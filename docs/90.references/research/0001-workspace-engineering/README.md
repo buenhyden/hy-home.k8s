@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-research-pack"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "references"
 ---
 # Workspace Engineering Research Pack
@@ -379,6 +379,55 @@ status, and hosted-runtime, provider-runtime, cluster, and live evidence remain
 | Terminology claims | CLM-WERPC-013-01, CLM-WERPC-013-02, CLM-WERPC-013-03 |
 | Drift claims | CLM-WERPC-013-04, CLM-WERPC-013-05, CLM-WERPC-013-06 |
 | Out-of-ledger observations | observed proposals=1; allocated=1; unallocated=0; outside-request/new-owner=0; SRC-WERPC-091->REQ-WERPC-009 |
+
+### 2026-09-05 external-only reverification reconciliation
+
+The approved 2026-09-05 follow-on cycle re-observed the external evidence layer
+for all thirty-six owners and deliberately excluded workspace re-observation at
+the requester's direction. It appended one dated subsection to each topical
+owner, extended the ledger to `SRC-WERPC-154`, opened the claim block
+`CLM-WERPC-016-01` through `CLM-WERPC-016-18`, and changed no requirement
+status.
+
+Reported outcomes:
+
+- **Changed with a superseded prior statement.** Three statements are superseded
+  as of 2026-09-05 and their earlier forms remain truthful for their own dates:
+  the subagent model-resolution order recorded on 2026-08-14; the claim that the
+  upstream agent catalogue's default branch is byte-identical to the retained
+  comparison pin; and one delivery citation confirmed dead by direct request and
+  repointed to its current location.
+- **Changed by coverage.** Official definitions of an agent harness and of loop
+  types now exist and are registered for the first time; a cross-provider
+  instruction-import bridge is documented by both providers; the permission-mode
+  and hook surfaces are materially wider than any list this pack had enumerated;
+  and the upstream spec-driven project reached a 1.0 line with additional
+  command families.
+- **Changed by currency.** A new orchestrator minor released after the previous
+  increment and shifted the supported set; the node distribution and
+  log-collection agent drifted further beyond their recorded pins; and a
+  secret-management operator release was captured for the first time.
+- **Unchanged.** The instruction-discovery chain and its size limit, the
+  configuration reference, the sandbox and approval vocabulary, the second
+  provider's memory default, the documentation framework's four modes, the
+  current protocol revision and its resource semantics, the index proposal's
+  informal status, the standards content behind a changed access path, and the
+  delivery platform's permission, concurrency, retention, federated-identity,
+  and API-version contracts.
+- **Unreachable.** One vendor agent guide could not be read: its HTML mirror
+  returned HTTP 403 and its document body was not extracted. It is recorded as
+  `unreachable`, not `unchanged`, and no claim rests on it. Two public indexes
+  disagree on the stage of one standards successor draft and the page that would
+  settle it returned HTTP 403; that discrepancy is recorded as unresolved.
+- **Rejected before allocation.** Three link-rot candidates raised during
+  collection were withdrawn after direct requests contradicted them, and one
+  redirect contradiction supported only by search results is recorded as
+  unverified rather than as a finding.
+
+This cycle records an external observation only. It does not meet the
+dual-observation expectation of the earlier full-corpus cycles, every workspace
+selector retains its previous observation date, and no statement here asserts
+that the pack is currently reconciled against the repository tree.
 
 ## Refresh and Succession
 

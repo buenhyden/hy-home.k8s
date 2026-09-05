@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0011"
 ---
@@ -403,6 +403,49 @@ rule, or document topology.
 contracts and `REQ-WERPC-032` remains `Partial`. Provider enablement, actual
 compaction, retention, deletion, retrieval, and secure-erasure behavior remain
 `provider-runtime` / `DEFER`; no provider store or ignored checkpoint was read.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the four memory owners under the approved 2026-09-05
+follow-on cycle. Workspace re-observation was excluded by direct user decision.
+New sources are `SRC-WERPC-125` and `SRC-WERPC-138`; the cycle claim is
+`CLM-WERPC-016-09`.
+
+#### REQ-WERPC-029, REQ-WERPC-030, REQ-WERPC-031, REQ-WERPC-032 memory re-observation
+
+- **Sources and external result:** `changed` by evidence depth, not by
+  contradiction. The first provider's memory reference was re-observed on
+  2026-09-05 and registered as
+  [SRC-WERPC-138](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  It now documents an automatic-memory note taxonomy, an index file with a
+  stated line and byte loading bound, an instruction-file size cap above which a
+  file is skipped entirely, ancestor-exclusion settings for nested projects, and
+  a separate memory directory for subagents. The corpus previously described
+  this page only as documenting provider-local automatic memory. A vendor
+  context-engineering publication naming compaction, structured note-taking, and
+  sub-agent summarisation was registered as
+  [SRC-WERPC-125](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  The second provider's memory surface was re-observed as `unchanged` and
+  remains off by default, with its own documentation directing required team
+  guidance to checked-in instruction files rather than to recalled memory.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  short-term, long-term, domain-scoped, and memory-management baselines retain
+  their earlier repository-static observation dates.
+- **As-Is, gap, and target:** no status changes. The three tier rows stay
+  `Verified` for their local contracts and the management row stays `Partial`.
+  The external record is now detailed enough to state precisely what a
+  provider-local memory does and does not guarantee, which sharpens rather than
+  moves the existing boundary between provider-local recall and the local
+  durable-memory contract.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Documented note classes and loading bounds do
+  not prove enablement, generation, retention, deletion, secure erasure, or
+  redaction in this environment.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 memory contracts. The safe follow-up is to keep provider-local recall
+  outside the durable-memory authority and to re-state, without changing policy,
+  which documented bound corresponds to which local tier. Refresh when memory
+  classes, storage locations, loading bounds, or default enablement change.
 
 ## Related Documents
 

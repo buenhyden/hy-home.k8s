@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0003"
 ---
@@ -358,6 +358,110 @@ immediately when local adapters change. The source register keeps the checked
 date and scope. Runtime assertions require a separate approved, non-secret
 observation and must identify client/version, evidence class, date, and exact
 surface.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the two provider owners under the approved
+2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user
+decision. New sources are `SRC-WERPC-131` through `SRC-WERPC-136`; the cycle
+claims are `CLM-WERPC-016-06` and `CLM-WERPC-016-07`.
+
+#### REQ-WERPC-004 Claude surface re-observation
+
+- **Sources and external result:** `changed` in three respects.
+
+  First, the permission surface moved and grew. The access-management path
+  previously cited for permission modes now renders authentication content, and
+  the mode enumeration is documented at a separate path
+  ([SRC-WERPC-131](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  That enumeration includes a classifier-reviewed automatic mode which the
+  vendor documents as the starting mode for stated plan tiers from stated client
+  versions. Any reading of the older citation for mode content is now
+  misdirected.
+
+  Second, the hook surface is materially wider than any list this corpus had
+  enumerated, with five hook types, an unconditional blocking exit code, an
+  administrative setting that suppresses non-managed hooks, and model-switch
+  events added in a release dated after the previous increment
+  ([SRC-WERPC-133](m0012-source-coverage.md#2026-09-05-external-source-reverification),
+  [SRC-WERPC-134](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The previously recorded distinction between deterministic command hooks and
+  experimental agent hooks is confirmed unchanged.
+
+  Third, settings precedence is documented as a five-level stack in which most
+  keys merge across scopes while named keys are taken whole from the highest
+  scope that sets them
+  ([SRC-WERPC-132](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [Claude baseline](#claude-baseline) retains its earlier repository-static
+  observation date; no tracked settings, hook, or projection file was re-read.
+- **As-Is, gap, and target:** the row stays `Verified` for bounded product
+  surfaces at public-documentation depth. The practical consequence is that a
+  local assumption that a manual confirmation is the universal default is no
+  longer supported by the vendor's own default table for every plan tier. That
+  is a review trigger for the owning governance document, not a finding against
+  this reference.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Documented modes, events, and precedence do not
+  prove this account's plan, the installed client version, the effective mode,
+  hook delivery, or any permission decision in this worktree.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 approval and safety policy. The safe follow-up is for the approval-boundary
+  owner to re-read its own default-mode assumption against the current
+  enumeration. Refresh when the mode enumeration, default-mode table, hook
+  events, or settings precedence changes.
+
+#### Requested provider sub-areas not admitted in this cycle
+
+The 2026-09-05 request named several provider sub-areas explicitly. Four of
+them were investigated but are recorded here as unmet evidence rather than as
+findings, because collection reached only search-result depth and
+`C-WRFR-003` does not accept a search summary as a substitute for reading a
+source. No claim, source identifier, or status change is attached to any of
+them.
+
+| Requested sub-area | Evidence reached in this cycle | Disposition |
+| --- | --- | --- |
+| Global system-prompt and standing-context configuration for each provider | One provider's system-prompt append mechanism was read directly; the other provider's instruction-override key was named on a page that did not show its default or example in the returned excerpt. | `Partial` external evidence; not admitted. Needs a direct read of the second provider's advanced configuration page. |
+| Git pre-commit hook integration for each provider | Both providers document integration patterns rather than a managed feature, but neither page was read in full. | `Unverified`; not admitted. The apparent absence of a first-class feature is itself the likely finding and needs a direct read to state. |
+| Editor shortcuts and code actions | One provider's keybinding reference was read directly; the other provider's IDE page explicitly stated it did not contain shortcut-customisation detail, and the page that plausibly does was located but not read. | `Partial` external evidence; not admitted. |
+| Token limits, context-window management, and cost or rate-limit controls | One provider's cost and limits page was read directly; the other provider's advanced configuration keys were named without numeric defaults in the returned excerpt. | `Partial` external evidence; not admitted. |
+
+Each row is a bounded, named gap with a defined next step: read the exact
+missing page directly in a later cycle. None of them blocks any claim recorded
+above, and none may be cited as evidence until it is read.
+
+#### REQ-WERPC-005 Codex surface re-observation
+
+- **Sources and external result:** `changed` in one respect and `unchanged`
+  otherwise. The instruction-discovery chain, its size limit, the configuration
+  reference's accepted reasoning values and model example, the sandbox and
+  approval vocabulary, and the memory default were all re-observed as
+  `unchanged` on 2026-09-05. The hook reference was captured in detail for the
+  first time, including a hash-anchored trust model that requires re-approval
+  after any hook edit and fields documented as parsed but not yet implemented
+  ([SRC-WERPC-135](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The model page now lists eight identifiers and a six-value effort vocabulary
+  that agrees with neither the configuration reference nor the earlier recorded
+  subagent guidance
+  ([SRC-WERPC-136](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [Codex baseline](#codex-baseline) retains its earlier repository-static
+  observation date.
+- **As-Is, gap, and target:** the row stays `Verified` for bounded product
+  surfaces at public-documentation depth. The internal disagreement across the
+  vendor's own pages is now three-way; the correct local response remains to
+  treat no single page as authoritative and to resolve identifiers only at the
+  adapter edge.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. A documented field is not a parsed field, and a
+  documented model name is not an available model.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 provider notes. A candidate contradiction was raised during collection
+  about whether a legacy documentation host still redirects; it was supported
+  only by search results, was not confirmed by a direct request, and is
+  therefore recorded here as unverified rather than as a finding. Refresh when
+  any cited page changes, or when a direct request settles the redirect question.
 
 ## Related Documents
 

@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0009"
 ---
@@ -315,6 +315,72 @@ Agency Agents comparison remain separate from local adoption authority.
   proposed, separately review license, security, overwrite safety, and role
   admission before executing a converter or installer. Refresh when the pin,
   license, inspected scripts, or adoption policy changes.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the two agent-system owners under the approved
+2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct
+user decision. New sources are `SRC-WERPC-126`, `SRC-WERPC-127`, and
+`SRC-WERPC-130`; the cycle claims are `CLM-WERPC-016-02`, `CLM-WERPC-016-03`,
+and `CLM-WERPC-016-04`.
+
+#### REQ-WERPC-026 governed agent-system re-observation
+
+- **Sources and external result:** `changed`. The official subagent reference
+  was re-observed on 2026-09-05 and registered as
+  [SRC-WERPC-130](m0012-source-coverage.md#2026-09-05-external-source-reverification):
+  the documented configuration surface is materially wider than the field set
+  recorded on 2026-08-14, discovery is now documented across five ordered
+  scopes, and the subagent model-resolution order changed so that the
+  environment override is no longer first. The second provider's subagent
+  guidance was re-observed as `unchanged`. One further external source, a
+  vendor practical-agent guide, is recorded as `unreachable`
+  ([SRC-WERPC-126](m0012-source-coverage.md#2026-09-05-external-source-reverification)):
+  its HTML mirror returned HTTP 403 and its PDF body was not extracted, so no
+  content from it is adopted.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [AI-agent-system baseline](#ai-agent-systems-baseline) retains its earlier
+  repository-static observation date; no adapter or roster file was re-read.
+- **As-Is, gap, and target:** the row stays `Partial` at public-documentation
+  depth. No promotion. The widened provider schema increases the distance
+  between documented product capability and what this corpus has verified
+  locally, which is a coverage observation rather than a defect.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Static adapter parity or a documented field does
+  not prove discovery, permissions, model resolution, tool use, or task quality.
+  An `unreachable` source cannot refresh any observation date.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 harness and roster-admission contracts. Refresh when a cited provider agent
+  schema, inheritance, tool, permission, isolation, or model rule changes, or
+  when the unreachable guide becomes readable.
+
+#### REQ-WERPC-027 Agency Agents comparison re-observation
+
+- **Sources and external result:** `changed`. Upstream `main` was observed on
+  2026-09-05 at commit `af128a92888fd7d7c389b6cb37f1820be1b3cd9d`, authored
+  2026-09-04, and registered as
+  [SRC-WERPC-127](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  That head is fifteen commits beyond the `ebe9c99acb5c96f9468de368d8bead775387d1a7`
+  pin recorded in the [Agency Agents baseline](#agency-agents-baseline) and
+  twenty-six commits beyond the `9f3e401ccd09aa0ee0ef8e015226d0647908e01e` pin
+  recorded in `SRC-WERPC-115`. The licence is unchanged and the `scripts/`
+  surface has grown. Reported popularity counts were discarded as unverified.
+- **Workspace selector and result:** `not observed in this cycle`. The local
+  adapted roster retains its earlier repository-static observation date.
+- **As-Is, gap, and target:** the fixed-pin comparison remains `Verified` for
+  the pin it names, but the statement that the default branch is byte-identical
+  to that pin is now false and is withdrawn as of 2026-09-05. The withdrawal is
+  bounded to the branch-currency premise; the pinned-tree comparison, licence,
+  and script inspection retain their original dates and conclusions.
+- **Evidence boundary:** blocking class is `none` for upstream currency, but no
+  local-adoption or runtime claim is made. Catalogue availability and script
+  presence authorise no prompt copying or script execution.
+- **Owner, safe follow-up, and trigger:** owner is this reference. This cycle
+  does not adjudicate which of the two retained pins is the intended comparison
+  baseline; that disagreement is recorded in `CLM-WERPC-016-03` for the owning
+  authority. The safe follow-up is an authorised decision on the pin before any
+  reuse, with licence, security, overwrite-safety, and admission review
+  unchanged as prerequisites.
 
 ## Related Documents
 

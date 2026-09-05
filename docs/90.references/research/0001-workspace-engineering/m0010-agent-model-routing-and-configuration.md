@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0010"
 ---
@@ -335,6 +335,58 @@ topology. It applies only to the Spec 0054 Claude/Codex provider boundary.
 **Disposition:** `REQ-WERPC-028` remains `Partial` at public-documentation plus
 repository-static depth. The dated guidance refines a candidate hypothesis; it
 does not change the model-fitness contract or any configured incumbent.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the model-routing owner under the approved
+2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user
+decision. New sources are `SRC-WERPC-128`, `SRC-WERPC-129`, `SRC-WERPC-130`, and
+`SRC-WERPC-136`; the cycle claims are `CLM-WERPC-016-04` and `CLM-WERPC-016-05`.
+
+#### REQ-WERPC-028 model-routing re-observation
+
+- **Sources and external result:** `changed` in two independent ways.
+
+  First, the documented subagent model-resolution order changed. The order
+  recorded here on 2026-08-14 placed the environment override first; the
+  reference observed on 2026-09-05 places the per-invocation value first, then
+  the agent-file value, then the environment override, then the parent
+  conversation, and attributes the reordering to a named client release
+  ([SRC-WERPC-130](m0012-source-coverage.md#2026-09-05-external-source-reverification),
+  [SRC-WERPC-134](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  This supersedes the 2026-08-14 ordering statement as of 2026-09-05; the
+  earlier statement remains truthful for its own date.
+
+  Second, the model-identifier disagreement widened. It was previously recorded
+  as three generations across two pages of one product. On 2026-09-05 a third
+  page states a further generation and a further reasoning-effort vocabulary
+  ([SRC-WERPC-129](m0012-source-coverage.md#2026-09-05-external-source-reverification),
+  [SRC-WERPC-136](m0012-source-coverage.md#2026-09-05-external-source-reverification)),
+  and the other provider's catalogue was captured for the first time
+  ([SRC-WERPC-128](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  No single page is authoritative for a routing target.
+
+  The recorded methodology caveat reproduced during this cycle. A first
+  single-pass read of the subagent guidance paraphrased the precedence order
+  incorrectly; a second read demanding verbatim text matched the wording already
+  on record. Any future check of that page must obtain verbatim text before an
+  apparent precedence change is treated as real.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [model-routing baseline](#model-routing-baseline) and the local model policy
+  retain their earlier repository-static observation dates.
+- **As-Is, gap, and target:** the row stays `Partial` at public-documentation
+  depth. No promotion, and no candidate is adopted. The practical effect is that
+  the specific candidate names recorded on 2026-08-23 are now one generation
+  behind the vendors' own general catalogues, while the local disposition that
+  model names are recommendations rather than routing authority is strengthened.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Public model documentation does not prove parser
+  resolution, entitlement, availability, cost, latency, safety, or fitness.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 model policy. The safe follow-up is to keep tier semantics provider-neutral
+  and to resolve concrete identifiers only at the adapter edge, under a separate
+  authorisation that admits entitlement evidence. Refresh when any cited page
+  changes, or when the three pages converge.
 
 ## Related Documents
 

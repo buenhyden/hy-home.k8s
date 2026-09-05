@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0005"
 ---
@@ -332,6 +332,41 @@ published site generator, or reader study was executed.
   current Guide violates its contract, Diataxis materially changes, or a
   separately approved activity names reader, task, environment, method,
   threshold, and evidence owner.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the documentation-architecture owner under the
+approved 2026-09-05 follow-on cycle. Workspace re-observation was excluded by
+direct user decision. The new source is `SRC-WERPC-141`; the cycle claim is
+`CLM-WERPC-016-12`.
+
+#### REQ-WERPC-020 Diátaxis re-observation
+
+- **Sources and external result:** `changed` for reachability, `unchanged` for
+  content. The published framework site was requested directly on 2026-09-05 and
+  returned successfully on the first attempt, so the upstream source repository
+  fallback recorded on 2026-08-11 was not needed. The four documentation modes,
+  their reader-need framing, and the guidance to adopt improvements
+  incrementally rather than building all four modes at once are unchanged. The
+  observation is registered as
+  [SRC-WERPC-141](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [Diátaxis baseline](#diátaxis-baseline) and the local profile and template
+  mapping retain their earlier repository-static observation dates.
+- **As-Is, gap, and target:** the row stays `Partial`. No promotion. The
+  recorded reason for the retained `Partial` is unchanged: it reflects
+  unenforced enumeration work, not an undecided documentation route. The
+  deliberate absence of tutorial and explanation modes continues to rest on an
+  approved local decision that the framework's own incremental-adoption guidance
+  supports.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `human-judgement` / `DEFER` for reader-outcome questions. Reachability is a
+  per-observation property: the earlier rate-limited results remain truthful for
+  their dates, and today's success does not guarantee future access.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  99 profile owner. Refresh when the framework site content changes, when the
+  local documentation decisions change, or if rate-limited access recurs and a
+  fallback is needed again.
 
 ## Related Documents
 

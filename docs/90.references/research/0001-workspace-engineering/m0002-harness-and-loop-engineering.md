@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0002"
 ---
@@ -363,6 +363,69 @@ delegation, compaction-event delivery, and enforcement completeness remain
 `provider-runtime` / `DEFER`. Recheck on a provider lifecycle, permission, or
 multi-agent contract change, and admit promotion only from a separately
 authorized, non-secret runtime observation.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the external evidence layer for the two harness and
+loop owners under the approved 2026-09-05 follow-on cycle. Workspace
+re-observation was excluded from this cycle by direct user decision, so the
+workspace selectors below retain their earlier observation dates and no local
+status is promoted or demoted. New sources are `SRC-WERPC-123` and
+`SRC-WERPC-124`; the cycle claim is `CLM-WERPC-016-01`.
+
+#### REQ-WERPC-001 harness re-observation
+
+- **Sources and external result:** `changed` by coverage. Two official vendor
+  engineering publications now define an agent harness directly and distinguish
+  orchestrated workflows from self-directing agents. They were observed on
+  2026-09-05 and registered as
+  [SRC-WERPC-123](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  Until this cycle the harness baseline above cited only provider configuration
+  pages, which describe surfaces rather than the harness concept.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [harness baseline](#harness-baseline) component table retains its earlier
+  repository-static observation date; no local file was re-read here.
+- **As-Is, gap, and target:** the row stays `Verified` at public-documentation
+  depth. The gap is narrower than before, because the local six-component model
+  can now be compared against an external definition instead of being derived
+  only from configuration surfaces. Whether the local model agrees with,
+  extends, or diverges from that definition is not assessed here and is the
+  next safe step.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. A vendor definition establishes vocabulary, not
+  that this repository's harness is loaded, dispatched, or effective.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 harness contracts. The safe follow-up is a bounded reading comparison
+  between the external definition and the component table, with no contract
+  edit. Refresh when a further vendor harness publication appears or the local
+  harness contract changes.
+
+#### REQ-WERPC-002 loop re-observation
+
+- **Sources and external result:** `changed` by coverage. An official vendor
+  publication dated 2026-06-30 now names four loop types, turn-based,
+  goal-based, time-based, and proactive, and recommends deterministic
+  verifiable stop conditions over subjective ones. It was observed on
+  2026-09-05 and registered as
+  [SRC-WERPC-124](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [loop baseline](#loop-baseline) and the state and termination table retain
+  their earlier repository-static observation dates.
+- **As-Is, gap, and target:** the row stays `Verified` at public-documentation
+  depth. The external taxonomy classifies loops by what ends them, while the
+  local contract enumerates terminal states and transitions; the two are
+  compatible framings at different levels and neither supersedes the other. The
+  external preference for deterministic stop conditions agrees with the local
+  rule that a deterministic evidence lane, not narrative confidence, closes a
+  loop.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. The transition table is a local implementation
+  fact; no provider is proven to emit any event.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the local
+  loop lifecycle contract. The safe follow-up is to record, without changing the
+  contract, which local terminal states correspond to which external loop type.
+  Refresh when a further vendor loop publication appears or the local lifecycle
+  contract changes.
 
 ## Related Documents
 

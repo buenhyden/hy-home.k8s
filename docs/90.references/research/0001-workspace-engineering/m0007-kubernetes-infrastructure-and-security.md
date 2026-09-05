@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0007"
 ---
@@ -956,6 +956,99 @@ unchanged. A Git revision, chart version, image digest, signature, provenance
 statement, verifier policy, and admission result remain distinct evidence
 classes; no registry object, trust decision, reconciliation, or runtime result
 was inspected.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the Kubernetes, infrastructure, and security owners
+under the approved 2026-09-05 follow-on cycle. Workspace re-observation was
+excluded by direct user decision, so no declared image tag, chart version,
+manifest field, or policy label was re-read and no live system was contacted.
+New sources are `SRC-WERPC-143` through `SRC-WERPC-146`; the cycle claims are
+`CLM-WERPC-016-13` and `CLM-WERPC-016-14`.
+
+#### REQ-WERPC-008 Kubernetes re-observation
+
+- **Sources and external result:** `changed` for currency, `unchanged` for
+  semantics. The network-policy, secret, pod-security admission and standards,
+  admission-controller, role-based access, secret-handling, and service-account
+  documentation were all re-observed as `unchanged`; the default-deny selection
+  model, the unencrypted-at-rest default, the three policy levels and three
+  modes, and the warning that list and watch access effectively reveal secret
+  contents all hold. Currency moved: a new upstream minor released on
+  2026-08-26, three days after this reference's most recent increment, so the
+  supported set has shifted and the previously pinned line is now the oldest
+  supported minor with the nearest end-of-life date
+  ([SRC-WERPC-143](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The log-collection agent's upstream release is now several minor versions
+  beyond the pin this reference records, quantifying a gap that was previously
+  stated only as a pin
+  ([SRC-WERPC-146](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The metrics collector and reconciliation controller releases already registered
+  on 2026-08-28 were re-observed as `unchanged` and remain current.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [Kubernetes baseline](#kubernetes-baseline) retains its earlier
+  repository-static observation date.
+- **As-Is, gap, and target:** the row stays `Partial`. No promotion. Version
+  currency is a review trigger only; this cycle performs no compatibility
+  assessment and recommends no upgrade.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `live-cluster` / `DEFER`. Upstream release pages prove that a version exists,
+  never that it is deployed, compatible, reconciled, or running here.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  05 platform owners. The safe follow-up is a workspace-observation cycle that
+  re-reads the declared pins before any upgrade proposal. Refresh on any further
+  upstream release or support-window change.
+
+#### REQ-WERPC-009 infrastructure re-observation
+
+- **Sources and external result:** `changed` for currency, `unchanged` for
+  semantics. Automated-sync, self-heal, bootstrap, tracking-strategy, and
+  source-integrity documentation were re-observed as `unchanged` in substance,
+  and the field names for the source-integrity policy were captured for the
+  first time. The node distribution has shipped further patches on the pinned
+  line and a newer line, and a further line is at release-candidate stage, so
+  the drift recorded on 2026-08-17 has widened
+  ([SRC-WERPC-144](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The secret-management operator's current release and its version-gated Vault
+  audience requirement were captured for the first time
+  ([SRC-WERPC-145](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [infrastructure baseline](#infrastructure-baseline) retains its earlier
+  repository-static observation date.
+- **As-Is, gap, and target:** the row stays `Partial`. No promotion. The
+  operator release figure is new evidence with no earlier pinned figure to
+  compare against, so it establishes a baseline rather than a drift.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `live-cluster` / `DEFER`. Declared reconciliation intent is not observed sync,
+  health, recovery, or rollback.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  05 platform owners. Refresh on any further release, or on a change to the
+  provider authentication fields.
+
+#### REQ-WERPC-025 security re-observation
+
+- **Sources and external result:** `unchanged`. The secret-authorisation and
+  least-privilege guidance, the service-account token model, the workload
+  hardening checklist, the provenance mechanism, the supply-chain specification
+  at its current approved version, the signature and attestation verification
+  surface, and the secure-development, cybersecurity-framework, and control
+  catalogue publications were all re-observed as `unchanged`, with one patch
+  release noted in the control catalogue family. Two link-rot candidates raised
+  during collection were rejected: the retained bootstrap and attestation
+  citations already use their current paths.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [security baseline](#security-baseline) retains its earlier repository-static
+  observation date.
+- **As-Is, gap, and target:** the row stays `Partial`. No promotion, and no
+  named gap closes. The external control basis is stable, so the retained gaps
+  remain local-evidence gaps rather than external-uncertainty gaps.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `live-cluster` / `DEFER`, with `secret-value` operations prohibited outright.
+  No secret was read, no cluster was contacted, and no policy enforcement was
+  observed.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  05 security owners. Refresh when any cited control publication is revised, or
+  when a separately authorised evidence class admits live verification.
 
 ## Related Documents
 

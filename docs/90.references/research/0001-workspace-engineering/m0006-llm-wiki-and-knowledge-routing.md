@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0006"
 ---
@@ -212,6 +212,42 @@ retrieval, and provider runtime.
   canonical content owners. Reopen on a newly approved discovery surface,
   llms.txt status, or MCP Resources revision change; require a separately
   approved security and evaluation design before publication or retrieval.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the knowledge-routing owner under the approved
+2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user
+decision. The new source is `SRC-WERPC-142`; the cycle claim is
+`CLM-WERPC-016-12`.
+
+#### REQ-WERPC-021 LLM-WIKI and knowledge-routing re-observation
+
+- **Sources and external result:** `unchanged`. The community index proposal
+  remains an informally governed proposal at the version and modification date
+  already recorded, notwithstanding broader adoption. The protocol specification
+  was read directly on 2026-09-05 rather than through a search summary: the
+  revision recorded here is still the current revision, and its resource
+  semantics, including result typing, pagination, caching, subscription, and
+  multi-round-trip behaviour, are unchanged. The working draft adds an
+  extensions framework but carries no dated revision that would supersede the
+  current one. The observation is registered as
+  [SRC-WERPC-142](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+- **Workspace selector and result:** `not observed in this cycle`. The
+  historical baseline in this reference retains its earlier observation date and
+  its recorded status.
+- **As-Is, gap, and target:** the row keeps its `Contradicted` disposition,
+  which records that the prior deterministic canonical-owner map did not hold.
+  Nothing observed in this cycle revives or replaces that map, and no new
+  routing owner is created.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `runtime-retrieval` / `DEFER`. A specification read proves the protocol
+  contract only: no server, session, negotiation, retrieval, authorisation, or
+  retrieval-quality claim follows from it, and the index proposal proves no
+  publication or consumer behaviour.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 knowledge-routing owners. Refresh when a dated revision supersedes the
+  current one, when resource semantics change, or if a knowledge server is ever
+  proposed under a separate authorisation.
 
 ## Related Documents
 
