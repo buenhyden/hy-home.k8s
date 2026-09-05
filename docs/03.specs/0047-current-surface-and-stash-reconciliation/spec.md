@@ -13,6 +13,22 @@ artifact_id: "SPEC-0047"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+| Original member | Current semantic member |
+| --- | --- |
+| REQ-0007-FR-0001 | REQ-0004-FR-0005 |
+| REQ-0007-FR-0002 | REQ-0004-FR-0006 |
+| REQ-0007-FR-0009 | REQ-0003-FR-0007 |
+| REQ-0007-FR-0010 | REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 |
+| REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
+
 This specification establishes the first tranche of the PRD-0007 repository
 delivery and platform assurance program. It re-observes every approved target
 against current `main`, assigns one canonical owner and disposition, activates
@@ -38,7 +54,7 @@ those tranches.
   disposition matrix; duplicate/conflict proof; protected-surface boundary;
   program activation; stash hunk classification; generated-object refresh;
   and successor handoff.
-- **Consumes**: the Current 2026-07-11 audit pack, PRD-0007, AD-0010,
+- **Consumes**: the Current 2026-07-11 audit pack, REQ-0004/REQ-0003, AD-0007/AD-0006,
   accepted ADR-0031, current Git indexes, `scripts/validation/registry.json`, Stage 99 profiles,
   native control files, validators, tests, and read-only GitHub metadata.
 - **Does not own**: labeler/CODEOWNERS projection implementation, workflow
@@ -227,9 +243,9 @@ or `git stash drop` in this tranche.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Current execution decisions**:
   [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
   and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
@@ -246,12 +262,12 @@ or `git stash drop` in this tranche.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0007-FR-0001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-003 | Lifecycle and cross-document validators prove package-local activation and sequential successor disposition. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
-| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
-| N/A — REQ-0007-NFR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |
+| [REQ-0004-FR-0005](../../01.requirements/0004-current-local-gitops-platform.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-CSASR-003 | Lifecycle and cross-document validators prove package-local activation and sequential successor disposition. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
+| N/A — REQ-0003-FR-0007 uses the retained requirement owner linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
+| N/A — REQ-0003-FR-0014 uses the retained requirement owner linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |

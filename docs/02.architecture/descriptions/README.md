@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "architecture"
 ---
 # 02.architecture/descriptions (AD)
@@ -54,10 +54,6 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 ├── 0005-argo-notifications-slack.md
 ├── 0006-workspace-agent-governance-platform.md
 ├── 0007-current-local-gitops-platform.md
-├── 0008-workspace-document-assurance-operating-model.md
-├── 0009-document-lifecycle-evidence-operating-model.md
-├── 0010-repository-delivery-evidence-architecture.md
-├── 0011-document-taxonomy-consolidation-architecture.md
 └── README.md
 ```
 
@@ -66,7 +62,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
-4. superseded 또는 삭제된 AD의 전체 본문은 Git history에서 복구한다. Stage 98은 registry가 요구하는 Migration 또는 최소 Tombstone lookup만 기록하며, full-body Archive Record를 새로 만들지 않는다.
+4. AD의 현재 의미와 소비자를 승계한 뒤 실제 lifecycle 및 ADR-0032에 따라 superseded 또는 ended-without-successor record로 구분한다. 정확한 source Git bytes와 봉인 provenance를 보존하며 ADR 본문은 decision log에 남긴다.
 5. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
 
 ### Relative Link Rules
@@ -84,12 +80,8 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 | --- | --- | --- | --- | --- |
 | [`./0004-argo-rollouts-progressive-delivery.md`](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 참조 아키텍처 | Active | Current-contract backfill. `platform-rollouts` Application, dashboard, metrics, AppProject 경계를 소유한다. | [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | [`./0005-argo-notifications-slack.md`](./0005-argo-notifications-slack.md) | ArgoCD Notifications Slack 알림 참조 아키텍처 | Active | Current-contract backfill. ArgoCD Notifications와 Vault/ESO credential 경계를 소유한다. | [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [`./0006-workspace-agent-governance-platform.md`](./0006-workspace-agent-governance-platform.md) | Workspace AI Agent governance, provider-native harness, loop, model, and evidence reference architecture | Active | ADR-0019의 과거 구현 구조를 보존하되 그 four-provider 및 고정 cardinality 주장은 비권위 이력으로 분리한다. 현재 terminal authority는 ADR-0030/Spec 0054이고, 실제 Codex·Claude 전환은 WP-003이 소유한다. | [`ADR-0030 (current authority)`](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); [`Spec 0054`](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [`./0007-current-local-gitops-platform.md`](./0007-current-local-gitops-platform.md) | 현재 local GitOps platform reference architecture | Active | Current repo-backed baseline. Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 경계를 소유한다. | [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md) |
-| [`./0008-workspace-document-assurance-operating-model.md`](./0008-workspace-document-assurance-operating-model.md) | Workspace document assurance 운영 모델 | Active | Registry, template, authored document, validation, CI/QA, provider, protected-surface 책임과 데이터 흐름을 정의한다. | [`../../03.specs/0026-document-contract-registry/spec.md`](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md) |
-| [`./0009-document-lifecycle-evidence-operating-model.md`](./0009-document-lifecycle-evidence-operating-model.md) | Document lifecycle, full-body archive, reference currentness, and QA evidence 운영 모델 | Active | 2026-07-28 exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`에서 Specs 034–040 repository-static contract와 `0/0·6/3·3` frontier를 종료하고, reciprocal accepted ADR-0020을 same-diff role-decision evidence로 사용한다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 external security/provider/remote/live evidence는 `DEFER`다. | [`ADR-0020`](../decisions/0020-document-lifecycle-program-closure-evidence.md) 및 [`Spec 040`](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) |
-| [`./0010-repository-delivery-evidence-architecture.md`](./0010-repository-delivery-evidence-architecture.md) | Repository delivery routing, layered validation evidence, and local integration reference architecture | Active | Existing validation-surface and platform topology owners remain canonical; two reference-based machine contracts close GitHub projection and platform evidence-depth gaps. | [`ADR-0021`](../decisions/0021-canonical-surface-routing-and-evidence-depth.md), active Spec 047 및 planned Specs 048–051 |
-| [`./0011-document-taxonomy-consolidation-architecture.md`](./0011-document-taxonomy-consolidation-architecture.md) | Document taxonomy, governance authority, AI-agent control, and validator topology reference architecture | Active | Requirement Package, prefix-free Architecture, package-local Task records, stable Stage 05, registry-owned lifecycle, and Git-backed recovery topology를 설명한다. | [`ADR-0030 (current authority)`](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [`Spec 0054`](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [AD-0006](./0006-workspace-agent-governance-platform.md) | Agent·문서·검증 authority 구조 | Active | 현재 Registry와 Stage 00/99, execution/history, native/static/runtime 경계 및 이전 AD 책임 승계. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), WP-013 미완료 |
+| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps와 delivery assurance 구조 | Active | Desired-state topology, external interfaces, layered validation, native IaC, revision/namespace evidence; AD-0006과 공통 경계 분리. | [Spec 0047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md) 재개; 0048..0051 미완료 |
 
 ## Related Documents
 

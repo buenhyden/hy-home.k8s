@@ -1,4 +1,24 @@
 ---
+title: "Superseded REQ-0008 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-REQ-0008"
+original_artifact_id: "REQ-0008"
+original_type: "sdlc/requirement"
+original_path: "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "39873ca978afad84d1cb10129c66b6c1f3424098"
+content_sha256: "28ae25c1608db13f51c586c3b568d4d3c97356e9fce34125e685463da9ee77f7"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Workspace Document Taxonomy Consolidation Requirement Package"
 version: "1.0.0"
 type: "sdlc/requirement"

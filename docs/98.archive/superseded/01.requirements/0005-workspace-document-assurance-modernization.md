@@ -1,4 +1,24 @@
 ---
+title: "Superseded REQ-0005 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-REQ-0005"
+original_artifact_id: "REQ-0005"
+original_type: "sdlc/requirement"
+original_path: "docs/01.requirements/0005-workspace-document-assurance-modernization.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "5f47c5104c0195d9237c9353260b272c008a48ed"
+content_sha256: "f719388aaa5eab9d4cdd4e26402e0a33f1463e6cb889f56537866ffae307ff9f"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Workspace Document Assurance Modernization Requirement Package"
 version: "1.0.0"
 type: "sdlc/requirement"

@@ -40,6 +40,8 @@ class LifecycleDocument:
     status: str | None
     state_issue: str | None = None
     original_path: PurePosixPath | None = None
+    archive_reason: str | None = None
+    replacement: PurePosixPath | None = None
 
 
 @dataclass(frozen=True)
@@ -319,7 +321,9 @@ def _create_diagnostics(
     return diagnostics
 
 
-def _mirrored_archive_path(original_path: PurePosixPath) -> PurePosixPath | None:
+def _mirrored_archive_path(
+    original_path: PurePosixPath, archive_reason: str | None = None
+) -> PurePosixPath | None:
     if (
         original_path.is_absolute()
         or not original_path.parts
@@ -328,7 +332,74 @@ def _mirrored_archive_path(original_path: PurePosixPath) -> PurePosixPath | None
         or original_path.parts[1:2] == ("98.archive",)
     ):
         return None
+    if archive_reason is not None:
+        from archive_recovery import ArchiveContractError, disposition_archive_path
+
+        try:
+            return PurePosixPath(
+                disposition_archive_path(original_path.as_posix(), archive_reason)
+            )
+        except ArchiveContractError:
+            return None
     return PurePosixPath("docs/98.archive", *original_path.parts[1:])
+
+
+def archive_disposition_gaps(
+    registry: Registry,
+    source: LifecycleDocument,
+    reason: str,
+    replacement: PurePosixPath | None,
+    successor: LifecycleDocument | None,
+) -> list[str]:
+    """Share the declared terminal edge and successor checks with sealed recovery."""
+    gaps: list[str] = []
+    source_profile = _optional_profile_by_id(registry, source.profile_id)
+    domain = source_profile.lifecycle_domain if source_profile else None
+    terminal = {
+        "superseded": "superseded",
+        "consolidated": "superseded",
+        "duplicate": "superseded",
+        "retired": "retired",
+        "abandoned": "withdrawn",
+    }.get(reason)
+    if (
+        source.state_issue
+        or domain is None
+        or terminal is None
+        or domain.validation_class(terminal) != "terminal"
+        or (
+            source.status != terminal
+            and (source.status, terminal) not in domain.transitions
+        )
+    ):
+        gaps.append(
+            "source lacks the declared terminal state or forward lifecycle edge"
+        )
+    if terminal == "superseded":
+        successor_profile = (
+            _optional_profile_by_id(registry, successor.profile_id)
+            if successor
+            else None
+        )
+        successor_domain = (
+            successor_profile.lifecycle_domain if successor_profile else None
+        )
+        if (
+            replacement is None
+            or successor is None
+            or successor.state_issue
+            or successor_domain is None
+            or successor.status is None
+            or successor_domain.validation_class(successor.status) != "current"
+            or domain is None
+            or successor_domain.family != domain.family
+        ):
+            gaps.append(
+                "supersession replacement is not a current owner of the same family"
+            )
+    elif replacement is not None:
+        gaps.append("ended-without-successor record must not claim a replacement")
+    return gaps
 
 
 def _archive_creation_evidence(
@@ -349,10 +420,14 @@ def _archive_creation_evidence(
         gaps: list[str] = []
         original_path = document.original_path
         expected_archive_path = (
-            _mirrored_archive_path(original_path) if original_path is not None else None
+            _mirrored_archive_path(original_path, document.archive_reason)
+            if original_path is not None
+            else None
         )
         if profile is None or profile.lifecycle_domain is None:
             gaps.append("registry archive lifecycle domain is unavailable")
+        if document.state_issue or document.status != "archived":
+            gaps.append("archive envelope is not a valid archived record")
         if original_path is None:
             gaps.append("archive original_path evidence is missing")
         elif expected_archive_path != document.path:
@@ -361,6 +436,16 @@ def _archive_creation_evidence(
             gaps.append("original source is absent from the comparison base")
         elif original_path in proposed_documents:
             gaps.append("original source remains in the proposed snapshot")
+        if isinstance(document.archive_reason, str) and original_path in base_documents:
+            gaps.extend(
+                archive_disposition_gaps(
+                    registry,
+                    base_documents[original_path],
+                    document.archive_reason,
+                    document.replacement,
+                    proposed_documents.get(document.replacement),
+                )
+            )
         if evidence_context is None:
             gaps.append("same-diff archive evidence context is unavailable")
         elif original_path is not None:
@@ -1272,7 +1357,10 @@ def document_from_text(
     """Classify one document and extract only its registry-owned status."""
 
     selected_profile = classify_path(registry, path)
-    if not _stateful(selected_profile):
+    if (
+        not _stateful(selected_profile)
+        and selected_profile.profile_id != "archive/tombstone"
+    ):
         return LifecycleDocument(
             path=path, profile_id=selected_profile.profile_id, status=None
         )
@@ -1346,6 +1434,7 @@ def document_from_text(
         else:
             status = "sealed"
     original_path: PurePosixPath | None = None
+    archive_reason: str | None = None
     if profile_id == "archive/tombstone":
         raw_original_path = metadata.get("original_path")
         if isinstance(raw_original_path, str):
@@ -1357,10 +1446,22 @@ def document_from_text(
                 original_path = candidate
         if original_path is None:
             profile_issue = "archive original_path is missing or noncanonical"
+        raw_reason = metadata.get("archive_reason")
+        if isinstance(raw_reason, str):
+            archive_reason = raw_reason
+        elif raw_reason is not None:
+            profile_issue = "archive_reason is not a string"
     return LifecycleDocument(
         path=path,
         profile_id=profile_id,
         status=status,
         state_issue=profile_issue,
         original_path=original_path,
+        archive_reason=archive_reason,
+        replacement=(
+            PurePosixPath(metadata["replacement"])
+            if profile_id == "archive/tombstone"
+            and isinstance(metadata.get("replacement"), str)
+            else None
+        ),
     )

@@ -327,10 +327,50 @@ historical payloads. Do not roll back an accepted dependent unit implicitly.
 No push, merge, release/tag, secret-value read, live mutation, forced
 reconciliation, sealed Stage 98 edit, or later WP-013 unit occurs in this slice.
 
+### Requirement and Architecture Authority Transfer (2026-09-05)
+
+This is WP-013's second implementation unit, not WP-013 completion. Retained
+REQ-0001..0004 and AD-0004..0007 own current requirements and architecture.
+Their explicit member/responsibility mappings absorb REQ-0005..0008 and
+AD-0008..0011 before the source paths leave current authority. All 24 surviving
+canonical-link holders were updated; original decision lineage remains in
+terminal ADR bodies and source-identical superseded records. REQ-0005/0006's
+original successor was REQ-0008; REQ-0003 is the transitive current semantic
+successor, not a rewritten original decision target.
+
+The actual Registry admitted both already-superseded sources and the six
+active-to-superseded edges, with current same-family replacements. Each source
+Git blob passed private, fully redacted secret classification. New MIG-0019
+and eight ADR-0032 superseded records preserve exact source commit/blob/digest
+and payload. No pre-existing sealed payload or ADR lifecycle was changed.
+
+Focused tests first exposed legacy-only mirror/creation evidence, v9 metadata
+order and missing `tomb-REQ` admission. Further RED fixtures exposed WORK-107's
+legacy census blocking independently proved additions and the cutover reader
+discarding terminal status. Minimal routing/provenance bridges preserve the
+old sealed inventory while requiring legal source edges, a current successor,
+exact recovery identity and an independently valid sealed disposition. Active
+or accepted record-as-authority, wrong category, unproved or mismatched source,
+malformed reason and non-archived envelope remain rejected.
+
+The final focused pre-disposition batch passed 24 tests in 13.769 seconds.
+Before corpus edits, expanded lifecycle and Archive batches passed 93 and 192
+tests respectively on unchanged snapshots. Final-snapshot strict, affected,
+staged, full-suite, aggregate and pre-commit evidence is recorded in the
+controller handoff report; these earlier runs alone are not final validation.
+The remaining cutover bridge is transition-only compatibility to re-evaluate
+with Task 4, not a permanent second source owner.
+
+Specs 0047..0051 retain their unfinished package-local states and sequence.
+Spec 0052 stays in Stage 03; no package retention, Stage 99 reduction,
+transition-control retirement, final archive reconciliation, push, merge,
+release/tag, secret-value read or live mutation occurs in this unit. This Task
+remains in-progress. Independent review remains the controller's next step.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | In progress. ADR-0032/0033 acceptance, document-contract v9, local/Hosted validation, and approved read-only runtime observation are complete; the WP-013 corpus dispositions are not. | Sealed-endpoint pin released across three owners with four regression cases; intact tree `PASS CROSS-DOCUMENT`; commits `41f8144e` through `ad907cb1`; PRs 54/55; Hosted CI run 33885291302; no corpus removal or live mutation made. |
+| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | In progress. Stage 03 state convergence and Stage 01/02 authority-transfer evidence are recorded above; remaining WP-013 dispositions and integrated closure are not complete. | Earlier acceptance, local/Hosted and read-only runtime evidence remains scoped to its original observations. The two dated implementation sections record the later local corpus work; neither claims live mutation or final WP-013 completion. |

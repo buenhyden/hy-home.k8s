@@ -53,6 +53,7 @@ if __package__:
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
         current_named_durable_ref,
+        disposition_archive_path,
         parse_work107_migration_document,
         parse_archive_envelope,
         require_commits_reachable_from_durable_refs,
@@ -74,6 +75,7 @@ else:  # Direct import-only execution from scripts/.
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
         current_named_durable_ref,
+        disposition_archive_path,
         parse_work107_migration_document,
         parse_archive_envelope,
         require_commits_reachable_from_durable_refs,
@@ -208,6 +210,7 @@ class ArchiveValidationReport:
     namespace_counts: tuple[tuple[str, int], ...] = ()
     record_link_counts: tuple[tuple[str, int], ...] = ()
     reviewed_manifest_records: tuple[ReviewedManifestRecord, ...] = ()
+    additive_record_sources: tuple[ReviewedManifestRecord, ...] = ()
 
     @property
     def valid(self) -> bool:
@@ -216,7 +219,7 @@ class ArchiveValidationReport:
 
 @dataclass(frozen=True, order=True)
 class ReviewedManifestRecord:
-    """One exact archive-unique row admitted by the reviewed stage-zero manifest."""
+    """An exact archive source identity, carried only by its admitting proof class."""
 
     target: str
     original_path: str
@@ -261,6 +264,7 @@ def _report(
     namespace_counts: Sequence[tuple[str, int]] = (),
     record_link_counts: Sequence[tuple[str, int]] = (),
     reviewed_manifest_records: Sequence[ReviewedManifestRecord] = (),
+    additive_record_sources: Sequence[ReviewedManifestRecord] = (),
 ) -> ArchiveValidationReport:
     return ArchiveValidationReport(
         diagnostics=tuple(sorted(diagnostics, key=lambda item: (item.path, item.code))),
@@ -270,6 +274,7 @@ def _report(
         namespace_counts=tuple(namespace_counts),
         record_link_counts=tuple(record_link_counts),
         reviewed_manifest_records=tuple(reviewed_manifest_records),
+        additive_record_sources=tuple(additive_record_sources),
     )
 
 
@@ -2797,7 +2802,17 @@ def _sealed_row_retired_paths(root: Path) -> frozenset[str]:
     for path in sorted(inventory):
         if generic_migration_id(path) is None:
             continue
-        content = read_staged_blob_bounded(root, path)
+        # The inventory already proved this exact stage-zero regular blob.
+        # Read its identity directly without a second path-to-object query.
+        object_id = inventory[path]
+        content = _read_git_blob_batch(
+            root,
+            (object_id,),
+            object_id_length=_repository_identity(root),
+            per_blob_limit=MIGRATION_DOCUMENT_MAX_BYTES,
+            aggregate_limit=MIGRATION_DOCUMENT_MAX_BYTES,
+            object_limit=1,
+        )[object_id]
         if not is_sealed_migration(content):
             continue
         rows, _consumers = parse_migration_control(path, content)
@@ -3136,7 +3151,7 @@ def _stage98_namespace_records(
 
 def _repository_archive_records(
     root: Path,
-) -> tuple[dict[str, bytes], list[ArchiveDiagnostic]]:
+) -> tuple[dict[str, bytes], list[ArchiveDiagnostic], MigrationProof | None]:
     records: dict[str, bytes] = {}
     migration_controls: dict[str, bytes] = {}
     diagnostics: list[ArchiveDiagnostic] = []
@@ -3144,11 +3159,19 @@ def _repository_archive_records(
     try:
         archive_root_stat = archive_root.lstat()
     except OSError:
-        return {}, [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())]
+        return (
+            {},
+            [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())],
+            None,
+        )
     if stat.S_ISLNK(archive_root_stat.st_mode) or not stat.S_ISDIR(
         archive_root_stat.st_mode
     ):
-        return {}, [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())]
+        return (
+            {},
+            [_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", ARCHIVE_ROOT.as_posix())],
+            None,
+        )
     archive_fd: int | None = None
 
     def read_record(directory_fd: int, name: str, relative: str) -> bytes:
@@ -3269,14 +3292,15 @@ def _repository_archive_records(
         for path, content in migration_controls.items()
         if generic_migration_id(path) is not None and is_sealed_migration(content)
     }
+    migration_proof = None
     if generic_controls:
         try:
-            validate_migration_records(root, generic_controls)
+            migration_proof = validate_migration_records(root, generic_controls)
         except ArchiveContractError as exc:
             diagnostics.append(
                 _diagnostic(exc.code, (ARCHIVE_ROOT / "migrations").as_posix())
             )
-    return records, diagnostics
+    return records, diagnostics, migration_proof
 
 
 @lru_cache(maxsize=1)
@@ -3586,7 +3610,7 @@ def validate_repository_archive(
             raise OSError
     except (OSError, RuntimeError, TypeError):
         return _report((_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", "<repository>"),))
-    records, inventory_diagnostics = _repository_archive_records(root)
+    records, inventory_diagnostics, proof = _repository_archive_records(root)
     actual = frozenset(records)
     diagnostics = [*inventory_diagnostics]
     try:
@@ -3622,7 +3646,99 @@ def validate_repository_archive(
         reviewed_manifest,
     )
     diagnostics.extend(namespace_diagnostics)
-    if stable_rows and not actual.issubset(frozenset(stable_rows)):
+    additive_sources: list[ReviewedManifestRecord] = []
+    unproved_additions = actual - frozenset(stable_rows) if stable_rows else frozenset()
+    if unproved_additions:
+        # WORK-107 sealed only its transition inventory. New categorized records
+        # need their own verified sealed disposition, never an expanded old census.
+        # Reuse only this inventory's validated ledger/source proof. Repeating
+        # discovery would validate the same sealed rows and Git objects twice.
+        admitted: set[str] = set()
+        for path in unproved_additions:
+            try:
+                parsed = parse_archive_envelope(records[path])
+                metadata = parsed.metadata
+                expected_path = disposition_archive_path(
+                    str(metadata["original_path"]), str(metadata["archive_reason"])
+                )
+            except ArchiveContractError:
+                continue
+            disposition = (
+                proof.dispositions.get(str(metadata["original_path"]))
+                if proof
+                else None
+            )
+            expected_actions = (
+                {"merged", "replaced"} if metadata["replacement"] else {"deleted"}
+            )
+            if (
+                path == expected_path
+                and disposition is not None
+                and disposition.source_commit == metadata["source_commit"]
+                and disposition.source_blob == metadata["source_blob"]
+                and disposition.source_bytes == parsed.payload
+                and disposition.action in expected_actions
+                and disposition.target
+                == (metadata["replacement"] or ARCHIVE_INDEX.as_posix())
+            ):
+                if __package__:
+                    from scripts.document_lifecycle import (
+                        archive_disposition_gaps,
+                        document_from_text,
+                    )
+                else:
+                    from document_lifecycle import (
+                        archive_disposition_gaps,
+                        document_from_text,
+                    )
+
+                if proof is None or proof.proposed_registry is None:
+                    continue
+                try:
+                    source = document_from_text(
+                        proof.proposed_registry,
+                        PurePosixPath(str(metadata["original_path"])),
+                        parsed.payload.decode("utf-8", errors="strict"),
+                    )
+                    replacement = (
+                        PurePosixPath(proof.targets[str(metadata["original_path"])])
+                        if metadata["replacement"]
+                        else None
+                    )
+                    successor = (
+                        document_from_text(
+                            proof.proposed_registry,
+                            replacement,
+                            read_worktree_regular_bounded(
+                                root,
+                                replacement.as_posix(),
+                                max_bytes=CURRENT_MARKDOWN_MAX_BYTES,
+                            ).decode("utf-8", errors="strict"),
+                        )
+                        if replacement is not None
+                        else None
+                    )
+                except (ArchiveContractError, UnicodeError):
+                    continue
+                if archive_disposition_gaps(
+                    proof.proposed_registry,
+                    source,
+                    str(metadata["archive_reason"]),
+                    replacement,
+                    successor,
+                ):
+                    continue
+                admitted.add(path)
+                additive_sources.append(
+                    ReviewedManifestRecord(
+                        path,
+                        str(metadata["original_path"]),
+                        disposition.source_commit,
+                        disposition.source_blob,
+                    )
+                )
+        unproved_additions -= admitted
+    if unproved_additions:
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-PARITY", WORK107_MIGRATION_PATH)
         )
@@ -3711,6 +3827,9 @@ def validate_repository_archive(
         reviewed_manifest_records=tuple(
             reviewed_manifest[path] for path in sorted(reviewed_manifest)
         ),
+        additive_record_sources=tuple(sorted(additive_sources))
+        if not diagnostics
+        else (),
     )
 
 
@@ -4480,12 +4599,19 @@ def validate_archive_records(
             diagnostics.append(_diagnostic("RECOVERY-OBJECT-MISSING", archive_path))
             continue
         try:
-            parse_archive_envelope(item.record.content, expected=recovered)
+            parsed = parse_archive_envelope(item.record.content, expected=recovered)
         except ArchiveContractError as exc:
             diagnostics.append(_diagnostic(exc.code, archive_path))
             continue
+        try:
+            classified_path = disposition_archive_path(
+                item.original_path,
+                str(parsed.metadata["archive_reason"]),
+            )
+        except ArchiveContractError:
+            classified_path = None
         if (
-            archive_path != recovered.proposed_archive_path
+            archive_path not in {recovered.proposed_archive_path, classified_path}
             and archive_path not in stable_archive_paths
         ):
             diagnostics.append(_diagnostic("ARCHIVE-MIRROR-MISMATCH", archive_path))
@@ -4518,6 +4644,7 @@ def validate_current_archive_authority(
     documents: Sequence[CurrentMarkdownDocument] | object,
     *,
     individual_archive_paths: frozenset[str] | object = _MISSING_INVENTORY,
+    registry: Registry | None = None,
 ) -> ArchiveValidationReport:
     """Validate passed current Markdown/profile data without filesystem reads."""
 
@@ -4541,7 +4668,14 @@ def validate_current_archive_authority(
         for document in materialized
         if type(document) is CurrentMarkdownDocument
     )
-    prepared_documents: list[tuple[str, CurrentMarkdownDocument, bool, bool, bool]] = []
+    profiles = (
+        {profile.profile_id: profile for profile in registry.profiles}
+        if registry
+        else {}
+    )
+    prepared_documents: list[
+        tuple[str, CurrentMarkdownDocument, bool, bool, bool, bool]
+    ] = []
     for document in typed_documents:
         path = _canonical_path(document.path)
         if path is None:
@@ -4555,6 +4689,30 @@ def validate_current_archive_authority(
             isinstance(document.profile, str)
             and document.profile in CURRENT_MARKDOWN_PROFILES
         )
+        current = status_valid and document.status in {"active", "accepted"}
+        profile = (
+            profiles.get(document.profile)
+            if isinstance(document.profile, str)
+            else None
+        )
+        if profile is not None:
+            profile_valid = True
+            status_valid = (
+                isinstance(document.status, str)
+                and document.status in profile.status_domain
+            )
+            if profile.lifecycle_domain is not None:
+                state_class = (
+                    profile.lifecycle_domain.validation_class(document.status)
+                    if status_valid
+                    else None
+                )
+                status_valid = status_valid and state_class is not None
+                current = state_class == "current"
+            else:
+                # Stateless routers still navigate current content; the Registry
+                # owns their admitted status domain, not the legacy API enum.
+                current = status_valid
         if not markdown_valid:
             diagnostics.append(_diagnostic("ARCHIVE-CURRENT-CONTENT-TYPE", path))
         if not status_valid:
@@ -4562,13 +4720,12 @@ def validate_current_archive_authority(
         if not profile_valid:
             diagnostics.append(_diagnostic("ARCHIVE-CURRENT-PROFILE-INVALID", path))
         prepared_documents.append(
-            (path, document, markdown_valid, status_valid, profile_valid)
+            (path, document, markdown_valid, status_valid, profile_valid, current)
         )
 
-    for path, document, markdown_valid, status_valid, profile_valid in sorted(
+    for path, document, markdown_valid, status_valid, profile_valid, current in sorted(
         prepared_documents, key=lambda item: item[0]
     ):
-        current = status_valid and document.status in {"active", "accepted"}
         pure_path = PurePosixPath(path)
         migration_control = (
             path in _ARCHIVE_MIGRATION_CONTROLS

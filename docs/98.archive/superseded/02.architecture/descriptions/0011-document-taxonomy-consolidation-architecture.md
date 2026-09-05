@@ -1,4 +1,24 @@
 ---
+title: "Superseded AD-0011 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-AD-0011"
+original_artifact_id: "AD-0011"
+original_type: "sdlc/architecture-description"
+original_path: "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "9c03158b129e5b1f4e885af94d3129f87eb84052"
+content_sha256: "a73c32d18bec1102b8103adc73e637cda073ef7b262d724a6115e3d8e93821ac"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Document Taxonomy Consolidation Architecture Description"
 version: "1.0.0"
 type: "sdlc/architecture-description"

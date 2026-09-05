@@ -1,270 +1,178 @@
 ---
-title: "Workspace Agent Governance Platform Architecture Description"
+title: "Agent and Document Governance Architecture"
 version: "1.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-08-30"
+updated: "2026-09-05"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
 
-# Workspace Agent Governance Platform Architecture Description (AD)
+# Agent and Document Governance Architecture
 
 ## Overview
 
-이 문서는 Stage 00 human governance, provider-neutral machine authority,
-provider projection, execution loop와 evidence gate의 경계를 정의한다.
-[ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)과
-[Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가
-current terminal authority다. Codex와 Claude만 남기는 실제 surface cutover는
-WP-003 소유이며 이 문서는 완료되지 않은 cutover를 현재 구현으로 주장하지 않는다.
-설계의 고정 외부 사실 관찰 기준은 **2026-07-10 10:00 Asia/Seoul**
-(`2026-07-10T01:00:00Z`)이며, concrete provider schema와
-model 값은 official primary source와 native parse/runtime evidence가 함께 입증할 때만
-provider-runtime current가 된다.
-
-[OpenAI Harness Engineering](https://openai.com/index/harness-engineering/)의 짧은 map,
-repo-local system of record, 기계적 invariant, 격리 환경과 feedback loop 원칙을 이 저장소의
-Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. 이 사례는 방향 근거이지
-다른 provider의 native capability를 대신하는 증거가 아니다.
+이 Architecture는 Agent·문서·검증·실행 증거의 current owner 경계를 설명한다.
+[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)의 요구를
+[ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md),
+[ADR-0031](../decisions/0031-current-corpus-retention-and-validation-ownership.md),
+[ADR-0032](../decisions/0032-completed-and-terminal-document-retention.md)에 따라 배치한다.
+실제 구현과 미완료 수렴은 [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
 
 ## Boundaries & Non-goals
 
-### Owns
-
-- `docs/00.agent-governance/**`의 durable human policy, 역할 책임, provider 차이와 lifecycle 경계.
-- 하나의 provider-neutral role/permission/handoff machine owner를 두고 projection이 공통 policy를 복제하지 않는 구조.
-- 현재 registry inventory에서 role과 adapter 집합을 도출하고 고정 cardinality를 권위로 사용하지 않는 규칙.
-- 역할별 model/reasoning-effort decision, provider config/MCP allowlist와 runtime canary evidence model.
-- Bounded retry, checkpoint, compaction, resume, handoff, eval/admission과 legacy cutover.
-- Spec 039가 제공하는 baseline CI/QA를 소비하고 Spec 045에서 추가하는 agent-governance static lane.
-
-### Consumes
-
-- `docs/99.templates/**`의 form/profile contract와 Stage 00의 routing contract.
-- GitHub Actions, pre-commit, repository quality gate, provider CLI와 local credential store.
-- Specs 038–040에서 완료되는 reference IA, CI/QA evidence 및 lifecycle cutover.
-- Kubernetes/GitOps/security/operations 문서를 역할 수행의 domain context로 소비하되 소유하지 않는다.
-
-### Does Not Own
-
-- `gitops/**`와 `infrastructure/**`의 desired-state semantics 및 live runtime state.
-- Provider account, billing, credential 값, shell history, auth file 또는 private transcript.
-- Provider vendor의 모델 lifecycle, CLI distribution 또는 authentication policy.
-
-### Non-goals
-
-- provider별 독립 governance fork를 만드는 것.
-- `.agents/**`를 Gemini CLI native evidence로 취급하는 것.
-- Provider-authenticated canary를 GitHub-hosted secret lane으로 실행하는 것.
-- 모든 역할에 같은 model/effort를 적용하거나 모델명을 “최신”이라는 이유만으로 자동 승격하는 것.
-- `agency-agents` prompt/persona를 vendoring하거나 외부 catalog를 admission authority로 삼는 것.
-- Live cluster/service mutation, secret material 수집, unrelated application 또는 GitOps 개편.
+이 문서는 소유 경계, 흐름, 증거 class 및 품질 속성을 소유한다. Machine route·schema·state enum,
+역할 roster, validator argv와 작업 상태는 아래 canonical owner를 참조하며 복제하지 않는다.
+GitOps desired state와 플랫폼 interface는 [AD-0007](./0007-current-local-gitops-platform.md)가 소유한다.
+외부 계정·credential·provider capability 및 live runtime은 이 문서의 구현 증거가 아니다.
+별도 governance registry, provider별 정책 fork, Release family 또는 shared progress ledger를 만들지 않는다.
 
 ## Quality Attributes
 
-| Attribute | Architecture requirement | Measure |
+| Attribute | Boundary | Evidence |
 | --- | --- | --- |
-| Consistency | Provider-neutral registry가 역할 semantic과 admitted surface projection의 유일한 machine owner다. | Registry-derived parity와 duplicate owner 0건 |
-| Verifiability | Static shape, native discovery와 authenticated run을 별도 evidence class로 관리한다. | Contract/schema/config PASS와 admitted-provider별 독립 canary record; PASS만 runtime readiness |
-| Reliability | 동일 실패의 무한 반복을 차단하고 재현 가능한 state만 checkpoint한다. | 동일 signature retry ≤2, task recovery ≤3, 동일 결과 2회면 stop |
-| Security | Least privilege, GitOps-first, secret-free evidence와 명시적 external-action approval을 적용한다. | Secret/auth/transcript 저장 0건, CI write permission 불필요, action full SHA |
-| Evolvability | Provider schema/model 변화는 cutoff ledger, eval과 canary를 통해 갱신한다. | Source date·model compatibility·fitness fixture 없는 승격 0건 |
-| Legibility | Root/provider gateway는 map이고 durable rule은 Stage 00에 한 번만 존재한다. | Duplicate policy/stale current claim 0건, cross-link validator PASS |
-| Recoverability | Compact checkpoint가 안전한 resume와 human escalation을 지원한다. | Redacted checkpoint schema와 recovery fixture PASS |
-| Operability | Local QA와 CI가 같은 contract/schema/parity failure를 진단한다. | Targeted→all-files lane 및 repository quality gate PASS |
+| Consistency | 책임별 단일 machine/prose owner와 thin projection | Registry/schema, profile, owner 및 adapter parity |
+| Verifiability | Repository-static, provider-runtime, hosted-CI, remote/live 분리 | Class별 직접 관측; 미관측은 owner와 retry trigger |
+| Reliability | 제한된 retry와 no-progress stop, 안전한 resume | Loop contract 및 positive/negative recovery fixture |
+| Security | 최소 권한과 승인 경계; 비밀정보·auth·전체 transcript 배제 | Static guardrail과 독립 review; 실행 권한은 별도 승인 |
+| Recoverability | 일반 변경의 Git 복구와 봉인 evidence 무결성 분리 | Consumer 승계, source commit/blob/digest 및 legal lifecycle edge |
+| Maintainability | 고정 census나 중복 wrapper 대신 실제 consumer graph | Targeted/affected/staged/all-files lane과 직접 negative fixture |
 
 ## System Overview & Context
 
-### Historical predecessor context
+### Authority planes
 
-The provider names, surface topology, roster counts, model candidates, and
-canary cardinalities below preserve the 2026-08-01 predecessor implementation
-context only. They are non-authoritative for current topology and must not be
-used to admit a provider or derive a roster. ADR-0030 and Spec 0054 own the
-current boundary; WP-003 will migrate or remove these tracked surfaces after
-consumer-zero proof.
-
-### Logical components
-
-| Component | Canonical owner | Responsibility | Evidence |
-| --- | --- | --- | --- |
-| Governance map | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider baseline | 짧은 bootstrap과 deeper owner routing | Thin-gateway/duplicate-policy lint |
-| Durable policy | `docs/00.agent-governance/**` | scope, role, model, quality, approval, lifecycle | Document profile/current-owner/cross-link validation |
-| Machine harness contract | `.agents/registry.json` plus `.agents/contracts/agent-registry.schema.json` | roles, semantics, surface projection, evidence, stop/handoff | JSON schema, semantic/parity validators |
-| Shared/local surface | `.agents/**` | shared skill/workflow/output style와 local/Antigravity adapter | Parse, link and role projection checks |
-| Claude surface | `.claude/**` | Claude-native agent/settings/hooks projection | Static schema plus authenticated Claude canary |
-| Codex surface | `.codex/**` | Codex-native agents/project config projection | TOML parse plus authenticated Codex canary |
-| Gemini surface | `.gemini/**` | Gemini-native agents/project settings projection | Frontmatter/JSON parse plus authenticated Gemini canary |
-| Loop state | `.agent-work/checkpoint.json` | ignored, redacted, bounded recovery state | Checkpoint schema and recovery fixtures |
-| Eval/QA evidence | tests, scripts, `.github/**`, SDLC Task | admission, fitness, parity, CI/all-files evidence | Local/CI command result and logical commit |
-
-구형 역할 의미 contract와 schema는 새 contract의 병행 SSoT가 아니다.
-Spec 041이 소비자를 새 contract로 이동했고 Spec 045가 zero-consumer 증거
-뒤 compatibility 입력과 stale references를 제거한다.
-`scripts/validation/registry.json`은 validation routing을 소유하므로 역할
-semantic contract와 합치지 않는다.
-
-### Surface projection contract
-
-| Surface | Required provider-native projection | Reasoning/tool boundary |
+| Plane | Canonical owner | Consumers and limits |
 | --- | --- | --- |
-| local/Antigravity | `name`, `description`, `model`을 가진 local role file과 shared asset reference | Antigravity/local capability만 주장하며 Gemini native로 재해석하지 않는다. |
-| Claude | Official subagent schema의 `name`, `description`, `model`, `tools`; `effort`·`maxTurns` 등은 cutoff schema가 허용할 때만 사용 | Claude settings/hooks의 native permission을 다른 provider에 일반화하지 않는다. |
-| Codex | role `name`, `description`, `developer_instructions`, `model`, `model_reasoning_effort`와 project config | Sandbox/approval 및 agent config를 사용하고 Claude-style hook enforcement를 주장하지 않는다. |
-| Gemini | Spec 044가 현재 repo-static contract로 허용한 `name`, `description`, `kind`, `max_turns`, `timeout_mins`와 최소 project settings | Generic tool alias와 exact model은 model-fitness candidate/runtime evidence가 소유하며, native parser/canary 전에는 adapter field로 승격하지 않는다. |
+| Agent role/skill machine truth | [Agent Registry](../../../.agents/registry.json) and [schema](../../../.agents/contracts/agent-registry.schema.json) | Current Claude/Codex projections; native discovery와 runtime enforcement는 별도 증거 |
+| Human execution policy | [Stage 00](../../00.agent-governance/README.md) | Root/provider gateway, 역할 책임, 승인·품질·문서 authoring; machine schema 복제 금지 |
+| Document machine contract and forms | [Stage 99 Registry](../../99.templates/registry.json) and [forms](../../99.templates/README.md) | Profile, route, metadata, identity, lifecycle 및 template consumer |
+| Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local/CI affected-path, lane, argv; validator별 고유 실패 의미는 유지 |
+| Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; 상태·순서·검증 evidence를 중앙 roster로 복제하지 않음 |
+| Operations and reference | [Stage 05](../../05.operations/README.md), [Stage 90](../../90.references/README.md) | 운영 절차와 관측 근거 분리; Reference는 승인 또는 현재 정책의 대체물이 아님 |
+| Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | 봉인 기록과 완료 package; current 실행 authority 또는 재활성화 경로가 아님 |
 
-Spec 042가 기록한 더 넓은 live-documentation field 목록은 observation-time
-candidate 이력이다. 현재 repository contract는 Spec 044의 닫힌 5필드 Gemini
-projection이 소유한다. Cutoff 시점 지원 사실은 dated tag/release/snapshot으로
-별도 증명하고, 그렇지 못한 field는 native schema/config canary를 통과하기 전
-contract-required로 승격하지 않는다.
+역할과 surface 수는 Registry에서 도출한다. `.agents`는 공통 machine/asset owner이며
+독립 provider-native runtime을 뜻하지 않는다. 과거 local/Antigravity/Gemini proposal은 현재
+지원 roster가 아니다. 현재 provider projection 파일은 repository-static configuration이고
+인증된 discovery/run을 관측했다는 증거가 아니다.
 
-Provider schema 근거는 Claude
-[subagents](https://code.claude.com/docs/en/sub-agents)·[configuration](https://code.claude.com/docs/en/configuration)·
-[hooks](https://code.claude.com/docs/en/hooks), Codex
-[subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)·
-[configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
-Gemini [subagents](https://geminicli.com/docs/core/subagents/)·
-[hooks](https://geminicli.com/docs/hooks/reference/)·
-[generation settings](https://geminicli.com/docs/cli/generation-settings/)다.
+### Consumer and validation flow
 
-### Roster, model and effort decision
+1. 작업은 Stage 00에서 scope·역할·skill·승인 경계를 정하고 package-local Plan/Task로 연결한다.
+2. 현재 domain owner와 Registry가 변경의 profile, affected-path 및 필수 lane을 선택한다.
+3. 각 validator는 독립 계약을 검사하고 결과·fallback·한계를 해당 증거 class로 남긴다.
+4. 검토자는 소비자 승계와 negative fixture를 확인하고 stable staged snapshot을 검증한다.
+5. Task가 명령·결과·미완료 owner를 기록한다. 외부 실행은 별도 승인과 관측 없이는 발생하지 않는다.
 
-Canonical roster는 기존 `code-reviewer`, `doc-writer`, `gitops-reviewer`, `incident-responder`,
-`k8s-implementer`, `network-reviewer`, `observability-reviewer`, `security-auditor`, `supervisor`,
-`wiki-curator`에 `docs-researcher`, `quality-engineer`를 추가한다. 각 역할은 네 surface에 하나씩
-투영하되 provider syntax 외 semantic 차이는 금지한다.
-
-구체 model/effort는 role마다 다음 순서로 결정한다.
-
-1. Correctness/security blast radius와 독립 판단 필요성.
-2. Context 크기, long-horizon planning, tool concurrency와 structured-output 요구.
-3. Provider schema가 지원하는 effort/reasoning enum 및 model compatibility.
-4. 역할 fixture의 pass rate, false-positive/false-negative, latency와 비용.
-5. Canary가 보고한 actual model/runtime과 fallback 동작.
-
-높은 위험의 supervisor/security/incident 또는 복합 architecture 역할은 강한 reasoning 후보로,
-bounded editing·formatting·index 역할은 비용/latency가 낮은 후보로 시작할 수 있으나 이는 기본
-가설일 뿐이다. `docs-researcher`는 source fidelity와 cutoff 정확성, `quality-engineer`는 fixture
-판별력과 deterministic evidence를 우선한다. Claude는 account-available
-`opus`/`fable`/`sonnet`/`haiku`, Codex는 installed runtime이 문서화한 `gpt-5.6` 계열과
-balanced candidate, Gemini는 `gemini-3-pro-preview`/`gemini-3-flash-preview`/Auto를
-후보로 비교한다. 모델 이름이나 provider benchmark만으로 역할에 배정하지 않고 Spec
-042/044의 schema·canary·동일 corpus eval이 exact ID와 effort를 확정한다.
-
-### Runtime evidence and strict closure
-
-각 Claude/Codex/Gemini canary는 CLI version, installation source, auth mode의 비밀 아닌 식별자,
-project-root discovery, known role discovery, controlled prompt/result, selected/actual model,
-exit status와 timestamp를 기록한다. Token, credential path/content, shell history, full transcript는
-기록하지 않는다. Repo-static PASS는 runtime PASS를 대체하지 않는다. 각 provider의
-runtime-readiness claim은 해당 canary PASS가 필요하다. Repository-local closure는
-`ABSENT`/`DEFER`에 limitation, owner와 retry trigger가 있을 때 허용하되 runtime readiness는
-열린 상태로 유지한다.
+Aggregate는 Registry의 all-files runner를 호출하는 router이지 두 번째 argv 또는 정책 소유자가 아니다.
+문서 Registry, Markdown/profile, link/owner, lifecycle, security, CI와 Archive 검사는 실패 의미가
+다르므로 orchestration 통합을 이유로 합치거나 약화하지 않는다.
 
 ## Data Architecture
 
-### Canonical entities
+### State, identity and evidence
 
-- **Role**: stable ID, purpose, input/output, responsibility, prohibited action, permission, stop
-  condition, handoff, required evidence, eval fixture와 model-fitness dimensions.
-- **Surface projection**: role ID, provider, native path, schema metadata, model/effort mapping과
-  capability limitation. Role semantic을 복제하지 않고 contract를 참조한다.
-- **Provider baseline**: cutoff, official source, CLI/config schema, candidate models, effort enum,
-  MCP/tool policy와 transition risk.
-- **Canary result**: provider/version/auth-mode, role-discovery/run outcome, actual model, timestamp,
-  redacted failure class. PASS/FAIL evidence이지 credential store가 아니다.
-- **Checkpoint**: task ID, attempt counters, normalized failure signature, completed/remaining work,
-  validation summary, next action과 escalation reason. Prompt transcript와 secret은 금지한다.
-- **Eval decision**: role/fixture/provider/model/effort, score, latency/cost observation, admission or
-  rejection rationale와 reviewer.
+Role/skill identity는 Agent Registry, 문서 identity/profile/state는 Stage 99, lane/argv는
+Validation Registry가 소유한다. 일반 current 문서의 본문 변경은 semantic/profile과 link 검증으로
+판정하고 ordinary body를 영구 SHA pin으로 고정하지 않는다. Lifecycle validator는
+Registry-classified profile/state/허용 edge를 판정한다.
 
-### State and integrity flow
+Risk, tool/data trust, oversight, stop, approval, trace, evaluation과 provenance는
+현재 Registry 및 Stage 00 책임에 연결된다. 과거 `agentSystems`/`evidenceOwnerPolicies`
+proposal을 구현된 병렬 contract로 주장하지 않는다. 고위험 실행이나 runtime enforcement의
+정적 선언은 실행 성공 또는 정책 강제 증거가 아니다.
 
-`Requirement Package/AD/ADR → Spec → machine contract → provider projection → static validation → authenticated
-canary/eval → CI/QA → closure` 순서를 사용한다. Specs 038–040은 이 프로그램의 문서·CI 기반을
-먼저 닫고, Specs 041–046은 contract, provider, loop, roster, cutover, closure 순서로 선행
-evidence를 소비한다.
+### Terminal disposition and historical lineage
 
-동일 failure signature는 normalized command/exit/finding key로 계산한다. 같은 signature 자동
-재시도는 최대 2회, task 전체 자동 recovery는 기본 최대 3회다. 동일 결과가 2회 반복되어
-progress delta가 없으면 checkpoint를 기록하고 stop/escalate한다. Compaction은 결정, 증거,
-remaining work만 보존하고 secret, auth data, raw/full transcript를 버린다.
+처분 전에 source → current semantic owner → 모든 current consumer → legal terminal route를 증명한다.
+완료 package는 ADR-0032에 따라 동일 document type으로 `completed/<stage>/`에 보관한다.
+후계자로 대체된 문서는 `superseded/<stage>/`, 후계자 없이 끝난 문서는 `tombstones/<stage>/`의
+non-authoritative record로 구분한다. ADR 본문은 상태에 관계없이 decision log에 남는다.
+Record envelope의 original path와 source commit/blob/digest는 정확한 원본을 회복하며
+봉인 payload를 현재 링크에 맞추어 편집하지 않는다. Terminal ADR의 원래 문서 인용은
+명시적 역사 링크로 유지하고 현재 문서는 record를 실행 authority로 소비하지 않는다.
+
+REQ-0005/0006 → REQ-0008은 원래 supersession 이력이다. REQ-0003은 이 수렴의 transitive
+current semantic successor이며 원래 decision target을 바꿔 쓰는 것이 아니다.
+Migration은 이 다대일 승계의 고유 mapping을 봉인하며 일반 문서마다 영구 pin을 요구하는 관행으로 확장하지 않는다.
+
+### Loop and checkpoint
+
+[Loop lifecycle contract](../../00.agent-governance/contracts/agent-loop-lifecycle.json)가
+retry/recovery 한도, failure signature, no-progress stop과 checkpoint class를 소유한다.
+Checkpoint는 ignored transient recovery state이고 정책·Task 또는 credential store를 대체하지 않는다.
+Compaction과 resume는 완료/미완료 일·검증 결과·다음 행동만 보존하고 민감정보와 전체 transcript를 배제한다.
 
 ## Infrastructure & Deployment
 
-- 격리된 `.worktrees/**` worktree와 logical branch/commit을 기본 실행 단위로 사용한다.
-- Project-local provider config는 secret-free defaults, role layer와 allowlisted MCP/tool만 추적한다.
-  User auth/config는 저장소 밖에 남고 migration script가 임의로 덮어쓰지 않는다.
-- Provider canary는 local/manual lane에서 인증 후 실행한다. 현재 Codex와 Claude의
-  provider set 및 필요한 canary record는 registry에서 도출하며, GitHub Actions에는 provider
-  credential을 추가하지 않는다.
-- Spec 039의 baseline workflow/QA를 먼저 완료한다. 현재 agent-governance lane은
-  registry-derived contract/schema parity, Codex·Claude provider config parse, eval fixture,
-  legacy/orphan pattern을 검사하며 `permissions` 최소화와 third-party action full commit SHA를
-  사용한다. 근거는 [GitHub secure use](https://docs.github.com/en/actions/reference/security/secure-use)다.
-- Local QA는 targeted → affected → staged → tests →
-  [`pre-commit run --all-files`](https://pre-commit.com/) → formatter review → rerun →
-  `git diff --check`/scope review 순서다. 실패 수정 뒤 관련 lane을 다시 실행한다.
-- Spec 0054의 current closure는 repository quality gate, all-files, registry-derived Codex·Claude
-  canary record, eval/model fitness, zero-legacy, independent whole-branch review와 clean tree를
-  요구한다. `ABSENT`/`DEFER` provider record는 runtime readiness PASS가 아니며 owner/trigger가
-  필수다. 이전 three-provider/12/48 closure 수치는 historical predecessor evidence일 뿐 current
-  acceptance 기준이 아니다.
+추적된 provider config와 projection은 secret-free repository configuration이다. 사용자 인증 저장소는
+읽거나 이관하지 않는다. Native parser와 canary는 해당 provider owner의 독립 evidence lane에서 다루며
+hosted CI에 provider credential을 추가하지 않는다.
+
+구현 검증 owner는 [document contracts](../../../scripts/document_contracts.py),
+[lifecycle](../../../scripts/document_lifecycle.py),
+[Archive recovery](../../../scripts/archive_recovery.py),
+[Archive validation](../../../scripts/archive_validation.py)와 Validation Registry가 가리키는 lane이다.
+정확한 명령과 tool version은 실행 owner에서 읽고 이 Architecture에 복제하지 않는다.
+
+### Unfinished ownership
+
+Spec 0054 WP-013/TSK-0013은 미완료다. 이 authority 승계는 Stage 99 축소, transition-control 제거,
+최종 archive-link/package retention 또는 프로그램 closure를 수행하지 않는다.
+Specs 0047..0051의 플랫폼 구현·검증은 [AD-0007](./0007-current-local-gitops-platform.md)의
+package별 owner가 보유하며, 이 문서는 공통 라우팅·승인·QA 경계를 제공한다.
 
 ## Traceability
 
 ### Lifecycle Traceability
 
-The table below retains the implemented predecessor delta while routing its
-current interpretation to ADR-0030 and Spec 0054. ADR-0019 and ADR-0013 remain
-historical predecessors; their fixed provider/cardinality clauses are not
-current authority.
-
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 00 durable policy와 owner graph | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Thin gateway와 provider projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Skill provenance와 gap evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Strategy axis와 scope owner | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | Execution/checkpoint/handoff evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0006](../../01.requirements/0003-workspace-agent-governance-platform.md) | Form/profile와 routing contract | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | GitOps, secret, privilege와 approval boundary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admitted-provider projection | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
-| [REQ-0003-FR-0009](../../01.requirements/0003-workspace-agent-governance-platform.md) | Provider schema/model/effort/MCP와 canary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Machine harness contract/schema | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Bounded loop/checkpoint/compaction | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived parity and eval/admission | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
-| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | CI/QA/all-files evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Legacy cutover/current-owner integrity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Evidence-only external role admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 01](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Owner graph consistency | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 02](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Reciprocal lifecycle chain | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 03](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Gateway/evidence-class separation | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 04](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Repository static gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 05](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Template form authority | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 06](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Registry-derived role/provider parity | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
-| N/A — [Acceptance criterion 07](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Admitted-provider independent canary classification and readiness evidence | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
-| N/A — [Acceptance criterion 08](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Contract/schema/provider parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 09](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Recovery fixture and safe resume | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 10](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Eval/model-fitness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 11](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | CI and all-files gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 12](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Zero stale legacy/orphan reference | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry, Stage 00 prose and Stage 99 document-contract authority planes | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Thin provider projections with native syntax isolated from shared policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Skill-source provenance and unavailable-capability boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local scope and approval handoff into domain owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | Task-owned durable evidence and ignored transient checkpoint separation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0006](../../01.requirements/0003-workspace-agent-governance-platform.md) | Repository form owner separated from external reference formats | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 00 approval gates around secret, external and live execution | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived provider projection admission | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0009](../../01.requirements/0003-workspace-agent-governance-platform.md) | Static provider metadata versus authenticated runtime evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Agent Registry ownership of permission, stop and handoff semantics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Loop contract as bounded retry, no-progress and resume owner | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage 99 machine contract versus Stage 00 authoring policy | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | One form route per document profile with schema/template parity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0014](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0015](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer transfer before source disposition with Git recovery evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Validation Registry dispatch and independent validator failure meanings | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Independent CI evidence lanes and remote-observation boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-diff review and rollback-ready logical delivery units | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0032 categorized records and completed-package retention | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer-zero removal of compatibility surfaces after semantic transfer | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0025](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current Agent Registry and Stage 00 risk, trust and approval owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | Separate repository-static, provider-runtime, hosted-CI and live evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | Lifecycle edges separated from ordinary body edits and sealed integrity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | Direct negative fixtures with explicit tool-failure and fallback diagnostics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admission rather than a frozen role/provider census | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stable target-path snapshots across focused and aggregate validation lanes | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Primary-source traceability with repository conventions labeled separately | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-NFR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Explicit baseline-failure and environment-limit reporting | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Atomic owner/consumer migration and reciprocal-link validation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | External catalog provenance without policy or permission authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 
-- **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Current terminal decision**: [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
-- **Current implementation authority**: [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-- **Historical accepted predecessor**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
-- **Historical accepted predecessor**: [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md)
-- **Prerequisites**: [Spec 038](../../98.archive/completed/03.specs/0038-reference-information-architecture/spec.md),
-  [Spec 039](../../98.archive/completed/03.specs/0039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
-- **Delivery sequence**: [Spec 041](../../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md),
-  [Spec 042](../../98.archive/completed/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
-  [Spec 043](../../98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md),
-  [Spec 044](../../98.archive/completed/03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
-  [Spec 045](../../98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
-  [Spec 046](../../98.archive/completed/03.specs/0046-agent-governance-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md)
+### Architecture responsibility transfer
+
+| Original description | Retained current responsibility | Consumer transfer |
+| --- | --- | --- |
+| AD-0008 | This AD: document machine owner, form parity, purpose-specific README, affected routing, CI/security and review boundaries | REQ-0003 member-ID map; terminal ADRs retain original decision citations |
+| AD-0009 | This AD: lifecycle/profile evidence, legal recovery, package-local lineage, Reference/scratch and non-promotable evidence | REQ-0003 member-ID map; original follow-up and supersession chronology unchanged |
+| AD-0011 | This AD: authority planes, stable identity, current taxonomy, validator ownership, consumer-zero and lifecycle/body separation | REQ-0003 and Spec 0054; original Spec 0052 history preserved |
+| AD-0010, shared assurance boundary | This AD: validation routing, CI/QA, approval and direct negative tests; AD-0007 retains platform-specific design | REQ-0003/0004 explicit member transfer and Specs 0047..0051 |
+
+The replacement record and this responsibility table express semantic succession, not a new claim that historical
+ADRs originally served this AD. Original ADR bodies and reciprocal decision supersession remain in the decision log.

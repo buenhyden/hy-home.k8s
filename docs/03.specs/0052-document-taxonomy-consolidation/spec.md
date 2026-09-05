@@ -13,6 +13,15 @@ artifact_id: "SPEC-0052"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 ### Package Closure Disposition (2026-09-05)
 
 All seventeen package Tasks are done: WORK-100 through WORK-108 and the design
@@ -39,8 +48,8 @@ and proves consumer-zero, historical-link safety, and migration provenance.
 Closure evidence belongs to SPEC-0054-TSK-0013, not a rewritten completed Task.
 
 This specification implements
-[PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md),
-[AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md),
+[Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md),
+[Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md),
 and the human-approved direction recorded in accepted
 [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
 It replaces the earlier Spec 052 direction that would have renumbered
@@ -758,9 +767,9 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Accepted full-body archive predecessor**:
   [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **Accepted transition predecessor**:
@@ -774,13 +783,13 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [Spec-driven SDLC and document contracts](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
   and [AI agents and Agency Agents](../../90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)
 - **Suspended program**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [Historical PRD-0007](../../98.archive/superseded/01.requirements/0007-repository-delivery-and-platform-assurance.md)
 
 ### Lifecycle Traceability
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0008-FR-0001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
+| [Historical REQ-0008-FR-0001](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
 | N/A — REQ-0008-FR-0002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |
 | N/A — REQ-0008-FR-0003 and REQ-0008-FR-0007 share the PRD source above. | VAL-WDTC-002 | Residue and registry checks prove Stage 05 stability and Release exclusion. |
 | N/A — REQ-0008-FR-0004 shares the PRD source above. | VAL-WDTC-004 | Exact eight-row mapping, classifier closure, registry, and reciprocal-link validation prove stable lineage and atomic authority transition. |

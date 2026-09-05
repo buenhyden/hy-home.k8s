@@ -16,9 +16,9 @@
 
 `completed/`만 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. 바이트 동일성이 아니라 링크 대상 동일성이 보존 불변식이고, 원본 바이트는 각 행이 고정한 `source_commit`과 `source_blob`으로 Git에서 복원한다. 그 링크는 현재 결합이 아니라 역사 증거로 읽는다.
 
-`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 17개 record는 모두 후속 문서를 명명하므로 전부 `superseded/`에 있고, `tombstones/`는 아직 구성원이 없다. 구성원이 없는 디렉터리도 역할을 유지하며, 이는 방치된 폴더가 아니라 올바른 공집합이다.
+`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 25개 record는 모두 후속 문서를 명명하므로 전부 `superseded/`에 있고, `tombstones/`는 아직 구성원이 없다. 구성원이 없는 디렉터리도 역할을 유지하며, 이는 방치된 폴더가 아니라 올바른 공집합이다.
 
-<!-- archive-manifest:v1 records=17 historical-links=133 -->
+<!-- archive-manifest:v1 records=25 historical-links=198 -->
 
 [MIG-0005: Codex/Claude 거버넌스 수렴](./migrations/0005-codex-claude-agent-governance-convergence.md)은
 제거된 권한 소스의 Git 복구 tuple과 현재 후속 소유자, 변경하지 않은 역사 링크
@@ -47,7 +47,7 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 
 ## Document Index
 
-아래 manifest는 17개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다. 모든 record는 후속 소유자를 명명하며, 현재 closure owner와 archive navigation boundary는 migration-result ledger와 namespace registry가 별도로 기록한다.
+아래 manifest는 25개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다. 모든 record는 후속 소유자를 명명하며, 현재 closure owner와 archive navigation boundary는 migration-result ledger와 namespace registry가 별도로 기록한다.
 
 | Archive Record | Original Path | Original Type | Source Commit | Source Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |
 | --- | --- | --- | --- | --- | --- | ---: | --- | --- |
@@ -68,8 +68,19 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 | [`superseded/03.specs/0007-docs-governance-consistency.md`](./superseded/03.specs/0007-docs-governance-consistency.md) | `docs/03.specs/007-docs-governance-consistency/spec.md` | `spec` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `cc803905127970c28fbb343ee69d71c27e0184f4` | `2143740f6a4c670976992e99e7ca8b35cc49e252912916991840b4a862dcfcbb` | 2 | `null` | `superseded` |
 | [`superseded/05.operations/0004-headlamp-auth-oidc-guide.md`](./superseded/05.operations/0004-headlamp-auth-oidc-guide.md) | `docs/05.operations/guides/0004-headlamp-auth-oidc-guide.md` | `guide` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `5786ac6cb75eb9c86b34bd7d61c1866ec1f693bc` | `a114a4c6632776de96eff8630fd5e672cccb31ffe425332198e7d5a96a427e65` | 4 | [`docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) | `superseded` |
 | [`superseded/05.operations/0005-headlamp-keycloak-runbook.md`](./superseded/05.operations/0005-headlamp-keycloak-runbook.md) | `docs/05.operations/runbooks/0005-headlamp-keycloak-runbook.md` | `runbook` | `82f0e1922d9748a88b1487a32a59629ba523f408` | `53f410d549871d7b952c7f3fc0d3d745ac3fcebb` | `6befadcc168a6f3bef3c414ab27b6be88f93f7e9f26f8b3ee747f9993d3ad535` | 8 | [`docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) | `superseded` |
+| [`superseded/01.requirements/0005-workspace-document-assurance-modernization.md`](./superseded/01.requirements/0005-workspace-document-assurance-modernization.md) | `docs/01.requirements/0005-workspace-document-assurance-modernization.md` | `sdlc/requirement` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `5f47c5104c0195d9237c9353260b272c008a48ed` | `f719388aaa5eab9d4cdd4e26402e0a33f1463e6cb889f56537866ffae307ff9f` | 6 | [`docs/01.requirements/0003-workspace-agent-governance-platform.md`](../01.requirements/0003-workspace-agent-governance-platform.md) | `superseded` |
+| [`superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md`](./superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md) | `docs/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md` | `sdlc/requirement` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `03dfeaf1e9771348e09071a92ae290234a165f2d` | `5a5658b59d93e91ab12bbdd687ec9128a32cf7fcf71630d7371ba114fc7f15e2` | 8 | [`docs/01.requirements/0003-workspace-agent-governance-platform.md`](../01.requirements/0003-workspace-agent-governance-platform.md) | `superseded` |
+| [`superseded/01.requirements/0007-repository-delivery-and-platform-assurance.md`](./superseded/01.requirements/0007-repository-delivery-and-platform-assurance.md) | `docs/01.requirements/0007-repository-delivery-and-platform-assurance.md` | `sdlc/requirement` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `eeee654e76e8fdc67dc5425e2f7514ce19f0784f` | `0ae1a7c664784230e4dbfb220cc06819df7580a80f7041d72f78ac37238cd185` | 9 | [`docs/01.requirements/0004-current-local-gitops-platform.md`](../01.requirements/0004-current-local-gitops-platform.md) | `superseded` |
+| [`superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md`](./superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md) | `docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md` | `sdlc/requirement` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `39873ca978afad84d1cb10129c66b6c1f3424098` | `28ae25c1608db13f51c586c3b568d4d3c97356e9fce34125e685463da9ee77f7` | 8 | [`docs/01.requirements/0003-workspace-agent-governance-platform.md`](../01.requirements/0003-workspace-agent-governance-platform.md) | `superseded` |
+| [`superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md`](./superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md) | `docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md` | `sdlc/architecture-description` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `09b6966e4915afd7c6e90c131ab095707ef6f97b` | `2c694a9adfa3192917505ec3fb8b3fdd9944545a1851bf6508c74c0d17049f3a` | 9 | [`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | `superseded` |
+| [`superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md`](./superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) | `docs/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md` | `sdlc/architecture-description` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `02f09b51676305bae082cf8c685b462c85adf6fc` | `240aee6adaa9915d03070ebbecfe8c392947243623e335eeb4894401cae757a0` | 10 | [`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | `superseded` |
+| [`superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md`](./superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) | `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` | `sdlc/architecture-description` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `dd1d54ca4112c915753cee313aeec4f92a745cd2` | `2ca26c452cbc75bd5f7d1c5bdfee4cfe6f8f1c10d3555e8a7e5d3edea77a6b70` | 7 | [`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`](../02.architecture/descriptions/0007-current-local-gitops-platform.md) | `superseded` |
+| [`superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md`](./superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) | `docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md` | `sdlc/architecture-description` | `89dc12df213849e3e591c3f52bde2b1d288f033b` | `9c03158b129e5b1f4e885af94d3129f87eb84052` | `a73c32d18bec1102b8103adc73e637cda073ef7b262d724a6115e3d8e93821ac` | 8 | [`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) | `superseded` |
 
-검증 합계: repository aggregate archive records `17/17`, historical links `133/133`. immutable ARWB base corpus는 pinned `CUTOVER_BASE_COMMIT`에 대해 `ARCHIVE-FINITE-ADMISSION`이 증명하며, 삭제된 body는 digest-pinned WORK-107 ledger의 sealed row로 증명한다.
+검증 합계: repository aggregate archive records `25/25`, historical links `198/198`. immutable ARWB base corpus는 pinned `CUTOVER_BASE_COMMIT`에 대해 `ARCHIVE-FINITE-ADMISSION`이 증명하며, 삭제된 body는 digest-pinned WORK-107 ledger의 sealed row로 증명한다.
+
+[MIG-0019](./migrations/0019-requirement-and-architecture-authority-transfer.md)는 이 추가 8개 source의
+현재 의미 승계와 독립 봉인 provenance를 기록한다. 기존 WORK-107 payload와 목록은 수정하지 않는다.
 
 ## Authoring Workflow
 
@@ -85,7 +96,7 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 - Payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다.
 - Historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
 - Current 문서는 `docs/98.archive/README.md`만 참조한다.
-- 이 index만 개별 record를 inventory link로 열거할 수 있다.
+- 이 index가 record inventory를 소유한다. Terminal ADR/문서의 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
 
 ## Related Documents
 

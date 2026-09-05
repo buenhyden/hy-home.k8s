@@ -18,6 +18,14 @@ artifact_id: "SPEC-0051-PLAN-0001"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
 ### Current Execution Disposition (2026-09-05)
 
 This Plan remains `draft`; all package Tasks remain `queued`. Resume only
@@ -91,8 +99,8 @@ merge, stash, cleanup, remote, or live result.
 
 - Parent [Spec 051](spec.md)
 - Parent [Implementation Plan](plan.md)
-- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+- [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
   and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Predecessor Specs 047-050, their Plans, Tasks, commits, reviews, contracts,
   schemas, validators, fixtures, and residual DEFER owners
@@ -145,9 +153,9 @@ merge, stash, cleanup, remote, or live result.
 
 **Files modified during RAIC-000 and RAIC-005:**
 
-- `docs/01.requirements/0007-repository-delivery-and-platform-assurance.md`
+- `docs/01.requirements/0004-current-local-gitops-platform.md`
 - `docs/01.requirements/README.md`
-- `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md`
+- `docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`
 - `docs/02.architecture/descriptions/README.md`
 - `docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md`
 - `docs/02.architecture/decisions/README.md`
@@ -398,7 +406,7 @@ merge, stash, cleanup, remote, or live result.
   SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0004-current-local-gitops-platform.md docs/01.requirements/README.md docs/02.architecture/descriptions/0007-current-local-gitops-platform.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close repository delivery assurance program"
   ```
 
@@ -502,8 +510,8 @@ advances. Draft status is not completion evidence.
 
 - **Spec**: [Repository Assurance Integration and Closure](spec.md)
 - **Task**: [Repository Assurance Integration and Closure Task](plan.md)
-- **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+- **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program
   lineage

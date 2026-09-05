@@ -14,6 +14,15 @@ superseded_by: "ADR-0031"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 This decision preserves ADR-0016's seven original modernization tranches while
 modeling completed Spec 033 as a follow-up within the same broader program.
 
@@ -70,10 +79,10 @@ leaving the registry unchanged makes machine lineage contradict it.
 ## Traceability
 
 - **Original decision**: [ADR-0016](./0016-program-to-tranche-document-lineage.md)
-- **Original program**: [PRD-005](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **Original architecture**: [ARD-0008](../descriptions/0008-workspace-document-assurance-operating-model.md)
+- **Original program**: [Historical PRD-005](../../98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md)
+- **Original architecture**: [Historical ARD-0008](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Follow-up**: [Spec 033](../../98.archive/completed/03.specs/0033-template-lifecycle-contract-normalization/spec.md)
-- **New program**: [PRD-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
+- **New program**: [Historical PRD-006](../../98.archive/superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 
 ### Lifecycle Traceability
 

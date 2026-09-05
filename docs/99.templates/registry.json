@@ -1321,7 +1321,7 @@
       "family": "archive",
       "mode": "evidence",
       "path_pattern": "^docs/98\\.archive/(?!migrations/)(?!completed/)(?!.*(?:/)?README\\.md$).+\\.md$",
-      "artifact_id_pattern": "^tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
+      "artifact_id_pattern": "^tomb-(?:REQ|PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/archive/tombstone.template.md",
       "frontmatter": {
         "mode": "required",

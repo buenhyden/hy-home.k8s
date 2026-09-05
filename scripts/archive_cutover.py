@@ -1090,6 +1090,11 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     reviewed_manifest_rows = {
         row.target: row for row in generic_report.reviewed_manifest_records
     }
+    additive_sources = (
+        {row.target: row for row in generic_report.additive_record_sources}
+        if generic_report.valid
+        else {}
+    )
     payloads: list[bytes] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
     for archive_path in sorted(expected_paths):
@@ -1119,6 +1124,14 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 )
             )
         )
+        additive = additive_sources.get(archive_path)
+        if (
+            expected_source_commit is None
+            and additive is not None
+            and additive.original_path == original_path
+            and additive.source_blob == parsed.metadata.get("source_blob")
+        ):
+            expected_source_commit = additive.source_commit
         if (
             not isinstance(original_path, str)
             or parsed.metadata.get("source_commit") != expected_source_commit
@@ -1342,18 +1355,19 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         except (OSError, UnicodeDecodeError):
             diagnostics.append(_diagnostic("ARCHIVE-CURRENT-READ", raw_path))
             continue
-        profile, _status = _frontmatter_identity(markdown, raw_path)
+        profile, status = _frontmatter_identity(markdown, raw_path)
         current_documents.append(
             CurrentMarkdownDocument(
                 path=raw_path,
                 markdown=markdown,
                 profile=profile,
-                status="active",
+                status=status,
             )
         )
     current_report = validate_current_archive_authority(
         tuple(current_documents),
         individual_archive_paths=expected_paths,
+        registry=typed_registry,
     )
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in current_report.diagnostics

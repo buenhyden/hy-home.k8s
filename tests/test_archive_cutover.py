@@ -95,7 +95,36 @@ class ArchiveCutoverTest(unittest.TestCase):
     def _row(cells: list[str]) -> str:
         return "| " + " | ".join(cells) + " |\n"
 
+    def _assert_record_partition(self, report, legacy_paths) -> None:
+        self.assertTrue(report.valid, report.diagnostics)
+        additive = {row.target for row in report.additive_record_sources}
+        namespace = {path for path, _links in report.record_link_counts}
+        self.assertFalse(legacy_paths & additive)
+        self.assertEqual(namespace, legacy_paths | additive)
+
+    def test_current_partition_rejects_unvalidated_addition(self) -> None:
+        legacy = "docs/98.archive/superseded/01.requirements/9000-legacy.md"
+        added = "docs/98.archive/superseded/01.requirements/9001-addition.md"
+        report = ArchiveValidationReport(record_link_counts=((legacy, 0), (added, 0)))
+        # Presence alone supplies no independently sealed source identity.
+        with self.assertRaises(AssertionError):
+            self._assert_record_partition(report, {legacy})
+        rejected = replace(
+            report,
+            diagnostics=(ArchiveDiagnostic("ARCHIVE-MIGRATION-PARITY", added),),
+            additive_record_sources=(
+                archive_validation.ReviewedManifestRecord(
+                    added, "docs/01.requirements/9001-addition.md", "1" * 40, "2" * 40
+                ),
+            ),
+        )
+        # An invalid generic result cannot make even a supplied identity usable.
+        with self.assertRaises(AssertionError):
+            self._assert_record_partition(rejected, {legacy})
+
     def test_repository_snapshot_is_complete_and_atomic(self) -> None:
+        generic = archive_validation.validate_repository_archive(ROOT, {})
+        self.assertTrue(generic.valid, generic.diagnostics)
         completed = subprocess.run(
             [
                 sys.executable,
@@ -116,16 +145,19 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertEqual(
             completed.stdout,
-            "PASS archive cutover records=17 historical_links=133 secret_clean=17\n",
+            f"PASS archive cutover records={generic.record_count} "
+            f"historical_links={generic.historical_link_count} "
+            f"secret_clean={generic.record_count}\n",
         )
         self.assertEqual(completed.stderr, "")
 
     def test_work107_repository_is_exact_stable_93_to_17(self) -> None:
-        """Every tracked record is a ledger row, and each one still matches it.
+        """WORK-107's surviving historical records still match its sealed rows.
 
         The ledger keeps all 93 rows because the rehome it records really
         happened.  Stage 98 keeps the 17 whose bodies ADR-0030 leaves in the
-        tree; the other 76 are absent here and recoverable from Git.
+        tree; the other 76 are absent here and recoverable from Git. Additive
+        records need independent sealed proof, not membership in that ledger.
         """
 
         migration_path = ROOT / archive_recovery.WORK107_MIGRATION_PATH
@@ -147,7 +179,12 @@ class ArchiveCutoverTest(unittest.TestCase):
         report = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(report.valid, report.diagnostics)
         namespace_paths = {path for path, _links in report.record_link_counts}
-        self.assertTrue(namespace_paths.issubset({row["stable_path"] for row in rows}))
+        legacy_paths = {
+            str(row["stable_path"])
+            for row in rows
+            if (ROOT / str(row["stable_path"])).is_file()
+        }
+        self._assert_record_partition(report, legacy_paths)
 
         present = 0
         for row in rows:
@@ -171,7 +208,9 @@ class ArchiveCutoverTest(unittest.TestCase):
                     self.assertNotIn("change_id", terminal.metadata)
         self.assertEqual(len(rows), 93)
         self.assertEqual(present, 17)
-        self.assertEqual(len(namespace_paths), 17)
+        self.assertEqual(
+            len(namespace_paths), present + len(report.additive_record_sources)
+        )
 
     def test_work107_index_has_only_stable_record_links(self) -> None:
         """The index links stable paths only, and only the ones still tracked.
@@ -201,22 +240,11 @@ class ArchiveCutoverTest(unittest.TestCase):
         index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
         index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
         self.assertFalse(structure_failure)
-        generic = ArchiveValidationReport(
-            historical_link_count=133,
-            record_count=17,
-            index_record_count=17,
-            namespace_counts=(
-                ("arwb-base", 17),
-                ("acer-additive", 0),
-                ("wdtc-execution", 0),
-                ("progress-snapshot", 0),
-            ),
-            record_link_counts=tuple(
-                (path, row.historical_links) for path, row in sorted(index_rows.items())
-            ),
-            reviewed_manifest_records=tuple(
-                archive_validation._reviewed_manifest_records(ROOT).values()  # noqa: SLF001
-            ),
+        generic = archive_validation.validate_repository_archive(ROOT, {})
+        self.assertTrue(generic.valid, generic.diagnostics)
+        self.assertEqual(
+            dict(generic.record_link_counts),
+            {path: row.historical_links for path, row in index_rows.items()},
         )
         with (
             patch.object(

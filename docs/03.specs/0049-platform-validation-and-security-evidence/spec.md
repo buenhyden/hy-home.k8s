@@ -13,6 +13,22 @@ artifact_id: "SPEC-0049"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+| Original member | Current semantic member |
+| --- | --- |
+| REQ-0007-FR-0005 | REQ-0004-FR-0008 |
+| REQ-0007-FR-0006 | REQ-0004-FR-0010 |
+| REQ-0007-FR-0008 | REQ-0003-FR-0028 |
+| REQ-0007-FR-0009 | REQ-0003-FR-0007 |
+| REQ-0007-FR-0010 | REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 |
+
 ### Current Execution Disposition (2026-09-05)
 
 Keep Spec 0049 and its Plan `draft`, with every Task `queued`. Resume only
@@ -265,9 +281,9 @@ commands and tool identities selected by the approved Plan.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**:
   [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
@@ -283,11 +299,11 @@ commands and tool identities selected by the approved Plan.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0007-FR-0005](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-PVSE-001 | Closed contract/schema and mutation fixtures prove depth and lane integrity. |
-| N/A — REQ-0007-FR-0005 shares the PRD-0007 source linked above. | VAL-PVSE-002 | Exact-root render evidence proves deterministic desired-state construction. |
-| N/A — REQ-0007-FR-0005 shares the PRD-0007 source linked above. | VAL-PVSE-003 | Schema and GVK fixtures prove built-in and external disposition boundaries. |
-| N/A — REQ-0007-FR-0006 shares the PRD-0007 source linked above. | VAL-PVSE-004 | Product-semantic fixtures prove Traefik reference and field behavior. |
-| N/A — REQ-0007-FR-0006 shares the PRD-0007 source linked above. | VAL-PVSE-005 | Existing focused gates and new direct tests prove security contract retention. |
-| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-PVSE-006 | Isolated positive, negative, and fallback suites prove deterministic failure behavior. |
-| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-PVSE-007 | Exception and DEFER rows prove honest live/transport boundaries. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-PVSE-008 | Local QA and independent reviews prove rollback-ready closure. |
+| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md#functional-requirements) | VAL-PVSE-001 | Closed contract/schema and mutation fixtures prove depth and lane integrity. |
+| N/A — REQ-0004-FR-0008 uses the retained requirement owner linked above. | VAL-PVSE-002 | Exact-root render evidence proves deterministic desired-state construction. |
+| N/A — REQ-0004-FR-0008 uses the retained requirement owner linked above. | VAL-PVSE-003 | Schema and GVK fixtures prove built-in and external disposition boundaries. |
+| N/A — REQ-0004-FR-0010 uses the retained requirement owner linked above. | VAL-PVSE-004 | Product-semantic fixtures prove Traefik reference and field behavior. |
+| N/A — REQ-0004-FR-0010 uses the retained requirement owner linked above. | VAL-PVSE-005 | Existing focused gates and new direct tests prove security contract retention. |
+| N/A — REQ-0003-FR-0028 uses the retained requirement owner linked above. | VAL-PVSE-006 | Isolated positive, negative, and fallback suites prove deterministic failure behavior. |
+| N/A — REQ-0003-FR-0007 uses the retained requirement owner linked above. | VAL-PVSE-007 | Exception and DEFER rows prove honest live/transport boundaries. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-PVSE-008 | Local QA and independent reviews prove rollback-ready closure. |

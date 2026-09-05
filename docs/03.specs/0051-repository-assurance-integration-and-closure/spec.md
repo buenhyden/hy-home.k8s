@@ -13,6 +13,23 @@ artifact_id: "SPEC-0051"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+| Original member | Current semantic member |
+| --- | --- |
+| REQ-0007-FR-0001 | REQ-0004-FR-0005 |
+| REQ-0007-FR-0002 | REQ-0004-FR-0006 |
+| REQ-0007-FR-0003 | REQ-0004-FR-0007 / REQ-0003-FR-0016 |
+| REQ-0007-FR-0008 | REQ-0003-FR-0028 |
+| REQ-0007-FR-0009 | REQ-0003-FR-0007 |
+| REQ-0007-FR-0010 | REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 |
+
 ### Current Execution Disposition (2026-09-05)
 
 Keep Spec 0051 and its Plan `draft`, with every Task `queued`. Resume only
@@ -49,7 +66,7 @@ ledger.
   DEFER matrix; complete QA; independent whole-branch reviews; lifecycle
   transitions; local fast-forward merge; main postflight; stash retirement;
   worktree/branch cleanup; and final handoff.
-- **Consumes**: PRD-0007, AD-0010, ADR-0021, Specs 047-050 and their Plans,
+- **Consumes**: REQ-0004/REQ-0003, AD-0007/AD-0006, historical ADR-0021, Specs 047-050 and their Plans,
   Tasks, commits, contracts, validators, fixtures, review results, read-only
   GitHub metadata, and the recorded stash object.
 - **Does not own**: remote push or PR, branch-protection/ruleset mutation,
@@ -249,9 +266,9 @@ read-only remote metadata commands in addition to this terminal sequence.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**:
   [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
@@ -265,12 +282,14 @@ read-only remote metadata commands in addition to this terminal sequence.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0007-FR-0010](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
-| N/A — REQ-0007-FR-0003 through REQ-0007-FR-0008 share the PRD-0007 source linked above. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
-| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
-| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |
+| [REQ-0004-FR-0011](../../01.requirements/0004-current-local-gitops-platform.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-RAIC-001 | Logical commits, independent review and rollback boundaries remain required. |
+| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-RAIC-001 | Package-local execution preserves the actual predecessor and follow-up sequence. |
+| N/A — The Current authority transfer mapping above identifies each retained requirement owner. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
+| N/A — REQ-0003-FR-0028 uses the retained requirement owner linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
+| N/A — REQ-0003-FR-0007 uses the retained requirement owner linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |

@@ -86,6 +86,15 @@ contracts.
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 ### Package Closure Disposition (2026-09-05)
 
 This Plan has no remaining execution queue: all seventeen Task records are
@@ -161,9 +170,9 @@ is performed or claimed.
 - **Specification**:
   [Spec 052](spec.md)
 - **Program requirement**:
-  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Current decision**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Accepted transition predecessor**:
@@ -593,9 +602,9 @@ accepted eight-AD authority gate remain green.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Decision**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Specification**:

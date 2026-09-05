@@ -18,6 +18,14 @@ artifact_id: "SPEC-0047-PLAN-0001"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
 ### Current Execution Disposition (2026-09-05)
 
 Resume only Spec 0047 after Spec 0052's semantic closure. Accepted ADR-0031
@@ -90,8 +98,8 @@ adoption, stash apply/pop/drop, remote, or live result.
 
 - Parent [Spec 047](spec.md)
 - Parent [Implementation Plan](plan.md)
-- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+- [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
   and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Current `scripts/validation/registry.json`, document profile registry, Current audit
   pack, tracked repository inventory, and affected-surface validators
@@ -377,8 +385,8 @@ outcomes, formatter effects, limitations, and successor handoff.
 
 - **Spec**: [Current Surface and Stash Reconciliation](spec.md)
 - **Task**: [Current Surface and Stash Reconciliation Task](plan.md)
-- **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+- **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Successor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007 program
   lineage

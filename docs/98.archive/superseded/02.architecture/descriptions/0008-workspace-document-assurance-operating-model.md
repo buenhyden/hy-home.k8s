@@ -1,4 +1,24 @@
 ---
+title: "Superseded AD-0008 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-AD-0008"
+original_artifact_id: "AD-0008"
+original_type: "sdlc/architecture-description"
+original_path: "docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "09b6966e4915afd7c6e90c131ab095707ef6f97b"
+content_sha256: "2c694a9adfa3192917505ec3fb8b3fdd9944545a1851bf6508c74c0d17049f3a"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Workspace Document Assurance Operating Model Architecture Description"
 version: "1.0.0"
 type: "sdlc/architecture-description"

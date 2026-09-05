@@ -14,6 +14,15 @@ superseded_by: "ADR-0031"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 This accepted decision selects a reference-based projection architecture for
 repository delivery and platform assurance. The existing validation-surface
 contract remains the sole affected-path and validator owner; two new closed
@@ -115,5 +124,5 @@ state with an older snapshot.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD-0010](../descriptions/0010-repository-delivery-evidence-architecture.md) | N/A — first repository-delivery assurance decision; preserves accepted ADR-0014 as the platform topology owner | [Spec 047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md), [Spec 048](../../03.specs/0048-github-routing-and-ci-evidence/spec.md), [Spec 049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md), [Spec 050](../../03.specs/0050-example-iac-and-validator-qa/spec.md), and [Spec 051](../../03.specs/0051-repository-assurance-integration-and-closure/spec.md) are authored. |
+| [Historical ARD-0010](../../98.archive/superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) | N/A — first repository-delivery assurance decision; preserves accepted ADR-0014 as the platform topology owner | [Spec 047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md), [Spec 048](../../03.specs/0048-github-routing-and-ci-evidence/spec.md), [Spec 049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md), [Spec 050](../../03.specs/0050-example-iac-and-validator-qa/spec.md), and [Spec 051](../../03.specs/0051-repository-assurance-integration-and-closure/spec.md) are authored. |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes validation-surface routing as a Stage 00/current-roster concern; preserves the historical evidence-depth rationale. | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |

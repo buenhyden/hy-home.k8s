@@ -728,11 +728,12 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_repository_inventory_separates_exact_archive_migration_controls(
         self,
     ) -> None:
-        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+        records, diagnostics, proof = archive_validation._repository_archive_records(  # noqa: SLF001
             ROOT
         )
 
         self.assertEqual(diagnostics, [])
+        self.assertIsNotNone(proof)
         self.assertTrue(records)
         self.assertTrue(
             all(
@@ -793,8 +794,10 @@ class ArchiveValidationTest(unittest.TestCase):
             target.write_bytes(migration_bytes)
             fixture.run("add", "--", migration_path)
 
-            records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
-                root
+            records, diagnostics, _proof = (
+                archive_validation._repository_archive_records(  # noqa: SLF001
+                    root
+                )
             )
 
             self.assertEqual(records, {})
@@ -1609,8 +1612,8 @@ class ArchiveValidationTest(unittest.TestCase):
                 target.parent.mkdir(parents=True)
                 target.write_bytes(content)
 
-                records, diagnostics = archive_validation._repository_archive_records(
-                    root
+                records, diagnostics, _proof = (
+                    archive_validation._repository_archive_records(root)
                 )  # noqa: SLF001
 
                 self.assertEqual(records, {})
@@ -1740,7 +1743,7 @@ class ArchiveValidationTest(unittest.TestCase):
         registry = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+        records, diagnostics, proof = archive_validation._repository_archive_records(  # noqa: SLF001
             ROOT
         )
         missing_member = dict(records)
@@ -1749,7 +1752,7 @@ class ArchiveValidationTest(unittest.TestCase):
         with mock.patch.object(
             archive_validation,
             "_repository_archive_records",
-            return_value=(missing_member, diagnostics),
+            return_value=(missing_member, diagnostics, proof),
         ):
             report = archive_validation.validate_repository_archive(ROOT, registry)
 
@@ -1795,6 +1798,71 @@ class ArchiveValidationTest(unittest.TestCase):
             report = archive_validation.validate_repository_archive(ROOT, registry)
 
         self.assertIn("ARCHIVE-INDEX-LINKS", self.codes(report))
+
+    def test_retired_paths_use_only_current_stage_zero_blob_identities(self) -> None:
+        path = "docs/98.archive/migrations/9000-fixture.md"
+        original = "docs/01.requirements/9000-original.md"
+        changed = "docs/01.requirements/9001-changed.md"
+        content = (
+            '---\nstatus: "sealed"\nartifact_id: "MIG-9000"\n---\n'
+            "<!-- archive-migration-ledger:v1 format=json -->\n\n"
+            '```json\n[{"legacy_path": "' + original + '"}]\n```\n'
+            "<!-- archive-historical-consumers:v1 format=json -->\n\n"
+            "```json\n[]\n```\n"
+        ).encode()
+        self.git.commit_many({path: content})
+        read = archive_validation._sealed_row_retired_paths  # noqa: SLF001
+        self.assertEqual(read(self.root), {original})
+
+        target = self.root / path
+        target.write_bytes(content.replace(original.encode(), changed.encode()))
+        untracked = target.with_name("9001-untracked.md")
+        untracked.write_bytes(target.read_bytes().replace(b"MIG-9000", b"MIG-9001"))
+        self.assertEqual(read(self.root), {original})
+
+        self.git.run("add", "--", path)
+        self.assertEqual(read(self.root), {changed})
+        self.git.run("rm", "--cached", "--", path)
+        self.assertEqual(read(self.root), set())
+
+    def test_retired_paths_reject_nonregular_stage_zero_identity(self) -> None:
+        path = "docs/98.archive/migrations/9000-fixture.md"
+        self.git.run(
+            "update-index", "--add", "--cacheinfo", f"120000,{self.blob},{path}"
+        )
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError, "RECOVERY-MIGRATION-INPUT"
+        ):
+            archive_validation._sealed_row_retired_paths(self.root)  # noqa: SLF001
+
+    def test_repository_archive_supports_isolated_package_and_direct_imports(
+        self,
+    ) -> None:
+        for directory, statement in (
+            (ROOT, "from scripts import archive_validation"),
+            (ROOT / "scripts", "import archive_validation"),
+        ):
+            with self.subTest(import_statement=statement):
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        "-E",
+                        "-c",
+                        statement
+                        + "; import sys; "
+                        + "report = archive_validation.validate_repository_archive(sys.argv[1], {}); "
+                        + "assert report.valid, report.diagnostics",
+                        str(ROOT),
+                    ],
+                    cwd=directory,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                self.assertEqual(completed.stdout, "")
+                self.assertEqual(completed.stderr, "")
 
     def test_repository_archive_git_snapshot_is_bounded_and_under_sixty_seconds(
         self,
@@ -1981,8 +2049,8 @@ class ArchiveValidationTest(unittest.TestCase):
         registry = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        records, inventory_diagnostics = archive_validation._repository_archive_records(
-            ROOT
+        records, inventory_diagnostics, _proof = (
+            archive_validation._repository_archive_records(ROOT)
         )  # noqa: SLF001
         self.assertEqual(inventory_diagnostics, [])
         original_paths = {

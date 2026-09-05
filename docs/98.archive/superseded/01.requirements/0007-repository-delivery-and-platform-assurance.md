@@ -1,4 +1,24 @@
 ---
+title: "Superseded REQ-0007 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-REQ-0007"
+original_artifact_id: "REQ-0007"
+original_type: "sdlc/requirement"
+original_path: "docs/01.requirements/0007-repository-delivery-and-platform-assurance.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/01.requirements/0004-current-local-gitops-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "eeee654e76e8fdc67dc5425e2f7514ce19f0784f"
+content_sha256: "0ae1a7c664784230e4dbfb220cc06819df7580a80f7041d72f78ac37238cd185"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Repository Delivery and Platform Assurance Requirement Package"
 version: "1.0.0"
 type: "sdlc/requirement"
