@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0051-PLAN-0001"
 ---
@@ -17,6 +17,26 @@ artifact_id: "SPEC-0051-PLAN-0001"
 > gate, and keep every checkbox tied to observed repository evidence.
 
 ## Overview
+
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+### Current Execution Disposition (2026-09-05)
+
+This Plan remains `draft`; all package Tasks remain `queued`. Resume only
+after Spec 0050's evidenced package closure through the legal package-local
+`draft → active` route described in the
+[Spec disposition](spec.md#current-execution-disposition-2026-09-05).
+Accepted ADR-0031/0033 replace ADR-0021 and the public program-instance roster
+as current execution authority. The older work breakdown is proposal input;
+re-observe its paths, commands, providers, and current owners before activating
+implementation. Do not restore retired progress, package routers, instance
+rows, or old decision states. New execution evidence belongs in package Tasks.
 
 **Goal:** Integrate the reviewed outputs of Specs 047-050, close the PRD-0007
 program lifecycle, fast-forward the reviewed branch into local `main`, retire
@@ -79,9 +99,9 @@ merge, stash, cleanup, remote, or live result.
 
 - Parent [Spec 051](spec.md)
 - Parent [Implementation Plan](plan.md)
-- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
-  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
+  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Predecessor Specs 047-050, their Plans, Tasks, commits, reviews, contracts,
   schemas, validators, fixtures, and residual DEFER owners
 - Preserved stash object
@@ -122,20 +142,20 @@ merge, stash, cleanup, remote, or live result.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| RAIC-000 | Activate terminal reciprocal execution path | Spec 050 closure | Specs 047-050 done and clean worktree | Spec 051, Plan, Task, indexes, progress, and program tranche are active in one validated commit |
+| RAIC-000 | Activate terminal reciprocal execution path | Spec 050 closure | Specs 047-050 done and clean worktree | Spec/Plan activate, activation Task starts, and Stage 03 index agrees under ADR-0031/0033 |
 | RAIC-001 | Integrate contracts and final target matrix | RAIC-000 | Two contract packages and predecessor Tasks pass | Version-compatible contracts, native consumers, target dispositions, and DEFER owners agree at one branch HEAD |
 | RAIC-002 | Run full QA and independent review | RAIC-001 | Focused validators pass | Required local lanes PASS and exact-diff requirements plus quality/security reviews have zero open finding |
 | RAIC-003 | Record local-integration readiness | RAIC-002 | Clean reviewed branch | Expected base, commit sequence, rollback units, stash identity, and fast-forward predicate are recorded |
 | RAIC-004 | Fast-forward main, postflight, retire stash, and clean worktree | RAIC-003 | Root main still has the expected ancestor | Main contains the reviewed branch, postflight passes, matching stash/worktree/branch are absent, and no remote action occurred |
-| RAIC-005 | Close reciprocal lifecycle and record postflight | RAIC-004 | Clean integrated main | Spec/Plan/Task and indexes are done, ADR-0021 is accepted, program lineage is terminal, and final repository-static postflight passes |
+| RAIC-005 | Close reciprocal lifecycle and record postflight | RAIC-004 | Clean integrated main | Spec/Plan/Task and index closure agree under current package-local authority; ADR-0021 remains superseded; final repository-static postflight passes |
 
 ### File map and interfaces
 
 **Files modified during RAIC-000 and RAIC-005:**
 
-- `docs/01.requirements/0007-repository-delivery-and-platform-assurance.md`
+- `docs/01.requirements/0004-current-local-gitops-platform.md`
 - `docs/01.requirements/README.md`
-- `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md`
+- `docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`
 - `docs/02.architecture/descriptions/README.md`
 - `docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md`
 - `docs/02.architecture/decisions/README.md`
@@ -163,38 +183,18 @@ merge, stash, cleanup, remote, or live result.
 - `document_lifecycle.py::{compare_lifecycle, validate_transition_evidence}`
   and `document_contracts.py::_program_structure_diagnostics`.
 
-### Task 1: RAIC-000 — activate the terminal execution path
+### Task 1: RAIC-000 — activate the package-local execution path
 
-- [ ] Verify predecessor states and the clean branch.
-
-  ```bash
-  rtk git status --short --branch
-  rtk rg -n '^status:|\| .* \| (Done|Queued) \|' docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/2026-08-02-*.md
-  ```
-
-  Expected: Specs 047-050 and their Tasks are done, Spec 051 is the first
-  unfinished program relation, and the worktree is clean.
-
-- [ ] Change only Spec 051, this Plan, its Task, the three owning indexes,
-  progress entry, and the Spec 051 `programLineage` row from draft/planned to
-  active.
-
-- [ ] Run staged lifecycle and strict documentation gates.
-
-  ```bash
-  rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-  rtk git diff --check
-  ```
-
-- [ ] Commit the activation unit.
-
-  ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
-  rtk git commit -m "docs: activate repository assurance closure"
-  ```
+- [ ] Verify Spec 0050 and its package-local Plan/Tasks are terminal with
+  required validation, review, and handoff evidence; re-observe the clean
+  approved checkout and current canonical owners.
+- [ ] Move only this Spec and Plan `draft → active`, and its activation Task
+  `queued → in-progress`, atomically with the Stage 03 index.
+- [ ] Run strict Registry, Markdown, links/owners, staged lifecycle, affected
+  and staged lanes, plain pre-commit, and diff checks over the exact activation.
+- [ ] Record evidence in the activation Task and commit the bounded change.
+  No ADR transition, public execution roster, or implementation is part of
+  activation. This Task remains queued until its predecessor condition holds.
 
 ### Task 2: RAIC-001 — integrate the contract and target evidence
 
@@ -385,10 +385,12 @@ merge, stash, cleanup, remote, or live result.
 
 ### Task 6: RAIC-005 — close lifecycle and postflight
 
-- [ ] On local main, set Specs 047-051 and all five Plans/Tasks to `done`, keep
-  PRD-0007 and AD-0010 `active`, set ADR-0021 to `accepted`, mark all five
-  program tranches `done`, update indexes, and record the observed integration,
-  stash, worktree, branch, and remote-action results.
+- [ ] After separately authorized integration, close only completed package-local
+  Specs/Plans through `active → done` and executing Tasks through
+  `in-progress → done`; verify already closed predecessors and current indexes.
+  ADR-0021 remains superseded; no public program roster or upstream lifecycle
+  is restored. Record only observed integration, stash, worktree, branch, and
+  remote-action results under the revalidated authorization boundary.
 
 - [ ] Run staged lifecycle and strict document validation.
 
@@ -404,7 +406,7 @@ merge, stash, cleanup, remote, or live result.
   SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0004-current-local-gitops-platform.md docs/01.requirements/README.md docs/02.architecture/descriptions/0007-current-local-gitops-platform.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close repository delivery assurance program"
   ```
 
@@ -456,7 +458,7 @@ advances. Draft status is not completion evidence.
 
 | Risk | Mitigation |
 | --- | --- |
-| A predecessor is done in prose but not in machine lineage | Make RAIC-000 fail on any Spec/Plan/Task/program mismatch and return to the owning tranche. |
+| A predecessor is done in prose but not in its package-local records | Make RAIC-000 fail on any package-local Spec/Plan/Task/index mismatch and return to the owning tranche. |
 | Formatter changes invalidate the reviewed diff | Inspect formatter output, rerun affected/all-files, recompute the diff digest, and repeat both reviews. |
 | Main moves after review | Stop before merge or stash drop and require a separately reviewed rebase/merge plan. |
 | A different stash occupies `stash@{0}` | Resolve the full object hash to an ordinal immediately before drop; preserve all stashes on ambiguity. |
@@ -492,8 +494,8 @@ advances. Draft status is not completion evidence.
   `../../00.agent-governance/memory/progress.md`; no third closure contract.
 ## Completion Criteria
 
-- Specs 047-051, all reciprocal Plans/Tasks, indexes, progress, and program
-  lineage are mutually consistent and terminal.
+- Specs 047-051, their package-local Plans/Tasks, and current indexes are
+  mutually consistent and terminal; ADR-0021 remains superseded.
 - The two machine contracts and every native consumer validate at the observed
   integrated commit with no duplicate owner or unexplained target.
 - Required focused, affected, staged, full-test, aggregate, all-files,
@@ -508,9 +510,9 @@ advances. Draft status is not completion evidence.
 
 - **Spec**: [Repository Assurance Integration and Closure](spec.md)
 - **Task**: [Repository Assurance Integration and Closure Task](plan.md)
-- **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program
   lineage
 

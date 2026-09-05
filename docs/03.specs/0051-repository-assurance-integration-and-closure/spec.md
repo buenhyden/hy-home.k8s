@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0051"
 ---
@@ -12,6 +12,40 @@ artifact_id: "SPEC-0051"
 # Repository Assurance Integration and Closure Technical Specification (Spec)
 
 ## Overview
+
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+| Original member | Current semantic member |
+| --- | --- |
+| REQ-0007-FR-0001 | REQ-0004-FR-0005 |
+| REQ-0007-FR-0002 | REQ-0004-FR-0006 |
+| REQ-0007-FR-0003 | REQ-0004-FR-0007 / REQ-0003-FR-0016 |
+| REQ-0007-FR-0008 | REQ-0003-FR-0028 |
+| REQ-0007-FR-0009 | REQ-0003-FR-0007 |
+| REQ-0007-FR-0010 | REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 |
+
+### Current Execution Disposition (2026-09-05)
+
+Keep Spec 0051 and its Plan `draft`, with every Task `queued`. Resume only
+after Spec 0050 and its package-local Plan/Tasks close with their required
+evidence, through the legal Spec/Plan `draft → active` and activation Task
+`queued → in-progress` transitions. Accepted
+[ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+own this package-local route. ADR-0021 is superseded historical context;
+activation and closure create no public program-instance roster.
+
+Specs 0047–0050 remain unfinished, so integrated acceptance and closure have
+no completed predecessor evidence.
+Before activation, reconcile the older planned paths, provider examples,
+commands, and scope with the current canonical owners. This disposition
+preserves unfinished work and authorizes no implementation or protected action.
 
 This specification is the terminal tranche of the PRD-0007 repository delivery
 and platform assurance program. It integrates Specs 047-050, proves that every
@@ -32,7 +66,7 @@ ledger.
   DEFER matrix; complete QA; independent whole-branch reviews; lifecycle
   transitions; local fast-forward merge; main postflight; stash retirement;
   worktree/branch cleanup; and final handoff.
-- **Consumes**: PRD-0007, AD-0010, ADR-0021, Specs 047-050 and their Plans,
+- **Consumes**: REQ-0004/REQ-0003, AD-0007/AD-0006, historical ADR-0021, Specs 047-050 and their Plans,
   Tasks, commits, contracts, validators, fixtures, review results, read-only
   GitHub metadata, and the recorded stash object.
 - **Does not own**: remote push or PR, branch-protection/ruleset mutation,
@@ -56,9 +90,9 @@ ledger.
    limitation, owner, retry trigger, and evidence lane.
 4. Required repository-static and CI-equivalent gates are PASS. A required
    tool or validator cannot close as SKIP/DEFER.
-5. AD-0010 and ADR-0021 transition together under the registry lifecycle
-   predicate; PRD-0007, Spec 051, Plan, Task, indexes, program lineage, and
-   progress evidence change atomically as required.
+5. This package's Spec, Plan, Task, and Stage 03 index follow their legal
+   lifecycle transitions together. Requirement/Architecture disposition needs
+   its own current-consumer evidence; superseded ADR-0021 stays superseded.
 6. Current hosted, provider-runtime, credential-bearing, and live evidence
    remains separate even when repository-static closure is PASS.
 
@@ -101,8 +135,8 @@ Closure runs in six gates:
 4. **Quality gate**: run targeted, affected, staged, test, aggregate, all-files,
    formatter review/rerun, diff checks, and whole-branch requirements plus
    quality/security review.
-5. **Lifecycle gate**: transition the final documents, indexes, registry
-   program lineage, Task evidence, and progress in one reviewable commit.
+5. **Lifecycle gate**: transition the package-local Spec, Plan, Task, and
+   Stage 03 index in one reviewable commit.
 6. **Finishing gate**: fast-forward local main, rerun postflight, retire the
    exact stash, record observed finishing evidence, then remove the worktree and
    local branch.
@@ -218,8 +252,9 @@ read-only remote metadata commands in addition to this terminal sequence.
   accurately classified.
 - **VAL-RAIC-005**: Independent whole-branch requirements and quality/security
   reviews approve the exact terminal diff with no open finding.
-- **VAL-RAIC-006**: PRD-0007, AD-0010, ADR-0021, Specs, Plan, Task, indexes,
-  lineage, and progress complete valid reciprocal lifecycle transitions.
+- **VAL-RAIC-006**: Package-local Spec, Plan, Task, and index evidence proves
+  legal reciprocal lifecycle closure without restoring superseded decision or
+  public program-instance authority.
 - **VAL-RAIC-007**: Local main fast-forwards to the reviewed branch and passes
   postflight without push, PR, remote merge, or remote setting change.
 - **VAL-RAIC-008**: The matching saved stash is retired only after integrated
@@ -231,11 +266,11 @@ read-only remote metadata commands in addition to this terminal sequence.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 050](../0050-example-iac-and-validator-qa/spec.md)
 - **Implementation Plan**:
@@ -247,12 +282,14 @@ read-only remote metadata commands in addition to this terminal sequence.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0007-FR-0010](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
-| N/A — REQ-0007-FR-0003 through REQ-0007-FR-0008 share the PRD-0007 source linked above. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
-| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
-| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |
+| [REQ-0004-FR-0011](../../01.requirements/0004-current-local-gitops-platform.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-RAIC-001 | Logical commits, independent review and rollback boundaries remain required. |
+| [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-RAIC-001 | Package-local execution preserves the actual predecessor and follow-up sequence. |
+| N/A — The Current authority transfer mapping above identifies each retained requirement owner. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
+| N/A — REQ-0003-FR-0028 uses the retained requirement owner linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
+| N/A — REQ-0003-FR-0007 uses the retained requirement owner linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |

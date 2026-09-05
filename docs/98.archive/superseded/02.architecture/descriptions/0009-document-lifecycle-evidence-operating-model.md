@@ -1,4 +1,24 @@
 ---
+title: "Superseded AD-0009 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-AD-0009"
+original_artifact_id: "AD-0009"
+original_type: "sdlc/architecture-description"
+original_path: "docs/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "02f09b51676305bae082cf8c685b462c85adf6fc"
+content_sha256: "240aee6adaa9915d03070ebbecfe8c392947243623e335eeb4894401cae757a0"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Document Lifecycle and Evidence Operating Model Architecture Description"
 version: "1.0.0"
 type: "sdlc/architecture-description"

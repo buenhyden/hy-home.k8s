@@ -148,8 +148,10 @@ def _normalized_relative(relative: PurePosixPath | str, *, code: str) -> PurePos
     path = PurePosixPath(raw)
     if (
         not raw
+        or "\x00" in raw
         or path.is_absolute()
-        or any(part in {"", ".", ".."} for part in path.parts)
+        # PurePosixPath has already collapsed empty and dot components.
+        or any(part in {"", ".", ".."} for part in raw.split("/"))
     ):
         fail(code, f"{raw!r} is not a normalized repository-relative path")
     return path

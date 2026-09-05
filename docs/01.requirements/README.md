@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "requirements"
 ---
 # 01.requirements
@@ -63,10 +63,6 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 ├── 0002-argo-notifications-slack.md
 ├── 0003-workspace-agent-governance-platform.md
 ├── 0004-current-local-gitops-platform.md
-├── 0005-workspace-document-assurance-modernization.md
-├── 0006-workspace-document-lifecycle-and-evidence-consolidation.md
-├── 0007-repository-delivery-and-platform-assurance.md
-├── 0008-workspace-document-taxonomy-consolidation.md
 └── README.md
 ```
 
@@ -110,7 +106,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | --- | --- | --- |
 | `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
 | `active` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
-| `superseded` | 새 Requirement Package가 대체한 이전 권위 | `superseded_by`와 새 문서의 `supersedes`를 상호 연결하며 Stage 01에 유지한다. |
+| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0032의 superseded record로 처분할 수 있다. |
 | `retired` | 대체 없이 의도적으로 종료한 요구 | 종료 사유와 마지막 추적 대상을 남기고 신규 구현의 권위로 사용하지 않는다. |
 | `withdrawn` | 승인 전에 철회한 요구 | 철회 사유를 남기고 downstream 구현을 시작하지 않는다. |
 
@@ -120,12 +116,8 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | --- | --- | --- | --- | --- |
 | [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-06-04 |
 | [`./0002-argo-notifications-slack.md`](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-06-04 |
-| [`./0003-workspace-agent-governance-platform.md`](./0003-workspace-agent-governance-platform.md) | Workspace AI Agent governance, provider-native harness, loop, model, and evidence program Requirement Package | `active` | AD-0006과 accepted current ADR-0019 및 Specs 041–046의 repository-local closure를 정의한다. ADR-0013은 accepted historical predecessor이고 provider-runtime readiness는 계속 별도 evidence lane이다. | 2026-08-01 |
-| [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline Requirement Package | `active` | AD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
-| [`./0005-workspace-document-assurance-modernization.md`](./0005-workspace-document-assurance-modernization.md) | Workspace document assurance modernization program Requirement Package | `superseded` | AD-0008, ADR-0015/0016과 Spec 026–032 및 각 canonical Plan/Task의 repository-static 구현 완료 증적을 소유한다. | 2026-07-14 |
-| [`./0006-workspace-document-lifecycle-and-evidence-consolidation.md`](./0006-workspace-document-lifecycle-and-evidence-consolidation.md) | Workspace document lifecycle, archive, reference, and QA evidence consolidation program Requirement Package | `superseded` | 2026-07-28 기준 AD-0009, ADR-0017/0018/0020, Specs 034–040과 통합 repository-static contract는 exact 14-path terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`에서 종료됐다. Final frontier는 `0/0·6/3·3`이고 reviewed digest `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`은 terminal requirements/quality/security approval을 받았다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며, evidence-update commit 자체와 hosted/provider/remote/live는 주장하지 않는다. | 2026-07-28 |
-| [`./0007-repository-delivery-and-platform-assurance.md`](./0007-repository-delivery-and-platform-assurance.md) | Repository delivery, GitHub routing, platform validation, IaC QA, and local integration assurance program Requirement Package | `active` | AD-0010과 ADR-0021을 기반으로 Spec 047을 첫 tranche로 두고 planned Specs 048–051의 경계를 정의한다. REQ-0004/AD-0007/ADR-0014/Spec 008의 current platform topology 소유권과 remote/live approval boundary는 유지한다. Requirement Package 자체는 active·governing 상태를 유지하고 2026-08-07부터 REQ-0008 document taxonomy consolidation 기간 동안 실행만 일시 중단된다. Spec 047과 그 Plan/Task는 draft로 되돌아갔고, Spec 052가 `done`에 도달하면 통합된 구조에서 실행을 재개한다. | 2026-08-07 |
-| [`./0008-workspace-document-taxonomy-consolidation.md`](./0008-workspace-document-taxonomy-consolidation.md) | Workspace SDLC taxonomy, document/agent-governance authority, and validator consolidation program Requirement Package | `active` | AD-0011, accepted current ADR-0024, transition predecessor ADR-0023, Spec 052를 통해 Stage 03 work-unit 통합, Stage 04 execution 폐지, Stage 05 유지, Release 제외, stable filename/date 예외, AI agent governance 및 validator 정리를 정의한다. REQ-0007 Specs 047–051은 통합 완료까지 실행 중단 상태다. | 2026-08-11 |
+| [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | `active` | AD-0006 및 ADR-0030..0032; 이전 member-ID의 명시적 승계. Spec 0054 WP-013은 미완료다. | 2026-09-05 |
+| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | `active` | AD-0007 및 REQ-0003의 공통 경계; Spec 0047 재개 후 구현 미완료, 0048..0051은 순차 선행 gate를 기다린다. | 2026-09-05 |
 
 ### 예시
 

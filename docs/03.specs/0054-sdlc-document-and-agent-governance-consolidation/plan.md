@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.1.0"
+version: "1.3.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -25,9 +25,11 @@ execution, Codex/Claude-only AI-agent governance, a bounded Stage 90 reference
 library, a classified Stage 98 retention/history surface, a minimal Stage 99 document
 control surface, and responsibility-oriented validation modules.
 
-**Architecture:** Stage 00 owns human agent policy, while `.agents/registry.json`
-owns the provider-neutral agent roster and Stage 99 owns only document
-profiles. Stage 01 Requirement Packages, Stage 02 Architecture, and Stage 03
+**Architecture:** Stage 00 owns shared agent policy, roles, skills and their
+machine registry; provider directories hold native bindings. The approved
+source-cutover amendment below replaces the former `.agents/` target, with
+implementation status and current host constraints recorded in WP-013.
+Stage 99 owns document profiles. Stage 01 Requirement Packages, Stage 02 Architecture, and Stage 03
 Spec Packages form the active delivery chain; Stage 05 owns Guides, Policies,
 Runbooks, and Incident packages but no Release family. Stage 90 retains the
 latest externally researched pack as its durable evidence collection and
@@ -1219,6 +1221,18 @@ apply to use of sealed records as current authority. Human acceptance of
 ADR-0033 likewise makes the v9 Registry, router envelope, and generation-aware
 Archive rules the current document contract.
 
+**2026-09-05 execution-order amendment:** This Plan/Task amendment is a
+separate governance commit that precedes five WP-013 implementation commits.
+Stage 03 lifecycle prerequisites come first: close Spec 0052, then record the
+resume-or-remove disposition of Spec Packages `0047` through `0051`, before
+any REQ-0007 or REQ-0008 disposition. Those Requirements govern the suspended
+and unfinished Stage 03 scope, so reversing that dependency could retire a
+current owner before its governed work is transferred or closed. The ordered
+implementation commits are Stage 03 prerequisites/current execution packages,
+Stage 01/02 Requirement and Architecture convergence, Stage 99
+profile/lifecycle/template reduction, taxonomy transition-control retirement,
+then Archive authority-link reconciliation.
+
 **Files:**
 
 - Enter only after ADR-0031 is accepted with its reciprocal evidence and Spec
@@ -1439,16 +1453,133 @@ Archive rules the current document contract.
   ```
 - [ ] Obtain architecture, documentation, Python, archive, and code-quality
   review.
-- [ ] Commit the Stage 01/02 owner and traceability cutover as
-  `refactor(docs): converge requirements and architecture corpus`.
 - [ ] Commit the Stage 03 unfinished-work transfer and current-owner cutover as
   `refactor(specs): converge current execution packages`.
+- [ ] Commit the Stage 01/02 owner and traceability cutover as
+  `refactor(docs): converge requirements and architecture corpus`.
 - [ ] Commit the Stage 99 profile/lifecycle/template reduction as
   `refactor(templates): reduce document control plane`.
 - [ ] Commit taxonomy transition consumer-zero retirement as
   `refactor(validation): retire taxonomy transition controls`.
 - [ ] Commit Archive authority-link reconciliation as
   `refactor(docs): reconcile archive authority links`.
+
+### Approved Governance Source Cutover Amendment (2026-09-05)
+
+The human approved the design recorded in
+[WP-013 intake](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md#governance-source-cutover-2026-09-05).
+This amendment replaces the earlier target that retains `.agents/`; it does
+not rewrite completed WP-003 evidence. Stage 00 becomes the common source
+owner, and Codex uses explicit procedure reads from root `AGENTS.md`. That
+approved fallback is not automatic native skill discovery. Preserve model
+selection, permission classes, role IDs and handoffs unless a supported,
+reviewed correction is necessary. Do not activate plugins or change trust.
+
+The concurrent task `hy-home.k8s 문서 거버넌스 체계 통합` owns the staged Stage 99,
+lifecycle and Archive changes. Its staged paths and additional ongoing edits
+are not this amendment's commit inputs. Integration with those consumers must
+wait for their owner to finish the relevant unit. The current session also
+mounts `.agents/`, `.codex/` and `.git/` read-only: no worktree creation,
+staging, local commit, adapter write or source removal may bypass that boundary.
+Only disjoint, writable work proceeds until the required paths are available.
+
+#### GC-001 — single owner for validation limits
+
+**Files:** `docs/00.agent-governance/policies/quality.md` and
+`tests/test_run_validation_lane.py`; this Plan and its intake Task carry
+evidence. The existing runner remains the implementation owner.
+
+- [x] Replace numeric prose in the policy envelope with a link to
+  `scripts/run-validation-lane.py`; retain finite runtime, separate bounded
+  stdout/stderr, one cleanup deadline, concurrent draining and failure meaning.
+- [x] Run the existing reviewed-limits test and record its rejection of the
+  missing duplicate prose. Remove only that obsolete prose-equality obligation
+  from the test; retain the independently reviewed numeric expectations:
+
+  ```python
+  self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
+  self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
+  self.assertEqual(RUNNER.VALIDATOR_STDERR_LIMIT_BYTES, 1 * 1024 * 1024)
+  self.assertEqual(RUNNER.VALIDATOR_CLEANUP_SECONDS, 2.0)
+  ```
+
+- [x] Run `python3 -m unittest tests.test_run_validation_lane`; preserve its
+  timeout, overflow, invalid-path/selection, child and pipe cleanup regressions.
+- [ ] Run document contract/profile checks and review this unit's exact diff.
+  Commit only after the complete required lane sequence can validate an index
+  belonging to this unit: `docs(quality): centralize validation limit ownership`.
+
+#### GC-002 — atomic common-source and native-consumer cutover
+
+**Entry for source cutover:** writable source/adapters/Git and a coordinated handoff of the
+concurrent Stage 99/lifecycle consumer changes. Keep this step deferred if
+either prerequisite is missing; do not create a second authoritative copy.
+
+- [x] Independently harden the existing registry reader's raw path check:
+  reproduce non-normalized aliases and uncaught dot/NUL input errors, reject
+  them through the existing value-free error contract, and preserve normal
+  reads and symlink/size controls. This preparation does not move authority,
+  implement a renderer or satisfy the source-cutover entry conditions.
+- [ ] Move `.agents/registry.json` and its schema below
+  `docs/00.agent-governance/roles/`; move neutral role bodies into that same
+  owner and skill procedures/assets into `skills/<skill-id>/SKILL.md`.
+  Keep provider binding data below `providers/` and one owner per field.
+- [ ] Add `scripts/render-agent-projections.py` with `--root`, `--write` and
+  `--check`, consuming the moved role registry/bodies and provider bindings.
+  Derive native metadata/read instructions; reject unknown roles, escaping
+  output paths and missing sources rather than creating partial projections.
+- [ ] Adapt the existing registry/projection, provider-evidence, legacy-cutover
+  and CI validators plus their directly consuming tests. Add independent
+  negative cases for a missing source, widened permission, dangling skill,
+  orphan projection and attempted `.agents/` regeneration before the cutover.
+- [ ] Reconnect Claude skills; make root `AGENTS.md` explicitly instruct reads
+  of the registered Stage 00 procedures; remove `.codex/skills` and distinguish
+  automatic discovery from explicit reads in the provider contract.
+- [ ] Move registered Claude event adapters to `.claude/hooks/` and reusable
+  validation code to `scripts/`; update settings, static routing and tests in
+  the same unit. Preserve pre-action rejection, root validation, non-secret
+  errors and native trust; do not replay Claude events through Codex.
+- [ ] Remove the old source only after all active consumers switch. Run the
+  renderer twice, then `--check`; compare diffs and assert no directory,
+  symlink, tracked path or generated output recreates `.agents/`.
+- [ ] Validate native formats and directly exercise the approved read path
+  without activating a new global/plugin surface. Record unavailable runtime
+  model resolution and event delivery separately from static checks.
+- [ ] Run focused tests and the complete lane sequence before the logical
+  commit `refactor(governance): move common sources to Stage 00`.
+
+#### GC-003 — invocation and fixture ownership
+
+- [ ] For each selected validator, map its guarantee, caller, exact input bytes,
+  direct negative test and measured duration in the Task. Compare the eight
+  observed CI command overlaps only where both jobs are selected.
+- [ ] Change `scripts/validation/registry.json`, CI selection and direct tests
+  together so each hosted check has one owner. Preserve index, working-tree,
+  post-formatter and whole-repository evidence as distinct scopes.
+- [ ] Remove a fixture or validator only after its actual consumer and retained
+  guarantee are accounted for. Do not remove the checkpoint/provider surface
+  solely because draft Spec 0068 proposed deletion.
+- [ ] Re-run affected regression tests and compare measured invocations on the
+  same selected inputs before committing
+  `refactor(validation): remove duplicate governance invocations`.
+
+#### GC-004 — current and historical owner closure
+
+- [ ] Reconcile Spec 0054, draft Spec 0068, existing terminology, SDLC, README
+  and Stage 99 references with the implemented owners after concurrent work
+  lands. Preserve sealed records and distinguish historical old-path mentions
+  from active dependencies. Update current consumers and recovery disposition
+  together; never rewrite a historical approval into a new approval.
+- [ ] Use NUL-delimited inputs for the affected runner; validate the exact
+  logical index with the staged runner, then plain `pre-commit run`.
+  Run `bash scripts/validate-repo-quality-gates.sh .`, relevant direct suites,
+  `pre-commit run --all-files`, and both diff checks. Review and restage only
+  this unit's formatter changes before repeating required final-byte checks.
+- [ ] Record PASS/FAIL/SKIP/DEFER, versions, scope, review and commit identities
+  in the owning Task. Unavailable required checks prevent completion.
+- [ ] Use `superpowers:finishing-a-development-branch` only after verification;
+  the human has already selected keep-as-is. Preserve the local branch and
+  worktree, with no push, PR, merge, deployment or destructive cleanup.
 
 ### WP-014 — convergence and branch completion
 

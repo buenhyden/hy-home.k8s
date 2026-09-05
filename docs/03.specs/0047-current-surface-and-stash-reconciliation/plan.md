@@ -2,9 +2,9 @@
 title: "Current Surface and Stash Reconciliation Implementation Plan"
 version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-08-07"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0047-PLAN-0001"
 ---
@@ -17,6 +17,32 @@ artifact_id: "SPEC-0047-PLAN-0001"
 > before closing each logical commit.
 
 ## Overview
+
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+### Current Execution Disposition (2026-09-05)
+
+Resume only Spec 0047 after Spec 0052's semantic closure. Accepted ADR-0031
+and ADR-0033 replace the old ADR-0021 activation and public program-roster
+procedure. This Plan and its Spec use the legal `draft → active` edge;
+CSASR-000 closes through `in-progress → done`. CSASR-001 through CSASR-005
+remain queued, and successor packages remain draft/queued until sequential
+predecessor closure. Their existing Plan/Task records are valid preplanning.
+
+The surviving stash commit `6370311e020620cc2743005896cc88db97d15465` was
+re-observed by metadata only. Its tracked-hunk analysis is still unfinished.
+Before CSASR-001 begins, re-observe current paths and resolve the older planned
+commands against `scripts/validation/registry.json`; retired progress,
+generated-residue, package-router, self-test, and registry-instance surfaces
+below are historical planning inputs, not instructions to recreate them.
+Record new evidence in the owning Task. This resume performs no implementation,
+stash application or retirement, remote action, or live operation.
 
 **Goal:** Activate PRD-0007 as a five-tranche program, inventory every tracked
 target against current canonical owners, and reconcile the preserved stash by
@@ -37,9 +63,9 @@ is the foundation tranche for PRD-0007. It is authorized to observe, classify,
 and record current state; it is not authorized to implement the GitHub,
 platform, Traefik, IaC, CI, or live-system changes owned by Specs 048-051.
 
-The current route owner is `scripts/validation/registry.json`. Program lineage
-is owned by `docs/99.templates/registry.json` and its strict
-registry validator. The preserved stash object is
+The current route owner is `scripts/validation/registry.json`. The document
+registry owns profiles and lifecycle domains; this package's reciprocal
+Spec/Plan/Task records own execution under accepted ADR-0031 and ADR-0033. The preserved stash object is
 `6370311e020620cc2743005896cc88db97d15465`; implementation must resolve it by
 full object identity rather than assuming `stash@{0}` remains stable.
 
@@ -66,15 +92,15 @@ This Task is the durable execution ledger for Spec 047. It will record the
 PRD-0007 program activation, current tracked target inventory, canonical
 surface/owner mapping, one disposition per target, tracked stash reconciliation
 categories, any current-generated residue evidence, reviews, validation, and
-the handoff to Spec 048. CSASR-000 is in progress and all later rows remain
+the handoff to Spec 048. CSASR-000 is done and all later rows remain
 queued. This activation claims no target implementation, stash content
 adoption, stash apply/pop/drop, remote, or live result.
 
 - Parent [Spec 047](spec.md)
 - Parent [Implementation Plan](plan.md)
-- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
-  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
+  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Current `scripts/validation/registry.json`, document profile registry, Current audit
   pack, tracked repository inventory, and affected-surface validators
 - Preserved stash object
@@ -83,9 +109,8 @@ adoption, stash apply/pop/drop, remote, or live result.
 ## Goals & In-Scope
 
 - Create and activate the reciprocal Spec 047 Plan/Task path.
-- Add PRD-0007, AD-0010, ADR-0021, and Specs 047-051 to program lineage with
-  Spec 047 as the first unfinished relation.
-- Update hard-coded program-lineage validator expectations and their tests.
+- Resume Spec 0047 through package-local lifecycle authority, preserving
+  sequential predecessor dependencies and existing successor preplanning.
 - Enumerate every tracked file under `.github`, `examples`, `gitops`,
   `infrastructure`, `policy`, `scripts`, `secrets`, `tests`, and `traefik`.
 - Resolve each file through the current surface router and record owner,
@@ -111,7 +136,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| CSASR-000 | Activate PRD-0007 lineage and reciprocal execution path | Approved written Plans | Clean isolated worktree | Decision readiness commit activates ADR-0021; program activation commit then accepts it and activates the reciprocal program foundation |
+| CSASR-000 | Activate the package-local reciprocal execution path | Approved written Plans; Spec 0052 semantic closure | Clean approved checkout; accepted ADR-0031/0033 | Spec/Plan activate, the existing activation Task closes, and the Stage 03 index agrees; no public execution roster |
 | CSASR-001 | Build tracked target inventory and surface projection | CSASR-000 | Current routing contract passes | Every tracked target has one current surface ID and canonical owner |
 | CSASR-002 | Record audit delta and disposition matrix | CSASR-001 | Current audits and target observations are available | Every target is `change`, `no-change`, or `defer` with evidence and successor |
 | CSASR-003 | Record tracked stash reconciliation ledger | CSASR-001 | Exact stash object and tracked path list resolve | Every tracked hunk has one category; untracked-parent content remains uninspected |
@@ -159,58 +184,20 @@ adoption, stash apply/pop/drop, remote, or live result.
 - `document_contracts.py::{_program_lineage_from_mapping, _program_structure_diagnostics}`
 - `validate-active-corpus-residue-closure.py` self-test and production modes
 
-### Task 1: CSASR-000 — activate the program foundation
+### Task 1: CSASR-000 — activate the package-local foundation
 
-- [ ] Verify clean branch, baseline, stash identity, and existing program list.
+- [x] Verify the clean approved checkout, reachable stash object, accepted
+  ADR-0031/0033, package-local Spec/Plan/Task links, and successor queued state.
+- [x] Discharge Spec 0052's superseded count predicates through WP-013 semantic
+  verification and close that package before resuming Spec 0047.
+- [x] Replace the superseded ADR-0021/public-roster activation procedure with
+  legal Spec/Plan `draft → active` and activation Task `in-progress → done`
+  transitions, keeping every implementation Task queued.
+- [x] Align the current Stage 03 index and record validation in
+  [CSASR-000](tasks/tsk-0001-csasr-000.md).
 
-  ```bash
-  rtk git status --short --branch
-  rtk git rev-parse HEAD
-  rtk git rev-parse refs/stash
-  rtk jq -r '.programLineage.programs[] | [.prd,.ard,([.tranches[].spec] | join(","))] | @tsv' docs/99.templates/registry.json
-  ```
-
-- [ ] Add the PRD-0007 program with ordered Specs 047-051 and decision `0021`;
-  make only Spec 047 active and keep successors planned.
-
-- [ ] Update the registry validator's exact program projection and add a
-  mutation case proving missing, duplicate, or reordered PRD-0007 tranches fail.
-
-- [ ] Commit decision readiness first: move ADR-0021 from `draft` to `active`
-  with same-diff body/index evidence using subject
-  `docs: activate repository delivery decision`.
-
-- [ ] In the following program activation commit, move ADR-0021 from `active`
-  to `accepted`; change PRD-0007, AD-0010, Spec 047, this Plan, and its Task to
-  `active`; and update owning indexes/progress atomically using subject
-  `docs: activate repository delivery program lineage`.
-
-- [ ] Preserve one reciprocal Plan/Task pair per original tranche, keep future
-  pairs in `draft`, remove rendered cross-tranche Spec links, and prove with
-  focused mutations that draft preplanning passes while malformed or premature
-  execution components fail.
-
-- [ ] Run RED/GREEN lifecycle and registry checks.
-
-  ```bash
-  rtk python3 scripts/validate-document-contract-registry.py --self-test
-  rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  rtk python3 scripts/validate-document-lifecycle.py --root . --self-test
-  rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  rtk python3 scripts/validate-links-and-owners.py --root . --self-test
-  rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-  ```
-
-- [ ] Commit the exact two-phase activation sequence.
-
-  ```bash
-  rtk git add docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md
-  rtk git commit -m "docs: activate repository delivery decision"
-
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/registry.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
-  rtk git commit -m "docs: activate repository delivery program lineage"
-  ```
+This activation changes no ADR lifecycle or Registry entry. The WP-013 logical
+commit owns this bounded resumption; the later CSASR work remains unexecuted.
 
 ### Task 2: CSASR-001 and CSASR-002 — inventory and disposition
 
@@ -299,8 +286,10 @@ adoption, stash apply/pop/drop, remote, or live result.
 - [ ] Dispatch independent requirements and quality/security reviewers over the
   exact Spec 047 activation-to-HEAD diff; resolve all findings and rerun gates.
 
-- [ ] Set Spec 047, Plan, and Task to `done`, set its program row to `done`,
-  update indexes/progress, and make Spec 048 the first unfinished relation.
+- [ ] After every implementation Task and closure gate completes, move this
+  Spec and Plan `active → done`, close the executing Task through its legal
+  edge, and update the Stage 03 index. Spec 0048 then becomes eligible for
+  package-local activation; no Registry instance row is changed.
 
 - [ ] Commit closure without preclaiming its own SHA.
 
@@ -345,7 +334,7 @@ outcomes, formatter effects, limitations, and successor handoff.
 
 | Risk | Mitigation |
 | --- | --- |
-| Program lineage and lifecycle statuses disagree | Activate/close Spec, Plan, Task, indexes, progress, registry, and expected projection atomically; staged lifecycle is blocking. |
+| Package lifecycle statuses disagree | Align Spec, Plan, Task, and Stage 03 index atomically; staged lifecycle is blocking. |
 | Surface inventory is incomplete | Generate from `git ls-files` over all nine target roots and require one Task row per emitted path. |
 | Stash ordinal changes | Resolve the full object hash before every operation and preserve all stashes on mismatch. |
 | Stash exposes untracked/private content | Never inspect parent-three payload; limit analysis to current tracked paths and metadata. |
@@ -379,8 +368,8 @@ outcomes, formatter effects, limitations, and successor handoff.
   durable evidence.
 ## Completion Criteria
 
-- PRD-0007 program lineage is structurally valid with Specs 047-051 ordered and
-  Spec 048 first unfinished after closure.
+- Package-local Spec/Plan/Task links and lifecycle agree, with Spec 0048
+  eligible only after Spec 0047's evidenced closure.
 - Every tracked target path has exactly one surface, owner, disposition, and
   successor/evidence record.
 - Every inspected tracked stash hunk has exactly one approved category, while
@@ -396,9 +385,9 @@ outcomes, formatter effects, limitations, and successor handoff.
 
 - **Spec**: [Current Surface and Stash Reconciliation](spec.md)
 - **Task**: [Current Surface and Stash Reconciliation Task](plan.md)
-- **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Successor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007 program
   lineage
 
@@ -423,7 +412,7 @@ outcomes, formatter effects, limitations, and successor handoff.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [CSASR-000](plan.md#work-breakdown) | In Progress | The reciprocal activation set is being validated; commit SHA is not yet claimed. |
+| [CSASR-000](plan.md#work-breakdown) | Done | Package-local resumption is recorded in SPEC-0047-TSK-0001; implementation rows remain queued. |
 | N/A — CSASR-001 shares the Plan and Spec sources above | Not executed | Queued tracked inventory evidence. |
 | N/A — CSASR-002 shares the Plan and Spec sources above | Not executed | Queued disposition matrix evidence. |
 | N/A — CSASR-003 shares the Plan and Spec sources above | Not executed | Queued tracked stash reconciliation evidence. |

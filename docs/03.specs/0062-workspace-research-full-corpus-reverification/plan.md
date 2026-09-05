@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-08-29"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0062-PLAN-0001"
 ---
@@ -2916,6 +2916,34 @@ and existing Spec/Task addenda instead. The retained census is
 `14/36/122/163`; the dated `14/36/91/141` record remains history. No new state,
 schema, validator feature, broad authority surface, old registry baseline/route
 contract, or Spec 0054 change is permitted.
+
+### Approved 2026-09-05 Follow-On External Observation Cycle Addendum
+
+This Plan addendum instantiates the cycle authorised in the
+[Spec addendum](spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum).
+It defines one logical unit, not a reopened work breakdown, and it supersedes
+no earlier task, result, or evidence row.
+
+**Unit:** external-source reverification and single-writer integration, recorded
+in [SPEC-0062-TSK-0011](tasks/tsk-0011-external-observation-cycle.md).
+
+**Allowed write paths:** `docs/90.references/research/0001-workspace-engineering/**`,
+this Plan, the owning Spec, and the new Task record. No other path is in scope.
+
+**Method:** five read-only research workstreams collected external evidence
+along the same topic split used by this Plan's earlier integration tasks, and a
+single writer allocated identifiers and integrated findings. Workers were
+instructed that a search result may locate a source but never substitutes for
+reading it, that an unreadable source is `unreachable` with its exact failure
+class, and that documentation proves a product contract only.
+
+**Verification lane:** the repository-static lane named in the Spec's
+Verification Commands, run on the resulting tree, with the pre-existing baseline
+failures recorded separately from any failure this cycle introduces.
+
+**Deliberate reduction:** workspace re-observation is excluded at the
+requester's direction, so this unit cannot satisfy `VAL-WRFR-002` and does not
+claim to. It satisfies `FOLLOWON-0062-001` through `FOLLOWON-0062-005` only.
 
 ## Verification Plan
 

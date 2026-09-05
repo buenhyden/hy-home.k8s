@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-05"
 layer: "architecture"
 artifact_id: "AD-0005"
 ---
@@ -19,7 +19,7 @@ artifact_id: "AD-0005"
 ### Current architecture summary
 
 ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되며, Slack token은 Vault에서 ESO를 통해 `argocd-notifications-secret`로 동기화된다.
-알림 template, trigger, default subscription은 GitOps ConfigMap으로 관리하고, 앱별 opt-in은 annotation으로 제한한다.
+알림 template, trigger와 `defaultTriggers`는 GitOps ConfigMap으로 관리하고, 앱별 opt-in은 annotation으로 표현한다. `defaultTriggers`만으로 전체 앱의 전역 구독이나 Slack 수신이 증명되지는 않는다.
 
 ## Boundaries & Non-goals
 
@@ -47,7 +47,7 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 - **Performance**: Notifications controller metrics를 활성화해 처리 상태를 관측할 수 있게 한다.
 - **Security**: Slack token은 Vault -> ESO -> Kubernetes Secret 경로로만 소비한다.
 - **Reliability**: ConfigMap과 ExternalSecret은 GitOps desired state로 복구 가능해야 한다.
-- **Scalability**: default subscriptions는 공통 실패 신호를 다루고, 앱별 channel opt-in은 annotation으로 확장한다.
+- **Scalability**: 공통 실패 신호 구독은 요구사항이며, 앱별 channel opt-in은 annotation으로 확장한다.
 - **Observability**: controller logs와 metrics NodePort가 Slack 전송 성공/실패와 runtime 상태를 확인하는 증거다.
 - **Operability**: Slack 알림 장애 시 Vault secret, ExternalSecret, controller log 순서로 검증한다.
 
@@ -58,6 +58,10 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 - Slack token material is represented by `gitops/platform/argocd/argocd-notifications-secret.yaml`.
 - The ConfigMap and ExternalSecret are included through `gitops/platform/argocd/kustomization.yaml`.
 - ArgoCD Notifications is separate from the Rollouts Helm chart `notifications.enabled` setting, which remains disabled.
+
+현재 source는 [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml)과
+[ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml)다.
+Rollouts event template의 존재도 runtime event context나 전송 성공을 보장하지 않는다.
 
 ## Data Architecture
 
@@ -82,7 +86,7 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 - **Deployment Model**:
   - `notifications.enabled: true` is set in ArgoCD Helm values.
   - `argocd-notifications-cm` and `argocd-notifications-secret` are GitOps-managed through `platform-argocd-config`.
-  - Default subscriptions cover health degraded and sync failed events.
+  - The ConfigMap declares health-degraded and sync-failed default triggers. Global subscription coverage and actual delivery require separate approved runtime evidence; the static declaration is not that evidence.
 - **Operational Evidence**:
   - Static contract checks validate notification and secret wiring.
   - Runtime runbook checks controller Pod, ExternalSecret/Secret readiness, and Slack send/error logs.
@@ -115,5 +119,5 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 
 - **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md)
-- **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../03.specs/0005-argo-notifications-slack/plan.md)
+- **Plan**: [`../../03.specs/0005-argo-notifications-slack/plan.md`](../../03.specs/0005-argo-notifications-slack/plan.md)
 - **ADR**: [`../decisions/0012-argo-notifications-slack.md`](../decisions/0012-argo-notifications-slack.md)

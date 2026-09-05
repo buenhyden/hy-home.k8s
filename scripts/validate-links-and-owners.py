@@ -8,7 +8,6 @@ import bisect
 import collections
 import hashlib
 import html
-import importlib.util
 import json
 import os
 import posixpath
@@ -105,9 +104,6 @@ from document_contracts import (
 _UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
-DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
-    "scripts/document-taxonomy-migration.json"
-)
 WORK109_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
@@ -118,9 +114,6 @@ WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
-DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
-    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
-)
 WORK109_SOURCE_COMMIT = (
     "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 )
@@ -2946,177 +2939,6 @@ def _work054_wp003_owner_merges(
     return result
 
 
-@lru_cache(maxsize=1)
-def _load_document_taxonomy_migration() -> Any:
-    """Load the reviewed migration tool under one private canonical identity."""
-
-    path = (
-        Path(__file__).resolve(strict=True).with_name("migrate-document-work-units.py")
-    )
-    name = "_links_document_taxonomy_migration"
-    spec = importlib.util.spec_from_file_location(name, path)
-    if spec is None or spec.loader is None:
-        raise ConfigurationError("archive transition manifest validator is unavailable")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    try:
-        spec.loader.exec_module(module)
-        if Path(str(getattr(module, "__file__", ""))).resolve(strict=True) != path:
-            raise ConfigurationError(
-                "archive transition manifest validator is unavailable"
-            )
-    except Exception:
-        sys.modules.pop(name, None)
-        raise
-    return module
-
-
-@lru_cache(maxsize=2)
-def _reviewed_taxonomy_manifest(root: Path) -> Any:
-    """Return only a clean stage-zero, fully validated reviewed manifest."""
-
-    module = _load_document_taxonomy_migration()
-    try:
-        snapshot = module.load_reviewed_manifest_snapshot(
-            root,
-            validate_repository=False,
-        )
-    except module.MigrationAbort as exc:
-        raise ConfigurationError(
-            "archive transition manifest contract differs"
-        ) from exc
-    document = snapshot.document
-    if document.source_commit != DOCUMENT_TAXONOMY_SOURCE_COMMIT:
-        raise ConfigurationError("archive transition manifest source commit differs")
-    return document
-
-
-def _document_taxonomy_transition_manifest(
-    context: Context,
-) -> tuple[
-    dict[PurePosixPath, str],
-    dict[PurePosixPath, PurePosixPath],
-    frozenset[PurePosixPath],
-]:
-    """Load the exact temporary 132-entry handoff without broad path waivers."""
-
-    if DOCUMENT_TAXONOMY_MANIFEST_PATH not in context.tracked_regular_paths:
-        raise ConfigurationError("archive transition manifest is not tracked")
-    document = _reviewed_taxonomy_manifest(context.root)
-    if (
-        document.source_commit != DOCUMENT_TAXONOMY_SOURCE_COMMIT
-        or len(document.entries) != 132
-    ):
-        raise ConfigurationError("archive transition manifest contract differs")
-    four_digit_aliases, vacated_moves = _work109_four_digit_aliases(context)
-
-    expected_keys = [
-        "source",
-        "target",
-        "workUnit",
-        "disposition",
-        "sourceBlob",
-        "reviewed",
-    ]
-    manifest_source_values: list[str] = []
-    for entry in document.entries:
-        if not isinstance(entry, Mapping) or list(entry) != expected_keys:
-            raise ConfigurationError("archive transition manifest entry differs")
-        source_value = entry["source"]
-        if not isinstance(source_value, str):
-            raise ConfigurationError("archive transition manifest entry differs")
-        source = PurePosixPath(source_value)
-        if (
-            source.as_posix() != source_value
-            or source.is_absolute()
-            or ".." in source.parts
-        ):
-            raise ConfigurationError("archive transition manifest path differs")
-        manifest_source_values.append(source_value)
-    try:
-        manifest_source_evidence = _commit_path_evidence(
-            str(context.root.absolute()),
-            DOCUMENT_TAXONOMY_SOURCE_COMMIT,
-            tuple(manifest_source_values),
-        )
-    except ValueError:
-        raise ConfigurationError("archive transition manifest source differs") from None
-    move_blobs: dict[PurePosixPath, str] = {}
-    move_targets: dict[PurePosixPath, PurePosixPath] = {}
-    move_sources: set[PurePosixPath] = set()
-    archive_sources: set[PurePosixPath] = set()
-    targets: set[PurePosixPath] = set()
-    for entry, (source_blob, _) in zip(
-        document.entries,
-        manifest_source_evidence,
-        strict=True,
-    ):
-        source_value = entry["source"]
-        target_value = entry["target"]
-        if (
-            not isinstance(source_value, str)
-            or not isinstance(target_value, str)
-            or not isinstance(entry["workUnit"], str)
-            or not entry["workUnit"]
-            or entry["disposition"] not in {"move-current", "archive-unique"}
-            or not isinstance(entry["sourceBlob"], str)
-            or re.fullmatch(r"[0-9a-f]{40}", entry["sourceBlob"]) is None
-            or entry["reviewed"] is not True
-        ):
-            raise ConfigurationError("archive transition manifest entry differs")
-        source = PurePosixPath(source_value)
-        target = PurePosixPath(target_value)
-        if (
-            source.as_posix() != source_value
-            or target.as_posix() != target_value
-            or source.is_absolute()
-            or target.is_absolute()
-            or ".." in source.parts
-            or ".." in target.parts
-            or len(source.parts) != 4
-            or source.parts[:2] != ("docs", "04.execution")
-            or source.parts[2] not in {"plans", "tasks"}
-            or source.suffix != ".md"
-            or source in move_sources
-            or source in archive_sources
-            or target in targets
-        ):
-            raise ConfigurationError("archive transition manifest path differs")
-        if source_blob != entry["sourceBlob"]:
-            raise ConfigurationError("archive transition manifest source differs")
-        if entry["disposition"] == "move-current":
-            if (
-                len(target.parts) != 4
-                or target.parts[:2] != ("docs", "03.specs")
-                or target.name not in {"plan.md", "tasks.md"}
-            ):
-                raise ConfigurationError("archive transition move target differs")
-            move_sources.add(source)
-            stable_target = four_digit_aliases.get(target)
-            if stable_target is None:
-                # A missing alias is admitted only when MIG-0002 sealed the row
-                # and its endpoint has since been vacated.  A target the ledger
-                # never sealed is still a manifest that differs from its proof.
-                if target not in vacated_moves:
-                    raise ConfigurationError(
-                        "archive transition move target lacks exact MIG-0002 evidence"
-                    )
-                targets.add(target)
-                continue
-            move_blobs[source] = entry["sourceBlob"]
-            move_targets[source] = stable_target
-            target = stable_target
-        else:
-            expected_target = PurePosixPath("docs", "98.archive", *source.parts[1:])
-            if target != expected_target:
-                raise ConfigurationError("archive transition archive target differs")
-            archive_sources.add(source)
-        targets.add(target)
-    if len(move_sources) != 82 or len(archive_sources) != 50:
-        raise ConfigurationError("archive transition manifest counts differ")
-    return move_blobs, move_targets, frozenset(archive_sources)
-
-
 def _git_sha1_blob_bytes(content: bytes) -> str:
     header = f"blob {len(content)}\0".encode("ascii")
     return hashlib.sha1(header + content).hexdigest()  # noqa: S324
@@ -3178,14 +3000,10 @@ def repository_historical_migration_proof(
             read_current_bytes=read_current_bytes,
             read_symlink=read_symlink,
         )
-    _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-    return _historical_migration_proof(context, move_targets)
+    return _historical_migration_proof(context)
 
 
-def _historical_migration_proof(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> HistoricalMigrationProof:
+def _historical_migration_proof(context: Context) -> HistoricalMigrationProof:
     proof = _context_migration_proof(context)
     generic_targets = {
         PurePosixPath(source): PurePosixPath(target)
@@ -3196,7 +3014,6 @@ def _historical_migration_proof(
     if PurePosixPath(WORK107_MIGRATION_PATH) in context.paths and not archive_aliases:
         raise ConfigurationError("historical archive migration proof differs")
     migration_projections = (
-        move_targets,
         aliases,
         replacements,
         work109_merges,
@@ -3363,9 +3180,8 @@ def _archive_payload_proofs(
 
 def _reviewed_work054_historical_owner_edges(
     context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    proof = _historical_migration_proof(context, move_targets)
+    proof = _historical_migration_proof(context)
     return {
         ArchiveTransitionEdge(
             PurePosixPath(source), PurePosixPath(target)
@@ -3376,11 +3192,7 @@ def _reviewed_work054_historical_owner_edges(
 
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
-    _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-    reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
-        context,
-        move_targets,
-    )
+    reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(context)
     for source in context.paths:
         profile = context.profiles[source].profile_id
         if profile == "archive/tombstone":

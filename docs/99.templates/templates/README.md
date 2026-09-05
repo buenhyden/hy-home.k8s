@@ -37,12 +37,12 @@ templates/
 ├── architecture/   decision, description
 ├── archive/        migration, tombstone
 ├── common/         repository, documentation·stage, package, runtime-governance entrypoint README form
-├── governance/     contract, control, provider, role, rule, skill
+├── governance/     contract, provider, role, rule, skill
 ├── operations/     guide, incident, policy, postmortem, runbook
 ├── references/     audit·data·research 의 pack form과 reference form
 ├── requirements/   requirement-package
 ├── runtime/        claude-agent (Markdown), codex-agent (TOML)
-└── specs/          spec, plan, task, contracts/
+└── specs/          spec, plan, task
 ```
 
 ## Add and Find

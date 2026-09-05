@@ -59,6 +59,13 @@ owns the scoped common-envelope, public Registry v9, template grammar, and
 generation-aware Archive validation amendment implemented by the current
 WP-013 change slice.
 
+The retained current semantic owners are
+[REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) and
+[AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
+Their explicit requirement-member and architecture-responsibility transfer mappings
+own the durable obligations inherited from REQ-0005/0006/0008 and AD-0008/0009/0011;
+this reciprocal trace does not rewrite the original directly approved execution lineage.
+
 Until WP-013 removes the parent-only compatibility roster, the current registry
 still requires these two historical compatibility statements:
 

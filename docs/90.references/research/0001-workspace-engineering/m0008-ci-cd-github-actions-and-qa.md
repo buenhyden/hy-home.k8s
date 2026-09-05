@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0008"
 ---
@@ -647,6 +647,100 @@ an attestation is distinct from consumer-side verification against explicit
 repository, workflow, signer, and digest expectations. No attestation,
 verification, hosted run, or release artifact was inspected; those outcomes
 remain `DEFER`.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the delivery and quality owners under the approved
+2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user
+decision, so no tracked workflow, lock file, or hook pin was re-read, and no
+remote query was made. New sources are `SRC-WERPC-147` through `SRC-WERPC-153`;
+the cycle claims are `CLM-WERPC-016-15`, `CLM-WERPC-016-16`, and
+`CLM-WERPC-016-17`.
+
+#### REQ-WERPC-022 and REQ-WERPC-023 delivery re-observation
+
+- **Sources and external result:** `unchanged` for every contract this
+  reference relies on, with additive platform capability and one confirmed
+  citation defect. The workflow-syntax, secure-use, concurrency, artifact
+  retention, federated-identity, and release-record documentation were
+  re-observed as `unchanged`; in particular the immutable subject-format rule
+  and its date threshold are confirmed exactly as recorded on 2026-08-23, and
+  the dated read-only API version used by this reference's earlier bounded
+  remote citations is still the current supported version
+  ([SRC-WERPC-150](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  Additive capabilities observed for the first time are a further concurrency
+  queueing option, a natural-language workflow authoring form
+  ([SRC-WERPC-147](m0012-source-coverage.md#2026-09-05-external-source-reverification)),
+  and a change in which action the platform recommends for new attestation
+  implementations, with the previously named action documented as a wrapper
+  ([SRC-WERPC-148](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+
+  One retained citation is confirmed dead. A direct request for the
+  deployment-environment how-to recorded in `SRC-WERPC-044` returned HTTP 404;
+  the current location was located and read, and is registered as
+  [SRC-WERPC-149](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  The environment protection surface itself is unchanged, so no claim in this
+  reference is falsified. Two further link-rot candidates raised during
+  collection were rejected after direct requests returned HTTP 200.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [CI/CD baseline](#cicd-baseline) and the
+  [GitHub Actions baseline](#github-actions-baseline) retain their earlier
+  repository-static observation dates, and the earlier bounded remote
+  observations retain their own dates and are not refreshed here.
+- **As-Is, gap, and target:** both rows stay `Partial`. No promotion. The
+  recorded absence of a deployment, federated-identity, attestation, or
+  environment consumer is untouched, because no workflow was re-read.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `hosted-CI` / `DEFER`. Platform documentation proves the platform contract
+  only, never a hosted run, an effective permission, a branch protection state,
+  or an issued identity claim.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  05 delivery owners. The safe follow-up is a source-register maintenance pass
+  that repoints the one confirmed dead citation. Refresh on any platform
+  contract change, or under a separate authorisation that admits hosted evidence.
+
+#### REQ-WERPC-024 and REQ-WERPC-033 quality and verification re-observation
+
+- **Sources and external result:** `changed` by additive detail. The hook
+  provenance guidance and the hash-checking install model were re-observed as
+  `unchanged`, with one new opt-out flag documented from a stated tool version
+  that permits selective verification
+  ([SRC-WERPC-151](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  Current upstream release identities were captured for five quality-tool
+  classes
+  ([SRC-WERPC-152](m0012-source-coverage.md#2026-09-05-external-source-reverification));
+  two of the five have no established local use and are recorded as benchmark
+  information only. The verification and validation sources, including the
+  product-verification and product-validation distinction and the traceability
+  requirement, were re-observed as `unchanged`.
+
+  Automated review was investigated as an explicitly requested question. Three
+  vendors document a pull-request review product, and each documents advisory,
+  non-blocking semantics by default; one is a limited-availability research
+  preview with plan and data-retention conditions
+  ([SRC-WERPC-153](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  No vendor documents automatically triggered test-case generation as a delivery
+  hook. The closest documented capability is developer-invoked and
+  editor-scoped, which is a materially different automation shape. This absence
+  is a bounded negative finding about official documentation, not proof that
+  such a hook cannot be built locally.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [QA baseline](#qa-baseline) and the verification and validation matrix retain
+  their earlier repository-static observation dates. No comparison between an
+  upstream release identity and a local pin is made here, because no local pin
+  was read.
+- **As-Is, gap, and target:** the quality row stays `Verified` for static lane
+  and formatter evidence, and the verification and validation row stays
+  `Partial`. No promotion. Tool currency is a review trigger for a later
+  workspace-observation cycle.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `hosted-CI` / `DEFER` for delivery evidence and `human-judgement` / `DEFER`
+  for validation adequacy. An advisory automated review is not a verification
+  lane and does not satisfy a required review gate.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 quality policy. Refresh when a quality tool releases, when an official
+  test-generation hook is published, or when any automated-review product
+  changes its blocking semantics.
 
 ## Related Documents
 

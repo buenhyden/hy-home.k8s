@@ -1,4 +1,24 @@
 ---
+title: "Superseded REQ-0006 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-REQ-0006"
+original_artifact_id: "REQ-0006"
+original_type: "sdlc/requirement"
+original_path: "docs/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "03dfeaf1e9771348e09071a92ae290234a165f2d"
+content_sha256: "5a5658b59d93e91ab12bbdd687ec9128a32cf7fcf71630d7371ba114fc7f15e2"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Workspace Document Lifecycle and Evidence Consolidation Requirement Package"
 version: "1.0.0"
 type: "sdlc/requirement"

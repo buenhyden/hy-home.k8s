@@ -14,6 +14,15 @@ superseded_by: "ADR-0030"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 This accepted record is the human-approved terminal successor design produced by
 the pre-WORK-104 package `WDTC-AMEND-001`. It establishes Architecture
 Description (AD), a closed global artifact identity grammar, stable terminal
@@ -47,7 +56,7 @@ full-body immutable payload and provenance but also fixes an archive record at
 the mirrored original path and prohibits a parallel Tombstone. Accepted
 ADR-0023 preserves Stage 98 dates and existing paths for the transition.
 Active
-[AD-0011](../descriptions/0011-document-taxonomy-consolidation-architecture.md)
+[Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 also treats AD and the mirror archive invariant as current. Those path/form
 constraints conflict with the approved terminal topology, although their
 payload, provenance, recovery, and transition-safety purposes remain valid.
@@ -87,10 +96,10 @@ lifecycle state:
 | ARD-0005 | active | AD-0005 / `docs/02.architecture/descriptions/0005-argo-notifications-slack.md` |
 | ARD-0006 | active | AD-0006 / `docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md` |
 | ARD-0007 | active | AD-0007 / `docs/02.architecture/descriptions/0007-current-local-gitops-platform.md` |
-| ARD-0008 | accepted | AD-0008 / `docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md` |
-| ARD-0009 | accepted | AD-0009 / `docs/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md` |
-| ARD-0010 | active | AD-0010 / `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` |
-| ARD-0011 | active | AD-0011 / `docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md` |
+| ARD-0008 | accepted | AD-0008 / [Historical `docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md`](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md) |
+| ARD-0009 | accepted | AD-0009 / [Historical `docs/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md`](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) |
+| ARD-0010 | active | AD-0010 / [Historical `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md`](../../98.archive/superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) |
+| ARD-0011 | active | AD-0011 / [Historical `docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md`](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) |
 
 These AD labels are lifecycle document identities; WORK-105 preserved the
 four-digit identity and deferred every mandatory `artifact_id` to WORK-108.

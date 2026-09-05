@@ -2,9 +2,9 @@
 title: "Document Taxonomy Consolidation Implementation Plan"
 version: "1.0.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-08-12"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0052-PLAN-0001"
 ---
@@ -86,6 +86,34 @@ contracts.
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
+### Package Closure Disposition (2026-09-05)
+
+This Plan has no remaining execution queue: all seventeen Task records are
+done, including the explicit WORK-109..115 transfers to Spec 0054. The
+[Spec closure disposition](spec.md#package-closure-disposition-2026-09-05)
+applies accepted ADR-0031 to the former count predicates. Earlier exact
+inventories, commands, and acceptance tables below are historical execution
+context; they do not require the current repository to reproduce obsolete
+forms, registry rosters, route modes, or script counts.
+
+The stable 187-test Archive/recovery/routing/strict-cutover batch passed on
+2026-09-05. This semantic closure moves only this Spec/Plan through
+`active → done`. Spec 0054
+retains the transferred transition-control and final acceptance work. ADR-0032
+retention is eligible on terminal state only; the whole package stays at its
+current path pending WP-013 current-consumer transfer, consumer-zero/link
+proof, and a sealed retention migration row. New closure evidence is recorded
+in SPEC-0054-TSK-0013; completed Task evidence is preserved.
+
 This plan executes [Spec 052](spec.md)
 after approval of the complete design. It supersedes the prior execution plan
 that proposed renumbering operations and deleting validator families without
@@ -142,9 +170,9 @@ is performed or claimed.
 - **Specification**:
   [Spec 052](spec.md)
 - **Program requirement**:
-  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Current decision**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Accepted transition predecessor**:
@@ -549,30 +577,34 @@ accepted eight-AD authority gate remain green.
 
 - WORK-100 through WORK-104 and `WDTC-AMEND-001` retain their factual commit,
   manifest, archive, and move evidence.
-- Terminal active forms use PRD/SRS/Interface Requirement, AD/ADR, and Stage 03
-  sibling work units; no legacy ARD/RFC/authored API Spec or live Stage 04 route remains.
+- Current forms and Stage 03 package ownership follow accepted ADR-0030/0033
+  and the v9 Registry; earlier PRD/SRS/Interface splits are historical.
 - Every mandatory outer artifact has one globally unique path-derived ID and
   every prohibited surface has none.
-- The 93 current Stage 98 records have unique stable destinations, immutable
-  payload/provenance, complete ledger evidence, and dual recovery.
+- VAL-WDTC-015 verifies declared historical identity, payload/provenance,
+  migration, and Git recovery semantics. The former 93-record census is a
+  historical observation under accepted ADR-0031, not a closure predicate.
 - Stage 05 remains unchanged and no Release-family artifact exists.
 - Stage 00, Stage 99, and the registry have disjoint authority; agent-system
   controls do not promote repository-static evidence to runtime evidence.
-- The complete script ledger proves `50 -> 49 -> 47`, deleting only the three
-  approved assets at their assigned gates without losing unique semantics.
-- Progress history is recoverable, stale graph output is absent, and transition
-  scaffolding has no remaining consumer or residue.
-- VAL-WDTC-001 through VAL-WDTC-016 have durable evidence; Specs 047-051 remain
-  unexecuted and receive a terminal resumption route.
+- VAL-WDTC-016 verifies canonical routing, consumer and diagnostic preservation,
+  and independent behavioral tests. The former `50 → 49 → 47` census is a
+  historical observation; WORK-111/112/114 remain transferred to Spec 0054.
+- Completed Task evidence and WORK-109..115 successor ownership remain intact;
+  residual transition retirement and integrated acceptance stay with Spec 0054
+  WP-013/WP-014 and are not claimed complete by this package closure.
+- VAL-WDTC-001 through VAL-WDTC-017 retain completed or explicit transferred
+  evidence. Spec 0047 may resume after this closure; Specs 0048–0051 stay
+  draft/queued until sequential predecessor closure.
 - Focused, strict, staged, affected, aggregate, controller all-files, diff, and
   clean-tree postflight evidence pass at the lane that owns each result.
 
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Decision**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Specification**:

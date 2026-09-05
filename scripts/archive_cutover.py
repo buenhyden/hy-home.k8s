@@ -49,6 +49,7 @@ if __package__:
         load_internal_payload,
         load_registry,
     )
+    from scripts.document_authority import RETIRED_UNUSED_CAPACITY_FORM_PATHS
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
@@ -91,6 +92,9 @@ else:
         classify_path,
         load_internal_payload,
         load_registry,
+    )
+    from document_authority import (  # type: ignore[no-redef]
+        RETIRED_UNUSED_CAPACITY_FORM_PATHS,
     )
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
@@ -593,10 +597,14 @@ def _work054_migration_projection(
             # A later ledger may retire this target in turn, and the pinned rows
             # cannot name a successor that did not exist when they were sealed.
             terminal = later_edges.get(target, target)
-            if terminal in later_retired:
+            if (
+                terminal in later_retired
+                or terminal in RETIRED_UNUSED_CAPACITY_FORM_PATHS
+            ):
                 # The later ledger deleted the endpoint rather than moving it,
-                # so this row composes no current owner and resolves through
-                # the Archive index instead.
+                # or current authority retired its unused authoring capacity.
+                # Either way this sealed row composes no current owner and
+                # resolves through the Archive index instead.
                 dropped.add(legacy)
                 continue
             edges[legacy] = terminal
@@ -1087,9 +1095,11 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     if present_paths != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
 
-    reviewed_manifest_rows = {
-        row.target: row for row in generic_report.reviewed_manifest_records
-    }
+    additive_sources = (
+        {row.target: row for row in generic_report.additive_record_sources}
+        if generic_report.valid
+        else {}
+    )
     payloads: list[bytes] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
     for archive_path in sorted(expected_paths):
@@ -1112,13 +1122,17 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             else (
                 _source_commit(str(original_path))
                 if archive_path in base_paths
-                else (
-                    reviewed_manifest_rows[archive_path].source_commit
-                    if archive_path in reviewed_manifest_rows
-                    else None
-                )
+                else None
             )
         )
+        additive = additive_sources.get(archive_path)
+        if (
+            expected_source_commit is None
+            and additive is not None
+            and additive.original_path == original_path
+            and additive.source_blob == parsed.metadata.get("source_blob")
+        ):
+            expected_source_commit = additive.source_commit
         if (
             not isinstance(original_path, str)
             or parsed.metadata.get("source_commit") != expected_source_commit
@@ -1342,18 +1356,19 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         except (OSError, UnicodeDecodeError):
             diagnostics.append(_diagnostic("ARCHIVE-CURRENT-READ", raw_path))
             continue
-        profile, _status = _frontmatter_identity(markdown, raw_path)
+        profile, status = _frontmatter_identity(markdown, raw_path)
         current_documents.append(
             CurrentMarkdownDocument(
                 path=raw_path,
                 markdown=markdown,
                 profile=profile,
-                status="active",
+                status=status,
             )
         )
     current_report = validate_current_archive_authority(
         tuple(current_documents),
         individual_archive_paths=expected_paths,
+        registry=typed_registry,
     )
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in current_report.diagnostics

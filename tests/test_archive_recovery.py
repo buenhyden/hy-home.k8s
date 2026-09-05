@@ -222,6 +222,74 @@ class ArchiveRecoveryTest(unittest.TestCase):
                 ):
                     validate_archive_metadata(metadata)
 
+    def test_no_successor_representation_is_generation_specific(self) -> None:
+        current = self.metadata(archive_reason="retired", replacement="none")
+        self.assertIsNone(validate_archive_metadata(current))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError,
+            r"^ARCHIVE-METADATA-TYPE:",
+        ):
+            validate_archive_metadata(self.metadata(type="content/invalid"))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError,
+            r"^ARCHIVE-METADATA-REPLACEMENT:",
+        ):
+            validate_archive_metadata(
+                self.metadata(archive_reason="retired", replacement=None)
+            )
+
+        prior = {
+            key: value
+            for key, value in self.metadata(
+                type="content/archive",
+                archive_reason="retired",
+                replacement=None,
+            ).items()
+            if key not in {"version", "layer"}
+        }
+        self.assertIsNone(validate_archive_metadata(prior))
+        prior["replacement"] = "none"
+        with self.assertRaisesRegex(
+            ArchiveContractError,
+            r"^ARCHIVE-METADATA-REPLACEMENT:",
+        ):
+            validate_archive_metadata(prior)
+
+        with self.assertRaisesRegex(
+            ArchiveContractError,
+            r"^ARCHIVE-METADATA-GENERATION:",
+        ):
+            validate_archive_metadata(
+                {
+                    key: value
+                    for key, value in self.metadata(
+                        archive_reason="retired", replacement=None
+                    ).items()
+                    if key not in {"version", "layer"}
+                }
+            )
+
+        with self.assertRaisesRegex(
+            ArchiveContractError,
+            r"^ARCHIVE-METADATA-GENERATION:",
+        ):
+            validate_archive_metadata(
+                self.metadata(
+                    type="content/archive", archive_reason="retired", replacement=None
+                )
+            )
+
+    def test_non_scalar_archive_type_fails_closed_as_type(self) -> None:
+        for declared_type in ([], {}):
+            with self.subTest(declared_type=declared_type):
+                with self.assertRaisesRegex(
+                    ArchiveContractError,
+                    r"^ARCHIVE-METADATA-TYPE:",
+                ):
+                    validate_archive_metadata(self.metadata(type=declared_type))
+
     def test_round_trips_payload_to_eof_with_collisions_and_final_newline_states(
         self,
     ) -> None:

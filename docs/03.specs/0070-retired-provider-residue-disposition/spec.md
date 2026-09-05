@@ -51,8 +51,8 @@ Out of scope: every closed Stage 03 Spec, Plan, and Task; the superseded
 [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 and [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md);
 ADR-0030's own account of what it removed; the Stage 98 archive and its sealed
-migration ledgers; dated Stage 90 research observations; the historical rows in
-`scripts/document-taxonomy-migration.json`; the tests that assert the removed
+migration ledgers; dated Stage 90 research observations; Git-backed recovery
+evidence for the retired transition mapping; the tests that assert the removed
 surfaces are absent; and the credential denylist literals in
 `scripts/validate-agent-governance-ci.py`.
 

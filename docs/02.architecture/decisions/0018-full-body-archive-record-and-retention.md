@@ -14,6 +14,15 @@ superseded_by: "ADR-0030"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 This decision replaces metadata-only archive Tombstones with one immutable,
 non-current, full-body archive record at each mirrored original path.
 
@@ -90,8 +99,8 @@ unreachable objects may be pruned:
 
 ## Traceability
 
-- **Requirement**: [PRD-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Architecture**: [ARD-0009](../descriptions/0009-document-lifecycle-evidence-operating-model.md)
+- **Requirement**: [Historical PRD-006](../../98.archive/superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
+- **Architecture**: [Historical ARD-0009](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Archive implementation**: [Spec 036](../../98.archive/completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md)
 - **Execution retention**: [Spec 037](../../98.archive/completed/03.specs/0037-active-corpus-and-execution-retention/spec.md)
 

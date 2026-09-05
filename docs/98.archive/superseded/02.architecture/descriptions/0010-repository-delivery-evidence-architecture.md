@@ -1,4 +1,24 @@
 ---
+title: "Superseded AD-0010 source record"
+version: "1.0.0"
+type: "archive/tombstone"
+status: "archived"
+owner: "platform"
+updated: "2026-09-05"
+layer: "archive"
+artifact_id: "tomb-AD-0010"
+original_artifact_id: "AD-0010"
+original_type: "sdlc/architecture-description"
+original_path: "docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md"
+archived_on: "2026-09-05"
+archive_reason: "superseded"
+replacement: "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+source_commit: "89dc12df213849e3e591c3f52bde2b1d288f033b"
+source_blob: "dd1d54ca4112c915753cee313aeec4f92a745cd2"
+content_sha256: "2ca26c452cbc75bd5f7d1c5bdfee4cfe6f8f1c10d3555e8a7e5d3edea77a6b70"
+---
+<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->
+---
 title: "Repository Delivery Evidence Architecture Description"
 version: "1.0.0"
 type: "sdlc/architecture-description"

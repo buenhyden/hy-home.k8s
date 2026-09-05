@@ -31,7 +31,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         registry = json.loads((ROOT / registry_path).read_text())
         selected = {
             "sdlc/architecture-description",
-            "sdlc/data-model",
+            "sdlc/spec",
             "sdlc/plan",
             "archive/tombstone",
         }
@@ -786,11 +786,6 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         # Unrelated sealed migration corpora do not exist in this disposable repo.
         # The generic migration/source/index proof and actual renderer remain real.
         with (
-            mock.patch.object(
-                links,
-                "_document_taxonomy_transition_manifest",
-                return_value=({}, {}, {}),
-            ),
             mock.patch.object(
                 links,
                 "_work109_migration_projection",

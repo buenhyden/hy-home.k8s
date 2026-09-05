@@ -21,7 +21,10 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
-정적 검증 스크립트가 우선한다. 현재 구현과 상충하는 old decision/requirement 문서는 활성 stage에 보존하지 않고 full-body Archive Record로 보존하며 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스로만 연결한다.
+정적 검증 스크립트가 우선한다. ADR 본문은 상태와 관계없이 decision log에 남겨 원래 결정과
+상호 supersession을 보존한다. 대체된 Requirement/AD는 current consumer와 의미를 승계한 뒤
+ADR-0032의 `superseded/<stage>/` record로, 후계자 없이 끝난 문서는 `tombstones/<stage>/`로
+구분한다. [`Archive index`](../98.archive/README.md)는 현재 탐색 경계이며 봉인 record는 현재 실행 권위가 아니다.
 
 ### Reader Route
 

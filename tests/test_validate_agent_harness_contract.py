@@ -79,6 +79,41 @@ class AgentHarnessRegistryContractTests(unittest.TestCase):
             self.validator.decode_json_text('{"roles": [], "roles": []}')
         self.assertEqual(raised.exception.code, "AGENT-REGISTRY-INPUT")
 
+    def test_normalized_json_paths_remain_readable(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="agent-registry-path-") as directory:
+            root = Path(directory)
+            (root / "inputs").mkdir()
+            (root / "inputs" / "registry.json").write_text("{}", encoding="utf-8")
+            for relative in (
+                "inputs/registry.json",
+                PurePosixPath("inputs/registry.json"),
+            ):
+                with self.subTest(relative=relative):
+                    self.assertEqual(self.validator.load_json(root, relative), {})
+
+    def test_non_normalized_json_paths_fail_with_a_registry_error(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="agent-registry-path-") as directory:
+            root = Path(directory)
+            (root / "inputs").mkdir()
+            (root / "inputs" / "registry.json").write_text("{}", encoding="utf-8")
+            for relative in (
+                "inputs//registry.json",
+                "inputs/./registry.json",
+                "inputs/registry.json/",
+                "inputs/../inputs/registry.json",
+                "/inputs/registry.json",
+                "",
+                ".",
+                "inputs/registry.json\x00",
+            ):
+                with self.subTest(relative=relative):
+                    with self.assertRaises(self.validator.HarnessError) as raised:
+                        self.validator.load_json(root, relative)
+                    self.assertEqual(raised.exception.code, "AGENT-REGISTRY-INPUT")
+                    self.assertEqual(
+                        raised.exception.detail, "agent registry validation failed"
+                    )
+
     def test_symlink_repository_root_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory(prefix="agent-registry-root-") as directory:
             link = Path(directory) / "repository-link"

@@ -728,11 +728,12 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_repository_inventory_separates_exact_archive_migration_controls(
         self,
     ) -> None:
-        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+        records, diagnostics, proof = archive_validation._repository_archive_records(  # noqa: SLF001
             ROOT
         )
 
         self.assertEqual(diagnostics, [])
+        self.assertIsNotNone(proof)
         self.assertTrue(records)
         self.assertTrue(
             all(
@@ -793,8 +794,10 @@ class ArchiveValidationTest(unittest.TestCase):
             target.write_bytes(migration_bytes)
             fixture.run("add", "--", migration_path)
 
-            records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
-                root
+            records, diagnostics, _proof = (
+                archive_validation._repository_archive_records(  # noqa: SLF001
+                    root
+                )
             )
 
             self.assertEqual(records, {})
@@ -1609,8 +1612,8 @@ class ArchiveValidationTest(unittest.TestCase):
                 target.parent.mkdir(parents=True)
                 target.write_bytes(content)
 
-                records, diagnostics = archive_validation._repository_archive_records(
-                    root
+                records, diagnostics, _proof = (
+                    archive_validation._repository_archive_records(root)
                 )  # noqa: SLF001
 
                 self.assertEqual(records, {})
@@ -1740,7 +1743,7 @@ class ArchiveValidationTest(unittest.TestCase):
         registry = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+        records, diagnostics, proof = archive_validation._repository_archive_records(  # noqa: SLF001
             ROOT
         )
         missing_member = dict(records)
@@ -1749,7 +1752,7 @@ class ArchiveValidationTest(unittest.TestCase):
         with mock.patch.object(
             archive_validation,
             "_repository_archive_records",
-            return_value=(missing_member, diagnostics),
+            return_value=(missing_member, diagnostics, proof),
         ):
             report = archive_validation.validate_repository_archive(ROOT, registry)
 
@@ -1795,6 +1798,71 @@ class ArchiveValidationTest(unittest.TestCase):
             report = archive_validation.validate_repository_archive(ROOT, registry)
 
         self.assertIn("ARCHIVE-INDEX-LINKS", self.codes(report))
+
+    def test_retired_paths_use_only_current_stage_zero_blob_identities(self) -> None:
+        path = "docs/98.archive/migrations/9000-fixture.md"
+        original = "docs/01.requirements/9000-original.md"
+        changed = "docs/01.requirements/9001-changed.md"
+        content = (
+            '---\nstatus: "sealed"\nartifact_id: "MIG-9000"\n---\n'
+            "<!-- archive-migration-ledger:v1 format=json -->\n\n"
+            '```json\n[{"legacy_path": "' + original + '"}]\n```\n'
+            "<!-- archive-historical-consumers:v1 format=json -->\n\n"
+            "```json\n[]\n```\n"
+        ).encode()
+        self.git.commit_many({path: content})
+        read = archive_validation._sealed_row_retired_paths  # noqa: SLF001
+        self.assertEqual(read(self.root), {original})
+
+        target = self.root / path
+        target.write_bytes(content.replace(original.encode(), changed.encode()))
+        untracked = target.with_name("9001-untracked.md")
+        untracked.write_bytes(target.read_bytes().replace(b"MIG-9000", b"MIG-9001"))
+        self.assertEqual(read(self.root), {original})
+
+        self.git.run("add", "--", path)
+        self.assertEqual(read(self.root), {changed})
+        self.git.run("rm", "--cached", "--", path)
+        self.assertEqual(read(self.root), set())
+
+    def test_retired_paths_reject_nonregular_stage_zero_identity(self) -> None:
+        path = "docs/98.archive/migrations/9000-fixture.md"
+        self.git.run(
+            "update-index", "--add", "--cacheinfo", f"120000,{self.blob},{path}"
+        )
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError, "RECOVERY-MIGRATION-INPUT"
+        ):
+            archive_validation._sealed_row_retired_paths(self.root)  # noqa: SLF001
+
+    def test_repository_archive_supports_isolated_package_and_direct_imports(
+        self,
+    ) -> None:
+        for directory, statement in (
+            (ROOT, "from scripts import archive_validation"),
+            (ROOT / "scripts", "import archive_validation"),
+        ):
+            with self.subTest(import_statement=statement):
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        "-E",
+                        "-c",
+                        statement
+                        + "; import sys; "
+                        + "report = archive_validation.validate_repository_archive(sys.argv[1], {}); "
+                        + "assert report.valid, report.diagnostics",
+                        str(ROOT),
+                    ],
+                    cwd=directory,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                self.assertEqual(completed.stdout, "")
+                self.assertEqual(completed.stderr, "")
 
     def test_repository_archive_git_snapshot_is_bounded_and_under_sixty_seconds(
         self,
@@ -1853,12 +1921,14 @@ class ArchiveValidationTest(unittest.TestCase):
         # durable-ref checks; proposal paths remain exact batched operands, so
         # this cost does not grow once per current document.
         budget = 242
+        git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
+                git_commands.append(tuple(command))
             return real_popen(*args, **kwargs)
 
         started = time.monotonic()
@@ -1869,6 +1939,18 @@ class ArchiveValidationTest(unittest.TestCase):
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
+        retired_form_fallbacks = {
+            "docs/99.templates/templates/specs/contracts/data-model.template.md",
+            "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
+            "docs/99.templates/templates/specs/contracts/schema.template.graphql",
+            "docs/99.templates/templates/specs/contracts/service.template.proto",
+        }
+        batched_fallbacks = [
+            command
+            for command in git_commands
+            if "log" in command and retired_form_fallbacks.issubset(command)
+        ]
+        self.assertEqual(len(batched_fallbacks), 1)
         # The power-of-two process budget covers staged authority inventory,
         # named-ref reachability, exact commit:path, and batched content reads
         # without introducing per-row subprocesses or a current count pin.
@@ -1981,8 +2063,8 @@ class ArchiveValidationTest(unittest.TestCase):
         registry = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        records, inventory_diagnostics = archive_validation._repository_archive_records(
-            ROOT
+        records, inventory_diagnostics, _proof = (
+            archive_validation._repository_archive_records(ROOT)
         )  # noqa: SLF001
         self.assertEqual(inventory_diagnostics, [])
         original_paths = {
@@ -2088,6 +2170,52 @@ class ArchiveBlobBatchTest(unittest.TestCase):
         self.assertEqual(raised.exception.code, "RECOVERY-RESOURCE-LIMIT")
         self.assertIn("bytes", str(raised.exception))
         self.assertNotIn("object count", str(raised.exception))
+
+
+class ArchiveHistoricalTargetBatchTest(unittest.TestCase):
+    """Historical target lookup must exhaust bounded output without log truncation."""
+
+    def test_lookup_reaches_an_older_requested_target_and_orders_paths(self) -> None:
+        newer = "a" * 40
+        older = "b" * 40
+        noisy_path = "docs/z-noisy.md"
+        older_path = "docs/a-older.md"
+
+        def header(commit, path):
+            return b"\0" + commit.encode() + b"\0\0\n" + path.encode() + b"\0"
+
+        # A bounded fake history keeps the regression fast while placing the
+        # second requested target beyond the former 4096-commit cutoff.
+        log = header(newer, noisy_path) * 4096 + header(older, older_path)
+        member = archive_validation._GitTreeMember("100644", "blob", "c" * 40)  # noqa: SLF001
+
+        def capture(_root, *args, stdout_limit):
+            self.assertEqual(args[0], "log")
+            self.assertFalse(any(arg.startswith("--max-count=") for arg in args))
+            self.assertGreaterEqual(stdout_limit, len(log))
+            return subprocess.CompletedProcess(("git", *args), 0, log, b"")
+
+        def tree_members(_root, _commit, *, original_paths, **_kwargs):
+            return {path: member for path in original_paths}
+
+        with (
+            mock.patch.object(archive_validation, "_git_capture_bounded", capture),
+            mock.patch.object(
+                archive_validation, "_repository_identity", return_value=40
+            ),
+            mock.patch.object(
+                archive_validation, "_batch_commit_path_members", return_value={}
+            ),
+            mock.patch.object(archive_validation, "_commit_tree_members", tree_members),
+        ):
+            found = archive_validation._reachable_historical_regular_targets(  # noqa: SLF001
+                Path("/bounded-fixture"),
+                (noisy_path, older_path),
+                proposed_commit="d" * 40,
+            )
+
+        self.assertEqual(tuple(found), (older_path, noisy_path))
+        self.assertEqual(found, {older_path: member, noisy_path: member})
 
 
 class ArchiveTransitionLinkTest(unittest.TestCase):
@@ -2276,46 +2404,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(vacated, frozenset({legacy}))
         self.assertEqual(len(reduced), len(aliases) - 1)
 
-    def test_transition_manifest_admits_a_vacated_mig0002_endpoint(self) -> None:
-        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
-            self.context
-        )
-        _, target = sorted(move_targets.items())[0]
-        # Several sealed moves can converge on one current path: a package that
-        # merged its plan and tasks leaves two MIG-0002 legacies pointing at the
-        # same file. Vacating that file vacates every move that reaches it.
-        expected_dropped = {
-            source for source, value in move_targets.items() if value == target
-        }
-        self.assertGreater(len(expected_dropped), 0)
-
-        context = dataclasses.replace(
-            self.context,
-            tracked_regular_paths=self.context.tracked_regular_paths - {target},
-        )
-        # The 82 move-current entries still have to be counted inside this call.
-        _, reduced, _ = self.validator._document_taxonomy_transition_manifest(context)
-
-        self.assertEqual(set(move_targets) - set(reduced), expected_dropped)
-
-    def test_transition_manifest_rejects_a_target_the_ledger_never_sealed(
-        self,
-    ) -> None:
-        """The vacated-endpoint admission is a proof, not a blanket waiver."""
-
-        with (
-            mock.patch.object(
-                self.validator,
-                "_work109_four_digit_aliases",
-                return_value=({}, frozenset()),
-            ),
-            self.assertRaisesRegex(
-                self.validator.ConfigurationError,
-                "lacks exact MIG-0002 evidence",
-            ),
-        ):
-            self.validator._document_taxonomy_transition_manifest(self.context)
-
     def _mutated_work109_context(self, mutate) -> object:
         path = self.validator.WORK109_MIGRATION_PATH
         text = self.context.texts[path]
@@ -2391,13 +2479,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                     self.validator._work054_wp003_owner_merges(context)
 
     def _work054_edges(self, context: object) -> dict[object, PurePosixPath]:
-        _aliases, move_targets, _replacements = (
-            self.validator._document_taxonomy_transition_manifest(context)
-        )
-        return self.validator._reviewed_work054_historical_owner_edges(
-            context,
-            move_targets,
-        )
+        return self.validator._reviewed_work054_historical_owner_edges(context)
 
     def test_terminal_route_does_not_project_an_active_stale_owner_edge(self) -> None:
         source = PurePosixPath(
@@ -2559,35 +2641,38 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
         self.assertNotIn(edge, projected)
 
-    def test_terminal_history_composes_taxonomy_mig0002_and_mig0004_edges(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/90.references/audits/2026-07-02-whia/"
-            "harness-loop-implementation-audit.md"
-        )
-        target = PurePosixPath(
-            "docs/04.execution/tasks/"
-            "2026-07-02-workspace-harness-implementation-audit-pack.md"
-        )
-        # The package was retained after it completed, so the composed edge ends
-        # at the retained copy rather than at the Stage 03 path it vacated.
-        expected = PurePosixPath(
-            "docs/98.archive/completed/03.specs/"
-            "0010-workspace-harness-implementation-audit-pack/plan.md"
-        )
-        _move_blobs, move_targets, _archive_sources = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
+    def test_current_stage04_reference_is_not_a_historical_alias(self) -> None:
+        """A current holder cannot resolve through the retired Stage04 bridge."""
 
-        projected = self.validator._reviewed_work054_historical_owner_edges(
+        source = PurePosixPath("docs/03.specs/9999-fixture/spec.md")
+        raw = self.validator.posixpath.relpath(self.moved_source, source.parent)
+        fixture_profile = next(iter(self.context.profiles.values()))
+        context = dataclasses.replace(
             self.context,
-            move_targets,
+            paths=(*self.context.paths, source),
+            profiles={**self.context.profiles, source: fixture_profile},
+            texts={**self.context.texts, source: f"[retired]({raw})\n"},
+            metadata={**self.context.metadata, source: {"status": "active"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
         )
 
-        self.assertEqual(
-            projected[self.validator.ArchiveTransitionEdge(source, target)],
-            expected,
+        with (
+            mock.patch.object(
+                self.validator,
+                "_reviewed_work054_historical_owner_edges",
+                return_value={},
+            ),
+            mock.patch.object(
+                self.validator, "_migrated_directory_link", return_value=False
+            ),
+        ):
+            diagnostics = self.validator._link_diagnostics(context)
+
+        self.assertTrue(
+            any(
+                item.rule_id == "LINK-BROKEN" and item.path == source
+                for item in diagnostics
+            )
         )
 
     def test_work054_historical_projection_rejects_undeclared_retired_edge(

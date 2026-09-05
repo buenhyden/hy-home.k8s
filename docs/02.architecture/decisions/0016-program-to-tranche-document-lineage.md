@@ -14,6 +14,15 @@ superseded_by: "ADR-0031"
 
 ## Overview
 
+### Historical source citations after authority transfer
+
+References marked Historical below identify the exact original source in a sealed
+superseded record; they do not change which Requirement or AD this document originally
+served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+status, decision supersession, package location, or execution completion claim.
+
 This decision defines numeric and semantic lineage for one program PRD that is
 implemented through multiple dependent Specs.
 
@@ -78,8 +87,8 @@ program PRDs would weaken either family uniqueness or product ownership.
 
 ## Traceability
 
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../descriptions/0008-workspace-document-assurance-operating-model.md)
+- **PRD**: [Historical Workspace Document Assurance Modernization](../../98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md)
+- **ARD**: [Historical Workspace Document Assurance Operating Model](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Related ADR**: [Declarative Document Contract Registry](./0015-declarative-document-contract-registry.md)
 - **Successor decision**: [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
   supersedes the program-instance roster and validation-routing ownership in

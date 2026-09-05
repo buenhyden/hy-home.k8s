@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-08-29"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0062"
 ---
@@ -456,6 +456,54 @@ the existing allowlist, tests, and registry state. That route must retain this
 administrative disposition in Result/Evidence, keep original criteria non-PASS
 where evidence is absent, and introduces no status enum, schema, or new
 registration. It is administrative closeout, not reconstructed lifecycle work.
+
+### Approved 2026-09-05 Follow-On External Observation Cycle Addendum
+
+A direct user decision on 2026-09-05 authorised one further observation cycle
+over the same closed thirty-six-row corpus. This addendum records that
+authorisation and its exact boundaries. It adds a cycle; it does not reopen,
+replay, or retroactively alter the 2026-08-20 cycle, the original
+`VAL-WRFR-*` results, or the approved 2026-08-29 administrative closeout. Every
+statement in those records remains true for its own date, and nothing here
+converts an earlier non-`PASS` into a `PASS`.
+
+The recorded implementation for this bounded cycle is
+[TSK-0011 external observation cycle](tasks/tsk-0011-external-observation-cycle.md).
+
+The addendum narrows three contracts for this cycle only, and leaves every
+other contract in force verbatim:
+
+| Base contract | Value for the 2026-09-05 cycle |
+| --- | --- |
+| C-WRFR-004 — current facts carry a current observation | Current facts are checked on 2026-09-05. The 2026-08-20 observation date is unchanged for the cycle that used it. |
+| C-WRFR-007 — append into the existing owners | Findings are appended under `### 2026-09-05 external-source reverification` in the existing topical owners, and under the corresponding dated headings in the ledger, scope index, and pack README. Existing body text, dates, and identifiers remain byte-preserved. |
+| C-WRFR-009 — source and claim continuity | New sources continue at `SRC-WERPC-123` without gap, reservation, or renumbering. New claims use the block `CLM-WERPC-016-NN`, starting at `01` and contiguous within that block. |
+
+C-WRFR-002 is deliberately not met by this cycle. The requester directed that
+workspace re-observation be excluded, so each owner row records an external
+observation and an explicit `not observed in this cycle` workspace field. Every
+workspace selector in the pack retains its previous observation date. This is a
+bounded, recorded reduction in evidence depth, not a silent omission: no row of
+this cycle may be cited as evidence that the corpus is currently reconciled
+against the repository tree, and restoring dual observation requires a separate
+workspace-observation cycle.
+
+C-WRFR-003, C-WRFR-005, C-WRFR-006, C-WRFR-008, and C-WRFR-010 applied without
+modification. Research workers were read-only evidence producers, allocated no
+identifiers, and wrote no repository file; the implementation task was the sole
+allocator and writer. No remote GitHub query, provider run, live-cluster
+action, secret operation, or authenticated call was performed. Three link-rot
+candidates and one redirect contradiction raised during collection were
+rejected or downgraded after direct verification contradicted or failed to
+support them, and one source is recorded `unreachable` rather than `unchanged`.
+
+| Acceptance ID | Cycle acceptance |
+| --- | --- |
+| FOLLOWON-0062-001 | Every one of the thirty-six owners receives exactly one external result, recorded as changed, unchanged, unreachable, or superseded. |
+| FOLLOWON-0062-002 | Every owner row states `not observed in this cycle` for its workspace field, and no workspace observation date is refreshed. |
+| FOLLOWON-0062-003 | New identifiers are contiguous from `SRC-WERPC-123` and `CLM-WERPC-016-01`, with no duplicate, gap, or renumbering of existing identifiers. |
+| FOLLOWON-0062-004 | Superseded prior statements are recorded additively with their original dates preserved; no prior text is destructively rewritten. |
+| FOLLOWON-0062-005 | Repository-static validation is run on the resulting tree and its results are recorded exactly, including any failure that predates this cycle. |
 
 ## Traceability
 

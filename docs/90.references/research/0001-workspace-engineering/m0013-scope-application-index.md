@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0013"
 ---
@@ -303,6 +303,38 @@ their named reopen conditions remain unchanged. No new research directory,
 duplicate report, one-time artifact, transitional topology, or legacy checker
 expansion was created. The pack README and frozen SDLC/documentation owner
 bodies remain byte-unmodified for the queued Spec 0054 Stage 90 cutover.
+
+### 2026-09-05 external-only scope revalidation
+
+All thirty-six requirement owners were re-observed against their external
+evidence layer only. The approved 2026-09-05 follow-on cycle deliberately
+excluded workspace re-observation at the requester's direction, so this
+projection records one external result per scope and an explicit
+`not observed in this cycle` workspace result throughout. The source ledger now
+extends through `SRC-WERPC-154` and `CLM-WERPC-016-18`. No requirement status,
+evidence class, document route, provider adapter, workflow, manifest, model,
+memory policy, or live state is promoted.
+
+| Scope | Requests re-observed | 2026-09-05 external outcome | Workspace outcome | Claim routing | Closed boundary / reopen condition |
+| --- | --- | --- | --- | --- | --- |
+| harness and loop | REQ-WERPC-001, REQ-WERPC-002 | changed coverage; official harness and loop definitions now exist | not observed in this cycle | `CLM-WERPC-016-01` | External vocabulary does not establish local harness or loop execution; reopen with `provider-runtime` evidence. |
+| provider surfaces and common environment | REQ-WERPC-003, REQ-WERPC-004, REQ-WERPC-005, REQ-WERPC-006 | changed; permission-mode surface moved and grew, hook surfaces widened, cross-provider import bridge documented | not observed in this cycle | `CLM-WERPC-016-06`, `CLM-WERPC-016-07`, `CLM-WERPC-016-08` | Documented modes, events, and import commands do not prove discovery, delivery, authentication, or enforcement; reopen with `provider-runtime` evidence. |
+| spec-driven SDLC and lifecycle documents | REQ-WERPC-007, REQ-WERPC-010–019, REQ-WERPC-034–036 | changed scope upstream; standards content unchanged with a changed catalogue access path | not observed in this cycle | `CLM-WERPC-016-10`, `CLM-WERPC-016-11` | Catalogue metadata supports edition, date, stage, and public scope only; clause-level questions stay `DEFER` on `paid-standard-text`. |
+| documentation and knowledge routing | REQ-WERPC-020, REQ-WERPC-021 | unchanged content; documentation-site reachability improved and the current protocol revision holds | not observed in this cycle | `CLM-WERPC-016-12` | Reachability is per-observation and may regress; retrieval, publication, and reader outcomes stay `DEFER`. |
+| Kubernetes and infrastructure | REQ-WERPC-008, REQ-WERPC-009 | changed currency; a new orchestrator minor released and node and agent drift widened | not observed in this cycle | `CLM-WERPC-016-13` | Version currency is a review trigger only; compatibility, reconciliation, health, and rollback stay `DEFER` on `live-cluster`. |
+| security and approval | REQ-WERPC-025 | unchanged; one operator release and one version-gated authentication field captured | not observed in this cycle | `CLM-WERPC-016-14` | No secret was read and no cluster contacted; effective authorisation and enforcement stay `DEFER`. |
+| CI/CD, GitHub Actions, and QA | REQ-WERPC-022, REQ-WERPC-023, REQ-WERPC-024 | unchanged contracts with additive capability; one retained citation confirmed dead and repointed | not observed in this cycle | `CLM-WERPC-016-15`, `CLM-WERPC-016-16` | Platform documentation proves the platform contract only; hosted results stay `DEFER` on `hosted-CI`. |
+| verification and validation | REQ-WERPC-033 | unchanged; automated review documented as advisory and no official test-generation hook found | not observed in this cycle | `CLM-WERPC-016-17` | An advisory review is not a verification lane; representative intended-use evidence stays `DEFER` on `human-judgement`. |
+| AI agents and agency-agents | REQ-WERPC-026, REQ-WERPC-027 | changed; upstream head advanced beyond both retained pins and one external guide was unreachable | not observed in this cycle | `CLM-WERPC-016-02`, `CLM-WERPC-016-03` | Upstream currency authorises no local role, adapter, or projection change; the retained pin disagreement is referred, not resolved. |
+| model routing and memory tiers | REQ-WERPC-028, REQ-WERPC-029–032 | changed; subagent model precedence reordered, model disagreement widened to three pages, memory documentation deepened | not observed in this cycle | `CLM-WERPC-016-04`, `CLM-WERPC-016-05`, `CLM-WERPC-016-09` | Public documentation does not prove parser resolution, entitlement, fitness, retention, or erasure; reopen with `provider-runtime` evidence. |
+| out-of-ledger observation | none — no owner row exists | new; platform guidance on README purpose located and read | not observed in this cycle | `CLM-WERPC-016-18` | Recorded outside the closed corpus; creates no owner row, document family, or local contract in this cycle. |
+
+This projection is deliberately asymmetric. Because workspace observation was
+excluded, no row here satisfies the dual-observation expectation that earlier
+full-corpus cycles met, and every workspace selector in the pack retains its
+previous observation date. Any later claim that the corpus is currently
+reconciled against the repository must come from a separate
+workspace-observation cycle, not from this record.
 
 ## Sources
 

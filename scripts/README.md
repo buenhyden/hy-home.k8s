@@ -67,7 +67,6 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `document_authority.py`, `validate-links-and-owners.py` | current owner and cross-document relation semantics |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry-classified lifecycle and staged-index transitions |
 | `archive_recovery.py`, `archive_validation.py`, `archive_cutover.py`, `archive_cutover_manifest.py` | bounded historical recovery and sealed Archive checks |
-| `migrate-document-work-units.py`, `document-taxonomy-migration.json` | explicit work-unit migration mapping and execution |
 | `json_schema_validation.py` | offline JSON Schema loading shared by production validators |
 
 ### Agent governance owners

@@ -64,7 +64,16 @@
     "replacement": {
       "oneOf": [
         {
-          "$ref": "#/$defs/repoRelativePath"
+          "allOf": [
+            {
+              "$ref": "#/$defs/repoRelativePath"
+            },
+            {
+              "not": {
+                "const": "none"
+              }
+            }
+          ]
         },
         {
           "const": "none"
@@ -107,7 +116,7 @@
     },
     "terminalArtifactId": {
       "type": "string",
-      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|MIG)-[0-9]{4}|DATA-MODEL-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?|tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4})$"
+      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|MIG)-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?|tomb-(?:REQ|PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4})$"
     },
     "requirementMemberId": {
       "type": "string",

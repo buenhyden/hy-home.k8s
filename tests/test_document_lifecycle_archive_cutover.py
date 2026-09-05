@@ -1670,21 +1670,103 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
 class TerminalLifecycleDomainTests(unittest.TestCase):
     """WP-004C lifecycle-domain-only model regressions."""
 
+    def test_archive_no_successor_representation_respects_document_generation(
+        self,
+    ) -> None:
+        registry = load_registry(ROOT)
+        path = PurePosixPath("docs/98.archive/03.specs/0901-fixture/spec.md")
+
+        def archive_text(*, current: bool, replacement: str) -> str:
+            version = 'version: "1.0.0"\n' if current else ""
+            layer = 'layer: "archive"\n' if current else ""
+            profile_id = "archive/tombstone" if current else "content/archive"
+            return (
+                "---\n"
+                'title: "Archive fixture"\n'
+                f"{version}"
+                f'type: "{profile_id}"\n'
+                'status: "archived"\n'
+                'owner: "platform"\n'
+                'updated: "2026-09-05"\n'
+                f"{layer}"
+                'original_type: "sdlc/spec"\n'
+                'original_path: "docs/03.specs/0901-fixture/spec.md"\n'
+                'archived_on: "2026-09-05"\n'
+                'archive_reason: "retired"\n'
+                f"replacement: {replacement}\n"
+                'source_commit: "0000000000000000000000000000000000000000"\n'
+                'source_blob: "1111111111111111111111111111111111111111"\n'
+                'content_sha256: "2222222222222222222222222222222222222222222222222222222222222222"\n'
+                "---\n"
+            )
+
+        current = lifecycle.document_from_text(
+            registry, path, archive_text(current=True, replacement='"none"')
+        )
+        self.assertIsNone(current.state_issue)
+        self.assertIsNone(current.replacement)
+
+        current_null = lifecycle.document_from_text(
+            registry, path, archive_text(current=True, replacement="null")
+        )
+        self.assertIn("replacement", current_null.state_issue or "")
+
+        prior = lifecycle.document_from_text(
+            registry,
+            path,
+            archive_text(current=False, replacement="null"),
+            retired_types=lifecycle.RETIRED_DOCUMENT_TYPES,
+        )
+        self.assertIsNone(prior.state_issue)
+        self.assertIsNone(prior.replacement)
+
+        prior_none = lifecycle.document_from_text(
+            registry,
+            path,
+            archive_text(current=False, replacement='"none"'),
+            retired_types=lifecycle.RETIRED_DOCUMENT_TYPES,
+        )
+        self.assertIn("replacement", prior_none.state_issue or "")
+
+        current_without_generation = (
+            archive_text(current=True, replacement="null")
+            .replace('version: "1.0.0"\n', "")
+            .replace('layer: "archive"\n', "")
+        )
+        current_downgrade = lifecycle.document_from_text(
+            registry, path, current_without_generation
+        )
+        self.assertIn("generation", current_downgrade.state_issue or "")
+
+        prior_without_replacement = archive_text(
+            current=False, replacement="null"
+        ).replace("replacement: null\n", "")
+        prior_missing = lifecycle.document_from_text(
+            registry,
+            path,
+            prior_without_replacement,
+            retired_types=lifecycle.RETIRED_DOCUMENT_TYPES,
+        )
+        self.assertIn("replacement", prior_missing.state_issue or "")
+
+        hybrid = archive_text(current=True, replacement="null").replace(
+            'type: "archive/tombstone"', 'type: "content/archive"'
+        )
+        hybrid_generation = lifecycle.document_from_text(
+            registry,
+            path,
+            hybrid,
+            retired_types=lifecycle.RETIRED_DOCUMENT_TYPES,
+        )
+        self.assertIn("generation", hybrid_generation.state_issue or "")
+
     def test_specification_relationship_group_tracks_terminal_registry_profiles(
         self,
     ) -> None:
         registry = load_registry(ROOT)
         self.assertEqual(
             lifecycle.specification_relationship_profiles(registry),
-            frozenset(
-                {
-                    "sdlc/spec",
-                    "sdlc/data-model",
-                    "common/native-contract-openapi",
-                    "common/native-contract-graphql",
-                    "common/native-contract-protobuf",
-                }
-            ),
+            frozenset({"sdlc/spec"}),
         )
         self.assertNotIn(
             "sdlc/agent-design",

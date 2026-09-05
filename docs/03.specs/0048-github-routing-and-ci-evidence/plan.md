@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0048-PLAN-0001"
 ---
@@ -17,6 +17,26 @@ artifact_id: "SPEC-0048-PLAN-0001"
 > preserve read-only remote boundaries.
 
 ## Overview
+
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+### Current Execution Disposition (2026-09-05)
+
+This Plan remains `draft`; all package Tasks remain `queued`. Resume only
+after Spec 0047's evidenced package closure through the legal package-local
+`draft → active` route described in the
+[Spec disposition](spec.md#current-execution-disposition-2026-09-05).
+Accepted ADR-0031/0033 replace ADR-0021 and the public program-instance roster
+as current execution authority. The older work breakdown is proposal input;
+re-observe its paths, commands, providers, and current owners before activating
+implementation. Do not restore retired progress, package routers, instance
+rows, or old decision states. New execution evidence belongs in package Tasks.
 
 **Goal:** Add one surface-ID-based GitHub projection contract and deterministic
 parity validator, align native labeler/CODEOWNERS/hub claims, and preserve
@@ -72,9 +92,9 @@ evidence.
 
 - Parent [Spec 048](spec.md)
 - Parent [Implementation Plan](plan.md)
-- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
-  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
+  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 047 target disposition and successor matrix
 - Current `scripts/validation/registry.json`, `.github/labeler.yml`,
   `.github/CODEOWNERS`, `.github/repository-surface.md`, workflow YAML, repository
@@ -112,7 +132,7 @@ evidence.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| GRCE-000 | Activate reciprocal Spec 048 execution path | Spec 047 closure | Spec 048 is first unfinished relation | Spec/Plan/Task/index/progress/program row activate atomically |
+| GRCE-000 | Activate reciprocal Spec 048 execution path | Spec 047 closure | Spec 048 is first unfinished relation | Spec/Plan activate, activation Task starts, and Stage 03 index agrees under ADR-0031/0033 |
 | GRCE-001 | Define RED contract and native-projection tests | GRCE-000 | Current drift captured | Focused tests reject every named schema, route, labeler, CODEOWNERS, README, and remote boundary defect |
 | GRCE-002 | Implement contract, schema, validator, and self-test | GRCE-001 | Expected RED failures observed | Closed contract references surface IDs only and focused self-test/production pass |
 | GRCE-003 | Align labeler, CODEOWNERS, and GitHub hub | GRCE-002 | Validator reports exact native drift | All mapped agent/provider surfaces have intended label and explicit owner; hub claims match YAML |
@@ -139,7 +159,7 @@ evidence.
 - `scripts/validate-repo-quality-gates.sh`
 - `scripts/README.md`
 - `tests/README.md`
-- reciprocal Spec/Plan/Task/index/progress/program-lineage surfaces
+- reciprocal package-local Spec/Plan/Task and current index surfaces
 
 **Implement these exact interfaces:**
 
@@ -163,28 +183,18 @@ The implementation may reuse `normalize_path`, `match_route`, and path
 classification semantics from `validate-affected-surfaces.py`, but must not
 import CLI side effects or duplicate route data.
 
-### Task 1: GRCE-000 — activate the reciprocal execution path
+### Task 1: GRCE-000 — activate the package-local execution path
 
-- [ ] Confirm Spec 047 closure, clean worktree, and first-unfinished relation.
-
-  ```bash
-  rtk git status --short --branch
-  rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  ```
-
-- [ ] Set Spec 048, this Plan, its Task, and the Spec 048 program row to active;
-  update Stage 03/04 indexes and progress in the same diff.
-
-- [ ] Run strict documents and commit activation.
-
-  ```bash
-  rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-  rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/registry.json
-  rtk git commit -m "docs: activate github routing evidence plan"
-  ```
+- [ ] Verify Spec 0047 and its package-local Plan/Tasks are terminal with
+  required validation, review, and handoff evidence; re-observe the clean
+  approved checkout and current canonical owners.
+- [ ] Move only this Spec and Plan `draft → active`, and its activation Task
+  `queued → in-progress`, atomically with the Stage 03 index.
+- [ ] Run strict Registry, Markdown, links/owners, staged lifecycle, affected
+  and staged lanes, plain pre-commit, and diff checks over the exact activation.
+- [ ] Record evidence in the activation Task and commit the bounded change.
+  No ADR transition, public execution roster, or implementation is part of
+  activation. This Task remains queued until its predecessor condition holds.
 
 ### Task 2: GRCE-001 — define focused RED behavior
 
@@ -317,7 +327,7 @@ import CLI side effects or duplicate route data.
   rtk git diff --cached --check
   ```
 
-- [ ] Set Spec 048, Plan, Task, and program row to done; update indexes and
+- [ ] Close Spec 048, Plan, and Tasks through their legal lifecycle edges; update indexes and
   progress so Spec 049 becomes first unfinished, then commit closure.
 
   ```bash
@@ -399,15 +409,15 @@ commands and dated historical metadata are not current PASS evidence.
   all-files, diff, and independent reviews pass.
 - Remote observations are metadata-only, timestamped, SHA-bound, and no
   hosted-current, enforcement, provider, remote, or live result is fabricated.
-- Spec 049 is the first unfinished program relation after closure.
+- Spec 049 becomes the next eligible package only after Spec 048 closure.
 
 ## Traceability
 
 - **Spec**: [GitHub Routing and CI Evidence](spec.md)
 - **Task**: [GitHub Routing and CI Evidence Task](plan.md)
-- **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 047 Current Surface and Stash Reconciliation in the
   PRD-0007 program lineage
 - **Successor**: Spec 049 Platform Validation and Security Evidence in the

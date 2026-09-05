@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-05"
 ---
 
 # Quality and Evidence Policy
@@ -57,12 +57,10 @@ metadata; static parity never proves discovery, model resolution, or execution.
 ### Validation runner envelope
 
 Every repository-static child selected by the validation-surface contract runs
-through `scripts/run-validation-lane.py` with one reviewed finite envelope:
-
-- 1,200 seconds maximum execution time per child;
-- 4 MiB maximum retained stdout and 1 MiB maximum retained stderr per child;
-- 2 seconds total cleanup time under one monotonic deadline; and
-- 64 KiB maximum read chunks with concurrent stdout/stderr draining.
+through the [validation runner](../../../scripts/run-validation-lane.py), which
+owns the reviewed limit constants. The envelope bounds execution time and
+retained stdout and stderr independently, uses one monotonic cleanup deadline,
+and drains both streams concurrently in bounded read chunks.
 
 The runner starts each child in its own session/process group. Timeout, either
 pipe overflow, pipe failure, or pipes held by descendants after the direct

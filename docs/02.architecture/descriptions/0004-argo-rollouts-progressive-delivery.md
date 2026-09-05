@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-05"
 layer: "architecture"
 artifact_id: "AD-0004"
 ---
@@ -55,7 +55,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 ## System Overview & Context
 
 - Platform root app includes `gitops/apps/root/platform-rollouts-app.yaml`.
-- The Rollouts chart source is `https://argoproj.github.io/argo-helm`, chart `argo-rollouts`, target revision `2.40.9`.
+- The chart source and exact revision are owned by the [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml); this AD does not maintain a second version pin.
 - The controller and dashboard run in `argo-rollouts`.
 - Dashboard traffic uses ingress-nginx TLS inside the cluster and an external Traefik dynamic config file for browser access.
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
@@ -94,7 +94,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 - **Model/Provider Strategy**: Agents may update docs and manifests only through repo-backed GitOps flow.
 - **Tooling Boundary**: Direct `kubectl apply` or live promotion is not allowed without explicit human approval.
-- **Memory & Context Strategy**: Reusable backfill lessons belong in `docs/00.agent-governance/memory/progress.md`.
+- **Memory & Context Strategy**: Durable 변경 증거는 해당 package-local Task에 남기고 공통 정책은 Stage 00을 참조한다.
 - **Guardrail Boundary**: Agents must distinguish Rollouts chart `notifications.enabled: false` from ArgoCD Notifications.
 - **Latency / Cost Budget**: Not applicable.
 
@@ -117,5 +117,5 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 - **PRD**: [`../../01.requirements/0001-argo-rollouts-progressive-delivery.md`](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
-- **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+- **Plan**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
 - **ADR**: [`../decisions/0011-argo-rollouts-progressive-delivery.md`](../decisions/0011-argo-rollouts-progressive-delivery.md)

@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0004"
 ---
@@ -731,6 +731,84 @@ allocation slice adds no source and assigns only
 - **Owner / safe follow-up / trigger:** product/QA/technical lead and Stage 99
   owners. Reopen on profile/template/body-contract/source change or a named
   instance effectiveness review.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the spec-driven, SDLC, and document-family owners
+under the approved 2026-09-05 follow-on cycle. Workspace re-observation was
+excluded by direct user decision, so no local route, profile, template, or
+lifecycle claim is refreshed here. New sources are `SRC-WERPC-139` and
+`SRC-WERPC-140`; the cycle claims are `CLM-WERPC-016-10` and `CLM-WERPC-016-11`.
+
+#### REQ-WERPC-007, REQ-WERPC-034, REQ-WERPC-035, REQ-WERPC-036 spec-driven re-observation
+
+- **Sources and external result:** `changed` by scope. The upstream
+  specification-driven project reached a 1.0 release line, with releases dated
+  2026-08-21 through 2026-09-02, and now documents a six-phase flow together
+  with additional command families for project principles, convergence, defect
+  handling, and assessment
+  ([SRC-WERPC-139](m0012-source-coverage.md#2026-09-05-external-source-reverification)).
+  The ordering claim already recorded here, that specification and refinement
+  precede planning and task execution, is reconfirmed and unchanged. The
+  upstream README presents two different command-naming conventions in the same
+  document; that inconsistency is upstream and is recorded rather than
+  normalised.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [spec-driven baseline](#spec-driven-development-baseline) and the Spec, Task,
+  and Plan rows of the
+  [document-family matrix](#document-family-contract-matrix) retain their earlier
+  repository-static observation dates.
+- **As-Is, gap, and target:** all four rows keep their existing statuses. The
+  delta is a completeness gap rather than a factual error: the recorded
+  description of the upstream model is true but no longer covers its full
+  surface. No local phase, command, route, or schema changes as a result.
+- **Evidence boundary:** blocking class is `none` for the external fact, but the
+  external project proves nothing about this repository's lifecycle. Upstream
+  growth is a review trigger, not an adoption decision.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  03 and Stage 99 contract owners. The safe follow-up is a bounded mapping note
+  recording which upstream phases have a local counterpart and which
+  deliberately do not. Refresh when a further upstream release lands, or when
+  the local document contract changes.
+
+#### REQ-WERPC-010 through REQ-WERPC-019 lifecycle and document-family re-observation
+
+- **Sources and external result:** `changed` for access path, `unchanged` for
+  content. Every direct standards-catalogue path previously used by this corpus
+  returned HTTP 403 on 2026-09-05, including the rendering mirror used earlier.
+  An alternate public catalogue host served the equivalent records for the same
+  standard numbers and was registered as
+  [SRC-WERPC-140](m0012-source-coverage.md#2026-09-05-external-source-reverification):
+  the software life-cycle standard at its second edition published 2026-04
+  superseding the first edition, the life-cycle information-items standard at its
+  fourth edition now staged for revision with a committee draft in progress, and
+  the architecture-description standard at its second edition published
+  2022-11-07. The requirements-engineering standard remains at its 2018 edition
+  and its successor remains unpublished. The secure-development framework, the
+  architecture-decision process guidance, the incident, postmortem, release, and
+  toil guidance, and the versioning specification were all re-observed as
+  `unchanged`, as were the previously registered architecture-notation and
+  decision-template catalogues.
+- **Workspace selector and result:** `not observed in this cycle`. Every row of
+  the [document-family matrix](#document-family-contract-matrix) retains its
+  earlier repository-static observation date.
+- **As-Is, gap, and target:** no status changes across the ten rows. The
+  standards evidence is metadata only and continues to support edition, date,
+  stage, and public scope; it supports no clause-level claim because the paid
+  normative text was not read.
+- **Evidence boundary:** blocking class is `paid-standard-text` for clause-level
+  questions and `human-judgement` for adequacy questions; both remain `DEFER`.
+  Two public indexes disagree on the pre-publication stage of one successor
+  draft, and the primary page that would settle it returned HTTP 403; that
+  discrepancy is recorded as unresolved rather than decided from search
+  snippets. The existing position that no successor is published holds under
+  either label.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  99 profile owner. The safe follow-up is to record the working catalogue access
+  path so a later cycle does not mistake a blocked host for a withdrawn
+  standard. Refresh when a successor edition publishes, when the previous access
+  path is restored, or when a readable primary source settles the contested
+  stage label.
 
 ## Related Documents
 

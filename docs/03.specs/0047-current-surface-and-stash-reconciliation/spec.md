@@ -2,9 +2,9 @@
 title: "Current Surface and Stash Reconciliation Technical Specification"
 version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-08-07"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0047"
 ---
@@ -13,6 +13,22 @@ artifact_id: "SPEC-0047"
 
 ## Overview
 
+### Current authority transfer
+
+The original REQ-0007 / AD-0010 program lineage remains historical context.
+Current platform requirements and architecture are [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+
+| Original member | Current semantic member |
+| --- | --- |
+| REQ-0007-FR-0001 | REQ-0004-FR-0005 |
+| REQ-0007-FR-0002 | REQ-0004-FR-0006 |
+| REQ-0007-FR-0009 | REQ-0003-FR-0007 |
+| REQ-0007-FR-0010 | REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 |
+| REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
+
 This specification establishes the first tranche of the PRD-0007 repository
 delivery and platform assurance program. It re-observes every approved target
 against current `main`, assigns one canonical owner and disposition, activates
@@ -20,8 +36,12 @@ the ordered program lineage after written-plan approval, and reconciles saved
 stash object `6370311e...` without applying an obsolete snapshot over current
 contracts.
 
-Spec 047 is active as the program's only unfinished execution tranche; its
-successors remain draft and blocked from active execution.
+Spec 0047 resumes after Spec 0052's semantic closure under accepted ADR-0031
+and ADR-0033. Its package-local activation Task is complete; implementation
+Tasks CSASR-001 through CSASR-005 remain queued. Specs 0048 through 0051 remain
+draft and resume sequentially only after their predecessor closes. The saved
+stash object remains reachable and still needs tracked-hunk reconciliation;
+activation does not claim that work complete.
 
 Spec 047 is an evidence and ownership foundation. It does not implement the
 GitHub routing, platform validation, or IaC validation gaps assigned to Specs
@@ -34,8 +54,8 @@ those tranches.
   disposition matrix; duplicate/conflict proof; protected-surface boundary;
   program activation; stash hunk classification; generated-object refresh;
   and successor handoff.
-- **Consumes**: the Current 2026-07-11 audit pack, PRD-0007, AD-0010,
-  ADR-0021, current Git indexes, `validation-surfaces.json`, Stage 99 profiles,
+- **Consumes**: the Current 2026-07-11 audit pack, REQ-0004/REQ-0003, AD-0007/AD-0006,
+  accepted ADR-0031, current Git indexes, `scripts/validation/registry.json`, Stage 99 profiles,
   native control files, validators, tests, and read-only GitHub metadata.
 - **Does not own**: labeler/CODEOWNERS projection implementation, workflow
   routing, Kustomize/schema/Traefik implementation, Terraform/Bicep validation,
@@ -49,13 +69,16 @@ those tranches.
 
 ### Program activation contract
 
-1. PRD-0007, AD-0010, ADR-0021, and Specs 047-051 must exist as reviewed draft
-   documents before Plan authoring begins.
-2. After human review, Spec 047 alone may enroll PRD `007`, AD `0010`, and
-   ordered Specs `047` through `051` in the registry program lineage.
-3. Exactly the first unfinished tranche may have a reciprocal Plan/Task pair.
-   Later tranche execution records remain absent until their predecessor is
-   done.
+1. The approved package-local Spec, Plan, and Task records own execution under
+   accepted ADR-0031 and the v9 document contract of ADR-0033. ADR-0021 is
+   superseded historical context; no public program-instance roster is added.
+2. After Spec 0052 closes, Spec 0047 and its Plan follow `draft → active`,
+   and the existing activation Task follows `in-progress → done` in the same
+   validated change as the Stage 03 index.
+3. Existing successor Plans remain draft and their Tasks queued. Spec 0048
+   may follow its package-local `draft → active` route only after Spec 0047
+   and its Plan and Tasks close with their required evidence. The same rule
+   applies sequentially through Spec 0051.
 4. Repository-static completion never promotes hosted, provider-runtime,
    credential-bearing, or live evidence.
 
@@ -71,9 +94,8 @@ disposition:
 - `defer`: the gap requires unavailable authority or evidence and includes an
   owner plus retry trigger.
 
-No path is edited merely to satisfy coverage. README frontmatter remains absent
-where the selected profile requires a frontmatter-free implementation or
-GitHub-native form.
+No path is edited merely to satisfy coverage. README metadata follows its
+selected v9 profile under ADR-0033.
 
 ### Stash reconciliation contract
 
@@ -143,7 +165,7 @@ secret-bearing payload.
 - **Audit interface**: immutable observation rows plus a current dated
   disposition in the Task; past findings are not rewritten as current fact.
 - **Document interface**: selected profiles, Stage indexes, reciprocal
-  PRD/AD/ADR/Spec links, and program-lineage state.
+  requirement/architecture links, and package-local Spec/Plan/Task state.
 - **Successor interface**: a closed list of Spec 048-051 owned changes and
   evidence-backed no-change rows.
 - **Scratch interface**: ignored, non-secret `_workspace` ledger with no
@@ -202,8 +224,9 @@ or `git stash drop` in this tranche.
   disposition and owner, with no uncovered or duplicated current-purpose row.
 - **VAL-CSASR-002**: Every Current audit finding is classified as residual,
   resolved, false positive, or external DEFER against current evidence.
-- **VAL-CSASR-003**: Program lineage contains PRD-0007, AD-0010, ordered Specs
-  047-051, one first-tranche execution component, and no later Plan/Task.
+- **VAL-CSASR-003**: Package-local reciprocal Spec/Plan/Task evidence proves
+  Spec 0047 activation, sequential predecessor closure for Specs 0048–0051,
+  and no premature successor execution or public program-instance roster.
 - **VAL-CSASR-004**: Every stash hunk has one durable category and adopted or
   non-adopted rationale; no wholesale apply occurs.
 - **VAL-CSASR-005**: Generated residue identities, if affected, are produced by
@@ -220,11 +243,14 @@ or `git stash drop` in this tranche.
 ## Traceability
 
 - **Program requirement**:
-  [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **Current execution decisions**:
+  [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+  and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+- **Historical decision**:
+  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
 - **Task**:
@@ -236,12 +262,12 @@ or `git stash drop` in this tranche.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0007-FR-0001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-003 | Registry and cross-document validators prove ordered program activation. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
-| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
-| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
-| N/A — REQ-0007-NFR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
-| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
-| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |
+| [REQ-0004-FR-0005](../../01.requirements/0004-current-local-gitops-platform.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-CSASR-003 | Lifecycle and cross-document validators prove package-local activation and sequential successor disposition. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
+| N/A — REQ-0004-FR-0006 uses the retained requirement owner linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
+| N/A — REQ-0003-FR-0007 uses the retained requirement owner linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
+| N/A — REQ-0003-FR-0014 uses the retained requirement owner linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
+| N/A — REQ-0004-FR-0011 / REQ-0003-FR-0018 / REQ-0003-FR-0019 uses the retained requirement owner linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
+| N/A — REQ-0004-FR-0005 uses the retained requirement owner linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |

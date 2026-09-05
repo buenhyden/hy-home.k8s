@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-08-31"
+updated: "2026-09-05"
 layer: "references"
 artifact_id: "RES-0001-m0001"
 ---
@@ -409,6 +409,65 @@ legacy projections, rewriting task topology, or cutting over validators. Those
 changes remain with their Spec 0054 work packages. Until those owners land the
 terminal topology, this research pack uses existing owner paths and records the
 transition instead of creating a duplicate report or competing authority.
+
+### 2026-09-05 external-source reverification
+
+This increment re-observed the workspace-application and common-system owners
+under the approved 2026-09-05 follow-on cycle. Workspace re-observation was
+excluded by direct user decision. The new source is `SRC-WERPC-137`; the cycle
+claim is `CLM-WERPC-016-08`.
+
+#### REQ-WERPC-003 workspace-application re-observation
+
+- **Sources and external result:** `changed` by coverage. Both providers now
+  document an explicit one-time instruction-import bridge between their
+  instruction files, observed on 2026-09-05 and registered as
+  [SRC-WERPC-137](m0012-source-coverage.md#2026-09-05-external-source-reverification).
+  One provider documents that it reads its own instruction file rather than the
+  neutral filename, and gives three supported bridges: an import directive, a
+  symbolic link, and a version-gated import command. The other documents an
+  import command that converts the first provider's instruction files, settings,
+  skills, server definitions, hooks, and commands into its own equivalents, and
+  states that importing does not change or delete the existing setup.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [workspace application baseline](#workspace-application-baseline) retains its
+  earlier repository-static observation date; no gateway file was re-read.
+- **As-Is, gap, and target:** the row stays `Verified` at public-documentation
+  depth. The material change is that cross-provider instruction sharing is now
+  an officially documented path rather than only a locally engineered one. This
+  is evidence for whoever owns the gateway topology; it is not an instruction to
+  change that topology, and this cycle proposes no change.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Neither source proves that any import ran here,
+  and neither documents continuous or bidirectional synchronisation. Treating a
+  one-time conversion as a live shared-context channel would overstate the
+  evidence.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 gateway and provider notes. The safe follow-up is a read-only comparison of
+  what an import would produce against the current tracked gateways, with no
+  execution. Refresh when either import command, its version gate, or its
+  converted artefact set changes.
+
+#### REQ-WERPC-006 common-system re-observation
+
+- **Sources and external result:** `changed` by coverage. The same import
+  bridge is the first officially documented mechanism that addresses the
+  common-system question directly, because it defines what one provider will and
+  will not carry across from the other. The rest of the common-system evidence
+  was re-observed as `unchanged`.
+- **Workspace selector and result:** `not observed in this cycle`. The
+  [common-system baseline](#common-system-baseline) retains its earlier
+  repository-static observation date.
+- **As-Is, gap, and target:** the row stays `Partial`. No promotion. The
+  documented bridge narrows the external-evidence gap but leaves the parity gap
+  untouched, because it says nothing about whether two providers behave
+  equivalently once their instructions are in place.
+- **Evidence boundary:** blocking class and retained boundary remain
+  `provider-runtime` / `DEFER`. Import support is not parity, and a conversion
+  table is not an equivalence proof.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 common execution policy. Refresh when either provider changes what its
+  import carries, or when the local common-control surface changes.
 
 ## Related Documents
 
