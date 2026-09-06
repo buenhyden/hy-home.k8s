@@ -94,7 +94,8 @@
         "id",
         "gateway",
         "projection_root",
-        "capability_models"
+        "capability_models",
+        "permission_scopes"
       ],
       "properties": {
         "id": {
@@ -108,6 +109,9 @@
         },
         "capability_models": {
           "$ref": "#/$defs/capabilityModelBinding"
+        },
+        "permission_scopes": {
+          "$ref": "#/$defs/codexPermissionScopes"
         }
       }
     },
@@ -266,6 +270,33 @@
         },
         "worker": {
           "$ref": "#/$defs/nativeModelIdentifier"
+        }
+      }
+    },
+    "codexSandboxScope": {
+      "type": "string",
+      "enum": [
+        "read-only",
+        "workspace-write"
+      ]
+    },
+    "codexPermissionScopes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read-only-evidence",
+        "orchestration",
+        "scoped-authoring"
+      ],
+      "properties": {
+        "read-only-evidence": {
+          "$ref": "#/$defs/codexSandboxScope"
+        },
+        "orchestration": {
+          "$ref": "#/$defs/codexSandboxScope"
+        },
+        "scoped-authoring": {
+          "$ref": "#/$defs/codexSandboxScope"
         }
       }
     }

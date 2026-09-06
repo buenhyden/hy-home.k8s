@@ -208,3 +208,48 @@ class CapabilityModelBindingTests(unittest.TestCase):
                 if observed != expected:
                     drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
         self.assertEqual(drift, [])
+
+
+class CodexSandboxScopeTests(unittest.TestCase):
+    """Codex projections declare a structured scope, not prose alone."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def test_codex_declares_a_sandbox_scope_for_every_permission_class(self) -> None:
+        codex = next(
+            provider
+            for provider in self.registry["providers"]
+            if provider["id"] == "codex"
+        )
+        declared = {
+            entry["id"] for entry in self.registry["permission_classes"]
+        }
+        self.assertEqual(set(codex.get("permission_scopes", {})), declared)
+
+    def test_every_codex_projection_carries_its_bound_sandbox_scope(self) -> None:
+        codex = next(
+            provider
+            for provider in self.registry["providers"]
+            if provider["id"] == "codex"
+        )
+        scopes = codex.get("permission_scopes", {})
+        missing = []
+        for role in self.registry["roles"]:
+            if "codex" not in role["supported_providers"]:
+                continue
+            data = self.validator.tomllib.loads(
+                (REPOSITORY_ROOT / role["projections"]["codex"]).read_text(
+                    encoding="utf-8"
+                )
+            )
+            expected = scopes.get(role["permission_class"])
+            if data.get("sandbox_mode") != expected:
+                missing.append(
+                    f"{role['id']}: {data.get('sandbox_mode')!r} != {expected!r}"
+                )
+        self.assertEqual(missing, [])

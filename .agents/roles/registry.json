@@ -19,6 +19,11 @@
       "capability_models": {
         "top": "gpt-5.5",
         "worker": "gpt-5.3-codex-spark"
+      },
+      "permission_scopes": {
+        "read-only-evidence": "read-only",
+        "orchestration": "read-only",
+        "scoped-authoring": "workspace-write"
       }
     }
   ],

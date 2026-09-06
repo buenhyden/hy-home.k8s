@@ -465,6 +465,32 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.write_text(body)
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
+    def test_codex_sandbox_scope_cannot_widen_beyond_the_permission_class(self):
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        self.assertIn('sandbox_mode = "read-only"', source)
+        for widened in ("workspace-write", "danger-full-access"):
+            with self.subTest(sandbox_mode=widened):
+                codex.write_text(
+                    source.replace(
+                        'sandbox_mode = "read-only"', f'sandbox_mode = "{widened}"'
+                    )
+                )
+                self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        codex.write_text(source)
+
+    def test_codex_projection_without_a_sandbox_scope_rejects(self):
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        codex.write_text(
+            "".join(
+                line
+                for line in source.splitlines(keepends=True)
+                if not line.startswith("sandbox_mode = ")
+            )
+        )
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+
     def test_native_model_must_equal_the_registry_capability_binding(self):
         import tomllib
 
@@ -504,14 +530,17 @@ class NativeBoundaryTests(unittest.TestCase):
             ("model", ""),
             ("model_reasoning_effort", []),
             ("model_reasoning_effort", "invalid"),
-            ("sandbox_mode", "danger-full-access"),
+            ("sandbox_mode", []),
+            ("approval_policy", "never"),
+            ("mcp_servers", "example"),
         ):
-            before = dict(data)
-            before[key] = value
-            path.write_text(
-                "".join(f"{k} = {json.dumps(v)}\n" for k, v in before.items())
-            )
-            self.assert_rejected("AGENT-NATIVE-METADATA")
+            with self.subTest(key=key, value=value):
+                before = dict(data)
+                before[key] = value
+                path.write_text(
+                    "".join(f"{k} = {json.dumps(v)}\n" for k, v in before.items())
+                )
+                self.assert_rejected()
 
     def test_lost_native_denial_and_wildcard_allow_reject(self):
         import json

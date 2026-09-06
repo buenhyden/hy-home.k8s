@@ -806,6 +806,11 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         provider["id"]: provider["capability_models"]
         for provider in registry["providers"]
     }
+    codex_scopes = next(
+        provider["permission_scopes"]
+        for provider in registry["providers"]
+        if provider["id"] == "codex"
+    )
     for role in registry["roles"]:
         canonical = role["projections"]["neutral"]
         capability_tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
@@ -861,8 +866,16 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     "description",
                     "model",
                     "model_reasoning_effort",
+                    "sandbox_mode",
                     "developer_instructions",
                 }
+                bound_scope = codex_scopes[role["permission_class"]]
+                if metadata.get("sandbox_mode") != bound_scope:
+                    fail(
+                        "AGENT-NATIVE-PERMISSION",
+                        f"{role['id']}: sandbox_mode must equal the registry scope "
+                        f"{bound_scope!r} for {role['permission_class']}",
+                    )
                 body = metadata.get("developer_instructions", "")
                 if metadata.get("model") != bound_model:
                     fail(
