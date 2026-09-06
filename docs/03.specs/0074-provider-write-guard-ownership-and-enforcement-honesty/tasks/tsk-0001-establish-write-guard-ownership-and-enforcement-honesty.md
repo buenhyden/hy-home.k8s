@@ -1,8 +1,8 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-07"
 layer: "specs"
@@ -41,7 +41,7 @@ outcome.
 
 | ID                                    | Upstream criterion | Work item                                                                     | Owner    | Status | Result      | Evidence    |
 | ------------------------------------- | ------------------ | ----------------------------------------------------------------------------- | -------- | ------ | ----------- | ----------- |
-| [WORK-001](../plan.md#work-breakdown) | VAL-PWG-001        | Extract the guard program to `scripts/` and reduce the Claude hook to an adapter | platform | Queued | Not started | Not started |
+| [WORK-001](../plan.md#work-breakdown) | VAL-PWG-001        | Extract the guard program to `scripts/` and reduce the Claude hook to an adapter | platform | Done | Guard logic owns one module; the Claude adapter resolves it from its own checkout rather than the tool-supplied project directory | Guard unit module 35 passing before, 37 passing after with two added trust-boundary cases; four probe payloads unchanged; staged profile 11/11 PASS |
 | [WORK-002](../plan.md#work-breakdown) | VAL-PWG-001        | Add the Codex adapter and repoint the Codex registration at it                 | platform | Queued | Not started | Not started |
 | [WORK-003](../plan.md#work-breakdown) | VAL-PWG-002        | Parse patch-envelope targets as data into the structured path pipeline         | platform | Queued | Not started | Not started |
 | [WORK-004](../plan.md#work-breakdown) | VAL-PWG-003        | Correct the enforcement statements and record the open runtime item            | platform | Queued | Not started | Not started |
@@ -78,7 +78,19 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-No work package has executed, so this Task records no result yet.
+WORK-001 is complete. The guard logic now lives in one module under
+`scripts/` and the Claude adapter names its provider and forwards the payload.
+
+Two findings arose during extraction and are recorded rather than smoothed
+over. First, resolving the guard program through the project directory made the
+guarded tree able to supply the guard, which two existing rejection cases
+caught immediately; the adapter now resolves the module from its own checkout
+and forwards the project directory as data, which is a stronger trust anchor
+than the arrangement it replaces. Second, four structural assertions and one
+repository-quality rule named the shell file as the implementation; their
+subject moved to the module, so each was retargeted at the module rather than
+relaxed, and two new assertions were added for the contracts the split created.
+
 
 The pre-change baseline is recorded: `python3 scripts/qa.py full` reported
 twenty-one gates passing on the working tree containing the two draft
@@ -107,7 +119,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 
 | Criterion / work item                 | Result      | Evidence                                                       |
 | ------------------------------------- | ----------- | -------------------------------------------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | Not started | Queued; entry gate VAL-PWG-001 approved with the specification  |
+| [WORK-001](../plan.md#work-breakdown) | Guard extracted without behaviour change; adapter trust anchor corrected | Guard unit module 35 to 37 passing; probe payloads unchanged; staged profile 11/11 PASS |
 | [WORK-002](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-001                                     |
 | [WORK-003](../plan.md#work-breakdown) | Not started | Queued; failing envelope case recorded in the plan              |
 | [WORK-004](../plan.md#work-breakdown) | Not started | Queued; client identities recorded in Inputs                    |

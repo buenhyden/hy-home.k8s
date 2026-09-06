@@ -18,6 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
+GUARD_PATH = ROOT / "scripts/provider_write_guard.py"
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 SAMPLE_DOCUMENT = "docs/01.requirements/README.md"
 
@@ -377,41 +378,66 @@ class PreEditGitDegradationTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_git_probes_are_bounded_by_an_explicit_timeout(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn("GIT_TIMEOUT_SECONDS", hook_text)
-        self.assertIn("timeout=GIT_TIMEOUT_SECONDS", hook_text)
+        self.assertIn("GIT_TIMEOUT_SECONDS", guard_text)
+        self.assertIn("timeout=GIT_TIMEOUT_SECONDS", guard_text)
 
     def test_git_results_are_memoized(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn("_git_cache", hook_text)
+        self.assertIn("_git_cache", guard_text)
 
 
 class PreEditTrustBoundaryTest(unittest.TestCase):
     """A root derived from tool input selects data only, never an executable."""
 
     def test_selector_executable_is_pinned_to_project_dir(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn(f'python3 "$PROJECT_DIR/{SELECTOR_RELATIVE_PATH}"', hook_text)
-        self.assertNotIn(f'"$RESOLVED_ROOT/{SELECTOR_RELATIVE_PATH}"', hook_text)
+        self.assertIn("os.path.join(project_dir, SELECTOR_RELATIVE_PATH)", guard_text)
+        self.assertNotIn("os.path.join(resolved_root, SELECTOR_RELATIVE_PATH)", guard_text)
 
     def test_no_executable_is_selected_by_the_resolved_root(self):
-        for line in HOOK_PATH.read_text(encoding="utf-8").splitlines():
+        """Every line naming the tool-derived root must use it as data."""
+        seen = 0
+        for line in GUARD_PATH.read_text(encoding="utf-8").splitlines():
             stripped = line.strip()
-            if stripped.startswith("#") or "$RESOLVED_ROOT" not in stripped:
+            if stripped.startswith("#") or "resolved_root" not in stripped:
                 continue
+            seen += 1
             self.assertNotIn(
-                "$RESOLVED_ROOT/",
-                stripped.replace('--root "$RESOLVED_ROOT"', ""),
+                "os.path.join(resolved_root",
+                stripped,
                 f"tool-derived root selects a program: {stripped}",
             )
+            self.assertNotIn(
+                "subprocess",
+                stripped,
+                f"tool-derived root reaches a process call: {stripped}",
+            )
+        self.assertGreater(seen, 0, "the guard must name the resolved root")
 
-    def test_resolved_root_reaches_the_selector_as_data(self):
+    def test_resolved_root_never_selects_a_program_in_the_shared_guard(self):
+        """The resolved root is data. Only project_dir may name an executable."""
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
+
+        self.assertNotIn("Path(resolved_root) /", guard_text)
+        self.assertNotIn('resolved_root, "scripts', guard_text)
+
+    def test_the_adapter_resolves_the_guard_from_its_own_checkout(self):
+        """A project directory pointed at another tree supplies data, never the
+        program. Resolving the guard through PROJECT_DIR would let the guarded
+        tree replace the guard."""
         hook_text = HOOK_PATH.read_text(encoding="utf-8")
 
-        self.assertIn('--root "$RESOLVED_ROOT"', hook_text)
+        self.assertIn("ADAPTER_DIR", hook_text)
+        self.assertNotIn('"$PROJECT_DIR/scripts/provider_write_guard.py"', hook_text)
+
+    def test_resolved_root_reaches_the_selector_as_data(self):
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('"--root",\n                resolved_root,', guard_text)
 
     def test_worktree_edit_does_not_run_that_worktrees_selector(self):
         """Substituting the worktree's selector must not change the outcome."""
