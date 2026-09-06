@@ -459,9 +459,9 @@ successor decision while carrying every other clause forward. Provider guard
 ownership, patch parsing and permission-scope honesty are owned by
 [SPEC-0074](../0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md),
 which this package follows in execution order without depending on its
-contract. The implementation plan and its package Task own ordered work, entry
-and exit gates, rollback, execution results and the limits that remain
-unobserved; neither exists yet, because this specification is under review.
+contract. [Implementation Plan](plan.md) owns ordered work, entry and exit
+gates, and rollback. Its package Task owns execution results, per-lane
+evidence, and the limits that remain unobserved.
 
 ### Lifecycle Traceability
 
