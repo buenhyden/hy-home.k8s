@@ -386,7 +386,7 @@ work and all earlier evidence.
 
 | Observation | Evidence / disposition |
 | --- | --- |
-| Repository | `/home/hy/projects/hy-home.k8s`; sanitized origin `https://github.com/buenhyden/hy-home.k8s.git` |
+| Repository | One local checkout of this repository; sanitized origin `https://github.com/buenhyden/hy-home.k8s.git` |
 | Starting HEAD / branch | `6c5ad33444fdbdbe4fb10e9d652287d89a56fe99`; `codex/document-contract-v9` |
 | Local integration baseline | `main` and cached `origin/main` at `1632ce28443b5b5bebf9abdba13543d5731f43bc`; merge-base equals that commit; `main...HEAD` is 0 left / 11 right |
 | Upstream | `origin/codex/document-contract-v9`; local branch is four commits ahead of the cached upstream |

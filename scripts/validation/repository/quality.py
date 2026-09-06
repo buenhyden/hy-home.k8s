@@ -2111,6 +2111,15 @@ stale_patterns = [
     legacy_harness,
     legacy_harness_examples,
 ]
+# `str(root)` catches a direct run, but `scripts/qa.py` always hands this
+# validator an isolated snapshot directory, so that entry can never match the
+# real checkout path. Match an absolute filesystem path that ends at this
+# repository's own directory name instead, which holds under any root. The
+# lookbehind keeps a remote URL such as `https://github.com/owner/hy-home.k8s.git`
+# out, because a URL is an identity rather than a machine-local path.
+local_checkout_path = re.compile(
+    r"(?<![\w:/])/(?:[^\s`'\"()]+/)?hy-home\.k8s(?![\w.-])"
+)
 legacy_contract_patterns = [
     legacy_dashboard_app,
     legacy_dashboard_ns_file,
@@ -2148,6 +2157,8 @@ for scan_root in scan_roots:
         for pattern in stale_patterns:
             if pattern in text:
                 fail(f"stale docs path reference found in {rel(path)}: {pattern}")
+        if local_checkout_path.search(text):
+            fail(f"local checkout path found in {rel(path)}")
         for pattern in legacy_contract_patterns:
             if pattern in text and not any(
                 marker in text for marker in legacy_contract_markers
