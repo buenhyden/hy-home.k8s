@@ -824,3 +824,66 @@ class RetiredSurfaceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReadOnlyShellScopeTests(unittest.TestCase):
+    """A read-only evidence role carries a shell only where it needs one.
+
+    The class withholds the structured write tools on Claude but leaves a shell
+    available, and a shell can write. The registry's per-role native scope
+    override is therefore the only mechanism that narrows a role here, and the
+    determination behind each narrowing is recorded in the owning Task.
+    """
+
+    # A role needs a shell when its required skills instruct running a tool, or
+    # when its stated evidence form is a command result. The roles below need
+    # none: their skills are analytical document procedures and their own
+    # guardrails restrict them to static review.
+    NO_SHELL_ROLES = ("incident-responder", "observability-reviewer")
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        cls.registry = json.loads(
+            (ROOT / ".agents/roles/registry.json").read_text(encoding="utf-8")
+        )
+        cls.claude = next(
+            provider
+            for provider in cls.registry["providers"]
+            if provider["id"] == "claude"
+        )
+
+    def role(self, role_id):
+        return next(role for role in self.registry["roles"] if role["id"] == role_id)
+
+    def test_the_shared_class_scope_is_unchanged(self):
+        """Narrowing must use the override, never edit the shared class."""
+        scopes = self.claude["permission_scopes"]
+
+        self.assertEqual(scopes["read-only-evidence"], ["Read", "Grep", "Glob", "Bash"])
+        self.assertEqual(len(self.registry["permission_classes"]), 3)
+
+    def test_roles_needing_no_shell_declare_a_narrowed_native_scope(self):
+        for role_id in self.NO_SHELL_ROLES:
+            with self.subTest(role=role_id):
+                role = self.role(role_id)
+
+                self.assertEqual(role["permission_class"], "read-only-evidence")
+                override = role.get("native_scope_override", {}).get("claude")
+                self.assertIsNotNone(
+                    override, f"{role_id} must declare a narrowed Claude scope"
+                )
+                self.assertNotIn("Bash", override)
+
+    def test_the_narrowed_projection_matches_its_override(self):
+        for role_id in self.NO_SHELL_ROLES:
+            with self.subTest(role=role_id):
+                role = self.role(role_id)
+                override = role["native_scope_override"]["claude"]
+                projection = (ROOT / role["projections"]["claude"]).read_text(
+                    encoding="utf-8"
+                )
+
+                self.assertIn(f'tools: "{", ".join(override)}"', projection)
+                self.assertNotIn("Bash", projection)

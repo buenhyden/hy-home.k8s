@@ -1,6 +1,6 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -45,7 +45,7 @@ outcome.
 | [WORK-002](../plan.md#work-breakdown) | VAL-PWG-001        | Add the Codex adapter and repoint the Codex registration at it                 | platform | Done | Codex registers its own adapter; no provider directory names the other's path | Three added ownership cases fail before and pass after; guard module 40 passing; staged profile 6/6 PASS |
 | [WORK-003](../plan.md#work-breakdown) | VAL-PWG-002        | Parse patch-envelope targets as data into the structured path pipeline         | platform | Done | A patch write now receives the manifest, secret-adjacency and document-route evaluation a structured write receives, in both payload forms | Eleven envelope cases, nine failing before and all passing after; guard module 40 to 51 passing; staged profile PASS |
 | [WORK-004](../plan.md#work-breakdown) | VAL-PWG-003        | Correct the enforcement statements and record the open runtime item            | platform | Done | Provider notes now separate registration, documented capability and observation; the discovery question is recorded as unresolved with its procedure and next owner | Reviewed provider text against the recorded client identities; staged profile 6/6 PASS |
-| [WORK-005](../plan.md#work-breakdown) | VAL-PWG-004, VAL-PWG-005 | Narrow the Claude read-only scope where a role needs no shell            | platform | Queued | Not started | Not started |
+| [WORK-005](../plan.md#work-breakdown) | VAL-PWG-004, VAL-PWG-005 | Narrow the Claude read-only scope where a role needs no shell            | platform | Done | Two of six roles narrowed through the existing per-role override; the shared class is unchanged in count and behaviour | Three scope cases failing before and passing after; governance validator PASS; governance module 41 passing |
 | [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Queued | Not started | Not started |
 | [WORK-007](../plan.md#work-breakdown) | VAL-PWG-006        | Add one evaluation artifact per enumerated failure mode                        | platform | Queued | Not started | Not started |
 | [WORK-008](../plan.md#work-breakdown) | VAL-PWG-006        | Anchor groundedness to content and add the unverified-success criterion        | platform | Queued | Not started | Not started |
@@ -78,7 +78,7 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-WORK-001 through WORK-004 are complete. The guard logic now lives in one module under
+WORK-001 through WORK-005 are complete. The guard logic now lives in one module under
 `scripts/` and each provider registers its own thin adapter. The Codex
 registration named a file inside the Claude adapter directory; it now names
 `.codex/hooks/pre-tool-use.sh`, and a structured payload produces the same
@@ -117,6 +117,43 @@ The `read-only-evidence` asymmetry is now stated at the Claude provider note
 rather than implied: the class withholds structured write tools while leaving a
 shell there, and binds an operating-system sandbox on Codex. The difference is
 documented and accepted, not presented as parity.
+
+WORK-005 recorded a per-role determination before changing anything. The test
+applied was whether a role's required skills instruct running a tool, or its
+stated evidence form is a command result.
+
+- `code-reviewer` keeps a shell. Its inputs are changed paths, and reading a
+  difference needs a command; the tracked permission allowlist already admits
+  the read-only `git diff` forms.
+- `gitops-reviewer` keeps a shell. `k8s-validate` instructs running YAML and
+  schema validation, kube-linter, GitOps structure checks, and secret-handling
+  checks, and the role's required evidence is a repository-backed validation
+  result.
+- `security-auditor` keeps a shell. Its skills are pattern catalogues rather
+  than command procedures, but narrowing the role that owns secret-exposure and
+  privilege findings carries more risk than the narrowing removes.
+- `network-reviewer` keeps a shell. Its required evidence is a static command
+  or a manifest relationship; removing the shell would delete one of the two
+  evidence forms its own contract offers.
+- `incident-responder` is narrowed. `incident-postmortem` and `rca-methodology`
+  are analytical document procedures with no tool instruction, its inputs are
+  supplied observations rather than gathered ones, and its guardrail already
+  says to remain read-only during analysis.
+- `observability-reviewer` is narrowed. Its guardrail restricts it to
+  manifest-static review, and neither `ops-runbook` nor `risk-report` instructs
+  running a tool for a review.
+
+Narrowing used the registry's existing per-role override, the mechanism
+`docs-researcher` already used, so no new registry mechanism appeared and the
+three shared permission classes are unchanged in count and behaviour. The Codex
+side needed no change: both narrowed roles already bind the operating-system
+read-only sandbox there.
+
+One observation is recorded without action. `observability-reviewer` references
+`ops-runbook`, whose steps include saving a runbook file and updating a README,
+which a read-only role cannot perform. Read as a review standard rather than an
+authoring instruction the reference is coherent, so no change is made here; a
+decision to split that skill would need its own scope.
 
 Two findings arose during extraction and are recorded rather than smoothed
 over. First, resolving the guard program through the project directory made the
@@ -160,7 +197,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 | [WORK-002](../plan.md#work-breakdown) | Codex adapter added and its registration repointed | Three ownership cases red then green; guard module 40 passing; staged profile 6/6 PASS |
 | [WORK-003](../plan.md#work-breakdown) | Patch targets reach the structured pipeline in both payload forms | Nine of eleven envelope cases red before, all green after; the reported silent payload now warns |
 | [WORK-004](../plan.md#work-breakdown) | Enforcement statements corrected; delivery recorded as unproven | Provider notes dated against `claude 2.1.263` and `codex-cli 0.153.4`; staged profile 6/6 PASS |
-| [WORK-005](../plan.md#work-breakdown) | Not started | Queued; per-role shell determination precedes any change        |
+| [WORK-005](../plan.md#work-breakdown) | incident-responder and observability-reviewer narrowed; four roles keep a shell with recorded reasons | Determination recorded per role below; scope cases red then green; governance validator PASS |
 | [WORK-006](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-005                                     |
 | [WORK-007](../plan.md#work-breakdown) | Not started | Queued; four enumerated failure modes named in the plan         |
 | [WORK-008](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-007                                     |
