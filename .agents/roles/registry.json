@@ -10,6 +10,28 @@
       "capability_models": {
         "top": "opus",
         "worker": "sonnet"
+      },
+      "permission_scopes": {
+        "read-only-evidence": [
+          "Read",
+          "Grep",
+          "Glob",
+          "Bash"
+        ],
+        "scoped-authoring": [
+          "Read",
+          "Write",
+          "Edit",
+          "Grep",
+          "Glob",
+          "Bash"
+        ],
+        "orchestration": [
+          "Read",
+          "Grep",
+          "Glob",
+          "Task"
+        ]
       }
     },
     {
@@ -359,6 +381,15 @@
       "id": "docs-researcher",
       "responsibility": "Collect and classify source evidence for documentation without claiming policy authority.",
       "permission_class": "read-only-evidence",
+      "native_scope_override": {
+        "claude": [
+          "Read",
+          "Grep",
+          "Glob",
+          "WebFetch",
+          "WebSearch"
+        ]
+      },
       "capability_tier_ref": ".agents/governance/model-selection.md#worker",
       "supported_providers": [
         "claude",

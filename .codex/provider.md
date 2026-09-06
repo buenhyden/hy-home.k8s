@@ -40,8 +40,9 @@ team document, not a special automatic entry filename.
   procedures selected by the role. Root AGENTS and native role instructions
   require these reads; they do not register native skills.
 - Use native sandbox and approval controls. Each role projection declares the
-  `sandbox_mode` its registry permission class binds; that is configuration the
-  validator checks, not proof the client applied it.
+  `sandbox_mode` its registry permission class binds, resolved through the same
+  `permission_scopes` lookup the Claude `tools` allowlist uses; that is
+  configuration the validator checks, not proof the client applied it.
 - Observed on `codex-cli 0.153.4` (2026-09-06): the client reports `hooks` as a
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline

@@ -26,7 +26,10 @@ These may restrict but never expand common approval boundaries.
 Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), relevant
 responsibility, and current Task. Claude Markdown role projections carry
 native model and least-privilege tool metadata; the neutral registry owns
-their shared responsibility and permission meaning.
+their shared responsibility and permission meaning. The `tools` allowlist a
+projection carries is the registry's `permission_scopes` entry for that role's
+permission class, rendered verbatim; a role whose native authority genuinely
+differs declares `native_scope_override` instead of departing silently.
 
 ## Current Contract
 

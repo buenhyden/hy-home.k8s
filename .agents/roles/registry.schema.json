@@ -70,7 +70,8 @@
         "id",
         "gateway",
         "projection_root",
-        "capability_models"
+        "capability_models",
+        "permission_scopes"
       ],
       "properties": {
         "id": {
@@ -84,6 +85,9 @@
         },
         "capability_models": {
           "$ref": "#/$defs/capabilityModelBinding"
+        },
+        "permission_scopes": {
+          "$ref": "#/$defs/claudePermissionScopes"
         }
       }
     },
@@ -250,6 +254,9 @@
               "pattern": "^\\.codex/agents/[a-z0-9-]+\\.toml$"
             }
           }
+        },
+        "native_scope_override": {
+          "$ref": "#/$defs/nativeScopeOverride"
         }
       }
     },
@@ -296,6 +303,49 @@
           "$ref": "#/$defs/codexSandboxScope"
         },
         "scoped-authoring": {
+          "$ref": "#/$defs/codexSandboxScope"
+        }
+      }
+    },
+    "claudeToolScope": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z]{1,23}$"
+      }
+    },
+    "claudePermissionScopes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read-only-evidence",
+        "scoped-authoring",
+        "orchestration"
+      ],
+      "properties": {
+        "read-only-evidence": {
+          "$ref": "#/$defs/claudeToolScope"
+        },
+        "scoped-authoring": {
+          "$ref": "#/$defs/claudeToolScope"
+        },
+        "orchestration": {
+          "$ref": "#/$defs/claudeToolScope"
+        }
+      }
+    },
+    "nativeScopeOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "claude": {
+          "$ref": "#/$defs/claudeToolScope"
+        },
+        "codex": {
           "$ref": "#/$defs/codexSandboxScope"
         }
       }

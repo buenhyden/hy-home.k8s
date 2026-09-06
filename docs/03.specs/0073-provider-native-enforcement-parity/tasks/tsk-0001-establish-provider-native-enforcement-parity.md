@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -48,7 +48,7 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-006](../plan.md#work-breakdown) | VAL-PNP-003 | Add the per-provider capability-to-model binding to the registry and schema | platform | Done | Binding declared for both providers; twenty-three of twenty-four projections realigned; drift now fails on both sides | Binding tests RED then GREEN; governance validator |
 | [WORK-007](../plan.md#work-breakdown) | VAL-PNP-002 | Declare a native execution scope for every Codex role and widen the parity rule | platform | Done | Each permission class binds one Codex sandbox scope; twelve projections carry it and widening or dropping it fails closed | Commit `edf960a3`; scope tests RED then GREEN |
 | [WORK-008](../plan.md#work-breakdown) | VAL-PNP-003 | Align every Codex role model with the observed client catalog | platform | Done | Delivered inside WORK-006; the installed client catalog listed only `gpt-5.5`, `gpt-5.4-mini` and `gpt-5.3-codex-spark`, so eleven of twelve prior values named absent models | Governance validator; catalog observed 2026-09-06 |
-| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002 | Align every Claude role model and permission mode with the registry binding | platform | Blocked | Models delivered inside WORK-006 as documented aliases. The Claude permission mode is not applied: `tools` already gives an enforced structured scope, and the subagent effect of `permissionMode` was not observed on this client | `DEFER` pending a native observation; next owner platform |
+| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002 | Align every Claude role model and permission mode with the registry binding | platform | Done | Models delivered inside WORK-006. The `tools` allowlist now resolves through the registry's `permission_scopes` like the Codex `sandbox_mode` does, and the one coded role exception became a declared `native_scope_override`, closing C-PNP-001 on the Claude side. `permissionMode` stays unapplied: `tools` is the enforced structured scope, and the subagent effect of `permissionMode` was not observed on this client | Twelve projections reproduced from the declaration; narrowing the registry scope fails closed. `permissionMode` remains `DEFER` |
 | [WORK-010](../plan.md#work-breakdown) | VAL-PNP-004 | Extend the pre-action guard to the shell tool class and name the residual class | platform | Done | Guard matcher covers the shell tool; redirect, tee and in-place sed targets are reported; out-of-repo, read-only and unparsed commands stay silent and exit zero | Commit `3093e158`; five new guard cases |
 | [WORK-011](../plan.md#work-breakdown) | VAL-PNP-008 | Correct provider notes to describe native capability against a named client | platform | Done | Capability statements name the client they were observed against; the Codex hook denial is replaced by a supported-but-not-adopted statement | Commit `5c017dde`; observed `claude 2.1.261` and `codex-cli 0.140.0` |
 | [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007 | Add the untrusted input, cost and throughput, and loop termination boundaries | platform | Done | Untrusted input, cost and throughput, and loop termination boundaries added at their policy owners | Commit `724719fb`; profile and link validation |
@@ -95,9 +95,9 @@ before the values it validates; WORK-009 now carries only the permission mode.
 
 ## Verification Summary
 
-Thirteen work packages landed as logical commits, each gated by the staged
-profile against its exact index. One remains `DEFER` with a reason and a next
-owner. WORK-014 reopened and completed after its gating observation arrived:
+Every work package landed as a logical commit, each gated by the staged
+profile against its exact index. WORK-009 and WORK-014 both reopened after
+their gating conditions changed. WORK-014 completed after its gating observation arrived:
 the installed Codex client moved from `0.140.0` to `0.153.4` and its published
 hook contract names the payload shape the guard already reads.
 
@@ -144,9 +144,11 @@ still cannot see a program that opens files itself. A rule that only the
 all-files and CI lanes select can be broken by a staged-only change and stay
 invisible until handoff, which is how WORK-015's defect reached a commit.
 
-**Next owner.** platform, for the remaining `DEFER` package (WORK-009, the
-Claude permission mode) and any authorized native observation. A registered
-hook is configuration; that either client delivered the event is unobserved.
+**Next owner.** platform, for any authorized native observation. Every work
+package has landed. What remains unobserved is runtime: native discovery,
+event delivery, model resolution, and whether `permissionMode` changes a
+subagent's authority at all. A registered hook and a declared scope are
+configuration, not enforcement evidence.
 
 ## Traceability
 
@@ -162,7 +164,7 @@ hook is configuration; that either client delivered the event is unobserved.
 | [WORK-006](../plan.md#work-breakdown) | Capability tier now determines the native model on both providers | Binding tests and governance validator negative cases |
 | [WORK-007](../plan.md#work-breakdown) | Codex roles now carry an enforced structured scope | Commit `edf960a3`; widening and removal both fail closed |
 | [WORK-008](../plan.md#work-breakdown) | Codex models realigned to the observed client catalog | Governance validator; recorded catalog identity |
-| [WORK-009](../plan.md#work-breakdown) | Model half delivered; permission mode deferred without runtime evidence | `DEFER` recorded with its reason |
+| [WORK-009](../plan.md#work-breakdown) | Claude scope moved from validator code into the registry; `permissionMode` still deferred | Registry scope negative case; declared override case |
 | [WORK-010](../plan.md#work-breakdown) | Shell writes are observed advisorily; the residual class is named | Commit `3093e158`; approval boundary text |
 | [WORK-011](../plan.md#work-breakdown) | Native capability claims carry a client identity | Commit `5c017dde` |
 | [WORK-012](../plan.md#work-breakdown) | Three missing boundaries added at their owners | Commit `724719fb` |

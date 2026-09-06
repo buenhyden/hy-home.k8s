@@ -486,6 +486,76 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.write_text(body)
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
+    def test_claude_permission_scope_is_owned_by_the_registry(self):
+        """Both providers read their native scope from one declaration.
+
+        Codex already resolves `sandbox_mode` through the registry. The
+        Claude tool allowlist must resolve the same way, so a scope change
+        is a registry edit rather than a validator edit.
+        """
+        import json
+
+        path = self.root / self.validator.REGISTRY_PATH
+        claude = next(p for p in self.registry["providers"] if p["id"] == "claude")
+        self.assertIn(
+            "permission_scopes", claude, "Claude declares no permission scope"
+        )
+        scopes = claude["permission_scopes"]
+        self.assertEqual(
+            set(scopes),
+            {"read-only-evidence", "scoped-authoring", "orchestration"},
+            "the scope map must be total over the declared permission classes",
+        )
+        narrowed = json.loads(json.dumps(self.registry))
+        provider = next(
+            p for p in narrowed["providers"] if p["id"] == "claude"
+        )
+        provider["permission_scopes"]["read-only-evidence"] = ["Read", "Grep", "Glob"]
+        path.write_text(json.dumps(narrowed))
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        path.write_text(json.dumps(self.registry))
+
+    def test_role_scope_override_is_declared_data_not_a_coded_exception(self):
+        """One role reaches the network; that exception is declared, not coded."""
+        import json
+
+        path = self.root / self.validator.REGISTRY_PATH
+        projection = self.root / ".claude/agents/code-reviewer.md"
+        source = projection.read_text()
+        overridden = json.loads(json.dumps(self.registry))
+        overridden["roles"][0]["native_scope_override"] = {
+            "claude": ["Read", "Grep", "Glob", "WebFetch", "WebSearch"]
+        }
+        path.write_text(json.dumps(overridden))
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        projection.write_text(
+            source.replace(
+                'tools: "Read, Grep, Glob, Bash"',
+                'tools: "Read, Grep, Glob, WebFetch, WebSearch"',
+            )
+        )
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+        projection.write_text(source)
+        path.write_text(json.dumps(self.registry))
+
+    def test_shipped_registry_reproduces_every_claude_projection(self):
+        """The declaration must match what the twelve real projections carry."""
+        import json
+        import re
+
+        registry = json.loads(
+            (ROOT / self.validator.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        claude = next(p for p in registry["providers"] if p["id"] == "claude")
+        for role in registry["roles"]:
+            expected = role.get("native_scope_override", {}).get(
+                "claude"
+            ) or claude["permission_scopes"][role["permission_class"]]
+            text = (ROOT / role["projections"]["claude"]).read_text(encoding="utf-8")
+            observed = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
+            with self.subTest(role=role["id"]):
+                self.assertEqual(observed.split(", "), list(expected))
+
     def test_codex_sandbox_scope_cannot_widen_beyond_the_permission_class(self):
         codex = self.root / ".codex/agents/code-reviewer.toml"
         source = codex.read_text()

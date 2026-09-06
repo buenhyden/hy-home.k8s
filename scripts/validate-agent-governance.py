@@ -833,6 +833,31 @@ def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
         _read_regular_file(root, script, code="AGENT-NATIVE-HOOK")
 
 
+def _bound_scope(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
+    """Resolve one role's native execution scope from the registry.
+
+    A permission class binds the scope for every role that carries it. A role
+    whose native authority genuinely differs declares the exception as data,
+    so the rule and its departure are read in the same file.
+    """
+
+    scopes = next(
+        entry.get("permission_scopes", {})
+        for entry in registry["providers"]
+        if entry["id"] == provider
+    )
+    override = role.get("native_scope_override", {}).get(provider)
+    if override is not None:
+        return override
+    scope = scopes.get(role["permission_class"])
+    if scope is None:
+        fail(
+            "AGENT-NATIVE-PERMISSION",
+            f"{provider} declares no scope for {role['permission_class']}",
+        )
+    return scope
+
+
 def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     """Validate direct canonical reads and native configuration, never discovery."""
     skills = {skill["id"]: skill["path"] for skill in registry["skills"]}
@@ -872,11 +897,6 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         provider["id"]: provider["capability_models"]
         for provider in registry["providers"]
     }
-    codex_scopes = next(
-        provider["permission_scopes"]
-        for provider in registry["providers"]
-        if provider["id"] == "codex"
-    )
     for role in registry["roles"]:
         canonical = role["projections"]["neutral"]
         capability_tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
@@ -897,6 +917,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     "AGENT-NATIVE-METADATA",
                     f"{provider} declares no model for tier {capability_tier}",
                 )
+            bound_scope = _bound_scope(registry, role, provider)
             if provider == "claude":
                 metadata, body = _frontmatter(text)
                 allowed = {"name", "description", "model", "tools"}
@@ -906,21 +927,13 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                         f"{role['id']}: model must equal the registry binding "
                         f"{bound_model!r} for tier {capability_tier}",
                     )
-                tools = {"Read", "Grep", "Glob"}
-                if role["permission_class"] == "scoped-authoring":
-                    tools |= {"Write", "Edit", "Bash"}
-                elif role["permission_class"] == "orchestration":
-                    tools |= {"Task"}
-                elif role["id"] == "docs-researcher":
-                    tools |= {"WebFetch", "WebSearch"}
-                else:
-                    tools |= {"Bash"}
                 raw_tools = metadata.get("tools", "")
                 observed = raw_tools.split(", ") if isinstance(raw_tools, str) else []
-                if set(observed) != tools or len(observed) != len(tools):
+                if observed != list(bound_scope):
                     fail(
                         "AGENT-NATIVE-PERMISSION",
-                        "native tools differ from least authority",
+                        f"{role['id']}: tools must equal the registry scope "
+                        f"{list(bound_scope)!r} for {role['permission_class']}",
                     )
             else:
                 try:
@@ -935,7 +948,6 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     "sandbox_mode",
                     "developer_instructions",
                 }
-                bound_scope = codex_scopes[role["permission_class"]]
                 if metadata.get("sandbox_mode") != bound_scope:
                     fail(
                         "AGENT-NATIVE-PERMISSION",
