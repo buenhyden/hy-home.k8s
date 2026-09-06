@@ -153,6 +153,12 @@ Current governance and QA implementation is owned by
 Provider-native execution scope, capability-to-model binding, and write-path
 guard parity are owned by
 [SPEC-0073](../03.specs/0073-provider-native-enforcement-parity/spec.md).
+Shared write-guard ownership, patch-envelope parsing, and enforcement
+honesty are owned by
+[SPEC-0074](../03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md).
+Common knowledge and prompt surfaces and their document contracts are
+owned by
+[SPEC-0075](../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md).
 
 ## Traceability
 
