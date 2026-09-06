@@ -47,7 +47,7 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-evaluations",
+      "id": "agent-evaluation-cases",
       "argv": [
         "python3",
         "scripts/run-agent-evaluations.py",
@@ -807,7 +807,7 @@
         }
       ],
       "validators": [
-        "agent-evaluations",
+        "agent-evaluation-cases",
         "repository-quality"
       ],
       "ciJobs": [
@@ -1119,7 +1119,7 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluations"
+      "agent-evaluation-cases"
     ],
     "staged": [
       "agent-governance",
@@ -1135,7 +1135,7 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluations"
+      "agent-evaluation-cases"
     ],
     "full": [
       "affected-surface-contract",
@@ -1158,7 +1158,7 @@
       "vault-eso-contracts",
       "unit-tests",
       "pre-commit",
-      "agent-evaluations"
+      "agent-evaluation-cases"
     ],
     "ci": [
       "affected-surface-contract",
@@ -1181,7 +1181,7 @@
       "vault-eso-contracts",
       "unit-tests",
       "pre-commit",
-      "agent-evaluations"
+      "agent-evaluation-cases"
     ]
   }
 }

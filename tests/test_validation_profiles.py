@@ -75,6 +75,7 @@ class ValidationProfileTests(unittest.TestCase):
         expected = {
             "affected-surface-contract",
             "archive-cutover",
+            "agent-evaluation-cases",
             "agent-governance",
             "ci-python-contract",
             "github-actions-security",

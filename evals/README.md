@@ -80,7 +80,7 @@ updated: "2026-09-04"
 - 평가 결과는 저장소에 남기는 증적이므로 재현 가능한 입력과 함께 기록한다.
   재현 불가능한 일회성 출력은 `_workspace/`에 둔다.
 - 비밀값, 자격 증명, 개인 식별 정보를 평가 입력에 포함하지 않는다.
-- `agent-evaluations` 게이트가 `scripts/validation/registry.json`의 `evals`
+- `agent-evaluation-cases` 게이트가 `scripts/validation/registry.json`의 `evals`
   surface에 등록되어 있다. 케이스나 실행기를 바꾸면 같은 변경에서 게이트
   선택과 회귀 테스트를 함께 확인한다.
 - 채점 출력에 응답 본문을 넣지 않는다. 실패는 기준 이름과 사유만 보고한다.
@@ -90,7 +90,7 @@ updated: "2026-09-04"
 | 검증기 | 확인 대상 |
 | --- | --- |
 | `repository-quality` | 저장소 전역 품질 규칙 |
-| `agent-evaluations` | 케이스 무결성과 기록된 응답의 채점 결과 |
+| `agent-evaluation-cases` | 케이스 무결성과 기록된 응답의 채점 결과 |
 
 실행: `python3 scripts/run-agent-evaluations.py --root .`
 
