@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-06"
 ---
 
 # Work Lifecycle
@@ -48,6 +48,14 @@ Make the smallest testable change. Demonstrate a focused failing case for a
 changed behavior, then its passing result. Keep active Task evidence current
 and remove touched duplication only after consumer and recovery disposition.
 Use [delegated development](delegated-development.md) for authorized subagents.
+
+Bound the attempt. Stop and report instead of continuing when the same check
+fails twice with no new information, when two consecutive changes produce no
+observable progress, when a repair would require widening the approved scope,
+or when the obstacle is an unmet authority, an unavailable environment, or an
+external limit. Classify the stop as a repository defect, a missing approval,
+an unavailable tool or environment, or an authority conflict, and name the next
+owner. Never weaken a contract, a gate, or a test to end the loop.
 
 ### Completion
 

@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "AD-0004"
 ---
@@ -94,7 +94,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 - **Model/Provider Strategy**: Agents may update docs and manifests only through repo-backed GitOps flow.
 - **Tooling Boundary**: Direct `kubectl apply` or live promotion is not allowed without explicit human approval.
-- **Memory & Context Strategy**: Durable 변경 증거는 해당 package-local Task에 남기고 공통 정책은 Stage 00을 참조한다.
+- **Memory & Context Strategy**: Durable 변경 증거는 해당 package-local Task에 남기고 공통 정책은 `.agents/governance/`를 참조한다.
 - **Guardrail Boundary**: Agents must distinguish Rollouts chart `notifications.enabled: false` from ArgoCD Notifications.
 - **Latency / Cost Budget**: Not applicable.
 

@@ -33,5 +33,5 @@ jobs:
         with:
           name: governance-audit-base
           path: ${{ runner.temp }}/governance-audit-base.bundle
-          retention-days: 1
+          retention-days: 7
           if-no-files-found: error

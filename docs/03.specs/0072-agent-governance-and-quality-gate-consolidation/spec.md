@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "2.0.1"
+version: "2.0.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -18,9 +18,11 @@ This specification implements the design proposed in
 for common authority in `.agents/` under the explicit local migration request,
 and preserves ADR-0034 for the consolidated local/CI QA and GitOps CD boundary.
 The 2026-09-06 execution scope replaces the previous Stage 00 location decision;
-prior execution evidence remains in the owning Task. The subsequent user request
-authorizes local commits and review of the remaining work. Remote operations,
-authenticated provider calls and live changes remain outside this scope.
+prior execution evidence remains in the owning Task. Its
+[current approval boundary](tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries)
+records local commit authority, the completed one-off local main merge, and
+the current follow-up. Remote operations, authenticated provider calls and
+live changes remain outside this scope.
 
 ## Strategic Boundaries & Non-goals
 

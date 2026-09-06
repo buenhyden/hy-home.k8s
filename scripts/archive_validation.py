@@ -1043,6 +1043,7 @@ def _historical_view_source(
     blob: str,
     target: str,
     proposed_commit: str | None,
+    verified_blobs: set[tuple[str, str]],
 ) -> None:
     """Prove one Git symlink view without widening regular-source admission."""
 
@@ -1102,6 +1103,10 @@ def _historical_view_source(
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-REFERENCE", "view source differs"
         )
+    # Commit/path/mode proof remains per view. Only a successful immutable
+    # blob/target comparison is reusable within this migration validation.
+    if (blob, target) in verified_blobs:
+        return
     try:
         content = _batch_blob_bytes(root, (blob,))[blob].decode(
             "utf-8", errors="strict"
@@ -1114,6 +1119,7 @@ def _historical_view_source(
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-REFERENCE", "view target differs"
         )
+    verified_blobs.add((blob, target))
 
 
 def _migration_input_options(
@@ -1502,6 +1508,7 @@ def validate_migration_records(
     references: dict[tuple[str, str], HistoricalReferenceDisposition] = {}
     view_sources: set[str] = set()
     view_identities: dict[str, tuple[str, str, str, str, str]] = {}
+    verified_view_blobs: set[tuple[str, str]] = set()
     lookup_paths: set[str] = set()
     reference_terminals: set[str] = set()
     for evidence in reference_rows:
@@ -1584,6 +1591,7 @@ def validate_migration_records(
                 blob=blob,
                 target=target,
                 proposed_commit=proposed_commit,
+                verified_blobs=verified_view_blobs,
             )
             view_sources.add(legacy)
             view_identities.setdefault(legacy, identity)
@@ -4676,14 +4684,11 @@ def validate_current_archive_authority(
             if link.kind != "local" or target is None:
                 continue
             target_path = target.as_posix()
-            # Migration ledgers are the declared lookup path from a current
-            # document to archived evidence, so they are navigational like the
-            # archive index rather than a direct link to an archived record.
+            # Current documents reach sealed evidence through the archive
+            # index. Migration ledgers are sealed evidence too.
             if target_path in canonical_individuals or (
                 target.is_relative_to(ARCHIVE_ROOT)
                 and target != ARCHIVE_INDEX
-                and target_path != _WORK054_WP004B_MIGRATION_PATH
-                and generic_migration_id(target_path) is None
                 # A retention class holds the document itself, not a sealed
                 # record, so citing one is an ordinary link to that document
                 # at the path it now occupies.

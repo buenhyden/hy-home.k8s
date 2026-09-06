@@ -1,7 +1,7 @@
 ---
 name: "code-reviewer"
 description: "Review repository changes for correctness, maintainability, regression risk, and policy alignment."
-model: "claude-sonnet-4-6"
+model: "sonnet"
 tools: "Read, Grep, Glob, Bash"
 ---
 

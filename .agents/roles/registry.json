@@ -6,12 +6,47 @@
     {
       "id": "claude",
       "gateway": "CLAUDE.md",
-      "projection_root": ".claude/agents"
+      "projection_root": ".claude/agents",
+      "capability_models": {
+        "top": "opus",
+        "worker": "sonnet"
+      },
+      "permission_scopes": {
+        "read-only-evidence": [
+          "Read",
+          "Grep",
+          "Glob",
+          "Bash"
+        ],
+        "scoped-authoring": [
+          "Read",
+          "Write",
+          "Edit",
+          "Grep",
+          "Glob",
+          "Bash"
+        ],
+        "orchestration": [
+          "Read",
+          "Grep",
+          "Glob",
+          "Task"
+        ]
+      }
     },
     {
       "id": "codex",
       "gateway": "AGENTS.md",
-      "projection_root": ".codex/agents"
+      "projection_root": ".codex/agents",
+      "capability_models": {
+        "top": "gpt-5.5",
+        "worker": "gpt-5.3-codex-spark"
+      },
+      "permission_scopes": {
+        "read-only-evidence": "read-only",
+        "orchestration": "read-only",
+        "scoped-authoring": "workspace-write"
+      }
     }
   ],
   "permission_classes": [
@@ -346,6 +381,15 @@
       "id": "docs-researcher",
       "responsibility": "Collect and classify source evidence for documentation without claiming policy authority.",
       "permission_class": "read-only-evidence",
+      "native_scope_override": {
+        "claude": [
+          "Read",
+          "Grep",
+          "Glob",
+          "WebFetch",
+          "WebSearch"
+        ]
+      },
       "capability_tier_ref": ".agents/governance/model-selection.md#worker",
       "supported_providers": [
         "claude",

@@ -1,19 +1,19 @@
 ---
-title: "VAL-WDTC-006"
+title: "VAL-WDTC-013 through VAL-WDTC-016"
 version: "1.0.0"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
 updated: "2026-08-12"
 layer: "specs"
-artifact_id: "SPEC-0052-TSK-0004"
+artifact_id: "SPEC-0052-TSK-0005"
 ---
 
-# SPEC-0052-TSK-0004: VAL-WDTC-006
+# SPEC-0052-TSK-0005: VAL-WDTC-013 through VAL-WDTC-016
 
 ## Overview
 
-Append-only Task record for legacy work item `WORK-103` from the package's
+Append-only Task record for legacy work item `WDTC-AMEND-001` from the package's
 decomposed monolithic ledger. The exact row below preserves its criterion,
 dependency, owner, result, and evidence.
 
@@ -21,13 +21,13 @@ dependency, owner, result, and evidence.
 
 - [Owning Spec](../spec.md)
 - [Owning Plan](../plan.md)
-- [Migration recovery ledger](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- [Migration recovery ledger](../../../../migrations/0004-document-authority-convergence.md)
 
 ## Task Table
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-103 | VAL-WDTC-006 | Archive the 50 unmatched execution documents. | platform | Done | 50 sources became validated ArchiveEnvelope records; repository total is 93 and prior records are immutable. | `0b53e9a1` through `a3cc852f`; archive/cutover/recovery PASS |
+| WDTC-AMEND-001 | VAL-WDTC-013 through VAL-WDTC-016 | Approve terminal AD, artifact-ID, stable Stage 98, and exact script-closure design. | platform | Done | Spec 052 and ADR-0024 close the successor scope and ordering. | `1452dbfd` through `446e336a`; strict design gates PASS |
 
 ## Approval and Safety Boundaries
 
@@ -43,6 +43,6 @@ shared verification context is in the
 
 ## Traceability
 
-- Stable Task: `SPEC-0052-TSK-0004`
-- Legacy work item: `WORK-103`
-- Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- Stable Task: `SPEC-0052-TSK-0005`
+- Legacy work item: `WDTC-AMEND-001`
+- Legacy bytes: [MIG-0004](../../../../migrations/0004-document-authority-convergence.md)

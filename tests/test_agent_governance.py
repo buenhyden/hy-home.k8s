@@ -92,6 +92,27 @@ class NativeBoundaryTests(unittest.TestCase):
                 f"../../.agents/skills/{skill['id']}"
             )
 
+    CODEX_HOOKS = {
+        "description": "Pre-action guard for tracked repository writes.",
+        "hooks": {
+            "PreToolUse": [
+                {
+                    "matcher": "Bash|apply_patch",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": (
+                                'bash "$(git rev-parse --show-toplevel)'
+                                '/.claude/hooks/k8s-pre-edit.sh"'
+                            ),
+                            "timeout": 10,
+                        }
+                    ],
+                }
+            ]
+        },
+    }
+
     def assert_rejected(self, code=None):
         with self.assertRaises(self.validator.HarnessError) as raised:
             self.validator.validate_registry(self.root)
@@ -465,6 +486,132 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.write_text(body)
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
+    def test_claude_permission_scope_is_owned_by_the_registry(self):
+        """Both providers read their native scope from one declaration.
+
+        Codex already resolves `sandbox_mode` through the registry. The
+        Claude tool allowlist must resolve the same way, so a scope change
+        is a registry edit rather than a validator edit.
+        """
+        import json
+
+        path = self.root / self.validator.REGISTRY_PATH
+        claude = next(p for p in self.registry["providers"] if p["id"] == "claude")
+        self.assertIn(
+            "permission_scopes", claude, "Claude declares no permission scope"
+        )
+        scopes = claude["permission_scopes"]
+        self.assertEqual(
+            set(scopes),
+            {"read-only-evidence", "scoped-authoring", "orchestration"},
+            "the scope map must be total over the declared permission classes",
+        )
+        narrowed = json.loads(json.dumps(self.registry))
+        provider = next(p for p in narrowed["providers"] if p["id"] == "claude")
+        provider["permission_scopes"]["read-only-evidence"] = ["Read", "Grep", "Glob"]
+        path.write_text(json.dumps(narrowed))
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        path.write_text(json.dumps(self.registry))
+
+    def test_role_scope_override_is_declared_data_not_a_coded_exception(self):
+        """One role reaches the network; that exception is declared, not coded."""
+        import json
+
+        path = self.root / self.validator.REGISTRY_PATH
+        projection = self.root / ".claude/agents/code-reviewer.md"
+        source = projection.read_text()
+        overridden = json.loads(json.dumps(self.registry))
+        overridden["roles"][0]["native_scope_override"] = {
+            "claude": ["Read", "Grep", "Glob", "WebFetch", "WebSearch"]
+        }
+        path.write_text(json.dumps(overridden))
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        projection.write_text(
+            source.replace(
+                'tools: "Read, Grep, Glob, Bash"',
+                'tools: "Read, Grep, Glob, WebFetch, WebSearch"',
+            )
+        )
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+        projection.write_text(source)
+        path.write_text(json.dumps(self.registry))
+
+    def test_shipped_registry_reproduces_every_claude_projection(self):
+        """The declaration must match what the twelve real projections carry."""
+        import json
+        import re
+
+        registry = json.loads(
+            (ROOT / self.validator.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        claude = next(p for p in registry["providers"] if p["id"] == "claude")
+        for role in registry["roles"]:
+            expected = (
+                role.get("native_scope_override", {}).get("claude")
+                or claude["permission_scopes"][role["permission_class"]]
+            )
+            text = (ROOT / role["projections"]["claude"]).read_text(encoding="utf-8")
+            observed = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
+            with self.subTest(role=role["id"]):
+                self.assertEqual(observed.split(", "), list(expected))
+
+    def test_codex_sandbox_scope_cannot_widen_beyond_the_permission_class(self):
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        self.assertIn('sandbox_mode = "read-only"', source)
+        for widened in ("workspace-write", "danger-full-access"):
+            with self.subTest(sandbox_mode=widened):
+                codex.write_text(
+                    source.replace(
+                        'sandbox_mode = "read-only"', f'sandbox_mode = "{widened}"'
+                    )
+                )
+                self.assert_rejected("AGENT-NATIVE-PERMISSION")
+        codex.write_text(source)
+
+    def test_codex_projection_without_a_sandbox_scope_rejects(self):
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        codex.write_text(
+            "".join(
+                line
+                for line in source.splitlines(keepends=True)
+                if not line.startswith("sandbox_mode = ")
+            )
+        )
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+
+    def test_native_model_must_equal_the_registry_capability_binding(self):
+        import tomllib
+
+        claude = self.root / ".claude/agents/code-reviewer.md"
+        original = claude.read_text()
+        for drifted in ('model: "opus"', 'model: "claude-sonnet-4-6"'):
+            with self.subTest(model=drifted):
+                claude.write_text(original.replace('model: "sonnet"', drifted))
+                self.assert_rejected("AGENT-NATIVE-METADATA")
+        claude.write_text(original)
+
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        bound = tomllib.loads(source)["model"]
+        for drifted in ("gpt-5.5", "gpt-5.3-codex"):
+            with self.subTest(model=drifted):
+                codex.write_text(
+                    source.replace(f'model = "{bound}"', f'model = "{drifted}"')
+                )
+                self.assert_rejected("AGENT-NATIVE-METADATA")
+        codex.write_text(source)
+
+    def test_missing_capability_binding_rejects(self):
+        import json
+
+        registry = self.root / self.validator.REGISTRY_PATH.as_posix()
+        data = json.loads(registry.read_text())
+        del data["providers"][0]["capability_models"]["worker"]
+        registry.write_text(json.dumps(data))
+        self.assert_rejected()
+
     def test_unsupported_native_model_effort_and_metadata_reject(self):
         import json
         import tomllib
@@ -475,14 +622,17 @@ class NativeBoundaryTests(unittest.TestCase):
             ("model", ""),
             ("model_reasoning_effort", []),
             ("model_reasoning_effort", "invalid"),
-            ("sandbox_mode", "danger-full-access"),
+            ("sandbox_mode", []),
+            ("approval_policy", "never"),
+            ("mcp_servers", "example"),
         ):
-            before = dict(data)
-            before[key] = value
-            path.write_text(
-                "".join(f"{k} = {json.dumps(v)}\n" for k, v in before.items())
-            )
-            self.assert_rejected("AGENT-NATIVE-METADATA")
+            with self.subTest(key=key, value=value):
+                before = dict(data)
+                before[key] = value
+                path.write_text(
+                    "".join(f"{k} = {json.dumps(v)}\n" for k, v in before.items())
+                )
+                self.assert_rejected()
 
     def test_lost_native_denial_and_wildcard_allow_reject(self):
         import json
@@ -552,6 +702,81 @@ class NativeBoundaryTests(unittest.TestCase):
         path.write_text(path.read_text() + "Read `.agents/registry.json`.\n")
         with self.assertRaises(self.validator.HarnessError):
             self.validator.validate_current_sources(self.root)
+
+    def test_codex_native_hooks_are_a_supported_surface(self):
+        """`.codex/hooks.json` is current native configuration, not residue.
+
+        The surface was retired while the installed client had no hook
+        support. That client now ships one, so the guard is registered
+        rather than denied.
+        """
+        import json
+
+        path = self.root / ".codex/hooks.json"
+        path.write_text(json.dumps(self.CODEX_HOOKS))
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+
+    def test_provider_hook_contract_is_shared_by_both_providers(self):
+        """One rule family judges both providers' hook registrations."""
+        import copy
+        import json
+
+        for provider, relative, read in (
+            ("claude", ".claude/settings.json", lambda d: d["hooks"]),
+            ("codex", ".codex/hooks.json", lambda d: d["hooks"]),
+        ):
+            path = self.root / relative
+            if provider == "codex":
+                path.write_text(json.dumps(self.CODEX_HOOKS))
+            original = json.loads(path.read_text())
+            for label, mutate in (
+                ("unknown event", lambda h: h.update({"NotAnEvent": []})),
+                (
+                    "automatic whole-QA event",
+                    lambda h: h.update({"Stop": copy.deepcopy(h["PreToolUse"])}),
+                ),
+                (
+                    "unregistered handler class",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"type": "mcp_tool"}
+                    ),
+                ),
+                (
+                    "unbounded execution",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].pop("timeout", None),
+                ),
+                (
+                    "path escape",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"command": 'bash "../synthetic-private-payload"'}
+                    ),
+                ),
+                (
+                    "untracked executable",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"command": "bash /tmp/synthetic-private-payload"}
+                    ),
+                ),
+            ):
+                with self.subTest(provider=provider, case=label):
+                    changed = copy.deepcopy(original)
+                    mutate(read(changed))
+                    path.write_text(json.dumps(changed))
+                    self.assert_rejected("AGENT-NATIVE-HOOK")
+            path.write_text(json.dumps(original))
+
+    def test_registered_guard_command_carries_no_dead_environment(self):
+        """A variable the guard never reads is residue, not configuration."""
+        import json
+
+        settings = json.loads((self.root / ".claude/settings.json").read_text())
+        command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        script = (ROOT / ".claude/hooks/k8s-pre-edit.sh").read_text(encoding="utf-8")
+        for assignment in command.split()[:-2]:
+            if "=" not in assignment:
+                continue
+            name = assignment.split("=", 1)[0]
+            self.assertIn(name, script, f"{name} is passed to the guard but never read")
 
 
 class RetiredSurfaceTests(unittest.TestCase):

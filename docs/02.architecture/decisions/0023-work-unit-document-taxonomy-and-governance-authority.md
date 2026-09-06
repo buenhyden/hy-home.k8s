@@ -143,5 +143,5 @@ reviewable and revertible by logical commit.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Historical ARD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) | N/A — first decision for PRD-008 taxonomy direction; corrects only the registry's unrelated ADR-0021 association | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
-| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only terminal Stage 98 date/mirror-path immutability; preserves transition safety, Stage 05 stability, Release exclusion, and every unrelated decision | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
+| [Historical ARD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) | N/A — first decision for PRD-008 taxonomy direction; corrects only the registry's unrelated ADR-0021 association | [Spec 052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md) |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only terminal Stage 98 date/mirror-path immutability; preserves transition safety, Stage 05 stability, Release exclusion, and every unrelated decision | [Spec 052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md) |

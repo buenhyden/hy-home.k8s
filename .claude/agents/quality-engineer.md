@@ -1,7 +1,7 @@
 ---
 name: "quality-engineer"
 description: "Design and run bounded repository validation and report reproducible quality evidence."
-model: "claude-sonnet-5"
+model: "sonnet"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: "supervisor"
 description: "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
-model: "claude-opus-4-8"
+model: "opus"
 tools: "Read, Grep, Glob, Task"
 ---
 

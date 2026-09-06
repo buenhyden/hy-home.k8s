@@ -1,8 +1,10 @@
 """Path-resolution and trust-boundary regressions for the pre-edit guard.
 
-The guard runs at PreToolUse for Write|Edit|MultiEdit. It must accept any path
-inside this repository, including any of its linked worktrees, reject every
-path outside it, and never run an executable selected by tool input.
+The guard runs at PreToolUse on both providers: Bash|Write|Edit|MultiEdit on
+Claude and Bash|apply_patch on Codex. It must accept any path inside this
+repository, including any of its linked worktrees, reject every path outside
+it, and never run an executable selected by tool input. Codex supplies no
+`CLAUDE_PROJECT_DIR`, so the guard derives the root from Git instead.
 """
 
 from __future__ import annotations
@@ -32,6 +34,24 @@ def run_hook(payload: str, project_dir: Path, environment: dict | None = None):
         capture_output=True,
         text=True,
         env=env,
+        timeout=300,
+    )
+
+
+def run_hook_without_project_dir(payload: str, cwd: Path):
+    """Invoke the guard the way Codex does: no project variable, Git root only."""
+    env = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in ("CLAUDE_PROJECT_DIR", "CLAUDE_TOOL_INPUT_FILE_PATH")
+    }
+    return subprocess.run(
+        ("bash", str(HOOK_PATH)),
+        input=payload,
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=str(cwd),
         timeout=300,
     )
 
@@ -415,6 +435,97 @@ class PreEditTrustBoundaryTest(unittest.TestCase):
             selector.write_bytes(original)
 
         self.assertEqual(result.returncode, 0, result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+def shell_payload(command: str) -> str:
+    return '{"tool_name":"Bash","tool_input":{"command":%s}}' % _json_string(command)
+
+
+class ShellWriteObservationTests(unittest.TestCase):
+    """Shell writes are reported, and an unreadable one never blocks the tool."""
+
+    def assert_silent_success(self, command: str) -> None:
+        result = run_hook(shell_payload(command), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "")
+
+    def test_shell_write_to_a_manifest_is_reported(self):
+        result = run_hook(
+            shell_payload("sed -i s/a/b/ gitops/platform/eso/vault-secret-store.yaml"),
+            ROOT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("gitops/platform/eso/vault-secret-store.yaml", result.stdout)
+        self.assertIn("did not see this write", result.stdout)
+
+    def test_shell_redirect_into_an_authored_document_is_reported(self):
+        result = run_hook(shell_payload(f"cat > {SAMPLE_DOCUMENT}"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(SAMPLE_DOCUMENT, result.stdout)
+
+    def test_shell_tee_target_is_reported(self):
+        result = run_hook(shell_payload("printf x | tee traefik/example.yaml"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("traefik/example.yaml", result.stdout)
+
+    def test_ordinary_and_unreadable_shell_commands_never_block(self):
+        for command in (
+            "git status --short",
+            "echo hi > /tmp/scratch.txt",
+            'echo "unterminated',
+            "cat ../outside/file.yaml",
+            "rm -rf /",
+        ):
+            with self.subTest(command=command):
+                self.assert_silent_success(command)
+
+    def test_shell_observation_does_not_reach_the_surface_selector(self):
+        """An unrouted shell guess must not become a hard selector failure."""
+        result = run_hook(shell_payload("echo x > not-a-registered-surface.txt"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class CodexPayloadTests(unittest.TestCase):
+    """The guard judges a Codex PreToolUse payload by the same boundary.
+
+    Codex delivers `tool_name` and `tool_input` like Claude but sets no
+    `CLAUDE_PROJECT_DIR`, so these cases prove the Git-derived root carries
+    the same accept and reject decisions.
+    """
+
+    def test_shell_write_inside_the_repository_is_observed(self):
+        import json
+
+        payload = json.dumps(
+            {
+                "session_id": "synthetic",
+                "hook_event_name": "PreToolUse",
+                "cwd": str(ROOT),
+                "tool_name": "Bash",
+                "tool_input": {"command": "echo x >" + " gitops/synthetic.yaml"},
+            }
+        )
+        result = run_hook_without_project_dir(payload, ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("systemMessage", result.stdout)
+
+    def test_apply_patch_on_the_retired_authority_root_fails_closed(self):
+        payload = '{"tool_name":"apply_patch",%s}' % (
+            '"tool_input":{"file_path":"docs/00.agent-governance/x.md"}'
+        )
+        result = run_hook_without_project_dir(payload, ROOT)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATH-RETIRED", result.stderr)
+
+    def test_apply_patch_outside_the_repository_fails_closed(self):
+        payload = '{"tool_name":"apply_patch","tool_input":{"file_path":"/etc/passwd"}}'
+        result = run_hook_without_project_dir(payload, ROOT)
+        self.assertEqual(result.returncode, 2)
+        self.assertNotEqual(result.stderr.strip(), "")
 
 
 if __name__ == "__main__":

@@ -47,21 +47,23 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-cutover",
+      "id": "agent-evaluation-cases",
       "argv": [
         "python3",
-        "scripts/archive_cutover.py",
+        "scripts/run-agent-evaluations.py",
         "--root",
         "."
       ],
       "lanes": [
+        "affected",
+        "staged",
         "all-files",
         "ci"
       ],
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Archive cutover validation is required."
+        "reason": "Agent evaluation cases are required."
       },
       "evidenceLane": "repo-static"
     },
@@ -83,6 +85,25 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Canonical Stage 00 registry, native adapter, and consumer validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "archive-cutover",
+      "argv": [
+        "python3",
+        "scripts/archive_cutover.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Archive cutover validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -149,6 +170,25 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Document lifecycle validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "github-actions-security",
+      "argv": [
+        "python3",
+        "scripts/validate-github-actions-security.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "GitHub Actions identity, permission, and artifact retention validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -301,6 +341,24 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "pre-commit",
+      "argv": [
+        "pre-commit",
+        "run",
+        "--all-files"
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "pre-commit is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "repository-quality",
       "argv": [
         "python3",
@@ -322,25 +380,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "workspace-boundary",
-      "argv": [
-        "python3",
-        "scripts/validate-workspace-boundary.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Workspace boundary validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "secret-handling",
       "argv": [
         "bash",
@@ -357,27 +396,6 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Redacted plaintext-secret scanning is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "vault-eso-contracts",
-      "argv": [
-        "python3",
-        "scripts/validate-vault-eso-contracts.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Vault and ESO safety contracts are required."
       },
       "evidenceLane": "repo-static"
     },
@@ -405,11 +423,33 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "pre-commit",
+      "id": "vault-eso-contracts",
       "argv": [
-        "pre-commit",
-        "run",
-        "--all-files"
+        "python3",
+        "scripts/validate-vault-eso-contracts.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "affected",
+        "staged",
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Vault and ESO safety contracts are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "workspace-boundary",
+      "argv": [
+        "python3",
+        "scripts/validate-workspace-boundary.py",
+        "--root",
+        "."
       ],
       "lanes": [
         "all-files",
@@ -418,7 +458,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "pre-commit is required."
+        "reason": "Workspace boundary validation is required."
       },
       "evidenceLane": "repo-static"
     }
@@ -489,6 +529,14 @@
         {
           "kind": "exact",
           "value": ".secrets.baseline"
+        },
+        {
+          "kind": "exact",
+          "value": ".vscode/extensions.json"
+        },
+        {
+          "kind": "exact",
+          "value": ".vscode/tasks.json"
         },
         {
           "kind": "exact",
@@ -759,6 +807,7 @@
         }
       ],
       "validators": [
+        "agent-evaluation-cases",
         "repository-quality"
       ],
       "ciJobs": [
@@ -1069,7 +1118,8 @@
       "policy-gates",
       "repository-quality",
       "secret-handling",
-      "vault-eso-contracts"
+      "vault-eso-contracts",
+      "agent-evaluation-cases"
     ],
     "staged": [
       "agent-governance",
@@ -1084,13 +1134,15 @@
       "policy-gates",
       "repository-quality",
       "secret-handling",
-      "vault-eso-contracts"
+      "vault-eso-contracts",
+      "agent-evaluation-cases"
     ],
     "full": [
       "affected-surface-contract",
       "archive-cutover",
       "agent-governance",
       "ci-python-contract",
+      "github-actions-security",
       "document-contract-registry",
       "document-lifecycle",
       "gitops-change-set",
@@ -1105,13 +1157,15 @@
       "secret-handling",
       "vault-eso-contracts",
       "unit-tests",
-      "pre-commit"
+      "pre-commit",
+      "agent-evaluation-cases"
     ],
     "ci": [
       "affected-surface-contract",
       "archive-cutover",
       "agent-governance",
       "ci-python-contract",
+      "github-actions-security",
       "document-contract-registry",
       "document-lifecycle",
       "gitops-change-set",
@@ -1126,7 +1180,8 @@
       "secret-handling",
       "vault-eso-contracts",
       "unit-tests",
-      "pre-commit"
+      "pre-commit",
+      "agent-evaluation-cases"
     ]
   }
 }

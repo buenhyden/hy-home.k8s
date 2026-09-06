@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.0.1"
+version: "2.0.2"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -14,16 +14,18 @@ artifact_id: "SPEC-0072-TSK-0001"
 ## Overview
 
 Execute the revised SPEC-0072-PLAN-0001 to relocate common authority to
-`.agents/`. The subsequent user request authorizes local commits and review of
-remaining work. This scope supersedes the former topology and no-commit plan.
-Dated historical evidence below records prior work only.
+`.agents/`. Subsequent user requests authorized local commits, review of
+remaining work and a one-off local main merge, now completed. Current scope
+continues the local follow-up under the approval boundary below. Dated
+baseline evidence retains the former topology and no-commit instructions as
+history; it does not override current authority.
 
 ## Inputs
 
 - [SPEC-0072](../spec.md)
 - [SPEC-0072-PLAN-0001](../plan.md)
 - [ADR-0034](../../../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)
-- Current main baseline `eb4fcfe3283115388d6eb1f31d56780b3e578f77`
+- Migration baseline `eb4fcfe3283115388d6eb1f31d56780b3e578f77`; local main after the authorized merge is `4053793a41a9cedff1edeaa4a9d3b2a6a80e1272`
 - [ADR-0035](../../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
 
 ## Task Table
@@ -40,7 +42,9 @@ Dated historical evidence below records prior work only.
 - **Allowed Paths**: `.agents/`, `.github/`, `.claude/`, `.codex/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`, `scripts/`, `tests/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml`, `.secrets.baseline`, `.graphifyignore`
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
 - **Local Commit Authority**: the subsequent user request explicitly authorizes committing this migration and reviewing remaining local work; select and verify the exact index first
-- **Approval Required**: push, PR mutation, workflow dispatch/re-run, merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
+- **Completed Merge Authority**: the latest user request explicitly authorized merging the existing local work into local main first; the one-off fast-forward to `4053793a41a9cedff1edeaa4a9d3b2a6a80e1272` is complete
+- **Current Follow-up**: review remaining work and correct stale authority/evidence navigation in ADR-0035 and this Spec, Plan and Task on `codex/governance-follow-up`; no unrelated package completion is implied
+- **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, additional merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
 - **Static Validation**: focused unit tests, QA profiles, pre-commit, actionlint and zizmor; existing GitHub Actions logs are read-only evidence
 - **Live Validation**: DEFER — not required or authorized for repository governance consolidation
 - **Secret / Vault Handling**: do not read, print, mutate, or validate secret values; retain static secret-handling gates
@@ -49,11 +53,62 @@ Dated historical evidence below records prior work only.
 
 ## Verification Summary
 
-### Current Migration Evidence (2026-09-06)
+### Current Local Main Merge and Follow-up (2026-09-06)
 
-Scope authority is the latest user request: common `.agents/` adoption and old
-hub removal are authorized; commit/merge/push/PR/deployment/global/trust changes
-are not. Initial index and working tree were clean; only one worktree existed.
+The user requested that the existing work be merged into local main before
+remaining-work execution. The local fast-forward advanced main from
+`eb4fcfe3283115388d6eb1f31d56780b3e578f77` to
+`4053793a41a9cedff1edeaa4a9d3b2a6a80e1272`, incorporating `add86fbd`,
+`2b884cfa` and `4053793a`. The resulting tree is identical to the already
+validated source tip; the working tree and index were clean and both stashes
+were preserved. No remote state changed. The follow-up branch
+`codex/governance-follow-up` starts from that merged local main.
+
+Commit `4053793a` retains separate earlier evidence: full QA passed nineteen
+gates in 927.707 s over the implementation snapshot before its Task update;
+the final exact index passed eleven staged gates in 209.107 s. Those results
+belong to that commit and are not validation of this documentation correction.
+The unchanged merge tree did not require another full run.
+
+The current document correction covers ADR-0035 and this package's Spec, Plan
+and Task under VAL-AGQ-005 and VAL-AGQ-007. It labels migration-intake authority
+as historical, routes current authority here, and leaves progress reporting in
+the Task rather than duplicate Plan checkboxes. Stage 99 profiles and templates
+are unchanged; ADR, Spec, Plan and Task lifecycle states are unchanged.
+
+The attempted fixed `doc-writer` tool role failed before edits because its model
+was unavailable to the current account. The existing worker performed this
+bounded document assignment after reading the canonical role and required
+procedures; no model or provider configuration changed. This is a tool
+limitation, not native repository discovery or invocation evidence.
+
+Author `post_merge_docs_worker` checked the four document paths before adding
+this result note. `rtk proxy python3 scripts/validate-markdown-profiles.py
+--root . --mode strict` with one `--include-path` per file exited 0 with no
+violations. `rtk proxy markdownlint-cli2 --config .markdownlint-cli2.yaml` with
+the same four paths exited 0 (CLI 0.23.0, four files, zero errors), and
+`rtk proxy git diff --check` exited 0. The installed Markdown CLI check is
+focused author evidence; it does not replace the pinned pre-commit gate.
+
+`rtk proxy python3 scripts/qa.py quick` exited 0: all six selected gates passed
+in 227.459 s over the four changed documents before this result update.
+Independent reviewer `post_merge_doc_review` approved the four-file diff without
+findings after checking links, actual Git refs and commit `4053793a`'s body.
+
+Native provider and hosted CI evidence remain DEFER for WORK-004. Final QA
+for these changed document bytes belongs to the supervising
+agent's handoff. Rollback is a reviewed reversal of only these four document
+changes after checking concurrent edits; it does not rewind main or discard
+stashes. The next owner remains the supervisor for local validation and
+remaining-work review, and the user/operator for protected external evidence.
+
+### Migration Baseline Evidence (2026-09-06)
+
+At migration intake, the user request authorized common `.agents/` adoption and
+old hub removal; commit/merge/push/PR/deployment/global/trust changes were not
+authorized at that point. The current approval boundary above supersedes those
+historical execution limits. Initial index and working tree were clean; only
+one worktree existed.
 Two existing stashes and ignored provider personal files are preserved.
 Main and origin/main both resolved to `eb4fcfe3283115388d6eb1f31d56780b3e578f77`,
 confirmed by read-only GitHub main metadata. The new local work branch is

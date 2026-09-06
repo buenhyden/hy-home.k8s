@@ -79,7 +79,7 @@ hy-home.k8s/
 | [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정                                         | [`description.template.md`](docs/99.templates/templates/architecture/description.template.md), [`decision.template.md`](docs/99.templates/templates/architecture/decision.template.md)                                                                                                                                                                                                                   |
 | [`docs/03.specs`](docs/03.specs/README.md)               | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약      | [`spec.template.md`](docs/99.templates/templates/specs/spec.template.md), helper templates는 [`03.specs README`](docs/03.specs/README.md) 참조                                                                                                                                                                                                   |
 | [`docs/05.operations`](docs/05.operations/README.md)     | 운영 가이드, 정책, 런북, 사고 기록                                             | [`guide.template.md`](docs/99.templates/templates/operations/guide.template.md), [`policy.template.md`](docs/99.templates/templates/operations/policy.template.md), [`runbook.template.md`](docs/99.templates/templates/operations/runbook.template.md), [`incident.template.md`](docs/99.templates/templates/operations/incident.template.md), [`postmortem.template.md`](docs/99.templates/templates/operations/postmortem.template.md) |
-| [`docs/90.references`](docs/90.references/README.md)     | 참조 자료, 용어, 버전 인벤토리, lookup material                                | [`research.template.md`](docs/99.templates/templates/references/research.template.md)                                                                                                                                                                                                                                                               |
+| [`docs/90.references`](docs/90.references/README.md)     | 참조 자료, 용어, audit/research/data pack, lookup material                                | [`research.template.md`](docs/99.templates/templates/references/research.template.md)                                                                                                                                                                                                                                                               |
 | [`docs/99.templates`](docs/99.templates/README.md)       | canonical document templates, route inventory, target-relative link 규칙       | 정확한 target pattern과 template 선택은 [Template Routing Contract](docs/99.templates/README.md)를 기준으로 한다.                                                                                                                                                                                               |
 
 ### 현재 구현 경계
@@ -260,6 +260,8 @@ python3 scripts/qa.py --list
 python3 scripts/qa.py quick
 python3 scripts/qa.py full
 ```
+
+에디터에서는 [`.vscode/tasks.json`](./.vscode/tasks.json)이 같은 진입점을 프로젝트 task로 노출한다. 이 파일은 팀 공유 설정이며, keybinding과 전역 설정은 개인 소유로 남기고 저장소가 추적하지 않는다. 공급자 확장의 command ID는 여기에서 관측되지 않았으므로 참조하지 않는다.
 
 `full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 [QA 운영 안내](docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
 

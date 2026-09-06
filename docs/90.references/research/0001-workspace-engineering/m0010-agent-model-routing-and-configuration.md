@@ -1,10 +1,10 @@
 ---
 title: "Reference: Agent Model Routing and Configuration"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "references"
 artifact_id: "RES-0001-m0010"
 ---
@@ -39,13 +39,22 @@ account catalog, or alter provider configuration.
 
 ### Model-routing baseline
 
+> [!NOTE]
+> The rows below are observations at the dates their cycles record, not the
+> current owner graph. `docs/00.agent-governance/` and its `memory/`, `rules/`,
+> `contracts/` and `harness-catalog.md` were retired, `.agents/agents/` and
+> `.gemini/` are not part of the current two-provider surface, and common
+> authority now lives under `.agents/` with progress owned by the Stage 03 Task.
+
 The workspace policy assigns `top` to planning/supervision and `worker` to
 bounded implementation, validation, and focused edits. A worker may escalate a
 high-risk governance, security, or cluster-affecting review without changing
 its role class. Exact provider tuples, candidates, incumbent values, reasoning
-support, evaluation readiness, and promotion state live in
-`contracts/agent-model-fitness.json`; all observed runtime/promotion/canary
-tuples remain `DEFER`.
+support, evaluation readiness, and promotion state lived in
+`contracts/agent-model-fitness.json` at the recorded observation; that contract
+was retired with the former governance root, and the capability tier to model
+binding is now declared per provider in `.agents/roles/registry.json`. All
+observed runtime/promotion/canary tuples remain `DEFER`.
 
 | Task characteristics                                                      | Role / tier                             | Tool and sandbox expectation                                                   | Review / promotion rule                                                         |
 | ------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |

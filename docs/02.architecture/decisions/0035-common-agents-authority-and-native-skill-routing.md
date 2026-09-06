@@ -1,30 +1,34 @@
 ---
 title: "Common Agents Authority and Native Skill Routing"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "ADR-0035"
+supersedes: "ADR-0034"
 ---
 
 # ADR-0035: Common Agents Authority and Native Skill Routing
 
 ## Overview
 
-The latest user request authorizes moving the common authority to `.agents/`
-and retiring the former documentation governance root. That direct instruction
-authorizes this bounded local implementation. The new ADR remains `proposed`: the
-repository requires an initial proposed record before a later accepted-state
-transition, and this task does not authorize commits. No lifecycle transition,
-review signature or runtime result is invented. The proposed durable decision
-narrows ADR-0034's authority-location and skill-routing clauses; its QA, security,
-preservation and GitOps CD boundaries remain in force.
+The migration request authorized moving the common authority to `.agents/`
+and retiring the former documentation governance root. Current local execution
+authority and the completed user-authorized main merge are recorded in the
+[owning Task](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries).
+This ADR is accepted, so no accepted decision now prescribes an authority
+location the repository contradicts. Acceptance records the durable choice; it
+does not establish native discovery, permission enforcement, model resolution
+or hook delivery, which remain separately observable evidence.
+This decision supersedes ADR-0034. It replaces that decision's
+authority-location and skill-routing clauses and carries forward its QA,
+security, preservation and GitOps CD boundaries unchanged.
 
 ## Context
 
-Main at `eb4fcfe3283115388d6eb1f31d56780b3e578f77` already consolidated the
+The migration baseline, main at `eb4fcfe3283115388d6eb1f31d56780b3e578f77`, already consolidated the
 role registry, native references and QA. Its location decision requires Codex
 to read skills explicitly outside the documented project skill discovery root.
 A second copy or provider generator would add avoidable drift. The old hub
@@ -56,8 +60,10 @@ provider-only notes; these are distinct responsibilities.
 
 ## Explicit Non-goals
 
-No commits, push, merge, PR, deployment, cluster or Vault operation, credentials,
-paid model call, global configuration, trust grant, new hook or model upgrade.
+This decision grants no Git or runtime action authority; the owning Task records
+the current user-authorized scope. Deployment, cluster or Vault operation,
+credentials, paid model calls, global configuration, trust grants, new hooks
+and model upgrades remain outside the decision.
 The retired common memory structure remains retired. No renderer is added.
 
 ## Consequences

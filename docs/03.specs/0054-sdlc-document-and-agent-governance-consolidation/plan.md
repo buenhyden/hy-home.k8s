@@ -1077,6 +1077,16 @@ Stage 01/02 Requirement and Architecture convergence, Stage 99
 profile/lifecycle/template reduction, taxonomy transition-control retirement,
 then Archive authority-link reconciliation.
 
+**2026-09-06 Spec 0052 retention slice:** The completed predecessor package
+now resides whole under `docs/98.archive/completed/03.specs/0052-document-taxonomy-consolidation/`.
+Its Spec, Plan, and seventeen Tasks retain their document profiles, identities,
+terminal states, and historical evidence; only rendered relative link prefixes
+change. Current and retained citations resolve to the preserved identity, and
+Stage 03 navigation no longer lists the completed package.
+[Task 0013](./tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md#spec-0052-whole-package-retention-2026-09-06)
+owns this finite retention and recovery evidence. Other WP-013 dispositions,
+WP-009 archive reconciliation, and WP-014 integration remain open.
+
 **Files:**
 
 - Enter only after ADR-0031 is accepted with its reciprocal evidence and Spec

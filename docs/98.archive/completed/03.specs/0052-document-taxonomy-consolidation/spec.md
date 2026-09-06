@@ -17,9 +17,9 @@ artifact_id: "SPEC-0052"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 ### Package Closure Disposition (2026-09-05)
@@ -30,7 +30,7 @@ transfer to Spec 0054. Those transferred responsibilities are not completed
 again here, and WP-013 transition-control retirement and WP-014 integrated
 acceptance remain with Spec 0054.
 
-Accepted [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+Accepted [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 supersedes count predicates in VAL-WDTC-015/016. The 93-record bijection and
 `50 → 49 → 47` script census below describe the reviewed historical migration,
 not present-corpus requirements. Current semantic verification checks sealed
@@ -48,16 +48,16 @@ and proves consumer-zero, historical-link safety, and migration provenance.
 Closure evidence belongs to SPEC-0054-TSK-0013, not a rewritten completed Task.
 
 This specification implements
-[Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md),
-[Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md),
+[Historical PRD-0008](../../../superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md),
+[Historical AD-0011](../../../superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md),
 and the human-approved direction recorded in accepted
-[ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
+[ADR-0023](../../../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
 It replaces the earlier Spec 052 direction that would have renumbered
 `05.operations` and deleted several validator families without current
 consumer proof.
 
 The pre-WORK-104 design package `WDTC-AMEND-001` created
-[ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
+[ADR-0024](../../../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
 which records the later human-approved successor for terminal requirement and
 architecture forms, global artifact identity, stable Stage 98 layout, and the
 exact `scripts/` disposition. ADR-0023 remains the accepted transition
@@ -329,7 +329,7 @@ All canonical typed path tokens use single hyphens. The validator derives the
 full ID from the path, ASCII-lowercases both comparison forms, and then requires
 exact token equality. It rejects aliases, collisions, noncanonical case,
 leading/trailing/double hyphens, or more than one path deriving the same ID.
-Accepted [ADR-0025](../../02.architecture/decisions/0025-four-digit-document-path-identity.md)
+Accepted [ADR-0025](../../../../02.architecture/decisions/0025-four-digit-document-path-identity.md)
 requires every current numeric path token to use four digits. WORK-109 atomically
 renames the eight PRD paths and every Stage 03 work-unit directory, updates
 their path-derived IDs and current consumers, and rejects any remaining live
@@ -767,29 +767,29 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 ## Traceability
 
 - **Program requirement**:
-  [Historical PRD-0008](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+  [Historical PRD-0008](../../../superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [Historical AD-0011](../../98.archive/superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+  [Historical AD-0011](../../../superseded/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Accepted full-body archive predecessor**:
-  [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+  [ADR-0018](../../../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **Accepted transition predecessor**:
-  [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
+  [ADR-0023](../../../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
 - **Accepted current decision and PRD-0008 lineage authority**:
-  [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
+  [ADR-0024](../../../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Approved implementation Plan and Task, to move during transition**:
   [legacy Plan](plan.md)
   and [legacy Task](plan.md)
 - **External evidence boundary**:
-  [Spec-driven SDLC and document contracts](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
-  and [AI agents and Agency Agents](../../90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)
+  [Spec-driven SDLC and document contracts](../../../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../../../90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)
 - **Suspended program**:
-  [Historical PRD-0007](../../98.archive/superseded/01.requirements/0007-repository-delivery-and-platform-assurance.md)
+  [Historical PRD-0007](../../../superseded/01.requirements/0007-repository-delivery-and-platform-assurance.md)
 
 ### Lifecycle Traceability
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [Historical REQ-0008-FR-0001](../../98.archive/superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
+| [Historical REQ-0008-FR-0001](../../../superseded/01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
 | N/A — REQ-0008-FR-0002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |
 | N/A — REQ-0008-FR-0003 and REQ-0008-FR-0007 share the PRD source above. | VAL-WDTC-002 | Residue and registry checks prove Stage 05 stability and Release exclusion. |
 | N/A — REQ-0008-FR-0004 shares the PRD source above. | VAL-WDTC-004 | Exact eight-row mapping, classifier closure, registry, and reciprocal-link validation prove stable lineage and atomic authority transition. |

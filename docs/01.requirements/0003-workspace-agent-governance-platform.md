@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.0.0"
+version: "1.2.0"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -17,7 +17,7 @@ artifact_id: "REQ-0003"
 machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
 사람용 실행 규칙은 [Common governance](../../.agents/README.md), 문서 형식은
 [Stage 99](../99.templates/README.md)가 소유한다. 현재 거버넌스·공통 QA 구현은
-[ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)와
+[ADR-0035](../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)와
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가,
 더 넓은 문서 수렴과 미완료 처분은 [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
 이 Requirement는 구현 inventory, provider roster 또는 일회성 migration 계획의 복제본이 아니다.
@@ -70,7 +70,7 @@ machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
 - **REQ-0003-FR-0022**: Scratch와 checkpoint는 제한된 비밀정보 없는 임시 상태로 유지하고 durable 실행 증거는 Task에 남겨야 한다. 제거된 공유 progress ledger를 새 current owner로 복원하지 않는다.
 - **REQ-0003-FR-0023**: 안정적인 문서 identity와 semantic filename을 유지하고 mandatory/excluded profile의 identity 규칙, 유일성 및 경로 대응을 검증해야 한다. 기존 결정 이력의 식별자를 재할당하지 않는다.
 - **REQ-0003-FR-0024**: Compatibility, wrapper 또는 script는 실제 소비자와 고유 rule·negative fixture가 있을 때만 유지하고 승계 증거와 consumer-zero 후 제거해야 한다.
-- **REQ-0003-FR-0025**: Agent 시스템의 risk, tool/data trust, oversight, stop, approval, trace, evaluation 및 component provenance 의무는 현재 Registry와 Stage 00 owner에서 구현·검증해야 한다. 정적 선언은 runtime enforcement를 증명하지 않는다.
+- **REQ-0003-FR-0025**: Agent 시스템의 risk, tool/data trust, oversight, stop, approval, trace, evaluation 및 component provenance 의무는 현재 `.agents/roles/` Registry와 `.agents/governance/` owner에서 구현·검증해야 한다. 정적 선언은 runtime enforcement를 증명하지 않는다.
 - **REQ-0003-FR-0026**: Repository-declared, provider-runtime, hosted-CI 및 승인된 remote/live 증거를 분리하고 관측 없이 서로 승격하지 않아야 한다.
 - **REQ-0003-FR-0027**: Lifecycle 검증은 profile, state 및 허용 edge를 판정하고 일반 본문 정정·소비자 승계는 semantic/link 검증과 검토된 Git 복구로 판정해야 한다. 봉인 Archive의 무결성 검사는 별도로 유지한다.
 - **REQ-0003-FR-0028**: Malformed input, 도구 부재, fallback, 위험 경로와 금지 동작에는 결정적인 직접 negative test가 있어야 하며 required-tool 실패를 diagnostic SKIP으로 숨기지 않아야 한다.
@@ -122,7 +122,7 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 - Task와 Git이 작업·검증·인계를 소유한다. 별도 자동 checkpoint 파일을 필수로 만들거나
   credential 또는 full transcript를 저장하지 않는다.
 - ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
-  보존하는 superseded historical decisions다. ADR-0035와 SPEC-0072가 현재 거버넌스 위치를, ADR-0034가 QA·CD 경계를 소유한다.
+  보존하는 superseded historical decisions다. ADR-0035와 SPEC-0072가 현재 거버넌스 위치와 QA·CD 경계를 소유하며, ADR-0034는 그 경계를 ADR-0035에 승계한 superseded decision이다.
 
 ### Agent execution and approval requirements
 
@@ -150,6 +150,9 @@ package retention 및 명시적 역사 인용 경계로 대체된다. 봉인 rec
 
 Current governance and QA implementation is owned by
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
+Provider-native execution scope, capability-to-model binding, and write-path
+guard parity are owned by
+[SPEC-0073](../03.specs/0073-provider-native-enforcement-parity/spec.md).
 
 ## Traceability
 
@@ -170,7 +173,7 @@ Current governance and QA implementation is owned by
 | REQ-0003-FR-0022 | Scratch와 checkpoint는 제한된 비밀정보 없는 임시 상태로 유지하고 durable 실행 증거는 Task에 남겨야 한다. 제거된 공유 progress ledger를 새 current owner로 복원하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0023 | 안정적인 문서 identity와 semantic filename을 유지하고 mandatory/excluded profile의 identity 규칙, 유일성 및 경로 대응을 검증해야 한다. 기존 결정 이력의 식별자를 재할당하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0024 | Compatibility, wrapper 또는 script는 실제 소비자와 고유 rule·negative fixture가 있을 때만 유지하고 승계 증거와 consumer-zero 후 제거해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0025 | Agent 시스템의 risk, tool/data trust, oversight, stop, approval, trace, evaluation 및 component provenance 의무는 현재 Registry와 Stage 00 owner에서 구현·검증해야 한다. 정적 선언은 runtime enforcement를 증명하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0025 | Agent 시스템의 risk, tool/data trust, oversight, stop, approval, trace, evaluation 및 component provenance 의무는 현재 `.agents/roles/` Registry와 `.agents/governance/` owner에서 구현·검증해야 한다. 정적 선언은 runtime enforcement를 증명하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI 및 승인된 remote/live 증거를 분리하고 관측 없이 서로 승격하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0027 | Lifecycle 검증은 profile, state 및 허용 edge를 판정하고 일반 본문 정정·소비자 승계는 semantic/link 검증과 검토된 Git 복구로 판정해야 한다. 봉인 Archive의 무결성 검사는 별도로 유지한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0028 | Malformed input, 도구 부재, fallback, 위험 경로와 금지 동작에는 결정적인 직접 negative test가 있어야 하며 required-tool 실패를 diagnostic SKIP으로 숨기지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -189,7 +192,7 @@ Current governance and QA implementation is owned by
 | REQ-0003-NFR-0002 | Quick, staged index, final-tree 및 CI 공통 QA는 입력 경계와 실패 전파를 구분한다. | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | REQ-0003-IF-0001 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 01 remains acceptance-only | 공통 `.agents/` owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 02 remains acceptance-only | Requirement Package→AD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 03 remains acceptance-only | Gateway가 policy를 복제하지 않고 evidence class를 구분한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 04 remains acceptance-only | Repository static quality gate가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |

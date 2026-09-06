@@ -1,7 +1,7 @@
 ---
 name: "incident-responder"
 description: "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance."
-model: "claude-sonnet-4-6"
+model: "opus"
 tools: "Read, Grep, Glob, Bash"
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: "doc-writer"
 description: "Author governed documentation at the canonical SDLC or common-document owner."
-model: "claude-sonnet-4-6"
+model: "sonnet"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

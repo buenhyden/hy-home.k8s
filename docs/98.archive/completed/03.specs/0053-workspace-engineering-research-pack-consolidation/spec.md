@@ -30,7 +30,7 @@ runtime owner.
 This specification is a successor to completed
 [Spec 017](../0017-workspace-engineering-research-pack/spec.md). It does not
 reopen or rewrite Spec 017's terminal evidence. It also records a deliberate
-conflict with the active [Spec 052](../../../../03.specs/0052-document-taxonomy-consolidation/spec.md)
+conflict with the active [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
 archive route: the human-approved replacement removes the three old live packs
 without creating replacement Stage 98 records, while preserving provenance in
 Git history and the new migration ledger. The affected mutable requirements,
@@ -401,7 +401,7 @@ secret-value check is part of acceptance.
 - **Predecessor specification**:
   [Spec 017](../0017-workspace-engineering-research-pack/spec.md)
 - **Related consolidation specification**:
-  [Spec 052](../../../../03.specs/0052-document-taxonomy-consolidation/spec.md)
+  [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
 - **Conflicting program requirement**:
   [PRD-0008](../../../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Conflicting architecture**:

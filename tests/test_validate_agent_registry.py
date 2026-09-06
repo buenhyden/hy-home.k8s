@@ -165,3 +165,89 @@ class AgentRegistryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CapabilityModelBindingTests(unittest.TestCase):
+    """Every projection carries the model its role's capability tier declares."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def _projection_model(self, provider: str, relative: str) -> str:
+        text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
+        if provider == "claude":
+            return self.validator._frontmatter(text)[0].get("model", "")
+        return self.validator.tomllib.loads(text).get("model", "")
+
+    def test_every_provider_declares_a_model_for_every_tier(self) -> None:
+        tiers = {
+            role["capability_tier_ref"].rsplit("#", 1)[-1]
+            for role in self.registry["roles"]
+        }
+        for provider in self.registry["providers"]:
+            with self.subTest(provider=provider["id"]):
+                self.assertEqual(set(provider.get("capability_models", {})), tiers)
+
+    def test_every_projection_model_matches_its_tier_binding(self) -> None:
+        bindings = {
+            provider["id"]: provider.get("capability_models", {})
+            for provider in self.registry["providers"]
+        }
+        drift = []
+        for role in self.registry["roles"]:
+            tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
+            for provider in role["supported_providers"]:
+                expected = bindings[provider].get(tier)
+                observed = self._projection_model(
+                    provider, role["projections"][provider]
+                )
+                if observed != expected:
+                    drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
+        self.assertEqual(drift, [])
+
+
+class CodexSandboxScopeTests(unittest.TestCase):
+    """Codex projections declare a structured scope, not prose alone."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def test_codex_declares_a_sandbox_scope_for_every_permission_class(self) -> None:
+        codex = next(
+            provider
+            for provider in self.registry["providers"]
+            if provider["id"] == "codex"
+        )
+        declared = {entry["id"] for entry in self.registry["permission_classes"]}
+        self.assertEqual(set(codex.get("permission_scopes", {})), declared)
+
+    def test_every_codex_projection_carries_its_bound_sandbox_scope(self) -> None:
+        codex = next(
+            provider
+            for provider in self.registry["providers"]
+            if provider["id"] == "codex"
+        )
+        scopes = codex.get("permission_scopes", {})
+        missing = []
+        for role in self.registry["roles"]:
+            if "codex" not in role["supported_providers"]:
+                continue
+            data = self.validator.tomllib.loads(
+                (REPOSITORY_ROOT / role["projections"]["codex"]).read_text(
+                    encoding="utf-8"
+                )
+            )
+            expected = scopes.get(role["permission_class"])
+            if data.get("sandbox_mode") != expected:
+                missing.append(
+                    f"{role['id']}: {data.get('sandbox_mode')!r} != {expected!r}"
+                )
+        self.assertEqual(missing, [])

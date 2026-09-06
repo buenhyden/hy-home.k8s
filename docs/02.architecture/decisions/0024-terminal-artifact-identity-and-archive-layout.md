@@ -406,5 +406,5 @@ schema, validators continue to enforce transition-state paths and profiles.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0018](./0018-full-body-archive-record-and-retention.md) | Partially supersedes mirror-original-path and Tombstone prohibition only; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
+| [ADR-0018](./0018-full-body-archive-record-and-retention.md) | Partially supersedes mirror-original-path and Tombstone prohibition only; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md) |
 | [ADR-0023](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Partially supersedes terminal Stage 98 date/mirror-path immutability only; preserves transition safety and unrelated decisions | N/A — shares the affected Spec 052 above. |

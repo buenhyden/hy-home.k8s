@@ -1,10 +1,10 @@
 ---
 title: "Reference: Scope Application Index"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "references"
 artifact_id: "RES-0001-m0013"
 ---
@@ -55,6 +55,13 @@ evidence that requires cluster, hosted CI, provider runtime, or stakeholder
 access.
 
 ## Definitions / Facts
+
+> [!NOTE]
+> The rows below are observations at the dates their cycles record, not the
+> current owner graph. `docs/00.agent-governance/` and its `memory/`, `rules/`,
+> `contracts/` and `harness-catalog.md` were retired, `.agents/agents/` and
+> `.gemini/` are not part of the current two-provider surface, and common
+> authority now lives under `.agents/` with progress owned by the Stage 03 Task.
 
 ### Scope-to-requirement map
 

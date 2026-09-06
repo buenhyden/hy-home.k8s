@@ -114,14 +114,22 @@ successful full coverage.
 Record in the owning Task or approved evidence record:
 
 - scope, changed paths, and acceptance IDs;
+- the snapshot the work sits on: branch, HEAD, and the base it diverged from;
 - commands and tool/version, with each ordered completion-step result;
 - separate lane results and limitations;
+- the approval boundary in force: what was authorized and what was not;
 - reviewer identity and disposition;
 - rollback commit or bounded rollback procedure;
 - residual risk and next owner.
 
 A field may state `none` or `DEFER` with a reason, but must not silently
 disappear. Do not copy raw child payload or sensitive diagnostics into evidence.
+
+These fields carry a handoff between providers as well as between people. The
+receiver re-observes Git, the owning Task, and the canonical owner before
+acting; a recorded snapshot says which state the evidence described, and a
+recorded boundary keeps a past authorization from being read as a standing
+one. Neither field grants authority, and a stale record never widens it.
 
 ### Supply-chain identity
 

@@ -1,0 +1,7 @@
+{
+  "id": "doc-writer-owner-routing",
+  "role": "doc-writer",
+  "prompt": "Add a domain memory statement to common governance without creating a second authority for any domain it names.",
+  "response": "evals/responses/doc-writer-owner-routing.synthetic.md",
+  "response_class": "synthetic"
+}

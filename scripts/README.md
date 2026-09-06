@@ -76,6 +76,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `agent_registry_loader.py` | bounded Stage 00 role-registry loading shared by governance validation |
 | `validate-agent-governance.py` | role/schema, native metadata, permission, skill, and consumer integrity |
 | `agent_governance_consumers.py` | bounded current-consumer and Git-backed historical recovery checks |
+| `run-agent-evaluations.py` | grades recorded agent responses against registry-derived criteria |
 
 ### Platform and supply-chain owners
 

@@ -1,6 +1,6 @@
 ---
 title: "Claude Native Adapter"
-version: "1.0.0"
+version: "1.1.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -19,16 +19,21 @@ This directory owns only Claude syntax, support notes and native connections.
 - `agents/`: native role definitions with explicit common file reads.
 - `CLAUDE.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
-- `settings.json`: existing permissions and registered pre-write hook.
-- `hooks/k8s-pre-edit.sh`: the existing synchronous write boundary.
+- `settings.json`: existing permissions and the registered pre-action hook.
+- `hooks/k8s-pre-edit.sh`: the synchronous write boundary for the shell and
+  structured file tools. One implementation serves both providers; the Codex
+  registration in [`.codex/hooks.json`](../.codex/hooks.json) runs this same
+  script.
 - `skills/<id>`: one relative link per common skill package.
 
 ## Configuration Boundary
 
 Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
 canonical role for common contracts. Update native references in both adapters
-when paths change; retain model and tool settings. Native files do not prove
-model access, role discovery or permission enforcement. No generator is used.
+when paths change. The registry owns the capability tier to model binding;
+a projection restates that value and keeps its own tool settings. Native files
+do not prove model access, role discovery or permission enforcement. No
+generator is used.
 
 ## Validation
 

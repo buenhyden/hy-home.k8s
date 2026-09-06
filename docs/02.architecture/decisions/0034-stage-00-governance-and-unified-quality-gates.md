@@ -1,21 +1,25 @@
 ---
 title: "Stage 00 Governance and Unified Quality Gates"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "ADR-0034"
+superseded_by: "ADR-0035"
 ---
 
 # ADR-0034: Stage 00 Governance and Unified Quality Gates
 
 ## Overview
 
-Authority-location and skill-routing clauses below record the previous decision.
-[ADR-0035](0035-common-agents-authority-and-native-skill-routing.md) proposes replacing those
-clauses under the latest user request. The QA/CD decisions remain current.
+This decision is superseded by
+[ADR-0035](0035-common-agents-authority-and-native-skill-routing.md), which replaces the
+authority-location and skill-routing clauses recorded below and carries forward
+the QA, security, preservation, and GitOps CD decisions unchanged. The clauses
+below record what was decided at the time; they are historical evidence, not
+current instructions, and the repository no longer holds the topology they name.
 
 This decision makes `docs/00.agent-governance/` the single shared control plane
 for agent policy, providers, roles, skills, and machine-readable role metadata.
@@ -108,3 +112,4 @@ as historical evidence and do not regain current authority.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ADR-0030](0030-authority-first-sdlc-and-agent-governance-convergence.md) | Narrows agent-governance and validation topology while preserving the wider authority-first SDLC model | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| [ADR-0035](0035-common-agents-authority-and-native-skill-routing.md) | Supersedes this decision: replaces its authority-location and skill-routing clauses and carries forward its QA, security, preservation, and GitOps CD decisions unchanged | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |

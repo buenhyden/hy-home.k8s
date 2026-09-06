@@ -1,7 +1,7 @@
 ---
 name: "gitops-reviewer"
 description: "Review GitOps manifests and reconciliation behavior without assuming mutation authority."
-model: "claude-sonnet-4-6"
+model: "sonnet"
 tools: "Read, Grep, Glob, Bash"
 ---
 

@@ -2179,7 +2179,7 @@
       "id": "common/root-provider-shim",
       "family": "common",
       "mode": "native",
-      "path_pattern": "^(?:AGENTS\\.md|CLAUDE\\.md|GEMINI\\.md)$",
+      "path_pattern": "^(?:AGENTS\\.md|CLAUDE\\.md)$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {

@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -125,7 +125,7 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 
 - **Model/Provider Strategy**: Provider adapters must route to Common agent governance and current active docs.
 - **Tooling Boundary**: Agents may inspect and edit repo files inside the workspace; live mutation requires approval.
-- **Memory & Context Strategy**: Durable 실행 증거는 package-local Task에, 공통 규칙은 Stage 00에, 임시 checkpoint는 ignored recovery state에 둔다.
+- **Memory & Context Strategy**: Durable 실행 증거는 package-local Task에, 공통 규칙은 `.agents/governance/`에, 임시 checkpoint는 ignored recovery state에 둔다.
 - **Guardrail Boundary**: Superseded/ended records are non-authoritative history; completed packages retain their own types under ADR-0032.
 - **Latency / Cost Budget**: Not applicable to platform runtime.
 

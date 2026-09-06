@@ -39,6 +39,12 @@ canonical owners before using remembered paths, results, or approvals.
 - Promote recurring knowledge only after review into the appropriate policy,
   skill, operating document, or reference record. Do not create a duplicate
   current-state ledger.
+- Durable knowledge about one domain — Kubernetes and GitOps desired state,
+  networking, secret handling, observability — stays with that domain's
+  operating or reference owner. Reach it through the stage index rather than
+  copying it into a governance summary; use
+  [`knowledge-map`](../skills/knowledge-map/SKILL.md) to find stale navigation
+  without creating a second authority for the same subject.
 - Provider-local recall never writes canonical truth directly; verify it
   against the repository first. A provider's memory feature does not change
   repository ownership or permission.
