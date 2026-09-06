@@ -19,11 +19,13 @@ This directory owns only Codex syntax, support notes and native connections.
 - `agents/`: native role definitions with explicit common file reads.
 - `CODEX.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
-- No project `skills/`, `hooks/`, `hooks.json`, `rules/` or `config.toml` is
-  adopted yet. Codex project skills reside in `.agents/skills/`, which is the
-  client's documented project skill root. `hooks.json` and `config.toml` are
-  supported by the installed client; see [provider.md](provider.md) for the
-  observation that gates adopting them.
+- `hooks.json`: the pre-action guard registration, judged by the same
+  validator rule family as the Claude side.
+- No project `skills/`, `hooks/`, `rules/` or `config.toml` is adopted. Codex
+  project skills reside in `.agents/skills/`, which is the client's documented
+  project skill root. `config.toml` stays unadopted so one file owns the hook
+  registration; see [provider.md](provider.md) for the client identity each
+  capability claim was observed against.
 
 ## Configuration Boundary
 

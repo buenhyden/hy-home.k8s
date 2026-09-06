@@ -25,6 +25,32 @@ from json_schema_validation import SchemaEvaluationError, schema_errors
 REGISTRY_PATH = PurePosixPath(".agents/roles/registry.json")
 REGISTRY_SCHEMA_PATH = PurePosixPath(".agents/roles/registry.schema.json")
 REGISTRY_PROVIDER_IDS = ("claude", "codex")
+# A surface stays retired while the reason it was retired still holds. The
+# Codex hook surface left this list once the installed client shipped one;
+# `.codex/skills` stays because shared skills are read through `.claude/skills`.
+RETIRED_SURFACES = (
+    "docs/00.agent-governance",
+    ".agents/memory",
+    ".agents/rules",
+    ".agents/agents",
+    ".agents/registry.json",
+    ".agents/registry.schema.json",
+    ".agents/hooks",
+    ".agents/providers",
+    ".codex/skills",
+    ".gemini",
+    "GEMINI.md",
+)
+PROVIDER_HOOK_PATHS = {
+    "claude": ".claude/settings.json",
+    "codex": ".codex/hooks.json",
+}
+# Only a pre-action event is registered. A Stop, compaction, or session event
+# that ran whole QA or called another agent would re-enter this repository's
+# own validation, so those events stay unregistered on both providers.
+PROVIDER_HOOK_EVENTS = frozenset({"PreToolUse"})
+PROVIDER_HOOK_ROOTS = (".claude/hooks/", ".codex/hooks/")
+PROVIDER_HOOK_TIMEOUT_RANGE = range(1, 61)
 REGISTRY_PROJECTION_ROOTS = {
     "neutral": PurePosixPath(".agents/roles"),
     "claude": PurePosixPath(".claude/agents"),
@@ -629,21 +655,7 @@ def _node_exists(root: Path, relative: str) -> bool:
 
 def validate_absent_surfaces(root: Path) -> None:
     root = _strict_root(root)
-    for path in (
-        "docs/00.agent-governance",
-        ".agents/memory",
-        ".agents/rules",
-        ".agents/agents",
-        ".agents/registry.json",
-        ".agents/registry.schema.json",
-        ".agents/hooks",
-        ".agents/providers",
-        ".codex/skills",
-        ".codex/hooks",
-        ".codex/hooks.json",
-        ".gemini",
-        "GEMINI.md",
-    ):
+    for path in RETIRED_SURFACES:
         if _node_exists(root, path):
             fail("AGENT-GOVERNANCE-RETIRED", "retired surface was recreated")
 
@@ -765,6 +777,60 @@ def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
         code="AGENT-NATIVE-REFERENCE",
         symlinks={name: f"../../.agents/skills/{name}" for name in skills},
     )
+
+
+def validate_provider_hooks(root: Path, provider: str, hooks: Any) -> None:
+    """Judge one provider's hook registration under the shared rule family.
+
+    Both providers register the same guard through the same event, handler
+    class, execution bound, and executable location. This checks those
+    properties rather than one serialized form, so a supported native field
+    can be added without editing a frozen literal.
+    """
+
+    if not isinstance(hooks, dict) or set(hooks) != PROVIDER_HOOK_EVENTS:
+        fail("AGENT-NATIVE-HOOK", f"{provider}: unregistered hook event set")
+    for groups in hooks.values():
+        if not isinstance(groups, list) or not groups:
+            fail("AGENT-NATIVE-HOOK", f"{provider}: empty hook event")
+        for group in groups:
+            if (
+                not isinstance(group, dict)
+                or not set(group) <= {"matcher", "hooks"}
+                or not isinstance(group.get("matcher"), str)
+                or not group["matcher"].strip()
+                or not isinstance(group.get("hooks"), list)
+                or not group["hooks"]
+            ):
+                fail("AGENT-NATIVE-HOOK", f"{provider}: invalid hook matcher group")
+            for handler in group["hooks"]:
+                _validate_hook_handler(root, provider, handler)
+
+
+def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
+    """Check one handler's class, execution bound, and executable location."""
+
+    if (
+        not isinstance(handler, dict)
+        or not set(handler) <= {"type", "command", "timeout", "statusMessage"}
+        or handler.get("type") != "command"
+    ):
+        fail("AGENT-NATIVE-HOOK", f"{provider}: handler is not a bounded command")
+    if handler.get("timeout") not in PROVIDER_HOOK_TIMEOUT_RANGE:
+        fail("AGENT-NATIVE-HOOK", f"{provider}: handler execution is unbounded")
+    command = handler.get("command")
+    if not isinstance(command, str) or ".." in command:
+        fail("AGENT-NATIVE-HOOK", f"{provider}: handler command is not repository-local")
+    scripts = [
+        token[token.index(prefix) :].rstrip('"')
+        for token in command.split()
+        for prefix in PROVIDER_HOOK_ROOTS
+        if prefix in token
+    ]
+    if not scripts:
+        fail("AGENT-NATIVE-HOOK", f"{provider}: handler runs an untracked executable")
+    for script in scripts:
+        _read_regular_file(root, script, code="AGENT-NATIVE-HOOK")
 
 
 def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
@@ -973,23 +1039,16 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),
     }:
         fail("AGENT-NATIVE-PERMISSION", "permission settings widened or lost denial")
-    expected_hook = {
-        "PreToolUse": [
-            {
-                "matcher": "Bash|Write|Edit|MultiEdit",
-                "hooks": [
-                    {
-                        "type": "command",
-                        "command": 'HY_HOME_K8S_HOOK_PROVIDER=claude bash "$CLAUDE_PROJECT_DIR/.claude/hooks/k8s-pre-edit.sh"',
-                        "timeout": 10,
-                    }
-                ],
-            }
-        ]
-    }
-    if settings["hooks"] != expected_hook:
-        fail("AGENT-NATIVE-HOOK", "native pre-action guard differs")
-    _read_regular_file(root, ".claude/hooks/k8s-pre-edit.sh", code="AGENT-NATIVE-HOOK")
+    validate_provider_hooks(root, "claude", settings.get("hooks"))
+    codex_hooks = PROVIDER_HOOK_PATHS["codex"]
+    if _node_exists(root, codex_hooks):
+        document = load_json(root, codex_hooks)
+        if not isinstance(document, dict) or not set(document) <= {
+            "description",
+            "hooks",
+        }:
+            fail("AGENT-NATIVE-HOOK", "unsupported native hook document")
+        validate_provider_hooks(root, "codex", document.get("hooks"))
     for provider in registry["providers"]:
         gateway = _read_text(root, provider["gateway"], "AGENT-NATIVE-REFERENCE")
         required = [

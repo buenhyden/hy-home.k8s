@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -53,7 +53,7 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-011](../plan.md#work-breakdown) | VAL-PNP-008 | Correct provider notes to describe native capability against a named client | platform | Done | Capability statements name the client they were observed against; the Codex hook denial is replaced by a supported-but-not-adopted statement | Commit `5c017dde`; observed `claude 2.1.261` and `codex-cli 0.140.0` |
 | [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007 | Add the untrusted input, cost and throughput, and loop termination boundaries | platform | Done | Untrusted input, cost and throughput, and loop termination boundaries added at their policy owners | Commit `724719fb`; profile and link validation |
 | [WORK-013](../plan.md#work-breakdown) | VAL-PNP-010 | Reconcile Stage 90 research baseline rows with the current tree | platform | Done | Six baselines framed as dated observation with current owners named; two present-tense column headers corrected; one duplicated router link removed | Commit `de1f7858`; path sweep and staged profile |
-| [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Blocked | Not started. The Codex event payload shape was not observed, and no authorized fresh Codex session was run | `DEFER`; `sandbox_mode` remains the only Codex structured control |
+| [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Done | The gating observation now exists: `codex-cli 0.153.4` documents `<repo>/.codex/hooks.json`, the `PreToolUse` event, the `command` handler, and `tool_name`/`tool_input`/`tool_input.command`. The guard is registered on `Bash\|apply_patch` and the frozen Claude hook literal is replaced by one property contract both providers are judged under | `tests.test_agent_governance` 35 OK, `tests.test_k8s_pre_edit_hook` 35 OK; native event delivery stays `DEFER` |
 | [WORK-015](../plan.md#work-breakdown) | VAL-PNP-009 | Route current documents to sealed evidence through the archive index | platform | Done | The retention commit removed the navigational exemption for Migration ledgers; four current documents still linked one directly and the index reached neither ledger they cite. Index navigation added, four links rerouted, seven terminal Task records left untouched | `archive-cutover` PASS, records=25; `tests.test_archive_cutover` 37 cases OK |
 
 ## Approval and Safety Boundaries
@@ -95,9 +95,11 @@ before the values it validates; WORK-009 now carries only the permission mode.
 
 ## Verification Summary
 
-Twelve work packages landed as twelve logical commits, each gated by the staged
-profile against its exact index. Two remain `DEFER` with a reason and a next
-owner, and one gate fails for a cause outside this package.
+Thirteen work packages landed as logical commits, each gated by the staged
+profile against its exact index. One remains `DEFER` with a reason and a next
+owner. WORK-014 reopened and completed after its gating observation arrived:
+the installed Codex client moved from `0.140.0` to `0.153.4` and its published
+hook contract names the payload shape the guard already reads.
 
 **Repository-static lanes.** Every commit passed `python3 scripts/qa.py staged`
 on its own index. The handoff `python3 scripts/qa.py full` selected twenty
@@ -142,8 +144,9 @@ still cannot see a program that opens files itself. A rule that only the
 all-files and CI lanes select can be broken by a staged-only change and stay
 invisible until handoff, which is how WORK-015's defect reached a commit.
 
-**Next owner.** platform, for the two `DEFER` packages and any authorized
-native observation.
+**Next owner.** platform, for the remaining `DEFER` package (WORK-009, the
+Claude permission mode) and any authorized native observation. A registered
+hook is configuration; that either client delivered the event is unobserved.
 
 ## Traceability
 
@@ -164,5 +167,5 @@ native observation.
 | [WORK-011](../plan.md#work-breakdown) | Native capability claims carry a client identity | Commit `5c017dde` |
 | [WORK-012](../plan.md#work-breakdown) | Three missing boundaries added at their owners | Commit `724719fb` |
 | [WORK-013](../plan.md#work-breakdown) | Stage 90 baselines read as dated observation | Commit `de1f7858` |
-| [WORK-014](../plan.md#work-breakdown) | Not executed; gated on an unobserved payload shape | `DEFER` with next owner |
+| [WORK-014](../plan.md#work-breakdown) | Codex guard registered under a contract shared with Claude; the dead guard environment variable removed | Governance validator; three Codex-payload guard cases |
 | [WORK-015](../plan.md#work-breakdown) | Archive cutover and its unit cases recovered without editing a terminal record | `archive-cutover` PASS; 37 archive cutover cases OK |

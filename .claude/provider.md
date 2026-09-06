@@ -55,7 +55,7 @@ Role projections carry the documented model aliases rather than a pinned
 generation identifier, and [the registry](../.agents/roles/registry.json) owns
 which alias each capability tier binds. An alias keeps the selection stable
 when a generation changes, and the validator rejects a projection whose model
-does not resolve from the binding. Observed on `claude 2.1.261` (2026-09-06).
+does not resolve from the binding. Observed on `claude 2.1.263` (2026-09-06).
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

@@ -92,6 +92,27 @@ class NativeBoundaryTests(unittest.TestCase):
                 f"../../.agents/skills/{skill['id']}"
             )
 
+    CODEX_HOOKS = {
+        "description": "Pre-action guard for tracked repository writes.",
+        "hooks": {
+            "PreToolUse": [
+                {
+                    "matcher": "Bash|apply_patch",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": (
+                                'bash "$(git rev-parse --show-toplevel)'
+                                '/.claude/hooks/k8s-pre-edit.sh"'
+                            ),
+                            "timeout": 10,
+                        }
+                    ],
+                }
+            ]
+        },
+    }
+
     def assert_rejected(self, code=None):
         with self.assertRaises(self.validator.HarnessError) as raised:
             self.validator.validate_registry(self.root)
@@ -612,6 +633,83 @@ class NativeBoundaryTests(unittest.TestCase):
         path.write_text(path.read_text() + "Read `.agents/registry.json`.\n")
         with self.assertRaises(self.validator.HarnessError):
             self.validator.validate_current_sources(self.root)
+
+    def test_codex_native_hooks_are_a_supported_surface(self):
+        """`.codex/hooks.json` is current native configuration, not residue.
+
+        The surface was retired while the installed client had no hook
+        support. That client now ships one, so the guard is registered
+        rather than denied.
+        """
+        import json
+
+        path = self.root / ".codex/hooks.json"
+        path.write_text(json.dumps(self.CODEX_HOOKS))
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+
+    def test_provider_hook_contract_is_shared_by_both_providers(self):
+        """One rule family judges both providers' hook registrations."""
+        import copy
+        import json
+
+        for provider, relative, read in (
+            ("claude", ".claude/settings.json", lambda d: d["hooks"]),
+            ("codex", ".codex/hooks.json", lambda d: d["hooks"]),
+        ):
+            path = self.root / relative
+            if provider == "codex":
+                path.write_text(json.dumps(self.CODEX_HOOKS))
+            original = json.loads(path.read_text())
+            for label, mutate in (
+                ("unknown event", lambda h: h.update({"NotAnEvent": []})),
+                (
+                    "automatic whole-QA event",
+                    lambda h: h.update({"Stop": copy.deepcopy(h["PreToolUse"])}),
+                ),
+                (
+                    "unregistered handler class",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"type": "mcp_tool"}
+                    ),
+                ),
+                (
+                    "unbounded execution",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].pop("timeout", None),
+                ),
+                (
+                    "path escape",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"command": 'bash "../synthetic-private-payload"'}
+                    ),
+                ),
+                (
+                    "untracked executable",
+                    lambda h: h["PreToolUse"][0]["hooks"][0].update(
+                        {"command": "bash /tmp/synthetic-private-payload"}
+                    ),
+                ),
+            ):
+                with self.subTest(provider=provider, case=label):
+                    changed = copy.deepcopy(original)
+                    mutate(read(changed))
+                    path.write_text(json.dumps(changed))
+                    self.assert_rejected("AGENT-NATIVE-HOOK")
+            path.write_text(json.dumps(original))
+
+    def test_registered_guard_command_carries_no_dead_environment(self):
+        """A variable the guard never reads is residue, not configuration."""
+        import json
+
+        settings = json.loads((self.root / ".claude/settings.json").read_text())
+        command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        script = (ROOT / ".claude/hooks/k8s-pre-edit.sh").read_text(encoding="utf-8")
+        for assignment in command.split()[:-2]:
+            if "=" not in assignment:
+                continue
+            name = assignment.split("=", 1)[0]
+            self.assertIn(
+                name, script, f"{name} is passed to the guard but never read"
+            )
 
 
 class RetiredSurfaceTests(unittest.TestCase):

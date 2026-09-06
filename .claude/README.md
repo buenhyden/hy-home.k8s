@@ -21,7 +21,9 @@ This directory owns only Claude syntax, support notes and native connections.
 - [provider.md](provider.md): provider-specific loading and support contract.
 - `settings.json`: existing permissions and the registered pre-action hook.
 - `hooks/k8s-pre-edit.sh`: the synchronous write boundary for the shell and
-  structured file tools.
+  structured file tools. One implementation serves both providers; the Codex
+  registration in [`.codex/hooks.json`](../.codex/hooks.json) runs this same
+  script.
 - `skills/<id>`: one relative link per common skill package.
 
 ## Configuration Boundary

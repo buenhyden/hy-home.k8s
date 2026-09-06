@@ -1,0 +1,18 @@
+{
+  "description": "Pre-action guard for tracked repository writes.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.claude/hooks/k8s-pre-edit.sh\"",
+            "timeout": 10,
+            "statusMessage": "Checking the repository write boundary"
+          }
+        ]
+      }
+    ]
+  }
+}
