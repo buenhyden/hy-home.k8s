@@ -42,11 +42,21 @@ invocation. The common procedure retains the selected role and user scope.
 - Read shared skills through `.claude/skills`, a view of the neutral owner.
   File presence alone does not prove native discovery or use.
 - Tracked settings register only `.claude/hooks/k8s-pre-edit.sh` for pre-action
-  safety, on the shell and structured file tools. It enforces a boundary only
-  when the intended runtime loads it, and its shell observation is advisory:
-  a shell write is reported, never blocked. A program that opens files itself
-  stays outside it; see [approval and safety](../.agents/governance/approval-and-safety.md).
+  safety, on the shell and structured file tools. That file is this provider's
+  thin adapter; the boundary itself is owned by
+  `scripts/provider_write_guard.py`, which the adapter resolves from its own
+  checkout so a project directory pointed at another tree supplies data and
+  never the program. It enforces a boundary only when the intended runtime
+  loads it, and its shell observation is advisory: a shell write is reported,
+  never blocked. A program that opens files itself stays outside it; see
+  [approval and safety](../.agents/governance/approval-and-safety.md).
   Run QA explicitly; edit, Stop, and compaction events do not run whole QA.
+- The `read-only-evidence` permission class does not mean the same enforcement
+  on both providers. Here it withholds the structured write tools while leaving
+  a shell available, so a shell write is prohibited by policy and observed
+  advisorily rather than blocked. On Codex the same class binds an
+  operating-system `read-only` sandbox. That difference is documented and
+  accepted; it is not parity, and neither side is described as the other.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
 - Treat auto-memory and ignored local warning files as auxiliary context, not
