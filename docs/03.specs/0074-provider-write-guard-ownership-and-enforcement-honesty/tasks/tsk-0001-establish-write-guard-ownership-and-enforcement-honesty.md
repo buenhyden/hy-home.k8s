@@ -1,6 +1,6 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.6.0"
+version: "0.7.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -46,7 +46,7 @@ outcome.
 | [WORK-003](../plan.md#work-breakdown) | VAL-PWG-002        | Parse patch-envelope targets as data into the structured path pipeline         | platform | Done | A patch write now receives the manifest, secret-adjacency and document-route evaluation a structured write receives, in both payload forms | Eleven envelope cases, nine failing before and all passing after; guard module 40 to 51 passing; staged profile PASS |
 | [WORK-004](../plan.md#work-breakdown) | VAL-PWG-003        | Correct the enforcement statements and record the open runtime item            | platform | Done | Provider notes now separate registration, documented capability and observation; the discovery question is recorded as unresolved with its procedure and next owner | Reviewed provider text against the recorded client identities; staged profile 6/6 PASS |
 | [WORK-005](../plan.md#work-breakdown) | VAL-PWG-004, VAL-PWG-005 | Narrow the Claude read-only scope where a role needs no shell            | platform | Done | Two of six roles narrowed through the existing per-role override; the shared class is unchanged in count and behaviour | Three scope cases failing before and passing after; governance validator PASS; governance module 41 passing |
-| [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Queued | Not started | Not started |
+| [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Done | No guardrail in the class offers an action its tool scope cannot perform; the approval policy states the provider asymmetry and the corrected sandbox fact | Repository sweep for the carve-out phrasing returns nothing; staged profile 6/6 PASS |
 | [WORK-007](../plan.md#work-breakdown) | VAL-PWG-006        | Add one evaluation artifact per enumerated failure mode                        | platform | Queued | Not started | Not started |
 | [WORK-008](../plan.md#work-breakdown) | VAL-PWG-006        | Anchor groundedness to content and add the unverified-success criterion        | platform | Queued | Not started | Not started |
 | [WORK-009](../plan.md#work-breakdown) | VAL-PWG-007        | Record evidence-class separation, deferred items, blockers, and next owners    | platform | Queued | Not started | Not started |
@@ -78,7 +78,7 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-WORK-001 through WORK-005 are complete. The guard logic now lives in one module under
+WORK-001 through WORK-006 are complete. The guard logic now lives in one module under
 `scripts/` and each provider registers its own thin adapter. The Codex
 registration named a file inside the Claude adapter directory; it now names
 `.codex/hooks/pre-tool-use.sh`, and a structured payload produces the same
@@ -155,6 +155,18 @@ which a read-only role cannot perform. Read as a review standard rather than an
 authoring instruction the reference is coherent, so no change is made here; a
 decision to split that skill would need its own scope.
 
+WORK-006 removed the two guardrails that offered an edit on request, an action
+the class has no structured write tool to perform. A sweep for that phrasing
+across the role bodies now returns nothing.
+
+The approval policy gained the class meaning and lost one inaccurate clause. It
+had stated that only an operating-system sandbox bounds the advisory class and
+that this repository does not enable one; the Codex projections bind
+`sandbox_mode` per permission class, so that clause was false and is corrected
+rather than left standing. The policy now also records that a patch envelope
+reaches the structured evaluation while a shell target is reported and never
+blocked.
+
 Two findings arose during extraction and are recorded rather than smoothed
 over. First, resolving the guard program through the project directory made the
 guarded tree able to supply the guard, which two existing rejection cases
@@ -198,7 +210,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 | [WORK-003](../plan.md#work-breakdown) | Patch targets reach the structured pipeline in both payload forms | Nine of eleven envelope cases red before, all green after; the reported silent payload now warns |
 | [WORK-004](../plan.md#work-breakdown) | Enforcement statements corrected; delivery recorded as unproven | Provider notes dated against `claude 2.1.263` and `codex-cli 0.153.4`; staged profile 6/6 PASS |
 | [WORK-005](../plan.md#work-breakdown) | incident-responder and observability-reviewer narrowed; four roles keep a shell with recorded reasons | Determination recorded per role below; scope cases red then green; governance validator PASS |
-| [WORK-006](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-005                                     |
+| [WORK-006](../plan.md#work-breakdown) | Impossible carve-outs removed; class meaning stated at its policy owner | Carve-out sweep returns nothing; approval policy corrected on the sandbox claim; staged profile 6/6 PASS |
 | [WORK-007](../plan.md#work-breakdown) | Not started | Queued; four enumerated failure modes named in the plan         |
 | [WORK-008](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-007                                     |
 | [WORK-009](../plan.md#work-breakdown) | Not started | Queued; deferred items already listed in Verification Summary   |

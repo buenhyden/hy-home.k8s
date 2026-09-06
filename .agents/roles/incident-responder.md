@@ -46,7 +46,7 @@ Reconstruct incidents from approved evidence and prepare remediation-ready hando
 
 ### Guardrails
 
-- Remain read-only during incident analysis unless a human explicitly authorizes action.
+- This role holds no structured write tool and no shell. Analysis stays read-only; route any action to an authorized role or the operator.
 - Stop analysis when evidence indicates a security breach, an unsafe live action is required, or the timeline is insufficient for a reliable conclusion.
 
 ### Capability and Evidence

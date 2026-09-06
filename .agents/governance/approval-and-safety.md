@@ -49,12 +49,22 @@ and validating their configuration.
   never their values. Follow existing isolation and AppProject controls.
 - GitHub Actions is repository QA/CI, not live deployment CD. Do not infer
   runtime readiness from a successful static or hosted check.
-- Write-path guards observe structured file tools and the obvious write targets
-  of a shell command. A program that opens files itself, such as a Python or
-  Node script, stays outside that observation, and so do permission rules that
-  match shell file commands. Treat instruction-level and rule-level controls as
-  advisory for that class; only an operating-system sandbox bounds it, and this
-  repository does not enable one.
+- Write-path guards observe structured file tools, patch envelopes, and the
+  obvious write targets of a shell command. A patch envelope's file headers
+  reach the same evaluation a structured write reaches. A shell target does
+  not: it is reported and never blocked. A program that opens files itself,
+  such as a Python or Node script, stays outside the observation entirely, and
+  so do permission rules that match shell file commands. Treat
+  instruction-level and rule-level controls as advisory for that class.
+- `read-only-evidence` names what the registry grants, not what an operating
+  system enforces, and the two supported providers differ under that one name.
+  On Codex the class binds an operating-system `read-only` sandbox, which is a
+  real boundary. On Claude it withholds the structured write tools and, for a
+  role whose skills require one, leaves a shell through which a write is
+  prohibited by policy and observed advisorily rather than prevented. A role
+  that needs no shell declares a narrowed native scope instead. This difference
+  is documented and accepted; do not describe it as parity, and do not report
+  the weaker side's policy prohibition as an enforced control.
 - Before an exception, record scope, target, responsible operator, rollback or
   backup, and required evidence in the owning Task or incident. Missing
   authority means stop at the local draft.
