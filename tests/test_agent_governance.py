@@ -465,6 +465,35 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.write_text(body)
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
+    def test_native_model_must_equal_the_registry_capability_binding(self):
+        import tomllib
+
+        claude = self.root / ".claude/agents/code-reviewer.md"
+        original = claude.read_text()
+        for drifted in ('model: "opus"', 'model: "claude-sonnet-4-6"'):
+            with self.subTest(model=drifted):
+                claude.write_text(original.replace('model: "sonnet"', drifted))
+                self.assert_rejected("AGENT-NATIVE-METADATA")
+        claude.write_text(original)
+
+        codex = self.root / ".codex/agents/code-reviewer.toml"
+        source = codex.read_text()
+        bound = tomllib.loads(source)["model"]
+        for drifted in ("gpt-5.5", "gpt-5.3-codex"):
+            with self.subTest(model=drifted):
+                codex.write_text(source.replace(f'model = "{bound}"', f'model = "{drifted}"'))
+                self.assert_rejected("AGENT-NATIVE-METADATA")
+        codex.write_text(source)
+
+    def test_missing_capability_binding_rejects(self):
+        import json
+
+        registry = self.root / self.validator.REGISTRY_PATH.as_posix()
+        data = json.loads(registry.read_text())
+        del data["providers"][0]["capability_models"]["worker"]
+        registry.write_text(json.dumps(data))
+        self.assert_rejected()
+
     def test_unsupported_native_model_effort_and_metadata_reject(self):
         import json
         import tomllib

@@ -69,7 +69,8 @@
       "required": [
         "id",
         "gateway",
-        "projection_root"
+        "projection_root",
+        "capability_models"
       ],
       "properties": {
         "id": {
@@ -80,6 +81,9 @@
         },
         "projection_root": {
           "const": ".claude/agents"
+        },
+        "capability_models": {
+          "$ref": "#/$defs/capabilityModelBinding"
         }
       }
     },
@@ -89,7 +93,8 @@
       "required": [
         "id",
         "gateway",
-        "projection_root"
+        "projection_root",
+        "capability_models"
       ],
       "properties": {
         "id": {
@@ -100,6 +105,9 @@
         },
         "projection_root": {
           "const": ".codex/agents"
+        },
+        "capability_models": {
+          "$ref": "#/$defs/capabilityModelBinding"
         }
       }
     },
@@ -238,6 +246,26 @@
               "pattern": "^\\.codex/agents/[a-z0-9-]+\\.toml$"
             }
           }
+        }
+      }
+    },
+    "nativeModelIdentifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{0,159}$"
+    },
+    "capabilityModelBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top",
+        "worker"
+      ],
+      "properties": {
+        "top": {
+          "$ref": "#/$defs/nativeModelIdentifier"
+        },
+        "worker": {
+          "$ref": "#/$defs/nativeModelIdentifier"
         }
       }
     }

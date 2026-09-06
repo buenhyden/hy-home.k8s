@@ -1,5 +1,5 @@
 description = "Review GitOps manifests and reconciliation behavior without assuming mutation authority."
 developer_instructions = "Read the following repository files before acting:\n- `.agents/roles/gitops-reviewer.md`\n- `.agents/roles/registry.json`\n- `.agents/workflows/work-lifecycle.md`\n- `.agents/skills/gitops-workflow/SKILL.md`\n- `.agents/skills/k8s-validate/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
 name = "gitops-reviewer"
-model = "gpt-5.3-codex"
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "high"

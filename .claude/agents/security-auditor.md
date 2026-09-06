@@ -1,7 +1,7 @@
 ---
 name: "security-auditor"
 description: "Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations."
-model: "claude-sonnet-4-6"
+model: "opus"
 tools: "Read, Grep, Glob, Bash"
 ---
 

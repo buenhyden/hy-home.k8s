@@ -1,7 +1,7 @@
 ---
 name: "network-reviewer"
 description: "Review cluster networking, ingress, DNS, policy, and isolation behavior from repository evidence."
-model: "claude-sonnet-4-6"
+model: "sonnet"
 tools: "Read, Grep, Glob, Bash"
 ---
 

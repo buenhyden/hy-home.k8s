@@ -1,5 +1,5 @@
 description = "Author governed documentation at the canonical SDLC or common-document owner."
 developer_instructions = "Read the following repository files before acting:\n- `.agents/roles/doc-writer.md`\n- `.agents/roles/registry.json`\n- `.agents/workflows/work-lifecycle.md`\n- `.agents/skills/docs-stage-conformance/SKILL.md`\n- `.agents/skills/docs-stage-routing/SKILL.md`\n- `.agents/skills/requirements-to-design/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
 name = "doc-writer"
-model = "gpt-5.3-codex"
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "medium"

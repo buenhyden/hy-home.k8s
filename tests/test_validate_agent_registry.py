@@ -165,3 +165,46 @@ class AgentRegistryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CapabilityModelBindingTests(unittest.TestCase):
+    """Every projection carries the model its role's capability tier declares."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def _projection_model(self, provider: str, relative: str) -> str:
+        text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
+        if provider == "claude":
+            return self.validator._frontmatter(text)[0].get("model", "")
+        return self.validator.tomllib.loads(text).get("model", "")
+
+    def test_every_provider_declares_a_model_for_every_tier(self) -> None:
+        tiers = {
+            role["capability_tier_ref"].rsplit("#", 1)[-1]
+            for role in self.registry["roles"]
+        }
+        for provider in self.registry["providers"]:
+            with self.subTest(provider=provider["id"]):
+                self.assertEqual(set(provider.get("capability_models", {})), tiers)
+
+    def test_every_projection_model_matches_its_tier_binding(self) -> None:
+        bindings = {
+            provider["id"]: provider.get("capability_models", {})
+            for provider in self.registry["providers"]
+        }
+        drift = []
+        for role in self.registry["roles"]:
+            tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
+            for provider in role["supported_providers"]:
+                expected = bindings[provider].get(tier)
+                observed = self._projection_model(
+                    provider, role["projections"][provider]
+                )
+                if observed != expected:
+                    drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
+        self.assertEqual(drift, [])

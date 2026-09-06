@@ -1,7 +1,7 @@
 ---
 name: "observability-reviewer"
 description: "Review metrics, logs, alerts, dashboards, and operational observability coverage."
-model: "claude-sonnet-4-6"
+model: "sonnet"
 tools: "Read, Grep, Glob, Bash"
 ---
 

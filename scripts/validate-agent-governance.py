@@ -802,8 +802,13 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             or not body.strip()
         ):
             fail("AGENT-REGISTRY-SKILL", "invalid skill identity or metadata")
+    capability_models = {
+        provider["id"]: provider["capability_models"]
+        for provider in registry["providers"]
+    }
     for role in registry["roles"]:
         canonical = role["projections"]["neutral"]
+        capability_tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
         _read_text(root, canonical, "AGENT-REGISTRY-PROJECTION")
         expected_refs = {
             canonical,
@@ -815,16 +820,21 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             text = _read_text(
                 root, role["projections"][provider], "AGENT-NATIVE-METADATA"
             )
+            bound_model = capability_models[provider].get(capability_tier)
+            if bound_model is None:
+                fail(
+                    "AGENT-NATIVE-METADATA",
+                    f"{provider} declares no model for tier {capability_tier}",
+                )
             if provider == "claude":
                 metadata, body = _frontmatter(text)
                 allowed = {"name", "description", "model", "tools"}
-                model = metadata.get("model")
-                if model not in {
-                    "claude-sonnet-4-6",
-                    "claude-opus-4-8",
-                    "claude-sonnet-5",
-                }:
-                    fail("AGENT-NATIVE-METADATA", "unsupported model identifier")
+                if metadata.get("model") != bound_model:
+                    fail(
+                        "AGENT-NATIVE-METADATA",
+                        f"{role['id']}: model must equal the registry binding "
+                        f"{bound_model!r} for tier {capability_tier}",
+                    )
                 tools = {"Read", "Grep", "Glob"}
                 if role["permission_class"] == "scoped-authoring":
                     tools |= {"Write", "Edit", "Bash"}
@@ -854,6 +864,12 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     "developer_instructions",
                 }
                 body = metadata.get("developer_instructions", "")
+                if metadata.get("model") != bound_model:
+                    fail(
+                        "AGENT-NATIVE-METADATA",
+                        f"{role['id']}: model must equal the registry binding "
+                        f"{bound_model!r} for tier {capability_tier}",
+                    )
                 if (
                     not isinstance(metadata.get("model"), str)
                     or not re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,159}", metadata["model"])

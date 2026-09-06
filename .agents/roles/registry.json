@@ -6,12 +6,20 @@
     {
       "id": "claude",
       "gateway": "CLAUDE.md",
-      "projection_root": ".claude/agents"
+      "projection_root": ".claude/agents",
+      "capability_models": {
+        "top": "opus",
+        "worker": "sonnet"
+      }
     },
     {
       "id": "codex",
       "gateway": "AGENTS.md",
-      "projection_root": ".codex/agents"
+      "projection_root": ".codex/agents",
+      "capability_models": {
+        "top": "gpt-5.5",
+        "worker": "gpt-5.3-codex-spark"
+      }
     }
   ],
   "permission_classes": [

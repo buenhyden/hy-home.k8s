@@ -1,7 +1,7 @@
 ---
 name: "docs-researcher"
 description: "Collect and classify source evidence for documentation without claiming policy authority."
-model: "claude-sonnet-5"
+model: "sonnet"
 tools: "Read, Grep, Glob, WebFetch, WebSearch"
 ---
 

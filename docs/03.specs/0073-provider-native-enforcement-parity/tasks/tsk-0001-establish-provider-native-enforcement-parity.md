@@ -1,8 +1,8 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-06"
 layer: "specs"
@@ -18,8 +18,9 @@ as one logical commit gated by its exact index snapshot, with the full profile
 run once on the final tree before handoff. This record owns execution results,
 per-lane evidence, and the limits that remain unobserved.
 
-Work has not started. Every row below is queued and every result reads as not
-executed until its package runs.
+Execution is under way. WORK-006 delivered the model alignment that WORK-008
+and WORK-009 had planned separately, because a binding validator cannot land
+before the values it validates; WORK-009 now carries only the permission mode.
 
 ## Inputs
 
@@ -39,15 +40,15 @@ executed until its package runs.
 
 | ID                                    | Upstream criterion | Work item                                                                       | Owner    | Status | Result       | Evidence                                                   |
 | ------------------------------------- | ------------------ | ------------------------------------------------------------------------------- | -------- | ------ | ------------ | ---------------------------------------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | VAL-PNP-001        | Record the decision lineage for the current governance topology                 | platform | Queued | Not executed | Pending lifecycle and link validation                      |
-| [WORK-002](../plan.md#work-breakdown) | VAL-PNP-009        | Remove retired-provider and retired-path residue from tracked configuration     | platform | Queued | Not executed | Pending repository quality and filesystem sweep            |
-| [WORK-003](../plan.md#work-breakdown) | VAL-PNP-005        | Make the GitHub Actions security validator reachable from a supported profile   | platform | Queued | Not executed | Pending reachability test and profile listing              |
-| [WORK-004](../plan.md#work-breakdown) | VAL-PNP-006        | Reduce duplicated rule implementations and profile membership to one owner      | platform | Queued | Not executed | Pending gate comparison and focused tests                  |
-| [WORK-005](../plan.md#work-breakdown) | VAL-PNP-007        | Set the commit and handoff evidence proportion in Git policy                    | platform | Queued | Not executed | Pending policy review against the completion sequence      |
-| [WORK-006](../plan.md#work-breakdown) | VAL-PNP-003        | Add the per-provider capability-to-model binding to the registry and schema     | platform | Queued | Not executed | Pending binding tests and governance validator             |
+| [WORK-001](../plan.md#work-breakdown) | VAL-PNP-001 | Record the decision lineage for the current governance topology | platform | Done | ADR-0034 superseded with a reciprocal successor row; ADR-0035 accepted; the index, AD-0006 and REQ-0003 name the current owner | Commit `7bfbf1dd`; staged profile, six gates |
+| [WORK-002](../plan.md#work-breakdown) | VAL-PNP-009 | Remove retired-provider and retired-path residue from tracked configuration | platform | Done | Dead pre-commit exclusion, two removed-provider globs, one deleted-test index row and one contradicted stage claim removed | Commit `ce0adb53`; staged profile, six gates |
+| [WORK-003](../plan.md#work-breakdown) | VAL-PNP-005 | Make the GitHub Actions security validator reachable from a supported profile | platform | Done | Gate registered on the all-files and CI lanes; its first run found a one-day artifact retention against the seven-day contract | Commit `1f6420ee`; reachability test RED then GREEN |
+| [WORK-004](../plan.md#work-breakdown) | VAL-PNP-006 | Reduce duplicated rule implementations and profile membership to one owner | platform | Done | Duplicate Vault and ESO heredoc removed, 441 to 306 lines, both gates still passing; two reported duplications kept as distinct rules | Commit `41648686`; staged profile, seven gates |
+| [WORK-005](../plan.md#work-breakdown) | VAL-PNP-007 | Set the commit and handoff evidence proportion in Git policy | platform | Done | The staged profile gates a logical commit; the full profile gates branch finish and handoff | Commit `43711f02`; staged profile, six gates |
+| [WORK-006](../plan.md#work-breakdown) | VAL-PNP-003 | Add the per-provider capability-to-model binding to the registry and schema | platform | Done | Binding declared for both providers; twenty-three of twenty-four projections realigned; drift now fails on both sides | Binding tests RED then GREEN; governance validator |
 | [WORK-007](../plan.md#work-breakdown) | VAL-PNP-002        | Declare a native execution scope for every Codex role and widen the parity rule | platform | Queued | Not executed | Pending scope tests and governance validator               |
-| [WORK-008](../plan.md#work-breakdown) | VAL-PNP-003        | Align every Codex role model with the observed client catalog                   | platform | Queued | Not executed | Pending governance validator and recorded catalog identity |
-| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002        | Align every Claude role model and permission mode with the registry binding     | platform | Queued | Not executed | Pending native metadata tests                              |
+| [WORK-008](../plan.md#work-breakdown) | VAL-PNP-003 | Align every Codex role model with the observed client catalog | platform | Done | Delivered inside WORK-006; the installed client catalog listed only `gpt-5.5`, `gpt-5.4-mini` and `gpt-5.3-codex-spark`, so eleven of twelve prior values named absent models | Governance validator; catalog observed 2026-09-06 |
+| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002 | Align every Claude role model and permission mode with the registry binding | platform | In progress | Models delivered inside WORK-006 as documented aliases; the permission mode remains | Native metadata tests |
 | [WORK-010](../plan.md#work-breakdown) | VAL-PNP-004        | Extend the pre-action guard to the shell tool class and name the residual class | platform | Queued | Not executed | Pending guard unit tests and approval-boundary review      |
 | [WORK-011](../plan.md#work-breakdown) | VAL-PNP-008        | Correct provider notes to describe native capability against a named client     | platform | Queued | Not executed | Pending provider note review                               |
 | [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007        | Add the untrusted input, cost and throughput, and loop termination boundaries   | platform | Queued | Not executed | Pending policy review and link validation                  |
@@ -120,15 +121,15 @@ first or a real regression can pass silently.
 
 | Criterion / work item                 | Result                                                    | Evidence                                                          |
 | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | Not executed; queued behind approval to begin             | Pending lifecycle and link validation on the changed decisions    |
-| [WORK-002](../plan.md#work-breakdown) | Not executed; queued                                      | Pending repository quality and document contract validation       |
-| [WORK-003](../plan.md#work-breakdown) | Not executed; queued                                      | Pending validation-surface contract test                          |
-| [WORK-004](../plan.md#work-breakdown) | Not executed; queued                                      | Pending before-and-after gate comparison                          |
-| [WORK-005](../plan.md#work-breakdown) | Not executed; queued                                      | Pending policy review against the completion sequence             |
-| [WORK-006](../plan.md#work-breakdown) | Not executed; queued                                      | Pending registry binding tests                                    |
+| [WORK-001](../plan.md#work-breakdown) | Recorded the decision lineage without rewriting either decision body | Commit `7bfbf1dd`; document lifecycle and link validation |
+| [WORK-002](../plan.md#work-breakdown) | Removed five tracked entries that could never match or hold true | Commit `ce0adb53`; repository quality and filesystem sweep |
+| [WORK-003](../plan.md#work-breakdown) | Registered the orphan gate and fixed the violation its first run found | Commit `1f6420ee`; reachability test and profile listing |
+| [WORK-004](../plan.md#work-breakdown) | Removed one duplicate implementation; kept three distinct rules | Commit `41648686`; both gates re-run after removal |
+| [WORK-005](../plan.md#work-breakdown) | Stated the commit and handoff evidence proportion | Commit `43711f02`; quality policy cross-reference |
+| [WORK-006](../plan.md#work-breakdown) | Capability tier now determines the native model on both providers | Binding tests and governance validator negative cases |
 | [WORK-007](../plan.md#work-breakdown) | Not executed; queued                                      | Pending native scope parity tests                                 |
-| [WORK-008](../plan.md#work-breakdown) | Not executed; queued                                      | Pending governance validator with recorded catalog identity       |
-| [WORK-009](../plan.md#work-breakdown) | Not executed; queued                                      | Pending native metadata tests                                     |
+| [WORK-008](../plan.md#work-breakdown) | Codex models realigned to the observed client catalog | Governance validator; recorded catalog identity |
+| [WORK-009](../plan.md#work-breakdown) | Claude models realigned to documented aliases; permission mode pending | Native metadata tests |
 | [WORK-010](../plan.md#work-breakdown) | Not executed; queued                                      | Pending guard unit tests for the shell tool class                 |
 | [WORK-011](../plan.md#work-breakdown) | Not executed; queued                                      | Pending provider note review against the recorded client identity |
 | [WORK-012](../plan.md#work-breakdown) | Not executed; queued                                      | Pending policy and link validation                                |
