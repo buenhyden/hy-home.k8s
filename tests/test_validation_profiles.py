@@ -64,6 +64,13 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ROUTES.ContractError):
                 ROUTES.classify_path(self.contract, path)
 
+    def test_quick_and_staged_keep_the_same_gate_set(self):
+        """The two change-scoped profiles differ by snapshot, never by membership."""
+
+        self.assertEqual(
+            self.contract["profiles"]["quick"], self.contract["profiles"]["staged"]
+        )
+
     def test_full_and_ci_keep_the_same_unique_gate_set(self):
         expected = {
             "affected-surface-contract",
