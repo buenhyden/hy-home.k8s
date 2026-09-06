@@ -1,6 +1,6 @@
 ---
 title: "Provider Native Enforcement Parity Technical Specification"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -13,23 +13,32 @@ artifact_id: "SPEC-0073"
 
 ## Overview
 
-The common authority under `.agents/` already declares one role registry, one
+The common authority under `.agents/` already declared one role registry, one
 permission-class vocabulary, and one capability-tier vocabulary for both
-supported providers. The enforcement of those declarations is asymmetric.
-Claude projections carry a structured `tools` field that the governance
-validator compares against the role's permission class; Codex projections
-accept no scope field at all, so a Codex role's write boundary exists only as
-prose inside `developer_instructions`.
+supported providers. At drafting, the enforcement of those declarations was
+asymmetric: Claude projections carried a structured `tools` field the
+governance validator compared against the role's permission class, while Codex
+projections accepted no scope field at all, so a Codex role's write boundary
+existed only as prose inside `developer_instructions`.
 
-Three further surfaces state a capability boundary that the installed clients
-no longer match: the Codex provider notes deny a hook surface the installed
-client reports as stable, the pre-edit guard observes only the structured file
-tools while shell-mediated writes pass unobserved, and eleven of twelve Codex
-model identifiers name models absent from the installed client's catalog.
+Three further surfaces then stated a capability boundary the installed clients
+no longer matched. The Codex provider notes denied a hook surface the client
+reported as stable, the pre-edit guard observed only the structured file tools
+while shell-mediated writes passed unobserved, and eleven of twelve Codex model
+identifiers named models absent from the installed client's catalog.
 
-This specification makes the declared scope structured on both providers,
-gives the model binding a single owner, extends the write-path guard to the
-tool class actually used, and reconciles the provider notes, retired-path
+Those conditions are the ones this package addressed, not the current state of
+the tree. Both providers now declare a structured scope the validator reads
+from one registry, both register the same guard script, every native model
+resolves from the capability binding, and the provider notes date their
+capability statements. This paragraph is stated in the past tense on purpose:
+VAL-PNP-010 forbids a document from asserting a present-tense state the tree
+contradicts, and a specification whose work has landed is bound by that rule
+like any other current document.
+
+This specification made the declared scope structured on both providers,
+gave the model binding a single owner, extended the write-path guard to the
+tool class actually used, and reconciled the provider notes, retired-path
 residue, gate reachability, and research observations that remained after the
 [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
 static migration. It does not supersede SPEC-0072; that package keeps its own
@@ -71,6 +80,13 @@ guarantees, the archive cutover contracts and their sealed recovery evidence,
 any Stage 03 package whose work is in flight, live cluster or Argo CD or Vault
 operation, remote Git operation, hosted CI execution, provider authentication,
 and any external agent catalog adopted as a role roster.
+
+One narrow exception applies to a record this package does not own: when a
+repository gate rejects a specific line in such a record, the correction is
+limited to the line the gate named and is recorded with the gate that forced
+it. That happened once, to a `SPEC-0054` Task record carrying an absolute local
+checkout path. Nothing else in an unowned package was touched, and the
+exception never extends to that package's meaning, status, or work.
 
 Protected surfaces this specification never edits: the user's staged index,
 `.claude/settings.local.json`, `.claude/*.local.md`, `_workspace/` contents,

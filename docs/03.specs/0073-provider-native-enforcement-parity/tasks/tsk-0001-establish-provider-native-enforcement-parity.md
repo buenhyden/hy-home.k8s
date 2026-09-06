@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.3.1"
+version: "1.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -179,6 +179,15 @@ across this package's range. One record this package does not own,
 `SPEC-0054`'s `tsk-0013`, changed by exactly one line: the repository-quality
 gate rejected an absolute local checkout path, and the correction is limited to
 the line the gate named. The user's index and both stashes are untouched.
+
+**Document reconciliation.** The Specification and Plan were audited against
+what was built and corrected in commit `5911a2ee`, then brought under
+VAL-PNP-010 in a follow-up: the Overview had described the pre-change tree in
+the present tense, which a current document may not do once its work has
+landed. The conditions this package addressed are now stated as observed at
+drafting, and what holds instead is stated separately. The Task keeps
+`in-progress` rather than `done`: a terminal record must not be rewritten, and
+this branch is neither merged nor handed off.
 
 **Negative evidence recorded.** A drifting model on either provider, a widened
 or missing Codex sandbox scope, a validator with no profile membership, and a

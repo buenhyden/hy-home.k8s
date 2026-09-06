@@ -1,6 +1,6 @@
 ---
 title: "Provider Native Enforcement Parity Implementation Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -63,10 +63,11 @@ is what reopened WP-014: the newer Codex client publishes the hook payload
 shape whose absence had made that package conditional, so the mirror landed
 instead of being recorded as a deferral.
 
-The repository carries pre-existing staged work for
+At drafting, the repository carried pre-existing staged work for
 [SPEC-0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-taxonomy cutover. That index and the untracked personal provider files are
-outside this plan's write boundary.
+taxonomy cutover. That index and the untracked personal provider files were
+outside this plan's write boundary and stayed so; the work is now held in the
+operator's stash, which this package neither applied nor dropped.
 
 ## Goals & In-Scope
 
@@ -93,7 +94,9 @@ outside this plan's write boundary.
 - The QA runner's bounded-execution guarantees and the archive cutover
   contracts with their sealed recovery evidence.
 - Any Stage 03 package whose work is in flight, including the SPEC-0054
-  taxonomy cutover currently staged in this working tree.
+  taxonomy cutover, which was staged in this working tree at drafting and is
+  now held in the operator's stash. This package never carried it, and the one
+  gate-forced line correction to a SPEC-0054 record is recorded in the Task.
 - The user's staged index, `.claude/settings.local.json`, `.claude/*.local.md`,
   `_workspace/` contents, and `policy/` Kubernetes policy code.
 - Live cluster, Argo CD, Vault, cloud, remote Git, hosted CI, and provider
