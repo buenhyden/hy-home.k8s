@@ -1,8 +1,8 @@
 ---
 title: "Provider Native Enforcement Parity Technical Specification"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-06"
 layer: "specs"
@@ -36,24 +36,34 @@ static migration. It does not supersede SPEC-0072; that package keeps its own
 acceptance identifiers and its open verification work.
 
 Counts and catalog contents cited here are point-in-time observations recorded
-on 2026-09-06 against `claude 2.1.261` and `codex-cli 0.140.0`. They are
-evidence for this change, not permanent governance invariants.
+on 2026-09-06 against `claude 2.1.261` and `codex-cli 0.140.0`. Both clients
+moved during execution and were re-observed the same day as `claude 2.1.263`
+and `codex-cli 0.153.4`; the earlier reading is kept as the observation this
+specification was drafted against rather than rewritten to match the later
+tree. They are evidence for this change, not permanent governance invariants.
 
 ## Strategic Boundaries & Non-goals
 
 In scope: the role registry and its schema; the twelve Claude and twelve Codex
 role projections and their Stage 99 runtime forms; the governance validator's
-native-asset rules; `.claude/settings.json` and the pre-edit guard script; the
-Codex and Claude provider notes and adapter READMEs; the validation-surface
-contract's profile membership and validator registration; the Git and
-model-selection policies' evidence proportion; the injection, cost, and loop
-boundaries missing from common policy; the retired-path residue in
-`.pre-commit-config.yaml`, `.github/labeler.yml`, the Stage 99 provider-shim
-route, `tests/README.md`, and the root README stage table; the decision
-lineage of ADR-0034 and ADR-0035; the current-tense claims in the Stage 90
-workspace-engineering research pack; the handoff evidence contract's snapshot
-and boundary fields; the empty evaluation boundary under `evals/`; and the
-absent project editor configuration.
+native-asset rules; `.claude/settings.json`, `.codex/hooks.json`, and the one
+pre-edit guard script both providers register; the Codex and Claude provider
+notes and adapter READMEs; the validation-surface contract's profile membership
+and validator registration; the Git and model-selection policies' evidence
+proportion; the injection, cost, and loop boundaries missing from common
+policy; the domain memory layer's routing to its operating owner; the
+retired-path residue in `.pre-commit-config.yaml`, `.github/labeler.yml`, the
+Stage 99 provider-shim route, `tests/README.md`, and the root README stage
+table; the decision lineage of ADR-0034 and ADR-0035; the current-tense claims
+in the Stage 90 workspace-engineering research pack; the handoff evidence
+contract's snapshot and boundary fields; the empty evaluation boundary under
+`evals/` and the runner and index row it needs; and the absent project editor
+configuration together with the ignore pattern that kept it untracked.
+
+Every surface named here is listed as an allowed path in the package Task,
+which owns the concrete write boundary. A surface reached during execution but
+absent from that list is a boundary defect to reconcile and record, not a
+silent widening.
 
 Out of scope: role membership, permission-class semantics, handoff edges, the
 meaning of any responsibility body, the QA runner's bounded-execution
@@ -86,7 +96,9 @@ Protected surfaces this specification never edits: the user's staged index,
   current contract.
 - **C-PNP-005 — gate reachability.** Every tracked validator is reachable from
   at least one supported QA profile, or it is retired together with its tests
-  and fixtures and its citing documents are corrected.
+  and fixtures and its citing documents are corrected. A retired validator
+  identifier does not return: a new rule takes a name no retired rule held, so
+  that an identifier never carries a meaning its own history contradicts.
 - **C-PNP-006 — proportional commit evidence.** A logical commit is gated by
   the exact index snapshot. The full profile gates branch finish and handoff.
   Neither substitutes for the other and neither is repeated on unchanged bytes.
@@ -100,12 +112,23 @@ Protected surfaces this specification never edits: the user's staged index,
 
 ## Core Design
 
-The role registry gains a per-provider `native_bindings` object holding two
-maps: capability tier to native model identifier, and permission class to the
-native scope metadata that provider expresses. Claude's scope metadata is the
-existing tool allowlist plus a permission mode; Codex's is `sandbox_mode`.
-The registry declares four model values and six scope values in total, and the
-governance validator compares each of the twenty-four projections against them.
+Each entry of the registry's `providers` array gains two sibling maps:
+`capability_models`, from capability tier to native model identifier, and
+`permission_scopes`, from permission class to the native scope value that
+provider expresses. Claude's scope value is its tool allowlist; Codex's is
+`sandbox_mode`. The registry declares four model values and six scope
+entries, and the governance validator compares each of the twenty-four native
+projections against them.
+
+A role whose native authority genuinely differs from its permission class
+declares `native_scope_override` rather than departing silently, so the
+exception stays declared data that the validator reads instead of a role
+identifier special-cased in validator code.
+
+Claude's `permissionMode` is not bound. The tool allowlist is the enforced
+structured scope, and whether `permissionMode` changes a subagent's authority
+at all was not observed on this client; binding an unobserved field would
+state a boundary the repository cannot show holds.
 
 No renderer is introduced. The projections stay hand-authored explicit files,
 as the superseded
@@ -121,10 +144,15 @@ which is the parity this specification exists to create.
 The pre-action guard keeps one implementation and one script location. Its
 Claude matcher widens to the shell tool class, and the script learns to derive
 candidate repository paths from a shell command in addition to a structured
-file-tool payload. The Codex mirror is a separate, later work package because
-its event payload shape has not been observed on the installed client; until
-that observation exists, the Codex side relies on `sandbox_mode` alone and the
-gap is recorded rather than assumed closed.
+file-tool payload. The Codex mirror stays a separate, later work package,
+gated on observing the installed client's event payload shape rather than
+assumed from the Claude side. That observation arrived during execution:
+`codex-cli 0.153.4` documents `<repo>/.codex/hooks.json`, the `PreToolUse`
+event, the `command` handler, and the `tool_name`, `tool_input`, and
+`tool_input.command` fields the guard already reads. The mirror therefore
+landed, both providers register the one guard script, and the frozen
+per-provider hook literal in the validator is replaced by one property
+contract both are judged under. Native event delivery remains unobserved.
 
 Policy changes are three narrow additions and one narrowing. Git policy
 narrows the per-commit obligation from the full profile to the staged profile
@@ -143,13 +171,15 @@ created and no `updated` value is advanced without a corresponding observation.
 
 ## Data Modeling & Storage Strategy
 
-`native_bindings` is an object on each entry of the registry's existing
-`providers` array. It holds `capability_models`, mapping the stable tier
-anchors `top` and `worker` to one native model identifier each, and
-`permission_scopes`, mapping each declared permission-class identifier to the
+`capability_models` and `permission_scopes` are objects on each entry of the
+registry's existing `providers` array. `capability_models` maps the stable tier
+anchors `top` and `worker` to one native model identifier each;
+`permission_scopes` maps each declared permission-class identifier to the
 provider's native scope value. Both maps are total over the vocabularies the
 registry already declares; a missing key is a schema failure, and an extra key
-naming an undeclared tier or permission class is a schema failure.
+naming an undeclared tier or permission class is a schema failure. A role's
+optional `native_scope_override` names a provider and the scope that replaces
+the class default for that role alone.
 
 The registry schema constrains model identifiers by shape only. The concrete
 values are configuration intent, and the observation that a given client
@@ -240,7 +270,10 @@ by choosing the weaker contract.
 python3 -m unittest tests.test_agent_governance
 python3 -m unittest tests.test_k8s_pre_edit_hook
 python3 -m unittest tests.test_validation_profiles tests.test_qa_runner
+python3 -m unittest tests.test_agent_evaluations
+python3 -m unittest tests.test_validation_tooling_ownership
 python3 scripts/validate-agent-governance.py --root .
+python3 scripts/run-agent-evaluations.py --root .
 python3 scripts/qa.py --list
 python3 scripts/qa.py staged
 python3 scripts/qa.py full
@@ -261,7 +294,7 @@ behavior. Those lanes are recorded separately in the owning Task.
 | VAL-PNP-002 | Every role declares a machine-readable execution scope for every supported provider, and a contradicting scope fails the governance validator                                             | Focused negative tests and governance validator                                |
 | VAL-PNP-003 | Every native model value resolves from the registry's capability binding, and an unbound or drifting value fails                                                                          | Focused negative tests and governance validator                                |
 | VAL-PNP-004 | The pre-action guard observes shell-mediated repository writes, and the residual interpreter-mediated class is named in the approval boundary                                             | Guard unit tests and reviewed policy text                                      |
-| VAL-PNP-005 | Every tracked validator is reachable from a supported profile, or is retired with its tests, fixtures, and citing documents                                                               | Validation-surface contract test and profile listing                           |
+| VAL-PNP-005 | Every tracked validator is reachable from a supported profile, or is retired with its tests, fixtures, and citing documents, and no retired identifier is re-registered                    | Validation-surface contract test, profile listing, and the retired-alias ban   |
 | VAL-PNP-006 | Duplicated rule implementations and duplicated profile membership are reduced to one owner with no loss of checked conditions                                                             | Before-and-after gate comparison and focused tests                             |
 | VAL-PNP-007 | Git policy gates a logical commit on the exact index and gates handoff on the full profile, consistently with the quality policy's completion sequence                                    | Reviewed policy text and quality-policy cross-reference                        |
 | VAL-PNP-008 | Provider notes and adapter READMEs describe native capability against a named client identity and contain no undated capability denial                                                    | Reviewed provider notes and recorded client observation                        |

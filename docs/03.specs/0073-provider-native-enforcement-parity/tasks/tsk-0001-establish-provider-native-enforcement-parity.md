@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.3.0"
+version: "1.3.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -56,25 +56,31 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Done | The gating observation now exists: `codex-cli 0.153.4` documents `<repo>/.codex/hooks.json`, the `PreToolUse` event, the `command` handler, and `tool_name`/`tool_input`/`tool_input.command`. The guard is registered on `Bash\|apply_patch` and the frozen Claude hook literal is replaced by one property contract both providers are judged under | `tests.test_agent_governance` 35 OK, `tests.test_k8s_pre_edit_hook` 35 OK; native event delivery stays `DEFER` |
 | [WORK-015](../plan.md#work-breakdown) | VAL-PNP-009 | Route current documents to sealed evidence through the archive index | platform | Done | The retention commit removed the navigational exemption for Migration ledgers; four current documents still linked one directly and the index reached neither ledger they cite. Index navigation added, four links rerouted, seven terminal Task records left untouched | `archive-cutover` PASS, records=25; `tests.test_archive_cutover` 37 cases OK |
 | [WORK-016](../plan.md#work-breakdown) | VAL-PNP-007 | Carry the snapshot and approval boundary across a cross-provider handoff | platform | Done | Handoff evidence now records branch, HEAD, and divergence base, and the approval boundary in force, so a resuming provider learns which state a passing record described and which authorizations were already spent. Memory policy names the domain layer and routes it to its operating or reference owner | Commit `88fae58e`; staged profile, six gates |
-| [WORK-017](../plan.md#work-breakdown) | VAL-PNP-005 | Give the evaluation boundary a case set and an execution path | platform | Done | `evals/` held only a README, so role behavior had no evidence path. Three cases, one per permission class, are graded on groundedness, authority, boundary, and handoff, every criterion derived from the role registry. Building the cases found a false positive in the boundary criterion and it was narrowed | Commit `40acfe46`; `tests.test_agent_evaluations` 12 OK; gate on all four profiles |
+| [WORK-017](../plan.md#work-breakdown) | VAL-PNP-005 | Give the evaluation boundary a case set and an execution path | platform | Done | `evals/` held only a README, so role behavior had no evidence path. Three cases, one per permission class, are graded on groundedness, authority, boundary, and handoff, every criterion derived from the role registry. Building the cases found a false positive in the boundary criterion and it was narrowed | Commits `40acfe46`, `6de18963`, `a8049811`; `tests.test_agent_evaluations` 12 OK; gate on all four profiles as `agent-evaluation-cases` |
 | [WORK-018](../plan.md#work-breakdown) | VAL-PNP-009 | Expose the QA entry points as project editor tasks | platform | Done | `.vscode/tasks.json` runs the existing entry points and adds no runner. The `.vscode/` ignore pattern was directory-level, which stops Git descending, so the tracked `!.vscode/extensions.json` exception below it had never worked | Commit `66d2c26c`; affected-surface contract 1036 paths, uncovered=0 |
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `.agents/governance/`, `.agents/roles/registry.json`,
+- **Allowed Paths**: `.agents/README.md`, `.agents/governance/`,
+  `.agents/roles/registry.json`, `.agents/roles/registry.schema.json`,
+  `.agents/workflows/`,
   `docs/01.requirements/0003-workspace-agent-governance-platform.md`,
-  `.agents/roles/registry.schema.json`, `.claude/agents/`,
-  `.claude/settings.json`, `.claude/hooks/`, `.claude/provider.md`,
-  `.claude/README.md`, `.codex/agents/`, `.codex/provider.md`,
-  `.codex/README.md`, `.codex/hooks.json`, `.github/labeler.yml`,
-  `.pre-commit-config.yaml`, `README.md`, `docs/02.architecture/decisions/`,
+  `.claude/agents/`, `.claude/settings.json`, `.claude/hooks/`,
+  `.claude/provider.md`, `.claude/README.md`, `.codex/agents/`,
+  `.codex/provider.md`, `.codex/README.md`, `.codex/hooks.json`,
+  `.github/labeler.yml`, `.github/workflows/governance-audit-snapshot.yml`,
+  `.gitignore`, `.pre-commit-config.yaml`, `.vscode/`, `README.md`,
+  `docs/02.architecture/decisions/`, `docs/02.architecture/descriptions/`,
   `docs/03.specs/0073-provider-native-enforcement-parity/`,
   `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
   (current records only), `docs/98.archive/README.md`,
   `docs/03.specs/README.md`, `docs/90.references/research/`,
   `docs/99.templates/registry.json`, `docs/99.templates/templates/runtime/`,
-  `scripts/validate-agent-governance.py`, `scripts/validation/registry.json`,
-  `infrastructure/tests/verify-contracts-static.sh`, `tests/`
+  `evals/`, `scripts/README.md`, `scripts/run-agent-evaluations.py`,
+  `scripts/validate-agent-governance.py`, `scripts/validation/`,
+  `infrastructure/tests/verify-contracts-static.sh`, `tests/`, and the single
+  failing line of a record this package does not own when a gate rejects that
+  line, recorded with the gate that forced it
 - **Forbidden Paths**: the user's staged index and every path it touches,
   `.claude/settings.local.json`, `.claude/*.local.md`, `_workspace/` contents,
   `policy/`, `gitops/`, `infrastructure/` outside the named contract script,
@@ -128,7 +134,51 @@ below. Its first run returned seventeen `PASS` and three `FAIL`.
 - `pre-commit` reported that `ruff format` rewrote three test files this change
   added. The formatter output was reviewed and committed explicitly.
 
-All three are resolved; the rerun over the final tree passed every gate.
+All three are resolved; that rerun over its final tree passed every gate.
+
+The second handoff `full` run, over the tree the late packages produced,
+returned eighteen `PASS` and three `FAIL`, and both underlying defects belong
+to work the staged lane structurally cannot see.
+
+- `pre-commit` reported one `ruff-check` defect and four files `ruff-format`
+  would rewrite. The defect is real: a groundedness note carried an f-string
+  with no placeholder and named no path, so it could not be acted on, while the
+  note on the following line already names the citation it rejects. The note
+  now reports the citation and the remaining hunks are the pinned formatter's
+  own output.
+- `unit-tests` failed two cases. `test_full_and_ci_keep_the_same_unique_gate_set`
+  is a literal gate inventory that a twenty-first gate legitimately changed.
+  `test_transition_wrappers_and_registry_aliases_are_absent` is a retired-alias
+  ban, and WORK-017 had registered its gate under the retired identifier
+  `agent-evaluations`. That surface was retired by `fa3d5a9d`, which gave each
+  validation rule one owner; the retired rule read
+  `contracts/agent-evaluations.json` and its twelve declarative suites, so the
+  identifier would have returned carrying a different rule. The reason for the
+  retirement still holds, so the ban stays and the gate is renamed
+  `agent-evaluation-cases`.
+
+Both are resolved and the final tree passed every gate.
+
+**Write-boundary audit.** Every path this package changed was compared against
+the declared boundary after execution. Seventeen of eighty-nine sat outside the
+`Allowed Paths` list as it then read, and every one of them belongs to work the
+Plan authorized: the loop-termination package writes `.agents/workflows/`, the
+decision-lineage package writes `AD-0006`, the gate-registration package writes
+the audit workflow, the archive routing package writes `.agents/README.md`, and
+the two late packages write `evals/`, `.vscode/`, `.gitignore`, and the runner
+and index row under `scripts/`. The list was never extended when those packages
+were added, so the declared boundary trailed the authorized one. It is
+reconciled above rather than backdated: the writes happened before the list
+named them.
+
+No forbidden path was written. `_workspace/`, `policy/`, `gitops/`, `secrets/`,
+`.claude/settings.local.json`, `.claude/*.local.md`, `infrastructure/` outside
+the one named contract script, and every sealed record body under
+`docs/98.archive/completed/` and `docs/98.archive/migrations/` are unchanged
+across this package's range. One record this package does not own,
+`SPEC-0054`'s `tsk-0013`, changed by exactly one line: the repository-quality
+gate rejected an absolute local checkout path, and the correction is limited to
+the line the gate named. The user's index and both stashes are untouched.
 
 **Negative evidence recorded.** A drifting model on either provider, a widened
 or missing Codex sandbox scope, a validator with no profile membership, and a
@@ -152,7 +202,17 @@ declarations, and both hook registrations are tracked configuration whose
 runtime effect is unobserved. The write-path guard still cannot see a program
 that opens files itself. A rule that only the all-files and CI lanes select can
 be broken by a staged-only change and stay invisible until handoff, which is
-how WORK-015's defect reached a commit.
+how WORK-015's defect reached a commit and how both second-run defects did.
+
+Two conditions widened that window here. `pre-commit` and `unit-tests` are
+declared on the all-files and CI lanes only, so no per-commit `staged` gate
+selects the formatter or the suite. And this clone sets
+`core.hooksPath` to a directory outside the repository, which is where Git
+reads hooks from when it is set, so the pre-commit framework's installed
+`.git/hooks/pre-commit` never ran on any commit in this branch. The setting is
+the operator's and was left as found; the effect is that the commit-time
+formatter lane produced no evidence and the handoff gate was the first check
+to see these files.
 
 Two limits belong to the work added late. The evaluation grader checks the
 shape of a response, not the truth of its content: a case may cite a path that
@@ -193,5 +253,5 @@ configuration, not enforcement evidence.
 | [WORK-014](../plan.md#work-breakdown) | Codex guard registered under a contract shared with Claude; the dead guard environment variable removed | Governance validator; three Codex-payload guard cases |
 | [WORK-015](../plan.md#work-breakdown) | Archive cutover and its unit cases recovered without editing a terminal record | `archive-cutover` PASS; 37 archive cutover cases OK |
 | [WORK-016](../plan.md#work-breakdown) | A handoff now names the snapshot it describes and the boundary it ran under | Document lifecycle and link validation |
-| [WORK-017](../plan.md#work-breakdown) | The evaluation boundary owns cases, a runner, and a registered gate | Twelve grading cases; affected-surface contract at 21 validators |
+| [WORK-017](../plan.md#work-breakdown) | The evaluation boundary owns cases, a runner, and a registered gate under a name no retired rule held | Twelve grading cases; affected-surface contract at 21 validators; retired-alias ban intact |
 | [WORK-018](../plan.md#work-breakdown) | QA entry points reachable from the editor; a dead ignore exception repaired | Affected-surface contract; reviewed ignore semantics |

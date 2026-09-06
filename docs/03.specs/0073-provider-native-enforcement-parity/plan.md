@@ -1,8 +1,8 @@
 ---
 title: "Provider Native Enforcement Parity Implementation Plan"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-06"
 layer: "specs"
@@ -55,6 +55,13 @@ The installed clients were observed on 2026-09-06 as `claude 2.1.261` and
 Codex documentation describes a per-agent sandbox field; both contradict the
 current Codex provider notes. Eleven of twelve Codex projections name models
 absent from that client's catalog.
+
+Both clients moved during execution and were re-observed the same day as
+`claude 2.1.263` and `codex-cli 0.153.4`. The original reading stands as the
+observation this plan was drafted against and is not rewritten. The later one
+is what reopened WP-014: the newer Codex client publishes the hook payload
+shape whose absence had made that package conditional, so the mirror landed
+instead of being recorded as a deferral.
 
 The repository carries pre-existing staged work for
 [SPEC-0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
@@ -134,6 +141,10 @@ profile runs once on the final working tree before handoff.
 | WP-011           | Provider note review against recorded client identity               | Repository static plus one recorded observation |
 | WP-013           | Reference pack route test and path existence sweep                  | Repository static                               |
 | WP-014           | Guard mirror tests                                                  | Provider runtime, or `DEFER`                    |
+| WP-015           | Archive cutover validator and its unit cases                        | Repository static                               |
+| WP-016           | Document lifecycle and link validation; policy review               | Repository static                               |
+| WP-017           | Grading harness tests; the gate selected from every profile         | Repository static                               |
+| WP-018           | Affected-surface contract with no uncovered path                    | Repository static                               |
 | Handoff          | Full profile on the final tree; both diff whitespace checks         | Repository static                               |
 
 Native discovery, native enforcement, model resolution, authenticated
@@ -170,10 +181,10 @@ passing repository-static profile never stands in for them.
 | Spec criterion                                             | Work package   | Expected Task                                                              |
 | ---------------------------------------------------------- | -------------- | -------------------------------------------------------------------------- |
 | [VAL-PNP-001](spec.md#success-criteria--verification-plan) | WP-001         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
-| [VAL-PNP-009](spec.md#success-criteria--verification-plan) | WP-002, WP-015 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
-| [VAL-PNP-005](spec.md#success-criteria--verification-plan) | WP-003         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
+| [VAL-PNP-009](spec.md#success-criteria--verification-plan) | WP-002, WP-015, WP-018 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
+| [VAL-PNP-005](spec.md#success-criteria--verification-plan) | WP-003, WP-017 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-006](spec.md#success-criteria--verification-plan) | WP-004         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
-| [VAL-PNP-007](spec.md#success-criteria--verification-plan) | WP-005, WP-012 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
+| [VAL-PNP-007](spec.md#success-criteria--verification-plan) | WP-005, WP-012, WP-016 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-003](spec.md#success-criteria--verification-plan) | WP-006, WP-008 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-002](spec.md#success-criteria--verification-plan) | WP-007, WP-009 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-004](spec.md#success-criteria--verification-plan) | WP-010, WP-014 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
