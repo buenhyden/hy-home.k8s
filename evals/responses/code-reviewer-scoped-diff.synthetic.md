@@ -8,9 +8,11 @@ handler carries a finite timeout, so a hung guard cannot stall a turn. The
 registration is configuration; it does not show that the client delivered
 the event.
 
-One gap. `.agents/governance/approval-and-safety.md` still describes the
-guard as covering structured file tools only. That sentence now understates
-the matcher.
+One naming risk. The Codex registration runs a script under
+`.claude/hooks/`, a provider-named directory now serving both providers. A
+reader could take the path as evidence that the guard is Claude-only.
+`.claude/README.md` says otherwise, so the risk is navigational rather than
+functional, and moving the script would split one implementation in two.
 
 Lane results: repo-static PASS for the governance validator; native event
 delivery DEFER, unobserved on this client.

@@ -532,6 +532,14 @@
         },
         {
           "kind": "exact",
+          "value": ".vscode/extensions.json"
+        },
+        {
+          "kind": "exact",
+          "value": ".vscode/tasks.json"
+        },
+        {
+          "kind": "exact",
           "value": "README.md"
         },
         {
