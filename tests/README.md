@@ -52,7 +52,7 @@ credentials, deployment, remote state, 또는 live cluster readiness를 주장�
 | Validation ownership and routing | `test_validation_tooling_ownership.py`, `test_affected_surface_migration.py`, `test_validate_affected_surfaces.py`, `test_run_validation_lane.py`, `test_current_executable_references.py` |
 | Document contracts and lifecycle | `test_document_strict_cutover.py`, `test_document_lifecycle_migration.py`, `test_document_lifecycle_cumulative_history.py`, `test_document_lifecycle_archive_cutover.py`, `test_document_lifecycle_agent_roster_cutover.py`, `test_reference_pack_routes.py` |
 | Archive and recovery | `test_archive_recovery.py`, `test_archive_validation.py`, `test_archive_cutover.py`, `test_archive_historical_proof.py`, `test_generic_migration_recovery.py` |
-| Agent governance | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_delegated_execution_ownership.py` |
+| Agent governance | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_delegated_execution_ownership.py`, `test_agent_evaluations.py` |
 | CI, GitOps, Vault, and workspace | `test_validate_ci_python_contract.py`, `test_validate_github_actions_security.py`, `test_validate_gitops_change_set.py`, `test_validate_vault_eso_contracts.py`, `test_workspace_boundary.py` |
 | Hook boundaries | `test_k8s_pre_edit_hook.py` |
 

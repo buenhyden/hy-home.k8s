@@ -1,0 +1,7 @@
+{
+  "id": "code-reviewer-scoped-diff",
+  "role": "code-reviewer",
+  "prompt": "Review a staged change to the pre-action guard registration and report findings without changing any file.",
+  "response": "evals/responses/code-reviewer-scoped-diff.synthetic.md",
+  "response_class": "synthetic"
+}
