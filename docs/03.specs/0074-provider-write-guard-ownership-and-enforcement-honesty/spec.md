@@ -379,10 +379,10 @@ The provider enforcement package this specification continues is
 repairs conditions observed in the tree that specification produced and does
 not reopen its decisions. Common surface adoption is owned separately by
 [SPEC-0075](../0075-common-knowledge-and-prompt-surfaces/spec.md), which
-depends on this package only for execution order, not for contract. The
-implementation plan and its package Task own ordered work, entry and exit
-gates, rollback, execution results and the limits that remain unobserved;
-neither exists yet, because this specification is under review.
+depends on this package only for execution order, not for contract.
+[Implementation Plan](plan.md) owns ordered work, entry and exit gates, and
+rollback. Its package Task owns execution results, per-lane evidence, and the
+limits that remain unobserved.
 
 ### Lifecycle Traceability
 
