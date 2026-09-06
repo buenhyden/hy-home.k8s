@@ -1,8 +1,8 @@
 ---
 title: "Provider Native Enforcement Parity Implementation Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-06"
 layer: "specs"

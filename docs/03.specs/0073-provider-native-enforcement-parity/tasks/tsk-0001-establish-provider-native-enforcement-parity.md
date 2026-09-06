@@ -1,8 +1,8 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-06"
 layer: "specs"
@@ -87,7 +87,11 @@ before the values it validates; WORK-009 now carries only the permission mode.
   `secrets/`, sealed record bodies under `docs/98.archive/`
 - **Approval Required**: commit authorization per logical package; separate
   authorization for push, pull-request creation, merge, branch cleanup, and any
-  hosted or provider-authenticated execution
+  hosted or provider-authenticated execution. The operator approved local
+  integration into `main` and cleanup of this development branch after the
+  final handoff gate passed. Push, pull-request creation, publication, and any
+  hosted or provider-authenticated execution were not approved and were not
+  performed
 - **Static Validation**: `python3 -m unittest` for the focused modules,
   `python3 scripts/validate-agent-governance.py --root .`,
   `python3 scripts/qa.py staged` per package, `python3 scripts/qa.py full` once
@@ -157,7 +161,10 @@ to work the staged lane structurally cannot see.
   retirement still holds, so the ban stays and the gate is renamed
   `agent-evaluation-cases`.
 
-Both are resolved and the final tree passed every gate.
+Both are resolved. The final handoff run of `python3 scripts/qa.py full` over
+the settled clean tree at `8e9f4a51` returned twenty-one `PASS` and no `FAIL`,
+`SKIP`, or `DEFER` in the repository-static lane, and exited zero. That run is
+the branch-finish evidence; no gate result was downgraded to reach it.
 
 **Write-boundary audit.** Every path this package changed was compared against
 the declared boundary after execution. Seventeen of eighty-nine sat outside the
@@ -186,8 +193,9 @@ VAL-PNP-010 in a follow-up: the Overview had described the pre-change tree in
 the present tense, which a current document may not do once its work has
 landed. The conditions this package addressed are now stated as observed at
 drafting, and what holds instead is stated separately. The Task keeps
-`in-progress` rather than `done`: a terminal record must not be rewritten, and
-this branch is neither merged nor handed off.
+`done` on the operator's integration approval; before that approval it stayed
+`in-progress`, because a terminal record must not be rewritten and the branch
+was neither merged nor handed off.
 
 **Negative evidence recorded.** A drifting model on either provider, a widened
 or missing Codex sandbox scope, a validator with no profile membership, and a
@@ -235,7 +243,7 @@ fails closed and no role uses either value, so it was left as observed rather
 than widened without a driver.
 
 **Next owner.** platform, for any authorized native observation. Every work
-package has landed. What remains unobserved is runtime: native discovery,
+package has landed and the package is integrated into local `main`. What remains unobserved is runtime: native discovery,
 event delivery, model resolution, and whether `permissionMode` changes a
 subagent's authority at all. A registered hook and a declared scope are
 configuration, not enforcement evidence.
