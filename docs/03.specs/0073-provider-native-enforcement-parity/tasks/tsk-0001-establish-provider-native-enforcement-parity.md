@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.5.0"
+version: "1.5.1"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -89,9 +89,11 @@ before the values it validates; WORK-009 now carries only the permission mode.
   authorization for push, pull-request creation, merge, branch cleanup, and any
   hosted or provider-authenticated execution. The operator approved local
   integration into `main` and cleanup of this development branch after the
-  final handoff gate passed. Push, pull-request creation, publication, and any
-  hosted or provider-authenticated execution were not approved and were not
-  performed
+  final handoff gate passed. Neither was executed: this environment's command
+  guard refuses `git merge`, so the integration and the branch deletion that
+  depends on it are handed to the operator with the exact commands. Push,
+  pull-request creation, publication, and any hosted or provider-authenticated
+  execution were not approved and were not performed
 - **Static Validation**: `python3 -m unittest` for the focused modules,
   `python3 scripts/validate-agent-governance.py --root .`,
   `python3 scripts/qa.py staged` per package, `python3 scripts/qa.py full` once
@@ -243,7 +245,10 @@ fails closed and no role uses either value, so it was left as observed rather
 than widened without a driver.
 
 **Next owner.** platform, for any authorized native observation. Every work
-package has landed and the package is integrated into local `main`. What remains unobserved is runtime: native discovery,
+package has landed. Integration into local `main` is approved and pending: the
+operator authorized it, and `git merge` is refused by this environment's
+command guard, so the merge is the operator's to run. The branch is retained
+until it succeeds, and no cleanup was performed. What remains unobserved is runtime: native discovery,
 event delivery, model resolution, and whether `permissionMode` changes a
 subagent's authority at all. A registered hook and a declared scope are
 configuration, not enforcement evidence.
