@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-06"
 ---
 
 # Git Policy
@@ -33,8 +33,11 @@ branch convention; Codex-created branches normally use `codex/`.
   the logical change and inspect `git diff --cached`.
 - Use Conventional Commits with an imperative, specific summary; include the
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
-- Complete the [quality sequence](quality.md#canonical-completion-sequence)
-  before each logical commit and branch finish. Never use `--no-verify`.
+- Validate the exact index with the staged profile before each logical commit,
+  and run the full profile once before branch finish or handoff. Both belong to
+  the same [quality sequence](quality.md#canonical-completion-sequence); neither
+  substitutes for the other, and neither is repeated on unchanged bytes.
+  Never use `--no-verify`.
 - Do not reset, restore away edits, clean, amend, rebase, force-push, delete
   branches, or remove worktrees without explicit approval for that operation.
   Prefer a forward corrective commit to rewriting shared history.
