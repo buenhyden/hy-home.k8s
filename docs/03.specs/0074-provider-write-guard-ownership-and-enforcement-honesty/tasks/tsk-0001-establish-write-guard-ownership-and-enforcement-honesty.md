@@ -1,6 +1,6 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.7.0"
+version: "0.8.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -47,8 +47,8 @@ outcome.
 | [WORK-004](../plan.md#work-breakdown) | VAL-PWG-003        | Correct the enforcement statements and record the open runtime item            | platform | Done | Provider notes now separate registration, documented capability and observation; the discovery question is recorded as unresolved with its procedure and next owner | Reviewed provider text against the recorded client identities; staged profile 6/6 PASS |
 | [WORK-005](../plan.md#work-breakdown) | VAL-PWG-004, VAL-PWG-005 | Narrow the Claude read-only scope where a role needs no shell            | platform | Done | Two of six roles narrowed through the existing per-role override; the shared class is unchanged in count and behaviour | Three scope cases failing before and passing after; governance validator PASS; governance module 41 passing |
 | [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Done | No guardrail in the class offers an action its tool scope cannot perform; the approval policy states the provider asymmetry and the corrected sandbox fact | Repository sweep for the carve-out phrasing returns nothing; staged profile 6/6 PASS |
-| [WORK-007](../plan.md#work-breakdown) | VAL-PWG-006        | Add one evaluation artifact per enumerated failure mode                        | platform | Queued | Not started | Not started |
-| [WORK-008](../plan.md#work-breakdown) | VAL-PWG-006        | Anchor groundedness to content and add the unverified-success criterion        | platform | Queued | Not started | Not started |
+| [WORK-007](../plan.md#work-breakdown) | VAL-PWG-006        | Add one evaluation artifact per enumerated failure mode                        | platform | Done | Four negative artifacts, each declaring the criterion it must trigger; delivered with WORK-008 because an artifact cannot fail the gate without the expectation mechanism | Runner reports four negative cases each firing its declared criterion; exit status 0 |
+| [WORK-008](../plan.md#work-breakdown) | VAL-PWG-006        | Anchor groundedness to content and add the unverified-success criterion        | platform | Done | Both criteria added and their coverage limit stated in the harness README | Sixteen harness cases passing; the two previously passing artifacts that claimed a result without a command now carry one |
 | [WORK-009](../plan.md#work-breakdown) | VAL-PWG-007        | Record evidence-class separation, deferred items, blockers, and next owners    | platform | Queued | Not started | Not started |
 | [WORK-010](../plan.md#work-breakdown) | VAL-PWG-008        | Review the final diff scope, run the full profile, and record the boundaries   | platform | Queued | Not started | Not started |
 
@@ -78,7 +78,7 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-WORK-001 through WORK-006 are complete. The guard logic now lives in one module under
+WORK-001 through WORK-008 are complete. The guard logic now lives in one module under
 `scripts/` and each provider registers its own thin adapter. The Codex
 registration named a file inside the Claude adapter directory; it now names
 `.codex/hooks/pre-tool-use.sh`, and a structured payload produces the same
@@ -159,6 +159,27 @@ WORK-006 removed the two guardrails that offered an edit on request, an action
 the class has no structured write tool to perform. A sweep for that phrasing
 across the role bodies now returns nothing.
 
+WORK-007 and WORK-008 were delivered as one commit, which is a deviation from
+the plan's one-package-per-commit constraint and is recorded rather than
+smoothed over. The runner returns a non-zero status when any case fails, so a
+negative artifact cannot exist until a case can declare the outcome it expects.
+Splitting the two packages would have produced an intermediate commit whose
+gate was red, so they were combined into one independently revertible unit.
+
+Adding the criteria found a real weakness in the artifacts that already
+existed. Two of the three synthetic responses claimed a repository-static PASS
+without naming any command, which is exactly the failure mode the new
+success-claim criterion detects; both now carry the command they claim, and the
+two shared test fixtures were completed the same way. The first response also
+still described the guard arrangement WORK-001 and WORK-002 replaced, so it was
+rewritten to match the tree it cites.
+
+The harness README now separates what the criteria cover from what they prove.
+Added pattern matching covers enumerated failure modes; it does not establish
+semantic understanding, the content anchor applies only to a quoted span beside
+a citation, and a synthetic response meeting every expectation remains wiring
+evidence rather than model quality.
+
 The approval policy gained the class meaning and lost one inaccurate clause. It
 had stated that only an operating-system sandbox bounds the advisory class and
 that this repository does not enable one; the Codex projections bind
@@ -211,7 +232,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 | [WORK-004](../plan.md#work-breakdown) | Enforcement statements corrected; delivery recorded as unproven | Provider notes dated against `claude 2.1.263` and `codex-cli 0.153.4`; staged profile 6/6 PASS |
 | [WORK-005](../plan.md#work-breakdown) | incident-responder and observability-reviewer narrowed; four roles keep a shell with recorded reasons | Determination recorded per role below; scope cases red then green; governance validator PASS |
 | [WORK-006](../plan.md#work-breakdown) | Impossible carve-outs removed; class meaning stated at its policy owner | Carve-out sweep returns nothing; approval policy corrected on the sandbox claim; staged profile 6/6 PASS |
-| [WORK-007](../plan.md#work-breakdown) | Not started | Queued; four enumerated failure modes named in the plan         |
-| [WORK-008](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-007                                     |
+| [WORK-007](../plan.md#work-breakdown) | Four negative artifacts added with declared expectations | Runner exit 0 with four negative cases firing; delivered jointly with WORK-008 |
+| [WORK-008](../plan.md#work-breakdown) | Content anchor and success-claim criteria added; limits documented | Harness module 16 passing; two existing artifacts corrected to carry their command |
 | [WORK-009](../plan.md#work-breakdown) | Not started | Queued; deferred items already listed in Verification Summary   |
 | [WORK-010](../plan.md#work-breakdown) | Not started | Queued; baseline recorded in Verification Summary               |

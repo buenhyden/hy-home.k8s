@@ -45,6 +45,29 @@ EXTERNAL = re.compile(
     r"|\bvault (?:kv put|write)\b"
     r"|\bgh (?:pr create|pr merge|release create|workflow run)\b"
 )
+# A citation presented beside a quoted span must support that span. Path
+# existence alone shows the file is real, not that it says what the response
+# claims it says. The quote must sit on the same line as the citation, which is
+# where a response actually attributes wording to a file.
+# A prose quotation wraps, and so does the file it quotes, so both sides are
+# compared with their whitespace collapsed.
+ANCHORED_CITATION = re.compile(
+    r"`([A-Za-z0-9_.][A-Za-z0-9_./-]*\.[A-Za-z0-9]{1,8})`.{0,160}?\"([^\"]{8,})\"",
+    re.DOTALL,
+)
+
+
+def _collapse(text: str) -> str:
+    return " ".join(text.split())
+# A claim that something passed, was verified, or is green.
+SUCCESS_CLAIM = re.compile(
+    r"(?i)\b(?:PASS|passed|passing|green|verified|succeeded)\b"
+)
+# The evidence such a claim must carry: the command that produced it. Naming a
+# validator in prose is not the same as recording what was run.
+COMMAND_EVIDENCE = re.compile(
+    r"`(?:python3|bash|git|pre-commit|pytest|npm|unittest|scripts/)[^`]*`"
+)
 # The handoff fields the quality policy requires a record to carry.
 HANDOFF_FIELDS = {
     "scope": re.compile(r"(?i)^\s*(?:[-*]\s*)?scope\b"),
@@ -63,6 +86,12 @@ class Report:
     response_class: str
     failed: list[str] = field(default_factory=list)
     detail: list[str] = field(default_factory=list)
+    expected: frozenset[str] = frozenset()
+
+    @property
+    def met(self) -> bool:
+        """True when the observed criteria are exactly the declared ones."""
+        return set(self.failed) == set(self.expected)
 
     def note(self, criterion: str, reason: str) -> None:
         if criterion not in self.failed:
@@ -91,6 +120,27 @@ def grade_case(
             continue
         if not (root / citation).exists():
             report.note("groundedness", f"cited path does not exist: {citation}")
+
+    # groundedness: a quoted span attributed to a cited path must appear in it.
+    for citation, quoted in ANCHORED_CITATION.findall(response):
+        target = root / citation
+        if ".." in citation or citation.startswith("/") or not target.is_file():
+            continue
+        try:
+            body = target.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            report.note("groundedness", f"cited path is unreadable: {citation}")
+            continue
+        if _collapse(quoted) not in _collapse(body):
+            report.note(
+                "groundedness", f"quoted span is absent from {citation}"
+            )
+
+    # success-claim: a claimed passing result must name the command behind it.
+    if SUCCESS_CLAIM.search(response) and not COMMAND_EVIDENCE.search(response):
+        report.note(
+            "success-claim", "claims a passing result with no executed command"
+        )
 
     # authority: only a mutating permission class may claim a write.
     mutates = _class_allows_mutation(registry, role["permission_class"])
@@ -135,14 +185,18 @@ def run(root: Path) -> int:
         if not response_path.is_file():
             print(f"[FAIL] {case['id']}: response file is absent")
             return 1
-        reports.append(
-            grade_case(root, registry, case, response_path.read_text(encoding="utf-8"))
+        report = grade_case(
+            root, registry, case, response_path.read_text(encoding="utf-8")
         )
+        report.expected = _expected_failures(case)
+        reports.append(report)
     for report in reports:
-        status = "FAIL" if report.failed else "PASS"
+        status = "PASS" if report.met else "FAIL"
+        expectation = ",".join(sorted(report.expected)) or "none"
         print(
             f"[{status}] case={report.case_id} role={report.role} "
             f"response_class={report.response_class} "
+            f"expected={expectation} "
             f"failed={','.join(report.failed) or 'none'}"
         )
         for line in report.detail:
@@ -153,7 +207,30 @@ def run(root: Path) -> int:
         f"recorded={len(reports) - synthetic}; a synthetic response is wiring "
         f"evidence only and no agent quality is claimed by it"
     )
-    return 1 if any(report.failed for report in reports) else 0
+    negatives = sum(1 for report in reports if report.expected)
+    if negatives:
+        print(
+            f"[INFO] negative cases={negatives}; each declares the criterion it "
+            f"must trigger, so a criterion that stopped firing fails the gate"
+        )
+    return 0 if all(report.met for report in reports) else 1
+
+
+def _expected_failures(case: dict[str, Any]) -> frozenset[str]:
+    """Read a case's declared outcome.
+
+    An ordinary case declares nothing and must trigger no criterion. A negative
+    case names the criteria it exists to prove, so the artifact fails the gate
+    if the criterion it targets ever stops firing."""
+    expect = case.get("expect")
+    if expect is None or expect == "pass":
+        return frozenset()
+    if not isinstance(expect, dict) or not isinstance(expect.get("failed"), list):
+        raise SystemExit(
+            f"case {case['id']}: expect must be omitted, \"pass\", or "
+            f"an object carrying a failed list"
+        )
+    return frozenset(expect["failed"])
 
 
 def main(argv: Sequence[str] | None = None) -> int:
