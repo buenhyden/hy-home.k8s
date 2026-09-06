@@ -1,6 +1,6 @@
 ---
 title: "Provider Write-Guard Ownership and Enforcement Honesty Implementation Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "done"
 owner: "platform"
@@ -140,22 +140,22 @@ JSON payload on standard input, writing an advisory JSON object on standard
 output, and writing `[FAIL] <CODE>` to standard error with exit status 2 on
 rejection. Consumes nothing from earlier packages.
 
-- [ ] Run `python3 -m unittest tests.test_k8s_pre_edit_hook -v` and record the
+- [x] Run `python3 -m unittest tests.test_k8s_pre_edit_hook -v` and record the
       passing baseline, so the extraction is proven behavior-preserving.
-- [ ] Move the inline program body into `scripts/provider_write_guard.py`
+- [x] Move the inline program body into `scripts/provider_write_guard.py`
       unchanged except for reading `--provider` and resolving `PROJECT_DIR`
       from the argument or the environment.
-- [ ] Reduce `.claude/hooks/k8s-pre-edit.sh` to forwarding standard input to
+- [x] Reduce `.claude/hooks/k8s-pre-edit.sh` to forwarding standard input to
       `python3 "$PROJECT_DIR/scripts/provider_write_guard.py" --provider claude`,
       keeping `PROJECT_DIR` resolution and the rule that the executed program
       always comes from the project directory.
-- [ ] Re-run the same unit module. Expected: identical passing result.
-- [ ] Re-run the two probe payloads from the specification's Context and record
+- [x] Re-run the same unit module. Expected: identical passing result.
+- [x] Re-run the two probe payloads from the specification's Context and record
       that Claude behavior is unchanged.
-- [ ] Run `python3 scripts/validate-agent-governance.py --root .`. Expected:
+- [x] Run `python3 scripts/validate-agent-governance.py --root .`. Expected:
       PASS, because the registered command still names an existing file under
       `.claude/hooks/`.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-002: Add the Codex adapter
 
@@ -166,20 +166,20 @@ rejection. Consumes nothing from earlier packages.
 standard input to the module with `--provider codex`. Consumes the module
 interface from WP-001.
 
-- [ ] Write a failing test asserting that the command string in
+- [x] Write a failing test asserting that the command string in
       `.codex/hooks.json` does not reference any path under `.claude/`.
-- [ ] Run it. Expected: FAIL, because the current registration names
+- [x] Run it. Expected: FAIL, because the current registration names
       `.claude/hooks/k8s-pre-edit.sh`.
-- [ ] Add `.codex/hooks/pre-tool-use.sh` as the Codex-side thin adapter.
-- [ ] Repoint `.codex/hooks.json` at the new adapter, keeping the existing
+- [x] Add `.codex/hooks/pre-tool-use.sh` as the Codex-side thin adapter.
+- [x] Repoint `.codex/hooks.json` at the new adapter, keeping the existing
       matcher, the ten-second timeout, and the status message.
-- [ ] Update `.codex/README.md` so the structure list names the adapter
+- [x] Update `.codex/README.md` so the structure list names the adapter
       directory instead of describing the Claude script as shared.
-- [ ] Run the test. Expected: PASS.
-- [ ] Run `python3 scripts/validate-agent-governance.py --root .`. Expected:
+- [x] Run the test. Expected: PASS.
+- [x] Run `python3 scripts/validate-agent-governance.py --root .`. Expected:
       PASS, because the Codex registration now names an existing file under
       `.codex/hooks/`.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-003: Parse patch envelopes as data
 
@@ -191,7 +191,7 @@ envelope contributes its `Add File`, `Update File`, `Delete File`, and
 `Move to` targets to the same structured path list a `file_path` field feeds.
 Consumes the module interface from WP-001.
 
-- [ ] Write the failing test. It sends the two payloads below and asserts that
+- [x] Write the failing test. It sends the two payloads below and asserts that
       each produces the Kubernetes manifest advisory that the equivalent
       `Write` payload produces.
 
@@ -222,21 +222,21 @@ PATCH_ARGV = {
 }
 ```
 
-- [ ] Run `python3 -m unittest tests.test_k8s_pre_edit_hook -v`. Expected:
+- [x] Run `python3 -m unittest tests.test_k8s_pre_edit_hook -v`. Expected:
       FAIL, because the current guard returns no message and exit status zero
       for both payloads.
-- [ ] Implement the envelope parser. It reads only the file-header lines, adds
+- [x] Implement the envelope parser. It reads only the file-header lines, adds
       each target through the existing structured path entry point so symbolic
       link, root, and retired-path rejection still apply, yields both the
       source and the destination for a move, and treats the patch body as
       inert text. It never applies, stages, or executes the patch.
-- [ ] Run the test. Expected: PASS for both payload forms.
-- [ ] Add and run the boundary cases: an envelope naming no file produces no
+- [x] Run the test. Expected: PASS for both payload forms.
+- [x] Add and run the boundary cases: an envelope naming no file produces no
       message and no error; an envelope naming several files produces one
       evaluation per file; a malformed envelope is rejected as malformed
       transport rather than ignored; a body containing text resembling a shell
       command produces no shell target.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-004: Correct the enforcement statements
 
@@ -247,19 +247,19 @@ PATCH_ARGV = {
 documented client capability, and observed behavior. Consumes the arrangement
 from WP-002.
 
-- [ ] Replace text implying the Codex registration is delivered with text
+- [x] Replace text implying the Codex registration is delivered with text
       stating what is registered, what the client documents, and that delivery
       is unobserved.
-- [ ] Record the open runtime item: whether the installed client discovers
+- [x] Record the open runtime item: whether the installed client discovers
       `.codex/hooks.json`, the procedure that answers it, and the next owner.
-- [ ] Record the observed `PreToolUse` response contract per provider, and
+- [x] Record the observed `PreToolUse` response contract per provider, and
       state that unsupported fields are not emitted to the provider that
       rejects them.
-- [ ] State that for non-authoring roles on Codex the enforced boundary is the
+- [x] State that for non-authoring roles on Codex the enforced boundary is the
       operating-system sandbox, independent of the hook.
-- [ ] State that the shell path is advisory on both providers and does not
+- [x] State that the shell path is advisory on both providers and does not
       detect every write.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-005: Narrow the read-only scope where a role needs no shell
 
@@ -270,21 +270,21 @@ from WP-002.
 Claude provider. Consumes the existing override field the documentation
 research role already uses; adds no new registry mechanism.
 
-- [ ] For each role in the read-only evidence class, read its responsibility
+- [x] For each role in the read-only evidence class, read its responsibility
       and every skill it references, and record whether the role needs a shell
       to produce its evidence. Record the determination per role with its
       reason before changing anything.
-- [ ] Write the failing test asserting that a role recorded as needing no
+- [x] Write the failing test asserting that a role recorded as needing no
       shell carries no `Bash` in its Claude projection.
-- [ ] Run it. Expected: FAIL.
-- [ ] Add the override for each such role and re-render its Claude projection
+- [x] Run it. Expected: FAIL.
+- [x] Add the override for each such role and re-render its Claude projection
       so the `tools` field matches, because the governance validator compares
       the projection to the registry scope exactly.
-- [ ] Run the test and `python3 scripts/validate-agent-governance.py --root .`.
+- [x] Run the test and `python3 scripts/validate-agent-governance.py --root .`.
       Expected: PASS.
-- [ ] Confirm the three shared permission classes are unchanged in count and
+- [x] Confirm the three shared permission classes are unchanged in count and
       behavior by diffing the `permission_classes` array.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-006: Correct the role guardrails and the class meaning
 
@@ -292,16 +292,16 @@ research role already uses; adds no new registry mechanism.
 `.agents/roles/incident-responder.md`,
 `.agents/governance/approval-and-safety.md`.
 
-- [ ] Replace the edit-on-request carve-out in both role guardrails with the
+- [x] Replace the edit-on-request carve-out in both role guardrails with the
       restriction the class actually imposes, matching the unconditional
       phrasing the other roles in the class already use.
-- [ ] State at the approval policy that the class means no structured write
+- [x] State at the approval policy that the class means no structured write
       tool, that shell writes are prohibited by policy and detected
       advisorily rather than blocked, and that the operating-system sandbox on
       Codex is a different and stronger boundary.
-- [ ] State that the difference between the two providers is accepted and
+- [x] State that the difference between the two providers is accepted and
       documented, not parity.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-007: Add the evaluation artifacts
 
@@ -311,18 +311,18 @@ under `evals/responses/`. Modify `evals/README.md`.
 **Interfaces.** Produces cases in the existing format: an identifier, a role,
 a prompt, a response path, and a response class. Consumes the existing runner.
 
-- [ ] Add a case whose response cites a path that exists but quotes a span
+- [x] Add a case whose response cites a path that exists but quotes a span
       absent from it.
-- [ ] Add a case whose response claims an external action outside the approved
+- [x] Add a case whose response claims an external action outside the approved
       boundary.
-- [ ] Add a case whose response asserts a passing result with no executed
+- [x] Add a case whose response asserts a passing result with no executed
       command behind it.
-- [ ] Add a case whose response omits a required handoff field.
-- [ ] Run `python3 scripts/run-agent-evaluations.py --root .`. Expected: the
+- [x] Add a case whose response omits a required handoff field.
+- [x] Run `python3 scripts/run-agent-evaluations.py --root .`. Expected: the
       boundary case and the handoff case already fail; the citation case and
       the success-claim case still pass, which is the gap WP-008 closes.
-- [ ] Record that observed split in the Task before proceeding.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Record that observed split in the Task before proceeding.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-008: Anchor groundedness and add the success-claim criterion
 
@@ -335,44 +335,44 @@ file. The success-claim criterion fails a response asserting a passing result
 with no executed command recorded beside it. Both report a criterion name only
 and never echo a response body.
 
-- [ ] Write the failing unit tests for both criteria using the WP-007
+- [x] Write the failing unit tests for both criteria using the WP-007
       artifacts as inputs.
-- [ ] Run `python3 -m unittest tests.test_agent_evaluations -v`. Expected:
+- [x] Run `python3 -m unittest tests.test_agent_evaluations -v`. Expected:
       FAIL.
-- [ ] Implement both criteria deterministically and locally, with no model
+- [x] Implement both criteria deterministically and locally, with no model
       call and no network access.
-- [ ] Run the unit module and the runner. Expected: PASS, and the two
+- [x] Run the unit module and the runner. Expected: PASS, and the two
       previously passing negative artifacts now fail the criteria they target.
-- [ ] State in `evals/README.md` that the added criteria cover enumerated
+- [x] State in `evals/README.md` that the added criteria cover enumerated
       failure modes and do not establish semantic understanding, and that a
       synthetic response remains wiring evidence rather than model quality.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-009: Record the evidence classes and the deferred items
 
 **Files:** Modify the package Task.
 
-- [ ] Record each result under its evidence class: repository-static,
+- [x] Record each result under its evidence class: repository-static,
       provider-runtime, hosted, or live.
-- [ ] Record each deferred runtime item with its blocker, the procedure that
+- [x] Record each deferred runtime item with its blocker, the procedure that
       would answer it, and its next owner. The Codex hook discovery question
       and both providers' discovery, permission, model resolution, and hook
       delivery remain deferred.
-- [ ] Confirm no repository-static result is written as runtime evidence.
-- [ ] Run `python3 scripts/qa.py staged` and commit.
+- [x] Confirm no repository-static result is written as runtime evidence.
+- [x] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-010: Review scope and close the package
 
 **Files:** Modify the package Task.
 
-- [ ] Review the full diff for scope, removing any task-owned scratch residue.
-- [ ] Run `python3 scripts/qa.py full`. Expected: twenty-one gates passing,
+- [x] Review the full diff for scope, removing any task-owned scratch residue.
+- [x] Run `python3 scripts/qa.py full`. Expected: twenty-one gates passing,
       matching the recorded baseline.
-- [ ] Record per-commit gate results and the revert boundary for each commit.
-- [ ] Record the handoff fields the quality policy requires, including
+- [x] Record per-commit gate results and the revert boundary for each commit.
+- [x] Record the handoff fields the quality policy requires, including
       failures, skipped optional tools, unavailable runtime checks, review
       disposition, rollback, residual risk, and next owner.
-- [ ] Commit.
+- [x] Commit.
 
 ## Verification Plan
 
