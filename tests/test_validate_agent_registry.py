@@ -226,9 +226,7 @@ class CodexSandboxScopeTests(unittest.TestCase):
             for provider in self.registry["providers"]
             if provider["id"] == "codex"
         )
-        declared = {
-            entry["id"] for entry in self.registry["permission_classes"]
-        }
+        declared = {entry["id"] for entry in self.registry["permission_classes"]}
         self.assertEqual(set(codex.get("permission_scopes", {})), declared)
 
     def test_every_codex_projection_carries_its_bound_sandbox_scope(self) -> None:

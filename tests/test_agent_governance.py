@@ -507,7 +507,9 @@ class NativeBoundaryTests(unittest.TestCase):
         bound = tomllib.loads(source)["model"]
         for drifted in ("gpt-5.5", "gpt-5.3-codex"):
             with self.subTest(model=drifted):
-                codex.write_text(source.replace(f'model = "{bound}"', f'model = "{drifted}"'))
+                codex.write_text(
+                    source.replace(f'model = "{bound}"', f'model = "{drifted}"')
+                )
                 self.assert_rejected("AGENT-NATIVE-METADATA")
         codex.write_text(source)
 
