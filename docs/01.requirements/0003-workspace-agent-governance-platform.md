@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ artifact_id: "REQ-0003"
 machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
 사람용 실행 규칙은 [Common governance](../../.agents/README.md), 문서 형식은
 [Stage 99](../99.templates/README.md)가 소유한다. 현재 거버넌스·공통 QA 구현은
-[ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)와
+[ADR-0035](../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)와
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가,
 더 넓은 문서 수렴과 미완료 처분은 [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
 이 Requirement는 구현 inventory, provider roster 또는 일회성 migration 계획의 복제본이 아니다.
@@ -122,7 +122,7 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 - Task와 Git이 작업·검증·인계를 소유한다. 별도 자동 checkpoint 파일을 필수로 만들거나
   credential 또는 full transcript를 저장하지 않는다.
 - ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
-  보존하는 superseded historical decisions다. ADR-0035와 SPEC-0072가 현재 거버넌스 위치를, ADR-0034가 QA·CD 경계를 소유한다.
+  보존하는 superseded historical decisions다. ADR-0035와 SPEC-0072가 현재 거버넌스 위치와 QA·CD 경계를 소유하며, ADR-0034는 그 경계를 ADR-0035에 승계한 superseded decision이다.
 
 ### Agent execution and approval requirements
 

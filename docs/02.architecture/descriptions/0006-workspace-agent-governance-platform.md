@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -14,7 +14,7 @@ artifact_id: "AD-0006"
 ## Overview
 
 이 Architecture는 Agent·문서·검증·실행 증거의 current owner 경계를 설명한다.
-[ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md)가
+[ADR-0035](../decisions/0035-common-agents-authority-and-native-skill-routing.md)가
 공통 거버넌스 설계를, [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가
 전환과 수용 조건을 소유하며, [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)는
 더 넓은 미완료 문서 수렴을 소유한다.
@@ -123,7 +123,7 @@ Spec 0054 WP-013/TSK-0013은 미완료다. 이 authority 승계는 Stage 99 축�
 Specs 0047..0051의 플랫폼 구현·검증은 [AD-0007](./0007-current-local-gitops-platform.md)의
 package별 owner가 보유하며, 이 문서는 공통 라우팅·승인·QA 경계를 제공한다.
 이 문서는 공통 거버넌스, Claude/Codex 어댑터, 공통 QA와 GitOps 운영의
-책임 경계를 설명한다. [ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md)가
+책임 경계를 설명한다. [ADR-0035](../decisions/0035-common-agents-authority-and-native-skill-routing.md)가
 설계를, [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가
 전환과 수용 조건을 소유한다. 파일의 존재는 설치된 런타임의 탐색·권한 강제나
 호스팅 CI의 성공을 입증하지 않는다. 실제 검증 상태는 해당 Task에서 확인한다.
@@ -166,7 +166,8 @@ explicit invocation. Root instructions also require reading the selected role
 and its common procedures. No provider generator or compatibility skill copy
 is needed. A native hook is registered only for an actual supported event;
 routine tool completion does not invoke whole-repository QA. ADR-0035 owns the
-current authority location; ADR-0034's QA/CD boundary remains effective.
+current authority location and carries forward the QA and CD boundary its
+superseded predecessor decided.
 
 ## Data Architecture
 
@@ -255,7 +256,7 @@ verification require their own actual evidence and applicable authorization.
 
 The replacement record and this responsibility table express semantic succession, not a new claim that historical
 ADRs originally served this AD. Original ADR bodies and reciprocal decision supersession remain in the decision log.
-The existing requirement IDs retain their identity. ADR-0034 and SPEC-0072
+The existing requirement IDs retain their identity. ADR-0035 and SPEC-0072
 own the current governance and QA implementation; predecessor decisions remain
 historical evidence rather than parallel operating instructions.
 
@@ -290,10 +291,10 @@ historical evidence rather than parallel operating instructions.
 | N/A — [Acceptance criterion 12](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Zero stale legacy/orphan reference | [ADR 0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md) |
 
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Current decision**: [ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md)
+- **Current decision**: [ADR-0035](../decisions/0035-common-agents-authority-and-native-skill-routing.md)
 - **Current implementation**: [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-- **Historical decisions**: [ADR-0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md), [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- **Historical decisions**: [ADR-0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md), [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md)
 
 The prior architecture narrative is recoverable from this same path at commit
 `bb73116b7b09c4f257fc81baa12cfa8359495fc0`. Its retired providers, fixed retry

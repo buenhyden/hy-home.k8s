@@ -1,12 +1,13 @@
 ---
 title: "Common Agents Authority and Native Skill Routing"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "ADR-0035"
+supersedes: "ADR-0034"
 ---
 
 # ADR-0035: Common Agents Authority and Native Skill Routing
@@ -17,11 +18,13 @@ The migration request authorized moving the common authority to `.agents/`
 and retiring the former documentation governance root. Current local execution
 authority and the completed user-authorized main merge are recorded in the
 [owning Task](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries).
-This ADR remains `proposed`; implementation, commits and the local merge do not
-establish its accepted-state transition or native runtime evidence.
-The proposed durable decision
-narrows ADR-0034's authority-location and skill-routing clauses; its QA, security,
-preservation and GitOps CD boundaries remain in force.
+This ADR is accepted, so no accepted decision now prescribes an authority
+location the repository contradicts. Acceptance records the durable choice; it
+does not establish native discovery, permission enforcement, model resolution
+or hook delivery, which remain separately observable evidence.
+This decision supersedes ADR-0034. It replaces that decision's
+authority-location and skill-routing clauses and carries forward its QA,
+security, preservation and GitOps CD boundaries unchanged.
 
 ## Context
 
