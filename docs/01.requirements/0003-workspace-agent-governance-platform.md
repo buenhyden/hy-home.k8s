@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.0.1"
+version: "1.1.0"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -150,6 +150,9 @@ package retention 및 명시적 역사 인용 경계로 대체된다. 봉인 rec
 
 Current governance and QA implementation is owned by
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
+Provider-native execution scope, capability-to-model binding, and write-path
+guard parity are owned by
+[SPEC-0073](../03.specs/0073-provider-native-enforcement-parity/spec.md).
 
 ## Traceability
 

@@ -132,6 +132,10 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0073-provider-native-enforcement-parity/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -184,6 +188,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0070-retired-provider-residue-disposition/spec.md`](./0070-retired-provider-residue-disposition/spec.md) | Prior residue disposition proposal | Superseded | SPEC-0072가 항목별 현행·역사 구분과 처분을 소유한다. Task 4의 sealed-ledger와 Git recovery 증거는 역사 기록으로 보존하며, 과거 문서의 일괄 불변 예외는 현재 권위가 아니다. | 2026-09-05 |
 | [`./0071-document-taxonomy-and-form-identity-normalization/spec.md`](./0071-document-taxonomy-and-form-identity-normalization/spec.md) | Family/kind profile identity, stage-free layer, semantic version, and Stage 99 form naming | Draft | 문서 profile 식별자를 `<family>/<kind>`로 통일하고, `layer`에서 stage 정렬 접두어를 제거하며, `version`을 기계 계약이 이미 쓰는 3요소 semver로 맞춘다. Stage 99 form 12개는 자신이 만드는 문서 이름으로 옮기고 governance form 하나를 여섯 kind로 나눈다. 소비자가 없던 `frontmatter.schema.json`을 strict 실행마다 평가되는 계약으로 만든다. Stage 98 봉인 계약은 세대별로 분기하고 form 이동은 MIG-0010으로 봉인한다. | 2026-09-02 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-05 |
+| [`./0073-provider-native-enforcement-parity/spec.md`](./0073-provider-native-enforcement-parity/spec.md) | Provider-native execution scope, model binding, and write-path guard parity | Draft | 두 provider의 실행 범위를 구조화된 필드로 선언하고, capability tier와 native model 결합에 단일 owner를 두며, pre-action guard를 shell 쓰기 경로까지 확장한다. SPEC-0072 정적 이관 이후 남은 provider 능력 서술·gate 도달성·폐기 경로 잔여물·Stage 90 관측을 함께 정리한다. | 2026-09-06 |
 
 ### Helper Templates
 
