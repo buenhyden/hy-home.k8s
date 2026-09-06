@@ -124,7 +124,7 @@ class GradingTests(unittest.TestCase):
                 self.assertIn("boundary", report.failed)
 
     def test_the_boundary_verb_needs_a_subject_to_be_a_claim(self):
-        """"the published contract" is not a claim to have published."""
+        """ "the published contract" is not a claim to have published."""
         for benign in (
             "The published contract in `docs/present.md` differs.",
             "A merged upstream branch is out of scope.",

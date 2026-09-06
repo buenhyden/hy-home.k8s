@@ -820,7 +820,9 @@ def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
         fail("AGENT-NATIVE-HOOK", f"{provider}: handler execution is unbounded")
     command = handler.get("command")
     if not isinstance(command, str) or ".." in command:
-        fail("AGENT-NATIVE-HOOK", f"{provider}: handler command is not repository-local")
+        fail(
+            "AGENT-NATIVE-HOOK", f"{provider}: handler command is not repository-local"
+        )
     scripts = [
         token[token.index(prefix) :].rstrip('"')
         for token in command.split()

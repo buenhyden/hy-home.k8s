@@ -507,9 +507,7 @@ class NativeBoundaryTests(unittest.TestCase):
             "the scope map must be total over the declared permission classes",
         )
         narrowed = json.loads(json.dumps(self.registry))
-        provider = next(
-            p for p in narrowed["providers"] if p["id"] == "claude"
-        )
+        provider = next(p for p in narrowed["providers"] if p["id"] == "claude")
         provider["permission_scopes"]["read-only-evidence"] = ["Read", "Grep", "Glob"]
         path.write_text(json.dumps(narrowed))
         self.assert_rejected("AGENT-NATIVE-PERMISSION")
@@ -548,9 +546,10 @@ class NativeBoundaryTests(unittest.TestCase):
         )
         claude = next(p for p in registry["providers"] if p["id"] == "claude")
         for role in registry["roles"]:
-            expected = role.get("native_scope_override", {}).get(
-                "claude"
-            ) or claude["permission_scopes"][role["permission_class"]]
+            expected = (
+                role.get("native_scope_override", {}).get("claude")
+                or claude["permission_scopes"][role["permission_class"]]
+            )
             text = (ROOT / role["projections"]["claude"]).read_text(encoding="utf-8")
             observed = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
             with self.subTest(role=role["id"]):
@@ -777,9 +776,7 @@ class NativeBoundaryTests(unittest.TestCase):
             if "=" not in assignment:
                 continue
             name = assignment.split("=", 1)[0]
-            self.assertIn(
-                name, script, f"{name} is passed to the guard but never read"
-            )
+            self.assertIn(name, script, f"{name} is passed to the guard but never read")
 
 
 class RetiredSurfaceTests(unittest.TestCase):

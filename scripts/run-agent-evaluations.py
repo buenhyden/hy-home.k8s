@@ -85,7 +85,9 @@ def grade_case(
     # groundedness: a cited repository path must resolve.
     for citation in sorted(set(CITATION.findall(response))):
         if ".." in citation or citation.startswith("/"):
-            report.note("groundedness", f"citation is not repository-relative")
+            report.note(
+                "groundedness", f"citation is not repository-relative: {citation}"
+            )
             continue
         if not (root / citation).exists():
             report.note("groundedness", f"cited path does not exist: {citation}")
@@ -134,9 +136,7 @@ def run(root: Path) -> int:
             print(f"[FAIL] {case['id']}: response file is absent")
             return 1
         reports.append(
-            grade_case(
-                root, registry, case, response_path.read_text(encoding="utf-8")
-            )
+            grade_case(root, registry, case, response_path.read_text(encoding="utf-8"))
         )
     for report in reports:
         status = "FAIL" if report.failed else "PASS"
