@@ -976,7 +976,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     expected_hook = {
         "PreToolUse": [
             {
-                "matcher": "Write|Edit|MultiEdit",
+                "matcher": "Bash|Write|Edit|MultiEdit",
                 "hooks": [
                     {
                         "type": "command",

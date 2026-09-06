@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-06"
 ---
 
 # Approval and Safety Policy
@@ -49,6 +49,12 @@ and validating their configuration.
   never their values. Follow existing isolation and AppProject controls.
 - GitHub Actions is repository QA/CI, not live deployment CD. Do not infer
   runtime readiness from a successful static or hosted check.
+- Write-path guards observe structured file tools and the obvious write targets
+  of a shell command. A program that opens files itself, such as a Python or
+  Node script, stays outside that observation, and so do permission rules that
+  match shell file commands. Treat instruction-level and rule-level controls as
+  advisory for that class; only an operating-system sandbox bounds it, and this
+  repository does not enable one.
 - Before an exception, record scope, target, responsible operator, rollback or
   backup, and required evidence in the owning Task or incident. Missing
   authority means stop at the local draft.

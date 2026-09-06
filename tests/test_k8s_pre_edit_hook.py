@@ -1,6 +1,6 @@
 """Path-resolution and trust-boundary regressions for the pre-edit guard.
 
-The guard runs at PreToolUse for Write|Edit|MultiEdit. It must accept any path
+The guard runs at PreToolUse for Bash|Write|Edit|MultiEdit. It must accept any path
 inside this repository, including any of its linked worktrees, reject every
 path outside it, and never run an executable selected by tool input.
 """
@@ -419,3 +419,53 @@ class PreEditTrustBoundaryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def shell_payload(command: str) -> str:
+    return '{"tool_name":"Bash","tool_input":{"command":%s}}' % _json_string(command)
+
+
+class ShellWriteObservationTests(unittest.TestCase):
+    """Shell writes are reported, and an unreadable one never blocks the tool."""
+
+    def assert_silent_success(self, command: str) -> None:
+        result = run_hook(shell_payload(command), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "")
+
+    def test_shell_write_to_a_manifest_is_reported(self):
+        result = run_hook(
+            shell_payload("sed -i s/a/b/ gitops/platform/eso/vault-secret-store.yaml"),
+            ROOT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("gitops/platform/eso/vault-secret-store.yaml", result.stdout)
+        self.assertIn("did not see this write", result.stdout)
+
+    def test_shell_redirect_into_an_authored_document_is_reported(self):
+        result = run_hook(shell_payload(f"cat > {SAMPLE_DOCUMENT}"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(SAMPLE_DOCUMENT, result.stdout)
+
+    def test_shell_tee_target_is_reported(self):
+        result = run_hook(
+            shell_payload("printf x | tee traefik/example.yaml"), ROOT
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("traefik/example.yaml", result.stdout)
+
+    def test_ordinary_and_unreadable_shell_commands_never_block(self):
+        for command in (
+            "git status --short",
+            "echo hi > /tmp/scratch.txt",
+            'echo "unterminated',
+            "cat ../outside/file.yaml",
+            "rm -rf /",
+        ):
+            with self.subTest(command=command):
+                self.assert_silent_success(command)
+
+    def test_shell_observation_does_not_reach_the_surface_selector(self):
+        """An unrouted shell guess must not become a hard selector failure."""
+        result = run_hook(shell_payload("echo x > not-a-registered-surface.txt"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)

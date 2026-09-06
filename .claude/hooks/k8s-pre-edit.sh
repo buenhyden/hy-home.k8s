@@ -21,6 +21,7 @@ python3 - <<'PY'
 import json
 import os
 import re
+import shlex
 import stat
 import subprocess
 import sys
@@ -189,6 +190,66 @@ if "edits" in tool_input:
         if not isinstance(edit, dict):
             reject("HOOK-PATH-TYPE")
         consume_scalar_alias(edit)
+
+# A shell command can create or modify a tracked file without ever reaching a
+# structured file tool. Read its obvious write targets so the guard can still
+# report the surface, but keep them out of PATHS_FILE: an unparsed guess must
+# never reach the affected-surface selector, whose failure is a hard block.
+shell_targets: list[str] = []
+
+
+def note_shell_target(value: str) -> None:
+    if not isinstance(value, str) or not value or value.startswith("-"):
+        return
+    if value.startswith("/"):
+        if not project_dir or not value.startswith(project_dir + "/"):
+            return
+        value = value[len(project_dir) + 1 :]
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        return
+    candidate = PurePosixPath(value)
+    if (
+        value.startswith("./")
+        or value.endswith("/")
+        or "//" in value
+        or candidate.is_absolute()
+        or "." in candidate.parts
+        or ".." in candidate.parts
+        or candidate.as_posix() != value
+    ):
+        return
+    if value not in shell_targets:
+        shell_targets.append(value)
+
+
+command = tool_input.get("command")
+if isinstance(command, str) and command:
+    try:
+        tokens = shlex.split(command, comments=True)
+    except ValueError:
+        tokens = []
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token in (">", ">>") and index + 1 < len(tokens):
+            note_shell_target(tokens[index + 1])
+            index += 2
+            continue
+        if token.startswith(">") and len(token) > 1 and not token.startswith(">&"):
+            note_shell_target(token.lstrip(">"))
+        elif token in ("tee", "/usr/bin/tee"):
+            for following in tokens[index + 1 :]:
+                if following in ("|", "&&", ";", "||"):
+                    break
+                note_shell_target(following)
+        elif token in ("sed", "/usr/bin/sed") and any(
+            following == "-i" or following.startswith("-i") for following in tokens[index + 1 :]
+        ):
+            for following in tokens[index + 1 :]:
+                if following in ("|", "&&", ";", "||"):
+                    break
+                note_shell_target(following)
+        index += 1
 
 environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
 if environment_path:
@@ -406,6 +467,20 @@ for path in paths:
                     ]
                 )
             )
+
+for target in shell_targets:
+    if manifest_re.search(target) or secret_re.search(target) or target.endswith(".md"):
+        messages.append(
+            "\n".join(
+                [
+                    f"Shell command writes `{target}`.",
+                    "- The structured-tool guard did not see this write; the same"
+                    " manifest, secret, and template rules still apply.",
+                    "- Prefer a file tool so the route and template check runs, or"
+                    " run explicit repository QA after the change.",
+                ]
+            )
+        )
 
 if messages:
     print(json.dumps({"systemMessage": "\n\n".join(messages)}))
