@@ -1,8 +1,8 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.8.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-07"
 layer: "specs"
@@ -49,8 +49,8 @@ outcome.
 | [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Done | No guardrail in the class offers an action its tool scope cannot perform; the approval policy states the provider asymmetry and the corrected sandbox fact | Repository sweep for the carve-out phrasing returns nothing; staged profile 6/6 PASS |
 | [WORK-007](../plan.md#work-breakdown) | VAL-PWG-006        | Add one evaluation artifact per enumerated failure mode                        | platform | Done | Four negative artifacts, each declaring the criterion it must trigger; delivered with WORK-008 because an artifact cannot fail the gate without the expectation mechanism | Runner reports four negative cases each firing its declared criterion; exit status 0 |
 | [WORK-008](../plan.md#work-breakdown) | VAL-PWG-006        | Anchor groundedness to content and add the unverified-success criterion        | platform | Done | Both criteria added and their coverage limit stated in the harness README | Sixteen harness cases passing; the two previously passing artifacts that claimed a result without a command now carry one |
-| [WORK-009](../plan.md#work-breakdown) | VAL-PWG-007        | Record evidence-class separation, deferred items, blockers, and next owners    | platform | Queued | Not started | Not started |
-| [WORK-010](../plan.md#work-breakdown) | VAL-PWG-008        | Review the final diff scope, run the full profile, and record the boundaries   | platform | Queued | Not started | Not started |
+| [WORK-009](../plan.md#work-breakdown) | VAL-PWG-007        | Record evidence-class separation, deferred items, blockers, and next owners    | platform | Done | Every result is filed under repository-static; none is promoted to provider-runtime, hosted, or live | Verification Summary carries the lane, the blocker, and the next owner for each deferred item |
+| [WORK-010](../plan.md#work-breakdown) | VAL-PWG-008        | Review the final diff scope, run the full profile, and record the boundaries   | platform | Done | Ten packages delivered as eight commits plus one forward corrective commit; each is independently revertible | `python3 scripts/qa.py full` reported 21/21 PASS on the tree at `f151057d`, matching the recorded baseline |
 
 ## Approval and Safety Boundaries
 
@@ -78,7 +78,7 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-WORK-001 through WORK-008 are complete. The guard logic now lives in one module under
+Every work package is complete. The guard logic now lives in one module under
 `scripts/` and each provider registers its own thin adapter. The Codex
 registration named a file inside the Claude adapter directory; it now names
 `.codex/hooks/pre-tool-use.sh`, and a structured payload produces the same
@@ -198,11 +198,26 @@ repository-quality rule named the shell file as the implementation; their
 subject moved to the module, so each was retargeted at the module rather than
 relaxed, and two new assertions were added for the contracts the split created.
 
-The pre-change baseline is recorded: `python3 scripts/qa.py full` reported
-twenty-one gates passing on the working tree containing the two draft
-specifications, and `python3 scripts/qa.py staged` reported six gates passing
-over the exact index of the specification commit. Any gate that stops passing
-during implementation is a regression of the change that preceded it.
+The pre-change baseline was twenty-one gates passing under
+`python3 scripts/qa.py full`. The package closed against the same profile:
+twenty-one gates passing on the tree at `f151057d`, exit status 0. Every
+logical commit was gated by `python3 scripts/qa.py staged` over its exact
+index before it landed.
+
+The first full run of the package found two regressions this package itself
+introduced, and both were repaired forward rather than by rewriting history.
+The extraction moved the affected-surface selector into a Python subprocess
+call without a timeout, which the tooling-ownership rule rejects and which
+could have let a hung selector outlive the hook's own ten-second registration;
+the call now declares a bounded timeout and treats a timeout as a failure
+rather than a silent pass. A Task edit left a double blank line the Markdown
+linter rejects, and the formatter rewrapped three Python files. That sequence
+is itself evidence that the handoff gate does work the staged profile cannot:
+the staged profile runs neither the whole unit suite nor the commit hook
+suite, so both conditions were invisible until the full profile ran.
+
+All results in this Task are repository-static. None is reported as
+provider-runtime, hosted continuous integration, or live evidence.
 
 Deferred items, each with its blocker and next owner:
 
@@ -233,5 +248,5 @@ ordered packages and their entry gates. This Task owns results and limits.
 | [WORK-006](../plan.md#work-breakdown) | Impossible carve-outs removed; class meaning stated at its policy owner | Carve-out sweep returns nothing; approval policy corrected on the sandbox claim; staged profile 6/6 PASS |
 | [WORK-007](../plan.md#work-breakdown) | Four negative artifacts added with declared expectations | Runner exit 0 with four negative cases firing; delivered jointly with WORK-008 |
 | [WORK-008](../plan.md#work-breakdown) | Content anchor and success-claim criteria added; limits documented | Harness module 16 passing; two existing artifacts corrected to carry their command |
-| [WORK-009](../plan.md#work-breakdown) | Not started | Queued; deferred items already listed in Verification Summary   |
-| [WORK-010](../plan.md#work-breakdown) | Not started | Queued; baseline recorded in Verification Summary               |
+| [WORK-009](../plan.md#work-breakdown) | Evidence classes separated; deferred items carry blocker and next owner | Verification Summary below; no repository-static result reported as runtime evidence |
+| [WORK-010](../plan.md#work-breakdown) | Package closed against the recorded baseline | `python3 scripts/qa.py full` 21/21 PASS at `f151057d`; nine logical commits, each revertible |
