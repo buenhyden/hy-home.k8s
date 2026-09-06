@@ -1,10 +1,10 @@
 ---
 title: "Model Selection Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-06"
 ---
 
 # Model Selection Policy
@@ -41,6 +41,19 @@ resolve membership from the registry rather than inferring it from a role name.
 Use a bounded capable model for focused implementation, documentation,
 validation, or review. The stable anchor is `#worker`; a difficult assignment
 may justify explicit escalation without reclassifying the role.
+
+### Cost and throughput
+
+Capability selection carries a spend and latency boundary as well as a quality
+one. Keep a bounded task on the worker tier and state the expected cost
+boundary when escalating. Prefer one focused delegation over a broad sweep:
+each concurrent worker carries its own context window, so cost scales with the
+number of active workers rather than with the size of the work.
+
+Usage windows, rate limits, and per-request budgets belong to the provider
+account, not to this repository, and no local run produces evidence about them.
+When a limit interrupts work, record the interruption and the remaining scope
+in the owning Task rather than retrying into the same limit.
 
 ### Selection and escalation
 
