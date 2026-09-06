@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "0.4.0"
+version: "1.0.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -101,7 +101,8 @@ owner, and one gate fails for a cause outside this package.
 
 **Repository-static lanes.** Every commit passed `python3 scripts/qa.py staged`
 on its own index. The handoff `python3 scripts/qa.py full` selected twenty
-gates over 1026 paths: seventeen `PASS`, three `FAIL`, and the three were dispositioned as below.
+gates over 1026 paths and returned twenty `PASS` after the dispositions below.
+Its first run returned seventeen `PASS` and three `FAIL`.
 
 - `archive-cutover` failed `ARCHIVE-DIRECT-CURRENT-LINK` on `.agents/README.md`
   and three `blocked` SPEC-0062 Task records that linked a Migration ledger
@@ -115,6 +116,8 @@ gates over 1026 paths: seventeen `PASS`, three `FAIL`, and the three were dispos
   because a terminal record is exempt from the rule and must not be rewritten.
 - `pre-commit` reported that `ruff format` rewrote three test files this change
   added. The formatter output was reviewed and committed explicitly.
+
+All three are resolved; the rerun over the final tree passed every gate.
 
 **Negative evidence recorded.** A drifting model on either provider, a widened
 or missing Codex sandbox scope, a validator with no profile membership, and a
