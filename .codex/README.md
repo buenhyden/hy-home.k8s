@@ -1,6 +1,6 @@
 ---
 title: "Codex Native Adapter"
-version: "1.0.0"
+version: "1.1.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -19,14 +19,19 @@ This directory owns only Codex syntax, support notes and native connections.
 - `agents/`: native role definitions with explicit common file reads.
 - `CODEX.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
-- No project `skills/`, `hooks/`, `hooks.json`, `rules/` or `config.toml` is adopted.
-  Codex project skills reside in `.agents/skills/`.
+- No project `skills/`, `hooks/`, `hooks.json`, `rules/` or `config.toml` is
+  adopted yet. Codex project skills reside in `.agents/skills/`, which is the
+  client's documented project skill root. `hooks.json` and `config.toml` are
+  supported by the installed client; see [provider.md](provider.md) for the
+  observation that gates adopting them.
 
 ## Configuration Boundary
 
 Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
 canonical role for common contracts. Update native references in both adapters
-when paths change; retain model and tool settings. Native files do not prove
+when paths change. The registry owns the capability tier to model binding and
+the permission class to `sandbox_mode` binding; a projection restates those
+values and the validator rejects any that drift. Native files do not prove
 model access, role discovery or permission enforcement. No generator is used.
 
 ## Validation
