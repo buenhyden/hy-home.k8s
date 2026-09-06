@@ -198,7 +198,6 @@ repository-quality rule named the shell file as the implementation; their
 subject moved to the module, so each was retargeted at the module rather than
 relaxed, and two new assertions were added for the contracts the split created.
 
-
 The pre-change baseline is recorded: `python3 scripts/qa.py full` reported
 twenty-one gates passing on the working tree containing the two draft
 specifications, and `python3 scripts/qa.py staged` reported six gates passing

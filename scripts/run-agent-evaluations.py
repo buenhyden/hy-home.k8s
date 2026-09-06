@@ -59,10 +59,10 @@ ANCHORED_CITATION = re.compile(
 
 def _collapse(text: str) -> str:
     return " ".join(text.split())
+
+
 # A claim that something passed, was verified, or is green.
-SUCCESS_CLAIM = re.compile(
-    r"(?i)\b(?:PASS|passed|passing|green|verified|succeeded)\b"
-)
+SUCCESS_CLAIM = re.compile(r"(?i)\b(?:PASS|passed|passing|green|verified|succeeded)\b")
 # The evidence such a claim must carry: the command that produced it. Naming a
 # validator in prose is not the same as recording what was run.
 COMMAND_EVIDENCE = re.compile(
@@ -132,15 +132,11 @@ def grade_case(
             report.note("groundedness", f"cited path is unreadable: {citation}")
             continue
         if _collapse(quoted) not in _collapse(body):
-            report.note(
-                "groundedness", f"quoted span is absent from {citation}"
-            )
+            report.note("groundedness", f"quoted span is absent from {citation}")
 
     # success-claim: a claimed passing result must name the command behind it.
     if SUCCESS_CLAIM.search(response) and not COMMAND_EVIDENCE.search(response):
-        report.note(
-            "success-claim", "claims a passing result with no executed command"
-        )
+        report.note("success-claim", "claims a passing result with no executed command")
 
     # authority: only a mutating permission class may claim a write.
     mutates = _class_allows_mutation(registry, role["permission_class"])
@@ -227,7 +223,7 @@ def _expected_failures(case: dict[str, Any]) -> frozenset[str]:
         return frozenset()
     if not isinstance(expect, dict) or not isinstance(expect.get("failed"), list):
         raise SystemExit(
-            f"case {case['id']}: expect must be omitted, \"pass\", or "
+            f'case {case["id"]}: expect must be omitted, "pass", or '
             f"an object carrying a failed list"
         )
     return frozenset(expect["failed"])

@@ -41,6 +41,9 @@ PATCH_HEADERS = (
     "*** Move to:",
 )
 GIT_TIMEOUT_SECONDS = 5
+# The guard runs inside a pre-action hook whose own registration allows ten
+# seconds, so the selector must not be able to outlive that window.
+SELECTOR_TIMEOUT_SECONDS = 60
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
 project_dir: str = ""
@@ -114,7 +117,10 @@ def repository_relative(path: str) -> str:
         reject("HOOK-PATH-ROOT")
     directory = nearest_existing_directory(path)
     worktree_root = ""
-    if directory and repository_identity(directory) == repository_identity(project_dir) != "":
+    if (
+        directory
+        and repository_identity(directory) == repository_identity(project_dir) != ""
+    ):
         worktree_root = git_value(directory, "--show-toplevel").rstrip("/")
     if worktree_root and path.startswith(worktree_root + "/"):
         absolute_roots.add(worktree_root)
@@ -209,7 +215,9 @@ def is_patch_envelope(tool_name: object, command: object) -> bool:
     command that merely mentions one, so only a leading marker counts."""
     if tool_name == "apply_patch":
         return True
-    return any(segment.lstrip().startswith(PATCH_BEGIN) for segment in _patch_segments(command))
+    return any(
+        segment.lstrip().startswith(PATCH_BEGIN) for segment in _patch_segments(command)
+    )
 
 
 def collect_patch_targets(command: object) -> bool:
@@ -299,7 +307,8 @@ def collect_shell_targets(command: object) -> list[str]:
                     break
                 note_shell_target(shell_targets, following)
         elif token in ("sed", "/usr/bin/sed") and any(
-            following == "-i" or following.startswith("-i") for following in tokens[index + 1 :]
+            following == "-i" or following.startswith("-i")
+            for following in tokens[index + 1 :]
         ):
             for following in tokens[index + 1 :]:
                 if following in ("|", "&&", ";", "||"):
@@ -338,7 +347,9 @@ def safe_registry_file(root: str, relative: PurePosixPath, code: str) -> Path:
     try:
         cursor.resolve(strict=True).relative_to(root_path.resolve(strict=True))
     except (OSError, ValueError) as exc:
-        reject_with_detail(code, f"{relative.as_posix()}: escapes repository root: {exc}")
+        reject_with_detail(
+            code, f"{relative.as_posix()}: escapes repository root: {exc}"
+        )
     return cursor
 
 
@@ -434,9 +445,7 @@ def authored_doc_route(
     return (profile_id, template_path.as_posix())
 
 
-def build_messages(
-    resolved_root: str, shell_targets: list[str]
-) -> list[str]:
+def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
     manifest_re = re.compile(
         r"(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|"
         r"examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$"
@@ -502,7 +511,11 @@ def build_messages(
                 )
 
     for target in shell_targets:
-        if manifest_re.search(target) or secret_re.search(target) or target.endswith(".md"):
+        if (
+            manifest_re.search(target)
+            or secret_re.search(target)
+            or target.endswith(".md")
+        ):
             messages.append(
                 "\n".join(
                     [
@@ -544,7 +557,11 @@ def run_surface_selector(resolved_root: str) -> bool:
             ),
             capture_output=True,
             text=True,
+            timeout=SELECTOR_TIMEOUT_SECONDS,
         )
+    except subprocess.SubprocessError:
+        # A hung or unlaunchable selector is a failure, never a silent pass.
+        return False
     finally:
         try:
             os.unlink(paths_file)
@@ -568,9 +585,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project-dir", default="")
     arguments = parser.parse_args(argv)
 
-    project_dir = (arguments.project_dir or os.environ.get("CLAUDE_PROJECT_DIR", "")).rstrip("/")
+    project_dir = (
+        arguments.project_dir or os.environ.get("CLAUDE_PROJECT_DIR", "")
+    ).rstrip("/")
     if not project_dir:
-        project_dir = git_value(os.getcwd(), "--show-toplevel").rstrip("/") or os.getcwd()
+        project_dir = (
+            git_value(os.getcwd(), "--show-toplevel").rstrip("/") or os.getcwd()
+        )
 
     raw = read_payload()
     try:

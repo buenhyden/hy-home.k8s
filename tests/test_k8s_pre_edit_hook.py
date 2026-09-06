@@ -392,8 +392,6 @@ class PreEditGitDegradationTest(unittest.TestCase):
         self.assertIn("_git_cache", guard_text)
 
 
-
-
 def patch_payload(body: str, argv_form: bool = False) -> str:
     """One apply_patch payload in either form the client may send."""
     command = ["apply_patch", body] if argv_form else body
@@ -401,7 +399,11 @@ def patch_payload(body: str, argv_form: bool = False) -> str:
 
 
 def envelope(*header_lines: str) -> str:
-    return "*** Begin Patch\n" + "".join(f"{line}\n" for line in header_lines) + "*** End Patch\n"
+    return (
+        "*** Begin Patch\n"
+        + "".join(f"{line}\n" for line in header_lines)
+        + "*** End Patch\n"
+    )
 
 
 class PatchEnvelopeTest(unittest.TestCase):
@@ -484,8 +486,9 @@ class PatchEnvelopeTest(unittest.TestCase):
     def test_a_patch_body_resembling_a_command_yields_no_shell_target(self):
         result = run_hook(
             patch_payload(
-                envelope("*** Update File: gitops/test.yaml")
-                .replace("*** End Patch", "+echo bad > gitops/injected.yaml\n*** End Patch")
+                envelope("*** Update File: gitops/test.yaml").replace(
+                    "*** End Patch", "+echo bad > gitops/injected.yaml\n*** End Patch"
+                )
             ),
             ROOT,
         )
@@ -495,7 +498,9 @@ class PatchEnvelopeTest(unittest.TestCase):
         self.assertNotIn("Shell command writes", result.stdout)
 
     def test_a_patch_target_outside_the_repository_is_rejected(self):
-        result = run_hook(patch_payload(envelope("*** Add File: ../outside.yaml")), ROOT)
+        result = run_hook(
+            patch_payload(envelope("*** Add File: ../outside.yaml")), ROOT
+        )
 
         self.assertEqual(result.returncode, 2)
         self.assertIn("HOOK-PATH-NORMALIZATION", result.stderr)
@@ -504,7 +509,10 @@ class PatchEnvelopeTest(unittest.TestCase):
         """Routing by shape must not disable the existing advisory path."""
         result = run_hook(
             json.dumps(
-                {"tool_name": "Bash", "tool_input": {"command": "echo x > gitops/shell.yaml"}}
+                {
+                    "tool_name": "Bash",
+                    "tool_input": {"command": "echo x > gitops/shell.yaml"},
+                }
             ),
             ROOT,
         )
@@ -512,13 +520,12 @@ class PatchEnvelopeTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Shell command writes", result.stdout)
 
+
 class ProviderAdapterOwnershipTest(unittest.TestCase):
     """Neither provider directory may execute the other's program."""
 
     def test_the_codex_registration_names_no_claude_path(self):
-        registration = json.loads(
-            CODEX_REGISTRATION_PATH.read_text(encoding="utf-8")
-        )
+        registration = json.loads(CODEX_REGISTRATION_PATH.read_text(encoding="utf-8"))
         commands = [
             handler.get("command", "")
             for entry in registration["hooks"]["PreToolUse"]
@@ -560,6 +567,7 @@ class ProviderAdapterOwnershipTest(unittest.TestCase):
                 f"{adapter_path.name} must not route documents itself",
             )
 
+
 class PreEditTrustBoundaryTest(unittest.TestCase):
     """A root derived from tool input selects data only, never an executable."""
 
@@ -567,7 +575,9 @@ class PreEditTrustBoundaryTest(unittest.TestCase):
         guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
         self.assertIn("os.path.join(project_dir, SELECTOR_RELATIVE_PATH)", guard_text)
-        self.assertNotIn("os.path.join(resolved_root, SELECTOR_RELATIVE_PATH)", guard_text)
+        self.assertNotIn(
+            "os.path.join(resolved_root, SELECTOR_RELATIVE_PATH)", guard_text
+        )
 
     def test_no_executable_is_selected_by_the_resolved_root(self):
         """Every line naming the tool-derived root must use it as data."""
