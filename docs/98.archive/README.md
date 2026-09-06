@@ -89,6 +89,13 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 기존 전이의 퇴역한 중간 목적지를 연결한다. MIG-0009와 MIG-0020을 포함한 이전 봉인 원문과
 archive-time replacement는 유지하고, 현재 목적지만 이 후속 전이로 합성한다.
 
+현재 문서는 봉인 원장을 직접 링크하지 않고 이 index를 경유한다. 그러므로 현재
+문서가 인용하는 원장은 여기에서 도달할 수 있어야 한다.
+[MIG-0004](./migrations/0004-document-authority-convergence.md)는 document authority
+수렴 시점의 경로 전이와 Git 복구 정보를,
+[MIG-0009](./migrations/0009-governance-memory-retirement.md)는 거버넌스 memory
+구조의 퇴역과 그 후속 소유자를 기록한다.
+
 [Spec 0052 완료 패키지](./completed/03.specs/0052-document-taxonomy-consolidation/spec.md)는
 Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한다.
 [MIG-0022](./migrations/0022-document-taxonomy-package-retention.md)는 이 패키지의

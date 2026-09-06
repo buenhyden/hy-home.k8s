@@ -1,6 +1,6 @@
 ---
 title: "Provider Native Enforcement Parity Implementation Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
@@ -109,6 +109,7 @@ outside this plan's write boundary.
 | WP-012 | Add the untrusted input boundary, the cost and throughput boundary, and the loop termination criteria to their common policy owners                                             | WP-011         | VAL-PNP-004, VAL-PNP-007 approved | Reviewed policy text; profile and link validation                                                     |
 | WP-013 | Reconcile Stage 90 research baseline rows with the current tree, keeping historical observations dated and unedited                                                             | WP-012         | VAL-PNP-010 approved              | Path existence sweep; reference pack route test                                                       |
 | WP-014 | Mirror the pre-action guard as a Codex native hook, conditional on observing the client's event payload shape                                                                   | WP-010, WP-011 | Native observation recorded       | Guard mirror tests, or a recorded `DEFER` with the observation and next owner                         |
+| WP-015 | Route current documents to sealed evidence through the archive index and give the index the entries they need | WP-013 | VAL-PNP-009 approved | Archive cutover and its unit cases pass; no current document links a Migration ledger directly |
 
 ## Verification Plan
 
@@ -163,7 +164,7 @@ passing repository-static profile never stands in for them.
 | Spec criterion                                             | Work package   | Expected Task                                                              |
 | ---------------------------------------------------------- | -------------- | -------------------------------------------------------------------------- |
 | [VAL-PNP-001](spec.md#success-criteria--verification-plan) | WP-001         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
-| [VAL-PNP-009](spec.md#success-criteria--verification-plan) | WP-002         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
+| [VAL-PNP-009](spec.md#success-criteria--verification-plan) | WP-002, WP-015 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-005](spec.md#success-criteria--verification-plan) | WP-003         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-006](spec.md#success-criteria--verification-plan) | WP-004         | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |
 | [VAL-PNP-007](spec.md#success-criteria--verification-plan) | WP-005, WP-012 | [tsk-0001](tasks/tsk-0001-establish-provider-native-enforcement-parity.md) |

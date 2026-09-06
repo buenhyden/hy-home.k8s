@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -54,6 +54,7 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007 | Add the untrusted input, cost and throughput, and loop termination boundaries | platform | Done | Untrusted input, cost and throughput, and loop termination boundaries added at their policy owners | Commit `724719fb`; profile and link validation |
 | [WORK-013](../plan.md#work-breakdown) | VAL-PNP-010 | Reconcile Stage 90 research baseline rows with the current tree | platform | Done | Six baselines framed as dated observation with current owners named; two present-tense column headers corrected; one duplicated router link removed | Commit `de1f7858`; path sweep and staged profile |
 | [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Blocked | Not started. The Codex event payload shape was not observed, and no authorized fresh Codex session was run | `DEFER`; `sandbox_mode` remains the only Codex structured control |
+| [WORK-015](../plan.md#work-breakdown) | VAL-PNP-009 | Route current documents to sealed evidence through the archive index | platform | Done | The retention commit removed the navigational exemption for Migration ledgers; four current documents still linked one directly and the index reached neither ledger they cite. Index navigation added, four links rerouted, seven terminal Task records left untouched | `archive-cutover` PASS, records=25; `tests.test_archive_cutover` 37 cases OK |
 
 ## Approval and Safety Boundaries
 
@@ -65,6 +66,8 @@ before the values it validates; WORK-009 now carries only the permission mode.
   `.codex/README.md`, `.codex/hooks.json`, `.github/labeler.yml`,
   `.pre-commit-config.yaml`, `README.md`, `docs/02.architecture/decisions/`,
   `docs/03.specs/0073-provider-native-enforcement-parity/`,
+  `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
+  (current records only), `docs/98.archive/README.md`,
   `docs/03.specs/README.md`, `docs/90.references/research/`,
   `docs/99.templates/registry.json`, `docs/99.templates/templates/runtime/`,
   `scripts/validate-agent-governance.py`, `scripts/validation/registry.json`,
@@ -98,16 +101,18 @@ owner, and one gate fails for a cause outside this package.
 
 **Repository-static lanes.** Every commit passed `python3 scripts/qa.py staged`
 on its own index. The handoff `python3 scripts/qa.py full` selected twenty
-gates over 1026 paths: seventeen `PASS`, three `FAIL`.
+gates over 1026 paths: seventeen `PASS`, three `FAIL`, and the three were dispositioned as below.
 
-- `archive-cutover` fails `ARCHIVE-DIRECT-CURRENT-LINK` on `.agents/README.md`
-  and three `blocked` SPEC-0062 Task records that link a Migration ledger
-  directly. This package changed none of those files. The rule that made those
-  links illegal arrived with the Spec 0052 retention commit, which removed the
-  navigational exemption for migration ledgers; `archive-cutover` runs only on
-  the all-files and CI lanes, so no staged run could have selected it.
-- `unit-tests` fails three `tests/test_archive_cutover.py` cases from the same
-  cause and the same untouched files.
+- `archive-cutover` failed `ARCHIVE-DIRECT-CURRENT-LINK` on `.agents/README.md`
+  and three `blocked` SPEC-0062 Task records that linked a Migration ledger
+  directly, and `unit-tests` failed three `tests/test_archive_cutover.py` cases
+  from the same cause. The rule that made those links illegal arrived with the
+  Spec 0052 retention commit, which removed the navigational exemption for
+  Migration ledgers; `archive-cutover` runs only on the all-files and CI lanes,
+  so no staged run could have selected it. WORK-015 repaired both: the archive
+  index now reaches MIG-0004 and MIG-0009, the four current documents cite them
+  through the index, and the seven `done` SPEC-0062 records stay untouched
+  because a terminal record is exempt from the rule and must not be rewritten.
 - `pre-commit` reported that `ruff format` rewrote three test files this change
   added. The formatter output was reviewed and committed explicitly.
 
@@ -130,12 +135,12 @@ it. No history was rewritten and no branch was pushed, merged, or deleted.
 
 **Residual risk.** The capability binding and the Codex sandbox scope are
 tracked configuration whose runtime effect is unobserved. The write-path guard
-still cannot see a program that opens files itself. The `archive-cutover` and
-`unit-tests` failures above block the handoff gate and need a disposition from
-the owner of the retention rule and the SPEC-0062 package.
+still cannot see a program that opens files itself. A rule that only the
+all-files and CI lanes select can be broken by a staged-only change and stay
+invisible until handoff, which is how WORK-015's defect reached a commit.
 
-**Next owner.** platform, for the `archive-cutover` disposition, the two
-`DEFER` packages, and any authorized native observation.
+**Next owner.** platform, for the two `DEFER` packages and any authorized
+native observation.
 
 ## Traceability
 
@@ -157,3 +162,4 @@ the owner of the retention rule and the SPEC-0062 package.
 | [WORK-012](../plan.md#work-breakdown) | Three missing boundaries added at their owners | Commit `724719fb` |
 | [WORK-013](../plan.md#work-breakdown) | Stage 90 baselines read as dated observation | Commit `de1f7858` |
 | [WORK-014](../plan.md#work-breakdown) | Not executed; gated on an unobserved payload shape | `DEFER` with next owner |
+| [WORK-015](../plan.md#work-breakdown) | Archive cutover and its unit cases recovered without editing a terminal record | `archive-cutover` PASS; 37 archive cutover cases OK |

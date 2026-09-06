@@ -56,5 +56,5 @@ execution registry owns mutable gate commands and limits.
 
 - [Document profiles and templates](../docs/99.templates/README.md)
 - [Repository documentation](../docs/README.md)
-- [Memory retirement](../docs/98.archive/migrations/0009-governance-memory-retirement.md)
+- [Memory retirement: MIG-0009 through the archive index](../docs/98.archive/README.md)
 - [Authority decision](../docs/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
