@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -46,14 +46,14 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-004](../plan.md#work-breakdown) | VAL-PNP-006 | Reduce duplicated rule implementations and profile membership to one owner | platform | Done | Duplicate Vault and ESO heredoc removed, 441 to 306 lines, both gates still passing; two reported duplications kept as distinct rules | Commit `41648686`; staged profile, seven gates |
 | [WORK-005](../plan.md#work-breakdown) | VAL-PNP-007 | Set the commit and handoff evidence proportion in Git policy | platform | Done | The staged profile gates a logical commit; the full profile gates branch finish and handoff | Commit `43711f02`; staged profile, six gates |
 | [WORK-006](../plan.md#work-breakdown) | VAL-PNP-003 | Add the per-provider capability-to-model binding to the registry and schema | platform | Done | Binding declared for both providers; twenty-three of twenty-four projections realigned; drift now fails on both sides | Binding tests RED then GREEN; governance validator |
-| [WORK-007](../plan.md#work-breakdown) | VAL-PNP-002        | Declare a native execution scope for every Codex role and widen the parity rule | platform | Queued | Not executed | Pending scope tests and governance validator               |
+| [WORK-007](../plan.md#work-breakdown) | VAL-PNP-002 | Declare a native execution scope for every Codex role and widen the parity rule | platform | Done | Each permission class binds one Codex sandbox scope; twelve projections carry it and widening or dropping it fails closed | Commit `edf960a3`; scope tests RED then GREEN |
 | [WORK-008](../plan.md#work-breakdown) | VAL-PNP-003 | Align every Codex role model with the observed client catalog | platform | Done | Delivered inside WORK-006; the installed client catalog listed only `gpt-5.5`, `gpt-5.4-mini` and `gpt-5.3-codex-spark`, so eleven of twelve prior values named absent models | Governance validator; catalog observed 2026-09-06 |
-| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002 | Align every Claude role model and permission mode with the registry binding | platform | In progress | Models delivered inside WORK-006 as documented aliases; the permission mode remains | Native metadata tests |
-| [WORK-010](../plan.md#work-breakdown) | VAL-PNP-004        | Extend the pre-action guard to the shell tool class and name the residual class | platform | Queued | Not executed | Pending guard unit tests and approval-boundary review      |
-| [WORK-011](../plan.md#work-breakdown) | VAL-PNP-008        | Correct provider notes to describe native capability against a named client     | platform | Queued | Not executed | Pending provider note review                               |
-| [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007        | Add the untrusted input, cost and throughput, and loop termination boundaries   | platform | Queued | Not executed | Pending policy review and link validation                  |
-| [WORK-013](../plan.md#work-breakdown) | VAL-PNP-010        | Reconcile Stage 90 research baseline rows with the current tree                 | platform | Queued | Not executed | Pending path sweep and reference pack route test           |
-| [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004        | Mirror the pre-action guard as a Codex native hook after observing the payload  | platform | Queued | Not executed | Pending native observation, otherwise `DEFER`              |
+| [WORK-009](../plan.md#work-breakdown) | VAL-PNP-002 | Align every Claude role model and permission mode with the registry binding | platform | Blocked | Models delivered inside WORK-006 as documented aliases. The Claude permission mode is not applied: `tools` already gives an enforced structured scope, and the subagent effect of `permissionMode` was not observed on this client | `DEFER` pending a native observation; next owner platform |
+| [WORK-010](../plan.md#work-breakdown) | VAL-PNP-004 | Extend the pre-action guard to the shell tool class and name the residual class | platform | Done | Guard matcher covers the shell tool; redirect, tee and in-place sed targets are reported; out-of-repo, read-only and unparsed commands stay silent and exit zero | Commit `3093e158`; five new guard cases |
+| [WORK-011](../plan.md#work-breakdown) | VAL-PNP-008 | Correct provider notes to describe native capability against a named client | platform | Done | Capability statements name the client they were observed against; the Codex hook denial is replaced by a supported-but-not-adopted statement | Commit `5c017dde`; observed `claude 2.1.261` and `codex-cli 0.140.0` |
+| [WORK-012](../plan.md#work-breakdown) | VAL-PNP-007 | Add the untrusted input, cost and throughput, and loop termination boundaries | platform | Done | Untrusted input, cost and throughput, and loop termination boundaries added at their policy owners | Commit `724719fb`; profile and link validation |
+| [WORK-013](../plan.md#work-breakdown) | VAL-PNP-010 | Reconcile Stage 90 research baseline rows with the current tree | platform | Done | Six baselines framed as dated observation with current owners named; two present-tense column headers corrected; one duplicated router link removed | Commit `de1f7858`; path sweep and staged profile |
+| [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Blocked | Not started. The Codex event payload shape was not observed, and no authorized fresh Codex session was run | `DEFER`; `sandbox_mode` remains the only Codex structured control |
 
 ## Approval and Safety Boundaries
 
@@ -92,28 +92,50 @@ before the values it validates; WORK-009 now carries only the permission mode.
 
 ## Verification Summary
 
-No package has run. No repository-static, provider-runtime, hosted-CI, or live
-result exists for this Task yet.
+Twelve work packages landed as twelve logical commits, each gated by the staged
+profile against its exact index. Two remain `DEFER` with a reason and a next
+owner, and one gate fails for a cause outside this package.
 
-Baseline observations recorded before work started, which are inputs rather
-than results:
+**Repository-static lanes.** Every commit passed `python3 scripts/qa.py staged`
+on its own index. The handoff `python3 scripts/qa.py full` selected twenty
+gates over 1026 paths: seventeen `PASS`, three `FAIL`.
 
-- `python3 scripts/validate-agent-governance.py --root .` passed on the
-  pre-change tree with two providers, twelve roles, three permission classes,
-  sixteen skills, thirty-four handoffs, and thirty-six projections.
-- `python3 scripts/qa.py quick` passed on the pre-change tree, selecting eleven
-  gates over fifty-eight changed paths in three minutes forty-five seconds.
-- `python3 scripts/qa.py --list` reported four profiles, with the quick and
-  staged member lists identical and the full and CI member lists identical.
+- `archive-cutover` fails `ARCHIVE-DIRECT-CURRENT-LINK` on `.agents/README.md`
+  and three `blocked` SPEC-0062 Task records that link a Migration ledger
+  directly. This package changed none of those files. The rule that made those
+  links illegal arrived with the Spec 0052 retention commit, which removed the
+  navigational exemption for migration ledgers; `archive-cutover` runs only on
+  the all-files and CI lanes, so no staged run could have selected it.
+- `unit-tests` fails three `tests/test_archive_cutover.py` cases from the same
+  cause and the same untouched files.
+- `pre-commit` reported that `ruff format` rewrote three test files this change
+  added. The formatter output was reviewed and committed explicitly.
 
-Lanes that will remain `DEFER` unless a separate authorized observation is
-made: native discovery, native enforcement, model resolution, authenticated
-provider operation, hosted CI execution, live infrastructure behavior, and any
-editor-extension behavior, since no provider editor extension is installed.
+**Negative evidence recorded.** A drifting model on either provider, a widened
+or missing Codex sandbox scope, a validator with no profile membership, and a
+Codex projection carrying an unknown key all fail closed, each demonstrated
+before its fix and shown passing after it.
 
-Residual risk before work starts: the governance validator pins several native
-and settings shapes exactly, so each widened rule must add its failing case
-first or a real regression can pass silently.
+**Lanes that produced no evidence.** Native discovery, native enforcement,
+model resolution, authenticated provider operation, hosted CI execution, and
+live infrastructure behavior are `DEFER`: no fresh provider session was run, no
+push was made, and no cluster was inspected. No editor-extension behavior was
+observed either, because neither provider extension is installed here.
+
+**Review disposition.** Self-reviewed against the diff of each commit. No
+independent reviewer has examined this work.
+
+**Rollback.** Each package is one commit; `git revert` of that commit reverses
+it. No history was rewritten and no branch was pushed, merged, or deleted.
+
+**Residual risk.** The capability binding and the Codex sandbox scope are
+tracked configuration whose runtime effect is unobserved. The write-path guard
+still cannot see a program that opens files itself. The `archive-cutover` and
+`unit-tests` failures above block the handoff gate and need a disposition from
+the owner of the retention rule and the SPEC-0062 package.
+
+**Next owner.** platform, for the `archive-cutover` disposition, the two
+`DEFER` packages, and any authorized native observation.
 
 ## Traceability
 
@@ -127,11 +149,11 @@ first or a real regression can pass silently.
 | [WORK-004](../plan.md#work-breakdown) | Removed one duplicate implementation; kept three distinct rules | Commit `41648686`; both gates re-run after removal |
 | [WORK-005](../plan.md#work-breakdown) | Stated the commit and handoff evidence proportion | Commit `43711f02`; quality policy cross-reference |
 | [WORK-006](../plan.md#work-breakdown) | Capability tier now determines the native model on both providers | Binding tests and governance validator negative cases |
-| [WORK-007](../plan.md#work-breakdown) | Not executed; queued                                      | Pending native scope parity tests                                 |
+| [WORK-007](../plan.md#work-breakdown) | Codex roles now carry an enforced structured scope | Commit `edf960a3`; widening and removal both fail closed |
 | [WORK-008](../plan.md#work-breakdown) | Codex models realigned to the observed client catalog | Governance validator; recorded catalog identity |
-| [WORK-009](../plan.md#work-breakdown) | Claude models realigned to documented aliases; permission mode pending | Native metadata tests |
-| [WORK-010](../plan.md#work-breakdown) | Not executed; queued                                      | Pending guard unit tests for the shell tool class                 |
-| [WORK-011](../plan.md#work-breakdown) | Not executed; queued                                      | Pending provider note review against the recorded client identity |
-| [WORK-012](../plan.md#work-breakdown) | Not executed; queued                                      | Pending policy and link validation                                |
-| [WORK-013](../plan.md#work-breakdown) | Not executed; queued                                      | Pending path existence sweep and reference pack route test        |
-| [WORK-014](../plan.md#work-breakdown) | Not executed; conditional on a native payload observation | Pending observation, otherwise `DEFER` with next owner            |
+| [WORK-009](../plan.md#work-breakdown) | Model half delivered; permission mode deferred without runtime evidence | `DEFER` recorded with its reason |
+| [WORK-010](../plan.md#work-breakdown) | Shell writes are observed advisorily; the residual class is named | Commit `3093e158`; approval boundary text |
+| [WORK-011](../plan.md#work-breakdown) | Native capability claims carry a client identity | Commit `5c017dde` |
+| [WORK-012](../plan.md#work-breakdown) | Three missing boundaries added at their owners | Commit `724719fb` |
+| [WORK-013](../plan.md#work-breakdown) | Stage 90 baselines read as dated observation | Commit `de1f7858` |
+| [WORK-014](../plan.md#work-breakdown) | Not executed; gated on an unobserved payload shape | `DEFER` with next owner |
