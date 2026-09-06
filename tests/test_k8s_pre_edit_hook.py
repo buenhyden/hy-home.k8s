@@ -393,6 +393,125 @@ class PreEditGitDegradationTest(unittest.TestCase):
 
 
 
+
+def patch_payload(body: str, argv_form: bool = False) -> str:
+    """One apply_patch payload in either form the client may send."""
+    command = ["apply_patch", body] if argv_form else body
+    return json.dumps({"tool_name": "apply_patch", "tool_input": {"command": command}})
+
+
+def envelope(*header_lines: str) -> str:
+    return "*** Begin Patch\n" + "".join(f"{line}\n" for line in header_lines) + "*** End Patch\n"
+
+
+class PatchEnvelopeTest(unittest.TestCase):
+    """A patch write receives the checks a structured write already receives."""
+
+    def assert_manifest_advisory(self, payload: str, path: str):
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Editing Kubernetes manifest", result.stdout)
+        self.assertIn(path, result.stdout)
+
+    def test_update_target_is_evaluated_in_the_string_form(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Update File: gitops/test.yaml")),
+            "gitops/test.yaml",
+        )
+
+    def test_add_target_is_evaluated_in_the_argument_vector_form(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Add File: gitops/new.yaml"), argv_form=True),
+            "gitops/new.yaml",
+        )
+
+    def test_delete_target_is_evaluated(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Delete File: gitops/old.yaml")),
+            "gitops/old.yaml",
+        )
+
+    def test_a_move_yields_both_the_source_and_the_destination(self):
+        result = run_hook(
+            patch_payload(
+                envelope(
+                    "*** Update File: gitops/from.yaml",
+                    "*** Move to: gitops/to.yaml",
+                )
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("gitops/from.yaml", result.stdout)
+        self.assertIn("gitops/to.yaml", result.stdout)
+
+    def test_several_files_produce_one_evaluation_each(self):
+        result = run_hook(
+            patch_payload(
+                envelope(
+                    "*** Update File: gitops/one.yaml",
+                    "*** Add File: gitops/two.yaml",
+                )
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.count("Editing Kubernetes manifest"), 2)
+
+    def test_an_envelope_naming_no_file_is_quiet_and_successful(self):
+        result = run_hook(patch_payload(envelope()), ROOT)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "")
+
+    def test_a_truncated_envelope_is_rejected_as_malformed_transport(self):
+        result = run_hook(
+            patch_payload("*** Begin Patch\n*** Update File: gitops/test.yaml\n"),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATCH-ENVELOPE", result.stderr)
+
+    def test_an_empty_target_path_is_rejected(self):
+        result = run_hook(patch_payload(envelope("*** Add File:   ")), ROOT)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATCH-PATH", result.stderr)
+
+    def test_a_patch_body_resembling_a_command_yields_no_shell_target(self):
+        result = run_hook(
+            patch_payload(
+                envelope("*** Update File: gitops/test.yaml")
+                .replace("*** End Patch", "+echo bad > gitops/injected.yaml\n*** End Patch")
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("gitops/injected.yaml", result.stdout)
+        self.assertNotIn("Shell command writes", result.stdout)
+
+    def test_a_patch_target_outside_the_repository_is_rejected(self):
+        result = run_hook(patch_payload(envelope("*** Add File: ../outside.yaml")), ROOT)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATH-NORMALIZATION", result.stderr)
+
+    def test_an_ordinary_shell_command_still_reaches_the_shell_observer(self):
+        """Routing by shape must not disable the existing advisory path."""
+        result = run_hook(
+            json.dumps(
+                {"tool_name": "Bash", "tool_input": {"command": "echo x > gitops/shell.yaml"}}
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Shell command writes", result.stdout)
+
 class ProviderAdapterOwnershipTest(unittest.TestCase):
     """Neither provider directory may execute the other's program."""
 

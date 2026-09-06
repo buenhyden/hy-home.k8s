@@ -30,6 +30,16 @@ import tempfile
 from pathlib import Path, PurePosixPath
 
 PROVIDERS = ("claude", "codex")
+PATCH_BEGIN = "*** Begin Patch"
+PATCH_END = "*** End Patch"
+# A move carries its destination on its own header line, so both the source
+# Update header and the Move header contribute a path.
+PATCH_HEADERS = (
+    "*** Add File:",
+    "*** Update File:",
+    "*** Delete File:",
+    "*** Move to:",
+)
 GIT_TIMEOUT_SECONDS = 5
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
@@ -181,6 +191,57 @@ def collect_structured_paths(tool_input: dict) -> None:
             if not isinstance(edit, dict):
                 reject("HOOK-PATH-TYPE")
             consume_scalar_alias(edit)
+
+
+def _patch_segments(command: object) -> list[str]:
+    """Return the string parts of a command in either payload form."""
+    if isinstance(command, str):
+        return [command]
+    if isinstance(command, list):
+        return [item for item in command if isinstance(item, str)]
+    return []
+
+
+def is_patch_envelope(tool_name: object, command: object) -> bool:
+    """Decide by tool name, or by a segment that opens with the envelope marker.
+
+    Matching a marker anywhere inside a command would misread an ordinary shell
+    command that merely mentions one, so only a leading marker counts."""
+    if tool_name == "apply_patch":
+        return True
+    return any(segment.lstrip().startswith(PATCH_BEGIN) for segment in _patch_segments(command))
+
+
+def collect_patch_targets(command: object) -> bool:
+    """Read a patch envelope's file headers into the path pipeline.
+
+    The envelope is data. Its headers name the files the patch would write, and
+    those paths receive the same manifest, secret-adjacency and document-route
+    evaluation a structured write receives. The body is never interpreted: a
+    line that resembles a shell command is inert text here.
+
+    Returns True when an envelope was found, so a payload that names the patch
+    tool but carries something else still reaches the shell observer."""
+    segments = [
+        segment
+        for segment in _patch_segments(command)
+        if PATCH_BEGIN in segment or any(header in segment for header in PATCH_HEADERS)
+    ]
+    if not segments:
+        return False
+    for segment in segments:
+        if PATCH_BEGIN in segment and PATCH_END not in segment:
+            reject("HOOK-PATCH-ENVELOPE")
+        for line in segment.splitlines():
+            stripped = line.strip()
+            for header in PATCH_HEADERS:
+                if stripped.startswith(header):
+                    target = stripped[len(header) :].strip()
+                    if not target:
+                        reject("HOOK-PATCH-PATH")
+                    add_path(target)
+                    break
+    return True
 
 
 def note_shell_target(shell_targets: list[str], value: str) -> None:
@@ -524,7 +585,13 @@ def main(argv: list[str] | None = None) -> int:
     tool_input = data.get("tool_input", {})
 
     collect_structured_paths(tool_input)
-    shell_targets = collect_shell_targets(tool_input.get("command"))
+    command = tool_input.get("command")
+    patched = (
+        collect_patch_targets(command)
+        if is_patch_envelope(data.get("tool_name"), command)
+        else False
+    )
+    shell_targets = [] if patched else collect_shell_targets(command)
 
     environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
     if environment_path:

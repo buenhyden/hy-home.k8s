@@ -1,6 +1,6 @@
 ---
 title: "Establish Write-Guard Ownership and Enforcement Honesty"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -43,7 +43,7 @@ outcome.
 | ------------------------------------- | ------------------ | ----------------------------------------------------------------------------- | -------- | ------ | ----------- | ----------- |
 | [WORK-001](../plan.md#work-breakdown) | VAL-PWG-001        | Extract the guard program to `scripts/` and reduce the Claude hook to an adapter | platform | Done | Guard logic owns one module; the Claude adapter resolves it from its own checkout rather than the tool-supplied project directory | Guard unit module 35 passing before, 37 passing after with two added trust-boundary cases; four probe payloads unchanged; staged profile 11/11 PASS |
 | [WORK-002](../plan.md#work-breakdown) | VAL-PWG-001        | Add the Codex adapter and repoint the Codex registration at it                 | platform | Done | Codex registers its own adapter; no provider directory names the other's path | Three added ownership cases fail before and pass after; guard module 40 passing; staged profile 6/6 PASS |
-| [WORK-003](../plan.md#work-breakdown) | VAL-PWG-002        | Parse patch-envelope targets as data into the structured path pipeline         | platform | Queued | Not started | Not started |
+| [WORK-003](../plan.md#work-breakdown) | VAL-PWG-002        | Parse patch-envelope targets as data into the structured path pipeline         | platform | Done | A patch write now receives the manifest, secret-adjacency and document-route evaluation a structured write receives, in both payload forms | Eleven envelope cases, nine failing before and all passing after; guard module 40 to 51 passing; staged profile PASS |
 | [WORK-004](../plan.md#work-breakdown) | VAL-PWG-003        | Correct the enforcement statements and record the open runtime item            | platform | Queued | Not started | Not started |
 | [WORK-005](../plan.md#work-breakdown) | VAL-PWG-004, VAL-PWG-005 | Narrow the Claude read-only scope where a role needs no shell            | platform | Queued | Not started | Not started |
 | [WORK-006](../plan.md#work-breakdown) | VAL-PWG-004        | Correct the two role guardrails and state the class meaning at its owner       | platform | Queued | Not started | Not started |
@@ -78,7 +78,7 @@ disposition is the user's to make.
 
 ## Verification Summary
 
-WORK-001 and WORK-002 are complete. The guard logic now lives in one module under
+WORK-001 through WORK-003 are complete. The guard logic now lives in one module under
 `scripts/` and each provider registers its own thin adapter. The Codex
 registration named a file inside the Claude adapter directory; it now names
 `.codex/hooks/pre-tool-use.sh`, and a structured payload produces the same
@@ -87,6 +87,20 @@ advisory through either adapter.
 The Codex adapter README previously stated that no project `hooks/` directory
 is adopted. That statement is now false, so it was corrected in the same
 change rather than left to contradict the tree.
+
+WORK-003 closed the observed silence. The payload recorded at intake, an
+`apply_patch` naming `gitops/test.yaml`, produced no message and exit status
+zero; it now produces the same Kubernetes manifest advisory the equivalent
+structured write produces, in the string form and the argument-vector form
+alike. Because the targets enter the structured path pipeline rather than the
+advisory shell list, they also inherit the symbolic-link, repository-root and
+retired-path rejections that pipeline already enforced. The envelope body is
+never interpreted: a body line resembling a shell redirection contributes no
+target.
+
+The shell path is deliberately unchanged and remains advisory. Routing by
+payload shape does not disable it, and a payload naming the patch tool while
+carrying something else still reaches the shell observer.
 
 Two findings arose during extraction and are recorded rather than smoothed
 over. First, resolving the guard program through the project directory made the
@@ -128,7 +142,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 | ------------------------------------- | ----------- | -------------------------------------------------------------- |
 | [WORK-001](../plan.md#work-breakdown) | Guard extracted without behaviour change; adapter trust anchor corrected | Guard unit module 35 to 37 passing; probe payloads unchanged; staged profile 11/11 PASS |
 | [WORK-002](../plan.md#work-breakdown) | Codex adapter added and its registration repointed | Three ownership cases red then green; guard module 40 passing; staged profile 6/6 PASS |
-| [WORK-003](../plan.md#work-breakdown) | Not started | Queued; failing envelope case recorded in the plan              |
+| [WORK-003](../plan.md#work-breakdown) | Patch targets reach the structured pipeline in both payload forms | Nine of eleven envelope cases red before, all green after; the reported silent payload now warns |
 | [WORK-004](../plan.md#work-breakdown) | Not started | Queued; client identities recorded in Inputs                    |
 | [WORK-005](../plan.md#work-breakdown) | Not started | Queued; per-role shell determination precedes any change        |
 | [WORK-006](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-005                                     |
