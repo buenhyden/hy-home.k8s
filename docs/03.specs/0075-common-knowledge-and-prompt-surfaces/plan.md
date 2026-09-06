@@ -154,6 +154,12 @@ from earlier packages.
 - [ ] Record why the adopted knowledge surface is not the retired generated
       index: it is hand-maintained pointer material bound by a non-duplication
       rule that WP-005 enforces.
+- [ ] Record the considered alternatives and why each was rejected: absorbing
+      the material into existing documents, which leaves the prompt input and
+      output contracts without an owner; and adopting every optional directory,
+      which duplicates an evaluation harness that already owns its runner,
+      cases, and validation surface and creates two directories with no
+      consumer.
 - [ ] Set ADR-0035 to superseded with the reciprocal successor row, leaving its
       body intact.
 - [ ] Add both rows to the decisions README index.
@@ -339,6 +345,10 @@ Remove the seven category documents under `.agents/roles/`.
 - [ ] Repoint every consumer reference at a section anchor in the same change,
       including the Stage 90 index rows that map each category to requirement
       identifiers and path scopes.
+- [ ] Repair the responsibility router's reference to a root `DESIGN.md`,
+      which names no file in the tree. Either point it at the owner that holds
+      the guidance or remove the clause; the reference escapes link validation
+      today because it is inline code rather than a link.
 - [ ] Run `python3 scripts/validate-links-and-owners.py --root . --mode strict`
       through `python3 scripts/qa.py staged`. Expected: no dangling link.
 - [ ] If a consumer cannot be served by a section anchor, retain that category
@@ -358,6 +368,11 @@ Remove the seven category documents under `.agents/roles/`.
 - [ ] Add a current dated observation of the two-provider, twelve-role,
       thirty-six-projection registry beside the four-provider observation,
       changing neither the wording, the subject, nor the date of the original.
+- [ ] Add the three-way comparison the pack currently lacks: per capability,
+      what the installed client documents, what the repository implements
+      statically, and what runtime evidence exists. Every runtime column entry
+      is an observation or an explicit absence, never an inference from the
+      static column.
 - [ ] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-012: Record the upstream re-observation
@@ -406,6 +421,12 @@ Remove the seven category documents under `.agents/roles/`.
       runs themselves.
 - [ ] Record any editor extension command identifier that could not be
       confirmed as deferred with its next owner.
+- [ ] Record the model, cost, and throughput conclusion: the registry's
+      capability-to-model binding is owned by SPEC-0073, was re-checked against
+      the observed client identities during this package, and needs no change;
+      concurrency, retry, and escalation limits stay with the loop conditions
+      the work lifecycle already owns; and no hard cost ceiling is enforceable
+      locally, so any budget statement is recorded as a soft budget.
 - [ ] Confirm no limitation is reported as a working control.
 - [ ] Run `python3 scripts/qa.py staged` and commit.
 
