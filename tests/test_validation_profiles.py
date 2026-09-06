@@ -64,12 +64,13 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ROUTES.ContractError):
                 ROUTES.classify_path(self.contract, path)
 
-    def test_full_and_ci_keep_the_same_nineteen_unique_gates(self):
+    def test_full_and_ci_keep_the_same_unique_gate_set(self):
         expected = {
             "affected-surface-contract",
             "archive-cutover",
             "agent-governance",
             "ci-python-contract",
+            "github-actions-security",
             "document-contract-registry",
             "document-lifecycle",
             "gitops-change-set",
@@ -90,6 +91,28 @@ class ValidationProfileTests(unittest.TestCase):
         self.assertEqual(full, self.contract["profiles"]["ci"])
         self.assertEqual(len(full), len(expected))
         self.assertEqual(set(full), expected)
+
+    def test_every_tested_repository_validator_runs_in_a_profile(self):
+        """A validator with its own test module must be reachable from a profile."""
+
+        reachable = {
+            identifier
+            for members in self.contract["profiles"].values()
+            for identifier in members
+        }
+        registered = {
+            argument
+            for validator in self.contract["validators"]
+            if validator["id"] in reachable
+            for argument in validator["argv"]
+        }
+        orphans = []
+        for script in sorted((ROOT / "scripts").glob("validate-*.py")):
+            relative = f"scripts/{script.name}"
+            module = ROOT / "tests" / f"test_{script.stem.replace('-', '_')}.py"
+            if module.exists() and relative not in registered:
+                orphans.append(relative)
+        self.assertEqual(orphans, [])
 
     def test_shell_hooks_only_select_existing_shell_owners(self):
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())

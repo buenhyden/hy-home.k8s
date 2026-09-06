@@ -106,6 +106,25 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "github-actions-security",
+      "argv": [
+        "python3",
+        "scripts/validate-github-actions-security.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "GitHub Actions identity, permission, and artifact retention validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "document-contract-registry",
       "argv": [
         "python3",
@@ -1091,6 +1110,7 @@
       "archive-cutover",
       "agent-governance",
       "ci-python-contract",
+      "github-actions-security",
       "document-contract-registry",
       "document-lifecycle",
       "gitops-change-set",
@@ -1112,6 +1132,7 @@
       "archive-cutover",
       "agent-governance",
       "ci-python-contract",
+      "github-actions-security",
       "document-contract-registry",
       "document-lifecycle",
       "gitops-change-set",
