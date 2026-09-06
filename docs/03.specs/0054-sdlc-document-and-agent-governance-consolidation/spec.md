@@ -41,7 +41,7 @@ records become current semantic authority or a routine deletion prerequisite.
 
 Direct human approval on 2026-08-13 authorizes B-scope consolidation including
 Stage 90. This integrated program inherits the incomplete WORK-109 candidate
-from [Spec 0052](../0052-document-taxonomy-consolidation/spec.md), but accepts
+from [Spec 0052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md), but accepts
 only the portions that satisfy this specification after staged-index review.
 The original direct-approval lineage was recorded by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),

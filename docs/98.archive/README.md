@@ -89,6 +89,11 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 기존 전이의 퇴역한 중간 목적지를 연결한다. MIG-0009와 MIG-0020을 포함한 이전 봉인 원문과
 archive-time replacement는 유지하고, 현재 목적지만 이 후속 전이로 합성한다.
 
+[Spec 0052 완료 패키지](./completed/03.specs/0052-document-taxonomy-consolidation/spec.md)는
+Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한다.
+[MIG-0022](./migrations/0022-document-taxonomy-package-retention.md)는 이 패키지의
+이전 경로와 Git 원문 복구 정보를 기록한다. 위 record manifest의 수치와는 별개다.
+
 ## Authoring Workflow
 
 1. 현재 authority와 replacement를 먼저 확정하고 원본 경로 제거와 mirrored archive record 생성을 하나의 proposed snapshot으로 준비한다.

@@ -560,22 +560,38 @@ class ArchiveValidationTest(unittest.TestCase):
 
         self.assertEqual(self.codes(report), ("ARCHIVE-DIRECT-CURRENT-LINK",))
 
-    def test_mig0004_is_the_only_direct_current_migration_control(self) -> None:
+    def test_current_direct_migration_links_fail_closed(self) -> None:
         current = CurrentMarkdownDocument(
             path="docs/03.specs/0054-document-authority-convergence/README.md",
-            markdown=(
-                "[recovery](../../98.archive/migrations/"
-                "0004-document-authority-convergence.md)\n"
-            ),
+            markdown="",
             profile="common/readme-collection-index",
             status="active",
         )
-        wrong_control = dataclasses.replace(
-            current,
+        for target in (
+            "0004-document-authority-convergence.md",
+            "0010-document-terminal-retention.md",
+            "0003-agent-governance-control-plane-consolidation.md",
+        ):
+            with self.subTest(target=target):
+                document = dataclasses.replace(
+                    current,
+                    markdown=f"[recovery](../../98.archive/migrations/{target})\n",
+                )
+                report = validate_current_archive_authority(
+                    (document,),
+                    individual_archive_paths=frozenset({self.archive_path}),
+                )
+                self.assertEqual(self.codes(report), ("ARCHIVE-DIRECT-CURRENT-LINK",))
+
+    def test_current_completed_document_citation_is_permitted(self) -> None:
+        current = CurrentMarkdownDocument(
+            path="docs/03.specs/0054-document-authority-convergence/spec.md",
             markdown=(
-                "[wrong](../../98.archive/migrations/"
-                "0003-agent-governance-control-plane-consolidation.md)\n"
+                "[completed](../../98.archive/completed/03.specs/"
+                "0052-document-taxonomy-consolidation/spec.md)\n"
             ),
+            profile="sdlc/spec",
+            status="active",
         )
 
         self.assertEqual(
@@ -586,15 +602,6 @@ class ArchiveValidationTest(unittest.TestCase):
                 )
             ),
             (),
-        )
-        self.assertEqual(
-            self.codes(
-                validate_current_archive_authority(
-                    (wrong_control,),
-                    individual_archive_paths=frozenset({self.archive_path}),
-                )
-            ),
-            ("ARCHIVE-DIRECT-CURRENT-LINK",),
         )
 
     def test_green_noncurrent_direct_link_does_not_claim_current_authority(

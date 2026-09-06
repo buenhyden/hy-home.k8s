@@ -1,10 +1,10 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.5.2"
+version: "1.6.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0054-TSK-0013"
 ---
@@ -88,8 +88,8 @@ authority.
 
 ## Verification Summary
 
-No additional Stage 01, 02, 03, or 99 document has been removed in this
-follow-up. One entry blocker is released, the document-contract v9 proposal and
+At the earlier entry-blocker follow-up, no additional Stage 01, 02, 03, or 99
+document was removed. One entry blocker was released, the document-contract v9 proposal and
 separate acceptance commits are durable, and the accepted ADR-0032 retention
 authority and ADR-0033 v9 decision are reflected in the Spec and Plan.
 
@@ -695,6 +695,182 @@ hosted/runtime/release evidence remain pending. No Task 5 or WP-009 expansion
 was performed. This Task remains
 `in-progress`; rollback remains a reviewed revert of the applicable logical
 commit, and the parent owner retains ordered integration handoff responsibility.
+
+### Spec 0052 Whole-Package Retention (2026-09-06)
+
+This bounded WP-013 slice retains the completed predecessor Spec 0052 under
+`docs/98.archive/completed/03.specs/0052-document-taxonomy-consolidation/`.
+The source baseline is explicitly
+`4053793a41a9cedff1edeaa4a9d3b2a6a80e1272`, retained by local `main`;
+implementation runs on `codex/governance-follow-up`. The preceding governance
+clarification commit may advance that branch without changing this source
+identity. No remote observation or hosted result is inferred from local refs.
+
+Scope is the nineteen Spec/Plan/Task source-to-mirror pairs, the new finite
+migration `MIG-0022`, Stage 03 and Archive navigation, the rendered citations
+in ADR-0018/0023/0024/0025 and Spec 0054, link targets in retained Specs 0053
+and 0056, and this Plan/Task evidence. The
+[Archive index](../../../98.archive/README.md) routes readers to the recovery
+record and the [retained Spec](../../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md).
+Existing sealed migrations and ArchiveEnvelope records remain byte-identical.
+No scripts, tests, registry, provider, Git index, refs, commits, or global
+configuration are changed by the retention worker.
+
+Preflight re-observed nineteen regular tracked `100644` files, all `done`,
+with working-tree bytes identical to their source Git blobs and SHA-256 values.
+There were no untracked, ignored, symlink, or unknown source members; the
+mirrored target and migration ID were free. Each exact source blob passed
+`scripts/archive_cutover.py`'s `_secret_classifier` with result `None` before
+writing the destination, using private output and full redaction. Copies were
+written and checked first; source files were then unlinked individually and
+only the two empty source directories were removed.
+
+The retained documents keep source metadata, identities, states, evidence,
+and non-link content. Sixty-six rendered relative link prefixes are re-based;
+code-fenced commands and historical literal paths remain unchanged. The nine
+incoming historical citations are repointed to the retained identity and the
+Stage 03 table/tree entry and its stale retention-pending paragraph are
+removed, resolving all ten observed incoming references. The Archive's existing record-manifest counts are unchanged.
+`MIG-0022` contains exactly nineteen `replaced` rows with null `stable_path`
+and `artifact_id`, mirrored replacements, exact source commit/blob/SHA-256,
+and no unchanged historical-consumer exceptions. The existing proved sealed
+publication route admits the new record only with synchronized source,
+target, and migration evidence; no lifecycle gate is disabled.
+
+| Command / scope | Exit | Result |
+| --- | --- | --- |
+| `rtk proxy git ls-tree -rz 4053793a41a9cedff1edeaa4a9d3b2a6a80e1272 -- docs/03.specs/0052-document-taxonomy-consolidation`, plus exact `git cat-file blob` reads, filesystem metadata, separate ignored/untracked NUL inventories, and `_secret_classifier` for each blob | 0 | PASS; nineteen regular baseline-identical source blobs, all terminal, no unknown source content, destination and migration identity free, secret classification clean |
+| `rtk proxy git merge-base --is-ancestor 4053793a41a9cedff1edeaa4a9d3b2a6a80e1272 refs/heads/main` | 0 | PASS; the durable local ref retains source recovery history |
+| Canonical `rendered_local_links` inspection over tracked Markdown outside sealed records and the source package | 0 | PASS; ten incoming rendered references identified before cutover |
+| `rtk proxy python3 -B /tmp/retain-spec0052-relocate.py` | 0 | PASS; destination-first nineteen-file retention with sixty-six rendered link-prefix edits and scoped source removal; the one-use helper is outside the repository |
+| Independent `rtk proxy python3 -B -` source/mirror proof using an explicitly enumerated suffix set and canonical `rendered_local_links` | 0 | PASS; nineteen mirrored members, 225 target identities preserved under only the package path mapping, sixty-six prefix changes; destination masks exactly match the canonical rendered reference sequence, proving all non-link content and complete frontmatter unchanged |
+| Independent `rtk proxy python3 -B -` ledger/source/consumer comparison | 0 | PASS; nineteen exact source-mode/blob/SHA-256 rows, ten incoming references resolved, zero historical-consumer exceptions, all 46 existing sealed files and the record manifest unchanged |
+| `rtk proxy python3 -B scripts/archive_recovery.py --root . --record docs/98.archive/migrations/0022-document-taxonomy-package-retention.md --verify`, before staging | 1 | FAIL; `ARCHIVE-MIGRATION-PROFILE`: the required stage-zero blob is absent for new MIG-0022. Rerun after the parent synchronizes the exact logical index; this is an unsatisfied index precondition, not an authority deferral |
+| `rtk proxy python3 -B scripts/validate-links-and-owners.py --root . --mode strict`, before staging | 2 | FAIL; generic migration recovery proof differs at the same stage-zero precondition. Parent rerun after staging remains required |
+| `rtk proxy python3 -B scripts/validate-document-contract-registry.py --root . --mode strict` with explicit `--include-path` arguments for all 31 existing owned paths | 0 | PASS; 723 routed paths, zero uncovered or ambiguous paths; 0.318 s |
+| `rtk proxy python3 -B scripts/validate-markdown-profiles.py --root . --mode strict` with the same 31 path arguments | 0 | PASS; zero violations; 2.037 s. The new migration also passed an earlier single-path check; Stage 03 README passed again after the later stale-paragraph removal |
+| `rtk proxy python3 -B -m unittest tests.test_document_lifecycle_migration.MigrationLifecycleTest tests.test_generic_migration_recovery.GenericMigrationRecoveryTest` | 0 | PASS; 66 tests in 425.741 s |
+| `rtk proxy git diff --check` | 0 | PASS; working-tree whitespace check. Exact logical staged checks remain parent-owned |
+| Quick, exact logical staged lifecycle, full QA, formatter review and commit | Not run by worker | Parent owns ordered integration validation and the exact index; working-tree evidence cannot replace that proof |
+| Provider discovery, authenticated execution, hosted CI, deployment, Vault and cluster actions | Not run | DEFER; outside this local retention slice |
+
+The pre-implementation read-only review found nineteen current members and
+zero retained members; its retention-completion probe exited 1. This is the
+concrete missing disposition, not a failing product test or authorization to
+change historical evidence. A registry-inspection helper initially treated
+`lifecycle_domains` as a mapping and exited 1 with `AttributeError`; the
+corrected read followed its actual list shape and proved unambiguous profiles
+and the migration lifecycle. No repository state changed during that failure.
+
+Tool observations: Python 3.12.3, Git 2.43.0 and RTK 0.45.0. The installed
+Gitleaks command does not expose a build version (`version is set by build
+process`); its actual classification result is recorded separately above.
+
+Review disposition: retention worker self-review and independent
+`post_merge_doc_review` approved the inventory, provenance, link-only edits,
+consumer repairs and sealed-record preservation with no findings. The later
+three-line stale README removal was separately inspected and profile-checked.
+Next owner is the parent
+controller for exact-index validation, independent review and the requested
+scoped local commit. Rollback is a reviewed revert of that one logical
+retention commit, restoring its source/target paths and navigation together
+from retained Git history. Source provenance remains recoverable independently
+of later branch advancement. Remaining WP-013 dispositions, WP-009 sealed
+Archive reconciliation and WP-014 integration stay open; this Task remains
+`in-progress`.
+
+### Archive Authority Guard Parity (2026-09-06)
+
+The read-only remaining-work review found a VAL-SDLC-009 defect in this
+WP-013 unit: `scripts/archive_validation.py` allowed current documents to
+link directly to MIG-0004 or generic sealed migrations, while
+`scripts/validate-links-and-owners.py` rejected those targets. An otherwise
+clean corpus concealed the inconsistent guards. This fix belongs to the
+already active Archive authority-link reconciliation work; Task 0009 stays
+`queued` and does not receive a premature WP-013 completion handoff.
+
+The parent removed only the two target exceptions and their stale explanation.
+Migration source classification, immutable recovery, completed-document
+citations, Archive-index navigation, runtime permissions and execution bounds
+remain unchanged. The obsolete MIG-0004 allow test is replaced by independent
+literal denial cases for MIG-0004, a generic migration and the previously
+forbidden migration path, plus a completed-citation positive case.
+
+| Command / scope | Exit | Result |
+| --- | --- | --- |
+| `rtk proxy python3 -B -m unittest tests.test_archive_validation.ArchiveValidationTest.test_current_direct_migration_links_fail_closed tests.test_archive_validation.ArchiveValidationTest.test_current_completed_document_citation_is_permitted`, before the fix | 1 | Expected RED: two tests, two failing denial subcases, 1.335 s; MIG-0004 and the generic migration incorrectly returned no diagnostic |
+| The same two tests plus `test_red_active_direct_link_fails_but_archive_index_is_permitted` and `test_current_archive_authority_accepts_declared_migration_profile`, after the fix | 0 | GREEN: four tests, 2.190 s; denial, completed/index navigation and migration-source classification preserved |
+| Pinned Ruff 0.16.5 `check` and `format --check` for `scripts/archive_validation.py` and `tests/test_archive_validation.py` | 0 | PASS; both files lint clean and already formatted |
+| `rtk proxy python3 -B -m unittest tests.test_archive_validation.ArchiveValidationTest`, before migration staging | 1 | FAIL: 64 tests, eight failures and one error, 77.374 s; repository-corpus cases reject absent MIG-0022 stage-zero evidence and index/worktree target mismatch. Rerun with the synchronized index is required |
+
+Independent Python reviewer `archive_guard_review` approved the two-file diff
+without findings. The retention and guard changes form one reviewed WP-013
+Archive boundary unit. Its reviewed document paths and three Python files
+must be staged explicitly; the new sealed migration requires its stage-zero
+blob before working-tree recovery and quick QA can run. This preparation
+does not replace exact-index QA. The parent owns the subsequent recovery,
+quick, staged and final full results, and records the final commit/index
+evidence in the logical commit body without claiming a hosted or native run.
+
+After synchronized staging, the public MIG-0022 recovery command and strict
+links command above both exited 0. The 64-test Archive class rerun resolved
+the absent-index errors but exited 1 in 141.538 s on one remaining performance
+assertion: 243 Git processes exceeded the unchanged 242-process ceiling.
+Independent instrumentation found valid recovery, 243 Git processes and
+8.070 s; four historical symlink paths read two immutable blobs twice each.
+
+The parent added a failing real-Git fixture before changing the private view
+proof. Each `validate_migration_records` invocation now keeps only successful
+`(blob, target)` identities, bounded by the existing reference-row limit, and
+reuses the final blob comparison after every path's commit, reachability,
+mode and blob checks. The set retains no blob payload, is never global, and
+does not alter public APIs, resource ceilings or current-index checks.
+
+| Command / scope | Exit | Result |
+| --- | --- | --- |
+| `rtk proxy python3 -B -m unittest tests.test_generic_migration_recovery.GenericMigrationRecoveryTest.test_shared_view_blob_is_read_once_per_proof_without_skipping_path_checks`, before reuse | 1 | Expected RED: one test, two invocation subcases each read twice instead of once, 6.691 s |
+| The same test plus `test_symlink_view_is_consumer_scoped_and_kept_out_of_recovery_targets`, after reuse | 0 | PASS; two tests in 14.184 s, including new-invocation reads and invalid second-path mode/blob/target rejection |
+| Pinned Ruff 0.16.5 `check` and `format --check` for the implementation and changed recovery test | 0 | PASS; no formatting changes |
+| Independent single-call `validate_repository_archive` instrumentation with real Git and the unchanged process/time/fallback assertions | 0 | PASS; valid recovery, no diagnostics, 241 Git processes in 6.592 s, zero retired-form fallback batches. Only `cat-file` calls fell, from 111 to 109; cache state was not controlled and no speedup percentage is claimed |
+
+Independent `archive_guard_review` approved this additional private-proof and
+test diff without findings. The process ceiling remains 242 and the measured
+operation remains bounded by 60 s; neither a test threshold nor a recovery
+check was removed. Final full QA owns the complete class rerun after this
+fix, rather than repeating the unchanged focused suites before that profile.
+
+### Current Requirement and Architecture Owner Corrections (2026-09-06)
+
+Read-only reviewer `remaining_native_review` compared Requirement Packages
+0001–0004 and Architecture Descriptions 0004–0007 with their linked local
+manifests, configuration, QA, CI and operational-interface owners. This bounded
+review found no additional missing implementation or unowned requirement;
+native readiness, reconciliation, ESO readiness and Slack delivery remain
+separate runtime observations, not inferred successes.
+
+| Current document | Correction | Preserved contract |
+| --- | --- | --- |
+| REQ-0003 | FR-0025, its reciprocal trace row and AC01 name the current `.agents/roles/` registry and `.agents/governance/` owner rather than Stage 00 | Requirement IDs, acceptance meaning and static/runtime separation |
+| AD-0004 and AD-0007 | Common policy/context references name `.agents/governance/` | GitOps and live-approval boundaries, package-local Task evidence |
+| AD-0006 | Remove the contradictory claim that `.agents` is only a noncurrent compatibility surface | Current common role/skill registry and execution-policy ownership; no provider-runtime promotion |
+| Architecture description index | AD-0006 navigation distinguishes common `.agents/` ownership from Stage 99 profiles | Existing document identities and navigation |
+
+Worker `post_merge_docs_worker` ran strict Markdown profiles and Markdown
+lint (CLI 0.23.0) over the four documents and then the index: all five files
+passed, exit 0 and zero lint findings. The scoped diff check also exited 0.
+Parent review confirmed only the stated ownership clauses, four version/date
+updates and the index row changed. Independent `post_merge_doc_review` found
+the five-file owner corrections sound; its Task wording finding was corrected
+to describe required staging rather than claiming it had already happened.
+
+These current prose corrections preserve the 2026-09-05 historical transfer
+evidence above. They add no runtime behavior, templates, hooks or model changes.
+Focused document checks and the parent-controlled review precede the final
+combined quick/index/full evidence. The logical commit body records those
+final results against the checked bytes so the evidence note does not itself
+mutate the already verified index. WP-013 remains `in-progress`; WP-009 remains
+`queued` until its actual predecessor handoff, and no archive-value decision
+or WP-014 completion is manufactured by these local corrections.
 
 ## Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -53,7 +53,8 @@ GitOps desired state와 플랫폼 interface는 [AD-0007](./0007-current-local-gi
 | Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | 봉인 기록과 완료 package; current 실행 authority 또는 재활성화 경로가 아님 |
 
 역할과 surface 수는 공통 거버넌스 registry에서 도출한다. 과거 local/Antigravity/Gemini proposal은 현재
-지원 roster가 아니며, `.agents` compatibility surface는 현재 owner가 아니다. 현재 provider projection 파일은 repository-static configuration이고
+지원 roster가 아니다. 현재 공통 역할·skill의 machine truth는 `.agents/roles/`가,
+실행 정책은 `.agents/governance/`가 소유한다. 현재 provider projection 파일은 repository-static configuration이고
 인증된 discovery/run을 관측했다는 증거가 아니다.
 
 ### Consumer and validation flow

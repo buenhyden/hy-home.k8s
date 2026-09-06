@@ -111,10 +111,6 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
-├── 0052-document-taxonomy-consolidation/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0054-sdlc-document-and-agent-governance-consolidation/
 │   ├── spec.md
 │   └── plan.md
@@ -141,9 +137,6 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 
 The 2026-09-05 Stage 03 dispositions and scope-specific evidence are recorded
 in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md#stage-03-current-package-convergence-2026-09-05).
-Spec 0052 remains here as a dependency-ordered intermediate state: terminal
-status alone does not establish consumer-zero or authorize retention before
-the later current-consumer and Archive-link units.
 
 ## Authoring Workflow
 
@@ -185,7 +178,6 @@ the later current-consumer and Archive-link units.
 | [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0048의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. Kustomize roots는 존재하지만 제안된 platform/Traefik validator 작업은 미완료다. | 2026-09-05 |
 | [`./0050-example-iac-and-validator-qa/spec.md`](./0050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0049의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. 현재 validation registry에 Terraform/Bicep validator가 없어 example IaC 작업은 미완료다. | 2026-09-05 |
 | [`./0051-repository-assurance-integration-and-closure/spec.md`](./0051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0050의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. 선행 구현·통합·stash retirement는 완료되지 않았으며 새 merge/cleanup 권한은 없다. | 2026-09-05 |
-| [`./0052-document-taxonomy-consolidation/spec.md`](./0052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Done | 17개 done Tasks의 완료/Spec 0054 이관 증거와 VAL-WDTC-015/016 semantic 검증에 따라 Spec/Plan을 종료했다. 과거 census는 ADR-0031에 따라 이력으로 보존한다. ADR-0032 terminal 전제는 충족하지만 WP-013의 current consumer 이관·consumer-zero/link proof·migration 전까지 이 경로에 유지한다. | 2026-09-05 |
 | [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Active | 승인된 B 범위(Stage 90 포함)의 통합 수용 소유자로서 문서·agent governance·operations·reference·archive·template 수렴을 관리하고, WP-010/WP-011 실행은 리뷰된 활성화 경계 이후 Spec 0066에 위임한다. | 2026-08-31 |
 | [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Active | 2026-09-05 재관찰: 7 done/3 blocked Tasks를 그대로 유지한다. 승인된 2026-08-29 administrative-closeout addendum이 미래의 기존 Path B replay를 대체한다. current index/link/census 정합성, fresh canonical local validation과 independent review 이후 별도 종료하며, 과거 미충족 증거는 PASS로 바꾸지 않는다. | 2026-08-29 |
 | [`./0068-agent-projection-rendering-and-gate-reduction/spec.md`](./0068-agent-projection-rendering-and-gate-reduction/spec.md) | Prior renderer proposal | Superseded | SPEC-0072가 Stage 00 원본과 명시적 네이티브 참조로 대체한다. 이전 제안은 구현 증거가 아니다. | 2026-09-05 |

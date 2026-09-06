@@ -384,7 +384,7 @@ credential-bearing, or live success.
 
 - **Research-pack terminal design**: [Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - **Direct-approval lineage decision**: [ADR-0022](../../../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- **Document taxonomy decisions**: [Spec 052](../../../../03.specs/0052-document-taxonomy-consolidation/spec.md)
+- **Document taxonomy decisions**: [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
 - **Current research pack**: [2026-08-08 WER](../../../../90.references/research/0001-workspace-engineering/README.md)
 - **Plan**: [active gap-only refresh Plan](./plan.md)
 - **Task**: [active gap-only refresh Task](./plan.md)

@@ -121,4 +121,4 @@ artifact-identity validators.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only three-digit PRD/Stage 03/Incident path and ID grammar | [Spec 0052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) is the predecessor program; [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) is the active successor. |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only three-digit PRD/Stage 03/Incident path and ID grammar | [Spec 0052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md) is the predecessor program; [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) is the active successor. |

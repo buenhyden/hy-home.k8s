@@ -80,7 +80,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 | --- | --- | --- | --- | --- |
 | [`./0004-argo-rollouts-progressive-delivery.md`](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 참조 아키텍처 | Active | Current-contract backfill. `platform-rollouts` Application, dashboard, metrics, AppProject 경계를 소유한다. | [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | [`./0005-argo-notifications-slack.md`](./0005-argo-notifications-slack.md) | ArgoCD Notifications Slack 알림 참조 아키텍처 | Active | Current-contract backfill. ArgoCD Notifications와 Vault/ESO credential 경계를 소유한다. | [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [AD-0006](./0006-workspace-agent-governance-platform.md) | Agent·문서·검증 authority 구조 | Active | 현재 Registry와 Stage 00/99, execution/history, native/static/runtime 경계 및 이전 AD 책임 승계. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), WP-013 미완료 |
+| [AD-0006](./0006-workspace-agent-governance-platform.md) | Agent·문서·검증 authority 구조 | Active | 공통 `.agents/` 소유 경계와 Stage 99 문서 profile, execution/history, native/static/runtime 경계 및 이전 AD 책임 승계. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), WP-013 미완료 |
 | [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps와 delivery assurance 구조 | Active | Desired-state topology, external interfaces, layered validation, native IaC, revision/namespace evidence; AD-0006과 공통 경계 분리. | [Spec 0047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md) 재개; 0048..0051 미완료 |
 
 ## Related Documents

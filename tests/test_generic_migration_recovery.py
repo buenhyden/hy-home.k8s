@@ -1123,6 +1123,77 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         with self.assertRaisesRegex(recovery.ArchiveContractError, "occurrence"):
             archive.repository_migration_proof(self.root)
 
+    def test_shared_view_blob_is_read_once_per_proof_without_skipping_path_checks(self):
+        views = (".claude/workflows", ".codex/workflows")
+        target = "../.agents/workflows"
+        (self.root / self.consumer).write_text(
+            "# Completed\n\n"
+            "[claude](../../../.claude/workflows)\n"
+            "[codex](../../../.codex/workflows)\n"
+        )
+        for view in views:
+            path = self.root / view
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.symlink_to(target)
+        self.git.run("add", "--", self.consumer, *views)
+        self.git.run("commit", "--quiet", "-m", "shared historical views")
+        commit = self.git.run("rev-parse", "HEAD").decode().strip()
+        blob = self.git.run("rev-parse", f"HEAD:{views[0]}").decode().strip()
+        second = self.root / views[1]
+        second.unlink()
+        second.write_text(target)
+        self.git.run("add", "--", views[1])
+        self.git.run("commit", "--quiet", "-m", "regular view impostor")
+        regular_commit = self.git.run("rev-parse", "HEAD").decode().strip()
+        self.git.run("rm", "--quiet", "--", *views)
+        lookup = self.root / archive.ARCHIVE_INDEX
+        lookup.parent.mkdir(parents=True, exist_ok=True)
+        lookup.write_text("# Archive\n")
+        self.git.run("add", "--", archive.ARCHIVE_INDEX.as_posix())
+        references = [
+            {
+                "kind": "symlink-view",
+                "consumer_path": self.consumer,
+                "legacy_path": view,
+                "source_commit": commit,
+                "source_mode": "120000",
+                "source_blob": blob,
+                "link_target": target,
+                "lookup_path": archive.ARCHIVE_INDEX.as_posix(),
+            }
+            for view in views
+        ]
+        consumers = [{"source_commit": commit, "paths": [self.consumer]}]
+        self.write(consumers=consumers, references=references)
+        for invocation in range(2):
+            with (
+                self.subTest(invocation=invocation),
+                mock.patch.object(
+                    archive, "_batch_blob_bytes", wraps=archive._batch_blob_bytes
+                ) as reads,
+            ):
+                proof = archive.repository_migration_proof(self.root)
+                for view in views:
+                    self.assertEqual(
+                        proof.references[self.consumer, view].terminal_path,
+                        archive.ARCHIVE_INDEX.as_posix(),
+                    )
+                self.assertEqual(
+                    sum(blob in call.args[1] for call in reads.call_args_list), 1
+                )
+        for mutation in (
+            {"source_commit": regular_commit},
+            {"source_blob": "0" * 40},
+            {"link_target": "../.agents/different"},
+        ):
+            with self.subTest(mutation=mutation):
+                self.write(
+                    consumers=consumers,
+                    references=[references[0], dict(references[1], **mutation)],
+                )
+                with self.assertRaisesRegex(recovery.ArchiveContractError, "REFERENCE"):
+                    archive.repository_migration_proof(self.root)
+
     def test_rejects_invalid_duplicate_rows_and_missing_targets(self):
         cases = [
             [self.row, self.row],
