@@ -40,7 +40,6 @@ area/agent:
           - ".codex/**"
           - "AGENTS.md"
           - "CLAUDE.md"
-          - "GEMINI.md"
           - ".agents/**"
 
 area/github:
