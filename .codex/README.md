@@ -20,8 +20,13 @@ This directory owns only Codex syntax, support notes and native connections.
 - `CODEX.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
 - `hooks.json`: the pre-action guard registration, judged by the same
-  validator rule family as the Claude side.
-- No project `skills/`, `hooks/`, `rules/` or `config.toml` is adopted. Codex
+  validator rule family as the Claude side. Registration is tracked
+  configuration; it is not evidence that the installed client discovered,
+  loaded or delivered the hook.
+- `hooks/pre-tool-use.sh`: the Codex adapter for the shared write boundary. It
+  names its provider and forwards the payload; the boundary itself is owned by
+  `scripts/provider_write_guard.py`. This directory holds no shared logic.
+- No project `skills/`, `rules/` or `config.toml` is adopted. Codex
   project skills reside in `.agents/skills/`, which is the client's documented
   project skill root. `config.toml` stays unadopted so one file owns the hook
   registration; see [provider.md](provider.md) for the client identity each

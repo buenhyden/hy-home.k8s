@@ -9,6 +9,7 @@ it, and never run an executable selected by tool input. Codex supplies no
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import tempfile
@@ -19,6 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
 GUARD_PATH = ROOT / "scripts/provider_write_guard.py"
+CODEX_ADAPTER_PATH = ROOT / ".codex/hooks/pre-tool-use.sh"
+CODEX_REGISTRATION_PATH = ROOT / ".codex/hooks.json"
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 SAMPLE_DOCUMENT = "docs/01.requirements/README.md"
 
@@ -388,6 +391,55 @@ class PreEditGitDegradationTest(unittest.TestCase):
 
         self.assertIn("_git_cache", guard_text)
 
+
+
+class ProviderAdapterOwnershipTest(unittest.TestCase):
+    """Neither provider directory may execute the other's program."""
+
+    def test_the_codex_registration_names_no_claude_path(self):
+        registration = json.loads(
+            CODEX_REGISTRATION_PATH.read_text(encoding="utf-8")
+        )
+        commands = [
+            handler.get("command", "")
+            for entry in registration["hooks"]["PreToolUse"]
+            for handler in entry["hooks"]
+        ]
+
+        self.assertTrue(commands, "the Codex registration must register a handler")
+        for command in commands:
+            self.assertNotIn(".claude/", command)
+            self.assertIn(".codex/hooks/", command)
+
+    def test_the_codex_adapter_exists_and_names_its_provider(self):
+        self.assertTrue(
+            CODEX_ADAPTER_PATH.is_file(), "the Codex adapter must be a real file"
+        )
+        adapter = CODEX_ADAPTER_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("--provider codex", adapter)
+        self.assertIn("ADAPTER_DIR", adapter)
+        self.assertNotIn(".claude/", adapter)
+
+    def test_both_adapters_stay_thin(self):
+        """An adapter names a provider and forwards; it holds no shared logic."""
+        for adapter_path in (HOOK_PATH, CODEX_ADAPTER_PATH):
+            body = [
+                line.strip()
+                for line in adapter_path.read_text(encoding="utf-8").splitlines()
+                if line.strip() and not line.strip().startswith("#")
+            ]
+
+            self.assertLessEqual(
+                len(body),
+                8,
+                f"{adapter_path.name} carries logic that belongs in the shared guard",
+            )
+            self.assertNotIn(
+                "registry.json",
+                "\n".join(body),
+                f"{adapter_path.name} must not route documents itself",
+            )
 
 class PreEditTrustBoundaryTest(unittest.TestCase):
     """A root derived from tool input selects data only, never an executable."""
