@@ -1,10 +1,10 @@
 ---
 title: "Reference: Workspace Governance and Common Agent Environment"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "references"
 artifact_id: "RES-0001-m0001"
 ---
@@ -68,7 +68,14 @@ task prompt or provider adapter.
 
 ### Common Provider-Neutral Control Plane
 
-| Plane element                    | Canonical owner                                                                | Required behavior                                                                                                                      | Evidence depth today                                                      |
+> [!NOTE]
+> The rows below are observations at the dates their cycles record, not the
+> current owner graph. `docs/00.agent-governance/` and its `memory/`, `rules/`,
+> `contracts/` and `harness-catalog.md` were retired, `.agents/agents/` and
+> `.gemini/` are not part of the current two-provider surface, and common
+> authority now lives under `.agents/` with progress owned by the Stage 03 Task.
+
+| Plane element                    | Canonical owner                                                                | Required behavior                                                                                                                      | Evidence depth at the recorded observation                                |
 | -------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | Task contract                    | Stage 03 Spec and Stage 04 Plan/Task                                           | Name acceptance IDs, owned paths, authority, validation, rollback, and next owner.                                                     | `Verified` static document/registry contract.                             |
 | Instruction routing              | `AGENTS.md`, `CLAUDE.md`, bootstrap, runtime baselines, scopes, provider notes | Enter via the appropriate gateway and load only the relevant JIT context.                                                              | `Verified` static routing; native discovery `DEFER`.                      |

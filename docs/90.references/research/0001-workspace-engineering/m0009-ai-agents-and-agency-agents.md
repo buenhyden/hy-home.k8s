@@ -1,10 +1,10 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "references"
 artifact_id: "RES-0001-m0009"
 ---
@@ -57,6 +57,13 @@ MCP scoping, and optional worktree isolation. These are product capabilities,
 not proof that either provider enforces this workspace's files.
 
 ### Agency-agents baseline
+
+> [!NOTE]
+> The rows below are observations at the dates their cycles record, not the
+> current owner graph. `docs/00.agent-governance/` and its `memory/`, `rules/`,
+> `contracts/` and `harness-catalog.md` were retired, `.agents/agents/` and
+> `.gemini/` are not part of the current two-provider surface, and common
+> authority now lives under `.agents/` with progress owned by the Stage 03 Task.
 
 The comparison is fixed to
 [`ebe9c99acb5c96f9468de368d8bead775387d1a7`](https://github.com/msitarzewski/agency-agents/tree/ebe9c99acb5c96f9468de368d8bead775387d1a7),

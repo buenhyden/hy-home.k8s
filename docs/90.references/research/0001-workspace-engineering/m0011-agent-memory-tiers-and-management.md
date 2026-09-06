@@ -1,10 +1,10 @@
 ---
 title: "Reference: Agent Memory Tiers and Management"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "references"
 artifact_id: "RES-0001-m0011"
 ---
@@ -37,6 +37,13 @@ conflict, staleness, and deletion rules.
 
 ### Short-term-memory baseline
 
+> [!NOTE]
+> The rows below are observations at the dates their cycles record, not the
+> current owner graph. `docs/00.agent-governance/` and its `memory/`, `rules/`,
+> `contracts/` and `harness-catalog.md` were retired, `.agents/agents/` and
+> `.gemini/` are not part of the current two-provider surface, and common
+> authority now lives under `.agents/` with progress owned by the Stage 03 Task.
+
 `.agent-work/checkpoint.json` is ignored, advisory, and must use the closed
 atomic/redacted checkpoint contract. It may contain bounded task identity,
 next action, redacted evidence references, and review state, never raw
@@ -47,11 +54,15 @@ current state. Its runtime existence/use is `DEFER` and was not inspected.
 
 ### Long-term-memory baseline
 
-`docs/00.agent-governance/memory/progress.md` is the durable shared progress
-ledger. A reusable lesson must name its task, canonical owner, evidence
-path/URL/commit, observation date, sensitivity, reviewer, retention/expiry,
-and handoff. It remains a concise fact/decision/evidence summary, not an
-operational trace or a second policy owner.
+At the 2026-08-14 observation the durable shared progress ledger was
+`docs/00.agent-governance/memory/progress.md`. That ledger and the whole
+governance memory tree were retired afterwards; the current owners are the
+Stage 03 Task for progress and verification, and
+`.agents/governance/context-and-memory.md` for the retention contract. The
+shape recorded then still describes what a reusable lesson must name: its task,
+canonical owner, evidence path/URL/commit, observation date, sensitivity,
+reviewer, retention/expiry, and handoff, as a concise fact/decision/evidence
+summary rather than an operational trace or a second policy owner.
 
 ### Domain-scoped-memory baseline
 
