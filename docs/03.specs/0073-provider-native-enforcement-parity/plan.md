@@ -75,6 +75,9 @@ outside this plan's write boundary.
 - Add the untrusted input, cost and throughput, and loop termination
   boundaries missing from common policy.
 - Reconcile Stage 90 research baseline rows with the current tree.
+- Carry the snapshot and approval boundary across a cross-provider handoff.
+- Give the evaluation boundary a case set and an execution path.
+- Expose the existing QA entry points as project editor tasks.
 
 ## Non-Goals & Out-of-Scope
 
@@ -110,6 +113,9 @@ outside this plan's write boundary.
 | WP-013 | Reconcile Stage 90 research baseline rows with the current tree, keeping historical observations dated and unedited                                                             | WP-012         | VAL-PNP-010 approved              | Path existence sweep; reference pack route test                                                       |
 | WP-014 | Mirror the pre-action guard as a Codex native hook, conditional on observing the client's event payload shape                                                                   | WP-010, WP-011 | Native observation recorded       | Guard mirror tests, or a recorded `DEFER` with the observation and next owner                         |
 | WP-015 | Route current documents to sealed evidence through the archive index and give the index the entries they need | WP-013 | VAL-PNP-009 approved | Archive cutover and its unit cases pass; no current document links a Migration ledger directly |
+| WP-016 | Add the snapshot identity and approval boundary to the handoff evidence contract and name the domain memory layer at its owner | WP-012 | VAL-PNP-007 approved | Reviewed policy text; document lifecycle and link validation |
+| WP-017 | Give the evaluation boundary one case per permission class and a runner whose criteria derive from the role registry | WP-007, WP-009 | VAL-PNP-005 approved | Failing grading tests before, passing after; the gate reachable from every profile |
+| WP-018 | Expose the QA entry points as project editor tasks and repair the ignore pattern that made the editor exception dead | WP-017 | VAL-PNP-009 approved | Affected-surface contract with no uncovered path; reviewed ignore semantics |
 
 ## Verification Plan
 

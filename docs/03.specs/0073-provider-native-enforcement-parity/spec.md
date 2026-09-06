@@ -50,8 +50,10 @@ model-selection policies' evidence proportion; the injection, cost, and loop
 boundaries missing from common policy; the retired-path residue in
 `.pre-commit-config.yaml`, `.github/labeler.yml`, the Stage 99 provider-shim
 route, `tests/README.md`, and the root README stage table; the decision
-lineage of ADR-0034 and ADR-0035; and the current-tense claims in the Stage 90
-workspace-engineering research pack.
+lineage of ADR-0034 and ADR-0035; the current-tense claims in the Stage 90
+workspace-engineering research pack; the handoff evidence contract's snapshot
+and boundary fields; the empty evaluation boundary under `evals/`; and the
+absent project editor configuration.
 
 Out of scope: role membership, permission-class semantics, handoff edges, the
 meaning of any responsibility body, the QA runner's bounded-execution

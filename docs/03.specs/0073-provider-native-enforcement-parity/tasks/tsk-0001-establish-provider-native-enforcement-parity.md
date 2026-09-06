@@ -1,6 +1,6 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -55,6 +55,9 @@ before the values it validates; WORK-009 now carries only the permission mode.
 | [WORK-013](../plan.md#work-breakdown) | VAL-PNP-010 | Reconcile Stage 90 research baseline rows with the current tree | platform | Done | Six baselines framed as dated observation with current owners named; two present-tense column headers corrected; one duplicated router link removed | Commit `de1f7858`; path sweep and staged profile |
 | [WORK-014](../plan.md#work-breakdown) | VAL-PNP-004 | Mirror the pre-action guard as a Codex native hook after observing the payload | platform | Done | The gating observation now exists: `codex-cli 0.153.4` documents `<repo>/.codex/hooks.json`, the `PreToolUse` event, the `command` handler, and `tool_name`/`tool_input`/`tool_input.command`. The guard is registered on `Bash\|apply_patch` and the frozen Claude hook literal is replaced by one property contract both providers are judged under | `tests.test_agent_governance` 35 OK, `tests.test_k8s_pre_edit_hook` 35 OK; native event delivery stays `DEFER` |
 | [WORK-015](../plan.md#work-breakdown) | VAL-PNP-009 | Route current documents to sealed evidence through the archive index | platform | Done | The retention commit removed the navigational exemption for Migration ledgers; four current documents still linked one directly and the index reached neither ledger they cite. Index navigation added, four links rerouted, seven terminal Task records left untouched | `archive-cutover` PASS, records=25; `tests.test_archive_cutover` 37 cases OK |
+| [WORK-016](../plan.md#work-breakdown) | VAL-PNP-007 | Carry the snapshot and approval boundary across a cross-provider handoff | platform | Done | Handoff evidence now records branch, HEAD, and divergence base, and the approval boundary in force, so a resuming provider learns which state a passing record described and which authorizations were already spent. Memory policy names the domain layer and routes it to its operating or reference owner | Commit `88fae58e`; staged profile, six gates |
+| [WORK-017](../plan.md#work-breakdown) | VAL-PNP-005 | Give the evaluation boundary a case set and an execution path | platform | Done | `evals/` held only a README, so role behavior had no evidence path. Three cases, one per permission class, are graded on groundedness, authority, boundary, and handoff, every criterion derived from the role registry. Building the cases found a false positive in the boundary criterion and it was narrowed | Commit `40acfe46`; `tests.test_agent_evaluations` 12 OK; gate on all four profiles |
+| [WORK-018](../plan.md#work-breakdown) | VAL-PNP-009 | Expose the QA entry points as project editor tasks | platform | Done | `.vscode/tasks.json` runs the existing entry points and adds no runner. The `.vscode/` ignore pattern was directory-level, which stops Git descending, so the tracked `!.vscode/extensions.json` exception below it had never worked | Commit `66d2c26c`; affected-surface contract 1036 paths, uncovered=0 |
 
 ## Approval and Safety Boundaries
 
@@ -101,10 +104,16 @@ their gating conditions changed. WORK-014 completed after its gating observation
 the installed Codex client moved from `0.140.0` to `0.153.4` and its published
 hook contract names the payload shape the guard already reads.
 
+**Snapshot.** Branch `codex/governance-follow-up`; divergence base
+`4053793a41a9cedff1edeaa4a9d3b2a6a80e1272`, which is also local and
+`origin/main`. Client identity re-observed 2026-09-06 on the later session:
+`claude 2.1.263`, `codex-cli 0.153.4`, `python 3.12.3`, `pre-commit 4.5.1`.
+Both clients moved during execution, which is what reopened WORK-014.
+
 **Repository-static lanes.** Every commit passed `python3 scripts/qa.py staged`
-on its own index. The handoff `python3 scripts/qa.py full` selected twenty
-gates over 1026 paths and returned twenty `PASS` after the dispositions below.
-Its first run returned seventeen `PASS` and three `FAIL`.
+on its own index. The first handoff `python3 scripts/qa.py full` selected
+twenty gates over 1026 paths and returned twenty `PASS` after the dispositions
+below. Its first run returned seventeen `PASS` and three `FAIL`.
 
 - `archive-cutover` failed `ARCHIVE-DIRECT-CURRENT-LINK` on `.agents/README.md`
   and three `blocked` SPEC-0062 Task records that linked a Migration ledger
@@ -138,11 +147,23 @@ independent reviewer has examined this work.
 **Rollback.** Each package is one commit; `git revert` of that commit reverses
 it. No history was rewritten and no branch was pushed, merged, or deleted.
 
-**Residual risk.** The capability binding and the Codex sandbox scope are
-tracked configuration whose runtime effect is unobserved. The write-path guard
-still cannot see a program that opens files itself. A rule that only the
-all-files and CI lanes select can be broken by a staged-only change and stay
-invisible until handoff, which is how WORK-015's defect reached a commit.
+**Residual risk.** The capability binding, both providers' scope
+declarations, and both hook registrations are tracked configuration whose
+runtime effect is unobserved. The write-path guard still cannot see a program
+that opens files itself. A rule that only the all-files and CI lanes select can
+be broken by a staged-only change and stay invisible until handoff, which is
+how WORK-015's defect reached a commit.
+
+Two limits belong to the work added late. The evaluation grader checks the
+shape of a response, not the truth of its content: a case may cite a path that
+exists and still describe it wrongly, which is how a synthetic response came to
+assert a stale sentence that the approval boundary does not contain. Every
+case carries a `synthetic` response, so the gate proves the harness and its
+criteria work and proves nothing about any agent. And the governance
+validator's Codex reasoning-effort allowlist is narrower than the installed
+client's — the client accepts `max` and `ultra`, the validator does not. It
+fails closed and no role uses either value, so it was left as observed rather
+than widened without a driver.
 
 **Next owner.** platform, for any authorized native observation. Every work
 package has landed. What remains unobserved is runtime: native discovery,
@@ -171,3 +192,6 @@ configuration, not enforcement evidence.
 | [WORK-013](../plan.md#work-breakdown) | Stage 90 baselines read as dated observation | Commit `de1f7858` |
 | [WORK-014](../plan.md#work-breakdown) | Codex guard registered under a contract shared with Claude; the dead guard environment variable removed | Governance validator; three Codex-payload guard cases |
 | [WORK-015](../plan.md#work-breakdown) | Archive cutover and its unit cases recovered without editing a terminal record | `archive-cutover` PASS; 37 archive cutover cases OK |
+| [WORK-016](../plan.md#work-breakdown) | A handoff now names the snapshot it describes and the boundary it ran under | Document lifecycle and link validation |
+| [WORK-017](../plan.md#work-breakdown) | The evaluation boundary owns cases, a runner, and a registered gate | Twelve grading cases; affected-surface contract at 21 validators |
+| [WORK-018](../plan.md#work-breakdown) | QA entry points reachable from the editor; a dead ignore exception repaired | Affected-surface contract; reviewed ignore semantics |
