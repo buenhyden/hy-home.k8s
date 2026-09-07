@@ -2,7 +2,7 @@
 title: "Responsibility Document Router Absorption"
 version: "1.0.0"
 type: "archive/migration"
-status: "draft"
+status: "sealed"
 owner: "platform"
 updated: "2026-09-07"
 layer: "archive"
@@ -146,3 +146,12 @@ rendered link resolves to a removed path.
 `validate-agent-governance.py` treated every Markdown file under
 `.agents/roles/` as a role projection and carried a hard-coded exception list
 for the eight that were not. With the seven gone, that list is one name.
+
+No consumer keeps an unchanged-source reference, so this ledger declares an
+empty consumer set.
+
+<!-- archive-historical-consumers:v1 format=json -->
+
+```json
+[]
+```
