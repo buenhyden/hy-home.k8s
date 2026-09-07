@@ -1088,5 +1088,116 @@ class Work107StableArchiveContractTest(unittest.TestCase):
             self.assertEqual(recovered.metadata, legacy_parsed.metadata)
 
 
+class CurrentNamedDurableRefTest(unittest.TestCase):
+    """Resolve the retention anchor from any read-only checkout shape.
+
+    The archived-commit retention contract needs one named ref that retains
+    the current history. A worktree on a branch names it directly; an
+    immutable CI checkout of an exact commit has a detached HEAD and names it
+    through the fetched remote-tracking ref instead. Both prove the same
+    retention, so both resolve; a commit no named ref retains still fails.
+    """
+
+    def _fixture(self, temporary: str) -> GitFixture:
+        fixture = GitFixture(Path(temporary))
+        fixture.commit("seed.txt", b"seed\n")
+        return fixture
+
+    def _head(self, fixture: GitFixture) -> str:
+        return fixture.run("rev-parse", "HEAD").decode("ascii").strip()
+
+    def test_worktree_on_a_branch_returns_that_branch_ref(self):
+        with tempfile.TemporaryDirectory(prefix="durable-branch-") as temporary:
+            fixture = self._fixture(temporary)
+            branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
+
+            self.assertEqual(
+                archive_recovery.current_named_durable_ref(fixture.root),
+                f"refs/heads/{branch}",
+            )
+
+    def test_detached_head_resolves_the_local_branch_that_retains_it(self):
+        with tempfile.TemporaryDirectory(prefix="durable-detached-") as temporary:
+            fixture = self._fixture(temporary)
+            branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
+            fixture.run("checkout", "--quiet", "--detach", self._head(fixture))
+
+            self.assertEqual(
+                archive_recovery.current_named_durable_ref(fixture.root),
+                f"refs/heads/{branch}",
+            )
+
+    def test_detached_head_resolves_a_remote_tracking_ref_when_no_branch_retains_it(
+        self,
+    ):
+        """Reproduce the hosted checkout: detached at the event commit."""
+
+        with tempfile.TemporaryDirectory(prefix="durable-remote-") as temporary:
+            fixture = self._fixture(temporary)
+            head = self._head(fixture)
+            branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
+            fixture.run("update-ref", "refs/remotes/origin/main", head)
+            fixture.run("checkout", "--quiet", "--detach", head)
+            fixture.run("branch", "--quiet", "--delete", "--force", branch)
+
+            self.assertEqual(
+                archive_recovery.current_named_durable_ref(fixture.root),
+                "refs/remotes/origin/main",
+            )
+
+    def test_local_branch_wins_over_a_remote_tracking_ref_deterministically(self):
+        with tempfile.TemporaryDirectory(prefix="durable-order-") as temporary:
+            fixture = self._fixture(temporary)
+            head = self._head(fixture)
+            fixture.run("update-ref", "refs/remotes/origin/main", head)
+            fixture.run("update-ref", "refs/heads/zzz-late", head)
+            fixture.run("checkout", "--quiet", "--detach", head)
+
+            resolved = archive_recovery.current_named_durable_ref(fixture.root)
+
+            self.assertTrue(resolved.startswith("refs/heads/"))
+            self.assertEqual(
+                resolved, archive_recovery.current_named_durable_ref(fixture.root)
+            )
+
+    def test_commit_no_named_ref_retains_still_fails_closed(self):
+        with tempfile.TemporaryDirectory(prefix="durable-unretained-") as temporary:
+            fixture = self._fixture(temporary)
+            branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
+            fixture.commit("orphan.txt", b"orphan\n")
+            orphan = self._head(fixture)
+            fixture.run("checkout", "--quiet", "--detach", orphan)
+            fixture.run("update-ref", "-d", f"refs/heads/{branch}")
+
+            with self.assertRaises(ArchiveContractError) as raised:
+                archive_recovery.current_named_durable_ref(fixture.root)
+            self.assertEqual(raised.exception.code, "RECOVERY-DURABLE-REF")
+
+    def test_resolved_ref_tip_is_the_checked_out_commit(self):
+        """The log anchor must stay equivalent to HEAD, not merely contain it."""
+
+        with tempfile.TemporaryDirectory(prefix="durable-tip-") as temporary:
+            fixture = self._fixture(temporary)
+            head = self._head(fixture)
+            fixture.run("update-ref", "refs/remotes/origin/main", head)
+            fixture.commit("later.txt", b"later\n")
+            fixture.run("checkout", "--quiet", "--detach", head)
+
+            resolved = archive_recovery.current_named_durable_ref(fixture.root)
+            self.assertEqual(
+                fixture.run("rev-parse", f"{resolved}^{{commit}}")
+                .decode("ascii")
+                .strip(),
+                head,
+            )
+
 if __name__ == "__main__":
     unittest.main()

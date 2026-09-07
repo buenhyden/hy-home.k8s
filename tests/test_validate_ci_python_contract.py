@@ -1401,5 +1401,50 @@ class CiPythonProductionRootTests(unittest.TestCase):
         self.assertEqual(VALIDATOR.validate_repository(REPO_ROOT), 1)
 
 
+class CiPythonShellGitSubcommandTests(unittest.TestCase):
+    """Bound the git subcommands a workflow run step may name.
+
+    An exact-SHA checkout detaches HEAD, so the workflow needs to name that
+    commit and to read back what it named. The widening stops there: it stays
+    an allowlist, and the execution-option guard still applies to it.
+    """
+
+    def _allowed(self, command: str) -> bool:
+        try:
+            VALIDATOR.shell_contains_pip_install(command)
+        except VALIDATOR.ShellGuardError:
+            return False
+        return True
+
+    def test_checkout_binding_subcommands_are_allowed(self):
+        for command in (
+            "git switch --force-create ci-validated-checkout",
+            "git symbolic-ref --quiet HEAD",
+            'test "$(git rev-parse HEAD)" = "$(git rev-parse ci-validated-checkout)"',
+        ):
+            with self.subTest(command=command):
+                self.assertTrue(self._allowed(command))
+
+    def test_subcommands_outside_the_allowlist_stay_rejected(self):
+        for command in (
+            "git push origin main",
+            "git config core.hooksPath .githooks",
+            "git fetch origin",
+            "git commit --allow-empty -m drift",
+            "git clean -xdf",
+        ):
+            with self.subTest(command=command):
+                self.assertFalse(self._allowed(command))
+
+    def test_submodule_recursion_is_still_refused_for_the_binding(self):
+        """Recursion reaches content outside the validated checkout."""
+
+        for command in (
+            "git switch --recurse-submodules --force-create ci-validated-checkout",
+            "git switch --recurse-submodules=yes -c ci-validated-checkout",
+        ):
+            with self.subTest(command=command):
+                self.assertFalse(self._allowed(command))
+
 if __name__ == "__main__":
     unittest.main()

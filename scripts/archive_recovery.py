@@ -620,32 +620,74 @@ def _require_repository(root: Path) -> tuple[Path, int]:
 _DURABLE_REF = re.compile(r"refs/(?:heads|remotes)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z")
 
 
+def _named_refs_retaining_head(root: Path) -> tuple[str, ...]:
+    """Return allowed named refs whose tip is exactly the checked-out commit.
+
+    One `--points-at HEAD` batch answers this, so a detached checkout costs a
+    single added process rather than one per candidate ref. Local branches are
+    offered before remote-tracking refs and each group is ordered by name, so
+    one checkout always resolves the same anchor.
+    """
+
+    listing = _git(
+        root,
+        "for-each-ref",
+        "--points-at",
+        "HEAD",
+        "--format=%(refname)",
+        "refs/heads",
+        "refs/remotes",
+    )
+    if listing.returncode != 0:
+        return ()
+    # A ref name outside the allowed ASCII namespace cannot be a durable ref,
+    # so an undecodable name is skipped rather than failing the whole lookup.
+    local: list[str] = []
+    remote: list[str] = []
+    for ref_name in listing.stdout.decode("utf-8", errors="surrogateescape").splitlines():
+        if _DURABLE_REF.fullmatch(ref_name) is None:
+            continue
+        (local if ref_name.startswith("refs/heads/") else remote).append(ref_name)
+    return (*sorted(local), *sorted(remote))
+
+
 def current_named_durable_ref(repository_root: str | Path) -> str:
-    """Return the current full branch ref, rejecting detached HEAD."""
+    """Return one named ref whose tip is the checked-out commit.
+
+    A worktree on a branch names that branch directly. A read-only checkout of
+    an exact commit -- what an immutable hosted checkout produces -- has no
+    symbolic HEAD, so the anchor is resolved from the fetched refs that retain
+    that same commit. Both shapes prove the archived commits are held by a
+    named ref, and requiring the ref tip to equal HEAD keeps the history anchor
+    equivalent to HEAD. A commit no allowed named ref retains still fails.
+    """
 
     try:
         root = Path(repository_root).resolve(strict=True)
     except (OSError, RuntimeError) as exc:
         raise _error("RECOVERY-DURABLE-REF", "repository root is unavailable") from exc
     result = _git(root, "symbolic-ref", "-q", "HEAD")
-    if result.returncode != 0:
-        raise _error(
-            "RECOVERY-DURABLE-REF",
-            "a named durable current ref is required",
-        )
-    try:
-        durable_ref = result.stdout.decode("ascii", errors="strict").strip()
-    except UnicodeDecodeError as exc:
-        raise _error(
-            "RECOVERY-DURABLE-REF",
-            "the named durable current ref is malformed",
-        ) from exc
-    if _DURABLE_REF.fullmatch(durable_ref) is None:
-        raise _error(
-            "RECOVERY-DURABLE-REF",
-            "the named durable current ref is outside the allowed namespace",
-        )
-    return durable_ref
+    if result.returncode == 0:
+        try:
+            durable_ref = result.stdout.decode("ascii", errors="strict").strip()
+        except UnicodeDecodeError as exc:
+            raise _error(
+                "RECOVERY-DURABLE-REF",
+                "the named durable current ref is malformed",
+            ) from exc
+        if _DURABLE_REF.fullmatch(durable_ref) is None:
+            raise _error(
+                "RECOVERY-DURABLE-REF",
+                "the named durable current ref is outside the allowed namespace",
+            )
+        return durable_ref
+
+    for candidate in _named_refs_retaining_head(root):
+        return candidate
+    raise _error(
+        "RECOVERY-DURABLE-REF",
+        "a named durable current ref is required",
+    )
 
 
 def require_commits_reachable_from_durable_refs(

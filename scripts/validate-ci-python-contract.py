@@ -197,6 +197,20 @@ TAR_EXECUTION_LONG_OPTIONS = frozenset(
         "--use-compress-program",
     }
 )
+# Read-only inspection plus the ref binding that names an exact-SHA checkout.
+# An immutable checkout of one commit detaches HEAD, and archive retention is
+# proved against a named ref, so the workflow must be able to name the commit
+# it already checked out without moving it.
+GIT_SAFE_SUBCOMMANDS = frozenset(
+    {
+        "cat-file",
+        "diff",
+        "ls-tree",
+        "rev-parse",
+        "switch",
+        "symbolic-ref",
+    }
+)
 GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND = {
     "cat-file": {
         "--filters": "--fi",
@@ -205,6 +219,10 @@ GIT_EXECUTION_LONG_OPTIONS_BY_SUBCOMMAND = {
     "diff": {
         "--ext-diff": "--ext",
         "--textconv": "--textc",
+    },
+    # Submodule recursion reaches content outside the validated checkout.
+    "switch": {
+        "--recurse-submodules": "--r",
     },
 }
 GIT_EXACT_SAFE_LONG_OPTIONS_BY_SUBCOMMAND = {
@@ -859,16 +877,7 @@ def _simple_command_contains_pip_install(
     if not _is_versioned_launcher(executable, "python"):
         if _simple_command_is_allowed(executable, arguments):
             return False
-        if (
-            executable == "git"
-            and arguments
-            and arguments[0]
-            in {
-                "cat-file",
-                "diff",
-                "ls-tree",
-            }
-        ):
+        if executable == "git" and arguments and arguments[0] in GIT_SAFE_SUBCOMMANDS:
             if _git_has_execution_option(arguments[0], arguments[1:]):
                 _shell_guard_error()
             return False
