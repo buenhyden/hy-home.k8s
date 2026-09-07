@@ -869,6 +869,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         {
             "README.md": stat.S_IFREG,
             "governance": stat.S_IFDIR,
+            "knowledge": stat.S_IFDIR,
             "roles": stat.S_IFDIR,
             "skills": stat.S_IFDIR,
             "workflows": stat.S_IFDIR,

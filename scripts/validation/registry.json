@@ -273,6 +273,27 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "knowledge-surface",
+      "argv": [
+        "python3",
+        "scripts/validate-knowledge-surface.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "affected",
+        "staged",
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Knowledge surface validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "links-and-owners",
       "argv": [
         "python3",
@@ -717,13 +738,14 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/(?:README\\.md|governance/.*|workflows/.*)$"
+          "value": "^\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
         }
       ],
       "validators": [
         "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
+        "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
@@ -1105,6 +1127,7 @@
       "gitops-structure",
       "infrastructure-contracts",
       "k8s-manifests",
+      "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
       "policy-gates",
@@ -1121,6 +1144,7 @@
       "gitops-structure",
       "infrastructure-contracts",
       "k8s-manifests",
+      "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
       "policy-gates",
@@ -1141,6 +1165,7 @@
       "gitops-structure",
       "infrastructure-contracts",
       "k8s-manifests",
+      "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
       "policy-gates",
@@ -1164,6 +1189,7 @@
       "gitops-structure",
       "infrastructure-contracts",
       "k8s-manifests",
+      "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
       "policy-gates",
