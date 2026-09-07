@@ -2435,6 +2435,42 @@
       "placeholder_policy": "forbidden"
     },
     {
+      "id": "common/provider-native-command",
+      "family": "common",
+      "mode": "native",
+      "path_pattern": "^\\.claude/commands/[^/]+\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "description"
+        ],
+        "optional": [
+          "argument-hint",
+          "allowed-tools"
+        ],
+        "forbidden": [],
+        "order": [
+          "description",
+          "argument-hint",
+          "allowed-tools"
+        ],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
       "id": "common/codex-agent-binding",
       "family": "common",
       "mode": "native",
@@ -4355,6 +4391,44 @@
       "relationships": {
         "source_profile_ids": [
           "common/provider-native-metadata"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
+      "id": "common/template-exception-provider-native-command",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/runtime/claude\\-command\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/runtime/claude-command.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "description"
+        ],
+        "optional": [
+          "argument-hint",
+          "allowed-tools"
+        ],
+        "forbidden": [],
+        "order": [
+          "description",
+          "argument-hint",
+          "allowed-tools"
+        ],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "common/provider-native-command"
         ],
         "body_contract": null
       },

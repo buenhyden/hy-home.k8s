@@ -77,9 +77,13 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
 - **Archive forms** (`archive/`): `migration` control과 `tombstone` record.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
-  Claude는 `claude-agent.template.md`, Codex는 `codex-agent.template.toml`이며
-  두 form은 provider 소유 key(`name`/`description`/`model`/
-  `model_reasoning_effort`/`tools`)만 가지고 guided 문서 key는 갖지 않는다.
+  Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
+  `codex-agent.template.toml`이며 이 form들은 provider 소유
+  key(`name`/`description`/`model`/`model_reasoning_effort`/`tools`,
+  command는 `description`/`argument-hint`/`allowed-tools`)만 가지고 guided 문서
+  key는 갖지 않는다. `.claude/commands/*.md`는
+  `common/provider-native-command`로 분류하며 `.agents/prompts/`의 계약을
+  호출하는 진입점일 뿐 계약 자체를 소유하지 않는다.
   `.agents/skills/<id>/SKILL.md`는 `common/native-skill-package` native
   profile로 분류하며 `name`/`description`과 boolean
   `disable-model-invocation: true` metadata만 허용한다. 각 package의

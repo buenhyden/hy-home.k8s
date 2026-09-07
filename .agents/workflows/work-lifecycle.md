@@ -33,7 +33,9 @@ state on resume; historical progress and provider-local memory are auxiliary.
 
 1. State the outcome, acceptance IDs, in/out scope, material assumptions, and
    protected actions. Resolve contradictions before editing.
-2. Inspect branch/worktree, status, relevant diffs, and canonical owners.
+2. Inspect branch/worktree, status, relevant diffs, and canonical owners. Use
+   `.agents/knowledge/` to find which tree and which entry document own the
+   affected area, then read that owner; the map routes and never decides.
    Preserve unrelated changes and identify the exact write boundary.
 3. Select the responsibility from [roles](../roles/README.md), resolve any
    delegated role and skills from the agent registry, and load the provider

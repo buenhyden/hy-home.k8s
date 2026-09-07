@@ -4,7 +4,7 @@ version: "1.1.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 ---
 
 # Claude Native Adapter
@@ -26,6 +26,10 @@ This directory owns only Claude syntax, support notes and native connections.
   `scripts/provider_write_guard.py`, and each provider registers its own
   adapter, so no provider directory owns a control both providers depend on.
 - `skills/<id>`: one relative link per common skill package.
+- `commands/<id>.md`: one entry point per common prompt contract. Each one
+  invokes `scripts/prompt-input.py` with its identifier and owns no contract
+  of its own; `.agents/prompts/` keeps the inputs, output and refusal
+  conditions.
 
 ## Configuration Boundary
 

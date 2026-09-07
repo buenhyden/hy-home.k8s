@@ -41,7 +41,7 @@ templates/
 ├── operations/     guide, incident, policy, postmortem, runbook
 ├── references/     audit·data·research 의 pack form과 reference form
 ├── requirements/   requirement-package
-├── runtime/        claude-agent (Markdown), codex-agent (TOML)
+├── runtime/        claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML)
 └── specs/          spec, plan, task
 ```
 

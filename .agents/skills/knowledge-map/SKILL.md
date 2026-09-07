@@ -19,7 +19,11 @@ second policy or role roster.
 1. Read the relevant gateway, common governance work lifecycle, and document-authoring
    policy; inspect current Git state and the task's authorized write boundary.
 2. Resolve exact role and skill paths from `.agents/roles/registry.json`; resolve
-   document profiles and indexes from the Stage 99 registry.
+   document profiles and indexes from the Stage 99 registry. Read
+   `.agents/knowledge/project-map.md` for the tree that owns a path and
+   `.agents/knowledge/domains.md` for the entry document of a domain; take the
+   owner path, entry path and validity condition from the row and verify each
+   against the tree rather than trusting the row.
 3. Compare current indexes and links with their owners. Classify a finding as
    missing, stale, orphaned, generated drift, or historical-only.
 4. Verify each finding against current source files and their canonical indexes.
@@ -45,3 +49,4 @@ recreate machine roster tables.
 - `.agents/governance/document-authoring.md`
 - `.agents/governance/context-and-memory.md`
 - `.agents/governance/quality.md`
+- `.agents/knowledge/README.md`
