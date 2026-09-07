@@ -447,8 +447,9 @@ and the current structural view in
 [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
 The decision this package revises is
 [ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md),
-whose unadopted-directory clause the first work item replaces through a
-successor decision while carrying every other clause forward. Provider guard
+whose unadopted-directory clause is replaced by
+[ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md),
+the successor decision that carries every other clause forward. Provider guard
 ownership, patch parsing and permission-scope honesty are owned by
 [SPEC-0074](../0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md),
 which this package follows in execution order without depending on its
