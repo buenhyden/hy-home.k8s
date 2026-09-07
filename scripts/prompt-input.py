@@ -34,7 +34,7 @@ ALLOWED_COMMANDS = frozenset(
         ("git", "diff", "--cached"),
         ("git", "diff", "--cached", "--name-only"),
         ("git", "diff", "--check"),
-        ("git", "log", "--oneline", "main..HEAD"),
+        ("git", "log", "--oneline", "-20"),
         ("git", "ls-files", "docs/**/README.md", ".agents/**/*.md"),
         ("git", "rev-parse", "HEAD"),
         ("git", "rev-parse", "--abbrev-ref", "HEAD"),

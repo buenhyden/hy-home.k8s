@@ -175,6 +175,55 @@ class PromptContractRepositoryTests(unittest.TestCase):
         }
         self.assertEqual(skills & identifiers, set())
 
+    def test_no_contract_assumes_a_named_base_ref_exists(self) -> None:
+        """A base ref is a property of the checkout, not of a contract.
+
+        The isolated snapshot the quality profile builds carries only the
+        working branch, so a contract that declared `main..HEAD` failed there
+        while passing in the repository. Assert the absence of that assumption
+        rather than the symptom."""
+        module = load_builder()
+        for argv in module.ALLOWED_COMMANDS:
+            joined = " ".join(argv)
+            for ref in ("main", "master", "origin/"):
+                self.assertNotIn(ref, joined, joined)
+
+    def test_builder_runs_in_a_checkout_without_the_default_branch(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="prompt-input-noref-") as directory:
+            root = Path(directory)
+            (root / ".agents" / "prompts").mkdir(parents=True)
+            for path in PROMPT_ROOT.glob("*.md"):
+                (root / ".agents" / "prompts" / path.name).write_text(
+                    path.read_text(encoding="utf-8"), encoding="utf-8"
+                )
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "t@example.invalid"], cwd=root, check=True
+            )
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+            subprocess.run(["git", "checkout", "--quiet", "-b", "work"], cwd=root, check=False)
+            (root / "seed.txt").write_text("seed\n", encoding="utf-8")
+            subprocess.run(["git", "add", "seed.txt"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "commit", "--quiet", "-m", "seed"], cwd=root, check=True
+            )
+            self.assertNotEqual(
+                subprocess.run(
+                    ["git", "rev-parse", "--verify", "-q", "main"],
+                    cwd=root,
+                    capture_output=True,
+                ).returncode,
+                0,
+                "fixture must have no main ref",
+            )
+            result = subprocess.run(
+                [sys.executable, str(BUILDER_PATH), "handoff", "--root", str(root)],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_builder_runs_for_a_known_identifier(self) -> None:
         result = subprocess.run(
             [

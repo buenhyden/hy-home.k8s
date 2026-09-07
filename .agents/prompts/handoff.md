@@ -29,7 +29,7 @@ grants it, and a recorded boundary is not a standing authorization.
 | Branch | `git rev-parse --abbrev-ref HEAD` | Part of the snapshot the evidence describes |
 | Head commit | `git rev-parse HEAD` | Part of the snapshot the evidence describes |
 | Changed path set | `git status --porcelain` | The scope the handoff covers |
-| Committed scope | `git log --oneline main..HEAD` | The logical units already landed on this branch |
+| Committed scope | `git log --oneline -20` | The most recent logical units, bounded so the contract needs no base ref to exist |
 
 The subject input is `Branch`. When it is empty the contract refuses, because
 a handoff without a snapshot describes no state.
@@ -38,6 +38,11 @@ a handoff without a snapshot describes no state.
 
 The handoff fields the quality policy lists, in its order, each either filled or
 explicitly marked `none` or `DEFER` with a reason. No field is omitted.
+
+The committed scope is bounded rather than diffed against a base branch. A base
+ref is a property of the checkout, not of the contract: a clone that carries
+only the working branch has no `main`, and a contract that assumes one fails
+there instead of producing a handoff.
 
 ## Validation
 
