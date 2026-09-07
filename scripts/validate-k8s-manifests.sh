@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
-# validate-k8s-manifests.sh — kube-linter + YAML syntax check on gitops/ and infrastructure/
+# validate-k8s-manifests.sh — YAML syntax check on gitops/ and infrastructure/
 # Idempotent: safe to run multiple times.
 # Usage: bash scripts/validate-k8s-manifests.sh [repo-root]
+#
+# kube-linter is owned by the pinned pre-commit hook, which installs the tool it
+# needs and therefore reports a real result in every environment. Running it a
+# second time here added no coverage and, because the copy was optional, it
+# reported a clean manifest result in any environment that simply lacked the
+# binary. This script owns manifest YAML syntax, which is the part the affected
+# and staged lanes need and pre-commit does not cover there.
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET_INPUT="${1:-${PROJECT_DIR}}"
-CONFIG="${PROJECT_DIR}/.kube-linter.yaml"
 EXIT_CODE=0
 
 if [[ ! -d "$TARGET_INPUT" ]]; then
@@ -64,7 +70,6 @@ fi
 
 echo "=== validate-k8s-manifests ==="
 echo "Target : $TARGET"
-echo "Config : $CONFIG"
 echo "Files  : ${#YAML_FILES[@]}"
 
 # YAML syntax check via python
@@ -78,15 +83,6 @@ for f in "${YAML_FILES[@]}"; do
     EXIT_CODE=1
   fi
 done
-
-# kube-linter
-echo ""
-echo "--- kube-linter ---"
-if command -v kube-linter &>/dev/null; then
-  kube-linter lint "${YAML_TARGETS[@]}" --config "$CONFIG" || EXIT_CODE=1
-else
-  echo "  SKIP optional kube-linter not installed — YAML syntax validation only"
-fi
 
 echo ""
 echo "=== done (exit: $EXIT_CODE) ==="
