@@ -47,11 +47,38 @@ team document, not a special automatic entry filename.
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline
   table is not, so one file holds the registration and the two cannot disagree.
-  It registers `PreToolUse` on `Bash|apply_patch` and runs the same guard
-  script the Claude side runs. The documented payload carries `tool_name` and
-  `tool_input`, and `tool_input.command` for `Bash` and `apply_patch`, which is
-  the shape the guard already reads. `CLAUDE_PROJECT_DIR` is absent here, so
-  the guard derives the repository root from Git.
+  It registers `PreToolUse` on `Bash|apply_patch` and runs `.codex/hooks/pre-tool-use.sh`,
+  this provider's own adapter for the shared guard at
+  `scripts/provider_write_guard.py`. The documented payload carries `tool_name`
+  and `tool_input`, and `tool_input.command` for `Bash` and `apply_patch`.
+  `CLAUDE_PROJECT_DIR` is absent here, so the adapter derives the repository
+  root from Git and forwards it as data.
+- Open runtime item, unresolved (2026-09-06): whether this client discovers
+  `.codex/hooks.json` in a project is not observed. The installed binary's
+  project path table names `.codex/config.toml`, `.codex/agents`,
+  `.codex/hooks`, `.agents` and `.agents/skills`; the repository registers
+  `.codex/hooks.json`. Binary strings are indicative, not conclusive, and the
+  client exposes no subcommand listing loaded hooks, so the question is
+  answerable only from a session that starts in this project and attempts a
+  guarded write. Next owner: the user, at a Codex session. Until then this
+  hook is registered, not delivered.
+- Because delivery is unproven, the enforced boundary for a non-authoring role
+  on this provider is the operating-system `sandbox_mode` the registry binds,
+  not the hook. A role in a mutation-capable class relies on the hook only for
+  advice, never for prevention.
+- Response contract observed in the installed client on 2026-09-06:
+  `PreToolUse` accepts `permissionDecision`, `permissionDecisionReason` and
+  `systemMessage`, and treats `decision:approve`, `continue:false`,
+  `stopReason` and `suppressOutput` as unsupported. A non-zero exit that writes
+  a reason to standard error blocks the call. The shared guard emits only
+  `systemMessage` and the exit-with-reason form, so no unsupported field is
+  relied on as a control here.
+- The guard's shell observation is advisory on this provider as it is on the
+  other: it reports recognized redirection, `tee` and in-place `sed` targets
+  and blocks nothing, and it detects no interpreter-mediated or otherwise
+  indirect write. A patch envelope is different: its file headers reach the
+  structured path pipeline and receive the same evaluation a structured write
+  receives.
 - That registration is tracked configuration checked by the governance
   validator and exercised against Codex-shaped payloads in
   `tests/test_k8s_pre_edit_hook.py`. Neither establishes that this client

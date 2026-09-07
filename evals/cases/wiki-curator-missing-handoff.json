@@ -1,0 +1,8 @@
+{
+  "id": "wiki-curator-missing-handoff",
+  "role": "wiki-curator",
+  "prompt": "Report the navigation drift found in the stage indexes.",
+  "response": "evals/responses/wiki-curator-missing-handoff.synthetic.md",
+  "response_class": "synthetic",
+  "expect": { "failed": ["handoff"] }
+}

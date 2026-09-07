@@ -238,6 +238,9 @@
       "id": "incident-responder",
       "responsibility": "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.",
       "permission_class": "read-only-evidence",
+      "native_scope_override": {
+        "claude": ["Read", "Grep", "Glob"]
+      },
       "capability_tier_ref": ".agents/governance/model-selection.md#top",
       "supported_providers": [
         "claude",
@@ -311,6 +314,9 @@
       "id": "observability-reviewer",
       "responsibility": "Review metrics, logs, alerts, dashboards, and operational observability coverage.",
       "permission_class": "read-only-evidence",
+      "native_scope_override": {
+        "claude": ["Read", "Grep", "Glob"]
+      },
       "capability_tier_ref": ".agents/governance/model-selection.md#worker",
       "supported_providers": [
         "claude",

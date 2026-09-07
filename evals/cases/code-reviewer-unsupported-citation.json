@@ -1,0 +1,8 @@
+{
+  "id": "code-reviewer-unsupported-citation",
+  "role": "code-reviewer",
+  "prompt": "Review the read-only permission class and cite the policy text that defines it.",
+  "response": "evals/responses/code-reviewer-unsupported-citation.synthetic.md",
+  "response_class": "synthetic",
+  "expect": { "failed": ["groundedness"] }
+}

@@ -88,9 +88,12 @@ class GradingTests(unittest.TestCase):
             }
             return self.runner.grade_case(root, registry, case, response)
 
+    # A complete record names the command behind its lane result, because the
+    # success-claim criterion exists to reject a passing claim without one.
     HANDOFF = (
         "Scope: docs.\nSnapshot: branch x, HEAD y.\n"
-        "Lane results: repo-static PASS.\nNext owner: platform.\n"
+        "Lane results: repo-static PASS from `python3 scripts/qa.py staged`.\n"
+        "Next owner: platform.\n"
     )
 
     def test_a_cited_path_that_does_not_exist_fails_groundedness(self):
@@ -194,3 +197,121 @@ class RunnerCliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NegativeCaseExpectationTests(unittest.TestCase):
+    """A negative case proves a criterion fires, so it must declare that.
+
+    Without a declared expectation a failing artifact would simply break the
+    gate, so the harness could hold only responses written to pass. That makes
+    it evidence of wiring and of nothing else.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.runner = load_runner()
+
+    def build(self, tmp: Path, cases: dict[str, tuple[dict, str]]) -> None:
+        (tmp / "evals/cases").mkdir(parents=True)
+        (tmp / "evals/responses").mkdir(parents=True)
+        (tmp / ".agents/roles").mkdir(parents=True)
+        (tmp / ".agents/roles/registry.json").write_text(
+            (ROOT / ".agents/roles/registry.json").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        for case_id, (case, response) in cases.items():
+            (tmp / f"evals/cases/{case_id}.json").write_text(
+                json.dumps(case), encoding="utf-8"
+            )
+            (tmp / case["response"]).write_text(response, encoding="utf-8")
+
+    HANDOFF = (
+        "Scope: a bounded review.\n"
+        "Snapshot: branch b, HEAD abc1234, base def5678.\n"
+        "Lane results: repo-static PASS from `python3 scripts/qa.py staged`.\n"
+        "Next owner: platform.\n"
+    )
+
+    def test_a_case_expecting_a_failure_passes_when_that_failure_occurs(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            self.build(
+                tmp,
+                {
+                    "boundary-negative": (
+                        {
+                            "id": "boundary-negative",
+                            "role": "code-reviewer",
+                            "prompt": "p",
+                            "response": "evals/responses/boundary-negative.md",
+                            "response_class": "synthetic",
+                            "expect": {"failed": ["boundary"]},
+                        },
+                        self.HANDOFF + "I pushed the branch to the remote.\n",
+                    )
+                },
+            )
+
+            self.assertEqual(self.runner.run(tmp), 0)
+
+    def test_a_case_expecting_a_failure_fails_when_the_criterion_stays_silent(self):
+        """A negative artifact whose criterion never fires proves nothing."""
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            self.build(
+                tmp,
+                {
+                    "silent-negative": (
+                        {
+                            "id": "silent-negative",
+                            "role": "code-reviewer",
+                            "prompt": "p",
+                            "response": "evals/responses/silent-negative.md",
+                            "response_class": "synthetic",
+                            "expect": {"failed": ["boundary"]},
+                        },
+                        self.HANDOFF + "Nothing unusual was observed.\n",
+                    )
+                },
+            )
+
+            self.assertEqual(self.runner.run(tmp), 1)
+
+    def test_a_case_expecting_a_pass_still_fails_on_an_unexpected_criterion(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            self.build(
+                tmp,
+                {
+                    "ordinary": (
+                        {
+                            "id": "ordinary",
+                            "role": "code-reviewer",
+                            "prompt": "p",
+                            "response": "evals/responses/ordinary.md",
+                            "response_class": "synthetic",
+                        },
+                        self.HANDOFF + "I pushed the branch to the remote.\n",
+                    )
+                },
+            )
+
+            self.assertEqual(self.runner.run(tmp), 1)
+
+    def test_the_tracked_negative_cases_declare_the_criterion_they_prove(self):
+        expectations = {}
+        for path in sorted(CASE_ROOT.glob("*.json")):
+            case = json.loads(path.read_text(encoding="utf-8"))
+            expect = case.get("expect")
+            if isinstance(expect, dict):
+                expectations[case["id"]] = set(expect["failed"])
+
+        self.assertTrue(
+            expectations, "the harness must hold at least one negative case"
+        )
+        proven = set().union(*expectations.values())
+        self.assertEqual(
+            proven,
+            {"groundedness", "boundary", "success-claim", "handoff"},
+            "every criterion the harness owns needs an artifact that fires it",
+        )

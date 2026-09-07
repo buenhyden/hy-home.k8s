@@ -7,6 +7,7 @@ layer and point it at `.agents/skills/knowledge-map/SKILL.md` rather than
 restating any domain content inside governance. No operating document was
 copied, so `docs/05.operations/README.md` keeps its ownership.
 
-Lane results: repo-static PASS for document lifecycle and link validation.
+Lane results: repo-static PASS from `python3 scripts/qa.py staged`, covering
+document lifecycle and link validation over the exact index.
 Residual risk: none identified for this change.
 Next owner: quality-engineer, for the staged profile on the exact index.

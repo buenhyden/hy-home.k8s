@@ -1,10 +1,10 @@
 ---
 title: "Provider Native Enforcement Parity Technical Specification"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "specs"
 artifact_id: "SPEC-0073"
 ---
@@ -29,9 +29,13 @@ identifiers named models absent from the installed client's catalog.
 
 Those conditions are the ones this package addressed, not the current state of
 the tree. Both providers now declare a structured scope the validator reads
-from one registry, both register the same guard script, every native model
-resolves from the capability binding, and the provider notes date their
-capability statements. This paragraph is stated in the past tense on purpose:
+from one registry, each provider registers its own thin adapter over one
+shared guard program, every native model resolves from the capability binding,
+and the provider notes date their capability statements. The single registered
+script this package left behind was replaced by that adapter pair under
+[SPEC-0074](../0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md),
+which moved the guard program out of a provider directory so no provider owns a
+control the other depends on. This paragraph is stated in the past tense on purpose:
 VAL-PNP-010 forbids a document from asserting a present-tense state the tree
 contradicts, and a specification whose work has landed is bound by that rule
 like any other current document.
@@ -157,7 +161,9 @@ its Claude model allowlist is replaced by a lookup through the registry
 binding. Both sides then fail for the same reason under the same rule family,
 which is the parity this specification exists to create.
 
-The pre-action guard keeps one implementation and one script location. Its
+The pre-action guard kept one implementation in one script location; SPEC-0074
+later split the registration into a per-provider adapter over one shared
+program while keeping the single implementation. Its
 Claude matcher widens to the shell tool class, and the script learns to derive
 candidate repository paths from a shell command in addition to a structured
 file-tool payload. The Codex mirror stays a separate, later work package,
@@ -166,7 +172,7 @@ assumed from the Claude side. That observation arrived during execution:
 `codex-cli 0.153.4` documents `<repo>/.codex/hooks.json`, the `PreToolUse`
 event, the `command` handler, and the `tool_name`, `tool_input`, and
 `tool_input.command` fields the guard already reads. The mirror therefore
-landed, both providers register the one guard script, and the frozen
+landed, both providers registered the one guard script, and the frozen
 per-provider hook literal in the validator is replaced by one property
 contract both are judged under. Native event delivery remains unobserved.
 

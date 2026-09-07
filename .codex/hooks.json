@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$(git rev-parse --show-toplevel)/.claude/hooks/k8s-pre-edit.sh\"",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.codex/hooks/pre-tool-use.sh\"",
             "timeout": 10,
             "statusMessage": "Checking the repository write boundary"
           }

@@ -9,6 +9,7 @@ it, and never run an executable selected by tool input. Codex supplies no
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import tempfile
@@ -18,6 +19,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
+GUARD_PATH = ROOT / "scripts/provider_write_guard.py"
+CODEX_ADAPTER_PATH = ROOT / ".codex/hooks/pre-tool-use.sh"
+CODEX_REGISTRATION_PATH = ROOT / ".codex/hooks.json"
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 SAMPLE_DOCUMENT = "docs/01.requirements/README.md"
 
@@ -377,41 +381,244 @@ class PreEditGitDegradationTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_git_probes_are_bounded_by_an_explicit_timeout(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn("GIT_TIMEOUT_SECONDS", hook_text)
-        self.assertIn("timeout=GIT_TIMEOUT_SECONDS", hook_text)
+        self.assertIn("GIT_TIMEOUT_SECONDS", guard_text)
+        self.assertIn("timeout=GIT_TIMEOUT_SECONDS", guard_text)
 
     def test_git_results_are_memoized(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn("_git_cache", hook_text)
+        self.assertIn("_git_cache", guard_text)
+
+
+def patch_payload(body: str, argv_form: bool = False) -> str:
+    """One apply_patch payload in either form the client may send."""
+    command = ["apply_patch", body] if argv_form else body
+    return json.dumps({"tool_name": "apply_patch", "tool_input": {"command": command}})
+
+
+def envelope(*header_lines: str) -> str:
+    return (
+        "*** Begin Patch\n"
+        + "".join(f"{line}\n" for line in header_lines)
+        + "*** End Patch\n"
+    )
+
+
+class PatchEnvelopeTest(unittest.TestCase):
+    """A patch write receives the checks a structured write already receives."""
+
+    def assert_manifest_advisory(self, payload: str, path: str):
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Editing Kubernetes manifest", result.stdout)
+        self.assertIn(path, result.stdout)
+
+    def test_update_target_is_evaluated_in_the_string_form(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Update File: gitops/test.yaml")),
+            "gitops/test.yaml",
+        )
+
+    def test_add_target_is_evaluated_in_the_argument_vector_form(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Add File: gitops/new.yaml"), argv_form=True),
+            "gitops/new.yaml",
+        )
+
+    def test_delete_target_is_evaluated(self):
+        self.assert_manifest_advisory(
+            patch_payload(envelope("*** Delete File: gitops/old.yaml")),
+            "gitops/old.yaml",
+        )
+
+    def test_a_move_yields_both_the_source_and_the_destination(self):
+        result = run_hook(
+            patch_payload(
+                envelope(
+                    "*** Update File: gitops/from.yaml",
+                    "*** Move to: gitops/to.yaml",
+                )
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("gitops/from.yaml", result.stdout)
+        self.assertIn("gitops/to.yaml", result.stdout)
+
+    def test_several_files_produce_one_evaluation_each(self):
+        result = run_hook(
+            patch_payload(
+                envelope(
+                    "*** Update File: gitops/one.yaml",
+                    "*** Add File: gitops/two.yaml",
+                )
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.count("Editing Kubernetes manifest"), 2)
+
+    def test_an_envelope_naming_no_file_is_quiet_and_successful(self):
+        result = run_hook(patch_payload(envelope()), ROOT)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "")
+
+    def test_a_truncated_envelope_is_rejected_as_malformed_transport(self):
+        result = run_hook(
+            patch_payload("*** Begin Patch\n*** Update File: gitops/test.yaml\n"),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATCH-ENVELOPE", result.stderr)
+
+    def test_an_empty_target_path_is_rejected(self):
+        result = run_hook(patch_payload(envelope("*** Add File:   ")), ROOT)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATCH-PATH", result.stderr)
+
+    def test_a_patch_body_resembling_a_command_yields_no_shell_target(self):
+        result = run_hook(
+            patch_payload(
+                envelope("*** Update File: gitops/test.yaml").replace(
+                    "*** End Patch", "+echo bad > gitops/injected.yaml\n*** End Patch"
+                )
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("gitops/injected.yaml", result.stdout)
+        self.assertNotIn("Shell command writes", result.stdout)
+
+    def test_a_patch_target_outside_the_repository_is_rejected(self):
+        result = run_hook(
+            patch_payload(envelope("*** Add File: ../outside.yaml")), ROOT
+        )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("HOOK-PATH-NORMALIZATION", result.stderr)
+
+    def test_an_ordinary_shell_command_still_reaches_the_shell_observer(self):
+        """Routing by shape must not disable the existing advisory path."""
+        result = run_hook(
+            json.dumps(
+                {
+                    "tool_name": "Bash",
+                    "tool_input": {"command": "echo x > gitops/shell.yaml"},
+                }
+            ),
+            ROOT,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Shell command writes", result.stdout)
+
+
+class ProviderAdapterOwnershipTest(unittest.TestCase):
+    """Neither provider directory may execute the other's program."""
+
+    def test_the_codex_registration_names_no_claude_path(self):
+        registration = json.loads(CODEX_REGISTRATION_PATH.read_text(encoding="utf-8"))
+        commands = [
+            handler.get("command", "")
+            for entry in registration["hooks"]["PreToolUse"]
+            for handler in entry["hooks"]
+        ]
+
+        self.assertTrue(commands, "the Codex registration must register a handler")
+        for command in commands:
+            self.assertNotIn(".claude/", command)
+            self.assertIn(".codex/hooks/", command)
+
+    def test_the_codex_adapter_exists_and_names_its_provider(self):
+        self.assertTrue(
+            CODEX_ADAPTER_PATH.is_file(), "the Codex adapter must be a real file"
+        )
+        adapter = CODEX_ADAPTER_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("--provider codex", adapter)
+        self.assertIn("ADAPTER_DIR", adapter)
+        self.assertNotIn(".claude/", adapter)
+
+    def test_both_adapters_stay_thin(self):
+        """An adapter names a provider and forwards; it holds no shared logic."""
+        for adapter_path in (HOOK_PATH, CODEX_ADAPTER_PATH):
+            body = [
+                line.strip()
+                for line in adapter_path.read_text(encoding="utf-8").splitlines()
+                if line.strip() and not line.strip().startswith("#")
+            ]
+
+            self.assertLessEqual(
+                len(body),
+                8,
+                f"{adapter_path.name} carries logic that belongs in the shared guard",
+            )
+            self.assertNotIn(
+                "registry.json",
+                "\n".join(body),
+                f"{adapter_path.name} must not route documents itself",
+            )
 
 
 class PreEditTrustBoundaryTest(unittest.TestCase):
     """A root derived from tool input selects data only, never an executable."""
 
     def test_selector_executable_is_pinned_to_project_dir(self):
-        hook_text = HOOK_PATH.read_text(encoding="utf-8")
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
 
-        self.assertIn(f'python3 "$PROJECT_DIR/{SELECTOR_RELATIVE_PATH}"', hook_text)
-        self.assertNotIn(f'"$RESOLVED_ROOT/{SELECTOR_RELATIVE_PATH}"', hook_text)
+        self.assertIn("os.path.join(project_dir, SELECTOR_RELATIVE_PATH)", guard_text)
+        self.assertNotIn(
+            "os.path.join(resolved_root, SELECTOR_RELATIVE_PATH)", guard_text
+        )
 
     def test_no_executable_is_selected_by_the_resolved_root(self):
-        for line in HOOK_PATH.read_text(encoding="utf-8").splitlines():
+        """Every line naming the tool-derived root must use it as data."""
+        seen = 0
+        for line in GUARD_PATH.read_text(encoding="utf-8").splitlines():
             stripped = line.strip()
-            if stripped.startswith("#") or "$RESOLVED_ROOT" not in stripped:
+            if stripped.startswith("#") or "resolved_root" not in stripped:
                 continue
+            seen += 1
             self.assertNotIn(
-                "$RESOLVED_ROOT/",
-                stripped.replace('--root "$RESOLVED_ROOT"', ""),
+                "os.path.join(resolved_root",
+                stripped,
                 f"tool-derived root selects a program: {stripped}",
             )
+            self.assertNotIn(
+                "subprocess",
+                stripped,
+                f"tool-derived root reaches a process call: {stripped}",
+            )
+        self.assertGreater(seen, 0, "the guard must name the resolved root")
 
-    def test_resolved_root_reaches_the_selector_as_data(self):
+    def test_resolved_root_never_selects_a_program_in_the_shared_guard(self):
+        """The resolved root is data. Only project_dir may name an executable."""
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
+
+        self.assertNotIn("Path(resolved_root) /", guard_text)
+        self.assertNotIn('resolved_root, "scripts', guard_text)
+
+    def test_the_adapter_resolves_the_guard_from_its_own_checkout(self):
+        """A project directory pointed at another tree supplies data, never the
+        program. Resolving the guard through PROJECT_DIR would let the guarded
+        tree replace the guard."""
         hook_text = HOOK_PATH.read_text(encoding="utf-8")
 
-        self.assertIn('--root "$RESOLVED_ROOT"', hook_text)
+        self.assertIn("ADAPTER_DIR", hook_text)
+        self.assertNotIn('"$PROJECT_DIR/scripts/provider_write_guard.py"', hook_text)
+
+    def test_resolved_root_reaches_the_selector_as_data(self):
+        guard_text = GUARD_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('"--root",\n                resolved_root,', guard_text)
 
     def test_worktree_edit_does_not_run_that_worktrees_selector(self):
         """Substituting the worktree's selector must not change the outcome."""

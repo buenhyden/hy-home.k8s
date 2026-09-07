@@ -2035,9 +2035,12 @@ for path, phrases in template_enforcement_phrase_checks.items():
         if phrase not in text:
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
+# The pre-action guard routes template selection through the registry. Its
+# implementation is the shared module; each provider directory holds only a
+# thin adapter, so the adapter is not the file that names the registry.
 active_template_routing_reference_files = [
     root / ".agents/skills/docs-stage-routing/SKILL.md",
-    root / ".claude/hooks/k8s-pre-edit.sh",
+    root / "scripts/provider_write_guard.py",
 ]
 for path in active_template_routing_reference_files:
     text = read_text(path)

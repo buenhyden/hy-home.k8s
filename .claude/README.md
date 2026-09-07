@@ -20,10 +20,11 @@ This directory owns only Claude syntax, support notes and native connections.
 - `CLAUDE.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
 - `settings.json`: existing permissions and the registered pre-action hook.
-- `hooks/k8s-pre-edit.sh`: the synchronous write boundary for the shell and
-  structured file tools. One implementation serves both providers; the Codex
-  registration in [`.codex/hooks.json`](../.codex/hooks.json) runs this same
-  script.
+- `hooks/k8s-pre-edit.sh`: the Claude adapter for the synchronous write
+  boundary on the shell and structured file tools. It names its provider and
+  forwards the payload; the boundary itself is owned by
+  `scripts/provider_write_guard.py`, and each provider registers its own
+  adapter, so no provider directory owns a control both providers depend on.
 - `skills/<id>`: one relative link per common skill package.
 
 ## Configuration Boundary

@@ -46,7 +46,7 @@ Review repository changes for correctness, maintainability, and policy alignment
 
 ### Guardrails
 
-- Stay read-only unless a human explicitly asks for edits.
+- This role holds no structured write tool. Report findings and route remediation to an authorized role instead of editing.
 - Stop the review and escalate when evidence shows secret exposure, RBAC risk, network isolation failure, or another security-critical defect.
 
 ### Capability and Evidence
