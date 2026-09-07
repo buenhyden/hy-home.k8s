@@ -80,8 +80,9 @@ roles, and thirty-six projections. `m0009` pins the upstream comparison at
 authored 2026-09-05, MIT licensed, organized as division directories of persona
 prompt files.
 
-`scripts/validation/registry.json` registers `.vscode/extensions.json` as a
-route with no file behind it. On this workstation the global `core.hooksPath`
+This workspace does not use VS Code, so `.vscode/` and the two validation
+routes naming it are removed rather than filled. On this workstation the
+global `core.hooksPath`
 points outside the repository, so the repository's commit-time hooks are inert
 and the conventional-commit check does not run at commit time. Because of that,
 the commit hook suite's execution inside the full profile is the only place it
@@ -93,13 +94,13 @@ runs and is retained rather than treated as duplication.
 - A knowledge surface of hand-maintained pointers with a non-duplication rule
   and validation, plus named consumers.
 - A prompt surface of input and output contracts with a deterministic builder
-  that makes no model call, plus editor and command entry points.
+  that makes no model call, plus command entry points.
 - Two document profiles with templates, and reuse of the collection-index
   profile for the two surface READMEs.
 - Consolidation of the seven responsibility documents with consumer succession.
 - Reference pack corrections and a dated upstream re-observation.
 - One execution owner per duplicated rule, with retained duplicates justified.
-- Recorded editor and commit-tooling limitations with a user-run remediation.
+- A recorded commit-tooling limitation with a user-run remediation.
 
 ## Non-Goals & Out-of-Scope
 
@@ -109,7 +110,7 @@ runs and is retained rather than treated as duplication.
 - No role adopted from the upstream persona catalog.
 - No hosted continuous integration workflow for automated review while no
   credential exists to run it.
-- No keybinding file under `.vscode/`.
+- No editor integration and nothing under `.vscode/`.
 - No change to guard ownership, patch parsing, or permission scope; SPEC-0074
   owns those.
 - No change to `gitops/`, `infrastructure/`, `traefik/`, `policy/`, or
@@ -127,12 +128,12 @@ runs and is retained rather than treated as duplication.
 | WP-006 | Wire the knowledge consumers at the navigation skill and the work-lifecycle intake step                            | WP-005                 | VAL-CKP-001 approved              | Named consumer reads with stated inputs; governance validator                                |
 | WP-007 | Create the prompt surface with its four contracts                                                                  | WP-003                 | VAL-CKP-001 approved              | Profile validation; each contract names inputs, outputs, and refusal conditions               |
 | WP-008 | Implement the deterministic prompt input builder                                                                   | WP-007                 | VAL-CKP-005 approved              | Failing builder tests before, passing after; no network and no repository write               |
-| WP-009 | Add the editor tasks, the command entry points, and the missing editor extension file                              | WP-008                 | VAL-CKP-001, VAL-CKP-011 approved | Affected-surface contract with no uncovered path; no identifier written without confirmation  |
+| WP-009 | Add the command entry points and retire the VS Code surface                                                        | WP-008                 | VAL-CKP-001 approved              | Affected-surface contract with no uncovered path; no route left naming a removed file         |
 | WP-010 | Consolidate the seven responsibility documents into the router and carry every consumer to a section anchor        | WP-006                 | VAL-CKP-006, VAL-CKP-010 approved | Link and owner validation; no dangling link; retained documents recorded with reasons          |
 | WP-011 | Correct the reference pack wording, the duplicate link, and the retired stage label, and add the current observation | WP-010                 | VAL-CKP-007 approved              | Reviewed pack text; past observations unchanged in wording, subject, and date                  |
 | WP-012 | Record the dated upstream re-observation and the zero-adoption conclusion                                          | WP-011                 | VAL-CKP-008 approved              | Registry role count unchanged; upstream head, licence, and observation date recorded            |
 | WP-013 | Give the container-manifest linter one execution owner and record why each retained duplicate is retained          | WP-012                 | VAL-CKP-009 approved              | Before-and-after full profile comparison; no rule lost and no required-tool failure skipped     |
-| WP-014 | Record the editor and commit-tooling limitations with a user-run remediation                                       | WP-013                 | VAL-CKP-011 approved              | Task evidence review; no limitation reported as a working control                              |
+| WP-014 | Record the commit-tooling limitation with a user-run remediation                                                   | WP-013                 | VAL-CKP-011 approved              | Task evidence review; no limitation reported as a working control                              |
 
 ### WP-001: Author the successor decision
 
@@ -316,22 +317,14 @@ files from WP-007.
 
 ### WP-009: Add the entry points
 
-**Files:** Create `.claude/commands/` entries, one per contract. Create
-`.vscode/extensions.json`. Modify `.vscode/tasks.json`.
+**Files:** Create `.claude/commands/` entries, one per contract.
 
 - [ ] Confirm none of the four contract identifiers collides with an existing
       skill identifier before creating a command entry.
 - [ ] Add one command entry per contract, each invoking the builder with its
       identifier.
-- [ ] Add one editor task per contract, invoking the builder from the workspace
-      root alongside the existing validation tasks.
-- [ ] Add the editor extension file the validation registry already routes,
-      recommending the extensions this workspace uses.
-- [ ] Confirm each installed extension command identifier before writing it
-      into a task; write no unconfirmed identifier and record any that could
-      not be confirmed as deferred.
-- [ ] Place no keybinding file under `.vscode/`; record the import example and
-      the conflict check as documentation instead.
+- [ ] Confirm the affected-surface contract reports no uncovered path and no
+      route naming a file this workspace no longer carries.
 - [ ] Run `python3 scripts/qa.py staged` and commit.
 
 ### WP-010: Consolidate the responsibility documents
@@ -419,8 +412,6 @@ Remove the seven category documents under `.agents/roles/`.
       conventional-commit check and the commit hook suite do not run at commit
       time on this workstation, and a repository-local remediation the user
       runs themselves.
-- [ ] Record any editor extension command identifier that could not be
-      confirmed as deferred with its next owner.
 - [ ] Record the model, cost, and throughput conclusion: the registry's
       capability-to-model binding is owned by SPEC-0073, was re-checked against
       the observed client identities during this package, and needs no change;
@@ -445,8 +436,8 @@ Invoking a document validator directly rather than through `scripts/qa.py`
 compares against the Git index and is not a substitute for the lane the entry
 point selects; the direct invocation is not used as evidence.
 
-No command in this plan establishes native discovery of a surface, loading of a
-contract, or execution of an editor action.
+No command in this plan establishes native discovery of a surface or loading of
+a contract.
 
 ## Risks & Mitigations
 

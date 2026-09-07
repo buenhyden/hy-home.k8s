@@ -50,10 +50,10 @@ registry entry and restate what the concrete role bodies already state. The
 Stage 90 research pack carries wording that reads as forbidding the filename
 prefix its own registry mandates, a duplicated navigation link, a retired stage
 label, a dated four-provider observation stated without its successor, and an
-upstream comparison pin the upstream has since advanced beyond. A registered
-editor configuration route has no file behind it, and on this workstation a
-global hook path override makes the repository's own commit-time hooks inert,
-which the commit-message contract must account for rather than assume away.
+upstream comparison pin the upstream has since advanced beyond. On this
+workstation a global hook path override makes the repository's own commit-time
+hooks inert, which the commit-message contract must account for rather than
+assume away.
 
 ## Strategic Boundaries & Non-goals
 
@@ -61,7 +61,7 @@ Authorized scope covers a new architecture decision, `.agents/README.md`,
 `.agents/governance/context-and-memory.md`, the new `.agents/knowledge/` and
 `.agents/prompts/` directories, `.agents/roles/`, `docs/99.templates/`,
 `docs/90.references/research/`, `scripts/`, `tests/`, `.claude/commands/`,
-`.vscode/`, `.pre-commit-config.yaml` and the repository validation registry.
+`.pre-commit-config.yaml` and the repository validation registry.
 Every change is a reviewable local commit.
 
 Protected surfaces stay unchanged. `gitops/`, `infrastructure/`, `traefik/`,
@@ -81,9 +81,10 @@ machine or loop runtime is built; the existing work-lifecycle stop conditions
 remain the loop contract. No role is adopted from the upstream persona
 catalog. No hosted continuous integration workflow for automated review is
 created while no credential exists to run it, because an unrunnable workflow
-file would present an inactive control as an active one. No editor keybinding
-file is placed under `.vscode/`, because a file there is not applied
-automatically and its presence would imply otherwise. No entry point makes a
+file would present an inactive control as an active one. No editor integration is
+added and nothing is placed under `.vscode/`, because this workspace does not
+use VS Code and a recommendation or task file there would name a surface no one
+runs. No entry point makes a
 paid model call mandatory, and no commit-time hook gains a network dependency.
 Guard ownership, patch parsing and permission-scope honesty are owned by
 SPEC-0074 and are not reopened here.
@@ -226,14 +227,13 @@ a division-organized set of persona prompt files, the existing twelve-role
 roster has no concrete gap it fills for this workspace, and no role is adopted.
 The catalog remains provenance for ideas, not admission or policy authority.
 
-### Editor and commit tooling
+### Commit tooling
 
-The registered editor extension route gains the file it names, recommending
-the extensions this workspace actually uses. Editor tasks are added for the
-four prompt contracts, invoking the builder from the workspace root. No
-keybinding file is placed under `.vscode/`; an import example and a conflict
-check procedure are documented instead, because a file there is not applied
-automatically.
+Command entry points are added for the four prompt contracts under
+`.claude/commands/`, each invoking the builder with its identifier. No editor
+surface is added: this workspace does not use VS Code, so `.vscode/` is removed
+and its two validation routes are retired with it. The builder stays runnable
+from the shell, which is the path the entry points wrap.
 
 The global hook path override that makes the repository's commit-time hooks
 inert on this workstation is documented with its consequence — the
@@ -342,11 +342,6 @@ If the non-duplication check proves unworkable in practice, the knowledge
 surface is reduced to the project map and the domain index without further
 documents, rather than relaxed into a second policy store.
 
-If the editor extension command identifiers cannot be confirmed from the
-installed extensions, editor actions beyond the task entries are deferred and
-the command-line entry points are delivered alone. An unverified command
-identifier is not written into a task.
-
 If a baseline gate fails after a change, the failure is separated from the
 recorded clean baseline of the current tree and treated as a regression of the
 change. A repair is bounded: the same check failing twice with no new
@@ -386,9 +381,8 @@ through the quality entry point compares against the Git index and is not a
 substitute for the lane the entry point selects.
 
 These commands produce repository-static evidence only. They do not establish
-that either client discovered a surface, loaded a contract, or executed an
-editor action. Those require a fresh session or an installed editor and are
-reported separately.
+that either client discovered a surface or loaded a contract. Those require a
+fresh session and are reported separately.
 
 ## Success Criteria & Verification Plan
 
@@ -440,10 +434,9 @@ VAL-CKP-010. Owner transition, mutual links, stale claim removal and orphan
 consumer cleanup are delivered in the same review unit as the change that
 causes them. Proven by diff scope review and link validation.
 
-VAL-CKP-011. The editor and commit-tooling limitations, including the global
-hook path override and any unconfirmed extension command identifier, are
-recorded as separate evidence with a named remediation the user runs, and none
-is reported as a working control. Proven by review of the package Task
+VAL-CKP-011. The commit-tooling limitation, namely the global hook path
+override, is recorded as evidence with a named remediation the user runs, and
+is not reported as a working control. Proven by review of the package Task
 evidence.
 
 ## Traceability

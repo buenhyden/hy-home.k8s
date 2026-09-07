@@ -52,12 +52,12 @@ outcome.
 | [WORK-006](../plan.md#work-breakdown) | VAL-CKP-001        | Wire the knowledge consumers at the navigation skill and the intake step    | platform | Queued | Not started | Not started |
 | [WORK-007](../plan.md#work-breakdown) | VAL-CKP-001        | Create the prompt surface with its four contracts                           | platform | Queued | Not started | Not started |
 | [WORK-008](../plan.md#work-breakdown) | VAL-CKP-005        | Implement the deterministic prompt input builder                            | platform | Queued | Not started | Not started |
-| [WORK-009](../plan.md#work-breakdown) | VAL-CKP-001, VAL-CKP-011 | Add the editor tasks, command entry points, and editor extension file | platform | Queued | Not started | Not started |
+| [WORK-009](../plan.md#work-breakdown) | VAL-CKP-001        | Add the command entry points and retire the VS Code surface                 | platform | Queued | Not started | Not started |
 | [WORK-010](../plan.md#work-breakdown) | VAL-CKP-006, VAL-CKP-010 | Consolidate the responsibility documents and carry every consumer      | platform | Queued | Not started | Not started |
 | [WORK-011](../plan.md#work-breakdown) | VAL-CKP-007        | Correct the reference pack and add the current dated observation            | platform | Queued | Not started | Not started |
 | [WORK-012](../plan.md#work-breakdown) | VAL-CKP-008        | Record the upstream re-observation and the zero-adoption conclusion         | platform | Queued | Not started | Not started |
 | [WORK-013](../plan.md#work-breakdown) | VAL-CKP-009        | Give each duplicated rule one execution owner with retention reasons        | platform | Queued | Not started | Not started |
-| [WORK-014](../plan.md#work-breakdown) | VAL-CKP-011        | Record the editor and commit-tooling limitations with a user-run remedy     | platform | Queued | Not started | Not started |
+| [WORK-014](../plan.md#work-breakdown) | VAL-CKP-011        | Record the commit-tooling limitation with a user-run remedy                 | platform | Queued | Not started | Not started |
 
 ## Approval and Safety Boundaries
 
@@ -107,12 +107,8 @@ records a repository-local remediation the user runs.
 
 Deferred items, each with its blocker and next owner:
 
-- Whether either client discovers the adopted surfaces, loads a contract, or
-  runs an editor action. Blocker: each requires a fresh session or an installed
-  editor. Next owner: the user.
-- Installed editor extension command identifiers. Blocker: an identifier not
-  confirmed from the installed extension is not written into a task. Next
-  owner: the user, at an editor session.
+- Whether either client discovers the adopted surfaces or loads a contract.
+  Blocker: each requires a fresh authenticated session. Next owner: the user.
 
 No repository-static result in this Task is reported as provider-runtime,
 hosted, or live evidence.

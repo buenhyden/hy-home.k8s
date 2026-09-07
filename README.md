@@ -261,8 +261,6 @@ python3 scripts/qa.py quick
 python3 scripts/qa.py full
 ```
 
-에디터에서는 [`.vscode/tasks.json`](./.vscode/tasks.json)이 같은 진입점을 프로젝트 task로 노출한다. 이 파일은 팀 공유 설정이며, keybinding과 전역 설정은 개인 소유로 남기고 저장소가 추적하지 않는다. 공급자 확장의 command ID는 여기에서 관측되지 않았으므로 참조하지 않는다.
-
 `full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 [QA 운영 안내](docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
 
 표면별 승인 경계는 [승인·안전 정책](.agents/governance/approval-and-safety.md), 역할·스킬 정본은 [공통 역할](.agents/roles/README.md)을 따른다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
