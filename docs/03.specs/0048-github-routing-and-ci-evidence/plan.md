@@ -158,7 +158,7 @@ evidence.
 - `.github/repository-surface.md`
 - `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
-- `scripts/validate-repo-quality-gates.sh`
+- `scripts/qa.py`
 - `scripts/README.md`
 - `tests/README.md`
 - reciprocal package-local Spec/Plan/Task and current index surfaces
@@ -288,7 +288,7 @@ import CLI side effects or duplicate route data.
   rtk python3 scripts/validate-agent-governance-ci.py --root . --self-test
   rtk python3 scripts/validate-agent-governance-ci.py --root .
   rtk python3 scripts/validate-github-actions-security.py --root .
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk git diff --check
   ```
 
@@ -296,7 +296,7 @@ import CLI side effects or duplicate route data.
   point at stale native state.
 
   ```bash
-  rtk git add .github/CODEOWNERS .github/repository-surface.md .github/labeler.yml .agents/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
+  rtk git add .github/CODEOWNERS .github/repository-surface.md .github/labeler.yml .agents/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/README.md tests/README.md
   rtk git commit -m "ci: align github projection evidence"
   ```
 
@@ -323,7 +323,7 @@ import CLI side effects or duplicate route data.
   rtk python3 scripts/validate-github-surface-routing.py --root . --self-test
   rtk python3 scripts/validate-github-surface-routing.py --root .
   rtk python3 -m unittest tests/test_validate_github_surface_routing.py
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk pre-commit run --all-files
   rtk git status --short
   rtk git diff --check
@@ -352,7 +352,7 @@ rtk python3 scripts/validate-github-actions-security.py --root .
 rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
 rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
 rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-rtk bash scripts/validate-repo-quality-gates.sh .
+rtk python3 scripts/qa.py full
 rtk pre-commit run --all-files
 rtk git diff --check
 rtk git diff --cached --check

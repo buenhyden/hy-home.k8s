@@ -1523,9 +1523,7 @@ def _validate_qa_execution(
     ]
     qa_commands = [command for command in commands if "scripts/qa.py" in command]
     if qa_commands != [QA_COMMAND] or any(
-        "pre-commit run" in command
-        or "unittest discover" in command
-        or "validate-repo-quality-gates.sh" in command
+        "pre-commit run" in command or "unittest discover" in command
         for command in commands
     ):
         fail("CI-QA-EXECUTION", "CI must execute the shared QA profile exactly once")

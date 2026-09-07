@@ -295,28 +295,18 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         self.assertEqual(offenders, {})
 
     def test_repository_aggregate_dispatches_without_embedded_rule_logic(self) -> None:
-        aggregate = (SCRIPTS / "validate-repo-quality-gates.sh").read_text(
-            encoding="utf-8"
-        )
+        """The supported entrypoint dispatches; it owns no validator argv."""
+
+        aggregate = (SCRIPTS / "qa.py").read_text(encoding="utf-8")
         self.assertNotIn("<<'PY'", aggregate)
         self.assertNotIn("<<PY", aggregate)
-        self.assertEqual(
-            aggregate.count("scripts/run-validation-lane.py"),
-            1,
-        )
-        self.assertIn("--lane all-files", aggregate)
+        self.assertEqual(aggregate.count("run-validation-lane.py"), 1)
+        self.assertIn("all-files", aggregate)
         embedded_validators = re.findall(
             r"scripts/(?:validate-[a-z0-9-]+\.(?:py|sh)|archive_cutover\.py)",
             aggregate,
         )
-        self.assertEqual(
-            [
-                path
-                for path in embedded_validators
-                if path != "scripts/validate-repo-quality-gates.sh"
-            ],
-            [],
-        )
+        self.assertEqual(embedded_validators, [])
 
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
         quality = next(

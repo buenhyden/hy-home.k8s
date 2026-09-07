@@ -227,7 +227,7 @@ actionlint
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 pre-commit run --all-files
 git diff --check
 ```

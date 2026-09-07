@@ -471,7 +471,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 f": > {startup_marker}\nexit 0\n",
                 encoding="utf-8",
             )
-            body = temp / "validate-repo-quality-gates.sh"
+            body = temp / "aggregate-under-test.sh"
             body.write_text(
                 f"#!/usr/bin/bash\nprintf '%s\\n' '{QUALITY_MARKER}'\n: > {body_marker}\n",
                 encoding="utf-8",
@@ -591,9 +591,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, qa_text)
 
     def test_registry_dispatches_exact_archive_cutover(self):
-        aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
-            encoding="utf-8"
-        )
+        aggregate = (ROOT / "scripts/qa.py").read_text(encoding="utf-8")
         registry = json.loads(
             (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
         )

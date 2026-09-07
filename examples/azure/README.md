@@ -47,7 +47,7 @@ Use the component entrypoints and repository-static checks first:
 az bicep build --file examples/azure/infrastructure/main.bicep --stdout
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 ```
 
 These commands do not prove live subscription, AKS, Managed Identity, Key

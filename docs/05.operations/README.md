@@ -57,7 +57,7 @@ human-approved, operator-approved, bootstrap-only, break-glass 같은 실행
 `external secret operation`, `temporary kubeconfig` 같은 실행 경계를 밝혀야
 한다.
 
-`bash scripts/validate-repo-quality-gates.sh .`는 authored docs와 examples의
+`python3 scripts/qa.py full`는 authored docs와 examples의
 high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한다. 이
 검사는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git 파일 수정,
 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.

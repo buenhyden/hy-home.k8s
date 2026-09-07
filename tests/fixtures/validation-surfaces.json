@@ -68,7 +68,7 @@
     },
     {
       "name": "scripts",
-      "path": "scripts/validate-repo-quality-gates.sh",
+      "path": "scripts/qa.py",
       "expectedSurface": "scripts"
     },
     {
@@ -382,7 +382,7 @@
         "gitops/clusters/local/root-application.yaml",
         "infrastructure/tests/verify-contracts-static.sh",
         "policy/conftest/kubernetes.rego",
-        "scripts/validate-repo-quality-gates.sh",
+        "scripts/qa.py",
         "secrets/README.md",
         "tests/README.md",
         "traefik/traefik.yaml"
@@ -418,7 +418,7 @@
         "docs/90.references/research/0001-workspace-engineering/README.md",
         "docs/99.templates/README.md",
         "scripts/validate-links-and-owners.py",
-        "scripts/validate-repo-quality-gates.sh"
+        "scripts/qa.py"
       ],
       "expected": {
         "validators": [

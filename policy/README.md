@@ -75,7 +75,7 @@ updated: "2026-09-08"
 
 ```bash
 bash scripts/validate-policy-gates.sh .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 ```
 
 PASS는 저장소 정적 증적이다. 클러스터에 실제로 admission 정책이 적용되어 있는지는

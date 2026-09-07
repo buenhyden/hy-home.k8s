@@ -137,9 +137,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
     def test_repository_aggregate_delegates_instead_of_reimplementing_rule(
         self,
     ) -> None:
-        aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
-            encoding="utf-8"
-        )
+        aggregate = (ROOT / "scripts/qa.py").read_text(encoding="utf-8")
         owner = (ROOT / "scripts/validation/repository/quality.py").read_text(
             encoding="utf-8"
         )

@@ -10,7 +10,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 echo "==> Repository quality gates"
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 
 echo "==> GitOps object identity and deletion set"
 python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD

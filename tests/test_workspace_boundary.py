@@ -14,7 +14,7 @@ from unittest import mock
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-workspace-boundary.py"
-AGGREGATE_PATH = REPOSITORY_ROOT / "scripts" / "validate-repo-quality-gates.sh"
+AGGREGATE_PATH = REPOSITORY_ROOT / "scripts" / "qa.py"
 REGISTRY_PATH = REPOSITORY_ROOT / "scripts" / "validation" / "registry.json"
 OBJECT_ID = b"a" * 40
 README_RECORD = b"100644 " + OBJECT_ID + b" 0\t_workspace/README.md\0"

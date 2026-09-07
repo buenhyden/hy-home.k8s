@@ -17,7 +17,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 검증 선택과 command mapping의 단일 machine owner는
 `validation/registry.json`이다. 개별 validator는 자기 진단 의미를 소유하며,
-`validate-repo-quality-gates.sh`와 `run-validation-lane.py`는 선택된 owner를
+`qa.py`와 `run-validation-lane.py`는 선택된 owner를
 호출하고 결과를 정규화한다. production module은 top-level `tests/`를 import하거나
 `tests/fixtures/`를 runtime input으로 읽지 않는다.
 
@@ -55,7 +55,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `select-affected-surfaces.py` | pure path-to-surface selection projection |
 | `validate-affected-surfaces.py` | registry and tracked-path coverage validation |
 | `run-validation-lane.py` | bounded execution and result normalization for affected, staged, and all-files lanes |
-| `validate-repo-quality-gates.sh` | dependency preflight plus one registry-owned `all-files` runner invocation; contains no validator argv or rule implementation |
+| `qa.py` | supported QA entrypoint; resolves a profile's gate IDs from the registry and runs them over an isolated final-tree or exact-index snapshot; contains no validator argv or rule implementation |
 | `validation/repository/quality.py` | repository-wide rules not already owned by a focused validator |
 | `validation/current_executable_references.py` | current executable target and Git-first historical recovery distinction |
 
@@ -121,7 +121,7 @@ python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
 python3 scripts/validate-agent-governance.py --root .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 git diff --check
 ```
 

@@ -88,7 +88,7 @@ docs/05.operations/runbooks/
 
 ### Verification and Monitoring
 
-- Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
+- Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)와 `scripts/qa.py`를 기준으로 한다.
 - 작업 증적은 명령 출력, GitOps diff, ArgoCD sync 상태, dashboard/log snapshot, CI 결과 중 해당 Runbook이 요구하는 항목으로 남긴다.
 - live cluster, Vault, Kubernetes mutation은 human-approved bootstrap 또는 break-glass 작업에서만 실행한다.
 
