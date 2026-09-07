@@ -39,9 +39,7 @@ tests/_tmp_*/
 tests/_tmp_*
 
 # IDE
-.vscode/*
-!.vscode/extensions.json
-!.vscode/tasks.json
+.vscode/
 .idea/
 .DS_Store
 *.swp
