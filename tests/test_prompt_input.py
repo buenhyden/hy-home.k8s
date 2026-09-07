@@ -198,10 +198,14 @@ class PromptContractRepositoryTests(unittest.TestCase):
                 )
             subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
             subprocess.run(
-                ["git", "config", "user.email", "t@example.invalid"], cwd=root, check=True
+                ["git", "config", "user.email", "t@example.invalid"],
+                cwd=root,
+                check=True,
             )
             subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
-            subprocess.run(["git", "checkout", "--quiet", "-b", "work"], cwd=root, check=False)
+            subprocess.run(
+                ["git", "checkout", "--quiet", "-b", "work"], cwd=root, check=False
+            )
             (root / "seed.txt").write_text("seed\n", encoding="utf-8")
             subprocess.run(["git", "add", "seed.txt"], cwd=root, check=True)
             subprocess.run(
