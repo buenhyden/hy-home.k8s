@@ -74,6 +74,11 @@ class NativeBoundaryTests(unittest.TestCase):
             ".claude/hooks/k8s-pre-edit.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
+            # The common authority directory is a closed set checked in both
+            # directions, so an adopted directory must be present in the
+            # fixture; an empty one would not survive a Git-based snapshot.
+            ".agents/knowledge/README.md",
+            ".agents/prompts/README.md",
             *role["projections"].values(),
             *(skill["path"] for skill in self.registry["skills"]),
         ]

@@ -1927,7 +1927,18 @@ class ArchiveValidationTest(unittest.TestCase):
         # fixed thirteen cover proposal identity, Registry/template, and
         # durable-ref checks; proposal paths remain exact batched operands, so
         # this cost does not grow once per current document.
-        budget = 242
+        #
+        # It moved 242 -> 246 when the seven responsibility documents under
+        # `.agents/roles/` were folded into their router and deleted. MIG-0021
+        # names each of them as a replacement target, so vacating those paths
+        # sends the archived-bytes proof through Git-first recovery: branch
+        # resolution, the last add-or-modify commit, that commit's exact tree
+        # entry, and one batched object read. That is the same fixed four a
+        # vacating rename costs above, and it stays four rather than
+        # twenty-eight because all seven paths ride one batched operand list.
+        # Deleting more paths that a sealed record names would not move this
+        # cap again unless they need a separate recovery group.
+        budget = 246
         git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):
