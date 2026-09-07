@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.util
-import os
 import subprocess
 import sys
 import tempfile
@@ -60,11 +59,19 @@ class PromptInputBuilderTests(unittest.TestCase):
         self.root = Path(self._directory.name)
         (self.root / ".agents" / "prompts").mkdir(parents=True)
         subprocess.run(["git", "init", "--quiet"], cwd=self.root, check=True)
-        subprocess.run(["git", "config", "user.email", "t@example.invalid"], cwd=self.root, check=True)
-        subprocess.run(["git", "config", "user.name", "Test"], cwd=self.root, check=True)
+        subprocess.run(
+            ["git", "config", "user.email", "t@example.invalid"],
+            cwd=self.root,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "config", "user.name", "Test"], cwd=self.root, check=True
+        )
 
     def write(self, identifier: str, text: str) -> None:
-        (self.root / ".agents" / "prompts" / f"{identifier}.md").write_text(text, encoding="utf-8")
+        (self.root / ".agents" / "prompts" / f"{identifier}.md").write_text(
+            text, encoding="utf-8"
+        )
 
     def stage(self, name: str, content: str) -> None:
         (self.root / name).write_text(content, encoding="utf-8")
@@ -98,8 +105,23 @@ class PromptInputBuilderTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "PROMPT-INPUT-FORBIDDEN")
 
     def test_no_allowed_command_writes_to_the_repository_or_git_state(self) -> None:
-        write_verbs = {"add", "commit", "push", "checkout", "reset", "restore", "clean",
-                       "rebase", "merge", "stash", "tag", "branch", "apply", "mv", "rm"}
+        write_verbs = {
+            "add",
+            "commit",
+            "push",
+            "checkout",
+            "reset",
+            "restore",
+            "clean",
+            "rebase",
+            "merge",
+            "stash",
+            "tag",
+            "branch",
+            "apply",
+            "mv",
+            "rm",
+        }
         for argv in self.module.ALLOWED_COMMANDS:
             self.assertEqual(argv[0], "git", argv)
             self.assertNotIn(argv[1], write_verbs, argv)
@@ -108,11 +130,19 @@ class PromptInputBuilderTests(unittest.TestCase):
         self.write("sample", contract("git diff --cached", "Staged difference"))
         self.stage("staged.txt", "staged marker\n")
         before = subprocess.run(
-            ["git", "status", "--porcelain"], cwd=self.root, capture_output=True, text=True, check=True
+            ["git", "status", "--porcelain"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout
         self.module.assemble(self.root, "sample")
         after = subprocess.run(
-            ["git", "status", "--porcelain"], cwd=self.root, capture_output=True, text=True, check=True
+            ["git", "status", "--porcelain"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout
         self.assertEqual(before, after)
 
@@ -135,13 +165,25 @@ class PromptContractRepositoryTests(unittest.TestCase):
             self.assertIn(subject, [name for name, _ in declared], path.name)
 
     def test_identifiers_do_not_collide_with_skill_identifiers(self) -> None:
-        skills = {p.name for p in (REPOSITORY_ROOT / ".agents" / "skills").iterdir() if p.is_dir()}
-        identifiers = {p.stem for p in PROMPT_ROOT.glob("*.md") if p.name != "README.md"}
+        skills = {
+            p.name
+            for p in (REPOSITORY_ROOT / ".agents" / "skills").iterdir()
+            if p.is_dir()
+        }
+        identifiers = {
+            p.stem for p in PROMPT_ROOT.glob("*.md") if p.name != "README.md"
+        }
         self.assertEqual(skills & identifiers, set())
 
     def test_builder_runs_for_a_known_identifier(self) -> None:
         result = subprocess.run(
-            [sys.executable, str(BUILDER_PATH), "handoff", "--root", str(REPOSITORY_ROOT)],
+            [
+                sys.executable,
+                str(BUILDER_PATH),
+                "handoff",
+                "--root",
+                str(REPOSITORY_ROOT),
+            ],
             capture_output=True,
             text=True,
             timeout=120,

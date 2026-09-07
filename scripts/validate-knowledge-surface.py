@@ -109,7 +109,9 @@ def _words(text: str) -> list[str]:
 def _spans(words: Sequence[str], size: int) -> set[tuple[str, ...]]:
     if len(words) < size:
         return set()
-    return {tuple(words[index : index + size]) for index in range(len(words) - size + 1)}
+    return {
+        tuple(words[index : index + size]) for index in range(len(words) - size + 1)
+    }
 
 
 def _knowledge_documents(root: Path) -> list[str]:
@@ -128,15 +130,27 @@ def _check_index(root: Path, documents: Sequence[str]) -> list[Finding]:
     readme = root / KNOWLEDGE_README
     if not readme.is_file():
         if documents:
-            return [Finding("KNOWLEDGE-README-MISSING", KNOWLEDGE_README, "the surface has documents but no index")]
+            return [
+                Finding(
+                    "KNOWLEDGE-README-MISSING",
+                    KNOWLEDGE_README,
+                    "the surface has documents but no index",
+                )
+            ]
         return []
-    indexed = "\n".join(_section(_read_document(readme, KNOWLEDGE_README), ITEM_INDEX_HEADING))
+    indexed = "\n".join(
+        _section(_read_document(readme, KNOWLEDGE_README), ITEM_INDEX_HEADING)
+    )
     findings = []
     for document in documents:
         name = PurePosixPath(document).name
         if f"({name})" not in indexed:
             findings.append(
-                Finding("KNOWLEDGE-INDEX-MISSING", document, f"{KNOWLEDGE_README} does not link {name}")
+                Finding(
+                    "KNOWLEDGE-INDEX-MISSING",
+                    document,
+                    f"{KNOWLEDGE_README} does not link {name}",
+                )
             )
     return findings
 
@@ -148,7 +162,9 @@ def _check_document(root: Path, document: str) -> list[Finding]:
     findings: list[Finding] = []
 
     if not rows:
-        findings.append(Finding("KNOWLEDGE-POINTER-EMPTY", document, "no pointer row was found"))
+        findings.append(
+            Finding("KNOWLEDGE-POINTER-EMPTY", document, "no pointer row was found")
+        )
         return findings
 
     named = _named_paths(rows)
@@ -159,7 +175,11 @@ def _check_document(root: Path, document: str) -> list[Finding]:
             existing.append(candidate)
         else:
             findings.append(
-                Finding("KNOWLEDGE-PATH-MISSING", document, f"the row names `{candidate}`, which is not in the tree")
+                Finding(
+                    "KNOWLEDGE-PATH-MISSING",
+                    document,
+                    f"the row names `{candidate}`, which is not in the tree",
+                )
             )
 
     document_spans = _spans(_words(body), DUPLICATE_SPAN_WORDS)

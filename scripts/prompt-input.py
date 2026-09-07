@@ -9,7 +9,7 @@ import shlex
 import subprocess
 import sys
 from collections.abc import Sequence
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 
 PROMPT_ROOT = ".agents/prompts"
@@ -59,16 +59,22 @@ class PromptInputError(Exception):
 
 def contract_path(root: Path, identifier: str) -> Path:
     if not IDENTIFIER.match(identifier):
-        raise PromptInputError("PROMPT-IDENTIFIER", f"{identifier!r} is not a contract identifier")
+        raise PromptInputError(
+            "PROMPT-IDENTIFIER", f"{identifier!r} is not a contract identifier"
+        )
     candidate = root / PROMPT_ROOT / f"{identifier}.md"
     if not candidate.is_file():
-        raise PromptInputError("PROMPT-UNKNOWN", f"no contract at {PROMPT_ROOT}/{identifier}.md")
+        raise PromptInputError(
+            "PROMPT-UNKNOWN", f"no contract at {PROMPT_ROOT}/{identifier}.md"
+        )
     return candidate
 
 
 def read_contract(path: Path) -> str:
     if path.stat().st_size > MAX_CONTRACT_BYTES:
-        raise PromptInputError("PROMPT-CONTRACT-SIZE", f"{path.name} exceeds the bounded read size")
+        raise PromptInputError(
+            "PROMPT-CONTRACT-SIZE", f"{path.name} exceeds the bounded read size"
+        )
     try:
         return path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:
@@ -102,7 +108,9 @@ def declared_inputs(text: str) -> list[tuple[str, tuple[str, ...]]]:
         if match:
             rows.append([cell.strip() for cell in match.group("cells").split("|")])
     if len(rows) < 2:
-        raise PromptInputError("PROMPT-INPUTS-EMPTY", "the contract declares no input row")
+        raise PromptInputError(
+            "PROMPT-INPUTS-EMPTY", "the contract declares no input row"
+        )
 
     inputs: list[tuple[str, tuple[str, ...]]] = []
     for cells in rows[1:]:
@@ -111,7 +119,9 @@ def declared_inputs(text: str) -> list[tuple[str, tuple[str, ...]]]:
         name = cells[0]
         codes = INLINE_CODE.findall(cells[1])
         if len(codes) != 1:
-            raise PromptInputError("PROMPT-INPUT-COMMAND", f"{name} must declare exactly one command")
+            raise PromptInputError(
+                "PROMPT-INPUT-COMMAND", f"{name} must declare exactly one command"
+            )
         try:
             argv = tuple(shlex.split(codes[0]))
         except ValueError as exc:
@@ -150,7 +160,10 @@ def run_input(root: Path, name: str, argv: Sequence[str]) -> str:
         )
     output = completed.stdout
     if len(output) > MAX_INPUT_CHARACTERS:
-        output = output[:MAX_INPUT_CHARACTERS] + "\n[truncated at the builder's bounded read size]\n"
+        output = (
+            output[:MAX_INPUT_CHARACTERS]
+            + "\n[truncated at the builder's bounded read size]\n"
+        )
     return output
 
 
@@ -163,7 +176,8 @@ def assemble(root: Path, identifier: str) -> str:
     names = [name for name, _ in inputs]
     if subject not in names:
         raise PromptInputError(
-            "PROMPT-SUBJECT", f"the subject {subject!r} is not one of the declared inputs"
+            "PROMPT-SUBJECT",
+            f"the subject {subject!r} is not one of the declared inputs",
         )
 
     collected: list[tuple[str, tuple[str, ...], str]] = []
@@ -177,9 +191,27 @@ def assemble(root: Path, identifier: str) -> str:
             )
         collected.append((name, argv, output))
 
-    parts = [f"# Prompt request: {identifier}", "", "## Contract", "", contract_text.strip(), "", "## Collected inputs", ""]
+    parts = [
+        f"# Prompt request: {identifier}",
+        "",
+        "## Contract",
+        "",
+        contract_text.strip(),
+        "",
+        "## Collected inputs",
+        "",
+    ]
     for name, argv, output in collected:
-        parts += [f"### {name}", "", f"Command: `{' '.join(argv)}`", "", "```", output.rstrip("\n"), "```", ""]
+        parts += [
+            f"### {name}",
+            "",
+            f"Command: `{' '.join(argv)}`",
+            "",
+            "```",
+            output.rstrip("\n"),
+            "```",
+            "",
+        ]
     return "\n".join(parts).rstrip("\n") + "\n"
 
 
@@ -187,7 +219,9 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Assemble a declared prompt request on standard output. Makes no model call."
     )
-    parser.add_argument("identifier", help="contract identifier, equal to its file stem")
+    parser.add_argument(
+        "identifier", help="contract identifier, equal to its file stem"
+    )
     parser.add_argument("--root", default=".")
     return parser.parse_args(argv)
 

@@ -645,6 +645,7 @@
         "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
+        "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
@@ -671,6 +672,7 @@
         "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
+        "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
@@ -697,6 +699,7 @@
         "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
+        "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"

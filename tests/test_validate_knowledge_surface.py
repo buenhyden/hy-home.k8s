@@ -51,7 +51,9 @@ def load_validator():
     return module
 
 
-def document(rows: str, prose: str = "This map points at owners and states no policy of its own.") -> str:
+def document(
+    rows: str, prose: str = "This map points at owners and states no policy of its own."
+) -> str:
     return (
         FRONTMATTER
         + "# Sample Map\n\n"
@@ -86,12 +88,17 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
 
     def codes(self):
-        return [finding.code for finding in self.module.validate_knowledge_surface(self.root)]
+        return [
+            finding.code
+            for finding in self.module.validate_knowledge_surface(self.root)
+        ]
 
     def test_valid_document_passes(self) -> None:
         self.write_readme("map.md")
         (self.surface / "map.md").write_text(
-            document("| Owner | `owner/` | `owner/README.md` | The owner keeps its scope |"),
+            document(
+                "| Owner | `owner/` | `owner/README.md` | The owner keeps its scope |"
+            ),
             encoding="utf-8",
         )
         self.assertEqual(self.codes(), [])
@@ -99,7 +106,9 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
     def test_missing_owner_path_fails(self) -> None:
         self.write_readme("map.md")
         (self.surface / "map.md").write_text(
-            document("| Owner | `absent/` | `owner/README.md` | The owner keeps its scope |"),
+            document(
+                "| Owner | `absent/` | `owner/README.md` | The owner keeps its scope |"
+            ),
             encoding="utf-8",
         )
         self.assertIn("KNOWLEDGE-PATH-MISSING", self.codes())
@@ -107,7 +116,9 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
     def test_missing_entry_path_fails(self) -> None:
         self.write_readme("map.md")
         (self.surface / "map.md").write_text(
-            document("| Owner | `owner/` | `owner/ABSENT.md` | The owner keeps its scope |"),
+            document(
+                "| Owner | `owner/` | `owner/ABSENT.md` | The owner keeps its scope |"
+            ),
             encoding="utf-8",
         )
         self.assertIn("KNOWLEDGE-PATH-MISSING", self.codes())
@@ -131,7 +142,9 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
     def test_unindexed_document_fails(self) -> None:
         self.write_readme()
         (self.surface / "map.md").write_text(
-            document("| Owner | `owner/` | `owner/README.md` | The owner keeps its scope |"),
+            document(
+                "| Owner | `owner/` | `owner/README.md` | The owner keeps its scope |"
+            ),
             encoding="utf-8",
         )
         self.assertIn("KNOWLEDGE-INDEX-MISSING", self.codes())
