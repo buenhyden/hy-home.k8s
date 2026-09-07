@@ -421,7 +421,6 @@ premise was already withdrawn on 2026-09-05 and stays withdrawn.
   adjudicated here. Refresh when a role is proposed for adoption, or when the
   licence field changes.
 
-
 ## Related Documents
 
 - [Model routing](m0010-agent-model-routing-and-configuration.md)

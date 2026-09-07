@@ -511,7 +511,6 @@ observation or an explicit absence; it is never inferred from the static column.
   is added or retired, when the registry counts change, or when a runtime cell
   gains its first observation.
 
-
 ## Related Documents
 
 - [Harness and loop engineering](m0002-harness-and-loop-engineering.md)

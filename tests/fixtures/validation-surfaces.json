@@ -154,6 +154,7 @@
           "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
+          "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
           "repository-quality"
@@ -176,6 +177,7 @@
           "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
+          "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
           "repository-quality"
@@ -202,6 +204,7 @@
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
+          "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
           "policy-gates",
@@ -393,6 +396,7 @@
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
+          "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
           "policy-gates",
@@ -505,6 +509,7 @@
           "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
+          "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
           "repository-quality"
