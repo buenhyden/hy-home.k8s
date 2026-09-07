@@ -25,14 +25,23 @@ loaders; the entire directory is not an automatic instruction loader.
 | [roles/registry.json](roles/registry.json) | Role IDs, permissions, skill references and native paths |
 | `skills/<id>/SKILL.md` | Callable common procedures; registry determines the package set |
 | `workflows/` | Ordinary lifecycle/delegation procedures, explicitly read |
+| `knowledge/` | Hand-maintained pointers to canonical owners; states no policy of its own |
+| `prompts/` | Input and output contracts for repeatable authoring requests |
 
 ## Configuration Boundary
 
 Provider differences and native adapters live in [.claude/](../.claude/README.md)
 and [.codex/](../.codex/README.md). Edit common meaning here; retain native syntax
-there. No role copies or provider generator own a second policy. Optional
-memory, rule, prompt and script directories are not adopted. MIG-0009's memory
-retirement remains effective.
+there. No role copies or provider generator own a second policy.
+[ADR-0036](../docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
+adopts `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
+affected-surface coverage and at least one named consumer, so a directory
+without a reader is not created. Evaluation, rule and script directories stay
+unadopted, each for its own reason: `evals/` already owns the evaluation
+runner, its cases and its validation surface; a rule directory would duplicate
+policy `governance/` already owns; and `scripts/` already owns executable
+tooling at the repository root. MIG-0009's memory retirement remains
+effective.
 
 ## Validation
 
@@ -57,4 +66,4 @@ execution registry owns mutable gate commands and limits.
 - [Document profiles and templates](../docs/99.templates/README.md)
 - [Repository documentation](../docs/README.md)
 - [Memory retirement: MIG-0009 through the archive index](../docs/98.archive/README.md)
-- [Authority decision](../docs/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+- [Authority decision](../docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)

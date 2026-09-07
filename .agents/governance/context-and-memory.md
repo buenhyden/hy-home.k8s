@@ -56,8 +56,10 @@ canonical owners before using remembered paths, results, or approvals.
   `memory/` directory under Spec 0065; their bytes are recoverable from Git
   through `MIG-0007` and `MIG-0009`. Progress and task status belong to the
   owning Spec Task. No governance memory directory remains, so durable
-  knowledge routes to the responsible policy, skill, operating document, or
-  reference owner instead.
+  knowledge stays with the responsible policy, skill, operating document, or
+  reference owner. `.agents/knowledge/` maps those owners
+  without restating them; it is a pointer surface, never a second store of
+  current state.
 - Ignored checkpoints are optional recovery aids. Static validation of a
   synthetic checkpoint proves neither actual checkpoint execution nor provider
   memory, hook, or compaction behavior.
