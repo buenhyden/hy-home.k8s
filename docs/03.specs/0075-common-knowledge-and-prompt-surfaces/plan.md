@@ -2,7 +2,7 @@
 title: "Common Knowledge and Prompt Surfaces Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-07"
 layer: "specs"

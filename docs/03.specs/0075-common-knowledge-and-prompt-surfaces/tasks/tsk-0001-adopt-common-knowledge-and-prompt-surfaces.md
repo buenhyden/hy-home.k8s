@@ -2,7 +2,7 @@
 title: "Adopt Common Knowledge and Prompt Surfaces"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-07"
 layer: "specs"
@@ -16,7 +16,7 @@ artifact_id: "SPEC-0075-TSK-0001"
 This Task owns execution for [SPEC-0075](../spec.md) through the ordered work
 packages in [the plan](../plan.md). It records per-package results, the
 evidence lane each result belongs to, the approval boundaries observed, and the
-limits that remain unobserved. It is in progress: the packages below record their
+limits that remain unobserved. It is done: the packages below record their
 actual state, and a row that has not run says so rather than anticipating an
 outcome.
 
@@ -167,6 +167,20 @@ already prices, and 246 to 248 for MIG-0023's single new declared source
 commit, which costs the fixed two. The ledger still separates an explained
 increment from drift.
 
+The handoff run is recorded: `python3 scripts/qa.py full` reported all
+twenty-two gates passing on the working tree at commit `92ae99d0`, with a clean
+index and a clean working tree, tool identities `Python 3.12.3`, `git 2.43.0`,
+`ruff 0.15.12` and `pre-commit 4.5.1`, over 1065 paths. The standalone unit
+suite reported 893 tests OK with four skips.
+
+Three failures were found and each was repaired at its cause rather than
+explained away. Naming the pattern is the useful part: every one was found by a
+check running in an environment the change had not considered — an index
+snapshot where an empty directory does not exist, a closed directory set
+compared in both directions, and a single-branch clone with no `main`. The last
+was a contract defect, not a test defect: the handoff contract declared
+`git log --oneline main..HEAD`, and a base ref is a property of a checkout.
+
 One measurement error is recorded so the result is not misread. The first
 full-suite run reported forty-six failures; forty-five were an artifact of
 running it against an uncommitted working tree, because
@@ -212,6 +226,36 @@ hosted, or live evidence.
 
 [SPEC-0075](../spec.md) owns the criteria and [the plan](../plan.md) owns the
 ordered packages and their entry gates. This Task owns results and limits.
+
+### Handoff Evidence
+
+- **Scope and acceptance:** SPEC-0075 VAL-CKP-001 through VAL-CKP-011, all
+  fourteen work packages. 77 files changed, 2491 insertions, 448 deletions.
+- **Snapshot:** branch `docs/0075-knowledge-and-prompt-surfaces`, HEAD
+  `92ae99d0`, diverged from `main` at `22ff2f4d`. `main` has not moved.
+- **Commands and results:** `python3 scripts/qa.py full` 22/22 PASS;
+  `python3 -m unittest discover -s tests -t .` 893 OK, 4 skipped;
+  `python3 -B scripts/archive_recovery.py --verify` PASS for MIG-0023.
+- **Lanes:** repository-static only. No `ci` and no `remote/live` result.
+- **Approval boundary:** local edits and reviewed local commits on a task-owned
+  branch were authorized. Push, pull request, merge, release, branch or
+  worktree deletion were not authorized and were not performed. No live
+  Kubernetes, ArgoCD or Vault operation ran. No credential was read. The global
+  Git configuration was not modified.
+- **Reviewer identity and disposition:** none. No independent reviewer, second
+  model or hosted CI run examined this branch. What exists is mechanical
+  self-consistency evidence, described under Deferred items.
+- **Rollback:** each commit is scoped to one owner boundary and reverts
+  independently, with two exceptions that must revert together: `4db215b3`
+  removed the seven responsibility documents and `25cdb369` sealed the
+  migration record that closes their archive routes. Reverting the first
+  without the second leaves a sealed record naming a path that exists again.
+- **Residual risk:** MIG-0021's `replacement` field still names the seven
+  removed paths. It is a dated sealed record and resolves by pinned blob, so
+  every gate passes and recovery works, but a reader following that field needs
+  the MIG-0023 hop to reach the router.
+- **Next owner:** the user, for the integration decision and for every deferred
+  item below.
 
 ### Lifecycle Traceability
 
