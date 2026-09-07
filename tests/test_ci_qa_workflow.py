@@ -141,6 +141,17 @@ class CiQaWorkflowTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr.decode())
             self.assertTrue(git("symbolic-ref", "HEAD").strip().startswith("refs/heads/"))
             self.assertEqual(git("rev-parse", "HEAD").strip(), selected)
+    def test_pre_commit_is_published_to_the_validator_search_path(self):
+        """Validators use a fixed system path, not the interpreter's bin dir."""
+
+        installs = [
+            step.get("run", "")
+            for step in self._qa_steps()
+            if "/usr/local/bin/pre-commit" in step.get("run", "")
+        ]
+        self.assertEqual(len(installs), 1)
+        self.assertIn("sudo install", installs[0])
+
 
 if __name__ == "__main__":
     unittest.main()

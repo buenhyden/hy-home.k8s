@@ -65,6 +65,14 @@ jobs:
       - name: Install repository validation dependencies
         run: |
           python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
+      - name: Publish pre-commit to the validator search path
+        run: |
+          set -euo pipefail
+          # Validators run with a fixed system search path, so the interpreter's
+          # own script directory is never searched. Publish the console script
+          # the way Gitleaks is published, or the gate reports its required tool
+          # as unavailable and the pre-commit hooks silently never run.
+          sudo install -o root -g root -m 0755 "$(command -v pre-commit)" /usr/local/bin/pre-commit
       - name: Install Gitleaks
         run: |
           set -euo pipefail
