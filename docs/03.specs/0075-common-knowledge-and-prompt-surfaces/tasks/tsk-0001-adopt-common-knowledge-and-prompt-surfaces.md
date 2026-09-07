@@ -144,6 +144,36 @@ twenty-one gates passing on the working tree containing the two draft
 specifications. Any gate that stops passing during implementation is a
 regression of the change that preceded it.
 
+The final tree carries twenty-two gates, because this package added one. Three
+intermediate full runs reported twenty of twenty-two; every failure was a
+regression of this branch and each was repaired rather than explained.
+
+The deepest of them was not caught by the gate that looked closest to it.
+Deleting the seven responsibility documents left fourteen composed archive
+routes terminating at paths the tree no longer had, because MIG-0021 names each
+deleted path as the replacement target for a retired Stage 00 document.
+`archive-cutover` passed throughout, because it resolves a replacement by
+pinned blob identity and a blob survives deletion. Only
+`test_successor_record_closes_its_current_and_predecessor_endpoints` asked
+whether a reader following the route lands anywhere. MIG-0023 closes those
+routes with the router as the successor endpoint, and it had to be created
+`draft` and sealed in a second commit because the lifecycle domain allows only
+`draft` at creation while the archive validators parse only `sealed`.
+
+One documented cost budget moved twice, and both increments are attributed
+rather than raised: 242 to 246 for the seven vacated paths, which route their
+archived-bytes proof through Git-first recovery at the fixed four the ledger
+already prices, and 246 to 248 for MIG-0023's single new declared source
+commit, which costs the fixed two. The ledger still separates an explained
+increment from drift.
+
+One measurement error is recorded so the result is not misread. The first
+full-suite run reported forty-six failures; forty-five were an artifact of
+running it against an uncommitted working tree, because
+`ARCHIVE-MIGRATION-STAGED-DRIFT` compares the index against the worktree. The
+suite means nothing unless the index is clean. Only one of the forty-six was a
+real regression.
+
 One observation is already recorded as a limitation rather than a control: on
 this workstation the global `core.hooksPath` points outside the repository, so
 the repository's commit-time hooks, including the conventional-commit check, do
@@ -160,6 +190,18 @@ Deferred items, each with its blocker and next owner:
   hold behind SPEC-0047, and each citation is lineage rather than navigation
   under the clarified rule, so none was edited. Next owner: those packages when
   the hold lifts.
+- MIG-0021 names the seven deleted responsibility documents as replacement
+  targets. The record is sealed and resolves by pinned blob identity, so the
+  archive gates pass and recovery still works, but a reader following the
+  `replacement` field lands on a path that no longer exists. The successor is
+  now a section anchor in the responsibility router. Sealed records are not
+  rewritten, so this is recorded rather than corrected. Next owner: the archive
+  owner, if a forward pointer is ever wanted.
+- No independent reviewer ran. No second model, no human reviewer and no hosted
+  CI run reviewed this branch. What stands in for review is mechanical: the
+  repository's own validators, the unit suite, and two mutation checks that
+  prove the new tests fail when the behaviour they guard is removed. That is
+  evidence of self-consistency, not of review. Next owner: the user.
 - The pin disagreement recorded as `CLM-WERPC-016-03` in the reference pack
   remains open and was not adjudicated here.
 

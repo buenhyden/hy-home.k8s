@@ -1938,7 +1938,14 @@ class ArchiveValidationTest(unittest.TestCase):
         # twenty-eight because all seven paths ride one batched operand list.
         # Deleting more paths that a sealed record names would not move this
         # cap again unless they need a separate recovery group.
-        budget = 246
+        #
+        # It moved 246 -> 248 when MIG-0023 sealed those seven absorptions. That
+        # is the fixed two a new declared source commit costs: one batched read
+        # plus its reachability check. It is two rather than the seven a
+        # retention ledger costs because every row's replacement is the
+        # responsibility router, a tracked file the corpus already proves, so no
+        # row adds a target proof of its own.
+        budget = 248
         git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):
