@@ -1,10 +1,10 @@
 ---
 title: "GitHub Routing and CI Evidence Technical Specification"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-08"
 layer: "specs"
 artifact_id: "SPEC-0048"
 ---
@@ -99,8 +99,12 @@ not merely presence of similar strings.
 
 - `ci.yml` remains the required workflow and always exposes `ci-summary` for
   supported events.
-- `pre-commit`, `repo-quality-static`, `agent-governance-static`, and
-  `manifest-static` remain independent evidence jobs.
+- One `qa` job owns validation execution. The former `pre-commit`,
+  `repo-quality-static`, `agent-governance-static`, and `manifest-static` jobs
+  were consolidated into it under
+  [ADR-0034](../../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)
+  and SPEC-0072. This package inherits that topology; its remaining obligations
+  are routing and projection, not job count.
 - A focused validator has one primary execution owner inside a lane. A job may
   consume or aggregate its result without rerunning the same command graph.
 - The aggregate repository script does not absorb a focused agent-governance
@@ -128,8 +132,9 @@ Implementation proceeds in five steps:
 2. Add a validator that resolves surface routes, expands the tracked corpus,
    evaluates effective labeler and CODEOWNERS behavior, and emits deterministic
    diagnostics.
-3. Add `.agents/**` and `.gemini/**` to the `area/agent` label projection and
-   explicit agent ownership class without changing the global fallback owner.
+3. Add `.agents/**` to the `area/agent` label projection and explicit agent
+   ownership class without changing the global fallback owner. The retired
+   `.gemini/**` surface is not projected; SPEC-0070 owns its residue.
 4. Correct `.github/repository-surface.md` so the changelog row describes tag-only
    execution and documents intentional CI lane ownership without copying the
    contract inventory.
@@ -236,9 +241,9 @@ observed repository and SHA.
 
 - **VAL-GRCE-001**: The routing contract/schema rejects copied routes, unknown
   surfaces, duplicate mappings, unowned exceptions, and unsupported versions.
-- **VAL-GRCE-002**: `.agents/**`, `.claude/**`, `.codex/**`, `.gemini/**`, root
-  provider gateways, and Common agent governance resolve the expected agent label
-  and explicit CODEOWNERS class.
+- **VAL-GRCE-002**: `.agents/**`, `.claude/**`, `.codex/**`, root provider
+  gateways, and Common agent governance resolve the expected agent label and
+  explicit CODEOWNERS class. The retired `.gemini/**` surface is out of scope.
 - **VAL-GRCE-003**: Native labeler and CODEOWNERS effective behavior matches
   every mapped tracked path and all negative ordering fixtures.
 - **VAL-GRCE-004**: Current workflow triggers, job ownership, full-SHA actions,

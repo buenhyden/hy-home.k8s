@@ -1,10 +1,10 @@
 ---
 title: "GitHub Routing and CI Evidence Implementation Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-08"
 layer: "specs"
 artifact_id: "SPEC-0048-PLAN-0001"
 ---
@@ -54,17 +54,19 @@ CLI metadata-only reads.
 ## Context
 
 [Spec 048](spec.md)
-consumes the committed Spec 047 target matrix. Current drift includes missing
-`.agents/**` and `.gemini/**` `area/agent` projections, incomplete explicit
-CODEOWNERS coverage for shared/provider surfaces, and a GitHub hub statement
-that describes the tag-only changelog workflow as manually dispatchable.
+consumes the committed Spec 047 target matrix. Current drift includes the
+missing `.agents/**` `area/agent` projection, incomplete explicit CODEOWNERS
+coverage for shared/provider surfaces, and a GitHub hub statement that
+describes the tag-only changelog workflow as manually dispatchable. The retired
+`.gemini/**` surface is not projected; SPEC-0070 owns its residue.
 
-The current `ci.yml` keeps `pre-commit`, `repo-quality-static`,
-`agent-governance-static`, and `manifest-static` as distinct evidence jobs and
-aggregates them through `ci-summary`. This Plan does not merge those jobs
-without exact semantic identity proof. A dated remote observation may record
-workflow and branch metadata, but a historical run is valid only for its exact
-SHA and current unpushed hosted evidence remains `DEFER`.
+The current `ci.yml` runs one `qa` job and aggregates it through `ci-summary`.
+The former `pre-commit`, `repo-quality-static`, `agent-governance-static`, and
+`manifest-static` jobs were consolidated under SPEC-0072, so this Plan inherits
+that topology rather than restoring or re-merging them. A dated remote
+observation may record workflow and branch metadata, but a historical run is
+valid only for its exact SHA and current unpushed hosted evidence remains
+`DEFER`.
 
 ### Global Constraints
 
@@ -261,8 +263,9 @@ import CLI side effects or duplicate route data.
 
 ### Task 4: GRCE-003 and GRCE-004 — align native projections and routing
 
-- [ ] Add `.agents/**` and `.gemini/**` to `area/agent`; preserve the existing
-  `.claude/**`, `.codex/**`, gateways, and Stage 00 rules.
+- [ ] Add `.agents/**` to `area/agent`; preserve the existing `.claude/**`,
+  `.codex/**`, gateways, and Stage 00 rules. Do not project the retired
+  `.gemini/**` surface.
 
 - [ ] Add explicit CODEOWNERS entries for shared/provider surfaces and root
   gateway files when required by the contract. Test global fallback and
