@@ -1,13 +1,14 @@
 ---
 title: "Common Agents Authority and Native Skill Routing"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "architecture"
 artifact_id: "ADR-0035"
 supersedes: "ADR-0034"
+superseded_by: "ADR-0036"
 ---
 
 # ADR-0035: Common Agents Authority and Native Skill Routing
@@ -18,8 +19,11 @@ The migration request authorized moving the common authority to `.agents/`
 and retiring the former documentation governance root. Current local execution
 authority and the completed user-authorized main merge are recorded in the
 [owning Task](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries).
-This ADR is accepted, so no accepted decision now prescribes an authority
-location the repository contradicts. Acceptance records the durable choice; it
+This ADR is superseded by
+[ADR-0036](0036-common-knowledge-and-prompt-surfaces.md), which revises only the
+unadopted-directory clause in the Decision below and carries every other clause
+forward. The body here stays intact as evidence of the decision taken at the
+time. Acceptance records the durable choice; it
 does not establish native discovery, permission enforcement, model resolution
 or hook delivery, which remain separately observable evidence.
 This decision supersedes ADR-0034. It replaces that decision's
@@ -90,3 +94,4 @@ endpoints as well as files; moving the folder alone is insufficient.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ADR-0034](0034-stage-00-governance-and-unified-quality-gates.md) | Narrows authority location and skill routing; preserves QA, security and CD decisions | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | Supersedes this decision; revises the unadopted-directory clause only | [SPEC-0075](../../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md) |
