@@ -2,7 +2,7 @@
 title: "Adopt Common Knowledge and Prompt Surfaces"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-07"
 layer: "specs"
@@ -16,9 +16,13 @@ artifact_id: "SPEC-0075-TSK-0001"
 This Task owns execution for [SPEC-0075](../spec.md) through the ordered work
 packages in [the plan](../plan.md). It records per-package results, the
 evidence lane each result belongs to, the approval boundaries observed, and the
-limits that remain unobserved. It is queued: no work package has started, and
-every result column below records that state rather than an anticipated
+limits that remain unobserved. It is in progress: the packages below record their
+actual state, and a row that has not run says so rather than anticipating an
 outcome.
+
+WP-001 and WP-002 landed before this record was reconciled, so the earlier
+`queued` state understated the tree. That gap is corrected here rather than
+backdated: the rows carry the commits that produced them.
 
 ## Inputs
 
@@ -44,8 +48,8 @@ outcome.
 
 | ID                                    | Upstream criterion | Work item                                                                  | Owner    | Status | Result      | Evidence    |
 | ------------------------------------- | ------------------ | -------------------------------------------------------------------------- | -------- | ------ | ----------- | ----------- |
-| [WORK-001](../plan.md#work-breakdown) | VAL-CKP-002        | Author the successor decision and mark the prior decision superseded        | platform | Queued | Not started | Not started |
-| [WORK-002](../plan.md#work-breakdown) | VAL-CKP-002        | Align the governance README and the context-and-memory routing sentence     | platform | Queued | Not started | Not started |
+| [WORK-001](../plan.md#work-breakdown) | VAL-CKP-002        | Author the successor decision and mark the prior decision superseded        | platform | Done | ADR-0036 restates ADR-0035's authority-location, skill-routing, gateway, preservation and validation clauses and revises only the unadopted-directory clause; it records the reason each remaining optional directory stays unadopted and why the adopted surface is not the retired generated index. ADR-0035 carries `superseded_by` and a reciprocal successor row with its body intact; both decisions are indexed | Commits `4583e88c`, `22ff2f4d`; strict lifecycle and link validation PASS |
+| [WORK-002](../plan.md#work-breakdown) | VAL-CKP-002        | Align the governance README and the context-and-memory routing sentence     | platform | Done | The governance README structure table names both surfaces, the configuration boundary states the adopted position with a per-directory reason for the three that stay unadopted, and the authority-decision link moves to ADR-0036. The context-and-memory routing sentence names the map without granting it authority | Commit `38136bec`; `grep -rn "are not adopted" .agents/ docs/02.architecture/` returns no match; staged profile 6 gates PASS |
 | [WORK-003](../plan.md#work-breakdown) | VAL-CKP-003        | Add the knowledge and prompt profiles with templates                        | platform | Queued | Not started | Not started |
 | [WORK-004](../plan.md#work-breakdown) | VAL-CKP-001        | Create the knowledge surface and register it in the surface contract        | platform | Queued | Not started | Not started |
 | [WORK-005](../plan.md#work-breakdown) | VAL-CKP-004        | Add the knowledge owner-path and non-duplication validator                  | platform | Queued | Not started | Not started |
@@ -92,7 +96,11 @@ residue owned by earlier work and are not removed by this Task.
 
 ## Verification Summary
 
-No work package has executed, so this Task records no result yet.
+Two work packages have executed. WP-001 produced the successor decision and the
+supersession record; WP-002 removed the superseded position from the active
+policy text. Each ran the staged profile against its own index snapshot before
+its commit, and each reported every gate passing. Neither result is provider,
+hosted, or live evidence.
 
 The pre-change baseline is recorded: `python3 scripts/qa.py full` reported
 twenty-one gates passing on the working tree containing the two draft
@@ -122,8 +130,8 @@ ordered packages and their entry gates. This Task owns results and limits.
 
 | Criterion / work item                 | Result      | Evidence                                                          |
 | ------------------------------------- | ----------- | ----------------------------------------------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | Not started | Queued; entry gate VAL-CKP-002 approved with the specification     |
-| [WORK-002](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-001                                        |
+| [WORK-001](../plan.md#work-breakdown) | Done        | ADR-0036 accepted, ADR-0035 superseded with a reciprocal row, both indexed |
+| [WORK-002](../plan.md#work-breakdown) | Done        | No active file states the superseded position; staged profile PASS        |
 | [WORK-003](../plan.md#work-breakdown) | Not started | Queued; profile coverage gap recorded in the plan Context          |
 | [WORK-004](../plan.md#work-breakdown) | Not started | Queued; depends on WORK-003                                        |
 | [WORK-005](../plan.md#work-breakdown) | Not started | Queued; failing validator cases enumerated in the plan             |
