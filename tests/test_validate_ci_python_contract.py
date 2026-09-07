@@ -1446,5 +1446,6 @@ class CiPythonShellGitSubcommandTests(unittest.TestCase):
             with self.subTest(command=command):
                 self.assertFalse(self._allowed(command))
 
+
 if __name__ == "__main__":
     unittest.main()

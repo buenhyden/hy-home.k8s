@@ -108,6 +108,7 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertEqual(len(binding), 1)
 
         with tempfile.TemporaryDirectory(prefix="ci-binding-") as temporary:
+
             def git(*args):
                 return subprocess.run(
                     ["git", *args], cwd=temporary, capture_output=True, check=True
@@ -139,8 +140,11 @@ class CiQaWorkflowTests(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 0, result.stderr.decode())
-            self.assertTrue(git("symbolic-ref", "HEAD").strip().startswith("refs/heads/"))
+            self.assertTrue(
+                git("symbolic-ref", "HEAD").strip().startswith("refs/heads/")
+            )
             self.assertEqual(git("rev-parse", "HEAD").strip(), selected)
+
     def test_pre_commit_is_published_to_the_validator_search_path(self):
         """Validators use a fixed system path, not the interpreter's bin dir."""
 

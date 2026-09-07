@@ -58,6 +58,8 @@ _INTERRUPT_SIGNALS = tuple(
     if sig is not None
 )
 _PROCESS_OWNERSHIP_LOCK = threading.Lock()
+
+
 def system_tool_candidates(name: str) -> tuple[Path, ...]:
     """Return the fixed system locations one trusted tool may occupy."""
 

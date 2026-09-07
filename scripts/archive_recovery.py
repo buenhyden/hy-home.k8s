@@ -644,7 +644,9 @@ def _named_refs_retaining_head(root: Path) -> tuple[str, ...]:
     # so an undecodable name is skipped rather than failing the whole lookup.
     local: list[str] = []
     remote: list[str] = []
-    for ref_name in listing.stdout.decode("utf-8", errors="surrogateescape").splitlines():
+    for ref_name in listing.stdout.decode(
+        "utf-8", errors="surrogateescape"
+    ).splitlines():
         if _DURABLE_REF.fullmatch(ref_name) is None:
             continue
         (local if ref_name.startswith("refs/heads/") else remote).append(ref_name)

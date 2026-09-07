@@ -1199,5 +1199,6 @@ class CurrentNamedDurableRefTest(unittest.TestCase):
                 head,
             )
 
+
 if __name__ == "__main__":
     unittest.main()
