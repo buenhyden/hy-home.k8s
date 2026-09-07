@@ -4,7 +4,7 @@ version: "1.3.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "specs"
 artifact_id: "SPEC-0054"
 ---
@@ -119,8 +119,9 @@ SPEC-0054-TSK-0011 is the current parent acceptance record.
   `docs/05.operations/incidents/<year>/inc-####-<slug>/`.
 - Consolidate templates, registries, validators, fixtures, navigation, and
   cross-links with the document taxonomy.
-- Keep root `DESIGN.md` as the canonical UI and design-system guide rather
-  than treating it as an SDLC work-unit design artifact.
+- Keep UI and design-system rules outside the SDLC work-unit sequence. This
+  workspace carries no user interface and no such document exists here; if one
+  is introduced it does not become a Stage 03 design artifact.
 - Consolidate the shared AI-agent control plane and provider-specific native
   adapters without claiming unobserved runtime behavior.
 - Reduce validator, aggregate-gate, fixture, and mutable-SHA complexity while
@@ -678,10 +679,12 @@ and recovery. Task records own execution and evidence. A long-lived structural
 view is promoted to an Architecture Description, and a long-lived important
 choice is promoted to an ADR before a legacy design file is removed.
 
-Root `DESIGN.md` is not part of that SDLC artifact sequence. It is the
-canonical human-readable owner for UI and design-system color, typography,
-component, and interaction rules. Validators and indexes must not reinterpret
-it as a work-unit technical design.
+UI and design-system rules are not part of that SDLC artifact sequence. This
+workspace carries no user interface, so no such owner exists in the tree; the
+earlier wording named a root `DESIGN.md` that no commit in this repository has
+ever contained. If one is introduced at the repository root it owns colour,
+typography, component, and interaction rules, and validators and indexes must
+not reinterpret it as a work-unit technical design.
 
 ### C-SDLC-012 — control-plane simplicity and evidence boundary
 

@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `quality-engineer` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [quality](quality.md)
+skill procedure before work. Read [quality](README.md#quality)
 for the broader responsibility context.
 
 ## Current Contract

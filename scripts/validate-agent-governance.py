@@ -410,17 +410,7 @@ def _projection_files(root: Path, relative: PurePosixPath, suffix: str) -> set[s
                     )
                 if entry.name.endswith(suffix) and not (
                     relative == REGISTRY_PROJECTION_ROOTS["neutral"]
-                    and entry.name
-                    in {
-                        "README.md",
-                        "architecture.md",
-                        "documentation.md",
-                        "infrastructure.md",
-                        "operations.md",
-                        "quality.md",
-                        "security.md",
-                        "supervision.md",
-                    }
+                    and entry.name == "README.md"
                 ):
                     if not entry.is_file(follow_symlinks=False):
                         fail(

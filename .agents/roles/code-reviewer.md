@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `code-reviewer` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [architecture](architecture.md)
+skill procedure before work. Read [architecture](README.md#architecture)
 for the broader responsibility context.
 
 ## Current Contract

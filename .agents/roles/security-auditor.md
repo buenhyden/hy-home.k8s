@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `security-auditor` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [security](security.md)
+skill procedure before work. Read [security](README.md#security)
 for the broader responsibility context.
 
 ## Current Contract

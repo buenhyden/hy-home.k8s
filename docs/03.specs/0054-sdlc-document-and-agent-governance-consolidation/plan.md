@@ -4,7 +4,7 @@ version: "1.4.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -101,7 +101,8 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   `tasks/tsk-####-<slug>.md`; remove `design.md`, `tests.md`, `tasks.md`, and
   other parallel design/test artifacts only after their unique content is
   assigned to Spec, Plan, Task, AD, or ADR owners.
-- Keep root `DESIGN.md` as the UI/design-system owner, not a Stage 03 artifact.
+- Keep UI and design-system rules out of Stage 03. No such owner exists in
+  this workspace today; introducing one would not make it a Stage 03 artifact.
 - Do not create or retain `docs/05.operations/releases/`; delivery outcome
   evidence belongs to the executing Task, Git, CI, deployment evidence, or an
   Incident/Postmortem when failure handling is required.

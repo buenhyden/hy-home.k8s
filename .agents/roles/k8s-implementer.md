@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `k8s-implementer` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [infrastructure](infrastructure.md)
+skill procedure before work. Read [infrastructure](README.md#infrastructure)
 for the broader responsibility context.
 
 ## Current Contract

@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-07"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -63,9 +63,16 @@ skill과 provider projection을 소유한다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
 6. superseded ADR은 decision log에 남긴다. 완료·봉인된 본문을 새 형식에
-   맞추려고 다시 쓰지 않는다. 폐기 문서의 본문은 Git history에서 복구하며,
-   활성 공통 거버넌스와 Stage 01/02/03/05/90 문서에는 Archive 문서·파일의 인용이나
-   cross-link, 본문 복제본 또는 redirect를 만들지 않는다.
+   맞추려고 다시 쓰지 않는다. 폐기 문서의 본문은 Git history에서 복구한다.
+
+   Archive 참조는 두 가지를 구분한다. **금지**: 활성 문서가 Archive를 현재
+   owner처럼 라우팅하는 것 — Item Index나 Related Documents 같은 탐색 목록에
+   Archive 문서를 항목으로 두거나, 본문 복제본 또는 redirect를 만드는 것.
+   **허용**: 계보와 출처로서의 인용 — ADR의 supersession 행, 완료 Task의 실행
+   기록, Stage 90 source ledger의 관측 근거처럼 링크 자체가 증거인 경우다. 이
+   구분이 필요한 이유는 두 요구가 충돌하기 때문이다. 봉인된 본문은 재작성하지
+   않는데, 그 본문들은 자신이 대체하거나 종료한 Archive 문서를 이름으로
+   가리킨다. 그 링크를 지우면 규칙을 지키는 대신 기록을 훼손한다.
 7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
    [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.

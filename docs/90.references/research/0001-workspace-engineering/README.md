@@ -4,7 +4,7 @@ version: "0.2.0"
 type: "common/readme-research-pack"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "references"
 ---
 # Workspace Engineering Research Pack
@@ -445,5 +445,6 @@ remote, credential-bearing, secret-value, or live-cluster evidence.
 
 ## Related Documents
 
-- [WERPC Plan](../../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
+- [Archive index](../../../98.archive/README.md) routes the consolidation Plan
+  that produced this pack; it is lineage, not a current owner.
 - [Source coverage](m0012-source-coverage.md)

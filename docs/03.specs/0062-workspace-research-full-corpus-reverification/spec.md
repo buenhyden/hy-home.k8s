@@ -4,7 +4,7 @@ version: "1.1.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "specs"
 artifact_id: "SPEC-0062"
 ---
@@ -540,7 +540,6 @@ retained and strengthened here.
 - [Plan](plan.md)
 - [Task records](plan.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Spec 0059 — Workspace Research Full-Corpus Refresh](../../98.archive/completed/03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Research collection contract](../../90.references/research/README.md)
 - [Quality standards](../../../.agents/governance/quality.md)

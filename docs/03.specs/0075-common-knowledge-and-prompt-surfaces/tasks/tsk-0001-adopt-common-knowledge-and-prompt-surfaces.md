@@ -57,7 +57,7 @@ backdated: the rows carry the commits that produced them.
 | [WORK-007](../plan.md#work-breakdown) | VAL-CKP-001        | Create the prompt surface with its four contracts                           | platform | Done | Four contracts with a README. Each declares its inputs with the exact read-only command producing them, its output shape, its validation rule, its refusal conditions, and by name the subject input whose emptiness triggers refusal | Commit `e2bc5bf9`; staged profile 12 gates PASS |
 | [WORK-008](../plan.md#work-breakdown) | VAL-CKP-005        | Implement the deterministic prompt input builder                            | platform | Done | The builder resolves a contract, runs only allowlisted read-only commands, and writes the assembled request to standard output. Unknown identifier exits 2; an empty subject exits 3 with no draft; the commit-message contract reads the staged difference and not the working tree; no invocation changes Git state and the module imports no network library | Commit `e2bc5bf9`; 10 tests PASS. Refusal was first demonstrated by execution — `change-review` exited 3 against an empty local difference — before the tests existed; the tests were written after the implementation rather than before it, and mutation checks stand in for the missing red phase |
 | [WORK-009](../plan.md#work-breakdown) | VAL-CKP-001        | Add the command entry points and retire the VS Code surface                 | platform | Done | Four command entry points, one per contract, each invoking the builder with its identifier. `.claude/commands/*.md` resolved to no document profile, so `common/provider-native-command` was added with its template instead of leaving the path uncovered. No identifier collides with a skill identifier. The VS Code retirement this row also covered had already landed in commits `e3c0d405` and `45e31a9b` before this Task resumed | Commit `e2bc5bf9`; registry 748 paths, uncovered=0; staged profile 12 gates PASS |
-| [WORK-010](../plan.md#work-breakdown) | VAL-CKP-006, VAL-CKP-010 | Consolidate the responsibility documents and carry every consumer      | platform | Partial | The router's reference to a root `DESIGN.md` was repaired, and so were the four other active governance documents that made the same claim: the file has never existed in this repository's history, so the clause was removed and the absence stated once in the SDLC owner. The seven category documents were not consolidated; that half is deferred with its reason below | Commit pending in this change; strict link and owner validation PASS. `git log --all -- DESIGN.md` returns no commit |
+| [WORK-010](../plan.md#work-breakdown) | VAL-CKP-006, VAL-CKP-010 | Consolidate the responsibility documents and carry every consumer      | platform | Done | Both halves are complete. The seven category documents are absorbed into the responsibility router as sections with stable anchors, carrying each domain boundary and its contract bullets rather than only the boundary sentence, because the contract bullets were not duplicated in any concrete role body and would have been lost. Twelve role bodies and seven Stage 90 index rows now point at section anchors. The router's `DESIGN.md` clause and the same claim in four other active governance documents were removed; the file has never existed in this repository's history | Commit pending in this change; strict link, owner, profile, lifecycle and registry validation PASS on the index snapshot at 741 paths. `validate-agent-governance.py`'s hard-coded exception list for the roles directory shrank from eight names to one, because the seven non-projection files it existed to excuse are gone |
 | [WORK-011](../plan.md#work-breakdown) | VAL-CKP-007        | Correct the reference pack and add the current dated observation            | platform | Done | The filename guidance no longer forbids the `m####-` identity prefix its own registry mandates; the prefix is now stated as an identity rather than an ordering key. The duplicated navigation link was removed, and three direct cross-links into the Archive were replaced by one link to the Archive index, which is the routing owner. Four retired `Stage 00` labels were replaced where the sentence describes the present. A dated 2026-09-07 observation records the two-provider, twelve-role, thirty-six-projection registry beside the four-provider observation, whose wording, subject and date are unchanged, and adds the three-way capability comparison the pack lacked | Commit pending in this change; strict link, owner and profile validation PASS on the index snapshot |
 | [WORK-012](../plan.md#work-breakdown) | VAL-CKP-008        | Record the upstream re-observation and the zero-adoption conclusion         | platform | Done | Upstream `main` was re-observed on 2026-09-07 at `647c8baa42b6842afb4a97bf2c0950d45ba88e8b`, dated 2026-09-06, with `license.spdx_id` `MIT` and `pushed_at` `2026-09-06T20:47:20Z`. That head is beyond `1454492577d1af4884722837f491fef14b501e21`, which this Task's Inputs recorded on 2026-09-06; the earlier reading is superseded additively, not corrected in place. The registry role count is unchanged at twelve and no role is adopted | External metadata read over a public endpoint, 2026-09-07. It establishes the branch head and licence field at that moment and nothing about file content |
 | [WORK-013](../plan.md#work-breakdown) | VAL-CKP-009        | Give each duplicated rule one execution owner with retention reasons        | platform | Done | The premise was checked before anything was removed and does not hold: `hadolint` is declared only in `.pre-commit-config.yaml`, no validation script runs it, and the repository tracks no Dockerfile. There is no duplicate execution to reassign, and removing the hook would drop future coverage rather than move ownership, so it is retained with that reason recorded. The action-pinning pair was verified as a deliberate interlock: `validate-github-actions-security.py` forbids `unpinned-uses` suppression, so the validator guards the linter's rule. The commit hook suite inside the full profile is retained because the override below makes the commit-time run inert here | Direct inspection of `.pre-commit-config.yaml`, `scripts/`, and the tracked file list; `scripts/validate-github-actions-security.py` lines 164-170 |
@@ -96,7 +96,7 @@ residue owned by earlier work and are not removed by this Task.
 
 ## Verification Summary
 
-Thirteen of fourteen work packages have executed; WP-010 is partial. Each ran
+All fourteen work packages have executed. Each ran
 the staged profile against its own index snapshot before its commit and
 reported every gate passing. The gate count per commit varies because the lane
 selects validators from the changed paths: six gates for policy-text-only
@@ -126,6 +126,16 @@ Two limits are recorded as limits, not as controls:
   file tool while the affected-surface contract was inconsistent, which
   demonstrates fail-closed behaviour for this client only.
 
+One documentation rule was found to contradict itself and was rewritten rather
+than enforced. The stage contract forbade Archive cross-links in active
+Stage 01/02/03/05/90 documents while also forbidding the rewriting of sealed
+bodies. Seventy-six documents carry such links, and most are sealed ADR
+supersession rows, completed Task execution records, or Stage 90 source ledgers
+where the link is the evidence. Deleting them would have satisfied one clause by
+falsifying the record the other clause protects. The rule now separates a
+forbidden navigation entry from a permitted lineage citation, and the two
+genuine navigation entries found under the clarified rule were corrected.
+
 No repository-static result in this Task is reported as provider-runtime,
 hosted, or live evidence.
 
@@ -145,23 +155,11 @@ Deferred items, each with its blocker and next owner:
 - Whether either client loads a knowledge document or a prompt contract.
   Blocker: each requires a fresh authenticated session. Next owner: the user.
   Command-entry discovery is observed; contract loading is not.
-- WP-010's second half: consolidating the seven category documents under
-  `.agents/roles/` into the responsibility router. Blocker: none technical. It
-  is deferred because it removes seven files and repoints consumers in eleven
-  role bodies and one Stage 90 index, which is a distinct ownership change from
-  the surface adoption this Task delivered and deserves its own review unit.
-  Next owner: the user, to schedule it.
-- Direct cross-links from active documents into `docs/98.archive/` beyond the
-  research README corrected here. The document README forbids them for active
-  Stage 01/02/03/05/90 documents, and a sweep found further instances in
-  `docs/90.references/research/0001-workspace-engineering/`. Most remaining
-  instances sit inside sealed decision bodies, which are not rewritten. Blocker:
-  the boundary between a sealed lineage record and an active router needs a
-  decision. Next owner: the user.
-- Statements in SPEC-0054's Spec and Plan that keep root `DESIGN.md` as the
-  UI owner. They are change-contract text owned by that package, not by this
-  one, so they were left intact rather than edited across an ownership
-  boundary. Next owner: SPEC-0054.
+- Queued Task records in SPEC-0047 through SPEC-0051 that cite archived
+  predecessor material. Thirty files across five packages sit on a documented
+  hold behind SPEC-0047, and each citation is lineage rather than navigation
+  under the clarified rule, so none was edited. Next owner: those packages when
+  the hold lifts.
 - The pin disagreement recorded as `CLM-WERPC-016-03` in the reference pack
   remains open and was not adjudicated here.
 
@@ -186,7 +184,7 @@ ordered packages and their entry gates. This Task owns results and limits.
 | [WORK-007](../plan.md#work-breakdown) | Done         | Four contracts, each naming its subject input by name |
 | [WORK-008](../plan.md#work-breakdown) | Done         | Builder with 10 tests; refusal first shown by execution |
 | [WORK-009](../plan.md#work-breakdown) | Done         | Four entry points; new profile covers the previously uncovered path |
-| [WORK-010](../plan.md#work-breakdown) | Partial      | DESIGN.md repaired in five documents; consolidation deferred |
+| [WORK-010](../plan.md#work-breakdown) | Done         | Seven documents absorbed into router sections; consumers repointed |
 | [WORK-011](../plan.md#work-breakdown) | Done         | Prefix contradiction, duplicate link and archive links resolved |
 | [WORK-012](../plan.md#work-breakdown) | Done         | Head 647c8baa dated 2026-09-06, MIT; role count unchanged |
 | [WORK-013](../plan.md#work-breakdown) | Done         | Premise disproved: no duplicate execution owner exists |
