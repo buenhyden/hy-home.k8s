@@ -67,7 +67,9 @@ secrets/certs/*.p12
 
 .claude/settings.local.json
 .claude/*.local.md
-.agent/
+.agent-work/
+/_workspace/*
+!/_workspace/README.md
 kube-linter-linux.tar.gz
 .gstack/
 
