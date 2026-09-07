@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-07"
 layer: "operations"
 ---
 # 05.operations/runbooks
@@ -130,4 +130,4 @@ docs/05.operations/runbooks/
 | [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD metrics/Prometheus 진단·복구 런북 | Active | 2026-09-01 |
 | [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | cluster metrics/Alloy/rules/AppProject 진단 런북 | Active | 2026-09-01 |
 | [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-01 |
-| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 | Active | 2026-09-01 |
+| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 | Active | 2026-09-07 |

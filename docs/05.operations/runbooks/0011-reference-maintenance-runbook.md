@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-07"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -34,7 +34,7 @@ artifact_id: "RUN-0011"
 ## Procedure or Checklist
 
 1. 자료의 semantic owner를 분류한다.
-   - Agent governance는 Stage 00에 둔다.
+   - Agent governance는 공통 거버넌스(`.agents/`)에 둔다.
    - 현재 요구와 아키텍처는 Stage 01/02에 둔다.
    - 구현 Spec/Plan/Task는 Stage 03에 둔다.
    - 운영 Guide/Policy/Runbook/Incident/Postmortem은 Stage 05에 둔다.
@@ -62,7 +62,7 @@ artifact_id: "RUN-0011"
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
    전환한다. consumer가 0이 된 뒤 파일을 제거하며, 전체 본문 복구는 Git
    history를 사용한다.
-7. Stage 00/01/02/03/05/90 문서에 Stage 98 인용 또는 cross-link가 생기지
+7. 공통 거버넌스와 Stage 01/02/03/05/90 문서에 Stage 98 인용 또는 cross-link가 생기지
    않았는지 확인한다.
 
 ## Verification Steps
@@ -75,7 +75,7 @@ rtk bash scripts/validate-repo-quality-gates.sh .
 rtk git diff --check
 ```
 
-- [ ] Reference가 현재 Stage 00/01/02/03/05 owner를 대체하지 않는다.
+- [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.
 - [ ] 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다.
 - [ ] 삭제 대상의 current consumer가 0이다.
 - [ ] 보존 자료의 출처·확인일·freshness trigger가 명시되어 있다.
@@ -118,4 +118,4 @@ rtk git diff --check
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical Stage 00/01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history owns removed full bodies. |
+| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history owns removed full bodies. |

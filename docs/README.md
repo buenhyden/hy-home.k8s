@@ -48,8 +48,7 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 | [99.templates](99.templates/README.md) | 유일한 문서 registry와 복사 가능한 template |
 
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
-skill과 provider projection을 소유한다. 루트 `DESIGN.md`는 UI와
-design-system 전용 정본이다.
+skill과 provider projection을 소유한다.
 
 ## Authoring Workflow
 

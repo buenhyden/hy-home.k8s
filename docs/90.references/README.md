@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-07"
 layer: "references"
 ---
 # 90.references
@@ -41,7 +41,8 @@ layer: "references"
 - generated wiki, redirect, 이전 본문 복제본, 영구 corpus census
 - `audits/`, `data/`, `research/` 밖의 느슨한 authored reference
 
-Stage 90 자료는 현재 Stage 00/01/02/03/05 owner를 인용할 수 있지만,
+Stage 90 자료는 공통 거버넌스(`.agents/`)와 현재 Stage 01/02/03/05 owner를
+인용할 수 있지만,
 Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 삭제된 자료의
 전체 본문 복구는 Git history가 담당한다.
 
@@ -67,7 +68,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 ## Authoring Workflow
 
 1. 새 자료가 정책·요구·설계·절차·실행 증거를 정의하는지 확인하고, 그렇다면
-   Stage 00/01/02/03/05의 canonical owner에 작성한다.
+   공통 거버넌스와 Stage 01/02/03/05의 canonical owner에 작성한다.
 2. Reference로 유지할 자료는 고유 목적, provenance, observation date,
    authority boundary, freshness trigger, 현재 consumer를 확인한다.
 3. 현재 pack은 `audits/####-<slug>/`, `data/####-<slug>/`,

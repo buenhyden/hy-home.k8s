@@ -36,8 +36,8 @@ to expand the roster or create parallel governance.
 Record gaps, priority, dependencies, file ownership, rollback, and deferred
 external work in the owning Plan/Task. Reuse approved package IDs and preserve
 user changes. Execute only approved gaps; remove touched duplicate owners
-after consumer-zero and applicable Git-backed recovery. Keep UI design-system
-authority at root `DESIGN.md` and change behavior in its Spec.
+after consumer-zero and applicable Git-backed recovery. Change behavior in the
+owning Spec.
 
 ### Verification and handoff
 

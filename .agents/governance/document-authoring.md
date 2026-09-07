@@ -25,8 +25,7 @@ owns agent procedure, not a second machine contract.
 
 Use [SDLC flow](sdlc.md) to distinguish durable requirements, current
 architecture, change-specific behavior, and operating knowledge. Stage numbers
-express ownership, not a one-way waterfall. Root `DESIGN.md` owns UI and
-design-system rules only.
+express ownership, not a one-way waterfall.
 
 ## Current Contract
 

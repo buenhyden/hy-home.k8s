@@ -55,8 +55,10 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
    evidence external. Do not create a Release Record without a successor ADR,
    profile, lifecycle, template, and demonstrated audit consumer.
 
-The terminal Stage 04 slot remains unused. Root `DESIGN.md` remains the UI and
-design-system authority, not a Stage 03 technical-design artifact.
+The terminal Stage 04 slot remains unused. This workspace carries no user
+interface, so it has no design-system authority and no root design document; if
+one is ever introduced it takes that authority and does not become a Stage 03
+technical-design artifact.
 
 ### Shared terminology and ownership
 

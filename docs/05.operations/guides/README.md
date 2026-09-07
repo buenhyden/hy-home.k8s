@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-07"
 layer: "operations"
 ---
 # 05.operations/guides
@@ -108,4 +108,4 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
 | 문서                                                                                           | 설명                                                                    | 상태   | 최종 수정  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ | ---------- |
-| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 | Active | 2026-09-01 |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 | Active | 2026-09-07 |

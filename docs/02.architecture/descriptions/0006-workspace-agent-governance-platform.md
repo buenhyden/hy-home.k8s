@@ -4,7 +4,7 @@ version: "1.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -291,10 +291,10 @@ historical evidence rather than parallel operating instructions.
 | N/A — [Acceptance criterion 12](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Zero stale legacy/orphan reference | [ADR 0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md) |
 
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Current decision**: [ADR-0035](../decisions/0035-common-agents-authority-and-native-skill-routing.md)
+- **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Current implementation**: [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-- **Historical decisions**: [ADR-0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md), [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md)
+- **Historical decisions**: [ADR-0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md), [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [ADR-0034](../decisions/0034-stage-00-governance-and-unified-quality-gates.md), [ADR-0035](../decisions/0035-common-agents-authority-and-native-skill-routing.md)
 
 The prior architecture narrative is recoverable from this same path at commit
 `bb73116b7b09c4f257fc81baa12cfa8359495fc0`. Its retired providers, fixed retry

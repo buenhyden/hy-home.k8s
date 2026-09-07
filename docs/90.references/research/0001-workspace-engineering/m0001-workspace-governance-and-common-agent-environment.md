@@ -476,6 +476,42 @@ claim is `CLM-WERPC-016-08`.
   00 common execution policy. Refresh when either provider changes what its
   import carries, or when the local common-control surface changes.
 
+### 2026-09-07 registry and capability re-observation
+
+This entry is additive. The 2026-08-17 and 2026-08-20 observations above keep
+their wording, subject and date; each described the tree at its own cutoff and
+is not rewritten into the present tense.
+
+- **Workspace result:** `changed`. `python3 scripts/validate-agent-governance.py
+  --root .` reports `providers=2 roles=12 permissionClasses=3 skills=16
+  handoffs=34 projections=36` on 2026-09-07. The earlier
+  `12 roles / 4 surfaces / 48 adapters` reading described a four-provider tree;
+  two of those provider surfaces have since been retired, so twelve roles now
+  project onto two tracked surfaces. The role count is unchanged across both
+  observations.
+- **Evidence boundary:** repository-static. A registry count proves what is
+  tracked, not what a client discovers or enforces.
+
+#### Capability comparison
+
+Each row separates three independent things. The runtime column carries an
+observation or an explicit absence; it is never inferred from the static column.
+
+| Capability | Installed client documentation (as recorded) | Repository static implementation | Runtime evidence |
+| --- | --- | --- | --- |
+| Subagent definition | Claude documents subagent frontmatter including model and tool scoping, recorded against `claude 2.1.263` on 2026-09-06 in `.claude/provider.md` | Twelve role projections under `.claude/agents/` and twelve under `.codex/agents/`, validated for registry parity | None observed. No authenticated delegation run is recorded |
+| Skill packages | Both clients document explicit skill invocation | Sixteen packages under `.agents/skills/`, linked from `.claude/skills/` and policy-gated for Codex | None observed |
+| Command entry points | Claude documents project command files under `.claude/commands/` | Four entry points, one per prompt contract, each invoking `scripts/prompt-input.py` | Observed 2026-09-07: this session listed all four identifiers as available. Discovery only; no invocation through an entry point is recorded |
+| Pre-action write guard | Both clients document a pre-tool hook event | One shared guard with a thin adapter per provider | Observed 2026-09-07: the Claude adapter blocked every shell and file tool while the affected-surface selector failed, and released them when the contract was repaired. Fail-closed behaviour confirmed for this client |
+| Permission enforcement | Claude documents an allow and deny permission model | `.claude/settings.json` declares the deny set | None observed. A declared deny is not a demonstrated refusal |
+| Model resolution | Both clients document model aliases | Projections carry aliases the registry binds | None observed |
+
+- **Owner, safe follow-up, and trigger:** owner is this reference and the common
+  execution policy under `.agents/governance/`. Refresh when a provider surface
+  is added or retired, when the registry counts change, or when a runtime cell
+  gains its first observation.
+
+
 ## Related Documents
 
 - [Harness and loop engineering](m0002-harness-and-loop-engineering.md)

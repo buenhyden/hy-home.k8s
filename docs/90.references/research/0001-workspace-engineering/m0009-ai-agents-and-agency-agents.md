@@ -389,6 +389,39 @@ and `CLM-WERPC-016-04`.
   reuse, with licence, security, overwrite-safety, and admission review
   unchanged as prerequisites.
 
+### 2026-09-07 upstream currency re-observation
+
+This entry is additive. The pinned-tree comparison, its licence check and its
+script inspection keep their original wording and dates; the branch-currency
+premise was already withdrawn on 2026-09-05 and stays withdrawn.
+
+#### REQ-WERPC-027 Agency Agents currency re-observation
+
+- **Sources and external result:** `changed`. Upstream `main` was observed on
+  2026-09-07 at commit `647c8baa42b6842afb4a97bf2c0950d45ba88e8b`, dated
+  2026-09-06. The repository metadata reports `license.spdx_id` `MIT`,
+  `default_branch` `main`, and `pushed_at` `2026-09-06T20:47:20Z`. The head is
+  therefore beyond both retained pins and beyond
+  `1454492577d1af4884722837f491fef14b501e21`, which SPEC-0075's Task recorded as
+  the head observed on 2026-09-06; that reading was accurate when taken and is
+  superseded here rather than corrected in place. The catalogue remains
+  organised as division directories of persona prompt files.
+- **Workspace selector and result:** `unchanged`. The registry reports twelve
+  roles on 2026-09-07, the same count every prior cycle recorded.
+- **Conclusion on adoption:** none. The catalogue is persona prompt material.
+  The twelve-role roster has no concrete gap it fills for this workspace, no
+  role is adopted from it, and it remains provenance for ideas rather than
+  admission or policy authority.
+- **Evidence boundary:** external metadata read over a public endpoint on
+  2026-09-07. It proves the branch head and licence field at that moment. It
+  proves nothing about the content of any file in that tree, and it authorises
+  no prompt copying and no script execution.
+- **Owner, safe follow-up, and trigger:** owner is this reference. The pin
+  disagreement recorded in `CLM-WERPC-016-03` is still open and is not
+  adjudicated here. Refresh when a role is proposed for adoption, or when the
+  licence field changes.
+
+
 ## Related Documents
 
 - [Model routing](m0010-agent-model-routing-and-configuration.md)

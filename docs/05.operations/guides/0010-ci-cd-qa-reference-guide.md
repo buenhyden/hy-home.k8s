@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-07"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -71,6 +71,33 @@ summary로 나뉜다. 로컬 성공은 호스팅 환경의 권한·event·requir
 
 handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이유를 기록한다.
 브랜치 SHA나 고정된 문서 수를 별도의 운영 진실로 복제하지 않는다.
+
+### 5. 규칙별 실행 소유자와 이 워크스테이션의 한계를 구분한다
+
+한 규칙은 실행 소유자를 하나만 가진다. 중복이 남아 있다면 그 이유가 기록되어
+있어야 하며, 기록 없는 중복은 정리 대상이다. 2026-09-07 확인 결과는 다음과 같다.
+
+| 규칙 | 실행 소유자 | 판정 |
+| --- | --- | --- |
+| 컨테이너 매니페스트 린트(`hadolint`) | `.pre-commit-config.yaml`의 훅 하나 | 중복 없음. 어떤 검증 스크립트도 이 린터를 실행하지 않으며, 현재 저장소에는 추적되는 Dockerfile이 없다. 훅을 제거하면 소유권 이전이 아니라 향후 커버리지 삭제가 되므로 유지한다 |
+| GitHub Actions 액션 핀 고정 | 서드파티 린터(`zizmor`)와 저장소 validator 양쪽 | 의도된 인터록이므로 양쪽 유지. `scripts/validate-github-actions-security.py`가 `unpinned-uses` 규칙의 `disable: true` 억제를 금지하므로, validator는 린터 규칙이 꺼지는 것을 막는 역할을 한다 |
+| 커밋 훅 스위트 | full 프로파일 안의 실행 | 유지. 아래 한계 때문에 이 워크스테이션에서는 full 프로파일 실행이 유일한 실행 경로다 |
+
+**커밋 도구 한계(2026-09-07 관측).** 이 워크스테이션의 전역
+`core.hooksPath`가 저장소 밖(`/home/hy/.codex/git-hooks`)을 가리킨다. 저장소의
+`.git/hooks/pre-commit`과 `commit-msg`는 설치되어 있으나 커밋 시점에 실행되지
+않으며, conventional-commit 검사도 커밋 시점에 동작하지 않는다. 이것은 한계이지
+동작하는 통제가 아니다.
+
+전역 설정은 변경하지 않는다. 사용자가 직접 실행하는 저장소-로컬 복구는 다음과
+같다.
+
+```bash
+git config --local core.hooksPath .git/hooks
+```
+
+이 설정은 이 저장소에만 적용되고 전역 설정을 건드리지 않는다. 되돌리려면
+`git config --local --unset core.hooksPath`를 실행한다.
 
 ## Common Pitfalls
 

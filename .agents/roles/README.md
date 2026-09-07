@@ -47,10 +47,9 @@ Canonical role bodies:
 ## Add and Find
 
 Load only the relevant responsibility owners. Product intent belongs in the
-Requirement Package; backend/API and UI behavior belong in the Spec and its
-implementation task. UI work additionally follows root `DESIGN.md` and checks
-accessibility/responsiveness. These general duties do not need unused
-standalone agent scopes in this infrastructure workspace.
+Requirement Package; backend and API behavior belong in the Spec and its
+implementation task. These general duties do not need unused standalone agent
+scopes in this infrastructure workspace.
 
 Add a role or skill only for an approved concrete gap, through the neutral
 registry and reviewed projections. Declare ownership transitions when a task
