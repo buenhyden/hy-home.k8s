@@ -216,6 +216,57 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         )
         self.assertNotIn("/home/alice/.local/bin", environment["PATH"])
 
+    def test_hostile_ambient_conftest_hint_is_not_forwarded(self):
+        hostile_hint = "/tmp/attacker/conftest"
+        with patch.object(
+            RUNNER,
+            "secure_conftest_executable",
+            return_value=None,
+            create=True,
+        ):
+            result, _output, invoked = self._run(
+                "affected",
+                {"HY_HOME_K8S_CONFTEST_EXECUTABLE": hostile_hint},
+            )
+
+        self.assertEqual(result, 0)
+        environment = invoked.call_args.kwargs["env"]
+        self.assertNotIn("HY_HOME_K8S_CONFTEST_EXECUTABLE", environment)
+        self.assertNotIn("/tmp/attacker", environment["PATH"])
+
+    def test_secure_passwd_home_conftest_is_passed_without_broadening_path(self):
+        """The policy gate needs Conftest without a sudo install to reach it."""
+
+        executable = "/home/alice/.local/bin/conftest"
+        with patch.object(
+            RUNNER,
+            "secure_conftest_executable",
+            return_value=executable,
+            create=True,
+        ):
+            result, _output, invoked = self._run("affected", {})
+
+        self.assertEqual(result, 0)
+        environment = invoked.call_args.kwargs["env"]
+        self.assertEqual(
+            environment["HY_HOME_K8S_CONFTEST_EXECUTABLE"],
+            executable,
+        )
+        self.assertNotIn("/home/alice/.local/bin", environment["PATH"])
+
+    def test_trusted_tool_candidate_is_bound_to_its_declared_name(self):
+        """One tool's trusted location must not admit a different executable."""
+
+        self.assertFalse(
+            RUNNER.validate_trusted_tool_candidate(
+                Path("/usr/local/bin/gitleaks"),
+                Path("/repo"),
+                owner_uid=0,
+                required_chain=(Path("/usr/local/bin"),),
+                name="conftest",
+            )
+        )
+
     def test_gitleaks_candidate_rejects_unsafe_shapes(self):
         metadata = {
             "/home/alice": stat.S_IFDIR | 0o750,
@@ -261,7 +312,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             ):
                 with self.subTest(path=path):
                     self.assertFalse(
-                        RUNNER.validate_gitleaks_candidate(
+                        RUNNER.validate_trusted_tool_candidate(
                             path,
                             ROOT,
                             owner_uid=1000,
@@ -309,7 +360,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             patch.object(RUNNER.os, "getgroups", return_value=[1000], create=True),
         ):
             self.assertTrue(
-                RUNNER.validate_gitleaks_candidate(
+                RUNNER.validate_trusted_tool_candidate(
                     candidate,
                     ROOT,
                     owner_uid=1000,
@@ -319,7 +370,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
 
             metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o001
             self.assertFalse(
-                RUNNER.validate_gitleaks_candidate(
+                RUNNER.validate_trusted_tool_candidate(
                     candidate,
                     ROOT,
                     owner_uid=1000,
@@ -335,7 +386,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 ) | 0o010
             with patch.object(RUNNER.os, "getgroups", return_value=[2000], create=True):
                 self.assertTrue(
-                    RUNNER.validate_gitleaks_candidate(
+                    RUNNER.validate_trusted_tool_candidate(
                         candidate,
                         ROOT,
                         owner_uid=0,
@@ -344,7 +395,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 )
                 metadata["/secure"].st_mode = stat.S_IFDIR | 0o100
                 self.assertFalse(
-                    RUNNER.validate_gitleaks_candidate(
+                    RUNNER.validate_trusted_tool_candidate(
                         candidate,
                         ROOT,
                         owner_uid=0,
@@ -357,7 +408,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o100
             with patch.object(RUNNER.os, "getgroups", return_value=[], create=True):
                 self.assertFalse(
-                    RUNNER.validate_gitleaks_candidate(
+                    RUNNER.validate_trusted_tool_candidate(
                         candidate,
                         ROOT,
                         owner_uid=0,
@@ -366,7 +417,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
                 )
                 metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o001
                 self.assertTrue(
-                    RUNNER.validate_gitleaks_candidate(
+                    RUNNER.validate_trusted_tool_candidate(
                         candidate,
                         ROOT,
                         owner_uid=0,
@@ -384,7 +435,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             metadata["/secure/bin"].st_mode = stat.S_IFDIR
             metadata[candidate.as_posix()].st_mode = stat.S_IFREG | 0o100
             self.assertTrue(
-                RUNNER.validate_gitleaks_candidate(
+                RUNNER.validate_trusted_tool_candidate(
                     candidate,
                     ROOT,
                     owner_uid=0,
@@ -393,7 +444,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             )
             metadata[candidate.as_posix()].st_mode = stat.S_IFREG
             self.assertFalse(
-                RUNNER.validate_gitleaks_candidate(
+                RUNNER.validate_trusted_tool_candidate(
                     candidate,
                     ROOT,
                     owner_uid=0,

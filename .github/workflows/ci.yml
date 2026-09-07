@@ -83,6 +83,16 @@ jobs:
           printf '%s  %s\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
           tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
           sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
+      - name: Install Conftest
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/open-policy-agent/conftest/releases/download/v0.69.0/conftest_0.69.0_Linux_x86_64.tar.gz \
+            --output "$RUNNER_TEMP/conftest_0.69.0_Linux_x86_64.tar.gz"
+          conftest_sha256='96fc2fbf11f0afde51256647127e6f00a64ce839a4d9a0a1aef2426c0e6f4b3f' # pragma: allowlist secret
+          printf '%s  %s\n' "$conftest_sha256" "$RUNNER_TEMP/conftest_0.69.0_Linux_x86_64.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/conftest_0.69.0_Linux_x86_64.tar.gz" -C "$RUNNER_TEMP" conftest
+          sudo install -o root -g root -m 0755 "$RUNNER_TEMP/conftest" /usr/local/bin/conftest
       - name: Validate repository checkout
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
