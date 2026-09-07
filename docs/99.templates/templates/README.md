@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -37,7 +37,7 @@ templates/
 ├── architecture/   decision, description
 ├── archive/        migration, tombstone
 ├── common/         repository, documentation·stage, package, runtime-governance entrypoint README form
-├── governance/     contract, provider, role, rule, skill
+├── governance/     contract, knowledge, prompt, provider, role, rule, skill
 ├── operations/     guide, incident, policy, postmortem, runbook
 ├── references/     audit·data·research 의 pack form과 reference form
 ├── requirements/   requirement-package

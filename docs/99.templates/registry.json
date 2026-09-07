@@ -1408,6 +1408,136 @@
       "placeholder_policy": "forbidden"
     },
     {
+      "id": "governance/knowledge",
+      "family": "governance",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/knowledge/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/knowledge"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Pointer Index",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "governance/prompt",
+      "family": "governance",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/prompts/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/prompt.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/prompt"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Inputs",
+          "Output",
+          "Validation",
+          "Refusal Conditions",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
       "id": "governance/provider",
       "family": "governance",
       "mode": "authored",
@@ -1784,7 +1914,7 @@
       "id": "common/readme-collection-index",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "frontmatter": {
@@ -4291,6 +4421,126 @@
       "placeholder_policy": "template-only"
     },
     {
+      "id": "common/template-governance-knowledge",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/governance/knowledge\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/knowledge.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/knowledge"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Pointer Index",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "governance/knowledge"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
+      "id": "common/template-governance-prompt",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/governance/prompt\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/governance/prompt.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "supersedes",
+          "superseded_by"
+        ],
+        "constants": {
+          "type": "governance/prompt"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Inputs",
+          "Output",
+          "Validation",
+          "Refusal Conditions",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "governance/prompt"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
       "id": "common/template-governance-provider",
       "family": "common",
       "mode": "template",
@@ -4664,6 +4914,8 @@
         "operation/policy",
         "operation/runbook",
         "governance/contract",
+        "governance/knowledge",
+        "governance/prompt",
         "governance/provider",
         "governance/role",
         "governance/rule",

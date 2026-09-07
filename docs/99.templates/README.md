@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-07"
 layer: "templates"
 ---
 # 99.templates
@@ -52,10 +52,14 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   profiles own each router's exact path, fixed "type"/"status", optional
   "layer", and heading contract.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
-  정책, 워크플로에 `contract`, `provider`, `role`, `rule`, `skill` form이
-  대응한다. 공통 소유자는 `.agents`에, provider note는 `.claude/provider.md`와
+  정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
+  `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. 공통 소유자는
+  `.agents`에, provider note는 `.claude/provider.md`와
   `.codex/provider.md`에 둔다. `governance/skill`은 두 flat workflow의
   생명주기 있는 문서 타입이며 native skill package와 구별한다.
+  `governance/knowledge`는 `.agents/knowledge/`의 포인터 문서를,
+  `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
+  README는 collection-index router profile로 해석한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
 - **Core SDLC forms**: `requirements/requirement-package`,
   `architecture/description`, `architecture/decision`, `specs/spec`,
