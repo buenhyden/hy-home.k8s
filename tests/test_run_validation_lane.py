@@ -1941,5 +1941,63 @@ class ValidatorTimeoutBudgetTest(unittest.TestCase):
                 self.assertGreater(budget, RUNNER.VALIDATOR_TIMEOUT_SECONDS)
 
 
+class FailureSnippetDiagnosabilityTest(unittest.TestCase):
+    """A failing gate has to say why, not only which case failed.
+
+    The snippet keeps its byte bound and its redaction; what changes is that a
+    unittest failure now carries the assertion that produced it. Without that,
+    a hosted failure names a test and nothing else, and the only way to learn
+    the cause is to reproduce it somewhere the fault may not occur.
+    """
+
+    def _snippet(self, stderr: str, stdout: str = "") -> str:
+        return RUNNER.failure_snippet(
+            bounded_result(stdout=stdout, stderr=stderr, returncode=1)
+        )
+
+    UNITTEST_STDERR = (
+        "======================================================================\n"
+        "FAIL: test_repository_snapshot_is_complete_and_atomic "
+        "(tests.test_archive_cutover.ArchiveCutoverTest)\n"
+        "----------------------------------------------------------------------\n"
+        "Traceback (most recent call last):\n"
+        '  File "/repo/tests/test_archive_cutover.py", line 131, in test_x\n'
+        '    self.assertIsNotNone(executable, "required secure Gitleaks")\n'
+        "AssertionError: unexpectedly None : required secure Gitleaks\n"
+        "\n"
+        "FAILED (failures=1, skipped=4)\n"
+    )
+
+    def test_assertion_detail_survives_into_the_snippet(self):
+        snippet = self._snippet(self.UNITTEST_STDERR)
+
+        self.assertIn("FAIL: test_repository_snapshot_is_complete_and_atomic", snippet)
+        self.assertIn("AssertionError", snippet)
+        self.assertIn("required secure Gitleaks", snippet)
+
+    def test_snippet_stays_bounded_and_redacted(self):
+        def noisy(count: int) -> str:
+            return "".join(
+                f"AssertionError: token=abcdef{index:04d} filler {'x' * 200}\n"
+                for index in range(count)
+            )
+
+        snippet = self._snippet(noisy(200))
+
+        # Boundedness is that the snippet stops growing with its input, not a
+        # particular length: the cap applies before escaping expands it.
+        self.assertEqual(len(snippet), len(self._snippet(noisy(2000))))
+        self.assertNotIn("abcdef0000", snippet)
+        self.assertIn("[REDACTED]", snippet)
+
+    def test_hook_failure_lines_are_still_prioritized(self):
+        snippet = self._snippet(
+            "", "Detect secrets...Failed\n- hook id: detect-secrets\n- exit code: 3\n"
+        )
+
+        self.assertIn("- hook id: detect-secrets", snippet)
+        self.assertIn("- exit code: 3", snippet)
+
+
 if __name__ == "__main__":
     unittest.main()

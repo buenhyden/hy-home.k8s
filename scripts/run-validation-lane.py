@@ -467,6 +467,10 @@ def failure_snippet(completed: BoundedCommandResult) -> str:
                 "- hook id: ",
                 "- exit code: ",
                 "- files were modified by this hook",
+                # Without the assertion itself a failing case names only which
+                # test failed, so a hosted failure can be read but not
+                # diagnosed. Redaction and the byte bound still apply.
+                "AssertionError",
             )
         ) or (line.endswith("Failed") and "...Failed" in line):
             prioritized += ("\n" if prioritized else "") + line[:256]
