@@ -92,7 +92,7 @@ class BoundedCommandResult:
     # Identities of owned descendants that held a foreign process group when
     # the leader exited.  Empty for every other outcome, so a passing gate's
     # observation is unchanged.
-    escaped_descendants: tuple[tuple[int, int, str], ...] = ()
+    escaped_descendants: tuple[tuple[int, int, str, str], ...] = ()
 
 
 class _StreamAccumulator:
@@ -205,7 +205,8 @@ def observation(completed: BoundedCommandResult) -> str:
             "escaped="
             + ",".join(
                 f"{pid}:{group}:{_escape_report_token(name)}"
-                for pid, group, name in completed.escaped_descendants
+                f":{_escape_report_token(token)}"
+                for pid, group, name, token in completed.escaped_descendants
             )
         )
     return ";".join(fields)
@@ -652,6 +653,61 @@ def _process_group_absent(process_group_id: int) -> bool:
     return True
 
 
+COMMAND_TOKEN = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
+# `Z` is an exited entry awaiting a reap and `X` is one already gone.
+TERMINATED_PROCESS_STATES = frozenset({"Z", "X"})
+
+
+def _command_token_from_cmdline(raw: bytes) -> str:
+    """Admit the subcommand of `git <subcommand>`, and nothing else.
+
+    The open question is which git call detaches, and that call names itself in
+    the second argument.  A credential never occupies that position: the forms
+    that carry one put an option there first, and an option is refused, as is
+    any token that is not a bare lowercase subcommand.  No other element of the
+    argument vector is read into the report.
+    """
+
+    arguments = raw.split(b"\x00")
+    if len(arguments) < 2 or not arguments[1]:
+        return "none"
+    candidate = arguments[1].decode("utf-8", errors="replace")
+    if COMMAND_TOKEN.fullmatch(candidate) is None:
+        return "redacted"
+    return candidate
+
+
+def _process_state(pid: int) -> str:
+    """Read one process state letter, or the empty string when it is gone."""
+
+    try:
+        raw = (Path("/proc") / str(pid) / "status").read_bytes()
+    except OSError:
+        return ""
+    for line in raw.decode("utf-8", errors="replace").splitlines():
+        if line.startswith("State:"):
+            field = line.split(":", 1)[1].strip()
+            return field[:1]
+    return ""
+
+
+def _process_command_token(pid: int) -> str:
+    """Name the call, or say why it cannot be named.
+
+    An exited-but-unreaped process has no argument vector.  That is a distinct
+    finding from a running process whose second argument was refused: a zombie
+    is not work outliving the gate, so the two must not both read as nothing.
+    """
+
+    if _process_state(pid) == "Z":
+        return "zombie"
+    try:
+        raw = (Path("/proc") / str(pid) / "cmdline").read_bytes()
+    except OSError:
+        return "unknown"
+    return _command_token_from_cmdline(raw)
+
+
 def _process_command_name(pid: int) -> str:
     """Read one process name without its arguments, so no argument can leak."""
 
@@ -665,8 +721,14 @@ def _process_command_name(pid: int) -> str:
 
 def _cross_session_owned_descendants(
     leader_pid: int, baseline_direct_children: set[int]
-) -> tuple[tuple[int, int, str], ...]:
+) -> tuple[tuple[int, int, str, str], ...]:
     """Identify owned descendants that left the leader's process group.
+
+    An escape is work that can outlive the gate that owns it, so a process that
+    has already exited is not one.  A terminated entry runs no code, holds
+    nothing but its slot in the process table, and can never run again; it is
+    waiting to be reaped, which the cleanup that follows does.  Counting it
+    would fail a gate for work that does not exist.
 
     The caller only needs to know whether any exist, but a bare verdict cannot
     be diagnosed once it is the only thing a remote run reports.  The group id
@@ -675,12 +737,16 @@ def _cross_session_owned_descendants(
     """
 
     owned = _discover_owned_pids(leader_pid, baseline_direct_children)
-    escaped: list[tuple[int, int, str]] = []
+    escaped: list[tuple[int, int, str, str]] = []
     for pid in sorted(owned - {leader_pid}):
         group = _process_group_id(pid)
         if group in (None, leader_pid):
             continue
-        escaped.append((pid, group, _process_command_name(pid)))
+        if _process_state(pid) in TERMINATED_PROCESS_STATES:
+            continue
+        escaped.append(
+            (pid, group, _process_command_name(pid), _process_command_token(pid))
+        )
         if len(escaped) == VALIDATOR_ESCAPE_REPORT_LIMIT:
             break
     return tuple(escaped)

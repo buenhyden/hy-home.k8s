@@ -722,11 +722,88 @@ class BoundedValidationCommandTest(unittest.TestCase):
         escaped = replace(
             clean,
             status="descendant_cleanup",
-            escaped_descendants=((4321, 4321, "gitleaks"),),
+            escaped_descendants=((4321, 4321, "gitleaks", "none"),),
         )
         rendered = RUNNER.observation(escaped)
         self.assertIn("status=descendant_cleanup", rendered)
-        self.assertIn("escaped=4321:4321:gitleaks", rendered)
+        self.assertIn("escaped=4321:4321:gitleaks:none", rendered)
+
+    def test_command_token_admits_a_subcommand_and_refuses_everything_else(self):
+        """Name the git call that detached without letting an argument leak.
+
+        `git <subcommand>` puts the subcommand in the second argument, which is
+        exactly the datum that distinguishes `gc` from `maintenance` from
+        `fsmonitor--daemon`.  A credential never occupies that position: the
+        forms that carry one, such as `git -c credential.helper=...`, put an
+        option there instead, and an option is refused.  Nothing else from the
+        argument vector is read into the report.
+        """
+
+        cases = {
+            # The three git paths that detach, which is the open question.
+            (b"git\x00gc\x00--auto\x00--detach\x00",): "gc",
+            (b"git\x00maintenance\x00run\x00--detach\x00",): "maintenance",
+            (b"git\x00fsmonitor--daemon\x00start\x00",): "fsmonitor--daemon",
+            # An option in that position means a value may follow it.
+            (b"git\x00-c\x00credential.helper=hunter2\x00clone\x00",): "redacted",
+            (b"git\x00--exec-path=/opt/secret\x00clone\x00",): "redacted",
+            # A URL with an inline credential is never in that position, but
+            # refuse it by shape rather than by trusting the position.
+            (
+                b"git\x00https://u:p@h.invalid/r\x00",  # pragma: allowlist secret
+            ): "redacted",
+            # Nothing to name.
+            (b"git\x00",): "none",
+            (b"",): "none",
+        }
+        for (raw,), expected in cases.items():
+            with self.subTest(raw=raw):
+                self.assertEqual(RUNNER._command_token_from_cmdline(raw), expected)
+
+    def test_an_exited_descendant_is_named_as_such_not_as_nameless(self):
+        """A zombie has no argument vector, and that is a finding, not a gap.
+
+        An unreaped exit record is not work outliving the gate; a running
+        process is.  Reporting both as nothing to name would collapse the one
+        distinction the verdict most needs, so read the state and say which.
+        """
+
+        process = subprocess.Popen(["/bin/true"])
+        try:
+            deadline = time.monotonic() + 5.0
+            while time.monotonic() < deadline:
+                if RUNNER._process_state(process.pid) == "Z":
+                    break
+                time.sleep(0.01)
+            self.assertEqual(RUNNER._process_state(process.pid), "Z")
+            self.assertEqual(RUNNER._process_command_token(process.pid), "zombie")
+        finally:
+            process.wait()
+
+    def test_observation_never_carries_an_argument_beyond_the_token(self):
+        """The whole point of reading one token is that the rest cannot travel."""
+
+        planted = "hunter2-should-never-appear"  # pragma: allowlist secret
+        raw = f"git\x00-c\x00http.extraHeader=Authorization: {planted}\x00fetch\x00"
+        self.assertEqual(
+            RUNNER._command_token_from_cmdline(raw.encode("utf-8")), "redacted"
+        )
+
+        empty = RUNNER.StreamObservation(
+            observed_bytes=0, sha256="0" * 64, complete=True, retained=b""
+        )
+        rendered = RUNNER.observation(
+            RUNNER.BoundedCommandResult(
+                status="descendant_cleanup",
+                returncode=0,
+                stdout=empty,
+                stderr=empty,
+                cleanup_complete=True,
+                escaped_descendants=((4321, 4321, "git", "gc"),),
+            )
+        )
+        self.assertIn("escaped=4321:4321:git:gc", rendered)
+        self.assertNotIn(planted, rendered)
 
     def test_reviewed_runner_limits_are_preserved(self):
         self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
@@ -1179,6 +1256,41 @@ class BoundedValidationCommandTest(unittest.TestCase):
                         pass
                     self._wait_for_process_exit(escaped["pid"])
 
+    def test_an_exited_descendant_is_not_a_containment_escape(self):
+        """A terminated process cannot outlive the gate, so it is not an escape.
+
+        Four hosted runs failed this way. Every escaping descendant they named
+        was a `git` that had already exited and had not yet been reaped, held
+        only as a process-table entry that runs no code and can never run
+        again. Counting that as an escape fails a gate for work that does not
+        exist. A live escape still fails, which the neighbouring test fixes.
+        """
+
+        with tempfile.TemporaryDirectory(prefix="runner-exited-escape-") as tmp:
+            pid_path = Path(tmp) / "exited.json"
+            child_source = (
+                "import json, os; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()}))"
+            )
+            # The leader never reaps it, so it is a zombie when the leader goes.
+            leader_source = (
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                "subprocess.Popen([sys.executable, '-I', '-c', "
+                f"{child_source!r}], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                "deadline=time.monotonic()+5.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
+                "time.sleep(0.2)\n"
+            )
+            outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+            self.assertEqual(outcome.status, "completed")
+            self.assertEqual(outcome.escaped_descendants, ())
+            self.assertTrue(outcome.cleanup_complete)
+
     def test_escaping_descendant_identity_is_reported(self):
         """A gate that fails on containment has to name what escaped.
 
@@ -1217,12 +1329,14 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 self.assertEqual(outcome.status, "descendant_cleanup")
                 reported = {entry[0]: entry for entry in outcome.escaped_descendants}
                 self.assertIn(escaped["pid"], reported)
-                _pid, pgid, command = reported[escaped["pid"]]
+                _pid, pgid, command, token = reported[escaped["pid"]]
                 self.assertEqual(pgid, escaped["pgid"])
-                # `comm` names the program without its arguments, so a leaked
-                # credential in an argument vector cannot reach the report.
+                # `comm` names the program without its arguments, and the token
+                # is admitted only when it is a bare subcommand, so a credential
+                # in an argument vector cannot reach the report.
                 self.assertTrue(command)
                 self.assertNotIn(" ", command)
+                self.assertNotIn(" ", token)
             finally:
                 if escaped:
                     try:
