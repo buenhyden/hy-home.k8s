@@ -881,6 +881,83 @@ Markdown and rewrote fenced snippets inside eleven authored and archived
 documents. Those edits were reverted before staging and no archived byte
 changed, but the configuration comment predicting it was already there.
 
+### Third Hosted Result, Local Main Merge, and the Trusted-Path Cause (2026-09-08)
+
+Run `34188398622` on `b1275fa6` returned twenty of twenty-two gates and left
+the same two gates failing. The dependency-identity repair worked: the case
+that failed on evaluator stderr now passes that assertion and stops at the
+next one in the same test, which had been masked behind it. That next
+assertion was legible only because assertion lines now survive the bounded
+snippet, and it named its own cause: `required secure Gitleaks executable
+unavailable`.
+
+The cause is a directory ownership contract, not a missing binary. The
+workflow installs Gitleaks root-owned and non-writable, and the file itself
+satisfies the strict resolver. The resolver also requires the containing
+directory to be root-owned and neither group- nor other-writable, because that
+write bit lets a non-root account swap the executable between resolution and
+execution. A runner image may publish `/usr/local/bin` writable so that
+actions can install into it without `sudo`. No local run could show this: the
+developer machine here carries Gitleaks in `~/.local/bin`, which the resolver
+accepts through its passwd-home branch, so the system-directory branch is
+never exercised. The workflow now claims the ownership it depends on before
+publishing anything into that directory, and a workflow contract test fixes
+the step ordering and the mode, because nothing in the contract covered this
+and the gap was therefore invisible to every local gate.
+
+The `descendant_cleanup` status was reproduced as a mechanism, though not as
+the hosted fault. A throwaway probe against the bounded runner shows a plain
+child returning `completed` and a `setsid` grandchild that outlives the leader
+returning `descendant_cleanup` with `rc=0`, which matches the hosted shape
+exactly: `pre-commit` passed every hook and still failed the gate. The earlier
+hypothesis that `VALIDATOR_CLEANUP_SECONDS` was too tight is refuted, since
+that path yields `cleanup_failure` rather than `descendant_cleanup`. The
+offending process is still unidentified and did not appear locally when idle
+or under CPU contention, so the runner emits the identity of each escaping
+descendant with the verdict. Only `comm` is read, never `cmdline`, so an
+argument vector cannot carry a credential into the report, and a test fixes
+that boundary. The verdict logic is unchanged.
+
+The archive cutover assertion reports the candidates it walked with their
+ownership when it refuses, so the next hosted result is conclusive whether or
+not the workflow change is the correct repair.
+
+PR #59 was merged as `0152369b` on explicit instruction with the follow-up
+work accepted as a separate branch. `git diff b1275fa6 main` is empty, so the
+merged content is exactly the state that passed locally. The merge required an
+administrative override of the failing required check `ci-summary`; the
+repository sets `enforce_admins` to false, so this used an allowance the owner
+had already configured rather than a settings change, and no protection,
+workflow gate or test was altered to obtain it. `main` remains red and its own
+run `34190920724` returned the same twenty of twenty-two with the same two
+gates, which is the predicted result rather than a new observation.
+
+Branch protection was re-read because a review requirement was suspected of
+blocking a single-maintainer repository. It does not:
+`required_approving_review_count` is zero, `require_code_owner_reviews` and
+`require_last_push_approval` are false, and the repository declares no
+rulesets. The only required check is `ci-summary`. No review setting needs
+changing and none was changed.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34188398622` | 1 / FAIL | `pull_request` on `b1275fa6`; `branch-policy` PASS, 20/22 gates PASS, `unit-tests` `rc=1` naming the Gitleaks assertion, `pre-commit` `rc=0` with `descendant_cleanup` |
+| Hosted CI run `34190920724` | 1 / FAIL | `push` on merged `main` `0152369b`; same twenty of twenty-two and the same two gates |
+| Bounded-runner escape probe | expected | Plain child `completed`; `setsid` grandchild outliving the leader `descendant_cleanup` with `rc=0` |
+| Local reproduction attempts for the hosted escape | NOT_REPRODUCED | Idle and two-CPU contention; no runaway process remained |
+| `python3 -m unittest discover -s tests -t .` | 0 / PASS | 928 tests, `OK (skipped=4)`; measured without a pipeline so the exit status is the suite's own |
+| `pre-commit run --all-files` | 1 then stable | Hooks applied Python-only formatting and a baseline rewrite; the second run applied no further change |
+| `.secrets.baseline` comparison | equivalent | Same version, files, entries and audit flags; two line numbers moved by the inserted workflow step and key order normalized |
+| Hosted CI on these commits | NOT_RUN / DEFER | No hosted result exists for `449dffb1`, `6bb6a7bc` or `e4cd542a` |
+
+Three limitations remain open. The escaping descendant on the hosted runner
+has no identified cause and the containment boundary it guards is real, so it
+is left intact and now reports what escaped rather than being widened. The
+escaped-descendant test from the earlier section is still unrepaired for the
+same reason. Whether the directory ownership claim is the correct repair for
+the Gitleaks resolution is unverified until a hosted run executes these
+commits; the failing assertion will name the rejecting fact either way.
+
 ## Traceability
 
 ### Lifecycle Traceability
