@@ -87,7 +87,6 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `validate-vault-eso-contracts.py`, `check-secret-handling.sh` | Vault/ESO reference contracts and redacted secret-pattern checks |
 | `validate-github-actions-security.py`, `validate-ci-python-contract.py` | workflow supply-chain and Python dependency contracts |
 | `validate-workspace-boundary.py` | staged workspace boundary and ignored-path contract |
-| `validate-harness.sh` | thin manual dispatcher for the retained harness-focused checks |
 | `render-platform-chart-kinds.sh` | operator-invoked chart-kind review helper |
 
 ## Configuration Boundary
@@ -112,7 +111,8 @@ the owning contract requires them, and diagnostics avoid secret values.
 ## Validation
 
 Run the smallest owner first, then the affected/staged lane required by the
-current work, and finally the aggregate when closing a logical unit.
+current work. Each local commit needs exact-index staged QA; full runs before
+final handoff under the shared quality policy.
 
 ```bash
 python3 -m unittest tests.test_validation_tooling_ownership
@@ -125,8 +125,11 @@ python3 scripts/qa.py full
 git diff --check
 ```
 
-The aggregate command discovers tracked paths internally. Direct affected or
-staged lane calls continue to require an explicit bounded NUL path file.
+QA selects tracked and applicable non-ignored untracked paths itself, including
+hidden paths, deletions and renames. Use `qa.py quick` for working-tree changes
+and `qa.py staged` for the exact index. The lower-level runner is a diagnostic
+interface, not a substitute for QA snapshot isolation; its explicit path files
+must be bounded and NUL-delimited.
 
 ### Reproducing the hosted dependency identity
 
@@ -137,12 +140,23 @@ identity by consuming the same lock CI installs rather than by tracking a
 version list here:
 
 ```bash
-python3 -m venv .venv-ci
-.venv-ci/bin/python -m pip install --disable-pip-version-check \
+# Choose a task-owned environment outside the checkout being validated,
+# under account-owned directories with no group/other write permission.
+python3 -m venv "$VALIDATION_VENV"
+"$VALIDATION_VENV/bin/python" -m pip install --disable-pip-version-check \
   --only-binary :all: --require-hashes \
   --requirement .github/requirements/ci-validation.txt
-.venv-ci/bin/python scripts/qa.py full
+"$VALIDATION_VENV/bin/python" scripts/qa.py full
 ```
+
+Set `VALIDATION_VENV` to the approved environment path first. The invoking
+Python is preserved for Python gates. Other tools use fixed system paths;
+pre-commit also permits a trusted interpreter-adjacent or exact account-owned
+fallback. A repository-local venv or namespace-mapped ancestor ownership can
+make that fallback differ: record the resolved executable, not just the venv
+activation. Shell validators' `python3` follows the closed system PATH, so its
+library identity also needs separate observation. HOME stays closed; reviewed
+pre-commit/Go/Rust/Node caches stay under the account-owned cache directory.
 
 Use this when a gate passes locally and fails hosted, or before changing a
 module that a locked dependency owns. It is closer evidence than a local run,
@@ -151,7 +165,10 @@ and it is still local evidence: it proves nothing about the hosted runner.
 Run formatters through `pre-commit` rather than invoking them directly. The
 hook configuration narrows `ruff-format` to Python on purpose; the bare
 command also claims Markdown and rewrites fenced snippets inside authored and
-archived documents.
+archived documents. Shfmt and whitespace fixes are also explicit `--files`
+operations on reviewed source paths. Full/ci run the manual stage once in an
+isolated snapshot: a formatter change fails validation. Commit-msg is separate;
+follow the shared Git policy for the actual candidate message.
 
 For an explicit NUL-delimited changed-path set:
 

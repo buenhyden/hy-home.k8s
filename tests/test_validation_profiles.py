@@ -131,7 +131,7 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(hook=identifier):
                 pattern = hooks[identifier]["files"]
                 for path in (
-                    "scripts/validate-harness.sh",
+                    "scripts/validate-gitops-structure.sh",
                     "infrastructure/bootstrap-local.sh",
                 ):
                     self.assertIsNotNone(re.search(pattern, path))

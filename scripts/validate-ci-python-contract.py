@@ -78,9 +78,6 @@ EXPECTED_PRE_COMMIT_REVISIONS = {
     "https://github.com/zizmorcore/zizmor-pre-commit": (
         "a4727cbbcd26d7098e96b9cb738169b59711ae51"  # pragma: allowlist secret
     ),
-    "https://github.com/hadolint/hadolint": (
-        "57e1618d78fd469a92c1e584e8c9313024656623"  # pragma: allowlist secret
-    ),
     "https://github.com/rhysd/actionlint": (
         "914e7df21a07ef503a81201c76d2b11c789d3fca"  # pragma: allowlist secret
     ),
@@ -99,7 +96,6 @@ EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/scop/pre-commit-shfmt": "v3.13.1-1",
     "https://github.com/astral-sh/ruff-pre-commit": "v0.16.5",
     "https://github.com/zizmorcore/zizmor-pre-commit": "v1.24.1",
-    "https://github.com/hadolint/hadolint": "v2.14.0",
     "https://github.com/rhysd/actionlint": "v1.7.12",
     "https://github.com/stackrox/kube-linter": "v0.8.3",
 }

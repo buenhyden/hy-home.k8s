@@ -96,8 +96,99 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             pattern = re.compile(hooks[identifier]["files"])
             with self.subTest(hook=identifier):
                 self.assertIsNotNone(pattern.search(".claude/hooks/k8s-pre-edit.sh"))
+                self.assertIsNotNone(pattern.search(".codex/hooks/pre-tool-use.sh"))
                 self.assertIsNotNone(pattern.search("scripts/check-secret-handling.sh"))
                 self.assertIsNone(pattern.search(".claude/settings.local.json"))
+
+    def test_shfmt_reports_mismatches_through_pre_commit_mutation(self):
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hook = next(
+            h for r in config["repos"] for h in r["hooks"] if h["id"] == "shfmt"
+        )
+        self.assertIn("--write", hook["args"])
+
+    def test_secret_modes_do_not_confuse_index_and_snapshot(self):
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hooks = [
+            h for r in config["repos"] for h in r["hooks"] if h["id"] == "gitleaks"
+        ]
+        native = [h for h in hooks if h.get("stages") == ["pre-commit"]]
+        manual = [h for h in hooks if h.get("stages") == ["manual"]]
+        self.assertEqual(len(native), 1)
+        self.assertEqual(len(manual), 1)
+        self.assertEqual(manual[0]["entry"].split()[:2], ["gitleaks", "dir"])
+        self.assertFalse(manual[0]["pass_filenames"])
+        self.assertIn("--redact", manual[0]["entry"])
+        commitizen = next(
+            h for r in config["repos"] for h in r["hooks"] if h["id"] == "commitizen"
+        )
+        self.assertEqual(commitizen["stages"], ["commit-msg"])
+
+    def test_manual_stage_preserves_every_file_hook(self):
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        for repository in config["repos"]:
+            for hook in repository["hooks"]:
+                identifier = hook.get("alias", hook["id"])
+                if identifier in {"gitleaks", "commitizen"}:
+                    continue  # The equivalent snapshot scan and message stage are separate.
+                with self.subTest(hook=identifier):
+                    self.assertIn(
+                        "manual", hook.get("stages", config.get("default_stages", []))
+                    )
+
+    def test_whitespace_exclusions_project_frozen_lifecycle_only(self):
+        import sys
+        from pathlib import PurePosixPath
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from document_contracts import classify_path, load_registry
+        from document_lifecycle import document_from_text
+
+        registry = load_registry(ROOT)
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hooks = {h["id"]: h for r in config["repos"] for h in r["hooks"]}
+        patterns = [
+            re.compile(hooks[name].get("exclude", "^$"))
+            for name in (
+                "end-of-file-fixer",
+                "mixed-line-ending",
+                "trailing-whitespace",
+            )
+        ]
+        for path in (ROOT / "docs/98.archive").rglob("*.md"):
+            relative = path.relative_to(ROOT).as_posix()
+            document = document_from_text(
+                registry, PurePosixPath(relative), path.read_text()
+            )
+            self.assertIsNone(document.state_issue, relative)
+            profile = classify_path(registry, PurePosixPath(relative))
+            frozen = document.status == "archived" or bool(
+                profile.lifecycle_domain
+                and profile.lifecycle_domain.validation_class(document.status)
+                == "terminal"
+            )
+            for pattern in patterns:
+                with self.subTest(path=relative, selector=pattern.pattern):
+                    self.assertEqual(bool(pattern.search(relative)), frozen)
+        for relative in (
+            "docs/98.archive/README.md",
+            "docs/98.archive/migrations/9999-new-current-record.md",
+            "docs/99.templates/templates/archive/migration.template.md",
+            ".agents/governance/quality.md",
+        ):
+            for pattern in patterns:
+                self.assertIsNone(pattern.search(relative), relative)
+
+    def test_heading_and_residue_probes_belong_to_tests(self):
+        tree = ast.parse((SCRIPTS / "validation/repository/quality.py").read_text())
+        probes = [
+            node.name
+            for node in tree.body
+            if isinstance(node, ast.FunctionDef)
+            and node.name.startswith("assert_")
+            and node.name.endswith("_probe")
+        ]
+        self.assertEqual(probes, [])
 
     def test_production_clis_do_not_embed_self_test_modes(self) -> None:
         offenders = [

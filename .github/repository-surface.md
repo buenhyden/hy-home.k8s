@@ -36,7 +36,7 @@ because it describes the repository's automation surface rather than the
   owned by the lock, pre-commit configuration, and execution registry.
 - The sole canonical local completion-order, lane, result, formatter, and
   handoff owner is
-  [`quality-standards.md`](../.agents/governance/quality.md);
+  [`quality.md`](../.agents/governance/quality.md);
   this hub and the PR template only route GitHub-specific consumers there.
 - Current validator command and fixture inventories live in
   [`scripts/README.md`](../scripts/README.md) and
@@ -67,7 +67,7 @@ because it describes the repository's automation surface rather than the
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
 | `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy` and the single `qa` job; QA prepares its locked dependencies once and executes the shared ci profile on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
-| `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
+| `generate-changelog.yml` | Release-evidence artifact generator. | Runs on pushed release tags matching `v*.*.*`. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 | `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |

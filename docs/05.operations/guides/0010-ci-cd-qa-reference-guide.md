@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.0.0"
+version: "1.1.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-08"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -39,16 +39,16 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 
 ### 1. 변경 표면을 먼저 분류한다
 
-`python3 scripts/validate-affected-surfaces.py --root .`는 변경된 경로에 맞는
-정적 검증 후보를 제시한다. 이 결과는 실행 권한을 부여하지 않으며, 변경하지
-않은 표면까지 무조건 검증하라는 고정 fixture도 아니다.
+`python3 scripts/validate-affected-surfaces.py --root .`는 registry 계약과
+추적된 경로의 라우팅을 검사한다. 실제 변경 경로 선택과 실행은 아래 QA
+진입점이 소유한다. 라우팅 결과는 실행 권한이나 live 검증 권한을 부여하지 않는다.
 
 ### 2. 가장 작은 로컬 검증에서 시작한다
 
 | 변경 상태 | 권장 진입점 | 증적 의미 |
 | --- | --- | --- |
-| 작업 트리 변경 | 영향 표면별 validator/test | 해당 변경의 빠른 정적 확인 |
-| staged 변경 | `python3 scripts/run-validation-lane.py --root . --lane staged --paths-file <paths.nul> --delimiter nul` | 커밋 후보 범위의 통합 확인 |
+| 작업 트리 변경 | `python3 scripts/qa.py quick` 및 focused test | 해당 변경의 빠른 정적 확인 |
+| staged 변경 | `python3 scripts/qa.py staged` | 정확한 Git index snapshot의 확인 |
 | 전체 저장소 | `python3 scripts/qa.py full` | 현재 checkout의 정적 계약 확인 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
@@ -72,32 +72,23 @@ summary로 나뉜다. 로컬 성공은 호스팅 환경의 권한·event·requir
 handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이유를 기록한다.
 브랜치 SHA나 고정된 문서 수를 별도의 운영 진실로 복제하지 않는다.
 
-### 5. 규칙별 실행 소유자와 이 워크스테이션의 한계를 구분한다
+### 5. 규칙별 실행 소유자와 메시지 검증을 구분한다
 
-한 규칙은 실행 소유자를 하나만 가진다. 중복이 남아 있다면 그 이유가 기록되어
-있어야 하며, 기록 없는 중복은 정리 대상이다. 2026-09-07 확인 결과는 다음과 같다.
-
-| 규칙 | 실행 소유자 | 판정 |
+| 규칙 | 실행 소유자 | 유지되는 경계 |
 | --- | --- | --- |
-| 컨테이너 매니페스트 린트(`hadolint`) | `.pre-commit-config.yaml`의 훅 하나 | 중복 없음. 어떤 검증 스크립트도 이 린터를 실행하지 않으며, 현재 저장소에는 추적되는 Dockerfile이 없다. 훅을 제거하면 소유권 이전이 아니라 향후 커버리지 삭제가 되므로 유지한다 |
-| GitHub Actions 액션 핀 고정 | 서드파티 린터(`zizmor`)와 저장소 validator 양쪽 | 의도된 인터록이므로 양쪽 유지. `scripts/validate-github-actions-security.py`가 `unpinned-uses` 규칙의 `disable: true` 억제를 금지하므로, validator는 린터 규칙이 꺼지는 것을 막는 역할을 한다 |
-| 커밋 훅 스위트 | full 프로파일 안의 실행 | 유지. 아래 한계 때문에 이 워크스테이션에서는 full 프로파일 실행이 유일한 실행 경로다 |
+| 파일 형식·lint | native 도구 설정과 full/ci의 pre-commit gate | 두 Provider shell adapter에 같은 기준을 적용하고, formatter의 snapshot 변경은 실패로 기록한다 |
+| GitHub Actions 보안 | zizmor와 repository Actions validator | 서로 다른 규칙을 유지한다. validator는 `unpinned-uses` 억제를 금지한다 |
+| secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
+| 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | full 파일 검사는 메시지 검증을 대신하지 않는다 |
 
-**커밋 도구 한계(2026-09-07 관측).** 이 워크스테이션의 전역
-`core.hooksPath`가 저장소 밖(`/home/hy/.codex/git-hooks`)을 가리킨다. 저장소의
-`.git/hooks/pre-commit`과 `commit-msg`는 설치되어 있으나 커밋 시점에 실행되지
-않으며, conventional-commit 검사도 커밋 시점에 동작하지 않는다. 이것은 한계이지
-동작하는 통제가 아니다.
+Dockerfile 도입 시 lint owner와 설정을 함께 도입한다. 현재 대상이 없는
+hadolint 설정의 제거는 SPEC-0072의 승인된 후속 정비이며, 과거 유지 판단을
+현재 정책으로 재사용하지 않는다.
 
-전역 설정은 변경하지 않는다. 사용자가 직접 실행하는 저장소-로컬 복구는 다음과
-같다.
-
-```bash
-git config --local core.hooksPath .git/hooks
-```
-
-이 설정은 이 저장소에만 적용되고 전역 설정을 건드리지 않는다. 되돌리려면
-`git config --local --unset core.hooksPath`를 실행한다.
+특정 workstation의 hooksPath는 공통 규범이 아니다. 유효한 출처와 hook
+연결만 좁게 확인하고 기존 설정을 유지한다. 실제 메시지의 명시적 검증과
+정상 active hook 실행은 [Git policy](../../../.agents/governance/git.md)를 따른다.
+수동 PASS를 native 설치·실행 증거로 기록하지 않는다.
 
 ## Common Pitfalls
 

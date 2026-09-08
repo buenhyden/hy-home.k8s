@@ -168,7 +168,7 @@ def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | 
             "-t",
             ".",
         ],
-        "pre-commit": ["pre-commit", "run", "--all-files"],
+        "pre-commit": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
     }
     if identifier in approved_commands and list(argv) == approved_commands[identifier]:
         return None

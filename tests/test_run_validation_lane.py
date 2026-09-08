@@ -1925,7 +1925,7 @@ class PreCommitChildEnvironmentTest(unittest.TestCase):
         "validators": [
             {
                 "id": "pre-commit",
-                "argv": ["pre-commit", "run", "--all-files"],
+                "argv": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
                 "lanes": ["all-files"],
                 "evidenceLane": "repo-static",
                 "optional": False,

@@ -84,7 +84,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Canonical Stage 00 registry, native adapter, and consumer validation is required."
+        "reason": "Canonical agent registry, native adapter, and consumer validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -366,7 +366,9 @@
       "argv": [
         "pre-commit",
         "run",
-        "--all-files"
+        "--all-files",
+        "--hook-stage",
+        "manual"
       ],
       "lanes": [
         "all-files",

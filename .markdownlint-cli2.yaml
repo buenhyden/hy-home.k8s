@@ -54,7 +54,6 @@ ignores:
   - "docs/98.archive/superseded/"
   - "docs/98.archive/tombstones/"
 
-# Reporting only. The pre-commit whitespace hooks own the safe fixes, and a
-# linter that rewrites files during a validation run would edit outside the
-# change under review.
+# Reporting only. Whitespace and language formatters have separate owners;
+# QA detects their snapshot changes. Explicit source fixes target reviewed files.
 fix: false

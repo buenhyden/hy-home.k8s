@@ -1,4 +1,5 @@
 default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit, pre-push, manual]
 
 repos:
   # --- 0. 커밋 메시지 검사 ---
@@ -25,14 +26,58 @@ repos:
       - id: check-toml
       - id: check-json
       - id: end-of-file-fixer
+        # Projection of terminal archive placement and sealed migration paths.
+        # Refresh with lifecycle transitions; the ownership test compares actual
+        # lifecycle meaning, including historical accepted controls. New draft
+        # migration paths remain formatter inputs. This is hook-local only.
+        exclude: &frozen_archive |
+          (?x)^docs/98\.archive/(?:
+            completed/(?!.*(?:/)?README\.md$).*\.md
+            | (?!migrations/)(?!completed/)(?!.*(?:/)?README\.md$).+\.md
+            | migrations/(?:
+              0001-sdlc-taxonomy-convergence
+              | 0002-sdlc-document-and-governance-consolidation
+              | 0003-agent-governance-control-plane-consolidation
+              | 0004-document-authority-convergence
+              | 0005-codex-claude-agent-governance-convergence
+              | 0006-unroutable-reference-profile-retirement
+              | 0007-agent-progress-ledger-retirement
+              | 0008-progress-append-form-retirement
+              | 0009-governance-memory-retirement
+              | 0010-stage99-form-naming-and-profile-identity-convergence
+              | 0011-stage03-package-router-retirement
+              | 0012-reference-form-family-naming
+              | 0013-completed-stage03-package-retention
+              | 0014-completed-stage03-package-retention-batch-a
+              | 0015-completed-stage03-package-retention-batch-b
+              | 0016-completed-stage03-package-retention-batch-c
+              | 0017-supersession-record-relocation
+              | 0018-terminal-stage03-package-retention
+              | 0019-requirement-and-architecture-authority-transfer
+              | 0020-stage00-agent-registry-authority-transfer
+              | 0021-common-agent-authority-routing
+              | 0022-document-taxonomy-package-retention
+              | 0023-responsibility-document-router-absorption
+            )\.md
+          )$
       - id: mixed-line-ending
+        exclude: *frozen_archive
       - id: trailing-whitespace
+        exclude: *frozen_archive
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: 6eaad039603a4de39fddd1cf5f727391efe9974e # frozen: v8.30.0
     hooks:
       - id: gitleaks
+        stages: [pre-commit]
         args: ['--config=.gitleaks.toml']
+      - id: gitleaks
+        alias: gitleaks-snapshot
+        name: detect secrets in the QA snapshot
+        stages: [manual]
+        entry: gitleaks dir --redact --verbose
+        pass_filenames: false
+        args: ['--config=.gitleaks.toml', '.']
 
   - repo: https://github.com/Yelp/detect-secrets
     rev: 01886c8a910c64595c47f186ca1ffc0b77fa5458 # frozen: v1.5.0
@@ -66,14 +111,14 @@ repos:
     rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
     hooks:
       - id: shellcheck
-        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
+        files: '^((scripts|infrastructure)/.*\.sh|\.(claude|codex)/hooks/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: 05c1426671b9237fb5e1444dd63aa5731bec0dfb # frozen: v3.13.1-1
     hooks:
       - id: shfmt
-        args: [-i, '2'] # Indent 2 spaces
-        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
+        args: [--write, -i, '2'] # pre-commit fails when formatting changes bytes
+        files: '^((scripts|infrastructure)/.*\.sh|\.(claude|codex)/hooks/.*\.sh)$'
 
   # Python lane, mirroring the shell lane: the linter reports, the formatter
   # rewrites. `ruff-check` runs without `--fix` so a validation run never
@@ -81,7 +126,7 @@ repos:
   #
   # `types` is stated rather than inherited. The v0.16.5 hook definition
   # declares `types_or: [python, pyi, jupyter, markdown]` for `ruff-format`,
-  # which would hand all 704 tracked Markdown files to a Python formatter and
+  # which would hand tracked Markdown files to a Python formatter and
   # rewrite the fenced snippets inside them -- a fenced list fragment such as
   # `("a", "b"),` comes back as `(("a", "b"),)`, still valid Python but no
   # longer the code the document is instructing a reader to write. Markdown
@@ -100,13 +145,6 @@ repos:
     rev: a4727cbbcd26d7098e96b9cb738169b59711ae51 # frozen: v1.24.1
     hooks:
       - id: zizmor
-
-  - repo: https://github.com/hadolint/hadolint
-    rev: 57e1618d78fd469a92c1e584e8c9313024656623 # frozen: v2.14.0
-    hooks:
-      - id: hadolint-docker
-        args: ['--config', '.hadolint.yaml']
-        files: '(^|/)([Dd]ockerfile|[Dd]ockerfile\.[^/]+)$'
 
   - repo: https://github.com/rhysd/actionlint
     rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12

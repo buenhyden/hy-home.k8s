@@ -1,4 +1,0 @@
-ignored:
-  - DL3006 # Home-lab Dockerfiles may pin images outside the maintainer guidance
-  - DL3018 # Local/dev images may intentionally avoid digest pinning for faster iteration
-  - DL4000 # Development Dockerfiles may rely on runtime-provided build args

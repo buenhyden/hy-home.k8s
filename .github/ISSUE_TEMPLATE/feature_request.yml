@@ -11,9 +11,9 @@ body:
   - type: input
     id: prd_link
     attributes:
-      label: PRD / AD Link
+      label: Requirement Package / AD Link
       description:
-        Provide a link to the PRD (`docs/01.requirements/`) or AD (`docs/02.architecture/descriptions/`) for this feature.
+        Provide a link to the requirement package (`docs/01.requirements/`) or AD (`docs/02.architecture/descriptions/`) for this feature.
       placeholder: https://github.com/<org>/<repo>/blob/main/docs/01.requirements/<file>.md
     validations:
       required: true
@@ -29,7 +29,7 @@ body:
     attributes:
       label: Expected Outcome
       description: What measurable outcome should improve after this feature?
-      placeholder: "Example: Reduce onboarding completion time from 8m to < 5m"
+      placeholder: "Example: Reject an unowned namespace with a precise static validation diagnostic"
     validations:
       required: true
   - type: textarea

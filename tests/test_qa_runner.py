@@ -297,7 +297,10 @@ class QaTests(unittest.TestCase):
             if argv[0] != "/trusted/pre-commit":
                 return real_run(argv, cwd=cwd, env=env, **kwargs)
             self.assertNotEqual(cwd, self.root)
-            self.assertEqual(argv, ["/trusted/pre-commit", "run", "--all-files"])
+            self.assertEqual(
+                argv,
+                ["/trusted/pre-commit", "run", "--all-files", "--hook-stage", "manual"],
+            )
             self.assertEqual((cwd / hidden).read_text(), "# New skill\n")
             self.assertIn(
                 hidden, self.qa.paths_from(self.qa.git(cwd, "ls-files", "-z"))
@@ -323,6 +326,74 @@ class QaTests(unittest.TestCase):
         self.assertEqual((self.root / ".git/index").read_bytes(), index_before)
         self.assertEqual(self.git("rev-parse", "HEAD"), head_before)
         self.assertNotIn(hidden, self.qa.paths_from(self.git("ls-files", "-z")))
+
+    def test_snapshot_secret_scan_covers_clean_history_and_hidden_files(self):
+        import json
+        import shlex
+        import yaml
+
+        executable = self.qa.runner.secure_gitleaks_executable(ROOT)
+        self.assertIsNotNone(executable, "Gitleaks is a required validation tool")
+        native = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hook = next(
+            h
+            for r in native["repos"]
+            for h in r["hooks"]
+            if h.get("alias") == "gitleaks-snapshot"
+        )
+        # Retain the real path allowlists with a harmless synthetic detection rule.
+        config = (ROOT / ".gitleaks.toml").read_text().split("[[rules]]", 1)[0]
+        config = config.replace("useDefault = true", "useDefault = false")
+        config += "[[rules]]\nid = 'qa-canary'\ndescription = 'synthetic canary'\nregex = 'AGQ_SYNTHETIC_[C]ANARY'\n"
+        (self.root / ".gitleaks.toml").write_text(config)
+        (self.root / "file.txt").write_text("AGQ_SYNTHETIC_CANARY\n")
+        self.git("add", "--", ".gitleaks.toml", "file.txt")
+        self.git("commit", "-qm", "fixture canary")
+        with self.qa.repository_snapshot(self.root) as snapshot:
+            staged = subprocess.run(
+                [
+                    executable,
+                    "git",
+                    "--pre-commit",
+                    "--staged",
+                    "--redact",
+                    "--config=.gitleaks.toml",
+                ],
+                cwd=snapshot,
+                env=self.qa.runner.closed_subprocess_environment(),
+                capture_output=True,
+                timeout=20,
+            )
+            self.assertEqual(staged.returncode, 0)
+
+        (self.root / ".hidden.txt").write_text("AGQ_SYNTHETIC_CANARY\n")
+        (self.root / "ignored-secret").write_text("AGQ_SYNTHETIC_CANARY\n")
+        before = (self.root / ".git/index").read_bytes()
+        with self.qa.repository_snapshot(self.root) as snapshot:
+            (snapshot / ".git/private-canary").write_text("AGQ_SYNTHETIC_CANARY\n")
+            with tempfile.TemporaryDirectory(prefix="qa-canary-report-") as report_dir:
+                report = Path(report_dir) / "findings.json"
+                result = subprocess.run(
+                    [
+                        executable,
+                        *shlex.split(hook["entry"])[1:],
+                        *hook["args"],
+                        "--report-format=json",
+                        "--report-path=" + str(report),
+                    ],
+                    cwd=snapshot,
+                    env=self.qa.runner.closed_subprocess_environment(),
+                    capture_output=True,
+                    timeout=20,
+                )
+                self.assertEqual(result.returncode, 1, result.stderr.decode())
+                paths = {row["File"] for row in json.loads(report.read_text())}
+                self.assertEqual(paths, {"file.txt", ".hidden.txt"})
+            self.qa.require_unchanged_snapshot(snapshot)
+        self.assertEqual((self.root / ".git/index").read_bytes(), before)
+        self.assertEqual(
+            (self.root / "ignored-secret").read_text(), "AGQ_SYNTHETIC_CANARY\n"
+        )
 
     def test_snapshot_rejects_escaping_symlinks(self):
         (self.root / "escape").symlink_to("../../outside")
@@ -516,7 +587,7 @@ class QaTests(unittest.TestCase):
 
         row = {
             "id": "missing",
-            "argv": ["pre-commit", "run", "--all-files"],
+            "argv": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
             "optional": False,
             "fallback": {"reason": "required"},
             "evidenceLane": "repo-static",

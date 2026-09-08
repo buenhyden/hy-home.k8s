@@ -1,10 +1,10 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.2.1"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-08"
 ---
 
 # Formatting and Linting Policy
@@ -53,15 +53,27 @@ reaches editors only and proves nothing about committed bytes.
   authoring convention, a rule blocked by documents the lifecycle policy
   forbids editing, or living debt to be retired by fixing the documents.
   A bare disabled rule hides which of the three it is.
-- Linters report during validation. A tool that rewrites files while a
-  validation lane runs would edit outside the change under review, so
-  automatic fixing stays with the whitespace hooks that own it.
+- Linters report. Shfmt, Ruff format and whitespace hooks rewrite their input
+  files. QA runs them inside an isolated snapshot, detects changed bytes and
+  fails without modifying the source tree/index. An explicitly approved fix
+  uses the same pinned hooks with `--files` naming only reviewed source paths;
+  inspect the diff, restage and refresh the affected evidence afterward.
+- ShellCheck and shfmt cover shell scripts under `scripts/`, `infrastructure/`
+  and both provider hook directories. Ruff's explicit Python type restriction
+  keeps Markdown with its own reporting linter.
 - Never suppress a rule for a whole file when the conflict is one rule.
   A whole-file exemption silently drops every other rule on that file.
 - Exclude frozen Archive payloads from every auto-fixing formatter. Validate
   their envelope, manifest, source commit/blob, digest, and historical links
   without changing their body bytes. Apply current formatting only to active
-  documents and newly authored current-generation Archive records.
+  documents and newly authored current-generation Archive records. The three
+  whitespace hooks share a hook-local native exclusion projection of terminal
+  archive placement and exact sealed migration paths. The ownership regression
+  compares that selector with the lifecycle owner's normalized states, including
+  historical accepted controls. Refresh it with sealing, replacement or path
+  reuse; a path is not permanently frozen merely because an earlier record was.
+  New draft/current migration paths and archive READMEs remain selected. Secret
+  scanners and lifecycle/recovery validators are not excluded by this selector.
 
 ## Validation and Refresh
 

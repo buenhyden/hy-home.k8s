@@ -704,7 +704,7 @@
       "validatorId": "repository-quality",
       "argv": [
         "bash",
-        "scripts/validate-harness.sh",
+        "scripts/validate-gitops-structure.sh",
         "-c"
       ]
     },
@@ -732,7 +732,7 @@
       "argv": [
         "bash",
         "--",
-        "scripts/validate-harness.sh",
+        "scripts/validate-gitops-structure.sh",
         "-c"
       ]
     }
@@ -965,7 +965,7 @@
         "argv": [
           "env",
           "bash",
-          "scripts/validate-harness.sh"
+          "scripts/validate-gitops-structure.sh"
         ]
       },
       "paths": [
@@ -996,7 +996,7 @@
         "validatorId": "repository-quality",
         "argv": [
           "scripts/bash",
-          "scripts/validate-harness.sh"
+          "scripts/validate-gitops-structure.sh"
         ]
       },
       "paths": [
@@ -1041,7 +1041,7 @@
         "validatorId": "repository-quality",
         "argv": [
           "../bin/bash",
-          "scripts/validate-harness.sh"
+          "scripts/validate-gitops-structure.sh"
         ]
       },
       "paths": [
@@ -1056,7 +1056,7 @@
         "validatorId": "repository-quality",
         "argv": [
           "Bash",
-          "scripts/validate-harness.sh"
+          "scripts/validate-gitops-structure.sh"
         ]
       },
       "paths": [

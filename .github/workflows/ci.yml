@@ -58,6 +58,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$(git rev-parse ci-validated-checkout)"
           git symbolic-ref --quiet HEAD
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        id: validation-python
         with:
           python-version: '3.12'
           cache: pip
@@ -79,10 +80,10 @@ jobs:
       - name: Publish pre-commit to the validator search path
         run: |
           set -euo pipefail
-          # Validators run with a fixed system search path, so the interpreter's
-          # own script directory is never searched. Publish the console script
-          # the way Gitleaks is published, or the gate reports its required tool
-          # as unavailable and the pre-commit hooks silently never run.
+          # Fixed system paths are searched first. The runner also permits a
+          # trusted interpreter-adjacent or exact account-owned fallback.
+          # Publish the locked script here for a stable hosted tool identity;
+          # missing required tools fail the gate.
           sudo install -o root -g root -m 0755 "$(command -v pre-commit)" /usr/local/bin/pre-commit
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -90,7 +91,7 @@ jobs:
           # cold cache, including the Go toolchains, which dominates the run.
           # The runner resolves this exact directory for that gate.
           path: ~/.cache/pre-commit
-          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit-${{ runner.os }}-${{ runner.arch }}-py${{ steps.validation-python.outputs.python-version }}-${{ hashFiles('.pre-commit-config.yaml', '.github/requirements/ci-validation.txt') }}
       - name: Install Gitleaks
         run: |
           set -euo pipefail

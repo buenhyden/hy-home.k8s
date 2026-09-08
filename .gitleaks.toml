@@ -9,6 +9,12 @@ paths = [
   '''^\.secrets\.baseline$''',
 ]
 
+[[allowlists]]
+description = "Skip Git metadata before snapshot directory traversal; source files remain scanned"
+paths = [
+  '''(?:^|/)\.git(?:/|$)''',
+]
+
 [[rules]]
 id = "generic-api-key"
 

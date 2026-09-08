@@ -216,6 +216,9 @@ class CiQaWorkflowTests(unittest.TestCase):
         # A key that ignores the hook configuration would restore environments
         # that no longer match the hooks being run.
         self.assertIn(".pre-commit-config.yaml", with_["key"])
+        self.assertIn("runner.arch", with_["key"])
+        self.assertIn("steps.validation-python.outputs.python-version", with_["key"])
+        self.assertIn(".github/requirements/ci-validation.txt", with_["key"])
 
     def test_job_wall_clock_exceeds_the_slowest_declared_gate_budget(self):
         """A gate budget larger than its job's wall clock can never be reached."""

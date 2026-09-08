@@ -34,8 +34,7 @@ existing owners and creates verified logical local commits.
 | [WORK-002](../plan.md#work-breakdown) | VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-008 | Preserve shared QA and hidden-path coverage; resolve baseline tooling failures | platform | Done | Hidden routes, bounded inputs and shared full/CI gate set verified | Focused negative tests and full QA |
 | [WORK-003](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-007 | Reconcile documents, history, profiles and safety boundaries | platform | Done | Profiles, consumers, history and current plans reconciled; static checks pass | Disposition and link checks |
 | [WORK-004](../plan.md#work-breakdown) | VAL-AGQ-006 | Validate final static tree and report native/hosted limits | platform | In progress | Local static migration passes; native and hosted evidence remains DEFER | Final validation table |
-
-| [WORK-005](../plan.md#work-breakdown) | VAL-AGQ-013 | Correct process diagnostics | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-005](../plan.md#work-breakdown) | VAL-AGQ-013 | Correct process diagnostics | platform | Done | Bounded kernel state replaces argument reads; commit 2c9450c | Current follow-up evidence below |
 | [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | In progress | Approved implementation | Current follow-up evidence below |
 | [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | In progress | Approved implementation | Current follow-up evidence below |
 | [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | In progress | Approved implementation | Current follow-up evidence below |
@@ -63,8 +62,8 @@ Baseline HEAD is `58b32427aecdee52c601151931455bddaa317500`, including the
 previous worker's diagnostic and hosted-evidence commits. The original
 `fix/qa-name-the-detaching-git-call` checkout has a clean index and working tree.
 The task worktree is `.worktrees/agq-consolidation` on `codex/agq-consolidation`.
-Local origin/main and merge-base are `be2d41efe32cc9c21787d0d2c32ecc920c28c61a`;
-remote freshness is not yet established. Existing stashes remain untouched.
+Fetched origin/main and merge-base are `be2d41efe32cc9c21787d0d2c32ecc920c28c61a`.
+Existing stashes remain untouched.
 
 The user approved minimal integration through existing owners. Spec criteria
 VAL-AGQ-009 through VAL-AGQ-014 extend acceptance without reopening WORK-001
@@ -104,7 +103,74 @@ contents and other private settings were not read. Actual candidate messages
 therefore require the explicit pinned commit-msg invocation; normal active
 hooks remain enabled for each real commit.
 
-### Current Local Main Merge and Follow-up (2026-09-06)
+### Follow-up Implementation and Targeted Evidence (2026-09-08)
+
+Commit `2c9450c84c8499b073e528807b04eaf2edf3eaa7` contains the diagnostic
+correction and approved Spec/Plan/Task refresh. Its final exact-index QA passes
+eleven gates in 252.54 s after reviewing/restaging the document repair. The
+earlier staged run took 313.24 s on different bytes; these are observations,
+not an optimization comparison. Pinned Commitizen checked the actual message
+file through commit-msg in a temporary Git repository using the index's config.
+The real commit then completed with normal active hooks. This does not prove a
+commit-msg hook exists in the source checkout.
+
+The follow-up retains existing owners and intentional differences:
+
+| Surface | Disposition and preserved contract | Targeted evidence |
+| --- | --- | --- |
+| QA registry and affected-surface validator | One exact manual-stage pre-commit argv; full/ci keep the same gate set | Profile, direct-command and snapshot tests |
+| Native Gitleaks / QA snapshot Gitleaks | Native index scan remains; manual directory scan covers unchanged and hidden snapshot files; only `.git` metadata is newly excluded | Actual Gitleaks 8.30.0 synthetic canary test passes in 1.807 s; ignored source/index remain untouched |
+| ShellCheck / shfmt / Ruff / whitespace hooks | Both Provider hook paths selected; shfmt writes only explicit fix or isolated snapshot; Python-only Ruff scope remains | Selector RED/GREEN; pinned formatter temporary-repository experiment detects changed bytes and preserves source/index |
+| Frozen archive | Hook-local lifecycle projection excludes existing sealed paths; new current migration paths stay selected | Lifecycle-derived corpus comparison and actual CRLF/trailing-whitespace fixture experiment; no sealed bytes edited |
+| Commitizen / Git-cliff | Ordinary grammar unchanged; generated prefix defaults made explicit; changelog skip ordering, build/deps/release groups and parsed breaking footer aligned | Contract tests and actual pinned native commit-msg experiment; Git-cliff 2.13.1 temporary-history comparison |
+| `scripts/validate-harness.sh` | Deleted full-plus-domain wrapper; PR/README call existing QA entry | Seven domain gates stay registered; Bash option/eval negative fixtures use the existing GitOps validator |
+| Repository quality heading/residue probes | Synthetic checks move to independent tests; production parsers and diagnostics remain | AST extraction tests retain H2/H3, hidden/composite blocks, ambiguity, missing heading and residue ownership |
+| `.hadolint.yaml` and unused hook | Deleted because no tracked Dockerfile consumes them; current guidance updated | Read-only target inventory; old exact path routing retained for deletion/recovery diffs |
+| CI cache and summary | Cache identity adds architecture, resolved Python and lock; one QA job and fail-closed summary remain | Workflow/commit/CI-Python focused suite passes 81 tests in 8.706 s before the final small regression additions |
+
+The pinned formatter experiment changes both Provider shell fixtures, Python
+and a current migration record, while leaving Markdown code fences, frozen
+archive bytes and the source/index unchanged. Formatter exit 1 and snapshot
+mutation detection are expected negative results, not skipped validation.
+
+Temporary native Git commits pass a valid subject and breaking footer and
+reject a terminal period and unsupported `type(scope)!`; Commitizen is absent
+from the manual file stage. These hooks are installed only in the temporary
+repository. Git-cliff's official 2.13.1 asset was verified against its published
+SHA-256; no global tool installation or history rewrite occurred.
+
+Security read-only review found a missing manual-stage inheritance regression
+and stale README hadolint guidance; both are corrected. Python review found
+missing composite hidden-block cases in the transferred probes; those are
+restored with distinct hidden rows. Reviewers ran no full QA or native hooks.
+Other embedded probes and validators retain their unique rules; no unmeasured
+scan/parse similarity is treated as proof of duplication.
+
+Quick QA initially rejected the removed `.hadolint.yaml` route. Restoring only
+that existing route preserves validation of deletion/recovery inputs without
+restoring the unused tool. Required failures are never relabeled as SKIP.
+
+Outside sandbox UID remapping, the strict resolver selects the locked
+interpreter-adjacent pre-commit 4.6.1. Closed HOME/PATH and account-owned cache
+rules remain unchanged. Cold setup is not repeated on this host given the
+previous resource-pressure evidence; warm-cache timings do not establish a
+cold/warm speedup. Removing the unused wrapper eliminates its extra seven
+domain invocations when that old entry point was used, and moving synthetic
+probes removes repeated production work; no wall-time reduction is claimed.
+
+Final quick, staged and full evidence is recorded after the final bytes are
+validated. New hosted execution, remote required-check configuration, Provider
+discovery/event delivery/model resolution/enforcement and live checks remain
+DEFER for the current unpublished branch. Static projection and payload tests
+cannot close those external acceptance items.
+
+### Historical Local Main Merge and Follow-up (2026-09-06)
+
+All dated evidence from this section through the final prior hosted result is
+retained history. Its former "next work", validation order, paths and one-off
+approvals are not current execution instructions. The approved follow-up above
+and current Spec/Plan own remaining work; sealed recovery identities below
+remain evidence, not pins for the current repository state.
 
 The user requested that the existing work be merged into local main before
 remaining-work execution. The local fast-forward advanced main from

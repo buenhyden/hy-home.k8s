@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.1.1"
+version: "1.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-08"
 ---
 
 # Quality and Evidence Policy
@@ -43,7 +43,8 @@ metadata; static parity never proves discovery, model resolution, or execution.
   does not replace this byte-specific evidence; commit-message hooks remain
   separate.
 - **full / all-files**: the full QA profile validates the final working tree,
-  including one unit discovery and one all-files pre-commit invocation. Do not
+  including one unit discovery and one all-files pre-commit invocation at the
+  explicit manual stage. Commit-msg remains separate. Do not
   repeat either command on unchanged bytes outside that profile.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
@@ -86,23 +87,25 @@ leader exits is `FAIL`.
 
 ### Canonical completion sequence
 
-1. **targeted**: reproduce the failure and run focused checks during implementation.
-2. **quick**: validate the complete working-tree change selection.
-3. **staged**: when committing is authorized, review and stage the logical set,
-   then validate its actual index
-   snapshot using the supported QA staged entrypoint.
-4. **full**: run the common full profile on the final working tree before handoff.
-   Unit discovery and pre-commit belong to this invocation and are not repeated
-   merely to collect the same evidence under another command name.
-5. **formatter-review**: inspect formatter findings and apply intended fixes
-   explicitly. QA/CI validation does not silently modify or commit user files.
-6. **rerun**: after changed bytes, review and restage as needed, then rerun the
-   affected evidence scopes. Record why a repeat was necessary; unchanged
-   full/ci profile parity is proved by contract tests rather than two full runs.
-7. **diff-checks**: run `git diff --check` and `git diff --cached --check`, review
-   final scope, then create the scoped local commit through normal hooks only
-   when the user has authorized commits. Otherwise preserve the index and record
-   staged/commit-message evidence as N/A for the no-commit handoff.
+1. **targeted**: reproduce changed behavior and run focused checks while implementing.
+2. **quick**: validate the affected working-tree snapshot during work.
+3. **each logical commit**: inspect status and the unstaged diff, stage only the
+   reviewed logical set, inspect the cached diff, run `git diff --check` and
+   `git diff --cached --check`, then exact-index staged QA. Validate the actual
+   message under Git policy and commit through normal active hooks.
+4. **final full**: before handoff run full QA on the final working tree. Its unit
+   discovery and pre-commit gate are not repeated on identical inputs under
+   another command name. Full/ci equality is checked by contract tests.
+5. **repair and refresh**: inspect formatter findings, explicitly fix selected
+   files, review/restage changed bytes and refresh affected evidence. QA itself
+   never fixes source files. A final full failure keeps the work incomplete.
+6. **evidence handoff**: record the checked snapshot and any subsequent Task-only
+   changes separately, validating those document changes without a self-SHA or
+   elapsed-time rewrite loop. Review final diff scope and remaining acceptance.
+
+For a no-commit request preserve the index and record staged/message evidence
+as N/A. Input identity includes bytes, base/history, configuration and mode;
+a matching filename set alone never justifies evidence reuse.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve

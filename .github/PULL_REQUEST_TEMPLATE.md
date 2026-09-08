@@ -40,17 +40,17 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-Record the canonical order from [Agent Quality Standards](../.agents/governance/quality.md):
-
-`targeted -> affected -> staged -> tests -> all-files -> formatter-review -> rerun -> diff-checks`
+Follow the completion order in [Quality Policy](../.agents/governance/quality.md).
+Record distinct input snapshots and reuse the full profile's unit/pre-commit
+results without repeating those commands on the same inputs.
 
 - [ ] `targeted` result:
-- [ ] `affected` result:
-- [ ] `staged` runner and exact-index `pre-commit run` results:
-- [ ] `tests` result:
+- [ ] `quick` working-tree result:
+- [ ] Exact-index `python3 scripts/qa.py staged` result for each logical commit:
+- [ ] Actual commit-message validation and normal active-hook evidence:
 - [ ] `full` result (`python3 scripts/qa.py full`):
-- [ ] `formatter-review` result:
-- [ ] `rerun` result (or `SKIP` reason when no formatter changed a file):
+- [ ] Formatter findings, explicit fixes and evidence refreshed after changed bytes:
+- [ ] Post-full documentation changes and their separate validation, if any:
 - [ ] `diff-checks` result:
 - [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
 - [ ] GitHub CI `ci-summary` passed for the `qa` job and applicable branch policy, or hosted verification is explicitly `DEFER`; exact SHA and run identity:
@@ -85,8 +85,7 @@ Record the canonical order from [Agent Quality Standards](../.agents/governance/
 If any harness surface changed, record exact static validation evidence:
 
 ```bash
-bash scripts/validate-harness.sh
-bash infrastructure/tests/verify-contracts-static.sh
+python3 scripts/qa.py full
 ```
 
 Live checks, only when explicitly approved:
