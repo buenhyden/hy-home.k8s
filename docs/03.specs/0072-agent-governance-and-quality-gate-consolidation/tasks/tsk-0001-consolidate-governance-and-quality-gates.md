@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.2.0"
+version: "2.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -825,6 +825,61 @@ the pre-commit repair introduced.
 The `unit-tests` budget and the cache change what the job costs, not what it
 proves. No execution-time improvement is claimed for the cache until a hosted
 run measures one.
+
+### Second Hosted Result and the Dependency Divergence (2026-09-08)
+
+Run `34183991155` on `3643aac6` shows both earlier repairs working and moves
+the remaining failures to new causes. `branch-policy` executed for the first
+time and passed; every setup step including the hook cache passed. The
+`unit-tests` gate no longer times out, which is the declared budget doing its
+job, and `pre-commit` returned `rc=0` with every hook passing, which is the
+toolchain-cache fix doing its job.
+
+`unit-tests` then failed one case:
+`test_repository_snapshot_is_complete_and_atomic`, which asserts the archive
+cutover command writes nothing to stderr. The cause is dependency identity.
+CI installs the locked `jsonschema==4.26.0`, which deprecates `RefResolver`
+and prints that deprecation when the shared schema evaluator imports it; the
+developer machine here carries `4.10.3`, which does not. A validator writes
+evidence, so noise on its stderr is a defect rather than a detail.
+
+That class of fault cannot be seen from a local run at all, so a virtualenv
+built from `.github/requirements/ci-validation.txt` was used to hold the
+hosted dependency identity. It reproduced the warning and the failing case
+exactly, and both clear after the evaluator uses the `referencing` registry
+where the interpreter has it and keeps the resolver path where it does not.
+The boundary the module exists for is unchanged and tested on both: external
+schema resources are never retrieved, embedded definitions resolve, and an
+invalid schema fails closed without leaking schema values. `scripts/README.md`
+now records the reproduction so the next such divergence does not need to be
+rediscovered.
+
+The hosted `unit-tests` failure also named a case and nothing else, because
+the bounded snippet kept only lines opening with `FAIL:`, `ERROR:` or a hook
+marker and a unittest assertion opens with neither. Assertion lines now carry
+through under the same byte bound and redaction.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34183991155` | 1 / FAIL | `pull_request` on `3643aac6`; `branch-policy` PASS, 20/22 gates PASS, `unit-tests` `rc=1`, `pre-commit` `rc=0` with `descendant_cleanup` |
+| CI-identity virtualenv reproduction | 1 / FAIL as expected | Locked `jsonschema==4.26.0` reproduced the deprecation and the failing case that no local interpreter here could show |
+| CI-identity virtualenv after the fix | 0 / PASS | Same interpreter; `unit-tests` passes and 21/22 gates pass, the remaining one being formatter output on newly written code |
+| Older interpreter after the fix | 0 / PASS | `jsonschema==4.10.3` without `referencing`; the resolver path still resolves and still refuses external resources |
+| Hosted CI on these commits | NOT_RUN / DEFER | No hosted result exists for the follow-up; run `34183991155` stands as the current observation |
+
+Two limitations remain open. `descendant_cleanup` was reported for both slow
+gates on the hosted runner and for neither locally, including under the
+CI-identity interpreter, so no root cause is established; the containment
+boundary it guards is real, so it is left intact rather than widened against a
+fault that has never been reproduced. The escaped-descendant test from the
+previous section is still unrepaired for the same reason.
+
+One repository hazard was confirmed the hard way and is now recorded in
+`scripts/README.md`: formatters must run through `pre-commit`. The hook
+narrows `ruff-format` to Python deliberately, and the bare command also claims
+Markdown and rewrote fenced snippets inside eleven authored and archived
+documents. Those edits were reverted before staging and no archived byte
+changed, but the configuration comment predicting it was already there.
 
 ## Traceability
 
