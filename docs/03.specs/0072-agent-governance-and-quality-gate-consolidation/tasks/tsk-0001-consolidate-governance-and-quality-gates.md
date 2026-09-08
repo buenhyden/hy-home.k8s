@@ -35,19 +35,19 @@ existing owners and creates verified logical local commits.
 | [WORK-003](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-007 | Reconcile documents, history, profiles and safety boundaries | platform | Done | Profiles, consumers, history and current plans reconciled; static checks pass | Disposition and link checks |
 | [WORK-004](../plan.md#work-breakdown) | VAL-AGQ-006 | Validate final static tree and report native/hosted limits | platform | In progress | Local static migration passes; native and hosted evidence remains DEFER | Final validation table |
 | [WORK-005](../plan.md#work-breakdown) | VAL-AGQ-013 | Correct process diagnostics | platform | Done | Bounded kernel state replaces argument reads; commit 2c9450c | Current follow-up evidence below |
-| [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | In progress | Approved implementation | Current follow-up evidence below |
-| [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | In progress | Approved implementation | Current follow-up evidence below |
-| [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | In progress | Approved implementation | Current follow-up evidence below |
-| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | Done | Both Providers covered; snapshot and frozen boundaries pass | Final local handoff below |
+| [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | Done | Pinned message, native temporary hook and changelog tests pass | Final local handoff below |
+| [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | Done | Wrapper and unused hook removed; unique domain and fixture contracts retained | Final local handoff below |
+| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Local implementation and validation complete; external acceptance remains DEFER with WORK-004 | Final local handoff below |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `.agents/`, `.github/`, `.claude/`, `.codex/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`, `scripts/`, `tests/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml`, `.secrets.baseline`, `.graphifyignore`, `.cz.toml`, `.gitmessage`, `cliff.toml`, `.editorconfig`, `.gitleaks.toml`, `.hadolint.yaml`
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
-- **Current Local Merge Authority**: the user separately approved merging origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` into the task branch, conflict resolution and revalidation; this grants no remote or additional merge authority
+- **Completed Current Local Merge**: the separately approved origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` integration completed as `4667aa03`; that authority is consumed and grants no remote or additional merge authority
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
-- **Current Follow-up**: implement the approved minimal integration on `codex/agq-consolidation`; commit configuration and full-snapshot scan coverage extend the earlier Task scope
+- **Completed Follow-up Scope**: the approved minimal integration on `codex/agq-consolidation` includes commit configuration and full-snapshot scan coverage beyond the earlier Task scope
 - **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
 - **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, additional merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
 - **Static Validation**: focused unit tests, QA profiles, pre-commit, actionlint and zizmor; existing GitHub Actions logs are read-only evidence
@@ -253,6 +253,68 @@ the regression now covers live, both terminated and malformed states. Main's
 real exited-descendant case is retained. All seventy runner tests pass in
 2.401 s after conflict resolution. Updated full evidence follows the merge
 commit; the cancelled run cannot establish final acceptance.
+
+### Final Local Handoff (2026-09-08)
+
+The approved local implementation is complete on `codex/agq-consolidation` in
+`.worktrees/agq-consolidation`. Integration commit
+`4667aa0362f77ec0fa406479a4e7913b3d79a79c` has parents `dbc80b4a` and
+`49e71f9c`; the latter is the updated main/base. The original checkout is clean
+on main `49e71f9c` and its parallel work is preserved through that integration.
+This worker did not push, mutate a PR, dispatch a workflow or perform live work.
+
+| Evidence | Result | Input and limitation |
+| --- | --- | --- |
+| Integration runner regression | PASS | Seventy tests in 2.401 s; subsequent formatter/test-description edits are covered by final full |
+| Integration quick | PASS | Eleven gates, working-tree snapshot, 256.17 s |
+| Integration staged | PASS | Eleven gates, exact index, 249.35 s |
+| Integration actual message and commit | PASS | Pinned commit-msg checks the actual UTF-8 file; normal active hooks create the merge commit |
+| Final full | PASS | All twenty-two gates, 1200.76 s, including one unit discovery and one manual all-files pre-commit |
+| Source isolation | PASS | Clean working tree; index SHA-256 unchanged; every gate reports complete cleanup |
+| Full/ci equivalence | PASS, repository-static | Existing registry/workflow regression; no redundant local ci run |
+| Hosted and remote required checks | DEFER | No current task-branch hosted run; remote required-check configuration unverified |
+| Provider native runtime | DEFER | Static links, permissions and payload contracts pass; discovery, actual model resolution and hook delivery/enforcement need separate runtime evidence |
+| Live and cross-platform behavior | DEFER | No live infrastructure invocation and no untested-platform guarantee |
+
+The final full input is tree `90a9969165acc2c59ce57c9dafb1e0e38e782cd8` at
+`4667aa03`. Its unchanged source index SHA-256 is
+`4ff54a4d00d554a567266f1da438724d9094f170e977ebb077f87e439984cf02`.
+The pre-commit configuration SHA-256 is
+`29f2b80d5660358f62c7e53e41c12739ba497ff658e208eb08e7907826de557a`, and the
+CI requirements lock SHA-256 is
+`6d0685e84a4fb19b24e44c5ae965f16d7215e8608b210cbf0559d4a203a9cc13`.
+These identify observed inputs, not policy pins for later work. The runtime
+uses the recorded WSL/Python and locked environment with its existing cache.
+The earlier failed and cancelled full attempts remain distinct evidence;
+different inputs and unisolated setup costs preclude a speedup claim.
+
+Python and security reviewers approve the liveness/diagnostic integration.
+The security review's stale zombie-test description is corrected. Earlier
+manual-stage, hadolint-reference and independent-probe findings are also
+resolved. Reviewers did not run this final full or establish native delivery.
+Frozen archive bodies and domain-owned infrastructure test locations remain
+unchanged; only the explicit nine-file Shell formatting repair affects those
+infrastructure scripts. No new registry, wrapper or fixture framework exists.
+
+The implementation commits are `2c9450c8` (bounded diagnostics), `1014bba7`
+(snapshot coverage and ownership), `4da974e4` (commit/changelog contracts),
+`dbc80b4a` (exposed hook findings), and the approved `4667aa03` main integration.
+This Task-only handoff update is authored after the full input. Its focused
+document, exact-index and actual-message results are recorded in the subsequent
+documentation commit body; full does not claim to have scanned this later prose.
+
+Keep the local branch and worktree. A scoped rollback uses reviewed forward
+reverts with their paired contracts/tests. For a whole-task rollback, first
+review reversal of the later handoff documentation, then the merge's second
+parent (main `49e71f9c`) as the revert baseline, preserving the upstream repair.
+Do not blindly revert the first-parent integration or rewrite history.
+
+WORK-004 and WORK-009 remain open only for external acceptance. The next owner
+is platform/the operator: obtain separate publication or hosted-run approval,
+then collect evidence for this implementation and current required checks;
+exercise each Provider's native discovery/model/hook/permission behavior in an
+authorized environment. Live infrastructure testing remains outside this task.
+The Task stays in progress until those lifecycle conditions are satisfied.
 
 ### Historical Local Main Merge and Follow-up (2026-09-06)
 
