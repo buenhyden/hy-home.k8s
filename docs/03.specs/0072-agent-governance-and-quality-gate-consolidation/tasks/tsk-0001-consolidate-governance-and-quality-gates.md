@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.1.0"
+version: "2.2.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -772,6 +772,59 @@ no history rewrite, no blanket restore. Reversing the resolver alone would
 restore the hosted failure, so the resolver and the workflow binding roll back
 together. The next owner is platform, for hosted verification once push is
 authorized, and for the two order-dependent tests.
+
+### Hosted Result and the Two Gates It Exposed (2026-09-08)
+
+The repair merged as `d284c99e` and hosted CI ran the QA job to completion for
+the first time. Twenty of twenty-two gates passed, including all five that the
+detached-HEAD defect had been failing, and the three added steps -- the ref
+binding, the pre-commit publish, and the pinned Conftest install -- all
+succeeded. The job ran 27m55s against the 9m8s of the run that used to die
+early, which is the shape of a job that now reaches its slow gates instead of
+failing before them.
+
+Both remaining failures are gates that had never executed in hosted CI, so
+neither was a regression from the repair; each was a latent fault the repair
+made reachable.
+
+`pre-commit` failed with pre-commit's unexpected-error exit. Its cause is
+exact and was reproduced locally:
+
+    go install ./...: failed to initialize build cache at
+    /nonexistent/.cache/go-build: mkdir /nonexistent: permission denied
+
+`HOME` is unreachable by design so no ambient startup state is read, but hook
+environments that build from source ask their toolchain for a cache under
+`HOME`. Every local run had passed only because its hook cache was already
+warm and no toolchain ever built. The runner now names each toolchain cache
+under the account-owned pre-commit directory rather than reopening `HOME`. A
+cold cache with `HOME=/nonexistent` failed at that exact `mkdir` before the
+change and installs and passes every Go-backed hook after it.
+
+`unit-tests` hit the shared 1200s validator budget and was killed at `rc=-9`.
+The suite takes 828s locally; `test_archive_validation` is 451.5s of that, and
+twelve of its tests hold 81% of the module because each runs a full
+link-diagnostics pass over its own variant of the corpus. That work is
+per-test and does not cache away, so the budget is what changes. Raising the
+shared constant would weaken the bound on every gate that has no reason to run
+long, so the registry schema gained an optional per-gate `timeoutSeconds`,
+only `unit-tests` declares one, and the job wall clock moved to 75 minutes
+because a gate budget above its job's wall clock can never be reached. Hook
+environments are cached between runs, which removes the largest single cost
+the pre-commit repair introduced.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34174869492` | 1 / FAIL | `push` on `d284c99e`; 20/22 gates PASS, `unit-tests` timeout and `pre-commit` cold-cache failure |
+| Hosted CI run `34174794127` | 1 / FAIL | `pull_request` on `c7b239f0`; same two gates |
+| Cold-cache reproduction of the pre-commit failure | 1 / FAIL as expected | `HOME=/nonexistent` with an empty hook cache returned the hosted `mkdir /nonexistent` error; the same command with a warm cache passed, which is why no earlier run saw it |
+| Cold-cache verification after the fix | 0 / PASS | Same cold cache and unreachable `HOME`; every Go-backed hook installs and passes |
+| `test_archive_validation` per-test timing | measured | 96 tests, 451.5s, top twelve hold 81%; recorded so the budget is chosen against a measurement rather than a guess |
+| Hosted CI on the follow-up | NOT_RUN / DEFER | No hosted result exists for the follow-up commits; the two failures above stand as the current hosted observation |
+
+The `unit-tests` budget and the cache change what the job costs, not what it
+proves. No execution-time improvement is claimed for the cache until a hosted
+run measures one.
 
 ## Traceability
 
