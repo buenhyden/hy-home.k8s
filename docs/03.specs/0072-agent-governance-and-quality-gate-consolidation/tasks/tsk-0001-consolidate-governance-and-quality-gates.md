@@ -47,6 +47,7 @@ existing owners and creates verified logical local commits.
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
 - **Current Follow-up**: implement the approved minimal integration on `codex/agq-consolidation`; commit configuration and full-snapshot scan coverage extend the earlier Task scope
+- **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
 - **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, additional merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
 - **Static Validation**: focused unit tests, QA profiles, pre-commit, actionlint and zizmor; existing GitHub Actions logs are read-only evidence
 - **Live Validation**: DEFER — not required or authorized for repository governance consolidation
@@ -163,6 +164,63 @@ validated. New hosted execution, remote required-check configuration, Provider
 discovery/event delivery/model resolution/enforcement and live checks remain
 DEFER for the current unpublished branch. Static projection and payload tests
 cannot close those external acceptance items.
+
+### First Full Snapshot and Bounded Repairs (2026-09-08)
+
+Quick passes twelve gates in 260.61 s after repairing the operations index date
+and changelog responsibility wording. The subsequent PR checklist/CLI prose
+repair is included in exact-index QA, not attributed to that earlier snapshot.
+QA commit `1014bba7` passes twelve staged gates in 285.50 s; Git contract commit
+`4da974e4` passes seven staged gates in 300.30 s. Each actual message passed the
+pinned commit-msg invocation and each real commit used normal active hooks.
+Security and Python reviewers confirmed their prior findings were resolved.
+
+Full at `4da974e4f0633c365b6dc9617007567c9122ce0b`, tree
+`d61d7def879a5f28dd5368fd41e2b90534ef80ac`, takes 1061.49 s: twenty-one gates
+PASS, including unit discovery; pre-commit FAIL and snapshot mutation FAIL.
+The source tree stays clean and the source index SHA-256 is unchanged.
+This is a failed full result, not a completed acceptance claim.
+
+The three failing hooks were reproduced separately in isolated snapshots;
+finding values were redacted and only paths/rules/line metadata inspected.
+
+| Failure | Bounded repair | Preserved boundary |
+| --- | --- | --- |
+| Gitleaks generic API-key matches on public prose | Rule-specific exact path AND anchored public-value allowances for `Prometheus/Grafana` in archived SPEC-0024 and `GH_PROMPT_DISABLED=1` in the retained SPEC-0062 plan | Both documents retain their bytes; API-shaped canaries in those same paths and both public terms outside those paths still fail |
+| detect-secrets baseline drift | Pinned explicit hook updates two CI checksum line references, 95→96 and 105→106, plus native generation time | Finding hashes, verification state and filters compare equal after removing only line-number/generation-time metadata |
+| shfmt existing drift | Explicit pinned fix on the nine reported Shell paths | Bash syntax passes for each; no script body or live command is executed |
+
+The nine Shell paths are `infrastructure/bootstrap-local.sh`,
+`infrastructure/tests/verify-cluster.sh`, `verify-external-services.sh`,
+`verify-gitops.sh`, `verify-ingress-tls.sh`, `verify-network-policies.sh` and
+`verify-secrets.sh` under that same tests directory, plus
+`scripts/check-secret-handling.sh` and `scripts/validate-gitops-structure.sh`.
+The diff changes indentation, redundant continuations, redirect spacing and
+heredoc `then` placement only. Gitleaks, detect-secrets and shfmt then each
+return zero in the repaired snapshot, with no snapshot changes. The added
+public-term regression fails on the previous configuration and passes after
+the narrow allowances; independent review added both out-of-path cases.
+
+The earlier standalone heading probe executes its parser 57 times in 0.001218 s
+under Python 3.12.3; its production call is now absent and independent tests
+retain its cases. This small measurement is not a whole-QA speedup claim.
+Full uses the existing cache; cache-miss/setup and per-gate timing were not
+separately instrumented, so a controlled cold/warm comparison remains DEFER.
+
+Pinned upstream hook manifests were read from their existing cache entries:
+all applicable file hooks include manual, Commitizen is commit-msg only, and
+the two Gitleaks modes have separate stages. Local Git is 2.43.0 on WSL2 Linux
+6.18.33.2/x86_64. The locked environment has PyYAML 6.0.3/jsonschema 4.26.0;
+system Python 3.12.3 has PyYAML 6.0.1/jsonschema 4.10.3 for Bash subcommands.
+Neither cross-platform nor complete hosted-environment equivalence is claimed.
+
+During this work the original checkout acquired external WIP in
+`scripts/run-validation-lane.py` and `tests/test_run_validation_lane.py` that
+exempts terminated descendants from escape reporting. Those edits are
+preserved there and not imported; this branch's diagnostic change retains the
+prior containment verdict. Integration requires reviewing that semantic
+difference. Public GitHub API reads through the available web tool were
+unavailable, so current remote check configuration and runs remain unverified.
 
 ### Historical Local Main Merge and Follow-up (2026-09-06)
 

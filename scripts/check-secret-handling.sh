@@ -66,7 +66,7 @@ echo "Files  : ${#SECRET_SCAN_FILES[@]}"
 
 echo ""
 echo "--- scanning for plaintext secret patterns ---"
-if SCAN_TARGET="$TARGET" python3 - "${SECRET_SCAN_FILES[@]}" <<'PY'
+if SCAN_TARGET="$TARGET" python3 - "${SECRET_SCAN_FILES[@]}" <<'PY'; then
 import os
 import re
 import sys
@@ -159,7 +159,6 @@ for rel, line_no, kind, key in findings:
 
 sys.exit(1 if findings else 0)
 PY
-then
   FOUND=0
 else
   FOUND=1

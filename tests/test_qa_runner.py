@@ -395,6 +395,62 @@ class QaTests(unittest.TestCase):
             (self.root / "ignored-secret").read_text(), "AGQ_SYNTHETIC_CANARY\n"
         )
 
+    def test_public_document_terms_do_not_exempt_other_secret_matches(self):
+        import json
+
+        executable = self.qa.runner.secure_gitleaks_executable(ROOT)
+        self.assertIsNotNone(executable, "Gitleaks is a required validation tool")
+        (self.root / ".gitleaks.toml").write_bytes(
+            (ROOT / ".gitleaks.toml").read_bytes()
+        )
+        products = "/".join(("Prometheus", "Grafana"))
+        control = "=".join(("GH_PROMPT_DISABLED", "1"))
+        documents = {
+            "docs/98.archive/completed/03.specs/0024-observability-and-network-review-agents/spec.md": f"live cluster scraping, {products} query execution,\n",
+            "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md": f"non-secret controls:\n`{control}`\n",
+        }
+        for name, content in documents.items():
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        with tempfile.TemporaryDirectory(prefix="qa-public-term-report-") as tmp:
+            report = Path(tmp) / "findings.json"
+
+            def scan():
+                return subprocess.run(
+                    [
+                        executable,
+                        "dir",
+                        "--redact",
+                        "--config=.gitleaks.toml",
+                        ".",
+                        "--report-format=json",
+                        "--report-path=" + str(report),
+                    ],
+                    cwd=self.root,
+                    env=self.qa.runner.closed_subprocess_environment(),
+                    capture_output=True,
+                    timeout=20,
+                )
+
+            self.assertEqual(scan().returncode, 0)
+            # Construct harmless negative data rather than store a token fixture.
+            value = "".join(f"{chr(97 + n)}{chr(65 + n)}{n % 10}" for n in range(12))
+            canary = 'api_key = "' + value + '"\n'
+            for name, content in documents.items():
+                (self.root / name).write_text(content + canary)
+            outside_paths = set()
+            for number, content in enumerate(documents.values()):
+                name = f"elsewhere-{number}.md"
+                outside_paths.add(name)
+                (self.root / name).write_text(content)
+            self.assertEqual(scan().returncode, 1)
+            rows = json.loads(report.read_text())
+            self.assertEqual(
+                {row["File"] for row in rows}, set(documents) | outside_paths
+            )
+            self.assertEqual({row["RuleID"] for row in rows}, {"generic-api-key"})
+
     def test_snapshot_rejects_escaping_symlinks(self):
         (self.root / "escape").symlink_to("../../outside")
         with self.assertRaisesRegex(ValueError, "symlink"):

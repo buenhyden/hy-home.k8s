@@ -45,8 +45,8 @@ for cmd in k3d kubectl helm docker curl jq openssl rg; do
 done
 
 case "$VAULT_ADDR" in
-  https://*) ;;
-  *) fail "VAULT_ADDR must use https:// for secret-bearing bootstrap" ;;
+https://*) ;;
+*) fail "VAULT_ADDR must use https:// for secret-bearing bootstrap" ;;
 esac
 
 require_file "$VAULT_CA_FILE"
@@ -134,7 +134,7 @@ validate_cert_for_host() {
     return 0
   fi
 
-  if printf '%s' "$host" | rg -q '^.+\.127\.0\.0\.1\.nip\.io$' && \
+  if printf '%s' "$host" | rg -q '^.+\.127\.0\.0\.1\.nip\.io$' &&
     printf '%s' "$sans" | rg -q 'DNS:\*\.127\.0\.0\.1\.nip\.io(,|$)'; then
     return 0
   fi

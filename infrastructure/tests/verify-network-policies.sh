@@ -8,7 +8,7 @@ fail() {
 
 echo "[INFO] Checking network policy contracts"
 
-kubectl version --request-timeout=5s >/dev/null 2>&1 || \
+kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
 # platform namespace policy

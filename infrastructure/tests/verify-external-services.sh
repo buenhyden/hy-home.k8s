@@ -8,10 +8,10 @@ fail() {
 
 echo "[INFO] Checking external service contracts"
 
-kubectl version --request-timeout=5s >/dev/null 2>&1 || \
+kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
-kubectl -n platform get svc,endpointslice > /tmp/platform-services.txt
+kubectl -n platform get svc,endpointslice >/tmp/platform-services.txt
 
 rg -q 'postgres-write-external' /tmp/platform-services.txt || fail "missing postgres-write-external"
 rg -q 'postgres-read-external' /tmp/platform-services.txt || fail "missing postgres-read-external"
@@ -38,7 +38,7 @@ valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 
 echo "[INFO] Checking observability external service contracts"
 
-kubectl -n platform get svc,endpointslice > /tmp/platform-services.txt 2>/dev/null || true
+kubectl -n platform get svc,endpointslice >/tmp/platform-services.txt 2>/dev/null || true
 
 for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
   rg -q "$svc" /tmp/platform-services.txt || fail "missing $svc in platform namespace"

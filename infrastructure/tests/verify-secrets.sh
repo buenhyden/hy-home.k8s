@@ -8,7 +8,7 @@ fail() {
 
 echo "[INFO] Checking ESO + Vault integration contracts"
 
-kubectl version --request-timeout=5s >/dev/null 2>&1 || \
+kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
 store_ready="$(kubectl -n external-secrets get clustersecretstore vault-backend -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || true)"

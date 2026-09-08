@@ -8,14 +8,14 @@ fail() {
 
 echo "[INFO] Checking ArgoCD GitOps contracts"
 
-kubectl version --request-timeout=5s >/dev/null 2>&1 || \
+kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
 kubectl -n argocd get application root-platform -o yaml >/tmp/root-platform.yaml
 
-rg -q 'path: gitops/apps/root' /tmp/root-platform.yaml || \
+rg -q 'path: gitops/apps/root' /tmp/root-platform.yaml ||
   fail "root-platform path contract mismatch"
-rg -q 'targetRevision: main' /tmp/root-platform.yaml || \
+rg -q 'targetRevision: main' /tmp/root-platform.yaml ||
   fail "root-platform targetRevision contract mismatch"
 
 check_app() {

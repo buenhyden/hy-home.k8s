@@ -19,6 +19,24 @@ paths = [
 id = "generic-api-key"
 
   [[rules.allowlists]]
+  description = "A sealed scope statement names public observability products"
+  condition = "AND"
+  paths = [
+    '''^docs/98\.archive/completed/03\.specs/0024-observability-and-network-review-agents/spec\.md$''',
+  ]
+  regexTarget = "secret"
+  regexes = ['''^Prometheus/Grafana$''']
+
+  [[rules.allowlists]]
+  description = "The retained execution plan names a noninteractive GitHub CLI control"
+  condition = "AND"
+  paths = [
+    '''^docs/03\.specs/0062-workspace-research-full-corpus-reverification/plan\.md$''',
+  ]
+  regexTarget = "secret"
+  regexes = ['''^GH_PROMPT_DISABLED=1$''']
+
+  [[rules.allowlists]]
   description = "Allow WORK-105 native template SHA256 fixture map entries"
   condition = "AND"
   paths = [

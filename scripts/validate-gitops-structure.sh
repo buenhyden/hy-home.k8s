@@ -76,7 +76,7 @@ fi
 # 3. Root app, platform app, and workload ApplicationSet hierarchy must stay separated.
 echo ""
 echo "--- GitOps hierarchy contract check ---"
-if python3 - "$PROJECT_DIR" <<'PY'
+if python3 - "$PROJECT_DIR" <<'PY'; then
 import pathlib
 import sys
 
@@ -184,7 +184,6 @@ print("  OK  root Application owns gitops/apps/root")
 print("  OK  apps ApplicationSet owns gitops/workloads/*")
 print("  OK  root app manifests stay in platform project and allowed local source paths")
 PY
-then
   :
 else
   EXIT_CODE=1
@@ -205,7 +204,7 @@ done < <(find "${PROJECT_DIR}/gitops" -name "kustomization.yaml" -print0)
 # 5. Sibling manifest files must be referenced by their kustomization.yaml.
 echo ""
 echo "--- Kustomization resource completeness check ---"
-if python3 - "$PROJECT_DIR" <<'PY'
+if python3 - "$PROJECT_DIR" <<'PY'; then
 import pathlib
 import sys
 
@@ -252,7 +251,6 @@ for kustomization in sorted((root / "gitops").rglob("kustomization.yaml")):
 
 sys.exit(1 if errors else 0)
 PY
-then
   :
 else
   EXIT_CODE=1

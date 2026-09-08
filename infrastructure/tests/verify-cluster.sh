@@ -37,7 +37,7 @@ if [ "${metallb_ready:-0}" -lt 1 ]; then
   metallb_ready="$(kubectl -n metallb-system get deploy controller \
     -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
 fi
-[ "${metallb_ready:-0}" -ge 1 ] || \
+[ "${metallb_ready:-0}" -ge 1 ] ||
   fail "metallb controller is not ready (readyReplicas=${metallb_ready:-0})"
 
 ip_pool="$(kubectl get ipaddresspool -n metallb-system local-services \
