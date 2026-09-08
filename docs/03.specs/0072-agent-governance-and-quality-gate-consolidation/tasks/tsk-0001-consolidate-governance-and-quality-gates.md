@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.3.0"
+version: "2.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -13,12 +13,10 @@ artifact_id: "SPEC-0072-TSK-0001"
 
 ## Overview
 
-Execute the revised SPEC-0072-PLAN-0001 to relocate common authority to
-`.agents/`. Subsequent user requests authorized local commits, review of
-remaining work and a one-off local main merge, now completed. Current scope
-continues the local follow-up under the approval boundary below. Dated
-baseline evidence retains the former topology and no-commit instructions as
-history; it does not override current authority.
+Execute the approved 2026-09-08 follow-up in SPEC-0072-PLAN-0001. Common
+authority migration is complete; dated results below remain historical.
+Current work corrects gate, formatter, commit and environment drift through
+existing owners and creates verified logical local commits.
 
 ## Inputs
 
@@ -37,13 +35,19 @@ history; it does not override current authority.
 | [WORK-003](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-007 | Reconcile documents, history, profiles and safety boundaries | platform | Done | Profiles, consumers, history and current plans reconciled; static checks pass | Disposition and link checks |
 | [WORK-004](../plan.md#work-breakdown) | VAL-AGQ-006 | Validate final static tree and report native/hosted limits | platform | In progress | Local static migration passes; native and hosted evidence remains DEFER | Final validation table |
 
+| [WORK-005](../plan.md#work-breakdown) | VAL-AGQ-013 | Correct process diagnostics | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | In progress | Approved implementation | Current follow-up evidence below |
+| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Approved implementation | Current follow-up evidence below |
+
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `.agents/`, `.github/`, `.claude/`, `.codex/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`, `scripts/`, `tests/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml`, `.secrets.baseline`, `.graphifyignore`
+- **Allowed Paths**: `.agents/`, `.github/`, `.claude/`, `.codex/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`, `scripts/`, `tests/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml`, `.secrets.baseline`, `.graphifyignore`, `.cz.toml`, `.gitmessage`, `cliff.toml`, `.editorconfig`, `.gitleaks.toml`, `.hadolint.yaml`
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
-- **Local Commit Authority**: the subsequent user request explicitly authorizes committing this migration and reviewing remaining local work; select and verify the exact index first
-- **Completed Merge Authority**: the latest user request explicitly authorized merging the existing local work into local main first; the one-off fast-forward to `4053793a41a9cedff1edeaa4a9d3b2a6a80e1272` is complete
-- **Current Follow-up**: review remaining work and correct stale authority/evidence navigation in ADR-0035 and this Spec, Plan and Task on `codex/governance-follow-up`; no unrelated package completion is implied
+- **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
+- **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
+- **Current Follow-up**: implement the approved minimal integration on `codex/agq-consolidation`; commit configuration and full-snapshot scan coverage extend the earlier Task scope
 - **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, additional merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
 - **Static Validation**: focused unit tests, QA profiles, pre-commit, actionlint and zizmor; existing GitHub Actions logs are read-only evidence
 - **Live Validation**: DEFER — not required or authorized for repository governance consolidation
@@ -52,6 +56,53 @@ history; it does not override current authority.
 - **Evidence Location**: this Task, Git commits, pull-request checks, and workflow job logs
 
 ## Verification Summary
+
+### Approved Follow-up Intake (2026-09-08)
+
+Baseline HEAD is `58b32427aecdee52c601151931455bddaa317500`, including the
+previous worker's diagnostic and hosted-evidence commits. The original
+`fix/qa-name-the-detaching-git-call` checkout has a clean index and working tree.
+The task worktree is `.worktrees/agq-consolidation` on `codex/agq-consolidation`.
+Local origin/main and merge-base are `be2d41efe32cc9c21787d0d2c32ecc920c28c61a`;
+remote freshness is not yet established. Existing stashes remain untouched.
+
+The user approved minimal integration through existing owners. Spec criteria
+VAL-AGQ-009 through VAL-AGQ-014 extend acceptance without reopening WORK-001
+through WORK-003. WORK-004 remains open for external evidence. Independent
+read-only review is authorized; this worker alone owns edits and the index.
+No hosted/native/live result from prior records validates the current tree.
+
+### Process Diagnostic Correction (2026-09-08)
+
+The former lowercase-token filter read complete process arguments before
+filtering. A focused regression failed on that `cmdline` access. The correction
+reads at most 4096 bytes of kernel status and retains only an admitted state
+letter, alongside the existing PID/group/name. It preserves containment failure
+for zombies and every timeout/output/cleanup limit. The two focused tests pass;
+`tests.test_run_validation_lane` passes 69 tests in 2.386 s. Pinned Ruff 0.16.5
+formatted only the two changed Python files; formatter exit 1 reflected changed
+bytes and was reviewed. Exact-index validation follows those formatted bytes.
+
+Independent read-only `diagnostic_review` (Python reviewer tool) approved the
+two-file diff without findings; it independently ran Ruff 0.16.6 lint and diff
+hygiene, not the pinned formatter or unit suite. The fixed code-reviewer tool
+could not start because of its model quota; that attempt is not a review.
+
+Strict profile checks pass on Spec/Plan/Task. Quick QA passes all eleven
+selected gates over the initial seven-path working-tree snapshot, before
+subsequent hook/test edits. This is local affected evidence, not final full QA.
+Fetch succeeded; origin/main remains `be2d41efe32cc9c21787d0d2c32ecc920c28c61a`.
+Linux WSL x86_64/Python 3.12.3 uses the existing CI hash lock in an isolated
+`.worktrees/.agq-venv`; the installation contains pre-commit 4.6.1. In the
+sandbox, platform ancestor UIDs are namespace-mapped and the strict adjacent
+resolver chooses the existing account pre-commit 4.6.2 instead. No trust rule
+was relaxed. Pinned message/fix calls name the isolated executable explicitly.
+
+Narrow Git configuration inspection found effective `core.hooksPath` from the
+user Git config, an executable pre-commit hook, and no commit-msg hook. Hook
+contents and other private settings were not read. Actual candidate messages
+therefore require the explicit pinned commit-msg invocation; normal active
+hooks remain enabled for each real commit.
 
 ### Current Local Main Merge and Follow-up (2026-09-06)
 
@@ -1030,3 +1081,8 @@ was still running.
 | [WORK-002](../plan.md#work-breakdown) | Done: local QA | Bounded-input/process and Shell-route regressions; full 19/19 and quick 11/11 PASS; full/CI registry parity |
 | [WORK-003](../plan.md#work-breakdown) | Done: document reconciliation | Profile/link/lifecycle PASS, 32 template dispositions, current successor proof and classified historical evidence |
 | [WORK-004](../plan.md#work-breakdown) | In progress: external evidence DEFER | Static workflow and final local QA PASS; the hosted failure this package introduced is reproduced and repaired with a CI-shape run; native runtime and hosted CI on the repaired commit NOT_RUN; no remote or live authority |
+| [WORK-005](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
+| [WORK-006](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
+| [WORK-007](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
+| [WORK-008](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
+| [WORK-009](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |

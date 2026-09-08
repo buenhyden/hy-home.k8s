@@ -1,10 +1,10 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.0.2"
+version: "2.1.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-08"
 layer: "specs"
 artifact_id: "SPEC-0072-PLAN-0001"
 ---
@@ -13,162 +13,149 @@ artifact_id: "SPEC-0072-PLAN-0001"
 
 ## Overview
 
-Revise SPEC-0072 around the latest user-authorized common `.agents/` authority.
-Use Superpowers executing-plans and its review checkpoints. The original
-Stage 00 consolidation is baseline history, not the implementation target.
-The [owning Task](tasks/tsk-0001-consolidate-governance-and-quality-gates.md#task-table)
-records execution status and evidence; this plan owns ordered work only.
+Execute the approved [Spec](spec.md) with Superpowers writing-plans and
+executing-plans. The Task owns state and results; the ordered work below owns
+implementation and verification. Keep the local branch/worktree at finish.
 
 ## Context
 
-At migration intake, the verified local and remote main baseline was
-`eb4fcfe3283115388d6eb1f31d56780b3e578f77`. The clean checkout was branched as
-`codex/common-agents-authority`; no user changes were staged or moved. Two
-existing stashes remain untouched. Main already contains QA consolidation.
-The old hub has 53 tracked files; an ignored Python cache is a separate local
-artifact. Provider local settings and notes are private excluded content.
-
-The authority-location request supersedes earlier instructions to remove
-`.agents/`. Subsequent user requests authorized local staging, commits, review
-of remaining work and a one-off local main merge, now completed. The
-[Task approval boundary](tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries)
-owns current authority and the follow-up scope. Push, PR, hosted execution,
-deployment, credentials, global configuration, paid provider calls, new trust
-grants and additional merges require their own explicit authority.
-Protected-path writes must use the normal scoped sandbox approval mechanism.
+The authority migration is complete. Its source disposition, former baseline,
+reviews and one-off merge approval remain historical evidence in the Task and
+Git; they are not work to repeat. ADR-0036 is the current structural decision.
+The approved follow-up extends SPEC-0072 to native lint/commit configuration,
+formatting coverage, full-tree secrets, diagnostic privacy and duplicate gates.
+Re-observe Git before writes and preserve the original checkout and its index.
 
 ## Goals & In-Scope
 
-- Dispose of every old-hub source with purpose, incoming/outgoing references,
-  destination, retained meaning, provenance and verification in the Task.
-- Migrate policies and normative SDLC to `.agents/governance/`, neutral roles
-  and registry/schema to `.agents/roles/`, callable packages to
-  `.agents/skills/`, and two ordinary procedures to `.agents/workflows/`.
-- Rehome provider differences to `.claude/provider.md` and `.codex/provider.md`.
-  Preserve native role paths and update explicit reads and Claude skill links.
-- Include the hidden authority in document, language, formatting, ownership,
-  secret and QA scope. Reject the old root and invalid new role/skill graphs.
-- Preserve GitOps boundaries, bounded QA, immutable historical source evidence,
-  memory retirement and all current permission restrictions.
+Correct the observed defects through existing owners: common governance,
+provider adapters, validation registry/runner, pre-commit/native tool config,
+independent tests, current docs and the hosted QA adapter. Preserve the shared
+full/ci gate set, required checks and domain verification boundaries.
 
 ## Non-Goals & Out-of-Scope
 
-No cluster/manifests/Helm/Argo CD/Vault changes, global installation, model
-upgrades, native hooks activation, general generator, duplicate registry,
-new memory directory or remote integration. Native/provider and
-hosted checks requiring absent authority remain NOT_RUN with reasons.
+No new registry, QA wrapper, fixture framework, policy engine, provider model
+change or live manifest behavior. No push, PR, merge, dispatch, release/tag,
+credentials, paid calls, global settings or live infrastructure actions.
+
+## Global Constraints
+
+`scripts/qa.py` remains the single supported QA entrypoint. Required-tool,
+cancellation, timeout, output and cleanup failures remain FAIL. External
+permissions/environment remain DEFER. No history rewrite, arbitrary stash,
+blanket restore or hook bypass. Preserve frozen recovery identities and NUL
+machine paths. Native configuration does not prove runtime delivery.
 
 ## Work Breakdown
 
-### WP-001: Reconcile design and protect source evidence
+### WP-005: Correct bounded process diagnostics
 
-- Read every source; attach the complete per-file disposition and folder
-  decision tables to the existing Task, including ignored cache disposition.
-- Update Spec criteria and add a narrowly superseding ADR for the authority
-  location and skill discovery decision. Preserve ADR-0034 QA/CD decisions.
-- Obtain a separate read-only review of this plan and source disposition;
-  resolve missing consumers, history handling and unsafe skill instructions.
+Files: `scripts/run-validation-lane.py`, `tests/test_run_validation_lane.py`.
+Keep the escaped tuple's fourth field as a state observation; remove argv reads.
 
-Read-only reviewer `migration_plan_review` confirmed all 53 source hashes and
-unique destinations. Its required corrections are part of WP-002/003: closed
-package/link/sidecar sets, explicit memory retirement, corrected unsafe skill
-steps, destination-first writes and sealed-record preservation. No external
-review approval or runtime success is inferred.
+1. Add a failing test that refuses `/proc/*/cmdline` access and observes running,
+   zombie, disappeared and malformed states using temporary/mock process data.
+2. Use bounded status reads and an allowlisted state letter; retain `comm`, PID,
+   group and the existing cleanup verdict. Remove synthetic token-only tests.
+3. Run `python3 -B -m unittest tests.test_run_validation_lane` and inspect the
+   diagnostic diff. Preserve timeout, cancellation and descendant regressions.
 
-### WP-002: Transition the authority and native consumers together
+### WP-006: Repair formatting and full-snapshot secret coverage
 
-- Add failing tests in `tests/test_agent_governance.py` for the new root,
-  old-root rejection including dangling links, role/skill references, duplicate
-  skill names, metadata, external symlinks and unchanged permission denial.
-- Move only mapped files after checking their baseline bytes. Update
-  `REGISTRY_PATH`, `REGISTRY_SCHEMA_PATH`, `REGISTRY_PROJECTION_ROOTS`, schema,
-  role references and provider adapters as one atomic transition.
-- Replace Codex `@` pseudo-imports with explicit reads. Claude imports
-  only shared instructions and Claude guidance, never the Codex entrypoint.
-  Expose Claude skills through individually validated relative links.
-- Preserve any existing SKILL IDs/status in string-valued `metadata` (none existed in the baseline packages); require native
-  name and description. Use explicit-only invocation metadata for skills
-  newly exposed by Codex and correct instructions that request secrets,
-  unapproved communications, persistent scratch state or unauthorized writes.
-- Preserve `.claude/settings.json` permissions and write-hook behavior;
-  update path roots only. No Codex hook/config directory is created.
+Files: `.pre-commit-config.yaml`, `.gitleaks.toml`, validation registry,
+`tests/test_validation_profiles.py`, `tests/test_validation_tooling_ownership.py`,
+`tests/test_qa_runner.py`, and formatting/quality guidance.
 
-### WP-003: Transition document, QA and historical consumers
+1. Reproduce Codex selector omission, shfmt's success-without-check behavior,
+   frozen mutation selection and clean-index Gitleaks scan omission.
+2. Include both provider shell paths and set shfmt args to `--write -i 2`.
+   Preserve Python-only Ruff selection. Resolve frozen exclusion through the
+   existing lifecycle owner, retaining current/draft archive coverage.
+3. Give full/ci pre-commit explicit `--hook-stage manual`; keep staged native
+   Gitleaks and a manual directory-scan hook on the same pin. Skip `.git`
+   traversal narrowly; retain all other manual-stage hook coverage.
+4. Run targeted selector, stage and snapshot tests, including unchanged tracked
+   canary and non-ignored hidden input. Explicit fixes target reviewed paths.
 
-- Change Stage 99 path profiles and `scripts/document_contracts.py` scope
-  together; keep English-only and native-format exceptions precise.
-- Update `scripts/validation/registry.json`, repository-quality path rules,
-  narrow pre-commit selectors, README/ownership/navigation and tests so hidden
-  governance participates in all corresponding existing gates.
-- Preserve historical source commit/blob/hash fields. Update current
-  replacement endpoints through the existing archive contract, not a second
-  ledger or fallback to the retired tree. Repair active historical executable
-  instructions with an explicit supersession note; do not alter past results.
-- Diagnose baseline full-QA failures at their owners: unavailable historical
-  replacement, workflow responsibility inventory, unittest package discovery
-  and required pre-commit executable resolution. Keep execution limits and
-  trusted executable resolution; missing prerequisites remain failures.
+### WP-007: Align commit validation and current guidance
 
-### WP-004: Verify final bytes and record limits
+Files: Git/quality policy, commit prompt/provider command, `.cz.toml`,
+`.gitmessage`, `cliff.toml`, PR/commit documentation and independent tests.
 
-- Run focused tests after each changed contract; use temporary repositories
-  for denial/error/path tests without reverting user files.
-- Run `python3 scripts/validate-agent-governance.py --root .`, document and
-  link validators, then `python3 scripts/qa.py full` over final bytes.
-  Do not separately repeat the full suite or its pre-commit gate unchanged.
-- Verify old-root lstat absence, zero functional old consumers, all residual
-  historical/negative-test strings classified, exact permission parity, no
-  manifest changes, and preservation of unrelated index content. Re-run deterministic
-  synchronization only if an actual generator is introduced; none is planned.
-- Record syntax/contracts separately from native discovery/invocation,
-  permissions/hooks, hosted CI and live infrastructure. Keep branch/worktree.
-- Stage only the reviewed transition paths using a NUL-delimited manifest;
-  run `python3 scripts/qa.py staged`, repository pre-commit and commit-message
-  validation, inspect the cached diff, and commit with active hooks enabled.
-- Review WORK-004 next: inspect installed native discovery interfaces
-  without paid calls, authentication access or trust changes. Record actual
-  native evidence separately and retain hosted/runtime blockers that remain.
+1. Test valid/invalid candidate messages and stage selection in a temporary Git
+   repository using the pinned Commitizen hook. Create no invalid real commit.
+2. Remove full-QA/native-hook equivalence claims and workstation policy prose.
+   Use infrastructure examples, distinguish enforced syntax from advice, retain
+   BREAKING CHANGE footer and document unsupported bang syntax.
+3. Put release-chore skip before generic chore; account for supported build,
+   deps and release groups. Preserve historical parser compatibility.
+4. Test synthetic changelog behavior with the pinned tool when available;
+   record missing tool/environment as a visible limitation.
+
+### WP-008: Remove demonstrated duplication
+
+Files: `scripts/validate-harness.sh`, its current README/PR/fixture consumers,
+`scripts/validation/repository/quality.py`, independent test modules,
+`.pre-commit-config.yaml`, `.hadolint.yaml`, formatting guidance.
+
+1. Inventory current wrapper consumers and its seven domain gate contracts.
+   Point consumers at full QA; remove repeated infrastructure validation.
+2. Move embedded heading/table and generic-residue synthetic probes into tests.
+   Keep actual production rule functions and independent negative diagnostics.
+3. Confirm no Dockerfile target, remove unused hadolint hook/config and repair
+   current references. Preserve historical references and Git recovery.
+4. Run ownership/profile and transferred-probe tests. Record removed call
+   counts; do not claim measured wall-time savings without measurements.
+
+### WP-009: Validate environment, workflows and final handoff
+
+Files: `.github/workflows/ci.yml`, workflow tests, scripts/QA documentation and
+this package's Task. Other workflows change only for observed defects.
+
+1. Check local OS/Python/tools, interpreter fallback and trusted caches. Reuse
+   hash-locked CI dependencies in an isolated environment when feasible;
+   preserve closed HOME/PATH and avoid cold-cache pressure on this workstation.
+2. Correct resolver documentation and cache identity where evidence requires.
+   Preserve named checkout/history, single QA job and fail-closed ci-summary.
+3. Run focused workflow tests for PR, push, dispatch and failure/cancel/skip;
+   contract-test full/ci equality instead of rerunning equivalent profiles.
+4. Complete independent read-only review and the sequence below. Record actual
+   results, limits, rollback and next owner in the Task. Keep WORK-004 open for
+   external acceptance that local evidence cannot establish.
 
 ## Verification Plan
 
-The baseline direct governance command exits 1 at the retired-path rule because
-of the sandbox's empty `.agents/` directory. Baseline full QA exits 1 after
-219.932 seconds with six failing gates; full details belong to the Task.
+For each changed behavior, targeted RED then GREEN. During work run quick;
+before each logical commit inspect status/diffs, stage explicit paths, inspect
+cached diff, run both diff checks and exact staged QA, then validate the actual
+message and use normal active hooks. Related contract/implementation/tests
+travel together; no arbitrary commit count target.
 
-Focused tests must first reject the unmodified old topology for the expected
-reason, then pass the migrated tree and continue rejecting permissions widened
-to broad shell access, external links, malformed metadata and old-root revival.
-
-`full` remains the final repository-static entrypoint; `ci` gate membership
-stays equal without a redundant local execution. Staged validation is now
-required for the user-authorized local commits; it reads the index snapshot.
-The migration session loaded old gateways; re-reading did not prove new-session
-native loading. Native and hosted evidence remains DEFER in the Task.
-No authenticated provider call is authorized.
+Run full QA over the final working tree before handoff. Its discovery and
+pre-commit gate are not repeated on identical bytes. If fixes alter bytes,
+review/restage and refresh affected evidence. Record subsequent Task-only
+changes with scoped document checks; do not create a self-SHA/full-run loop.
+Measure targeted invocation/setup/snapshot/gate timing and cache identity.
+Cold installation, hosted/native/live results require their own environment;
+no absent measurement is a performance claim or PASS.
 
 ## Risks & Mitigations
 
 | Risk | Mitigation |
 | --- | --- |
-| Protected `.agents/` write is denied | Request only mapped paths through normal approval; keep source until the transition can be completed |
-| Auto-discovery exposes dangerous steps | Explicit-only metadata plus role/user approval preconditions; never grant tools through skill metadata |
-| Historic evidence loses provenance | Keep source commits and hashes; distinguish current link endpoints from past observations |
-| QA omits hidden paths | Negative scope tests and shared registry/profile updates |
-| Migration interrupted | Byte-checked per-file mapping and no overwriting unknown files; no compatibility authority |
-| Rollback requested | Reverse only the reviewed mapped transition as a new change after checking later user edits and dependent commits; no blanket restore/reset or history rewrite |
+| User work is mixed into commits | Separate worktree from observed HEAD; preserve original index |
+| Security scan or formatter input shrinks | Synthetic stage/lifecycle/path tests and explicit owner review |
+| Removal loses a diagnostic | Move tests before removal; map consumers and unique domain gates |
+| Tool installation or active hooks fail | Keep changes; report exact blocker without bypass/global changes |
+| Rollback reopens a defect | Forward revert reviewed logical commits with paired config/tests/consumers |
 
 ## Completion Criteria
 
-- `.agents/` is the single common authority and every one of the 53 source files
-  has an explicit disposition; the old root has no file, directory or link.
-- All active functional references resolve to current owners; residual source
-  evidence and denial-test mentions are classified instead of concealed.
-- Role IDs, permissions, models and handoffs retain their original meanings.
-- Native skill metadata and loader paths are valid; actual runtime levels are
-  reported only when observed, otherwise NOT_RUN with a reason.
-- Required focused and full static checks pass. A failure remains incomplete.
-- Only reviewed transition paths enter local commits; private local state and
-  existing stashes remain unchanged. No remote integration is performed.
+All applicable local acceptance passes with independent review disposition and
+logical local commits. Required failures remain incomplete. Hosted, native and
+live evidence stay separate with next owners. No remote integration or worktree
+cleanup occurs. The Task preserves the completed migration and current limits.
 
 ## Traceability
 
@@ -176,11 +163,17 @@ No authenticated provider call is authorized.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-AGQ-001](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-003](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-004](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-005](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-006](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-007](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
-| [VAL-AGQ-008](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-001](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-002](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-003](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-004](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-005](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-006](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-007](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-008](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-009](spec.md#success-criteria--verification-plan) | WP-007 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-010](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-011](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-012](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-013](spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-008 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |

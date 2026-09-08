@@ -205,8 +205,8 @@ def observation(completed: BoundedCommandResult) -> str:
             "escaped="
             + ",".join(
                 f"{pid}:{group}:{_escape_report_token(name)}"
-                f":{_escape_report_token(token)}"
-                for pid, group, name, token in completed.escaped_descendants
+                f":{_escape_report_token(state)}"
+                for pid, group, name, state in completed.escaped_descendants
             )
         )
     return ";".join(fields)
@@ -653,57 +653,24 @@ def _process_group_absent(process_group_id: int) -> bool:
     return True
 
 
-COMMAND_TOKEN = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
-
-
-def _command_token_from_cmdline(raw: bytes) -> str:
-    """Admit the subcommand of `git <subcommand>`, and nothing else.
-
-    The open question is which git call detaches, and that call names itself in
-    the second argument.  A credential never occupies that position: the forms
-    that carry one put an option there first, and an option is refused, as is
-    any token that is not a bare lowercase subcommand.  No other element of the
-    argument vector is read into the report.
-    """
-
-    arguments = raw.split(b"\x00")
-    if len(arguments) < 2 or not arguments[1]:
-        return "none"
-    candidate = arguments[1].decode("utf-8", errors="replace")
-    if COMMAND_TOKEN.fullmatch(candidate) is None:
-        return "redacted"
-    return candidate
-
-
 def _process_state(pid: int) -> str:
-    """Read one process state letter, or the empty string when it is gone."""
+    """Observe a bounded kernel state field without collecting process arguments."""
 
     try:
-        raw = (Path("/proc") / str(pid) / "status").read_bytes()
+        with (Path("/proc") / str(pid) / "status").open("rb") as stream:
+            raw = stream.read(4096)
     except OSError:
         return ""
     for line in raw.decode("utf-8", errors="replace").splitlines():
         if line.startswith("State:"):
-            field = line.split(":", 1)[1].strip()
-            return field[:1]
+            fields = line.split(":", 1)[1].split()
+            state = fields[0] if fields else ""
+            return (
+                state
+                if state in {"R", "S", "D", "T", "t", "X", "Z", "P", "I", "K", "W"}
+                else ""
+            )
     return ""
-
-
-def _process_command_token(pid: int) -> str:
-    """Name the call, or say why it cannot be named.
-
-    An exited-but-unreaped process has no argument vector.  That is a distinct
-    finding from a running process whose second argument was refused: a zombie
-    is not work outliving the gate, so the two must not both read as nothing.
-    """
-
-    if _process_state(pid) == "Z":
-        return "zombie"
-    try:
-        raw = (Path("/proc") / str(pid) / "cmdline").read_bytes()
-    except OSError:
-        return "unknown"
-    return _command_token_from_cmdline(raw)
 
 
 def _process_command_name(pid: int) -> str:
@@ -724,8 +691,9 @@ def _cross_session_owned_descendants(
 
     The caller only needs to know whether any exist, but a bare verdict cannot
     be diagnosed once it is the only thing a remote run reports.  The group id
-    is read anyway, so recording it with the process name costs one extra file
-    read per offender and makes the failure name its own cause.
+    is read anyway, so recording the name and kernel state makes that observation diagnosable.
+    Process arguments are never collected. State is advisory and does not
+    relax the containment verdict, including an unreaped zombie.
     """
 
     owned = _discover_owned_pids(leader_pid, baseline_direct_children)
@@ -735,7 +703,7 @@ def _cross_session_owned_descendants(
         if group in (None, leader_pid):
             continue
         escaped.append(
-            (pid, group, _process_command_name(pid), _process_command_token(pid))
+            (pid, group, _process_command_name(pid), _process_state(pid) or "unknown")
         )
         if len(escaped) == VALIDATOR_ESCAPE_REPORT_LIMIT:
             break
