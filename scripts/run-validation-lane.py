@@ -310,6 +310,26 @@ def secure_conftest_executable(root: Path) -> str | None:
     return secure_tool_executable(root, "conftest")
 
 
+def pre_commit_toolchain_caches(pre_commit_home: Path) -> dict[str, str]:
+    """Name each hook toolchain cache under the account-owned hook directory.
+
+    Hook environments that build from source ask their toolchain for a cache
+    below `HOME`, and `HOME` is deliberately unreachable here so no ambient
+    startup state is read. A warm cache never reaches that code, so a cold one
+    would otherwise fail the whole gate at `mkdir /nonexistent`. These stay
+    inside the directory pre-commit already owns rather than reopening `HOME`.
+    """
+
+    toolchains = pre_commit_home / "toolchains"
+    return {
+        "CARGO_HOME": str(toolchains / "cargo"),
+        "GOCACHE": str(toolchains / "go-build"),
+        "GOPATH": str(toolchains / "go"),
+        "XDG_CACHE_HOME": str(toolchains / "xdg"),
+        "npm_config_cache": str(toolchains / "npm"),
+    }
+
+
 def closed_subprocess_environment() -> dict[str, str]:
     """Return the complete validator environment; ambient startup state is absent."""
 
@@ -1480,9 +1500,9 @@ def run_selected(
         if identifier == "pre-commit":
             # Use the account cache location, never ambient HOME or startup state.
             account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
-            child_environment["PRE_COMMIT_HOME"] = str(
-                account_home / ".cache/pre-commit"
-            )
+            pre_commit_home = account_home / ".cache/pre-commit"
+            child_environment["PRE_COMMIT_HOME"] = str(pre_commit_home)
+            child_environment.update(pre_commit_toolchain_caches(pre_commit_home))
         completed = run_bounded_command(
             argv,
             cwd=root,

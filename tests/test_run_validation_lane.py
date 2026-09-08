@@ -46,6 +46,13 @@ class _ContractModule:
         return {"validators": ["repository-quality"]}
 
 
+class _PreCommitContractModule:
+    @staticmethod
+    def select_paths(contract, paths, lane, root):
+        del contract, paths, lane, root
+        return {"validators": ["pre-commit"]}
+
+
 class _RemoteLiveContractModule:
     @staticmethod
     def select_paths(contract, paths, lane, root):
@@ -1762,6 +1769,104 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(len(propagated), 3)
         for argv in propagated:
             self.assertIn("--include-path", argv)
+
+
+class PreCommitChildEnvironmentTest(unittest.TestCase):
+    """A closed environment must still let a cold hook install build.
+
+    `HOME` is deliberately unreachable so no ambient startup state is read.
+    Hook environments that build from source ask their toolchain for a cache
+    under `HOME`, so each cache is named explicitly under the account-owned
+    pre-commit directory. Without that, a cold cache fails the whole gate at
+    `mkdir /nonexistent`, which is invisible to any run whose cache is warm.
+    """
+
+    CONTRACT = {
+        "validators": [
+            {
+                "id": "pre-commit",
+                "argv": ["pre-commit", "run", "--all-files"],
+                "lanes": ["all-files"],
+                "evidenceLane": "repo-static",
+                "optional": False,
+                "fallback": {"status": "FAIL", "reason": "required"},
+            }
+        ]
+    }
+
+    def _child_environment(self) -> dict[str, str]:
+        with (
+            patch.object(
+                RUNNER.shutil, "which", return_value="/usr/local/bin/pre-commit"
+            ),
+            patch.object(
+                RUNNER, "run_bounded_command", return_value=bounded_result("")
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "all-files",
+                ["scripts/run-validation-lane.py"],
+                self.CONTRACT,
+                _PreCommitContractModule,
+            )
+        return invoked.call_args.kwargs["env"]
+
+    def test_pre_commit_home_stays_account_owned(self):
+        environment = self._child_environment()
+        account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
+
+        self.assertEqual(
+            environment["PRE_COMMIT_HOME"],
+            str(account_home / ".cache/pre-commit"),
+        )
+
+    def test_toolchain_caches_resolve_without_a_reachable_home(self):
+        environment = self._child_environment()
+        unreachable_home = Path(environment["HOME"])
+        cache_root = Path(environment["PRE_COMMIT_HOME"])
+
+        # Go is the toolchain a cold install actually fails on: it initializes
+        # a build cache before it compiles anything.
+        for variable in (
+            "GOCACHE",
+            "GOPATH",
+            "CARGO_HOME",
+            "XDG_CACHE_HOME",
+            "npm_config_cache",
+        ):
+            with self.subTest(variable=variable):
+                self.assertIn(variable, environment)
+                location = Path(environment[variable])
+                self.assertTrue(location.is_absolute())
+                self.assertTrue(location.is_relative_to(cache_root))
+                self.assertFalse(location.is_relative_to(unreachable_home))
+
+    def test_other_validators_receive_no_toolchain_caches(self):
+        """Only the hook installer needs them; the closed default stays closed."""
+
+        with (
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["scripts/run-validation-lane.py"],
+                CONTRACT,
+                _ContractModule,
+            )
+
+        environment = invoked.call_args.kwargs["env"]
+        for variable in ("GOCACHE", "GOPATH", "CARGO_HOME", "npm_config_cache"):
+            with self.subTest(variable=variable):
+                self.assertNotIn(variable, environment)
 
 
 if __name__ == "__main__":
