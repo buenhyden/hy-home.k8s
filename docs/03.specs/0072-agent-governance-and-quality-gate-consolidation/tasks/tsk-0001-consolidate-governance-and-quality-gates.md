@@ -1,10 +1,10 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.6.0"
+version: "2.7.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0072-TSK-0001"
 ---
@@ -47,11 +47,12 @@ existing owners and creates verified logical local commits.
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
 - **Completed Current Local Merge**: the separately approved origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` integration completed as `4667aa03`; that authority is consumed and grants no remote or additional merge authority
 - **Historical External Authority**: earlier one-off push, dispatch and Provider sessions are recorded below; no past approval authorizes another external action in this continuation
-- **Current Finish Authority**: the current request authorizes local commits and explicitly keeps `codex/agq-consolidation` and its worktree; the prior conditional merge/cleanup selection is superseded
+- **Current Finish Authority**: the 2026-09-09 request approves pending follow-up and local main integration followed by cleanup of `codex/agq-consolidation` and its worktree only when the inherited completion conditions are satisfied
+- **Current Native Authority**: after the Claude execution was rejected by automatic approval review, the user explicitly selected local review without external transmission; only local discovery/trust metadata inspection is authorized, with no Provider model call, trust/permission bypass, global setting change or credential inspection
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
 - **Completed Follow-up Scope**: the approved minimal integration on `codex/agq-consolidation` includes commit configuration and full-snapshot scan coverage beyond the earlier Task scope
 - **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
-- **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, additional merge, release, repository protection changes, global settings, paid calls, provider authentication, credential access and live deployment/reconciliation
+- **Approval Required**: push, PR mutation, hosted workflow dispatch/re-run, merge before completion, release, repository protection changes, global settings, Provider model calls or external transmission, new authentication, credential access and live deployment/reconciliation
 - **Static Validation**: focused unit tests, QA profiles, pre-commit, actionlint and zizmor; existing GitHub Actions logs are read-only evidence
 - **Live Validation**: DEFER — not required or authorized for repository governance consolidation
 - **Secret / Vault Handling**: do not read, print, mutate, or validate secret values; retain static secret-handling gates
@@ -59,6 +60,61 @@ existing owners and creates verified logical local commits.
 - **Evidence Location**: this Task, Git commits, pull-request checks, and workflow job logs
 
 ## Verification Summary
+
+### Approved Native Follow-up and Conditional Finish (2026-09-09)
+
+Intake observes clean task HEAD `c3155e6a2fc7c22d2bcfef13a2051eec29d7fff7`
+and clean local main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7`; main is
+already an ancestor of the task branch. The user approves pending follow-up and
+conditional local integration/cleanup, superseding the prior keep selection.
+WORK-001 through WORK-008 and the completed implementation remain intact.
+
+The operator owns the native environment; this worker owns bounded validation
+and the Plan/Task evidence edits. The prepared Claude check selected the
+existing project `code-reviewer` role, project-only settings, stream hook events,
+a disposable clone, a 90-second process limit and the 0.50-dollar cap.
+Automatic approval review rejected execution before the process started: the
+governance/provider/role payload and external destination needed specific
+transmission approval. The user then explicitly chose local review without
+external transmission. No Claude session, probe or Provider model call ran;
+the rejection is not native denial or enforcement evidence.
+
+Local Codex inspection uses the installed 0.153.4 client's generated protocol
+schema and only `initialize`, `hooks/list` and `skills/list`. The sandboxed
+server attempt could not initialize, and the existing-daemon proxy found no
+socket. A bounded standalone local stdio server under the normal account then
+completed both metadata requests with exit 0, complete stdout/stderr and
+descendant cleanup; no thread, model request or configuration write was sent.
+Only repository metadata and result categories were retained, not user hook
+bodies, private configuration, credentials or raw session logs.
+
+| Local runtime observation | Result | Evidence limit |
+| --- | --- | --- |
+| `skills/list` for the task worktree | 16 enabled repository skills returned, including risk-report; zero reported discovery errors | Native discovery API evidence; not invocation or proof that descriptions survive model-context budgeting |
+| Other discovery surfaces | 836 skills outside the worktree returned | Count only; their bodies were not collected and their context effect remains unverified |
+| `hooks/list` for the task worktree | No hook whose source path is under this worktree; zero reported errors/warnings | Does not establish the cause, project trust, hook execution or an enforced block |
+| Native role/model and direct Codex permission probe | DEFER | Not executed under the user's local-only selection |
+| Claude role/model/tool follow-up | DEFER | Proposed call was rejected before execution; user declined external transmission |
+
+Independent read-only `native_completion_review` uses the previously justified
+gpt-5.6-sol/high fallback without changing native projections. It confirms that
+hosted/static acceptance is already complete, that native completion remains
+under WORK-009, and that the generic Codex read-only process cannot substitute
+for actual role/model/hook/permission evidence. Claude's shell guard remains
+advisory; an extra shell-write denial is not a new acceptance criterion.
+
+The implementation is unchanged. This evidence commit's body records focused
+document, quick, exact-index staged, final full and actual-message results,
+active hooks and the final review disposition after execution. WORK-009 and
+the Task remain in progress. The next owner is the operator: review the local
+Codex project/hook trust and discovery environment, then separately authorize
+native Provider verification if desired. Local-only checks cannot close that
+condition or authorize the conditional merge and cleanup.
+
+Rollback removes only newly created non-secret scratch and forward-reverts
+the reviewed evidence commit if needed. No main integration or task-owned
+branch/worktree removal occurs until completion is demonstrated. The following
+dated sections retain prior observations; they do not authorize new actions.
 
 ### Resumed Local Continuation (2026-09-08)
 
@@ -70,7 +126,7 @@ checkout. Main and the merge-base remain
 non-ignored untracked files. Preserve that evidence work and all implementation
 commits. Do not repeat the completed migration or recreate its removed owners.
 
-This request keeps the local branch/worktree and supersedes former conditional
+That request kept the local branch/worktree and superseded former conditional
 merge/cleanup instructions. The inherited external/native record below is
 dated evidence from the previous session, not new authority or an observation
 made by this worker. No Provider session or trust/configuration change is run.

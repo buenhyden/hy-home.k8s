@@ -1,10 +1,10 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.3.0"
+version: "2.4.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0072-PLAN-0001"
 ---
@@ -15,9 +15,10 @@ artifact_id: "SPEC-0072-PLAN-0001"
 
 Execute the approved [Spec](spec.md) with Superpowers writing-plans and
 executing-plans. The Task owns state and results; the ordered work below owns
-implementation and verification. The current user instruction selects local
-commits and retention of the existing task branch/worktree. Prior conditional
-integration and cleanup instructions remain historical evidence in the Task.
+implementation and verification. The 2026-09-09 user instruction approves local
+follow-up and main integration followed by task branch/worktree cleanup only
+after the existing completion conditions are satisfied. The subsequent answer
+limits this continuation to local review without external transmission.
 
 ## Context
 
@@ -38,14 +39,13 @@ full/ci gate set, required checks and domain verification boundaries.
 ## Non-Goals & Out-of-Scope
 
 No new registry, QA wrapper, fixture framework, policy engine, provider model
-change or live manifest behavior. No push, PR, dispatch, release/tag,
-credentials, paid calls, global settings or live infrastructure actions. The
-earlier local merge of updated origin/main into the task branch is complete.
-Earlier conditional integration/cleanup and one-off external approvals are
-historical and grant no authority in this continuation. Read existing hosted
-results only; no new push, dispatch, authenticated Provider session, merge or
-branch/worktree removal is authorized. The Task preserves the earlier actions
-and their incomplete native evidence.
+change or live manifest behavior. No push, PR, dispatch, release/tag, credential
+inspection, global settings or live infrastructure actions. After automatic
+approval review rejected the proposed Claude call, the user selected local
+review without external transmission. Only local native discovery/trust
+metadata inspection is in scope; no Provider model call is authorized. Do not
+bypass trust or permissions or retry an unchanged failure. The earlier main
+integration and external actions remain dated evidence, not reusable authority.
 
 ## Global Constraints
 
@@ -136,10 +136,17 @@ this package's Task. Other workflows change only for observed defects.
 5. Re-observe the existing task-branch hosted run read-only and record its exact
    input and verdict. Preserve prior native observations without replaying
    consumed approvals or treating process completion as native acceptance.
-6. Review the inherited three-file evidence change, update current authority,
-   run focused document checks, quick and exact staged QA, validate the actual
-   message and commit through active hooks. Run final full QA and record any
-   later Task-only evidence separately. Keep main and the task branch/worktree.
+6. Resume from the committed local evidence and inspect native prerequisites
+   through local metadata APIs. Record discovery separately from unexecuted
+   model/tool/hook/probe checks. No external Provider call follows from this
+   continuation; preserve the inherited native completion condition.
+7. Review the evidence change, run focused document checks, quick and exact
+   staged QA, validate the actual message and commit through active hooks.
+   Run final full QA over the resulting tree and record subsequent Task-only
+   evidence separately without a self-referential validation loop.
+8. If every inherited completion condition is met, integrate into local main,
+   verify the resulting tree and remove only this task's clean worktree and
+   merged branch. Otherwise preserve both and name the remaining prerequisite.
 
 ## Verification Plan
 
@@ -174,8 +181,9 @@ logical local commits. Required failures remain incomplete. Hosted, native and
 live evidence stay separate with next owners. The inherited Task completion
 condition keeps native follow-up open even when Spec static/hosted acceptance
 and local implementation are complete; no new Spec criterion is introduced.
-Keep the branch/worktree; integration, cleanup and remote writes need a new
-explicit request. The Task preserves the completed migration and current limits.
+The current request authorizes local integration and task-owned cleanup only
+when complete. Remote writes remain outside this continuation. The Task
+preserves the completed migration and current limits.
 
 ## Traceability
 
