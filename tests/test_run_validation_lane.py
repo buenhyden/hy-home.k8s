@@ -731,25 +731,31 @@ class BoundedValidationCommandTest(unittest.TestCase):
     def test_escape_diagnostics_never_read_process_arguments(self):
         from io import BytesIO
 
-        reads = []
-
-        def open_process(path, *args, **kwargs):
-            reads.append(path.name)
-            if path.name == "cmdline":
-                self.fail("process arguments must never be collected")
-            return BytesIO(b"State:\tS (sleeping)\n")
-
-        with (
-            patch.object(Path, "open", open_process),
-            patch.object(RUNNER, "_discover_owned_pids", return_value={12345}),
-            patch.object(RUNNER, "_process_group_id", return_value=12345),
-            patch.object(RUNNER, "_process_command_name", return_value="git"),
+        for raw, expected in (
+            (b"State:\tS (sleeping)\n", ((12345, 12345, "git", "S"),)),
+            (b"State:\tZ (zombie)\n", ()),
+            (b"State:\tX (dead)\n", ()),
+            (b"State:\tunexpected-value\n", ((12345, 12345, "git", "unknown"),)),
         ):
-            self.assertEqual(
-                RUNNER._cross_session_owned_descendants(99, set()),
-                ((12345, 12345, "git", "S"),),
-            )
-        self.assertEqual(reads, ["status"])
+            reads = []
+
+            def open_process(path, *args, **kwargs):
+                reads.append(path.name)
+                if path.name == "cmdline":
+                    self.fail("process arguments must never be collected")
+                return BytesIO(raw)
+
+            with (
+                self.subTest(raw=raw),
+                patch.object(Path, "open", open_process),
+                patch.object(RUNNER, "_discover_owned_pids", return_value={12345}),
+                patch.object(RUNNER, "_process_group_id", return_value=12345),
+                patch.object(RUNNER, "_process_command_name", return_value="git"),
+            ):
+                self.assertEqual(
+                    RUNNER._cross_session_owned_descendants(99, set()), expected
+                )
+            self.assertEqual(reads, ["status"])
 
     def test_process_state_is_bounded_and_rejects_malformed_fields(self):
         from io import BytesIO
@@ -769,13 +775,8 @@ class BoundedValidationCommandTest(unittest.TestCase):
         with patch.object(Path, "open", side_effect=FileNotFoundError):
             self.assertEqual(RUNNER._process_state(12345), "")
 
-    def test_an_exited_descendant_is_named_as_such_not_as_nameless(self):
-        """A zombie has no argument vector, and that is a finding, not a gap.
-
-        An unreaped exit record is not work outliving the gate; a running
-        process is.  Reporting both as nothing to name would collapse the one
-        distinction the verdict most needs, so read the state and say which.
-        """
+    def test_process_state_observes_unreaped_exit(self):
+        """A confirmed zombie state supports the terminated-process exclusion."""
 
         process = subprocess.Popen(["/bin/true"])
         try:
@@ -1238,6 +1239,41 @@ class BoundedValidationCommandTest(unittest.TestCase):
                     except ProcessLookupError:
                         pass
                     self._wait_for_process_exit(escaped["pid"])
+
+    def test_an_exited_descendant_is_not_a_containment_escape(self):
+        """A terminated process cannot outlive the gate, so it is not an escape.
+
+        Four hosted runs failed this way. Every escaping descendant they named
+        was a `git` that had already exited and had not yet been reaped, held
+        only as a process-table entry that runs no code and can never run
+        again. Counting that as an escape fails a gate for work that does not
+        exist. A live escape still fails, which the neighbouring test fixes.
+        """
+
+        with tempfile.TemporaryDirectory(prefix="runner-exited-escape-") as tmp:
+            pid_path = Path(tmp) / "exited.json"
+            child_source = (
+                "import json, os; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()}))"
+            )
+            # The leader never reaps it, so it is a zombie when the leader goes.
+            leader_source = (
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                "subprocess.Popen([sys.executable, '-I', '-c', "
+                f"{child_source!r}], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                "deadline=time.monotonic()+5.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
+                "time.sleep(0.2)\n"
+            )
+            outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+            self.assertEqual(outcome.status, "completed")
+            self.assertEqual(outcome.escaped_descendants, ())
+            self.assertTrue(outcome.cleanup_complete)
 
     def test_escaping_descendant_identity_is_reported(self):
         """A gate that fails on containment has to name what escaped.

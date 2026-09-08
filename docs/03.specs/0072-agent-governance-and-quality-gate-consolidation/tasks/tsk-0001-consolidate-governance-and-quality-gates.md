@@ -45,6 +45,7 @@ existing owners and creates verified logical local commits.
 - **Allowed Paths**: `.agents/`, `.github/`, `.claude/`, `.codex/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`, `scripts/`, `tests/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`, `.ruff.toml`, `.secrets.baseline`, `.graphifyignore`, `.cz.toml`, `.gitmessage`, `cliff.toml`, `.editorconfig`, `.gitleaks.toml`, `.hadolint.yaml`
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
+- **Current Local Merge Authority**: the user separately approved merging origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` into the task branch, conflict resolution and revalidation; this grants no remote or additional merge authority
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
 - **Current Follow-up**: implement the approved minimal integration on `codex/agq-consolidation`; commit configuration and full-snapshot scan coverage extend the earlier Task scope
 - **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
@@ -221,6 +222,37 @@ preserved there and not imported; this branch's diagnostic change retains the
 prior containment verdict. Integration requires reviewing that semantic
 difference. Public GitHub API reads through the available web tool were
 unavailable, so current remote check configuration and runs remain unverified.
+
+### Updated Main Integration (2026-09-08)
+
+The original checkout's parallel WIP became commits `0bcde241` and `0828c1b5`,
+then upstream PR 61 merged as `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7`.
+The user reported that update and explicitly approved a local merge into this
+task branch. Fetch confirms both local main and origin/main at that SHA, with
+merge-base `58b32427aecdee52c601151931455bddaa317500`. The original checkout
+is clean; none of its work was replaced or imported by blanket restoration.
+
+Repair commit `dbc80b4a44c51d2805ac624e22878a19532c0736` passes quick twelve
+gates in 260.36 s and staged twelve gates in 234.08 s. Its actual message passes
+pinned commit-msg validation and normal active hooks complete the commit.
+Its full attempt is cancelled with SIGINT after 264.55 s, exit 130, because the
+approved main integration supersedes that input. This is cancellation/FAIL,
+never PASS or SKIP; the source checkout remains clean after cancellation.
+
+The runner conflict joins main's liveness repair with the bounded diagnostic
+contract. Only confirmed terminated states `Z` and `X` are excluded from escape
+reporting. Live and unknown states retain failure; cleanup, timeout, output and
+report bounds are unchanged, and process arguments remain unread. The earlier
+diagnostic-only result above predates this approved integration and does not
+define the final liveness rule. Main's fifth hosted-result history below stays
+attributed to its own input, not the merged task branch.
+
+Mechanical combination fails the existing single-read regression because it
+reads status twice. Reusing one bounded state observation fixes that failure;
+the regression now covers live, both terminated and malformed states. Main's
+real exited-descendant case is retained. All seventy runner tests pass in
+2.401 s after conflict resolution. Updated full evidence follows the merge
+commit; the cancelled run cannot establish final acceptance.
 
 ### Historical Local Main Merge and Follow-up (2026-09-06)
 
@@ -1194,6 +1226,60 @@ The open limitation is unchanged in substance and narrower in scope: the
 escaping call is `git`, the subcommand and liveness are now reportable, and no
 repair is attempted until a hosted run says which call it is and whether it
 was still running.
+
+### Fifth Hosted Result: the Escape Was a Definition Defect (2026-09-08)
+
+Run `34211376210` on `58b32427` closed the question the previous four runs
+could not. Both failing gates named every escaping descendant, and all sixteen
+of them across the two gates read the same way:
+
+    escaped=10016:10016:git:zombie,10026:10026:git:zombie, ... (cap reached)
+    escaped=54604:54604:git:zombie,54645:54645:git:zombie, ... (cap reached)
+
+Not one was running. Every escape was a `git` that had already exited and had
+not yet been reaped.
+
+That makes the fault a definition defect rather than an environment problem.
+An escape is work that can outlive the gate that owns it. A terminated entry
+runs no code, holds nothing beyond its slot in the process table, and can
+never run again; it is waiting for the reap that the cleanup immediately
+following performs. Counting it failed a gate for work that does not exist,
+which is exactly why `pre-commit` failed while returning `rc=0` with every
+hook passing, across four consecutive runs.
+
+Exited states are now excluded from the escape determination and nothing else
+changes. The boundary is not widened: a live descendant holding a foreign
+process group still fails the gate, and now names itself while doing so. A
+test reproduces the hosted shape locally for the first time -- an exited
+`setsid` descendant produced `descendant_cleanup` before the change and
+`completed` after -- and the neighbouring test keeps a live escape failing.
+
+The narrowing that produced this answer is worth recording as method. The
+report first carried the status alone, which named nothing. It then carried
+the process identity, which showed `git` with `pid == pgid` and established
+that git had detached rather than inherited a group. It then carried the
+subcommand and the liveness, and the liveness -- added because a zombie has no
+argument vector and would otherwise have reported as nothing to name -- was
+the field that answered the question. Three of the four hosted runs spent on
+this gate produced no diagnosis because the evidence emitted was thinner than
+the fault.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34211376210` | 1 / FAIL | `pull_request` on `58b32427`; 20/22 PASS, both failures `rc=0`, all sixteen escapes `git:zombie` |
+| Local reproduction of the hosted shape | 1 then 0 | An exited `setsid` descendant produced `descendant_cleanup`; `completed` after the change |
+| Live-escape boundary after the change | unchanged | A live `setsid` descendant still fails and reports `git:hash-object` |
+| Plain child control | 0 / PASS | `completed` before and after |
+| `python3 -m unittest tests.test_run_validation_lane` | 0 / PASS | 70 tests |
+| `pre-commit run --all-files` | 0 / PASS | No hook applied a change |
+| `python3 scripts/qa.py full` | 0 / PASS | 22 gates |
+| Hosted CI on this commit | NOT_RUN / DEFER | No hosted result exists for `0bcde241` |
+
+Two limitations from earlier sections close here and one stays open. The
+escaping descendant now has an established cause and a repair. Whether the
+earlier `test_escaped_devnull_descendant_is_killed_and_not_reported_completed`
+flake shares that cause is untested; that test uses a live descendant, so the
+change does not affect its assertion and it remains unrepaired.
 
 ## Traceability
 

@@ -653,6 +653,10 @@ def _process_group_absent(process_group_id: int) -> bool:
     return True
 
 
+# `Z` is an exited entry awaiting a reap and `X` is one already gone.
+TERMINATED_PROCESS_STATES = frozenset({"Z", "X"})
+
+
 def _process_state(pid: int) -> str:
     """Observe a bounded kernel state field without collecting process arguments."""
 
@@ -689,11 +693,17 @@ def _cross_session_owned_descendants(
 ) -> tuple[tuple[int, int, str, str], ...]:
     """Identify owned descendants that left the leader's process group.
 
+    An escape is work that can outlive the gate that owns it, so a process that
+    has already exited is not one.  A terminated entry runs no code, holds
+    nothing but its slot in the process table, and can never run again; it is
+    waiting to be reaped, which the cleanup that follows does.  Counting it
+    would fail a gate for work that does not exist.
+
     The caller only needs to know whether any exist, but a bare verdict cannot
     be diagnosed once it is the only thing a remote run reports.  The group id
-    is read anyway, so recording the name and kernel state makes that observation diagnosable.
-    Process arguments are never collected. State is advisory and does not
-    relax the containment verdict, including an unreaped zombie.
+    is read anyway, so recording the name and kernel state makes that
+    observation diagnosable. Process arguments are never collected. Only a
+    confirmed terminated state is excluded; unknown states still fail closed.
     """
 
     owned = _discover_owned_pids(leader_pid, baseline_direct_children)
@@ -702,9 +712,10 @@ def _cross_session_owned_descendants(
         group = _process_group_id(pid)
         if group in (None, leader_pid):
             continue
-        escaped.append(
-            (pid, group, _process_command_name(pid), _process_state(pid) or "unknown")
-        )
+        state = _process_state(pid)
+        if state in TERMINATED_PROCESS_STATES:
+            continue
+        escaped.append((pid, group, _process_command_name(pid), state or "unknown"))
         if len(escaped) == VALIDATOR_ESCAPE_REPORT_LIMIT:
             break
     return tuple(escaped)

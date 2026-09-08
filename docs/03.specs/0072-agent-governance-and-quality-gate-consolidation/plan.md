@@ -36,8 +36,10 @@ full/ci gate set, required checks and domain verification boundaries.
 ## Non-Goals & Out-of-Scope
 
 No new registry, QA wrapper, fixture framework, policy engine, provider model
-change or live manifest behavior. No push, PR, merge, dispatch, release/tag,
-credentials, paid calls, global settings or live infrastructure actions.
+change or live manifest behavior. No push, PR, dispatch, release/tag,
+credentials, paid calls, global settings or live infrastructure actions. The
+user separately approved one local merge of updated origin/main into the task
+branch; all other merge authority remains excluded.
 
 ## Global Constraints
 
@@ -57,7 +59,9 @@ Keep the escaped tuple's fourth field as a state observation; remove argv reads.
 1. Add a failing test that refuses `/proc/*/cmdline` access and observes running,
    zombie, disappeared and malformed states using temporary/mock process data.
 2. Use bounded status reads and an allowlisted state letter; retain `comm`, PID,
-   group and the existing cleanup verdict. Remove synthetic token-only tests.
+   group and cleanup limits. Preserve updated main's exclusion of confirmed
+   terminated states; unknown states still fail closed. Read state once for
+   both classification and diagnostics. Remove synthetic token-only tests.
 3. Run `python3 -B -m unittest tests.test_run_validation_lane` and inspect the
    diagnostic diff. Preserve timeout, cancellation and descendant regressions.
 
