@@ -654,6 +654,8 @@ def _process_group_absent(process_group_id: int) -> bool:
 
 
 COMMAND_TOKEN = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
+# `Z` is an exited entry awaiting a reap and `X` is one already gone.
+TERMINATED_PROCESS_STATES = frozenset({"Z", "X"})
 
 
 def _command_token_from_cmdline(raw: bytes) -> str:
@@ -722,6 +724,12 @@ def _cross_session_owned_descendants(
 ) -> tuple[tuple[int, int, str, str], ...]:
     """Identify owned descendants that left the leader's process group.
 
+    An escape is work that can outlive the gate that owns it, so a process that
+    has already exited is not one.  A terminated entry runs no code, holds
+    nothing but its slot in the process table, and can never run again; it is
+    waiting to be reaped, which the cleanup that follows does.  Counting it
+    would fail a gate for work that does not exist.
+
     The caller only needs to know whether any exist, but a bare verdict cannot
     be diagnosed once it is the only thing a remote run reports.  The group id
     is read anyway, so recording it with the process name costs one extra file
@@ -733,6 +741,8 @@ def _cross_session_owned_descendants(
     for pid in sorted(owned - {leader_pid}):
         group = _process_group_id(pid)
         if group in (None, leader_pid):
+            continue
+        if _process_state(pid) in TERMINATED_PROCESS_STATES:
             continue
         escaped.append(
             (pid, group, _process_command_name(pid), _process_command_token(pid))

@@ -1256,6 +1256,41 @@ class BoundedValidationCommandTest(unittest.TestCase):
                         pass
                     self._wait_for_process_exit(escaped["pid"])
 
+    def test_an_exited_descendant_is_not_a_containment_escape(self):
+        """A terminated process cannot outlive the gate, so it is not an escape.
+
+        Four hosted runs failed this way. Every escaping descendant they named
+        was a `git` that had already exited and had not yet been reaped, held
+        only as a process-table entry that runs no code and can never run
+        again. Counting that as an escape fails a gate for work that does not
+        exist. A live escape still fails, which the neighbouring test fixes.
+        """
+
+        with tempfile.TemporaryDirectory(prefix="runner-exited-escape-") as tmp:
+            pid_path = Path(tmp) / "exited.json"
+            child_source = (
+                "import json, os; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()}))"
+            )
+            # The leader never reaps it, so it is a zombie when the leader goes.
+            leader_source = (
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                "subprocess.Popen([sys.executable, '-I', '-c', "
+                f"{child_source!r}], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                "deadline=time.monotonic()+5.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
+                "time.sleep(0.2)\n"
+            )
+            outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+            self.assertEqual(outcome.status, "completed")
+            self.assertEqual(outcome.escaped_descendants, ())
+            self.assertTrue(outcome.cleanup_complete)
+
     def test_escaping_descendant_identity_is_reported(self):
         """A gate that fails on containment has to name what escaped.
 
