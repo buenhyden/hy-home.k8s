@@ -42,6 +42,7 @@ VALIDATOR_TIMEOUT_SECONDS = 1_200.0
 VALIDATOR_STDOUT_LIMIT_BYTES = 4 * 1024 * 1024
 VALIDATOR_STDERR_LIMIT_BYTES = 1 * 1024 * 1024
 VALIDATOR_CLEANUP_SECONDS = 2.0
+VALIDATOR_ESCAPE_REPORT_LIMIT = 8
 VALIDATOR_PIPE_POLL_SECONDS = 0.05
 VALIDATOR_READ_CHUNK_BYTES = 64 * 1024
 VALIDATOR_OWNED_PROCESS_POLL_SECONDS = 0.01
@@ -88,6 +89,10 @@ class BoundedCommandResult:
     stdout: StreamObservation
     stderr: StreamObservation
     cleanup_complete: bool
+    # Identities of owned descendants that held a foreign process group when
+    # the leader exited.  Empty for every other outcome, so a passing gate's
+    # observation is unchanged.
+    escaped_descendants: tuple[tuple[int, int, str], ...] = ()
 
 
 class _StreamAccumulator:
@@ -168,6 +173,18 @@ def stream_metadata(label: str, stream: StreamObservation) -> str:
     )
 
 
+def _escape_report_token(name: str) -> str:
+    """Keep a process name inside the delimited grammar it is reported in."""
+
+    return (
+        "".join(
+            character if character.isalnum() or character in "._-" else "?"
+            for character in name
+        )
+        or "unknown"
+    )
+
+
 def observation(completed: BoundedCommandResult) -> str:
     if completed.status == "completed":
         status = "completed" if completed.returncode == 0 else "failed"
@@ -176,15 +193,22 @@ def observation(completed: BoundedCommandResult) -> str:
     returncode = (
         "unknown" if completed.returncode is None else str(completed.returncode)
     )
-    return ";".join(
-        (
-            f"status={status}",
-            f"rc={returncode}",
-            stream_metadata("stdout", completed.stdout),
-            stream_metadata("stderr", completed.stderr),
-            f"cleanup_complete={str(completed.cleanup_complete).lower()}",
+    fields = [
+        f"status={status}",
+        f"rc={returncode}",
+        stream_metadata("stdout", completed.stdout),
+        stream_metadata("stderr", completed.stderr),
+        f"cleanup_complete={str(completed.cleanup_complete).lower()}",
+    ]
+    if completed.escaped_descendants:
+        fields.append(
+            "escaped="
+            + ",".join(
+                f"{pid}:{group}:{_escape_report_token(name)}"
+                for pid, group, name in completed.escaped_descendants
+            )
         )
-    )
+    return ";".join(fields)
 
 
 def trusted_search_path() -> str:
@@ -628,14 +652,38 @@ def _process_group_absent(process_group_id: int) -> bool:
     return True
 
 
-def _has_cross_session_owned_descendant(
+def _process_command_name(pid: int) -> str:
+    """Read one process name without its arguments, so no argument can leak."""
+
+    try:
+        raw = (Path("/proc") / str(pid) / "comm").read_bytes()
+    except OSError:
+        return "unknown"
+    name = raw.decode("utf-8", errors="replace").strip()
+    return name or "unknown"
+
+
+def _cross_session_owned_descendants(
     leader_pid: int, baseline_direct_children: set[int]
-) -> bool:
+) -> tuple[tuple[int, int, str], ...]:
+    """Identify owned descendants that left the leader's process group.
+
+    The caller only needs to know whether any exist, but a bare verdict cannot
+    be diagnosed once it is the only thing a remote run reports.  The group id
+    is read anyway, so recording it with the process name costs one extra file
+    read per offender and makes the failure name its own cause.
+    """
+
     owned = _discover_owned_pids(leader_pid, baseline_direct_children)
-    for pid in owned - {leader_pid}:
-        if _process_group_id(pid) not in (None, leader_pid):
-            return True
-    return False
+    escaped: list[tuple[int, int, str]] = []
+    for pid in sorted(owned - {leader_pid}):
+        group = _process_group_id(pid)
+        if group in (None, leader_pid):
+            continue
+        escaped.append((pid, group, _process_command_name(pid)))
+        if len(escaped) == VALIDATOR_ESCAPE_REPORT_LIMIT:
+            break
+    return tuple(escaped)
 
 
 def _close_pidfds(pidfds: dict[int, int]) -> None:
@@ -1241,7 +1289,7 @@ def _run_bounded_command_locked(
 
         # Every path, including normal leader exit, closes the owned process
         # group while the unreaped leader still pins its numeric identity.
-        cross_session_descendant = _has_cross_session_owned_descendant(
+        escaped_descendants = _cross_session_owned_descendants(
             process.pid, baseline_direct_children
         )
         cleanup_deadline = time.monotonic() + max(0.0, cleanup_seconds)
@@ -1252,7 +1300,7 @@ def _run_bounded_command_locked(
             baseline_direct_children=baseline_direct_children,
         )
         if status == "ready_for_completion":
-            if cleanup_complete and not cross_session_descendant:
+            if cleanup_complete and not escaped_descendants:
                 status = "completed"
             elif cleanup_complete:
                 status = "descendant_cleanup"
@@ -1316,6 +1364,7 @@ def _run_bounded_command_locked(
         stdout=accumulators["stdout"].result(complete=stream_complete["stdout"]),
         stderr=accumulators["stderr"].result(complete=stream_complete["stderr"]),
         cleanup_complete=cleanup_complete,
+        escaped_descendants=escaped_descendants,
     )
 
 

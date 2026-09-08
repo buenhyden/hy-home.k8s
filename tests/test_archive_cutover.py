@@ -122,6 +122,36 @@ class ArchiveCutoverTest(unittest.TestCase):
         with self.assertRaises(AssertionError):
             self._assert_record_partition(rejected, {legacy})
 
+    @staticmethod
+    def _rejected_tool_candidates(runner, name: str) -> str:
+        """Say which candidate failed and on what fact, not merely that none passed.
+
+        The resolver requires the containing directory to be root-owned and
+        neither group- nor other-writable, so an environment that publishes the
+        binary correctly can still be refused.  Reporting the ownership makes a
+        remote failure diagnosable from its own log; modes and uids of system
+        directories carry nothing sensitive.
+        """
+
+        observed = []
+        for candidate in runner.system_tool_candidates(name):
+            try:
+                file_stat = os.lstat(candidate)
+            except OSError:
+                continue
+            try:
+                parent = os.lstat(candidate.parent)
+                parent_facts = (
+                    f"dir_uid={parent.st_uid},dir_mode={parent.st_mode & 0o7777:04o}"
+                )
+            except OSError:
+                parent_facts = "dir=unreadable"
+            observed.append(
+                f"{candidate}(uid={file_stat.st_uid},"
+                f"mode={file_stat.st_mode & 0o7777:04o},{parent_facts})"
+            )
+        return "candidates=" + ("; ".join(observed) or "none present")
+
     def test_repository_snapshot_is_complete_and_atomic(self) -> None:
         generic = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(generic.valid, generic.diagnostics)
@@ -130,7 +160,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         environment = qa.runner.closed_subprocess_environment()
         executable = qa.runner.secure_gitleaks_executable(ROOT)
         self.assertIsNotNone(
-            executable, "required secure Gitleaks executable unavailable"
+            executable,
+            "required secure Gitleaks executable unavailable; "
+            + self._rejected_tool_candidates(qa.runner, "gitleaks"),
         )
         environment[qa.runner.GITLEAKS_EXECUTABLE_ENV] = executable
         completed = subprocess.run(

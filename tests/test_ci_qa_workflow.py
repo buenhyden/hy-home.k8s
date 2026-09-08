@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import json
+import re
 import subprocess
 import tempfile
 import unittest
@@ -156,6 +157,47 @@ class CiQaWorkflowTests(unittest.TestCase):
         ]
         self.assertEqual(len(installs), 1)
         self.assertIn("sudo install", installs[0])
+
+    def test_tool_publication_directory_satisfies_the_strict_resolver(self):
+        """Publishing a root-owned file into a writable directory is not enough.
+
+        `secure_tool_executable` rejects a candidate whose containing directory
+        is group- or other-writable, because anyone holding that write bit can
+        swap the executable the validator is about to trust.  A runner image is
+        free to ship `/usr/local/bin` writable, so the workflow has to state the
+        ownership it needs instead of inheriting whatever the image provides.
+        """
+
+        steps = self._qa_steps()
+        published = [
+            index
+            for index, step in enumerate(steps)
+            if re.search(r"sudo install\s+[^\n]*/usr/local/bin/\S", step.get("run", ""))
+        ]
+        self.assertTrue(published, "no tool is published to the search path")
+
+        prepared = [
+            (index, step.get("run", ""))
+            for index, step in enumerate(steps)
+            if re.search(
+                r"sudo install\s+-d\b[^\n]*/usr/local/bin\b", step.get("run", "")
+            )
+        ]
+        self.assertEqual(len(prepared), 1, "the directory contract is stated once")
+        index, run = prepared[0]
+        self.assertLess(
+            index,
+            min(published),
+            "the directory is hardened before anything is published into it",
+        )
+        self.assertIn("-o root", run)
+        self.assertIn("-g root", run)
+        mode = re.search(r"-m\s*(\d+)", run)
+        self.assertIsNotNone(mode, "the directory mode is stated explicitly")
+        self.assertFalse(
+            int(mode.group(1), 8) & 0o022,
+            "a group- or other-writable directory is rejected by the resolver",
+        )
 
     def test_hook_environments_are_cached_between_runs(self):
         """A cold cache builds every hook toolchain from source."""
