@@ -1,10 +1,10 @@
 ---
 title: "Commit Message Prompt Contract"
-version: "0.1.0"
+version: "0.1.1"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-08"
 ---
 
 # Commit Message Prompt Contract
@@ -44,11 +44,11 @@ staged difference does not show.
 
 ## Validation
 
-The draft is judged by the repository's existing conventional-commit rule
-before use. On this workstation that rule does not run at commit time, because
-the global hook path points outside the repository; it runs inside the full
-validation profile instead. The draft is not treated as validated by having
-been produced.
+The draft is judged by Commitizen using [`.cz.toml`](../../.cz.toml).
+Generation is not validation. File QA's all-files/manual stage does not run
+the separate commit-msg stage. Follow the [Git policy](../governance/git.md)
+for validating the actual candidate message and observing active hooks;
+workstation configuration is Task evidence, never a shared policy assumption.
 
 ## Refusal Conditions
 
