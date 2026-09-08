@@ -231,6 +231,11 @@
         },
         "pathInput": {
           "const": "include-existing-markdown"
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7200
         }
       }
     },

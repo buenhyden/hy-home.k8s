@@ -441,7 +441,8 @@
         "status": "FAIL",
         "reason": "unit-tests is required."
       },
-      "evidenceLane": "repo-static"
+      "evidenceLane": "repo-static",
+      "timeoutSeconds": 2400
     },
     {
       "id": "vault-eso-contracts",

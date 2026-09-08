@@ -1507,6 +1507,11 @@ def run_selected(
             argv,
             cwd=root,
             env=child_environment,
+            # A gate may declare a larger budget than the shared default.
+            # Raising the default instead would weaken every other gate.
+            timeout_seconds=float(
+                validator.get("timeoutSeconds", VALIDATOR_TIMEOUT_SECONDS)
+            ),
         )
         marker = QUALITY_SUCCESS_MARKER if identifier == "repository-quality" else None
         marker_count = (

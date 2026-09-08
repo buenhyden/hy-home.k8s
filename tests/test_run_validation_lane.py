@@ -1869,5 +1869,77 @@ class PreCommitChildEnvironmentTest(unittest.TestCase):
                 self.assertNotIn(variable, environment)
 
 
+class ValidatorTimeoutBudgetTest(unittest.TestCase):
+    """A gate may declare a larger budget than the shared default.
+
+    The default bounds every gate that has no reason to run long. One suite
+    legitimately does, and raising the shared constant for it would weaken the
+    bound on every other gate, so the budget is declared per gate and the
+    default stays where it is.
+    """
+
+    def _contract(self, **extra) -> dict:
+        validator = {
+            "id": "repository-quality",
+            "argv": [
+                "python3",
+                "scripts/validation/repository/quality.py",
+                "--root",
+                ".",
+            ],
+            "lanes": ["affected", "staged", "all-files"],
+            "evidenceLane": "repo-static",
+            "optional": False,
+            "fallback": {"status": "FAIL", "reason": "required"},
+        }
+        validator.update(extra)
+        return {"validators": [validator]}
+
+    def _timeout_for(self, contract: dict) -> float:
+        with (
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["scripts/run-validation-lane.py"],
+                contract,
+                _ContractModule,
+            )
+        return invoked.call_args.kwargs["timeout_seconds"]
+
+    def test_declared_budget_reaches_the_bounded_runner(self):
+        self.assertEqual(self._timeout_for(self._contract(timeoutSeconds=2400)), 2400.0)
+
+    def test_absent_budget_keeps_the_shared_default(self):
+        self.assertEqual(
+            self._timeout_for(self._contract()),
+            RUNNER.VALIDATOR_TIMEOUT_SECONDS,
+        )
+
+    def test_registry_declares_a_budget_only_where_the_default_is_too_small(self):
+        """The override is an exception, not a way around the shared bound."""
+
+        registry = json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
+        )
+        declared = {
+            row["id"]: row["timeoutSeconds"]
+            for row in registry["validators"]
+            if "timeoutSeconds" in row
+        }
+
+        self.assertEqual(set(declared), {"unit-tests"})
+        for identifier, budget in declared.items():
+            with self.subTest(validator=identifier):
+                self.assertGreater(budget, RUNNER.VALIDATOR_TIMEOUT_SECONDS)
+
+
 if __name__ == "__main__":
     unittest.main()

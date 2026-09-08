@@ -40,7 +40,7 @@ jobs:
 
   qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -73,6 +73,13 @@ jobs:
           # the way Gitleaks is published, or the gate reports its required tool
           # as unavailable and the pre-commit hooks silently never run.
           sudo install -o root -g root -m 0755 "$(command -v pre-commit)" /usr/local/bin/pre-commit
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # The pre-commit gate builds every hook environment from source on a
+          # cold cache, including the Go toolchains, which dominates the run.
+          # The runner resolves this exact directory for that gate.
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Install Gitleaks
         run: |
           set -euo pipefail
