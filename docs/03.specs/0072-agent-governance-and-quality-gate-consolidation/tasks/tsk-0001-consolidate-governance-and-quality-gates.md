@@ -738,11 +738,33 @@ pre-commit and commit-message hooks did not run at commit time; the all-files
 pre-commit gate inside the `full` profile covered the same bytes and caught
 formatter findings, which were committed separately, and commit messages were
 checked against the tracked `.cz.toml` pattern. Global Git configuration was
-not modified. Separately, `test_escaped_devnull_descendant_is_killed_and_not_reported_completed`
-and `test_root_cli_path_remains_green_without_a_production_self_test` have each
-been observed failing once under whole-suite discovery while passing in
-isolation and in the final `full` and CI-shape runs; they are order or
-accumulation dependent and are not repaired here.
+not modified.
+
+Two tests were observed failing once each under whole-suite discovery while
+passing in isolation. `test_root_cli_path_remains_green_without_a_production_self_test`
+is repaired: it carried two state dependencies. Its loader removes the script
+directory from `sys.path` after loading, so the `import qa` inside `main` only
+resolved when an earlier module had already imported it, and the module failed
+on its own. It also asserted the consumer was called with the repository root,
+which only holds for a clean working tree, because a dirty tree makes `main`
+hand the consumer an isolated snapshot that is released when the command
+returns. The test now restores the search path the way a script invocation
+provides it and records what the consumer received while it is still readable,
+pinning one dispatch over this repository's own registry bytes. Both branches
+are verified: a dirty tree takes the snapshot path and a clean clone takes the
+indexed-tree path.
+
+`test_escaped_devnull_descendant_is_killed_and_not_reported_completed` is not
+repaired, because no root cause was established. It passed 25 consecutive runs
+under concurrent load, in its own module, with every alphabetically preceding
+module, and under a discovery pass that imports every module, so module
+interference, import side effects and load alone are excluded. The one hosted
+observation pairs an inner test failure with `status=descendant_cleanup` on the
+outer `unit-tests` gate, which places the escaped process outside the inner
+detection window and inside the outer one; subreaper restoration ordering in
+`run_bounded_command` is the open hypothesis. It is left unrepaired rather than
+adjusted, because the assertion guards a real containment boundary and no
+reproducible failure exists to prove a change fixes anything.
 
 Rollback is a new change reversing the reviewed commits against
 `de040df41f038e981963de1ac60093ea6fb80edd` after checking for later user edits;
