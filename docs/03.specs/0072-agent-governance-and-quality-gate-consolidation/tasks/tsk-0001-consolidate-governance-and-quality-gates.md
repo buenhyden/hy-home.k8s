@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.4.0"
+version: "2.5.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -46,6 +46,7 @@ existing owners and creates verified logical local commits.
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
 - **Completed Current Local Merge**: the separately approved origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` integration completed as `4667aa03`; that authority is consumed and grants no remote or additional merge authority
+- **Conditional Finish Authority**: the later user request approves local main integration and removal of this task-owned branch/worktree only after required acceptance is complete; pending external evidence does not satisfy that condition
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
 - **Completed Follow-up Scope**: the approved minimal integration on `codex/agq-consolidation` includes commit configuration and full-snapshot scan coverage beyond the earlier Task scope
 - **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
@@ -303,7 +304,8 @@ This Task-only handoff update is authored after the full input. Its focused
 document, exact-index and actual-message results are recorded in the subsequent
 documentation commit body; full does not claim to have scanned this later prose.
 
-Keep the local branch and worktree. A scoped rollback uses reviewed forward
+The initial handoff kept the local branch and worktree; the later conditional
+finish instruction below supersedes that selection. A scoped rollback uses reviewed forward
 reverts with their paired contracts/tests. For a whole-task rollback, first
 review reversal of the later handoff documentation, then the merge's second
 parent (main `49e71f9c`) as the revert baseline, preserving the upstream repair.
@@ -315,6 +317,43 @@ then collect evidence for this implementation and current required checks;
 exercise each Provider's native discovery/model/hook/permission behavior in an
 authorized environment. Live infrastructure testing remains outside this task.
 The Task stays in progress until those lifecycle conditions are satisfied.
+
+### Completion Audit and Conditional Finish (2026-09-08)
+
+The user requested follow-up work and an explicit completion audit, permitting
+local main integration and cleanup only once complete. Intake finds task HEAD
+`0cda880c165c2bba7821fb67b446b4c554026ad2` and main/origin/main
+`49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7`, both checkouts clean. Fetch and
+remote-ref inspection confirm the main SHA and no published task branch.
+The preceding full and Task-only staged evidence still describes the unchanged
+implementation; no equivalent aggregate was repeated to manufacture progress.
+
+Unauthenticated public GitHub API reads now succeed:
+
+| Read-only observation | Result | Acceptance meaning |
+| --- | --- | --- |
+| Task branch and `0cda880c` Actions run queries | Zero runs | No hosted evidence for the local implementation |
+| [Main CI run 34221460082](https://github.com/buenhyden/hy-home.k8s/actions/runs/34221460082) | `push` at `49e71f9c`; qa and ci-summary success, branch-policy skipped | Valid upstream push evidence; does not validate this task branch |
+| Applicable ruleset API for main | Empty list | No applicable rules returned through this public endpoint |
+| Classic main protection API | HTTP 401 | Authentication required; required-check configuration remains unverified |
+| Installed client version/help | Codex 0.153.4, Claude 2.1.263 | Client identity/capability metadata only, no model call or event delivery |
+
+Codex help exposes ephemeral execution and an option to ignore user config;
+Claude help exposes project-only settings and hook events in stream output.
+These can bound a future authorized smoke check but are not runtime success.
+Codex help also reports a read-only PATH-alias setup warning; no permission or
+global installation was changed to silence it. No private configuration,
+credential values, session logs or model output were collected.
+
+Independent read-only security review agrees that repository-static work is
+complete while required hosted and native acceptance is open. Conditional
+merge/cleanup is therefore not executable yet. Approval has been requested
+for publishing this branch plus one CI dispatch, and for one bounded native
+session per Provider. Until granted, preserve the branch/worktree and keep
+WORK-004/WORK-009 in progress. The next owner is the user for these protected
+actions; the worker then owns result review, scoped repairs and the requested
+local finish once the condition is met. Live infrastructure remains outside
+the task.
 
 ### Historical Local Main Merge and Follow-up (2026-09-06)
 

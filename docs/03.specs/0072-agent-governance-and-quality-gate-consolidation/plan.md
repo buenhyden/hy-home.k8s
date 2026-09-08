@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.1.0"
+version: "2.2.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -15,7 +15,9 @@ artifact_id: "SPEC-0072-PLAN-0001"
 
 Execute the approved [Spec](spec.md) with Superpowers writing-plans and
 executing-plans. The Task owns state and results; the ordered work below owns
-implementation and verification. Keep the local branch/worktree at finish.
+implementation and verification. The later user instruction selects local
+main integration and task-owned branch/worktree cleanup only after the
+completion audit closes the required acceptance.
 
 ## Context
 
@@ -38,8 +40,10 @@ full/ci gate set, required checks and domain verification boundaries.
 No new registry, QA wrapper, fixture framework, policy engine, provider model
 change or live manifest behavior. No push, PR, dispatch, release/tag,
 credentials, paid calls, global settings or live infrastructure actions. The
-user separately approved one local merge of updated origin/main into the task
-branch; all other merge authority remains excluded.
+earlier local merge of updated origin/main into the task branch is complete.
+The later user instruction conditionally approves local main integration and
+task-owned branch/worktree cleanup after completion. Protected external actions
+still require their own approval.
 
 ## Global Constraints
 
@@ -127,6 +131,14 @@ this package's Task. Other workflows change only for observed defects.
 4. Complete independent read-only review and the sequence below. Record actual
    results, limits, rollback and next owner in the Task. Keep WORK-004 open for
    external acceptance that local evidence cannot establish.
+5. Re-observe public hosted results and available native client capabilities.
+   Obtain the existing protected-action approvals before publishing the task
+   branch, dispatching CI or invoking an authenticated Provider session. Keep
+   upstream runs separate from evidence for this implementation.
+6. Once required acceptance is complete, verify main and the task branch are
+   clean and current, merge locally, validate any changed integration input,
+   then remove only this task-owned worktree and its merged branch. Preserve
+   both while a required result is missing; do not auto-pull or rewrite history.
 
 ## Verification Plan
 
@@ -158,8 +170,10 @@ no absent measurement is a performance claim or PASS.
 
 All applicable local acceptance passes with independent review disposition and
 logical local commits. Required failures remain incomplete. Hosted, native and
-live evidence stay separate with next owners. No remote integration or worktree
-cleanup occurs. The Task preserves the completed migration and current limits.
+live evidence stay separate with next owners. Required hosted/native acceptance
+must close before the newly selected local main integration and cleanup.
+Remote writes still require separate authorization. The Task preserves the completed
+migration and current limits.
 
 ## Traceability
 
