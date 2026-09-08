@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import itertools
 import hashlib
+from dataclasses import replace
 import json
 import os
 import pwd
@@ -703,6 +704,30 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertRegex(rendered, r"stdout_sha256=[0-9a-f]{64}")
         self.assertRegex(rendered, r"stderr_sha256=[0-9a-f]{64}")
 
+    def test_observation_carries_the_escape_that_failed_the_gate(self):
+        """The verdict travels to the remote log; the evidence has to travel too."""
+
+        empty = RUNNER.StreamObservation(
+            observed_bytes=0, sha256="0" * 64, complete=True, retained=b""
+        )
+        clean = RUNNER.BoundedCommandResult(
+            status="completed",
+            returncode=0,
+            stdout=empty,
+            stderr=empty,
+            cleanup_complete=True,
+        )
+        self.assertNotIn("escaped", RUNNER.observation(clean))
+
+        escaped = replace(
+            clean,
+            status="descendant_cleanup",
+            escaped_descendants=((4321, 4321, "gitleaks"),),
+        )
+        rendered = RUNNER.observation(escaped)
+        self.assertIn("status=descendant_cleanup", rendered)
+        self.assertIn("escaped=4321:4321:gitleaks", rendered)
+
     def test_reviewed_runner_limits_are_preserved(self):
         self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
         self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
@@ -1146,6 +1171,58 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 self.assertTrue(outcome.cleanup_complete)
                 with self.assertRaises(ProcessLookupError):
                     os.kill(escaped["pid"], 0)
+            finally:
+                if escaped:
+                    try:
+                        os.killpg(escaped["pgid"], signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    self._wait_for_process_exit(escaped["pid"])
+
+    def test_escaping_descendant_identity_is_reported(self):
+        """A gate that fails on containment has to name what escaped.
+
+        Three hosted runs reported `descendant_cleanup` for the slow gates and
+        none of them could be diagnosed, because the result carried the verdict
+        without the evidence.  The identity is read at the same moment as the
+        group id already consulted, so it is exactly as fresh as the decision
+        it explains; a recycled pid is possible and the record is a lead, not a
+        proof.
+        """
+
+        with tempfile.TemporaryDirectory(prefix="runner-escape-identity-") as tmp:
+            pid_path = Path(tmp) / "escaped.json"
+            child_source = (
+                "import json, os, signal; os.setsid(); "
+                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()})); "
+                "signal.pause()"
+            )
+            leader_source = (
+                "import pathlib, subprocess, sys, time; "
+                f"path=pathlib.Path({str(pid_path)!r}); "
+                "subprocess.Popen([sys.executable, '-I', '-c', "
+                f"{child_source!r}], stdin=subprocess.DEVNULL, "
+                "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
+                "deadline=time.monotonic()+2.0\n"
+                "while not path.exists():\n"
+                "    assert time.monotonic() < deadline\n"
+                "    time.sleep(0.01)\n"
+            )
+            escaped: dict[str, int] = {}
+            try:
+                outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+                escaped = json.loads(pid_path.read_text(encoding="utf-8"))
+
+                self.assertEqual(outcome.status, "descendant_cleanup")
+                reported = {entry[0]: entry for entry in outcome.escaped_descendants}
+                self.assertIn(escaped["pid"], reported)
+                _pid, pgid, command = reported[escaped["pid"]]
+                self.assertEqual(pgid, escaped["pgid"])
+                # `comm` names the program without its arguments, so a leaked
+                # credential in an argument vector cannot reach the report.
+                self.assertTrue(command)
+                self.assertNotIn(" ", command)
             finally:
                 if escaped:
                     try:
