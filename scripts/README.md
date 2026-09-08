@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-08"
 ---
 # scripts
 
@@ -127,6 +127,31 @@ git diff --check
 
 The aggregate command discovers tracked paths internally. Direct affected or
 staged lane calls continue to require an explicit bounded NUL path file.
+
+### Reproducing the hosted dependency identity
+
+Validators run under whichever interpreter invokes them, so a machine carrying
+different library versions than CI can pass a gate that CI fails, and the
+difference is invisible until a hosted run reports it. Reproduce the hosted
+identity by consuming the same lock CI installs rather than by tracking a
+version list here:
+
+```bash
+python3 -m venv .venv-ci
+.venv-ci/bin/python -m pip install --disable-pip-version-check \
+  --only-binary :all: --require-hashes \
+  --requirement .github/requirements/ci-validation.txt
+.venv-ci/bin/python scripts/qa.py full
+```
+
+Use this when a gate passes locally and fails hosted, or before changing a
+module that a locked dependency owns. It is closer evidence than a local run,
+and it is still local evidence: it proves nothing about the hosted runner.
+
+Run formatters through `pre-commit` rather than invoking them directly. The
+hook configuration narrows `ruff-format` to Python on purpose; the bare
+command also claims Markdown and rewrites fenced snippets inside authored and
+archived documents.
 
 For an explicit NUL-delimited changed-path set:
 

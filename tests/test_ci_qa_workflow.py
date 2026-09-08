@@ -1,6 +1,7 @@
 """Independent execution boundaries for the shared QA workflow."""
 
 from pathlib import Path
+import json
 import subprocess
 import tempfile
 import unittest
@@ -155,6 +156,40 @@ class CiQaWorkflowTests(unittest.TestCase):
         ]
         self.assertEqual(len(installs), 1)
         self.assertIn("sudo install", installs[0])
+
+    def test_hook_environments_are_cached_between_runs(self):
+        """A cold cache builds every hook toolchain from source."""
+
+        cache = [
+            step
+            for step in self._qa_steps()
+            if step.get("uses", "").startswith("actions/cache@")
+        ]
+        self.assertEqual(len(cache), 1)
+        pinned = cache[0]["uses"].split("@", 1)[1]
+        self.assertRegex(pinned, r"^[0-9a-f]{40}$")
+
+        with_ = cache[0]["with"]
+        self.assertIn("pre-commit", with_["path"])
+        # A key that ignores the hook configuration would restore environments
+        # that no longer match the hooks being run.
+        self.assertIn(".pre-commit-config.yaml", with_["key"])
+
+    def test_job_wall_clock_exceeds_the_slowest_declared_gate_budget(self):
+        """A gate budget larger than its job's wall clock can never be reached."""
+
+        registry = json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
+        )
+        declared = [
+            row["timeoutSeconds"]
+            for row in registry["validators"]
+            if "timeoutSeconds" in row
+        ]
+        self.assertTrue(declared)
+
+        job_seconds = self.workflow["jobs"]["qa"]["timeout-minutes"] * 60
+        self.assertGreater(job_seconds, max(declared))
 
 
 if __name__ == "__main__":

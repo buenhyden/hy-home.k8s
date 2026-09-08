@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.1.0"
+version: "2.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -772,6 +772,114 @@ no history rewrite, no blanket restore. Reversing the resolver alone would
 restore the hosted failure, so the resolver and the workflow binding roll back
 together. The next owner is platform, for hosted verification once push is
 authorized, and for the two order-dependent tests.
+
+### Hosted Result and the Two Gates It Exposed (2026-09-08)
+
+The repair merged as `d284c99e` and hosted CI ran the QA job to completion for
+the first time. Twenty of twenty-two gates passed, including all five that the
+detached-HEAD defect had been failing, and the three added steps -- the ref
+binding, the pre-commit publish, and the pinned Conftest install -- all
+succeeded. The job ran 27m55s against the 9m8s of the run that used to die
+early, which is the shape of a job that now reaches its slow gates instead of
+failing before them.
+
+Both remaining failures are gates that had never executed in hosted CI, so
+neither was a regression from the repair; each was a latent fault the repair
+made reachable.
+
+`pre-commit` failed with pre-commit's unexpected-error exit. Its cause is
+exact and was reproduced locally:
+
+    go install ./...: failed to initialize build cache at
+    /nonexistent/.cache/go-build: mkdir /nonexistent: permission denied
+
+`HOME` is unreachable by design so no ambient startup state is read, but hook
+environments that build from source ask their toolchain for a cache under
+`HOME`. Every local run had passed only because its hook cache was already
+warm and no toolchain ever built. The runner now names each toolchain cache
+under the account-owned pre-commit directory rather than reopening `HOME`. A
+cold cache with `HOME=/nonexistent` failed at that exact `mkdir` before the
+change and installs and passes every Go-backed hook after it.
+
+`unit-tests` hit the shared 1200s validator budget and was killed at `rc=-9`.
+The suite takes 828s locally; `test_archive_validation` is 451.5s of that, and
+twelve of its tests hold 81% of the module because each runs a full
+link-diagnostics pass over its own variant of the corpus. That work is
+per-test and does not cache away, so the budget is what changes. Raising the
+shared constant would weaken the bound on every gate that has no reason to run
+long, so the registry schema gained an optional per-gate `timeoutSeconds`,
+only `unit-tests` declares one, and the job wall clock moved to 75 minutes
+because a gate budget above its job's wall clock can never be reached. Hook
+environments are cached between runs, which removes the largest single cost
+the pre-commit repair introduced.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34174869492` | 1 / FAIL | `push` on `d284c99e`; 20/22 gates PASS, `unit-tests` timeout and `pre-commit` cold-cache failure |
+| Hosted CI run `34174794127` | 1 / FAIL | `pull_request` on `c7b239f0`; same two gates |
+| Cold-cache reproduction of the pre-commit failure | 1 / FAIL as expected | `HOME=/nonexistent` with an empty hook cache returned the hosted `mkdir /nonexistent` error; the same command with a warm cache passed, which is why no earlier run saw it |
+| Cold-cache verification after the fix | 0 / PASS | Same cold cache and unreachable `HOME`; every Go-backed hook installs and passes |
+| `test_archive_validation` per-test timing | measured | 96 tests, 451.5s, top twelve hold 81%; recorded so the budget is chosen against a measurement rather than a guess |
+| Hosted CI on the follow-up | NOT_RUN / DEFER | No hosted result exists for the follow-up commits; the two failures above stand as the current hosted observation |
+
+The `unit-tests` budget and the cache change what the job costs, not what it
+proves. No execution-time improvement is claimed for the cache until a hosted
+run measures one.
+
+### Second Hosted Result and the Dependency Divergence (2026-09-08)
+
+Run `34183991155` on `3643aac6` shows both earlier repairs working and moves
+the remaining failures to new causes. `branch-policy` executed for the first
+time and passed; every setup step including the hook cache passed. The
+`unit-tests` gate no longer times out, which is the declared budget doing its
+job, and `pre-commit` returned `rc=0` with every hook passing, which is the
+toolchain-cache fix doing its job.
+
+`unit-tests` then failed one case:
+`test_repository_snapshot_is_complete_and_atomic`, which asserts the archive
+cutover command writes nothing to stderr. The cause is dependency identity.
+CI installs the locked `jsonschema==4.26.0`, which deprecates `RefResolver`
+and prints that deprecation when the shared schema evaluator imports it; the
+developer machine here carries `4.10.3`, which does not. A validator writes
+evidence, so noise on its stderr is a defect rather than a detail.
+
+That class of fault cannot be seen from a local run at all, so a virtualenv
+built from `.github/requirements/ci-validation.txt` was used to hold the
+hosted dependency identity. It reproduced the warning and the failing case
+exactly, and both clear after the evaluator uses the `referencing` registry
+where the interpreter has it and keeps the resolver path where it does not.
+The boundary the module exists for is unchanged and tested on both: external
+schema resources are never retrieved, embedded definitions resolve, and an
+invalid schema fails closed without leaking schema values. `scripts/README.md`
+now records the reproduction so the next such divergence does not need to be
+rediscovered.
+
+The hosted `unit-tests` failure also named a case and nothing else, because
+the bounded snippet kept only lines opening with `FAIL:`, `ERROR:` or a hook
+marker and a unittest assertion opens with neither. Assertion lines now carry
+through under the same byte bound and redaction.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34183991155` | 1 / FAIL | `pull_request` on `3643aac6`; `branch-policy` PASS, 20/22 gates PASS, `unit-tests` `rc=1`, `pre-commit` `rc=0` with `descendant_cleanup` |
+| CI-identity virtualenv reproduction | 1 / FAIL as expected | Locked `jsonschema==4.26.0` reproduced the deprecation and the failing case that no local interpreter here could show |
+| CI-identity virtualenv after the fix | 0 / PASS | Same interpreter; `unit-tests` passes and 21/22 gates pass, the remaining one being formatter output on newly written code |
+| Older interpreter after the fix | 0 / PASS | `jsonschema==4.10.3` without `referencing`; the resolver path still resolves and still refuses external resources |
+| Hosted CI on these commits | NOT_RUN / DEFER | No hosted result exists for the follow-up; run `34183991155` stands as the current observation |
+
+Two limitations remain open. `descendant_cleanup` was reported for both slow
+gates on the hosted runner and for neither locally, including under the
+CI-identity interpreter, so no root cause is established; the containment
+boundary it guards is real, so it is left intact rather than widened against a
+fault that has never been reproduced. The escaped-descendant test from the
+previous section is still unrepaired for the same reason.
+
+One repository hazard was confirmed the hard way and is now recorded in
+`scripts/README.md`: formatters must run through `pre-commit`. The hook
+narrows `ruff-format` to Python deliberately, and the bare command also claims
+Markdown and rewrote fenced snippets inside eleven authored and archived
+documents. Those edits were reverted before staging and no archived byte
+changed, but the configuration comment predicting it was already there.
 
 ## Traceability
 

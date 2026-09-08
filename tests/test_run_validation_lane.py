@@ -46,6 +46,13 @@ class _ContractModule:
         return {"validators": ["repository-quality"]}
 
 
+class _PreCommitContractModule:
+    @staticmethod
+    def select_paths(contract, paths, lane, root):
+        del contract, paths, lane, root
+        return {"validators": ["pre-commit"]}
+
+
 class _RemoteLiveContractModule:
     @staticmethod
     def select_paths(contract, paths, lane, root):
@@ -1762,6 +1769,234 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(len(propagated), 3)
         for argv in propagated:
             self.assertIn("--include-path", argv)
+
+
+class PreCommitChildEnvironmentTest(unittest.TestCase):
+    """A closed environment must still let a cold hook install build.
+
+    `HOME` is deliberately unreachable so no ambient startup state is read.
+    Hook environments that build from source ask their toolchain for a cache
+    under `HOME`, so each cache is named explicitly under the account-owned
+    pre-commit directory. Without that, a cold cache fails the whole gate at
+    `mkdir /nonexistent`, which is invisible to any run whose cache is warm.
+    """
+
+    CONTRACT = {
+        "validators": [
+            {
+                "id": "pre-commit",
+                "argv": ["pre-commit", "run", "--all-files"],
+                "lanes": ["all-files"],
+                "evidenceLane": "repo-static",
+                "optional": False,
+                "fallback": {"status": "FAIL", "reason": "required"},
+            }
+        ]
+    }
+
+    def _child_environment(self) -> dict[str, str]:
+        with (
+            patch.object(
+                RUNNER.shutil, "which", return_value="/usr/local/bin/pre-commit"
+            ),
+            patch.object(
+                RUNNER, "run_bounded_command", return_value=bounded_result("")
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "all-files",
+                ["scripts/run-validation-lane.py"],
+                self.CONTRACT,
+                _PreCommitContractModule,
+            )
+        return invoked.call_args.kwargs["env"]
+
+    def test_pre_commit_home_stays_account_owned(self):
+        environment = self._child_environment()
+        account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
+
+        self.assertEqual(
+            environment["PRE_COMMIT_HOME"],
+            str(account_home / ".cache/pre-commit"),
+        )
+
+    def test_toolchain_caches_resolve_without_a_reachable_home(self):
+        environment = self._child_environment()
+        unreachable_home = Path(environment["HOME"])
+        cache_root = Path(environment["PRE_COMMIT_HOME"])
+
+        # Go is the toolchain a cold install actually fails on: it initializes
+        # a build cache before it compiles anything.
+        for variable in (
+            "GOCACHE",
+            "GOPATH",
+            "CARGO_HOME",
+            "XDG_CACHE_HOME",
+            "npm_config_cache",
+        ):
+            with self.subTest(variable=variable):
+                self.assertIn(variable, environment)
+                location = Path(environment[variable])
+                self.assertTrue(location.is_absolute())
+                self.assertTrue(location.is_relative_to(cache_root))
+                self.assertFalse(location.is_relative_to(unreachable_home))
+
+    def test_other_validators_receive_no_toolchain_caches(self):
+        """Only the hook installer needs them; the closed default stays closed."""
+
+        with (
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["scripts/run-validation-lane.py"],
+                CONTRACT,
+                _ContractModule,
+            )
+
+        environment = invoked.call_args.kwargs["env"]
+        for variable in ("GOCACHE", "GOPATH", "CARGO_HOME", "npm_config_cache"):
+            with self.subTest(variable=variable):
+                self.assertNotIn(variable, environment)
+
+
+class ValidatorTimeoutBudgetTest(unittest.TestCase):
+    """A gate may declare a larger budget than the shared default.
+
+    The default bounds every gate that has no reason to run long. One suite
+    legitimately does, and raising the shared constant for it would weaken the
+    bound on every other gate, so the budget is declared per gate and the
+    default stays where it is.
+    """
+
+    def _contract(self, **extra) -> dict:
+        validator = {
+            "id": "repository-quality",
+            "argv": [
+                "python3",
+                "scripts/validation/repository/quality.py",
+                "--root",
+                ".",
+            ],
+            "lanes": ["affected", "staged", "all-files"],
+            "evidenceLane": "repo-static",
+            "optional": False,
+            "fallback": {"status": "FAIL", "reason": "required"},
+        }
+        validator.update(extra)
+        return {"validators": [validator]}
+
+    def _timeout_for(self, contract: dict) -> float:
+        with (
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as invoked,
+            redirect_stdout(StringIO()),
+        ):
+            RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["scripts/run-validation-lane.py"],
+                contract,
+                _ContractModule,
+            )
+        return invoked.call_args.kwargs["timeout_seconds"]
+
+    def test_declared_budget_reaches_the_bounded_runner(self):
+        self.assertEqual(self._timeout_for(self._contract(timeoutSeconds=2400)), 2400.0)
+
+    def test_absent_budget_keeps_the_shared_default(self):
+        self.assertEqual(
+            self._timeout_for(self._contract()),
+            RUNNER.VALIDATOR_TIMEOUT_SECONDS,
+        )
+
+    def test_registry_declares_a_budget_only_where_the_default_is_too_small(self):
+        """The override is an exception, not a way around the shared bound."""
+
+        registry = json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
+        )
+        declared = {
+            row["id"]: row["timeoutSeconds"]
+            for row in registry["validators"]
+            if "timeoutSeconds" in row
+        }
+
+        self.assertEqual(set(declared), {"unit-tests"})
+        for identifier, budget in declared.items():
+            with self.subTest(validator=identifier):
+                self.assertGreater(budget, RUNNER.VALIDATOR_TIMEOUT_SECONDS)
+
+
+class FailureSnippetDiagnosabilityTest(unittest.TestCase):
+    """A failing gate has to say why, not only which case failed.
+
+    The snippet keeps its byte bound and its redaction; what changes is that a
+    unittest failure now carries the assertion that produced it. Without that,
+    a hosted failure names a test and nothing else, and the only way to learn
+    the cause is to reproduce it somewhere the fault may not occur.
+    """
+
+    def _snippet(self, stderr: str, stdout: str = "") -> str:
+        return RUNNER.failure_snippet(
+            bounded_result(stdout=stdout, stderr=stderr, returncode=1)
+        )
+
+    UNITTEST_STDERR = (
+        "======================================================================\n"
+        "FAIL: test_repository_snapshot_is_complete_and_atomic "
+        "(tests.test_archive_cutover.ArchiveCutoverTest)\n"
+        "----------------------------------------------------------------------\n"
+        "Traceback (most recent call last):\n"
+        '  File "/repo/tests/test_archive_cutover.py", line 131, in test_x\n'
+        '    self.assertIsNotNone(executable, "required secure Gitleaks")\n'
+        "AssertionError: unexpectedly None : required secure Gitleaks\n"
+        "\n"
+        "FAILED (failures=1, skipped=4)\n"
+    )
+
+    def test_assertion_detail_survives_into_the_snippet(self):
+        snippet = self._snippet(self.UNITTEST_STDERR)
+
+        self.assertIn("FAIL: test_repository_snapshot_is_complete_and_atomic", snippet)
+        self.assertIn("AssertionError", snippet)
+        self.assertIn("required secure Gitleaks", snippet)
+
+    def test_snippet_stays_bounded_and_redacted(self):
+        def noisy(count: int) -> str:
+            return "".join(
+                f"AssertionError: token=abcdef{index:04d} filler {'x' * 200}\n"
+                for index in range(count)
+            )
+
+        snippet = self._snippet(noisy(200))
+
+        # Boundedness is that the snippet stops growing with its input, not a
+        # particular length: the cap applies before escaping expands it.
+        self.assertEqual(len(snippet), len(self._snippet(noisy(2000))))
+        self.assertNotIn("abcdef0000", snippet)
+        self.assertIn("[REDACTED]", snippet)
+
+    def test_hook_failure_lines_are_still_prioritized(self):
+        snippet = self._snippet(
+            "", "Detect secrets...Failed\n- hook id: detect-secrets\n- exit code: 3\n"
+        )
+
+        self.assertIn("- hook id: detect-secrets", snippet)
+        self.assertIn("- exit code: 3", snippet)
 
 
 if __name__ == "__main__":
