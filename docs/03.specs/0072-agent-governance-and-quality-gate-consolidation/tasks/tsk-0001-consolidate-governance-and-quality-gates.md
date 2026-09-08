@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.5.0"
+version: "2.6.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -33,12 +33,12 @@ existing owners and creates verified logical local commits.
 | [WORK-001](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002 | Review and migrate common authority and native references | platform | Done | 53 sources migrated; static role, permission and link contracts pass | Current migration evidence below |
 | [WORK-002](../plan.md#work-breakdown) | VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-008 | Preserve shared QA and hidden-path coverage; resolve baseline tooling failures | platform | Done | Hidden routes, bounded inputs and shared full/CI gate set verified | Focused negative tests and full QA |
 | [WORK-003](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-007 | Reconcile documents, history, profiles and safety boundaries | platform | Done | Profiles, consumers, history and current plans reconciled; static checks pass | Disposition and link checks |
-| [WORK-004](../plan.md#work-breakdown) | VAL-AGQ-006 | Validate final static tree and report native/hosted limits | platform | In progress | Local static migration passes; native and hosted evidence remains DEFER | Final validation table |
+| [WORK-004](../plan.md#work-breakdown) | VAL-AGQ-006 | Validate final static tree and report native/hosted limits | platform | Done | Hosted QA and ci-summary pass for 021e8192; native follow-up stays with WORK-009 | Continuation and external evidence below |
 | [WORK-005](../plan.md#work-breakdown) | VAL-AGQ-013 | Correct process diagnostics | platform | Done | Bounded kernel state replaces argument reads; commit 2c9450c | Current follow-up evidence below |
 | [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | Done | Both Providers covered; snapshot and frozen boundaries pass | Final local handoff below |
 | [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | Done | Pinned message, native temporary hook and changelog tests pass | Final local handoff below |
 | [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | Done | Wrapper and unused hook removed; unique domain and fixture contracts retained | Final local handoff below |
-| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Local implementation and validation complete; external acceptance remains DEFER with WORK-004 | Final local handoff below |
+| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Local implementation retained; continuation validates inherited evidence; overall native acceptance remains open | Continuation and final local handoff below |
 
 ## Approval and Safety Boundaries
 
@@ -46,7 +46,8 @@ existing owners and creates verified logical local commits.
 - **Forbidden Paths**: live credentials, secret values, external provider state, cluster state, release state
 - **Local Commit Authority**: the 2026-09-08 user request approves scoped logical local commits through exact-index QA and normal active hooks
 - **Completed Current Local Merge**: the separately approved origin/main `49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7` integration completed as `4667aa03`; that authority is consumed and grants no remote or additional merge authority
-- **Conditional Finish Authority**: the later user request approves local main integration and removal of this task-owned branch/worktree only after required acceptance is complete; pending external evidence does not satisfy that condition
+- **Historical External Authority**: earlier one-off push, dispatch and Provider sessions are recorded below; no past approval authorizes another external action in this continuation
+- **Current Finish Authority**: the current request authorizes local commits and explicitly keeps `codex/agq-consolidation` and its worktree; the prior conditional merge/cleanup selection is superseded
 - **Completed Merge Authority**: the prior one-off local merge is completed historical evidence and grants no new merge authority
 - **Completed Follow-up Scope**: the approved minimal integration on `codex/agq-consolidation` includes commit configuration and full-snapshot scan coverage beyond the earlier Task scope
 - **Formatter-only Extension**: the full hook exposes formatting drift in `infrastructure/bootstrap-local.sh` and six `infrastructure/tests/verify-*.sh` files listed below; the approved explicit formatting repair includes these paths without executing their bodies or changing live/manifest behavior
@@ -58,6 +59,55 @@ existing owners and creates verified logical local commits.
 - **Evidence Location**: this Task, Git commits, pull-request checks, and workflow job logs
 
 ## Verification Summary
+
+### Resumed Local Continuation (2026-09-08)
+
+The new session found the completed implementation in the existing linked
+worktree at `021e8192c176acd886c38b68b9999f5b928c7834`, rather than in the main
+checkout. Main and the merge-base remain
+`49e71f9c522ee6bb70aeb917812f2e9a1e8fcad7`. The inherited index contains only
+`.codex/provider.md`, the owning Plan and this Task; there are no unstaged or
+non-ignored untracked files. Preserve that evidence work and all implementation
+commits. Do not repeat the completed migration or recreate its removed owners.
+
+This request keeps the local branch/worktree and supersedes former conditional
+merge/cleanup instructions. The inherited external/native record below is
+dated evidence from the previous session, not new authority or an observation
+made by this worker. No Provider session or trust/configuration change is run.
+
+Read-only GitHub job summaries now report success for `qa` (job 102078085874)
+and `ci-summary` (job 102089745485) in run 34231374154; branch-policy is skipped
+as expected for dispatch. This closes the pending hosted verdict for the
+published `021e8192`, not for the later three-file documentation change. Classic
+main protection remains the previous session's dated observation. The Codex
+hook trust prerequisites in the inherited note were checked against its linked
+official documentation; runtime delivery and role/model resolution remain DEFER.
+
+The existing hash-locked environment remains Python 3.12.3, pre-commit 4.6.1,
+PyYAML 6.0.3 and jsonschema 4.26.0 on WSL2 Linux x86_64. Under the sandbox the
+runner resolves account-installed pre-commit 4.6.2 rather than the adjacent locked
+console script; this environment distinction is retained, not hidden by a PATH
+or ownership change. Gitleaks and Conftest resolve to their account-owned
+installations. The effective global hooksPath still has a pre-commit hook and
+no commit-msg hook; actual messages therefore need the pinned explicit check.
+
+The native code-reviewer dispatch failed before reviewing because its Spark
+quota was unavailable. A bounded read-only reviewer uses an explicit runtime
+fallback, gpt-5.6-sol/high, without changing registry or provider model settings.
+The fallback review identified stale current-tense approvals, the incomplete
+traceability table and a missing Plan path in the inherited evidence scope;
+these are corrected. VAL-AGQ-006 is satisfied by the published hosted result.
+The current user explicitly preserves the inherited Task lifecycle condition,
+so native follow-up stays with WORK-009 without inventing a new Spec criterion.
+
+Strict profiles and quick QA pass for the three-document candidate before
+these final review corrections; quick selects seven gates and all report
+complete cleanup. The local continuation commit's body is the evidence record
+for the final staged/full checks, actual message, normal commit hooks and final
+review disposition. Keeping this Task stable during those checks avoids a
+self-referential validation loop; this paragraph claims no future PASS.
+Rollback of this continuation is a reviewed forward revert of that three-file
+documentation commit. Retain all earlier implementation commits and main.
 
 ### Approved Follow-up Intake (2026-09-08)
 
@@ -304,19 +354,20 @@ This Task-only handoff update is authored after the full input. Its focused
 document, exact-index and actual-message results are recorded in the subsequent
 documentation commit body; full does not claim to have scanned this later prose.
 
-The initial handoff kept the local branch and worktree; the later conditional
-finish instruction below supersedes that selection. A scoped rollback uses reviewed forward
+The initial handoff kept the local branch and worktree. A later conditional
+finish request temporarily superseded that choice; the current continuation
+again explicitly keeps both. A scoped rollback uses reviewed forward
 reverts with their paired contracts/tests. For a whole-task rollback, first
 review reversal of the later handoff documentation, then the merge's second
 parent (main `49e71f9c`) as the revert baseline, preserving the upstream repair.
 Do not blindly revert the first-parent integration or rewrite history.
 
-WORK-004 and WORK-009 remain open only for external acceptance. The next owner
-is platform/the operator: obtain separate publication or hosted-run approval,
-then collect evidence for this implementation and current required checks;
-exercise each Provider's native discovery/model/hook/permission behavior in an
-authorized environment. Live infrastructure testing remains outside this task.
-The Task stays in progress until those lifecycle conditions are satisfied.
+At that handoff, WORK-004 and WORK-009 remained open for external acceptance,
+with platform/the operator owning the next approval and validation steps. The
+following external record and resumed continuation close the hosted verdict
+under WORK-004. Native discovery/model/hook/permission follow-up stays with
+WORK-009 and needs a separately authorized environment. The Task remains in
+progress under that inherited condition; live testing stays outside its scope.
 
 ### Completion Audit and Conditional Finish (2026-09-08)
 
@@ -345,15 +396,74 @@ Codex help also reports a read-only PATH-alias setup warning; no permission or
 global installation was changed to silence it. No private configuration,
 credential values, session logs or model output were collected.
 
-Independent read-only security review agrees that repository-static work is
-complete while required hosted and native acceptance is open. Conditional
-merge/cleanup is therefore not executable yet. Approval has been requested
-for publishing this branch plus one CI dispatch, and for one bounded native
-session per Provider. Until granted, preserve the branch/worktree and keep
-WORK-004/WORK-009 in progress. The next owner is the user for these protected
-actions; the worker then owns result review, scoped repairs and the requested
-local finish once the condition is met. Live infrastructure remains outside
-the task.
+At that audit, independent read-only security review agreed that
+repository-static work was complete while hosted/native acceptance was open.
+Conditional merge/cleanup was not executable. Approval was requested for
+publishing this branch, one CI dispatch and one bounded native session per
+Provider. The following section records the resulting one-off actions. These
+historical next steps do not override the current keep-branch instruction or
+grant another protected action. Live infrastructure remains outside the task.
+
+### Authorized External Validation (2026-09-08)
+
+The user explicitly approved the pending bounded external actions. The branch
+push published `021e8192c176acd886c38b68b9999f5b928c7834`, and one dispatch started
+[CI run 34231374154](https://github.com/buenhyden/hy-home.k8s/actions/runs/34231374154)
+on that exact SHA. No PR or main push occurred. The published tree
+`bc104d400a22a4bd0199920fbb159c9ff780ac3e` matches the local tree; GitHub reports
+the repository as public. The normal pre-push hook reported no supported checks;
+that supplemental skip does not replace QA or message evidence.
+
+Authenticated `gh` read access resolved the previously unavailable classic
+main protection: required status check `ci-summary`, strict=false, no required
+approving review count. The connector alone returned 403; no protection or
+credential value was changed or collected.
+
+| Evidence boundary | Observed result | Remaining limitation |
+| --- | --- | --- |
+| Hosted run | Initially in progress; read-only continuation confirms QA and ci-summary success | Applies to published 021e8192 only; later evidence edits have no hosted run |
+| Codex process | 0.153.4; exit 0 in 50.778 s; complete stdout/stderr and descendant cleanup | Successful process completion is not full native acceptance |
+| Codex project skill visibility | FAIL: client reported skill-context budget exhaustion and removed descriptions | Client discovery environment needs review; do not weaken repository role/skill contracts |
+| Codex role/model/hook | Explicit file reads observed; no hook events or resolved role model identity | DEFER: configured role/model and client discovery are separate |
+| Codex permission probe | Agent reported read-only filesystem denial; probe file absent afterward | DEFER: retained event stream lacks the negative command's direct result; do not certify enforcement from self-report |
+| Claude process | 2.1.263; one real session started with project-only settings and stream hook events; exit 1 after 30 s | FAIL/DEFER: session ended on max-budget before the intended probe sequence completed |
+| Claude project reads and hook visibility | CLAUDE gateway, provider note, settings, registry, role and required skills were read; `hook_started`, `hook_response` and `permission_denied` were emitted | This proves event visibility for the observed Bash request only, not complete role/model acceptance |
+| Claude permission probe | The exact `rtk proxy git status --short` command required approval because it did not match the native allowlist; the shell write probe was requested but no result returned before budget stop; probe file absent | Do not certify the write boundary from a command that never completed |
+
+The Codex attempt used the existing isolated snapshot and bounded runner with
+`--ephemeral --ignore-user-config --sandbox read-only`. The stream still
+reported malformed user-role metadata and a skill-context limit; that flag did
+not isolate every discovery surface. User configuration bodies were not read
+by the worker or modified. Source checkout/index remained unchanged. No second
+Codex session, unsafe trust bypass or global repair is authorized by this
+consumed single-session approval.
+
+The Claude attempt used `/home/hy/.local/bin/claude --print --verbose
+--no-session-persistence --setting-sources project --include-hook-events
+--output-format stream-json --max-budget-usd 0.50` against a disposable clone.
+Two earlier local CLI failures, missing PATH lookup and missing `--verbose` for
+stream JSON, happened before a provider session began. The actual session then
+read the requested project files and emitted hook visibility for a Bash request,
+but the native permission layer required approval for the `rtk proxy git status`
+shape and the run ended with `error_max_budget_usd` before the harmless shell
+write probe produced a result. No second actual Claude session, approval bypass,
+budget increase or global permission repair is authorized. The source
+checkout/index remained unchanged except for these Plan, Task and Provider
+note evidence edits.
+
+The [Codex Provider note](../../../../.codex/provider.md) now links the official
+project/hook trust procedure instead of treating binary path strings or absence
+of a CLI subcommand as the current discovery contract. The user/operator owns
+reviewed trust and the client discovery environment. At that handoff WORK-004
+and WORK-009 remained open. The continuation closes the hosted verdict under
+WORK-004 and retains the native follow-up under WORK-009; partial native
+observations grant no cleanup authority.
+
+The evidence-only correction covering this section passes quick QA over three
+affected paths with seven selected gates: agent-governance,
+document-contract-registry, document-lifecycle, knowledge-surface,
+links-and-owners, markdown-profiles and repository-quality. That local check
+does not repeat full QA or hosted CI on unchanged implementation bytes.
 
 ### Historical Local Main Merge and Follow-up (2026-09-06)
 
@@ -1391,9 +1501,9 @@ change does not affect its assertion and it remains unrepaired.
 | [WORK-001](../plan.md#work-breakdown) | Done: local static migration | All 53 source dispositions, unchanged permission metadata, direct governance PASS and old-root absence |
 | [WORK-002](../plan.md#work-breakdown) | Done: local QA | Bounded-input/process and Shell-route regressions; full 19/19 and quick 11/11 PASS; full/CI registry parity |
 | [WORK-003](../plan.md#work-breakdown) | Done: document reconciliation | Profile/link/lifecycle PASS, 32 template dispositions, current successor proof and classified historical evidence |
-| [WORK-004](../plan.md#work-breakdown) | In progress: external evidence DEFER | Static workflow and final local QA PASS; the hosted failure this package introduced is reproduced and repaired with a CI-shape run; native runtime and hosted CI on the repaired commit NOT_RUN; no remote or live authority |
-| [WORK-005](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
-| [WORK-006](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
-| [WORK-007](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
-| [WORK-008](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
-| [WORK-009](../plan.md#work-breakdown) | In progress | Approved follow-up intake; implementation evidence pending |
+| [WORK-004](../plan.md#work-breakdown) | Done: static and hosted QA | Run 34231374154 at 021e8192: QA and ci-summary success; native limitations reported separately |
+| [WORK-005](../plan.md#work-breakdown) | Done | 2c9450c8 diagnostic repair and 4667aa03 liveness integration; focused regressions and final full |
+| [WORK-006](../plan.md#work-breakdown) | Done | 1014bba7 coverage repair and dbc80b4a hook findings; snapshot, selector and final full evidence |
+| [WORK-007](../plan.md#work-breakdown) | Done | 4da974e4 message/changelog alignment; temporary native hook and actual message checks |
+| [WORK-008](../plan.md#work-breakdown) | Done | 1014bba7 wrapper/probe/hadolint disposition; independent tests preserve unique diagnostics |
+| [WORK-009](../plan.md#work-breakdown) | In progress: inherited native follow-up | Local implementation and hosted QA complete; continuation commit body owns final local evidence; Provider observations remain partial/DEFER |

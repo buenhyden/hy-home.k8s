@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-08"
 ---
 
 # Codex Provider Notes
@@ -53,15 +53,21 @@ team document, not a special automatic entry filename.
   and `tool_input`, and `tool_input.command` for `Bash` and `apply_patch`.
   `CLAUDE_PROJECT_DIR` is absent here, so the adapter derives the repository
   root from Git and forwards it as data.
-- Open runtime item, unresolved (2026-09-06): whether this client discovers
-  `.codex/hooks.json` in a project is not observed. The installed binary's
-  project path table names `.codex/config.toml`, `.codex/agents`,
-  `.codex/hooks`, `.agents` and `.agents/skills`; the repository registers
-  `.codex/hooks.json`. Binary strings are indicative, not conclusive, and the
-  client exposes no subcommand listing loaded hooks, so the question is
-  answerable only from a session that starts in this project and attempts a
-  guarded write. Next owner: the user, at a Codex session. Until then this
-  hook is registered, not delivered.
+- Native prerequisites reviewed on 2026-09-08: the
+  [official hook documentation](https://learn.chatgpt.com/docs/hooks) requires
+  a trusted project `.codex/` layer and review/trust of the current non-managed
+  hook definition. The interactive `/hooks` command inspects sources and their
+  review state. The user owns that trust decision; do not change global trust
+  or bypass hook review to manufacture runtime acceptance.
+- Runtime delivery remains unresolved. The authorized 0.153.4 smoke session in
+  a disposable clone used `--ephemeral --ignore-user-config --sandbox read-only`.
+  It completed, but emitted no hook-delivery event and reported a skill-context
+  budget failure. `--ignore-user-config` did not isolate every user role/skill
+  discovery surface. Explicit role/skill file reads, agent-reported denial and
+  an absent probe file do not establish native discovery, resolved role model
+  or hook enforcement. The [SPEC-0072 Task](../docs/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
+  owns that attempt's evidence. Next owner: the user/operator for a reviewed
+  project/hook trust state and an explicitly authorized observable session.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
   on this provider is the operating-system `sandbox_mode` the registry binds,
   not the hook. A role in a mutation-capable class relies on the hook only for
