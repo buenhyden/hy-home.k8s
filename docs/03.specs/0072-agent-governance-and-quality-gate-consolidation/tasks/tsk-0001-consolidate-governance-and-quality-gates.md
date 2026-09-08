@@ -958,6 +958,68 @@ same reason. Whether the directory ownership claim is the correct repair for
 the Gitleaks resolution is unverified until a hosted run executes these
 commits; the failing assertion will name the rejecting fact either way.
 
+### Fourth Hosted Result and Naming the Escaping Call (2026-09-08)
+
+Run `34200871694` on `55a6714e` confirms the trusted-path repair and isolates
+the remaining cause. The directory ownership claim worked: `unit-tests` moved
+from `rc=1` to `rc=0`, so the strict resolver now accepts the Gitleaks the
+workflow publishes. Twenty gates pass and the two that fail both return
+`rc=0`, meaning every validator command succeeded and only the containment
+verdict remains.
+
+The identity report answered the question it was added for. Both gates named
+their escaping descendants, and every one of them is `git` with `pid == pgid`:
+
+    escaped=54600:54600:git,54641:54641:git,54682:54682:git, ... (cap reached)
+
+A process whose group id equals its own pid became a group leader, so git
+itself detached rather than inheriting a group from a wrapper. Git detaches in
+`gc --auto --detach`, `maintenance run --detach` and `fsmonitor--daemon`, and
+the regular pid spacing points at sequential creation by the same workload
+rather than at recycled identities. Which of those three it is stayed open, so
+the report now carries the subcommand: git names its call in the second
+argument, and that argument is admitted only when it is a bare lowercase
+token. The forms that can carry a credential put an option in that position
+first, so refusing options refuses them, and a test renders an argument vector
+holding an authorization header and asserts the header does not appear.
+
+Probing that change surfaced a sharper question than the name. An
+exited-but-unreaped process has no argument vector at all, so it would have
+reported as nothing to name — the same as a running process whose argument was
+refused. Those two are not the same finding. A zombie is an unreaped exit
+record and not work outliving the gate; a running process is. The reader now
+distinguishes them, and a local comparison is suggestive: an escape that had
+already exited produced `descendant_cleanup` while a live one produced
+`descendant_pipe_hold`, and `descendant_cleanup` is what every hosted run has
+reported. That is a lead and not a conclusion, and the verdict logic is
+unchanged until a hosted result settles it.
+
+Two local reproduction attempts for git's detached auto-gc failed, including
+one with 7,002 loose objects, which is above the default threshold. A cold
+`pre-commit` reproduction was attempted and abandoned: building every hook
+toolchain at once exhausted memory on a workstation that also runs the local
+cluster, and the kernel killed the probe. Repeating it risks the operator's
+workloads for a result the next hosted run produces anyway, so it was not
+retried and the scratch it left was removed.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| Hosted CI run `34200871694` | 1 / FAIL | `pull_request` on `55a6714e`; `branch-policy` PASS, 20/22 PASS, both failures `rc=0` with `descendant_cleanup`, all escapes named `git` with `pid == pgid` |
+| Hosted CI run `34204101088` | observed | `push` on merged `main` `be2d41ef` after PR #60 |
+| Trusted-path repair | CONFIRMED | `unit-tests` `rc=1` to `rc=0` across the two runs |
+| `install -d -m 0755` on an existing directory | 0 / PASS | 0775 normalized to 0755, satisfying the resolver predicate the repair depends on |
+| Escape identity probe, live process | expected | `escaped=<pid>:<pid>:git:hash-object` with `descendant_pipe_hold` |
+| Escape identity probe, exited process | expected | `escaped=<pid>:<pid>:git:zombie` with `descendant_cleanup` |
+| Local git detached auto-gc reproduction | NOT_REPRODUCED | Two attempts, one above the default loose-object threshold |
+| Cold `pre-commit` reproduction | ABANDONED | Killed for memory pressure on a host running the local cluster; not retried |
+| `python3 scripts/qa.py full` | 0 / PASS | 22 gates on the narrowed diagnostic |
+| Hosted CI on this commit | NOT_RUN / DEFER | No hosted result exists for `f13fbe9e` |
+
+The open limitation is unchanged in substance and narrower in scope: the
+escaping call is `git`, the subcommand and liveness are now reportable, and no
+repair is attempted until a hosted run says which call it is and whether it
+was still running.
+
 ## Traceability
 
 ### Lifecycle Traceability
