@@ -58,10 +58,36 @@ class AgentHarnessRegistryContractTests(unittest.TestCase):
     def test_root_cli_path_remains_green_without_a_production_self_test(self) -> None:
         # Full CLI also checks index/history parity, exercised in QA's finalized
         # Git snapshot. This test isolates CLI dispatch from that external owner.
-        consumer = types.SimpleNamespace(validate_repository=mock.Mock())
-        with mock.patch.dict(sys.modules, {"agent_governance_consumers": consumer}):
-            self.assertEqual(self.validator.main(["--root", str(ROOT)]), 0)
-        consumer.validate_repository.assert_called_once_with(ROOT)
+        #
+        # `main` imports its sibling modules by bare name, which production
+        # satisfies because the script's own directory leads `sys.path` when it
+        # runs as a script. The loader above drops that entry once the module is
+        # executed, so this call site restores it rather than passing only when
+        # some earlier test happened to import `qa` first.
+        #
+        # A dirty working tree also makes `main` hand the consumer an isolated
+        # snapshot instead of the root, and that snapshot is released when the
+        # command returns. Record what the consumer received while it is still
+        # readable and pin what has to hold in either state: exactly one
+        # dispatch, over this repository's own registry bytes.
+        registry = Path(".agents") / "roles" / "registry.json"
+        observed: dict[str, bytes] = {}
+
+        def record(validation_root: Path) -> None:
+            observed["registry"] = (validation_root / registry).read_bytes()
+
+        consumer = types.SimpleNamespace(
+            validate_repository=mock.Mock(side_effect=record)
+        )
+        sys.path.insert(0, str(SCRIPT.parent))
+        try:
+            with mock.patch.dict(sys.modules, {"agent_governance_consumers": consumer}):
+                self.assertEqual(self.validator.main(["--root", str(ROOT)]), 0)
+        finally:
+            sys.path.remove(str(SCRIPT.parent))
+
+        self.assertEqual(consumer.validate_repository.call_count, 1)
+        self.assertEqual(observed["registry"], (ROOT / registry).read_bytes())
 
         unsupported = subprocess.run(
             [sys.executable, str(SCRIPT), "--root", ".", "--self-test"],

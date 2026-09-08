@@ -52,7 +52,7 @@ workloads/
 ### Workload Coverage Matrix
 
 이 표는 ApplicationSet이 스캔하는 실제 workload 디렉터리와 검증 명령을
-연결한다. `validate-repo-quality-gates.sh`는 이 표가 `workloads/*`
+연결한다. `repository-quality` 게이트는 이 표가 `workloads/*`
 디렉터리와 동기화되어 있고, 각 workload가 GitOps 구조, manifest, secret
 handling 검증 명령을 명시하는지 확인한다.
 

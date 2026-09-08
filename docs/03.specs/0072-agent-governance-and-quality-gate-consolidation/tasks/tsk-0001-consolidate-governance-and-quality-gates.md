@@ -1,10 +1,10 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.0.2"
+version: "2.1.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-08"
 layer: "specs"
 artifact_id: "SPEC-0072-TSK-0001"
 ---
@@ -671,6 +671,108 @@ blockers, and the `-t .` import path is corrected.
 Full-suite, hosted CI, provider/runtime, and release evidence are not claimed;
 this Task remains `in-progress`.
 
+### Hosted CI Failure Reproduction and Repair (2026-09-08)
+
+The consolidation left hosted CI failing on every push. Run `34128911521`
+attempt 1 checked `de040df41f038e981963de1ac60093ea6fb80edd` on 2026-09-07 and
+failed `Validate repository checkout`, which failed `ci-summary`. That FAIL is
+an observed fact and is not restated as a pass anywhere below.
+
+The cause is one line this package introduced. The QA job checks out
+`${{ github.sha }}`, which `actions/checkout` performs as
+`git checkout --force <sha>`, leaving a detached HEAD; the hosted checkout log
+records exactly that. `current_named_durable_ref` resolved the archive
+retention anchor only through `git symbolic-ref HEAD`, so the anchor could not
+resolve and `archive-cutover`, `agent-governance`, `document-lifecycle`,
+`links-and-owners` and the archive unit tests all failed `RECOVERY-DURABLE-REF`.
+A clone detached at the same commit reproduced the hosted diagnostics
+byte for byte, and the last green run was green because `ci.yml` then had no
+`ref:` and checked out a branch. `pre-commit` failed separately and for an
+unrelated reason: the runner resolves tools against a fixed system search path,
+so the console script `pip` installs beside the interpreter was never visible
+and the gate had been closing on an absent required tool rather than running.
+
+Resolution keeps the exact-SHA checkout, which is what binds hosted evidence to
+one commit. The resolver now also accepts a named ref whose tip is the
+checked-out commit, and the workflow names the commit it checked out because a
+`pull_request` event validates a merge commit that no fetched branch ref points
+at. Both were needed; neither alone covers both events.
+
+| Command / bounded observation | Exit / result | Input and evidence |
+| --- | --- | --- |
+| `python3 scripts/qa.py full` | 0 / PASS | Isolated working-tree snapshot at `1aede195`, 22/22 gates including one unit discovery and one all-files pre-commit; no snapshot mutation |
+| CI-shape simulation: clone detached at `1aede195`, workflow binding step, `python3 scripts/qa.py ci --base-ref ""` | 0 / PASS | 22/22 gates; HEAD started detached and the binding step produced `refs/heads/ci-validated-checkout` with its tip still the exact commit |
+| Detached-checkout regression before the workflow binding | 0 / PASS | `tests.test_archive_validation` and `tests.test_archive_recovery`, 135 tests, on a clone with no symbolic HEAD; the same clone failed 9 tests and errored 14 before the fix |
+| Baseline reproduction of the hosted failure | 1 / FAIL as expected | `archive_cutover.py`, `validate-agent-governance.py`, `validate-document-lifecycle.py` and `validate-links-and-owners.py` on a detached clone of `de040df4` returned the hosted diagnostics unchanged |
+| `python3 scripts/qa.py staged` per logical unit | 0 / PASS | Exact index of each of the eight commits; selected gates only |
+| Profile membership contract | 0 / PASS | `--list` shows `full` and `ci` identical at 22 gates, `quick` and `staged` identical at 15, and no duplicate gate ID in any profile |
+| Hosted GitHub Actions on the repaired commit | NOT_RUN / DEFER | Push, dispatch and re-run remain unauthorized, so no hosted result exists for `1aede195`; the 2026-09-07 FAIL stands as the last hosted observation |
+| Provider runtime and live systems | NOT_RUN / DEFER | No provider session, cluster, Vault or reconciliation action |
+
+Gate ownership was consolidated in the same scope. `kube-linter` ran twice per
+`full` and `ci` run, from the manifest script and the pinned pre-commit hook,
+with the same config over the same objects; the script's copy was optional and
+returned success when the binary was absent, which is the state hosted CI has
+always been in. The pinned hook is now the only owner. The policy gate ran
+Conftest and a built-in Python reimplementation of the same rules
+unconditionally, and `policy/conftest/kubernetes.rego` was Rego v0 and does not
+parse under OPA 1.x, so the copy was the only engine that had ever evaluated
+these rules while the gate still reported PASS. The policy is ported to Rego v1
+with executable rule tests, the reimplementation is deleted, and Conftest is
+required rather than optional. No execution-time improvement is claimed; these
+are execution-count and ownership changes, not measured speed changes.
+
+`scripts/validate-repo-quality-gates.sh` was retired. It was a second public
+entrypoint that ran the all-files lane against the live working tree with no
+snapshot isolation and no profile or index semantics, and it owned no gate the
+`full` profile does not. Its consumers cite `python3 scripts/qa.py full`, and
+the aggregate-ownership tests keep their guarantees against `scripts/qa.py`.
+`governance-audit-snapshot.yml` was retired as well: its trigger branch no
+longer exists on the remote, its artifact retention has expired, and the commit
+it captured is an ancestor of `origin/main`, so the bundle remains reproducible
+from history.
+
+Two limitations are recorded rather than resolved. `core.hooksPath` in this
+workspace points at a user-global hooks directory, so the repository's own
+pre-commit and commit-message hooks did not run at commit time; the all-files
+pre-commit gate inside the `full` profile covered the same bytes and caught
+formatter findings, which were committed separately, and commit messages were
+checked against the tracked `.cz.toml` pattern. Global Git configuration was
+not modified.
+
+Two tests were observed failing once each under whole-suite discovery while
+passing in isolation. `test_root_cli_path_remains_green_without_a_production_self_test`
+is repaired: it carried two state dependencies. Its loader removes the script
+directory from `sys.path` after loading, so the `import qa` inside `main` only
+resolved when an earlier module had already imported it, and the module failed
+on its own. It also asserted the consumer was called with the repository root,
+which only holds for a clean working tree, because a dirty tree makes `main`
+hand the consumer an isolated snapshot that is released when the command
+returns. The test now restores the search path the way a script invocation
+provides it and records what the consumer received while it is still readable,
+pinning one dispatch over this repository's own registry bytes. Both branches
+are verified: a dirty tree takes the snapshot path and a clean clone takes the
+indexed-tree path.
+
+`test_escaped_devnull_descendant_is_killed_and_not_reported_completed` is not
+repaired, because no root cause was established. It passed 25 consecutive runs
+under concurrent load, in its own module, with every alphabetically preceding
+module, and under a discovery pass that imports every module, so module
+interference, import side effects and load alone are excluded. The one hosted
+observation pairs an inner test failure with `status=descendant_cleanup` on the
+outer `unit-tests` gate, which places the escaped process outside the inner
+detection window and inside the outer one; subreaper restoration ordering in
+`run_bounded_command` is the open hypothesis. It is left unrepaired rather than
+adjusted, because the assertion guards a real containment boundary and no
+reproducible failure exists to prove a change fixes anything.
+
+Rollback is a new change reversing the reviewed commits against
+`de040df41f038e981963de1ac60093ea6fb80edd` after checking for later user edits;
+no history rewrite, no blanket restore. Reversing the resolver alone would
+restore the hosted failure, so the resolver and the workflow binding roll back
+together. The next owner is platform, for hosted verification once push is
+authorized, and for the two order-dependent tests.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -680,4 +782,4 @@ this Task remains `in-progress`.
 | [WORK-001](../plan.md#work-breakdown) | Done: local static migration | All 53 source dispositions, unchanged permission metadata, direct governance PASS and old-root absence |
 | [WORK-002](../plan.md#work-breakdown) | Done: local QA | Bounded-input/process and Shell-route regressions; full 19/19 and quick 11/11 PASS; full/CI registry parity |
 | [WORK-003](../plan.md#work-breakdown) | Done: document reconciliation | Profile/link/lifecycle PASS, 32 template dispositions, current successor proof and classified historical evidence |
-| [WORK-004](../plan.md#work-breakdown) | In progress: external evidence DEFER | Static workflow and final local QA PASS; native runtime and hosted CI NOT_RUN; no remote or live authority |
+| [WORK-004](../plan.md#work-breakdown) | In progress: external evidence DEFER | Static workflow and final local QA PASS; the hosted failure this package introduced is reproduced and repaired with a CI-shape run; native runtime and hosted CI on the repaired commit NOT_RUN; no remote or live authority |

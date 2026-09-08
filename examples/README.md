@@ -63,7 +63,7 @@ cluster mutation do not belong here; active local desired state remains under
 
 ## Validation
 
-Run `bash scripts/validate-repo-quality-gates.sh .`,
+Run `python3 scripts/qa.py full`,
 `bash scripts/validate-k8s-manifests.sh .`, and
 `bash scripts/check-secret-handling.sh .` as applicable to the copied example.
 These repository-static checks do not prove provider or live-cluster readiness.
@@ -75,7 +75,7 @@ These repository-static checks do not prove provider or live-cluster readiness.
 1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
 2. AWS/Azure 예시는 각 provider README와 현재 공식 자료를 함께 검토한다.
 3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 실행 자산을 같은 변경에서 갱신한다.
-4. 변경 후 `bash scripts/validate-repo-quality-gates.sh .`와 outdated marker scan을 실행한다.
+4. 변경 후 `python3 scripts/qa.py full`와 outdated marker scan을 실행한다.
 
 ### Link Basis
 
@@ -103,9 +103,9 @@ These repository-static checks do not prove provider or live-cluster readiness.
 
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
-| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
 ### 사용 방법
 

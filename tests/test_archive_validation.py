@@ -921,6 +921,18 @@ class ArchiveValidationTest(unittest.TestCase):
             )
             fixture.run("checkout", "--quiet", "--detach", source)
 
+            # A detached checkout is how an immutable checkout of one exact
+            # commit presents. A branch still retains the commit there, so a
+            # named durable ref exists and retention stays provable.
+            archive_validation._require_commits_reachable(  # noqa: SLF001
+                root.resolve(),
+                (source,),
+            )
+
+            fixture.run("branch", "-D", short_branch)
+            # With no allowed named ref retaining it, the commit is held only
+            # by the detached HEAD. Retention is then unprovable and both the
+            # resolved and the explicitly named form fail closed.
             with self.assertRaisesRegex(
                 archive_validation.ArchiveContractError,
                 "RECOVERY-DURABLE-REF",
@@ -929,8 +941,6 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(),
                     (source,),
                 )
-
-            fixture.run("branch", "-D", short_branch)
             with self.assertRaisesRegex(
                 archive_validation.ArchiveContractError,
                 "RECOVERY-DURABLE-REF",
@@ -1946,6 +1956,20 @@ class ArchiveValidationTest(unittest.TestCase):
         # responsibility router, a tracked file the corpus already proves, so no
         # row adds a target proof of its own.
         budget = 248
+        # A detached checkout -- an immutable checkout of one exact commit --
+        # has no symbolic HEAD, so each durable-ref resolution answers from the
+        # ref table with one added `--points-at HEAD` batch. That is a fixed
+        # eight for the eight resolutions this report performs: it tracks the
+        # number of resolutions, not the corpus, and a worktree on a branch
+        # still pays nothing. Measured before the mock so it is not counted.
+        if subprocess.run(
+            ["git", "symbolic-ref", "-q", "HEAD"],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        ).returncode:
+            budget += 8
         git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):

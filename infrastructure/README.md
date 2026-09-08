@@ -60,7 +60,7 @@ infrastructure/
 ### Infrastructure Coverage Matrix
 
 이 표는 `infrastructure/`의 현재 bootstrap/runtime-support entrypoint와
-운영 책임을 연결한다. `validate-repo-quality-gates.sh`는 이 표가 실제
+운영 책임을 연결한다. `repository-quality` 게이트는 이 표가 실제
 `argocd/`, `k3d/`, `tests/`, `vault/`, `bootstrap-local.sh`,
 `ipaddresspool.yaml`, `l2advertisement.yaml` 표면과 동기화되어 있는지
 검증한다.

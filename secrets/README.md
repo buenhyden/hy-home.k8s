@@ -64,7 +64,7 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 
 ```bash
 bash scripts/check-secret-handling.sh .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 ```
 
 PASS는 추적된 바이트에 대한 증적이다. 로컬 워크트리에 놓인 추적되지 않는 키

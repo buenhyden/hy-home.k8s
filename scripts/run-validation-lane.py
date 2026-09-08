@@ -37,6 +37,7 @@ TRUSTED_SEARCH_DIRECTORIES = (
 )
 QUALITY_SUCCESS_MARKER = "[PASS] repository quality gates passed"
 GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
+CONFTEST_EXECUTABLE_ENV = "HY_HOME_K8S_CONFTEST_EXECUTABLE"
 VALIDATOR_TIMEOUT_SECONDS = 1_200.0
 VALIDATOR_STDOUT_LIMIT_BYTES = 4 * 1024 * 1024
 VALIDATOR_STDERR_LIMIT_BYTES = 1 * 1024 * 1024
@@ -57,9 +58,15 @@ _INTERRUPT_SIGNALS = tuple(
     if sig is not None
 )
 _PROCESS_OWNERSHIP_LOCK = threading.Lock()
-SYSTEM_GITLEAKS_CANDIDATES = tuple(
-    Path(directory) / "gitleaks" for directory in TRUSTED_SEARCH_DIRECTORIES
-)
+
+
+def system_tool_candidates(name: str) -> tuple[Path, ...]:
+    """Return the fixed system locations one trusted tool may occupy."""
+
+    return tuple(Path(directory) / name for directory in TRUSTED_SEARCH_DIRECTORIES)
+
+
+SYSTEM_GITLEAKS_CANDIDATES = system_tool_candidates("gitleaks")
 
 
 @dataclass(frozen=True)
@@ -195,20 +202,21 @@ def trusted_search_path() -> str:
     return os.pathsep.join(directories)
 
 
-def validate_gitleaks_candidate(
+def validate_trusted_tool_candidate(
     candidate: Path,
     root: Path,
     *,
     owner_uid: int,
     required_chain: Sequence[Path],
+    name: str = "gitleaks",
 ) -> bool:
-    """Validate one exact non-search-path Gitleaks candidate without dereference."""
+    """Validate one exact non-search-path tool candidate without dereference."""
 
     candidate = Path(candidate)
     root = Path(root)
     if (
         not candidate.is_absolute()
-        or candidate.name != "gitleaks"
+        or candidate.name != name
         or not required_chain
         or candidate.parent != required_chain[-1]
         or candidate.is_relative_to(root)
@@ -260,15 +268,16 @@ def validate_gitleaks_candidate(
     )
 
 
-def secure_gitleaks_executable(root: Path) -> str | None:
-    """Return the first exact secure system or passwd-home Gitleaks candidate."""
+def secure_tool_executable(root: Path, name: str) -> str | None:
+    """Return the first exact secure system or passwd-home candidate for a tool."""
 
-    for candidate in SYSTEM_GITLEAKS_CANDIDATES:
-        if validate_gitleaks_candidate(
+    for candidate in system_tool_candidates(name):
+        if validate_trusted_tool_candidate(
             candidate,
             root,
             owner_uid=0,
             required_chain=(candidate.parent,),
+            name=name,
         ):
             return candidate.as_posix()
 
@@ -277,15 +286,28 @@ def secure_gitleaks_executable(root: Path) -> str | None:
     except (KeyError, OSError):
         return None
     home = Path(account.pw_dir)
-    candidate = home / ".local" / "bin" / "gitleaks"
-    if validate_gitleaks_candidate(
+    candidate = home / ".local" / "bin" / name
+    if validate_trusted_tool_candidate(
         candidate,
         root,
         owner_uid=account.pw_uid,
         required_chain=(home, home / ".local", home / ".local" / "bin"),
+        name=name,
     ):
         return candidate.as_posix()
     return None
+
+
+def secure_gitleaks_executable(root: Path) -> str | None:
+    """Return the exact secure Gitleaks candidate, or None."""
+
+    return secure_tool_executable(root, "gitleaks")
+
+
+def secure_conftest_executable(root: Path) -> str | None:
+    """Return the exact secure Conftest candidate, or None."""
+
+    return secure_tool_executable(root, "conftest")
 
 
 def closed_subprocess_environment() -> dict[str, str]:
@@ -1386,6 +1408,9 @@ def run_selected(
     gitleaks_executable = secure_gitleaks_executable(root)
     if gitleaks_executable is not None:
         subprocess_environment[GITLEAKS_EXECUTABLE_ENV] = gitleaks_executable
+    conftest_executable = secure_conftest_executable(root)
+    if conftest_executable is not None:
+        subprocess_environment[CONFTEST_EXECUTABLE_ENV] = conftest_executable
     for identifier in selected["validators"]:
         validator = validators[identifier]
         argv = validator_argv(root, lane, paths, validator, contract, contract_module)

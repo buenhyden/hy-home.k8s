@@ -45,7 +45,7 @@ Use repository-static checks first:
 terraform fmt -check -recursive examples/aws/terraform
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 ```
 
 These commands do not authenticate to AWS or prove live EKS, IAM, network,

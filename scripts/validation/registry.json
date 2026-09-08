@@ -357,7 +357,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Built-in policy fallback remains mandatory."
+        "reason": "Conftest policy evaluation is required."
       },
       "evidenceLane": "repo-static"
     },

@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import subprocess
+import tempfile
 import unittest
 
 import yaml
@@ -81,6 +82,79 @@ class CiQaWorkflowTests(unittest.TestCase):
                 timeout=5,
             )
             self.assertEqual(result.returncode, 1)
+
+    def _qa_steps(self):
+        return self.workflow["jobs"]["qa"]["steps"]
+
+    def test_checkout_is_bound_to_a_named_durable_ref(self):
+        """An exact-SHA checkout detaches HEAD; archive retention needs a name.
+
+        The step is executed here rather than pattern-matched, so the contract
+        under test is the observable outcome: HEAD becomes symbolic and the
+        branch tip is still exactly the commit the event selected.
+        """
+
+        steps = self._qa_steps()
+        checkout = next(
+            index
+            for index, step in enumerate(steps)
+            if step.get("uses", "").startswith("actions/checkout@")
+        )
+        binding = [
+            step
+            for step in steps[checkout + 1 :]
+            if "git switch" in step.get("run", "")
+        ]
+        self.assertEqual(len(binding), 1)
+
+        with tempfile.TemporaryDirectory(prefix="ci-binding-") as temporary:
+
+            def git(*args):
+                return subprocess.run(
+                    ["git", *args], cwd=temporary, capture_output=True, check=True
+                ).stdout.decode()
+
+            git("init", "--quiet")
+            git("config", "user.email", "ci-fixture@example.invalid")
+            git("config", "user.name", "CI Fixture")
+            Path(temporary, "seed.txt").write_text("seed\n", encoding="utf-8")
+            git("add", "seed.txt")
+            git("commit", "--quiet", "-m", "seed")
+            selected = git("rev-parse", "HEAD").strip()
+            git("checkout", "--quiet", "--detach", selected)
+            self.assertNotEqual(
+                subprocess.run(
+                    ["git", "symbolic-ref", "-q", "HEAD"],
+                    cwd=temporary,
+                    capture_output=True,
+                ).returncode,
+                0,
+                "fixture must start detached for this to test anything",
+            )
+
+            result = subprocess.run(
+                ["/bin/bash", "-c", binding[0]["run"]],
+                cwd=temporary,
+                capture_output=True,
+                timeout=30,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+            self.assertTrue(
+                git("symbolic-ref", "HEAD").strip().startswith("refs/heads/")
+            )
+            self.assertEqual(git("rev-parse", "HEAD").strip(), selected)
+
+    def test_pre_commit_is_published_to_the_validator_search_path(self):
+        """Validators use a fixed system path, not the interpreter's bin dir."""
+
+        installs = [
+            step.get("run", "")
+            for step in self._qa_steps()
+            if "/usr/local/bin/pre-commit" in step.get("run", "")
+        ]
+        self.assertEqual(len(installs), 1)
+        self.assertIn("sudo install", installs[0])
 
 
 if __name__ == "__main__":

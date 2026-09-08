@@ -49,7 +49,7 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 | --- | --- | --- |
 | 작업 트리 변경 | 영향 표면별 validator/test | 해당 변경의 빠른 정적 확인 |
 | staged 변경 | `python3 scripts/run-validation-lane.py --root . --lane staged --paths-file <paths.nul> --delimiter nul` | 커밋 후보 범위의 통합 확인 |
-| 전체 저장소 | `bash scripts/validate-repo-quality-gates.sh .` | 현재 checkout의 정적 계약 확인 |
+| 전체 저장소 | `python3 scripts/qa.py full` | 현재 checkout의 정적 계약 확인 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지

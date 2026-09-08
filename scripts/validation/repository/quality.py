@@ -841,7 +841,7 @@ else:
                     f"examples/README.md Example Role Matrix row {row_number} has empty {label}"
                 )
         for command in [
-            "scripts/validate-repo-quality-gates.sh",
+            "python3 scripts/qa.py full",
             "scripts/validate-k8s-manifests.sh",
             "scripts/check-secret-handling.sh",
         ]:
@@ -2152,7 +2152,7 @@ scan_roots = [
 for scan_root in scan_roots:
     candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
     for path in candidates:
-        if not path.is_file() or path.name == "validate-repo-quality-gates.sh":
+        if not path.is_file():
             continue
         if path.suffix not in {".md", ".toml", ".json", ".yml", ".yaml", ".sh"}:
             continue
@@ -2189,8 +2189,6 @@ active_stale_contract_patterns = [
 ]
 for scan_root in active_stale_contract_roots:
     for path in sorted(scan_root.rglob("*.md")):
-        if path.name == "validate-repo-quality-gates.sh":
-            continue
         if path.is_relative_to(root / "docs/98.archive"):
             continue
         text = read_text(path)
@@ -3705,10 +3703,10 @@ else:
                 fail(
                     f"gitops/README.md AppProject Allow-list Rationale Matrix row {row_number} has empty {label}"
                 )
-        if "scripts/validate-repo-quality-gates.sh" not in validation:
+        if "python3 scripts/qa.py full" not in validation:
             fail(
                 "gitops/README.md AppProject Allow-list Rationale Matrix "
-                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+                f"row {row_number} must cite python3 scripts/qa.py full"
             )
         documented_kinds = set(re.findall(r"`([^`]+)`", kinds_cell))
         if surface_key == "apps|clusterResourceWhitelist":
@@ -3834,10 +3832,10 @@ else:
                 fail(
                     f"gitops/README.md Workload Image and Kind Policy Matrix row {row_number} has empty {label}"
                 )
-        if "validate-repo-quality-gates.sh" not in validation:
+        if "python3 scripts/qa.py full" not in validation:
             fail(
                 "gitops/README.md Workload Image and Kind Policy Matrix "
-                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+                f"row {row_number} must cite python3 scripts/qa.py full"
             )
         if surface == "gitops/workloads/*":
             if "non-latest" not in image_policy or "tag or digest" not in image_policy:
@@ -4077,7 +4075,7 @@ else:
                     f"gitops/README.md Namespace Ownership Matrix row {row_number} has empty {label}"
                 )
         for command in [
-            "scripts/validate-repo-quality-gates.sh",
+            "python3 scripts/qa.py full",
             "scripts/validate-gitops-structure.sh",
         ]:
             if command not in validation:
@@ -4753,7 +4751,7 @@ else:
             fail(
                 f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary"
             )
-        if not validation or "validate-repo-quality-gates.sh" not in validation:
+        if not validation or "python3 scripts/qa.py full" not in validation:
             fail(
                 f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation"
             )
@@ -4911,7 +4909,7 @@ for tracked_path in tracked:
 
 
 if failures:
-    print("=== validate-repo-quality-gates ===")
+    print("=== repository quality ===")
     for item in failures:
         print(item)
     sys.exit(1)

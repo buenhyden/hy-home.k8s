@@ -83,7 +83,7 @@ generated in temporary directories instead of expanding a permanent matrix.
 
 ## Validation
 
-Run focused suites before broad discovery:
+Run focused suites while iterating, then the full profile once:
 
 ```bash
 python3 -m unittest tests.test_reference_pack_routes
@@ -91,10 +91,14 @@ python3 -m unittest tests.test_validation_tooling_ownership
 python3 -m unittest tests.test_validate_affected_surfaces tests.test_run_validation_lane
 python3 -m unittest tests.test_validate_agent_governance_ci
 python3 -m unittest tests.test_document_strict_cutover
-python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_*.py'
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 git diff --check
 ```
+
+The `full` profile owns the one discovery run over the whole suite, so a
+separate `unittest discover` on the same bytes repeats work the profile has
+already done rather than adding evidence. Run discovery directly only to
+reproduce a failure outside a profile.
 
 The completion order and PASS/FAIL/SKIP/DEFER meanings are owned by the
 [Quality policy](../.agents/governance/quality.md). This README

@@ -1,68 +1,69 @@
+# Deployment-safety rules for tracked Kubernetes and Argo CD manifests.
+#
+# This package is the single owner of these rules. Conftest is required by the
+# policy gate rather than optional, so a manifest is never reported as policy
+# clean by an engine that silently did not run.
 package main
 
-deny[msg] {
-  input.apiVersion == "v1"
-  input.kind == "Secret"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("plaintext Kubernetes Secret manifest is not allowed: %s", [name])
+import rego.v1
+
+resource_name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
+
+sync_options contains option if {
+	input.kind == "Application"
+	some option in input.spec.syncPolicy.syncOptions
 }
 
-deny[msg] {
-  input.kind == "Application"
-  input.spec.syncPolicy.syncOptions[_] == "CreateNamespace=true"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("Application must not use CreateNamespace=true: %s", [name])
+sync_options contains option if {
+	input.kind == "ApplicationSet"
+	some option in input.spec.template.spec.syncPolicy.syncOptions
 }
 
-deny[msg] {
-  input.kind == "ApplicationSet"
-  input.spec.template.spec.syncPolicy.syncOptions[_] == "CreateNamespace=true"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("ApplicationSet must not use CreateNamespace=true: %s", [name])
+# Containers are located by walking the document rather than by assuming the
+# Deployment shape, so a CronJob, a Rollout template, or any other nesting is
+# covered by the same rule.
+container_images contains image if {
+	walk(input, [path, value])
+	path[count(path) - 1] in {"containers", "initContainers"}
+	is_array(value)
+	some item in value
+	is_object(item)
+	image := item.image
+	is_string(image)
 }
 
-deny[msg] {
-  input.kind == "AppProject"
-  whitelist := input.spec.clusterResourceWhitelist[_]
-  whitelist.group == "*"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("AppProject must not allow wildcard cluster group: %s", [name])
+wildcard_surfaces contains surface if {
+	input.kind == "AppProject"
+	some surface in {"clusterResourceWhitelist", "namespaceResourceWhitelist"}
+	some entry in input.spec[surface]
+	entry.group == "*"
 }
 
-deny[msg] {
-  input.kind == "AppProject"
-  whitelist := input.spec.clusterResourceWhitelist[_]
-  whitelist.kind == "*"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("AppProject must not allow wildcard cluster kind: %s", [name])
+wildcard_surfaces contains surface if {
+	input.kind == "AppProject"
+	some surface in {"clusterResourceWhitelist", "namespaceResourceWhitelist"}
+	some entry in input.spec[surface]
+	entry.kind == "*"
 }
 
-deny[msg] {
-  input.kind == "AppProject"
-  whitelist := input.spec.namespaceResourceWhitelist[_]
-  whitelist.group == "*"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("AppProject must not allow wildcard namespace group: %s", [name])
+deny contains msg if {
+	input.apiVersion == "v1"
+	input.kind == "Secret"
+	msg := sprintf("plaintext Kubernetes Secret manifest is not allowed: %s", [resource_name])
 }
 
-deny[msg] {
-  input.kind == "AppProject"
-  whitelist := input.spec.namespaceResourceWhitelist[_]
-  whitelist.kind == "*"
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("AppProject must not allow wildcard namespace kind: %s", [name])
+deny contains msg if {
+	"CreateNamespace=true" in sync_options
+	msg := sprintf("%s must not use CreateNamespace=true: %s", [input.kind, resource_name])
 }
 
-deny[msg] {
-  image := input.spec.template.spec.containers[_].image
-  endswith(image, ":latest")
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("container image must not use latest tag: %s uses %s", [name, image])
+deny contains msg if {
+	some surface in wildcard_surfaces
+	msg := sprintf("AppProject wildcard %s is not allowed: %s", [surface, resource_name])
 }
 
-deny[msg] {
-  image := input.spec.template.spec.initContainers[_].image
-  endswith(image, ":latest")
-  name := object.get(object.get(input, "metadata", {}), "name", "<unknown>")
-  msg := sprintf("init container image must not use latest tag: %s uses %s", [name, image])
+deny contains msg if {
+	some image in container_images
+	endswith(image, ":latest")
+	msg := sprintf("container image must not use latest tag: %s uses %s", [resource_name, image])
 }

@@ -53,10 +53,10 @@ ingress-nginx `LoadBalancer` backend를 가리키며, live gateway 반영 여부
 
 | Config | Router host | Backend URL | Boundary | Validation |
 | --- | --- | --- | --- | --- |
-| `argocd-k3d.yaml` | `argocd.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local ArgoCD UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
-| `headlamp-k3d.yaml` | `headlamp.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Headlamp UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
-| `kiali-k3d.yaml` | `kiali.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Kiali UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
-| `rollouts-k3d.yaml` | `rollouts.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Argo Rollouts UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
+| `argocd-k3d.yaml` | `argocd.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local ArgoCD UI. | `python3 scripts/qa.py full` checks host, backend, TLS, and `websecure`. |
+| `headlamp-k3d.yaml` | `headlamp.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Headlamp UI. | `python3 scripts/qa.py full` checks host, backend, TLS, and `websecure`. |
+| `kiali-k3d.yaml` | `kiali.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Kiali UI. | `python3 scripts/qa.py full` checks host, backend, TLS, and `websecure`. |
+| `rollouts-k3d.yaml` | `rollouts.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Argo Rollouts UI. | `python3 scripts/qa.py full` checks host, backend, TLS, and `websecure`. |
 
 ### Audience
 
@@ -103,7 +103,7 @@ material here.
 
 ## Validation
 
-Run `bash scripts/validate-repo-quality-gates.sh .` for the route manifest
+Run `python3 scripts/qa.py full` for the route manifest
 contract. Use
 `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` only
 for an intentional live check; failure without an external gateway is not a

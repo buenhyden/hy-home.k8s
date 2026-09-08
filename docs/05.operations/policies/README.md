@@ -86,7 +86,7 @@ docs/05.operations/policies/
 
 ### Verification and Monitoring
 
-- 정책 문서 구조 검증은 [policy.template.md](../../99.templates/templates/operations/policy.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
+- 정책 문서 구조 검증은 [policy.template.md](../../99.templates/templates/operations/policy.template.md)와 `scripts/qa.py`를 기준으로 한다.
 - 정책 준수 증적은 연결된 Runbook의 verification output, CI 결과, GitOps diff, review evidence로 남긴다.
 - live cluster, Vault, Kubernetes mutation 증적은 human-approved bootstrap 또는 break-glass 작업에서만 수집한다.
 
