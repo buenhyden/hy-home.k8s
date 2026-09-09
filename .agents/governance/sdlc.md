@@ -20,7 +20,7 @@ waterfall.
 
 This flow selects the responsible document stage. Exact paths, profile IDs,
 frontmatter, sections, relationships, status classes, and lifecycle edges come
-only from the [Stage 99 registry](../../docs/99.templates/registry.json). Provider and
+only from the Stage 99 registry (`docs/99.templates/registry.json`). Provider and
 agent-roster authority is outside Stage 99 and is not defined here.
 
 ## Governance Context
@@ -100,4 +100,4 @@ evidence.
 - [Governance Hub](../README.md)
 - [Document Lifecycle Policy](document-lifecycle.md)
 - [Document Authoring Policy](document-authoring.md)
-- [Document Profile Registry](../../docs/99.templates/registry.json)
+- Document Profile Registry (`docs/99.templates/registry.json`)

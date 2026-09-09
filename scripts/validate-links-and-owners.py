@@ -104,6 +104,13 @@ from document_contracts import (
 _UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
+# A file outside `docs/` names a numbered stage document in plain text
+# instead of linking it, and reaches the tree through the documentation hub.
+# The hub is the one entry point consumers depend on, so a stage can be
+# reorganized without rewriting every implementation README that only needed
+# to say which document owns a subject. Links inside `docs/` keep their own
+# contracts, and a machine reference a program opens is not a link.
+NUMBERED_STAGE_TARGET = re.compile(r"^docs/(?:0[1235]|90|98|99)\.")
 WORK109_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
@@ -3182,6 +3189,22 @@ def _reviewed_work054_historical_owner_edges(
     }
 
 
+def _stage_boundary_diagnostic(
+    source: PurePosixPath, profile: str, target: PurePosixPath
+) -> Diagnostic | None:
+    if source.parts and source.parts[0] == "docs":
+        return None
+    if not NUMBERED_STAGE_TARGET.match(target.as_posix()):
+        return None
+    return _diag(
+        "LINK-STAGE-BOUNDARY",
+        source,
+        profile,
+        "plain-text stage reference",
+        target.as_posix(),
+    )
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(context)
@@ -3262,6 +3285,9 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                         "direct archive target",
                     )
                 )
+            boundary = _stage_boundary_diagnostic(source, profile, target)
+            if boundary is not None:
+                diagnostics.append(boundary)
     return diagnostics
 
 

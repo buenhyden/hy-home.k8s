@@ -48,4 +48,4 @@ not by itself require a row; only a change of canonical owner does.
 
 - [Common Knowledge](README.md)
 - [Project Map](project-map.md)
-- [Operations policies](../../docs/05.operations/policies/README.md)
+- Operations policies (`docs/05.operations/policies/README.md`)

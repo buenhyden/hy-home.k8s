@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-09"
 ---
 
 # Document Authoring Policy
@@ -16,8 +16,8 @@ close the change with traceable evidence.
 
 ## Authority Boundary
 
-[Stage 99 README](../../docs/99.templates/README.md) is the human authoring guide.
-Its [registry](../../docs/99.templates/registry.json) alone owns exact paths,
+Stage 99 README (`docs/99.templates/README.md`) is the human authoring guide.
+Its registry (`docs/99.templates/registry.json`) alone owns exact paths,
 profiles, IDs, sections, metadata, lifecycle, and relationships. This policy
 owns agent procedure, not a second machine contract.
 
@@ -39,7 +39,7 @@ express ownership, not a one-way waterfall.
    artifact identity nor lifecycle binding.
 4. Take the frontmatter key set and its order from the selected profile, and
    each key's value grammar from the
-   [frontmatter schema](../../docs/99.templates/contracts/frontmatter.schema.json).
+   frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
    Every string, date, version, and identity scalar uses double quotes. A
    "title" never repeats the document's "artifact_id": identity is already a
    key, and a title that restates it carries no information.
@@ -49,7 +49,12 @@ express ownership, not a one-way waterfall.
    produces; neither declares one. A profile that declares no `artifact_id`
    describes something the repository does not give a stable identity.
 6. Replace prompts with concrete content, use complete stable IDs for
-   traceability, and calculate links from the final target path.
+   traceability, and calculate links from the final target path. A file outside
+   `docs/` never links directly into a numbered stage tree; it names the stage
+   document by path, artifact ID, or role in plain text and reaches the tree
+   through the documentation hub. Links between documents inside `docs/` keep
+   their existing contracts, and a machine reference a program opens is not a
+   link.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
@@ -107,6 +112,6 @@ the same logical change.
 ## Related Documents
 
 - [Document Lifecycle](document-lifecycle.md)
-- [Stage 99 Author Guide](../../docs/99.templates/README.md)
+- Stage 99 Author Guide (`docs/99.templates/README.md`)
 - [Work Lifecycle](../workflows/work-lifecycle.md)
-- [Archive Index](../../docs/98.archive/README.md)
+- Archive Index (`docs/98.archive/README.md`)

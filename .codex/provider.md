@@ -65,7 +65,7 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The [SPEC-0072 Task](../docs/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
+  or hook enforcement. The SPEC-0072 Task (`docs/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md`)
   owns that attempt's evidence. Next owner: the user/operator for a reviewed
   project/hook trust state and an explicitly authorized observable session.
 - Because delivery is unproven, the enforced boundary for a non-authoring role

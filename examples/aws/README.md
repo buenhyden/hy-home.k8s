@@ -13,9 +13,9 @@ updated: "2026-09-04"
 ### Current authority transfer
 
 The original REQ-0007 / AD-0010 program lineage remains historical context.
-Current platform requirements and architecture are [REQ-0004](../../docs/01.requirements/0004-current-local-gitops-platform.md) and
-[AD-0007](../../docs/02.architecture/descriptions/0007-current-local-gitops-platform.md); shared routing, approval and QA are [REQ-0003](../../docs/01.requirements/0003-workspace-agent-governance-platform.md)
-and [AD-0006](../../docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md). Package-local execution state and unfinished
+Current platform requirements and architecture are REQ-0004 (`docs/01.requirements/0004-current-local-gitops-platform.md`) and
+AD-0007 (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`); shared routing, approval and QA are REQ-0003 (`docs/01.requirements/0003-workspace-agent-governance-platform.md`)
+and AD-0006 (`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`). Package-local execution state and unfinished
 0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
 
 This entrypoint defines the boundary of the executable AWS example assets.
@@ -60,5 +60,5 @@ then obtain human approval before any provider or live-cluster action.
 ## Related Documents
 
 - [Examples index](../README.md)
-- [REQ-0004 — current platform requirements](../../docs/01.requirements/0004-current-local-gitops-platform.md)
-- [AD-0007 — current platform architecture](../../docs/02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- REQ-0004 — current platform requirements (`docs/01.requirements/0004-current-local-gitops-platform.md`)
+- AD-0007 — current platform architecture (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)

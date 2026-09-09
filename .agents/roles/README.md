@@ -177,5 +177,5 @@ permission, skill, and handoff membership stays in the agent registry.
 - [Delegated Development](../workflows/delegated-development.md)
 - [Approval and Safety](../governance/approval-and-safety.md)
 - [Document Authoring](../governance/document-authoring.md)
-- [Architecture Index](../../docs/02.architecture/README.md)
-- [Operations Index](../../docs/05.operations/README.md)
+- Architecture Index (`docs/02.architecture/README.md`)
+- Operations Index (`docs/05.operations/README.md`)

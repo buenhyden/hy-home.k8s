@@ -95,7 +95,7 @@ These repository-static checks do not prove provider or live-cluster readiness.
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
-| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 최소 앱 온보딩 템플릿 | [Policy](../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md) · [Runbook](../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 최소 앱 온보딩 템플릿 | Policy (`docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`) · Runbook (`docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`) |
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS example boundary](./aws/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure example boundary](./azure/README.md) |
 
@@ -125,4 +125,4 @@ cp -r examples/sample-app gitops/workloads/<appname>
 
 - [AWS executable example](aws/README.md)
 - [Azure executable example](azure/README.md)
-- [README and Workspace Profiles Spec](../docs/98.archive/completed/03.specs/0028-readme-workspace-profiles/spec.md)
+- README and Workspace Profiles Spec (`docs/98.archive/completed/03.specs/0028-readme-workspace-profiles/spec.md`)

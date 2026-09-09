@@ -82,5 +82,5 @@ this rule.
 - [Documentation Protocol](../.agents/governance/document-authoring.md)
 - [Approval Boundaries](../.agents/governance/approval-and-safety.md)
 - [Subagent Protocol](../.agents/workflows/delegated-development.md)
-- [Documentation Contract](../docs/99.templates/README.md)
-- [Workspace-staging README form](../docs/99.templates/templates/common/readme-workspace-staging.template.md)
+- Documentation Contract (`docs/99.templates/README.md`)
+- Workspace-staging README form (`docs/99.templates/templates/common/readme-workspace-staging.template.md`)

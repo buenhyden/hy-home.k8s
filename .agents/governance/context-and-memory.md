@@ -74,5 +74,5 @@ it. Use [quality policy](quality.md) for evidence and handoff classification.
 
 - [Work Lifecycle](../workflows/work-lifecycle.md)
 - [Document Lifecycle](document-lifecycle.md)
-- [Archive Index](../../docs/98.archive/README.md)
+- Archive Index (`docs/98.archive/README.md`)
 - [Approval and Safety](approval-and-safety.md)

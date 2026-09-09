@@ -84,7 +84,7 @@ prove Azure deployment readiness.
 ### Reference Links
 
 - **Example boundary**: [Azure reference implementation](../README.md)
-- **Repository architecture**: [Current local GitOps platform](../../../docs/02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
 ### AI Agent Guidance

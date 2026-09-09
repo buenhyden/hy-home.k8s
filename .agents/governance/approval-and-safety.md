@@ -81,4 +81,4 @@ failing required check or provider restriction.
 - [Agent Execution](agent-execution.md)
 - [Git Policy](git.md)
 - [Quality Policy](quality.md)
-- [Operations Index](../../docs/05.operations/README.md)
+- Operations Index (`docs/05.operations/README.md`)

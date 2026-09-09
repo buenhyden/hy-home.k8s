@@ -58,4 +58,4 @@ form.
 
 - [Common Prompt Contracts](README.md)
 - [Document Authoring](../governance/document-authoring.md)
-- [Document profiles and templates](../../docs/99.templates/README.md)
+- Document profiles and templates (`docs/99.templates/README.md`)

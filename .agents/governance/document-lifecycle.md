@@ -16,7 +16,7 @@ withdrawal, sealing, and historical recovery across the repository.
 
 ## Authority Boundary
 
-The [Stage 99 registry](../../docs/99.templates/registry.json) is the sole machine
+The Stage 99 registry (`docs/99.templates/registry.json`) is the sole machine
 owner for lifecycle states, directed transitions, and the internal `mutable`,
 `current`, and `terminal` validation classes. Documents carry only their
 profile status. This policy explains evidence obligations and does not repeat
@@ -65,6 +65,6 @@ changes.
 
 - [Software Development Lifecycle](sdlc.md)
 - [Governance Hub](../README.md)
-- [Document Profile Registry](../../docs/99.templates/registry.json)
+- Document Profile Registry (`docs/99.templates/registry.json`)
 - [Document Authoring Policy](document-authoring.md)
-- [Archive Stage](../../docs/98.archive/README.md)
+- Archive Stage (`docs/98.archive/README.md`)

@@ -79,7 +79,7 @@ separate provider/runtime evidence and is not established by this snapshot.
 
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
-- **Repository operations**: [GitOps platform runbook](../../../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)
 
 ### AI Agent Guidance
 

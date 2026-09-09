@@ -33,7 +33,7 @@ loaders; the entire directory is not an automatic instruction loader.
 Provider differences and native adapters live in [.claude/](../.claude/README.md)
 and [.codex/](../.codex/README.md). Edit common meaning here; retain native syntax
 there. No role copies or provider generator own a second policy.
-[ADR-0036](../docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
+ADR-0036 (`docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`)
 adopts `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
 without a reader is not created. Evaluation, rule and script directories stay
@@ -64,7 +64,7 @@ execution registry owns mutable gate commands and limits.
 
 ## Related Documents
 
-- [Document profiles and templates](../docs/99.templates/README.md)
+- Document profiles and templates (`docs/99.templates/README.md`)
 - [Repository documentation](../docs/README.md)
-- [Memory retirement: MIG-0009 through the archive index](../docs/98.archive/README.md)
-- [Authority decision](../docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
+- Memory retirement: MIG-0009 through the archive index (`docs/98.archive/README.md`)
+- Authority decision (`docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`)
