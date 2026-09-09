@@ -23,7 +23,7 @@ area/tests:
   - changed-files:
       - any-glob-to-any-file:
           - "tests/**"
-          - "infrastructure/tests/**"
+          - "infrastructure/verify/**"
 
 area/scripts:
   - changed-files:

@@ -1,6 +1,6 @@
 ---
 title: "Close the Documentation Entry Point and the Gaps It Exposed"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 status: "queued"
 owner: "platform"
@@ -142,7 +142,7 @@ bound the gate ranking rather than establish a precise absolute cost.
 | `greetings.yml` job permissions | No change | The job omits `contents: read`, which withholds rather than grants. Adding it would widen the token. |
 | `DEBT_PATH` naming a `tests/fixtures` path | No change | The path is asserted absent as a retired-source denylist entry, the same shape as the other retired paths; nothing is read as runtime input. |
 | Brittle corpus-count and pinned-SHA assertions in the suite | Recorded, not changed | Roughly thirty assertions pin counts or commit identifiers against the repository's own test guidance. Changing them is a suite-wide contract decision with its own review, not a side effect of this scope. |
-| `infrastructure/tests/verify-contracts-static.sh` classified as a validator under a `tests/` path | Recorded, not moved | Moving it touches the execution registry argv, the shell hook selectors and two READMEs; it is a separate reviewable change. |
+| `scripts/validate-infrastructure-contracts.sh` classified as a validator under a `tests/` path | Recorded, not moved | Moving it touches the execution registry argv, the shell hook selectors and two READMEs; it is a separate reviewable change. |
 | Two remaining test-module-as-library imports | Recorded, not changed | `load_validator` and one validator handle are single definitions imported by one consumer each, not duplicated definitions. |
 
 ## Traceability

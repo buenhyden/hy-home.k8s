@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Backfill Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "done"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0005-PLAN-0001"
 ---
@@ -73,7 +73,7 @@ writes are out of scope.
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Structural | docs taxonomy and template headings | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
 | VAL-PLN-002 | Secret | plaintext secret scan | `bash scripts/check-secret-handling.sh .` | PASS |
-| VAL-PLN-003 | Contract | static notification contract | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
+| VAL-PLN-003 | Contract | static notification contract | `bash scripts/validate-infrastructure-contracts.sh` | PASS |
 | VAL-PLN-004 | Manifest | Kubernetes YAML syntax | `bash scripts/validate-k8s-manifests.sh .` | PASS |
 | VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|not created during this PRD remediation" docs/01.requirements` | no matches |
 
@@ -83,7 +83,7 @@ writes are out of scope.
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `bash scripts/check-secret-handling.sh .`
   - `bash scripts/validate-k8s-manifests.sh .`
-  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-infrastructure-contracts.sh`
 - **Eval Commands**:
   - `rg -n "Follow-up Gap|not created during this PRD remediation" docs/01.requirements`
   - `rg -n "slack_token|slack-token|notifications.enabled" docs/03.specs/0005-argo-notifications-slack/spec.md`
@@ -118,7 +118,7 @@ writes are out of scope.
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `bash scripts/check-secret-handling.sh .`
   - `bash scripts/validate-k8s-manifests.sh .`
-  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-infrastructure-contracts.sh`
 - **Live Validation**: DEFER — Argo Notifications Slack Backfill is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Repository evidence for Argo Notifications Slack Backfill must not read or print Secret data, Vault material, provider credentials, kubeconfigs, auth files, private RTK data, or shell history.
 - **Rollback Plan**: Revert the logical Argo Notifications Slack Backfill change set for `NOTIF-T-001 through NOTIF-T-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.

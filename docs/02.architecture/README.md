@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-09"
 layer: "architecture"
 ---
 # 02.architecture
@@ -20,7 +20,7 @@ layer: "architecture"
 Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에 둔다.
 
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
-[`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
+[`gitops/`](../../gitops/README.md), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
 정적 검증 스크립트가 우선한다. ADR 본문은 상태와 관계없이 decision log에 남겨 원래 결정과
 상호 supersession을 보존한다. 대체된 Requirement/AD는 current consumer와 의미를 승계한 뒤
 ADR-0032의 `superseded/<stage>/` record로, 후계자 없이 끝난 문서는 `tombstones/<stage>/`로
@@ -30,7 +30,7 @@ ADR-0032의 `superseded/<stage>/` record로, 후계자 없이 끝난 문서는 `
 
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
-| 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
+| 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../scripts/validate-infrastructure-contracts.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
 | 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 Requirement Package를 현재 구조와 참조 모델로 해석한다. |
 | 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |

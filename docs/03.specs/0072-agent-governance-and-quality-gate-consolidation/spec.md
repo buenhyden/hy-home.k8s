@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "2.3.0"
+version: "2.3.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -171,9 +171,9 @@ unless branch policy and QA have valid results.
   payloads and frozen bytes unchanged. Stage, package and Task numbers remain
   distinct; cross-document references use the parent artifact plus an existing
   local ID without renumbering.
-- `infrastructure/tests/verify-gitops.sh`,
-  `infrastructure/tests/verify-external-services.sh` and
-  `infrastructure/tests/verify-ingress-tls.sh` replace predictable shared `/tmp`
+- `infrastructure/verify/verify-gitops.sh`,
+  `infrastructure/verify/verify-external-services.sh` and
+  `infrastructure/verify/verify-ingress-tls.sh` replace predictable shared `/tmp`
   files with private per-run storage and a trap. Stubbed tests exercise status,
   diagnostics and cleanup without invoking live commands or adding retention.
 - `.agents/README.md` routes evaluation assets to `evals/`, execution to the

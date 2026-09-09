@@ -1,10 +1,10 @@
 ---
 title: "policy"
-version: "0.2.0"
+version: "0.2.2"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 ---
 # policy
 
@@ -63,6 +63,11 @@ updated: "2026-09-08"
 - 규칙을 추가하면 `kubernetes_test.rego`에 발화 사례와 비발화 사례를 함께
   추가한다. 규칙이 조용히 매칭을 멈추는 것은 커버리지 손실이다.
 - 정책 위반 예외는 규칙을 끄는 방식이 아니라 매니페스트를 고치는 방식으로 해소한다.
+- `infrastructure/vault/policies/`의 Vault 정책은 이 폴더와 다른 소유자다.
+  그것은 외부 Vault 서버가 평가하는 HCL 인가 정책이고, 여기의 규칙은
+  Conftest가 Kubernetes 매니페스트에 평가하는 Rego다. 시스템, 언어, 평가기,
+  변경 이유가 모두 달라 한 폴더로 합치지 않는다. Vault 정책 경로의 계약은
+  `scripts/validate-vault-eso-contracts.py`와 QA 실행 레지스트리가 소유한다.
 
 ## Validation
 

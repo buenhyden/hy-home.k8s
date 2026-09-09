@@ -1,6 +1,6 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -93,7 +93,7 @@ artifact_id: "POL-0003"
 
 ### CI Governance
 
-- `infrastructure/tests/verify-contracts-static.sh` PASS가 모든 IP/endpoint
+- `scripts/validate-infrastructure-contracts.sh` PASS가 모든 IP/endpoint
   변경의 선행 조건이다. 이 검사의 선택과 실행은 QA 실행 레지스트리가 소유한다.
 - shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - cert-manager/Headlamp/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.

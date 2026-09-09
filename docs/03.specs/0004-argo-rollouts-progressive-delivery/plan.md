@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Backfill Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "done"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0004-PLAN-0001"
 ---
@@ -73,7 +73,7 @@ traceability hardening; live cluster changes are out of scope.
 | VAL-PLN-001 | Structural | docs taxonomy and template headings | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
 | VAL-PLN-002 | GitOps | Rollouts Application and kustomization structure | `bash scripts/validate-gitops-structure.sh` | PASS |
 | VAL-PLN-003 | Manifest | Kubernetes YAML syntax | `bash scripts/validate-k8s-manifests.sh .` | PASS |
-| VAL-PLN-004 | Contract | platform static contracts | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
+| VAL-PLN-004 | Contract | platform static contracts | `bash scripts/validate-infrastructure-contracts.sh` | PASS |
 | VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|not created during this PRD remediation" docs/01.requirements` | no matches |
 
 ### Legacy Task verification evidence
@@ -82,7 +82,7 @@ traceability hardening; live cluster changes are out of scope.
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
-  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-infrastructure-contracts.sh`
 - **Eval Commands**:
   - `rg -n "Follow-up Gap|not created during this PRD remediation" docs/01.requirements`
   - `rg -n "notifications.enabled: false|notifications.enabled: true" docs/03.specs/0004-argo-rollouts-progressive-delivery/spec.md docs/03.specs/0005-argo-notifications-slack/spec.md`
@@ -117,7 +117,7 @@ traceability hardening; live cluster changes are out of scope.
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
-  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-infrastructure-contracts.sh`
 - **Live Validation**: DEFER — Argo Rollouts Progressive Delivery Backfill is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Repository evidence for Argo Rollouts Progressive Delivery Backfill must not read or print Secret data, Vault material, provider credentials, kubeconfigs, auth files, private RTK data, or shell history.
 - **Rollback Plan**: Revert the logical Argo Rollouts Progressive Delivery Backfill change set for `ROL-T-001 through ROL-T-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.

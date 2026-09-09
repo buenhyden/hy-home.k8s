@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -153,17 +153,17 @@ argocd app sync platform-argocd-config
 1. 런타임 계약 회귀를 검증한다.
 
 ```bash
-./infrastructure/tests/verify-network-policies.sh
-./infrastructure/tests/verify-ingress-tls.sh
-CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
-./infrastructure/tests/run-all.sh
+./infrastructure/verify/verify-network-policies.sh
+./infrastructure/verify/verify-ingress-tls.sh
+CHECK_TRAEFIK_443=true ./infrastructure/verify/verify-ingress-tls.sh
+./infrastructure/verify/run-all.sh
 ```
 
 1. CI 정적 계약 회귀를 검증한다.
 
 ```bash
-./infrastructure/tests/verify-contracts-static.sh
-bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
+./scripts/validate-infrastructure-contracts.sh
+bash -n infrastructure/bootstrap-local.sh infrastructure/verify/*.sh
 ```
 
 1. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).

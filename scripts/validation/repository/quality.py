@@ -2702,7 +2702,7 @@ else:
 labeler_path = root / ".github/labeler.yml"
 labeler_data = load_yaml(labeler_path)
 test_label_globs = set(collect_strings(labeler_data.get("area/tests") or []))
-for expected_glob in ["tests/**", "infrastructure/tests/**"]:
+for expected_glob in ["tests/**", "infrastructure/verify/**"]:
     if expected_glob not in test_label_globs:
         fail(f"{rel(labeler_path)} area/tests missing glob: {expected_glob}")
 
@@ -2973,10 +2973,10 @@ else:
                 fail(
                     f"gitops/README.md External Service Contract Matrix row {row_number} has empty {label}"
                 )
-        if "verify-contracts-static.sh" not in validation:
+        if "validate-infrastructure-contracts.sh" not in validation:
             fail(
                 "gitops/README.md External Service Contract Matrix "
-                f"row {row_number} must cite infrastructure/tests/verify-contracts-static.sh"
+                f"row {row_number} must cite scripts/validate-infrastructure-contracts.sh"
             )
         if "platform" not in namespace:
             fail(
@@ -3157,7 +3157,7 @@ else:
                 ("external-secrets", destination),
                 ("external Vault operator", owner),
                 ("reviewer JWT", value_handling),
-                ("verify-contracts-static.sh", validation),
+                ("validate-infrastructure-contracts.sh", validation),
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
@@ -3176,7 +3176,7 @@ else:
                 ("creationPolicy: Owner", destination),
                 ("external PostgreSQL owner", owner),
                 ("ESO refresh", value_handling),
-                ("verify-contracts-static.sh", validation),
+                ("validate-infrastructure-contracts.sh", validation),
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
@@ -3973,7 +3973,7 @@ expected_infrastructure_coverage_header = [
 expected_infrastructure_coverage_areas = [
     "argocd/",
     "k3d/",
-    "tests/",
+    "verify/",
     "vault/",
     "bootstrap-local.sh",
     "ipaddresspool.yaml",
@@ -4157,7 +4157,7 @@ else:
                     fail(
                         f"infrastructure/README.md port/network prerequisite row missing contract: {phrase}"
                     )
-            for command in ["verify-contracts-static.sh", "run-all.sh"]:
+            for command in ["validate-infrastructure-contracts.sh", "run-all.sh"]:
                 if command not in validation:
                     fail(
                         f"infrastructure/README.md port/network prerequisite row missing validation command: {command}"
@@ -4285,7 +4285,7 @@ else:
                 ("WSL-native Docker", operator_resp),
                 ("human-approved", operator_resp),
                 ("k3d cluster create", command_surface),
-                ("infrastructure/tests/verify-cluster.sh", verification),
+                ("infrastructure/verify/verify-cluster.sh", verification),
                 ("do not create", failure_boundary),
             ]:
                 if phrase not in value:
@@ -4298,8 +4298,8 @@ else:
                 ("ingress/TLS", repo_resp),
                 ("certificate inputs", operator_resp),
                 ("helm upgrade --install", command_surface),
-                ("verify-contracts-static.sh", verification),
-                ("infrastructure/tests/verify-gitops.sh", verification),
+                ("validate-infrastructure-contracts.sh", verification),
+                ("infrastructure/verify/verify-gitops.sh", verification),
                 ("outside approved bootstrap/break-glass", failure_boundary),
             ]:
                 if phrase not in value:
@@ -4361,7 +4361,7 @@ else:
 
 infrastructure_shell_paths = sorted(
     [infrastructure_dir / "bootstrap-local.sh"]
-    + list((infrastructure_dir / "tests").glob("*.sh"))
+    + list((infrastructure_dir / "verify").glob("*.sh"))
 )
 for script in infrastructure_shell_paths:
     if not script.exists():
@@ -4386,7 +4386,7 @@ expected_infra_test_header = [
     "Retention / command surface",
 ]
 allowed_infra_test_types = {"Static", "Live", "Live aggregate"}
-test_script_paths = sorted((infrastructure_dir / "tests").glob("*.sh"))
+test_script_paths = sorted((infrastructure_dir / "verify").glob("*.sh"))
 test_script_names = {path.name for path in test_script_paths}
 if len(infrastructure_test_rows) < 2:
     fail(
@@ -4457,7 +4457,7 @@ else:
             f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}"
         )
 
-    run_all_path = infrastructure_dir / "tests/run-all.sh"
+    run_all_path = infrastructure_dir / "verify/run-all.sh"
     if run_all_path.exists():
         run_all_called = set(
             re.findall(r'bash "\$script_dir/([^"]+\.sh)"', read_text(run_all_path))
@@ -4466,12 +4466,12 @@ else:
         extra_run_all_calls = sorted(run_all_called - live_test_scripts)
         if missing_run_all_calls:
             fail(
-                "infrastructure/tests/run-all.sh is missing live test call(s): "
+                "infrastructure/verify/run-all.sh is missing live test call(s): "
                 + ", ".join(missing_run_all_calls)
             )
         if extra_run_all_calls:
             fail(
-                "infrastructure/tests/run-all.sh calls test(s) not marked Live in Infrastructure Test Inventory: "
+                "infrastructure/verify/run-all.sh calls test(s) not marked Live in Infrastructure Test Inventory: "
                 + ", ".join(extra_run_all_calls)
             )
 

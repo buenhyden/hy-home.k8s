@@ -1,10 +1,10 @@
 ---
 title: "traefik"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-09"
 ---
 # traefik
 
@@ -34,7 +34,7 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
 - 이 저장소의 repo-static 검증은 route manifest 계약만 확인하며,
   live port availability와 external gateway readiness는 operator-owned
   runtime evidence로 분리한다.
-- `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh`가
+- `CHECK_TRAEFIK_443=true bash infrastructure/verify/verify-ingress-tls.sh`가
   실패하고 Docker에 외부 Traefik gateway 컨테이너가 없다면, 이는 k3d
   GitOps desired state 실패가 아니라 `hy-home.docker` gateway runtime 또는
   dynamic config 반영이 아직 증명되지 않은 상태다.
@@ -105,7 +105,7 @@ material here.
 
 Run `python3 scripts/qa.py full` for the route manifest
 contract. Use
-`CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` only
+`CHECK_TRAEFIK_443=true bash infrastructure/verify/verify-ingress-tls.sh` only
 for an intentional live check; failure without an external gateway is not a
 k3d desired-state failure.
 

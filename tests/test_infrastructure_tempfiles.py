@@ -16,9 +16,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = (
-    ROOT / "infrastructure/tests/verify-gitops.sh",
-    ROOT / "infrastructure/tests/verify-external-services.sh",
-    ROOT / "infrastructure/tests/verify-ingress-tls.sh",
+    ROOT / "infrastructure/verify/verify-gitops.sh",
+    ROOT / "infrastructure/verify/verify-external-services.sh",
+    ROOT / "infrastructure/verify/verify-ingress-tls.sh",
 )
 SHARED_TMP_REDIRECT = re.compile(r"(?:[0-9]+)?>>?\s*(/tmp/[^\s;&|]+)")
 STUB = r"""#!/usr/bin/python3
@@ -316,7 +316,7 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
                 self.assertEqual(len(tuple(tmpdir.iterdir())), 1)
 
     def test_cleanup_failure_preserves_existing_nonzero_status(self) -> None:
-        script = ROOT / "infrastructure/tests/verify-gitops.sh"
+        script = ROOT / "infrastructure/verify/verify-gitops.sh"
         tmpdir = self.root / "combined-failure"
         tmpdir.mkdir()
         log = self.root / "combined-failure.log"

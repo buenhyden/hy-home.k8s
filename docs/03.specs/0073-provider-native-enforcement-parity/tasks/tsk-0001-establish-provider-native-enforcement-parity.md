@@ -1,10 +1,10 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.5.1"
+version: "1.5.2"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0073-TSK-0001"
 ---
@@ -78,7 +78,7 @@ before the values it validates; WORK-009 now carries only the permission mode.
   `docs/99.templates/registry.json`, `docs/99.templates/templates/runtime/`,
   `evals/`, `scripts/README.md`, `scripts/run-agent-evaluations.py`,
   `scripts/validate-agent-governance.py`, `scripts/validation/`,
-  `infrastructure/tests/verify-contracts-static.sh`, `tests/`, and the single
+  `scripts/validate-infrastructure-contracts.sh`, `tests/`, and the single
   failing line of a record this package does not own when a gate rejects that
   line, recorded with the gate that forced it
 - **Forbidden Paths**: the user's staged index and every path it touches,

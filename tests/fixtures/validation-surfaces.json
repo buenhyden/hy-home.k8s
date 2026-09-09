@@ -58,7 +58,7 @@
     },
     {
       "name": "infrastructure",
-      "path": "infrastructure/tests/verify-contracts-static.sh",
+      "path": "infrastructure/verify/verify-gitops.sh",
       "expectedSurface": "infrastructure"
     },
     {
@@ -380,7 +380,7 @@
         ".codex/agents/supervisor.toml",
         ".github/workflows/ci.yml",
         "gitops/clusters/local/root-application.yaml",
-        "infrastructure/tests/verify-contracts-static.sh",
+        "scripts/validate-infrastructure-contracts.sh",
         "policy/conftest/kubernetes.rego",
         "scripts/qa.py",
         "secrets/README.md",
@@ -599,7 +599,7 @@
         "_workspace/README.md",
         "policy/conftest/kubernetes.rego",
         "gitops/clusters/local/root-application.yaml",
-        "infrastructure/tests/verify-contracts-static.sh",
+        "scripts/validate-infrastructure-contracts.sh",
         "secrets/README.md",
         "traefik/traefik.yaml",
         ".agents/roles/supervisor.md",
@@ -618,7 +618,7 @@
       "paths": [
         "policy/conftest/kubernetes.rego",
         "gitops/clusters/local/root-application.yaml",
-        "infrastructure/tests/verify-contracts-static.sh",
+        "scripts/validate-infrastructure-contracts.sh",
         "secrets/README.md",
         "traefik/traefik.yaml"
       ],

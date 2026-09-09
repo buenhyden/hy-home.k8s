@@ -97,7 +97,7 @@ python3 scripts/qa.py full
 Live checks, only when explicitly approved:
 
 ```bash
-bash infrastructure/tests/run-all.sh
+bash infrastructure/verify/run-all.sh
 ```
 
 Secret handling:

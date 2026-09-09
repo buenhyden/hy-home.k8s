@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -85,6 +85,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | --- | --- |
 | `validate-gitops-change-set.py`, `validate-gitops-structure.sh` | GitOps identity and structure validation |
 | `validate-k8s-manifests.sh`, `validate-policy-gates.sh` | manifest syntax and repository policy checks |
+| `validate-infrastructure-contracts.sh` | repository-static infrastructure contract checks; the live cluster checks are `infrastructure/verify/` |
 | `validate-vault-eso-contracts.py`, `check-secret-handling.sh` | Vault/ESO reference contracts and redacted secret-pattern checks |
 | `validate-github-actions-security.py`, `validate-ci-python-contract.py` | workflow supply-chain and Python dependency contracts |
 | `validate-workspace-boundary.py` | staged workspace boundary and ignored-path contract |

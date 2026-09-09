@@ -1,10 +1,10 @@
 ---
 title: "Repository Assurance Integration and Closure Implementation Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0051-PLAN-0001"
 ---
@@ -247,7 +247,7 @@ merge, stash, cleanup, remote, or live result.
 - [ ] Run platform, policy, secret, and infrastructure-static gates.
 
   ```bash
-  rtk bash infrastructure/tests/verify-contracts-static.sh
+  rtk bash scripts/validate-infrastructure-contracts.sh
   rtk bash scripts/validate-gitops-structure.sh
   rtk bash scripts/validate-k8s-manifests.sh .
   rtk bash scripts/validate-policy-gates.sh .

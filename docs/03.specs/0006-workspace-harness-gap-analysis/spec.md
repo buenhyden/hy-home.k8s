@@ -1,10 +1,10 @@
 ---
 title: "Workspace Harness Gap Analysis Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0006"
 ---
@@ -177,7 +177,7 @@ bash scripts/validate-repo-quality-gates.sh .
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-bash infrastructure/tests/verify-contracts-static.sh
+bash scripts/validate-infrastructure-contracts.sh
 find infrastructure scripts .agents/hooks -type f -name '*.sh' -exec bash -n {} +
 python3 -m json.tool .claude/settings.json
 python3 -m json.tool .codex/hooks.json
@@ -262,7 +262,7 @@ git diff --check
 - **VAL-SPC-006-021**: 2026-05-25 live bootstrap runtime closure records the
   approved external-service startup, k3d bootstrap, Vault Kubernetes auth
   repair, EndpointSlice bootstrap boundary correction, MetalLB/Traefik
-  validation fixes, and successful `infrastructure/tests/run-all.sh` evidence
+  validation fixes, and successful `infrastructure/verify/run-all.sh` evidence
   without printing secret values or rewriting public history.
 - **VAL-SPC-006-022**: 2026-05-25 documentation/governance-first overlay
   records six fresh read-only subagent reviews, external `P0-01` through
@@ -309,7 +309,7 @@ git diff --check
   resource semantics or AppProject permissions.
 - **VAL-SPC-006-029**: 2026-05-25 infrastructure test inventory guardrail
   follow-up strengthens `infrastructure/` review by adding an
-  `infrastructure/tests/*.sh` inventory to `infrastructure/README.md` and
+  `infrastructure/verify/*.sh` inventory to `infrastructure/README.md` and
   validating executable bits, Bash shebangs, exact inventory coverage, nonempty
   preconditions/result semantics/retention surfaces, and `run-all.sh` live-test
   call parity without executing live cluster mutations or repairing kubeconfig
@@ -413,19 +413,19 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 - **VAL-SPC-006-046**: 2026-05-26 approved temporary-kubeconfig live validation
   follow-up strengthens WSL2/k3d runtime evidence by recording that the default
   kubeconfig still fails TLS trust, while a k3d-generated temporary kubeconfig
-  proves the read-only live aggregate `infrastructure/tests/run-all.sh` passes
+  proves the read-only live aggregate `infrastructure/verify/run-all.sh` passes
   without modifying `~/.kube/config`, Kubernetes resources, Docker networks, or
   secret values.
 - **VAL-SPC-006-047**: 2026-05-26 approved default kubeconfig TLS repair
   follow-up strengthens WSL2/k3d runtime support by backing up `~/.kube/config`,
   merging the k3d `hyhome` kubeconfig into the default kubeconfig, and proving
   that default `kubectl version --request-timeout=5s` and
-  `infrastructure/tests/run-all.sh` pass without changing repository manifests,
+  `infrastructure/verify/run-all.sh` pass without changing repository manifests,
   Kubernetes resources, Docker networks, Vault policy, secret values, or `.env`
   values.
 - **VAL-SPC-006-048**: 2026-05-26 approved Traefik 443 runtime proof follow-up
   strengthens Traefik boundary evidence by running
-  `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh`,
+  `CHECK_TRAEFIK_443=true bash infrastructure/verify/verify-ingress-tls.sh`,
   recording the failure when no external Traefik gateway container is running,
   and keeping external gateway startup or dynamic-config application outside
   this repository's GitOps desired-state ownership.

@@ -1,6 +1,6 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -131,14 +131,14 @@ artifact_id: "RUN-0003"
 6. 전체 정적 계약 검증
 
    ```bash
-   ./infrastructure/tests/verify-contracts-static.sh
+   ./scripts/validate-infrastructure-contracts.sh
    ```
 
 ## Verification Steps
 
 ```bash
 # 정적 계약
-./infrastructure/tests/verify-contracts-static.sh
+./scripts/validate-infrastructure-contracts.sh
 
 # 런타임
 kubectl get clusterissuer mkcert-ca-issuer

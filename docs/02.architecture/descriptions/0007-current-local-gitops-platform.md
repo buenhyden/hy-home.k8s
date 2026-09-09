@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-09"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -67,7 +67,7 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 | Desired-state tree | [root Application](../../../gitops/clusters/local/root-application.yaml), [root kustomization](../../../gitops/apps/root/kustomization.yaml) | Root → platform Applications / workload ApplicationSet의 정적 구조이며 live reconciliation 증거가 아님 |
 | Local runtime and namespace policy | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml), [namespace declarations](../../../gitops/platform/namespaces/) | 저장소가 소유·정적으로 검증한 workload에만 enforce; chart/injection 불확실성은 audit/warn |
 | Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | Registry가 lane/argv owner; labels/CODEOWNERS native projections와의 parity는 Spec 0048의 미완료 범위 |
-| Platform verification | [static contract checks](../../../infrastructure/tests/verify-contracts-static.sh), [validators](../../../scripts/) | syntax → render → schema/policy → product semantic → live observation을 분리; 실제 root 수와 도구는 실행 source에서 도출 |
+| Platform verification | [static contract checks](../../../scripts/validate-infrastructure-contracts.sh), [validators](../../../scripts/) | syntax → render → schema/policy → product semantic → live observation을 분리; 실제 root 수와 도구는 실행 source에서 도출 |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep의 format/validate/lint/build; provider credential, apply 또는 deploy는 별도 승인 범위 |
 | Local browser/service transport | [Traefik](../../../traefik/), [external service interfaces](../../../gitops/platform/external-services/) | 실제 reference와 local-only transport 예외를 검사하고 예외를 일반 보안 허용으로 확대하지 않음 |
 
@@ -117,7 +117,7 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
   - Bootstrap installs the initial ArgoCD boundary.
   - Steady-state changes flow through Git and ArgoCD reconciliation.
 - **Operational Evidence**:
-  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-infrastructure-contracts.sh`
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
 

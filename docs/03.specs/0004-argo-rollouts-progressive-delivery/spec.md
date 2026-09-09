@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0004"
 ---
@@ -27,7 +27,7 @@ evidence.
 
 | Area | Current implementation evidence | Verification boundary |
 | --- | --- | --- |
-| Rollouts platform install | `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/platform/namespaces/namespace-argo-rollouts.yaml` | `bash scripts/validate-gitops-structure.sh`, `bash infrastructure/tests/verify-contracts-static.sh` |
+| Rollouts platform install | `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/platform/namespaces/namespace-argo-rollouts.yaml` | `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-infrastructure-contracts.sh` |
 | Dashboard/TLS route | `gitops/apps/root/platform-rollouts-app.yaml`, `traefik/rollouts-k3d.yaml` | static manifest validation; live HTTPS evidence through operations runbook |
 | AppProject permissions | `gitops/clusters/local/appproject-platform.yaml`, `gitops/clusters/local/appproject-apps.yaml` | `verify-contracts-static.sh` Rollout/Analysis allow-list checks |
 | Metrics exposure | `gitops/platform/monitoring/metrics-nodeports.yaml` | `verify-contracts-static.sh` NodePort contract checks |
@@ -176,7 +176,7 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 ```bash
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
-bash infrastructure/tests/verify-contracts-static.sh
+bash scripts/validate-infrastructure-contracts.sh
 kubectl -n argo-rollouts get pods
 kubectl argo rollouts list rollouts --all-namespaces
 curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
@@ -197,7 +197,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0001-FR-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-001 | `scripts/validate-gitops-structure.sh` confirms the root-owned `platform-rollouts` Application. |
-| [REQ-0001-FR-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` checks the chart repository, namespace, and platform AppProject contract. |
+| [REQ-0001-FR-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-002 | `scripts/validate-infrastructure-contracts.sh` checks the chart repository, namespace, and platform AppProject contract. |
 | [REQ-0001-IF-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-003 | Static AppProject checks confirm the required `argoproj.io` Rollout and Analysis resource allow-list. |
 | [REQ-0001-FR-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-004 | Manifest validation checks the Dashboard ingress host and cert-manager TLS contract; the runbook owns live HTTPS evidence. |
 | [REQ-0001-FR-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-005 | Static contract verification checks controller metrics port and NodePort exposure for external Prometheus. |

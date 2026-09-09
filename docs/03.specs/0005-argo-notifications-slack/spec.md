@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0005"
 ---
@@ -125,7 +125,7 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 
 ### Tools & Tool Contract
 
-- **Tool List**: `rg`, `bash scripts/check-secret-handling.sh .`, `bash infrastructure/tests/verify-contracts-static.sh`, runtime `kubectl` checks for human/operator use.
+- **Tool List**: `rg`, `bash scripts/check-secret-handling.sh .`, `bash scripts/validate-infrastructure-contracts.sh`, runtime `kubectl` checks for human/operator use.
 - **Permission Boundary**: no Vault writes, Slack token reads, or live notification tests without explicit approval.
 - **Failure Handling**: static mismatch is fixed through PR; runtime send failures route to the runbook.
 
@@ -174,7 +174,7 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 
 ```bash
 bash scripts/check-secret-handling.sh .
-bash infrastructure/tests/verify-contracts-static.sh
+bash scripts/validate-infrastructure-contracts.sh
 kubectl -n argocd get pods | grep notification
 kubectl -n argocd get externalsecret argocd-notifications-secret
 kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -i 'slack\|error\|sent'

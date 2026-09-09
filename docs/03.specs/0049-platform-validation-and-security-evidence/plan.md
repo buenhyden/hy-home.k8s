@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Implementation Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0049-PLAN-0001"
 ---
@@ -420,7 +420,7 @@ copied.
   rtk python3 scripts/validate-traefik-contracts.py --root . --self-test
   rtk python3 scripts/validate-traefik-contracts.py --root .
   rtk python3 -m unittest discover -s tests -p 'test_*.py'
-  rtk bash infrastructure/tests/verify-contracts-static.sh
+  rtk bash scripts/validate-infrastructure-contracts.sh
   rtk bash scripts/validate-repo-quality-gates.sh .
   rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict

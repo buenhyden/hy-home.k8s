@@ -1,10 +1,10 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Implementation Plan"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0062-PLAN-0001"
 ---
@@ -1443,7 +1443,7 @@ of this recovery.
     --root . --baseline "$WRFR_SDD/baseline.json" \
     --allocation "$WRFR_SDD/allocation.json" --workstream platform-security
   bash scripts/validate-gitops-structure.sh
-  bash infrastructure/tests/verify-contracts-static.sh
+  bash scripts/validate-infrastructure-contracts.sh
   bash scripts/validate-k8s-manifests.sh .
   python3 scripts/validate-vault-eso-contracts.py --root .
   bash scripts/check-secret-handling.sh .

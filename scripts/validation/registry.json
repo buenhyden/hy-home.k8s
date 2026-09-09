@@ -237,7 +237,7 @@
       "id": "infrastructure-contracts",
       "argv": [
         "bash",
-        "infrastructure/tests/verify-contracts-static.sh"
+        "scripts/validate-infrastructure-contracts.sh"
       ],
       "lanes": [
         "affected",
