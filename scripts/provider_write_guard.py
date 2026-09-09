@@ -42,8 +42,12 @@ PATCH_HEADERS = (
 )
 GIT_TIMEOUT_SECONDS = 5
 # The guard runs inside a pre-action hook whose own registration allows ten
-# seconds, so the selector must not be able to outlive that window.
-SELECTOR_TIMEOUT_SECONDS = 60
+# seconds, so the selector must not be able to outlive that window. A bound
+# above that window is never reached: the runtime kills the hook first and the
+# guard loses the controlled rejection this constant exists to produce. The
+# selector reads the routing registry and classifies the edited paths, which
+# stays far below this bound even when handed the whole tracked tree.
+SELECTOR_TIMEOUT_SECONDS = 5
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
 project_dir: str = ""
@@ -570,9 +574,12 @@ def run_surface_selector(resolved_root: str) -> bool:
     return completed.returncode == 0
 
 
-def read_payload() -> str:
+def read_payload(provider: str) -> str:
     raw = sys.stdin.read()
-    if not raw:
+    if not raw and provider == "claude":
+        # Only the Claude runtime sets this variable. Reading it under another
+        # provider would let an unrelated exported value reach the evaluated
+        # payload, so the fallback stays bound to the adapter that names it.
         raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
     return raw
 
@@ -585,15 +592,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project-dir", default="")
     arguments = parser.parse_args(argv)
 
+    claude = arguments.provider == "claude"
     project_dir = (
-        arguments.project_dir or os.environ.get("CLAUDE_PROJECT_DIR", "")
+        arguments.project_dir
+        or (os.environ.get("CLAUDE_PROJECT_DIR", "") if claude else "")
     ).rstrip("/")
     if not project_dir:
         project_dir = (
             git_value(os.getcwd(), "--show-toplevel").rstrip("/") or os.getcwd()
         )
 
-    raw = read_payload()
+    raw = read_payload(arguments.provider)
     try:
         data = json.loads(raw) if raw else {}
     except (TypeError, json.JSONDecodeError):
@@ -614,7 +623,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     shell_targets = [] if patched else collect_shell_targets(command)
 
-    environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
+    environment_path = (
+        os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "") if claude else ""
+    )
     if environment_path:
         add_path(environment_path)
     if len(absolute_roots) > 1:

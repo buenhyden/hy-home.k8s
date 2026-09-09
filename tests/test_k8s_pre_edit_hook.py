@@ -731,5 +731,86 @@ class CodexPayloadTests(unittest.TestCase):
         self.assertNotEqual(result.stderr.strip(), "")
 
 
+class ProviderScopedEnvironmentTests(unittest.TestCase):
+    """The named provider selects which runtime variables the guard may read."""
+
+    def run_guard(self, provider: str, payload: str, environment: dict):
+        env = {
+            key: value
+            for key, value in os.environ.items()
+            if key
+            not in (
+                "CLAUDE_PROJECT_DIR",
+                "CLAUDE_TOOL_INPUT",
+                "CLAUDE_TOOL_INPUT_FILE_PATH",
+            )
+        }
+        env.update(environment)
+        return subprocess.run(
+            (
+                "python3",
+                str(GUARD_PATH),
+                "--provider",
+                provider,
+                "--project-dir",
+                str(ROOT),
+            ),
+            input=payload,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=str(ROOT),
+            timeout=300,
+        )
+
+    def test_claude_payload_variable_is_read_only_for_claude(self):
+        retired = (
+            '{"tool_input":{"file_path":"docs/00.agent-governance/x.md"}}'
+        )
+
+        claude = self.run_guard("claude", "", {"CLAUDE_TOOL_INPUT": retired})
+        codex = self.run_guard("codex", "", {"CLAUDE_TOOL_INPUT": retired})
+
+        self.assertEqual(claude.returncode, 2)
+        self.assertIn("HOOK-PATH-RETIRED", claude.stderr)
+        self.assertEqual(codex.returncode, 0)
+
+    def test_claude_path_variable_is_read_only_for_claude(self):
+        outside = {"CLAUDE_TOOL_INPUT_FILE_PATH": "/etc/passwd"}
+
+        claude = self.run_guard("claude", "{}", outside)
+        codex = self.run_guard("codex", "{}", outside)
+
+        self.assertEqual(claude.returncode, 2)
+        self.assertNotEqual(claude.stderr.strip(), "")
+        self.assertEqual(codex.returncode, 0)
+
+    def test_selector_bound_stays_inside_every_registered_hook_timeout(self):
+        guard_source = GUARD_PATH.read_text(encoding="utf-8")
+        namespace: dict = {}
+        for line in guard_source.splitlines():
+            if line.startswith("SELECTOR_TIMEOUT_SECONDS ="):
+                exec(line, namespace)  # noqa: S102 - one reviewed constant line
+        bound = namespace["SELECTOR_TIMEOUT_SECONDS"]
+
+        registrations = []
+        claude_settings = json.loads(
+            (ROOT / ".claude/settings.json").read_text(encoding="utf-8")
+        )
+        for matcher in claude_settings["hooks"]["PreToolUse"]:
+            registrations.extend(hook["timeout"] for hook in matcher["hooks"])
+        codex_registration = json.loads(
+            CODEX_REGISTRATION_PATH.read_text(encoding="utf-8")
+        )
+        for matcher in codex_registration["hooks"]["PreToolUse"]:
+            registrations.extend(hook["timeout"] for hook in matcher["hooks"])
+
+        self.assertTrue(registrations)
+        for timeout in registrations:
+            # A bound above the registration is never reached: the runtime
+            # kills the hook first and the controlled rejection is lost.
+            self.assertLessEqual(bound, timeout)
+
+
 if __name__ == "__main__":
     unittest.main()
