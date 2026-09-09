@@ -1,8 +1,8 @@
 ---
 title: "Close the Documentation Entry Point and the Gaps It Exposed"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-09"
 layer: "specs"
@@ -20,9 +20,9 @@ This Task also records the per-gate timing that
 [SPEC-0072-TSK-0001](tsk-0001-consolidate-governance-and-quality-gates.md)
 left as a `DEFER`; it neither reopens nor completes that Task's native stream.
 
-The lifecycle domain owns creation, so this record is committed at the
-zero-indegree `queued` state and transitions once the final full-profile
-result is recorded. The work items below already carry their focused
+The lifecycle domain owns creation, so this record opened at the
+zero-indegree `queued` state and moves through `in-progress` while the units
+run; it reaches `done` once the final full-profile result is recorded. The work items below already carry their focused
 evidence and implementation commits.
 
 ## Inputs
