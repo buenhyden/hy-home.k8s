@@ -7,6 +7,7 @@ import os
 import re
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 import unittest
@@ -66,9 +67,9 @@ if stdout_target is not None and stdout_target.is_relative_to(tmpdir):
         sys.exit(int(os.environ["STUB_FAIL_STATUS"]))
 
 if os.environ.get("STUB_MODE") == "block" and tool == "kubectl" and "version" in args:
-    Path(os.environ["STUB_READY"]).touch()
     signal.signal(signal.SIGINT, lambda *_: sys.exit(130))
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
+    Path(os.environ["STUB_READY"]).touch()
     while True:
         time.sleep(1)
 
@@ -140,6 +141,12 @@ FAILURES = {
     "verify-external-services.sh": ("rg", "missing postgres-write-external"),
     "verify-ingress-tls.sh": ("curl", "https fallback endpoint is not reachable"),
 }
+
+SIGNAL_CHILD_LAUNCHER = (
+    "import os, signal, sys; "
+    "signal.pthread_sigmask(signal.SIG_UNBLOCK, (signal.SIGINT, signal.SIGTERM)); "
+    "os.execv(sys.argv[1], sys.argv[1:])"
+)
 
 
 class InfrastructureTemporaryFileTests(unittest.TestCase):
@@ -339,7 +346,14 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
                     log = self.root / f"signal-{script.stem}-{sent_signal.name}.log"
                     ready = self.root / f"ready-{script.stem}-{sent_signal.name}"
                     process = subprocess.Popen(
-                        ["/usr/bin/bash", str(script)],
+                        [
+                            sys.executable,
+                            "-I",
+                            "-c",
+                            SIGNAL_CHILD_LAUNCHER,
+                            "/usr/bin/bash",
+                            str(script),
+                        ],
                         cwd=ROOT,
                         env=self.environment(
                             tmpdir,
