@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # chained-hook.sh — run both the user's global Git hook and this workspace's.
 #
+# Each entry in this directory names its hook and forwards the payload here.
 # Git honours exactly one hook directory. A user-global `core.hooksPath` makes
 # every repository's own `.git/hooks` unreachable, so a workspace that installs
 # hooks through pre-commit silently loses them: here that removed the commit
@@ -18,7 +19,8 @@
 # Neither is selected by anything a commit under review can write.
 set -euo pipefail
 
-HOOK_NAME="$(basename "$0")"
+HOOK_NAME="$1"
+shift
 REPOSITORY_ROOT="$(git rev-parse --show-toplevel)"
 GIT_COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
 

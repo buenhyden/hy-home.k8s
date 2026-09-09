@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -65,10 +65,22 @@ body wrapping are guidance, not extra validator rules. Historical parsers may
 retain prior punctuation without permitting it in new messages.
 
 Full QA checks files through the manual stage and does not validate a commit
-message. Inspect only the effective `core.hooksPath` source and hook connection;
-preserve active hooks and private settings. If the same message is not checked
-by an active commit-msg hook, validate the actual UTF-8 message file in the
-pinned pre-commit environment before committing:
+message. Inspect the effective `core.hooksPath` source and hook connection, and
+preserve active hooks and private settings.
+
+Git honours one hook directory, so a user-global `core.hooksPath` makes this
+repository's own hooks unreachable and silently drops the commit-message check
+and every staged formatter. The supported repair is to widen what runs, never
+to choose one side: this repository's `core.hooksPath` points at
+`scripts/githooks`, whose entries run the user's global hook first and then the
+workspace hook, returning the first non-zero status unchanged. Enable it once
+per clone with `git config core.hooksPath scripts/githooks`; it is local
+configuration, not tracked state, so a fresh clone runs whatever the user's
+global configuration alone provides until it is set.
+
+If the same message is not checked by an active commit-msg hook, validate the
+actual UTF-8 message file in the pinned pre-commit environment before
+committing:
 
 ```bash
 pre-commit run commitizen --hook-stage commit-msg --commit-msg-filename "$MESSAGE_FILE"
@@ -78,7 +90,7 @@ Use that file for the real commit. When unrelated unstaged configuration would
 make pre-commit stash or refuse, use an isolated temporary Git repository with
 the index's Commitizen pin/configuration and the same candidate message. This
 is explicit message evidence, not proof of hook installation or delivery in
-the source repository. Never change hooksPath or bypass active hooks to pass.
+the source repository. Never change hooksPath, disable a hook, or set a skip variable in order to make a failing check pass or to leave a check unrun; widening the set of hooks that run is the only supported change.
 
 ## Validation and Refresh
 

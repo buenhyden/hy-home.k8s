@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 ---
 # scripts
 
@@ -53,6 +53,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | --- | --- |
 | `validation/registry.json` and `validation/registry.schema.json` | validator, surface, lane, argument, fallback, and CI routing contract |
 | `select-affected-surfaces.py` | pure path-to-surface selection projection |
+| `githooks/chained-hook.sh` and its `pre-commit`, `commit-msg`, `pre-push` links | run the user's global Git hook and then this workspace's, returning the first non-zero status |
 | `validate-affected-surfaces.py` | registry and tracked-path coverage validation |
 | `run-validation-lane.py` | bounded execution and result normalization for affected, staged, and all-files lanes |
 | `qa.py` | supported QA entrypoint; resolves a profile's gate IDs from the registry and runs them over an isolated final-tree or exact-index snapshot; contains no validator argv or rule implementation |

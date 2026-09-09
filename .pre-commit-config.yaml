@@ -1,5 +1,8 @@
 default_install_hook_types: [pre-commit, commit-msg]
-default_stages: [pre-commit, pre-push, manual]
+# No hook is installed at the pre-push stage and re-running the same file
+# hooks on a push would repeat the commit boundary, so the two reachable
+# stages are the staged commit boundary and the explicit manual gate.
+default_stages: [pre-commit, manual]
 
 repos:
   # --- 0. 커밋 메시지 검사 ---

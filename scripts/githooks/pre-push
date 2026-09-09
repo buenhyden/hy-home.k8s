@@ -1,1 +1,7 @@
-chained-hook.sh
+#!/usr/bin/env bash
+# pre-push — thin entry for the chained Git hook runner.
+# Git resolves one hook directory, so this entry names its hook and
+# forwards the payload; the chain itself is owned by chained-hook.sh.
+set -euo pipefail
+
+exec bash "$(dirname "$0")/chained-hook.sh" pre-push "$@"
