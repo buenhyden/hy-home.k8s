@@ -1,10 +1,10 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "2.1.0"
+version: "2.2.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 layer: "specs"
 artifact_id: "SPEC-0072"
 ---
@@ -15,12 +15,16 @@ artifact_id: "SPEC-0072"
 
 Common authority and the QA migration are complete. This specification now
 owns the approved 2026-09-08 correction of gate coverage, formatter behavior,
-commit validation, redundant execution and current guidance. The accepted
+commit validation, redundant execution and current guidance, plus the approved
+2026-09-09 local repair of evaluation-input containment, QA snapshot integrity,
+document identity, live-script temporary files and current ownership prose. The accepted
 [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
 succeeds ADR-0034/0035 for current authority. SPEC-0074 owns provider write-guard
 behavior and SPEC-0075 owns knowledge/prompt adoption; neither replaces this QA
-follow-up. The [Task](tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
-preserves completed migration evidence and the current approval boundary.
+follow-up. The [original Task](tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
+preserves completed migration and native follow-up evidence. The
+[repair Task](tasks/tsk-0002-repair-governance-and-validation-contracts.md)
+owns the new local implementation and its evidence without reopening that stream.
 
 ## Strategic Boundaries & Non-goals
 
@@ -33,6 +37,14 @@ retire obsolete instructions with their consumers and recovery evidence.
 No live infrastructure, provider, credential, release, deployment, or Argo CD
 reconciliation operation is authorized. Historical evidence is not rewritten
 to simulate a timeless repository state.
+
+The 2026-09-09 repair is local-only and authorizes only the current owners,
+implementations, focused tests and synthetic fixtures named below. It authorizes
+no file deletion, new document registry/profile/gate, native projection change,
+private configuration read, network action, push, PR, merge or branch/worktree
+cleanup. Task-owned temporary cleanup is authorized and required. The
+existing `WORK-009` native follow-up remains separate and deferred to the
+operator; this repair cannot satisfy it.
 
 ## Contracts
 
@@ -57,6 +69,24 @@ to simulate a timeless repository state.
 - **C-AGQ-008 — fail-closed summary.** Missing commands, timeouts, invalid gate
   definitions, and non-zero child results fail the selected profile and the
   required `ci-summary` check.
+- **C-AGQ-009 — contained evaluation inputs.** Evaluation registry, case,
+  response and citation reads accept only contained bounded regular files decoded as strict
+  UTF-8. Rejections identify a safe path and reason without payload content.
+- **C-AGQ-010 — exact snapshot and review subjects.** A gate that promises an
+  unchanged snapshot compares both working-tree bytes and the pre-gate index.
+  Change review accepts staged-only and unstaged differences, rejects an empty
+  or untracked-only subject, and states which diff forms were reviewed.
+- **C-AGQ-011 — path-bound document identity.** Every registered numbered
+  authored family binds its artifact ID to the path-derived family and number.
+  Current IDs are unique even for partial selected inputs; retired IDs cannot be
+  reused unless existing base, sealed-migration or tombstone provenance proves
+  the same document lineage.
+- **C-AGQ-012 — private live-script temporaries.** Each live verification run
+  creates a private per-run temporary directory and removes it on every exit
+  while preserving the command status and existing diagnostic meaning.
+- **C-AGQ-013 — source-owned current guidance.** Evaluation, formatting, Git and
+  PR prose points to its executable or configuration owner and does not copy
+  mutable inventories. A dated ADR clarification preserves historical meaning.
 
 ## Core Design
 
@@ -120,6 +150,35 @@ unless branch policy and QA have valid results.
   Escaped-process diagnostics use process name/state, never command arguments.
   Tool/cache identities and platform limits belong to measured Task evidence.
 
+### Approved governance and validation contract repairs
+
+- `scripts/run-agent-evaluations.py` reuses
+  `scripts/validation/repository/bounded_io.py` for case, response and citation
+  inputs and applies the same boundary to the agent registry input. Exactly one
+  tracked authority-negative case and synthetic response
+  demonstrate the fail-closed criterion; test module entry guards remain at EOF.
+- `scripts/qa.py` snapshots the index as content before running a gate, so a
+  modify-and-stage child cannot pass `require_unchanged_snapshot`. The
+  `change-review` prompt and `scripts/prompt-input.py` distinguish staged,
+  unstaged, empty and untracked-only inputs. Deleted-path routing fixtures remain.
+- Existing Markdown-profile, lifecycle and Archive implementations enforce
+  numbered path-to-ID binding, current uniqueness and retired-number provenance.
+  They keep existing conforming current IDs, template placeholders, tombstone
+  payloads and frozen bytes unchanged. Stage, package and Task numbers remain
+  distinct; cross-document references use the parent artifact plus an existing
+  local ID without renumbering.
+- `infrastructure/tests/verify-gitops.sh`,
+  `infrastructure/tests/verify-external-services.sh` and
+  `infrastructure/tests/verify-ingress-tls.sh` replace predictable shared `/tmp`
+  files with private per-run storage and a trap. Stubbed tests exercise status,
+  diagnostics and cleanup without invoking live commands or adding retention.
+- `.agents/README.md` routes evaluation assets to `evals/`, execution to the
+  script runner and role truth to the registry. ADR-0036 receives only a dated
+  ownership clarification. Formatting prose and comments describe editor,
+  hook, Git and pinned defaults without behavior changes. The PR template calls
+  its entries review categories and points commit syntax to `.cz.toml`; the
+  quality assertion checks that pointer instead of copying the 13 types.
+
 ## Data Modeling & Storage Strategy
 
 The common role registry keeps stable role IDs, permission classes, supported
@@ -131,6 +190,13 @@ configuration, not shared policy.
 The existing validation registry remains versioned JSON. QA profile records
 contain ordered gate IDs only. They never duplicate command arguments,
 timeouts, mutable commit SHAs, runtime observations or copied policy prose.
+
+Artifact identity is derived from the selected profile and numbered path, then
+compared across the current governed corpus. A selected-path run still loads the
+existing current identity base needed to detect collisions. Historical identity
+comes only from the existing lifecycle base and sealed migration/tombstone
+provenance; no ledger, README, registry or Spec tree is added. Recorded
+same-document lineage may retain its identity.
 
 ## Interfaces & Data Structures
 
@@ -148,6 +214,9 @@ IDs, empty command arrays, invalid limits and inadmissible evidence lanes.
 `quick` selects changed working-tree paths; staged validation reads the actual
 index in a separate snapshot without hiding staged errors behind unstaged
 repairs. NUL-delimited paths preserve deletions, renames and whitespace.
+An unchanged-snapshot gate also compares the post-gate index with the pre-gate
+index content. Prompt assembly treats staged and unstaged diffs as reviewable
+subjects and status-only untracked paths as insufficient input.
 
 ## Edge Cases & Error Handling
 
@@ -160,6 +229,13 @@ for required external evidence is DEFER and cannot satisfy overall completion.
 A provider projection may remain tracked when the provider supports that native
 format, but its common responsibility and skill meaning must resolve to `.agents/`. Historical source paths are retained as evidence
 only; they never provide an executable fallback to the removed owner.
+
+Escaping, symlinked, oversized, non-regular or non-UTF-8 evaluation inputs fail
+with stable payload-free diagnostics. A duplicated current artifact ID, a valid
+but wrong family/number ID, or retired-number reuse without accepted provenance
+fails even for partial selected inputs. Same-lineage recovery is accepted only
+through existing provenance owners. Live-script cleanup runs after success,
+command failure and signal-driven exit and returns the original status.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -177,6 +253,9 @@ static acceptance.
 
 ```bash
 python3 -m unittest tests.test_qa_runner tests.test_agent_governance
+python3 -B -m unittest tests.test_agent_evaluations tests.test_prompt_input
+python3 -B -m unittest tests.test_document_artifact_identity
+python3 -B -m unittest tests.test_infrastructure_tempfiles
 python3 scripts/qa.py --list
 python3 scripts/qa.py quick
 python3 scripts/qa.py full
@@ -205,12 +284,19 @@ this section proves provider runtime or live cluster behavior.
 | VAL-AGQ-012 | Full/ci secret scanning covers unchanged eligible snapshot files | Clean-tree canary, hidden file and stage-mode checks |
 | VAL-AGQ-013 | Environment identity and process diagnostics preserve the security boundary | Trusted resolver, bounded process state and no-cmdline tests |
 | VAL-AGQ-014 | Removed duplication preserves unique rules, failure meanings and base inputs | Independent probe tests and consumer-zero review |
+| VAL-AGQ-015 | Evaluation registry, case, response and citation inputs are contained, bounded regular strict-UTF-8 files with payload-free diagnostics | Focused path, symlink, size and one tracked authority-negative evaluation case |
+| VAL-AGQ-016 | Snapshot mutation through modify-and-stage fails, and review input semantics distinguish staged, unstaged, empty and untracked-only states | QA snapshot regression and prompt-input contract tests |
+| VAL-AGQ-017 | Every registered numbered authored family has path-bound unique current identity and retired IDs require existing provenance, including partial selected inputs | Ten-family wrong-valid-ID probes, duplicate/partial-input tests and Archive lineage regressions |
+| VAL-AGQ-018 | The three live verification scripts use private per-run temporary storage, preserve exit status and diagnostics, and always clean up | Stubbed no-live-command script tests |
+| VAL-AGQ-019 | Current evaluation, formatting, Git and PR guidance points to canonical owners without copied mutable inventories or changed native/tool behavior | Focused governance prose and repository-quality assertions |
 
 ## Traceability
 
 [Implementation Plan](plan.md) owns ordered work and
-[Task evidence](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) owns
-execution outcomes and remaining verification limits.
+[original Task evidence](tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
+owns the completed migration and unresolved native follow-up. The
+[repair Task](tasks/tsk-0002-repair-governance-and-validation-contracts.md) owns
+`WORK-010` onward and the local repair evidence.
 
 ### Lifecycle Traceability
 
@@ -230,3 +316,8 @@ execution outcomes and remaining verification limits.
 | [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-012 | Clean-tree canary, hidden file and stage-mode checks |
 | [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-013 | Trusted resolver, bounded process state and no-cmdline tests |
 | [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-014 | Independent probe tests and consumer-zero review |
+| [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-015 | Bounded-input negative tests and tracked authority-negative evaluation |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-016 | Exact-index snapshot and prompt-input state tests |
+| [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-017 | Path/identity, partial-selection and retained-provenance tests |
+| [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-018 | Stubbed private-temporary cleanup and exit-status tests |
+| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-019 | Canonical-owner prose and repository-quality tests |

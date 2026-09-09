@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.4.0"
+version: "2.5.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -18,7 +18,10 @@ executing-plans. The Task owns state and results; the ordered work below owns
 implementation and verification. The 2026-09-09 user instruction approves local
 follow-up and main integration followed by task branch/worktree cleanup only
 after the existing completion conditions are satisfied. The subsequent answer
-limits this continuation to local review without external transmission.
+limited that continuation to local review without external transmission. A
+distinct 2026-09-09 approval adds `WP-010` and
+[SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md)
+for local governance and validation contract repairs.
 
 ## Context
 
@@ -36,6 +39,10 @@ provider adapters, validation registry/runner, pre-commit/native tool config,
 independent tests, current docs and the hosted QA adapter. Preserve the shared
 full/ci gate set, required checks and domain verification boundaries.
 
+For `WP-010`, repair evaluation reads, exact QA/prompt inputs, artifact identity,
+live-script temporary files and current owner prose through existing owners.
+Keep each contract, implementation and focused regression in one logical unit.
+
 ## Non-Goals & Out-of-Scope
 
 No new registry, QA wrapper, fixture framework, policy engine, provider model
@@ -46,6 +53,9 @@ review without external transmission. Only local native discovery/trust
 metadata inspection is in scope; no Provider model call is authorized. Do not
 bypass trust or permissions or retry an unchanged failure. The earlier main
 integration and external actions remain dated evidence, not reusable authority.
+`WP-010` adds no file deletion, gate, registry, profile, form, ledger, README
+router, native projection or behavior change to pinned tools. It does not reopen
+`WORK-001` through `WORK-009` or authorize native/provider/live execution.
 
 ## Global Constraints
 
@@ -56,6 +66,12 @@ blanket restore or hook bypass. Preserve frozen recovery identities and NUL
 machine paths. Native configuration does not prove runtime delivery.
 
 ## Work Breakdown
+
+`WP-005` through `WP-009` below are the dated 2026-09-08/09 follow-up scope
+owned by `SPEC-0072-TSK-0001`; their completed local/hosted evidence is not
+re-executed by this approval. That Task's `WORK-009` native observation remains
+`In progress`/`DEFER` with the operator as next owner and is independent of
+`WP-010`.
 
 ### WP-005: Correct bounded process diagnostics
 
@@ -148,6 +164,33 @@ this package's Task. Other workflows change only for observed defects.
    verify the resulting tree and remove only this task's clean worktree and
    merged branch. Otherwise preserve both and name the remaining prerequisite.
 
+### WP-010: Repair governance and validation contracts
+
+Implement `VAL-AGQ-015` through `VAL-AGQ-019` as five disjoint ownership units.
+Each behavior-changing unit starts with a focused failing case and ends with
+focused passing checks and diagnostic review. The prose-only unit uses focused
+contract checks without manufacturing a failing test. Related contract, implementation and tests remain one
+logical boundary without a fixed commit count. A correction returns to its
+owning unit; the package-document owner coordinates Task state separately.
+
+| Unit | Cause and owned files | Focused tests and diagnostics | Commit boundary and rollback |
+| --- | --- | --- | --- |
+| WP-010A | Unsafe direct registry/case/response/citation reads in `scripts/run-agent-evaluations.py`; tests in `tests/test_agent_evaluations.py`; exactly one new pair `evals/cases/code-reviewer-unauthorized-write.json` and `evals/responses/code-reviewer-unauthorized-write.synthetic.md`; optional `evals/README.md` only for minimal safe-input contract prose. Reuse `scripts/validation/repository/bounded_io.py` read-only. | Registry and evaluation path escape, parent/leaf symlink, non-regular, oversize and strict-UTF-8 cases; tracked authority-negative expectation; diagnostics omit response/citation payloads. Move this module's `unittest.main` guard to EOF. | Keep runner, tests and the one case/response pair atomic; include the README only if its bounded input contract needs the minimal clarification, without a new ownership framework. Revert this logical unit; bounded I/O and registry contents remain unchanged. |
+| WP-010B | `scripts/qa.py` compares only source bytes, so a child can modify and stage the snapshot index; `.agents/prompts/change-review.md` treats only the unstaged diff as the subject. Own `scripts/qa.py`, `tests/test_qa_runner.py`, `.agents/prompts/change-review.md`, `scripts/prompt-input.py`, `tests/test_prompt_input.py`, `tests/test_agent_governance.py`, `tests/test_k8s_pre_edit_hook.py`, `tests/test_validate_agent_registry.py` and `tests/README.md`; update `scripts/validate-knowledge-surface.py` only if the existing prompt consumer requires the atomic contract change. | Reproduce modify-and-stage mutation; compare pre/post index content. Staged-only succeeds; unstaged-only succeeds; staged and unstaged changes that cancel in the net HEAD diff still review both; empty and untracked-only refuse. A plural subject may name existing input rows with any-nonempty semantics while singular contracts and unknown-name rejection remain unchanged. Preserve deleted-path routing fixtures. Move three test guards to EOF, remove only the duplicate hook guard, and correct deleted-module guidance. | Commit QA/prompt/test-entry changes together. Revert that commit; no registry, hook registration, deleted-path fixture, predicate DSL or prompt-ID exception is introduced. |
+| WP-010C | Current validation checks profile-shaped IDs but does not consistently bind every numbered family to its path, current corpus uniqueness or retired-number provenance. Own `scripts/validate-markdown-profiles.py`, `scripts/document_lifecycle.py`, `scripts/validate-document-lifecycle.py` and new `tests/test_document_artifact_identity.py`; use `scripts/document_contracts.py` only if the existing shared contract helper is required. | Ten-family wrong-but-pattern-valid probes, duplicate IDs including partial selected inputs, retired reuse through existing base/sealed-migration/tombstone evidence, and allowed same-document lineage. Tombstone payloads and frozen bytes remain unchanged; diagnostics distinguish stage, package and Task numbering. | Keep identity implementation and its new focused tests atomic. Revert this logical unit; do not edit Stage 99 registry/forms, Archive records or issued IDs. |
+| WP-010D | Three live scripts write predictable shared `/tmp` files. Own `infrastructure/tests/verify-gitops.sh`, `infrastructure/tests/verify-external-services.sh`, `infrastructure/tests/verify-ingress-tls.sh` and new `tests/test_infrastructure_tempfiles.py`. | Stub `kubectl`, `curl` and `rg`; run no live command. Verify private per-run mode, cleanup on success/failure, original exit status and existing diagnostics. | Commit three scripts and stubbed tests together. Revert that commit; no retention framework or live state is involved. |
+| WP-010E | Current prose blurs evaluation ownership, editor/hook defaults and PR category versus commit syntax. Own `.agents/README.md`, `docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`, `.agents/governance/formatting-and-linting.md`, `.editorconfig`, `.ruff.toml`, `RTK.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `scripts/validation/repository/quality.py`, `docs/99.templates/README.md` and `docs/99.templates/templates/README.md`; update an existing focused test owner only if implementation evidence identifies it. | Focused checks confirm evaluation routes to runner/registry/data owners, ADR clarification is dated, formatting text reflects Git/editor/hooks/pinned defaults, PR categories point to `.cz.toml`, and `quality.py` copies no 13-type list. Check Stage 99 family-versus-physical-group wording with no route/form migration. | Keep current prose and its corresponding existing assertion atomic. Revert prose without changing historical decisions, tool pins, pre-commit configuration or forms. Package Spec/Plan/Task remain with the coordinated document owner. |
+
+#### WP-010 dependency and ownership
+
+| Unit | Depends on | Exclusive write owner | Handoff evidence |
+| --- | --- | --- | --- |
+| WP-010A | Approved Spec/Plan/Task | Evaluation runner, evaluation tests and one new case/response pair | `VAL-AGQ-015` focused RED/GREEN |
+| WP-010B | Approved Spec/Plan/Task | QA runner, prompt contract/builder and named guard/README tests | `VAL-AGQ-016` focused RED/GREEN |
+| WP-010C | Approved Spec/Plan/Task | Existing Markdown-profile/lifecycle implementations and new focused identity tests | `VAL-AGQ-017` focused RED/GREEN |
+| WP-010D | Approved Spec/Plan/Task | Three live scripts and their stubbed test module | `VAL-AGQ-018` focused RED/GREEN |
+| WP-010E | WP-010A through WP-010D final behavior | Current prose/config comments and corresponding existing assertion | `VAL-AGQ-019` focused checks; package owner records final handoff |
+
 ## Verification Plan
 
 For each changed behavior, targeted RED then GREEN. During work run quick;
@@ -168,7 +211,7 @@ no absent measurement is a performance claim or PASS.
 
 | Risk | Mitigation |
 | --- | --- |
-| User work is mixed into commits | Separate worktree from observed HEAD; preserve original index |
+| User work is mixed into commits | Stay on the dedicated `codex/governance-contract-repairs` branch in the observed clean root checkout; inspect and preserve the existing index before each logical commit |
 | Security scan or formatter input shrinks | Synthetic stage/lifecycle/path tests and explicit owner review |
 | Removal loses a diagnostic | Move tests before removal; map consumers and unique domain gates |
 | Tool installation or active hooks fail | Keep changes; report exact blocker without bypass/global changes |
@@ -180,10 +223,20 @@ All applicable local acceptance passes with independent review disposition and
 logical local commits. Required failures remain incomplete. Hosted, native and
 live evidence stay separate with next owners. The inherited Task completion
 condition keeps native follow-up open even when Spec static/hosted acceptance
-and local implementation are complete; no new Spec criterion is introduced.
-The current request authorizes local integration and task-owned cleanup only
-when complete. Remote writes remain outside this continuation. The Task
-preserves the completed migration and current limits.
+and local implementation are complete; that older native scope introduces no
+criterion beyond the criteria it already owned.
+The dated TSK-0001 request authorized local integration and task-owned cleanup
+only when its own conditions were met; that authority is historical evidence,
+not permission for `WP-010`. Remote writes remained outside that continuation.
+The original Task preserves the completed migration and current limits.
+
+For `WP-010`, completion means behavior changes have targeted RED/GREEN evidence,
+the prose-only unit has focused contract checks, and all units have exact-index
+staged evidence per logical commit, normal-hook and actual
+pinned-message evidence, independent review, and one final full result. The
+initial queued Task contract is committed before its first legal status
+transition. Branch/worktree finish, remote actions and the older native
+`WORK-009` remain outside this approval.
 
 ## Traceability
 
@@ -205,3 +258,8 @@ preserves the completed migration and current limits.
 | [VAL-AGQ-012](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
 | [VAL-AGQ-013](spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
 | [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-008 | [SPEC-0072-TSK-0001](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) |
+| [VAL-AGQ-015](spec.md#success-criteria--verification-plan) | WP-010A | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
+| [VAL-AGQ-016](spec.md#success-criteria--verification-plan) | WP-010B | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
+| [VAL-AGQ-017](spec.md#success-criteria--verification-plan) | WP-010C | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
+| [VAL-AGQ-018](spec.md#success-criteria--verification-plan) | WP-010D | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
+| [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-010E | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
