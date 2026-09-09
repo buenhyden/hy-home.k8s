@@ -46,6 +46,10 @@
         "read-only-evidence": "read-only",
         "orchestration": "read-only",
         "scoped-authoring": "workspace-write"
+      },
+      "capability_reasoning": {
+        "top": "xhigh",
+        "worker": "high"
       }
     }
   ],
@@ -208,6 +212,9 @@
         "neutral": ".agents/roles/doc-writer.md",
         "claude": ".claude/agents/doc-writer.md",
         "codex": ".codex/agents/doc-writer.toml"
+      },
+      "native_reasoning_override": {
+        "codex": "medium"
       }
     },
     {
@@ -239,7 +246,11 @@
       "responsibility": "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.",
       "permission_class": "read-only-evidence",
       "native_scope_override": {
-        "claude": ["Read", "Grep", "Glob"]
+        "claude": [
+          "Read",
+          "Grep",
+          "Glob"
+        ]
       },
       "capability_tier_ref": ".agents/governance/model-selection.md#top",
       "supported_providers": [
@@ -259,6 +270,9 @@
         "neutral": ".agents/roles/incident-responder.md",
         "claude": ".claude/agents/incident-responder.md",
         "codex": ".codex/agents/incident-responder.toml"
+      },
+      "native_reasoning_override": {
+        "codex": "high"
       }
     },
     {
@@ -315,7 +329,11 @@
       "responsibility": "Review metrics, logs, alerts, dashboards, and operational observability coverage.",
       "permission_class": "read-only-evidence",
       "native_scope_override": {
-        "claude": ["Read", "Grep", "Glob"]
+        "claude": [
+          "Read",
+          "Grep",
+          "Glob"
+        ]
       },
       "capability_tier_ref": ".agents/governance/model-selection.md#worker",
       "supported_providers": [
@@ -358,6 +376,9 @@
         "neutral": ".agents/roles/security-auditor.md",
         "claude": ".claude/agents/security-auditor.md",
         "codex": ".codex/agents/security-auditor.toml"
+      },
+      "native_reasoning_override": {
+        "codex": "high"
       }
     },
     {
@@ -381,6 +402,9 @@
         "neutral": ".agents/roles/wiki-curator.md",
         "claude": ".claude/agents/wiki-curator.md",
         "codex": ".codex/agents/wiki-curator.toml"
+      },
+      "native_reasoning_override": {
+        "codex": "medium"
       }
     },
     {

@@ -249,5 +249,47 @@ class CodexSandboxScopeTests(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+class CodexReasoningBindingTests(unittest.TestCase):
+    """Every projected reasoning effort resolves from the registry."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def test_every_projection_matches_its_registry_binding(self) -> None:
+        import tomllib
+
+        mismatched = []
+        for role in self.registry["roles"]:
+            bound = self.validator._bound_reasoning(self.registry, role)
+            projection = REPOSITORY_ROOT / role["projections"]["codex"]
+            observed = tomllib.loads(projection.read_text(encoding="utf-8")).get(
+                "model_reasoning_effort"
+            )
+            if observed != bound:
+                mismatched.append((role["id"], bound, observed))
+
+        self.assertEqual(mismatched, [])
+
+    def test_a_departure_is_declared_rather_than_implied(self) -> None:
+        binding = next(
+            entry["capability_reasoning"]
+            for entry in self.registry["providers"]
+            if entry["id"] == "codex"
+        )
+        for role in self.registry["roles"]:
+            tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
+            declared = role.get("native_reasoning_override", {}).get("codex")
+            resolved = self.validator._bound_reasoning(self.registry, role)
+            with self.subTest(role=role["id"]):
+                if declared is None:
+                    self.assertEqual(resolved, binding[tier])
+                else:
+                    self.assertEqual(resolved, declared)
+
+
 if __name__ == "__main__":
     unittest.main()

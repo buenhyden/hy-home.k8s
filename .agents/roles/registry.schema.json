@@ -99,7 +99,8 @@
         "gateway",
         "projection_root",
         "capability_models",
-        "permission_scopes"
+        "permission_scopes",
+        "capability_reasoning"
       ],
       "properties": {
         "id": {
@@ -116,6 +117,9 @@
         },
         "permission_scopes": {
           "$ref": "#/$defs/codexPermissionScopes"
+        },
+        "capability_reasoning": {
+          "$ref": "#/$defs/capabilityReasoningBinding"
         }
       }
     },
@@ -257,6 +261,9 @@
         },
         "native_scope_override": {
           "$ref": "#/$defs/nativeScopeOverride"
+        },
+        "native_reasoning_override": {
+          "$ref": "#/$defs/nativeReasoningOverride"
         }
       }
     },
@@ -347,6 +354,43 @@
         },
         "codex": {
           "$ref": "#/$defs/codexSandboxScope"
+        }
+      }
+    },
+    "codexReasoningEffort": {
+      "type": "string",
+      "enum": [
+        "none",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ]
+    },
+    "capabilityReasoningBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top",
+        "worker"
+      ],
+      "properties": {
+        "top": {
+          "$ref": "#/$defs/codexReasoningEffort"
+        },
+        "worker": {
+          "$ref": "#/$defs/codexReasoningEffort"
+        }
+      }
+    },
+    "nativeReasoningOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "codex": {
+          "$ref": "#/$defs/codexReasoningEffort"
         }
       }
     }

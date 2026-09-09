@@ -825,6 +825,25 @@ def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
         _read_regular_file(root, script, code="AGENT-NATIVE-HOOK")
 
 
+def _bound_reasoning(registry: dict[str, Any], role: dict[str, Any]) -> Any:
+    """Resolve one role's native reasoning effort from the registry.
+
+    A capability tier binds the effort for every role that carries it, the same
+    way the tier binds the model. A role whose effort genuinely differs declares
+    the exception as data, so no projection can hold an unowned value.
+    """
+
+    binding = next(
+        entry.get("capability_reasoning", {})
+        for entry in registry["providers"]
+        if entry["id"] == "codex"
+    )
+    override = role.get("native_reasoning_override", {}).get("codex")
+    if override is not None:
+        return override
+    return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
+
+
 def _bound_scope(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
     """Resolve one role's native execution scope from the registry.
 
@@ -954,6 +973,13 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                         "AGENT-NATIVE-METADATA",
                         f"{role['id']}: model must equal the registry binding "
                         f"{bound_model!r} for tier {capability_tier}",
+                    )
+                bound_reasoning = _bound_reasoning(registry, role)
+                if metadata.get("model_reasoning_effort") != bound_reasoning:
+                    fail(
+                        "AGENT-NATIVE-METADATA",
+                        f"{role['id']}: model_reasoning_effort must equal the "
+                        f"registry binding {bound_reasoning!r}",
                     )
                 if (
                     not isinstance(metadata.get("model"), str)
