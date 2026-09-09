@@ -257,6 +257,22 @@ def validator_script_paths(
     )
 
 
+def profile_gate_ids(contract: Mapping[str, Any], profile: str) -> list[str]:
+    """Return one profile's gate list, resolving an alias to the profile it names.
+
+    A profile that runs exactly the gates of another one records that in
+    `profileAliases` instead of repeating the array, so the two cannot drift
+    apart and no test is needed to hold them in agreement. Callers name a
+    profile and never have to know which of the two forms carries it."""
+    profiles = contract["profiles"]
+    if profile in profiles:
+        return list(profiles[profile])
+    target = contract.get("profileAliases", {}).get(profile)
+    if target not in profiles:
+        fail("SURFACE-PROFILE-ALIAS", f"{profile} names no profile")
+    return list(profiles[target])
+
+
 def validate_contract(
     root: Path,
     raw_contract: dict[str, Any] | None = None,
@@ -365,10 +381,15 @@ def validate_contract(
     for profile, identifiers in profiles.items():
         if any(identifier not in validators for identifier in identifiers):
             fail("SURFACE-PROFILE-REFERENCE", profile)
-    if profiles["full"] != profiles["ci"] or set(profiles["full"]) != set(validators):
+    # The schema owns which names may be an alias and forbids a profile of the
+    # same name, so only the target needs checking here.
+    for alias, target in contract.get("profileAliases", {}).items():
+        if target not in profiles:
+            fail("SURFACE-PROFILE-ALIAS", f"{alias} resolves to no profile: {target}")
+    if set(profile_gate_ids(contract, "full")) != set(validators):
         fail(
             "SURFACE-PROFILE-COVERAGE",
-            "full and ci must cover every gate in the same order",
+            "the pre-handoff profile must cover every registered gate",
         )
     return contract
 

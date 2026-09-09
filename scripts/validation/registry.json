@@ -1182,30 +1182,9 @@
       "unit-tests",
       "pre-commit",
       "agent-evaluation-cases"
-    ],
-    "ci": [
-      "affected-surface-contract",
-      "archive-cutover",
-      "agent-governance",
-      "ci-python-contract",
-      "github-actions-security",
-      "document-contract-registry",
-      "document-lifecycle",
-      "gitops-change-set",
-      "gitops-structure",
-      "infrastructure-contracts",
-      "k8s-manifests",
-      "knowledge-surface",
-      "links-and-owners",
-      "markdown-profiles",
-      "policy-gates",
-      "repository-quality",
-      "workspace-boundary",
-      "secret-handling",
-      "vault-eso-contracts",
-      "unit-tests",
-      "pre-commit",
-      "agent-evaluation-cases"
     ]
+  },
+  "profileAliases": {
+    "ci": "full"
   }
 }

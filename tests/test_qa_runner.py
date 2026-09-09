@@ -572,9 +572,8 @@ class QaTests(unittest.TestCase):
         self.git("commit", "-qam", "next")
         self.assertEqual(self.qa.base_revision(self.root, "ci", ""), parent)
 
-    def test_profiles_are_complete_equal_and_deduplicated(self):
+    def test_profiles_are_complete_and_deduplicated(self):
         contract = self.qa.contract_module.validate_contract(ROOT)
-        self.assertEqual(contract["profiles"]["full"], contract["profiles"]["ci"])
         ids = contract["profiles"]["full"]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {r["id"] for r in contract["validators"]})

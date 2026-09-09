@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -72,35 +73,39 @@ class ValidationProfileTests(unittest.TestCase):
             self.contract["profiles"]["quick"], self.contract["profiles"]["staged"]
         )
 
-    def test_full_and_ci_keep_the_same_unique_gate_set(self):
-        expected = {
-            "affected-surface-contract",
-            "archive-cutover",
-            "agent-evaluation-cases",
-            "agent-governance",
-            "ci-python-contract",
-            "github-actions-security",
-            "document-contract-registry",
-            "document-lifecycle",
-            "gitops-change-set",
-            "gitops-structure",
-            "infrastructure-contracts",
-            "k8s-manifests",
-            "knowledge-surface",
-            "links-and-owners",
-            "markdown-profiles",
-            "policy-gates",
-            "repository-quality",
-            "workspace-boundary",
-            "secret-handling",
-            "vault-eso-contracts",
-            "unit-tests",
-            "pre-commit",
-        }
-        full = self.contract["profiles"]["full"]
-        self.assertEqual(full, self.contract["profiles"]["ci"])
-        self.assertEqual(len(full), len(expected))
-        self.assertEqual(set(full), expected)
+    def test_the_hosted_profile_resolves_rather_than_repeats_the_gate_list(self):
+        """One profile owns the hosted gate set; the other resolves from it.
+
+        Membership itself is checked once, by the QA runner suite. What belongs
+        here is that the second name reaches that one owner instead of carrying
+        a copy a test would then have to hold in agreement."""
+
+        self.assertNotIn("ci", self.contract["profiles"])
+        self.assertEqual(
+            ROUTES.profile_gate_ids(self.contract, "ci"),
+            ROUTES.profile_gate_ids(self.contract, "full"),
+        )
+
+    def test_a_repeated_gate_array_cannot_return_under_an_alias_name(self):
+        """The contract, not a test, is what keeps the second copy out."""
+
+        restored = copy.deepcopy(self.contract)
+        restored["profiles"]["ci"] = restored["profiles"]["full"]
+        with self.assertRaises(ROUTES.ContractError) as raised:
+            ROUTES.validate_contract(ROOT, restored)
+        self.assertEqual(raised.exception.code, "SURFACE-SCHEMA")
+
+    def test_an_alias_that_resolves_to_nothing_is_a_named_failure(self):
+        """A dangling alias must diagnose itself, never raise a bare KeyError."""
+
+        dangling = copy.deepcopy(self.contract)
+        dangling["profileAliases"]["ci"] = "no-such-profile"
+        with self.assertRaises(ROUTES.ContractError) as raised:
+            ROUTES.validate_contract(ROOT, dangling)
+        self.assertEqual(raised.exception.code, "SURFACE-PROFILE-ALIAS")
+        with self.assertRaises(ROUTES.ContractError) as unknown:
+            ROUTES.profile_gate_ids(self.contract, "no-such-profile")
+        self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
     def test_every_tested_repository_validator_runs_in_a_profile(self):
         """A validator with its own test module must be reachable from a profile."""

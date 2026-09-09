@@ -14,7 +14,8 @@
     "validators",
     "ciJobs",
     "surfaces",
-    "profiles"
+    "profiles",
+    "profileAliases"
   ],
   "properties": {
     "$schema": {
@@ -104,8 +105,7 @@
       "required": [
         "quick",
         "staged",
-        "full",
-        "ci"
+        "full"
       ],
       "properties": {
         "quick": {
@@ -131,14 +131,19 @@
           "items": {
             "$ref": "#/$defs/identifier"
           }
-        },
+        }
+      }
+    },
+    "profileAliases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ci"
+      ],
+      "properties": {
         "ci": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
+          "type": "string",
+          "minLength": 1
         }
       }
     }

@@ -29,6 +29,9 @@ from validation.repository.bounded_io import (  # noqa: E402
 
 # Match the existing governance candidate reader's per-file bound. Git indexes
 # contain the whole path table and receive a separate finite metadata allowance.
+# Every profile a caller may name, including one the contract carries as an
+# alias rather than as its own gate array.
+PROFILES = ("quick", "staged", "full", "ci")
 SNAPSHOT_FILE_LIMIT_BYTES = 8 * 1024 * 1024
 GIT_INDEX_LIMIT_BYTES = 16 * 1024 * 1024
 
@@ -329,7 +332,7 @@ def changed_paths(root: Path, *, staged: bool) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("profile", nargs="?", choices=("quick", "staged", "full", "ci"))
+    parser.add_argument("profile", nargs="?", choices=PROFILES)
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--base-ref")
     parser.add_argument(
@@ -342,7 +345,8 @@ def main() -> int:
     try:
         if args.list:
             contract = contract_module.validate_contract(root)
-            for profile, identifiers in contract["profiles"].items():
+            for profile in PROFILES:
+                identifiers = contract_module.profile_gate_ids(contract, profile)
                 print(profile + ": " + ", ".join(identifiers))
             return 0
         baseline = base_revision(root, args.profile, args.base_ref)
@@ -362,7 +366,7 @@ def main() -> int:
             if paths is None:
                 paths = source_paths(snapshot)
             selected = contract_module.select_paths(contract, paths, lane, snapshot)
-            ids = contract["profiles"][args.profile]
+            ids = contract_module.profile_gate_ids(contract, args.profile)
             if args.profile in ("quick", "staged"):
                 ids = [
                     identifier
