@@ -36,44 +36,7 @@ from scripts.archive_validation import (  # noqa: E402
     validate_archive_records,
     validate_current_archive_authority,
 )
-
-
-class GitFixture:
-    """Create a bounded source-history fixture without production corpus reads."""
-
-    def __init__(self, root: Path) -> None:
-        self.root = root
-        self.run("init", "--quiet")
-        self.run("config", "user.email", "archive-validator@example.invalid")
-        self.run("config", "user.name", "Archive Validator")
-
-    def run(self, *args: str) -> bytes:
-        completed = subprocess.run(
-            ["git", *args],
-            cwd=self.root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=False,
-        )
-        if completed.returncode != 0:
-            raise AssertionError(
-                f"fixture Git command failed: {completed.stderr.decode(errors='replace')}"
-            )
-        return completed.stdout
-
-    def commit_many(self, files: dict[str, bytes]) -> tuple[str, dict[str, str]]:
-        for relative_path, payload in files.items():
-            destination = self.root / relative_path
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(payload)
-        self.run("--literal-pathspecs", "add", "--", *files)
-        self.run("commit", "--quiet", "-m", "source fixture")
-        commit = self.run("rev-parse", "HEAD").decode("ascii").strip()
-        blobs = {
-            path: self.run("rev-parse", f"HEAD:{path}").decode("ascii").strip()
-            for path in files
-        }
-        return commit, blobs
+from tests.git_fixture import GitFixture  # noqa: E402
 
 
 def _migration_declared_paths(root: Path) -> set[str]:

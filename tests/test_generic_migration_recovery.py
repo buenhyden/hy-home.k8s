@@ -18,7 +18,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts import archive_recovery as recovery, archive_validation as archive  # noqa: E402
-from tests.test_archive_recovery import GitFixture  # noqa: E402
+from tests.git_fixture import GitFixture  # noqa: E402
 
 
 class GenericMigrationRecoveryTest(unittest.TestCase):

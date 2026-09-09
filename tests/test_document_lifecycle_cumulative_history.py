@@ -13,7 +13,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path, PurePosixPath
 from unittest import mock
 
-from tests.test_archive_recovery import GitFixture
+from tests.git_fixture import GitFixture
 
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -1,6 +1,6 @@
 ---
 title: "tests"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -55,6 +55,19 @@ credentials, deployment, remote state, 또는 live cluster readiness를 주장�
 | Agent governance | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_delegated_execution_ownership.py`, `test_agent_evaluations.py` |
 | CI, GitOps, Vault, and workspace | `test_validate_ci_python_contract.py`, `test_validate_github_actions_security.py`, `test_validate_gitops_change_set.py`, `test_validate_vault_eso_contracts.py`, `test_workspace_boundary.py` |
 | Hook boundaries | `test_k8s_pre_edit_hook.py` |
+
+### Shared helper modules
+
+| Module | Responsibility |
+| --- | --- |
+| `git_fixture.py` | Build exact Git objects in a temporary root for archive and lifecycle regressions |
+| `affected_surface_mutations.py` | Routing mutation cases for affected-surface selection |
+| `gitops_change_set_cases.py` | Change-set cases for GitOps diff rendering |
+| `vault_eso_contract_cases.py` | Vault/ESO contract and security cases |
+
+A helper module holds shared input or construction only. Importing a test
+module for its helper would re-run that module's own tests, so a helper that
+more than one suite needs lives here instead.
 
 ### Fixture families
 
