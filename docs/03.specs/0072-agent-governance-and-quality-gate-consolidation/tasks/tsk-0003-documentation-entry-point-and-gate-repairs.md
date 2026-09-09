@@ -1,8 +1,8 @@
 ---
 title: "Close the Documentation Entry Point and the Gaps It Exposed"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-09"
 layer: "specs"
@@ -21,9 +21,10 @@ This Task also records the per-gate timing that
 left as a `DEFER`; it neither reopens nor completes that Task's native stream.
 
 The lifecycle domain owns creation, so this record opened at the
-zero-indegree `queued` state and moves through `in-progress` while the units
-run; it reaches `done` once the final full-profile result is recorded. The work items below already carry their focused
-evidence and implementation commits.
+zero-indegree `queued` state, passed through `in-progress`, and reaches
+`done` here on the recorded final full-profile result. Four further units
+were approved after the record opened, so the table below carries nine, not
+five; each carries its own focused evidence and implementation commit.
 
 ## Inputs
 
@@ -49,6 +50,10 @@ evidence and implementation commits.
 | WORK-020 | VAL-AGQ-003        | Instrument per-gate timing and record the full profile baseline the prior Task deferred                                        | platform | Done   | PASS: two instrumented full runs on the same warm cache                 | Recorded below; cold-cache comparison remains `DEFER`                                 |
 | WORK-021 | VAL-AGQ-002 | Give the Codex reasoning effort a registry owner and declare every departure as data | platform | Done | PASS: focused RED/GREEN and 18 registry tests | Binding `{top: xhigh, worker: high}` with four declared overrides; no observed value changed |
 | WORK-022 | VAL-AGQ-019 | Close the remaining current-guidance gaps the review surfaced | platform | Done | PASS: focused governance and quality checks | Supported-version claim, Codex prompt-projection gap, and CI lock refresh ownership |
+| WORK-023 | VAL-AGQ-009 | Run the user's global Git hook and this repository's workspace hook in one stated order instead of losing one to `core.hooksPath` | platform | Done | PASS: the commit-msg check and the staged formatters run again | `b73032a2`, `ffc83017`; a user-global `core.hooksPath` had made this repository's own hooks unreachable |
+| WORK-024 | VAL-AGQ-019 | Return the agent rules that `docs/05.operations` restated to their `.agents/` owners | platform | Done | PASS: focused governance and cross-document checks | `6fd374e0`; the survey found no operations document that belongs under `.agents/`, `.claude/` or `.codex/` |
+| WORK-025 | VAL-AGQ-019 | Separate the static infrastructure contract check from the live verification scripts and give each its owning tree | platform | Done | PASS: repository-quality, affected-surface and infrastructure gates | `45beb759`; `verify-contracts-static.sh` became `scripts/validate-infrastructure-contracts.sh` and seven live scripts moved to `infrastructure/verify/` |
+| WORK-026 | VAL-AGQ-019 | Describe this repository's own branch protection and route `.github/rulesets/*.md` to a document profile in the same change | platform | Done | PASS: final full profile, 22 of 22 gates | `9f039154`; the tracked note had described the sibling `hy-home.docker` workspace |
 
 ## Approval and Safety Boundaries
 
@@ -97,16 +102,22 @@ pre-commit cache, one process, gates executed sequentially by the runner.
 Times are the elapsed interval between consecutive result lines, so each
 value includes that gate's process start and teardown.
 
-| Gate                                  | Baseline `80a0ce68` | After `c9f5cd29`                    |
-| ------------------------------------- | ------------------- | ----------------------------------- |
-| unit-tests                            | 753.4 s             | recorded in the final handoff below |
-| document-lifecycle                    | 107.6 s             | recorded in the final handoff below |
-| links-and-owners                      | 88.1 s              | recorded in the final handoff below |
-| agent-governance                      | 43.0 s              | recorded in the final handoff below |
-| pre-commit                            | 32.4 s              | recorded in the final handoff below |
-| archive-cutover                       | 12.7 s              | recorded in the final handoff below |
-| the remaining fifteen gates, combined | under 15 s          | recorded in the final handoff below |
-| **profile total**                     | **1051.2 s**        | recorded in the final handoff below |
+| Gate                                  | Baseline `80a0ce68` | Final tree `9f039154` |
+| ------------------------------------- | ------------------- | --------------------- |
+| unit-tests                            | 753.4 s             | 805.2 s               |
+| document-lifecycle                    | 107.6 s             | 112.7 s               |
+| links-and-owners                      | 88.1 s              | 93.6 s                |
+| agent-governance                      | 43.0 s              | 43.8 s                |
+| pre-commit                            | 32.4 s              | 30.9 s                |
+| archive-cutover                       | 12.7 s              | 11.8 s                |
+| the remaining fifteen gates, combined | under 15 s          | 12.3 s                |
+| **profile total**                     | **1051.2 s**        | **1112.0 s**          |
+
+The final run adds 60.8 s, and 51.8 s of that is the test suite: this Task
+added `tests/test_documentation_link_boundary.py` and widened the guard and
+registry regressions. The three whole-repository document gates each grew a
+few seconds against a corpus that gained one routed path. The profile start,
+1.9 s before the first gate, is counted in the total but in no gate row.
 
 Four gates hold roughly ninety-five per cent of everything except the test
 suite, and the suite itself holds about seventy per cent of the profile. The
@@ -125,7 +136,7 @@ bound the gate ranking rather than establish a precise absolute cost.
 
 | Lane                    | Result                      | Basis                                                                                                                  |
 | ----------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Repository-static local | See the final handoff below | Instrumented `full` on the final tree                                                                                  |
+| Repository-static local | PASS                        | Instrumented `python3 scripts/qa.py full` on `9f039154`: 22 of 22 gates PASS, no SKIP or DEFER, exit 0 in 1112.0 s     |
 | Hosted CI               | `DEFER`                     | No authorized remote execution for this branch; the baseline hosted run belongs to a different commit                  |
 | Provider native runtime | `DEFER`                     | Guard changes are covered by static regressions; hook delivery, discovery and model resolution need a separate session |
 | Live and cross-platform | `DEFER`                     | No live invocation and no untested-platform guarantee                                                                  |
@@ -142,7 +153,8 @@ bound the gate ranking rather than establish a precise absolute cost.
 | `greetings.yml` job permissions | No change | The job omits `contents: read`, which withholds rather than grants. Adding it would widen the token. |
 | `DEBT_PATH` naming a `tests/fixtures` path | No change | The path is asserted absent as a retired-source denylist entry, the same shape as the other retired paths; nothing is read as runtime input. |
 | Brittle corpus-count and pinned-SHA assertions in the suite | Recorded, not changed | Roughly thirty assertions pin counts or commit identifiers against the repository's own test guidance. Changing them is a suite-wide contract decision with its own review, not a side effect of this scope. |
-| `scripts/validate-infrastructure-contracts.sh` classified as a validator under a `tests/` path | Recorded, not moved | Moving it touches the execution registry argv, the shell hook selectors and two READMEs; it is a separate reviewable change. |
+| `scripts/validate-infrastructure-contracts.sh` classified as a validator under a `tests/` path | Closed by `WORK-025` | The separate change was approved and made: the static check moved to `scripts/` under its validator name and the seven live scripts moved to `infrastructure/verify/`, with the registry argv, the selectors, the fixtures and seventeen documents updated with it. |
+| `infrastructure/vault/policies` and `policy/` as one folder | Reviewed, not merged | They are different systems with different languages, evaluators and change reasons: HCL read by Vault against a path hierarchy, and Rego read by the policy gate against manifests. `eso-read.hcl` is pinned by path in the validation registry. Merging them would create one folder with two unrelated contracts. |
 | Two remaining test-module-as-library imports | Recorded, not changed | `load_validator` and one validator handle are single definitions imported by one consumer each, not duplicated definitions. |
 
 ## Traceability
@@ -166,3 +178,7 @@ completed `WORK-010` stream. Neither is reopened here.
 | [WORK-020](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS locally; cold-cache and hosted timing DEFER. | `VAL-AGQ-003`; two instrumented full runs on one warm cache |
 | [WORK-021](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-002`; registry binding, four declared overrides and 18 registry tests |
 | [WORK-022](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-019`; governance and repository-quality checks |
+| [WORK-023](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-009`; `b73032a2`, `ffc83017`; both hook sides observed running in order |
+| [WORK-024](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-019`; `6fd374e0`; no operations document resolved to a provider tree |
+| [WORK-025](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-019`; `45beb759`; registry argv, fixtures and seventeen documents moved with the scripts |
+| [WORK-026](../plan.md#wp-011-close-the-documentation-entry-point-and-the-gaps-it-exposed) | Done / PASS for the approved local scope. | `VAL-AGQ-019`; `9f039154`; final full profile, 22 of 22 gates, exit 0 |
