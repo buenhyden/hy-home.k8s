@@ -6,6 +6,7 @@ status: "active"
 owner: "platform"
 updated: "2026-09-09"
 ---
+
 # tests
 
 ## Overview
@@ -47,23 +48,23 @@ credentials, deployment, remote state, 또는 live cluster readiness를 주장�
 
 ### Test families
 
-| Family | Representative modules |
-| --- | --- |
-| Validation ownership and routing | `test_validation_tooling_ownership.py`, `test_affected_surface_migration.py`, `test_validate_affected_surfaces.py`, `test_run_validation_lane.py`, `test_current_executable_references.py` |
+| Family                           | Representative modules                                                                                                                                                                                                                                                                              |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validation ownership and routing | `test_validation_tooling_ownership.py`, `test_affected_surface_migration.py`, `test_validate_affected_surfaces.py`, `test_run_validation_lane.py`, `test_current_executable_references.py`                                                                                                          |
 | Document contracts and lifecycle | `test_document_strict_cutover.py`, `test_document_lifecycle_migration.py`, `test_document_lifecycle_cumulative_history.py`, `test_document_lifecycle_archive_cutover.py`, `test_document_lifecycle_agent_roster_cutover.py`, `test_reference_pack_routes.py`, `test_documentation_link_boundary.py` |
-| Archive and recovery | `test_archive_recovery.py`, `test_archive_validation.py`, `test_archive_cutover.py`, `test_archive_historical_proof.py`, `test_generic_migration_recovery.py` |
-| Agent governance | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_delegated_execution_ownership.py`, `test_agent_evaluations.py` |
-| CI, GitOps, Vault, and workspace | `test_validate_ci_python_contract.py`, `test_validate_github_actions_security.py`, `test_validate_gitops_change_set.py`, `test_validate_vault_eso_contracts.py`, `test_workspace_boundary.py` |
-| Hook boundaries | `test_k8s_pre_edit_hook.py` |
+| Archive and recovery             | `test_archive_recovery.py`, `test_archive_validation.py`, `test_archive_cutover.py`, `test_archive_historical_proof.py`, `test_generic_migration_recovery.py`                                                                                                                                       |
+| Agent governance                 | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_delegated_execution_ownership.py`, `test_agent_evaluations.py`                                                                                    |
+| CI, GitOps, Vault, and workspace | `test_validate_ci_python_contract.py`, `test_validate_github_actions_security.py`, `test_validate_gitops_change_set.py`, `test_validate_vault_eso_contracts.py`, `test_workspace_boundary.py`                                                                                                       |
+| Hook boundaries                  | `test_k8s_pre_edit_hook.py`                                                                                                                                                                                                                                                                         |
 
 ### Shared helper modules
 
-| Module | Responsibility |
-| --- | --- |
-| `git_fixture.py` | Build exact Git objects in a temporary root for archive and lifecycle regressions |
-| `affected_surface_mutations.py` | Routing mutation cases for affected-surface selection |
-| `gitops_change_set_cases.py` | Change-set cases for GitOps diff rendering |
-| `vault_eso_contract_cases.py` | Vault/ESO contract and security cases |
+| Module                          | Responsibility                                                                    |
+| ------------------------------- | --------------------------------------------------------------------------------- |
+| `git_fixture.py`                | Build exact Git objects in a temporary root for archive and lifecycle regressions |
+| `affected_surface_mutations.py` | Routing mutation cases for affected-surface selection                             |
+| `gitops_change_set_cases.py`    | Change-set cases for GitOps diff rendering                                        |
+| `vault_eso_contract_cases.py`   | Vault/ESO contract and security cases                                             |
 
 A helper module holds shared input or construction only. Importing a test
 module for its helper would re-run that module's own tests, so a helper that
@@ -71,12 +72,12 @@ more than one suite needs lives here instead.
 
 ### Fixture families
 
-| Fixture | Independent consumer |
-| --- | --- |
+| Fixture                                 | Independent consumer                       |
+| --------------------------------------- | ------------------------------------------ |
 | `fixtures/github-actions-security.json` | `test_validate_github_actions_security.py` |
-| `fixtures/gitops-change-set/` | `test_validate_gitops_change_set.py` |
-| `fixtures/validation-surfaces.json` | `test_validate_affected_surfaces.py` and routing migration tests |
-| `fixtures/vault-eso-contracts.json` | `test_validate_vault_eso_contracts.py` |
+| `fixtures/gitops-change-set/`           | `test_validate_gitops_change_set.py`       |
+| `fixtures/validation-surfaces.json`     | `test_validate_affected_surfaces.py`       |
+| `fixtures/vault-eso-contracts.json`     | `test_validate_vault_eso_contracts.py`     |
 
 Fixtures are bounded examples, not production registries. A fixture remains
 only while an independent test consumes it; combinations should normally be
@@ -93,6 +94,12 @@ generated in temporary directories instead of expanding a permanent matrix.
   are outside the default test boundary.
 - Assertions target behavior, diagnostic IDs, and semantic ownership rather
   than permanent file counts, line counts, current SHA values, or mutation counts.
+- Whether this repository passes a registered validator is that gate's own
+  result. A test that asserts only the pass runs the same check on the same
+  bytes under a second name, so it belongs to the gate rather than here. Reading
+  the real corpus stays correct where the test does something the gate does not:
+  patching a dependency to reach a failure path, pinning an exact diagnostic
+  string, or proving the validator is routed at all.
 
 ## Validation
 

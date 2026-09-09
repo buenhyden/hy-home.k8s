@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.util
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -156,14 +155,10 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
 
 
 class KnowledgeSurfaceRepositoryTests(unittest.TestCase):
-    def test_repository_surface_passes(self) -> None:
-        result = subprocess.run(
-            [sys.executable, str(VALIDATOR_PATH), "--root", str(REPOSITORY_ROOT)],
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
+    # Whether this repository passes the validator is the gate's own result,
+    # reported once per profile run over the snapshot the profile selected.
+    # Asserting it again here would run the same check on the same bytes under
+    # a second name. What belongs here is that the gate exists at all.
 
     def test_validator_is_registered(self) -> None:
         import json
