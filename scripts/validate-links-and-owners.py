@@ -1462,6 +1462,21 @@ def _inline_link_destination_spans(
 ) -> tuple[tuple[int, int], ...]:
     """Commit inline suffix ownership once in monotonic source order."""
 
+    # Ownership resolution reaches this scan three times for the same value, so
+    # keep the result. The definition scan below reads lazy-line provenance off
+    # the value, which string equality cannot see, so it belongs in the key.
+    return _committed_inline_link_destination_spans(
+        value, getattr(value, "lazy_lines", frozenset())
+    )
+
+
+@lru_cache(maxsize=4096)
+def _committed_inline_link_destination_spans(
+    value: str,
+    lazy_lines: frozenset[int],
+) -> tuple[tuple[int, int], ...]:
+    """Resolve suffix ownership for one exact text and provenance input."""
+
     closer_ends = _backtick_closer_ends(value, ())
     html_ends = dict(_raw_inline_html_token_spans(value))
     _, definition_spans = _reference_definitions_with_spans(value)
