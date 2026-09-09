@@ -1,10 +1,10 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-runtime-governance"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-09"
 ---
 # GitHub Configuration Hub
 
@@ -30,8 +30,9 @@ because it describes the repository's automation surface rather than the
 - CI enforcement lives in `workflows/ci.yml` and `scripts/qa.py`; the validation
   registry owns logical gates shared with local QA.
 - One QA job selects Python 3.12, installs the fully hashed binary-only lock
-  from `requirements/ci-validation.txt`, verifies the recorded Gitleaks asset,
-  and validates the immutable event checkout with full history. Pre-commit and
+  from `requirements/ci-validation.txt`, verifies the recorded Gitleaks and
+  Conftest assets against their pinned checksums, and validates the immutable
+  event checkout with full history. Pre-commit and
   unit discovery execute once inside the full/ci profile. Their settings remain
   owned by the lock, pre-commit configuration, and execution registry.
 - The sole canonical local completion-order, lane, result, formatter, and
@@ -69,7 +70,7 @@ because it describes the repository's automation surface rather than the
 | `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy` and the single `qa` job; QA prepares its locked dependencies once and executes the shared ci profile on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs on pushed release tags matching `v*.*.*`. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
-| `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
+| `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 | `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |
 
 ## Boundaries

@@ -1,10 +1,10 @@
 ---
 title: "Claude Native Adapter"
-version: "1.1.0"
+version: "1.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-09"
 ---
 
 # Claude Native Adapter
@@ -35,8 +35,9 @@ This directory owns only Claude syntax, support notes and native connections.
 
 Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
 canonical role for common contracts. Update native references in both adapters
-when paths change. The registry owns the capability tier to model binding;
-a projection restates that value and keeps its own tool settings. Native files
+when paths change. The registry owns the capability tier to model binding and the
+permission class to `tools` binding; a projection restates those values
+and the validator rejects any that drift. Native files
 do not prove model access, role discovery or permission enforcement. No
 generator is used.
 

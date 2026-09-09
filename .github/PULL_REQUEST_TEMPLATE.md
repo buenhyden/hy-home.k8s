@@ -57,12 +57,12 @@ results without repeating those commands on the same inputs.
 - [ ] `full` result (`python3 scripts/qa.py full`):
 - [ ] Formatter findings, explicit fixes and evidence refreshed after changed bytes:
 - [ ] Post-full documentation changes and their separate validation, if any:
-- [ ] `diff-checks` result:
+- [ ] `git diff --check` and `git diff --cached --check` result:
 - [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
 - [ ] GitHub CI `ci-summary` passed for the `qa` job and applicable branch policy, or hosted verification is explicitly `DEFER`; exact SHA and run identity:
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
-- [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
-- [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting 01-04 docs are routed through `docs/98.archive/README.md` only.
+- [ ] Workflow triggers and job ownership reviewed (if `.github` automation changed)
+- [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs are routed through `docs/98.archive/README.md` only.
 - [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve each provider README and adjacent executable assets as one boundary; they are not live provider-latest guidance unless an approved provider refresh spec exists.
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable; source-code test surfaces own coverage evidence, while Bash/YAML/Markdown infrastructure changes use validation-matrix evidence instead of application coverage claims
 - [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced

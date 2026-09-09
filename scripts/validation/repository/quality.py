@@ -2463,7 +2463,7 @@ pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pr_template_text = read_text(pr_template_path)
 
 for phrase in [
-    "Workflow path filters and job ownership reviewed",
+    "Workflow triggers and job ownership reviewed",
     "No live cluster mutation",
     "approved prefix",
     "`main`",
