@@ -32,14 +32,9 @@ if __package__:
     )
     from scripts.archive_recovery import (
         ArchiveContractError,
-        WORK107_LEGACY_INDEX_OVERVIEW,
         WORK107_MIGRATION_PATH,
-        WORK107_STABLE_INDEX_OVERVIEW,
         build_work107_migration_rows,
         parse_archive_envelope,
-        render_work107_migration_document,
-        render_work107_stable_envelope,
-        validate_work107_migration_rows,
     )
     from scripts.document_contracts import (
         REGISTRY_PATH,
@@ -76,14 +71,9 @@ else:
     )
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
-        WORK107_LEGACY_INDEX_OVERVIEW,
         WORK107_MIGRATION_PATH,
-        WORK107_STABLE_INDEX_OVERVIEW,
         build_work107_migration_rows,
         parse_archive_envelope,
-        render_work107_migration_document,
-        render_work107_stable_envelope,
-        validate_work107_migration_rows,
     )
     from document_contracts import (  # type: ignore[no-redef]
         REGISTRY_PATH,
@@ -1401,135 +1391,14 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     )
 
 
-def _work107_stable_index(
-    legacy_index: str,
-    rows: Sequence[Mapping[str, object]],
-) -> str:
-    """Apply the reviewed stable overview and 93 inventory link projection."""
-
-    result = legacy_index
-    if result.count(WORK107_LEGACY_INDEX_OVERVIEW) != 1:
-        raise ArchiveContractError(
-            "ARCHIVE-MIGRATION-INDEX", "legacy index overview differs"
-        )
-    result = result.replace(
-        WORK107_LEGACY_INDEX_OVERVIEW,
-        WORK107_STABLE_INDEX_OVERVIEW,
-        1,
-    )
-    for row in rows:
-        legacy = str(row["legacy_path"]).removeprefix("docs/98.archive/")
-        stable = str(row["stable_path"]).removeprefix("docs/98.archive/")
-        source = f"[`{legacy}`](./{legacy})"
-        target = f"[`{stable}`](./{stable})"
-        if result.count(source) != 1:
-            raise ArchiveContractError(
-                "ARCHIVE-MIGRATION-INDEX", "legacy index member differs"
-            )
-        result = result.replace(source, target, 1)
-    return result
-
-
-def apply_work107_stable_rehome(repository_root: str | Path) -> int:
-    """Apply the reviewed stable rehome with rollback on any partial write."""
-
-    root = Path(repository_root).resolve(strict=True)
-    rows = validate_work107_migration_rows(root, build_work107_migration_rows(root))
-    index_path = root / ARCHIVE_INDEX
-    migration_path = root / WORK107_MIGRATION_PATH
-    original_index = index_path.read_bytes()
-    legacy_bytes: dict[Path, bytes] = {}
-    stable_bytes: dict[Path, bytes] = {}
-    for row in rows:
-        legacy = root / str(row["legacy_path"])
-        stable = root / str(row["stable_path"])
-        if not legacy.is_file() or legacy.is_symlink() or stable.exists():
-            raise ArchiveContractError(
-                "ARCHIVE-MIGRATION-PRECONDITION", "legacy/stable path state differs"
-            )
-        content = legacy.read_bytes()
-        recovered = parse_archive_envelope(content)
-        if (
-            recovered.metadata.get("source_commit") != row["source_commit"]
-            or recovered.metadata.get("source_blob") != row["source_blob"]
-            or recovered.metadata.get("content_sha256") != row["content_sha256"]
-        ):
-            raise ArchiveContractError(
-                "ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope metadata differs"
-            )
-        legacy_bytes[legacy] = content
-        stable_bytes[stable] = render_work107_stable_envelope(content, row)
-    if migration_path.exists():
-        raise ArchiveContractError(
-            "ARCHIVE-MIGRATION-PRECONDITION", "migration control record already exists"
-        )
-    desired_index = _work107_stable_index(original_index.decode("utf-8"), rows).encode(
-        "utf-8"
-    )
-    desired_migration = render_work107_migration_document(rows)
-
-    created: list[Path] = []
-    removed: list[Path] = []
-    try:
-        for path, content in stable_bytes.items():
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(content)
-            created.append(path)
-        migration_path.parent.mkdir(parents=True, exist_ok=True)
-        migration_path.write_bytes(desired_migration)
-        created.append(migration_path)
-        index_path.write_bytes(desired_index)
-        for path in legacy_bytes:
-            path.unlink()
-            removed.append(path)
-        for directory in sorted(
-            {
-                parent
-                for path in legacy_bytes
-                for parent in path.parents
-                if parent != root and parent.is_relative_to(root / "docs/98.archive")
-            },
-            key=lambda item: len(item.parts),
-            reverse=True,
-        ):
-            try:
-                directory.rmdir()
-            except OSError:
-                pass
-    except Exception:
-        index_path.write_bytes(original_index)
-        for path, content in legacy_bytes.items():
-            if not path.exists():
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(content)
-        for path in reversed(created):
-            path.unlink(missing_ok=True)
-        raise
-    return len(rows)
-
-
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
-    parser.add_argument("--apply-work107", action="store_true")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    if args.apply_work107:
-        try:
-            count = apply_work107_stable_rehome(args.root)
-        except (ArchiveContractError, OSError, RuntimeError, ValueError) as exc:
-            code = (
-                exc.code
-                if isinstance(exc, ArchiveContractError)
-                else "ARCHIVE-MIGRATION-APPLY"
-            )
-            print(f"FAIL {code} path=docs/98.archive")
-            return 1
-        print(f"PASS archive stable rehome records={count}")
-        return 0
     report = validate_repository_cutover(args.root)
     if report.valid:
         print(
