@@ -2477,7 +2477,7 @@ for phrase in [
     "90% target for future testable application code",
     "`test`: Tests or validation updates",
     "`chore`: Maintenance updates",
-    "`infra` is a change type, not an approved branch prefix",
+    "[`.cz.toml`](../.cz.toml)",
     "branch protection/rulesets enforce direct-push restrictions",
 ]:
     if phrase not in pr_template_text:

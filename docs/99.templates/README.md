@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-09"
 layer: "templates"
 ---
 # 99.templates
@@ -30,17 +30,20 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 | --- | --- | --- |
 | Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 두 schema |
 | Human guidance | profile을 고르고 안전하게 작성·검증·복구하는 방법을 설명하며 machine authority가 아니다. | 이 README |
-| Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](#form-family-inventory) |
+| Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](#physical-form-inventory) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
 
 이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 이 README
 또는 `.agents/governance`의 공통 정책으로 돌려보낸다.
 
-### Form Family Inventory
+### Physical Form Inventory
 
-Form directory 이름은 책임 family를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
-Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
+Form directory는 사람이 form을 찾도록 physical responsibility surface별로 묶는다.
+파일 이름은 form이 만드는 문서 kind를 나타내지만, directory 이름은 Registry
+profile family를 정의하지 않는다. 예를 들어 `templates/specs/plan.template.md`는
+그 경로를 유지하면서 `sdlc/plan` profile의 form으로 연결된다. 정확한 profile ID와
+form 경로의 대응은 Registry만 소유한다.
 
 - **Common forms** ("common/"): governed README entrypoints share the ordered
   six-key envelope but receive no fake identity. "readme-repository" covers
@@ -61,9 +64,10 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
   README는 collection-index router profile로 해석한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
-- **Core SDLC forms**: `requirements/requirement-package`,
-  `architecture/description`, `architecture/decision`, `specs/spec`,
-  `specs/plan`, `specs/task`가 단계별 책임과 handoff를 기록한다.
+- **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
+  grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
+  `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
+  form을 담아 단계별 책임과 handoff를 기록한다.
 - **Spec forms** (`specs/`): `spec`, `plan`, `task` form이 요구 추적,
   실행 계획, 작업 증거를 소유한다. 별도 data-model 및 native contract
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.

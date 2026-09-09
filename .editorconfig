@@ -11,7 +11,8 @@ trim_trailing_whitespace = true
 [*.py]
 indent_size = 4
 
-# Markdown keeps the repository-wide setting: the `trailing-whitespace`
-# pre-commit hook strips it everywhere, no tracked file uses a trailing-space
-# hard break, and an exemption here only lets an editor add what the hook then
-# removes.
+# Markdown keeps the repository-wide editor hint: the `trailing-whitespace`
+# pre-commit hook strips it from selected active paths, while frozen terminal
+# Archive payloads remain excluded to preserve sealed bytes. No selected
+# current file uses a trailing-space hard break, so an editor exemption would
+# only add whitespace that the hook then removes.

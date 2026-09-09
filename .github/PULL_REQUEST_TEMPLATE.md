@@ -16,7 +16,12 @@ Fixes # (link to issue if applicable)
 - [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
 - [ ] CI `branch-policy` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions.
 
-## 4. Type of Change
+## 4. Change Review Categories
+
+Select every category that applies to this PR. These categories route review;
+they do not define commit-message types. [`.cz.toml`](../.cz.toml) owns the
+supported commit types and message syntax, and
+[Git policy](../.agents/governance/git.md) explains their validation.
 
 - [ ] `feat`: New feature or enhancement
 - [ ] `fix`: Bug fix
@@ -27,7 +32,8 @@ Fixes # (link to issue if applicable)
 - [ ] `infra`: Changes to Kubernetes manifests or GitOps assets
 - [ ] `ci`: Changes to GitHub Actions, hooks, or automation
 
-Note: `infra` is a change type, not an approved branch prefix. Use an approved source branch prefix above.
+Note: `infra` is a PR review category, not an approved branch prefix or a
+Commitizen type. Use an approved source branch prefix above.
 
 ## 5. Breaking Changes
 

@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-09"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -12,8 +12,10 @@ layer: "templates"
 ## Overview
 
 이 디렉터리는 저장소가 인정하는 모든 authored 문서의 physical form을 담는다.
-Form directory 이름은 그 form을 소유하는 책임 family를, 파일 이름은 그 form이 만드는
-문서 kind를 말한다. Form은 계약을 정의하지 않는다. 계약은
+Form directory는 navigation을 위해 physical responsibility surface별로 묶고,
+파일 이름은 그 form이 만드는 문서 kind를 말한다. Directory 이름은 Registry profile
+family를 정의하지 않는다. 예를 들어 `specs/plan.template.md`는 `sdlc/plan`
+profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 [registry](../registry.json)와 [frontmatter schema](../contracts/frontmatter.schema.json)가
 소유하고, form은 그 계약을 저자가 채울 수 있는 모양으로 보여줄 뿐이다.
 
@@ -49,8 +51,9 @@ templates/
 
 1. 만들려는 문서의 경로로 [registry](../registry.json)에서 profile을 하나만
    해석하고, 그 profile이 지정한 form을 읽는다.
-2. 새 form은 그 form이 만드는 문서 이름으로 짓고, 소유 family 디렉터리에 두며,
-   디렉터리 이름을 파일 이름에 반복하지 않는다.
+2. 새 form은 그 form이 만드는 문서 이름으로 짓고, 기존 physical responsibility
+   grouping에 두며, 디렉터리 이름을 파일 이름에 반복하지 않는다. Profile family와
+   form 경로의 대응은 Registry에 명시한다.
 3. 새 form은 Registry의 "template_source"와
    "relationships.source_profile_ids"에 명시적으로 연결한다. source가 없는
    required form, 소유 profile이 없는 form, 암묵적 공유 form은 계약 위반이다.

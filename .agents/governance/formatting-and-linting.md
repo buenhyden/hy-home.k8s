@@ -1,19 +1,20 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 ---
 
 # Formatting and Linting Policy
 
 ## Overview
 
-Each file type has one formatting and linting owner, each rule is declared
-once, and each suppression states why it exists. A configuration file that no
-tool reads is not a convention; it is drift that reads like one.
+Each formatting and linting rule has one semantic owner. Git normalization,
+editor hints and hook delivery may project that rule for their distinct jobs,
+and each suppression states why it exists. A configuration file that no tool
+reads is not a convention; it is drift that reads like one.
 
 ## Authority Boundary
 
@@ -26,27 +27,29 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 
 ## Governance Context
 
-`.pre-commit-config.yaml` is the single enforcement surface. It runs from the
-shared QA full profile and the hosted QA job through the same pre-commit gate
-and pinned hook revisions, so both environments enforce the same contract. `.editorconfig`
-reaches editors only and proves nothing about committed bytes.
+`.gitattributes` owns Git text and line-ending normalization.
+`.pre-commit-config.yaml` owns hook integration, including pinned revisions,
+stages, arguments and exclusions; the shared QA full profile and hosted QA job
+run the same pre-commit gate. `.editorconfig` reaches editors only and proves
+nothing about committed bytes.
 
 ## Current Contract
 
-- Declare a shared byte rule at most twice: once in `.editorconfig` as an
-  editor hint, once in `.pre-commit-config.yaml` as enforcement. Where the two
-  disagree, the hook decides. Do not add a third declaration in a tool that
-  targets one file type.
+- Keep one semantic owner for each rule. Project it only where a complementary
+  layer needs it: `.gitattributes` for Git normalization, `.editorconfig` for
+  editor hints, and hook or tool configuration for validation and rewriting.
+  Mirrored values across those layers are not separate rules; document their
+  purpose and validate that the committed result agrees.
 - Keep no configuration for a file type the repository does not contain.
   When the last target of a tool disappears, remove the tool and its
   configuration in the same change rather than leaving an unread file.
 - Do not add a second tool that enforces a rule an existing tool already
   enforces. Extend the owner instead.
-- Declare which file types a tool covers and which rules it applies. Do not
-  inherit either from the tool's own defaults. A pinned revision still moves
-  when it is raised, and one release can both widen a default rule set and
-  hand a formatter a file type another tool already owns, changing what the
-  hosted lane enforces with no change in this repository.
+- Explicitly declare file types or rules when that projection preserves an
+  ownership boundary. A pinned tool may intentionally retain reviewed defaults.
+  Before raising its revision, measure default changes, check whether they widen
+  the rule set or claim another tool's file type, and validate the resulting
+  corpus behavior before accepting the upgrade.
 - Scope a rule by capability, not by exclusion. Prefer configuring a checker
   to understand a file shape over excluding the tree that has that shape.
 - State a cause for every suppression and classify it as a deliberate

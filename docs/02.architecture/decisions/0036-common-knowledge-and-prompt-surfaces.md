@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-09"
 layer: "architecture"
 artifact_id: "ADR-0036"
 supersedes: "ADR-0035"
@@ -21,6 +21,13 @@ restating them here so this decision stands alone rather than by reference.
 Acceptance records the durable choice; it does not establish native discovery,
 permission enforcement, model resolution or hook delivery, which remain
 separately observable evidence.
+
+**Current ownership clarification (2026-09-09).** The accepted decision below
+remains the historical record of what was decided. Root `evals/` now holds
+evaluation case and response data, `scripts/run-agent-evaluations.py` owns
+runner behavior, and `scripts/validation/registry.json` owns gate selection.
+This clarification records current execution ownership; it does not amend the
+decision.
 
 ## Context
 

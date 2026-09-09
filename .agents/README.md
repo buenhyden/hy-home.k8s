@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "1.0.0"
+version: "1.0.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-09"
 ---
 
 # Common Agent Governance
@@ -37,11 +37,12 @@ there. No role copies or provider generator own a second policy.
 adopts `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
 without a reader is not created. Evaluation, rule and script directories stay
-unadopted, each for its own reason: `evals/` already owns the evaluation
-runner, its cases and its validation surface; a rule directory would duplicate
-policy `governance/` already owns; and `scripts/` already owns executable
-tooling at the repository root. MIG-0009's memory retirement remains
-effective.
+unadopted, each for its own reason: root `evals/` holds evaluation case and
+response data, `scripts/run-agent-evaluations.py` owns runner behavior, and
+`scripts/validation/registry.json` owns gate selection; a rule directory would
+duplicate policy `governance/` already owns; and `scripts/` already owns
+executable tooling at the repository root. MIG-0009's memory retirement
+remains effective.
 
 ## Validation
 

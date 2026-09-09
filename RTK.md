@@ -1,10 +1,16 @@
 # RTK - Rust Token Killer (Cross-Agent SSOT)
 
-**Usage**: Token-optimized CLI proxy for shell commands.
+**Usage**: Token-optimized CLI proxy for interactive agent-issued shell commands.
 
 ## Rule
 
-Always prefix shell commands with `rtk`.
+Prefix interactive shell commands issued by an agent in this workspace with
+`rtk` when the proxy supports the command. Use `rtk proxy <cmd>` for compatible
+raw passthrough when no specialized subcommand applies.
+
+This rule governs commands the agent runs. Keep portable human examples,
+CI/workflow commands, validation-registry argv, and shell or hook internals in
+their native command form unless that consumer explicitly invokes RTK.
 
 Examples:
 
