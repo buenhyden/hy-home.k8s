@@ -28,14 +28,14 @@ and validating their configuration.
 
 ## Current Contract
 
-| Surface | Default | Approval boundary |
-| --- | --- | --- |
-| Repository docs, manifests, tests, and scripts | Scoped edits and deterministic local validation | Scope expansion or weakened security/gate failure semantics |
-| Bootstrap and recovery assets | Edit and review only | Running against a cluster or external service |
-| CI configuration | Scoped static edits | Permission expansion, protected triggers, publishing, paid execution, or remote dispatch |
-| Git history and worktrees | Inspect; make requested logical commits | Push, PR creation, merge, destructive cleanup, history rewrite, or worktree removal |
-| Live cluster, Argo CD, Vault, and cloud | No mutation | Explicit operator action with target, command class, rollback, and evidence |
-| Secrets and private runtime data | Do not read or record values | Stop and use the approved secret/incident process; never expose values |
+| Surface                                        | Default                                         | Approval boundary                                                                        |
+| ---------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Repository docs, manifests, tests, and scripts | Scoped edits and deterministic local validation | Scope expansion or weakened security/gate failure semantics                              |
+| Bootstrap and recovery assets                  | Edit and review only                            | Running against a cluster or external service                                            |
+| CI configuration                               | Scoped static edits                             | Permission expansion, protected triggers, publishing, paid execution, or remote dispatch |
+| Git history and worktrees                      | Inspect; make requested logical commits         | Push, PR creation, merge, destructive cleanup, history rewrite, or worktree removal      |
+| Live cluster, Argo CD, Vault, and cloud        | No mutation                                     | Explicit operator action with target, command class, rollback, and evidence              |
+| Secrets and private runtime data               | Do not read or record values                    | Stop and use the approved secret/incident process; never expose values                   |
 
 - Subagents never mutate live clusters. Approved bootstrap or break-glass
   actions remain operator-bound, not delegated background work.
@@ -65,6 +65,12 @@ and validating their configuration.
   that needs no shell declares a narrowed native scope instead. This difference
   is documented and accepted; do not describe it as parity, and do not report
   the weaker side's policy prohibition as an enforced control.
+- A permission class is the only place native reach widens. A projection may
+  drop a tool its class grants, and the registry validator rejects one that
+  adds a tool the class withholds, so a per-role exception can never become a
+  second permission authority. Network reach is therefore its own read-only
+  class rather than an exception on the ordinary one: the role that researches
+  primary sources carries it, and no other read-only role gains it by default.
 - Before an exception, record scope, target, responsible operator, rollback or
   backup, and required evidence in the owning Task or incident. Missing
   authority means stop at the local draft.

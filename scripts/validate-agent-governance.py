@@ -63,6 +63,7 @@ REGISTRY_PROJECTION_SUFFIXES = {
 }
 REGISTRY_PERMISSION_BEHAVIOR = {
     "read-only-evidence": (False, False),
+    "read-only-research": (False, False),
     "scoped-authoring": (True, False),
     "orchestration": (False, True),
 }
@@ -74,15 +75,6 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git diff --cached --name-only)",
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
-)
-CLAUDE_FORBIDDEN_ALLOW_PERMISSIONS = (
-    "Bash(ls:*)",
-    "Bash(grep:*)",
-    "Bash(cat:*)",
-    "Bash(git:*)",
-    "Bash(kubectl get:*)",
-    "Bash(kubectl describe:*)",
-    "Bash(kubectl logs:*)",
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
@@ -490,6 +482,23 @@ def validate_registry(
                 "AGENT-REGISTRY-PERMISSION",
                 f"{role_id} references an unknown permission class",
             )
+        for provider_entry in registry["providers"]:
+            override = role.get("native_scope_override", {}).get(provider_entry["id"])
+            if override is None:
+                continue
+            granted = provider_entry.get("permission_scopes", {}).get(
+                role["permission_class"]
+            )
+            if granted is None:
+                continue
+            # A projection adapts the class it projects, so it may drop what the
+            # class grants. Adding to it would make the projection a second
+            # permission authority beside the registry.
+            if not set(_scope_members(override)).issubset(_scope_members(granted)):
+                fail(
+                    "AGENT-REGISTRY-PERMISSION",
+                    f"{role_id} widens its permission class on {provider_entry['id']}",
+                )
         if tuple(role["supported_providers"]) != REGISTRY_PROVIDER_IDS:
             fail(
                 "AGENT-REGISTRY-PROVIDER",
@@ -844,6 +853,14 @@ def _bound_reasoning(registry: dict[str, Any], role: dict[str, Any]) -> Any:
     return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
 
 
+def _scope_members(scope: Any) -> tuple[str, ...]:
+    """Return a scope's members, whether it names one mode or lists tools."""
+
+    if isinstance(scope, str):
+        return (scope,)
+    return tuple(scope)
+
+
 def _bound_scope(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
     """Resolve one role's native execution scope from the registry.
 
@@ -1066,6 +1083,10 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     settings = load_json(root, ".claude/settings.json")
     if not isinstance(settings, dict) or set(settings) != {"permissions", "hooks"}:
         fail("AGENT-NATIVE-METADATA", "unsupported native settings")
+    # Exact equality is what bounds the allow list. A list of forbidden broad
+    # grants would be weaker than this and would read as the real control, so
+    # this comparison stays the only one. Ignored personal settings are outside
+    # it: they are not tracked configuration and carry no shared authority.
     if settings["permissions"] != {
         "allow": list(CLAUDE_ALLOWED_PERMISSIONS),
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),

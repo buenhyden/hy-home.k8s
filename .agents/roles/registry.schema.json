@@ -39,8 +39,8 @@
     },
     "permission_classes": {
       "type": "array",
-      "minItems": 3,
-      "maxItems": 3,
+      "minItems": 4,
+      "maxItems": 4,
       "items": {
         "$ref": "#/$defs/permissionClass"
       }
@@ -136,6 +136,7 @@
         "id": {
           "enum": [
             "read-only-evidence",
+            "read-only-research",
             "scoped-authoring",
             "orchestration"
           ]
@@ -299,11 +300,15 @@
       "additionalProperties": false,
       "required": [
         "read-only-evidence",
+        "read-only-research",
         "orchestration",
         "scoped-authoring"
       ],
       "properties": {
         "read-only-evidence": {
+          "$ref": "#/$defs/codexSandboxScope"
+        },
+        "read-only-research": {
           "$ref": "#/$defs/codexSandboxScope"
         },
         "orchestration": {
@@ -329,11 +334,15 @@
       "additionalProperties": false,
       "required": [
         "read-only-evidence",
+        "read-only-research",
         "scoped-authoring",
         "orchestration"
       ],
       "properties": {
         "read-only-evidence": {
+          "$ref": "#/$defs/claudeToolScope"
+        },
+        "read-only-research": {
           "$ref": "#/$defs/claudeToolScope"
         },
         "scoped-authoring": {

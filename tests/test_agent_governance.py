@@ -508,7 +508,7 @@ class NativeBoundaryTests(unittest.TestCase):
         scopes = claude["permission_scopes"]
         self.assertEqual(
             set(scopes),
-            {"read-only-evidence", "scoped-authoring", "orchestration"},
+            {item["id"] for item in self.registry["permission_classes"]},
             "the scope map must be total over the declared permission classes",
         )
         narrowed = json.loads(json.dumps(self.registry))
@@ -519,7 +519,7 @@ class NativeBoundaryTests(unittest.TestCase):
         path.write_text(json.dumps(self.registry))
 
     def test_role_scope_override_is_declared_data_not_a_coded_exception(self):
-        """One role reaches the network; that exception is declared, not coded."""
+        """A narrowing is declared data, and its projection must follow it."""
         import json
 
         path = self.root / self.validator.REGISTRY_PATH
@@ -527,14 +527,14 @@ class NativeBoundaryTests(unittest.TestCase):
         source = projection.read_text()
         overridden = json.loads(json.dumps(self.registry))
         overridden["roles"][0]["native_scope_override"] = {
-            "claude": ["Read", "Grep", "Glob", "WebFetch", "WebSearch"]
+            "claude": ["Read", "Grep", "Glob"]
         }
         path.write_text(json.dumps(overridden))
         self.assert_rejected("AGENT-NATIVE-PERMISSION")
         projection.write_text(
             source.replace(
                 'tools: "Read, Grep, Glob, Bash"',
-                'tools: "Read, Grep, Glob, WebFetch, WebSearch"',
+                'tools: "Read, Grep, Glob"',
             )
         )
         self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
@@ -858,12 +858,34 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
     def role(self, role_id):
         return next(role for role in self.registry["roles"] if role["id"] == role_id)
 
+    def test_network_authority_comes_from_a_class_not_an_override(self):
+        """Reaching the network is a permission class, not a per-role exception.
+
+        A projection adapts the class it projects, so it may drop a tool the
+        class grants. Adding one would make the projection a second permission
+        authority, which is why the network-reaching role carries its own class.
+        """
+        researcher = self.role("docs-researcher")
+        self.assertNotIn(
+            "native_scope_override",
+            researcher,
+            "the network role must not widen a class through its projection",
+        )
+        scopes = self.claude["permission_scopes"]
+        granted = scopes[researcher["permission_class"]]
+        self.assertIn("WebFetch", granted)
+        self.assertIn("WebSearch", granted)
+        self.assertNotIn(
+            "WebFetch",
+            scopes["read-only-evidence"],
+            "network access must not leak into the ordinary read-only class",
+        )
+
     def test_the_shared_class_scope_is_unchanged(self):
         """Narrowing must use the override, never edit the shared class."""
         scopes = self.claude["permission_scopes"]
 
         self.assertEqual(scopes["read-only-evidence"], ["Read", "Grep", "Glob", "Bash"])
-        self.assertEqual(len(self.registry["permission_classes"]), 3)
 
     def test_roles_needing_no_shell_declare_a_narrowed_native_scope(self):
         for role_id in self.NO_SHELL_ROLES:

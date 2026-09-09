@@ -18,6 +18,13 @@
           "Glob",
           "Bash"
         ],
+        "read-only-research": [
+          "Read",
+          "Grep",
+          "Glob",
+          "WebFetch",
+          "WebSearch"
+        ],
         "scoped-authoring": [
           "Read",
           "Write",
@@ -44,6 +51,7 @@
       },
       "permission_scopes": {
         "read-only-evidence": "read-only",
+        "read-only-research": "read-only",
         "orchestration": "read-only",
         "scoped-authoring": "workspace-write"
       },
@@ -56,6 +64,12 @@
   "permission_classes": [
     {
       "id": "read-only-evidence",
+      "allows_mutation": false,
+      "allows_delegation": false,
+      "external_writes_require_approval": true
+    },
+    {
+      "id": "read-only-research",
       "allows_mutation": false,
       "allows_delegation": false,
       "external_writes_require_approval": true
@@ -410,16 +424,7 @@
     {
       "id": "docs-researcher",
       "responsibility": "Collect and classify source evidence for documentation without claiming policy authority.",
-      "permission_class": "read-only-evidence",
-      "native_scope_override": {
-        "claude": [
-          "Read",
-          "Grep",
-          "Glob",
-          "WebFetch",
-          "WebSearch"
-        ]
-      },
+      "permission_class": "read-only-research",
       "capability_tier_ref": ".agents/governance/model-selection.md#worker",
       "supported_providers": [
         "claude",

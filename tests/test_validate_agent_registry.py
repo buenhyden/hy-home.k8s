@@ -116,6 +116,18 @@ class AgentRegistryTests(unittest.TestCase):
         mutated["roles"][0]["permission_class"] = "unbounded-write"
         self.assert_rule(mutated, "AGENT-REGISTRY-PERMISSION")
 
+    def test_native_scope_override_may_narrow_its_permission_class(self) -> None:
+        mutated = self.registry_copy()
+        role = next(item for item in mutated["roles"] if item["id"] == "code-reviewer")
+        role["native_scope_override"] = {"claude": ["Read", "Grep"]}
+        self.validator.validate_registry(REPOSITORY_ROOT, mutated, check_files=False)
+
+    def test_native_scope_override_cannot_widen_its_permission_class(self) -> None:
+        mutated = self.registry_copy()
+        role = next(item for item in mutated["roles"] if item["id"] == "code-reviewer")
+        role["native_scope_override"] = {"claude": ["Read", "Grep", "WebSearch"]}
+        self.assert_rule(mutated, "AGENT-REGISTRY-PERMISSION")
+
     def test_unknown_handoff_is_rejected(self) -> None:
         mutated = self.registry_copy()
         mutated["roles"][0]["handoff_to"].append("unknown-role")
