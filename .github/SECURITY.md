@@ -4,10 +4,13 @@
 
 We currently support the following versions of the `hy-home.k8s` platform:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| v1.0.x  | :white_check_mark: |
-| < v1.0  | :x:                |
+| Version                     | Supported          |
+| --------------------------- | ------------------ |
+| `main` at its current commit | :white_check_mark: |
+| any earlier commit           | :x:                |
+
+This repository publishes no release tag, so support is stated against the
+integration branch rather than a version series.
 
 ## Reporting a Vulnerability
 

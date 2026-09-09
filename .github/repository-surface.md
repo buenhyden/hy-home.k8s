@@ -1,6 +1,6 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.1.1"
+version: "0.1.2"
 type: "common/readme-runtime-governance"
 status: "active"
 owner: "platform"
@@ -35,6 +35,11 @@ because it describes the repository's automation surface rather than the
   event checkout with full history. Pre-commit and
   unit discovery execute once inside the full/ci profile. Their settings remain
   owned by the lock, pre-commit configuration, and execution registry.
+- Dependabot covers the pinned Actions only. The hashed Python lock is refreshed
+  by hand because `scripts/validate-ci-python-contract.py` asserts its exact
+  resolved pins, so a lock change and that assertion move in one reviewed
+  change; an automated bump would open a pull request that cannot pass its own
+  gate.
 - The sole canonical local completion-order, lane, result, formatter, and
   handoff owner is
   [`quality.md`](../.agents/governance/quality.md);

@@ -1,10 +1,10 @@
 ---
 title: "Codex Native Adapter"
-version: "1.1.0"
+version: "1.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-09"
 ---
 
 # Codex Native Adapter
@@ -26,6 +26,11 @@ This directory owns only Codex syntax, support notes and native connections.
 - `hooks/pre-tool-use.sh`: the Codex adapter for the shared write boundary. It
   names its provider and forwards the payload; the boundary itself is owned by
   `scripts/provider_write_guard.py`. This directory holds no shared logic.
+- No project `commands/` or `prompts/` directory is adopted. The neutral
+  `.agents/prompts/` contracts are read explicitly and are consumed by
+  `scripts/prompt-input.py`; Claude additionally projects them as native
+  commands. That projection is a Claude affordance, not shared policy, so its
+  absence here is a declared difference rather than missing work.
 - No project `skills/`, `rules/` or `config.toml` is adopted. Codex
   project skills reside in `.agents/skills/`, which is the client's documented
   project skill root. `config.toml` stays unadopted so one file owns the hook
