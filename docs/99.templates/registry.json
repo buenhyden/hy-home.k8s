@@ -2501,7 +2501,7 @@
       "id": "common/github-native-control",
       "family": "common",
       "mode": "native",
-      "path_pattern": "^\\.github/(?:PULL_REQUEST_TEMPLATE|SECURITY)\\.md$",
+      "path_pattern": "^\\.github/(?:PULL_REQUEST_TEMPLATE|SECURITY)\\.md$|^\\.github/rulesets/[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
