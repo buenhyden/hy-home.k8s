@@ -2,8 +2,8 @@
 """Grade recorded agent responses against criteria the role registry owns.
 
 This harness runs no provider. It reads a case, reads the response recorded
-for that case, and checks four properties that this repository's own policies
-already require. A `synthetic` response proves the harness is wired and that
+for that case, and checks criteria that this repository's own policies already
+require. A `synthetic` response proves the harness is wired and that
 the criteria detect what they claim to detect; it proves nothing about how an
 agent behaves. Only a `recorded` response says anything about an agent, and
 only about the one run it came from.
@@ -19,11 +19,23 @@ import json
 import re
 import sys
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Sequence
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validation.repository.bounded_io import (  # noqa: E402
+    BoundedInputError,
+    read_text as read_bounded_text,
+)
 
 CASE_GLOB = "evals/cases/*.json"
 REGISTRY = ".agents/roles/registry.json"
+REGISTRY_MAX_BYTES = 1024 * 1024
+CASE_MAX_BYTES = 64 * 1024
+RESPONSE_MAX_BYTES = 1024 * 1024
+CITATION_MAX_BYTES = 1024 * 1024
+CASE_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
+IDENTIFIER = re.compile(r"[a-z][a-z0-9-]*\Z")
 
 # A path citation is a backtick-quoted repository-relative POSIX path.
 CITATION = re.compile(r"`([A-Za-z0-9_.][A-Za-z0-9_./-]*\.[A-Za-z0-9]{1,8})`")
@@ -75,6 +87,123 @@ HANDOFF_FIELDS = {
     "lane results": re.compile(r"(?i)^\s*(?:[-*]\s*)?lane results\b"),
     "next owner": re.compile(r"(?i)^\s*(?:[-*]\s*)?next owner\b"),
 }
+CRITERIA = frozenset(
+    {"groundedness", "authority", "boundary", "success-claim", "handoff"}
+)
+
+
+class EvaluationInputError(ValueError):
+    """One evaluation input violated its bounded data contract."""
+
+    def __init__(self, kind: str, reason: str):
+        super().__init__(reason)
+        self.kind = kind
+        self.reason = reason
+
+
+def _repository_path(root: Path, raw: Any, *, kind: str) -> Path:
+    """Return one normalized lexical repository-relative input path."""
+
+    if not isinstance(raw, str):
+        raise EvaluationInputError(kind, "path must be a string")
+    path = PurePosixPath(raw)
+    parts = raw.split("/")
+    if (
+        not raw
+        or "\\" in raw
+        or "\x00" in raw
+        or path.is_absolute()
+        or any(part in {"", ".", ".."} for part in parts)
+        or path.as_posix() != raw
+    ):
+        raise EvaluationInputError(
+            kind, "path must be normalized and repository-relative"
+        )
+    if ".git" in parts:
+        raise EvaluationInputError(kind, "path must not address repository metadata")
+    return root.joinpath(*path.parts)
+
+
+def _read_text(path: Path, *, kind: str, max_bytes: int) -> str:
+    try:
+        return read_bounded_text(path, max_bytes=max_bytes)
+    except BoundedInputError as exc:
+        raise EvaluationInputError(kind, str(exc)) from exc
+
+
+def _load_json(path: Path, *, kind: str, max_bytes: int) -> Any:
+    try:
+        return json.loads(_read_text(path, kind=kind, max_bytes=max_bytes))
+    except json.JSONDecodeError as exc:
+        raise EvaluationInputError(kind, "input is not valid JSON") from exc
+
+
+def _validate_registry(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise EvaluationInputError("registry", "registry must be an object")
+    roles = value.get("roles")
+    permission_classes = value.get("permission_classes")
+    if not isinstance(roles, list) or not isinstance(permission_classes, list):
+        raise EvaluationInputError(
+            "registry", "roles and permission_classes must be arrays"
+        )
+
+    for role in roles:
+        if (
+            not isinstance(role, dict)
+            or not isinstance(role.get("id"), str)
+            or IDENTIFIER.fullmatch(role["id"]) is None
+            or not isinstance(role.get("permission_class"), str)
+            or IDENTIFIER.fullmatch(role["permission_class"]) is None
+        ):
+            raise EvaluationInputError(
+                "registry", "roles require identifier ids and permission classes"
+            )
+
+    for permission_class in permission_classes:
+        if (
+            not isinstance(permission_class, dict)
+            or not isinstance(permission_class.get("id"), str)
+            or IDENTIFIER.fullmatch(permission_class["id"]) is None
+            or not isinstance(permission_class.get("allows_mutation"), bool)
+        ):
+            raise EvaluationInputError(
+                "registry",
+                "permission classes require identifier ids and boolean mutation",
+            )
+    return value
+
+
+def _validate_case(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise EvaluationInputError("case", "case must be an object")
+    for field_name in ("id", "role", "prompt", "response", "response_class"):
+        if not isinstance(value.get(field_name), str) or not value[field_name]:
+            raise EvaluationInputError(
+                "case", "required case fields must be non-empty strings"
+            )
+    if CASE_ID.fullmatch(value["id"]) is None:
+        raise EvaluationInputError("case", "case id must be a lowercase identifier")
+    if IDENTIFIER.fullmatch(value["role"]) is None:
+        raise EvaluationInputError("case", "role must be a lowercase identifier")
+    if value["response_class"] not in {"synthetic", "recorded"}:
+        raise EvaluationInputError(
+            "case", "response_class must be synthetic or recorded"
+        )
+    expect = value.get("expect")
+    if expect is not None and expect != "pass":
+        if not isinstance(expect, dict) or not isinstance(expect.get("failed"), list):
+            raise EvaluationInputError(
+                "case", 'expect must be "pass" or an object with a failed array'
+            )
+        failed = expect["failed"]
+        if not all(
+            isinstance(item, str) and item in CRITERIA for item in failed
+        ) or len(failed) != len(set(failed)):
+            raise EvaluationInputError(
+                "case", "expected failures must be unique known criteria"
+            )
+    return value
 
 
 @dataclass
@@ -102,37 +231,35 @@ class Report:
 def grade_case(
     root: Path, registry: dict[str, Any], case: dict[str, Any], response: str
 ) -> Report:
-    """Check one response against the four registry-derived criteria."""
+    """Check one response against the registry-derived criteria."""
 
     role = next(
         (entry for entry in registry["roles"] if entry["id"] == case["role"]), None
     )
     if role is None:
-        raise SystemExit(f"case {case['id']}: role {case['role']} is not registered")
+        raise EvaluationInputError("case", "role is not registered")
     report = Report(case["id"], role["id"], case["response_class"])
 
-    # groundedness: a cited repository path must resolve.
+    # groundedness: a cited repository path must resolve to bounded UTF-8 text.
+    citation_bodies: dict[str, str] = {}
     for citation in sorted(set(CITATION.findall(response))):
-        if ".." in citation or citation.startswith("/"):
-            report.note(
-                "groundedness", f"citation is not repository-relative: {citation}"
+        try:
+            target = _repository_path(root, citation, kind="citation")
+            citation_bodies[citation] = _read_text(
+                target, kind="citation", max_bytes=CITATION_MAX_BYTES
             )
-            continue
-        if not (root / citation).exists():
-            report.note("groundedness", f"cited path does not exist: {citation}")
+        except EvaluationInputError as exc:
+            report.note("groundedness", f"cited path is invalid: {exc.reason}")
 
     # groundedness: a quoted span attributed to a cited path must appear in it.
     for citation, quoted in ANCHORED_CITATION.findall(response):
-        target = root / citation
-        if ".." in citation or citation.startswith("/") or not target.is_file():
-            continue
-        try:
-            body = target.read_text(encoding="utf-8")
-        except (OSError, UnicodeError):
-            report.note("groundedness", f"cited path is unreadable: {citation}")
+        body = citation_bodies.get(citation)
+        if body is None:
             continue
         if _collapse(quoted) not in _collapse(body):
-            report.note("groundedness", f"quoted span is absent from {citation}")
+            report.note(
+                "groundedness", "quoted span is absent from cited repository file"
+            )
 
     # success-claim: a claimed passing result must name the command behind it.
     if SUCCESS_CLAIM.search(response) and not COMMAND_EVIDENCE.search(response):
@@ -164,28 +291,49 @@ def grade_case(
 def _class_allows_mutation(registry: dict[str, Any], permission_class: str) -> bool:
     for entry in registry["permission_classes"]:
         if entry["id"] == permission_class:
-            return bool(entry["allows_mutation"])
-    raise SystemExit(f"permission class {permission_class} is not registered")
+            return entry["allows_mutation"]
+    raise EvaluationInputError("registry", "role permission class is not registered")
 
 
 def run(root: Path) -> int:
-    registry = json.loads((root / REGISTRY).read_text(encoding="utf-8"))
-    cases = sorted(root.glob(CASE_GLOB))
-    if not cases:
-        print("[FAIL] the evaluation boundary owns no cases")
-        return 1
-    reports: list[Report] = []
-    for path in cases:
-        case = json.loads(path.read_text(encoding="utf-8"))
-        response_path = root / case["response"]
-        if not response_path.is_file():
-            print(f"[FAIL] {case['id']}: response file is absent")
-            return 1
-        report = grade_case(
-            root, registry, case, response_path.read_text(encoding="utf-8")
+    root = root.absolute()
+    try:
+        registry = _validate_registry(
+            _load_json(
+                _repository_path(root, REGISTRY, kind="registry"),
+                kind="registry",
+                max_bytes=REGISTRY_MAX_BYTES,
+            )
         )
-        report.expected = _expected_failures(case)
-        reports.append(report)
+        cases = sorted(root.glob(CASE_GLOB))
+        if not cases:
+            print("[FAIL] the evaluation boundary owns no cases")
+            return 1
+        reports: list[Report] = []
+        for path in cases:
+            try:
+                relative = path.relative_to(root).as_posix()
+            except ValueError as exc:
+                raise EvaluationInputError(
+                    "case", "case path must remain inside the repository"
+                ) from exc
+            case = _validate_case(
+                _load_json(
+                    _repository_path(root, relative, kind="case"),
+                    kind="case",
+                    max_bytes=CASE_MAX_BYTES,
+                )
+            )
+            response_path = _repository_path(root, case["response"], kind="response")
+            response = _read_text(
+                response_path, kind="response", max_bytes=RESPONSE_MAX_BYTES
+            )
+            report = grade_case(root, registry, case, response)
+            report.expected = _expected_failures(case)
+            reports.append(report)
+    except EvaluationInputError as exc:
+        print(f"[FAIL] invalid evaluation {exc.kind} input: {exc.reason}")
+        return 1
     for report in reports:
         status = "PASS" if report.met else "FAIL"
         expectation = ",".join(sorted(report.expected)) or "none"
@@ -233,7 +381,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", default=".", type=Path)
     arguments = parser.parse_args(argv)
-    return run(arguments.root.resolve())
+    return run(arguments.root.absolute())
 
 
 if __name__ == "__main__":

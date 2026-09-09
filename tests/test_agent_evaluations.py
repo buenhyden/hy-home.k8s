@@ -8,11 +8,14 @@ about the response it was given, never about live agent quality.
 from __future__ import annotations
 
 import json
+import io
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNNER = ROOT / "scripts/run-agent-evaluations.py"
@@ -195,10 +198,6 @@ class RunnerCliTests(unittest.TestCase):
             )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class NegativeCaseExpectationTests(unittest.TestCase):
     """A negative case proves a criterion fires, so it must declare that.
 
@@ -312,6 +311,269 @@ class NegativeCaseExpectationTests(unittest.TestCase):
         proven = set().union(*expectations.values())
         self.assertEqual(
             proven,
-            {"groundedness", "boundary", "success-claim", "handoff"},
+            {"groundedness", "authority", "boundary", "success-claim", "handoff"},
             "every criterion the harness owns needs an artifact that fires it",
         )
+
+
+class InputContractTests(unittest.TestCase):
+    """All evaluation inputs stay inside the bounded repository file contract."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.runner = load_runner()
+        cls.registry_bytes = (ROOT / ".agents/roles/registry.json").read_bytes()
+
+    HANDOFF = (
+        "Scope: a bounded review.\n"
+        "Snapshot: branch b, HEAD abc1234, base def5678.\n"
+        "Lane results: repo-static PASS from `python3 scripts/qa.py staged`.\n"
+        "Next owner: platform.\n"
+    )
+
+    def seed(self, root: Path, *, response: str = "evals/responses/a.md"):
+        (root / ".agents/roles").mkdir(parents=True)
+        (root / ".agents/roles/registry.json").write_bytes(self.registry_bytes)
+        (root / "evals/cases").mkdir(parents=True)
+        (root / "evals/responses").mkdir(parents=True)
+        case = {
+            "id": "a",
+            "role": "code-reviewer",
+            "prompt": "Review one synthetic response.",
+            "response": response,
+            "response_class": "synthetic",
+        }
+        (root / "evals/cases/a.json").write_text(json.dumps(case), encoding="utf-8")
+        response_path = root / response
+        response_path.parent.mkdir(parents=True, exist_ok=True)
+        response_path.write_text(self.HANDOFF, encoding="utf-8")
+
+    def invoke(self, root: Path) -> tuple[int, str]:
+        output = io.StringIO()
+        with redirect_stdout(output):
+            result = self.runner.run(root)
+        return result, output.getvalue()
+
+    def assert_input_failure(self, root: Path, kind: str, marker: str = "") -> None:
+        result, output = self.invoke(root)
+        self.assertEqual(result, 1, output)
+        self.assertIn(f"[FAIL] invalid evaluation {kind} input", output)
+        if marker:
+            self.assertNotIn(marker, output)
+
+    def test_absolute_and_parent_response_escapes_fail_before_payload_read(self):
+        marker = "synthetic-temp-absolute-response-marker"
+        for absolute in (True, False):
+            with self.subTest(absolute=absolute):
+                with tempfile.TemporaryDirectory() as raw:
+                    parent = Path(raw)
+                    root = parent / "repository"
+                    root.mkdir()
+                    external = parent / "external.md"
+                    response = str(external) if absolute else "../external.md"
+                    self.seed(root, response=response)
+                    external.write_text(
+                        self.HANDOFF + f"Reviewed `{marker}.md`.\n", encoding="utf-8"
+                    )
+                    self.assert_input_failure(root, "response", marker)
+
+    def test_git_metadata_is_not_an_evaluation_response_or_citation(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.seed(root, response=".git/synthetic-response.md")
+            self.assert_input_failure(root, "response")
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.seed(root)
+            metadata = root / ".git/synthetic-citation.md"
+            metadata.parent.mkdir()
+            metadata.write_text("synthetic citation", encoding="utf-8")
+            (root / "evals/responses/a.md").write_text(
+                self.HANDOFF
+                + 'Reviewed `.git/synthetic-citation.md` as "synthetic citation".\n',
+                encoding="utf-8",
+            )
+            result, output = self.invoke(root)
+            self.assertEqual(result, 1, output)
+            self.assertIn("failed=groundedness", output)
+
+    def test_parent_and_leaf_symlinks_fail_closed(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.seed(root)
+            real_agents = root / ".agents-real"
+            (root / ".agents").rename(real_agents)
+            (root / ".agents").symlink_to(real_agents, target_is_directory=True)
+            self.assert_input_failure(root, "registry")
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.seed(root)
+            case = root / "evals/cases/a.json"
+            target = root / "evals/cases/target.json"
+            case.rename(target)
+            case.symlink_to(target)
+            self.assert_input_failure(root, "case")
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.seed(root)
+            response = root / "evals/responses/a.md"
+            target = root / "evals/responses/target.md"
+            response.rename(target)
+            response.symlink_to(target)
+            self.assert_input_failure(root, "response")
+
+    def test_registry_case_and_response_reject_nonregular_oversize_and_utf8(self):
+        variants = (
+            ("registry", "directory"),
+            ("registry", "oversize"),
+            ("registry", "utf8"),
+            ("case", "directory"),
+            ("case", "oversize"),
+            ("case", "utf8"),
+            ("response", "directory"),
+            ("response", "oversize"),
+            ("response", "utf8"),
+        )
+        for kind, variant in variants:
+            with self.subTest(kind=kind, variant=variant):
+                with tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    self.seed(root)
+                    path = {
+                        "registry": root / ".agents/roles/registry.json",
+                        "case": root / "evals/cases/a.json",
+                        "response": root / "evals/responses/a.md",
+                    }[kind]
+                    if variant == "directory":
+                        path.unlink()
+                        path.mkdir()
+                    elif variant == "oversize":
+                        path.write_bytes(b"x" * 33)
+                    else:
+                        path.write_bytes(b"\xff")
+                    limit = {
+                        "REGISTRY_MAX_BYTES": 32,
+                        "CASE_MAX_BYTES": 32,
+                        "RESPONSE_MAX_BYTES": 32,
+                    }[f"{kind.upper()}_MAX_BYTES"]
+                    with mock.patch.object(
+                        self.runner, f"{kind.upper()}_MAX_BYTES", limit
+                    ):
+                        self.assert_input_failure(root, kind)
+
+    def test_registry_and_case_schema_types_are_required(self):
+        invalid_registries = (
+            [],
+            {"roles": {}, "permission_classes": []},
+            {
+                "roles": [{"id": "code-reviewer", "permission_class": 1}],
+                "permission_classes": [],
+            },
+            {
+                "roles": [
+                    {
+                        "id": "code-reviewer",
+                        "permission_class": "read-only-evidence",
+                    }
+                ],
+                "permission_classes": [
+                    {"id": "read-only-evidence", "allows_mutation": "false"}
+                ],
+            },
+        )
+        for registry in invalid_registries:
+            with self.subTest(registry=registry):
+                with tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    self.seed(root)
+                    (root / ".agents/roles/registry.json").write_text(
+                        json.dumps(registry), encoding="utf-8"
+                    )
+                    self.assert_input_failure(root, "registry")
+
+        invalid_cases = (
+            [],
+            {"id": "a"},
+            {
+                "id": "a",
+                "role": "code-reviewer",
+                "prompt": 1,
+                "response": "evals/responses/a.md",
+                "response_class": "synthetic",
+            },
+            {
+                "id": "a",
+                "role": "code-reviewer",
+                "prompt": "p",
+                "response": "evals/responses/a.md",
+                "response_class": "synthetic",
+                "expect": {"failed": "authority"},
+            },
+        )
+        for case in invalid_cases:
+            with self.subTest(case=case):
+                with tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    self.seed(root)
+                    (root / "evals/cases/a.json").write_text(
+                        json.dumps(case), encoding="utf-8"
+                    )
+                    self.assert_input_failure(root, "case")
+
+    def test_citations_are_bounded_regular_strict_utf8_non_symlink_files(self):
+        marker = "citation-payload-marker"
+        variants = ("directory", "oversize", "utf8", "symlink")
+        for variant in variants:
+            with self.subTest(variant=variant):
+                with tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    self.seed(root)
+                    citation = root / "docs/cited.md"
+                    citation.parent.mkdir()
+                    if variant == "directory":
+                        citation.mkdir()
+                    elif variant == "oversize":
+                        citation.write_text(marker + "x" * 32, encoding="utf-8")
+                    elif variant == "utf8":
+                        citation.write_bytes(b"\xff")
+                    else:
+                        target = root / "docs/target.md"
+                        target.write_text(marker, encoding="utf-8")
+                        citation.symlink_to(target)
+                    (root / "evals/responses/a.md").write_text(
+                        self.HANDOFF + f'Reviewed `docs/cited.md` as "{marker}".\n',
+                        encoding="utf-8",
+                    )
+                    with mock.patch.object(self.runner, "CITATION_MAX_BYTES", 32):
+                        result, output = self.invoke(root)
+                    self.assertEqual(result, 1, output)
+                    self.assertIn("failed=groundedness", output)
+                    self.assertNotIn(marker, output)
+
+    def test_citation_failure_diagnostics_omit_response_path_tokens(self):
+        marker = "response-derived-citation-marker"
+        for failure in ("missing", "absent-quote"):
+            with self.subTest(failure=failure):
+                with tempfile.TemporaryDirectory() as raw:
+                    root = Path(raw)
+                    self.seed(root)
+                    citation = root / f"docs/{marker}.md"
+                    if failure == "absent-quote":
+                        citation.parent.mkdir()
+                        citation.write_text("different text", encoding="utf-8")
+                    (root / "evals/responses/a.md").write_text(
+                        self.HANDOFF
+                        + f'Reviewed `docs/{marker}.md` as "claimed source text".\n',
+                        encoding="utf-8",
+                    )
+                    result, output = self.invoke(root)
+                    self.assertEqual(result, 1, output)
+                    self.assertIn("failed=groundedness", output)
+                    self.assertNotIn(marker, output)
+
+
+if __name__ == "__main__":
+    unittest.main()
