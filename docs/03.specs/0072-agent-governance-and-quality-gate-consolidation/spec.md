@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "2.2.0"
+version: "2.3.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -87,6 +87,10 @@ operator; this repair cannot satisfy it.
 - **C-AGQ-013 — source-owned current guidance.** Evaluation, formatting, Git and
   PR prose points to its executable or configuration owner and does not copy
   mutable inventories. A dated ADR clarification preserves historical meaning.
+- **C-AGQ-014 — one documentation entry point.** A file outside `docs/` names a
+  numbered stage document in plain text and reaches the tree through the
+  documentation hub. Links between documents inside `docs/` keep their existing
+  contracts, and a path a program opens is a machine reference, not a link.
 
 ## Core Design
 
@@ -289,6 +293,7 @@ this section proves provider runtime or live cluster behavior.
 | VAL-AGQ-017 | Every registered numbered authored family has path-bound unique current identity and retired IDs require existing provenance, including partial selected inputs | Ten-family wrong-valid-ID probes, duplicate/partial-input tests and Archive lineage regressions |
 | VAL-AGQ-018 | The three live verification scripts use private per-run temporary storage, preserve exit status and diagnostics, and always clean up | Stubbed no-live-command script tests |
 | VAL-AGQ-019 | Current evaluation, formatting, Git and PR guidance points to canonical owners without copied mutable inventories or changed native/tool behavior | Focused governance prose and repository-quality assertions |
+| VAL-AGQ-020 | No file outside `docs/` links into a numbered stage tree, the hub stays reachable, and links inside `docs/` are unchanged | Cross-document boundary diagnostic and its focused positive/negative regressions |
 
 ## Traceability
 
@@ -321,3 +326,4 @@ owns the completed migration and unresolved native follow-up. The
 | [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-017 | Path/identity, partial-selection and retained-provenance tests |
 | [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-018 | Stubbed private-temporary cleanup and exit-status tests |
 | [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-019 | Canonical-owner prose and repository-quality tests |
+| [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-AGQ-020 | Stage boundary diagnostic and hub-reachability regressions |

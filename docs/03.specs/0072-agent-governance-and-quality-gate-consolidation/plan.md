@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.5.0"
+version: "2.6.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -191,6 +191,19 @@ owning unit; the package-document owner coordinates Task state separately.
 | WP-010D | Approved Spec/Plan/Task | Three live scripts and their stubbed test module | `VAL-AGQ-018` focused RED/GREEN |
 | WP-010E | WP-010A through WP-010D final behavior | Current prose/config comments and corresponding existing assertion | `VAL-AGQ-019` focused checks; package owner records final handoff |
 
+### WP-011: Close the documentation entry point and the gaps it exposed
+
+Implement `VAL-AGQ-020` and the defects the boundary sweep surfaced. Each unit
+starts from a focused failing case and ends with its passing result.
+
+| Unit | Cause and owned files | Focused tests and diagnostics | Commit boundary and rollback |
+| --- | --- | --- | --- |
+| WP-011A | Files outside `docs/` reached numbered stage documents through direct links, so every implementation README depended on stage paths. Own `scripts/validate-links-and-owners.py`, the 24 consumer documents, `.agents/governance/document-authoring.md` as rule owner, and new `tests/test_documentation_link_boundary.py`. | `LINK-STAGE-BOUNDARY` fires for every numbered stage target written outside `docs/`, stays silent for the hub, for sources inside `docs/`, and for targets outside the stage tree. | Keep the diagnostic, its consumers and the rule owner atomic. Revert the unit; no stage path, machine reference or docs-internal link changes. |
+| WP-011B | The pre-action guard bounded its selector above the hook registration that kills it, and required a `--provider` value it then discarded. Own `scripts/provider_write_guard.py` and `tests/test_k8s_pre_edit_hook.py`. | The bound is compared against both providers' registered timeouts; the Claude payload, path and project variables are read only under the Claude provider. | Keep guard and regressions atomic. Revert the unit; adapters, registrations and the accept/trust boundary are unchanged. |
+| WP-011C | Every Archive-stage path with a non-archive profile was reduced to an identity-only check, so the stage index answered to no frontmatter contract. Own `scripts/validate-markdown-profiles.py`, `docs/98.archive/README.md` and `tests/test_common_agents_document_routes.py`. | The index without frontmatter reports `FM-DELIMITER`; a retained payload keeps its identity-only contract. | Keep the narrowed exemption, the conforming index and the route regressions atomic. Revert the unit; retained payloads and sealed bytes are untouched. |
+| WP-011D | Four current statements described absent behavior: projection-owned tools, a path-filtered labeler, an undocumented second CI binary, and two review items naming filters and a lane with no owner. Own `.claude/README.md`, `.github/repository-surface.md`, `.github/PULL_REQUEST_TEMPLATE.md` and `scripts/validation/repository/quality.py`. | The corrected template phrase remains the phrase the quality gate asserts. | Keep prose and its assertion atomic. Revert the unit; no workflow, trigger or gate behavior changes. |
+| WP-011E | One Git object fixture had two definitions and three further suites imported one of them from a test module. Own `tests/git_fixture.py`, both archive suites, the three importers and `tests/README.md`. | The five affected modules pass unchanged. | Keep the helper and every consumer atomic. Revert the unit; no test behavior or fixture data changes. |
+
 ## Verification Plan
 
 For each changed behavior, targeted RED then GREEN. During work run quick;
@@ -263,3 +276,8 @@ transition. Branch/worktree finish, remote actions and the older native
 | [VAL-AGQ-017](spec.md#success-criteria--verification-plan) | WP-010C | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
 | [VAL-AGQ-018](spec.md#success-criteria--verification-plan) | WP-010D | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
 | [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-010E | [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md) |
+| [VAL-AGQ-020](spec.md#success-criteria--verification-plan) | WP-011A | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
+| [VAL-AGQ-020](spec.md#success-criteria--verification-plan) | WP-011B | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
+| [VAL-AGQ-020](spec.md#success-criteria--verification-plan) | WP-011C | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
+| [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-011D | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
+| [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-011E | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
