@@ -23,6 +23,7 @@ TABLE_DIVIDER = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
 HEADING = re.compile(r"^##\s")
 INLINE_CODE = re.compile(r"`([^`\n]+)`")
 SUBJECT = re.compile(r"The subject input is `([^`\n]+)`")
+SUBJECTS = re.compile(r"The subject inputs are ([^\n.]+)\.")
 FRONTMATTER = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
 
 # Every command a contract may declare. The builder runs nothing else, so a
@@ -135,11 +136,15 @@ def declared_inputs(text: str) -> list[tuple[str, tuple[str, ...]]]:
     return inputs
 
 
-def subject_name(text: str) -> str:
-    match = SUBJECT.search(text)
-    if match is None:
+def subject_names(text: str) -> tuple[str, ...]:
+    singular = SUBJECT.search(text)
+    if singular is not None:
+        return (singular.group(1),)
+    plural = SUBJECTS.search(text)
+    names = () if plural is None else tuple(INLINE_CODE.findall(plural.group(1)))
+    if not names:
         raise PromptInputError("PROMPT-SUBJECT", "the contract names no subject input")
-    return match.group(1)
+    return names
 
 
 def run_input(root: Path, name: str, argv: Sequence[str]) -> str:
@@ -172,24 +177,33 @@ def assemble(root: Path, identifier: str) -> str:
 
     contract_text = body(read_contract(contract_path(root, identifier)))
     inputs = declared_inputs(contract_text)
-    subject = subject_name(contract_text)
+    subjects = subject_names(contract_text)
     names = [name for name, _ in inputs]
-    if subject not in names:
+    unknown = [subject for subject in subjects if subject not in names]
+    if unknown:
         raise PromptInputError(
             "PROMPT-SUBJECT",
-            f"the subject {subject!r} is not one of the declared inputs",
+            f"the subject {unknown[0]!r} is not one of the declared inputs",
         )
 
     collected: list[tuple[str, tuple[str, ...], str]] = []
     for name, argv in inputs:
         output = run_input(root, name, argv)
-        if name == subject and not output.strip():
+        if len(subjects) == 1 and name == subjects[0] and not output.strip():
             raise PromptInputError(
                 "PROMPT-REFUSED",
                 f"the subject input {name!r} is empty, so the contract produces no draft",
                 EXIT_REFUSED,
             )
         collected.append((name, argv, output))
+    subject_outputs = [output for name, _argv, output in collected if name in subjects]
+    if len(subjects) > 1 and not any(output.strip() for output in subject_outputs):
+        raise PromptInputError(
+            "PROMPT-REFUSED",
+            f"the subject inputs {', '.join(map(repr, subjects))} are empty, "
+            "so the contract produces no draft",
+            EXIT_REFUSED,
+        )
 
     parts = [
         f"# Prompt request: {identifier}",

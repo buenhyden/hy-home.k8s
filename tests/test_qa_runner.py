@@ -370,6 +370,7 @@ class QaTests(unittest.TestCase):
         (self.root / "ignored-secret").write_text("AGQ_SYNTHETIC_CANARY\n")
         before = (self.root / ".git/index").read_bytes()
         with self.qa.repository_snapshot(self.root) as snapshot:
+            index_tree_before = self.qa.index_tree_identity(snapshot)
             (snapshot / ".git/private-canary").write_text("AGQ_SYNTHETIC_CANARY\n")
             with tempfile.TemporaryDirectory(prefix="qa-canary-report-") as report_dir:
                 report = Path(report_dir) / "findings.json"
@@ -389,7 +390,7 @@ class QaTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 1, result.stderr.decode())
                 paths = {row["File"] for row in json.loads(report.read_text())}
                 self.assertEqual(paths, {"file.txt", ".hidden.txt"})
-            self.qa.require_unchanged_snapshot(snapshot)
+            self.qa.require_unchanged_snapshot(snapshot, index_tree_before)
         self.assertEqual((self.root / ".git/index").read_bytes(), before)
         self.assertEqual(
             (self.root / "ignored-secret").read_text(), "AGQ_SYNTHETIC_CANARY\n"
@@ -666,10 +667,41 @@ class QaTests(unittest.TestCase):
 
     def test_formatter_mutation_fails_without_changing_source(self):
         with self.qa.repository_snapshot(self.root) as snapshot:
+            index_tree_before = self.qa.index_tree_identity(snapshot)
             (snapshot / "file.txt").write_text("formatted\n")
             with self.assertRaisesRegex(ValueError, "modified"):
-                self.qa.require_unchanged_snapshot(snapshot)
+                self.qa.require_unchanged_snapshot(snapshot, index_tree_before)
         self.assertEqual((self.root / "file.txt").read_text(), "original\n")
+
+    def test_gate_staged_mutation_fails_without_changing_source_or_index(self):
+        import io
+        from contextlib import redirect_stderr
+
+        source_index_before = (self.root / ".git/index").read_bytes()
+
+        def stage_mutation(snapshot, *_args, **_kwargs):
+            (snapshot / "file.txt").write_text("formatted and staged\n")
+            self.qa.git(snapshot, "add", "--", "file.txt")
+            return 0
+
+        contract = self.qa.contract_module.validate_contract(ROOT)
+        errors = io.StringIO()
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.runner, "run_selected", side_effect=stage_mutation
+            ),
+            redirect_stderr(errors),
+        ):
+            self.assertEqual(self.qa.main(), 1)
+        self.assertIn("modified", errors.getvalue())
+        self.assertEqual((self.root / "file.txt").read_text(), "original\n")
+        self.assertEqual((self.root / ".git/index").read_bytes(), source_index_before)
 
 
 class FailureSnippetTests(unittest.TestCase):

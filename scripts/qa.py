@@ -243,9 +243,16 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         yield snapshot
 
 
-def require_unchanged_snapshot(root: Path) -> None:
-    if git(root, "diff", "--name-only", "-z") or git(
-        root, "ls-files", "--others", "--exclude-standard", "-z"
+def index_tree_identity(root: Path) -> bytes:
+    """Return the logical index entries without index file metadata."""
+    return git(root, "ls-files", "--stage", "-z")
+
+
+def require_unchanged_snapshot(root: Path, index_tree_before: bytes) -> None:
+    if (
+        index_tree_identity(root) != index_tree_before
+        or git(root, "diff", "--name-only", "-z")
+        or git(root, "ls-files", "--others", "--exclude-standard", "-z")
     ):
         raise ValueError(
             "QA modified snapshot files; review formatter changes before rerunning"
@@ -365,6 +372,7 @@ def main() -> int:
             print(
                 f"[INFO] qa profile={args.profile} snapshot={'index' if args.profile == 'staged' else 'working-tree'} gates={len(ids)}"
             )
+            index_tree_before = index_tree_identity(snapshot)
             result = runner.run_selected(
                 snapshot,
                 lane,
@@ -374,7 +382,7 @@ def main() -> int:
                 validator_ids=ids,
                 base_ref=baseline,
             )
-            require_unchanged_snapshot(snapshot)
+            require_unchanged_snapshot(snapshot, index_tree_before)
             return result
     except (OSError, ValueError) as exc:
         print("[FAIL] qa: " + runner.encoded(str(exc)[:1024]), file=sys.stderr)

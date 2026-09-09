@@ -77,6 +77,20 @@ class PromptInputBuilderTests(unittest.TestCase):
         (self.root / name).write_text(content, encoding="utf-8")
         subprocess.run(["git", "add", name], cwd=self.root, check=True)
 
+    def install_repository_contract(self, identifier: str) -> None:
+        self.write(
+            identifier,
+            (PROMPT_ROOT / f"{identifier}.md").read_text(encoding="utf-8"),
+        )
+
+    def commit(self, name: str, content: str) -> None:
+        self.stage(name, content)
+        subprocess.run(
+            ["git", "commit", "--quiet", "-m", "fixture"],
+            cwd=self.root,
+            check=True,
+        )
+
     def test_unknown_identifier_exits_non_zero(self) -> None:
         with self.assertRaises(self.module.PromptInputError) as raised:
             self.module.assemble(self.root, "absent")
@@ -90,6 +104,18 @@ class PromptInputBuilderTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "PROMPT-REFUSED")
         self.assertEqual(raised.exception.status, self.module.EXIT_REFUSED)
 
+    def test_empty_singular_subject_refuses_before_a_later_input_fails(self) -> None:
+        text = contract("git diff").replace(
+            "| Subject | `git diff` | The subject |",
+            "| Subject | `git diff` | The subject |\n"
+            "| Revision | `git rev-parse HEAD` | A later input |",
+        )
+        self.write("sample", text)
+        with self.assertRaises(self.module.PromptInputError) as raised:
+            self.module.assemble(self.root, "sample")
+        self.assertEqual(raised.exception.code, "PROMPT-REFUSED")
+        self.assertEqual(raised.exception.status, self.module.EXIT_REFUSED)
+
     def test_staged_difference_is_read_and_the_working_tree_is_not(self) -> None:
         self.write("sample", contract("git diff --cached", "Staged difference"))
         self.stage("staged.txt", "staged marker\n")
@@ -97,6 +123,62 @@ class PromptInputBuilderTests(unittest.TestCase):
         assembled = self.module.assemble(self.root, "sample")
         self.assertIn("staged marker", assembled)
         self.assertNotIn("unstaged marker", assembled)
+
+    def test_change_review_accepts_a_staged_only_difference(self) -> None:
+        self.install_repository_contract("change-review")
+        self.stage("review.txt", "staged marker\n")
+
+        assembled = self.module.assemble(self.root, "change-review")
+
+        self.assertIn("staged marker", assembled)
+        self.assertIn("Command: `git diff --cached`", assembled)
+
+    def test_change_review_accepts_an_unstaged_only_difference(self) -> None:
+        self.install_repository_contract("change-review")
+        self.commit("review.txt", "original\n")
+        (self.root / "review.txt").write_text("unstaged marker\n", encoding="utf-8")
+
+        assembled = self.module.assemble(self.root, "change-review")
+
+        self.assertIn("unstaged marker", assembled)
+        self.assertIn("Command: `git diff`", assembled)
+
+    def test_change_review_keeps_cancelling_staged_and_unstaged_differences(
+        self,
+    ) -> None:
+        self.install_repository_contract("change-review")
+        self.commit("review.txt", "original\n")
+        self.stage("review.txt", "staged marker\n")
+        (self.root / "review.txt").write_text("original\n", encoding="utf-8")
+
+        assembled = self.module.assemble(self.root, "change-review")
+
+        self.assertEqual(assembled.count("staged marker"), 2)
+        self.assertIn("Command: `git diff`", assembled)
+        self.assertIn("Command: `git diff --cached`", assembled)
+
+    def test_change_review_refuses_an_empty_difference(self) -> None:
+        self.install_repository_contract("change-review")
+        with self.assertRaises(self.module.PromptInputError) as raised:
+            self.module.assemble(self.root, "change-review")
+        self.assertEqual(raised.exception.code, "PROMPT-REFUSED")
+
+    def test_change_review_refuses_an_untracked_only_path_set(self) -> None:
+        self.install_repository_contract("change-review")
+        (self.root / "untracked.txt").write_text("not a diff\n", encoding="utf-8")
+        with self.assertRaises(self.module.PromptInputError) as raised:
+            self.module.assemble(self.root, "change-review")
+        self.assertEqual(raised.exception.code, "PROMPT-REFUSED")
+
+    def test_plural_subject_rejects_an_unknown_input_name(self) -> None:
+        text = contract("git diff").replace(
+            "The subject input is `Subject`.",
+            "The subject inputs are `Subject` and `Absent`.",
+        )
+        self.write("sample", text)
+        with self.assertRaises(self.module.PromptInputError) as raised:
+            self.module.assemble(self.root, "sample")
+        self.assertEqual(raised.exception.code, "PROMPT-SUBJECT")
 
     def test_undeclared_command_is_rejected(self) -> None:
         self.write("sample", contract("git push origin main"))
@@ -161,8 +243,8 @@ class PromptContractRepositoryTests(unittest.TestCase):
             text = module.body(path.read_text(encoding="utf-8"))
             declared = module.declared_inputs(text)
             self.assertTrue(declared, path.name)
-            subject = module.subject_name(text)
-            self.assertIn(subject, [name for name, _ in declared], path.name)
+            subjects = module.subject_names(text)
+            self.assertTrue(set(subjects) <= {name for name, _ in declared}, path.name)
 
     def test_identifiers_do_not_collide_with_skill_identifiers(self) -> None:
         skills = {

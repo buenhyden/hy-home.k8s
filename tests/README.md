@@ -89,7 +89,7 @@ Run focused suites while iterating, then the full profile once:
 python3 -m unittest tests.test_reference_pack_routes
 python3 -m unittest tests.test_validation_tooling_ownership
 python3 -m unittest tests.test_validate_affected_surfaces tests.test_run_validation_lane
-python3 -m unittest tests.test_validate_agent_governance_ci
+python3 -m unittest tests.test_agent_governance tests.test_ci_qa_workflow
 python3 -m unittest tests.test_document_strict_cutover
 python3 scripts/qa.py full
 git diff --check

@@ -827,10 +827,6 @@ class RetiredSurfaceTests(unittest.TestCase):
                     self.assertNotIn("synthetic-private-payload", str(raised.exception))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ReadOnlyShellScopeTests(unittest.TestCase):
     """A read-only evidence role carries a shell only where it needs one.
 
@@ -892,3 +888,7 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
 
                 self.assertIn(f'tools: "{", ".join(override)}"', projection)
                 self.assertNotIn("Bash", projection)
+
+
+if __name__ == "__main__":
+    unittest.main()

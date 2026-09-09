@@ -163,10 +163,6 @@ class AgentRegistryTests(unittest.TestCase):
         self.assert_rule(mutated, "AGENT-REGISTRY-EVIDENCE")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class CapabilityModelBindingTests(unittest.TestCase):
     """Every projection carries the model its role's capability tier declares."""
 
@@ -251,3 +247,7 @@ class CodexSandboxScopeTests(unittest.TestCase):
                     f"{role['id']}: {data.get('sandbox_mode')!r} != {expected!r}"
                 )
         self.assertEqual(missing, [])
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -30,8 +30,8 @@ protected actions. The contract names no reviewer role and grants none.
 | Changed path set | `git status --porcelain` | Establishes the owner boundaries the change touches |
 | Whitespace check | `git diff --check` | A defect class a reviewer should not have to find by eye |
 
-The subject input is `Local difference`. When it is empty the contract
-refuses, because there is nothing to review.
+The subject inputs are `Local difference` and `Staged difference`. When both
+are empty the contract refuses, because there is no difference to review.
 
 ## Output
 
@@ -42,12 +42,13 @@ finding without a failure condition is a preference and is reported as such.
 ## Validation
 
 Findings are checked against the changed files before they are acted on. A
-finding that names a path outside the changed set, or that the diff does not
-support, is discarded rather than reported.
+finding that names a path outside the changed set, or that neither difference
+supports, is discarded rather than reported.
 
 ## Refusal Conditions
 
-- The difference is empty, so there is nothing to review.
+- Both differences are empty, so there is nothing to review. An untracked-only
+  path set does not establish a reviewable difference.
 - The request asks for a verdict on live cluster, hosted, or provider-runtime
   behavior, which a local difference cannot establish.
 - The request asks to review content the approval boundary excludes from

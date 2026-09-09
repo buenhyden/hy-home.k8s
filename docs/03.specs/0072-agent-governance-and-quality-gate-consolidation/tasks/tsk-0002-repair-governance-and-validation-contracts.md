@@ -1,8 +1,8 @@
 ---
 title: "Repair Governance and Validation Contracts"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-09"
 layer: "specs"
@@ -40,10 +40,10 @@ operator-owned `In progress`/`DEFER` stream.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-010 | VAL-AGQ-015 | Contain and bound evaluation registry, case, response and citation reads; add exactly one authority-negative case/response | platform | Queued | Not executed | Focused evaluation RED/GREEN and payload-free diagnostics |
-| WORK-011 | VAL-AGQ-016 | Detect snapshot index mutation and align staged/unstaged review-input semantics and test entry guards | platform | Queued | Not executed | Focused QA/prompt RED/GREEN; deleted-path fixtures retained |
-| WORK-012 | VAL-AGQ-017 | Bind numbered document paths to unique current IDs and refuse unproven retired reuse | platform | Queued | Not executed | Ten-family, partial-selection and Archive lineage RED/GREEN |
-| WORK-013 | VAL-AGQ-018 | Replace predictable live-script `/tmp` files with private per-run cleanup | platform | Queued | Not executed | Stubbed no-live-command status/diagnostic/cleanup tests |
+| WORK-010 | VAL-AGQ-015 | Contain and bound evaluation registry, case, response and citation reads; add exactly one authority-negative case/response | platform | In progress | Not yet validated | Focused evaluation RED/GREEN and payload-free diagnostics pending |
+| WORK-011 | VAL-AGQ-016 | Detect snapshot index mutation and align staged/unstaged review-input semantics and test entry guards | platform | In progress | Not yet validated | Focused QA/prompt RED/GREEN pending; deleted-path fixtures retained |
+| WORK-012 | VAL-AGQ-017 | Bind numbered document paths to unique current IDs and refuse unproven retired reuse | platform | In progress | Not yet validated | Registered numbered authored profile coverage, partial-selection and Archive lineage evidence pending |
+| WORK-013 | VAL-AGQ-018 | Replace predictable live-script `/tmp` files with private per-run cleanup | platform | In progress | Not yet validated | Stubbed no-live-command status/diagnostic/cleanup tests pending |
 | WORK-014 | VAL-AGQ-019 | Correct current ownership, formatting and PR/commit prose through canonical owners | platform | Queued | Not executed | Focused governance and repository-quality assertions |
 
 ## Approval and Safety Boundaries
@@ -108,8 +108,19 @@ operator-owned `In progress`/`DEFER` stream.
 
 ## Verification Summary
 
-Status at creation: `WORK-010` through `WORK-014` are queued and no future test
-result is claimed. The approved execution-tool selection is a bounded
+### Initial contract and implementation start (2026-09-09)
+
+The initial three-document contract was committed as `f9762093`. Strict profile
+validation passed; exact-index validation passed six gates against tree
+`46b83eeb28397b4f670cd710bd1b0432e56bc054`; the actual pinned Commitizen check
+passed; and the normal active-hook commit returned `rc=0`. Independent
+`audit_document_contracts` review returned `APPROVE` with no blocker. These
+results validate the initial contract commit, not the implementation now in
+progress.
+
+`WORK-010` through `WORK-013` are in progress and not yet validated. `WORK-014`
+remains queued until their final behavior is known; no future result is claimed.
+The approved execution-tool selection is a bounded
 `gpt-5.6-sol`/high local authoring and implementation task; it is not native
 provider discovery, model resolution, permission enforcement or hook-delivery
 evidence. The reusable environment is `.worktrees/.agq-venv` with Python
@@ -128,8 +139,8 @@ finish decisions. The operator remains next owner for the older native
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-010](../plan.md#wp-010-repair-governance-and-validation-contracts) | Queued; no implementation result yet. | `VAL-AGQ-015`; initial approved Task contract |
-| [WORK-011](../plan.md#wp-010-repair-governance-and-validation-contracts) | Queued; no implementation result yet. | `VAL-AGQ-016`; initial approved Task contract |
-| [WORK-012](../plan.md#wp-010-repair-governance-and-validation-contracts) | Queued; no implementation result yet. | `VAL-AGQ-017`; initial approved Task contract |
-| [WORK-013](../plan.md#wp-010-repair-governance-and-validation-contracts) | Queued; no implementation result yet. | `VAL-AGQ-018`; initial approved Task contract |
+| [WORK-010](../plan.md#wp-010-repair-governance-and-validation-contracts) | In progress; not yet validated. | `VAL-AGQ-015`; initial contract `f9762093`; implementation evidence pending |
+| [WORK-011](../plan.md#wp-010-repair-governance-and-validation-contracts) | In progress; not yet validated. | `VAL-AGQ-016`; initial contract `f9762093`; implementation evidence pending |
+| [WORK-012](../plan.md#wp-010-repair-governance-and-validation-contracts) | In progress; not yet validated. | `VAL-AGQ-017`; initial contract `f9762093`; implementation evidence pending |
+| [WORK-013](../plan.md#wp-010-repair-governance-and-validation-contracts) | In progress; not yet validated. | `VAL-AGQ-018`; initial contract `f9762093`; implementation evidence pending |
 | [WORK-014](../plan.md#wp-010-repair-governance-and-validation-contracts) | Queued; no implementation result yet. | `VAL-AGQ-019`; initial approved Task contract |

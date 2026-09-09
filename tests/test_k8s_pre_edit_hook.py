@@ -644,10 +644,6 @@ class PreEditTrustBoundaryTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 def shell_payload(command: str) -> str:
     return '{"tool_name":"Bash","tool_input":{"command":%s}}' % _json_string(command)
 
