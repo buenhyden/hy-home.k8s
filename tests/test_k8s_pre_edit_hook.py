@@ -764,9 +764,7 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
         )
 
     def test_claude_payload_variable_is_read_only_for_claude(self):
-        retired = (
-            '{"tool_input":{"file_path":"docs/00.agent-governance/x.md"}}'
-        )
+        retired = '{"tool_input":{"file_path":"docs/00.agent-governance/x.md"}}'
 
         claude = self.run_guard("claude", "", {"CLAUDE_TOOL_INPUT": retired})
         codex = self.run_guard("codex", "", {"CLAUDE_TOOL_INPUT": retired})
