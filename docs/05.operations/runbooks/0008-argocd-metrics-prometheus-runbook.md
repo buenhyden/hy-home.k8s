@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0008"
 ---
@@ -297,11 +297,6 @@ docker exec infra-prometheus promtool check config /etc/prometheus/prometheus.ym
 | `YAML syntax error` in prometheus.yml                | config 문법 오류                              | `promtool check config` 실행 |
 
 ---
-
-### Agent Operations
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

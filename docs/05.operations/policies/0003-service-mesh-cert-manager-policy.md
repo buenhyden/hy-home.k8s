@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -93,7 +93,8 @@ artifact_id: "POL-0003"
 
 ### CI Governance
 
-- `verify-contracts-static.sh` PASS가 모든 IP/endpoint 변경의 선행 조건이다.
+- `infrastructure/tests/verify-contracts-static.sh` PASS가 모든 IP/endpoint
+  변경의 선행 조건이다. 이 검사의 선택과 실행은 QA 실행 레지스트리가 소유한다.
 - shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - cert-manager/Headlamp/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
@@ -111,11 +112,6 @@ artifact_id: "POL-0003"
 
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
 - cert-manager, Istio, Kiali, Headlamp 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
-
-### AI Agent Policy Section
-
-이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
-단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

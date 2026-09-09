@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -182,11 +182,6 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - Headlamp 404 → ingress-nginx 미시작 또는 TLS secret 미발급
 - Rollouts `CRD not found` → `installCRDs: true` 확인 또는 ArgoCD sync wave 순서 문제
 - Rollouts Dashboard 502 → dashboard Pod 미기동, service port 3100 확인
-
-### Agent Operations
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

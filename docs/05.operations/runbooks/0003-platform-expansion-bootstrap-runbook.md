@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -156,11 +156,6 @@ curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
 
 - **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
 - **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
-
-### Agent Operations
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Safe Rollback or Recovery Procedure
 

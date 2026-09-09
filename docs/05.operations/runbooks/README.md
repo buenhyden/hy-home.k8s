@@ -1,10 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-09"
 layer: "operations"
 ---
 # 05.operations/runbooks
@@ -122,12 +122,12 @@ docs/05.operations/runbooks/
 
 | 문서                                                                                                       | 설명                                                                   | 상태   | 최종 수정  |
 | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북 | Active | 2026-09-01 |
-| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault/EndpointSlice/auth drift 분류와 ESO 복구 런북 | Active | 2026-09-01 |
-| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Headlamp/Istio/Kiali 부트스트랩 런북 | Active | 2026-09-01 |
-| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md) | Rollouts/Notifications/Headlamp 운영 런북 | Active | 2026-09-01 |
-| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 연결 진단·복구 런북 | Active | 2026-09-01 |
-| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD metrics/Prometheus 진단·복구 런북 | Active | 2026-09-01 |
-| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | cluster metrics/Alloy/rules/AppProject 진단 런북 | Active | 2026-09-01 |
-| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-01 |
+| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북 | Active | 2026-09-09 |
+| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault/EndpointSlice/auth drift 분류와 ESO 복구 런북 | Active | 2026-09-09 |
+| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Headlamp/Istio/Kiali 부트스트랩 런북 | Active | 2026-09-09 |
+| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md) | Rollouts/Notifications/Headlamp 운영 런북 | Active | 2026-09-09 |
+| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 연결 진단·복구 런북 | Active | 2026-09-09 |
+| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD metrics/Prometheus 진단·복구 런북 | Active | 2026-09-09 |
+| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | cluster metrics/Alloy/rules/AppProject 진단 런북 | Active | 2026-09-09 |
+| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-09 |
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 | Active | 2026-09-07 |

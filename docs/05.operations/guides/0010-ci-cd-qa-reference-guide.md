@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.1.0"
+version: "1.1.1"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -58,10 +58,10 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 ### 3. 호스팅 CI의 소유 경계를 확인한다
 
 `.github/workflows/ci.yml`이 job 이름, 의존 관계, 실행 조건의 canonical
-source다. 현재 주요 검증 면은 branch policy, change classification,
-pre-commit, repository quality, agent governance, manifest validation,
-summary로 나뉜다. 로컬 성공은 호스팅 환경의 권한·event·required-check
-상태까지 증명하지 않는다.
+source이며, job과 required check의 현재 구성은
+[GitHub Configuration Hub](../../../.github/repository-surface.md)가 설명한다.
+이 문서는 job 목록을 복제하지 않는다. 로컬 성공은 호스팅 환경의
+권한·event·required-check 상태까지 증명하지 않는다.
 
 ### 4. 증적 등급을 구분해 handoff한다
 
@@ -69,7 +69,9 @@ summary로 나뉜다. 로컬 성공은 호스팅 환경의 권한·event·requir
 - 호스팅 CI: GitHub event와 workflow 환경에서 동일 변경을 확인한다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 
-handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이유를 기록한다.
+handoff 기록 항목은
+[Quality Policy](../../../.agents/governance/quality.md)의 handoff evidence
+contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다.
 브랜치 SHA나 고정된 문서 수를 별도의 운영 진실로 복제하지 않는다.
 
 ### 5. 규칙별 실행 소유자와 메시지 검증을 구분한다
@@ -81,9 +83,8 @@ handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이
 | secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
 | 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | full 파일 검사는 메시지 검증을 대신하지 않는다 |
 
-Dockerfile 도입 시 lint owner와 설정을 함께 도입한다. 현재 대상이 없는
-hadolint 설정의 제거는 SPEC-0072의 승인된 후속 정비이며, 과거 유지 판단을
-현재 정책으로 재사용하지 않는다.
+Dockerfile 도입 시 lint owner와 설정을 함께 도입한다. 대상이 없는 설정은
+남기지 않는다.
 
 특정 workstation의 hooksPath는 공통 규범이 아니다. 유효한 출처와 hook
 연결만 좁게 확인하고 기존 설정을 유지한다. 실제 메시지의 명시적 검증과

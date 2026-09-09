@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---
@@ -365,11 +365,6 @@ argocd app set platform-external-services \
 - EndpointSlice or NetworkPolicy changes should be reverted through GitOps if the new IP mapping is wrong.
 - Docker-side Grafana auth changes must be reflected in the owning Docker repo before treating the fix as persistent.
 - Direct EndpointSlice apply/patch remains human-approved break-glass only and must be reconciled back into Git.
-
-### Agent Operations
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

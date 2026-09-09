@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -211,14 +211,6 @@ kubectl argo rollouts get rollout ${APP} -n apps
 
 - **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
 - **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
-
-### Agent Operations
-
-- **Prompt Rollback**: 최근 agent-generated manifest 변경을 PR diff 기준으로 되돌린다.
-- **Model Fallback**: 검증 실패 시 sample-app/adminer 패턴에 맞춘 최소 변경만 유지한다.
-- **Tool Disable / Revoke**: 실패 중 live cluster mutation 또는 secret write 자동화를 중지한다.
-- **Eval Re-run**: GitOps structure, manifest validation, secret handling gate를 재실행한다.
-- **Trace Capture**: 온보딩 task 또는 PR에 검증 명령과 결과를 남긴다.
 
 ## Safe Rollback or Recovery Procedure
 

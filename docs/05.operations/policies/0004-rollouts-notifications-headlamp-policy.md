@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -99,11 +99,6 @@ artifact_id: "POL-0004"
 
 - 운영 변경 시 즉시
 - 정기 분기 검토
-
-### AI Agent Policy Section
-
-이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
-단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

@@ -275,19 +275,16 @@ Recovery Time (MTTR)  = incident_resolution_time − incident_detection_time
 
 ---
 
-## GitOps Branch Strategy Mapping
+## Branch and Promotion Model
 
-| Branch Strategy | Deploy Flow                                | Best For                          |
-| --------------- | ------------------------------------------ | --------------------------------- |
-| **Trunk-Based** | `main` → staging → production              | Small teams, frequent releases    |
-| **GitHub Flow** | `feature` → PR → `main` → production       | Medium teams, mature GitOps       |
-| **GitFlow**     | `feature` → `develop` → `release` → `main` | Large teams, fixed release cycles |
+This workspace has one integration branch and no environment promotion chain,
+so the generic multi-branch models a deployment guide usually lists do not
+describe it. `main` is the integration base, a change reaches it through a
+prefixed branch and review, and Argo CD reconciles the merged desired state
+under operator control. [Git policy](../../governance/git.md) owns the branch,
+merge and finish rules, `.github/workflows/ci.yml` owns the executable branch
+shape, and [approval and safety](../../governance/approval-and-safety.md) owns
+which actions need explicit authorization.
 
-### ArgoCD App-of-Apps Environment Rules
-
-```
-feature/*  → PR preview environment (ephemeral ArgoCD app, auto-deleted on PR close)
-main       → auto-sync → staging (full test suite gate)
-main + tag → manual promotion gate → production
-hotfix/*   → emergency path → production (simplified approval, mandatory post-incident review)
-```
+No promotion path shortens an approval. A passing check is evidence, never
+permission, and an emergency still needs the same authorization boundary.

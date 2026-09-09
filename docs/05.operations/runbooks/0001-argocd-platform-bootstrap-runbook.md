@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-09"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -180,14 +180,6 @@ argocd app list
   ```
 
 - [ ] 외부 endpoint mapping/IP 및 ESO auth 설정 재적용 후 재검증
-
-### Agent Operations
-
-- **Prompt Rollback**: 최근 문서/설정 변경 롤백
-- **Model Fallback**: 검증 실패 시 보수적 절차 우선
-- **Tool Disable / Revoke**: 위험 자동화 중지
-- **Eval Re-run**: T-001~T-011 검증 재실행
-- **Trace Capture**: task 문서에 증적 추가
 
 ## Traceability
 

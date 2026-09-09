@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-09"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -121,7 +121,7 @@ docs/05.operations/policies/
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
 | [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/Vault/ingress/최소권한 통합 정책 | Active | 2026-09-01 |
-| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Headlamp/Istio/Kiali 운영 통제 정책 | Active | 2026-09-01 |
-| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-01 |
+| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Headlamp/Istio/Kiali 운영 통제 정책 | Active | 2026-09-09 |
+| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-09 |
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-01 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-01 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-09 |
