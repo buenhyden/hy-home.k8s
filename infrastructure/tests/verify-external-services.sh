@@ -6,17 +6,35 @@ fail() {
   exit 1
 }
 
+TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/verify-external-services.XXXXXXXX")" ||
+  fail "cannot create private temporary directory"
+PLATFORM_SERVICES_OUTPUT="$TEMP_DIR/platform-services.txt"
+
+cleanup() {
+  local status=$?
+  trap - EXIT INT TERM
+  if ! rm -rf -- "$TEMP_DIR"; then
+    echo "[FAIL] cannot remove private temporary directory" >&2
+    [ "$status" -ne 0 ] || status=1
+  fi
+  exit "$status"
+}
+
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 echo "[INFO] Checking external service contracts"
 
 kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
-kubectl -n platform get svc,endpointslice >/tmp/platform-services.txt
+kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT"
 
-rg -q 'postgres-write-external' /tmp/platform-services.txt || fail "missing postgres-write-external"
-rg -q 'postgres-read-external' /tmp/platform-services.txt || fail "missing postgres-read-external"
-rg -q 'vault-external' /tmp/platform-services.txt || fail "missing vault-external"
-rg -q 'valkey-external' /tmp/platform-services.txt || fail "missing valkey-external"
+rg -q 'postgres-write-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-write-external"
+rg -q 'postgres-read-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-read-external"
+rg -q 'vault-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing vault-external"
+rg -q 'valkey-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing valkey-external"
 
 rw_port="$(kubectl -n platform get svc postgres-write-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
 [ "$rw_port" = "15432" ] || fail "postgres-write-external port mismatch (actual=$rw_port)"
@@ -38,10 +56,10 @@ valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 
 echo "[INFO] Checking observability external service contracts"
 
-kubectl -n platform get svc,endpointslice >/tmp/platform-services.txt 2>/dev/null || true
+kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT" 2>/dev/null || true
 
 for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
-  rg -q "$svc" /tmp/platform-services.txt || fail "missing $svc in platform namespace"
+  rg -q "$svc" "$PLATFORM_SERVICES_OUTPUT" || fail "missing $svc in platform namespace"
 done
 
 check_obs_port() {
