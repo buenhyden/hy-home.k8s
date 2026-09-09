@@ -1122,9 +1122,12 @@ def _intervals_not_overlapping(
     )
 
 
+# The pairing depends only on the text and the spans higher-priority syntax
+# already claimed, and the same pair is scanned once per document per caller.
+@lru_cache(maxsize=4096)
 def _backtick_closer_scan(
     text: str,
-    syntax_owned_spans: Sequence[tuple[int, int]],
+    syntax_owned_spans: tuple[tuple[int, int], ...],
 ) -> BacktickCloserScan:
     """Pair unowned backtick runs with one monotonic ownership cursor."""
 
@@ -1184,7 +1187,8 @@ def _backtick_closer_ends(
 ) -> dict[int, int]:
     """Map each unowned backtick run to its next equal-length closer."""
 
-    return _backtick_closer_scan(text, syntax_owned_spans).closer_ends
+    # Callers receive their own mapping; the cached scan keeps its result.
+    return dict(_backtick_closer_scan(text, tuple(syntax_owned_spans)).closer_ends)
 
 
 def _inline_code_spans(
@@ -1997,8 +2001,24 @@ def _reference_definitions_with_spans(
 ) -> tuple[dict[str, str], tuple[tuple[int, int], ...]]:
     """Parse valid definitions and their complete, offset-stable source spans."""
 
+    # Resolve provenance before the cache. A rendered value carries its lazy
+    # lines as an attribute that string equality cannot see, so two inputs that
+    # compare and hash alike can still parse differently; the resolved set has
+    # to be part of the key rather than travel on the value.
     if lazy_lines is None:
         lazy_lines = getattr(value, "lazy_lines", frozenset())
+    definitions, spans = _parsed_reference_definitions(value, lazy_lines)
+    # Callers own the mapping they receive; the cache keeps its own copy.
+    return dict(definitions), spans
+
+
+@lru_cache(maxsize=8192)
+def _parsed_reference_definitions(
+    value: str,
+    lazy_lines: frozenset[int],
+) -> tuple[tuple[tuple[str, str], ...], tuple[tuple[int, int], ...]]:
+    """Parse one exact text and lazy-line input into an immutable result."""
+
     definitions: dict[str, str] = {}
     spans: list[tuple[int, int]] = []
     lines: list[tuple[str, int, int]] = []
@@ -2196,7 +2216,7 @@ def _reference_definitions_with_spans(
         definitions.setdefault(label, target)
         spans.append((definition_start, span_end))
         index = definition_end_index + 1
-    return definitions, tuple(spans)
+    return tuple(definitions.items()), tuple(spans)
 
 
 def _reference_definitions(value: str) -> dict[str, str]:
@@ -4251,6 +4271,12 @@ class RenderedMarkdown(str):
         return instance
 
 
+# Rendering depends only on the argument's text: neither this function nor the
+# container renderer it calls reads an attribute off the value, and every
+# returned line is a frozen record, so one result is safe to share. The bound
+# holds the whole tracked Markdown corpus without retaining every transient
+# fragment the block scans build.
+@lru_cache(maxsize=1024)
 def _rendered_container_lines(text: str) -> tuple[RenderedBlockLine, ...]:
     """Render containers outside-in so outer opaque state hides descendants."""
 
