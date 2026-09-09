@@ -122,6 +122,9 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-VALUE-KIND",
         "FM-VALUE-NULL",
         "FM-VALUE-PATTERN",
+        "ARTIFACT-IDENTITY",
+        "ARTIFACT-IDENTITY-DUPLICATE",
+        "REQUIREMENT-PACKAGE-IDENTITY",
         "README_FENCE",
         "README_FRONTMATTER",
         "README_H1",
@@ -582,31 +585,133 @@ def _requirement_package_number(path: PurePosixPath) -> str | None:
     return None if match is None else match.group(1)
 
 
-def _requirement_package_identity_diagnostics(
+def expected_artifact_id(
     path: PurePosixPath,
     profile: DocumentProfile,
-    metadata: dict[str, Any],
-) -> list[Diagnostic]:
-    """Bind an authored Requirement Package artifact ID to its path number."""
+) -> str | None:
+    """Derive one concrete identity after the Registry selected the path."""
 
-    if profile.profile_id != "sdlc/requirement" or profile.mode != "authored":
-        return []
-    package_number = _requirement_package_number(path)
+    profile_id = profile.profile_id
+    if profile_id in {
+        "sdlc/requirement",
+        "sdlc/architecture-description",
+        "sdlc/architecture-decision",
+        "operation/guide",
+        "operation/policy",
+        "operation/runbook",
+    }:
+        number = path.name[:4]
+        prefix = {
+            "sdlc/requirement": "REQ",
+            "sdlc/architecture-description": "AD",
+            "sdlc/architecture-decision": "ADR",
+            "operation/guide": "GDE",
+            "operation/policy": "POL",
+            "operation/runbook": "RUN",
+        }[profile_id]
+        return f"{prefix}-{number}"
+    if profile_id in {"sdlc/spec", "sdlc/plan", "sdlc/task"}:
+        try:
+            package_number = path.parts[path.parts.index("03.specs") + 1][:4]
+        except (ValueError, IndexError):
+            return None
+        if profile_id == "sdlc/spec":
+            return f"SPEC-{package_number}"
+        if profile_id == "sdlc/plan":
+            return f"SPEC-{package_number}-PLAN-0001"
+        return f"SPEC-{package_number}-TSK-{path.name[4:8]}"
+    if profile_id in {"operation/incident", "operation/postmortem"}:
+        year = path.parent.parent.name
+        incident_number = path.parent.name[4:8]
+        suffix = "-PM" if profile_id == "operation/postmortem" else ""
+        return f"inc-{year}-{incident_number}{suffix}"
+    if profile_id in {"reference/audit", "reference/research", "reference/data"}:
+        prefix = {
+            "reference/audit": "AUD",
+            "reference/research": "RES",
+            "reference/data": "DATA",
+        }[profile_id]
+        return f"{prefix}-{path.parent.name[:4]}-{path.stem[:5]}"
+    if profile_id == "archive/migration":
+        return f"MIG-{path.name[:4]}"
+    return None
+
+
+def artifact_identity_diagnostics(
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    metadata: Mapping[str, Any],
+) -> list[Diagnostic]:
+    """Bind every Registry-numbered document ID to its selected route."""
+
+    expected = expected_artifact_id(path, profile)
     artifact_id = metadata.get("artifact_id")
-    if package_number is None or not isinstance(artifact_id, str):
+    if expected is None or not isinstance(artifact_id, str):
         return []
-    expected = f"REQ-{package_number}"
     if artifact_id == expected:
         return []
     return [
         _diagnostic(
-            "REQUIREMENT-PACKAGE-IDENTITY",
+            (
+                "REQUIREMENT-PACKAGE-IDENTITY"
+                if profile.profile_id == "sdlc/requirement"
+                else "ARTIFACT-IDENTITY"
+            ),
             path,
             profile,
-            f"artifact_id equals path-derived package ID {expected!r}",
+            f"artifact_id equals path-derived identity {expected!r}",
             repr(artifact_id),
         )
     ]
+
+
+def current_artifact_identities(
+    documents: Sequence[tuple[PurePosixPath, DocumentProfile, str]],
+) -> tuple[tuple[PurePosixPath, str], ...]:
+    """Read only the outer frontmatter identity of current concrete records."""
+
+    identities: dict[PurePosixPath, str] = {}
+    for path, profile, text in documents:
+        if profile.mode == "template" or profile.artifact_id_pattern is None:
+            continue
+        try:
+            _, metadata, _ = extract_frontmatter(text)
+        except ContractError:
+            continue
+        artifact_id = metadata.get("artifact_id")
+        if not isinstance(artifact_id, str) or MARKDOWN_TEMPLATE_PLACEHOLDER.fullmatch(
+            artifact_id
+        ):
+            continue
+        identities[path] = artifact_id
+    return tuple(sorted(identities.items(), key=lambda item: item[0].as_posix()))
+
+
+def artifact_identity_uniqueness_diagnostics(
+    documents: Sequence[tuple[PurePosixPath, DocumentProfile, str]],
+) -> list[Diagnostic]:
+    """Reject one concrete current ID owned by more than one tracked path."""
+
+    profiles = {path: profile for path, profile, _ in documents}
+    owners: dict[str, list[PurePosixPath]] = collections.defaultdict(list)
+    for path, artifact_id in current_artifact_identities(documents):
+        owners[artifact_id].append(path)
+    diagnostics: list[Diagnostic] = []
+    for artifact_id, paths in sorted(owners.items()):
+        if len(paths) < 2:
+            continue
+        rendered = ", ".join(path.as_posix() for path in paths)
+        for path in paths:
+            diagnostics.append(
+                _diagnostic(
+                    "ARTIFACT-IDENTITY-DUPLICATE",
+                    path,
+                    profiles[path],
+                    "one current concrete artifact_id per governed path",
+                    f"{artifact_id!r} at {rendered}",
+                )
+            )
+    return sorted(diagnostics, key=diagnostic_sort_key)
 
 
 def _body_contract_is_enforced(
@@ -1461,10 +1566,14 @@ def validate_document_text(
 
     if mode not in {"compatibility", "strict"}:
         raise ValueError("mode must be compatibility or strict")
-    if path.parts[:2] == ("docs", "98.archive") and profile.profile_class != "archive":
-        return []
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
+    if path.parts[:2] == ("docs", "98.archive") and profile.profile_class != "archive":
+        try:
+            _, metadata, _ = extract_frontmatter(text)
+        except ContractError:
+            return []
+        return artifact_identity_diagnostics(path, profile, metadata)
     body = _frontmatter_body(
         text, path, profile, diagnostics, effective_today, frontmatter_schema
     )
@@ -1478,9 +1587,7 @@ def validate_document_text(
             metadata = {}
         value = metadata.get("status")
         status = value if isinstance(value, str) else ""
-    diagnostics.extend(
-        _requirement_package_identity_diagnostics(path, profile, metadata)
-    )
+    diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -1711,11 +1818,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                 include_paths=native_include_paths,
             )
         )
+        identity_documents: list[tuple[PurePosixPath, DocumentProfile, str]] = []
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
+            text = read_repository_text(root, path)
+            identity_documents.append((path, profile, text))
             diagnostics.extend(
-                validate_document(
-                    root,
+                validate_document_text(
+                    text,
                     path,
                     profile,
                     args.mode,
@@ -1724,6 +1834,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     frontmatter_schema=frontmatter_schema,
                 )
             )
+        diagnostics.extend(artifact_identity_uniqueness_diagnostics(identity_documents))
         rows = _outcome_rows(root, diagnostics, args.mode)
         _emit_results(args.mode, args.format, rows)
         return 1 if any(row.outcome == "FAIL" for row in rows) else 0

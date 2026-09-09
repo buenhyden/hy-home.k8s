@@ -48,6 +48,7 @@ from document_contracts import (
     read_repository_text,
 )
 from document_lifecycle import (
+    ArtifactIdentityLineage,
     LifecycleDiagnostic,
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -3707,8 +3708,62 @@ def _migration_lifecycle_events(
     archive_rehomes = declared_archive_rehome_pairs(
         root=root, base_blobs=base_blobs, proposed_texts=proposed_texts
     )
+
+    def row_identity_lineages(
+        rows: Sequence[Mapping[str, object]],
+    ) -> set[ArtifactIdentityLineage]:
+        return {
+            ArtifactIdentityLineage(
+                str(row["artifact_id"]),
+                PurePosixPath(str(row["legacy_path"])),
+                PurePosixPath(str(row["stable_path"])),
+            )
+            for row in rows
+            if row.get("action") == "moved"
+            and isinstance(row.get("artifact_id"), str)
+            and isinstance(row.get("legacy_path"), str)
+            and isinstance(row.get("stable_path"), str)
+        }
+
+    identity_lineages: set[ArtifactIdentityLineage] = set()
+
+    def preserve_document_identity(
+        source: PurePosixPath, target: PurePosixPath
+    ) -> None:
+        before = base_documents.get(source)
+        after = proposed_documents.get(target)
+        if (
+            before is not None
+            and after is not None
+            and before.artifact_id is not None
+            and before.artifact_id == after.artifact_id
+        ):
+            identity_lineages.add(
+                ArtifactIdentityLineage(before.artifact_id, source, target)
+            )
+
+    for path, document in proposed_documents.items():
+        if (
+            document.profile_id != "archive/migration"
+            or document.status != "sealed"
+            or path.as_posix() in records
+        ):
+            continue
+        try:
+            identity_lineages.update(
+                row_identity_lineages(
+                    parse_pinned_migration_control(
+                        path.as_posix(), proposed_texts[path].encode("utf-8")
+                    )
+                )
+            )
+        except ArchiveContractError:
+            continue
     if not records:
-        return MigrationLifecycleEvents(archive_rehomes=archive_rehomes), ()
+        return MigrationLifecycleEvents(
+            archive_rehomes=archive_rehomes,
+            identity_lineages=frozenset(identity_lineages),
+        ), ()
 
     def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
         return LifecycleDiagnostic(
@@ -3735,6 +3790,10 @@ def _migration_lifecycle_events(
         return MigrationLifecycleEvents(archive_rehomes=archive_rehomes), (
             failure(PurePosixPath(sorted(records)[0]), exc.code),
         )
+
+    for path, content in records.items():
+        rows, _ = parse_migration_control(path, content)
+        identity_lineages.update(row_identity_lineages(rows))
 
     removals: set[PurePosixPath] = set()
     rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
@@ -3793,6 +3852,7 @@ def _migration_lifecycle_events(
                     diagnostics.append(failure(target, "relocated record route"))
                     continue
                 archive_rehomes = archive_rehomes | {(source_path, target)}
+                preserve_document_identity(source_path, target)
                 continue
         retention_class = _retention_rehome_target(source_path, target)
         if retention_class is not None:
@@ -3829,6 +3889,7 @@ def _migration_lifecycle_events(
                 diagnostics.append(failure(target, "canonical retained document form"))
                 continue
             retention_rehomes.add((source_path, target))
+            preserve_document_identity(source_path, target)
             continue
         if target.parts[0] != ".agents" and target not in {
             PurePosixPath(".claude/provider.md"),
@@ -3916,6 +3977,7 @@ def _migration_lifecycle_events(
         current_rehomes=frozenset(rehomes),
         form_rehomes=frozenset(form_rehomes),
         archive_rehomes=archive_rehomes | frozenset(retention_rehomes),
+        identity_lineages=frozenset(identity_lineages),
     )
     return events, tuple(diagnostics)
 

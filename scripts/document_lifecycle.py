@@ -42,6 +42,8 @@ class LifecycleDocument:
     original_path: PurePosixPath | None = None
     archive_reason: str | None = None
     replacement: PurePosixPath | None = None
+    artifact_id: str | None = None
+    original_artifact_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -50,6 +52,15 @@ class LifecycleRename:
 
     old_path: PurePosixPath
     new_path: PurePosixPath
+
+
+@dataclass(frozen=True, order=True)
+class ArtifactIdentityLineage:
+    """One proof-backed same-document identity move between exact paths."""
+
+    artifact_id: str
+    source_path: PurePosixPath
+    target_path: PurePosixPath
 
 
 @dataclass(frozen=True)
@@ -69,6 +80,7 @@ class MigrationLifecycleEvents:
     # answers to, and a `moved` row is byte-identical, so a reviewed move onto
     # the same template route is the entire event.
     form_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
+    identity_lineages: frozenset[ArtifactIdentityLineage] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -1104,6 +1116,78 @@ def _terminal_supersession_evidence(
     )
 
 
+def artifact_identity_reuse_diagnostics(
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    *,
+    identity_lineages: frozenset[ArtifactIdentityLineage] = frozenset(),
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Reject new owners of identities reserved by the base or sealed evidence."""
+
+    reserved: dict[str, set[PurePosixPath]] = {}
+    for document in base_documents.values():
+        if document.artifact_id is not None:
+            reserved.setdefault(document.artifact_id, set()).add(document.path)
+    for lineage in identity_lineages:
+        reserved.setdefault(lineage.artifact_id, set()).add(lineage.source_path)
+
+    tombstone_lineages: set[ArtifactIdentityLineage] = set()
+    for document in (*base_documents.values(), *proposed_documents.values()):
+        if (
+            document.profile_id != "archive/tombstone"
+            or document.status != "archived"
+            or document.state_issue is not None
+            or document.original_artifact_id is None
+            or document.original_path is None
+        ):
+            continue
+        reserved.setdefault(document.original_artifact_id, set()).add(
+            document.original_path
+        )
+        if document.replacement is not None:
+            tombstone_lineages.add(
+                ArtifactIdentityLineage(
+                    document.original_artifact_id,
+                    document.original_path,
+                    document.replacement,
+                )
+            )
+
+    allowed = identity_lineages | frozenset(tombstone_lineages)
+    diagnostics: list[LifecycleDiagnostic] = []
+    for path, document in sorted(
+        proposed_documents.items(), key=lambda item: item[0].as_posix()
+    ):
+        artifact_id = document.artifact_id
+        if artifact_id is None:
+            continue
+        base = base_documents.get(path)
+        if base is not None and base.artifact_id == artifact_id:
+            continue
+        sources = reserved.get(artifact_id, set())
+        if not sources or any(
+            ArtifactIdentityLineage(artifact_id, source, path) in allowed
+            for source in sources
+        ):
+            continue
+        diagnostics.append(
+            _diagnostic(
+                "LIFECYCLE-IDENTITY-REUSE",
+                path=path,
+                profile=document.profile_id,
+                expected=(
+                    "new artifact identity absent from the comparison base and "
+                    "sealed dispositions, or exact same-document lineage"
+                ),
+                observed=f"{artifact_id!r} reserved at another document path",
+                base_mode=base_mode,
+                evidence_gap="base or sealed migration/tombstone identity provenance",
+            )
+        )
+    return tuple(diagnostics)
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1123,6 +1207,27 @@ def compare_lifecycle(
     """
 
     diagnostics: list[LifecycleDiagnostic] = []
+    identity_base = (
+        evidence_context.base_documents
+        if evidence_context is not None
+        else base_documents
+    )
+    identity_proposed = (
+        {
+            path: view.document
+            for path, view in evidence_context.proposed_documents.items()
+        }
+        if evidence_context is not None
+        else proposed_documents
+    )
+    diagnostics.extend(
+        artifact_identity_reuse_diagnostics(
+            identity_base,
+            identity_proposed,
+            identity_lineages=migration_events.identity_lineages,
+            base_mode=base_mode,
+        )
+    )
     consumed_base: set[PurePosixPath] = set()
     consumed_proposed: set[PurePosixPath] = set()
 
@@ -1432,6 +1537,10 @@ def document_from_text(
     original_path: PurePosixPath | None = None
     archive_reason: str | None = None
     replacement_path: PurePosixPath | None = None
+    artifact_id = metadata.get("artifact_id")
+    if not isinstance(artifact_id, str):
+        artifact_id = None
+    original_artifact_id: str | None = None
     if profile_id == "archive/tombstone":
         prior_generation: bool | None = None
         from archive_recovery import (
@@ -1477,6 +1586,9 @@ def document_from_text(
                         replacement_path = PurePosixPath(replacement.path)
         elif raw_reason is not None:
             profile_issue = "archive_reason is not a string"
+        raw_original_artifact_id = metadata.get("original_artifact_id")
+        if isinstance(raw_original_artifact_id, str):
+            original_artifact_id = raw_original_artifact_id
     return LifecycleDocument(
         path=path,
         profile_id=profile_id,
@@ -1485,4 +1597,6 @@ def document_from_text(
         original_path=original_path,
         archive_reason=archive_reason,
         replacement=replacement_path,
+        artifact_id=artifact_id,
+        original_artifact_id=original_artifact_id,
     )
