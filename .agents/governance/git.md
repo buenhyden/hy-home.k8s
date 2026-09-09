@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "1.3.0"
+version: "1.3.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-09"
 ---
 
 # Git Policy
@@ -90,7 +90,9 @@ Use that file for the real commit. When unrelated unstaged configuration would
 make pre-commit stash or refuse, use an isolated temporary Git repository with
 the index's Commitizen pin/configuration and the same candidate message. This
 is explicit message evidence, not proof of hook installation or delivery in
-the source repository. Never change hooksPath, disable a hook, or set a skip variable in order to make a failing check pass or to leave a check unrun; widening the set of hooks that run is the only supported change.
+the source repository. Never change hooksPath, disable a hook, or set a skip
+variable in order to make a failing check pass or to leave a check unrun;
+widening the set of hooks that run is the only supported change.
 
 ## Validation and Refresh
 
