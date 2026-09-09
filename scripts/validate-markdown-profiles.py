@@ -67,6 +67,7 @@ OWNER = "markdown-profile-validator"
 FRONTMATTER_SCHEMA_PATH = PurePosixPath(
     "docs/99.templates/contracts/frontmatter.schema.json"
 )
+ARCHIVE_STAGE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 
 AUTHOR_PROMPT_MARKER = "Author prompt:"
 AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
@@ -1568,7 +1569,16 @@ def validate_document_text(
         raise ValueError("mode must be compatibility or strict")
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
-    if path.parts[:2] == ("docs", "98.archive") and profile.profile_class != "archive":
+    # A retained payload under the Archive stage keeps the profile it had when
+    # it was finished, and its body is terminal evidence rather than a current
+    # contract, so only its identity is checked. The stage index is not such a
+    # payload: the registry gives it an active routing constant, so it answers
+    # to its own router profile like every other stage index.
+    if (
+        path.parts[:2] == ("docs", "98.archive")
+        and profile.profile_class != "archive"
+        and path != ARCHIVE_STAGE_INDEX_PATH
+    ):
         try:
             _, metadata, _ = extract_frontmatter(text)
         except ContractError:

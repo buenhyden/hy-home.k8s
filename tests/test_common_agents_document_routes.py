@@ -206,5 +206,40 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
             self.assertEqual(len(failures), len(paths))
 
 
+class ArchiveStageIndexRouteTests(unittest.TestCase):
+    """The Archive stage index answers to its router profile, not the payload rule."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = contracts.load_registry(ROOT)
+        cls.profiles = {
+            profile.profile_id: profile for profile in cls.registry.profiles
+        }
+
+    def _report(self, path: str, profile_id: str, text: str):
+        return MARKDOWN.validate_document_text(
+            text,
+            PurePosixPath(path),
+            self.profiles[profile_id],
+            "strict",
+        )
+
+    def test_a_stage_index_without_frontmatter_is_reported(self) -> None:
+        diagnostics = self._report(
+            "docs/98.archive/README.md", "common/readme-stage-index", "# 98.archive\n"
+        )
+
+        self.assertIn("FM-DELIMITER", {item.rule_id for item in diagnostics})
+
+    def test_a_retained_payload_keeps_its_identity_only_contract(self) -> None:
+        diagnostics = self._report(
+            "docs/98.archive/completed/03.specs/0072-example/spec.md",
+            "sdlc/spec",
+            "# terminal evidence\n",
+        )
+
+        self.assertEqual(diagnostics, [])
+
+
 if __name__ == "__main__":
     unittest.main()

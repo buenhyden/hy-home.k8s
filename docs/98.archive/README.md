@@ -1,3 +1,13 @@
+---
+title: "98.archive"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-09"
+layer: "archive"
+---
+
 # 98.archive
 
 > 현재 구현 권한에서 제거된 `docs/01-05` 문서의 전체 원문과 provenance를 보존하는 비현재 archive stage다.
