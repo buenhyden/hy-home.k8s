@@ -142,7 +142,9 @@ spec:
 | 3     | 50%     | 1–2 h  | All metrics             |
 | 4     | 100%    | —      | Complete                |
 
-**Automatic rollback conditions:**
+**Automatic canary-abort conditions** — tighter than the release-wide
+triggers under Rollback Procedures, because a canary aborts on a small early
+signal from a small share of traffic:
 
 - HTTP 5xx rate > 1% (2× baseline)
 - p99 latency > 2 s (50% above baseline)

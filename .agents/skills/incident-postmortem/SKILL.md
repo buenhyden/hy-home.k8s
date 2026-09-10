@@ -78,26 +78,9 @@ Apply structured RCA (see `rca-methodology` skill for full technique guide):
 - **Fishbone** for multi-dimensional factors (People, Process, Technology, Environment, Monitoring)
 - **Change Analysis** for deployment-related incidents
 
-```markdown
-# Root Cause Analysis
-
-## Primary Root Cause
-
-[One-sentence statement of the root cause]
-
-## Contributing Factors
-
-| Factor   | Category              | Evidence               |
-| -------- | --------------------- | ---------------------- |
-| [Factor] | [Process/Tech/People] | [Log/metric reference] |
-
-## 5 Whys Chain
-
-Why 1 → [Answer]
-Why 2 → [Answer]
-...
-Root Cause: [Conclusion]
-```
+Write the Root Cause Analysis structure that `rca-methodology` defines under
+its Output Format heading. That skill owns the structure; this phase decides
+which techniques the incident needs and where the result is written.
 
 ### Phase 4: Impact Assessment → `_workspace/03_impact_assessment.md`
 
@@ -207,9 +190,9 @@ Root Cause: [Conclusion]
 
 ## Failure Handling
 
-- Route to `security-auditor.md` if security breach indicators emerge.
-- Route to `k8s-implementer.md` if remediation requires manifest changes.
-- Escalate to `supervisor.md` if incident scope exceeds cluster boundaries.
+- Route to the security review owner if security breach indicators emerge.
+- Route to the implementation owner if remediation requires manifest changes.
+- Escalate to the supervising owner if incident scope exceeds cluster boundaries.
 
 ## Test Scenarios
 

@@ -212,9 +212,10 @@ image: my-registry.io/app:latest
 ## Failure Handling
 
 - Plaintext secret exposure → **immediate stop condition**; do not proceed until resolved.
-- RBAC findings → route remediation to `k8s-implementer.md`.
-- Network isolation gaps → route to `k8s-implementer.md` for NetworkPolicy authoring.
-- Escalate ambiguous security decisions to `supervisor.md`.
+- RBAC findings and network isolation gaps → route remediation to the
+  implementation owner, or record them for the supervising owner when the
+  selected role has no implementation handoff.
+- Escalate ambiguous security decisions to the supervising owner.
 
 ## Related Skills
 

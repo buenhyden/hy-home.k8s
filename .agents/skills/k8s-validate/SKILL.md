@@ -22,16 +22,21 @@ Define the validation sequence for manifest changes before GitOps review or merg
 
 ## Workflow Steps
 
-1. Run YAML and schema validation for the changed scope.
-2. Run kube-linter against the approved configuration.
+1. Run manifest YAML syntax validation for the changed scope.
+2. Run kube-linter where the selected profile reaches it. The pinned pre-commit
+   hook owns that tool and the change-scoped profiles do not run it, so a
+   change-scoped result covers syntax, structure and secrets but not lint.
 3. Run GitOps structure checks.
 4. Run secret-handling checks.
-5. Return a pass, fail, or blocked outcome with evidence.
+5. Report each check using the result meanings quality policy owns, and name
+   every check the selected profile did not reach.
 
 ## Constraints
 
 - `.kube-linter.yaml` is the lint baseline.
 - Secret-handling violations are blocking.
+- No gate here validates manifests against Kubernetes API schemas, so a syntax
+  result is never reported as a schema result.
 - Validation must remain repository-backed and cluster-specific.
 - Do not downgrade blocking failures into informational output.
 
@@ -45,4 +50,5 @@ Define the validation sequence for manifest changes before GitOps review or merg
 
 - Stop on syntax errors or blocking secret violations.
 - If a tool is unavailable, report the limitation explicitly.
-- Route remediation back to `k8s-implementer.md` or `supervisor.md` as appropriate.
+- Route remediation to the implementation owner, or report the finding to the
+  supervising owner when the selected role has no implementation handoff.

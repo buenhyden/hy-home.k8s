@@ -43,5 +43,5 @@ Define how to identify, score, and report cluster risks in a repeatable format f
 ## Failure Handling
 
 - If live inspection is unavailable, fall back to repository-backed static analysis and state the limitation.
-- If security-critical findings emerge, escalate to `security-auditor.md`.
-- If ownership or routing is unclear, escalate to `supervisor.md`.
+- If security-critical findings emerge, escalate to the security review owner.
+- If ownership or routing is unclear, escalate to the supervising owner.

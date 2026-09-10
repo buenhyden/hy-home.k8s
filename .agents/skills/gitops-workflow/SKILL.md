@@ -43,6 +43,6 @@ Define the approved GitOps path for workload onboarding, change review, and sync
 
 ## Failure Handling
 
-- If repository ownership is unclear, escalate to `supervisor.md`.
-- If security findings block progress, escalate to `security-auditor.md`.
+- If repository ownership is unclear, escalate to the supervising owner.
+- If security findings block progress, hand off to the security review owner.
 - If validation fails, stop and route through `k8s-validate` remediation before continuing.
