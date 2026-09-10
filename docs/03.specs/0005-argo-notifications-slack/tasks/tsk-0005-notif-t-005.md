@@ -21,7 +21,7 @@ dependency, owner, result, and evidence.
 
 - [Owning Spec](../spec.md)
 - [Owning Plan](../plan.md)
-- [Migration recovery ledger](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- Migration recovery ledger, through the [archive index](../../../98.archive/README.md)
 
 ## Task Table
 
@@ -45,4 +45,4 @@ shared verification context is in the
 
 - Stable Task: `SPEC-0005-TSK-0005`
 - Legacy work item: `NOTIF-T-005`
-- Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- Legacy bytes: MIG-0004, through the [archive index](../../../98.archive/README.md)

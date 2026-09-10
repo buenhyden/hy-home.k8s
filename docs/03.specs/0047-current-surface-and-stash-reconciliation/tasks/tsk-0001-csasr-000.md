@@ -21,7 +21,7 @@ evidence; the original row remains recoverable through MIG-0004 and Git.
 
 - [Owning Spec](../spec.md)
 - [Owning Plan](../plan.md)
-- [Migration recovery ledger](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- Migration recovery ledger, through the [archive index](../../../98.archive/README.md)
 
 ## Task Table
 
@@ -72,4 +72,4 @@ and its controller report. Historical shared context remains in the
 | --- | --- | --- |
 | VAL-CSASR-003 — legacy work item `CSASR-000` | Activation done; implementation remains queued. | Package-local legal resumption and semantic prerequisite evidence above; no public execution roster or premature successor activation. |
 
-- Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- Legacy bytes: MIG-0004, through the [archive index](../../../98.archive/README.md)

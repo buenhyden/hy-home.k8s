@@ -32,6 +32,67 @@ def _report(source: PurePosixPath, target: str):
     return validator._stage_boundary_diagnostic(source, PROFILE, PurePosixPath(target))
 
 
+def _archive(source: PurePosixPath, target: str, *, profile: str = PROFILE):
+    return validator._archive_boundary_diagnostic(
+        source, profile, PurePosixPath(target)
+    )
+
+
+class ArchiveLinkBoundaryTests(unittest.TestCase):
+    def test_reports_every_archive_internal_target(self) -> None:
+        for target in (
+            "docs/98.archive/migrations/0004-document-authority-convergence.md",
+            "docs/98.archive/superseded/01.requirements/0001-wsl-k3d-argocd-platform.md",
+            "docs/98.archive/tombstones/03.specs/0002-legacy.md",
+        ):
+            with self.subTest(target=target):
+                diagnostic = _archive(CONSUMER, target)
+
+                self.assertIsNotNone(diagnostic)
+                assert diagnostic is not None
+                self.assertEqual(diagnostic.rule_id, "LINK-ARCHIVE-BYPASS")
+                self.assertEqual(diagnostic.path, CONSUMER)
+
+    def test_admits_the_two_declared_routes_into_the_archive(self) -> None:
+        """The index routes to a record; a retention class holds the document."""
+
+        self.assertIsNone(_archive(CONSUMER, "docs/98.archive/README.md"))
+        self.assertIsNone(
+            _archive(
+                CONSUMER,
+                "docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md",
+            )
+        )
+
+    def test_only_an_incident_account_may_cite_an_archive_path(self) -> None:
+        """An incident and its postmortem rest on the archived record itself.
+
+        Every other profile keeps the claim and drops the path, so the exemption
+        is bound to what a document is rather than to what state it is in."""
+
+        target = "docs/98.archive/migrations/0004-document-authority-convergence.md"
+        source = PurePosixPath(
+            "docs/05.operations/incidents/2026/inc-0001-x/incident.md"
+        )
+        for profile in ("operation/incident", "operation/postmortem"):
+            with self.subTest(profile=profile):
+                self.assertIsNone(_archive(source, target, profile=profile))
+        for profile in ("sdlc/task", "sdlc/architecture-decision", "operation/runbook"):
+            with self.subTest(profile=profile):
+                self.assertIsNotNone(_archive(source, target, profile=profile))
+
+    def test_leaves_the_archive_own_cross_references_alone(self) -> None:
+        self.assertIsNone(
+            _archive(
+                PurePosixPath("docs/98.archive/migrations/0004-x.md"),
+                "docs/98.archive/superseded/01.requirements/0001-y.md",
+            )
+        )
+
+    def test_leaves_targets_outside_the_archive_alone(self) -> None:
+        self.assertIsNone(_archive(CONSUMER, "docs/02.architecture/README.md"))
+
+
 class StageLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_numbered_stage_target_written_outside_docs(self) -> None:
         for target in (

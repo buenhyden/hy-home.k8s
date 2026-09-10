@@ -2523,12 +2523,6 @@ def _path_exists_without_dereference(
     return True
 
 
-def _is_current_authority(context: Context, path: PurePosixPath) -> bool:
-    profile = context.profiles[path]
-    status = str(context.metadata[path].get("status", "")).casefold()
-    return profile.mode == "authored" and status in {"active", "accepted"}
-
-
 _SEALED_STAGE03_IDENTITY = re.compile(r"^(?:PLAN|TASK)-([0-9]{4})$")
 
 
@@ -3224,6 +3218,45 @@ def _reviewed_work054_historical_owner_edges(
     }
 
 
+ARCHIVE_CITING_PROFILES = frozenset({"operation/incident", "operation/postmortem"})
+
+
+def _archive_boundary_diagnostic(
+    source: PurePosixPath, profile: str, target: PurePosixPath
+) -> Diagnostic | None:
+    """Keep the tree outside the archive off the archive's internal paths.
+
+    The archive index and the retention class are the two admitted routes in. A
+    retention class holds the document itself rather than a record of it, so
+    citing one is an ordinary link to that document at the path it now occupies.
+    Every other archive path is a record whose location the archive owns and may
+    re-seal, so a link to one couples the outside tree to that decision.
+
+    An incident record and its postmortem are exempt. Both are accounts of
+    something that happened, and the evidence they rest on is often the archived
+    record itself, so citing it directly is the point rather than a dependency
+    to be routed away."""
+
+    if profile in ARCHIVE_CITING_PROFILES or source.as_posix().startswith(
+        "docs/98.archive/"
+    ):
+        return None
+    value = target.as_posix()
+    if (
+        not value.startswith("docs/98.archive/")
+        or target == PurePosixPath("docs/98.archive/README.md")
+        or value.startswith("docs/98.archive/completed/")
+    ):
+        return None
+    return _diag(
+        "LINK-ARCHIVE-BYPASS",
+        source,
+        profile,
+        "archive index boundary",
+        "direct archive target",
+    )
+
+
 def _stage_boundary_diagnostic(
     source: PurePosixPath, profile: str, target: PurePosixPath
 ) -> Diagnostic | None:
@@ -3301,25 +3334,9 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     )
                 )
                 continue
-            if (
-                _is_current_authority(context, source)
-                and target.as_posix().startswith("docs/98.archive/")
-                and target != PurePosixPath("docs/98.archive/README.md")
-                # A retention class holds the document itself rather than a
-                # record of it, so citing one is an ordinary link to that
-                # document at the path it now occupies. The index boundary
-                # exists to keep current authority away from sealed evidence.
-                and not target.as_posix().startswith("docs/98.archive/completed/")
-            ):
-                diagnostics.append(
-                    _diag(
-                        "LINK-ARCHIVE-BYPASS",
-                        source,
-                        profile,
-                        "archive index boundary",
-                        "direct archive target",
-                    )
-                )
+            archive = _archive_boundary_diagnostic(source, profile, target)
+            if archive is not None:
+                diagnostics.append(archive)
             boundary = _stage_boundary_diagnostic(source, profile, target)
             if boundary is not None:
                 diagnostics.append(boundary)

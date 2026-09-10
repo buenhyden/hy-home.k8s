@@ -55,7 +55,7 @@ section.
   `AGQC-LEGACY-CONSUMER` for a retired harness-map token in the historical
   progress record. This is an explicit successor obligation, not a WP-004
   full-wrapper PASS. Historical progress was not rewritten to hide it.
-- [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)
+- MIG-0004, through the [archive index](../../../98.archive/README.md)
   retains the exact sealed source/target recovery proof. No runtime, hosted CI,
   deployment, push, or merge result is claimed.
 

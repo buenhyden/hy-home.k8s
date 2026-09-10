@@ -87,8 +87,8 @@ program PRDs would weaken either family uniqueness or product ownership.
 
 ## Traceability
 
-- **PRD**: [Historical Workspace Document Assurance Modernization](../../98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md)
-- **ARD**: [Historical Workspace Document Assurance Operating Model](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
+- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../98.archive/README.md)
+- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../98.archive/README.md)
 - **Related ADR**: [Declarative Document Contract Registry](./0015-declarative-document-contract-registry.md)
 - **Successor decision**: [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
   supersedes the program-instance roster and validation-routing ownership in

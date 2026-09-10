@@ -99,8 +99,8 @@ unreachable objects may be pruned:
 
 ## Traceability
 
-- **Requirement**: [Historical PRD-006](../../98.archive/superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Architecture**: [Historical ARD-0009](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
+- **Requirement**: Historical PRD-006, through the [archive index](../../98.archive/README.md)
+- **Architecture**: Historical ARD-0009, through the [archive index](../../98.archive/README.md)
 - **Archive implementation**: [Spec 036](../../98.archive/completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md)
 - **Execution retention**: [Spec 037](../../98.archive/completed/03.specs/0037-active-corpus-and-execution-retention/spec.md)
 

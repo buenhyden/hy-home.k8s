@@ -27,7 +27,7 @@ This accepted decision records the closure-evidence architecture for the
 PRD-006 and ARD-0009 document lifecycle program. In exact terminal closure
 commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`, it changes body and status
 with
-[Historical ARD-0009](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
+Historical ARD-0009, through the [archive index](../../98.archive/README.md)
 and supplies that ARD's reciprocal same-diff accepted role-decision evidence.
 ADR-0017 and ADR-0018 remain unchanged accepted history.
 
@@ -104,9 +104,9 @@ bounded, current role-decision evidence path.
 ## Traceability
 
 - **Architecture**:
-  [Historical ARD-0009](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
+  Historical ARD-0009, through the [archive index](../../98.archive/README.md)
 - **Program PRD**:
-  [Historical PRD-006](../../98.archive/superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
+  Historical PRD-006, through the [archive index](../../98.archive/README.md)
 - **Final tranche**:
   [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
 - **Historical decisions**:
@@ -117,5 +117,5 @@ bounded, current role-decision evidence path.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Historical ARD-0009](../../98.archive/superseded/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
+| Historical ARD-0009, through the [archive index](../../98.archive/README.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent closure-instance roster and current-state SHA ownership; preserves this record's historical closure evidence. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

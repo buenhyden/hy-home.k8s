@@ -23,8 +23,8 @@ refuses is recorded rather than forced.
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-012 execution boundary](../plan.md#wp-012--progress-and-generated-current-cleanup)
-- [MIG-0007](../../../98.archive/migrations/0007-agent-progress-ledger-retirement.md)
-- [MIG-0008](../../../98.archive/migrations/0008-progress-append-form-retirement.md)
+- MIG-0007, through the [archive index](../../../98.archive/README.md)
+- MIG-0008, through the [archive index](../../../98.archive/README.md)
 
 ## Task Table
 

@@ -79,10 +79,10 @@ leaving the registry unchanged makes machine lineage contradict it.
 ## Traceability
 
 - **Original decision**: [ADR-0016](./0016-program-to-tranche-document-lineage.md)
-- **Original program**: [Historical PRD-005](../../98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md)
-- **Original architecture**: [Historical ARD-0008](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
+- **Original program**: Historical PRD-005, through the [archive index](../../98.archive/README.md)
+- **Original architecture**: Historical ARD-0008, through the [archive index](../../98.archive/README.md)
 - **Follow-up**: [Spec 033](../../98.archive/completed/03.specs/0033-template-lifecycle-contract-normalization/spec.md)
-- **New program**: [Historical PRD-006](../../98.archive/superseded/01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
+- **New program**: Historical PRD-006, through the [archive index](../../98.archive/README.md)
 
 ### Lifecycle Traceability
 

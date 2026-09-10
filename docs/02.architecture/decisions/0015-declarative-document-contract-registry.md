@@ -97,8 +97,8 @@ historical evidence and provider-native schemas.
 
 ## Traceability
 
-- **PRD**: [Historical Workspace Document Assurance Modernization](../../98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md)
-- **ARD**: [Historical Workspace Document Assurance Operating Model](../../98.archive/superseded/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
+- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../98.archive/README.md)
+- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../98.archive/README.md)
 - **Related ADR**: [Program-to-Tranche Lineage](./0016-program-to-tranche-document-lineage.md)
 - **First Spec**: [Document Contract Registry](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md)
 - **JSON Schema Object Validation**: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-validation)

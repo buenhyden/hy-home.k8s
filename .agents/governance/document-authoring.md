@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-10"
 ---
 
 # Document Authoring Policy
@@ -54,7 +54,12 @@ express ownership, not a one-way waterfall.
    document by path, artifact ID, or role in plain text and reaches the tree
    through the documentation hub. Links between documents inside `docs/` keep
    their existing contracts, and a machine reference a program opens is not a
-   link.
+   link. A document never links into `docs/98.archive/` beyond its index and a
+   retention class; it names the archive record by identifier and reaches it
+   through that index, which keeps the claim and drops the path the archive owns
+   and may re-seal. Only an `operation/incident` record and its
+   `operation/postmortem` may cite an archive path directly, because the
+   evidence such an account rests on is often the archived record itself.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
