@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -52,7 +52,11 @@ express ownership, not a one-way waterfall.
    traceability, and calculate links from the final target path. A file outside
    `docs/` never links directly into a numbered stage tree; it names the stage
    document by path, artifact ID, or role in plain text and reaches the tree
-   through the documentation hub. Links between documents inside `docs/` keep
+   through the documentation hub. That plain-text path names a document that
+   exists, or the collection a profile owns, and stops there. A route spelled
+   out as a grammar is a second copy of a registry `path_pattern` that no
+   document answers to and no gate reads, so it is free to be wrong for as long
+   as nobody follows it. Links between documents inside `docs/` keep
    their existing contracts, and a machine reference a program opens is not a
    link. A document never links into `docs/98.archive/` beyond its index and a
    retention class; it names the archive record by identifier and reaches it

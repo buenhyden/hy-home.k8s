@@ -3273,9 +3273,101 @@ def _stage_boundary_diagnostic(
     )
 
 
+# The stage boundary above sends a file outside `docs/` to plain text rather
+# than a link, and this is the limit of what that plain text may say. Naming a
+# document, or the collection a profile owns, costs nothing: the registry still
+# decides the route. Writing the route out as a grammar
+# (`docs/05.operations/incidents/YYYY/INC-###-<title>/`) is a second copy of a
+# `path_pattern` that no document answers to, no gate reads, and nothing keeps
+# in step with the registry — so it is free to be wrong for as long as nobody
+# follows it. The prefixes come from the registry for the same reason: a list
+# of directories written here would be that same second copy.
+_STAGE_PATH_TOKEN = re.compile(r"docs/[0-9]{2}\.[A-Za-z][^\s`\"'()\[\],;]*")
+_PATH_PATTERN_META = frozenset(".^$*+?()[]{}|\\")
+
+
+def _fixed_directory_prefix(pattern: str) -> str:
+    """Return the literal directory a profile's path pattern opens with.
+
+    A pattern whose first metacharacter arrives before any `/` describes more
+    than one root, so it contributes no prefix and governs no plain text."""
+
+    body = pattern[1:] if pattern.startswith("^") else pattern
+    literal: list[str] = []
+    index = 0
+    while index < len(body):
+        character = body[index]
+        if character == "\\" and index + 1 < len(body):
+            literal.append(body[index + 1])
+            index += 2
+            continue
+        if character in _PATH_PATTERN_META:
+            break
+        literal.append(character)
+        index += 1
+    prefix = "".join(literal)
+    return prefix[: prefix.rfind("/") + 1] if "/" in prefix else ""
+
+
+def _stage_document_prefixes(registry: Registry) -> frozenset[str]:
+    """Collect the stage directories whose route grammar the registry owns."""
+
+    return frozenset(
+        prefix
+        for profile in registry.profiles
+        if profile.mode in {"authored", "evidence"}
+        for prefix in (_fixed_directory_prefix(profile.path_pattern),)
+        if prefix.startswith("docs/")
+    )
+
+
+def _stage_grammar_diagnostics(
+    source: PurePosixPath,
+    profile: str,
+    text: str,
+    prefixes: frozenset[str],
+    exists: Callable[[str], bool],
+) -> list[Diagnostic]:
+    if source.parts and source.parts[0] == "docs":
+        return []
+    diagnostics: list[Diagnostic] = []
+    reported: set[str] = set()
+    for match in _STAGE_PATH_TOKEN.finditer(text):
+        target = match.group(0).rstrip(".")
+        if target in reported or not any(
+            target.startswith(prefix) for prefix in prefixes
+        ):
+            continue
+        if target in prefixes or f"{target}/" in prefixes:
+            continue
+        if exists(target):
+            continue
+        reported.add(target)
+        diagnostics.append(
+            _diag(
+                "PATH-STAGE-GRAMMAR",
+                source,
+                profile,
+                "named stage document or the collection that owns it",
+                target,
+            )
+        )
+    return diagnostics
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(context)
+    registry = getattr(context, "document_registry", None) or load_registry(
+        context.root
+    )
+    stage_prefixes = _stage_document_prefixes(registry)
+
+    def stage_target_exists(target: str) -> bool:
+        return _path_exists_without_dereference(
+            context.root, PurePosixPath(target), context.adapter_targets
+        )
+
     for source in context.paths:
         profile = context.profiles[source].profile_id
         if profile == "archive/tombstone":
@@ -3290,6 +3382,15 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             # resolve them, so they are read the same way a record's links are
             # rather than as current coupling.
             continue
+        diagnostics.extend(
+            _stage_grammar_diagnostics(
+                source,
+                profile,
+                context.texts[source],
+                stage_prefixes,
+                stage_target_exists,
+            )
+        )
         for raw in _extract_links(context.texts[source]):
             kind, target = _local_destination(source, raw)
             if kind in {"external", "anchor"}:

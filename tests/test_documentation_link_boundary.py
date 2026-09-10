@@ -38,6 +38,21 @@ def _archive(source: PurePosixPath, target: str, *, profile: str = PROFILE):
     )
 
 
+STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT))
+
+
+def _grammar(
+    text: str,
+    *,
+    source: PurePosixPath = CONSUMER,
+    profile: str = PROFILE,
+    exists=lambda target: False,
+):
+    return validator._stage_grammar_diagnostics(
+        source, profile, text, STAGE_PREFIXES, exists
+    )
+
+
 class ArchiveLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_archive_internal_target(self) -> None:
         for target in (
@@ -138,6 +153,90 @@ class StageLinkBoundaryTests(unittest.TestCase):
         ):
             with self.subTest(target=target):
                 self.assertIsNone(_report(CONSUMER, target))
+
+
+class StagePathGrammarTests(unittest.TestCase):
+    """A plain-text stage path names a document, never a second path pattern.
+
+    The stage boundary above sends a file outside `docs/` to plain text instead
+    of a link. These tests cover what that plain text may then say: the
+    collection a profile owns, or a document that exists. A route written out
+    as a grammar is a copy of the registry's `path_pattern` that no gate reads
+    and nothing keeps current."""
+
+    def test_derives_its_prefixes_from_the_registry(self) -> None:
+        """A literal list here would be the same defect the rule exists to stop."""
+
+        self.assertIn("docs/05.operations/incidents/", STAGE_PREFIXES)
+        self.assertIn("docs/05.operations/runbooks/", STAGE_PREFIXES)
+        self.assertNotIn("docs/99.templates/templates/operations/", STAGE_PREFIXES)
+
+    def test_a_pattern_that_opens_on_a_branch_contributes_no_prefix(self) -> None:
+        """Two roots share one profile, so no single directory literal holds."""
+
+        self.assertEqual(
+            validator._fixed_directory_prefix(
+                r"^(?:docs/03\.specs|docs/98\.archive/completed/03\.specs)"
+                r"/[0-9]{4}-[a-z]+/spec\.md$"
+            ),
+            "",
+        )
+        self.assertEqual(
+            validator._fixed_directory_prefix(
+                r"^docs/05\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
+            ),
+            "docs/05.operations/incidents/",
+        )
+
+    def test_reports_a_route_written_out_as_a_grammar(self) -> None:
+        body = (
+            "Durable incident bundles live under\n"
+            "`docs/05.operations/incidents/YYYY/INC-###-<title>/`: the fact record is\n"
+            "`INC-###-<title>.md`.\n"
+        )
+        diagnostics = _grammar(body)
+
+        self.assertEqual([item.rule_id for item in diagnostics], ["PATH-STAGE-GRAMMAR"])
+        self.assertEqual(
+            diagnostics[0].actual, "docs/05.operations/incidents/YYYY/INC-###-<title>/"
+        )
+
+    def test_reports_each_distinct_grammar_once(self) -> None:
+        body = (
+            "records in `docs/05.operations/incidents/YYYY/INC-###-x/`\n"
+            "reports in `docs/05.operations/incidents/YYYY/INC-###-x/`\n"
+        )
+
+        self.assertEqual(len(_grammar(body)), 1)
+
+    def test_admits_the_collection_a_profile_owns(self) -> None:
+        """Naming the collection couples nothing; the registry still owns the route."""
+
+        for body in (
+            "Save the file under `docs/05.operations/runbooks/`.",
+            "Runbooks live in docs/05.operations/runbooks and nowhere else.",
+        ):
+            with self.subTest(body=body):
+                self.assertEqual(_grammar(body), [])
+
+    def test_admits_a_path_that_resolves_to_a_document(self) -> None:
+        body = "See `docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`."
+
+        self.assertEqual(_grammar(body, exists=lambda target: True), [])
+        self.assertEqual(len(_grammar(body, exists=lambda target: False)), 1)
+
+    def test_ignores_a_target_no_profile_prefix_covers(self) -> None:
+        body = (
+            "Read `docs/99.templates/registry.json` and `docs/05.operations/README.md`."
+        )
+
+        self.assertEqual(_grammar(body), [])
+
+    def test_leaves_documents_inside_docs_to_their_own_contracts(self) -> None:
+        body = "`docs/05.operations/incidents/YYYY/INC-###-<title>/incident.md`"
+        source = PurePosixPath("docs/02.architecture/decisions/0024-terminal.md")
+
+        self.assertEqual(_grammar(body, source=source), [])
 
 
 if __name__ == "__main__":  # pragma: no cover - module entry guard
