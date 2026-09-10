@@ -49,9 +49,10 @@ measured.
 
 ### Outputs
 
-Cases that declare their own expected result, the scored cycle result, and
-improvement findings that name the role or skill procedure at fault and the
-failure observed.
+- Evaluation cases that declare their own expected result, and the scored
+  cycle result with its response class
+- Improvement findings naming the role or skill procedure at fault and the
+  observed failure, routed rather than applied
 
 ### Guardrails
 

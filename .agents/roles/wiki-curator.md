@@ -30,8 +30,9 @@ for the broader responsibility context.
 
 ### Role
 
-Keep the entry points and generated owner maps pointing at the current
-canonical owners. Write navigation, never policy: when the answer needs a
+Keep the entry points and hand-maintained owner maps pointing at the current
+canonical owners. No generator writes to that surface, and the retired
+generated index is not recreated. Write navigation, never policy: when the answer needs a
 durable document rather than a better route, that is `doc-writer.md`'s work,
 and a contested ownership question goes to `supervisor.md`.
 
@@ -46,7 +47,9 @@ indexes. Producing the document the index points at is a different role.
 
 ### Outputs
 
-- Updated LLM Wiki Markdown entrypoints and generated index files
+- Updated navigation entry points, index rows, and cross-links at their
+  canonical owners, with each stale route classified rather than silently
+  rewritten
 
 ### Guardrails
 
