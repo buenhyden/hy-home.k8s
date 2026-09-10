@@ -2,7 +2,7 @@
 title: "Agent Evaluator Responsibility"
 version: "1.0.0"
 type: "governance/role"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-10"
 ---

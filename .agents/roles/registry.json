@@ -174,11 +174,17 @@
         "ci-workflow-engineer",
         "code-reviewer",
         "doc-writer",
+        "docs-researcher",
+        "gitops-reviewer",
         "governance-steward",
+        "incident-responder",
         "k8s-implementer",
+        "network-reviewer",
+        "observability-reviewer",
         "quality-engineer",
         "repo-tooling-engineer",
-        "security-auditor"
+        "security-auditor",
+        "wiki-curator"
       ],
       "projections": {
         "neutral": ".agents/roles/supervisor.md",
@@ -223,6 +229,7 @@
         "requirements-to-design"
       ],
       "handoff_to": [
+        "architect",
         "docs-researcher",
         "supervisor",
         "wiki-curator"
@@ -539,6 +546,7 @@
       ],
       "handoff_to": [
         "quality-engineer",
+        "repo-tooling-engineer",
         "security-auditor",
         "supervisor"
       ],
@@ -562,6 +570,8 @@
         "docs-stage-conformance"
       ],
       "handoff_to": [
+        "agent-evaluator",
+        "ci-workflow-engineer",
         "quality-engineer",
         "security-auditor",
         "supervisor"

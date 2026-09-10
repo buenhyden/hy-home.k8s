@@ -2,7 +2,7 @@
 title: "Agent Role Coverage and Contract Completion Technical Specification"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
@@ -249,6 +249,13 @@ for a measurement that can detect its effect.
 already carries, so the pair state their shared edge from both sides in the way
 `network-reviewer` and `security-auditor` already do.
 
+A role body routes in two places: the Role section names where its question
+stops being its own, and Handoff / Escalation names where the work goes. The
+existing twelve carry every such statement as a registry edge, which is what
+makes the prose and the machine roster agree. Each admitted role is held to
+the same rule, so a role named in either section appears in that role's
+`handoff_to`.
+
 ### External provenance handling
 
 `docs/90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md`
@@ -409,7 +416,7 @@ specification does not claim and that no static result promotes.
 | VAL-ARCC-005 | Each admitted role is justified by a named uncovered tree and carries an evaluation case. | Project-map intersection review and evaluation case presence |
 | VAL-ARCC-006 | The external catalogue is recorded as provenance by its Stage 90 owner and adopts no upstream role or prose. | Reference cycle entry and diff review for absent upstream text |
 | VAL-ARCC-007 | Repository-static results are reported separately from provider-runtime and live evidence. | Verification record separating the lanes |
-| VAL-ARCC-008 | `supervisor.handoff_to` contains every peer role and not itself. | Governance validation and registry review |
+| VAL-ARCC-008 | `supervisor.handoff_to` contains every peer role and not itself, and every routing statement a role body makes is carried as a registry edge. | Governance validation and a body-to-registry edge comparison |
 | VAL-ARCC-009 | The specification and the admitted role bodies match exactly one document profile each. | Markdown profile validation |
 | VAL-ARCC-010 | The `doc-writer` and `architect` boundary is stated from both sides with no orphaned reference. | Link and owner validation with reciprocal reference review |
 | VAL-ARCC-011 | Evaluation ownership is separated from contract authoring, and the added cases run under the existing gate with declared expectations. | Agent evaluation gate result and boundary review of both role bodies |

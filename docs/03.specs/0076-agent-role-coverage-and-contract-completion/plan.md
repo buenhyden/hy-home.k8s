@@ -2,7 +2,7 @@
 title: "Agent Role Coverage and Contract Completion Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
@@ -1046,7 +1046,45 @@ grep -h "README.md#" .agents/roles/*.md | sed 's/.*README.md#//' | sort | uniq -
 
 Expected: seven distinct boundary anchors, architecture among them.
 
-- [ ] **Step 2: Verify routing completeness.**
+- [ ] **Step 2: Complete the supervisor roster.** Each admitting package added
+      only its own edge, so the six peers the registry already omitted before
+      this work are still unreachable from the router. Add them:
+
+```bash
+python3 -c "import json,pathlib
+p=pathlib.Path('.agents/roles/registry.json'); d=json.loads(p.read_text())
+ids={r['id'] for r in d['roles']}
+for r in d['roles']:
+    if r['id']=='supervisor':
+        r['handoff_to']=sorted(ids-{'supervisor'})
+p.write_text(json.dumps(d,indent=2,ensure_ascii=False)+chr(10))"
+```
+
+Expected: `supervisor.handoff_to` holds sixteen peers.
+
+- [ ] **Step 3: Close every stated-but-unregistered edge.** A role body routes
+      in its Role section and in Handoff / Escalation. Compare both against the
+      registry and add any named role that is missing:
+
+```bash
+python3 - <<'PY'
+import json, pathlib, re
+reg = {r["id"]: set(r["handoff_to"]) for r in json.load(open(".agents/roles/registry.json"))["roles"]}
+for rid in sorted(reg):
+    text = pathlib.Path(f".agents/roles/{rid}.md").read_text(encoding="utf-8")
+    for sec in (r"### Role\n(.*?)(?=\n### )", r"### Handoff / Escalation(.*?)(?=\n### |\n## )"):
+        m = re.search(sec, text, re.DOTALL)
+        if m:
+            stated = {x for x in re.findall(r"`([a-z0-9-]+)\.md`", m.group(1)) if x in reg} - {rid}
+            if stated - reg[rid]:
+                print(rid, sorted(stated - reg[rid]))
+PY
+```
+
+Expected: no output once the edges are added. The existing twelve roles report
+nothing before the change, which is what establishes the convention.
+
+- [ ] **Step 4: Verify routing completeness.**
 
 ```bash
 python3 -c "import json; d=json.load(open('.agents/roles/registry.json')); r={x['id'] for x in d['roles']}; s=[x for x in d['roles'] if x['id']=='supervisor'][0]; print(sorted(r-{'supervisor'}-set(s['handoff_to'])))"
@@ -1054,7 +1092,7 @@ python3 -c "import json; d=json.load(open('.agents/roles/registry.json')); r={x[
 
 Expected: `[]`, an empty list, meaning no peer is unreachable from the router.
 
-- [ ] **Step 3: Run the full repository-static set.**
+- [ ] **Step 5: Run the full repository-static set.**
 
 ```bash
 python3 scripts/json_schema_validation.py
@@ -1067,7 +1105,7 @@ python3 scripts/run-agent-evaluations.py --root .
 
 Expected: PASS for each.
 
-- [ ] **Step 4: Run full QA on the final tree.**
+- [ ] **Step 6: Run full QA on the final tree.**
 
 ```bash
 python3 scripts/qa.py full
@@ -1075,7 +1113,7 @@ python3 scripts/qa.py full
 
 Expected: PASS. A failure keeps the work incomplete.
 
-- [ ] **Step 5: Verify the provenance record.** The 2026-09-10 cycle in
+- [ ] **Step 7: Verify the provenance record.** The 2026-09-10 cycle in
       `docs/90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md`
       landed with the specification rather than in a package here. Confirm it
       still matches the final roster and that no upstream text entered the
@@ -1090,7 +1128,7 @@ grep -rn "^emoji:\|^vibe:" .agents/roles/ .claude/agents/ .codex/agents/
 Expected: the cycle heading present once, a diff touching only the files this
 plan names, and no match for the upstream persona frontmatter keys.
 
-- [ ] **Step 6: Transition the admitted role bodies to active.** The
+- [ ] **Step 8: Transition the admitted role bodies to active.** The
       `governance/role` lifecycle domain admits a document only in `draft` and
       allows `draft -> active`, so each admitted body was created as `draft`.
       Set `status: "active"` on all five in one logical change:
@@ -1101,12 +1139,12 @@ python3 scripts/validate-document-lifecycle.py --root . --mode strict
 
 Expected: PASS with each transition recognised as `draft -> active`.
 
-- [ ] **Step 7: Record the evidence** in the package Task: the checked
+- [ ] **Step 9: Record the evidence** in the package Task: the checked
       snapshot, each package's result, the lanes that ran, and the lanes that
       did not. Native discovery, permission enforcement, model resolution and
       authenticated operation stay unobserved and are recorded as such.
 
-- [ ] **Step 8: Stage, validate and commit.**
+- [ ] **Step 10: Stage, validate and commit.**
 
 ```bash
 git add .agents/roles/ docs/03.specs/0076-agent-role-coverage-and-contract-completion/
