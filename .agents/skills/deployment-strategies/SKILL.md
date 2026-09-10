@@ -7,275 +7,33 @@ disable-model-invocation: true
 Read `.agents/governance/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation does not authorize additional actions.
 
-# Deployment Strategies — Kubernetes & ArgoCD Deployment Strategy Catalog
+# Deployment Strategies — Choosing and Verifying a Rollout
 
-Reference patterns for selecting and implementing deployment strategies in Kubernetes clusters managed via ArgoCD.
+Select a rollout strategy for a Kubernetes workload reconciled by Argo CD, then
+design the verification and reversal that make the choice safe to review.
 
-## Strategy Comparison
+## Workflow Steps
 
-| Strategy       | Downtime | Risk     | Infra Cost | Rollback Speed | Best For                               |
-| -------------- | -------- | -------- | ---------- | -------------- | -------------------------------------- |
-| **Rolling**    | None     | Medium   | Low        | Medium         | General workloads                      |
-| **Blue-Green** | None     | Low      | 2×         | Instant        | Mission-critical services              |
-| **Canary**     | None     | Very Low | Slight     | Instant        | High-traffic / high-risk releases      |
-| **Recreate**   | Yes      | High     | None       | Slow           | Dev/staging only                       |
-| **A/B Test**   | None     | Low      | Slight     | Instant        | Feature experiments                    |
-| **Shadow**     | None     | None     | 2×         | N/A            | Performance / compatibility validation |
+1. State what the change is risking: whether it can be served side by side with
+   the current version, whether it is reversible by reverting desired state
+   alone, and what a failure would cost. The answer decides the strategy, not
+   the strategy's popularity.
+2. Read `references/strategies.md` and choose one. The comparison table
+   separates them by exactly the properties step 1 established.
+3. Read `references/verification.md` and design the verification half: which
+   probes prove readiness, which conditions abort the rollout, and what reverses
+   it. A strategy without a stated abort condition is a strategy that cannot
+   fail visibly.
+4. Express both halves as desired state in the repository. This procedure
+   produces a reviewable change, never a cluster action.
+5. Observe the branch and approval boundary below before proposing the change.
 
----
+## Reference Material
 
-## 1. Rolling Update
-
-```
-Pool: [v1] [v1] [v1] [v1]
-→    [v2] [v1] [v1] [v1]
-→    [v2] [v2] [v1] [v1]
-→    [v2] [v2] [v2] [v1]
-→    [v2] [v2] [v2] [v2]  ✓
-```
-
-**Kubernetes manifest:**
-
-```yaml
-spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1 # or 25%
-      maxSurge: 1 # or 25%
-```
-
-- **Pros**: No extra infrastructure; gradual rollout limits blast radius.
-- **Cons**: v1 and v2 pods coexist — APIs must be backward-compatible during the transition window.
-
-**GitOps rollback:**
-
-```bash
-# Revert the image tag or rollout manifest commit.
-# Operator-only example; requires explicit Git mutation authorization.
-git revert <commit-sha>
-
-# Open or update a PR, wait for review/merge, then let ArgoCD reconcile from Git.
-```
-
-Direct cluster mutation commands are outside the normal path and require explicit human emergency approval.
-
----
-
-## 2. Blue-Green Deployment
-
-```
-Blue  (active):  [v1][v1][v1]  ← 100% traffic
-Green (staging): [v2][v2][v2]  ← 0% traffic
-
-After switch:
-Blue:  [v1][v1][v1]  ← 0% (standby for rollback)
-Green: [v2][v2][v2]  ← 100% traffic
-```
-
-**ArgoCD Rollouts CRD (preferred for GitOps):**
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
-metadata:
-  name: my-app
-spec:
-  strategy:
-    blueGreen:
-      activeService: my-app-active
-      previewService: my-app-preview
-      autoPromotionEnabled: false # require manual promotion gate
-      scaleDownDelaySeconds: 300 # keep Blue alive 5 min post-switch
-```
-
-**Promotion procedure:**
-
-1. ArgoCD deploys new version to preview (Green) replicas.
-2. Run smoke tests against `previewService`.
-3. Promote through the approved repository-backed release gate, or an explicitly approved Argo Rollouts manual gate.
-4. Monitor for 5 minutes; keep Blue scaled until confirmed stable.
-5. `scaleDownDelaySeconds` elapses → Blue automatically removed.
-
-**Rollback:** use the repository-backed rollback plan. Direct Argo Rollouts abort actions require explicit human emergency approval.
-
----
-
-## 3. Canary Deployment
-
-```
-Stage 1: [v1 × 95%] [v2 × 5%]
-Stage 2: [v1 × 80%] [v2 × 20%]
-Stage 3: [v1 × 50%] [v2 × 50%]
-Stage 4: [v2 × 100%]           ✓
-```
-
-**ArgoCD Rollouts CRD:**
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
-spec:
-  strategy:
-    canary:
-      steps:
-        - setWeight: 5
-        - pause: { duration: 10m }
-        - analysis:
-            templates:
-              - templateName: success-rate
-        - setWeight: 20
-        - pause: { duration: 30m }
-        - setWeight: 50
-        - pause: { duration: 1h }
-        - setWeight: 100
-      canaryService: my-app-canary
-      stableService: my-app-stable
-```
-
-**Per-stage validation criteria:**
-
-| Stage | Traffic | Wait   | Validation              |
-| ----- | ------- | ------ | ----------------------- |
-| 1     | 5%      | 10 min | Error rate, p99 latency |
-| 2     | 20%     | 30 min | + business metrics      |
-| 3     | 50%     | 1–2 h  | All metrics             |
-| 4     | 100%    | —      | Complete                |
-
-**Automatic canary-abort conditions** — tighter than the release-wide
-triggers under Rollback Procedures, because a canary aborts on a small early
-signal from a small share of traffic:
-
-- HTTP 5xx rate > 1% (2× baseline)
-- p99 latency > 2 s (50% above baseline)
-- Business metric anomaly (conversion rate, revenue, etc.)
-
----
-
-## 4. A/B Testing
-
-- Traffic split by user segment (header, cookie, user-id hash).
-- Integrate with feature flag systems (LaunchDarkly, Flagsmith, etc.).
-- Promote only after reaching statistical significance.
-- Kubernetes implementation: Istio `VirtualService` weighted routes, or Nginx Ingress canary annotations.
-
----
-
-## 5. Shadow (Traffic Mirroring)
-
-- Production requests are mirrored to the new version; responses are discarded.
-- Zero user impact — used solely for performance, error rate, and compatibility validation.
-- Kubernetes: Istio `VirtualService` mirror + mirrorPercentage.
-
----
-
-## Health Check Design
-
-### Three Probe Types
-
-| Probe         | Validates               | Endpoint   | Period          |
-| ------------- | ----------------------- | ---------- | --------------- |
-| **Liveness**  | Process still alive     | `/healthz` | 10 s            |
-| **Readiness** | Ready to serve traffic  | `/readyz`  | 5 s             |
-| **Startup**   | Initialization complete | `/healthz` | 1 s (max 300 s) |
-
-### Kubernetes Probe Configuration
-
-```yaml
-livenessProbe:
-  httpGet:
-    path: /healthz
-    port: 8080
-  initialDelaySeconds: 15
-  periodSeconds: 10
-  failureThreshold: 3
-
-readinessProbe:
-  httpGet:
-    path: /readyz
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-  failureThreshold: 3
-
-startupProbe:
-  httpGet:
-    path: /healthz
-    port: 8080
-  failureThreshold: 30
-  periodSeconds: 10
-```
-
-### Health Endpoint Response Structure
-
-```json
-{
-  "status": "healthy",
-  "version": "2.1.0",
-  "checks": {
-    "database": { "status": "healthy", "latency_ms": 2 },
-    "cache": { "status": "healthy", "latency_ms": 1 },
-    "external": { "status": "degraded", "latency_ms": 500 }
-  }
-}
-```
-
-Readiness endpoint must return non-2xx when any required dependency is unhealthy — this is what prevents traffic routing to broken pods.
-
----
-
-## Rollback Procedures
-
-### Automatic Rollback Triggers
-
-| Metric            | Threshold | Window            |
-| ----------------- | --------- | ----------------- |
-| HTTP 5xx rate     | > 5%      | 2 min consecutive |
-| Latency p99       | > 3 s     | 5 min consecutive |
-| Pod restart count | > 3       | Within 10 min     |
-| Memory / CPU      | > 90%     | 5 min consecutive |
-
-### GitOps Rollback Decision Tree
-
-```
-Trigger detected
-    ├── ArgoCD Rollout (Canary/Blue-Green)
-    │       → Revert or abort through the repository-backed rollback plan
-    │       → Let ArgoCD reconcile from the merged Git state
-    │
-    └── Standard Deployment (Rolling)
-            → Revert image tag commit in Git → PR/merge → ArgoCD reconciliation
-```
-
-After rollback:
-
-1. Draft an alert for an authorized operator; send via Slack/PagerDuty only with explicit authorization.
-2. Conduct RCA (see `rca-methodology` skill).
-3. Fix root cause, re-deploy via normal GitOps path.
-
----
-
-## DORA Metrics
-
-### Four Key Metrics
-
-| Metric                   | Description                        | Elite                    | High         | Medium       | Low       |
-| ------------------------ | ---------------------------------- | ------------------------ | ------------ | ------------ | --------- |
-| **Deployment Frequency** | How often to production            | On-demand (multiple/day) | Daily–weekly | Monthly      | < Monthly |
-| **Lead Time**            | Commit → production                | < 1 h                    | 1 day–1 week | 1–4 weeks    | > 1 month |
-| **Change Failure Rate**  | % of deployments causing incidents | < 5%                     | 6–15%        | 16–30%       | > 30%     |
-| **Recovery Time (MTTR)** | Detection → resolution             | < 1 h                    | < 1 day      | 1 day–1 week | > 1 week  |
-
-### Measurement Formulas
-
-```
-Deployment Frequency  = production deploy count / time period
-Lead Time             = production_deploy_time − first_commit_time
-Change Failure Rate   = rollback_deploys / total_deploys × 100
-Recovery Time (MTTR)  = incident_resolution_time − incident_detection_time
-```
-
----
+`references/strategies.md` holds the catalog and `references/verification.md`
+holds probe, abort, and measurement detail. Both are read when a decision needs
+them rather than carried through every use of this skill, because a rollout
+question is usually about one strategy and not about all five.
 
 ## Branch and Promotion Model
 
