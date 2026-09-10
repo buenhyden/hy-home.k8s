@@ -2,7 +2,7 @@
 title: "Admit Coverage Roles and Repair Routing"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
@@ -18,7 +18,7 @@ packages in [the plan](../plan.md). It records per-package results, the evidence
 lane each result belongs to, the approval boundaries observed, and the limits
 that remain unobserved.
 
-It is in progress. WP-001 through WP-007 have run and this record closes next;
+It is done. WP-001 through WP-007 have run;
 each row below carries the command result actually read, and a row that has
 not run says so rather than anticipating an outcome.
 
