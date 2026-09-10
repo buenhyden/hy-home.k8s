@@ -1,10 +1,10 @@
 ---
 title: "Code Reviewer Responsibility"
-version: "1.0.0"
+version: "1.0.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # code-reviewer Responsibility
@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `code-reviewer` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [architecture](README.md#architecture)
+skill procedure before work. Read [quality](README.md#quality)
 for the broader responsibility context.
 
 ## Current Contract

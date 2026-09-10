@@ -1,10 +1,10 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.0.0"
+version: "1.0.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # observability-reviewer Responsibility
@@ -23,7 +23,7 @@ permission class constrains this role; native controls may only narrow it.
 
 Read the `observability-reviewer` entry in [the registry](registry.json) for its permission
 class, skill references, capability tier, and handoff edges. Read every listed
-skill procedure before work. Read [infrastructure](README.md#infrastructure)
+skill procedure before work. Read [operations](README.md#operations)
 for the broader responsibility context.
 
 ## Current Contract
