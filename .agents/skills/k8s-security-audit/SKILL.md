@@ -7,156 +7,33 @@ disable-model-invocation: true
 Read `.agents/governance/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation does not authorize additional actions.
 
-# k8s Security Audit — Cluster Security Assessment Workflow
+# k8s Security Audit — Cluster Security Assessment
 
-Structured audit pipeline covering RBAC → NetworkPolicy → Secrets → Container security → Supply chain.
+Assess a repository's Kubernetes security posture across five dimensions and
+report what each one found, at a severity that says what the finding obliges.
 
-## Audit Dimensions
+## Workflow Steps
 
-### 1. RBAC Analysis
+1. Fix the audit scope and type: which namespaces, paths, or manifests, and
+   whether this is a full audit or one dimension. A finding outside the stated
+   scope is context, not a result.
+2. Work the dimensions in order — RBAC, NetworkPolicy, secrets, container
+   security context, image supply chain — using
+   `references/audit-dimensions.md` for the detection targets of each. The
+   order is deliberate: an RBAC finding changes what a NetworkPolicy gap is
+   worth.
+3. Assign each finding a level with the table below, taking the pattern-to-level
+   mapping from `vulnerability-patterns` where one applies.
+4. Stop immediately on plaintext secret exposure and report it before
+   continuing; the remaining dimensions do not change what that requires.
+5. Write the report with the format below, and record the closing state rather
+   than deciding acceptance, which this procedure does not own.
 
-**Detection Targets:**
+## Reference Material
 
-| Risk Pattern                                   | Severity | Example                                       |
-| ---------------------------------------------- | -------- | --------------------------------------------- |
-| `ClusterRole` with `*` verbs                   | Critical | `verbs: ["*"]` on `secrets` resource          |
-| `ClusterRoleBinding` to service accounts       | High     | SA with cluster-wide list/get on secrets      |
-| `automountServiceAccountToken: true` (default) | Medium   | Pods that do not need API access              |
-| Overly broad namespace-scoped roles            | Medium   | `Role` with `get/list/watch` on all resources |
-| `system:masters` group membership              | Critical | Any non-bootstrap entity in this group        |
-
-**RBAC Audit Checklist:**
-
-```yaml
-# Least-privilege check: list bindings per SA
-# Flag: any SA with secrets read access it does not need
-# Flag: any RoleBinding/ClusterRoleBinding using wildcard verbs
-# Flag: default SA with non-empty automount
-```
-
-**Output format:**
-
-```markdown
-| Resource | Binding               | Subject    | Overpermission | Severity |
-| -------- | --------------------- | ---------- | -------------- | -------- |
-| secrets  | cluster-admin-binding | sa/default | list/get/watch | CRITICAL |
-```
-
-### 2. NetworkPolicy Gap Analysis
-
-**Default-deny baseline check:**
-
-```yaml
-# Expected in every namespace:
-kind: NetworkPolicy
-spec:
-  podSelector: {} # selects all pods
-  policyTypes: [Ingress, Egress]
-  # No ingress/egress rules = deny all
-```
-
-**Detection Targets:**
-
-| Risk Pattern                         | Severity |
-| ------------------------------------ | -------- |
-| Namespace with no NetworkPolicy      | High     |
-| Pods reachable from `0.0.0.0/0`      | Critical |
-| Unrestricted egress to internet      | High     |
-| DNS-only egress not enforced         | Medium   |
-| Cross-namespace unrestricted ingress | High     |
-
-**Verification approach:**
-
-- List all namespaces
-- For each namespace: check if `NetworkPolicy` resources exist
-- For each pod: verify ingress/egress rules cover it
-- Flag namespaces where `podSelector: {}` deny-all is absent
-
-### 3. Secret Handling
-
-**Stop-condition patterns (immediate block):**
-
-- Plaintext secrets in manifest annotations or labels
-- Secrets embedded in `ConfigMap` data values
-- `KUBECONFIG` or credentials mounted via `hostPath`
-- Secret values visible in container args or env vars (non-SecretKeyRef)
-
-**Accepted patterns:**
-
-```yaml
-# Correct: reference, not value
-env:
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: password
-```
-
-**Rejected patterns:**
-
-```yaml
-# Wrong: plaintext in env
-env:
-  - name: DB_PASSWORD
-    value: 'mysecretpassword'
-
-# Wrong: secret embedded in ConfigMap
-# Wrong: base64 in annotation (base64 is NOT encryption)
-```
-
-**Secret age and rotation:**
-
-- Flag Secrets older than 90 days without rotation evidence
-- Flag Secrets with `immutable: false` that contain credentials
-
-### 4. Container Security Context
-
-**Required security context for production workloads:**
-
-```yaml
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000 # non-zero UID
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop: ['ALL']
-    add: [] # add only if strictly required
-```
-
-**Detection Targets:**
-
-| Risk Pattern                                 | Severity |
-| -------------------------------------------- | -------- |
-| `runAsUser: 0` (root)                        | Critical |
-| `privileged: true`                           | Critical |
-| `allowPrivilegeEscalation: true`             | High     |
-| `hostPID: true` or `hostNetwork: true`       | Critical |
-| `hostPath` volume mounts                     | High     |
-| Missing `readOnlyRootFilesystem`             | Medium   |
-| `capabilities.add: ["NET_ADMIN"]` or similar | High     |
-
-### 5. Image Supply Chain
-
-**Verification targets:**
-
-- Images must use digest pinning or immutable tags
-- Images from unapproved registries are flagged
-- No `latest` tag in production workloads
-
-```yaml
-# Correct: digest pinned
-image: my-registry.io/app:v1.2.3@sha256:abc123...
-
-# Rejected: floating tag
-image: my-registry.io/app:latest
-```
-
-**Registry allowlist check:**
-
-- Flag any image not from approved registries
-- Flag images without vulnerability scan evidence in CI annotations
+`references/audit-dimensions.md` holds the per-dimension detection targets and
+checklists. It is read a dimension at a time as step 2 works through them,
+which is why it is not carried in the procedure itself.
 
 ## Severity Classification
 
