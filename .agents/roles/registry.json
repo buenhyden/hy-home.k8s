@@ -172,6 +172,7 @@
         "architect",
         "code-reviewer",
         "doc-writer",
+        "governance-steward",
         "k8s-implementer",
         "quality-engineer",
         "security-auditor"
@@ -493,6 +494,30 @@
         "neutral": ".agents/roles/architect.md",
         "claude": ".claude/agents/architect.md",
         "codex": ".codex/agents/architect.toml"
+      }
+    },
+    {
+      "id": "governance-steward",
+      "responsibility": "Maintain the neutral agent registry, role bodies, skills, and provider projections without widening its own authority.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": ".agents/governance/model-selection.md#top",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "workspace-harness-audit",
+        "knowledge-map"
+      ],
+      "handoff_to": [
+        "quality-engineer",
+        "supervisor",
+        "wiki-curator"
+      ],
+      "projections": {
+        "neutral": ".agents/roles/governance-steward.md",
+        "claude": ".claude/agents/governance-steward.md",
+        "codex": ".codex/agents/governance-steward.toml"
       }
     }
   ]
