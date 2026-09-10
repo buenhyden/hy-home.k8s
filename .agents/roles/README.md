@@ -38,6 +38,8 @@ policy.
 - Hand implementation, operational, and security consequences to their
   responsible owners. Do not claim ownership of all documentation.
 
+This boundary is carried by [architect](architect.md).
+
 ### Documentation
 
 Keep authored documents and navigation useful, traceable, and correctly routed.
@@ -143,6 +145,7 @@ projections own native configuration.
 Canonical role bodies:
 
 - [supervisor](supervisor.md)
+- [architect](architect.md)
 - [code-reviewer](code-reviewer.md)
 - [doc-writer](doc-writer.md)
 - [gitops-reviewer](gitops-reviewer.md)

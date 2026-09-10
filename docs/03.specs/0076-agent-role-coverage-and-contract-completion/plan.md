@@ -154,9 +154,11 @@ Expected: PASS. The object satisfies the role schema on its own.
 python3 scripts/validate-agent-governance.py
 ```
 
-Expected: FAIL. The registry names three projection paths that do not exist,
-so the projection reader reports `AGENT-REGISTRY-PROJECTION`. This failing
-result is the focused case the work lifecycle requires before the fix.
+Expected: FAIL with exit code 1 and
+`ERR AGENT-NATIVE-METADATA agent registry validation failed`. The registry
+names three projection paths that do not exist, and the absent native
+frontmatter is what the reader reports. This failing result is the focused
+case the work lifecycle requires before the fix.
 
 - [ ] **Step 5: Write the neutral role body** at `.agents/roles/architect.md`.
       Copy the section skeleton verbatim from `.agents/roles/quality-engineer.md`,
@@ -372,7 +374,7 @@ role's `handoff_to`.
 python3 scripts/validate-agent-governance.py
 ```
 
-Expected: FAIL with `AGENT-REGISTRY-PROJECTION`, the missing projections.
+Expected: FAIL with `AGENT-NATIVE-METADATA`, the missing native frontmatter of the absent projections.
 
 - [ ] **Step 4: Write the neutral role body** at
       `.agents/roles/governance-steward.md`, copying the section skeleton from
@@ -538,7 +540,7 @@ router reconciliation in WP-007.
 python3 scripts/validate-agent-governance.py
 ```
 
-Expected: FAIL with `AGENT-REGISTRY-PROJECTION`.
+Expected: FAIL with `AGENT-NATIVE-METADATA`, the missing native frontmatter of the absent projections.
 
 - [ ] **Step 4: Write the neutral role body** at
       `.agents/roles/ci-workflow-engineer.md`, copying the section skeleton from
@@ -711,7 +713,7 @@ runner-carve-out sentence to this role's body.
 python3 scripts/validate-agent-governance.py
 ```
 
-Expected: FAIL with `AGENT-REGISTRY-PROJECTION`.
+Expected: FAIL with `AGENT-NATIVE-METADATA`, the missing native frontmatter of the absent projections.
 
 - [ ] **Step 4: Write the neutral role body** at
       `.agents/roles/repo-tooling-engineer.md`, copying the section skeleton from
@@ -884,7 +886,7 @@ two reciprocal sentences that complete the evaluation boundary.
 python3 scripts/validate-agent-governance.py
 ```
 
-Expected: FAIL with `AGENT-REGISTRY-PROJECTION`.
+Expected: FAIL with `AGENT-NATIVE-METADATA`, the missing native frontmatter of the absent projections.
 
 - [ ] **Step 4: Write the neutral role body** at
       `.agents/roles/agent-evaluator.md`, copying the section skeleton from

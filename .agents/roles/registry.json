@@ -169,6 +169,7 @@
         "task-breakdown"
       ],
       "handoff_to": [
+        "architect",
         "code-reviewer",
         "doc-writer",
         "k8s-implementer",
@@ -467,6 +468,31 @@
         "neutral": ".agents/roles/quality-engineer.md",
         "claude": ".claude/agents/quality-engineer.md",
         "codex": ".codex/agents/quality-engineer.toml"
+      }
+    },
+    {
+      "id": "architect",
+      "responsibility": "Own structural decisions and architecture descriptions, and trace them to requirements and the owning Spec.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": ".agents/governance/model-selection.md#top",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "requirements-to-design",
+        "docs-stage-routing"
+      ],
+      "handoff_to": [
+        "doc-writer",
+        "k8s-implementer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": ".agents/roles/architect.md",
+        "claude": ".claude/agents/architect.md",
+        "codex": ".codex/agents/architect.toml"
       }
     }
   ]

@@ -335,9 +335,9 @@ rather than by precedence.
 A handoff edge naming an unknown role or naming the role itself fails
 `AGENT-REGISTRY-HANDOFF`. A skill reference outside `skills[]` fails
 `AGENT-REGISTRY-SKILL`. A projection whose metadata keys, identity, model or
-sandbox differ from the derived values fails `AGENT-NATIVE-METADATA`, and a
-read list that differs in membership or count fails
-`AGENT-NATIVE-REFERENCE`. These are deterministic and are the intended
+sandbox differ from the derived values fails `AGENT-NATIVE-METADATA`, as does
+a projection the registry names but that does not exist, and a read list that
+differs in membership or count fails `AGENT-NATIVE-REFERENCE`. These are deterministic and are the intended
 detection path for a hand-edited projection.
 
 An identifier collision with an existing role or skill is rejected by the
