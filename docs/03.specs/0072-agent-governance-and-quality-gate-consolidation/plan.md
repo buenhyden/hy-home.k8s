@@ -1,10 +1,10 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.6.1"
+version: "2.7.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-10"
 layer: "specs"
 artifact_id: "SPEC-0072-PLAN-0001"
 ---
@@ -204,6 +204,21 @@ starts from a focused failing case and ends with its passing result.
 | WP-011D | Four current statements described absent behavior: projection-owned tools, a path-filtered labeler, an undocumented second CI binary, and two review items naming filters and a lane with no owner. Own `.claude/README.md`, `.github/repository-surface.md`, `.github/PULL_REQUEST_TEMPLATE.md` and `scripts/validation/repository/quality.py`. | The corrected template phrase remains the phrase the quality gate asserts. | Keep prose and its assertion atomic. Revert the unit; no workflow, trigger or gate behavior changes. |
 | WP-011E | One Git object fixture had two definitions and three further suites imported one of them from a test module. Own `tests/git_fixture.py`, both archive suites, the three importers and `tests/README.md`. | The five affected modules pass unchanged. | Keep the helper and every consumer atomic. Revert the unit; no test behavior or fixture data changes. |
 
+### WP-012: Return duplicated authority to one owner per rule
+
+Close the duplication and drift the governance/QA convergence sweep surfaced.
+Each unit removes a second owner or a false statement rather than adding a
+control, and keeps the result the previous owner produced.
+
+| Unit | Cause and owned files | Focused tests and diagnostics | Commit boundary and rollback |
+| --- | --- | --- | --- |
+| WP-012A | A hand-written CommonMark path was pure but uncached, so two validators re-derived the same view over the same bytes. Own `scripts/validate-links-and-owners.py` and new `tests/test_markdown_render_cache.py`. | A `RenderedMarkdown` and its plain twin compare and hash alike yet must parse differently, so lazy-line provenance belongs in the cache key; callers keep their own mapping. | Keep each cache with its correctness guard. Revert the unit; gate output is byte-identical either way. |
+| WP-012B | A stated invariant that native controls may only narrow a permission class was enforced nowhere, and one role had silently gained network tools. Own `.agents/roles/registry.json`, its schema, `scripts/validate-agent-governance.py` and the evaluation boundary. | `AGENT-REGISTRY-PERMISSION` fires when an override widens its class; the boundary owns one case per permission class. | Keep the class, its enforcement and its evaluation case atomic. Revert the unit; no role gains or loses reach. |
+| WP-012C | A read-only gate carried a one-shot rehome path that wrote files and unlinked thirty-one others. Own `scripts/archive_cutover.py`. | Gate output hash is unchanged with the path and its orphaned helper and imports removed. | Keep the removal atomic. Revert the unit; the archive corpus is untouched throughout. |
+| WP-012D | Unit tests re-ran registered gates against the real repository root, so a gate result was asserted twice under two names. Own the affected suites and `tests/README.md`. | Each suite keeps the failure paths and diagnostic strings the gate does not own. | Keep tests and their stated boundary atomic. Revert the unit; no gate or validator changes. |
+| WP-012E | `full` and `ci` held the same gate array twice, with a contract check and a test existing only to hold the copies in agreement. Own `scripts/validation/registry.json`, its schema, `scripts/validate-affected-surfaces.py`, `scripts/qa.py` and both profile suites. | A reintroduced `ci` array is rejected as `SURFACE-SCHEMA`; a dangling alias is `SURFACE-PROFILE-ALIAS`, never a bare `KeyError`. | Widen the schema, move the data, then narrow the schema, so each step stands alone. Revert any step; `qa.py ci` keeps resolving the same gates. |
+| WP-012F | Four governance documents, five skills and two role documents stated something their owner does not say, and two of the restatements had drifted. Own `.agents/governance/git.md`, `.agents/governance/sdlc.md`, `scripts/README.md`, `tests/README.md`, six `SKILL.md` bodies and two role documents. | Handoff targets name a responsibility, so the registry keeps the identity; `k8s-validate` no longer promises lint or schema checks its profile does not run. | Keep each document with the owner it defers to. Revert any unit; registry permissions, handoff edges and gate behavior are unchanged. |
+
 ## Verification Plan
 
 For each changed behavior, targeted RED then GREEN. During work run quick;
@@ -281,3 +296,9 @@ transition. Branch/worktree finish, remote actions and the older native
 | [VAL-AGQ-020](spec.md#success-criteria--verification-plan) | WP-011C | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
 | [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-011D | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
 | [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-011E | [SPEC-0072-TSK-0003](tasks/tsk-0003-documentation-entry-point-and-gate-repairs.md) |
+| [VAL-AGQ-003](spec.md#success-criteria--verification-plan) | WP-012A | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-002](spec.md#success-criteria--verification-plan) | WP-012B | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-005](spec.md#success-criteria--verification-plan) | WP-012C | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-012D | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-004](spec.md#success-criteria--verification-plan) | WP-012E | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-012F | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
