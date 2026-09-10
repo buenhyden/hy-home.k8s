@@ -1090,15 +1090,26 @@ grep -rn "^emoji:\|^vibe:" .agents/roles/ .claude/agents/ .codex/agents/
 Expected: the cycle heading present once, a diff touching only the files this
 plan names, and no match for the upstream persona frontmatter keys.
 
-- [ ] **Step 6: Record the evidence** in the package Task: the checked
+- [ ] **Step 6: Transition the admitted role bodies to active.** The
+      `governance/role` lifecycle domain admits a document only in `draft` and
+      allows `draft -> active`, so each admitted body was created as `draft`.
+      Set `status: "active"` on all five in one logical change:
+
+```bash
+python3 scripts/validate-document-lifecycle.py --root . --mode strict
+```
+
+Expected: PASS with each transition recognised as `draft -> active`.
+
+- [ ] **Step 7: Record the evidence** in the package Task: the checked
       snapshot, each package's result, the lanes that ran, and the lanes that
       did not. Native discovery, permission enforcement, model resolution and
       authenticated operation stay unobserved and are recorded as such.
 
-- [ ] **Step 7: Stage, validate and commit.**
+- [ ] **Step 8: Stage, validate and commit.**
 
 ```bash
-git add .agents/roles/README.md docs/03.specs/0076-agent-role-coverage-and-contract-completion/
+git add .agents/roles/ docs/03.specs/0076-agent-role-coverage-and-contract-completion/
 python3 scripts/qa.py staged
 git commit -m "docs(agents): reconcile the responsibility router and record SPEC-0076 evidence"
 ```
