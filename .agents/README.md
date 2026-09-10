@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "1.0.1"
+version: "1.1.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-10"
 ---
 
 # Common Agent Governance
@@ -23,10 +23,30 @@ loaders; the entire directory is not an automatic instruction loader.
 | `governance/` | Approval, safety, quality, Git, documents, context and model policy |
 | [roles/README.md](roles/README.md) | Responsibility selection and common handoff contracts |
 | [roles/registry.json](roles/registry.json) | Role IDs, permissions, skill references and native paths |
-| `skills/<id>/SKILL.md` | Callable common procedures; registry determines the package set |
+| `skills/<id>/` | Callable common procedure packages; registry determines the package set |
 | `workflows/` | Ordinary lifecycle/delegation procedures, explicitly read |
 | `knowledge/` | Hand-maintained pointers to canonical owners; states no policy of its own |
 | `prompts/` | Input and output contracts for repeatable authoring requests |
+
+### Skill package
+
+A package holds `SKILL.md` and the `agents/` sidecar both providers read. It may
+hold three more directories when the procedure needs them: `references/` for
+Markdown the steps point at instead of restating, `scripts/` for a helper the
+steps run, and `assets/` for a file the output is built from. Reaching for one
+is a judgment about what the material is — a step belongs in `SKILL.md`, and
+everything else belongs where a reader can skip it.
+
+The package stays a closed set. `SKILL.md` names every file in those
+directories, so nothing a provider loads is unreachable from the procedure that
+owns it, and an empty directory is refused rather than left as a placeholder.
+
+Two boundaries keep the new directories from becoming second authorities, and
+both are enforced rather than advised. A skill script is a helper and never a
+gate: `scripts/validation/registry.json` refuses a gate whose script lives in a
+package, so editing a skill can never change what QA enforces. An asset is a
+resource and never a document template: Stage 99 owns those and the route that
+reaches them, so the name `*.template.md` is refused here.
 
 ## Configuration Boundary
 
@@ -41,7 +61,8 @@ unadopted, each for its own reason: root `evals/` holds evaluation case and
 response data, `scripts/run-agent-evaluations.py` owns runner behavior, and
 `scripts/validation/registry.json` owns gate selection; a rule directory would
 duplicate policy `governance/` already owns; and `scripts/` already owns
-executable tooling at the repository root. MIG-0009's memory retirement
+executable tooling at the repository root, which a package-local helper does
+not displace because it can never be a registered gate. MIG-0009's memory retirement
 remains effective.
 
 ## Validation

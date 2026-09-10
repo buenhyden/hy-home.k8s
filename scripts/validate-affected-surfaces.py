@@ -156,6 +156,10 @@ def _unique_ids(rows: Sequence[dict[str, Any]], kind: str) -> dict[str, dict[str
     return indexed
 
 
+# Skill packages hold procedures and their helpers, never gates.
+SKILL_PACKAGE_ROOT = ".agents/skills/"
+
+
 def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | None:
     approved_commands = {
         "unit-tests": [
@@ -237,6 +241,17 @@ def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | 
         fail(
             "SURFACE-VALIDATOR-ARGV-SCRIPT",
             f"{identifier} script {normalized_script!r} does not match {executable}",
+        )
+    # A skill package may carry a helper its own procedure runs. A gate is a
+    # different thing: it decides whether work may proceed, and this registry
+    # is where that decision lives. Letting one file be both would mean a skill
+    # edit silently changed what QA enforces, so the two stay separate by
+    # address rather than by convention.
+    if normalized_script.startswith(SKILL_PACKAGE_ROOT):
+        fail(
+            "SURFACE-VALIDATOR-ARGV-SCRIPT",
+            f"{identifier} script {normalized_script!r} is a skill-local helper, "
+            "which cannot also be a registered gate",
         )
     return normalized_script
 

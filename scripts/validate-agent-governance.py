@@ -706,8 +706,14 @@ def _validate_directory_entries(
     *,
     code: str,
     symlinks: dict[str, str] | None = None,
-) -> None:
-    """Check one closed directory without following a parent or child link."""
+    optional: frozenset[str] = frozenset(),
+) -> frozenset[str]:
+    """Check one closed directory without following a parent or child link.
+
+    `expected` names everything the directory may hold; `optional` names the
+    subset that may be absent. The returned set is what was actually there, so
+    a caller can go on to check the optional members it found without opening
+    the directory a second time and racing its own check."""
     strict_root = _strict_root(root, code=code)
     normalized = _normalized_relative(relative, code=code)
     descriptors: list[int] = []
@@ -733,13 +739,73 @@ def _validate_directory_entries(
                 ):
                     fail(code, "native package link differs")
                 observed.add(entry.name)
-        if observed != set(expected):
+        if not set(expected) - optional <= observed:
             fail(code, "native package entry set differs")
+        return frozenset(observed)
     except OSError:
         fail(code, "native package directory is unavailable")
     finally:
         for descriptor in reversed(descriptors):
             os.close(descriptor)
+
+
+# A long procedure carries material that is not itself a step: a pattern
+# catalog, a helper the steps would otherwise describe in prose, a file the
+# output is built from. These three directories give that material a home so
+# the procedure can stay a procedure, and each one keeps its own contract so
+# the material cannot quietly become something else. The package stays a closed
+# set either way — every file here is named by SKILL.md, so nothing a provider
+# loads is unreachable from the procedure that owns it.
+SKILL_BUNDLE_SUFFIXES: dict[str, frozenset[str] | None] = {
+    "references": frozenset({".md"}),
+    "scripts": frozenset({".py", ".sh"}),
+    "assets": None,
+}
+# Stage 99 owns document templates and routes them through its registry. An
+# asset that took this name would be a second template authority reachable
+# without that route.
+STAGE_TEMPLATE_SUFFIX = ".template.md"
+
+
+def _validate_skill_bundle(
+    root: Path, package: str, directory: str, body: str, code: str
+) -> None:
+    """Check one optional bundle directory of a skill package."""
+
+    allowed = SKILL_BUNDLE_SUFFIXES[directory]
+    relative = f"{package}/{directory}"
+    strict_root = _strict_root(root, code=code)
+    descriptors: list[int] = []
+    names: set[str] = set()
+    try:
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        descriptor = os.open(strict_root, flags)
+        descriptors.append(descriptor)
+        for part in _normalized_relative(relative, code=code).parts:
+            descriptor = os.open(part, flags, dir_fd=descriptor)
+            descriptors.append(descriptor)
+        with os.scandir(descriptor) as entries:
+            for entry in entries:
+                if (
+                    stat.S_IFMT(entry.stat(follow_symlinks=False).st_mode)
+                    != stat.S_IFREG
+                ):
+                    fail(code, "skill bundle entry is not a regular file")
+                names.add(entry.name)
+    except OSError:
+        fail(code, "native package directory is unavailable")
+    finally:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
+    if not names:
+        fail(code, "skill bundle directory is empty")
+    for name in sorted(names):
+        if allowed is not None and PurePosixPath(name).suffix not in allowed:
+            fail(code, "skill bundle entry has an unregistered suffix")
+        if directory == "assets" and name.endswith(STAGE_TEMPLATE_SUFFIX):
+            fail(code, "skill asset claims the Stage 99 template name")
+        if f"{directory}/{name}" not in body:
+            fail(code, "skill bundle entry is unreachable from SKILL.md")
 
 
 def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
@@ -749,12 +815,25 @@ def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
     )
     for skill_id in skills:
         package = f".agents/skills/{skill_id}"
-        _validate_directory_entries(
-            root, package, {"SKILL.md": stat.S_IFREG, "agents": stat.S_IFDIR}, code=code
+        entries = _validate_directory_entries(
+            root,
+            package,
+            {
+                "SKILL.md": stat.S_IFREG,
+                "agents": stat.S_IFDIR,
+                **{name: stat.S_IFDIR for name in SKILL_BUNDLE_SUFFIXES},
+            },
+            code=code,
+            optional=frozenset(SKILL_BUNDLE_SUFFIXES),
         )
         _validate_directory_entries(
             root, f"{package}/agents", {"openai.yaml": stat.S_IFREG}, code=code
         )
+        bundles = entries & frozenset(SKILL_BUNDLE_SUFFIXES)
+        if bundles:
+            body = _read_text(root, f"{package}/SKILL.md", code)
+            for directory in sorted(bundles):
+                _validate_skill_bundle(root, package, directory, body, code)
         text = _read_text(root, f"{package}/agents/openai.yaml", code)
         try:
             metadata = yaml.load(text, Loader=UniqueMetadataLoader)

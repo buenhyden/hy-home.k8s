@@ -107,6 +107,26 @@ class ValidationProfileTests(unittest.TestCase):
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
+    def test_a_skill_local_helper_cannot_be_registered_as_a_gate(self):
+        """A skill package carries helpers; this registry carries gates.
+
+        The two are kept apart by address rather than by convention, because a
+        path that was both would let a skill edit change what QA enforces
+        without the change ever reaching this contract."""
+
+        with self.assertRaises(ROUTES.ContractError) as raised:
+            ROUTES._validate_direct_script_argv(
+                "synthetic",
+                ["python3", ".agents/skills/k8s-validate/scripts/check.py"],
+            )
+        self.assertEqual(raised.exception.code, "SURFACE-VALIDATOR-ARGV-SCRIPT")
+        self.assertEqual(
+            ROUTES._validate_direct_script_argv(
+                "synthetic", ["python3", "scripts/validate-k8s-manifests.py"]
+            ),
+            "scripts/validate-k8s-manifests.py",
+        )
+
     def test_every_tested_repository_validator_runs_in_a_profile(self):
         """A validator with its own test module must be reachable from a profile."""
 

@@ -389,6 +389,77 @@ class NativeBoundaryTests(unittest.TestCase):
                 if not existed:
                     path.parent.rmdir()
 
+    def bundle_package(self):
+        """The one skill package the fixture carries, as a path."""
+
+        return self.root / ".agents/skills" / self.registry["skills"][0]["id"]
+
+    def place_bundle(self, relative, payload="synthetic-private-payload", *, reachable):
+        """Put one bundle file in place and decide whether SKILL.md names it."""
+
+        package = self.bundle_package()
+        path = package / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(payload)
+        skill = package / "SKILL.md"
+        if reachable:
+            skill.write_text(skill.read_text() + f"\n\nSee `{relative}`.\n")
+        return path
+
+    def test_a_named_bundle_file_is_admitted(self):
+        """The package stays closed; it now closes over three more directories."""
+
+        for relative in (
+            "references/patterns.md",
+            "scripts/check.py",
+            "assets/row.csv",
+        ):
+            with self.subTest(relative=relative):
+                self.place_bundle(relative, reachable=True)
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+
+    def test_a_bundle_file_the_procedure_never_names_rejects(self):
+        """An unreachable file still ships to a provider, so it stays rejected."""
+
+        self.place_bundle("references/orphan.md", reachable=False)
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_bundle_suffixes_are_contracted_per_directory(self):
+        for relative in ("references/notes.txt", "scripts/tool.rb"):
+            with self.subTest(relative=relative):
+                path = self.place_bundle(relative, reachable=True)
+                self.assert_rejected("AGENT-REGISTRY-SKILL")
+                path.unlink()
+                path.parent.rmdir()
+
+    def test_an_asset_cannot_claim_the_stage_template_name(self):
+        """Stage 99 owns document templates and the route that reaches them."""
+
+        self.place_bundle("assets/report.template.md", reachable=True)
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_an_empty_bundle_directory_rejects(self):
+        (self.bundle_package() / "references").mkdir()
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_a_bundle_entry_cannot_be_a_directory_or_a_link(self):
+        import tempfile
+
+        package = self.bundle_package()
+        nested = package / "references/deeper"
+        nested.mkdir(parents=True)
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+        nested.rmdir()
+        with tempfile.TemporaryDirectory() as directory:
+            (package / "references/escape.md").symlink_to(f"{directory}/outside.md")
+            self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_an_unregistered_package_directory_still_rejects(self):
+        """Widening the set to three names is not widening it to any name."""
+
+        self.place_bundle("extras/payload.md", reachable=True)
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+
     def test_skill_source_parents_and_sidecars_cannot_be_links(self):
         import tempfile
 
