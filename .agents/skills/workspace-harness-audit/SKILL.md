@@ -12,50 +12,56 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Purpose
 
 Keep broad workspace analysis complete, evidence-backed, and bounded to the
-authorized repository work. For narrow document drift use docs-stage-conformance.
+authorized repository work. Narrow document drift belongs to
+`docs-stage-conformance` instead.
 
 ## Workflow Phases
 
-### Intake
+### Coverage map
 
-Read the provider gateway, relevant `.agents/governance/`, active Spec/Plan/Task,
-and current diff. Map every requested area to an owner, acceptance condition,
-and evidence source. Record unknowns and named-skill availability without
-claiming uninspected areas complete.
+Take the reading and the write boundary from
+[work lifecycle](../../workflows/work-lifecycle.md) intake. What this audit adds
+is the map: every area the request names gets an owner, an acceptance condition,
+and an evidence source, recorded before any of them is inspected. An area with
+no evidence source is recorded as uninspected rather than as clean, because a
+broad audit fails by leaving a silent gap far more often than by reporting a
+wrong finding.
 
-### Authority and dependency review
+### Authority review
 
-Map instructions, safety constraints, validation feedback, and durable
-knowledge to their current owners. Use `.agents/roles/registry.json` for roles and
-skills, Stage 99 for document contracts, and scripts for executable checks.
-External catalogs are evidence or strategy lenses, not automatic permission
-to expand the roster or create parallel governance.
+Resolve each instruction, safety constraint, validation signal, and durable
+knowledge claim to its current owner: `.agents/roles/registry.json` for roles
+and skills, Stage 99 for document contracts, `scripts/` for executable checks.
+An external catalog, benchmark, or third-party agent definition is evidence or
+a strategy lens. It never authorizes expanding the roster or standing up
+governance beside an existing owner.
 
-### Plan and implementation
+### Disposition
 
-Record gaps, priority, dependencies, file ownership, rollback, and deferred
-external work in the owning Plan/Task. Reuse approved package IDs and preserve
-user changes. Execute only approved gaps; remove touched duplicate owners
-after consumer-zero and applicable Git-backed recovery. Change behavior in the
-owning Spec.
+For each gap, separate what the audit may settle from what it must route.
+Remove a duplicate owner only when both tests pass: no consumer remains, and
+Git-backed recovery covers the removal. Execute approved gaps only, change
+behavior in the owning Spec, and record priority, dependencies, file ownership,
+rollback, and deferred external work in the owning Plan/Task under its existing
+package IDs.
 
 ### Verification and handoff
 
-Use the ordered sequence and result meanings in
-`.agents/governance/quality.md`. Audit every acceptance item
-against current files and actual command results. Keep unresolved items
-visible, record review and next owner, and remove task-owned temporary output.
+Follow [quality policy](../../governance/quality.md) and the work-lifecycle
+completion sequence. Check every acceptance item against current files and
+actual command results rather than against the intake map, and carry each
+unresolved item into the handoff by name.
 
 ## Boundaries
 
-- No live cluster, Vault, cloud, paid, credential, or remote action follows
-  implicitly from an audit request.
-- Native provider settings differ; explicit repository validation remains
-  necessary. Static projection presence does not prove discovery or execution.
-- Skills must not duplicate registry inventories, exact gate limits, branch
-  pins, or dated model-fitness snapshots.
-- Durable results belong to canonical documents and Task records, not a
-  parallel progress, closure, or current-state ledger.
+- An audit request implies no live cluster, Vault, cloud, paid, credential, or
+  remote action.
+- A finding about native provider behavior needs runtime evidence. Tracked
+  configuration shows intent, never discovery or execution.
+- Registry inventories, exact gate limits, branch pins, and dated model-fitness
+  snapshots stay with their owners. A skill that copies one is itself a finding.
+- Durable results belong to canonical documents and Task records. An audit does
+  not leave behind a progress, closure, or current-state ledger of its own.
 
 ## Outputs
 
