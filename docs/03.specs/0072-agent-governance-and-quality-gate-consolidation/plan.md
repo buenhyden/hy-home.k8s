@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.7.0"
+version: "2.8.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -219,6 +219,16 @@ control, and keeps the result the previous owner produced.
 | WP-012E | `full` and `ci` held the same gate array twice, with a contract check and a test existing only to hold the copies in agreement. Own `scripts/validation/registry.json`, its schema, `scripts/validate-affected-surfaces.py`, `scripts/qa.py` and both profile suites. | A reintroduced `ci` array is rejected as `SURFACE-SCHEMA`; a dangling alias is `SURFACE-PROFILE-ALIAS`, never a bare `KeyError`. | Widen the schema, move the data, then narrow the schema, so each step stands alone. Revert any step; `qa.py ci` keeps resolving the same gates. |
 | WP-012F | Four governance documents, five skills and two role documents stated something their owner does not say, and two of the restatements had drifted. Own `.agents/governance/git.md`, `.agents/governance/sdlc.md`, `scripts/README.md`, `tests/README.md`, six `SKILL.md` bodies and two role documents. | Handoff targets name a responsibility, so the registry keeps the identity; `k8s-validate` no longer promises lint or schema checks its profile does not run. | Keep each document with the owner it defers to. Revert any unit; registry permissions, handoff edges and gate behavior are unchanged. |
 
+### WP-013: Bind the tree outside the archive to the archive index
+
+Implement the archive-internal reference boundary. The archive index and the
+retention class are the two admitted routes in; every other archive path is a
+record whose location the archive owns and may re-seal.
+
+| Unit | Cause and owned files | Focused tests and diagnostics | Commit boundary and rollback |
+| --- | --- | --- | --- |
+| WP-013A | `LINK-ARCHIVE-BYPASS` existed but was gated on current authority, so only a document with status `active` or `accepted` answered to it. Fifty-nine documents in every other state linked an archive internal and passed. Own `scripts/validate-links-and-owners.py`, `.agents/governance/document-authoring.md` as rule owner, `tests/test_documentation_link_boundary.py`, and the fifty-nine rerouted records. | The boundary fires for a migration, superseded or tombstone target and stays silent for the index, for a retention-class target, for an archive-internal source, and for an `operation/incident` or `operation/postmortem` account. | Keep the widened diagnostic, its rule owner, its regressions and the rerouted records atomic. Revert the unit; every identifier stays named in prose and only the route changes back. |
+
 ## Verification Plan
 
 For each changed behavior, targeted RED then GREEN. During work run quick;
@@ -302,3 +312,4 @@ transition. Branch/worktree finish, remote actions and the older native
 | [VAL-AGQ-014](spec.md#success-criteria--verification-plan) | WP-012D | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
 | [VAL-AGQ-004](spec.md#success-criteria--verification-plan) | WP-012E | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
 | [VAL-AGQ-019](spec.md#success-criteria--verification-plan) | WP-012F | [SPEC-0072-TSK-0004](tasks/tsk-0004-return-duplicated-authority-to-one-owner.md) |
+| [VAL-AGQ-020](spec.md#success-criteria--verification-plan) | WP-013A | [SPEC-0072-TSK-0005](tasks/tsk-0005-bind-the-outside-tree-to-the-archive-index.md) |
