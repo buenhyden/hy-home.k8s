@@ -170,8 +170,14 @@ implementation task. These general duties do not need unused standalone agent
 scopes in this infrastructure workspace.
 
 Add a role or skill only for an approved concrete gap, through the neutral
-registry and reviewed projections. Declare ownership transitions when a task
-crosses domains; escalate unclear or conflicting boundaries.
+registry and reviewed projections. A new role body is created with
+`status: "draft"` and reaches `active` in a later logical change: the
+`governance/role` lifecycle domain admits creation only in `draft`, declares no
+edge back from `active`, and admits deletion only through a pinned migration
+record. A body committed straight to `active` therefore cannot be corrected
+forward, so read the staged validation result before that commit rather than
+after it. Declare ownership transitions when a task crosses domains; escalate
+unclear or conflicting boundaries.
 
 Record evidence and handoff through [quality policy](../governance/quality.md).
 Reassess the responsibility when the active Task changes scope; exact role,
