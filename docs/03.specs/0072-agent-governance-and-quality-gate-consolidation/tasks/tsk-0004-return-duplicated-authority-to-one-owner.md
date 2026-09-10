@@ -1,8 +1,8 @@
 ---
 title: "Return Duplicated Authority to One Owner"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
@@ -20,8 +20,9 @@ deletes a copy, enforces an invariant that was already written down, or
 corrects a statement the repository cannot keep.
 
 This record was authored after its units were committed, so it states observed
-results rather than a plan. It reaches `done` only after the final full profile;
-the branch finish decision is the user's and is not this stream's to make.
+results rather than a plan. Its units are complete and the final full profile
+has run; the branch finish decision is the user's and is not this stream's to
+make.
 
 ## Inputs
 
@@ -69,6 +70,12 @@ the branch finish decision is the user's and is not this stream's to make.
 
 Every unit carries repo-static evidence only. Hosted CI and live cluster are
 separate lanes and are recorded as DEFER, not as absent risk.
+
+The pre-handoff run is `python3 scripts/qa.py full` over the final working tree:
+22 of 22 gates PASS, exit 0, with no FAIL, SKIP or DEFER among them. Each logical
+commit additionally carries its own exact-index `qa.py staged` result, named in
+the table above. That is a local repository-static PASS and nothing more: it is
+not a GitHub-hosted result and not evidence of any live cluster state.
 
 `WP-012A` is the one unit with a performance claim, so it carries a measurement
 rather than an assertion. The same code and the same corpus were run twice, once
