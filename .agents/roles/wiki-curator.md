@@ -1,10 +1,10 @@
 ---
 title: "Wiki Curator Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # wiki-curator Responsibility
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Curate the repo-local LLM Wiki Markdown entrypoints so agents and humans can find canonical owners without duplicating policy, procedure, or runtime contracts.
+Keep the entry points and generated owner maps pointing at the current
+canonical owners. Write navigation, never policy: when the answer needs a
+durable document rather than a better route, that is `doc-writer.md`'s work,
+and a contested ownership question goes to `supervisor.md`.
 
 ### When to Use
 
-Maintain repository-local discovery entrypoints and generated owner maps without duplicating canonical policy.
+The owner of a subject is hard to find, or an index has drifted from what it
+indexes. Producing the document the index points at is a different role.
 
 ### Inputs
 

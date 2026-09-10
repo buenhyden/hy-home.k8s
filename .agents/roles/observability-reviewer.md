@@ -1,6 +1,6 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.0.1"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Review observability manifests and SLO documentation for manifest-level correctness across Prometheus, Grafana, kube-state-metrics, Alloy, and Kiali surfaces.
+Judge whether metrics, alerts, dashboards, and SLO documents cover what they
+claim to cover, as written. Sync-structure and release concerns go to
+`gitops-reviewer.md`; sensitive data reaching a dashboard or a log is
+`security-auditor.md`'s judgment.
 
 ### When to Use
 
-Review observability manifests and SLO documents for static wiring, ownership, and operational completeness.
+Observability manifests or SLO documents changed and the open question is
+coverage and wiring. Reading live telemetry is not this role.
 
 ### Inputs
 

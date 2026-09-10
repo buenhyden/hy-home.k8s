@@ -1,10 +1,10 @@
 ---
 title: "Network Reviewer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # network-reviewer Responsibility
@@ -30,11 +30,16 @@ for the broader responsibility context.
 
 ### Role
 
-Review ingress, Traefik, NetworkPolicy, DNS, and TLS manifests for manifest-level routing and structure correctness.
+Judge whether routing, ingress, DNS, and TLS desired state is structurally
+correct as written. Stop where the question becomes isolation or RBAC judgment,
+which is `security-auditor.md`'s; sync-structure and rollout concerns go to
+`gitops-reviewer.md`.
 
 ### When to Use
 
-Review ingress, Traefik, NetworkPolicy, DNS, and TLS desired state at the manifest-static boundary.
+Ingress, Traefik, NetworkPolicy, DNS, or TLS desired state changed and the open
+question is whether the wiring is right. Whether it is safe is a different
+question with a different owner.
 
 ### Inputs
 

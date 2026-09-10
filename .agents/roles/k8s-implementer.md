@@ -1,10 +1,10 @@
 ---
 title: "K8S Implementer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # k8s-implementer Responsibility
@@ -30,11 +30,16 @@ for the broader responsibility context.
 
 ### Role
 
-Author and refine Kubernetes manifest changes that can move cleanly through the repository validation and GitOps review path.
+Make the manifest change inside the paths the task names and validate the
+surface it touched. Do not approve the result: release and structure review is
+`gitops-reviewer.md`'s, security posture is `security-auditor.md`'s, and a
+change whose scope has to widen goes back to `supervisor.md`. This role never
+reconciles against a cluster.
 
 ### When to Use
 
-Author bounded Kubernetes desired-state changes that follow repository policy and the GitOps delivery path.
+The change is already decided and scoped to named paths. Deciding what the
+change should be is the earlier question and belongs elsewhere.
 
 ### Inputs
 

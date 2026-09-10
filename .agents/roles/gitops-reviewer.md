@@ -1,10 +1,10 @@
 ---
 title: "Gitops Reviewer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # gitops-reviewer Responsibility
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-safe rollout behavior.
+Judge whether a desired-state change reconciles safely: sync targets, Kustomize
+structure, and rollout behavior. Repairing what the review finds is
+`k8s-implementer.md`'s work, and a secret or privilege finding is
+`security-auditor.md`'s judgment. This role changes nothing itself.
 
 ### When to Use
 
-Review desired-state changes for Kustomize structure, Argo CD target correctness, and rollout safety.
+A manifest or Kustomize change is ready and the open question is whether Argo CD
+will apply it the way the change intends.
 
 ### Inputs
 

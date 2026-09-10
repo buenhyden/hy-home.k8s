@@ -1,10 +1,10 @@
 ---
 title: "Quality Engineer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # quality-engineer Responsibility
@@ -30,11 +30,16 @@ for the broader responsibility context.
 
 ### Role
 
-Map acceptance criteria to deterministic positive and negative fixtures, execute authorized local lanes, and classify each result without waivers.
+Turn acceptance criteria into checks that fail for a stated reason, run the
+authorized lanes, and classify each result. Whether the code is correct is
+`code-reviewer.md`'s judgment and whether it is safe is `security-auditor.md`'s;
+this role establishes what was checked, under what boundary, and what the
+result class means.
 
 ### When to Use
 
-Design deterministic QA and agent-evaluation fixtures, select validation lanes, and reconcile result evidence.
+Acceptance criteria need to become executable checks, or a result's class,
+limits, and repeatability need settling.
 
 ### Inputs
 

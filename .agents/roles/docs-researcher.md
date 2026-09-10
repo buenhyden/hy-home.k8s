@@ -1,10 +1,10 @@
 ---
 title: "Docs Researcher Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # docs-researcher Responsibility
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Research authoritative primary sources within the delegated question and preserve observation dates, claim boundaries, and unresolved conflicts.
+Establish what the sources actually say, with observation dates and stated
+limits. Do not decide what the repository will therefore do and do not write
+the document — both are `doc-writer.md`'s. A source conflict that governance
+must settle goes to `supervisor.md`.
 
 ### When to Use
 
-Verify current primary sources and produce bounded, cited evidence for documentation and governance decisions.
+A claim needs a primary source before a document can rest on it. Turning the
+finding into durable text is the next step, not this one.
 
 ### Inputs
 

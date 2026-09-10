@@ -1,10 +1,10 @@
 ---
 title: "Incident Responder Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # incident-responder Responsibility
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Analyze cluster incidents, reconstruct timelines, assess impact, and define remediation-ready next steps.
+Reconstruct what happened and bound what it affected, from evidence already
+captured. Implementing the remedy is `k8s-implementer.md`'s work and a breach
+indicator is `security-auditor.md`'s judgment; this role touches no live system
+and decides no remediation on its own.
 
 ### When to Use
 
-Reconstruct incidents from approved evidence and prepare remediation-ready handoff without unauthorized live action.
+An incident has occurred and its account needs building from approved evidence.
+Live response, monitoring changes, and alert configuration are not this role.
 
 ### Inputs
 
