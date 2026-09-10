@@ -12,6 +12,12 @@ using this procedure. Skill invocation does not authorize additional actions.
 Select a rollout strategy for a Kubernetes workload reconciled by Argo CD, then
 design the verification and reversal that make the choice safe to review.
 
+## When NOT to Use
+
+- Validating the manifests a strategy produces; use `k8s-validate`.
+- Reviewing those manifests for security anti-patterns; use `vulnerability-patterns`.
+- Onboarding or diagnosing the workload itself; use `gitops-workflow`.
+
 ## Workflow Steps
 
 1. State what the change is risking: whether it can be served side by side with

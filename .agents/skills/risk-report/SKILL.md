@@ -20,6 +20,12 @@ Define how to identify, score, and report cluster risks in a repeatable format f
 - "summarize operational risk"
 - "prepare a risk review"
 
+## When NOT to Use
+
+- Auditing cluster security posture; use `k8s-security-audit`.
+- Matching manifests to known-bad shapes; use `vulnerability-patterns`, which owns pattern-to-level.
+- Analysing an incident that already happened; use `rca-methodology`.
+
 ## Workflow Steps
 
 1. Identify risks across security, availability, operations, and change management.

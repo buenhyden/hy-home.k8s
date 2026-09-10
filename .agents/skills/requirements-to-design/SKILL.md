@@ -9,6 +9,11 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # requirements-to-design
 
+## When NOT to Use
+
+- Turning an approved Spec into ordered implementation work; use `execution-plan`.
+- Choosing where the resulting design document belongs; use `docs-stage-routing`.
+
 ## Workflow Steps
 
 1. Read the Requirement Package and extract complete member IDs such as

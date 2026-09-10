@@ -20,6 +20,12 @@ Define the validation sequence for manifest changes before GitOps review or merg
 - "check GitOps structure"
 - "scan for secret-handling violations"
 
+## When NOT to Use
+
+- Reviewing manifests for security anti-patterns; use `vulnerability-patterns`.
+- Auditing cluster security posture across dimensions; use `k8s-security-audit`.
+- Onboarding or diagnosing a workload through the GitOps path; use `gitops-workflow`.
+
 ## Workflow Steps
 
 1. Run manifest YAML syntax validation for the changed scope.

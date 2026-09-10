@@ -9,6 +9,11 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # docs-stage-conformance
 
+## When NOT to Use
+
+- Choosing the owner and template for a document that has neither yet; use `docs-stage-routing`.
+- Auditing navigation and owner maps across the tree rather than one document; use `knowledge-map`.
+
 ## Workflow Steps
 
 1. Read the relevant gateway, document-authoring policy, current Git state,

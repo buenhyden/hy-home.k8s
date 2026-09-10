@@ -12,6 +12,11 @@ using this procedure. Skill invocation does not authorize additional actions.
 Choose a root cause analysis technique for a cluster incident, apply it against
 captured evidence, and return the result in the structure this skill owns.
 
+## When NOT to Use
+
+- Reconstructing the timeline or planning remediation; use `incident-postmortem`.
+- Turning the remediation into a repeatable procedure; use `ops-runbook`.
+
 ## Workflow Steps
 
 1. State the problem as one observable fact with a time boundary. An analysis

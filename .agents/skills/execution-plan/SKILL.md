@@ -9,6 +9,12 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # execution-plan
 
+## When NOT to Use
+
+- Decomposing an approved Plan into Task records; use `task-breakdown`.
+- Tracing a Requirement to the designs that constrain it; use `requirements-to-design`.
+- Scoring and recording the risks the plan carries; use `risk-report`.
+
 ## Workflow Steps
 
 1. Read the approved Spec, related requirements and decisions, current task

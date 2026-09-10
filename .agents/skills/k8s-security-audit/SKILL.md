@@ -12,6 +12,12 @@ using this procedure. Skill invocation does not authorize additional actions.
 Assess a repository's Kubernetes security posture across five dimensions and
 report what each one found, at a severity that says what the finding obliges.
 
+## When NOT to Use
+
+- Matching individual manifests to known-bad shapes; use `vulnerability-patterns`, which owns pattern-to-level.
+- Checking manifest and GitOps structure rather than posture; use `k8s-validate`.
+- Carrying a finding forward as a tracked operational risk; use `risk-report`.
+
 ## Workflow Steps
 
 1. Fix the audit scope and type: which namespaces, paths, or manifests, and

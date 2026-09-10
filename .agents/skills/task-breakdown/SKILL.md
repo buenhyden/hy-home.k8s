@@ -9,6 +9,11 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # task-breakdown
 
+## When NOT to Use
+
+- Producing the ordered Plan the Task records come from; use `execution-plan`.
+- Choosing the template and owner for the Task record; use `docs-stage-routing`.
+
 ## Workflow Steps
 
 1. Read the Spec and Plan work breakdown; preserve approved work-package IDs.

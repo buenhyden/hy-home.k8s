@@ -27,6 +27,12 @@ resolve the profile at write time rather than copying a path out of this
 procedure, because a path restated here drifts from the grammar the gate
 actually enforces.
 
+## When NOT to Use
+
+- Applying one analysis technique rather than running the pipeline; use `rca-methodology`.
+- Turning a remediation into a repeatable operational procedure; use `ops-runbook`.
+- Recording residual risk for later tracking; use `risk-report`.
+
 ## Workflow
 
 ### Phase 0: Context Check

@@ -15,6 +15,12 @@ Keep broad workspace analysis complete, evidence-backed, and bounded to the
 authorized repository work. Narrow document drift belongs to
 `docs-stage-conformance` instead.
 
+## When NOT to Use
+
+- Repairing narrow document drift; use `docs-stage-conformance`.
+- Auditing navigation and owner maps; use `knowledge-map`.
+- Auditing cluster security posture; use `k8s-security-audit`.
+
 ## Workflow Phases
 
 ### Coverage map

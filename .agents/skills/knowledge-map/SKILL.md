@@ -14,6 +14,12 @@ using this procedure. Skill invocation does not authorize additional actions.
 Find stale navigation and duplicate authority without turning an index into a
 second policy or role roster.
 
+## When NOT to Use
+
+- Repairing one document's profile, heading, or link drift; use `docs-stage-conformance`.
+- Choosing where a new document belongs; use `docs-stage-routing`.
+- Auditing ownership across governance, GitOps, and QA; use `workspace-harness-audit`.
+
 ## Workflow Steps
 
 1. Read the relevant gateway, common governance work lifecycle, and document-authoring

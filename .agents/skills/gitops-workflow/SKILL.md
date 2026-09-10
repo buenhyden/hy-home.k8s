@@ -20,6 +20,12 @@ Define the approved GitOps path for workload onboarding, change review, and sync
 - "diagnose an ArgoCD sync problem"
 - "prepare a GitOps-safe change"
 
+## When NOT to Use
+
+- Choosing how the change rolls out; use `deployment-strategies`.
+- Running the repository validation lanes; use `k8s-validate`.
+- Reviewing the manifests for security anti-patterns; use `vulnerability-patterns`.
+
 ## Workflow Steps
 
 1. Define the target workload or GitOps object and confirm the repository path.

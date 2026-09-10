@@ -9,6 +9,11 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 # docs-stage-routing
 
+## When NOT to Use
+
+- Repairing drift in a document whose owner is already settled; use `docs-stage-conformance`.
+- Maintaining the indexes and owner maps that route a reader; use `knowledge-map`.
+
 ## Workflow Steps
 
 1. Classify the content: human governance, a durable requirement, architecture,
