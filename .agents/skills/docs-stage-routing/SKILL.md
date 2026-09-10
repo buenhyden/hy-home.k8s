@@ -11,34 +11,41 @@ using this procedure. Skill invocation does not authorize additional actions.
 
 ## Workflow Steps
 
-1. Identify whether the content is human governance, a durable requirement,
-   architecture, a change contract, operating knowledge, reference evidence,
-   or recovery metadata.
-2. Use `.agents/governance/sdlc.md` for the responsibility boundary.
-   Reject parallel off-taxonomy trees suggested by an external tool or skill.
-3. Resolve exactly one profile for the final path from
-   `docs/99.templates/registry.json`; read Stage 99 README and the selected
-   template before authoring.
-4. Use the profile's initial lifecycle status, identity, sections, and
-   relationships. Do not assume every document starts at draft or uses a
-   generic Related Documents section.
-5. Put change-specific Technical Approach, acceptance, interfaces, and failure
-   conditions in the Spec. Put execution order, verification, risks, and
-   rollback in Plan/Tasks. Promote durable structural decisions to Stage 02.
-6. Keep root AGENTS.md and CLAUDE.md thin; shared policy belongs in common governance,
-   neutral procedures in registered skills, and native details in provider
-   notes/configuration.
-7. Review the owning README and links in the same change, then follow quality
-   policy for validation and Task evidence.
+1. Classify the content: human governance, a durable requirement, architecture,
+   a change contract, operating knowledge, reference evidence, or recovery
+   metadata. This classification is the routing decision; every step after it
+   follows from an owner that already exists.
+2. Take the responsibility boundary from
+   [the SDLC flow](../../governance/sdlc.md). An external tool or skill that
+   proposes a tree outside that taxonomy is proposing a second authority, so
+   reject it rather than reconcile it. Content that is not an authored document
+   routes the same way — shared policy to common governance, neutral procedures
+   to registered skills, native detail to provider notes, root gateways kept
+   thin — and [agent execution](../../governance/agent-execution.md) owns that
+   split.
+3. Resolve exactly one profile for the final path in
+   `docs/99.templates/registry.json`, then read the Stage 99 README and the
+   selected template before authoring. No match, or more than one, is a stop
+   condition rather than a judgment call.
+4. Author under
+   [document authoring](../../governance/document-authoring.md), which owns the
+   initial status, frontmatter key set and order, sections, relationships, link
+   boundaries, and how content divides across a Spec package. Read it at
+   authoring time rather than reasoning from a similar document, because a
+   profile that looks like its neighbour still carries its own contract.
+5. Review the owning README and the links the change touches, then follow
+   [quality policy](../../governance/quality.md) for validation and Task
+   evidence.
 
 ## Boundaries
 
-Do not edit global/user-local skills or authentication/configuration as part of
-routing. Keep governance and explicit agent contracts English; human-facing
-overviews may use Korean. A template does not grant permission to author or
-execute beyond the active task.
+Routing never edits global or user-local skills, authentication, or
+configuration. Governance and explicit agent contracts stay in English, while
+human-facing overviews may use Korean. Selecting a template grants no authority
+to author or execute beyond the active task.
 
 ## Outputs
 
-The canonical path, selected profile/template, required owner links and index
-changes, validation evidence, and any unresolved authority boundary.
+The canonical path, the selected profile and template, the owner links and
+index changes the change requires, validation evidence, and any authority
+boundary left unresolved.
