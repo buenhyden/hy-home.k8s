@@ -7,140 +7,34 @@ disable-model-invocation: true
 Read `.agents/governance/approval-and-safety.md` and the selected role before
 using this procedure. Skill invocation does not authorize additional actions.
 
-# RCA Methodology — Root Cause Analysis Technique Reference
+# RCA Methodology — Tracing an Incident to Its Cause
 
-Structured analysis techniques for systematically tracing cluster incident root causes.
+Choose a root cause analysis technique for a cluster incident, apply it against
+captured evidence, and return the result in the structure this skill owns.
 
-## 1. 5 Whys Technique
+## Workflow Steps
 
-### Procedure
+1. State the problem as one observable fact with a time boundary. An analysis
+   that starts from a suspicion inherits it as a conclusion.
+2. Choose the technique with the selection guide in
+   `references/techniques.md`. A linear chain, compound causes, a
+   safety-critical failure, and a post-deployment failure each suit a different
+   one, and combining 5 Whys with change analysis covers most cases.
+3. Apply it against evidence that was captured, citing a log, event, or metric
+   at each step. A step that rests on recollection is marked as such rather
+   than left to read as established.
+4. Run the cognitive-bias checklist before concluding. It exists because the
+   first plausible cause is the one an analysis stops at.
+5. Return the result in the Output Format below. Where a durable record then
+   belongs is owned by the `incident-postmortem` skill and the Stage 99 profile
+   it names; this skill owns the technique and the structure, not the
+   destination.
 
-```
-Problem: Payment service namespace unreachable for 30 minutes.
+## Reference Material
 
-Why 1: Why was the namespace unreachable?
-→ The Pod readiness probe was failing continuously.
-
-Why 2: Why was the readiness probe failing?
-→ The application could not connect to the database.
-
-Why 3: Why could it not connect to the database?
-→ The Secret containing the DB credentials was rotated but not updated in the manifest.
-
-Why 4: Why was the Secret not updated?
-→ The rotation runbook did not include a step to update the k8s Secret resource.
-
-Why 5: Why was there no such step in the runbook?
-→ Secret rotation was previously handled manually without a documented procedure.
-
-Root Cause: Missing runbook step for propagating credential rotation to cluster Secrets
-```
-
-### 5 Whys Pitfalls
-
-| Pitfall                   | Description                        | Prevention                                   |
-| ------------------------- | ---------------------------------- | -------------------------------------------- |
-| Stopping too early        | Concluding at step 2–3             | Ask: "Would fixing this prevent recurrence?" |
-| Leading to blame          | Ending with "who made the mistake" | Focus on system and process causes           |
-| Single path only          | Missing compound causes            | Review branches at each step                 |
-| Speculation-based answers | Hypotheses without evidence        | Verify with logs, events, or metrics         |
-
-## 2. Fishbone Diagram (Ishikawa)
-
-```
-               +- People --------- Operator unaware of rotation procedure
-               |                   Code review skipped for Secret update
-               |
-               +- Process -------- Rotation runbook incomplete
-               |                   No pre-deploy Secret validation step
-               |
-Namespace  <---+- Technology ----- Readiness probe too aggressive
-Unreachable    |                   No Secret sync mechanism in place
-               |
-               +- Environment ---- Staging Secret not rotated (diverged)
-               |                   Namespace network policy blocking DNS
-               |
-               +- Monitoring ----- No alert for Secret age or staleness
-                                   DB connection errors not surfaced to dashboard
-```
-
-### 6M Categories Applied to Kubernetes Incidents
-
-| Traditional 6M | Kubernetes Application  | Investigation Items                                      |
-| -------------- | ----------------------- | -------------------------------------------------------- |
-| Man            | People/Team             | Runbook training, on-call handoff, review skips          |
-| Method         | Process                 | Deployment procedures, change management, approval gates |
-| Machine        | Infrastructure/Platform | Cluster version, node pressure, control-plane health     |
-| Material       | Manifests/Config        | Approved secret reference/rotation metadata, non-sensitive configuration, image tags            |
-| Measurement    | Observability           | Alerts, metrics, log coverage, tracing gaps              |
-| Environment    | Cluster Environment     | Namespace isolation, network policy, resource quotas     |
-
-## 3. Fault Tree Analysis (FTA)
-
-```
-                    Namespace Unreachable (Top Event)
-                          |
-                    +-----OR-----+
-                    |            |
-              Pod Failure    Network Failure
-                |                |
-          +-----OR-----+  +------AND------+
-          |             |  |               |
-    Crash Loop   OOM Kill  NetworkPolicy  DNS Failure
-          |
-    +-----AND-----+
-    |              |
-Bad Config    Probe Failure
-```
-
-**Probability Estimation:**
-
-```
-OR gate:  P(A OR B)  = 1 - (1-P(A)) × (1-P(B))
-AND gate: P(A AND B) = P(A) × P(B)
-
-Example: P(bad config)=0.2, P(probe failure)=0.3
-  P(crash loop) = 0.2 × 0.3 = 0.06 (6%)
-```
-
-## 4. Change Analysis
-
-Investigate all changes in the window before the incident.
-
-```markdown
-| Change Time | Change Content                        | Author     | Scope      | Correlation   |
-| ----------- | ------------------------------------- | ---------- | ---------- | ------------- |
-| T-2h        | Payment API image bumped to v2.3      | Dev        | payment ns | HIGH          |
-| T-1h        | ArgoCD sync triggered by drift        | ArgoCD     | payment ns | HIGH          |
-| T-30m       | Network policy applied to database ns | Ops        | db ns      | MEDIUM        |
-| T-10m       | Alert fired: DB connection errors     | Monitoring | —          | LOW (symptom) |
-```
-
-**Correlation criteria:**
-
-1. **Temporal proximity** — Change time vs. incident onset time
-2. **Scope match** — Change blast radius vs. incident impact scope
-3. **Rollback effect** — Does reverting the change resolve the incident?
-
-## 5. Cognitive Bias Prevention Checklist
-
-| Bias                              | Description                                             | Prevention                                                  |
-| --------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------- |
-| **Confirmation bias**             | Collecting only evidence that fits the first hypothesis | Actively search for counterexamples                         |
-| **Hindsight bias**                | "Obviously this was the cause"                          | Judge based only on information available at detection time |
-| **Availability bias**             | Equating with a recently seen similar incident          | Enforce evidence-based analysis each time                   |
-| **Fundamental attribution error** | Attributing to human error                              | Prioritize system and process causes                        |
-| **Anchoring**                     | Fixating on the initial incident report                 | Analyze independently from multiple angles                  |
-
-## RCA Technique Selection Guide
-
-| Situation                             | Recommended Technique             | Reason                               |
-| ------------------------------------- | --------------------------------- | ------------------------------------ |
-| Simple incident, fast analysis needed | 5 Whys                            | Lightweight; can be done immediately |
-| Suspected compound causes             | Fishbone                          | Multi-dimensional cause exploration  |
-| Safety-related or severe incidents    | FTA                               | Quantitative and systematic          |
-| Post-deployment incidents             | Change Analysis                   | Rapidly narrows candidate causes     |
-| All cases                             | 5 Whys + Change Analysis combined | Fast yet structured                  |
+`references/techniques.md` holds the five techniques worked through on a
+cluster incident, with their pitfalls and the selection guide. It is read for
+the technique in use rather than in full, since an analysis applies one or two.
 
 ## Output Format
 
