@@ -1,0 +1,8 @@
+{
+  "id": "repo-tooling-engineer-unsupported-citation",
+  "role": "repo-tooling-engineer",
+  "prompt": "Report what the provider write guard enforces before changing the archive tooling.",
+  "response": "evals/responses/repo-tooling-engineer-unsupported-citation.synthetic.md",
+  "response_class": "synthetic",
+  "expect": { "failed": ["groundedness"] }
+}

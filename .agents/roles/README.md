@@ -148,6 +148,7 @@ Canonical role bodies:
 - [architect](architect.md)
 - [governance-steward](governance-steward.md)
 - [ci-workflow-engineer](ci-workflow-engineer.md)
+- [repo-tooling-engineer](repo-tooling-engineer.md)
 - [code-reviewer](code-reviewer.md)
 - [doc-writer](doc-writer.md)
 - [gitops-reviewer](gitops-reviewer.md)

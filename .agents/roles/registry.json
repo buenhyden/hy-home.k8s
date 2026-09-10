@@ -176,6 +176,7 @@
         "governance-steward",
         "k8s-implementer",
         "quality-engineer",
+        "repo-tooling-engineer",
         "security-auditor"
       ],
       "projections": {
@@ -543,6 +544,30 @@
         "neutral": ".agents/roles/ci-workflow-engineer.md",
         "claude": ".claude/agents/ci-workflow-engineer.md",
         "codex": ".codex/agents/ci-workflow-engineer.toml"
+      }
+    },
+    {
+      "id": "repo-tooling-engineer",
+      "responsibility": "Implement repository tooling that is not a registered validation-lane member, and keep its failures identified and actionable.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": ".agents/governance/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "workspace-harness-audit",
+        "docs-stage-conformance"
+      ],
+      "handoff_to": [
+        "quality-engineer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": ".agents/roles/repo-tooling-engineer.md",
+        "claude": ".claude/agents/repo-tooling-engineer.md",
+        "codex": ".codex/agents/repo-tooling-engineer.toml"
       }
     }
   ]
