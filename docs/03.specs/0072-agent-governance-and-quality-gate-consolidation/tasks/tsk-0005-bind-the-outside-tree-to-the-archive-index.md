@@ -1,8 +1,8 @@
 ---
 title: "Bind the Outside Tree to the Archive Index"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
