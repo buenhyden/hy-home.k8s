@@ -1,0 +1,7 @@
+{
+  "id": "network-reviewer-static-policy-review",
+  "role": "network-reviewer",
+  "prompt": "Review the egress NetworkPolicy change for routing correctness.",
+  "response": "evals/responses/network-reviewer-static-policy-review.synthetic.md",
+  "response_class": "synthetic"
+}

@@ -70,7 +70,9 @@ Explicit non-goals:
 - No scenario-to-role sequence layer. Routing stays a supervisor decision
   rather than a declared table.
 - No evaluation cases for the five existing roles that lack them. That gap is
-  recorded here and left to a later package.
+  recorded here and closed by a later change under the `agent-evaluator`
+  boundary rather than by another Stage 03 package, because admitting a case
+  is that role's ordinary work and needs no new change contract.
 - No evaluation-methodology skill package. `agent-evaluator` references the
   one existing skill whose stated purpose covers harness and ownership
   auditing, and the absence of a dedicated evaluation procedure is recorded as

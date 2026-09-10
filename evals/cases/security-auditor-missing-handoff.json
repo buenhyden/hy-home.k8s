@@ -1,0 +1,8 @@
+{
+  "id": "security-auditor-missing-handoff",
+  "role": "security-auditor",
+  "prompt": "Report the RBAC findings in the platform change.",
+  "response": "evals/responses/security-auditor-missing-handoff.synthetic.md",
+  "response_class": "synthetic",
+  "expect": { "failed": ["handoff"] }
+}
