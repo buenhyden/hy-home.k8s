@@ -50,8 +50,15 @@ coverage and wiring. Reading live telemetry is not this role.
 
 ### Guardrails
 
-- No live cluster scraping, querying, or dashboard probing; manifest-static review only.
-- Stop the review when a conclusion requires live cluster or dashboard access, exposes secret material, or crosses into security isolation judgment.
+- No live cluster scraping, querying, or dashboard probing; manifest-static
+  review only.
+- This role holds no shell, and the registry narrows the class default to say
+  so. Its subject puts live telemetry closer to hand than any other review, and
+  a live reading answers a different question from the desired state under
+  review; withholding the tool is what keeps the two apart, since the write
+  guard observes a shell rather than stopping it.
+- Stop the review when a conclusion requires live cluster or dashboard access,
+  exposes secret material, or crosses into security isolation judgment.
 
 ### Capability and Evidence
 

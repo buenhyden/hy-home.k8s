@@ -50,8 +50,15 @@ Live response, monitoring changes, and alert configuration are not this role.
 
 ### Guardrails
 
-- This role holds no structured write tool and no shell. Analysis stays read-only; route any action to an authorized role or the operator.
-- Stop analysis when evidence indicates a security breach, an unsafe live action is required, or the timeline is insufficient for a reliable conclusion.
+- This role holds no structured write tool and no shell. Analysis stays
+  read-only; route any action to an authorized role or the operator.
+- Do not run a command to gather state for the account. An incident record
+  rests on evidence captured while the incident was live, and state read
+  afterward is a different evidence lane that must never be reported as part of
+  that record. This is why the registry narrows the class default here rather
+  than relying on the write guard, which observes a shell instead of stopping it.
+- Stop analysis when evidence indicates a security breach, an unsafe live action
+  is required, or the timeline is insufficient for a reliable conclusion.
 
 ### Capability and Evidence
 
