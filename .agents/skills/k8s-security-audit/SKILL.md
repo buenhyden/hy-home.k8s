@@ -160,12 +160,18 @@ image: my-registry.io/app:latest
 
 ## Severity Classification
 
-| Severity     | Response Required            | Examples                                                               |
-| ------------ | ---------------------------- | ---------------------------------------------------------------------- |
-| **CRITICAL** | Immediate stop — block merge | Plaintext secrets, privileged containers, cluster-admin to workload SA |
-| **HIGH**     | Fix before next release      | Missing NetworkPolicy, root containers, unrestricted egress            |
-| **MEDIUM**   | Fix within sprint            | Missing readOnlyRootFilesystem, default SA token automount             |
-| **LOW**      | Track in backlog             | Image tag conventions, label hygiene                                   |
+This table owns what a level obliges. It does not map manifest patterns onto
+levels: `vulnerability-patterns` owns that mapping together with the conditions
+that escalate a pattern, and its assignment governs where the two could be read
+against each other. The right column illustrates a tier rather than classifying
+anything.
+
+| Severity     | Response Required            | Illustrative finding                                                              |
+| ------------ | ---------------------------- | --------------------------------------------------------------------------------- |
+| **CRITICAL** | Immediate stop — block merge | Plaintext secrets, container runtime socket mounted, cluster-admin to workload SA |
+| **HIGH**     | Fix before next release      | Missing NetworkPolicy, root or privileged containers, unrestricted egress         |
+| **MEDIUM**   | Fix within sprint            | Missing readOnlyRootFilesystem, default SA token automount                        |
+| **LOW**      | Track in backlog             | Image tag conventions, label hygiene                                              |
 
 ## Audit Report Format
 
@@ -203,11 +209,20 @@ image: my-registry.io/app:latest
 1. [Item] — by [date]
 2. ...
 
-## Sign-off
+## Closing State
 
-- [ ] All CRITICAL findings resolved or accepted with documented risk
-- [ ] All HIGH findings have remediation plan with owner and date
+| Level    | State recorded                                                          |
+| -------- | ------------------------------------------------------------------------ |
+| CRITICAL | Resolved, or unresolved and routed by name to whoever decides acceptance |
+| HIGH     | Remediation owner and target release, or explicitly unassigned           |
 ```
+
+State where each finding stands rather than ticking it off. Accepting an
+unresolved CRITICAL finding weakens security semantics, which
+[approval and safety](../../governance/approval-and-safety.md) places outside
+what an audit may decide for itself, and [the SDLC flow](../../governance/sdlc.md)
+never infers approval from a checkbox. A report that carries the acceptance
+box also carries the invitation to tick it.
 
 ## Failure Handling
 
