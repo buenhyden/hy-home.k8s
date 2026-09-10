@@ -169,6 +169,7 @@
         "task-breakdown"
       ],
       "handoff_to": [
+        "agent-evaluator",
         "architect",
         "ci-workflow-engineer",
         "code-reviewer",
@@ -512,6 +513,7 @@
         "knowledge-map"
       ],
       "handoff_to": [
+        "agent-evaluator",
         "quality-engineer",
         "supervisor",
         "wiki-curator"
@@ -568,6 +570,29 @@
         "neutral": ".agents/roles/repo-tooling-engineer.md",
         "claude": ".claude/agents/repo-tooling-engineer.md",
         "codex": ".codex/agents/repo-tooling-engineer.toml"
+      }
+    },
+    {
+      "id": "agent-evaluator",
+      "responsibility": "Design and run agent evaluation cases and report scored evidence and improvement findings without editing role or skill definitions.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": ".agents/governance/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "workspace-harness-audit"
+      ],
+      "handoff_to": [
+        "governance-steward",
+        "quality-engineer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": ".agents/roles/agent-evaluator.md",
+        "claude": ".claude/agents/agent-evaluator.md",
+        "codex": ".codex/agents/agent-evaluator.toml"
       }
     }
   ]

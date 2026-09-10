@@ -1,0 +1,8 @@
+{
+  "id": "agent-evaluator-synthetic-quality-claim",
+  "role": "agent-evaluator",
+  "prompt": "Report what this evaluation cycle established about the admitted roles.",
+  "response": "evals/responses/agent-evaluator-synthetic-quality-claim.synthetic.md",
+  "response_class": "synthetic",
+  "expect": { "failed": ["success-claim"] }
+}

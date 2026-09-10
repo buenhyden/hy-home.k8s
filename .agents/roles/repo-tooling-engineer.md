@@ -36,8 +36,11 @@ helpers, and the policy rules under `policy/conftest/`. The split is decided by
 registry membership rather than by reading a filename — a script that
 `scripts/validation/registry.json` registers is `quality-engineer.md`'s
 assigned scope and reaches this role only by explicit delegation in the active
-Task. What a lane result means is `quality-engineer.md`'s; the hosted job that
-invokes it is `ci-workflow-engineer.md`'s.
+Task. One registered member is carved out by name: `scripts/run-agent-evaluations.py`
+and its regression test are `agent-evaluator.md`'s, because a scoring criterion
+and the code that fires it are one contract. What a lane result means is
+`quality-engineer.md`'s; the hosted job that invokes it is
+`ci-workflow-engineer.md`'s.
 
 ### When to Use
 
