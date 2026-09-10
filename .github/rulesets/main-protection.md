@@ -31,8 +31,9 @@ setting is in force; only a dated authenticated read-back is.
 
 ## Observed State
 
-Read on 2026-09-10 from `branches/main/protection` by `buenhyden`. This is
-point-in-time evidence for that moment and for those fields only.
+Read on 2026-09-10 from `branches/main/protection` by `buenhyden`, before the
+correction recorded below. This is point-in-time evidence for that moment and
+for those fields only.
 
 | Field | Observed | Target Ruleset row | Agreement |
 | --- | --- | --- | --- |
@@ -60,8 +61,32 @@ rules are configured and they are not applied to administrators. Target Ruleset
 states no expectation for that field, so the difference is a gap in the
 intended contract rather than a drift from it.
 
-Nothing here authorises a change. A contradiction is a prompt to inspect under
-Rollback State and Application Boundary.
+### 2026-09-10 correction and re-read
+
+The two contradictions above were corrected on 2026-09-10 by `buenhyden` with
+`gh api -X PUT repos/buenhyden/hy-home.k8s/branches/main/protection`, after the
+reading above was captured as the before-state. A re-read of the same endpoint
+confirms the result:
+
+| Field | Before | After |
+| --- | --- | --- |
+| `required_status_checks.strict` | `false` | `true` |
+| `required_conversation_resolution.enabled` | `false` | `true` |
+
+Eleven fields were sent at their observed values and re-read unchanged:
+`required_status_checks.contexts`, `enforce_admins`,
+`required_approving_review_count`, `require_code_owner_reviews`,
+`allow_force_pushes`, `allow_deletions`, `required_linear_history`,
+`block_creations`, `lock_branch`, `allow_fork_syncing` and
+`required_signatures`. The endpoint replaces the whole object, so sending them
+explicitly is what preserved them.
+
+`enforce_admins` was not changed. Target Ruleset now states an expectation for
+it, so the field is no longer unstated; what remains is a recorded operating
+decision rather than a difference from intent.
+
+Every row above is evidence for 2026-09-10 only. A later claim of enforcement
+needs a new authenticated read-back.
 
 ## Target Ruleset
 
@@ -79,6 +104,15 @@ Rollback State and Application Boundary.
 - Require the latest branch head to pass required checks before merge.
 - Do not enforce squash/rebase-only or linear-history settings that would
   discard referenced objects, so delivered history can keep them.
+- Leave `enforce_admins` disabled, and read the consequence rather than the
+  wording: the pull-request requirement and the required check do not bind the
+  administrator, so a direct push to `main` by the owner succeeds and is
+  reported as a bypass. This is deliberate. The repository has one operator and
+  `allow_force_pushes` is blocked, so enabling administrator enforcement would
+  leave a pull request as the only recovery path for a branch the same operator
+  must be able to repair. Enabling it is a separate operating decision, not a
+  correction of drift, and every administrator bypass stays visible in the
+  remote's push output.
 
 Branch, merge, finish and recovery rules themselves are owned by
 `.agents/governance/git.md`. This file records only the remote settings that
