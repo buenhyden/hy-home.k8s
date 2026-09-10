@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-10"
 ---
 # scripts
 
@@ -212,6 +212,9 @@ changes preserve that name. No remote branch-protection setting is changed.
 - [Quality policy](../.agents/governance/quality.md)
 - [Document authoring policy](../.agents/governance/document-authoring.md)
 - Validation ownership ADR (`docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md`)
-- Validation tooling Spec (`docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md`)
-- Validation tooling Task (`docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/tasks/tsk-0001-vto-000.md`)
+
+The accepted decision above is the current owner of validation responsibility.
+The completed Spec and Task that first carried out that decision are sealed
+evidence and stay reachable through the archive index; they record what was
+done once and are not a second statement of what holds now.
 - [Tests](../tests/README.md)

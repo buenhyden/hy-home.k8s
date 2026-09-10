@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "1.3.1"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-10"
 ---
 
 # Git Policy
@@ -77,6 +77,12 @@ workspace hook, returning the first non-zero status unchanged. Enable it once
 per clone with `git config core.hooksPath scripts/githooks`; it is local
 configuration, not tracked state, so a fresh clone runs whatever the user's
 global configuration alone provides until it is set.
+
+The chain reaches exactly the hooks that directory has an entry for. A global
+hook of any other name stops running the moment this repository's
+`core.hooksPath` is set, which is the same silent loss the repair exists to
+prevent, so widening it to a new hook means adding the matching entry rather
+than assuming the chain already covers the name.
 
 If the same message is not checked by an active commit-msg hook, validate the
 actual UTF-8 message file in the pinned pre-commit environment before

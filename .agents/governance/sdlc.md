@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "1.1.1"
+version: "1.1.2"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-10"
 ---
 
 # Software Development Lifecycle
@@ -67,7 +67,7 @@ technical-design artifact.
 | Requirement | Durable need and acceptance boundary; Stage 01. |
 | Architecture Description / Architecture Decision Record | Current structural view / durable choice and rationale; Stage 02. |
 | Spec / Plan / Task | Change contract / execution order and risk / work, verification, and handoff evidence; one Stage 03 package. |
-| Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. |
+| Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
 | Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
 | Skill | Reusable procedure under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
 | Hook / Gate / validator / Fixture | Native event callback / blocking quality decision / executable check implementing that decision / independent bounded test input. A hook need not run QA, and a test fixture is never production policy input. |
