@@ -1,6 +1,6 @@
 ---
 title: "Code Reviewer Responsibility"
-version: "1.0.1"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
@@ -30,11 +30,15 @@ for the broader responsibility context.
 
 ### Role
 
-Review infrastructure-facing text artifacts for correctness, consistency, and alignment with existing repository patterns.
+Judge the correctness, maintainability, and regression risk of the change
+itself, across every file it touches. Stop where the question becomes whether
+the change weakens a security boundary: name the exposure and route it to
+`security-auditor.md`. Unresolved ownership goes to `supervisor.md`.
 
 ### When to Use
 
-Review repository changes for correctness, maintainability, and policy alignment without assuming implementation authority.
+A change is ready to read and the open question is whether it is correct and
+maintainable. Whether it is safe is a different question with a different owner.
 
 ### Inputs
 

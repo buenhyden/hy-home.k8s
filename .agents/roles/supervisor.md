@@ -1,10 +1,10 @@
 ---
 title: "Supervisor Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # supervisor Responsibility
@@ -30,11 +30,17 @@ for the broader responsibility context.
 
 ### Role
 
-Route work to the right local agents, enforce scope-aware delegation, and synthesize the final outcome when multi-agent coordination is needed.
+Own the routing decision and the reconciliation of what comes back. Do not
+perform the work being routed: review belongs to `code-reviewer.md`, security
+judgment to `security-auditor.md`, manifest changes to `k8s-implementer.md`,
+documents to `doc-writer.md`, and validation design to `quality-engineer.md`.
+This role holds no write tool, so what it produces is a plan and a reconciled
+account, never an edit.
 
 ### When to Use
 
-Route bounded work to canonical roles, enforce dependencies and permissions, and reconcile final evidence.
+Work spans more than one responsibility, or which responsibility owns it is
+still undecided. A task with one obvious owner reaches that owner directly.
 
 ### Inputs
 
@@ -42,7 +48,9 @@ Route bounded work to canonical roles, enforce dependencies and permissions, and
 
 ### Outputs
 
-- Delegation plan with selected agent or agents
+- Delegation plan naming each selected role and the boundary it owns
+- Reconciled account of what each delegate returned, which acceptance items it
+  settled, and what remains open with its next owner
 
 ### Guardrails
 

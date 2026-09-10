@@ -1,10 +1,10 @@
 ---
 title: "Security Auditor Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # security-auditor Responsibility
@@ -30,11 +30,17 @@ for the broader responsibility context.
 
 ### Role
 
-Audit Kubernetes security posture across RBAC, NetworkPolicy, and secret-handling controls.
+Judge whether a repository change weakens a security boundary: secret
+exposure, privilege escalation, isolation failure, or supply-chain trust.
+Kubernetes RBAC, NetworkPolicy, and secret handling are where that question
+lands most often rather than the limit of it. Structural correctness of routing
+and manifest wiring is not this question and goes to `network-reviewer.md`;
+remediation goes to `k8s-implementer.md` once the finding is clear.
 
 ### When to Use
 
-Audit repository security controls across RBAC, isolation, sensitive-data handling, and supply-chain boundaries.
+A change touches a trust boundary, or another role stopped because its question
+turned into a security judgment.
 
 ### Inputs
 
@@ -56,6 +62,8 @@ Audit repository security controls across RBAC, isolation, sensitive-data handli
 ### Handoff / Escalation
 
 - Escalate implementation work to `k8s-implementer.md` only after findings are clear.
+- Route a routing or manifest-structure finding to `network-reviewer.md`, which
+  is the reciprocal of that role stopping at isolation and RBAC judgment.
 
 ### Postflight
 

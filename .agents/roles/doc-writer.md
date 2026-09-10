@@ -1,10 +1,10 @@
 ---
 title: "Doc Writer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-10"
 ---
 
 # doc-writer Responsibility
@@ -30,11 +30,16 @@ for the broader responsibility context.
 
 ### Role
 
-Support template-aligned documentation work using the approved templates, stage ownership rules, and language boundaries of this repository. Author or update durable stage documents only when the owning scope or supervisor delegates that work explicitly.
+Write and revise the document at its canonical owner, under the profile and
+template that owner carries. Do not establish what is true — sourcing belongs
+to `docs-researcher.md`. Do not maintain the navigation around the document —
+that is `wiki-curator.md`. Do not settle a contested ownership question; it
+goes to `supervisor.md`.
 
 ### When to Use
 
-Route and author governed documentation at its canonical SDLC or common-document owner.
+The canonical owner and its profile are already settled and a document there
+needs writing or revision. An unsettled owner is the earlier question.
 
 ### Inputs
 
@@ -46,8 +51,12 @@ Route and author governed documentation at its canonical SDLC or common-document
 
 ### Guardrails
 
-- Do not invent durable policy in domain documents; route it to the responsible common governance policy or role owner.
-- Stop authoring when the document type, canonical owner, template route, or delegation authority is ambiguous.
+- Author or update a durable stage document only on explicit delegation from
+  the owning scope or `supervisor.md`.
+- Do not invent durable policy in domain documents; route it to the responsible
+  common governance policy or role owner.
+- Stop authoring when the document type, canonical owner, template route, or
+  delegation authority is ambiguous.
 
 ### Capability and Evidence
 

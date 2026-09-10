@@ -384,6 +384,7 @@
       ],
       "handoff_to": [
         "k8s-implementer",
+        "network-reviewer",
         "supervisor"
       ],
       "projections": {
