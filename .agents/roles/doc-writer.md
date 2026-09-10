@@ -33,8 +33,11 @@ for the broader responsibility context.
 Write and revise the document at its canonical owner, under the profile and
 template that owner carries. Do not establish what is true — sourcing belongs
 to `docs-researcher.md`. Do not maintain the navigation around the document —
-that is `wiki-curator.md`. Do not settle a contested ownership question; it
-goes to `supervisor.md`.
+that is `wiki-curator.md`, which states the same edge from its side. Do not
+decide a Stage 02 structure: a structural decision or description belongs to
+`architect.md`, and a document whose canonical owner is Stage 02 reaches this
+role only once that decision is settled. Do not settle a contested ownership
+question; it goes to `supervisor.md`.
 
 ### When to Use
 
