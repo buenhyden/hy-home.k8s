@@ -19,10 +19,13 @@ skill never expands the responder's permissions.
 
 ## Workspace Boundary
 
-`_workspace/` is scratch-only for intermediate analysis. Durable incident bundles live under
-`docs/05.operations/incidents/YYYY/INC-###-<title>/`: the fact record is
-`INC-###-<title>.md`, and the postmortem is `postmortem.md` when needed,
-using the approved templates.
+`_workspace/` is scratch-only for intermediate analysis. A durable fact record
+belongs to the `operation/incident` profile and its analysis to
+`operation/postmortem`. The Stage 99 registry (`docs/99.templates/registry.json`)
+owns the directory grammar, filename, template, and required sections for both;
+resolve the profile at write time rather than copying a path out of this
+procedure, because a path restated here drifts from the grammar the gate
+actually enforces.
 
 ## Workflow
 
@@ -41,8 +44,8 @@ Extract from user input:
 - **Impact information** (optional) — affected services, user count, duration
 - **Actions taken** (optional) — emergency measures already performed
 
-Summarize input in the response. Only an explicitly authorized author may
-write an assigned scratch or durable document; no automatic scratch creation.
+Summarize input in the response. Creating a scratch file is a write like any
+other, so it never happens automatically.
 
 ### Phase 2: Timeline Reconstruction → `_workspace/01_timeline.md`
 
@@ -173,11 +176,13 @@ which techniques the incident needs and where the result is written.
 
 ## Data Protocol
 
-- The phase filenames above are optional author output examples. A read-only role returns analysis in its response and writes no files.
-- An explicitly authorized author places durable final reports in `docs/05.operations/incidents/YYYY/INC-###-[incident-slug]/postmortem.md` when a postmortem record is requested.
-- An explicitly authorized author places durable incident records in `docs/05.operations/incidents/YYYY/INC-###-[incident-slug]/INC-###-[incident-slug].md` when an incident log is requested.
-- Use profile `operation/postmortem` and
-  `docs/99.templates/templates/operations/postmortem.template.md` as the structural baseline
+- The phase filenames above are optional author output examples; under the
+  execution mode stated above, a read-only role returns the analysis in its
+  response and writes nothing.
+- An explicitly authorized author writes a durable fact record under the
+  `operation/incident` profile and a durable analysis under
+  `operation/postmortem`, taking the path, template, and required sections
+  from the Stage 99 registry entry for whichever is being written.
 
 ## Error Handling
 

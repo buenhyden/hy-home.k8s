@@ -145,10 +145,10 @@ Investigate all changes in the window before the incident.
 ## Output Format
 
 Return scratch RCA output in the response when acting in a read-only role. An
-explicitly authorized author may record it in the assigned Task, then
-move durable incident or postmortem findings into
-`docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` or
-`docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` when a record is required. Use this structure:
+explicitly authorized author may record it in the assigned Task. Where a
+durable finding then belongs is owned by the `incident-postmortem` skill and
+the Stage 99 profile it names; this skill owns the technique and the structure
+below, not the destination. Use this structure:
 
 ```markdown
 # Root Cause Analysis
