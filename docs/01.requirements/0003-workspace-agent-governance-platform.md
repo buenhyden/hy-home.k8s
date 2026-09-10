@@ -159,6 +159,9 @@ honesty are owned by
 Common knowledge and prompt surfaces and their document contracts are
 owned by
 [SPEC-0075](../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md).
+Responsibility-boundary coverage, the roles that close it, and routing
+completeness are owned by
+[SPEC-0076](../03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
 
 ## Traceability
 

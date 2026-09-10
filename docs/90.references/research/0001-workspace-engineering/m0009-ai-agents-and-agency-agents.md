@@ -1,10 +1,10 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.1.0"
+version: "1.2.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-10"
 layer: "references"
 artifact_id: "RES-0001-m0009"
 ---
@@ -420,6 +420,62 @@ premise was already withdrawn on 2026-09-05 and stays withdrawn.
   disagreement recorded in `CLM-WERPC-016-03` is still open and is not
   adjudicated here. Refresh when a role is proposed for adoption, or when the
   licence field changes.
+
+### 2026-09-10 role-admission trigger and upstream re-observation
+
+This entry is additive. The pinned-tree comparison, its licence check and its
+script inspection keep their original wording and dates, and the
+adopt/adapt/reject rule keeps the result each earlier cycle recorded. The
+2026-09-07 entry set the refresh trigger to a proposed role adoption. That
+trigger fired on 2026-09-10 and this cycle records the outcome.
+
+#### REQ-WERPC-027 admission-trigger observation
+
+- **Sources and external result:** `changed`. Upstream `main` was observed on
+  2026-09-10 at commit `6d29a9b08785a0e49ffc9818bbdd381164c2df5f`, dated
+  2026-09-09. The repository metadata reports `license.spdx_id` `MIT`,
+  `default_branch` `main`, and `pushed_at` `2026-09-09T00:10:23Z`. The head is
+  beyond `647c8baa42b6842afb4a97bf2c0950d45ba88e8b`, which this reference
+  recorded as the head observed on 2026-09-07. A recursive tree listing at the
+  new head reports 270 Markdown persona files under the division directories,
+  beside integration, strategy and script directories. The catalogue remains
+  persona prompt material whose frontmatter carries `name`, `description`,
+  `color`, `emoji` and `vibe`; it declares no permission class, no evidence
+  lane and no hand-off contract, so it is not directly comparable to a role
+  entry in this repository's registry.
+- **Workspace selector and result:** `changed`. The registry reported twelve
+  roles on 2026-09-10, the same count as every prior cycle, but the selector
+  now resolves a gap rather than a count. The responsibility router declares
+  seven domain boundaries and the role bodies read six of them; no role reads
+  the architecture boundary. The tracked trees `.agents/`, `.claude/`,
+  `.codex/`, `.github/`, `policy/`, the non-validator part of `scripts/`, and
+  `evals/` carry no role authorised to author them. That gap is observed in
+  this repository, not inferred from the catalogue.
+- **Conclusion on adoption:** adapt, not adopt. Five roles are proposed by
+  [SPEC-0076](../../../03.specs/0076-agent-role-coverage-and-contract-completion/spec.md)
+  to close the gap above; four have a nearest counterpart in the catalogue and
+  the fifth, agent evaluation, has none and rests on the local folder contract. No upstream role, file, name, frontmatter field or
+  prose enters this repository, and no converter or installer was executed. The
+  four upstream files whose subjects are the nearest counterparts —
+  `engineering/engineering-software-architect.md`,
+  `specialized/automation-governance-architect.md`,
+  `engineering/engineering-devops-automator.md` and
+  `engineering/engineering-developer-tooling-engineer.md` — were read as
+  provenance for the coverage argument only. The admission evidence is the
+  local tree-to-owner intersection; the catalogue supplies none of it.
+- **Evidence boundary:** external repository metadata and a recursive tree
+  listing read over a public endpoint on 2026-09-10, plus the bodies of the
+  four named files at that head. This proves the branch head, the licence
+  field, the tree shape and those four file contents at that moment. It proves
+  nothing about the remainder of the tree, authorises no prompt copying and no
+  script execution, and establishes no provider-runtime behaviour for any role
+  admitted locally.
+- **Owner, safe follow-up, and trigger:** owner is this reference. The pin
+  disagreement recorded in `CLM-WERPC-016-03` remains open and is not
+  adjudicated here. This cycle registers no new claim identifier and changes no
+  row in the source ledger or the scope index. Refresh when a further role is
+  proposed for adoption, when the licence field changes, or when SPEC-0076
+  closes and the admitted roster count changes.
 
 ## Related Documents
 
