@@ -170,6 +170,7 @@
       ],
       "handoff_to": [
         "architect",
+        "ci-workflow-engineer",
         "code-reviewer",
         "doc-writer",
         "governance-steward",
@@ -518,6 +519,30 @@
         "neutral": ".agents/roles/governance-steward.md",
         "claude": ".claude/agents/governance-steward.md",
         "codex": ".codex/agents/governance-steward.toml"
+      }
+    },
+    {
+      "id": "ci-workflow-engineer",
+      "responsibility": "Implement scoped hosted-surface changes under .github/ and keep workflow permissions, triggers, and action identities least-privilege.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": ".agents/governance/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "vulnerability-patterns",
+        "risk-report"
+      ],
+      "handoff_to": [
+        "quality-engineer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": ".agents/roles/ci-workflow-engineer.md",
+        "claude": ".claude/agents/ci-workflow-engineer.md",
+        "codex": ".codex/agents/ci-workflow-engineer.toml"
       }
     }
   ]
