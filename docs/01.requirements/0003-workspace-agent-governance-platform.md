@@ -162,6 +162,9 @@ owned by
 Responsibility-boundary coverage, the roles that close it, and routing
 completeness are owned by
 [SPEC-0076](../03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
+Retirement of unreachable validation code, absent-subject assertions, and
+same-snapshot duplicate gate execution is owned by
+[SPEC-0077](../03.specs/0077-dead-contract-and-duplicate-execution-retirement/spec.md).
 
 ## Traceability
 
