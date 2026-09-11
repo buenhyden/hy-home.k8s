@@ -128,7 +128,7 @@ and are recorded as DEFER rather than inferred.
 
 ```bash
 python3 -m unittest tests.test_documentation_link_boundary
-python3 -B -m unittest tests.test_delegated_execution_ownership
+python3 -B -m unittest tests.test_markdown_render_cache
 python3 -B -m unittest tests.test_document_lifecycle_archive_cutover
 python3 -B -m unittest tests.test_validation_tooling_ownership
 python3 scripts/qa.py quick
