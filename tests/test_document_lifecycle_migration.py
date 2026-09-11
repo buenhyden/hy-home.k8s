@@ -566,9 +566,7 @@ class MigrationLifecycleTest(unittest.TestCase):
             registry, PurePosixPath(self.path), (self.root / self.path).read_text()
         )
         self.assertEqual(document.status, "sealed")
-        for path in sorted(
-            (ROOT / "docs/98.archive/migrations").glob("mig-000[1-3]-*.md")
-        ):
+        for path in sorted((ROOT / "docs/98.archive/migrations").glob("000[1-3]-*.md")):
             relative = PurePosixPath(path.relative_to(ROOT).as_posix())
             text = path.read_text()
             document = VALIDATOR.document_from_text(registry, relative, text)

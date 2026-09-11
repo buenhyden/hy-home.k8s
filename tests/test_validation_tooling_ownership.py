@@ -456,6 +456,44 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             [],
         )
 
+    def test_every_declared_test_class_is_collected(self) -> None:
+        """A class that declares test methods but no TestCase base never runs.
+
+        The collector ignores it silently, so the suite reports green while
+        the declared cases are invisible.
+        """
+
+        uncollected: list[str] = []
+        for module in sorted((ROOT / "tests").glob("test_*.py")):
+            tree = ast.parse(module.read_text(encoding="utf-8"))
+            local_case_bases = {
+                node.name
+                for node in tree.body
+                if isinstance(node, ast.ClassDef)
+                and any("TestCase" in ast.unparse(base) for base in node.bases)
+            }
+            for node in tree.body:
+                if not isinstance(node, ast.ClassDef):
+                    continue
+                declared = [
+                    child.name
+                    for child in node.body
+                    if isinstance(child, ast.FunctionDef)
+                    and child.name.startswith("test_")
+                ]
+                if not declared:
+                    continue
+                bases = {ast.unparse(base) for base in node.bases}
+                if any("TestCase" in base for base in bases) or (
+                    bases & local_case_bases
+                ):
+                    continue
+                uncollected.append(
+                    f"{module.relative_to(ROOT)}::{node.name} "
+                    f"declares {len(declared)} test methods with bases {sorted(bases)}"
+                )
+        self.assertEqual(uncollected, [])
+
 
 if __name__ == "__main__":
     unittest.main()
