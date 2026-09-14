@@ -54,7 +54,6 @@ use without requiring cluster access delegation.
 ## Safety Rules
 
 - Never include plaintext Kubernetes secrets or Vault tokens in runbook steps.
-- Mark every live-cluster mutating step with `<!-- OPERATOR-BOUND -->` comment.
 - Every bootstrap-boundary action (k3d create, ArgoCD install, root app apply) must state
   the exact `kubectl apply` or `helm install` command and its scope.
 - Break-glass actions must record scope, rollback, and verification evidence in the runbook.
