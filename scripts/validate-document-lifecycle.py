@@ -205,23 +205,6 @@ WORK054_WP003_OWNER_RETIREMENTS = (
     },
 )
 
-WORK054_WP004A_BASE_COMMIT = "0860f1723b81b407391055cbec4ca7331a8e9a73"
-WORK054_WP004A_OWNER_PATHS = (
-    PurePosixPath("docs/00.agent-governance/policies/document-lifecycle.md"),
-    PurePosixPath("docs/00.agent-governance/sdlc.md"),
-)
-WORK054_WP004A_REQUIRED_CHANGED_PATHS = (
-    CURRENT_REGISTRY_PATH,
-    PurePosixPath("docs/99.templates/contracts/document-profile.schema.json"),
-    PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json"),
-    PurePosixPath("docs/99.templates/contracts/route-contract.json"),
-    PurePosixPath("docs/99.templates/README.md"),
-    PurePosixPath("docs/00.agent-governance/README.md"),
-    PurePosixPath(
-        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
-    ),
-    *WORK054_WP004A_OWNER_PATHS,
-)
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
@@ -1048,141 +1031,6 @@ def _git_blob_oid(content: bytes) -> str:
     return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
 
 
-# One declared archive rehome. A tombstone identity now names the sequence slot
-# its original vacated (`tomb-ADR-0004`) rather than a content digest, and every
-# Stage 98 filename leads with its number, so each record moves exactly once.
-# The three Migration records move without a byte changing; their digests are
-# equal on both sides and the pair is still declared, so the move is reviewed
-# rather than inferred from Git similarity.
-_ARCHIVE_REHOME: dict[str, tuple[str, str, str]] = {
-    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md": (
-        "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md",
-        "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- archived base digest
-        "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md": (
-        "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md",
-        "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- archived base digest
-        "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md": (
-        "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md",
-        "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- archived base digest
-        "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-513540c3ab7c8c7ec2d848170c3c6df85b1780a2126ad41cb61d550456cefcac.md": (
-        "docs/98.archive/tombstones/01.requirements/0001-wsl-k3d-argocd-platform.md",
-        "b0e42453e66f6284e022ee88080670d9bfa97ffdad6b439c7ddbf1ba16a5f553",  # pragma: allowlist secret -- archived base digest
-        "a41cb18ebf4724bdf5c8590c3e2ab386b70bd486bbde47ea546a94046f83fa85",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-54087d753dd7edf618b1cd5a0ffad654f6511e117ff7eac1ac289792c20c1e4d.md": (
-        "docs/98.archive/tombstones/01.requirements/0002-wsl2-k3d-argocd-ha-platform.md",
-        "29d6d0895c907d780603a6a99e9824a9284a9ed361c8c3c7ee39b6d686c5903c",  # pragma: allowlist secret -- archived base digest
-        "f7ba72179970cac74816f428d673f37bfcb9d211a1d5975ba7cdade923b86367",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-8b107a1a83eb2e477de7f3c7b1d63050cff935af0dcfbdeb1e2636dc4ee5de06.md": (
-        "docs/98.archive/tombstones/01.requirements/0003-platform-expansion-dashboard-mesh.md",
-        "0c1b4a5dad7fc16784ef88698d2b83535e8369c9f23661ff15bf403e78871772",  # pragma: allowlist secret -- archived base digest
-        "58a5125b27aa177ccc9b4a2eb4dcafdb6c228591e5a4a067237ef48d9af92417",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-61d107a63b02dcdfa33f43fbb8418afb7e4bcd4a3d83da0693b71b830da22bb8.md": (
-        "docs/98.archive/tombstones/02.architecture/0003-platform-expansion-mesh-dashboard.md",
-        "1a1f82da8b06b7fd89f198851ba4a5184602adab7838ea47717e44f76243996a",  # pragma: allowlist secret -- archived base digest
-        "a6abe2b58911ffadd981f4c6caa84f580e79c1f2b7ac3fe9a3d45b65d371aac7",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-a9933ec86fcda902cce202655eaef15ff4131e1b8bf40a74a316368f2b80fe57.md": (
-        "docs/98.archive/tombstones/02.architecture/0001-wsl-k3d-argocd-platform.md",
-        "adee60ceecd4c6847c6281d9670a7e6fe9736c9ef1a8e5644330c2a96a03c5fb",  # pragma: allowlist secret -- archived base digest
-        "5cfbf95f7385d11dfbc36f42843ca0e2f0bf1b18d29e7574ce0803800a721f8e",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-daf190279d9ffd8a110eee548317c0a8ae58b86ba21220f00427c0dcace9f7b1.md": (
-        "docs/98.archive/tombstones/02.architecture/0002-wsl2-k3d-argocd-ha-platform.md",
-        "f158c19d22af09ac32ea86b57200cd72c89569f3e4995446939d661066c0f779",  # pragma: allowlist secret -- archived base digest
-        "66779448d5636c690fe3e423ee3a1fa24ec3b5413b52db535a7bb601278f0ec8",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-1cf8aa49bbb6bdca7c69c6f94881c636d25dc68b9aa298ecb854790d17f26548.md": (
-        "docs/98.archive/tombstones/02.architecture/0004-external-services-endpoints-and-valkey-backend.md",
-        "de89ff5dc038b8f8cfcf53060ae5c29b94fdbf80bc375cfd077627b47835ccea",  # pragma: allowlist secret -- archived base digest
-        "09a3d613ff3416079dc143c6cde66be4eb39d4d5ac988d22f7d2a1e2c8bf5c0c",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-59ec4c1d612f19572a59abb443a1279f998584488a41f1adb3bece1081fe774e.md": (
-        "docs/98.archive/tombstones/02.architecture/0010-headlamp-replaces-dashboard.md",
-        "dd4d1a4c9c4929bc0fde052779e5eccd9de7e8d8c865e6a6c7d8410506b6b2d6",  # pragma: allowlist secret -- archived base digest
-        "f96da0e330b72cb2dba4f05ef8a6c4ad0716533c99f100863e22e54c4672fac7",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-6ec9a5d55b91e0e59d9b73f4c11ced53d7a3a290c5a88e704b4d6d7f733cfb34.md": (
-        "docs/98.archive/tombstones/02.architecture/0007-kubernetes-dashboard-v3.md",
-        "750ca02d62e55582d7410579f769004910a7ca72e97ef256ff8a78e120803a8a",  # pragma: allowlist secret -- archived base digest
-        "f832239a7b7225ecb12f627724f08a4c88e41e6d420007d8dd675fbeac9acf38",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-78452949112de698bd6fa9205770c51f516c900f4e42f372912612de528eac9f.md": (
-        "docs/98.archive/tombstones/02.architecture/0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
-        "35b19a3a52df61a668cd44ce50834173a4bbdbee2c04088a7b2eeebfdfc2b4ce",  # pragma: allowlist secret -- archived base digest
-        "24b4437e3b0c5681328fcf936f4555853612c96e1a2bc9706fbb19215e406b16",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-a19264e8c774c9843b1bd489e4ea13b089f9493ddcfe5716a88764e1b41e68ad.md": (
-        "docs/98.archive/tombstones/02.architecture/0001-k3d-topology-and-network.md",
-        "03e6d7e3c3cc5c56665d154f9201baed063a65b782aa57c00da0f4c8fa15b0f4",  # pragma: allowlist secret -- archived base digest
-        "53f4916d68deaaf6119885aabe0f80b6e4fd1122899f0f44a105cadb42862847",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-013c5c6ed9d3a810044f6ce50eb9aa043472b2e3528bbdfa1810192682be76ac.md": (
-        "docs/98.archive/tombstones/03.specs/0001-wsl-k3d-argocd-platform.md",
-        "dd2a996ad941d526d5211532c5a042b5cee5990d6f309970fbb9d2036dca82c4",  # pragma: allowlist secret -- archived base digest
-        "a9892fa9c5ae3aad3c66fce3db5942c13ace8c9c5e74b732240340d235e32c16",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-063f6e166f3ebfc9dbcce93b3ea6aa53438f58b75935fbda294e79d87c6b52f4.md": (
-        "docs/98.archive/tombstones/03.specs/0002-wsl2-k3d-argocd-ha-platform.md",
-        "3c37f5ececa33ddf245206cb465200127664ddd62bd9547f1f588d9534737afd",  # pragma: allowlist secret -- archived base digest
-        "efc440a05e9b0207b41268f80c98a73536e61498a29f218cf34057629aadcb2e",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-250a2ac6df411e9506f888dd0a0db7493990b3544b20cdfdbb086fa7233034cc.md": (
-        "docs/98.archive/tombstones/03.specs/0003-platform-expansion.md",
-        "d9b7cf63540ddc707e64c1cf76f9f87edae84b7923a33a9a252bee58fa83305a",  # pragma: allowlist secret -- archived base digest
-        "fcb871124bc12d904cb7964713a5c9100ef03102db206c9b967820a977c36ad3",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-aa76c31eb19898c6270484148791abad4d8b07b4323eaf949bddafb0b8e7097c.md": (
-        "docs/98.archive/tombstones/03.specs/0007-docs-governance-consistency.md",
-        "8e24805dd0cddab50df6bafded779628eef2306cf088d9b0c336b7dc90484ce0",  # pragma: allowlist secret -- archived base digest
-        "7ef73d636b535fd514323bbfca89ae8cb61cb0eec6609294cd65882f12ba27b9",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/05.operations/tmb-guide-legacy-292f0f96da3102684734a62842ee5c4d1e663f731921040911fa288a16163305.md": (
-        "docs/98.archive/tombstones/05.operations/0004-headlamp-auth-oidc-guide.md",
-        "1e4061d80d9687388e8b3d8eb714834442c9e4f0dd070032dec647cd3f593b49",  # pragma: allowlist secret -- archived base digest
-        "316a1f1c0695154b4363e85267ba5470fd683244e2d144686c9f1a6e5c777867",  # pragma: allowlist secret -- rehomed digest
-    ),
-    "docs/98.archive/tombstones/05.operations/tmb-runbook-legacy-3c3f615242a98268abeac20385372ef3eafe9dd9680454d749d7ffb853cdbf4a.md": (
-        "docs/98.archive/tombstones/05.operations/0005-headlamp-keycloak-runbook.md",
-        "8583850ca693a736b5f32487a6648715a3b2a2ffce2220e153183d7babfa75e0",  # pragma: allowlist secret -- archived base digest
-        "621a2b8749e3128693680477ca459509191c9e34f349328ebcc9d76857986cd7",  # pragma: allowlist secret -- rehomed digest
-    ),
-}
-
-
-def declared_archive_rehome_pairs(
-    *,
-    root: Path,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_texts: Mapping[PurePosixPath, str],
-) -> frozenset[tuple[PurePosixPath, PurePosixPath]]:
-    """Name both paths of every admitted tombstone rehome."""
-
-    pairs: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    for source, (target, base_digest, proposed_digest) in _ARCHIVE_REHOME.items():
-        source_path = PurePosixPath(source)
-        target_path = PurePosixPath(target)
-        base_oid = base_blobs.get(source_path)
-        text = proposed_texts.get(target_path)
-        if base_oid is None or text is None:
-            continue
-        if (
-            hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest() != base_digest
-            or hashlib.sha256(text.encode("utf-8")).hexdigest() != proposed_digest
-        ):
-            return frozenset()
-        pairs.add((source_path, target_path))
-    return frozenset(pairs)
-
-
 def sealed_record_relocation_paths(
     *,
     root: Path,
@@ -1241,139 +1089,6 @@ def sealed_record_relocation_paths(
             if base_digest != digest or target_digest != digest:
                 return frozenset()
             admitted.add(legacy)
-    return frozenset(admitted)
-
-
-def declared_archive_rehome_paths(
-    *,
-    root: Path,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit the tombstone rehome only when every declared byte pair is exact."""
-
-    admitted: set[PurePosixPath] = set()
-    for source, (target, base_digest, proposed_digest) in _ARCHIVE_REHOME.items():
-        source_path = PurePosixPath(source)
-        target_path = PurePosixPath(target)
-        base_oid = base_blobs.get(source_path)
-        proposed_oid = proposed_blobs.get(target_path)
-        if base_oid is None or proposed_oid is None:
-            # The move already landed in an earlier commit, so this declaration
-            # has nothing left to admit. A mismatch below still fails closed.
-            continue
-        if (
-            hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest() != base_digest
-            or hashlib.sha256(_blob_bytes(root, proposed_oid)).hexdigest()
-            != proposed_digest
-        ):
-            return frozenset()
-        admitted.add(source_path)
-    return frozenset(admitted)
-
-
-# The shared frontmatter key set gave every archive record the same `version`
-# and `layer` keys, and the archive family's profile identity became
-# `archive/tombstone`. The sealed payload below the envelope is untouched, so
-# every `content_sha256` still verifies. Archive records stay byte-immutable
-# against every other change: only these exact reviewed base -> proposed byte
-# pairs are admitted, all seventeen or none.
-_ARCHIVE_NORMALIZATION: dict[str, tuple[str, str]] = {
-    "docs/98.archive/tombstones/01.requirements/0001-wsl-k3d-argocd-platform.md": (
-        "a41cb18ebf4724bdf5c8590c3e2ab386b70bd486bbde47ea546a94046f83fa85",  # pragma: allowlist secret -- sealed base digest
-        "4e43cbd06e48500c9f3bbead256b45356957219bc971a402d2b2c6a772a5f876",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/01.requirements/0002-wsl2-k3d-argocd-ha-platform.md": (
-        "f7ba72179970cac74816f428d673f37bfcb9d211a1d5975ba7cdade923b86367",  # pragma: allowlist secret -- sealed base digest
-        "637e9e67f449a2ea18c62559ca222aa5656d424b01b70904ac8d5ee1ce49ba09",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/01.requirements/0003-platform-expansion-dashboard-mesh.md": (
-        "58a5125b27aa177ccc9b4a2eb4dcafdb6c228591e5a4a067237ef48d9af92417",  # pragma: allowlist secret -- sealed base digest
-        "73a0dbc69cc91b5a05e3beb09003c6826ad8974ea87fb1bf4b473ccc9f5dc4f6",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0001-k3d-topology-and-network.md": (
-        "53f4916d68deaaf6119885aabe0f80b6e4fd1122899f0f44a105cadb42862847",  # pragma: allowlist secret -- sealed base digest
-        "336a44351a6472674c55f01d23261d262c4452c8e93ca1a082e65db047064743",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0001-wsl-k3d-argocd-platform.md": (
-        "5cfbf95f7385d11dfbc36f42843ca0e2f0bf1b18d29e7574ce0803800a721f8e",  # pragma: allowlist secret -- sealed base digest
-        "b13f253197369d21a019d18d8ac441b3186f29eed08c4f89d627e2ef07037f75",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0002-wsl2-k3d-argocd-ha-platform.md": (
-        "66779448d5636c690fe3e423ee3a1fa24ec3b5413b52db535a7bb601278f0ec8",  # pragma: allowlist secret -- sealed base digest
-        "d04ec775fd8aa8b9c8604b76ba97017717965dc00d70c7f1568096cb7f75ef30",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0003-platform-expansion-mesh-dashboard.md": (
-        "a6abe2b58911ffadd981f4c6caa84f580e79c1f2b7ac3fe9a3d45b65d371aac7",  # pragma: allowlist secret -- sealed base digest
-        "66a18fd86e264c6522654382a3e3b2a0b1435c5aece7ed98d7746a297dc18046",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0004-external-services-endpoints-and-valkey-backend.md": (
-        "09a3d613ff3416079dc143c6cde66be4eb39d4d5ac988d22f7d2a1e2c8bf5c0c",  # pragma: allowlist secret -- sealed base digest
-        "b0af3db33014aaccac22afb83b87cf749808ea497335f6fa409e13cf0b6b8ef9",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0005-wsl2-ha-baseline-and-external-endpoint-contract.md": (
-        "24b4437e3b0c5681328fcf936f4555853612c96e1a2bc9706fbb19215e406b16",  # pragma: allowlist secret -- sealed base digest
-        "a8ca737853057933403a27bb7f91e421cd7105711c75cb46bff6a609245040ef",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0007-kubernetes-dashboard-v3.md": (
-        "f832239a7b7225ecb12f627724f08a4c88e41e6d420007d8dd675fbeac9acf38",  # pragma: allowlist secret -- sealed base digest
-        "4ac8522cb93d4db90c21fc6d269540d7a17748ab1446087a43e6023e9698869c",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/02.architecture/0010-headlamp-replaces-dashboard.md": (
-        "f96da0e330b72cb2dba4f05ef8a6c4ad0716533c99f100863e22e54c4672fac7",  # pragma: allowlist secret -- sealed base digest
-        "90a01ba9b580cf65fce2ddfcabeedef39d1ac29311888f2a83173021c4f41012",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/03.specs/0001-wsl-k3d-argocd-platform.md": (
-        "a9892fa9c5ae3aad3c66fce3db5942c13ace8c9c5e74b732240340d235e32c16",  # pragma: allowlist secret -- sealed base digest
-        "e843f8b98a664f43335af929a50739e173086fac3476cff62f317edac9e36a20",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/03.specs/0002-wsl2-k3d-argocd-ha-platform.md": (
-        "efc440a05e9b0207b41268f80c98a73536e61498a29f218cf34057629aadcb2e",  # pragma: allowlist secret -- sealed base digest
-        "07d944aca0f99c4ebd352366e8ed860f67ccfa58a52fefe68122bfe5064733a7",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/03.specs/0003-platform-expansion.md": (
-        "fcb871124bc12d904cb7964713a5c9100ef03102db206c9b967820a977c36ad3",  # pragma: allowlist secret -- sealed base digest
-        "27123a0b202e09562aefcde10827b890997915fca9042ed72dd2ac8ac68d8671",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/03.specs/0007-docs-governance-consistency.md": (
-        "7ef73d636b535fd514323bbfca89ae8cb61cb0eec6609294cd65882f12ba27b9",  # pragma: allowlist secret -- sealed base digest
-        "2b19853654b10e4221fb1cac83c921f96f0cb312e635321db597c0784d182e54",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/05.operations/0004-headlamp-auth-oidc-guide.md": (
-        "316a1f1c0695154b4363e85267ba5470fd683244e2d144686c9f1a6e5c777867",  # pragma: allowlist secret -- sealed base digest
-        "e1123d3639f58e157c05f1372cb15e736551921b5ccbec279e7af207b3194f0c",  # pragma: allowlist secret -- normalized digest
-    ),
-    "docs/98.archive/tombstones/05.operations/0005-headlamp-keycloak-runbook.md": (
-        "621a2b8749e3128693680477ca459509191c9e34f349328ebcc9d76857986cd7",  # pragma: allowlist secret -- sealed base digest
-        "a7f0d10c433a281b06b878de2a5897de732541d2fe8c4f9949a81480f5b45302",  # pragma: allowlist secret -- normalized digest
-    ),
-}
-
-
-def declared_archive_normalization_paths(
-    *,
-    root: Path,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit the envelope normalization only when every declared pair is exact."""
-
-    admitted: set[PurePosixPath] = set()
-    for source, (base_digest, proposed_digest) in _ARCHIVE_NORMALIZATION.items():
-        path = PurePosixPath(source)
-        base_oid = base_blobs.get(path)
-        proposed_oid = proposed_blobs.get(path)
-        if base_oid is None or proposed_oid is None:
-            # The normalization already landed in an earlier commit, so this
-            # declaration has nothing left to admit. A mismatch still fails closed.
-            continue
-        if (
-            hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest() != base_digest
-            or hashlib.sha256(_blob_bytes(root, proposed_oid)).hexdigest()
-            != proposed_digest
-        ):
-            return frozenset()
-        admitted.add(path)
     return frozenset(admitted)
 
 
@@ -1662,39 +1377,6 @@ def finite_work054_wp003_agent_governance_paths(
             return frozenset()
         consumed.add(legacy)
     return frozenset(consumed) if len(consumed) == 4 else frozenset()
-
-
-def finite_work054_wp004a_authority_paths(
-    *,
-    mode: str,
-    base_commit: str,
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit the atomic WP-004A activation of the two current human owners."""
-
-    if mode not in {"staged", "ci"} or base_commit != WORK054_WP004A_BASE_COMMIT:
-        return frozenset()
-    if any(
-        proposed_blobs.get(path) is None
-        or proposed_blobs.get(path) == base_blobs.get(path)
-        for path in WORK054_WP004A_REQUIRED_CHANGED_PATHS
-    ):
-        return frozenset()
-    expected = {
-        path: LifecycleDocument(path, "governance/rule", "active")
-        for path in WORK054_WP004A_OWNER_PATHS
-    }
-    if any(
-        path in base_documents
-        or path in base_blobs
-        or proposed_documents.get(path) != document
-        for path, document in expected.items()
-    ):
-        return frozenset()
-    return frozenset(WORK054_WP004A_OWNER_PATHS)
 
 
 def finite_archive_cutover_paths(
@@ -2610,9 +2292,7 @@ def _migration_lifecycle_events(
     }
     # A declared archive rehome is reviewed on its own evidence, so it survives
     # an unrelated migration-proof outcome on every return path below.
-    archive_rehomes = declared_archive_rehome_pairs(
-        root=root, base_blobs=base_blobs, proposed_texts=proposed_texts
-    )
+    archive_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
 
     def row_identity_lineages(
         rows: Sequence[Mapping[str, object]],
@@ -3851,16 +3531,8 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    archive_rehome_consumed_paths = (
-        declared_archive_rehome_paths(
-            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
-        )
-        | declared_archive_normalization_paths(
-            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
-        )
-        | sealed_record_relocation_paths(
-            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
-        )
+    archive_rehome_consumed_paths = sealed_record_relocation_paths(
+        root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
     )
 
     immutability_diagnostics = _archive_immutability_diagnostics(
