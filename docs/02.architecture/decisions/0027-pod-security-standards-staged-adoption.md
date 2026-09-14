@@ -1,17 +1,25 @@
 ---
 title: "Pod Security Standards Staged Adoption"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
-updated: "2026-08-18"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0027"
+superseded_by: "ADR-0028"
 ---
 
 # ADR-0027: Pod Security Standards Staged Adoption
 
 ## Overview
+
+**Superseded (2026-09-14).** [ADR-0028](0028-pod-security-admission-per-namespace-adoption.md)
+is the current Pod Security Admission decision. Its reversal condition fired
+when the Istio CNI node agent was adopted, and every namespace now carries
+Pod Security labels, so this record's instruction to withhold labels no longer
+applies. The ordering rationale below is retained as the reasoning ADR-0028
+built on.
 
 The Spec 060 cycle established that this repository has a real workload hardening
 convention and that nothing enforces it. No namespace declares a
@@ -212,6 +220,7 @@ constraint is the mesh's networking mechanism rather than any workload's spec.
 | Decision lineage                                | Replacement relation                                                                                        | Affected Spec                                            |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | Direct human approval recorded in this decision | N/A — first Pod Security Admission adoption decision; supersedes no prior ADR and replaces no prior control | N/A — standalone decision record with no execution scope |
+| [ADR-0028](0028-pod-security-admission-per-namespace-adoption.md) | Superseded by ADR-0028 after this decision's reversal fired | N/A — standalone decision record with no execution scope |
 
 ### Related Documents
 
