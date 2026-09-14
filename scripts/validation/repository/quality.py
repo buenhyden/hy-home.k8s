@@ -153,10 +153,6 @@ def load_yaml_documents(path: pathlib.Path) -> list:
     ]
 
 
-def workflow_on(data):
-    return data.get("on") if "on" in data else data.get(True, {})
-
-
 def load_json(path: pathlib.Path):
     try:
         return json.loads(read_text(path))
@@ -510,21 +506,6 @@ allowed_top_level_docs = {
     "98.archive",
     "99.templates",
 }
-required_doc_dirs = {
-    "01.requirements",
-    "02.architecture",
-    "02.architecture/descriptions",
-    "02.architecture/decisions",
-    "03.specs",
-    "05.operations",
-    "05.operations/guides",
-    "05.operations/policies",
-    "05.operations/runbooks",
-    "05.operations/incidents",
-    "90.references",
-    "98.archive",
-    "99.templates",
-}
 old_top_level_docs = {
     "01.prd",
     "02.ard",
@@ -565,27 +546,6 @@ for name in sorted(actual_docs - allowed_top_level_docs):
 for name in sorted(allowed_top_level_docs - actual_docs):
     fail(f"required docs top-level folder is missing: docs/{name}")
 
-example_docs_required = {
-    "01.requirements",
-    "02.architecture",
-    "02.architecture/descriptions",
-    "02.architecture/decisions",
-    "03.specs",
-    "04.execution",
-    "04.execution/plans",
-    "04.execution/tasks",
-    "05.operations",
-    "05.operations/guides",
-    "05.operations/policies",
-    "05.operations/runbooks",
-}
-example_docs_allowed_top_level = {
-    "01.requirements",
-    "02.architecture",
-    "03.specs",
-    "04.execution",
-    "05.operations",
-}
 expected_provider_asset_counts = {"aws": 8, "azure": 14}
 for provider in ["aws", "azure"]:
     example_docs = root / "examples" / provider / "docs"
@@ -842,7 +802,6 @@ def normalize_markdown_target(raw_target: str) -> str:
     return target.strip()
 
 
-template_readme = read_text(root / "docs/99.templates/README.md")
 document_registry = load_registry(root)
 template_locations = {}
 for profile in document_registry.profiles:
@@ -2422,7 +2381,6 @@ for phrase in [
         fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
 
 ci_path = root / ".github/workflows/ci.yml"
-ci_text = read_text(ci_path)
 try:
     ci_data = load_yaml(ci_path)
 except Exception as exc:

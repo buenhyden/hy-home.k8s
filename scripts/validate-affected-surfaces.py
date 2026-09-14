@@ -35,7 +35,6 @@ schema_errors = _schema_owner.schema_errors
 
 CONTRACT_PATH = PurePosixPath("scripts/validation/registry.json")
 SCHEMA_PATH = PurePosixPath("scripts/validation/registry.schema.json")
-CI_WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 SELECTOR_LANES = ("affected", "staged", "all-files", "ci")
 LANES = (
     "affected",

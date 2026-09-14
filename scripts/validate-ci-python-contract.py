@@ -100,12 +100,6 @@ EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/stackrox/kube-linter": "v0.8.3",
 }
 GITLEAKS_SHA256 = "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
-EXPECTED_GITLEAKS_TOOL = {
-    "version": "8.30.0",
-    "asset": "gitleaks_8.30.0_linux_x64.tar.gz",
-    "sha256": GITLEAKS_SHA256,
-    "install_path": "/usr/local/bin/gitleaks",
-}
 EXPECTED_PYTHON = "3.12"
 VALIDATION_JOBS = ("qa",)
 INSTALL_COMMAND = (

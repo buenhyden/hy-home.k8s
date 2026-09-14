@@ -67,9 +67,6 @@ def system_tool_candidates(name: str) -> tuple[Path, ...]:
     return tuple(Path(directory) / name for directory in TRUSTED_SEARCH_DIRECTORIES)
 
 
-SYSTEM_GITLEAKS_CANDIDATES = system_tool_candidates("gitleaks")
-
-
 @dataclass(frozen=True)
 class StreamObservation:
     """Bounded internal bytes plus non-secret metadata for one child pipe."""
