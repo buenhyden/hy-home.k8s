@@ -667,12 +667,8 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 )
 
     def test_retired_program_and_standalone_planes_are_absent(self) -> None:
-        contracts = load_document_contracts()
         self.assertNotIn("programLineage", self.registry)
         self.assertNotIn("standaloneExecutions", self.registry)
-        typed = contracts.load_registry(REPOSITORY_ROOT)
-        self.assertEqual(typed.program_lineage, ())
-        self.assertEqual(typed.standalone_executions, ())
 
     def test_terminal_templates_must_be_regular_non_symlink_files(self) -> None:
         contracts = load_document_contracts()

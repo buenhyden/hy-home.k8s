@@ -2620,21 +2620,6 @@ def _require_regular_current_target(
         )
 
 
-def _reachable_historical_regular_target(
-    root: Path,
-    relative: str,
-    *,
-    proposed_commit: str | None,
-) -> _GitTreeMember:
-    """Prove one absent Migration target through the shared batch boundary."""
-
-    return _reachable_historical_regular_targets(
-        root,
-        (relative,),
-        proposed_commit=proposed_commit,
-    )[relative]
-
-
 def _reachable_historical_regular_targets(
     root: Path,
     relatives: tuple[str, ...],

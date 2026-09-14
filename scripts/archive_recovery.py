@@ -776,67 +776,6 @@ def _require_git_tree_path(value: object, *, field: str) -> str:
     return path.as_posix()
 
 
-def git_tree_path_exists(
-    repository_root: str | Path,
-    source_commit: str,
-    repository_path: str,
-) -> bool:
-    """Check one sanitized literal path in one full immutable commit tree."""
-
-    root, object_id_length = _require_repository(Path(repository_root))
-    canonical_path = _require_git_tree_path(repository_path, field="repository_path")
-    if (
-        not isinstance(source_commit, str)
-        or len(source_commit) != object_id_length
-        or _FULL_OBJECT_ID.fullmatch(source_commit) is None
-    ):
-        raise _error(
-            "RECOVERY-OBJECT-AMBIGUOUS",
-            "source_commit must be one full lowercase object ID",
-        )
-    commit_type = _git(root, "cat-file", "-t", source_commit)
-    if commit_type.returncode != 0:
-        raise _error("RECOVERY-OBJECT-MISSING", "source commit object is unavailable")
-    if commit_type.stdout != b"commit\n":
-        raise _error("RECOVERY-OBJECT-NOT-COMMIT", "source object is not a commit")
-
-    tree = _git(
-        root,
-        "ls-tree",
-        "-z",
-        "--full-tree",
-        source_commit,
-        "--",
-        canonical_path,
-    )
-    if tree.returncode != 0:
-        raise _error("RECOVERY-TREE-INVALID", "source tree lookup failed")
-    records = [record for record in tree.stdout.split(b"\0") if record]
-    if not records:
-        return False
-    if len(records) != 1:
-        raise _error("RECOVERY-PATH-AMBIGUOUS", "source path resolves more than once")
-    try:
-        header, raw_path = records[0].split(b"\t", 1)
-        _mode, object_type, raw_object = header.split(b" ", 2)
-        resolved_path = raw_path.decode("utf-8")
-        object_id = raw_object.decode("ascii")
-    except (ValueError, UnicodeDecodeError) as exc:
-        raise _error(
-            "RECOVERY-TREE-INVALID", "source tree record is malformed"
-        ) from exc
-    if resolved_path != canonical_path:
-        raise _error("RECOVERY-PATH-AMBIGUOUS", "source tree returned a different path")
-    if object_type not in {b"blob", b"tree"}:
-        raise _error("RECOVERY-OBJECT-UNSUPPORTED", "source path is not a blob or tree")
-    if (
-        len(object_id) != object_id_length
-        or _FULL_OBJECT_ID.fullmatch(object_id) is None
-    ):
-        raise _error("RECOVERY-TREE-INVALID", "source object ID is not full length")
-    return True
-
-
 def _proposed_archive_path(original_path: str) -> str:
     path = PurePosixPath(original_path)
     if len(path.parts) < 3 or path.parts[1] not in {

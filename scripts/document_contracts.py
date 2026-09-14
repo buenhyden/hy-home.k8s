@@ -26,13 +26,6 @@ from json_schema_validation import SchemaEvaluationError, schema_errors
 
 GIT_TIMEOUT_SECONDS = 10
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
-_LS_TREE_MODE_TYPES = {
-    b"040000": b"tree",
-    b"100644": b"blob",
-    b"100755": b"blob",
-    b"120000": b"blob",
-    b"160000": b"commit",
-}
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
 ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
 TARGET_ROOTS = (
@@ -190,44 +183,9 @@ class DocumentProfile:
 
 
 @dataclass(frozen=True)
-class ProgramRelation:
-    spec_id: str
-    order: int
-    state: str
-    reason: str
-    decision_id: str
-
-
-@dataclass(frozen=True)
-class ProgramFollowUp(ProgramRelation):
-    evidence_mode: Literal["reciprocal-body", "successor-record"]
-
-
-@dataclass(frozen=True)
-class ProgramLineage:
-    prd_id: str
-    ad_id: str
-    tranches: tuple[ProgramRelation, ...]
-    follow_ups: tuple[ProgramFollowUp, ...]
-
-
-@dataclass(frozen=True)
-class StandaloneExecution:
-    spec_id: str
-    plan_path: PurePosixPath
-    task_path: PurePosixPath
-    state: str
-    reason: str
-    decision_id: str
-    approval_mode: Literal["spec-body-record"]
-
-
-@dataclass(frozen=True)
 class Registry:
     schema_version: int
     profiles: tuple[DocumentProfile, ...]
-    program_lineage: tuple[ProgramLineage, ...]
-    standalone_executions: tuple[StandaloneExecution, ...]
     lifecycle_domains: tuple[LifecycleDomain, ...]
 
 
@@ -253,10 +211,6 @@ class DocumentContractError(ValueError):
     def __init__(self, diagnostics: Sequence[Diagnostic]):
         self.diagnostics = tuple(diagnostics)
         super().__init__("; ".join(item.rule_id for item in self.diagnostics))
-
-
-class _DuplicateJSONKeyError(ValueError):
-    """Internal marker for a duplicate JSON mapping key at any depth."""
 
 
 class _UniqueKeySafeLoader(yaml.SafeLoader):
@@ -368,32 +322,6 @@ def _validate_git_object_id(raw_object: bytes, command: str) -> None:
         raise ValueError(f"{command} object id must be exactly 40 or 64 characters")
     if re.fullmatch(rb"[0-9a-f]+", raw_object) is None:
         raise ValueError(f"{command} object id must be lowercase hexadecimal")
-
-
-def _parse_ls_tree_z(raw: bytes) -> tuple[_GitEntry, ...]:
-    """Parse ``git ls-tree -z`` output without interpreting path contents."""
-
-    entries: list[_GitEntry] = []
-    records = raw.split(b"\0")
-    if records[-1] != b"":
-        raise ValueError("git ls-tree output is not NUL terminated")
-    for record in records[:-1]:
-        try:
-            header, raw_path = record.split(b"\t", 1)
-            raw_mode, raw_type, raw_object = header.split(b" ", 2)
-        except ValueError as exc:
-            raise ValueError("malformed git ls-tree record") from exc
-        if raw_type not in {b"blob", b"tree", b"commit"}:
-            raise ValueError("unsupported git ls-tree object type")
-        if raw_mode not in _LS_TREE_MODE_TYPES:
-            raise ValueError("noncanonical git ls-tree mode")
-        if _LS_TREE_MODE_TYPES[raw_mode] != raw_type:
-            raise ValueError("impossible git ls-tree mode/type pair")
-        _validate_git_object_id(raw_object, "git ls-tree")
-        entries.append(
-            _GitEntry(mode=raw_mode.decode("ascii"), path=_decode_git_path(raw_path))
-        )
-    return tuple(entries)
 
 
 def _parse_ls_files_stage_z(raw: bytes) -> tuple[_GitEntry, ...]:
@@ -1011,8 +939,6 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     return Registry(
         schema_version=raw["schema_version"],
         profiles=profiles,
-        program_lineage=(),
-        standalone_executions=(),
         lifecycle_domains=domains,
     )
 
