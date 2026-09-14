@@ -1,10 +1,10 @@
 ---
 title: "GitHub Routing and CI Evidence Technical Specification"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0048"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0048"
 # GitHub Routing and CI Evidence Technical Specification (Spec)
 
 ## Overview
+
+**Disposition note (2026-09-14).** Re-observation found VAL-GRCE-002 and VAL-GRCE-005 implemented, VAL-GRCE-004 absorbed by SPEC-0072 and SPEC-0073, VAL-GRCE-007 settled differently by the recorded main protection, and the proposed contract location `.agents/contracts/` outside the adopted `.agents/` directories. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so this draft is left unchanged rather than activated only to be withdrawn. [SPEC-0078](../0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
 
 ### Current authority transfer
 
@@ -143,8 +145,9 @@ Implementation proceeds in five steps:
 
 No workflow or job is removed unless comparison proves identical trigger,
 owner, command graph, output, retention, and required-check semantics. The
-current five tracked workflow files and eleven unique job identifiers do not
-meet that duplicate threshold.
+five tracked workflow files held eleven unique job identifiers when this was
+written and hold seven after the SPEC-0072 QA consolidation; neither set meets
+that duplicate threshold.
 
 ## Data Modeling & Storage Strategy
 
@@ -268,8 +271,8 @@ observed repository and SHA.
   [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [GitHub Routing and CI Evidence Implementation Plan](plan.md)
-- **Task**:
-  [GitHub Routing and CI Evidence Task](plan.md)
+- **Tasks**:
+  [GitHub Routing and CI Evidence Plan work breakdown](plan.md#work-breakdown)
 - **Predecessor**:
   [Spec 047](../0047-current-surface-and-stash-reconciliation/spec.md)
 - **Successor**:

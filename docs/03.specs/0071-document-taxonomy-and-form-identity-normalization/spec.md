@@ -1,10 +1,10 @@
 ---
 title: "Document Taxonomy and Form Identity Normalization Technical Specification"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0071"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0071"
 # Document Taxonomy and Form Identity Normalization Technical Specification (Spec)
 
 ## Overview
+
+**Activation (2026-09-14).** The tree already carries this package's result: every registry profile uses a `family/kind` identity, no `layer` keeps a stage prefix, version strings are three-component, `frontmatter.schema.json` is evaluated on strict runs, MIG-0010 and MIG-0011 are sealed, and no Stage 03 package keeps a router README. The draft state lagged that evidence. This change takes the one declared edge to `active`; closing the package to `done` is the next reviewed change, as [SPEC-0078](../0078-document-currency-reconciliation/spec.md) records.
 
 **Continuation boundary (2026-09-06).** Registry v9 and its existing schema
 implementation are the current baseline. This package retains ownership of

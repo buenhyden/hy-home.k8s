@@ -1,10 +1,10 @@
 ---
 title: "Agent Role Coverage and Contract Completion Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0076"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0076"
 # Agent Role Coverage and Contract Completion Technical Specification (Spec)
 
 ## Overview
+
+**Closed (2026-09-14).** WORK-001 through WORK-007 are done and the package Task is `done`. Lanes the Task records as not observed remain DEFERs and are not implemented here; this document moves `active` to `done`.
 
 The agent registry admits twelve roles. The responsibility router at
 `.agents/roles/README.md` declares seven domain boundaries, and the role bodies

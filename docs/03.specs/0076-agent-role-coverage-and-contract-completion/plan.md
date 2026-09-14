@@ -1,10 +1,10 @@
 ---
 title: "Agent Role Coverage and Contract Completion Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0076-PLAN-0001"
 ---
@@ -31,6 +31,8 @@ Copied from [SPEC-0076](spec.md). Every work package inherits them.
   "codex"]` and a `capability_tier_ref` of `#top` or `#worker`.
 
 ## Overview
+
+**Closed (2026-09-14).** WORK-001 through WORK-007 are done and the package Task is `done`. Lanes the Task records as not observed remain DEFERs and are not implemented here; this document moves `active` to `done`.
 
 This plan executes [SPEC-0076](spec.md). It admits five roles, repairs the
 routing and boundary defects the specification names, and adds one evaluation
