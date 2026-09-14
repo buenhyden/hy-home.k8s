@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0049"
 ---
@@ -247,7 +247,7 @@ bash scripts/validate-k8s-manifests.sh .
 bash scripts/validate-policy-gates.sh .
 bash scripts/check-secret-handling.sh .
 python3 scripts/validate-vault-eso-contracts.py --root .
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 pre-commit run --all-files
 git diff --check
 ```

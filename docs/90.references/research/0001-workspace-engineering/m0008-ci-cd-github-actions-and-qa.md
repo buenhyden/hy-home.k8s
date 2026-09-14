@@ -1,10 +1,10 @@
 ---
 title: "Reference: CI/CD, GitHub Actions, and QA"
-version: "1.0.0"
+version: "1.0.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "references"
 artifact_id: "RES-0001-m0008"
 ---
@@ -111,6 +111,12 @@ an upstream-code audit, a provenance claim, or a hosted-run result
 ([SRC-WERPC-036](m0012-source-coverage.md#source-register)).
 
 ### Workflow control inventory
+
+Currency note (2026-09-14): `ci.yml` now defines only `branch-policy`, `qa`
+and `ci-summary`. The `qa` job runs `python3 scripts/qa.py ci --base-ref "$BASE_SHA"`
+in place of the separate `changes`, `pre-commit`, `repo-quality-static`,
+`agent-governance-static` and `manifest-static` jobs listed in the dated table
+below, and the five workflows now hold seven jobs in total.
 
 | Trigger / workflow                                                  | Jobs, dependency, and failure behavior                                                                                                                                                                                                                                                                                               | Artifact / state effect                                                                                 | Promotion and rollback boundary                                                                                                                      |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -230,6 +236,10 @@ the only way to use an action as an immutable release. The pre-commit and pip
 pages are unchanged against their adopted scope. Both NASA verification and
 validation pages still show unmoved page-revision dates, so the
 Verification-and-Validation question matrix rests on the same basis.
+
+Currency note (2026-09-14): the `ci.yml` line range and job names below are the
+dated observation; see the note under the workflow control inventory for the
+current three-job layout.
 
 **Workspace detail.** All five tracked workflows remain present. Every remote
 `uses:` entry in all five files is a full forty-character SHA with a version

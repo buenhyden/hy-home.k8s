@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.1.1"
+version: "0.1.2"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -38,7 +38,7 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 templates/
 ├── architecture/   decision, description
 ├── archive/        migration, tombstone
-├── common/         repository, documentation·stage, package, runtime-governance entrypoint README form
+├── common/         repository, documentation·stage, package, implementation, workspace-staging, runtime-governance entrypoint README form
 ├── governance/     contract, knowledge, prompt, provider, role, rule, skill
 ├── operations/     guide, incident, policy, postmortem, runbook
 ├── references/     audit·data·research 의 pack form과 reference form

@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -68,11 +68,11 @@ artifact_id: "RUN-0011"
 ## Verification Steps
 
 ```bash
-rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-rtk python3 scripts/validate-links-and-owners.py --root . --mode strict
-rtk python3 scripts/qa.py full
-rtk git diff --check
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/qa.py full
+git diff --check
 ```
 
 - [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.

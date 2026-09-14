@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -84,12 +84,13 @@ artifact_id: "RUN-0003"
 
    bootstrap 내부 단계 (`[1/11]`~`[11/11]`):
    - `[1/11]` k3d 클러스터 생성/재사용
-   - `[2/11]` 외부 의존성 검증 (vault/postgres/valkey TCP + valkey_password 읽기)
+   - `[2/11]` 외부 의존성 검증 (Vault HTTPS `/v1/sys/health`, postgres/valkey TCP, Vault에서 valkey_password 읽기)
    - `[3/11]` TLS cert 검증 (4개 파일 + SAN)
    - `[4/11]` 관측성 pre-check warn-only (prometheus/loki/tempo/alloy/grafana)
    - `[5/11]` MetalLB + IPAddressPool + L2Advertisement 설치
    - `[6/11]` argocd namespace + Secrets (valkey + TLS)
    - `[7/11]` cert-manager namespace + mkcert-root-ca Secret 주입
+   - `[7.5/11]` platform namespace 선생성 + `gitops/platform/external-services` 적용
    - `[8/11]` ArgoCD Helm 설치
    - `[9/11]` GitOps 부트스트랩 리소스 적용
    - `[10/11]` ArgoCD 컨트롤 플레인 대기
@@ -209,7 +210,7 @@ argocd app get platform-headlamp-config --hard-refresh
 kubectl get clusterrolebinding headlamp-admin
 
 # 토큰 재발급
-kubectl -n headlamp create token headlamp-admin --duration=1h
+kubectl -n headlamp create token headlamp --duration=1h
 ```
 
 ### Istiod CrashLoop / OOMKilled
@@ -220,10 +221,9 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 # 1. 자원 사용량 확인
 kubectl -n istio-system top pod -l app=istiod
 
-# 2. istiod Helm values에서 requests 축소
-# gitops/platform/istio/istiod-values.yaml 수정:
-#   pilot.resources.requests.memory: "64Mi"  # 128Mi → 64Mi
-# ArgoCD sync 후 확인
+# 2. istiod 자원 값은 gitops/apps/root/platform-istiod-app.yaml의 inline Helm values가 소유한다.
+#    POL-0003은 requests를 cpu 100m, memory 128Mi 아래로 낮추지 않는다.
+#    값 조정이 필요하면 해당 Application을 수정·커밋한 뒤 ArgoCD sync로 반영한다.
 
 # 3. 재시작
 kubectl -n istio-system rollout restart deploy/istiod
@@ -238,7 +238,7 @@ kubectl -n istio-system rollout restart deploy/istiod
 nc -z 172.18.0.10 9090 && echo "OK" || echo "FAIL"
 
 # 2. egress NetworkPolicy 확인
-kubectl -n istio-system get networkpolicy kiali-egress-to-observability -o yaml
+kubectl -n istio-system get networkpolicy allow-kiali-egress-to-observability -o yaml
 # cidr 172.18.0.10/32 존재 여부 확인
 
 # 3. Kiali config 확인

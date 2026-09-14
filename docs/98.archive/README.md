@@ -1,23 +1,23 @@
 ---
 title: "98.archive"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "archive"
 ---
 
 # 98.archive
 
-> 현재 구현 권한에서 제거된 `docs/01-05` 문서의 전체 원문과 provenance를 보존하는 비현재 archive stage다.
+> 활성 stage를 떠난 종단 문서의 보존본, 봉인 record, 경로 전이 원장과 provenance를 보관하는 비현재 archive stage다.
 
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
-`98.archive/`는 활성 스테이지를 떠난 문서를 보관하는 비현재 stage다. 네 개의 하위 디렉터리는 이름이 아니라 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)가 registry의 종단 상태 분류에서 파생한 역할로 구분된다.
+`98.archive/`는 활성 스테이지를 떠난 문서를 보관하는 비현재 stage다. retention 역할은 이름이 아니라 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)가 registry의 종단 상태 분류에서 파생한 역할로 구분된다.
 
 - `migrations/`는 경로 전이 자체를 봉인한 원장이다. `archive/migration` profile의 `sealed` 문서이며, 어떤 문서가 어디로 갔는지에 대한 유일한 기계 증거다.
 - `completed/`는 끝까지 진행된 작업을 보관한다. 판정 근거는 replacement를 명명하지 않는 종단 상태이며, `done`과 끝난 패키지 안의 `cancelled`가 여기 해당한다. 보존 단위는 문서가 아니라 패키지이므로, 미종단 문서가 하나라도 있으면 패키지 전체가 활성 스테이지에 남는다.
@@ -26,7 +26,7 @@ layer: "archive"
 
 `completed/`만 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. 바이트 동일성이 아니라 링크 대상 동일성이 보존 불변식이고, 원본 바이트는 각 행이 고정한 `source_commit`과 `source_blob`으로 Git에서 복원한다. 그 링크는 현재 결합이 아니라 역사 증거로 읽는다.
 
-`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 25개 record는 모두 후속 문서를 명명하므로 전부 `superseded/`에 있고, `tombstones/`는 아직 구성원이 없다. 구성원이 없는 디렉터리도 역할을 유지하며, 이는 방치된 폴더가 아니라 올바른 공집합이다.
+`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 25개 record는 모두 후속 문서를 명명하므로 전부 `superseded/`에 있고, `tombstones/`는 아직 구성원이 없다. Git은 빈 디렉터리를 추적하지 않으므로 현재 디렉터리는 `migrations/`, `completed/`, `superseded/` 세 개이고, `tombstones/`는 첫 record와 함께 생성된다. 구성원이 없어도 그 역할은 유지된다.
 
 <!-- archive-manifest:v1 records=25 historical-links=198 -->
 
@@ -39,7 +39,8 @@ layer: "archive"
 
 ### In Scope
 
-- `docs/01.requirements`부터 `docs/05.operations`까지에서 제거된 원문의 mirrored full-body record
+- 활성 stage에서 대체되거나 후속 없이 끝난 문서의 봉인 record (`superseded/`, `tombstones/`)
+- 끝난 package 전체의 보존본 (`completed/`)
 - 활성 스테이지를 떠난 종단 문서의 보존본과 그 경로를 은퇴시킨 봉인 원장 행
 - `original_path`, `original_type`, archive decision, source commit/blob, SHA-256 provenance
 - source commit과 original path를 기준으로 해석하는 historical rendered links
@@ -99,8 +100,9 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 기존 전이의 퇴역한 중간 목적지를 연결한다. MIG-0009와 MIG-0020을 포함한 이전 봉인 원문과
 archive-time replacement는 유지하고, 현재 목적지만 이 후속 전이로 합성한다.
 
-현재 문서는 봉인 원장을 직접 링크하지 않고 이 index를 경유한다. 그러므로 현재
-문서가 인용하는 원장은 여기에서 도달할 수 있어야 한다.
+현재 문서는 봉인 원장을 현재 owner처럼 라우팅하지 않고 이 index를 경유한다. 이 index는
+아래 원장을 직접 연결하며, 현재 문서가 계보로 인용하는 나머지 원장은 `migrations/`에서
+ artifact ID로 찾는다.
 [MIG-0004](./migrations/0004-document-authority-convergence.md)는 document authority
 수렴 시점의 경로 전이와 Git 복구 정보를,
 [MIG-0009](./migrations/0009-governance-memory-retirement.md)는 거버넌스 memory
@@ -124,13 +126,13 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 - Payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다.
 - Historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
-- Current 문서는 `docs/98.archive/README.md`만 참조한다.
+- Current 문서는 archive를 현재 owner처럼 라우팅할 때 `docs/98.archive/README.md`만 참조한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
 - 이 index가 record inventory를 소유한다. Terminal ADR/문서의 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
-- [Archive Record Decision](../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
+- [Archive Retention Decision](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Template Routing Contract](../99.templates/README.md)

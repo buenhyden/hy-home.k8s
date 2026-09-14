@@ -1,10 +1,10 @@
 ---
 title: "Reference: Source Coverage"
-version: "1.0.0"
+version: "1.0.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "references"
 artifact_id: "RES-0001-m0012"
 ---
@@ -214,7 +214,7 @@ provider, credential, Secret value, hosted, remote, or live state changed.
 | Claim ID | Owner | Claim / status | Supporting evidence | Boundary and uncertainty |
 | ---------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | CLM-WERPC-004-01 | Kubernetes / GitOps | `Verified`: the root Application and apps ApplicationSet declare `main`, automated `prune`, and `selfHeal`; AppProjects enumerate bounded sources, destinations, and resource types. | `gitops/clusters/local/root-application.yaml`, `applicationset-apps.yaml`, `appproject-*.yaml`; observed 2026-08-08. | Desired-state text only; authorization, rendering, source fetch, sync, health, pruning, and live RBAC remain `DEFER`. |
-| CLM-WERPC-004-02 | Network policy | `Verified`: six egress-focused NetworkPolicy manifests and a separately live `verify-network-policies.sh` check exist. | `gitops/platform/network-policies/`; `infrastructure/tests/verify-network-policies.sh`; observed 2026-08-08. | CNI support, effective isolation/default-deny posture, and allowed/denied traffic outcomes are `DEFER`; SRC-WERPC-023 provides the upstream boundary. |
+| CLM-WERPC-004-02 | Network policy | `Verified`: six egress-focused NetworkPolicy manifests and a separately live `verify-network-policies.sh` check exist (now `infrastructure/verify/verify-network-policies.sh`). | `gitops/platform/network-policies/`; `infrastructure/tests/verify-network-policies.sh`; observed 2026-08-08. | CNI support, effective isolation/default-deny posture, and allowed/denied traffic outcomes are `DEFER`; SRC-WERPC-023 provides the upstream boundary. |
 | CLM-WERPC-004-03 | Secrets / Vault / ESO | `Verified`: the tracked Store declares Vault Kubernetes auth with the `external-secrets` ServiceAccount and `vault` audience; matching TokenReview binding and scoped Vault policy are tracked. | `gitops/platform/eso/vault-secret-store.yaml`, `vault-token-reviewer-binding.yaml`, `infrastructure/vault/policies/eso-read.hcl`; observed 2026-08-08. | No secret value, Vault state, encryption, TLS health, auth success, ESO condition, rotation, or consumer reload was inspected; all are `DEFER`. |
 | CLM-WERPC-004-04 | Static policy | `Verified`: checked Conftest policy denies plaintext Secrets, `CreateNamespace=true`, AppProject wildcards, and `:latest` image tags. | `policy/conftest/kubernetes.rego`; observed 2026-08-08. | Invocation may be local/CI dependent and does not prove API admission or a live rejected write. |
 | CLM-WERPC-004-05 | Admission / pod security | `Verified`: no tracked PSA labels, native admission-policy resources, Gatekeeper install, ConstraintTemplate, or Constraint were found in reviewed paths. | Reviewed `gitops/`, `policy/`, and platform contracts; observed 2026-08-08. | Bounded repository absence only; uninspected API-server configuration and runtime enforcement remain `DEFER`. |

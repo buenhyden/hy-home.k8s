@@ -1,10 +1,10 @@
 ---
 title: "Example IaC and Validator QA Implementation Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0050-PLAN-0001"
 ---
@@ -180,7 +180,7 @@ or live result.
 - `docs/90.references/data/tech-stack-version-inventory.md`
 - `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
-- `scripts/validate-repo-quality-gates.sh`
+- `scripts/qa.py`
 - `.github/workflows/ci.yml`
 - `scripts/validate-ci-python-contract.py`
 - `tests/test_validate_ci_python_contract.py`
@@ -412,13 +412,13 @@ stdout/stderr is not durable evidence.
   rtk python3 scripts/validate-ci-python-contract.py --root .
   rtk python3 scripts/validate-github-actions-security.py --root .
   rtk python3 scripts/validate-example-iac.py --root . --tool-cache /tmp/hy-home-iac-tools --require-tools
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   ```
 
 - [ ] Commit CI/routing/inventory/cleanup as one rollback unit.
 
   ```bash
-  rtk git add .github/workflows/ci.yml .gitignore scripts/validation/registry.json scripts/README.md scripts/validate-ci-python-contract.py scripts/validate-repo-quality-gates.sh tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py
+  rtk git add .github/workflows/ci.yml .gitignore scripts/validation/registry.json scripts/README.md scripts/validate-ci-python-contract.py scripts/qa.py tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py
   rtk git add -u examples/.gitkeep
   rtk git commit -m "ci: route example iac validation"
   ```
@@ -439,7 +439,7 @@ stdout/stderr is not durable evidence.
   rtk bash scripts/validate-k8s-manifests.sh .
   rtk bash scripts/validate-policy-gates.sh .
   rtk bash scripts/check-secret-handling.sh .
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry

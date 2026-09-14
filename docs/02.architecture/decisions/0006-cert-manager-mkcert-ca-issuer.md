@@ -1,10 +1,10 @@
 ---
 title: "cert-manager with mkcert CA as ClusterIssuer"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-05-18"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0006"
 ---
@@ -66,6 +66,13 @@ mkcert rootCA는 이미 로컬 신뢰 저장소에 등록되어 있으므로, ce
 - Bad: 브라우저 신뢰 불가, 로컬 신뢰 저장소 재등록 필요
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** The Decision's "`Certificate` CR"
+wording no longer describes the implementation: no `kind: Certificate` manifest
+exists under `gitops/` or `infrastructure/`. Headlamp, Kiali, Argo Rollouts and
+adminer obtain TLS through the cert-manager ingress-shim annotation
+`cert-manager.io/cluster-issuer: mkcert-ca-issuer` on each Ingress, which keeps
+the mkcert `ClusterIssuer` boundary this decision chose.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

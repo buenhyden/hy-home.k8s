@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "requirements"
 ---
 # 01.requirements
@@ -74,7 +74,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 이전 본문은 Git history가 보존하며, 대규모 권위 이동이나 삭제된 안정 경로에 복구 안내가 필요할 때만 Stage 98 Migration 또는 최소 Tombstone을 남긴다.
+7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 경로 이동은 Stage 98 Migration이 기록하고, 종단 문서는 ADR-0032에 따라 완료 package는 `completed/`, 후속 문서가 대체한 문서는 `superseded/`, 후속 없이 끝난 문서는 `tombstones/` record로 보존한다. 원본 바이트는 Git history가 복구한다.
 
 ### Relative Link Rules
 
@@ -114,9 +114,9 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 | 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-06-04 |
-| [`./0002-argo-notifications-slack.md`](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-06-04 |
-| [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | `active` | AD-0006 및 ADR-0030..0032; 이전 member-ID의 명시적 승계. Spec 0054 WP-013은 미완료다. | 2026-09-05 |
+| [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-09-05 |
+| [`./0002-argo-notifications-slack.md`](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-09-05 |
+| [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | `active` | AD-0006 및 ADR-0030..0032; 이전 member-ID의 명시적 승계. Spec 0054 WP-013은 미완료다. | 2026-09-14 |
 | [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | `active` | AD-0007 및 REQ-0003의 공통 경계; Spec 0047 재개 후 구현 미완료, 0048..0051은 순차 선행 gate를 기다린다. | 2026-09-05 |
 
 ### 예시

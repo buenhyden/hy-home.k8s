@@ -1,10 +1,10 @@
 ---
 title: "Workspace Harness Gap Analysis Technical Specification"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0006"
 ---
@@ -52,10 +52,10 @@ pass.
 
 - **Config Contract**: root gateway files remain thin; recurring workflow belongs
   to `.agents/workflows/work-lifecycle.md`, while role membership
-  and task-to-skill routing belong to `.agents/registry.json`.
+  and task-to-skill routing belong to `.agents/roles/registry.json`.
 - **Data / Interface Contract**: no new runtime API is introduced. New
   execution evidence lives in `docs/03.specs/`, `docs/03.specs/`,
-  `docs/03.specs/`, and `.agents/memory/progress.md`.
+  and `docs/03.specs/`; the former `.agents/memory/progress.md` ledger is retired.
 - **Governance Contract**: all findings are classified as low, medium, or high
   risk. High-risk runtime, secret, ArgoCD, and CI/CD policy items are either
   deferred with explicit pre-checks or handled through a separate approved plan
@@ -126,8 +126,8 @@ Not applicable. This work does not expose an API.
 ### Memory & Context Strategy
 
 - **Short-term Context**: previous subagent results and baseline command output.
-- **Long-term Memory**: append a concise progress entry to
-  `.agents/memory/progress.md`.
+- **Long-term Memory**: record progress in the owning Task; the former
+  `.agents/memory/progress.md` ledger is retired.
 - **Retrieval Boundary**: memory is supporting context; current repository files
   remain authoritative.
 
@@ -173,15 +173,14 @@ Not applicable. This work does not expose an API.
 ## Verification Commands
 
 ```bash
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
 bash scripts/validate-infrastructure-contracts.sh
-find infrastructure scripts .agents/hooks -type f -name '*.sh' -exec bash -n {} +
+find infrastructure scripts -type f -name '*.sh' -exec bash -n {} \;
 python3 -m json.tool .claude/settings.json
 python3 -m json.tool .codex/hooks.json
-python3 -m json.tool .agents/hooks.json
 git diff --check
 ```
 

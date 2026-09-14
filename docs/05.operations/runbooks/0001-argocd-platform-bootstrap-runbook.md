@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -34,7 +34,8 @@ artifact_id: "RUN-0001"
 ### Checklist
 
 - [ ] WSL2/WSL-native Docker 정상 상태
-- [ ] CLI 도구(k3d/kubectl/helm/argocd) 설치
+- [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
+- [ ] `fs.inotify.max_user_instances` 512 이상 (bootstrap이 미달 시 중단)
 - [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`vault`, `vault-agent`, `mng-valkey`)
 - [ ] Valkey `172.18.0.9:6379` 접근 가능
 - [ ] PostgreSQL HAProxy `172.18.0.15:15432/15433` 접근 가능
@@ -184,7 +185,7 @@ argocd app list
 ## Traceability
 
 - **Incident and Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
-- [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

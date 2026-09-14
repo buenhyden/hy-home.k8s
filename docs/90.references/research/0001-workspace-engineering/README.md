@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering Research Pack"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-research-pack"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 layer: "references"
 ---
 # Workspace Engineering Research Pack
@@ -100,6 +100,15 @@ not a policy, runtime, provider, or deployment control surface.
 Each request has one and only one primary research owner. Workspace evidence is
 current local evidence; it does not establish external product or live-runtime
 claims.
+
+Currency note (2026-09-14): several evidence paths in the matrix below name
+owners that have since moved. Agent governance now lives in `.agents/governance/`
+and `.agents/roles/registry.json` (not `docs/00.agent-governance/` or
+`.agents/agents/`); repository quality runs through `scripts/qa.py` and
+`scripts/validation/registry.json` (not `scripts/validate-repo-quality-gates.sh`);
+GitHub surface ownership is recorded in `.github/repository-surface.md`; and Plans
+and Tasks live in each `docs/03.specs/<package>/` rather than `docs/04.execution/`.
+The rows keep their observation-time paths until the pack's next refresh.
 
 | Request ID    | Requested topic         | Primary owner                                                                                                         | Workspace evidence                                                                                  | External source class                                                                                                                                                                                                                                   | Status                                                                                                                                                                                                                                           |
 | ------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

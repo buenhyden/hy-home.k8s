@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---
@@ -189,8 +189,8 @@ Kiali의 Grafana 연동 URL은 ArgoCD App의 Helm values 또는 ConfigMap에서 
 ### 4-1. 현재 설정된 URL 확인
 
 ```bash
-# platform-kiali-app의 Grafana URL 확인
-kubectl get app platform-kiali-app -n argocd -o jsonpath='{.spec.source.helm.values}'
+# platform-kiali Application의 Grafana URL 확인
+kubectl get app platform-kiali -n argocd -o jsonpath='{.spec.source.helm.values}'
 ```
 
 또는 직접 파일에서 확인:
@@ -201,11 +201,15 @@ grep -i grafana gitops/apps/root/platform-kiali-app.yaml
 
 ### 4-2. URL이 현재 할당 IP와 다른 경우
 
-`gitops/apps/root/platform-kiali-app.yaml`에서 Grafana URL을 현재 IP로 수정한다.
+`gitops/apps/root/platform-kiali-app.yaml`에서 브라우저용 Grafana 링크(`url`)만 현재 IP로 수정한다.
+Kiali의 cluster 내부 연결은 service DNS(`in_cluster_url`)를 사용하므로 IP 변경은
+`platform` 네임스페이스의 external service endpoint가 소유한다.
 
 ```yaml
-# 예시: 현재 GitOps 계약
-grafana_url: http://172.18.0.14:3000
+# 예시: 현재 GitOps 계약 (cr.spec.external_services)
+grafana:
+  in_cluster_url: "http://grafana-external.platform.svc.cluster.local:3000"
+  url: "http://172.18.0.14:3000"
 ```
 
 수정 후 커밋하고 ArgoCD Sync를 실행한다:
@@ -214,7 +218,7 @@ grafana_url: http://172.18.0.14:3000
 git add gitops/apps/root/platform-kiali-app.yaml
 git commit -m "chore: update Kiali Grafana URL to current IP"
 # operator-triggered reconciliation only
-argocd app sync platform-kiali-app
+argocd app sync platform-kiali
 ```
 
 ### 4-3. Kiali ConfigMap 직접 확인 (선택)

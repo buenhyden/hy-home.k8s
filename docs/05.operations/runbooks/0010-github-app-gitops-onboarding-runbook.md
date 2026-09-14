@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -51,8 +51,9 @@ kubectl -n argo-rollouts get pods | grep argo-rollouts
 # 출력: argo-rollouts-<hash>   1/1   Running
 
 # Prometheus 접근 확인 (AnalysisTemplate 전제)
-kubectl exec -n argo-rollouts deploy/argo-rollouts -- \
-  wget -qO- http://prometheus-external.platform.svc.cluster.local:9090/-/healthy
+# argo-rollouts 이미지는 distroless라 wget/curl이 없으므로 임시 curl pod를 사용한다.
+kubectl run -it --rm prom-check --image=curlimages/curl --restart=Never -- \
+  curl -s http://prometheus-external.platform.svc.cluster.local:9090/-/healthy
 # 출력: Prometheus is Healthy.
 ```
 
@@ -126,8 +127,10 @@ git push origin feat/${APP}-gitops
 # apps-generator가 새 Application을 생성하는지 확인 (최대 3분)
 watch argocd app list | grep ${APP}
 
+# apps-generator는 ApplicationSet이므로 app sync 대상이 아니다. 생성된 Application을 동기화한다.
+kubectl -n argocd describe applicationset apps-generator
 # operator-triggered reconciliation only
-argocd app sync argocd/apps-generator
+argocd app sync ${APP}
 ```
 
 ---

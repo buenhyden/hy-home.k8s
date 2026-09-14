@@ -1,10 +1,10 @@
 ---
 title: "Example IaC and Validator QA Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0050"
 ---
@@ -239,7 +239,7 @@ rtk bicep build examples/azure/infrastructure/main.bicep --stdout
 rtk bash scripts/validate-k8s-manifests.sh .
 rtk bash scripts/validate-policy-gates.sh .
 rtk bash scripts/check-secret-handling.sh .
-rtk bash scripts/validate-repo-quality-gates.sh .
+rtk python3 scripts/qa.py full
 rtk pre-commit run --all-files
 rtk git diff --check
 ```

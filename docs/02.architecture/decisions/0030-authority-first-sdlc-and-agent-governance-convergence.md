@@ -1,10 +1,10 @@
 ---
 title: "Authority-First SDLC and Agent Governance Convergence"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0030"
 supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
@@ -312,6 +312,17 @@ Rejected because behavior, implementation strategy, and execution evidence
 have different lifecycle and review responsibilities even when co-located.
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** Later accepted decisions amend
+parts of this topology without superseding the whole record. ADR-0031 amends the
+validation layout clauses; ADR-0032 replaces the deletion disposition for
+terminal documents with retention; ADR-0033 governs the router envelope; and
+ADR-0034, ADR-0035 and ADR-0036 successively moved agent governance, so the
+current owners are `.agents/governance/` and `.agents/roles/registry.json`, not
+`docs/00.agent-governance/`, `.agents/registry.json` or `.agents/agents/`. The
+clause that would regroup `scripts/` into `docs/`, `setup/`, `qa/`,
+`validation/{documents,agents,archive,repository}` and `lib/` was not executed:
+`scripts/` stays flat with `scripts/validation/`.
 
 Accepted [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
 amends exactly two validation-layout clauses in this decision: independent
