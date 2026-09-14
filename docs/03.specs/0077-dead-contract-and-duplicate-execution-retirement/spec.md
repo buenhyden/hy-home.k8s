@@ -2,9 +2,9 @@
 title: "Dead Contract and Duplicate Execution Retirement Technical Specification"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-09-11"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0077"
 ---
@@ -40,8 +40,9 @@ documentation link boundary keeps the behavior `SPEC-0072` criterion
 `VAL-AGQ-020` states: a file outside `docs/` reaches the numbered tree only
 through the documentation hub, and a stage index is not a second entry point.
 This Spec records that rationale and relaxes nothing. No archive payload,
-sealed record or issued identifier is edited. No push, PR, merge, branch
-cleanup, live cluster, provider runtime or network action is authorized.
+sealed record or issued identifier is edited. The request owner approved
+push, merge and branch cleanup for the finished sequence; no live cluster,
+provider runtime or network action beyond that is authorized.
 
 `SPEC-0072` remains the owner of its own dated repair; its authorization
 excludes file deletion and native projection change, which is why that package

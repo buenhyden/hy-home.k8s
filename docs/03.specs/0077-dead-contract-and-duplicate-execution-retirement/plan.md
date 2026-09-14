@@ -2,9 +2,9 @@
 title: "Dead Contract and Duplicate Execution Retirement Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-09-11"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0077-PLAN-0001"
 ---
@@ -41,8 +41,9 @@ routing and document-boundary gaps the stocktake named.
 No gate changes the rule it enforces. No document route, profile, template,
 artifact identifier or lifecycle edge changes. The documentation link boundary
 diagnostic and its regressions are unchanged; only its rule owner gains
-rationale. No archive payload or sealed record is edited. No push, PR, merge,
-branch cleanup, live cluster, provider runtime or network action is performed.
+rationale. No archive payload or sealed record is edited. Push, merge and
+branch cleanup follow the request owner's approval; no live cluster, provider
+runtime or network action is performed.
 
 ## Work Breakdown
 
