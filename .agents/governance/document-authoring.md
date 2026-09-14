@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-14"
 ---
 
 # Document Authoring Policy
@@ -52,8 +52,12 @@ express ownership, not a one-way waterfall.
    traceability, and calculate links from the final target path. A file outside
    `docs/` never links directly into a numbered stage tree; it names the stage
    document by path, artifact ID, or role in plain text and reaches the tree
-   through the documentation hub. That plain-text path names a document that
-   exists, or the collection a profile owns, and stops there. A route spelled
+   through the documentation hub. A stage index is inside that tree, not a
+   second way in: it is the stage's own navigation, reachable from the hub, and
+   a link to it from outside would give each stage an entry the hub does not
+   route, so the hub would stop being the one place the tree is entered from.
+   That plain-text path names a document that exists, or the collection a
+   profile owns, and stops there. A route spelled
    out as a grammar is a second copy of a registry `path_pattern` that no
    document answers to and no gate reads, so it is free to be wrong for as long
    as nobody follows it. Links between documents inside `docs/` keep
