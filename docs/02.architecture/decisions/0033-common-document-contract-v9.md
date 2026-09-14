@@ -1,10 +1,10 @@
 ---
 title: "Common Document Contract v9 and Governed Router Envelopes"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0033"
 ---
@@ -176,6 +176,12 @@ __Rewrite frozen Archive payloads to v9.__ Rejected because it would destroy
 the byte-level historical evidence the Archive contract exists to preserve.
 
 ## Traceability
+
+__Current-state clarification (2026-09-14).__ Where this record says Stage 00
+owns meaning, approval, SDLC, lifecycle obligations and authoring procedure,
+that authority now sits in `.agents/governance/`; the agent role registry named
+as `.agents/registry.json` is `.agents/roles/registry.json` (ADR-0036). The
+Stage 99 Registry version 9 contract this decision adopted is unchanged.
 
 ### Lifecycle Traceability
 

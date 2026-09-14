@@ -1,12 +1,13 @@
 ---
 title: "Pod Security Admission Per-namespace Adoption"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-08-18"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0028"
+supersedes: "ADR-0027"
 ---
 
 # ADR-0028: Pod Security Admission Per-namespace Adoption
@@ -176,6 +177,14 @@ fact that a future version would tighten. Splitting them is what makes the warni
 channel useful.
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** After the argocd amendment the
+`audit`/`warn`-only Helm namespaces are five, not four: `cert-manager`,
+`external-secrets`, `headlamp`, `argo-rollouts` and `argocd`. The pod-level
+`seccompProfile` reversal trigger named below has already been met for the
+injected workloads, so the remaining barrier to Restricted there is live CNI
+verification. This record now carries the reciprocal `supersedes` link to
+ADR-0027.
 
 Reversal condition: reopen this decision when the Baseline warning channel on
 `apps` and `ingress-nginx` is observed clean, which unblocks `enforce: baseline`

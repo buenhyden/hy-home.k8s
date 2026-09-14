@@ -89,6 +89,10 @@
   ],
   "skills": [
     {
+      "id": "archive-cutover",
+      "path": ".agents/skills/archive-cutover/SKILL.md"
+    },
+    {
       "id": "deployment-strategies",
       "path": ".agents/skills/deployment-strategies/SKILL.md"
     },
@@ -224,6 +228,7 @@
         "codex"
       ],
       "skill_refs": [
+        "archive-cutover",
         "docs-stage-conformance",
         "docs-stage-routing",
         "requirements-to-design"

@@ -1,10 +1,10 @@
 ---
 title: "Run the approved 2026-09-05 follow-on external observation cycle"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0062-TSK-0011"
 ---
@@ -23,8 +23,8 @@ superseded procedure.
 This record is created in the lifecycle's zero-indegree state because the
 document contract owns creation states and admits no direct creation in a
 terminal state. The work described below is complete and its evidence is
-recorded; the status transition to `done` is the next lifecycle step and is
-made in the following logical change, not asserted here.
+recorded. On 2026-09-14 the record moved `queued` to `in-progress`, the first
+declared edge toward `done`; the move to `done` is the following reviewed change.
 
 ## Inputs
 
@@ -71,6 +71,10 @@ output byte-identical to the pre-change baseline.
 | `python3 scripts/validation/repository/quality.py --root .` | FAIL — pre-existing | Stale provider-local path references inside an unrelated in-flight Stage 03 package. Byte-identical to the pre-change baseline. |
 | `git diff --check` | PASS | No whitespace or conflict-marker defect in the change. |
 | Provider-runtime, hosted-CI, and live-cluster lanes | DEFER | Not authorised and not executed in this cycle. No result of any kind is claimed for these classes. |
+
+Currency note (2026-09-14): the three failures above were pre-existing and are
+resolved on the current tree; SPEC-0077's Task records `python3 scripts/qa.py full`
+passing 22 of 22 gates on `7d75e680` and later commits.
 
 Two defects raised by this lane during the cycle were introduced by the cycle
 and were fixed before this record was finalised: the Stage 90 index-parity

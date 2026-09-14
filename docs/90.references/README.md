@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 layer: "references"
 ---
 # 90.references
@@ -88,10 +88,10 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 7. 다음 최소 검증을 실행한다.
 
    ```bash
-   rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict
-   rtk git diff --check
+   python3 scripts/validate-document-contract-registry.py --root . --mode strict
+   python3 scripts/validate-markdown-profiles.py --root . --mode strict
+   python3 scripts/validate-links-and-owners.py --root . --mode strict
+   git diff --check
    ```
 
 ## Related Documents

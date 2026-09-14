@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -274,6 +274,12 @@ sealed recovery objects and external dependency pins at the boundary where
 byte identity is meaningful.
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** The agent topology owner named
+below as `.agents/registry.json` is now `.agents/roles/registry.json`
+(ADR-0036). Spec 0066 has completed and is retained at
+`docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/`, so its
+delegated validation-tooling ownership is historical.
 
 This ADR supersedes the current lineage and routing
 control-plane decisions in

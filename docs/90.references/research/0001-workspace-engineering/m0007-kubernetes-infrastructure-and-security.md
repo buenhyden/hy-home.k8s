@@ -1,10 +1,10 @@
 ---
 title: "Reference: Kubernetes, Infrastructure, and Security"
-version: "1.0.0"
+version: "1.0.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "references"
 artifact_id: "RES-0001-m0007"
 ---
@@ -259,6 +259,13 @@ the repository's unpinned bootstrap leaves compatibility `DEFER`.
 [SRC-WERPC-064](m0012-source-coverage.md#source-register) are the
 direct product sources.
 
+Currency note (2026-09-14): the bootstrap observation above no longer holds.
+`infrastructure/bootstrap-local.sh` now installs Argo CD with an exact chart
+version (`10.4.0`) and MetalLB `0.16.1`, and the live network-policy check this
+report cites under `infrastructure/tests/` now lives at
+`infrastructure/verify/verify-network-policies.sh`. The dated finding is kept as
+observed; a targeted refresh of this report owns any new conclusion.
+
 Tracked Adminer, kube-state-metrics, and Alloy image references use tags with
 no digest. A Kubernetes `@sha256:` digest fixes image bytes; it does not prove
 who signed or built them. A signature binds an asserted signer identity to an
@@ -509,6 +516,11 @@ dashboard, rule, or alert consumes the metrics that would stop being emitted; th
 external Docker-hosted Prometheus named at
 `gitops/platform/monitoring/kube-state-metrics.yaml:3` remains outside tracked
 paths and its query set stays `DEFER`.
+
+Currency note (2026-09-14): `gitops/platform/monitoring/kube-state-metrics.yaml`
+now pins `v2.19.1`, so the `v2.14.0` pin described in this and the preceding
+dated observations is historical. The compatibility gap stated below closed
+with that change; the Secret `list`/`watch` grant is a separate finding.
 
 A further currency observation, recorded without action (`CLM-WERPC-012-04`): the
 pinned `v2.14.0` ships client-go `v1.31` while

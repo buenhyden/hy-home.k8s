@@ -1843,34 +1843,6 @@ def _markdown_title_end(value: str, start: int, end: int) -> int | None:
     return None
 
 
-def _valid_markdown_title(value: str, start: int, end: int) -> bool:
-    """Accept an empty remainder or exactly one quoted/parenthesized title."""
-
-    cursor, _ = _markdown_link_separator_end(value, start, end)
-    if cursor >= end:
-        return True
-    title_end = _markdown_title_end(value, cursor, end)
-    if title_end is None:
-        return False
-    cursor, _ = _markdown_link_separator_end(value, title_end, end)
-    return cursor == end
-
-
-def _link_destination(value: str, start: int, end: int) -> str | None:
-    """Parse a destination and validate its complete optional-title remainder."""
-
-    parsed = _markdown_destination(value, start, end)
-    if parsed is None:
-        return None
-    target, consumed = parsed
-    if consumed == end:
-        return target
-    _, separated = _markdown_link_separator_end(value, consumed, end)
-    if not separated:
-        return None
-    return target if _valid_markdown_title(value, consumed, end) else None
-
-
 def _inline_link_destination(
     value: str, start: int, failed_starts: set[int] | None = None
 ) -> tuple[str, int] | None:
@@ -2224,10 +2196,6 @@ def _mask_source_spans(value: str, spans: Sequence[tuple[int, int]]) -> str:
     return result
 
 
-def _crosses_hard_inline_boundary(value: str) -> bool:
-    return re.search(r"\n[ \t]*\n", value) is not None
-
-
 def _scan_markdown_links(
     value: str, definitions: dict[str, str]
 ) -> tuple[MarkdownLink, ...]:
@@ -2533,11 +2501,6 @@ def _work109_expected_stable_path(
             f"docs/03.specs/{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
         )
     return None
-
-
-def _work109_git_blob_oid(payload: bytes) -> str:
-    header = f"blob {len(payload)}\0".encode("ascii")
-    return hashlib.sha1(header + payload).hexdigest()  # noqa: S324
 
 
 @lru_cache(maxsize=8)
@@ -2929,15 +2892,6 @@ def _work054_wp003_owner_merges(
             raise ConfigurationError("WORK-054 WP-003 migration target differs")
         result[legacy] = terminal
     return result
-
-
-def _git_sha1_blob_bytes(content: bytes) -> str:
-    header = f"blob {len(content)}\0".encode("ascii")
-    return hashlib.sha1(header + content).hexdigest()  # noqa: S324
-
-
-def _git_sha1_blob(text: str) -> str:
-    return _git_sha1_blob_bytes(text.encode("utf-8"))
 
 
 @dataclass(frozen=True)
@@ -4605,25 +4559,6 @@ def _rendered_markdown(text: str) -> str:
     return _join_rendered_container_lines(_rendered_container_lines(text))
 
 
-@dataclass
-class CurrentExecutionIndex:
-    graph: dict[PurePosixPath, frozenset[PurePosixPath]]
-    adjacency: dict[PurePosixPath, frozenset[PurePosixPath]]
-    incoming: dict[PurePosixPath, frozenset[PurePosixPath]]
-    component_by_node: dict[PurePosixPath, tuple[PurePosixPath, ...]]
-    component_cache: dict[
-        tuple[PurePosixPath, tuple[PurePosixPath, ...]],
-        tuple[PurePosixPath, ...],
-    ]
-    steps: int
-
-
-@dataclass(frozen=True)
-class ExecutionComponentScan:
-    paths: tuple[PurePosixPath, ...]
-    steps: int
-
-
 # A declared Spec may have been retained under ADR-0032, so the decision can
 # name it either at its Stage 03 path or at its retention path. The identity
 # the roster compares is the four-digit Spec number, which the move preserves.
@@ -5354,30 +5289,6 @@ def _raw_diagnostics(
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     return sorted(diagnostics, key=diagnostic_sort_key)
-
-
-def validate_cross_document_contracts(
-    root: Path,
-    mode: str,
-    body_contracts: str = "registry",
-    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
-    include_paths: tuple[PurePosixPath, ...] = (),
-) -> list[Diagnostic]:
-    """Return deterministic raw cross-document diagnostics."""
-
-    if mode not in {"compatibility", "strict"}:
-        raise ConfigurationError("mode must be compatibility or strict")
-    context = _build_context(root, include_paths=include_paths)
-    _load_debt(context.root, mode=mode)
-    registry = load_registry(context.root)
-    profiles_by_id = {profile.profile_id: profile for profile in registry.profiles}
-    return _raw_diagnostics(
-        context,
-        registry,
-        profiles_by_id,
-        body_contracts,
-        body_contract_path_prefixes,
-    )
 
 
 def _inventory_documents(context: Context) -> list[dict[str, Any]]:

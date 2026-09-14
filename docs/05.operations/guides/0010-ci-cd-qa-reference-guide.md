@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.1.1"
+version: "1.1.2"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -50,6 +50,7 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 | 작업 트리 변경 | `python3 scripts/qa.py quick` 및 focused test | 해당 변경의 빠른 정적 확인 |
 | staged 변경 | `python3 scripts/qa.py staged` | 정확한 Git index snapshot의 확인 |
 | 전체 저장소 | `python3 scripts/qa.py full` | 현재 checkout의 정적 계약 확인 |
+| hosted CI | `python3 scripts/qa.py ci --base-ref "$BASE_SHA"` | `full`과 같은 gate 집합을 CI 기준 commit에 대해 실행; 로컬 실행은 hosted 결과가 아니다 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지

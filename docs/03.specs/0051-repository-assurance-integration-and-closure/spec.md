@@ -1,10 +1,10 @@
 ---
 title: "Repository Assurance Integration and Closure Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0051"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0051"
 # Repository Assurance Integration and Closure Technical Specification (Spec)
 
 ## Overview
+
+**Disposition note (2026-09-14).** This draft conflicts with the current direction: it requires a local-only fast-forward from a worktree that no longer exists while CI enforces pull requests into `main`, it depends on a progress ledger MIG-0007 retired, and merge authority belongs to the request owner. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so the draft is left unchanged. [SPEC-0078](../0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
 
 ### Current authority transfer
 
@@ -229,7 +231,7 @@ rtk bash scripts/validate-policy-gates.sh .
 rtk bash scripts/check-secret-handling.sh .
 rtk python3 scripts/validate-vault-eso-contracts.py --root .
 rtk python3 -m unittest discover -s tests -p 'test_*.py'
-rtk bash scripts/validate-repo-quality-gates.sh .
+rtk python3 scripts/qa.py full
 rtk pre-commit run --all-files
 rtk git diff --check
 ```
@@ -275,8 +277,8 @@ read-only remote metadata commands in addition to this terminal sequence.
   [Spec 050](../0050-example-iac-and-validator-qa/spec.md)
 - **Implementation Plan**:
   [Repository Assurance Integration and Closure Implementation Plan](plan.md)
-- **Execution Task**:
-  [Task: Repository Assurance Integration and Closure](plan.md)
+- **Execution Tasks**:
+  [Repository Assurance Integration and Closure Plan work breakdown](plan.md#work-breakdown)
 
 ### Lifecycle Traceability
 

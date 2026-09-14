@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.1.1"
+version: "0.1.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "architecture"
 ---
 # 02.architecture
@@ -30,7 +30,7 @@ ADR-0032의 `superseded/<stage>/` record로, 후계자 없이 끝난 문서는 `
 
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
-| 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../scripts/validate-infrastructure-contracts.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
+| 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
 | 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 Requirement Package를 현재 구조와 참조 모델로 해석한다. |
 | 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |

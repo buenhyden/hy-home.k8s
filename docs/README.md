@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -26,8 +26,8 @@ README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는�
 - Stage 90: 워크스페이스 Audit, 외부 Research, Data와 기타 참고 자료. 다른
   stage의 규칙이나 실행 권한을 덮어쓰지 않는다.
 - Stage 98: SDLC·운영·reference에서 퇴역한 자료를 독립적으로 정리하는
-  historical archive. 활성 stage의 문서가 이 stage의 문서·파일을 인용하거나
-  cross-link하지 않는다.
+  historical archive. 활성 stage의 문서는 이 stage를 현재 owner처럼 라우팅하지
+  않으며, 계보·출처 인용만 아래 Archive 참조 규칙에 따라 허용한다.
 - Stage 99: docs에서 사용하는 문서 profile, 경로, ID, lifecycle, schema와
   복사 가능한 template.
 

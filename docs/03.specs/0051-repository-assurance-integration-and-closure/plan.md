@@ -1,10 +1,10 @@
 ---
 title: "Repository Assurance Integration and Closure Implementation Plan"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0051-PLAN-0001"
 ---
@@ -259,7 +259,7 @@ merge, stash, cleanup, remote, or live result.
 
   ```bash
   rtk python3 -m unittest discover -s tests -p 'test_*.py'
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk pre-commit run --all-files
   rtk git status --short
   rtk git diff --check
@@ -309,7 +309,7 @@ merge, stash, cleanup, remote, or live result.
   ```bash
   rtk git add docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records .agents/memory/progress.md
   rtk git commit -m "docs: prepare repository assurance local integration"
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   ```
 
 ### Task 5: RAIC-004 — finish the local branch
@@ -354,7 +354,7 @@ merge, stash, cleanup, remote, or live result.
 
   ```bash
   rtk git -C "$REPO_ROOT" status --short
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk pre-commit run --all-files
   rtk git diff --check
   ```
@@ -415,7 +415,7 @@ merge, stash, cleanup, remote, or live result.
   ```bash
   rtk git rev-parse HEAD
   rtk git status --short
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk pre-commit run --all-files
   rtk git diff --check
   ```
@@ -437,7 +437,7 @@ rtk python3 scripts/validate-document-contract-registry.py --root . --mode stric
 rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
 rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
 rtk python3 -m unittest discover -s tests -p 'test_*.py'
-rtk bash scripts/validate-repo-quality-gates.sh .
+rtk python3 scripts/qa.py full
 rtk pre-commit run --all-files
 rtk git diff --check
 ```

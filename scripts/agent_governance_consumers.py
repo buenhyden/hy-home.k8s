@@ -769,11 +769,6 @@ def _repository_candidates(reader: _RepositoryReader) -> tuple[str, ...]:
     return _parse_git_candidates(raw)
 
 
-def _candidate_payload(root: Path, relative: str, *, read: bool) -> bytes | None:
-    with _RepositoryReader(root) as reader:
-        return reader.candidate_payload(relative, read=read)
-
-
 def _require_candidate(
     reader: _RepositoryReader,
     candidates: set[str],
@@ -1026,13 +1021,6 @@ def _scan_consumers_with_reader(
         # Unknown token-bearing text remains an enforceable consumer.
         consumers.append(path)
     return scanned, evidence, consumers
-
-
-def _scan_consumers(
-    root: Path, candidates: tuple[str, ...] | None = None
-) -> tuple[int, int, list[str]]:
-    with _RepositoryReader(root) as reader:
-        return _scan_consumers_with_reader(reader, candidates)
 
 
 def validate_repository(root: Path) -> dict[str, int]:

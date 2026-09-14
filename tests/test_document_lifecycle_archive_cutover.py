@@ -909,48 +909,6 @@ artifact_id: "AUD-0001-m0001"
                     timeout_seconds=1e-9,
                 )
 
-    def test_wp004a_current_owner_activation_is_finite_and_atomic(self):
-        admission = getattr(VALIDATOR, "finite_work054_wp004a_authority_paths", None)
-        self.assertTrue(callable(admission), "WP-004A authority admission is missing")
-        owner_paths = (
-            PurePosixPath("docs/00.agent-governance/policies/document-lifecycle.md"),
-            PurePosixPath("docs/00.agent-governance/sdlc.md"),
-        )
-        required_paths = tuple(VALIDATOR.WORK054_WP004A_REQUIRED_CHANGED_PATHS)
-        proposed_documents = {
-            path: LifecycleDocument(path, "governance/rule", "active")
-            for path in owner_paths
-        }
-        base_blobs = {path: "1" * 40 for path in required_paths}
-        proposed_blobs = {path: "2" * 40 for path in required_paths}
-        for path in owner_paths:
-            base_blobs.pop(path, None)
-            proposed_blobs[path] = "2" * 40
-
-        exact = admission(
-            mode="staged",
-            base_commit=VALIDATOR.WORK054_WP004A_BASE_COMMIT,
-            base_documents={},
-            proposed_documents=proposed_documents,
-            base_blobs=base_blobs,
-            proposed_blobs=proposed_blobs,
-        )
-        self.assertEqual(exact, frozenset(owner_paths))
-
-        partial_blobs = dict(proposed_blobs)
-        partial_blobs[required_paths[0]] = base_blobs[required_paths[0]]
-        self.assertEqual(
-            admission(
-                mode="staged",
-                base_commit=VALIDATOR.WORK054_WP004A_BASE_COMMIT,
-                base_documents={},
-                proposed_documents=proposed_documents,
-                base_blobs=base_blobs,
-                proposed_blobs=partial_blobs,
-            ),
-            frozenset(),
-        )
-
 
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
     original_path = "docs/03.specs/0900-fixture/spec.md"

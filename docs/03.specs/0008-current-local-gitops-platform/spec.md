@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0008"
 ---
@@ -97,7 +97,7 @@ platform_contract:
 ## Verification Commands
 
 ```bash
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 bash scripts/validate-infrastructure-contracts.sh
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
@@ -105,7 +105,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 ## Success Criteria & Verification Plan
 
-- **VAL-SPC-001**: Repo quality gate passes and active documents have no Stage 98 dependency.
+- **VAL-SPC-001**: `python3 scripts/qa.py full` passes and active documents have no Stage 98 dependency.
 - **VAL-SPC-002**: Static contract verification passes against current GitOps manifests.
 - **VAL-SPC-003**: GitOps structure check passes.
 - **VAL-SPC-004**: Kubernetes manifest syntax validation passes.
@@ -116,7 +116,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-001 | `scripts/validate-repo-quality-gates.sh .` checks current active-document contracts without an Archive dependency. |
+| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-001 | `python3 scripts/qa.py full` checks current active-document contracts without an Archive dependency. |
 | N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-002 | `scripts/validate-infrastructure-contracts.sh` verifies the current GitOps manifest contracts. |
 | N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-003 | `scripts/validate-gitops-structure.sh` checks root Application, platform Application, and workload ApplicationSet ownership. |
 | N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-004 | `scripts/validate-k8s-manifests.sh .` validates tracked Kubernetes YAML syntax. |

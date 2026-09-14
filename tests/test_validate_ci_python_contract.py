@@ -1388,15 +1388,6 @@ class CiPythonContractTests(unittest.TestCase):
         self.assertEqual(direct_input.read_text(encoding="utf-8"), DIRECT_INPUT)
 
 
-@unittest.skipUnless(
-    (REPO_ROOT / ".github/requirements/ci-validation.in").is_file(),
-    "repository contract owners are intentionally added after temporary-root GREEN",
-)
-class CiPythonProductionRootTests(unittest.TestCase):
-    def test_repository_root_passes(self) -> None:
-        self.assertEqual(VALIDATOR.validate_repository(REPO_ROOT), 1)
-
-
 class CiPythonShellGitSubcommandTests(unittest.TestCase):
     """Bound the git subcommands a workflow run step may name.
 

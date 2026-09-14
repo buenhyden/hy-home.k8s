@@ -1,10 +1,10 @@
 ---
 title: "Kiali with External Observability Stack"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-05-18"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0009"
 ---
@@ -72,6 +72,15 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 - Bad: Istio 서비스메시 토폴로지 시각화 불가
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** The install-mode clauses of this
+decision no longer describe the implementation. Since commit `b54655ad`
+(2026-03-30) `gitops/apps/root/platform-kiali-app.yaml` installs the
+`kiali-operator` chart `2.10.0` with an operator-created Kiali CR
+(`cr.create: true`), and Kiali reaches Prometheus, Grafana and Tempo through
+`platform` service DNS names rather than the IP URLs listed above. The
+external-observability boundary itself is unchanged.
+[ADR-0037](0037-kiali-operator-installation.md) proposes the successor decision.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

@@ -1,10 +1,10 @@
 ---
 title: "Current Surface and Stash Reconciliation Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0047"
 ---
@@ -210,7 +210,7 @@ git diff --check
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py full
 pre-commit run --all-files
 ```
 
@@ -253,8 +253,8 @@ or `git stash drop` in this tranche.
   [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
-- **Task**:
-  [Current Surface and Stash Reconciliation Task](plan.md)
+- **Tasks**:
+  [Current Surface and Stash Reconciliation Plan work breakdown](plan.md#work-breakdown)
 - **Successor**:
   [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
 

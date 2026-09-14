@@ -1,10 +1,10 @@
 ---
 title: "Provider Native Enforcement Parity Technical Specification"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0073"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0073"
 # Provider Native Enforcement Parity Technical Specification (Spec)
 
 ## Overview
+
+**Closed (2026-09-14).** The Plan and every Task of this package are `done` and their commits are on `main`. What remains is recorded in the Task as operator-owned native-runtime or reviewer DEFERs, which this package does not implement; the Spec therefore moves `active` to `done`.
 
 The common authority under `.agents/` already declared one role registry, one
 permission-class vocabulary, and one capability-tier vocabulary for both

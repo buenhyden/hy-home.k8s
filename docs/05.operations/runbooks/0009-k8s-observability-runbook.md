@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -158,7 +158,7 @@ kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 | 오류 시그니처                                | 원인                             | 조치                                          |
 | -------------------------------------------- | -------------------------------- | --------------------------------------------- |
 | `mkdir data-alloy: read-only file system`    | `--storage.path` 미설정          | args에 `--storage.path=/var/lib/alloy` 추가   |
-| `unrecognized attribute name 'extra_labels'` | Alloy v1.13.1 미지원 속성        | `loki.process` + `stage.static_labels`로 대체 |
+| `unrecognized attribute name 'extra_labels'` | 당시 Alloy v1.13.1 미지원 속성   | `loki.process` + `stage.static_labels`로 대체 |
 | `failed to list pods: Forbidden`             | ClusterRole 권한 미할당          | ClusterRoleBinding 재적용                     |
 | `connection refused` to `loki-external`      | ExternalService/Endpoints 미설정 | `platform` 네임스페이스 loki-external 확인    |
 

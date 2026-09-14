@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0075"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0075"
 # Common Knowledge and Prompt Surfaces Technical Specification (Spec)
 
 ## Overview
+
+**Closed (2026-09-14).** The Plan and every Task of this package are `done` and their commits are on `main`. What remains is recorded in the Task as operator-owned native-runtime or reviewer DEFERs, which this package does not implement; the Spec therefore moves `active` to `done`.
 
 The common authority under `.agents/` owns policy, roles, callable skills and
 two lifecycle workflows. It deliberately owns no knowledge index and no prompt

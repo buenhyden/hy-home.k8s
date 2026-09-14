@@ -9,6 +9,7 @@ Read the following repository files before acting:
 - `.agents/roles/doc-writer.md`
 - `.agents/roles/registry.json`
 - `.agents/workflows/work-lifecycle.md`
+- `.agents/skills/archive-cutover/SKILL.md`
 - `.agents/skills/docs-stage-conformance/SKILL.md`
 - `.agents/skills/docs-stage-routing/SKILL.md`
 - `.agents/skills/requirements-to-design/SKILL.md`

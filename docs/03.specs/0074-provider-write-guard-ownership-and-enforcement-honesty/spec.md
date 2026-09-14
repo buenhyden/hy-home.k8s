@@ -1,10 +1,10 @@
 ---
 title: "Provider Write-Guard Ownership and Enforcement Honesty Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0074"
 ---
@@ -12,6 +12,8 @@ artifact_id: "SPEC-0074"
 # Provider Write-Guard Ownership and Enforcement Honesty Technical Specification (Spec)
 
 ## Overview
+
+**Closed (2026-09-14).** The Plan and every Task of this package are `done` and their commits are on `main`. What remains is recorded in the Task as operator-owned native-runtime or reviewer DEFERs, which this package does not implement; the Spec therefore moves `active` to `done`.
 
 SPEC-0073 declared one execution scope per role on both providers, bound each
 capability tier to one native model, and extended the pre-action guard beyond

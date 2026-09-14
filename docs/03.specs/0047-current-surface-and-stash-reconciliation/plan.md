@@ -1,10 +1,10 @@
 ---
 title: "Current Surface and Stash Reconciliation Implementation Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-14"
 layer: "specs"
 artifact_id: "SPEC-0047-PLAN-0001"
 ---
@@ -277,7 +277,7 @@ commit owns this bounded resumption; the later CSASR work remains unexecuted.
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk python3 scripts/validate-affected-surfaces.py --root . --self-test
   rtk python3 scripts/validate-affected-surfaces.py --root .
-  rtk bash scripts/validate-repo-quality-gates.sh .
+  rtk python3 scripts/qa.py full
   rtk pre-commit run --all-files
   rtk git status --short
   rtk git diff --check
@@ -311,7 +311,7 @@ rtk python3 scripts/validate-affected-surfaces.py --root . --self-test
 rtk python3 scripts/validate-affected-surfaces.py --root .
 rtk python3 scripts/validate-active-corpus-residue-closure.py --root . --self-test
 rtk python3 scripts/validate-active-corpus-residue-closure.py --root .
-rtk bash scripts/validate-repo-quality-gates.sh .
+rtk python3 scripts/qa.py full
 rtk pre-commit run --all-files
 rtk git diff --check
 ```

@@ -1,10 +1,10 @@
 ---
 title: "Terminal Document Retention and Archive Stage Taxonomy"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0032"
 ---
@@ -199,6 +199,12 @@ ArchiveEnvelope replaces the document's own identity metadata, so the retained
 artifact would no longer be the document that was retained.
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** The standing case described in the
+consumer-zero section has since resolved. The documents tracing to REQ-0005 and
+REQ-0006 moved their traceability to REQ-0003, and both requirement packages
+are sealed as superseded records under `docs/98.archive/superseded/01.requirements/`
+(commit `2b5e16de`).
 
 ### Lifecycle Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "Istio Default Profile with ingress-nginx Coexistence"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-05-18"
+updated: "2026-09-14"
 layer: "architecture"
 artifact_id: "ADR-0008"
 ---
@@ -71,6 +71,16 @@ Istio IngressGateway가 ingress-nginx와 포트 충돌 없이 공존해야 한�
 - Bad: GitOps 선언형 관리 불가
 
 ## Traceability
+
+**Current-state clarification (2026-09-14).** Two parts of the Decision no
+longer match the tree. `ingress-nginx` is injected, not excluded:
+`gitops/platform/namespaces/namespace-ingress-nginx.yaml` carries
+`istio-injection: enabled`, and ADR-0028 relies on that. The install set also
+includes the Istio CNI node agent (`gitops/apps/root/platform-istio-cni-app.yaml`,
+sync wave 1 beside `istio-base`, with `pilot.cni.enabled: true` on istiod). The
+IngressGateway stays disabled because no gateway is declared; the
+`gateways.istio-ingressgateway.enabled: false` value is not set explicitly in the
+Application values.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

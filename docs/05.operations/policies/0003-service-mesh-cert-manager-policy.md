@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -28,7 +28,7 @@ artifact_id: "POL-0003"
 
 ## Applies To
 
-- **Systems**: `gitops/platform/{cert-manager,headlamp,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
+- **Systems**: `gitops/platform/{cert-manager,headlamp,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istio-cni-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: WSL2 local cluster
 
@@ -61,11 +61,12 @@ artifact_id: "POL-0003"
   - IngressGateway 비활성화 유지 (`gateways.enabled: false`)
   - sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여
   - istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests)
-  - sync-wave 순서 강제: `istio-base(wave:1)` → `istiod(wave:2)`
+  - sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`)
 - **Allowed**:
   - Mesh 내 namespace에 `istio-injection=enabled` 레이블 추가
 - **Disallowed**:
-  - `argocd`, `cert-manager`, `headlamp`, `ingress-nginx`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여
+  - `argocd`, `cert-manager`, `headlamp`, `external-secrets`, `platform` namespace에 `istio-injection=enabled` 레이블 부여
+  - (`apps`와 `ingress-nginx`는 mesh 대상이며 `istio-injection=enabled`를 유지한다.)
   - IngressGateway 활성화
   - Ambient mesh 전환(로컬 플랫폼 스코프 외)
 
@@ -73,9 +74,9 @@ artifact_id: "POL-0003"
 
 - **Required**:
   - auth: `anonymous` (로컬 전용)
-  - Prometheus: `http://172.18.0.10:9090`
-  - Grafana: `http://172.18.0.14:3000`
-  - Tempo(Tracing): `http://172.18.0.12:3200`
+  - Prometheus: `http://prometheus-external.platform.svc.cluster.local:9090`
+  - Grafana: `in_cluster_url` `http://grafana-external.platform.svc.cluster.local:3000`, 브라우저 링크 `url` `http://172.18.0.14:3000`
+  - Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
   - egress NetworkPolicy: `172.18.0.10/32`, `172.18.0.12/32`, `172.18.0.14/32` cidr 허용
   - hostname: `kiali.127.0.0.1.nip.io`, TLS: cert-manager 발급 (`kiali-tls`)
 - **Disallowed**:

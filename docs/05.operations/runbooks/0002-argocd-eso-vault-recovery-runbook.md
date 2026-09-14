@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-14"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -163,7 +163,7 @@ CHECK_TRAEFIK_443=true ./infrastructure/verify/verify-ingress-tls.sh
 
 ```bash
 ./scripts/validate-infrastructure-contracts.sh
-bash -n infrastructure/bootstrap-local.sh infrastructure/verify/*.sh
+for f in infrastructure/bootstrap-local.sh infrastructure/verify/*.sh; do bash -n "$f"; done
 ```
 
 1. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
@@ -183,7 +183,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 - [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
 - [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; 외부 Traefik 443
       확인은 gateway 런타임이 준비된 경우에만 별도 수행
-- [ ] CI 정적 계약(`verify-contracts-static.sh`) 통과
+- [ ] CI 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 
 ## Observability and Evidence Sources
 
@@ -227,13 +227,13 @@ export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
 kubectl -n platform delete endpointslice vault-external-1
 ```
 
-- 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
+- 롤백 후 `./scripts/validate-infrastructure-contracts.sh`와 `run-all.sh`를 재실행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
 ## Traceability
 
 - **Operations Policy**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
-- [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 
