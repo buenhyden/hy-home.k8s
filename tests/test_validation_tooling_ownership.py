@@ -494,6 +494,94 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 )
         self.assertEqual(uncollected, [])
 
+    def test_no_test_reruns_a_registered_gate_over_the_repository(self) -> None:
+        """The unit-test gate must not execute another registered gate again.
+
+        `full` already runs every registered validator over the same snapshot,
+        so a test that runs one with its registered arguments over the
+        repository root repeats that verdict and its cost. Synthetic roots and
+        changed arguments stay allowed.
+        """
+
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        commands = {
+            Path(row["argv"][1]).name: tuple(row["argv"][2:])
+            for row in registry["validators"]
+            if row["argv"][0] == "python3"
+        }
+        reruns: list[str] = []
+        for module in sorted((ROOT / "tests").glob("test_*.py")):
+            tree = ast.parse(module.read_text(encoding="utf-8"))
+            roots: set[str] = set()
+            scripts: dict[str, str] = {}
+            for node in tree.body:
+                if not (
+                    isinstance(node, ast.Assign)
+                    and len(node.targets) == 1
+                    and isinstance(node.targets[0], ast.Name)
+                ):
+                    continue
+                name, source = node.targets[0].id, ast.unparse(node.value)
+                if source == "Path(__file__).resolve().parents[1]":
+                    roots.add(name)
+                    continue
+                named = [script for script in commands if script in source]
+                named += [
+                    scripts[sub.id]
+                    for sub in ast.walk(node.value)
+                    if isinstance(sub, ast.Name) and sub.id in scripts
+                ]
+                if named:
+                    scripts[name] = named[0]
+
+            def is_root(expr: ast.expr, cwd_is_root: bool) -> bool:
+                text = ast.unparse(expr)
+                return (
+                    text in roots
+                    or text.removeprefix("str(").removesuffix(")") in roots
+                    or (text == "'.'" and cwd_is_root)
+                )
+
+            def script_of(expr: ast.expr) -> str | None:
+                if isinstance(expr, ast.Constant) and isinstance(expr.value, str):
+                    return next((s for s in commands if expr.value.endswith(s)), None)
+                text = ast.unparse(expr).removeprefix("str(").removesuffix(")")
+                return scripts.get(text)
+
+            for call in ast.walk(tree):
+                if not isinstance(call, ast.Call):
+                    continue
+                location = f"{module.relative_to(ROOT)}:{call.lineno}"
+                cwd_is_root = any(
+                    keyword.arg == "cwd" and ast.unparse(keyword.value) in roots
+                    for keyword in call.keywords
+                )
+                argv = (
+                    call.args[0].elts
+                    if call.args and isinstance(call.args[0], ast.List)
+                    else []
+                )
+                script = script_of(argv[1]) if len(argv) >= 2 else None
+                if script is not None:
+                    tail = tuple(
+                        "."
+                        if is_root(element, cwd_is_root)
+                        else getattr(element, "value", ast.unparse(element))
+                        for element in argv[2:]
+                    )
+                    if tail == commands[script]:
+                        reruns.append(f"{location} runs {script}")
+                if (
+                    isinstance(call.func, ast.Attribute)
+                    and call.func.attr == "validate_repository"
+                    and ast.unparse(call.func.value) in scripts
+                    and len(call.args) == 1
+                    and is_root(call.args[0], False)
+                ):
+                    script = scripts[ast.unparse(call.func.value)]
+                    reruns.append(f"{location} validates with {script}")
+        self.assertEqual(reruns, [])
+
 
 if __name__ == "__main__":
     unittest.main()

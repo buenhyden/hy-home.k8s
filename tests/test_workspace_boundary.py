@@ -497,27 +497,6 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
 
 
 class WorkspaceBoundaryCliTests(unittest.TestCase):
-    def test_production_cli_passes(self) -> None:
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(VALIDATOR_PATH),
-                "--root",
-                str(REPOSITORY_ROOT),
-            ],
-            cwd=REPOSITORY_ROOT,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(
-            result.stdout,
-            "[PASS] workspace boundary: _workspace/README.md\n",
-        )
-        self.assertEqual(result.stderr, "")
-
     def test_registry_routes_only_the_production_validator(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         records = [

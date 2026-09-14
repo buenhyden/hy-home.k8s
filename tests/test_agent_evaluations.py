@@ -152,16 +152,6 @@ class GradingTests(unittest.TestCase):
 
 
 class RunnerCliTests(unittest.TestCase):
-    def test_the_repository_cases_grade_green_and_declare_their_class(self):
-        completed = subprocess.run(
-            [sys.executable, str(RUNNER), "--root", str(ROOT)],
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-        self.assertIn("response_class=synthetic", completed.stdout)
-        self.assertIn("no agent quality is claimed", completed.stdout)
-
     def test_a_failing_case_exits_non_zero_without_printing_the_response(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
