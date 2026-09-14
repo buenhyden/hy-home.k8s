@@ -148,6 +148,10 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
+├── 0078-document-currency-reconciliation/
+│   ├── plan.md
+│   ├── spec.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -205,6 +209,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0075-common-knowledge-and-prompt-surfaces/spec.md`](./0075-common-knowledge-and-prompt-surfaces/spec.md) | Common knowledge and prompt surfaces with their document contracts | Active | ADR-0036이 ADR-0035의 미채택 절만 개정해 수락되었고, 이 package가 `.agents/knowledge/`와 `.agents/prompts/`를 실제 소비자와 함께 도입한다. Stage 99 profile·template, 책임 문서 통합, Stage 90 관측 갱신, 커밋 도구 한계 기록을 같은 검토 단위에서 처리한다. | 2026-09-07 |
 | [`./0076-agent-role-coverage-and-contract-completion/spec.md`](./0076-agent-role-coverage-and-contract-completion/spec.md) | Responsibility-boundary coverage, the roles that close it, and routing completeness | Active | 라우터가 선언한 7개 책임 경계 중 role이 읽는 것은 6개이고 architecture 경계는 소유자가 없다. `.agents/`, `.claude/`, `.codex/`, `.github/`, `policy/`, 등록되지 않은 `scripts/` 도구, `evals/`도 authoring 소유자가 없다. 이 package가 role 다섯을 admit하고 supervisor 라우팅과 doc-writer 경계를 복구하며, 외부 catalog는 provenance로만 기록한다. | 2026-09-10 |
 | [`./0077-dead-contract-and-duplicate-execution-retirement/spec.md`](./0077-dead-contract-and-duplicate-execution-retirement/spec.md) | Retirement of unreachable validation code, absent-subject assertions, and same-snapshot duplicate gate execution | Active | 기준선 `qa.py full`이 22/22 PASS인 상태에서 green이 드러내지 못하는 결함을 처분한다. 도달 불가능한 cross-document 서브트리와 수집되지 않는 test class, 대상이 사라진 cutover pin, `unit-tests` 안에서 같은 snapshot에 재실행되는 등록 gate, 코퍼스가 실천하지 않는 skill 의무를 제거하고 archive cutover 워크플로에 소유 skill을 부여한다. Gate 의미, 문서 route, profile, 링크 경계 동작은 바뀌지 않는다. | 2026-09-11 |
+| [`./0078-document-currency-reconciliation/spec.md`](./0078-document-currency-reconciliation/spec.md) | Reconciliation of stale and implementation-conflicting document statements and Stage 03 lifecycle state | Draft | `docs/` 전반에서 현재 구현과 다른 명령·경로·리소스 이름·버전·결정 서술을 근거와 함께 바로잡고, 구현되었거나 후속 작업으로 대체된 Stage 03 package를 다음 단일 lifecycle edge로 옮긴다. 미완료 작업은 구현하지 않고 처분과 차단 사유만 기록한다. | 2026-09-14 |
 
 ### Helper Templates
 
