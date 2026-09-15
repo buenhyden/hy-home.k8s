@@ -1,10 +1,10 @@
 ---
 title: "Cut Over the Registry and Validators"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "specs"
 artifact_id: "SPEC-0082-TSK-0002"
 ---
@@ -39,7 +39,7 @@ repository-static result to hosted, provider-runtime, or live evidence.
 | WORK-004 | VAL-UAR-005        | Compare units as Git objects and admit a class by anchor state                                   | platform | Done   | Entry-for-entry comparison in `f33efb5f`; membership, byte, mode, type, and reachability faults rejected | Lifecycle regressions        |
 | WORK-005 | VAL-UAR-007        | Admit identity-preserving moves between active stages                                            | platform | Done   | Identity lineage in `f33efb5f`; a changed or ambiguous identity stays rejected | Lifecycle regressions        |
 | WORK-006 | VAL-UAR-008        | Re-verify every catalog row on the full lane                                                     | platform | Done   | `catalog_envelope_diagnostics` in `f33efb5f`; a missing, unreachable, or mistyped object fails | Archive cutover regressions  |
-| WORK-007 | VAL-UAR-009        | State the adopted contract in governance, indexes, the skill, and forms, and add the fast gate   | platform | In progress | Prose and the `archive-contract-tests` gate are written; QA is pending | Staged and full QA           |
+| WORK-007 | VAL-UAR-009        | State the adopted contract in governance, indexes, the skill, and forms, and add the fast gate   | platform | Done   | Stated in `38dbbd5e`; `archive-contract-tests` runs in the quick, staged, and full profiles | Staged and full QA           |
 
 ## Approval and Safety Boundaries
 
@@ -79,7 +79,19 @@ claimed for this branch.
 - A review of the staged WP-008 diff reported one HIGH fail-open finding, where
   two unreadable entry listings compared equal; the comparison now fails closed
   and a regression covers it.
-- `python3 scripts/qa.py full` has not run on the final tree yet.
+- `python3 scripts/qa.py staged` passed its thirteen gates before `38dbbd5e`,
+  the first run that included `archive-contract-tests`.
+- `python3 scripts/qa.py full` first failed on `unit-tests` at `38dbbd5e`.
+  Registering the gate on the `scripts`, `tests`, and `template-documents`
+  surfaces changes what an affected-path selection returns, and seven recorded
+  selection cases still held the previous expectation. Full unit discovery
+  reproduced exactly those seven failures out of 1099 tests. The cases were
+  rewritten from the selector's own output, each differing from its previous
+  expectation by this gate alone, and `ddd0212d` records them beside the script
+  index entry.
+- `python3 scripts/qa.py full` then passed all twenty-three gates on
+  `ddd0212d`, `unit-tests`, `archive-cutover`, and `archive-contract-tests`
+  included.
 
 ## Traceability
 
@@ -95,4 +107,4 @@ Each work item carries its observed result.
 | [WORK-004](../plan.md#work-breakdown) | Done. | Lifecycle regressions.        |
 | [WORK-005](../plan.md#work-breakdown) | Done. | Lifecycle regressions.        |
 | [WORK-006](../plan.md#work-breakdown) | Done. | Archive cutover regressions.  |
-| [WORK-007](../plan.md#work-breakdown) | In progress. | Staged and full QA.           |
+| [WORK-007](../plan.md#work-breakdown) | Done. | Staged and full QA.           |
