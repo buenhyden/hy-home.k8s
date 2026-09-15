@@ -28,10 +28,19 @@ TOP_LEVEL_KEYS = frozenset(
         "lifecycle_domains",
     }
 )
-# ADR-0038 binds each Stage 98 retention class to the terminal states it admits.
-# A comparison-base registry from before that decision has no binding, so the
-# key is admitted beside the required set rather than required by it.
-OPTIONAL_TOP_LEVEL_KEYS = frozenset({"retention_classes"})
+# ADR-0038 binds each Stage 98 retention class to the terminal states it admits,
+# and ADR-0039 adds the retention units, modes, citation table, and legacy set.
+# A comparison-base registry from before either decision has none of them, so
+# the keys are admitted beside the required set rather than required by it.
+OPTIONAL_TOP_LEVEL_KEYS = frozenset(
+    {
+        "retention_classes",
+        "retention_units",
+        "retention_modes",
+        "archive_citation",
+        "legacy_rebased_retained_paths",
+    }
+)
 PROFILE_KEYS = frozenset(
     {
         "id",

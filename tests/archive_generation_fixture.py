@@ -12,7 +12,8 @@ That generation is derived from the current registry rather than read from Git
 history, so the regressions need no particular commit. The derivation reverses
 exactly what ADR-0038 added: the retention class binding, the two route
 disposition forms and their family, the mirrored retention alternatives, and
-the exact frozen routes. `tests/test_archive_generation_fixture.py` proves the
+the exact frozen routes, together with the retention units, modes, citation
+table, and legacy set that ADR-0039 added. `tests/test_archive_generation_fixture.py` proves the
 derivation equals the registry merged at `LEGACY_ARCHIVE_GENERATION_COMMIT`.
 
 A regression that asserts what the current registry admits must load the
@@ -93,7 +94,14 @@ def legacy_registry_payload() -> dict[str, Any]:
     """Return a fresh mutable copy of the frozen generation registry."""
 
     payload = json.loads((ROOT / REGISTRY_PATH).read_text(encoding="utf-8"))
-    payload.pop("retention_classes", None)
+    for key in (
+        "retention_classes",
+        "retention_units",
+        "retention_modes",
+        "archive_citation",
+        "legacy_rebased_retained_paths",
+    ):
+        payload.pop(key, None)
     payload["profiles"] = [
         profile
         for profile in payload["profiles"]

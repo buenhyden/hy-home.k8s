@@ -158,6 +158,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "profiles",
                 "lifecycle_domains",
                 "retention_classes",
+                "retention_units",
+                "retention_modes",
+                "archive_citation",
+                "legacy_rebased_retained_paths",
             },
         )
         self.assertEqual(self.registry["schema_version"], 9)
@@ -273,6 +277,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "lifecycle_domains",
                 "profiles",
                 "retention_classes",
+                "retention_units",
+                "retention_modes",
+                "archive_citation",
+                "legacy_rebased_retained_paths",
                 "schema_version",
             },
         )

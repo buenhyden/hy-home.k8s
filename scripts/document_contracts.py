@@ -155,6 +155,48 @@ class RetentionClass:
 
 
 @dataclass(frozen=True)
+class RetentionUnit:
+    """A Stage 98 retention unit: its root, the anchor its class is read from, and members."""
+
+    name: Literal["spec-package", "incident-bundle"]
+    root: re.Pattern[str]
+    anchor: str
+    required_members: tuple[str, ...]
+    member_admitted_states: tuple[tuple[str, frozenset[str]], ...] = ()
+
+
+@dataclass(frozen=True)
+class RetentionMode:
+    """One retention mode and the registry profiles its selector binds."""
+
+    name: Literal[
+        "move-frozen-body", "sealed-record", "retain-in-place", "git-history-only"
+    ]
+    profile_id_pattern: re.Pattern[str]
+    classes: frozenset[str]
+
+
+@dataclass(frozen=True)
+class CitationRule:
+    """One ordered rule of the archive citation table."""
+
+    source: Literal["archive", "any", "profiles"]
+    target: Literal["any", "index", "route-record", "sealed-record", "retained-body"]
+    decision: Literal["admit", "reject"]
+    source_profile_ids: frozenset[str] = frozenset()
+    target_classes: frozenset[str] = frozenset()
+
+
+@dataclass(frozen=True)
+class ArchiveCitation:
+    """The ordered citation table into Stage 98; the first matching rule decides."""
+
+    index: PurePosixPath
+    default: Literal["reject"]
+    rules: tuple[CitationRule, ...]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal[
@@ -197,6 +239,10 @@ class Registry:
     profiles: tuple[DocumentProfile, ...]
     lifecycle_domains: tuple[LifecycleDomain, ...]
     retention_classes: tuple[RetentionClass, ...] = ()
+    retention_units: tuple[RetentionUnit, ...] = ()
+    retention_modes: tuple[RetentionMode, ...] = ()
+    archive_citation: ArchiveCitation | None = None
+    legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -664,6 +710,169 @@ def _profile_from_mapping(
     )
 
 
+def _retention_unit_diagnostics(
+    raw_registry: Mapping[str, Any], declared_states: set[str]
+) -> list[Diagnostic]:
+    """Check that each retention unit is declared once and names its own members."""
+
+    diagnostics: list[Diagnostic] = []
+    seen: set[str] = set()
+    for item in raw_registry.get("retention_units", ()):
+        name = item["unit"]
+        problems: list[str] = []
+        if name in seen:
+            problems.append("duplicate declaration")
+        seen.add(name)
+        try:
+            re.compile(item["root_pattern"])
+        except re.error:
+            problems.append("invalid root_pattern")
+        if item["anchor"] not in item["required_members"]:
+            problems.append(f"anchor {item['anchor']} is not a required member")
+        for member, states in item.get("member_admitted_states", {}).items():
+            undeclared = sorted(set(states) - declared_states)
+            if member not in item["required_members"] or undeclared:
+                problems.append(f"{member}: undeclared {undeclared!r}")
+        diagnostics.extend(
+            _diagnostic(
+                "REGISTRY_RETENTION_UNIT",
+                expected="one unit with a required anchor and declared member states",
+                actual=f"{name}: {problem}",
+            )
+            for problem in problems
+        )
+    return diagnostics
+
+
+def _retention_mode_bindings(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> tuple[dict[str, str], list[Diagnostic]]:
+    """Bind each profile to at most one retention mode and report selector faults."""
+
+    bound: dict[str, str] = {}
+    diagnostics: list[Diagnostic] = []
+
+    def fault(actual: str, profile: str = "") -> None:
+        diagnostics.append(
+            _diagnostic(
+                "REGISTRY_RETENTION_MODE",
+                profile=profile,
+                expected="each mode binds profiles once, and moved bodies are mirrored",
+                actual=actual,
+            )
+        )
+
+    seen: set[str] = set()
+    for item in raw_registry.get("retention_modes", ()):
+        name = item["mode"]
+        if name in seen:
+            fault(f"duplicate retention mode {name}")
+        seen.add(name)
+        try:
+            selector = re.compile(item["profile_id_pattern"])
+        except re.error:
+            fault(f"{name}: invalid profile_id_pattern")
+            continue
+        # A mode that binds no profile is declared but cannot be applied; a
+        # reduced registry may leave one unbound.
+        matched = sorted(pid for pid in profiles_by_id if selector.search(pid))
+        for profile_id in matched:
+            if profile_id in bound:
+                fault(f"bound to {bound[profile_id]} and {name}", profile_id)
+                continue
+            bound[profile_id] = name
+            path_pattern = profiles_by_id[profile_id]["path_pattern"]
+            if item["classes"] and "98\\.archive/" not in path_pattern:
+                fault(f"{name}: no Stage 98 alternative in path_pattern", profile_id)
+    return bound, diagnostics
+
+
+def _archive_citation_diagnostics(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[Diagnostic]:
+    """Require every citation rule to name registry profiles and retention classes."""
+
+    citation = raw_registry.get("archive_citation")
+    if citation is None:
+        return []
+    class_names = {item["class"] for item in raw_registry.get("retention_classes", ())}
+    diagnostics: list[Diagnostic] = []
+    for position, rule in enumerate(citation["rules"], start=1):
+        profiles = set(rule.get("source_profile_ids", ()))
+        unknown_profiles = sorted(profiles - set(profiles_by_id))
+        unknown_classes = sorted(set(rule.get("target_classes", ())) - class_names)
+        if unknown_profiles or unknown_classes:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_ARCHIVE_CITATION",
+                    expected="rules that name registry profiles and retention classes",
+                    actual=(
+                        f"rule {position}: profiles {unknown_profiles!r}, "
+                        f"classes {unknown_classes!r}"
+                    ),
+                )
+            )
+    return diagnostics
+
+
+def _legacy_retained_diagnostics(
+    raw_registry: Mapping[str, Any], bound_modes: Mapping[str, str]
+) -> list[Diagnostic]:
+    """Require each legacy path to classify as a body retained under a class."""
+
+    legacy = raw_registry.get("legacy_rebased_retained_paths", ())
+    if not legacy:
+        return []
+    class_names = {item["class"] for item in raw_registry.get("retention_classes", ())}
+    typed = _typed_registry_from_mapping(raw_registry)
+    diagnostics: list[Diagnostic] = []
+    for value in legacy:
+        path = PurePosixPath(value)
+        try:
+            profile_id = classify_path(typed, path).profile_id
+        except DocumentContractError:
+            profile_id = ""
+        retained = (
+            len(path.parts) >= 4
+            and path.parts[:2] == ("docs", "98.archive")
+            and path.parts[2] in class_names
+            and bound_modes.get(profile_id) == "move-frozen-body"
+        )
+        if not retained:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LEGACY_RETAINED",
+                    path=path,
+                    expected="a body retained under a retention class",
+                    actual=f"{value} is not a retained body",
+                )
+            )
+    return diagnostics
+
+
+def _archive_retention_diagnostics(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+    declared_states: set[str],
+) -> list[Diagnostic]:
+    """Validate the ADR-0039 units, modes, citation table, and legacy set."""
+
+    bound_modes, mode_diagnostics = _retention_mode_bindings(
+        raw_registry, profiles_by_id
+    )
+    diagnostics = [
+        *_retention_unit_diagnostics(raw_registry, declared_states),
+        *mode_diagnostics,
+        *_archive_citation_diagnostics(raw_registry, profiles_by_id),
+    ]
+    if diagnostics:
+        # The legacy check builds the typed registry, which needs the rest valid.
+        return diagnostics
+    return _legacy_retained_diagnostics(raw_registry, bound_modes)
+
+
 def _terminal_semantic_diagnostics(
     root: Path,
     raw_registry: Mapping[str, Any],
@@ -907,6 +1116,9 @@ def _terminal_semantic_diagnostics(
                     actual=f"{item['class']}: undeclared {undeclared!r}",
                 )
             )
+    diagnostics.extend(
+        _archive_retention_diagnostics(raw_registry, profiles_by_id, declared_states)
+    )
 
     for profile_id, profile in profiles_by_id.items():
         if profile["mode"] != "authored":
@@ -983,6 +1195,55 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
                 admitted_states=frozenset(item["admitted_states"]),
             )
             for item in raw.get("retention_classes", ())
+        ),
+        retention_units=tuple(
+            RetentionUnit(
+                name=item["unit"],
+                root=re.compile(item["root_pattern"]),
+                anchor=item["anchor"],
+                required_members=tuple(item["required_members"]),
+                member_admitted_states=tuple(
+                    (member, frozenset(states))
+                    for member, states in sorted(
+                        item.get("member_admitted_states", {}).items()
+                    )
+                ),
+            )
+            for item in raw.get("retention_units", ())
+        ),
+        retention_modes=tuple(
+            RetentionMode(
+                name=item["mode"],
+                profile_id_pattern=re.compile(item["profile_id_pattern"]),
+                classes=frozenset(item["classes"]),
+            )
+            for item in raw.get("retention_modes", ())
+        ),
+        archive_citation=_archive_citation_from_mapping(raw.get("archive_citation")),
+        legacy_rebased_retained_paths=frozenset(
+            PurePosixPath(value)
+            for value in raw.get("legacy_rebased_retained_paths", ())
+        ),
+    )
+
+
+def _archive_citation_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> ArchiveCitation | None:
+    if raw is None:
+        return None
+    return ArchiveCitation(
+        index=PurePosixPath(raw["index"]),
+        default=raw["default"],
+        rules=tuple(
+            CitationRule(
+                source=rule["source"],
+                target=rule["target"],
+                decision=rule["decision"],
+                source_profile_ids=frozenset(rule.get("source_profile_ids", ())),
+                target_classes=frozenset(rule.get("target_classes", ())),
+            )
+            for rule in raw["rules"]
         ),
     )
 

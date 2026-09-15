@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 import yaml
 
 if TYPE_CHECKING:
-    from document_contracts import Registry, RetentionClass
+    from document_contracts import Registry, RetentionClass, RetentionMode
 
 
 def contracts_module() -> ModuleType:
@@ -243,6 +243,15 @@ def citable_retention_classes(registry: "Registry") -> frozenset[str]:
         for item in registry.retention_classes
         if item.names in CITABLE_NAMINGS
     )
+
+
+def retention_mode_of(registry: "Registry", profile_id: str) -> "RetentionMode | None":
+    """Return the one retention mode the registry binds to a profile, if any."""
+
+    for mode in registry.retention_modes:
+        if mode.profile_id_pattern.search(profile_id):
+            return mode
+    return None
 
 
 def retention_class_of(

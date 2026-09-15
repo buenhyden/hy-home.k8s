@@ -418,6 +418,230 @@
           }
         }
       }
+    },
+    "retention_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit",
+          "root_pattern",
+          "anchor",
+          "required_members"
+        ],
+        "properties": {
+          "unit": {
+            "enum": [
+              "spec-package",
+              "incident-bundle"
+            ]
+          },
+          "root_pattern": {
+            "type": "string",
+            "minLength": 2
+          },
+          "anchor": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
+          },
+          "required_members": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
+            }
+          },
+          "member_admitted_states": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*\\.md$"
+            },
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "retention_modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "profile_id_pattern",
+          "classes"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "move-frozen-body",
+              "sealed-record",
+              "retain-in-place",
+              "git-history-only"
+            ]
+          },
+          "profile_id_pattern": {
+            "type": "string",
+            "minLength": 2
+          },
+          "classes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "completed",
+                "superseded",
+                "retired",
+                "resolved"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "archive_citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "default",
+        "rules"
+      ],
+      "properties": {
+        "index": {
+          "const": "docs/98.archive/README.md"
+        },
+        "default": {
+          "const": "reject"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "target",
+              "decision"
+            ],
+            "properties": {
+              "source": {
+                "enum": [
+                  "archive",
+                  "any",
+                  "profiles"
+                ]
+              },
+              "source_profile_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "target": {
+                "enum": [
+                  "any",
+                  "index",
+                  "route-record",
+                  "sealed-record",
+                  "retained-body"
+                ]
+              },
+              "target_classes": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "completed",
+                    "superseded",
+                    "retired",
+                    "resolved"
+                  ]
+                },
+                "minItems": 1
+              },
+              "decision": {
+                "enum": [
+                  "admit",
+                  "reject"
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "source": {
+                      "const": "profiles"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "source_profile_ids"
+                  ]
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "source_profile_ids"
+                    ]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "target": {
+                      "const": "retained-body"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "target_classes"
+                  ]
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "target_classes"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "legacy_rebased_retained_paths": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^docs/[^\\s]+\\.md$"
+      }
     }
   }
 }
