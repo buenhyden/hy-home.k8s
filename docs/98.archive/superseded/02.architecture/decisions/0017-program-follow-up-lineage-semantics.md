@@ -18,9 +18,9 @@ superseded_by: "ADR-0031"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 This decision preserves ADR-0016's seven original modernization tranches while
@@ -79,14 +79,14 @@ leaving the registry unchanged makes machine lineage contradict it.
 ## Traceability
 
 - **Original decision**: [ADR-0016](./0016-program-to-tranche-document-lineage.md)
-- **Original program**: Historical PRD-005, through the [archive index](../../98.archive/README.md)
-- **Original architecture**: Historical ARD-0008, through the [archive index](../../98.archive/README.md)
-- **Follow-up**: [Spec 033](../../98.archive/completed/03.specs/0033-template-lifecycle-contract-normalization/spec.md)
-- **New program**: Historical PRD-006, through the [archive index](../../98.archive/README.md)
+- **Original program**: Historical PRD-005, through the [archive index](../../../README.md)
+- **Original architecture**: Historical ARD-0008, through the [archive index](../../../README.md)
+- **Follow-up**: [Spec 033](../../../completed/03.specs/0033-template-lifecycle-contract-normalization/spec.md)
+- **New program**: Historical PRD-006, through the [archive index](../../../README.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0016 original program lineage | Complementary successor; original decision remains accepted | [Spec 034](../../98.archive/completed/03.specs/0034-authority-and-lineage-foundation/spec.md) |
-| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent follow-up instance roster and validation-routing ownership; preserves this record's historical lineage context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0016 original program lineage | Complementary successor; original decision remains accepted | [Spec 034](../../../completed/03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent follow-up instance roster and validation-routing ownership; preserves this record's historical lineage context. | [Spec 0054](../../../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

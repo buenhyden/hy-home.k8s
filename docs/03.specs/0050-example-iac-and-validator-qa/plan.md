@@ -1,10 +1,10 @@
 ---
 title: "Example IaC and Validator QA Implementation Plan"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0050-PLAN-0001"
 ---
@@ -110,7 +110,7 @@ or live result.
 - Parent [Implementation Plan](plan.md)
 - [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
   [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
-  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  and superseded ADR-0021
 - Spec 049 platform contract, exact-tool helper behavior, validation routing,
   CI owner, aggregate, and residual DEFER records
 - Current AWS Terraform source/constraints/modules, Azure Bicep module graph,
@@ -551,7 +551,7 @@ current PASS evidence.
 - **Task**: [Example IaC and Validator QA Task](plan.md)
 - **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Decision**: superseded ADR-0021
 - **Predecessor**: Spec 049 Platform Validation and Security Evidence in the
   PRD-0007 program lineage
 - **Successor**: Spec 051 Repository Assurance Integration and Closure in the

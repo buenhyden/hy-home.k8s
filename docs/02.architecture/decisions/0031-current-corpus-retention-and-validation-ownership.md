@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -283,11 +283,11 @@ delegated validation-tooling ownership is historical.
 
 This ADR supersedes the current lineage and routing
 control-plane decisions in
-[ADR-0016](./0016-program-to-tranche-document-lineage.md),
-[ADR-0017](./0017-program-follow-up-lineage-semantics.md),
-[ADR-0020](./0020-document-lifecycle-program-closure-evidence.md),
-[ADR-0021](./0021-canonical-surface-routing-and-evidence-depth.md), and
-[ADR-0022](./0022-direct-approval-standalone-execution-lineage.md). Their
+ADR-0016,
+ADR-0017,
+ADR-0020,
+ADR-0021, and
+ADR-0022. Their
 historical decision bodies remain in Stage 02. The acceptance transaction
 atomically added the `supersedes` relation to this ADR, changed each predecessor
 from `accepted` to `superseded`, added reciprocal `superseded_by: ADR-0031`
@@ -324,5 +324,5 @@ narrower validation-routing and execution-instance boundaries needed by Specs
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0016](./0016-program-to-tranche-document-lineage.md), [ADR-0017](./0017-program-follow-up-lineage-semantics.md), [ADR-0020](./0020-document-lifecycle-program-closure-evidence.md), [ADR-0021](./0021-canonical-surface-routing-and-evidence-depth.md), and [ADR-0022](./0022-direct-approval-standalone-execution-lineage.md) | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |

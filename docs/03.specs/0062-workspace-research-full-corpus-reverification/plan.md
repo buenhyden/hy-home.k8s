@@ -1,10 +1,10 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Implementation Plan"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0062-PLAN-0001"
 ---
@@ -3052,5 +3052,5 @@ original evidence or recreating progress memory.
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
-- [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- ADR 0022 — direct-approval standalone execution lineage
 - [Quality standards](../../../.agents/governance/quality.md)

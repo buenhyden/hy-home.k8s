@@ -18,16 +18,16 @@ superseded_by: "ADR-0031"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 This accepted decision records the closure-evidence architecture for the
 PRD-006 and ARD-0009 document lifecycle program. In exact terminal closure
 commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`, it changes body and status
 with
-Historical ARD-0009, through the [archive index](../../98.archive/README.md)
+Historical ARD-0009, through the [archive index](../../../README.md)
 and supplies that ARD's reciprocal same-diff accepted role-decision evidence.
 ADR-0017 and ADR-0018 remain unchanged accepted history.
 
@@ -104,11 +104,11 @@ bounded, current role-decision evidence path.
 ## Traceability
 
 - **Architecture**:
-  Historical ARD-0009, through the [archive index](../../98.archive/README.md)
+  Historical ARD-0009, through the [archive index](../../../README.md)
 - **Program PRD**:
-  Historical PRD-006, through the [archive index](../../98.archive/README.md)
+  Historical PRD-006, through the [archive index](../../../README.md)
 - **Final tranche**:
-  [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
+  [Spec 040](../../../completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
 - **Historical decisions**:
   [ADR-0017](./0017-program-follow-up-lineage-semantics.md) and
   [ADR-0018](./0018-full-body-archive-record-and-retention.md)
@@ -117,5 +117,5 @@ bounded, current role-decision evidence path.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Historical ARD-0009, through the [archive index](../../98.archive/README.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
-| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent closure-instance roster and current-state SHA ownership; preserves this record's historical closure evidence. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| Historical ARD-0009, through the [archive index](../../../README.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../../completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
+| [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent closure-instance roster and current-state SHA ownership; preserves this record's historical closure evidence. | [Spec 0054](../../../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

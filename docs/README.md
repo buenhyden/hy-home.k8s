@@ -1,6 +1,6 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -65,8 +65,8 @@ skill과 provider projection을 소유한다.
 6. 완료·봉인된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. ADR을 포함해 더
    이상 현재가 아닌 문서는 Stage 98의 해당 disposition으로 떠나며, 원본은 두
    번째 복구 원장 없이 Git history가 복구한다
-   ([ADR-0038](02.architecture/decisions/0038-six-disposition-archive-stage.md), accepted). 기존 superseded ADR은
-   disposition마다 승인을 받기 전까지 decision log에 남아 있다.
+   ([ADR-0038](02.architecture/decisions/0038-six-disposition-archive-stage.md), accepted). 대체된 ADR은
+   `98.archive/superseded/`에 보존되어 있다.
 
    Archive 인용 가능 여부는 각 family가 무엇을 명명하는지에서 따라 나온다.
    **허용**: `completed/`는 promote 선언을 통해, `resolved/`는 corrective-work

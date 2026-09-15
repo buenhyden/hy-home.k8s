@@ -1,10 +1,10 @@
 ---
 title: "Pod Security Admission Per-namespace Adoption"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0028"
 supersedes: "ADR-0027"
@@ -14,7 +14,7 @@ supersedes: "ADR-0027"
 
 ## Overview
 
-[ADR-0027](0027-pod-security-standards-staged-adoption.md) declined to apply Pod
+ADR-0027 declined to apply Pod
 Security Admission labels and recorded an ordering: install the Istio CNI node
 agent, then apply non-rejecting `warn` and `audit`, then apply `enforce` per
 namespace. Its reversal condition fired when the CNI agent was adopted.
@@ -196,10 +196,10 @@ namespaces, which is the event those labels exist to surface.
 
 | Decision lineage                                                                    | Replacement relation                                                                                  | Affected Spec                                            |
 | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [ADR-0027](0027-pod-security-standards-staged-adoption.md) after its reversal fired | Supersedes ADR-0027's steps 2 and 3; ADR-0027 is retained as the reasoning that produced the ordering | N/A — standalone decision record with no execution scope |
+| ADR-0027 after its reversal fired | Supersedes ADR-0027's steps 2 and 3; ADR-0027 is retained as the reasoning that produced the ordering | N/A — standalone decision record with no execution scope |
 
 ### Related Documents
 
-- [ADR-0027 — Pod Security Standards staged adoption](0027-pod-security-standards-staged-adoption.md)
+- ADR-0027 — Pod Security Standards staged adoption
 - [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)
 - [Istio CNI application](../../../gitops/apps/root/platform-istio-cni-app.yaml)

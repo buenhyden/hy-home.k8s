@@ -39,6 +39,15 @@ MIGRATION = "docs/98.archive/migrations/0024-runbook-rename.md"
 INDEX_TEXT = "---\ntitle: Archive\n---\n\n# Archive\n"
 
 
+def original_bytes(path: str) -> bytes:
+    """Return a decision at its original path, rebuilt from its retained body."""
+
+    source = PurePosixPath(path)
+    retained = dispositions.retained_body_path(source, "superseded")
+    text = (ROOT / retained).read_text(encoding="utf-8")
+    return dispositions.rebase_relative_links(text, retained, source).encode("utf-8")
+
+
 def catalog(*rows: tuple[str, str]) -> str:
     lines = [INDEX_TEXT, "## Retention Catalog", "", dispositions.CATALOG_HEADER]
     lines.append(dispositions.CATALOG_SEPARATOR)
@@ -75,8 +84,9 @@ class DispositionLifecycleTest(unittest.TestCase):
         self.git("init", "--quiet")
         self.git("config", "user.email", "fixture@example.invalid")
         self.git("config", "user.name", "Disposition Fixture")
-        for path in (REGISTRY_PATH, ADR, RUNBOOK):
+        for path in (REGISTRY_PATH, RUNBOOK):
             self.write(path, (ROOT / path).read_bytes())
+        self.write(ADR, original_bytes(ADR))
         self.write(INDEX, INDEX_TEXT.encode())
         self.git("add", "--", ".")
         self.git("commit", "--quiet", "-m", "base")

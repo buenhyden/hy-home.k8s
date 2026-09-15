@@ -14,7 +14,7 @@ superseded_by: "ADR-0028"
 
 ## Overview
 
-**Superseded (2026-09-14).** [ADR-0028](0028-pod-security-admission-per-namespace-adoption.md)
+**Superseded (2026-09-14).** [ADR-0028](../../../../02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md)
 is the current Pod Security Admission decision. Its reversal condition fired
 when the Istio CNI node agent was adopted, and every namespace now carries
 Pod Security labels, so this record's instruction to withhold labels no longer
@@ -121,7 +121,7 @@ the mesh's own init container is the dominant violation.
   Restricted; none was inspected at the time this decision was taken. That
   assessment has since been carried out against the repository manifests and is
   summarized in
-  [the Kubernetes security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md),
+  [the Kubernetes security research](../../../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md),
   which amends the `warn`/`audit` alternative below without changing this
   decision.
 - It does not close the `adminer` deferred controls, which remain blocked on
@@ -172,7 +172,7 @@ subsequent survey disproved that.** Every deployed workload passes Baseline, so
 those namespaces would contribute no warnings at all, and the entire signal
 would be the Istio init container in two namespaces — precise, singular, and
 already understood. See
-[the Kubernetes security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md).
+[the Kubernetes security research](../../../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md).
 
 The rejection therefore rests on a narrower and weaker argument than recorded:
 the one signal Baseline would produce is a fact this decision already documents,
@@ -220,10 +220,10 @@ constraint is the mesh's networking mechanism rather than any workload's spec.
 | Decision lineage                                | Replacement relation                                                                                        | Affected Spec                                            |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | Direct human approval recorded in this decision | N/A — first Pod Security Admission adoption decision; supersedes no prior ADR and replaces no prior control | N/A — standalone decision record with no execution scope |
-| [ADR-0028](0028-pod-security-admission-per-namespace-adoption.md) | Superseded by ADR-0028 after this decision's reversal fired | N/A — standalone decision record with no execution scope |
+| [ADR-0028](../../../../02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md) | Superseded by ADR-0028 after this decision's reversal fired | N/A — standalone decision record with no execution scope |
 
 ### Related Documents
 
-- [ADR-0026 — Argo CD source integrity non-adoption](0026-argo-cd-source-integrity-non-adoption.md)
-- [Spec 060 — workload security context baseline](../../98.archive/completed/03.specs/0061-workload-security-context-baseline/spec.md)
-- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)
+- [ADR-0026 — Argo CD source integrity non-adoption](../../../../02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md)
+- [Spec 060 — workload security context baseline](../../../completed/03.specs/0061-workload-security-context-baseline/spec.md)
+- [Kubernetes, infrastructure, and security research](../../../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

@@ -1,10 +1,10 @@
 ---
 title: "Repository Assurance Integration and Closure Technical Specification"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0051"
 ---
@@ -272,7 +272,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Architecture**:
   [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**:
-  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  superseded ADR-0021
 - **Predecessor**:
   [Spec 050](../0050-example-iac-and-validator-qa/spec.md)
 - **Implementation Plan**:

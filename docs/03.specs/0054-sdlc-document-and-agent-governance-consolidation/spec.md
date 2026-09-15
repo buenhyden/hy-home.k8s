@@ -1,6 +1,6 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
-version: "1.4.0"
+version: "1.4.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -15,7 +15,7 @@ artifact_id: "SPEC-0054"
 
 The 2026-09-06 governance continuation is owned by
 [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md) and
-[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md).
+ADR-0035.
 They replace this program's earlier governance location and execution design;
 its unrelated SDLC acceptance and historical Task evidence remain in scope.
 
@@ -44,12 +44,12 @@ Stage 90. This integrated program inherits the incomplete WORK-109 candidate
 from [Spec 0052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md), but accepts
 only the portions that satisfy this specification after staged-index review.
 The original direct-approval lineage was recorded by
-[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+ADR-0022,
 which remains predecessor context but no longer owns a global standalone
 execution projection under
 [accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 The four-digit current-path and Incident identity decision is
-[ADR-0025](../../02.architecture/decisions/0025-four-digit-document-path-identity.md),
+ADR-0025,
 which transfers the active WORK-109 implementation from Spec 0052 to this
 specification's WORK-054-002 package.
 
@@ -288,9 +288,9 @@ stable `AD-####` frontmatter identity.
 `docs/02.architecture/decisions/####-<slug>.md` owns important choice context,
 alternatives, decision, consequences, and supersession under stable
 `ADR-####` identity. The parent directory determines the route type, so
-`ad-` and `adr-` filename prefixes are not used. A superseded ADR stays in the
-decision log and links reciprocally to its successor; it is not deleted or
-moved to Archive.
+`ad-` and `adr-` filename prefixes are not used. A superseded ADR links reciprocally
+to its successor and, under ADR-0038, leaves the decision log for
+`docs/98.archive/superseded/`; it is not deleted.
 
 Every retained Requirement Package and Architecture Description is reconciled
 against the current repository implementation, including manifests,
@@ -322,7 +322,8 @@ Descriptions `0008` through `0011` are retired after their unique structural
 content and consumers move. These sets are reviewed semantic targets, not
 fixed-count gate inputs.
 
-All ADRs remain in the Stage 02 decision log. Their status and reciprocal
+Current ADRs remain in the Stage 02 decision log; under ADR-0038 a superseded
+ADR is retained under `docs/98.archive/superseded/`. Their status and reciprocal
 supersession links are reconciled, including accepted ADR-0031 and its five
 superseded predecessors; an obsolete decision is superseded rather than
 deleted as corpus cleanup.
@@ -436,7 +437,7 @@ role, timeline, evidence, cause, action-owner, due-state, and closure semantics.
 
 ### C-SDLC-006 — integrated AI-agent governance
 
-[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+ADR-0035
 and [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
 own the current governance implementation. This criterion accepts that result
 without maintaining a second migration or QA plan.
@@ -629,8 +630,9 @@ origin-path and Git provenance.
 `migrations/`, `superseded/`, and `tombstones/` hold sealed records. A current
 document may not use those records as semantic authority or recovery gates for
 active work. Existing sealed records are never edited or compacted in place;
-their internal historical links do not create current authority. Superseded
-ADRs remain in the Stage 02 decision log.
+their internal historical links do not create current authority. Under
+ADR-0038, a superseded ADR leaves the Stage 02 decision log and is retained
+under `superseded/`.
 
 Validation is role-specific. Retained documents keep their registered profile,
 terminal lifecycle, mirrored origin path, link-target identity, and migration

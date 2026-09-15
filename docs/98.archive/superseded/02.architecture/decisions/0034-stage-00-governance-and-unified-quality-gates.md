@@ -111,5 +111,5 @@ as historical evidence and do not regain current authority.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0030](0030-authority-first-sdlc-and-agent-governance-convergence.md) | Narrows agent-governance and validation topology while preserving the wider authority-first SDLC model | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
-| [ADR-0035](0035-common-agents-authority-and-native-skill-routing.md) | Supersedes this decision: replaces its authority-location and skill-routing clauses and carries forward its QA, security, preservation, and GitOps CD decisions unchanged | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| [ADR-0030](../../../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) | Narrows agent-governance and validation topology while preserving the wider authority-first SDLC model | [SPEC-0072](../../../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| [ADR-0035](0035-common-agents-authority-and-native-skill-routing.md) | Supersedes this decision: replaces its authority-location and skill-routing clauses and carries forward its QA, security, preservation, and GitOps CD decisions unchanged | [SPEC-0072](../../../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |

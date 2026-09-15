@@ -1,10 +1,10 @@
 ---
 title: "Establish Provider Native Enforcement Parity"
-version: "1.5.2"
+version: "1.5.3"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0073-TSK-0001"
 ---
@@ -28,7 +28,7 @@ before the values it validates; WORK-009 now carries only the permission mode.
 - [SPEC-0073-PLAN-0001](../plan.md)
 - [REQ-0003](../../../01.requirements/0003-workspace-agent-governance-platform.md)
 - [AD-0006](../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
-- [ADR-0035](../../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+- ADR-0035
 - [SPEC-0072](../../0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - Baseline commit `a57887cbf8d34eed248cb33438073635380966e3` on branch
   `codex/governance-follow-up`; local `main` and `origin/main` both at

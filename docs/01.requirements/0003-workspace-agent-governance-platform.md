@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.4.0"
+version: "1.4.1"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -173,6 +173,8 @@ the registry routes, archive forms, and validators to that model are owned by
 The first disposition under that model, which retains ADR-0032 and resolves
 frozen Stage 98 links to a retained source, is owned by
 [SPEC-0080](../03.specs/0080-adr-0032-retention-pilot/spec.md).
+Retaining the fifteen remaining superseded decisions is owned by
+[SPEC-0081](../03.specs/0081-superseded-decision-retention/spec.md).
 
 ## Traceability
 

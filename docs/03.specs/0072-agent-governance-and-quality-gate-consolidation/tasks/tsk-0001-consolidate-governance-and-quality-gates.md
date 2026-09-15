@@ -1,10 +1,10 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.7.0"
+version: "2.7.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0072-TSK-0001"
 ---
@@ -22,9 +22,9 @@ existing owners and creates verified logical local commits.
 
 - [SPEC-0072](../spec.md)
 - [SPEC-0072-PLAN-0001](../plan.md)
-- [ADR-0034](../../../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)
+- ADR-0034
 - Migration baseline `eb4fcfe3283115388d6eb1f31d56780b3e578f77`; local main after the authorized merge is `4053793a41a9cedff1edeaa4a9d3b2a6a80e1272`
-- [ADR-0035](../../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+- ADR-0035
 
 ## Task Table
 

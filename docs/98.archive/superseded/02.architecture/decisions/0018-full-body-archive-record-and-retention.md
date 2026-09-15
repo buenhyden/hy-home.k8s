@@ -18,9 +18,9 @@ superseded_by: "ADR-0030"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 This decision replaces metadata-only archive Tombstones with one immutable,
@@ -99,14 +99,14 @@ unreachable objects may be pruned:
 
 ## Traceability
 
-- **Requirement**: Historical PRD-006, through the [archive index](../../98.archive/README.md)
-- **Architecture**: Historical ARD-0009, through the [archive index](../../98.archive/README.md)
-- **Archive implementation**: [Spec 036](../../98.archive/completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md)
-- **Execution retention**: [Spec 037](../../98.archive/completed/03.specs/0037-active-corpus-and-execution-retention/spec.md)
+- **Requirement**: Historical PRD-006, through the [archive index](../../../README.md)
+- **Architecture**: Historical ARD-0009, through the [archive index](../../../README.md)
+- **Archive implementation**: [Spec 036](../../../completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md)
+- **Execution retention**: [Spec 037](../../../completed/03.specs/0037-active-corpus-and-execution-retention/spec.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Existing metadata-only archive decision | Supersedes the Tombstone-only storage model | [Spec 036](../../98.archive/completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md) |
-| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only the mirrored-original-path requirement and parallel-Tombstone prohibition; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md) |
+| Existing metadata-only archive decision | Supersedes the Tombstone-only storage model | [Spec 036](../../../completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md) |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only the mirrored-original-path requirement and parallel-Tombstone prohibition; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../../completed/03.specs/0052-document-taxonomy-consolidation/spec.md) |

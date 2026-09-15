@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces Technical Specification"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/spec"
 status: "done"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0075"
 ---
@@ -448,7 +448,7 @@ Requirement inputs come from
 and the current structural view in
 [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
 The decision this package revises is
-[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md),
+ADR-0035,
 whose unadopted-directory clause is replaced by
 [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md),
 the successor decision that carries every other clause forward. Provider guard

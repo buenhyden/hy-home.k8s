@@ -1,6 +1,6 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.5.0"
+version: "1.5.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -153,9 +153,9 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - [Spec 0054](spec.md)
 - [Plan 0054](#overview)
 - Predecessor Spec 0052 and its inherited WORK-109 evidence
-- [Historical ADR-0022 direct approval lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+- Historical ADR-0022 direct approval lineage,
   retained as predecessor context rather than current projection authority
-- [ADR-0024 historical terminal-taxonomy decision](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
+- ADR-0024 historical terminal-taxonomy decision,
   superseded where ADR-0030 defines the new terminal authority
 - [ADR-0030 authority-first convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [Accepted ADR-0031 current-corpus and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md),
@@ -1323,7 +1323,7 @@ WP-009 archive reconciliation, and WP-014 integration remain open.
 ### Approved Governance Source Cutover Amendment (2026-09-05)
 
 The 2026-09-05 proposal is superseded by the 2026-09-06 common `.agents/`
-authority decision in [ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md).
+authority decision in ADR-0035.
 Its old-root migration and `.agents/` removal checklist have been retired.
 [The baseline amendment](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md#approved-governance-source-cutover-amendment-2026-09-05)
 preserves the original proposal and host observations. Prior Task evidence

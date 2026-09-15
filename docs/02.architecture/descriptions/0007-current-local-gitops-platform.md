@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -159,7 +159,7 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
 
 Original AD-0010 and REQ-0007 program identity remain historical lineage. These current boundaries
-do not rewrite which description the original ADRs served; their bodies remain in the decision log.
+do not rewrite which description the original ADRs served; superseded bodies are retained under `98.archive/superseded/`.
 
 - **Requirement**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Spec**: [../../03.specs/0008-current-local-gitops-platform/spec.md](../../03.specs/0008-current-local-gitops-platform/spec.md)

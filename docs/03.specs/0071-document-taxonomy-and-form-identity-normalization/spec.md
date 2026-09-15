@@ -1,10 +1,10 @@
 ---
 title: "Document Taxonomy and Form Identity Normalization Technical Specification"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0071"
 ---
@@ -313,7 +313,7 @@ are not evidence that current unfinished work has passed.
 
 This Spec has no Requirement Package or Architecture Description. Its
 authority is the direct human approval recorded above under
-[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+ADR-0022.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |

@@ -18,9 +18,9 @@ superseded_by: "ADR-0030"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 This decision selects a declarative, machine-readable registry as the single
@@ -97,9 +97,9 @@ historical evidence and provider-native schemas.
 
 ## Traceability
 
-- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../98.archive/README.md)
-- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../98.archive/README.md)
+- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../../README.md)
+- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../../README.md)
 - **Related ADR**: [Program-to-Tranche Lineage](./0016-program-to-tranche-document-lineage.md)
-- **First Spec**: [Document Contract Registry](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md)
+- **First Spec**: [Document Contract Registry](../../../completed/03.specs/0026-document-contract-registry/spec.md)
 - **JSON Schema Object Validation**: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-validation)
 - **YAML Mapping Order**: [YAML 1.2.2](https://yaml.org/spec/1.2.2/)

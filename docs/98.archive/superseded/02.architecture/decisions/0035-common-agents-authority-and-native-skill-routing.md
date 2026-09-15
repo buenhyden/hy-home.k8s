@@ -18,9 +18,9 @@ superseded_by: "ADR-0036"
 The migration request authorized moving the common authority to `.agents/`
 and retiring the former documentation governance root. Current local execution
 authority and the completed user-authorized main merge are recorded in the
-[owning Task](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries).
+[owning Task](../../../../03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md#approval-and-safety-boundaries).
 This ADR is superseded by
-[ADR-0036](0036-common-knowledge-and-prompt-surfaces.md), which revises only the
+[ADR-0036](../../../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), which revises only the
 unadopted-directory clause in the Decision below and carries every other clause
 forward. The body here stays intact as evidence of the decision taken at the
 time. Acceptance records the durable choice; it
@@ -93,5 +93,5 @@ endpoints as well as files; moving the folder alone is insufficient.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0034](0034-stage-00-governance-and-unified-quality-gates.md) | Narrows authority location and skill routing; preserves QA, security and CD decisions | [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
-| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | Supersedes this decision; revises the unadopted-directory clause only | [SPEC-0075](../../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md) |
+| [ADR-0034](0034-stage-00-governance-and-unified-quality-gates.md) | Narrows authority location and skill routing; preserves QA, security and CD decisions | [SPEC-0072](../../../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| [ADR-0036](../../../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) | Supersedes this decision; revises the unadopted-directory clause only | [SPEC-0075](../../../../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md) |

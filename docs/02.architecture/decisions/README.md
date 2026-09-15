@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -53,28 +53,13 @@ layer: "architecture"
 ├── 0009-kiali-external-observability.md
 ├── 0011-argo-rollouts-progressive-delivery.md
 ├── 0012-argo-notifications-slack.md
-├── 0013-stage-00-canonical-adapter-model.md
 ├── 0014-current-local-gitops-platform-contract.md
-├── 0015-declarative-document-contract-registry.md
-├── 0016-program-to-tranche-document-lineage.md
-├── 0017-program-follow-up-lineage-semantics.md
-├── 0018-full-body-archive-record-and-retention.md
-├── 0019-provider-native-agent-harness-and-loop-model.md
-├── 0020-document-lifecycle-program-closure-evidence.md
-├── 0021-canonical-surface-routing-and-evidence-depth.md
-├── 0022-direct-approval-standalone-execution-lineage.md
-├── 0023-work-unit-document-taxonomy-and-governance-authority.md
-├── 0024-terminal-artifact-identity-and-archive-layout.md
-├── 0025-four-digit-document-path-identity.md
 ├── 0026-argo-cd-source-integrity-non-adoption.md
-├── 0027-pod-security-standards-staged-adoption.md
 ├── 0028-pod-security-admission-per-namespace-adoption.md
 ├── 0029-mutable-target-revision-retention.md
 ├── 0030-authority-first-sdlc-and-agent-governance-convergence.md
 ├── 0031-current-corpus-retention-and-validation-ownership.md
 ├── 0033-common-document-contract-v9.md
-├── 0034-stage-00-governance-and-unified-quality-gates.md
-├── 0035-common-agents-authority-and-native-skill-routing.md
 ├── 0036-common-knowledge-and-prompt-surfaces.md
 ├── 0037-kiali-operator-installation.md
 ├── 0038-six-disposition-archive-stage.md
@@ -85,7 +70,7 @@ layer: "architecture"
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0038](./0038-six-disposition-archive-stage.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 기존 superseded ADR은 disposition마다 승인을 받기 전까지 이 log에 남는다. 첫 disposition인 ADR-0032(Terminal document retention and Archive taxonomy decision, Superseded)는 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
+3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0038](./0038-six-disposition-archive-stage.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 대체된 ADR은 모두 이 log를 떠났다. ADR-0013, ADR-0015부터 ADR-0025, ADR-0027, ADR-0032, ADR-0034, ADR-0035는 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
@@ -109,28 +94,13 @@ layer: "architecture"
 | [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md) | Kiali + 외부 Prometheus/Grafana/Tempo 연동 결정 | Accepted | External observability boundary(Service/EndpointSlice, NetworkPolicy)는 현재 계약이다. 설치 방식 조항(`kiali-server`, v2.6.x, operator 비채택)은 구현과 다르며 ADR-0037이 후속 결정으로 제안되어 있다. |
 | [`./0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts 도입과 Rollouts Dashboard 결정 | Accepted | Current progressive delivery contract. |
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
-| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core와 native/local adapter-surface ownership 결정 | Superseded | Earlier agent-governance tranche를 지배한 accepted historical predecessor다. Current decision은 accepted ADR-0030이며 이 record의 original context는 보존한다. |
 | [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md) | Current local GitOps platform baseline and archive replacement decision | Accepted | Current Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer contract. |
-| [`./0015-declarative-document-contract-registry.md`](./0015-declarative-document-contract-registry.md) | Declarative document contract registry 결정 | Superseded | ADR-0030이 fixed metadata/profile/transition clauses만 부분 대체하며, Stage 99 registry의 단일 document-machine-owner 원칙은 유지한다. |
-| [`./0016-program-to-tranche-document-lineage.md`](./0016-program-to-tranche-document-lineage.md) | Program-to-tranche document lineage 결정 | Superseded | ADR-0031이 permanent program-instance roster와 validation-routing 권위를 대체한다. 원래 tranche 계보는 역사적 decision context로 유지한다. |
-| [`./0017-program-follow-up-lineage-semantics.md`](./0017-program-follow-up-lineage-semantics.md) | Original tranche와 program follow-up 계보 분리 결정 | Superseded | ADR-0031이 permanent follow-up instance roster를 대체한다. 원래 follow-up 계보 의미는 역사적 context로 유지한다. |
-| [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Superseded | ADR-0030이 mandatory full-body 및 parallel deletion-ledger 금지 terminal design을 대체한다. Non-authoritative history, secret exception, provenance와 recovery 목적은 유지한다. |
-| [`./0019-provider-native-agent-harness-and-loop-model.md`](./0019-provider-native-agent-harness-and-loop-model.md) | Provider-native agent harness, bounded loop, model/evidence 전이 결정 | Superseded | ADR-0030이 four-provider/12-role/48-adapter/harness-owner design을 대체한다. Provider-native delta, evidence class, bounded execution과 least privilege는 유지한다. |
-| [`./0020-document-lifecycle-program-closure-evidence.md`](./0020-document-lifecycle-program-closure-evidence.md) | PRD-0006 / AD-0009 문서 수명주기 프로그램 closure evidence 결정 | Superseded | ADR-0031이 permanent closure-instance roster와 current-state SHA 권위를 대체한다. 원래 terminal closure evidence는 역사적 context로 유지한다. |
-| [`./0021-canonical-surface-routing-and-evidence-depth.md`](./0021-canonical-surface-routing-and-evidence-depth.md) | Canonical affected-surface references, GitHub projections, and layered platform evidence decision | Superseded | ADR-0031이 validation-surface routing의 Stage 00/current-roster 권위를 대체한다. 기존 evidence-depth rationale은 역사적 context로 유지한다. |
-| [`./0022-direct-approval-standalone-execution-lineage.md`](./0022-direct-approval-standalone-execution-lineage.md) | Direct human-approved standalone Spec/Plan/Task lineage decision | Superseded | ADR-0031이 permanent standalone instance roster를 package-local execution ownership으로 대체한다. direct approval 사실은 역사적 context로 유지한다. |
-| [`./0023-work-unit-document-taxonomy-and-governance-authority.md`](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Work-unit document topology, stable Stage 05, and governance-authority decision | Superseded | ADR-0030이 Task/agent/archive clauses를 부분 대체하며 Stage 03 co-location, retired Stage 04, stable Stage 05, no Release와 transition safety는 유지한다. |
-| [`./0024-terminal-artifact-identity-and-archive-layout.md`](./0024-terminal-artifact-identity-and-archive-layout.md) | Architecture Description activation, complete legacy-form retirement, two-gate authored API Spec retirement, closed mandatory/prohibited artifact identity, virtual Stage 98 change identity, stable archive, and exact script-disposition successor | Superseded | ADR-0030이 terminal form/archive/census/SHA/script design을 대체한다. AD/ADR 의미, native interface, identity, consumer-zero, provenance와 recovery 목적은 유지한다. |
-| [`./0025-four-digit-document-path-identity.md`](./0025-four-digit-document-path-identity.md) | Four-digit current document path identity and lowercase Incident directory grammar | Superseded | ADR-0030이 old family table만 부분 대체하며 four-digit identity, lowercase Incident, atomic migration과 immutable history는 유지한다. |
 | [`./0026-argo-cd-source-integrity-non-adoption.md`](./0026-argo-cd-source-integrity-non-adoption.md)               | Argo CD source-integrity 미채택 결정                                  | Accepted | 서명 검증은 가변 `targetRevision: main`의 tip 커밋만 인증하므로 기록된 identity gap의 원인을 해결하지 못한다. 선호 대안은 commit-SHA 핀이며 실행하지 않는다. Helm/OCI 범위 확장, warn 모드 문서화, 또는 독립적 이유의 commit signing 도입 시 재검토한다. |
-| [`./0027-pod-security-standards-staged-adoption.md`](./0027-pod-security-standards-staged-adoption.md) | Pod Security Standards 단계 도입 결정 | Superseded | ADR-0028이 현재 결정이다. 역전 조건 발화 후 모든 네임스페이스에 라벨이 적용되었으며, 아래 순서 논리는 역사 근거로 남는다. 원래 결정: 라벨을 지금 붙이지 않는다. Baseline capabilities 제어가 initContainers를 포함하고 `NET_ADMIN`·`NET_RAW`를 허용하지 않는 반면 `istio-cni` 없는 Istio 1.25.2는 `istio-init`에 그 둘을 요구하므로, 구속 조건은 워크로드가 아니라 mesh 네트워킹이다. 도입 순서는 CNI → warn/audit=baseline → 네임스페이스별 enforce로 기록한다. |
 | [`./0028-pod-security-admission-per-namespace-adoption.md`](./0028-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission 네임스페이스별 도입 결정 | Accepted | ADR-0027의 역전 조건 발화 후 재판단이다. 네임스페이스마다 자체 증거가 뒷받침하는 최대 강도를 부여한다: `istio-system`은 CNI DaemonSet 때문에 영구 `privileged`, `monitoring`/`platform`은 `enforce=restricted`, Helm 소유 5곳(argocd 포함)은 차트 버전 종속이라 `audit`/`warn`만, 주입 2곳은 CNI 라이브 미검증이라 `baseline` warn/audit을 검증 신호로 쓴다. `enforce`만 버전 고정한다. |
 | [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 | [`./0030-authority-first-sdlc-and-agent-governance-convergence.md`](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-first SDLC document, agent governance, Archive, template, and script convergence decision | Accepted | Spec 0054의 terminal authority다. ADR-0031(validation layout), ADR-0032(종단 문서 보존), ADR-0033(router envelope), ADR-0034→0035→0036(agent governance 위치)이 일부 조항을 범위 한정 개정했고, `scripts/` 재배치 조항은 실행되지 않았다. |
 | [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Accepted | ADR-0016/0017/0020/0021/0022의 current instance-roster 및 validation-routing 권위를 대체하고 ADR-0030의 두 validation-layout 조항만 lifecycle supersession 없이 범위 한정 개정한다. Spec 0054가 통합 수용을 소유하며, 위임된 validation-tooling 실행은 완료된 Spec 0066이 소유했다. |
 | [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
-| [`./0034-stage-00-governance-and-unified-quality-gates.md`](./0034-stage-00-governance-and-unified-quality-gates.md) | Stage 00 governance and unified QA | Superseded | ADR-0035가 정본 위치·스킬 탐색 조항을 대체하고 단일 QA와 GitHub 검증·Argo CD 배포 경계를 그대로 승계한다. 본문은 당시 결정의 역사 증거다. |
-| [`./0035-common-agents-authority-and-native-skill-routing.md`](./0035-common-agents-authority-and-native-skill-routing.md) | Common .agents authority and native skill routing | Superseded | ADR-0036이 미채택 디렉터리 조항만 개정하며 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. 본문은 당시 결정의 역사 증거다. |
 | [`./0036-common-knowledge-and-prompt-surfaces.md`](./0036-common-knowledge-and-prompt-surfaces.md) | Common knowledge and prompt surface adoption | Accepted | ADR-0035의 미채택 디렉터리 조항만 개정해 `.agents/knowledge/`와 `.agents/prompts/`를 채택하고, memory·rule·evaluation·script 디렉터리는 각각의 이유로 미채택을 유지한다. 나머지 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. |
 | [`./0037-kiali-operator-installation.md`](./0037-kiali-operator-installation.md) | Kiali operator 설치 결정 | Proposed | 현재 GitOps 구현(`kiali-operator` chart, operator 생성 CR, service DNS 연동)을 결정 기록으로 제안한다. 수락 시 ADR-0009 설치 조항을 대체한다. |
 | [`./0038-six-disposition-archive-stage.md`](./0038-six-disposition-archive-stage.md) | Six-disposition Archive stage decision | Accepted | Stage 98을 본문 전체를 원래 profile로 보존하는 retention class(`completed/`, `superseded/`, `retired/`, `resolved/`)와 본문 없는 route disposition(`tombstones/`, `migrations/`)으로 나누고, 인용 가능성을 명명에서 파생하며, record마다 commit·blob·digest를 두는 대신 catalog의 Retention Envelope `<commit>:<original path>` 하나를 둔다. decision-log 예외를 폐지하고 동결 generation은 다시 쓰지 않는다. ADR-0032를 대체한다. |

@@ -1,10 +1,10 @@
 ---
 title: "Common Document Contract v9 and Governed Router Envelopes"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0033"
 ---
@@ -187,7 +187,7 @@ Stage 99 Registry version 9 contract this decision adopted is unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0015](./0015-declarative-document-contract-registry.md), [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0015, [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md), and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of README envelope and public Registry-shape clauses; no full supersession | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 
 ### Implementation Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Implementation Plan"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0049-PLAN-0001"
 ---
@@ -110,7 +110,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 - Parent [Implementation Plan](plan.md)
 - [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
   [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
-  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  and superseded ADR-0021
 - Spec 048 target/routing handoff and current `scripts/validation/registry.json`
 - Current Kustomize roots, GitOps/infrastructure desired state, policy Rego,
   tracked secret contract, Vault/ESO contract, Traefik dynamic files, CI,
@@ -532,7 +532,7 @@ release metadata are not current PASS evidence.
 - **Task**: [Platform Validation and Security Evidence Task](plan.md)
 - **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Decision**: superseded ADR-0021
 - **Predecessor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007
   program lineage
 - **Successor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program

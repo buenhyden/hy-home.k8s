@@ -1,10 +1,10 @@
 ---
 title: "Retired Provider Residue Disposition Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "superseded"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0070"
 ---
@@ -54,8 +54,8 @@ in `docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.m
 and `docs/01.requirements/0003-workspace-agent-governance-platform.md`.
 
 Out of scope: every closed Stage 03 Spec, Plan, and Task; the superseded
-[ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
-and [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md);
+ADR-0013
+and ADR-0019;
 ADR-0030's own account of what it removed; the Stage 98 archive and its sealed
 migration ledgers; dated Stage 90 research observations; Git-backed recovery
 evidence for the retired transition mapping; the tests that assert the removed

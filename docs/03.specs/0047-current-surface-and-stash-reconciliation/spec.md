@@ -1,10 +1,10 @@
 ---
 title: "Current Surface and Stash Reconciliation Technical Specification"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0047"
 ---
@@ -250,7 +250,7 @@ or `git stash drop` in this tranche.
   [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
   and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
 - **Historical decision**:
-  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  superseded ADR-0021
 - **Plan**:
   [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
 - **Tasks**:

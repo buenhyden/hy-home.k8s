@@ -18,9 +18,9 @@ superseded_by: "ADR-0031"
 
 References marked Historical below identify the exact original source in a sealed
 superseded record; they do not change which Requirement or AD this document originally
-served. Current semantic authority is held by [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) /
-[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) /
-[AD-0007](../descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
+served. Current semantic authority is held by [REQ-0003](../../../../01.requirements/0003-workspace-agent-governance-platform.md) /
+[REQ-0004](../../../../01.requirements/0004-current-local-gitops-platform.md) and [AD-0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) /
+[AD-0007](../../../../02.architecture/descriptions/0007-current-local-gitops-platform.md). This reference maintenance changes no lifecycle
 status, decision supersession, package location, or execution completion claim.
 
 This decision defines numeric and semantic lineage for one program PRD that is
@@ -87,16 +87,16 @@ program PRDs would weaken either family uniqueness or product ownership.
 
 ## Traceability
 
-- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../98.archive/README.md)
-- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../98.archive/README.md)
+- **PRD**: Historical Workspace Document Assurance Modernization, through the [archive index](../../../README.md)
+- **ARD**: Historical Workspace Document Assurance Operating Model, through the [archive index](../../../README.md)
 - **Related ADR**: [Declarative Document Contract Registry](./0015-declarative-document-contract-registry.md)
-- **Successor decision**: [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
+- **Successor decision**: [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
   supersedes the program-instance roster and validation-routing ownership in
   this decision while preserving this record's historical program context.
-- **Specs**: [Document Contract Registry](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../98.archive/completed/03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
+- **Specs**: [Document Contract Registry](../../../completed/03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../../completed/03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent program-instance roster and validation-routing ownership while preserving this record's historical program context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent program-instance roster and validation-routing ownership while preserving this record's historical program context. | [Spec 0054](../../../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

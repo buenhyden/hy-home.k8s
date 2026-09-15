@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -134,11 +134,26 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 ### Retention Catalog
 
-첫 ADR-0038 disposition은 대체된 ADR-0032를 `superseded/`에 보존한다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다.
+ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. 대체된 ADR-0032가 첫 disposition이고, 나머지 대체된 ADR 15개가 뒤따랐다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다.
 
 | Disposition Record | Retention Envelope |
 | --- | --- |
 | [`superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md`](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) | `223b773f7ac15b755906cc485a9700f23194a16e:docs/02.architecture/decisions/0032-completed-and-terminal-document-retention.md` |
+| [`superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`](./superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md` |
+| [`superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md`](./superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0015-declarative-document-contract-registry.md` |
+| [`superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md`](./superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md` |
+| [`superseded/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md`](./superseded/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md` |
+| [`superseded/02.architecture/decisions/0018-full-body-archive-record-and-retention.md`](./superseded/02.architecture/decisions/0018-full-body-archive-record-and-retention.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md` |
+| [`superseded/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md`](./superseded/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md` |
+| [`superseded/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md`](./superseded/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md` |
+| [`superseded/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md`](./superseded/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md` |
+| [`superseded/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`](./superseded/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md` |
+| [`superseded/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md`](./superseded/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md` |
+| [`superseded/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md`](./superseded/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md` |
+| [`superseded/02.architecture/decisions/0025-four-digit-document-path-identity.md`](./superseded/02.architecture/decisions/0025-four-digit-document-path-identity.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0025-four-digit-document-path-identity.md` |
+| [`superseded/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`](./superseded/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md` |
+| [`superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md`](./superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md` |
+| [`superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md`](./superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md` |
 
 ## Authoring Workflow
 

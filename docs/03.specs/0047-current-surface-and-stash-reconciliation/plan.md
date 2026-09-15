@@ -1,10 +1,10 @@
 ---
 title: "Current Surface and Stash Reconciliation Implementation Plan"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0047-PLAN-0001"
 ---
@@ -100,7 +100,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 - Parent [Implementation Plan](plan.md)
 - [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md),
   [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md),
-  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  and superseded ADR-0021
 - Current `scripts/validation/registry.json`, document profile registry, Current audit
   pack, tracked repository inventory, and affected-surface validators
 - Preserved stash object
@@ -386,7 +386,7 @@ outcomes, formatter effects, limitations, and successor handoff.
 - **Task**: [Current Surface and Stash Reconciliation Task](plan.md)
 - **Program**: [REQ-0004 — current platform requirements](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Architecture**: [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Decision**: superseded ADR-0021
 - **Successor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007 program
   lineage
 

@@ -1,10 +1,10 @@
 ---
 title: "Argo CD Source Integrity Non-adoption"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-08-18"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0026"
 ---
@@ -155,5 +155,5 @@ orthogonal.
 
 ### Related Documents
 
-- [ADR 0022 — direct-approval standalone execution lineage](0022-direct-approval-standalone-execution-lineage.md)
+- ADR 0022 — direct-approval standalone execution lineage
 - [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

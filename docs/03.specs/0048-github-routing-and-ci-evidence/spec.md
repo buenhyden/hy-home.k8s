@@ -1,10 +1,10 @@
 ---
 title: "GitHub Routing and CI Evidence Technical Specification"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0048"
 ---
@@ -104,7 +104,7 @@ not merely presence of similar strings.
 - One `qa` job owns validation execution. The former `pre-commit`,
   `repo-quality-static`, `agent-governance-static`, and `manifest-static` jobs
   were consolidated into it under
-  [ADR-0034](../../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)
+  ADR-0034
   and SPEC-0072. This package inherits that topology; its remaining obligations
   are routing and projection, not job count.
 - A focused validator has one primary execution owner inside a lane. A job may
@@ -268,7 +268,7 @@ observed repository and SHA.
 - **Architecture**:
   [AD-0007 — current platform architecture](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Decision**:
-  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  superseded ADR-0021
 - **Plan**:
   [GitHub Routing and CI Evidence Implementation Plan](plan.md)
 - **Tasks**:
