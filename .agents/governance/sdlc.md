@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "1.1.2"
+version: "1.1.3"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-15"
 ---
 
 # Software Development Lifecycle
@@ -74,7 +74,7 @@ technical-design artifact.
 | QA / CI / CD | Quality checks / hosted validation of a checkout / delivery and reconciliation. Local and CI static QA share one execution contract; Argo CD reconciles the declared GitOps state under the operating boundary. |
 | Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
 | Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
-| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Stage 98 owns retained recovery records. |
+| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Stage 98 owns retained bodies and route dispositions; Git owns source recovery. |
 
 ### Proportional transitions
 

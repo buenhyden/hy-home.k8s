@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -62,17 +62,22 @@ skill과 provider projection을 소유한다.
    구현 순서·위험·검증·rollback은 Plan, 작업 결과는 개별 Task에 둔다.
 5. 경로 또는 내용 변경 시 해당 README와 현재 cross-link를 함께 점검한다.
    ID는 재사용하지 않고 다른 문서에서는 전체 ID로 추적한다.
-6. superseded ADR은 decision log에 남긴다. 완료·봉인된 본문을 새 형식에
-   맞추려고 다시 쓰지 않는다. 폐기 문서의 본문은 Git history에서 복구한다.
+6. 완료·봉인된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. ADR을 포함해 더
+   이상 현재가 아닌 문서는 Stage 98의 해당 disposition으로 떠나며, 원본은 두
+   번째 복구 원장 없이 Git history가 복구한다
+   ([ADR-0038](02.architecture/decisions/0038-six-disposition-archive-stage.md), proposed). 수락과 machine
+   전환 전까지 검증기는 ADR-0032 route만 인정하므로 기존 superseded ADR은
+   decision log에 남아 있다.
 
-   Archive 참조는 두 가지를 구분한다. **금지**: 활성 문서가 Archive를 현재
-   owner처럼 라우팅하는 것 — Item Index나 Related Documents 같은 탐색 목록에
-   Archive 문서를 항목으로 두거나, 본문 복제본 또는 redirect를 만드는 것.
-   **허용**: 계보와 출처로서의 인용 — ADR의 supersession 행, 완료 Task의 실행
-   기록, Stage 90 source ledger의 관측 근거처럼 링크 자체가 증거인 경우다. 이
-   구분이 필요한 이유는 두 요구가 충돌하기 때문이다. 봉인된 본문은 재작성하지
-   않는데, 그 본문들은 자신이 대체하거나 종료한 Archive 문서를 이름으로
-   가리킨다. 그 링크를 지우면 규칙을 지키는 대신 기록을 훼손한다.
+   Archive 인용 가능 여부는 각 family가 무엇을 명명하는지에서 따라 나온다.
+   **허용**: `completed/`는 promote 선언을 통해, `resolved/`는 corrective-work
+   owner를 통해 현재 authority로 이어지므로 인용할 수 있고, `resolved/`는 역사
+   증거로만 인용한다. **금지**: `superseded/` 본문 대신 후속 문서를, `retired/`,
+   `tombstones/`, `migrations/` 대신 현재 route를 인용한다. 어느 경우든
+   Archive를 탐색 목록에 현재 owner처럼 두거나 본문 복제본·redirect를 만들지
+   않는다. 봉인된 본문은 재작성하지 않으므로 그 안의 기존 Archive 링크는
+   기록으로 남고, ADR-0038 수락 전에 작성된 활성 문서의 인용은 SPEC-0079가
+   consumer로 열거한다.
 7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
    [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.

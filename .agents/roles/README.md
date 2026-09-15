@@ -1,10 +1,10 @@
 ---
 title: "Agent Responsibilities"
-version: "1.0.0"
+version: "1.1.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-15"
 ---
 # Agent Responsibilities
 
@@ -33,8 +33,10 @@ policy.
 
 - Trace structural changes to complete Requirement Package IDs and affected
   Specs.
-- Use a successor ADR for a changed accepted decision; retain superseded ADRs in
-  the decision log.
+- Use a successor ADR for a changed accepted decision. A superseded ADR stays in
+  the decision log only until ADR-0038 is accepted and Spec 0079 moves the
+  machine routes; after that it leaves Stage 02 for `superseded/` like any
+  other family, under its own disposition authorization.
 - Hand implementation, operational, and security consequences to their
   responsible owners. Do not claim ownership of all documentation.
 

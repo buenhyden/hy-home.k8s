@@ -1,10 +1,10 @@
 ---
 title: "Terminal Document Retention and Archive Stage Taxonomy"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0032"
 ---
@@ -205,6 +205,15 @@ consumer-zero section has since resolved. The documents tracing to REQ-0005 and
 REQ-0006 moved their traceability to REQ-0003, and both requirement packages
 are sealed as superseded records under `docs/98.archive/superseded/01.requirements/`
 (commit `2b5e16de`).
+
+**Proposed successor (2026-09-15).** [ADR-0038](./0038-six-disposition-archive-stage.md)
+proposes a six-disposition Stage 98 that supersedes this decision on
+acceptance. It withdraws the decision-log exception, turns `superseded/` into a
+retention class that holds whole bodies, adds `retired/` and `resolved/`, makes
+`tombstones/` and `migrations/` route dispositions that hold no body, and
+replaces per-record source commit, blob, and digest with one catalog Retention
+Envelope. This decision stays accepted, and its routes stay the only ones the
+validators admit, until that acceptance and the machine cutover in Spec 0079.
 
 ### Lifecycle Traceability
 

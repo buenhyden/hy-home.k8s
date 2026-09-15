@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.1.1"
+version: "1.2.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -86,12 +86,13 @@ proposal을 구현된 병렬 contract로 주장하지 않는다. 고위험 실�
 ### Terminal disposition and historical lineage
 
 처분 전에 source → current semantic owner → 모든 current consumer → legal terminal route를 증명한다.
-완료 package는 ADR-0032에 따라 동일 document type으로 `completed/<stage>/`에 보관한다.
-후계자로 대체된 문서는 `superseded/<stage>/`, 후계자 없이 끝난 문서는 `tombstones/<stage>/`의
-non-authoritative record로 구분한다. ADR 본문은 상태에 관계없이 decision log에 남는다.
-Record envelope의 original path와 source commit/blob/digest는 정확한 원본을 회복하며
-봉인 payload를 현재 링크에 맞추어 편집하지 않는다. Terminal ADR의 원래 문서 인용은
-명시적 역사 링크로 유지하고 현재 문서는 record를 실행 authority로 소비하지 않는다.
+더 이상 현재가 아닌 문서의 보존은 [ADR-0038](../decisions/0038-six-disposition-archive-stage.md)(proposed)이 두 종류로 나눈다.
+retention class인 `completed/`, `superseded/`, `retired/`, `resolved/`는 본문 전체를 원래 profile로 보존하고,
+route disposition인 `tombstones/`와 `migrations/`는 본문 없이 route와 현재 owner만 명명한다. ADR decision-log 예외는 폐지된다.
+인용 가능성은 각 family가 명명하는 대상에서 파생되고, catalog의 Retention Envelope가 source Git object를
+`<commit>:<original path>`로 한 번 명명한다. 수락과 SPEC-0079 machine 전환 전까지 route는 ADR-0032를 따르며,
+그 generation의 envelope와 source commit/blob/digest는 동결된 역사 증거로 편집하지 않는다. Terminal ADR의 원래 문서 인용은
+명시적 역사 링크로 유지하고 현재 문서는 보존본을 실행 authority로 소비하지 않는다.
 
 REQ-0005/0006 → REQ-0008은 원래 supersession 이력이다. REQ-0003은 이 수렴의 transitive
 current semantic successor이며 원래 decision target을 바꿔 쓰는 것이 아니다.

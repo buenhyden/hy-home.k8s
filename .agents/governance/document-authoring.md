@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.4.1"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 ---
 
 # Document Authoring Policy
@@ -62,10 +62,16 @@ express ownership, not a one-way waterfall.
    document answers to and no gate reads, so it is free to be wrong for as long
    as nobody follows it. Links between documents inside `docs/` keep
    their existing contracts, and a machine reference a program opens is not a
-   link. A document never links into `docs/98.archive/` beyond its index and a
-   retention class; it names the archive record by identifier and reaches it
-   through that index, which keeps the claim and drops the path the archive owns
-   and may re-seal. Only an `operation/incident` record and its
+   link. A document never links into `docs/98.archive/` beyond its index and the
+   retention classes whose own body still leads a reader to current authority:
+   `completed/`, through its promotion declaration, and `resolved/`, as
+   historical evidence, through its corrective-work owner. It cites the
+   successor instead of a `superseded/` body and the current route instead of a
+   `retired/` body, a tombstone, or a migration. A frozen record it must still
+   name is named by identifier and reached through the index. Until ADR-0038 is
+   accepted and Spec 0079 moves the link validator, only `completed/` is an
+   admitted link target, and citations that predate acceptance stay as
+   enumerated consumers. Only an `operation/incident` record and its
    `operation/postmortem` may cite an archive path directly, because the
    evidence such an account rests on is often the archived record itself.
 7. Keep a Requirement Package solution-independent. Put executable interface
@@ -92,8 +98,9 @@ express ownership, not a one-way waterfall.
     reviewed, tracked document may later occupy a retired path; never restore
     the retired bytes there.
 13. Preserve accepted decisions and completed evidence. Use successors,
-    reciprocal lifecycle relationships, and minimal Git-backed recovery
-    mappings rather than rewriting history or leaving redirects.
+    reciprocal lifecycle relationships, and the one Git object a Stage 98
+    Retention Envelope names rather than rewriting history, leaving redirects,
+    or keeping a second recovery ledger.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 

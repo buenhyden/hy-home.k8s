@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.2.1"
+version: "1.3.0"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -65,7 +65,7 @@ machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
 - **REQ-0003-FR-0017**: CI는 의도된 독립 evidence lane, 누락 없는 aggregate verdict, 최소 권한, immutable 외부 Action 식별자와 artifact 보존 경계를 유지해야 한다. 로컬 검증을 hosted 실행으로 보고하지 않는다.
 - **REQ-0003-FR-0018**: 변경은 논리적 커밋, 독립 검토, 비례적인 전체 검증과 되돌릴 수 있는 경계로 전달해야 한다.
 - **REQ-0003-FR-0019**: 실행 상태와 순서는 package-local Plan/Task가 소유하고 원래 tranche·follow-up·승계 이력을 왜곡하거나 영구 중앙 roster로 복제하지 않아야 한다.
-- **REQ-0003-FR-0020**: 완료 package, 후계자로 대체된 문서, 후계자 없이 끝난 문서를 실제 lifecycle에 따라 구분하고 선언된 봉인 원본·provenance를 보존해야 한다. ADR 본문은 decision log에 남고 기록은 current authority나 재활성화 입력이 될 수 없다.
+- **REQ-0003-FR-0020**: 완료 package, 후계자로 대체된 문서, 후계자 없이 철회된 문서, 종결된 사고 기록을 실제 lifecycle에 따라 구분해 본문 전체를 보존하고, 퇴역한 route와 이동한 scope는 본문 없이 현재 owner를 명명해야 한다. 원본 복구는 Git history가 맡고 두 번째 복구 원장을 두지 않으며, 동결된 봉인 본문과 provenance는 다시 쓰지 않는다. ADR도 예외가 아니며 보존본은 current authority나 재활성화 입력이 될 수 없다.
 - **REQ-0003-FR-0021**: Audit, research, data, generated output 및 학습 자료는 근거·관측 시점·소유자를 명시하고 현재 정책 또는 실행 승인의 대체물이 되지 않아야 한다.
 - **REQ-0003-FR-0022**: Scratch와 checkpoint는 제한된 비밀정보 없는 임시 상태로 유지하고 durable 실행 증거는 Task에 남겨야 한다. 제거된 공유 progress ledger를 새 current owner로 복원하지 않는다.
 - **REQ-0003-FR-0023**: 안정적인 문서 identity와 semantic filename을 유지하고 mandatory/excluded profile의 identity 규칙, 유일성 및 경로 대응을 검증해야 한다. 기존 결정 이력의 식별자를 재할당하지 않는다.
@@ -168,6 +168,9 @@ same-snapshot duplicate gate execution is owned by
 Reconciliation of document statements that drifted from the implementation,
 and of Stage 03 lifecycle state that lagged completed work, is owned by
 [SPEC-0078](../03.specs/0078-document-currency-reconciliation/spec.md).
+The six-disposition Archive stage, its derived citation rule, and the move of
+the registry routes, archive forms, and validators to that model are owned by
+[SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md).
 
 ## Traceability
 
@@ -183,7 +186,7 @@ and of Stage 03 lifecycle state that lagged completed work, is owned by
 | REQ-0003-FR-0017 | CI는 의도된 독립 evidence lane, 누락 없는 aggregate verdict, 최소 권한, immutable 외부 Action 식별자와 artifact 보존 경계를 유지해야 한다. 로컬 검증을 hosted 실행으로 보고하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0018 | 변경은 논리적 커밋, 독립 검토, 비례적인 전체 검증과 되돌릴 수 있는 경계로 전달해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0019 | 실행 상태와 순서는 package-local Plan/Task가 소유하고 원래 tranche·follow-up·승계 이력을 왜곡하거나 영구 중앙 roster로 복제하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0020 | 완료 package, 후계자로 대체된 문서, 후계자 없이 끝난 문서를 실제 lifecycle에 따라 구분하고 선언된 봉인 원본·provenance를 보존해야 한다. ADR 본문은 decision log에 남고 기록은 current authority나 재활성화 입력이 될 수 없다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0020 | 완료 package, 후계자로 대체된 문서, 후계자 없이 철회된 문서, 종결된 사고 기록을 실제 lifecycle에 따라 구분해 본문 전체를 보존하고, 퇴역한 route와 이동한 scope는 본문 없이 현재 owner를 명명해야 한다. 원본 복구는 Git history가 맡고 두 번째 복구 원장을 두지 않으며, 동결된 봉인 본문과 provenance는 다시 쓰지 않는다. ADR도 예외가 아니며 보존본은 current authority나 재활성화 입력이 될 수 없다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0021 | Audit, research, data, generated output 및 학습 자료는 근거·관측 시점·소유자를 명시하고 현재 정책 또는 실행 승인의 대체물이 되지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0022 | Scratch와 checkpoint는 제한된 비밀정보 없는 임시 상태로 유지하고 durable 실행 증거는 Task에 남겨야 한다. 제거된 공유 progress ledger를 새 current owner로 복원하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0023 | 안정적인 문서 identity와 semantic filename을 유지하고 mandatory/excluded profile의 identity 규칙, 유일성 및 경로 대응을 검증해야 한다. 기존 결정 이력의 식별자를 재할당하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |

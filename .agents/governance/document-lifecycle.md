@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-15"
 ---
 
 # Document Lifecycle Policy
@@ -44,14 +44,41 @@ their owning migration work package moves them.
   do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
-- A terminal document is retained rather than deleted. It leaves the active
-  stage for the Stage 98 directory whose role matches why it ended, and the
-  move is proved by a sealed migration row that pins the origin path, commit,
-  and blob. Which states are terminal stays with the registry; this policy adds
-  only the obligation that reaching one moves the document.
-- Frozen legacy Archive payloads retain their original generation, bytes, and
-  historical links. Current validators classify them as historical evidence
-  and do not rewrite them to the current envelope.
+- A governed document that is no longer current is retained rather than
+  deleted. It leaves Stages 01, 02, 03, 05, 90, and 99 for the Stage 98
+  disposition that matches what happened to it, and a superseded architecture
+  decision follows the same rule. Which states are terminal stays with the
+  registry; this policy adds only the obligation that reaching one moves the
+  document, and that each disposition needs its own authorization.
+- Stage 98 has six dispositions of two kinds. A retention class holds a whole
+  once-current body under the profile that governed it: `completed/` names what
+  it promoted, `superseded/` names the document that replaced it, `retired/`
+  names why a rule or scope was withdrawn with no successor, and `resolved/`
+  holds a closed Incident bundle with its published Postmortem and names the
+  closure evidence and current corrective-work owner. A route disposition holds
+  no body: `tombstones/` names a retired route, its successor or absence, and
+  the reason, and `migrations/` names a moved scope and its current owner as
+  `MIG-####`. A disposition's directory is created by the change that first
+  uses it.
+- Citability follows from what a family names. An active-stage document may
+  cite `completed/` and, as historical evidence, `resolved/`. It cites the
+  successor instead of a `superseded/` body, and the current route instead of a
+  `retired/` body, a tombstone, or a migration.
+- Retention follows the profile: frozen bodies remain immutable, while a
+  Git-history-only disposition retains recoverable provenance without a
+  compatibility copy. No Stage 98 record carries a second recovery ledger: no
+  redirect, path ledger, self-designed body digest, branch SHA, or recovery
+  commit. The Stage 98 catalog's Retention Envelope names the source Git object
+  once as `<commit>:<original path>`, and normal Git history recovers it.
+- ADR-0038 records this model as a proposed decision that supersedes ADR-0032
+  on acceptance. Until Spec 0079 moves the registry routes, archive forms, and
+  validators in one change, the machine routes admit only ADR-0032's
+  `completed/`, `superseded/`, `tombstones/`, and `migrations/` forms, so no
+  disposition into the new model is executed before then.
+- Frozen Stage 98 content keeps its generation. Sealed records with their
+  ArchiveEnvelope and digests, migration ledgers with pinned rows, and retained
+  packages keep their bytes and historical links; validators classify them as
+  historical evidence and never rewrite them to the current form.
 
 ## Validation and Refresh
 

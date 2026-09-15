@@ -1,32 +1,51 @@
 ---
 title: "98.archive"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "archive"
 ---
 
 # 98.archive
 
-> 활성 stage를 떠난 종단 문서의 보존본, 봉인 record, 경로 전이 원장과 provenance를 보관하는 비현재 archive stage다.
+> 활성 stage가 더 이상 싣지 않는 것을 retention class 네 가지와 route disposition 두 가지로 보존하는 비현재 archive stage다.
 
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
-`98.archive/`는 활성 스테이지를 떠난 문서를 보관하는 비현재 stage다. retention 역할은 이름이 아니라 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)가 registry의 종단 상태 분류에서 파생한 역할로 구분된다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 현재 `proposed` 상태다. 수락되고 [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry와 검증기를 함께 전환하기 전까지, 검증기가 인정하는 route는 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)의 `completed/`, `superseded/`, `tombstones/`, `migrations/` 형식뿐이다. 그 전에는 새 모델로의 disposition을 실행하지 않는다.
 
-- `migrations/`는 경로 전이 자체를 봉인한 원장이다. `archive/migration` profile의 `sealed` 문서이며, 어떤 문서가 어디로 갔는지에 대한 유일한 기계 증거다.
-- `completed/`는 끝까지 진행된 작업을 보관한다. 판정 근거는 replacement를 명명하지 않는 종단 상태이며, `done`과 끝난 패키지 안의 `cancelled`가 여기 해당한다. 보존 단위는 문서가 아니라 패키지이므로, 미종단 문서가 하나라도 있으면 패키지 전체가 활성 스테이지에 남는다.
-- `superseded/`는 후속 문서가 대체한 문서의 record를 보관한다. 판정 근거는 종단 `superseded` 상태와 존재하는 replacement다.
-- `tombstones/`는 끝난 패키지 없이 단독으로 끝난 문서의 record를 보관한다. 판정 근거는 `withdrawn`·`rejected`·`cancelled`·`retired`·`invalidated` 종단 상태와 replacement의 부재다.
+각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 
-`completed/`만 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. 바이트 동일성이 아니라 링크 대상 동일성이 보존 불변식이고, 원본 바이트는 각 행이 고정한 `source_commit`과 `source_blob`으로 Git에서 복원한다. 그 링크는 현재 결합이 아니라 역사 증거로 읽는다.
+### Retention Class
 
-`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 25개 record는 모두 후속 문서를 명명하므로 전부 `superseded/`에 있고, `tombstones/`는 아직 구성원이 없다. Git은 빈 디렉터리를 추적하지 않으므로 현재 디렉터리는 `migrations/`, `completed/`, `superseded/` 세 개이고, `tombstones/`는 첫 record와 함께 생성된다. 구성원이 없어도 그 역할은 유지된다.
+**Retention class**는 한때 현재였던 본문 전체를 당시 적용된 profile 그대로 보관한다. 더 이상 현재가 아닌 governed 문서는 Stage 01, 02, 03, 05, 90, 99를 떠나 실제로 일어난 일에 맞는 class에 보관되며, superseded ADR도 예외가 아니다. 보존은 profile을 따른다. 동결된 본문은 immutable로 남고, Git-history-only disposition은 호환 복제본 없이 복구 가능한 provenance만 남긴다. disposition마다 별도 승인이 필요하다.
+
+- `completed/`: 끝나서 반영된 작업을 보관한다. 무엇을 promote했는지 명명하며, 활성 stage에서 인용할 수 있다.
+- `superseded/`: 더 새로운 현재 authority가 대체한 내용을 보관한다. 대체한 문서를 명명하며, 인용할 수 없으므로 후속 문서를 인용한다.
+- `retired/`: 후속 없이 철회된 rule 또는 scope를 보관한다. 철회 이유를 명명하며, 인용할 수 없다.
+- `resolved/`: 종결된 Incident bundle과 발행된 Postmortem을 보관한다. 종결 증거와 현재 corrective-work owner를 명명하며, 역사 증거로서 인용할 수 있다.
+
+### Route Disposition
+
+**Route disposition**은 본문을 담지 않는다. 이 저장소 밖 consumer를 위한 route를 명명하므로, 현재 문서는 그 route를 명명한 record가 아니라 현재 route를 인용한다.
+
+- `tombstones/`: 본문을 담지 않는다. 퇴역한 route, 그 후속 또는 부재, 이유를 명명하며, 인용할 수 없다.
+- `migrations/`: 본문을 담지 않는다. 이동한 scope와 현재 owner를 `MIG-####`로 명명하며, 인용할 수 없다.
+
+인용 가능성은 명명 방식에서 따라 나오며, 명명과 별도로 규정하지 않는다. retention class는 자신의 본문이 여전히 독자를 현재 authority로 이끌 때만 인용할 수 있다. `completed`는 Promotion 선언을 통해, `resolved`는 corrective-work owner를 통해 독자를 이끈다. `superseded` 본문은 대체 문서를 명명하므로 인용은 그 후속 문서에 둔다. 대체된 rule을 인용하는 것이 곧 그 rule이 되살아나는 경로이기 때문이다. `retired`에는 가리키는 대상이 없으므로, 인용하면 독자가 철회된 rule에 머문다.
+
+### One Recovery Reference
+
+어떤 family의 Stage 98 record도 두 번째 복구 원장을 갖지 않는다. redirect, path ledger, 자체 설계한 본문 digest, branch SHA, recovery commit이 없다. ADR-0038 수락과 SPEC-0079 machine 전환 뒤의 disposition은 catalog인 아래 Document Index에 Retention Envelope 하나를 두어 source Git object를 `<commit>:<original path>` 형식으로 한 번만 명명하고, 복구는 일반 Git history가 맡는다. 전환 전까지 아래 index의 동결 행은 `Source Commit`, `Source Blob`, `Payload SHA-256` 열을 그대로 유지하며, 이 열은 새 disposition의 형식이 아니다.
+
+### Frozen Generation
+
+현재 보관된 내용은 모두 ADR-0038 이전 generation이며 immutable이다. `completed/`는 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. `superseded/`의 25개 record는 ArchiveEnvelope payload와 `source_commit`·`source_blob`·`content_sha256` provenance를 가진 봉인 record이고, `migrations/`의 원장은 행마다 commit·blob·digest를 고정한다. 이 generation은 새 형식에 맞추어 다시 쓰지 않으며 검증기는 이를 역사 증거로 분류한다. 이 generation을 인용하는 기존 활성 문서는 SPEC-0079가 consumer로 열거하고 그대로 둔다.
 
 <!-- archive-manifest:v1 records=25 historical-links=198 -->
 
@@ -39,22 +58,22 @@ layer: "archive"
 
 ### In Scope
 
-- 활성 stage에서 대체되거나 후속 없이 끝난 문서의 봉인 record (`superseded/`, `tombstones/`)
-- 끝난 package 전체의 보존본 (`completed/`)
-- 활성 스테이지를 떠난 종단 문서의 보존본과 그 경로를 은퇴시킨 봉인 원장 행
-- `original_path`, `original_type`, archive decision, source commit/blob, SHA-256 provenance
-- source commit과 original path를 기준으로 해석하는 historical rendered links
-- index-only current navigation과 immutable payload 검증
+- retention class `completed/`, `superseded/`, `retired/`, `resolved/`에 보관한 본문 전체
+- route disposition `tombstones/`, `migrations/`가 명명하는 route와 현재 owner
+- 전환 뒤 새 disposition마다 catalog의 Retention Envelope `<commit>:<original path>` 한 개
+- ADR-0038 이전 generation의 봉인 record, 원장, completed 보존본과 그 provenance
+- index-only current navigation과 동결 payload 검증
 
 ### Out of Scope
 
 - 현재 SDLC 또는 operations authority. 보존본을 인용해도 그것이 현재가 되지는 않는다
-- historical link를 현재 경로로 다시 쓰는 작업
+- 두 번째 복구 원장: redirect, path ledger, 자체 설계 본문 digest, branch SHA, recovery commit
+- 동결 generation을 새 형식으로 다시 쓰거나 historical link를 현재 경로로 다시 쓰는 작업
 - `mutable` 또는 `current` 상태 문서의 보관. 진행 중인 문서는 아무리 오래되어도 제자리에 남는다
 - secret-bearing history의 일반 보존
 - metadata 또는 payload를 조용히 수정하는 provenance repair
 
-ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing delimiter는 없으며 validator는 Git blob identity, payload byte count, final newline, SHA-256, mirror path, replacement dependency를 함께 확인한다.
+동결 generation에서는 ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing delimiter는 없으며 validator는 Git blob identity, payload byte count, final newline, SHA-256, mirror path, replacement dependency를 함께 확인한다.
 
 ## Document Index
 
@@ -115,6 +134,21 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 ## Authoring Workflow
 
+### ADR-0038 Disposition
+
+ADR-0038 수락과 SPEC-0079 machine 전환 뒤의 disposition은 다음 순서를 따른다.
+
+1. 문서에 실제로 일어난 일(완료, 대체, 후속 없는 철회, 사고 종결, route 퇴역, scope 이동)과 현재 authority를 확정하고 family를 하나 고른다. disposition 승인을 해당 Task에 기록한다.
+2. Retention class면 문서를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile, identity, 종단 상태를 유지한다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
+3. Route disposition이면 본문 없이 퇴역한 route와 그 후속 또는 부재, 이유를 `tombstones/`에, 이동한 scope와 현재 owner를 `MIG-####`로 `migrations/`에 기록한다.
+4. catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다.
+5. 현재 consumer를 인용 규칙에 맞춘다. `superseded/` 인용은 후속 문서로, `retired/`·`tombstones/`·`migrations/` 인용은 현재 route로 바꾼다.
+6. 디렉터리가 없으면 첫 구성원과 같은 변경에서 만든다.
+
+### ADR-0032 Transition Procedure
+
+전환 전까지 검증기가 인정하는 record는 아래 절차로만 만든다.
+
 1. 현재 authority와 replacement를 먼저 확정하고 원본 경로 제거와 mirrored archive record 생성을 하나의 proposed snapshot으로 준비한다.
 2. 원본은 working-tree text가 아니라 full source commit의 Git blob bytes로 복구한다.
 3. 복구 blob을 stdout/stderr 비공개, 완전 redaction, 전용 detection exit code로 secret classifier에 통과시킨다. 탐지 또는 도구 오류는 fail-closed다.
@@ -126,13 +160,14 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 - Payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다.
 - Historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
-- Current 문서는 archive를 현재 owner처럼 라우팅할 때 `docs/98.archive/README.md`만 참조한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
-- 이 index가 record inventory를 소유한다. Terminal ADR/문서의 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
+- 현재 문서가 archive로 링크할 수 있는 곳은 이 index, `completed/`, 역사 증거로서의 `resolved/`뿐이다. 그 밖의 family는 후속 문서나 현재 route를 인용하며, 동결 record는 identifier로 명명하고 이 index를 경유한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
+- 이 index가 동결 record inventory와, 전환 뒤 새 disposition의 Retention Envelope catalog를 소유한다. 동결 generation의 Terminal ADR/문서에 있는 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Archive Retention Decision](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
+- [Six-Disposition Archive Decision](../02.architecture/decisions/0038-six-disposition-archive-stage.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Template Routing Contract](../99.templates/README.md)
