@@ -1,6 +1,6 @@
 ---
 title: "Six-Disposition Archive Stage"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -23,7 +23,7 @@ keeps its generation.
 
 ## Context
 
-[ADR-0032](./0032-completed-and-terminal-document-retention.md) gave Stage 98
+ADR-0032 gave Stage 98
 four directories. `completed/` retains a document itself; `superseded/` and
 `tombstones/` hold sealed records whose ArchiveEnvelope carries `source_commit`,
 `source_blob`, and `content_sha256`; `migrations/` holds ledgers whose rows pin
@@ -187,4 +187,4 @@ family.
 
 | Decision lineage                                                | Replacement relation                                                  | Affected Spec                                                          |
 | --------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [ADR-0032](./0032-completed-and-terminal-document-retention.md) | Supersedes ADR-0032; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| ADR-0032 | Supersedes ADR-0032; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |

@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.4.0"
+version: "0.5.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ layer: "archive"
 
 ## Overview
 
-`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 `accepted` 상태다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 `accepted` 상태다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
 
 각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 
@@ -132,6 +132,14 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 [MIG-0022](./migrations/0022-document-taxonomy-package-retention.md)는 이 패키지의
 이전 경로와 Git 원문 복구 정보를 기록한다. 위 record manifest의 수치와는 별개다.
 
+### Retention Catalog
+
+첫 ADR-0038 disposition은 대체된 ADR-0032를 `superseded/`에 보존한다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다.
+
+| Disposition Record | Retention Envelope |
+| --- | --- |
+| [`superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md`](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) | `223b773f7ac15b755906cc485a9700f23194a16e:docs/02.architecture/decisions/0032-completed-and-terminal-document-retention.md` |
+
 ## Authoring Workflow
 
 ### ADR-0038 Disposition
@@ -167,7 +175,7 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 - [Docs README](../README.md)
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
-- [Archive Retention Decision](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
+- [Archive Retention Decision](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 - [Six-Disposition Archive Decision](../02.architecture/decisions/0038-six-disposition-archive-stage.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Route Tombstone Template](../99.templates/templates/archive/route-tombstone.template.md)

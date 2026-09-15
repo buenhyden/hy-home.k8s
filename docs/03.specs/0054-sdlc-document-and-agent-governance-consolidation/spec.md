@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0054"
 ---
@@ -57,8 +57,8 @@ Direct human approval on 2026-08-13 authorizes this Spec-owned execution
 relation. No separate PRD or Architecture Description is required for this
 package-local lifecycle. ADR-0025 owns the topology decision; accepted
 ADR-0031 owns the current-corpus and validation-routing model; and
-[accepted ADR-0032](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
-owns the retention model that replaces deletion as the disposition for
+[ADR-0038](../../02.architecture/decisions/0038-six-disposition-archive-stage.md),
+which superseded ADR-0032, owns the retention model that replaces deletion as the disposition for
 completed, stale, and deprecated documents in WP-013 and WP-009.
 [accepted ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
 owns the scoped common-envelope, public Registry v9, template grammar, and
@@ -134,7 +134,7 @@ SPEC-0054-TSK-0011 is the current parent acceptance record.
 - Use reachable Git history as the exact-byte recovery owner. Do not create a
   sealed Archive record or redirect as a current-document dependency or
   routine condition for retiring an owner. Retain terminal governed documents
-  only through the accepted ADR-0032 package-retention route.
+  only through the ADR-0038 disposition route, which superseded ADR-0032.
 - Commit each independently testable logical unit separately.
 
 ### Protected boundaries
@@ -618,7 +618,8 @@ docs/98.archive/
 └── tombstones/<original-stage>/####-<slug>.md
 ```
 
-The accepted ADR-0032 contract governs the distinction. `completed/` retains a
+ADR-0032 set this distinction, and ADR-0038, which superseded it, keeps the
+completed-package rule while freezing ADR-0032's record forms. `completed/` retains a
 terminal governed document or whole Stage 03 package after current consumers
 reach zero. The retained document keeps its original profile and identity, may
 be cited directly for historical trace, and never becomes current requirement,

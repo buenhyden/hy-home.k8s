@@ -1,10 +1,10 @@
 ---
 title: "Authority-First SDLC and Agent Governance Convergence"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0030"
 supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
@@ -315,7 +315,7 @@ have different lifecycle and review responsibilities even when co-located.
 
 **Current-state clarification (2026-09-14).** Later accepted decisions amend
 parts of this topology without superseding the whole record. ADR-0031 amends the
-validation layout clauses; ADR-0032 replaces the deletion disposition for
+validation layout clauses; ADR-0032, since superseded by ADR-0038, replaced the deletion disposition for
 terminal documents with retention; ADR-0033 governs the router envelope; and
 ADR-0034, ADR-0035 and ADR-0036 successively moved agent governance, so the
 current owners are `.agents/governance/` and `.agents/roles/registry.json`, not

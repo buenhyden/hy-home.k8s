@@ -15,7 +15,7 @@ superseded_by: "ADR-0038"
 ## Overview
 
 This decision is superseded by
-[ADR-0038](./0038-six-disposition-archive-stage.md), which gives Stage 98 six
+[ADR-0038](../../../../02.architecture/decisions/0038-six-disposition-archive-stage.md), which gives Stage 98 six
 dispositions of two kinds and withdraws the decision-log exception. The clauses
 below record what was decided at the time; they are historical evidence, not
 current instructions. Its sealed records and ledgers remain a frozen
@@ -30,9 +30,9 @@ every other respect.
 
 ## Context
 
-[ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md)
+[ADR-0030](../../../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 established consumer-first deletion with Git-backed recovery, and
-[ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) made
+[ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) made
 Git the default terminal-history owner. Under those decisions a finished
 package is deleted once its consumers reach zero, and Stage 98 keeps only an
 index, migration ledgers, and tombstones.
@@ -42,7 +42,7 @@ recovery requires already knowing that a document existed and which commit
 holds it, which is exactly what a reader of finished work does not know.
 
 Meanwhile the active stages describe finished work as if it were current. The
-[Stage 99 registry](../../99.templates/registry.json) classifies every profile
+[Stage 99 registry](../../../../99.templates/registry.json) classifies every profile
 state as `mutable`, `current`, or `terminal`, so this is measurable rather than
 a matter of opinion: on 2026-09-04 the active stages held 415 documents in a
 terminal state, 399 of them `done` Stage 03 documents.
@@ -214,7 +214,7 @@ REQ-0006 moved their traceability to REQ-0003, and both requirement packages
 are sealed as superseded records under `docs/98.archive/superseded/01.requirements/`
 (commit `2b5e16de`).
 
-**Successor (2026-09-15).** [ADR-0038](./0038-six-disposition-archive-stage.md)
+**Successor (2026-09-15).** [ADR-0038](../../../../02.architecture/decisions/0038-six-disposition-archive-stage.md)
 records a six-disposition Stage 98 and supersedes this decision. It withdraws
 the decision-log exception, turns `superseded/` into a retention class that
 holds whole bodies, adds `retired/` and `resolved/`, makes `tombstones/` and
@@ -226,8 +226,8 @@ records and ledgers keep this decision's form as a frozen generation.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of their deletion and Git-first terminal-history clauses for terminal documents; both remain accepted and are not superseded | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes this decision; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| [ADR-0030](../../../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) and [ADR-0031](../../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of their deletion and Git-first terminal-history clauses for terminal documents; both remain accepted and are not superseded | [Spec 0054](../../../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [ADR-0038](../../../../02.architecture/decisions/0038-six-disposition-archive-stage.md) | Supersedes this decision; its records and ledgers stay a frozen generation | [Spec 0079](../../../../03.specs/0079-six-disposition-archive-stage/spec.md) |
 
 ### Implementation Traceability
 

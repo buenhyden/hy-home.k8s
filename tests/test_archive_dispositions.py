@@ -349,24 +349,20 @@ class FrozenIndexParserTests(unittest.TestCase):
         import archive_validation
 
         index = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
-        with_catalog = (
-            index
-            + "\n"
-            + catalog(
+        if dispositions.CATALOG_HEADER not in index:
+            index += "\n" + catalog(
                 row(
                     "docs/98.archive/superseded/02.architecture/decisions/0032-x.md",
                     f"{COMMIT}:docs/02.architecture/decisions/0032-x.md",
                 )
             )
-        )
-        rows, _links, diagnostics = archive_validation._parse_repository_index(
-            with_catalog
-        )
+        catalog_rows, catalog_errors = dispositions.parse_catalog(index)
+        self.assertTrue(catalog_rows)
+        self.assertEqual(catalog_errors, ())
+        rows, _links, diagnostics = archive_validation._parse_repository_index(index)
         self.assertEqual(len(rows), 25)
         self.assertEqual(diagnostics, [])
-        cutover_rows, structure_failure = archive_cutover._parse_archive_index(
-            with_catalog
-        )
+        cutover_rows, structure_failure = archive_cutover._parse_archive_index(index)
         self.assertEqual(len(cutover_rows), 25)
         self.assertFalse(structure_failure)
 

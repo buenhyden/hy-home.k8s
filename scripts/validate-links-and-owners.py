@@ -83,10 +83,15 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
     )
 
 try:
-    from archive_dispositions import citable_retention_classes, retention_class_of
+    from archive_dispositions import (
+        citable_retention_classes,
+        parse_catalog,
+        retention_class_of,
+    )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
         citable_retention_classes,
+        parse_catalog,
         retention_class_of,
     )
 
@@ -3414,6 +3419,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if _retired_reference_link(context, target):
                     continue
+                if _catalog_retained_link(context, source, target):
+                    continue
                 diagnostics.append(
                     _diag(
                         "LINK-BROKEN",
@@ -5078,6 +5085,47 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
             )
 
     return diagnostics
+
+
+def _catalog_retained_link(
+    context: Context, source: PurePosixPath, target: PurePosixPath
+) -> bool:
+    """Admit a frozen Stage 98 link to a source a Retention Catalog row retained.
+
+    Frozen records and ledgers cannot be rewritten, so a link they hold to a
+    document that later left its stage is historical evidence. The link is
+    proved rather than waived: a catalog row names that original path in its
+    Retention Envelope, and the record the row names is a tracked regular path.
+    A current document gets no such admission; it cites the successor or the
+    current route instead.
+    """
+
+    if not source.is_relative_to(ARCHIVE_INDEX_PATH.parent):
+        return False
+    source_profile = context.profiles.get(source)
+    if source_profile is None or source_profile.profile_id not in {
+        "archive/migration",
+        "archive/tombstone",
+    }:
+        # Only the frozen generation holds links nobody may rewrite. A route
+        # record or index written under ADR-0038 follows the citation rule.
+        return False
+    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
+    if index_text is None:
+        try:
+            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            return False
+    rows, errors = parse_catalog(index_text)
+    if errors:
+        return False
+    return any(
+        row.envelope.original_path == target
+        and _path_exists_without_dereference(
+            context.root, record, context.adapter_targets
+        )
+        for record, row in rows.items()
+    )
 
 
 def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:

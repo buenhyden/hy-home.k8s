@@ -1,10 +1,10 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.6.0"
+version: "1.6.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0054-TSK-0013"
 ---
@@ -115,9 +115,9 @@ must count terminal documents, and the first removal tier splits into twenty
 MIG-0004 row targets, three named only by other ledgers, and two in no ledger.
 
 The validator-release proof created no Archive record, redirect, or Migration
-row. Future completed-package retention follows ADR-0032 and therefore requires
-a reviewed sealed migration row while still forbidding redirect and body-copy
-records.
+row. Future completed-package retention follows ADR-0038, which superseded ADR-0032,
+and therefore requires a Retention Catalog row while still forbidding redirect
+and body-copy records.
 
 ### Document Contract v9 Gap Matrix
 

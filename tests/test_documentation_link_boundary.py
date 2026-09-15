@@ -131,6 +131,75 @@ class ArchiveLinkBoundaryTests(unittest.TestCase):
         self.assertIsNone(_archive(CONSUMER, "docs/02.architecture/README.md"))
 
 
+class CatalogRetainedLinkTests(unittest.TestCase):
+    """A frozen Stage 98 link to a retained source resolves through the catalog."""
+
+    original = PurePosixPath("docs/02.architecture/decisions/0032-x.md")
+    record = PurePosixPath(
+        "docs/98.archive/superseded/02.architecture/decisions/0032-x.md"
+    )
+    ledger = PurePosixPath("docs/98.archive/migrations/0017-x.md")
+    route = PurePosixPath("docs/98.archive/migrations/0024-x.md")
+
+    def index_text(self, *, row: bool) -> str:
+        text = "# Archive\n"
+        if row:
+            relative = self.record.as_posix().removeprefix("docs/98.archive/")
+            text += (
+                "\n| Disposition Record | Retention Envelope |\n| --- | --- |\n"
+                f"| [`{relative}`](./{relative}) | `{'a' * 40}:{self.original}` |\n"
+            )
+        return text
+
+    def context(self, *, row: bool = True, record: bool = True, held: bool = False):
+        import tempfile
+        import types
+
+        temporary = tempfile.TemporaryDirectory(prefix="catalog-link-")
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        index = self.index_text(row=row)
+        (root / "docs/98.archive").mkdir(parents=True)
+        (root / "docs/98.archive/README.md").write_text(
+            "# Archive\n" if held else index, encoding="utf-8"
+        )
+        if record:
+            (root / self.record).parent.mkdir(parents=True)
+            (root / self.record).write_text("---\n---\n", encoding="utf-8")
+        profile = types.SimpleNamespace
+        return types.SimpleNamespace(
+            root=root,
+            texts={PurePosixPath("docs/98.archive/README.md"): index} if held else {},
+            adapter_targets={},
+            profiles={
+                self.ledger: profile(profile_id="archive/migration"),
+                self.route: profile(profile_id="archive/scope-migration"),
+            },
+        )
+
+    def admitted(self, context, source) -> bool:
+        return validator._catalog_retained_link(context, source, self.original)
+
+    def test_frozen_link_to_a_retained_source_is_proved(self) -> None:
+        self.assertTrue(self.admitted(self.context(), self.ledger))
+
+    def test_held_index_text_is_the_catalog_read(self) -> None:
+        self.assertTrue(self.admitted(self.context(held=True), self.ledger))
+
+    def test_current_documents_must_cite_the_successor_instead(self) -> None:
+        self.assertFalse(
+            self.admitted(self.context(), PurePosixPath("docs/03.specs/0054-x/spec.md"))
+        )
+
+    def test_route_records_written_under_adr_0038_get_no_admission(self) -> None:
+        self.assertFalse(self.admitted(self.context(), self.route))
+
+    def test_no_row_or_no_retained_record_proves_nothing(self) -> None:
+        for options in ({"row": False}, {"record": False}):
+            with self.subTest(options=options):
+                self.assertFalse(self.admitted(self.context(**options), self.ledger))
+
+
 class StageLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_numbered_stage_target_written_outside_docs(self) -> None:
         for target in (

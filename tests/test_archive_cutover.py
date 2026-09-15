@@ -82,10 +82,20 @@ class ArchiveCutoverTest(unittest.TestCase):
 
     @staticmethod
     def _manifest_rows(text: str) -> tuple[list[str], list[int]]:
+        # The frozen record manifest is the table under its own header. The
+        # ADR-0038 Retention Catalog is a separate table in the same index.
         lines = text.splitlines(keepends=True)
-        return lines, [
-            offset for offset, line in enumerate(lines) if line.startswith("| [`")
-        ]
+        header = next(
+            offset
+            for offset, line in enumerate(lines)
+            if line.startswith("| Archive Record |")
+        )
+        rows: list[int] = []
+        for offset in range(header + 2, len(lines)):
+            if not lines[offset].startswith("| [`"):
+                break
+            rows.append(offset)
+        return lines, rows
 
     @staticmethod
     def _cells(line: str) -> list[str]:

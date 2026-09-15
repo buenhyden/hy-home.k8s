@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.4.0"
+version: "0.5.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -72,7 +72,6 @@ layer: "architecture"
 ├── 0029-mutable-target-revision-retention.md
 ├── 0030-authority-first-sdlc-and-agent-governance-convergence.md
 ├── 0031-current-corpus-retention-and-validation-ownership.md
-├── 0032-completed-and-terminal-document-retention.md
 ├── 0033-common-document-contract-v9.md
 ├── 0034-stage-00-governance-and-unified-quality-gates.md
 ├── 0035-common-agents-authority-and-native-skill-routing.md
@@ -86,7 +85,7 @@ layer: "architecture"
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0038](./0038-six-disposition-archive-stage.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 기존 superseded ADR은 disposition마다 승인을 받기 전까지 이 log에 남는다. redirect나 본문 복제본을 만들지 않는다.
+3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0038](./0038-six-disposition-archive-stage.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 기존 superseded ADR은 disposition마다 승인을 받기 전까지 이 log에 남는다. 첫 disposition인 ADR-0032(Terminal document retention and Archive taxonomy decision, Superseded)는 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
@@ -129,7 +128,6 @@ layer: "architecture"
 | [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 | [`./0030-authority-first-sdlc-and-agent-governance-convergence.md`](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-first SDLC document, agent governance, Archive, template, and script convergence decision | Accepted | Spec 0054의 terminal authority다. ADR-0031(validation layout), ADR-0032(종단 문서 보존), ADR-0033(router envelope), ADR-0034→0035→0036(agent governance 위치)이 일부 조항을 범위 한정 개정했고, `scripts/` 재배치 조항은 실행되지 않았다. |
 | [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Accepted | ADR-0016/0017/0020/0021/0022의 current instance-roster 및 validation-routing 권위를 대체하고 ADR-0030의 두 validation-layout 조항만 lifecycle supersession 없이 범위 한정 개정한다. Spec 0054가 통합 수용을 소유하며, 위임된 validation-tooling 실행은 완료된 Spec 0066이 소유했다. |
-| [`./0032-completed-and-terminal-document-retention.md`](./0032-completed-and-terminal-document-retention.md) | Terminal document retention and Archive taxonomy decision | Superseded | Terminal governed documents를 consumer-zero 뒤 `completed/`에 package 단위로 보존하고, sealed record는 `migrations/`, `superseded/`, `tombstones/`로 분리한다. 완료 문서 인용은 역사적 trace이며 current authority를 부여하지 않는다. ADR-0038이 이 결정을 대체했고, 이 결정 형식의 봉인 record와 원장은 동결 generation으로 남는다. |
 | [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
 | [`./0034-stage-00-governance-and-unified-quality-gates.md`](./0034-stage-00-governance-and-unified-quality-gates.md) | Stage 00 governance and unified QA | Superseded | ADR-0035가 정본 위치·스킬 탐색 조항을 대체하고 단일 QA와 GitHub 검증·Argo CD 배포 경계를 그대로 승계한다. 본문은 당시 결정의 역사 증거다. |
 | [`./0035-common-agents-authority-and-native-skill-routing.md`](./0035-common-agents-authority-and-native-skill-routing.md) | Common .agents authority and native skill routing | Superseded | ADR-0036이 미채택 디렉터리 조항만 개정하며 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. 본문은 당시 결정의 역사 증거다. |

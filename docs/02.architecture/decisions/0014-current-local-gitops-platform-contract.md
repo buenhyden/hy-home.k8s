@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Contract"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0014"
 ---
@@ -65,9 +65,9 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 
 ## Traceability
 
-**Current-state clarification (2026-09-14).** The archive clauses below predate
-ADR-0030 and ADR-0032. Superseded decision bodies now stay in the Stage 02
-decision log with reciprocal supersession links, and terminal documents are
+**Current-state clarification (2026-09-14).** The archive clauses below predate ADR-0030 and ADR-0038. A superseded decision body
+leaves the Stage 02 decision log for `docs/98.archive/superseded/` with its
+reciprocal supersession links, and terminal documents are
 retained in `docs/98.archive/` by retention class rather than represented only
 by the archive index and Tombstones. The document chain is now named
 Requirement, Architecture Description and Spec rather than PRD, ARD and Spec.

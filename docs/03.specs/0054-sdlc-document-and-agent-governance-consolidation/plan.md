@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.4.1"
+version: "1.5.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -52,7 +52,8 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Do not edit existing immutable Stage 98 envelopes or source blobs to satisfy
   current validators. Remove redundant sealed records only in WP-009 after
   WP-013 removes their current-authority consumers and Git recovery is
-  confirmed. Preserve completed-document retention under accepted ADR-0032.
+  confirmed. Preserve completed-document retention under ADR-0038, which superseded
+  ADR-0032.
   Do not require remote or mutable-branch ancestry as current policy.
 - Preserve source provenance while Stage 90 content moves to its semantic
   owner. Point-in-time dispositions belong to the Task/diff, not a permanent
@@ -118,8 +119,7 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   identity, explicitly sealed evidence bytes, or a Git-reachable Archive
   recovery object, and record that purpose explicitly.
 - Retain a terminal governed document or whole completed Stage 03 package only
-  after every current consumer is migrated, using the accepted ADR-0032 route
-  and sealed migration provenance. Delete other legacy, duplicate, generated,
+  after every current consumer is migrated, using the ADR-0038 disposition route and its Retention Catalog row. Delete other legacy, duplicate, generated,
   or one-time assets only after consumer-zero and Git recovery; do not create a
   sealed Stage 98 record as a routine deletion dependency.
 - Treat repository-static, provider-runtime, hosted-CI, remote-live, and
@@ -162,9 +162,9 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   which defines the current package-local delegated-execution model.
   Superseded ADR-0022 remains bounded predecessor context for the parent-only
   compatibility row until WP-013 removes that roster.
-- [Accepted ADR-0032 terminal document retention](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md),
-  which retains terminal governed documents after consumer-zero and separates
-  completed documents from sealed historical records.
+- [ADR-0038 six-disposition Archive stage](../../02.architecture/decisions/0038-six-disposition-archive-stage.md),
+  which superseded ADR-0032 and retains terminal governed documents after
+  consumer-zero in the disposition that matches what happened to them.
 - [Accepted ADR-0033 common document contract v9](../../02.architecture/decisions/0033-common-document-contract-v9.md),
   which owns the public Registry shape, governed router envelope, template
   grammar, external release boundary, and generation-aware Archive validation.
@@ -394,7 +394,7 @@ required preservation of the latest externally researched material under
 before queued WP-005 and WP-006. After WP-008, the active pointer returns to
 WP-005. After WP-006, WP-010 activates delegated Spec 0066. WP-013 resolves the
 remaining current-corpus conflicts, retains terminal governed documents under
-ADR-0032, and removes current-authority dependencies on sealed Stage 98 records
+ADR-0038, which superseded ADR-0032, and removes current-authority dependencies on sealed Stage 98 records
 before WP-009 reviews those records. This order preserves readable completed
 history without allowing Archive records to become a parallel semantic control
 plane.
@@ -881,10 +881,10 @@ remote-ancestry gate.
 - [ ] Require the registered retained-document and sealed-record contracts
   from C-SDLC-009. Reject line-number hashes, full-corpus digests, and
   current-document pins; preserve whole completed Spec/Plan/Task packages only
-  through the ADR-0032 retention route and its migration provenance.
+  through the ADR-0038 disposition route and its Retention Catalog row.
 - [ ] Do not create a new Tombstone, redirect, or retained body during sealed
-  record cleanup. A Migration is created only by an independently reviewed
-  ADR-0032 retention move, not to satisfy a current consumer. Retain or remove
+  record cleanup. A scope migration is created only by an independently reviewed
+  ADR-0038 move, not to satisfy a current consumer. Retain or remove
   existing sealed records only by historical value and reachable Git recovery.
 - [ ] Apply bounded path/decoding and sealed-byte checks only where each
   retained record declares that contract. Do not run a full Archive census,
@@ -1199,9 +1199,9 @@ WP-009 archive reconciliation, and WP-014 integration remain open.
   drops when its endpoint is vacated, ledger coverage is counted from the
   sealed rows rather than from what still resolves, and a manifest target the
   ledger never sealed is still rejected. An existing sealed row is historical
-  evidence rather than a standing current-path pin. A new ADR-0032 package
-  retention does require its own sealed migration row, but no redirect,
-  tombstone, or body-copy record.
+  evidence rather than a standing current-path pin. A new package retention under ADR-0038, which superseded
+  ADR-0032, requires its own Retention Catalog row, but no redirect, path ledger,
+  or body-copy record.
 - `docs/03.specs/README.md` is a declared index whose contract enumerates every
   `docs/03.specs/####-<slug>/spec.md`, so its tree, table, and retained-set
   statement are updated in the same change that removes a package. Its current
@@ -1276,8 +1276,9 @@ WP-009 archive reconciliation, and WP-014 integration remain open.
   and external links. Whichever lands second builds on the first rather than
   reverting it, and neither advances a `version` for a governance correction.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
-  Retain terminal governed documents through an ADR-0032 migration row; do not
-  create a redirect, tombstone, or sealed body-copy record for that retention.
+  Retain terminal governed documents through an ADR-0038 Retention Catalog row;
+  do not create a redirect, path ledger, or second recovery ledger for that
+  retention.
 - [ ] Record the implementation evidence used for each retained Requirement
   Package and Architecture Description, transfer unique current facts from
   removal candidates, and correct or retire claims that conflict with the

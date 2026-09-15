@@ -32,7 +32,7 @@ from document_contracts import load_registry  # noqa: E402
 
 REGISTRY_PATH = "docs/99.templates/registry.json"
 INDEX = "docs/98.archive/README.md"
-ADR = "docs/02.architecture/decisions/0032-completed-and-terminal-document-retention.md"
+ADR = "docs/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md"
 RUNBOOK = "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md"
 RUNBOOK_TARGET = "docs/05.operations/runbooks/0001-argocd-bootstrap-runbook.md"
 MIGRATION = "docs/98.archive/migrations/0024-runbook-rename.md"
