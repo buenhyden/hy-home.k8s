@@ -102,22 +102,28 @@ class ArchiveLinkBoundaryTests(unittest.TestCase):
             )
         )
 
-    def test_only_an_incident_account_may_cite_an_archive_path(self) -> None:
-        """An incident and its postmortem rest on the archived record itself.
+    def test_an_incident_account_cites_retained_bodies_but_not_records(self) -> None:
+        """ADR-0039 narrows the incident exemption to the four retention classes.
 
-        Every other profile keeps the claim and drops the path, so the exemption
-        is bound to what a document is rather than to what state it is in."""
+        An incident and its postmortem rest on the retained body itself. A route
+        record or a sealed record holds no evidence body, so every source reaches
+        one through the index, and the exemption stays bound to the profile."""
 
-        target = "docs/98.archive/migrations/0004-document-authority-convergence.md"
         source = PurePosixPath(
             "docs/05.operations/incidents/2026/inc-0001-x/incident.md"
         )
+        body = (
+            "docs/98.archive/superseded/02.architecture/decisions/"
+            "0032-completed-and-terminal-document-retention.md"
+        )
+        record = "docs/98.archive/migrations/0004-document-authority-convergence.md"
         for profile in ("operation/incident", "operation/postmortem"):
             with self.subTest(profile=profile):
-                self.assertIsNone(_archive(source, target, profile=profile))
+                self.assertIsNone(_archive(source, body, profile=profile))
+                self.assertIsNotNone(_archive(source, record, profile=profile))
         for profile in ("sdlc/task", "sdlc/architecture-decision", "operation/runbook"):
             with self.subTest(profile=profile):
-                self.assertIsNotNone(_archive(source, target, profile=profile))
+                self.assertIsNotNone(_archive(source, body, profile=profile))
 
     def test_leaves_the_archive_own_cross_references_alone(self) -> None:
         self.assertIsNone(

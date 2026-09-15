@@ -35,7 +35,7 @@ repository-static result to hosted, provider-runtime, or live evidence.
 | -------- | ------------------ | ------------------------------------------------------------------------------------------------ | -------- | ------ | ------------ | ---------------------------- |
 | WORK-001 | VAL-UAR-011        | Accept ADR-0039, supersede ADR-0038, activate this package, and close SPEC-0080 and SPEC-0081    | platform | Done   | ADR-0039 accepted, ADR-0038 superseded, SPEC-0080 and SPEC-0081 done | Lifecycle gate               |
 | WORK-002 | VAL-UAR-004        | Declare units, modes, the citation table, and the legacy set in the registry, schema, and loader | platform | Queued | Not executed | Registry regressions         |
-| WORK-003 | VAL-UAR-006        | Decide citation in the shared resolver and remove the duplicate current-link loop                | platform | Queued | Not executed | Link and archive regressions |
+| WORK-003 | VAL-UAR-006        | Decide citation in the shared resolver for the link and archive validators                | platform | Queued | Not executed | Link and archive regressions |
 | WORK-004 | VAL-UAR-005        | Compare units as Git objects and admit a class by anchor state                                   | platform | Queued | Not executed | Lifecycle regressions        |
 | WORK-005 | VAL-UAR-007        | Admit identity-preserving moves between active stages                                            | platform | Queued | Not executed | Lifecycle regressions        |
 | WORK-006 | VAL-UAR-008        | Re-verify every catalog row on the full lane                                                     | platform | Queued | Not executed | Archive cutover regressions  |

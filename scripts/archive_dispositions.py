@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 import yaml
 
 if TYPE_CHECKING:
-    from document_contracts import Registry, RetentionClass, RetentionMode
+    from document_contracts import CitationRule, Registry, RetentionClass, RetentionMode
 
 
 def contracts_module() -> ModuleType:
@@ -57,11 +57,10 @@ CATALOG_SEPARATOR = "| --- | --- |"
 ROUTE_DISPOSITION_PROFILES = frozenset(
     {"archive/route-tombstone", "archive/scope-migration"}
 )
-# A retention class is citable exactly when its own body leads a reader to
-# current authority: a promotion declaration or a corrective-work owner. A
-# successor is cited in place of the body that names it, because citing a
-# replaced rule is how it returns, and a withdrawal reason points nowhere.
-CITABLE_NAMINGS = frozenset({"promotion", "corrective-owner"})
+# A route record names where something went and holds no evidence body; the
+# frozen migration ledger is read as one for citation.
+ROUTE_RECORD_PROFILES = ROUTE_DISPOSITION_PROFILES | {"archive/migration"}
+SEALED_RECORD_PROFILES = frozenset({"archive/tombstone"})
 
 _COMMIT = re.compile(r"[0-9a-f]{40}")
 _CATALOG_ROW = re.compile(
@@ -235,16 +234,6 @@ def retention_classes_by_name(registry: "Registry") -> Mapping[str, "RetentionCl
     return {item.name: item for item in registry.retention_classes}
 
 
-def citable_retention_classes(registry: "Registry") -> frozenset[str]:
-    """Derive citability from what each class names, never stipulate it."""
-
-    return frozenset(
-        item.name
-        for item in registry.retention_classes
-        if item.names in CITABLE_NAMINGS
-    )
-
-
 def retention_mode_of(registry: "Registry", profile_id: str) -> "RetentionMode | None":
     """Return the one retention mode the registry binds to a profile, if any."""
 
@@ -252,6 +241,104 @@ def retention_mode_of(registry: "Registry", profile_id: str) -> "RetentionMode |
         if mode.profile_id_pattern.search(profile_id):
             return mode
     return None
+
+
+@dataclass(frozen=True)
+class CitationDecision:
+    """What the citation table decided and which rule decided it.
+
+    `rule` is the 1-based position of the deciding rule, or None when no rule
+    matched and the table's default decided."""
+
+    admitted: bool
+    rule: int | None
+
+
+def archive_target_kind(
+    registry: "Registry", target: PurePosixPath
+) -> tuple[str, str | None] | None:
+    """Classify a Stage 98 link target by its registry profile.
+
+    Returns the target kind the citation table names and, for a retained body,
+    its class. A target outside Stage 98 has no kind. The directory name alone
+    never decides: a frozen record is a record wherever it sits."""
+
+    if target.parts[:2] != ARCHIVE_ROOT.parts:
+        return None
+    table = registry.archive_citation
+    if target == (table.index if table is not None else ARCHIVE_INDEX):
+        return ("index", None)
+    retention = retention_class_of(registry, target)
+    if retention is not None:
+        return ("retained-body", retention.name)
+    try:
+        profile_id = classify_path(registry, target).profile_id
+    except Exception as error:  # noqa: BLE001 - only the registry's own error means unrouted
+        if _is_contract_error(error):
+            return ("unclassified", None)
+        raise
+    if profile_id in ROUTE_RECORD_PROFILES:
+        return ("route-record", None)
+    if profile_id in SEALED_RECORD_PROFILES:
+        return ("sealed-record", None)
+    return ("unclassified", None)
+
+
+def _rule_matches(
+    rule: "CitationRule",
+    source: PurePosixPath,
+    source_profile_id: str,
+    target_kind: str,
+    target_class: str | None,
+) -> bool:
+    """Report whether one citation-table rule applies to this source and target.
+
+    `rule.source` is "archive" (the source sits under Stage 98), "profiles" (the
+    source profile is in `rule.source_profile_ids`), or "any". `rule.target` is
+    "any" or one kind from `archive_target_kind`; a "retained-body" rule also
+    names the classes it covers in `rule.target_classes`.
+    """
+
+    if rule.source == "archive":
+        source_matches = source.parts[:2] == ARCHIVE_ROOT.parts
+    elif rule.source == "profiles":
+        source_matches = source_profile_id in rule.source_profile_ids
+    else:
+        source_matches = True
+    if not source_matches:
+        return False
+    if rule.target == "any":
+        return True
+    if rule.target != target_kind:
+        return False
+    # A retained-body rule that does not cover this class passes to the next rule.
+    return rule.target != "retained-body" or target_class in rule.target_classes
+
+
+def citation_decision(
+    registry: "Registry",
+    source: PurePosixPath,
+    source_profile_id: str,
+    target: PurePosixPath,
+) -> CitationDecision | None:
+    """Decide a citation into Stage 98 from the registry's ordered table.
+
+    The first matching rule decides; with no match the table's default does.
+    A target outside Stage 98 is not a citation decision and returns None."""
+
+    kind = archive_target_kind(registry, target)
+    if kind is None:
+        return None
+    table = registry.archive_citation
+    if table is None:
+        raise DispositionError(
+            "ARCHIVE-CITATION-TABLE", "the registry declares no archive citation table"
+        )
+    target_kind, target_class = kind
+    for position, rule in enumerate(table.rules, start=1):
+        if _rule_matches(rule, source, source_profile_id, target_kind, target_class):
+            return CitationDecision(admitted=rule.decision == "admit", rule=position)
+    return CitationDecision(admitted=table.default == "admit", rule=None)
 
 
 def retention_class_of(

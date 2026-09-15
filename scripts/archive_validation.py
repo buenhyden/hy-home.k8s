@@ -41,7 +41,7 @@ if __package__:
         ROUTE_DISPOSITION_PROFILES,
         catalog_line_span,
         catalog_parity_diagnostics,
-        citable_retention_classes,
+        citation_decision,
         contracts_module,
         retention_class_of,
     )
@@ -71,7 +71,7 @@ else:  # Direct import-only execution from scripts/.
         ROUTE_DISPOSITION_PROFILES,
         catalog_line_span,
         catalog_parity_diagnostics,
-        citable_retention_classes,
+        citation_decision,
         contracts_module,
         retention_class_of,
     )
@@ -144,15 +144,22 @@ def is_route_disposition_path(path: PurePosixPath, registry: "Registry | None") 
         return False
 
 
-def is_citable_archive_target(path: PurePosixPath, registry: "Registry | None") -> bool:
-    """Report whether a current document may link this retained body directly."""
+def current_link_admitted(
+    source: PurePosixPath,
+    source_profile_id: str,
+    target: PurePosixPath,
+    registry: "Registry | None",
+) -> bool:
+    """Report whether a current document may link this Stage 98 target directly.
+
+    The registry's citation table decides, the same decision the link validator
+    reads. Without a registry only the frozen generation's retained class is
+    known, so only its bodies are admitted."""
 
     if registry is None:
-        return is_retention_path(path)
-    retention = retention_class_of(registry, path)
-    return retention is not None and retention.name in citable_retention_classes(
-        registry
-    )
+        return is_retention_path(target)
+    decision = citation_decision(registry, source, source_profile_id, target)
+    return decision is None or decision.admitted
 
 
 _UNSET = object()
@@ -4785,7 +4792,9 @@ def validate_current_archive_authority(
                 # A retention class holds the document itself, not a sealed
                 # record, so citing one is an ordinary link to that document
                 # at the path it now occupies.
-                and not is_citable_archive_target(target, registry)
+                and not current_link_admitted(
+                    pure_path, str(document.profile), target, registry
+                )
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))
     return _report(diagnostics)

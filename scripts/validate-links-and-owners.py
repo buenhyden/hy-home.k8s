@@ -84,13 +84,13 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
 
 try:
     from archive_dispositions import (
-        citable_retention_classes,
+        citation_decision,
         parse_catalog,
         retention_class_of,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
-        citable_retention_classes,
+        citation_decision,
         parse_catalog,
         retention_class_of,
     )
@@ -3149,38 +3149,19 @@ def _reviewed_work054_historical_owner_edges(
     }
 
 
-ARCHIVE_CITING_PROFILES = frozenset({"operation/incident", "operation/postmortem"})
-
-
 def _archive_boundary_diagnostic(
     source: PurePosixPath, profile: str, target: PurePosixPath
 ) -> Diagnostic | None:
-    """Keep the tree outside the archive off the archive's internal paths.
+    """Decide a link into Stage 98 from the registry's ordered citation table.
 
-    The archive index and the retention class are the two admitted routes in. A
-    retention class holds the document itself rather than a record of it, so
-    citing one is an ordinary link to that document at the path it now occupies.
-    Every other archive path is a record whose location the archive owns and may
-    re-seal, so a link to one couples the outside tree to that decision.
+    The table admits the archive index, historical links written inside Stage 98,
+    retained `completed/` and `resolved/` bodies, and, for an Incident or its
+    Postmortem, any retained body as evidence. Route and sealed records are
+    reached through the index by every source, so the exemption stays bound to
+    what a document is rather than to where it sits."""
 
-    An incident record and its postmortem are exempt. Both are accounts of
-    something that happened, and the evidence they rest on is often the archived
-    record itself, so citing it directly is the point rather than a dependency
-    to be routed away."""
-
-    if profile in ARCHIVE_CITING_PROFILES or source.as_posix().startswith(
-        "docs/98.archive/"
-    ):
-        return None
-    value = target.as_posix()
-    if (
-        not value.startswith("docs/98.archive/")
-        or target == PurePosixPath("docs/98.archive/README.md")
-        or (
-            len(target.parts) > 3
-            and target.parts[2] in _repository_citable_retention_classes()
-        )
-    ):
+    decision = citation_decision(_repository_registry(), source, profile, target)
+    if decision is None or decision.admitted:
         return None
     return _diag(
         "LINK-ARCHIVE-BYPASS",
@@ -3221,14 +3202,10 @@ _PATH_PATTERN_META = frozenset(".^$*+?()[]{}|\\")
 
 
 @lru_cache(maxsize=1)
-def _repository_citable_retention_classes() -> frozenset[str]:
-    """Derive ADR-0038 citability from what each registry class names.
+def _repository_registry() -> Registry:
+    """Load the repository registry the citation table is read from, once."""
 
-    Only `completed/` and `resolved/` bodies still lead a reader to current
-    authority, and a frozen record never sits in either, so the class
-    directory alone decides the boundary once the registry has named it."""
-
-    return citable_retention_classes(load_registry(Path(__file__).resolve().parents[1]))
+    return load_registry(Path(__file__).resolve().parents[1])
 
 
 def _leading_alternation(body: str) -> tuple[tuple[str, ...], str] | None:

@@ -86,9 +86,8 @@ The registry stays the only machine owner. It gains the units, the modes, the
 citation table, and the finite legacy set, and the schema and loader validate
 them. `scripts/archive_dispositions.py` owns the shared reading: the unit of a
 path, the mirror path and its inverse, and the citation decision. The link
-validator consumes the decision, and the archive validator's duplicate
-current-link loop is removed once a regression proves the link validator covers
-the same sources. The lifecycle gate replaces link-resolved comparison with an
+validator and the archive validator consume the same decision, and the
+archive validator keeps its registry-less reading of the frozen generation. The lifecycle gate replaces link-resolved comparison with an
 entry comparison of Git objects for new rows, admits a class by the unit
 anchor's state, checks object type and mode, and admits identity-preserving
 moves. The archive cutover check re-verifies every catalog row on the full lane.
@@ -114,8 +113,8 @@ classes. `scripts/archive_dispositions.py` exposes
 `CITABLE_NAMINGS` and `rebase_relative_links` are removed once no consumer
 remains. The archive validator reports `ARCHIVE-UNIT-MEMBERSHIP`,
 `ARCHIVE-UNIT-STATE`, and `ARCHIVE-ENVELOPE-OBJECT` alongside the existing
-catalog codes; the link validator keeps `LINK-ARCHIVE-BYPASS`, and
-`ARCHIVE-DIRECT-CURRENT-LINK` retires with the duplicate loop. A new validation
+catalog codes; the link validator keeps `LINK-ARCHIVE-BYPASS`, and the
+archive validator reports `ARCHIVE-DIRECT-CURRENT-LINK` from the same decision. A new validation
 gate, `archive-contract-tests`, runs the fast archive regression modules in the
 quick and staged profiles only.
 

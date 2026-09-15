@@ -144,12 +144,6 @@ class RetentionPathTests(unittest.TestCase):
                     dispositions.retention_class_of(REGISTRY, PurePosixPath(path))
                 )
 
-    def test_citability_is_derived_from_what_each_class_names(self) -> None:
-        self.assertEqual(
-            dispositions.citable_retention_classes(REGISTRY),
-            frozenset({"completed", "resolved"}),
-        )
-
 
 class RetentionEnvelopeTests(unittest.TestCase):
     def test_envelope_names_one_commit_and_original_path(self) -> None:
