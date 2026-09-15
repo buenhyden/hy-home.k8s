@@ -37,8 +37,8 @@ repository-static result to hosted, provider-runtime, or live evidence.
 | -------- | ------------------ | -------------------------------------------------------------------------------------- | -------- | ------ | ------------------------------------------------------- | ---------------------------- |
 | WORK-001 | VAL-UAR-002        | Record the survey judgment and correct stale current statements                        | platform | Done   | Judgment below; eight statements in six files corrected | Commit `c07ee272`, staged QA |
 | WORK-002 | VAL-UAR-003        | Record the external evidence as research pack 0002                                     | platform | Done   | Fourteen sources fetched, PREMIS unreachable            | Research pack 0002           |
-| WORK-003 | VAL-UAR-001        | Propose ADR-0039 and this package, note the proposed successor, and update the indexes | platform | Done   | Proposed decision, package, and index rows              | Proposal commit, staged QA   |
-| WORK-004 | VAL-UAR-002        | Activate SPEC-0080 and SPEC-0081 for closure                                           | platform | Queued | Not executed                                            | Lifecycle gate               |
+| WORK-003 | VAL-UAR-001        | Propose ADR-0039 and this package, note the proposed successor, and update the indexes | platform | Done   | Proposed decision, package, and index rows              | Commit `cd3139e6`, staged QA   |
+| WORK-004 | VAL-UAR-002        | Activate SPEC-0080 and SPEC-0081 for closure                                           | platform | Done   | Spec and Plan `active`, Task `in-progress`, index rows `Active`                                            | Lifecycle gate               |
 
 ## Approval and Safety Boundaries
 
@@ -114,8 +114,22 @@ replacements, and the committed diff is twenty insertions and nineteen
 deletions. Research source PREMIS returned HTTP 403 on two official URLs and is
 recorded as unreachable with no claim.
 
-Hosted CI, provider runtime, and live evidence were not observed. Full QA has
-not run on this integration yet.
+Commit `cd3139e6`: the first `python3 scripts/qa.py staged` run failed one
+gate of six. `links-and-owners` reported `BODY-LINK-SOURCE` because the
+proposed ADR-0039 named ADR-0038 in `Decision lineage` without a repository
+link, which the body contract enforces for a proposed decision; the cell now
+links ADR-0038, as the ADR-0038 proposal linked ADR-0032. The rerun passed 6 of
+6. The commit hook then rejected two MD033 findings in research member
+`m0001`, where a quoted `<object>` read as inline HTML; the placeholder is now
+code. The rerun over the changed index passed 6 of 6, and the commit hooks
+passed. No gate or contract was weakened.
+
+The activation commit moves SPEC-0080 and SPEC-0081 one edge each: Spec and
+Plan `draft` to `active`, Task `queued` to `in-progress`. Their closure is the
+cutover integration's first work item.
+
+Hosted CI, provider runtime, and live evidence were not observed. Full QA runs
+once on the final tree of this integration and is recorded in the handoff.
 
 ## Traceability
 
@@ -127,5 +141,5 @@ Each work item carries its observed result.
 | ------------------------------------- | ------------- | -------------------------------- |
 | [WORK-001](../plan.md#work-breakdown) | Done.         | Commit `c07ee272` and staged QA. |
 | [WORK-002](../plan.md#work-breakdown) | Done.         | Research pack 0002.              |
-| [WORK-003](../plan.md#work-breakdown) | Done.         | Proposal commit and staged QA.   |
-| [WORK-004](../plan.md#work-breakdown) | Not executed. | Lifecycle gate.                  |
+| [WORK-003](../plan.md#work-breakdown) | Done.         | Commit `cd3139e6` and staged QA.   |
+| [WORK-004](../plan.md#work-breakdown) | Done. | Activation commit and staged QA.                  |

@@ -23,6 +23,10 @@ evidence.
 - [Spec](../spec.md) owns the contract, and [Plan](../plan.md) owns order.
 - Entry gate: the cutover integration has merged, ADR-0038 is `superseded` at
   the comparison base, and the request owner has approved its disposition.
+- ADR-0039 links ADR-0038 in its `Decision lineage` cell, as the body contract
+  requires of a proposed decision. The retention replaces that link with the
+  identifier, because a current document cites a successor, not a
+  `superseded/` body.
 
 ## Task Table
 

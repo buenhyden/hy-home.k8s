@@ -2,7 +2,7 @@
 title: "Superseded Decision Retention Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
