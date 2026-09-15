@@ -38,7 +38,7 @@ repository-static result to hosted, provider-runtime, or live evidence.
 | WORK-001 | VAL-UAR-002        | Record the survey judgment and correct stale current statements                        | platform | Done   | Judgment below; eight statements in six files corrected | Commit `c07ee272`, staged QA |
 | WORK-002 | VAL-UAR-003        | Record the external evidence as research pack 0002                                     | platform | Done   | Fourteen sources fetched, PREMIS unreachable            | Research pack 0002           |
 | WORK-003 | VAL-UAR-001        | Propose ADR-0039 and this package, note the proposed successor, and update the indexes | platform | Done   | Proposed decision, package, and index rows              | Commit `cd3139e6`, staged QA   |
-| WORK-004 | VAL-UAR-002        | Activate SPEC-0080 and SPEC-0081 for closure                                           | platform | Done   | Spec and Plan `active`, Task `in-progress`, index rows `Active`                                            | Lifecycle gate               |
+| WORK-004 | VAL-UAR-011        | Activate SPEC-0080 and SPEC-0081 for closure                                           | platform | Done   | Spec and Plan `active`, Task `in-progress`, index rows `Active`                                            | Lifecycle gate               |
 
 ## Approval and Safety Boundaries
 
@@ -128,8 +128,24 @@ The activation commit moves SPEC-0080 and SPEC-0081 one edge each: Spec and
 Plan `draft` to `active`, Task `queued` to `in-progress`. Their closure is the
 cutover integration's first work item.
 
-Hosted CI, provider runtime, and live evidence were not observed. Full QA runs
-once on the final tree of this integration and is recorded in the handoff.
+Commit `97a2101b`: staged QA passed 6 of 6 and the commit hooks passed.
+`python3 scripts/qa.py ci --base-ref 8a76bd3b05c5f34fa8f0cd0a46bf631098f79306`
+then ran the full gate set once on that clean tree, comparing lifecycle state
+with the merge base as a pull request would: 22 of 22 gates `PASS`, exit 0, in
+491 seconds. That is local evidence, not a hosted CI result.
+
+Review: one independent read-only review of the three commits confirmed the
+unchanged frozen bytes, the survey claims against the code at `8a76bd3b`, the
+counts, and the corrections. It reported one MEDIUM finding: WORK-004 and the
+cutover's closure item cited criteria that do not cover package activation or
+closure, and the Plan mapped no criterion to WP-004. Criterion VAL-UAR-011 now
+covers both, and the Plan and both Tasks cite it. Its LOW observation, this
+Task staying `queued` with finished items, is intended: a document created in
+an integration keeps its creation state until the next one, as SPEC-0078
+recorded. The final tree after this repair runs the ci profile once more and
+is recorded in the handoff rather than here.
+
+Hosted CI, provider runtime, and live evidence were not observed.
 
 ## Traceability
 

@@ -29,7 +29,7 @@ repository-static result to hosted, provider-runtime, or live evidence.
 
 | ID       | Upstream criterion | Work item                                                                                        | Owner    | Status | Result       | Evidence                     |
 | -------- | ------------------ | ------------------------------------------------------------------------------------------------ | -------- | ------ | ------------ | ---------------------------- |
-| WORK-001 | VAL-UAR-004        | Accept ADR-0039, supersede ADR-0038, activate this package, and close SPEC-0080 and SPEC-0081    | platform | Queued | Not executed | Lifecycle gate               |
+| WORK-001 | VAL-UAR-011        | Accept ADR-0039, supersede ADR-0038, activate this package, and close SPEC-0080 and SPEC-0081    | platform | Queued | Not executed | Lifecycle gate               |
 | WORK-002 | VAL-UAR-004        | Declare units, modes, the citation table, and the legacy set in the registry, schema, and loader | platform | Queued | Not executed | Registry regressions         |
 | WORK-003 | VAL-UAR-006        | Decide citation in the shared resolver and remove the duplicate current-link loop                | platform | Queued | Not executed | Link and archive regressions |
 | WORK-004 | VAL-UAR-005        | Compare units as Git objects and admit a class by anchor state                                   | platform | Queued | Not executed | Lifecycle regressions        |

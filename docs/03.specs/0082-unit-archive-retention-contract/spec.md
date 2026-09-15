@@ -167,6 +167,7 @@ proves hosted CI, provider runtime, or live cluster behavior.
 | VAL-UAR-008 | Full validation re-verifies every catalog row and fails on a missing object                                                                                              | Archive cutover regressions and full QA           |
 | VAL-UAR-009 | Governance prose, indexes, the skill, and forms state the adopted contract, and the fast gate runs in quick and staged                                                   | Policy review and validation-registry regressions |
 | VAL-UAR-010 | ADR-0038 is retained as the first exact disposition, its current consumers cite ADR-0039, and this package closes                                                        | Retention Task, staged and full QA                |
+| VAL-UAR-011 | SPEC-0080 and SPEC-0081 reach `done` one lifecycle edge per integration: activated in the proposal and closed in the cutover | Lifecycle gate against the merge base |
 
 ## Traceability
 
@@ -189,3 +190,4 @@ The [Implementation Plan](plan.md) owns order and risk. The
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-UAR-008    | Full-lane catalog re-verification                   |
 | [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-UAR-009    | Policy and index review                             |
 | [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-UAR-010    | Disposition admitted by the lifecycle gate          |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-UAR-011 | Lifecycle edges admitted per integration |

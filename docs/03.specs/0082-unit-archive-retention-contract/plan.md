@@ -103,3 +103,5 @@ each integration's final tree passes staged and full QA.
 | [VAL-UAR-008](spec.md#success-criteria--verification-plan) | WP-008       | [tsk-0002](tasks/tsk-0002-cut-over-registry-and-validators.md)    |
 | [VAL-UAR-009](spec.md#success-criteria--verification-plan) | WP-009       | [tsk-0002](tasks/tsk-0002-cut-over-registry-and-validators.md)    |
 | [VAL-UAR-010](spec.md#success-criteria--verification-plan) | WP-010       | [tsk-0003](tasks/tsk-0003-retain-adr-0038-and-close.md)           |
+| [VAL-UAR-011](spec.md#success-criteria--verification-plan) | WP-004 | [tsk-0001](tasks/tsk-0001-propose-the-unit-retention-contract.md) |
+| [VAL-UAR-011](spec.md#success-criteria--verification-plan) | WP-005 | [tsk-0002](tasks/tsk-0002-cut-over-registry-and-validators.md) |
