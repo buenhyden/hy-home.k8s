@@ -199,6 +199,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -263,6 +264,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -311,6 +313,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
@@ -334,6 +337,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "repository-quality"
         ],
         "ciJobs": [
@@ -390,6 +394,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-change-set",
@@ -423,6 +428,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -543,6 +549,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
