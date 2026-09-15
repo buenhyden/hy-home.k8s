@@ -67,6 +67,7 @@ from archive_dispositions import (
     ROUTE_DISPOSITION_PROFILES,
     canonical_repository_path,
     frontmatter_mapping,
+    link_resolved_text,
     parse_catalog,
     retention_class_of,
     retention_source_path,
@@ -2300,8 +2301,14 @@ def _scope_migration_moves(
     base_blobs: Mapping[PurePosixPath, str],
     base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
     proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+    other_moves: Mapping[PurePosixPath, PurePosixPath],
 ) -> tuple[set[tuple[PurePosixPath, PurePosixPath]], list[str]]:
-    """Pair each document leaving a moved scope with its owner under the new root."""
+    """Pair each document leaving a moved scope with its owner under the new root.
+
+    A moved document keeps its state and identity, and its body differs from
+    the source by relative link prefixes alone."""
 
     scope = canonical_repository_path(metadata.get("moved_scope"))
     owner = canonical_repository_path(metadata.get("current_owner"))
@@ -2338,6 +2345,15 @@ def _scope_migration_moves(
             gaps.append(f"moved document keeps no current owner: {source.as_posix()}")
             continue
         moves.add((source, target))
+    moved = {**other_moves, **dict(moves)}
+    for source, target in sorted(moves, key=lambda pair: pair[0].as_posix()):
+        if link_resolved_text(base_texts[source], source, moved) != link_resolved_text(
+            proposed_texts[target], target
+        ):
+            gaps.append(
+                "moved document differs beyond relative link rebasing: "
+                + source.as_posix()
+            )
     if not moves and not gaps:
         gaps.append("moved scope names no document this change moves")
     return moves, gaps
@@ -2403,6 +2419,14 @@ def _disposition_lifecycle_events(
     current_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
     lineages: set[ArtifactIdentityLineage] = set()
     owner: ModuleType | None = None
+    # Bodies retained together may link each other, so their links are compared
+    # through the whole change's moves rather than one pair at a time.
+    retention_moves = {
+        retention_source_path(record): record
+        for record, row in proposed_rows.items()
+        if base_rows.get(record) != row
+        and retention_class_of(registry, record) is not None
+    }
     for record, row in sorted(
         proposed_rows.items(), key=lambda item: item[0].as_posix()
     ):
@@ -2460,6 +2484,15 @@ def _disposition_lifecycle_events(
                 != (after.profile_id, after.status, after.artifact_id)
             ):
                 gaps.append("retained body changed its profile, state, or identity")
+            if (
+                not gaps
+                and before is not None
+                and link_resolved_text(base_texts[source], source, retention_moves)
+                != link_resolved_text(proposed_texts[record], record)
+            ):
+                gaps.append(
+                    "retained body differs from its source beyond relative link rebasing"
+                )
             if not gaps:
                 owner = owner or _load_canonical_markdown_module()
                 if owner.validate_document_text(
@@ -2507,7 +2540,14 @@ def _disposition_lifecycle_events(
                     gaps.append("Retention Envelope object differs from the base route")
                 if not gaps and document.profile_id == "archive/scope-migration":
                     moves, move_gaps = _scope_migration_moves(
-                        registry, metadata, base_blobs, base_snapshot, proposed_snapshot
+                        registry,
+                        metadata,
+                        base_blobs,
+                        base_snapshot,
+                        proposed_snapshot,
+                        base_texts,
+                        proposed_texts,
+                        retention_moves,
                     )
                     gaps.extend(move_gaps)
                     if not gaps:

@@ -222,6 +222,57 @@ class CatalogTests(unittest.TestCase):
         self.assertFalse(end < len(lines) and lines[end].startswith("|"))
 
 
+class LinkRebaseTests(unittest.TestCase):
+    source = PurePosixPath("docs/02.architecture/decisions/0032-x.md")
+    record = PurePosixPath(
+        "docs/98.archive/superseded/02.architecture/decisions/0032-x.md"
+    )
+    text = (
+        "See [next](./0038-y.md), [registry](../../99.templates/registry.json#top),\n"
+        "[site](https://example.com/a), [here](#local).\n\n[ref]: ../README.md\n"
+    )
+
+    def test_rebased_copy_names_the_same_targets(self) -> None:
+        rebased = dispositions.rebase_relative_links(
+            self.text, self.source, self.record
+        )
+        self.assertIn("../../../../02.architecture/decisions/0038-y.md", rebased)
+        self.assertIn("https://example.com/a", rebased)
+        self.assertIn("(#local)", rebased)
+        self.assertEqual(
+            dispositions.link_resolved_text(self.text, self.source),
+            dispositions.link_resolved_text(rebased, self.record),
+        )
+
+    def test_unrebased_or_rewritten_copy_differs(self) -> None:
+        self.assertNotEqual(
+            dispositions.link_resolved_text(self.text, self.source),
+            dispositions.link_resolved_text(self.text, self.record),
+        )
+        rebased = dispositions.rebase_relative_links(
+            self.text, self.source, self.record
+        )
+        self.assertNotEqual(
+            dispositions.link_resolved_text(self.text, self.source),
+            dispositions.link_resolved_text(rebased + "Added.\n", self.record),
+        )
+
+    def test_links_to_documents_moving_together_follow_the_move(self) -> None:
+        moves = {
+            PurePosixPath("docs/02.architecture/decisions/0038-y.md"): PurePosixPath(
+                "docs/98.archive/superseded/02.architecture/decisions/0038-y.md"
+            )
+        }
+        rebased = dispositions.rebase_relative_links(
+            self.text, self.source, self.record, moves
+        )
+        self.assertIn("(./0038-y.md)", rebased)
+        self.assertEqual(
+            dispositions.link_resolved_text(self.text, self.source, moves),
+            dispositions.link_resolved_text(rebased, self.record),
+        )
+
+
 class CatalogParityTests(unittest.TestCase):
     record = PurePosixPath(
         "docs/98.archive/superseded/02.architecture/decisions/0032-x.md"

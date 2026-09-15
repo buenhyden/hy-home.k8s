@@ -141,7 +141,7 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 1. 문서에 실제로 일어난 일(완료, 대체, 후속 없는 철회, 사고 종결, route 퇴역, scope 이동)과 현재 authority를 확정하고 family를 하나 고른다. disposition 승인을 해당 Task에 기록한다.
 2. Retention class면 문서를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile, identity, 종단 상태를 유지한다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
 3. Route disposition이면 본문 없이 기록한다. `tombstones/`의 `archive/route-tombstone`(`TOMB-####`)은 `retired_route`, `successor`, `reason`을, `migrations/`의 `archive/scope-migration`(`MIG-####`)은 `moved_scope`와 `current_owner`를 명명한다.
-4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. lifecycle gate는 보존 본문의 envelope가 비교 base의 source object와 같은지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. scope migration은 본문 바이트를 증명하지 않으므로 옮긴 문서의 내용 변경은 Git diff와 review가 확인한다. Stage 98에 들어간 보존 본문과 route record는 이후 어떤 변경도 수정하거나 제거할 수 없다.
+4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. lifecycle gate는 보존 본문의 envelope가 비교 base의 source object와 같은지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. 보존 본문과 scope migration이 옮긴 문서는 상대 링크 재기준 외에 원본과 달라질 수 없으며, 같은 변경에서 함께 옮긴 문서 사이의 링크는 새 경로를 따른다. Stage 98에 들어간 보존 본문과 route record는 이후 어떤 변경도 수정하거나 제거할 수 없다.
 5. 현재 consumer를 인용 규칙에 맞춘다. `superseded/` 인용은 후속 문서로, `retired/`·`tombstones/`·`migrations/` 인용은 현재 route로 바꾼다.
 6. 디렉터리가 없으면 첫 구성원과 같은 변경에서 만든다.
 

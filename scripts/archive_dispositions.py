@@ -11,6 +11,7 @@ recovery ledger; Git history recovers the object the envelope names.
 from __future__ import annotations
 
 import importlib
+import posixpath
 import re
 import sys
 from dataclasses import dataclass
@@ -114,6 +115,99 @@ def parse_retention_envelope(value: str) -> RetentionEnvelope:
             "a Retention Envelope names one <commit>:<original path>",
         )
     return RetentionEnvelope(commit=commit, original_path=path)
+
+
+_INLINE_LINK = re.compile(r'(\]\()(<[^>\n]+>|[^)\s]+)((?:\s+"[^"\n]*")?\))')
+_REFERENCE_LINK = re.compile(r"^( {0,3}\[[^\]\n]+\]:[ \t]*)(<[^>\n]+>|\S+)", re.M)
+_URI_SCHEME = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
+
+
+def _relative_link(target: str) -> tuple[str, str, bool] | None:
+    """Split a relative Markdown link target into path, fragment, and bracket form."""
+
+    bracketed = target.startswith("<") and target.endswith(">")
+    bare = target[1:-1] if bracketed else target
+    if not bare or bare.startswith(("#", "/")) or _URI_SCHEME.match(bare):
+        return None
+    path, separator, fragment = bare.partition("#")
+    if not path:
+        return None
+    return path, separator + fragment, bracketed
+
+
+def _rewrite_links(text: str, rewrite) -> str:
+    def inline(match: re.Match[str]) -> str:
+        replaced = rewrite(match.group(2))
+        return (
+            match.group(0)
+            if replaced is None
+            else match.group(1) + replaced + match.group(3)
+        )
+
+    def reference(match: re.Match[str]) -> str:
+        replaced = rewrite(match.group(2))
+        return match.group(0) if replaced is None else match.group(1) + replaced
+
+    return _REFERENCE_LINK.sub(reference, _INLINE_LINK.sub(inline, text))
+
+
+def _resolve_link(document: PurePosixPath, path: str) -> PurePosixPath:
+    return PurePosixPath(
+        posixpath.normpath(posixpath.join(document.parent.as_posix(), path))
+    )
+
+
+def link_resolved_text(
+    text: str,
+    document: PurePosixPath,
+    moves: Mapping[PurePosixPath, PurePosixPath] | None = None,
+) -> str:
+    """Replace each relative link with the repository path it names.
+
+    Two copies of a document name the same targets exactly when their resolved
+    texts are equal. `moves` maps a target that moves in the same change to its
+    new path, so a link between documents moving together still matches."""
+
+    moved = moves or {}
+
+    def rewrite(target: str) -> str | None:
+        relative = _relative_link(target)
+        if relative is None:
+            return None
+        path, fragment, _bracketed = relative
+        resolved = _resolve_link(document, path)
+        return f"<@{moved.get(resolved, resolved).as_posix()}{fragment}>"
+
+    return _rewrite_links(text, rewrite)
+
+
+def rebase_relative_links(
+    text: str,
+    source: PurePosixPath,
+    target: PurePosixPath,
+    moves: Mapping[PurePosixPath, PurePosixPath] | None = None,
+) -> str:
+    """Rewrite a moved document's relative links to name the same targets.
+
+    Only a link whose resolved target would change is rewritten, so the result
+    differs from the source by relative link prefixes alone."""
+
+    moved = moves or {}
+
+    def rewrite(link: str) -> str | None:
+        relative = _relative_link(link)
+        if relative is None:
+            return None
+        path, fragment, bracketed = relative
+        resolved = _resolve_link(source, path)
+        destination = moved.get(resolved, resolved)
+        if destination == _resolve_link(target, path):
+            return None
+        rebased = posixpath.relpath(destination.as_posix(), target.parent.as_posix())
+        rebased += fragment
+        return f"<{rebased}>" if bracketed else rebased
+
+    return _rewrite_links(text, rewrite)
 
 
 def canonical_repository_path(value: object) -> PurePosixPath | None:

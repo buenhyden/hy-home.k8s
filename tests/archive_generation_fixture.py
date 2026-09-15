@@ -6,8 +6,14 @@ registry now routes only the frozen records and ledgers by exact path, so no
 fixture can create another one under it, which is the contract. The machinery
 that still validates that frozen content keeps its regressions by exercising
 synthetic records and ledgers against the registry generation that governed
-them: the one on the default branch at `LEGACY_ARCHIVE_GENERATION_COMMIT`, the
-last merged commit before ADR-0038 moved the routes.
+them.
+
+That generation is derived from the current registry rather than read from Git
+history, so the regressions need no particular commit. The derivation reverses
+exactly what ADR-0038 added: the retention class binding, the two route
+disposition forms and their family, the mirrored retention alternatives, and
+the exact frozen routes. `tests/test_archive_generation_fixture.py` proves the
+derivation equals the registry merged at `LEGACY_ARCHIVE_GENERATION_COMMIT`.
 
 A regression that asserts what the current registry admits must load the
 repository registry instead; this fixture never stands in for that.
@@ -16,44 +22,101 @@ repository registry instead; this fixture never stands in for that.
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = "docs/99.templates/registry.json"
 LEGACY_ARCHIVE_GENERATION_COMMIT = "c652331ce1c6bfddf1e670c748ce1a04b3835c33"
+ADR0038_PROFILES = frozenset(
+    {
+        "archive/route-tombstone",
+        "archive/scope-migration",
+        "common/template-archive-route-tombstone",
+        "common/template-archive-scope-migration",
+    }
+)
+ADR0038_FAMILY = "route-disposition"
+FROZEN_GENERATION_ROUTES = {
+    "archive/tombstone": (
+        r"^docs/98\.archive/(?!migrations/)(?!completed/)"
+        r"(?!.*(?:/)?README\.md$).+\.md$"
+    ),
+    "archive/migration": r"^docs/98\.archive/migrations/[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$",
+}
 
 
-def legacy_registry_bytes() -> bytes:
-    """Return the exact registry blob of the frozen archive generation."""
+def _leading_group(body: str) -> tuple[list[str], str] | None:
+    if not body.startswith("(?:"):
+        return None
+    depth, start, branches, index = 0, 3, [], 0
+    while index < len(body):
+        character = body[index]
+        if character == "\\":
+            index += 2
+            continue
+        if character == "(":
+            depth += 1
+        elif character == ")":
+            depth -= 1
+            if depth == 0:
+                branches.append(body[start:index])
+                return branches, body[index + 1 :]
+        elif character == "|" and depth == 1:
+            branches.append(body[start:index])
+            start = index + 1
+        index += 1
+    return None
 
-    completed = subprocess.run(
-        [
-            "git",
-            "--no-replace-objects",
-            "-C",
-            str(ROOT),
-            "cat-file",
-            "blob",
-            f"{LEGACY_ARCHIVE_GENERATION_COMMIT}:{REGISTRY_PATH}",
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-    if completed.returncode != 0:
-        raise AssertionError(
-            "legacy archive generation registry is unavailable: "
-            + completed.stderr.decode("utf-8", errors="replace")
-        )
-    return completed.stdout
+
+def _frozen_generation_route(pattern: str) -> str:
+    split = _leading_group(pattern[1:-1])
+    if split is None or split[1] == "":
+        return pattern
+    branches, tail = split
+    active = [branch for branch in branches if "98\\.archive" not in branch]
+    completed = [
+        branch
+        for branch in branches
+        if "98\\.archive" in branch and "completed" in branch
+    ]
+    if completed:
+        stage = completed[0].rsplit("/", 1)[-1]
+        mirror = r"docs/98\.archive/completed/" + stage
+        return "^(?:" + "|".join([*active, mirror]) + ")" + tail + "$"
+    if len(active) == 1 and len(active) < len(branches):
+        return "^" + active[0] + tail + "$"
+    return pattern
 
 
 def legacy_registry_payload() -> dict[str, Any]:
     """Return a fresh mutable copy of the frozen generation registry."""
 
-    return json.loads(legacy_registry_bytes())
+    payload = json.loads((ROOT / REGISTRY_PATH).read_text(encoding="utf-8"))
+    payload.pop("retention_classes", None)
+    payload["profiles"] = [
+        profile
+        for profile in payload["profiles"]
+        if profile["id"] not in ADR0038_PROFILES
+    ]
+    payload["lifecycle_domains"] = [
+        domain
+        for domain in payload["lifecycle_domains"]
+        if domain["family"] != ADR0038_FAMILY
+    ]
+    for profile in payload["profiles"]:
+        profile["path_pattern"] = FROZEN_GENERATION_ROUTES.get(
+            profile["id"], _frozen_generation_route(profile["path_pattern"])
+        )
+    return payload
+
+
+def legacy_registry_bytes() -> bytes:
+    """Serialize the frozen generation registry in the registry's own format."""
+
+    return (
+        json.dumps(legacy_registry_payload(), indent=2, ensure_ascii=False) + "\n"
+    ).encode("utf-8")
 
 
 def legacy_registry():

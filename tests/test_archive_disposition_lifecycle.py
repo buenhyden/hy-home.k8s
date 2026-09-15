@@ -105,11 +105,37 @@ class DispositionLifecycleTest(unittest.TestCase):
         )
         return sorted((item.rule_id, item.path.as_posix()) for item in diagnostics)
 
-    def retain(self, class_name: str, source: str) -> str:
+    def retain(self, class_name: str, source: str, *, rebase: bool = True) -> str:
         record = dispositions.retained_body_path(PurePosixPath(source), class_name)
-        self.write(record.as_posix(), (self.root / source).read_bytes())
+        text = (self.root / source).read_text(encoding="utf-8")
+        if rebase:
+            text = dispositions.rebase_relative_links(
+                text, PurePosixPath(source), record
+            )
+        self.write(record.as_posix(), text.encode("utf-8"))
         (self.root / source).unlink()
         return record.as_posix()
+
+    def test_retained_copy_must_rebase_its_relative_links(self) -> None:
+        record = self.retain("superseded", ADR, rebase=False)
+        self.write(INDEX, catalog((record, f"{self.base}:{ADR}")).encode())
+        self.assertIn(("LIFECYCLE-EVIDENCE", record), self.evaluate())
+
+    def test_retained_copy_may_not_rewrite_its_body(self) -> None:
+        record = self.retain("superseded", ADR)
+        body = (self.root / record).read_bytes()
+        self.write(record, body.replace(b"## Context", b"## Context\n\nAdded.", 1))
+        self.write(INDEX, catalog((record, f"{self.base}:{ADR}")).encode())
+        self.assertIn(("LIFECYCLE-EVIDENCE", record), self.evaluate())
+
+    def test_scope_migration_rejects_a_rewritten_body(self) -> None:
+        self.write(
+            RUNBOOK_TARGET, (self.root / RUNBOOK).read_bytes() + b"\nNew step.\n"
+        )
+        (self.root / RUNBOOK).unlink()
+        self.write(MIGRATION, scope_migration(RUNBOOK, RUNBOOK_TARGET).encode())
+        self.write(INDEX, catalog((MIGRATION, f"{self.base}:{RUNBOOK}")).encode())
+        self.assertIn(("LIFECYCLE-EVIDENCE", MIGRATION), self.evaluate())
 
     def test_catalog_envelope_admits_a_superseded_decision_leaving_the_log(
         self,
