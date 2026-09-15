@@ -1,6 +1,6 @@
 ---
 title: "02.architecture"
-version: "0.3.0"
+version: "0.4.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -23,8 +23,8 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 [`gitops/`](../../gitops/README.md), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
 정적 검증 스크립트가 우선한다. ADR을 포함해 더 이상 현재가 아닌 문서는 current consumer와 의미를
 승계한 뒤 Stage 98로 떠난다. 대체된 문서는 `superseded/<stage>/`, 후계자 없이 철회된 문서는 `retired/<stage>/`에
-원래 profile 그대로 보존한다([ADR-0038](./decisions/0038-six-disposition-archive-stage.md), accepted). SPEC-0079 machine 전환 전까지
-검증기는 ADR-0032 route만 인정하므로 기존 superseded ADR은 decision log에 남아 상호 supersession을 보존한다.
+원래 profile 그대로 보존한다([ADR-0038](./decisions/0038-six-disposition-archive-stage.md), accepted). 기존 superseded ADR은 disposition마다
+승인을 받기 전까지 decision log에 남아 상호 supersession을 보존한다.
 [`Archive index`](../98.archive/README.md)는 현재 탐색 경계이며 보존본은 현재 실행 권위가 아니다.
 
 ### Reader Route

@@ -24,6 +24,7 @@ from typing import Mapping, Sequence
 import yaml
 
 if __package__:
+    from scripts.archive_dispositions import catalog_line_span
     from scripts.archive_cutover_manifest import (
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
@@ -63,6 +64,7 @@ if __package__:
         validate_repository_archive,
     )
 else:
+    from archive_dispositions import catalog_line_span  # type: ignore[no-redef]
     from archive_cutover_manifest import (  # type: ignore[no-redef]
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
@@ -942,10 +944,13 @@ def _parse_archive_index(
         raw_rows.append(line)
     manifest_end = header_offset + 2 + len(raw_rows)
     rows: dict[str, ArchiveIndexRow] = {}
+    catalog = catalog_line_span(lines)
     structure_failure = not raw_rows or any(
         line.startswith("|")
         for offset, line in enumerate(lines)
         if not header_offset <= offset < manifest_end
+        # ADR-0038's catalog is its own table, owned by `archive_dispositions`.
+        and (catalog is None or not catalog[0] <= offset < catalog[1])
     )
     for raw_row in raw_rows:
         row = _parse_index_row(raw_row)

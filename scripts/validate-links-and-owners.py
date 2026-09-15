@@ -82,6 +82,14 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         apply_stable_archive_relocations,
     )
 
+try:
+    from archive_dispositions import citable_retention_classes, retention_class_of
+except ModuleNotFoundError:  # Imported as a repository-root test module.
+    from scripts.archive_dispositions import (
+        citable_retention_classes,
+        retention_class_of,
+    )
+
 from document_contracts import (
     DOCUMENT_TEXT_MAX_BYTES,
     Diagnostic,
@@ -3163,7 +3171,10 @@ def _archive_boundary_diagnostic(
     if (
         not value.startswith("docs/98.archive/")
         or target == PurePosixPath("docs/98.archive/README.md")
-        or value.startswith("docs/98.archive/completed/")
+        or (
+            len(target.parts) > 3
+            and target.parts[2] in _repository_citable_retention_classes()
+        )
     ):
         return None
     return _diag(
@@ -3204,6 +3215,66 @@ _STAGE_PATH_TOKEN = re.compile(r"docs/[0-9]{2}\.[A-Za-z][^\s`\"'()\[\],;]*")
 _PATH_PATTERN_META = frozenset(".^$*+?()[]{}|\\")
 
 
+@lru_cache(maxsize=1)
+def _repository_citable_retention_classes() -> frozenset[str]:
+    """Derive ADR-0038 citability from what each registry class names.
+
+    Only `completed/` and `resolved/` bodies still lead a reader to current
+    authority, and a frozen record never sits in either, so the class
+    directory alone decides the boundary once the registry has named it."""
+
+    return citable_retention_classes(load_registry(Path(__file__).resolve().parents[1]))
+
+
+def _leading_alternation(body: str) -> tuple[tuple[str, ...], str] | None:
+    """Split a pattern that opens on one `(?:a|b)` group into branches and tail."""
+
+    if not body.startswith("(?:"):
+        return None
+    depth = 0
+    branches: list[str] = []
+    start = 3
+    index = 0
+    while index < len(body):
+        character = body[index]
+        if character == "\\":
+            index += 2
+            continue
+        if character == "(":
+            depth += 1
+        elif character == ")":
+            depth -= 1
+            if depth == 0:
+                branches.append(body[start:index])
+                return tuple(branches), body[index + 1 :]
+        elif character == "|" and depth == 1:
+            branches.append(body[start:index])
+            start = index + 1
+        index += 1
+    return None
+
+
+def _fixed_directory_prefixes(pattern: str) -> tuple[str, ...]:
+    """Return one literal directory per root a pattern's leading group names.
+
+    ADR-0038 gives most profiles an active root and mirrored Stage 98 roots in
+    one pattern. Each branch still opens on a literal directory, so each branch
+    contributes the prefix it would contribute alone."""
+
+    body = pattern[1:] if pattern.startswith("^") else pattern
+    split = _leading_alternation(body)
+    if split is None or any(
+        "98\\.archive/" in branch and "completed" in branch for branch in split[0]
+    ):
+        # ADR-0032's `completed/` mirror already opened the Stage 03 patterns
+        # on a branch, so their grammar was never governed and the root README
+        # documents the package grammar under that reading. ADR-0038 keeps the
+        # coverage where it was rather than widening it as a side effect.
+        return (_fixed_directory_prefix(pattern),)
+    branches, tail = split
+    return tuple(_fixed_directory_prefix(branch + tail) for branch in branches)
+
+
 def _fixed_directory_prefix(pattern: str) -> str:
     """Return the literal directory a profile's path pattern opens with.
 
@@ -3234,7 +3305,7 @@ def _stage_document_prefixes(registry: Registry) -> frozenset[str]:
         prefix
         for profile in registry.profiles
         if profile.mode in {"authored", "evidence"}
-        for prefix in (_fixed_directory_prefix(profile.path_pattern),)
+        for prefix in _fixed_directory_prefixes(profile.path_pattern)
         if prefix.startswith("docs/")
     )
 
@@ -3293,7 +3364,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             # authority is resolved against source_commit/original_path by the
             # archive validator, never against the current worktree.
             continue
-        if source.as_posix().startswith("docs/98.archive/completed/"):
+        if retention_class_of(registry, source) is not None:
             # A retained document is terminal work, and its links are the
             # historical evidence of what it cited when it was finished. The
             # retiring migration row pins the origin path, commit and blob that

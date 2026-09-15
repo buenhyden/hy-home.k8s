@@ -378,6 +378,46 @@
           }
         }
       }
+    },
+    "retention_classes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "class",
+          "names",
+          "admitted_states"
+        ],
+        "properties": {
+          "class": {
+            "enum": [
+              "completed",
+              "superseded",
+              "retired",
+              "resolved"
+            ]
+          },
+          "names": {
+            "enum": [
+              "promotion",
+              "successor",
+              "reason",
+              "corrective-owner"
+            ]
+          },
+          "admitted_states": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
     }
   }
 }

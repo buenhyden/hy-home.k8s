@@ -151,7 +151,14 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def test_v9_registry_uses_the_common_public_model(self) -> None:
         self.assertEqual(
             set(self.registry),
-            {"$id", "$schema", "schema_version", "profiles", "lifecycle_domains"},
+            {
+                "$id",
+                "$schema",
+                "schema_version",
+                "profiles",
+                "lifecycle_domains",
+                "retention_classes",
+            },
         )
         self.assertEqual(self.registry["schema_version"], 9)
         self.assertNotIn("programLineage", self.registry)
@@ -265,6 +272,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "$schema",
                 "lifecycle_domains",
                 "profiles",
+                "retention_classes",
                 "schema_version",
             },
         )
@@ -291,10 +299,16 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         # `mode: template`, so a transition graph for them asserted movement
         # that cannot happen.  Migration and tombstone are separate families
         # because a migration progresses and a tombstone is created finished.
+        # ADR-0038 route dispositions are recorded finished and hold no body.
         self.assertTrue(
-            {"incident", "postmortem", "task", "migration", "tombstone"}.issubset(
-                lifecycle_families
-            )
+            {
+                "incident",
+                "postmortem",
+                "task",
+                "migration",
+                "tombstone",
+                "route-disposition",
+            }.issubset(lifecycle_families)
         )
         self.assertNotIn("template-profile", lifecycle_families)
 

@@ -62,6 +62,15 @@ from document_lifecycle import (
     validate_snapshot_documents,
 )
 
+from archive_dispositions import (
+    ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
+    ROUTE_DISPOSITION_PROFILES,
+    canonical_repository_path,
+    frontmatter_mapping,
+    parse_catalog,
+    retention_class_of,
+    retention_source_path,
+)
 from archive_validation import (
     MIG0004_TERMINAL_SOURCE_COMMIT,
     MIGRATION_DOCUMENT_MAX_BYTES,
@@ -2217,18 +2226,12 @@ def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) ->
     return proposed is not None and (base, proposed) in pins
 
 
-# Only `completed/` retains the document itself. `superseded/` and
-# `tombstones/` hold records, and `migrations/` holds the ledgers, so none of
-# them is reachable by a retention rehome.
-#
-# `cancelled` is admitted beside `done` because the retention unit is the
-# package, not the document. A task abandoned while its package ran to
-# completion travels with the package it belongs to; a document that ends
-# alone still gets a record. `superseded` stays out either way: it names a
-# replacement, which is what `superseded/` describes.
-RETENTION_CLASS_SOURCE_STATES: dict[str, frozenset[str]] = {
-    "completed": frozenset({"done", "cancelled"}),
-}
+# ADR-0032's generation retained a document only under `completed/`; its
+# `superseded/` and `tombstones/` held sealed records and `migrations/` held the
+# ledgers. A frozen ledger row is replayed under that generation, so this names
+# the frozen generation rather than the current classes, which the registry's
+# `retention_classes` owns under ADR-0038.
+FROZEN_GENERATION_RETENTION_CLASSES = frozenset({"completed"})
 
 
 def _is_sealed_record_path(path: PurePosixPath) -> bool:
@@ -2243,7 +2246,7 @@ def _is_sealed_record_path(path: PurePosixPath) -> bool:
     return (
         len(parts) > 3
         and parts[:2] == ("docs", "98.archive")
-        and parts[2] not in {"migrations", *RETENTION_CLASS_SOURCE_STATES}
+        and parts[2] not in {"migrations", *FROZEN_GENERATION_RETENTION_CLASSES}
     )
 
 
@@ -2262,11 +2265,274 @@ def _retention_rehome_target(
     if len(parts) < 4 or parts[:2] != ("docs", "98.archive"):
         return None
     retention_class = parts[2]
-    if retention_class not in RETENTION_CLASS_SOURCE_STATES:
+    if retention_class not in FROZEN_GENERATION_RETENTION_CLASSES:
         return None
     if parts[3:] != source.parts[1:]:
         return None
     return retention_class
+
+
+def _envelope_object(
+    root: Path, commit: str, path: PurePosixPath, base_commit: str
+) -> str | None:
+    """Return the object a Retention Envelope names when the base can reach it."""
+
+    try:
+        _run_git(root, ("merge-base", "--is-ancestor", commit, base_commit))
+        raw = _run_git(
+            root,
+            (
+                "rev-parse",
+                "--verify",
+                "--end-of-options",
+                f"{commit}:{path.as_posix()}",
+            ),
+        )
+    except InvocationError:
+        return None
+    value = raw.decode("ascii", errors="ignore").strip()
+    return value if OBJECT_ID.fullmatch(value) is not None else None
+
+
+def _scope_migration_moves(
+    registry: Registry,
+    metadata: Mapping[str, object],
+    base_blobs: Mapping[PurePosixPath, str],
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+) -> tuple[set[tuple[PurePosixPath, PurePosixPath]], list[str]]:
+    """Pair each document leaving a moved scope with its owner under the new root."""
+
+    scope = canonical_repository_path(metadata.get("moved_scope"))
+    owner = canonical_repository_path(metadata.get("current_owner"))
+    if scope is None or owner is None or scope == owner:
+        return set(), ["moved scope and current owner are not two canonical paths"]
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    moves: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    gaps: list[str] = []
+    for source in sorted(base_blobs, key=PurePosixPath.as_posix):
+        if (
+            source != scope and scope not in source.parents
+        ) or source in proposed_snapshot:
+            continue
+        target = owner if source == scope else owner / source.relative_to(scope)
+        before, after = base_snapshot.get(source), proposed_snapshot.get(target)
+        before_profile = profiles.get(before.profile_id) if before else None
+        after_profile = profiles.get(after.profile_id) if after else None
+        domain = before_profile.lifecycle_domain if before_profile else None
+        if (
+            target in base_blobs
+            or before is None
+            or after is None
+            or before.state_issue
+            or after.state_issue
+            or domain is None
+            or before.status is None
+            or domain.validation_class(before.status) != "current"
+            or after.status != before.status
+            or after_profile is None
+            or after_profile.lifecycle_domain is None
+            or after_profile.lifecycle_domain.family != domain.family
+            or after.artifact_id != before.artifact_id
+        ):
+            gaps.append(f"moved document keeps no current owner: {source.as_posix()}")
+            continue
+        moves.add((source, target))
+    if not moves and not gaps:
+        gaps.append("moved scope names no document this change moves")
+    return moves, gaps
+
+
+def _disposition_lifecycle_events(
+    root: Path,
+    registry: Registry,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_texts: Mapping[PurePosixPath, str],
+    *,
+    mode: str,
+) -> tuple[MigrationLifecycleEvents, tuple[LifecycleDiagnostic, ...]]:
+    """Admit ADR-0038 dispositions from the catalog's one Retention Envelope.
+
+    A retained body is proved by a new catalog row whose `<commit>:<original
+    path>` names the exact source object the comparison base holds. A scope
+    migration is proved by a new body-less record the catalog names, and it
+    admits only documents that keep their current state under the new owner.
+    No row carries a digest, a blob pin, or a path ledger; Git holds the bytes.
+    """
+
+    index = DISPOSITION_ARCHIVE_INDEX
+    proposed_rows, catalog_errors = parse_catalog(proposed_texts.get(index, ""))
+    base_rows, _ = parse_catalog(base_texts.get(index, ""))
+
+    def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
+        document = proposed_snapshot.get(path)
+        return LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-EVIDENCE",
+            path=path,
+            profile=document.profile_id if document is not None else "",
+            expected_transition="one ADR-0038 disposition proved by its Retention Envelope",
+            observed_transition="disposition is not proved",
+            base_mode=mode,  # type: ignore[arg-type]
+            evidence_gap=gap,
+        )
+
+    diagnostics = [failure(index, code) for code in catalog_errors]
+    if any(proposed_rows.get(path) != row for path, row in base_rows.items()):
+        diagnostics.append(failure(index, "an existing catalog row changed or left"))
+    # Retention follows the profile, and a frozen body is immutable: once a
+    # body or route record sits in Stage 98, no later change rewrites or
+    # removes it, whether its catalog row or a frozen ledger proved it.
+    for path in sorted(base_texts, key=PurePosixPath.as_posix):
+        if path.parts[:2] != DISPOSITION_ARCHIVE_INDEX.parts[:2]:
+            continue
+        if proposed_texts.get(path) == base_texts[path]:
+            continue
+        document = base_snapshot.get(path)
+        if retention_class_of(registry, path) is not None or (
+            document is not None and document.profile_id in ROUTE_DISPOSITION_PROFILES
+        ):
+            diagnostics.append(
+                failure(path, "a retained body or route record changed or left")
+            )
+    archive_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    current_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    lineages: set[ArtifactIdentityLineage] = set()
+    owner: ModuleType | None = None
+    for record, row in sorted(
+        proposed_rows.items(), key=lambda item: item[0].as_posix()
+    ):
+        if base_rows.get(record) == row:
+            continue
+        envelope = row.envelope
+        gaps: list[str] = []
+        if record in base_blobs or record not in proposed_snapshot:
+            gaps.append("catalog row does not name a record this change creates")
+        named_object = _envelope_object(
+            root, envelope.commit, envelope.original_path, base_commit
+        )
+        if named_object is None:
+            gaps.append(
+                "Retention Envelope names no object the comparison base reaches"
+            )
+        retention = retention_class_of(registry, record)
+        if retention is not None:
+            source = retention_source_path(record)
+            before, after = base_snapshot.get(source), proposed_snapshot.get(record)
+            if envelope.original_path != source:
+                gaps.append("Retention Envelope does not name the mirrored source")
+            if before is None or source not in base_blobs:
+                gaps.append("retained source is absent from the comparison base")
+            elif source in proposed_snapshot:
+                gaps.append("retained source remains in the proposal")
+            elif named_object is not None and named_object != base_blobs[source]:
+                gaps.append("Retention Envelope object differs from the base source")
+            if (
+                before is not None
+                and after is not None
+                and (
+                    before.state_issue
+                    or after.state_issue
+                    or before.status not in retention.admitted_states
+                )
+            ):
+                gaps.append(f"{retention.name}/ does not admit the source state")
+            if retention.name == "resolved":
+                sibling = record.with_name(
+                    "postmortem.md" if record.name == "incident.md" else "incident.md"
+                )
+                if sibling not in proposed_snapshot:
+                    gaps.append(
+                        "a resolved Incident and its Postmortem are retained together"
+                    )
+            if (
+                before is not None
+                and after is not None
+                and (
+                    before.profile_id,
+                    before.status,
+                    before.artifact_id,
+                )
+                != (after.profile_id, after.status, after.artifact_id)
+            ):
+                gaps.append("retained body changed its profile, state, or identity")
+            if not gaps:
+                owner = owner or _load_canonical_markdown_module()
+                if owner.validate_document_text(
+                    proposed_texts[record],
+                    record,
+                    classify_path(registry, record),
+                    "strict",
+                ):
+                    gaps.append("canonical retained document form")
+            if not gaps and before is not None:
+                archive_rehomes.add((source, record))
+                if before.artifact_id is not None:
+                    lineages.add(
+                        ArtifactIdentityLineage(before.artifact_id, source, record)
+                    )
+        else:
+            document = proposed_snapshot.get(record)
+            if (
+                document is None
+                or document.profile_id not in ROUTE_DISPOSITION_PROFILES
+            ):
+                gaps.append("catalog row names no ADR-0038 disposition")
+            else:
+                metadata = frontmatter_mapping(proposed_texts[record])
+                key = (
+                    "moved_scope"
+                    if document.profile_id == "archive/scope-migration"
+                    else "retired_route"
+                )
+                if metadata.get(key) != envelope.original_path.as_posix():
+                    gaps.append(f"Retention Envelope does not name the record's {key}")
+                base_object = _envelope_object(
+                    root, base_commit, envelope.original_path, base_commit
+                )
+                if (
+                    document.profile_id == "archive/scope-migration"
+                    and base_object is None
+                ):
+                    gaps.append("moved scope is absent from the comparison base")
+                elif (
+                    base_object is not None
+                    and named_object is not None
+                    and named_object != base_object
+                ):
+                    gaps.append("Retention Envelope object differs from the base route")
+                if not gaps and document.profile_id == "archive/scope-migration":
+                    moves, move_gaps = _scope_migration_moves(
+                        registry, metadata, base_blobs, base_snapshot, proposed_snapshot
+                    )
+                    gaps.extend(move_gaps)
+                    if not gaps:
+                        current_rehomes.update(moves)
+                        lineages.update(
+                            ArtifactIdentityLineage(
+                                base_snapshot[source].artifact_id, source, target
+                            )
+                            for source, target in moves
+                            if base_snapshot[source].artifact_id is not None
+                        )
+        if gaps:
+            diagnostics.append(
+                failure(
+                    record if record in proposed_snapshot else index, "; ".join(gaps)
+                )
+            )
+    return (
+        MigrationLifecycleEvents(
+            current_rehomes=frozenset(current_rehomes),
+            archive_rehomes=frozenset(archive_rehomes),
+            identity_lineages=frozenset(lineages),
+        ),
+        tuple(diagnostics),
+    )
 
 
 def _migration_lifecycle_events(
@@ -2455,7 +2721,10 @@ def _migration_lifecycle_events(
                 or retained is None
                 or source_document.state_issue
                 or source_document.status
-                not in RETENTION_CLASS_SOURCE_STATES[retention_class]
+                not in {
+                    item.name: item.admitted_states
+                    for item in registry.retention_classes
+                }.get(retention_class, frozenset())
             ):
                 diagnostics.append(failure(target, "retention source state"))
                 continue
@@ -3584,6 +3853,27 @@ def _evaluate_comparison(
         proposed_commit=proposed_commit,
         mode=mode,
     )
+    disposition_events, disposition_diagnostics = _disposition_lifecycle_events(
+        root,
+        registry,
+        base_commit,
+        base_blobs,
+        base_snapshot,
+        base_texts,
+        proposed_snapshot,
+        proposed_texts,
+        mode=mode,
+    )
+    migration_events = replace(
+        migration_events,
+        current_rehomes=migration_events.current_rehomes
+        | disposition_events.current_rehomes,
+        archive_rehomes=migration_events.archive_rehomes
+        | disposition_events.archive_rehomes,
+        identity_lineages=migration_events.identity_lineages
+        | disposition_events.identity_lineages,
+    )
+    migration_diagnostics = migration_diagnostics + disposition_diagnostics
     evidence_context = evidence_context_factory(
         proposed_classification_registry,
         base_snapshot,

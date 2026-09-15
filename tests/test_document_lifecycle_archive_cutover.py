@@ -45,6 +45,10 @@ from archive_recovery import (  # noqa: E402
     WP004C_SEALED_TARGET_COMMIT,
 )
 from document_contracts import DocumentContractError, load_registry  # noqa: E402
+from tests.archive_generation_fixture import (  # noqa: E402
+    legacy_registry,
+    legacy_registry_bytes,
+)
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -579,8 +583,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         # 12 before the content/audit, content/research and content/data
         # families retired with their unroutable profiles, 9 while the three
         # reference roles carried a domain no graph governed, and 12 again now
-        # that each role declares the lifecycle Spec 0054 names for it.
-        self.assertEqual(len(registry.lifecycle_domains), 12)
+        # that each role declares the lifecycle Spec 0054 names for it. ADR-0038
+        # adds one family for the body-less route dispositions.
+        self.assertEqual(len(registry.lifecycle_domains), 13)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
@@ -911,6 +916,8 @@ artifact_id: "AUD-0001-m0001"
 
 
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
+    """Frozen ADR-0032 record fixtures run under that generation's registry."""
+
     original_path = "docs/03.specs/0900-fixture/spec.md"
     archive_path = "docs/98.archive/03.specs/0900-fixture/spec.md"
 
@@ -973,7 +980,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         self._git(root, "config", "user.name", "Lifecycle Archive Fixture")
         registry_path = root / REGISTRY_PATH
         registry_path.parent.mkdir(parents=True, exist_ok=True)
-        registry_path.write_bytes((ROOT / REGISTRY_PATH).read_bytes())
+        registry_path.write_bytes(legacy_registry_bytes())
         document_path = root / (self.archive_path if archived else self.original_path)
         document_path.parent.mkdir(parents=True, exist_ok=True)
         document_path.write_bytes(
@@ -1016,7 +1023,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         self._git(root, "config", "user.name", "Lifecycle Adapter Fixture")
         registry_path = root / REGISTRY_PATH
         registry_path.parent.mkdir(parents=True, exist_ok=True)
-        registry_path.write_bytes((ROOT / REGISTRY_PATH).read_bytes())
+        registry_path.write_bytes(legacy_registry_bytes())
         for relative, content in documents.items():
             path = root / relative
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -1044,7 +1051,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             self._git(root, "add", "--", path)
             diagnostics = VALIDATOR._evaluate_comparison(
                 root,
-                load_registry(ROOT),
+                legacy_registry(),
                 mode="staged",
             )
         self.assertEqual(diagnostics, ())
@@ -1091,7 +1098,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             proposed_commit = self._git(root, "rev-parse", "HEAD")
             diagnostics = VALIDATOR._evaluate_comparison(
                 root,
-                load_registry(ROOT),
+                legacy_registry(),
                 mode="ci",
                 base_ref=base_commit,
                 to_ref=proposed_commit,
@@ -1102,7 +1109,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         )
 
     def test_staged_rejects_metadata_and_payload_byte_mutation(self) -> None:
-        registry = load_registry(ROOT)
+        registry = legacy_registry()
         for mutation in ("metadata", "payload"):
             with self.subTest(mutation=mutation):
                 temporary, root, _base = self._repository(archived=True)
@@ -1119,7 +1126,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
                 )
 
     def test_explicit_ref_rejects_metadata_and_payload_byte_mutation(self) -> None:
-        registry = load_registry(ROOT)
+        registry = legacy_registry()
         for mutation in ("metadata", "payload"):
             with self.subTest(mutation=mutation):
                 temporary, root, base = self._repository(archived=True)
@@ -1142,7 +1149,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
     def test_staged_and_explicit_ref_reject_archive_creation_without_migration(
         self,
     ) -> None:
-        registry = load_registry(ROOT)
+        registry = legacy_registry()
         for mode in ("staged", "explicit-ref"):
             with self.subTest(mode=mode):
                 temporary, root, base = self._repository(archived=False)
@@ -1172,7 +1179,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
     def test_archive_no_successor_representation_respects_document_generation(
         self,
     ) -> None:
-        registry = load_registry(ROOT)
+        registry = legacy_registry()
         path = PurePosixPath("docs/98.archive/03.specs/0901-fixture/spec.md")
 
         def archive_text(*, current: bool, replacement: str) -> str:

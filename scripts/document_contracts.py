@@ -146,6 +146,15 @@ class LifecycleDomain:
 
 
 @dataclass(frozen=True)
+class RetentionClass:
+    """One Stage 98 retention class, what its body names, and its source states."""
+
+    name: Literal["completed", "superseded", "retired", "resolved"]
+    names: Literal["promotion", "successor", "reason", "corrective-owner"]
+    admitted_states: frozenset[str]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal[
@@ -187,6 +196,7 @@ class Registry:
     schema_version: int
     profiles: tuple[DocumentProfile, ...]
     lifecycle_domains: tuple[LifecycleDomain, ...]
+    retention_classes: tuple[RetentionClass, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -872,6 +882,32 @@ def _terminal_semantic_diagnostics(
             assigned_profiles.add(profile_id)
             domains_by_profile[profile_id] = domain
 
+    declared_states = {
+        state
+        for domain in raw_registry["lifecycle_domains"]
+        for state in domain["states"]
+    }
+    retention_names: set[str] = set()
+    for item in raw_registry.get("retention_classes", ()):
+        if item["class"] in retention_names:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_RETENTION_CLASS",
+                    expected="one binding per retention class",
+                    actual=f"duplicate retention class {item['class']}",
+                )
+            )
+        retention_names.add(item["class"])
+        undeclared = sorted(set(item["admitted_states"]) - declared_states)
+        if undeclared:
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_RETENTION_CLASS",
+                    expected="admitted states declared by a lifecycle domain",
+                    actual=f"{item['class']}: undeclared {undeclared!r}",
+                )
+            )
+
     for profile_id, profile in profiles_by_id.items():
         if profile["mode"] != "authored":
             continue
@@ -940,6 +976,14 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         schema_version=raw["schema_version"],
         profiles=profiles,
         lifecycle_domains=domains,
+        retention_classes=tuple(
+            RetentionClass(
+                name=item["class"],
+                names=item["names"],
+                admitted_states=frozenset(item["admitted_states"]),
+            )
+            for item in raw.get("retention_classes", ())
+        ),
     )
 
 

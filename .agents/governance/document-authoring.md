@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -68,10 +68,8 @@ express ownership, not a one-way waterfall.
    historical evidence, through its corrective-work owner. It cites the
    successor instead of a `superseded/` body and the current route instead of a
    `retired/` body, a tombstone, or a migration. A frozen record it must still
-   name is named by identifier and reached through the index. Until ADR-0038 is
-   accepted and Spec 0079 moves the link validator, only `completed/` is an
-   admitted link target, and citations that predate acceptance stay as
-   enumerated consumers. Only an `operation/incident` record and its
+   name is named by identifier and reached through the index. Citations that
+   predate ADR-0038 acceptance stay as enumerated consumers. Only an `operation/incident` record and its
    `operation/postmortem` may cite an archive path directly, because the
    evidence such an account rests on is often the archived record itself.
 7. Keep a Requirement Package solution-independent. Put executable interface

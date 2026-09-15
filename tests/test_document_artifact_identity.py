@@ -104,9 +104,13 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "docs/90.references/data/0072-example/m0002-example.md",
                 "DATA-0072-m0002",
             ),
-            "archive/migration": (
+            "archive/scope-migration": (
                 "docs/98.archive/migrations/0072-example.md",
                 "MIG-0072",
+            ),
+            "archive/route-tombstone": (
+                "docs/98.archive/tombstones/0072-example.md",
+                "TOMB-0072",
             ),
         }
 
@@ -116,7 +120,10 @@ class PathArtifactIdentityTest(unittest.TestCase):
             for profile in self.registry.profiles
             if profile.mode == "authored" and profile.artifact_id_pattern is not None
         }
-        self.assertEqual(set(self.cases) - {"archive/migration"}, authored)
+        self.assertEqual(
+            set(self.cases) - {"archive/scope-migration", "archive/route-tombstone"},
+            authored,
+        )
         for profile_id, (raw_path, expected) in self.cases.items():
             with self.subTest(profile=profile_id):
                 profile = self.profiles[profile_id]

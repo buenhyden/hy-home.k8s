@@ -1,6 +1,6 @@
 ---
 title: "Six-Disposition Archive Stage"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -154,9 +154,11 @@ Recovery depends on the named commit staying reachable. A rewrite of the default
 branch would break it; that is accepted because the Git policy already forbids
 the rewrite.
 
-Until the machine cutover in Spec 0079, the validators admit only ADR-0032's
-routes, so no disposition into the new model can be executed. Governance prose
-states the new contract together with that transition boundary.
+Spec 0079 moved the registry routes, archive forms, and validators to this
+model in one change. The registry routes frozen records and ledgers by exact
+path, so the frozen generation cannot grow, and the lifecycle gate admits a
+retained body through its catalog row and a move through a body-less scope
+migration.
 
 ## Alternatives
 
@@ -185,4 +187,4 @@ family.
 
 | Decision lineage                                                | Replacement relation                                                  | Affected Spec                                                          |
 | --------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [ADR-0032](./0032-completed-and-terminal-document-retention.md) | Supersedes ADR-0032; its routes stay the only admitted ones until the cutover | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| [ADR-0032](./0032-completed-and-terminal-document-retention.md) | Supersedes ADR-0032; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |

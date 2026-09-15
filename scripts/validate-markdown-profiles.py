@@ -585,8 +585,10 @@ def expected_artifact_id(
             "reference/data": "DATA",
         }[profile_id]
         return f"{prefix}-{path.parent.name[:4]}-{path.stem[:5]}"
-    if profile_id == "archive/migration":
+    if profile_id in {"archive/migration", "archive/scope-migration"}:
         return f"MIG-{path.name[:4]}"
+    if profile_id == "archive/route-tombstone":
+        return f"TOMB-{path.name[:4]}"
     return None
 
 

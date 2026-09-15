@@ -28,6 +28,10 @@ TOP_LEVEL_KEYS = frozenset(
         "lifecycle_domains",
     }
 )
+# ADR-0038 binds each Stage 98 retention class to the terminal states it admits.
+# A comparison-base registry from before that decision has no binding, so the
+# key is admitted beside the required set rather than required by it.
+OPTIONAL_TOP_LEVEL_KEYS = frozenset({"retention_classes"})
 PROFILE_KEYS = frozenset(
     {
         "id",
@@ -158,7 +162,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
     """Validate the non-delegable Stage 99 registry authority boundary."""
 
     actual_keys = frozenset(registry)
-    if actual_keys != TOP_LEVEL_KEYS:
+    if actual_keys - OPTIONAL_TOP_LEVEL_KEYS != TOP_LEVEL_KEYS:
         raise AuthorityError(
             "REGISTRY_TOP_LEVEL: expected only " + ", ".join(sorted(TOP_LEVEL_KEYS))
         )

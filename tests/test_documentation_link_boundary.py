@@ -68,6 +68,29 @@ class ArchiveLinkBoundaryTests(unittest.TestCase):
                 self.assertEqual(diagnostic.rule_id, "LINK-ARCHIVE-BYPASS")
                 self.assertEqual(diagnostic.path, CONSUMER)
 
+    def test_rejects_retention_classes_that_name_no_current_authority(self) -> None:
+        """ADR-0038: cite the successor or current route, never the body."""
+
+        for target in (
+            "docs/98.archive/superseded/02.architecture/decisions/0032-x.md",
+            "docs/98.archive/retired/05.operations/runbooks/0009-x.md",
+            "docs/98.archive/tombstones/0001-old-route.md",
+            "docs/98.archive/migrations/0024-scope-move.md",
+        ):
+            with self.subTest(target=target):
+                diagnostic = _archive(CONSUMER, target)
+                self.assertIsNotNone(diagnostic)
+                assert diagnostic is not None
+                self.assertEqual(diagnostic.rule_id, "LINK-ARCHIVE-BYPASS")
+
+    def test_admits_resolved_bodies_as_historical_evidence(self) -> None:
+        self.assertIsNone(
+            _archive(
+                CONSUMER,
+                "docs/98.archive/resolved/05.operations/incidents/2026/inc-0001-x/incident.md",
+            )
+        )
+
     def test_admits_the_two_declared_routes_into_the_archive(self) -> None:
         """The index routes to a record; a retention class holds the document."""
 
@@ -168,6 +191,7 @@ class StagePathGrammarTests(unittest.TestCase):
         """A literal list here would be the same defect the rule exists to stop."""
 
         self.assertIn("docs/05.operations/incidents/", STAGE_PREFIXES)
+        self.assertNotIn("docs/03.specs/", STAGE_PREFIXES)
         self.assertIn("docs/05.operations/runbooks/", STAGE_PREFIXES)
         self.assertNotIn("docs/99.templates/templates/operations/", STAGE_PREFIXES)
 
@@ -186,6 +210,20 @@ class StagePathGrammarTests(unittest.TestCase):
                 r"^docs/05\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
             ),
             "docs/05.operations/incidents/",
+        )
+
+    def test_a_leading_root_group_contributes_one_prefix_per_root(self) -> None:
+        """ADR-0038 mirrors an active root into Stage 98 in the same pattern."""
+
+        self.assertEqual(
+            validator._fixed_directory_prefixes(
+                r"^(?:docs/05\.operations|docs/98\.archive/resolved/05\.operations)"
+                r"/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z]+/incident\.md$"
+            ),
+            (
+                "docs/05.operations/incidents/",
+                "docs/98.archive/resolved/05.operations/incidents/",
+            ),
         )
 
     def test_reports_a_route_written_out_as_a_grammar(self) -> None:

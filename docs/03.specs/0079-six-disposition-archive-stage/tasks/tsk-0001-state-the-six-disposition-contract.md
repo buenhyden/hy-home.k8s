@@ -1,8 +1,8 @@
 ---
 title: "State the Six-Disposition Contract"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -116,7 +116,7 @@ Pending, with owners:
   `superseded/`: ADR-0032 and SPEC-0072 TSK-0001. The active SPEC-0054 Spec body
   still states that all ADRs remain in the Stage 02 decision log. They stay as
   they are. Next owner: each document's owning Spec when it is next revised.
-- Machine references to Stage 98 paths in `scripts/` and `tests/` belong to
+- Machine references to Stage 98 paths in `scripts/` and `tests/` moved in
   tsk-0002.
 - ADR-0038 was accepted and ADR-0032 moved to `superseded` in the change after
   the proposal commit, at the request owner's direction on 2026-09-15.

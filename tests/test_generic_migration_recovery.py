@@ -18,6 +18,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts import archive_recovery as recovery, archive_validation as archive  # noqa: E402
+from tests.archive_generation_fixture import legacy_registry_payload  # noqa: E402
 from tests.git_fixture import GitFixture  # noqa: E402
 
 
@@ -28,7 +29,9 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.git = GitFixture(self.root)
         registry_path = Path("docs/99.templates/registry.json")
-        registry = json.loads((ROOT / registry_path).read_text())
+        # These regressions create synthetic path ledgers, which ADR-0038 no
+        # longer routes; they exercise the frozen generation's own registry.
+        registry = legacy_registry_payload()
         selected = {
             "sdlc/architecture-description",
             "sdlc/spec",
@@ -748,11 +751,18 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
 
     def test_later_numbered_profile_is_not_a_per_migration_allowlist(self):
         from scripts.document_contracts import classify_path, load_registry
+        from tests.archive_generation_fixture import legacy_registry
 
         future = "docs/98.archive/migrations/0123-future-convergence.md"
+        # The frozen generation routed every later number to a path ledger.
+        self.assertEqual(
+            classify_path(legacy_registry(), PurePosixPath(future)).profile_id,
+            "archive/migration",
+        )
+        # ADR-0038 routes it to the body-less scope migration instead.
         self.assertEqual(
             classify_path(load_registry(ROOT), PurePosixPath(future)).profile_id,
-            "archive/migration",
+            "archive/scope-migration",
         )
         content = self.write().replace(b"MIG-0005", b"MIG-0123")
         archive.parse_migration_control(future, content)

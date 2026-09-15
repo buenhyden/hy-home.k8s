@@ -37,6 +37,14 @@ if TYPE_CHECKING:
     from document_contracts import Registry
 
 if __package__:
+    from scripts.archive_dispositions import (
+        ROUTE_DISPOSITION_PROFILES,
+        catalog_line_span,
+        catalog_parity_diagnostics,
+        citable_retention_classes,
+        contracts_module,
+        retention_class_of,
+    )
     from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
     from scripts.document_authority import REGISTRY_PATH
     from scripts.archive_recovery import (
@@ -59,6 +67,14 @@ if __package__:
         require_commits_reachable_from_durable_refs,
     )
 else:  # Direct import-only execution from scripts/.
+    from archive_dispositions import (  # type: ignore[no-redef]
+        ROUTE_DISPOSITION_PROFILES,
+        catalog_line_span,
+        catalog_parity_diagnostics,
+        citable_retention_classes,
+        contracts_module,
+        retention_class_of,
+    )
     from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from document_authority import REGISTRY_PATH
     from archive_recovery import (  # type: ignore[no-redef]
@@ -83,21 +99,59 @@ else:  # Direct import-only execution from scripts/.
 
 
 ARCHIVE_ROOT = PurePosixPath("docs/98.archive")
-# Retention classes hold governed documents that left an active stage intact.
-# They are not sealed archive records: they carry no ArchiveEnvelope, their
-# provenance lives in the migration row that retired the origin path, and the
-# document keeps its own profile and terminal state.
-RETENTION_CLASSES = ("completed",)
+# ADR-0032's generation retained a governed document only under `completed/`,
+# with provenance in the migration row that retired its origin path. Frozen
+# ledger relocations replay under that generation. The current classes are the
+# registry's `retention_classes` under ADR-0038.
+FROZEN_GENERATION_RETENTION_CLASSES = ("completed",)
 
 
-def is_retention_path(path: PurePosixPath) -> bool:
-    """Report whether `path` sits in a retention class rather than a record."""
+def repository_registry(root: Path) -> "Registry | None":
+    """Load the root registry, or None where a fixture tree carries none.
 
+    Without a registry no current-generation route is known, so the reading
+    falls back to the frozen generation rather than admitting a new route."""
+
+    if not (root / REGISTRY_PATH).is_file():
+        return None
+    return contracts_module().load_registry(root)
+
+
+def is_retention_path(path: PurePosixPath, registry: "Registry | None" = None) -> bool:
+    """Report whether `path` holds a retained body rather than a sealed record."""
+
+    if registry is not None:
+        return retention_class_of(registry, path) is not None
     parts = path.parts
     return (
         len(parts) > 3
         and parts[:2] == ARCHIVE_ROOT.parts
-        and parts[2] in RETENTION_CLASSES
+        and parts[2] in FROZEN_GENERATION_RETENTION_CLASSES
+    )
+
+
+def is_route_disposition_path(path: PurePosixPath, registry: "Registry | None") -> bool:
+    """Report whether `path` is a body-less ADR-0038 route disposition."""
+
+    if registry is None:
+        return False
+    contracts = contracts_module()
+    try:
+        return contracts.classify_path(registry, path).profile_id in (
+            ROUTE_DISPOSITION_PROFILES
+        )
+    except contracts.DocumentContractError:
+        return False
+
+
+def is_citable_archive_target(path: PurePosixPath, registry: "Registry | None") -> bool:
+    """Report whether a current document may link this retained body directly."""
+
+    if registry is None:
+        return is_retention_path(path)
+    retention = retention_class_of(registry, path)
+    return retention is not None and retention.name in citable_retention_classes(
+        registry
     )
 
 
@@ -953,7 +1007,7 @@ def _is_relocatable_record_path(path: str) -> bool:
     return (
         len(parts) > 3
         and parts[:2] == ARCHIVE_ROOT.parts
-        and parts[2] not in {"migrations", *RETENTION_CLASSES}
+        and parts[2] not in {"migrations", *FROZEN_GENERATION_RETENTION_CLASSES}
     )
 
 
@@ -3180,6 +3234,7 @@ def _repository_archive_records(
     records: dict[str, bytes] = {}
     migration_controls: dict[str, bytes] = {}
     diagnostics: list[ArchiveDiagnostic] = []
+    registry = repository_registry(root)
     archive_root = root / ARCHIVE_ROOT
     try:
         archive_root_stat = archive_root.lstat()
@@ -3256,7 +3311,8 @@ def _repository_archive_records(
                 if (
                     relative == ARCHIVE_INDEX.as_posix()
                     or not relative.endswith(".md")
-                    or is_retention_path(relative_path)
+                    or is_retention_path(relative_path, registry)
+                    or is_route_disposition_path(relative_path, registry)
                 ):
                     continue
                 content = read_record(directory_fd, name, relative)
@@ -3458,6 +3514,7 @@ def _parse_repository_index(
     diagnostics: list[ArchiveDiagnostic] = []
     lines = text.splitlines()
     headers = [offset for offset, line in enumerate(lines) if line == _INDEX_HEADER]
+    catalog = catalog_line_span(lines)
     if len(headers) != 1:
         return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
     header = headers[0]
@@ -3469,7 +3526,12 @@ def _parse_repository_index(
             break
         raw_rows.append(line)
     end = header + 2 + len(raw_rows)
-    if any(line.startswith("|") for line in lines[end:]):
+    if any(
+        line.startswith("|")
+        for offset, line in enumerate(lines[end:], start=end)
+        # ADR-0038's catalog is its own table, owned by `archive_dispositions`.
+        if catalog is None or not catalog[0] <= offset < catalog[1]
+    ):
         diagnostics.append(
             _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
         )
@@ -3536,6 +3598,35 @@ def _parse_repository_index(
             _diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX.as_posix())
         )
     return rows, link_total, diagnostics
+
+
+def _current_generation_texts(
+    root: Path,
+    registry: "Registry",
+    frozen_retained: frozenset[PurePosixPath],
+) -> dict[PurePosixPath, str]:
+    """Read each ADR-0038 retained body and route record under Stage 98."""
+
+    texts: dict[PurePosixPath, str] = {}
+    for directory, directories, files in os.walk(
+        root / ARCHIVE_ROOT, followlinks=False
+    ):
+        directories.sort()
+        for name in sorted(files):
+            path = PurePosixPath(Path(directory, name).relative_to(root).as_posix())
+            if (
+                not name.endswith(".md")
+                or path in frozen_retained
+                or not (
+                    is_retention_path(path, registry)
+                    or is_route_disposition_path(path, registry)
+                )
+            ):
+                continue
+            texts[path] = read_worktree_regular_bounded(
+                root, path.as_posix(), max_bytes=CURRENT_MARKDOWN_MAX_BYTES
+            ).decode("utf-8", errors="replace")
+    return texts
 
 
 def validate_repository_archive(
@@ -3702,6 +3793,22 @@ def validate_repository_archive(
         diagnostics.append(_diagnostic(exc.code, ARCHIVE_INDEX.as_posix()))
     index_rows, index_links, index_diagnostics = _parse_repository_index(index_text)
     diagnostics.extend(index_diagnostics)
+    current_registry = repository_registry(root)
+    if current_registry is not None:
+        frozen_retained = frozenset(
+            PurePosixPath(target)
+            for target in (proof.targets.values() if proof is not None else ())
+            if is_retention_path(PurePosixPath(target))
+        )
+        diagnostics.extend(
+            _diagnostic(code, path)
+            for code, path in catalog_parity_diagnostics(
+                current_registry,
+                index_text,
+                _current_generation_texts(root, current_registry, frozen_retained),
+                frozen_retained=frozen_retained,
+            )
+        )
     if frozenset(index_rows) != actual:
         diagnostics.append(
             _diagnostic("ARCHIVE-INDEX-PARITY", ARCHIVE_INDEX.as_posix())
@@ -4643,7 +4750,8 @@ def validate_current_archive_authority(
             pure_path.is_relative_to(ARCHIVE_ROOT)
             and pure_path != ARCHIVE_INDEX
             and not migration_control
-            and not is_retention_path(pure_path)
+            and not is_retention_path(pure_path, registry)
+            and not is_route_disposition_path(pure_path, registry)
         )
         if current and (
             archive_record_path
@@ -4655,7 +4763,7 @@ def validate_current_archive_authority(
             continue
         if not status_valid or not profile_valid or not markdown_valid or not current:
             continue
-        if archive_record_path or is_retention_path(pure_path):
+        if archive_record_path or is_retention_path(pure_path, registry):
             # A retained document is not part of the current corpus, so its
             # own links are not current-to-archive coupling.
             continue
@@ -4677,7 +4785,7 @@ def validate_current_archive_authority(
                 # A retention class holds the document itself, not a sealed
                 # record, so citing one is an ordinary link to that document
                 # at the path it now occupies.
-                and not is_retention_path(target)
+                and not is_citable_archive_target(target, registry)
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))
     return _report(diagnostics)

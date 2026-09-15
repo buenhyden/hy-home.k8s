@@ -1,8 +1,8 @@
 ---
 title: "Six-Disposition Archive Stage Implementation Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"

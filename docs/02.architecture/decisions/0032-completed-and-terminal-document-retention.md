@@ -1,6 +1,6 @@
 ---
 title: "Terminal Document Retention and Archive Stage Taxonomy"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/architecture-decision"
 status: "superseded"
 owner: "platform"
@@ -18,8 +18,8 @@ This decision is superseded by
 [ADR-0038](./0038-six-disposition-archive-stage.md), which gives Stage 98 six
 dispositions of two kinds and withdraws the decision-log exception. The clauses
 below record what was decided at the time; they are historical evidence, not
-current instructions. Until the machine cutover in Spec 0079, the validators
-still admit only the routes named below.
+current instructions. Its sealed records and ledgers remain a frozen
+generation that the registry routes by exact path.
 
 This decision retains terminal governed documents instead of deleting them,
 keeps them out of the active stages, and gives Stage 98 four subdirectories
@@ -219,16 +219,15 @@ records a six-disposition Stage 98 and supersedes this decision. It withdraws
 the decision-log exception, turns `superseded/` into a retention class that
 holds whole bodies, adds `retired/` and `resolved/`, makes `tombstones/` and
 `migrations/` route dispositions that hold no body, and replaces per-record
-source commit, blob, and digest with one catalog Retention Envelope. This
-decision's routes stay the only ones the validators admit until the machine
-cutover in Spec 0079.
+source commit, blob, and digest with one catalog Retention Envelope. Its sealed
+records and ledgers keep this decision's form as a frozen generation.
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of their deletion and Git-first terminal-history clauses for terminal documents; both remain accepted and are not superseded | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes this decision; its routes stay the only admitted ones until the cutover | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes this decision; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
 
 ### Implementation Traceability
 

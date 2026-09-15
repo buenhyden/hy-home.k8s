@@ -41,12 +41,14 @@ from document_lifecycle import (  # noqa: E402
     _archive_creation_evidence,
     document_from_text,
 )
+from tests.archive_generation_fixture import legacy_registry  # noqa: E402
 from tests.git_fixture import GitFixture  # noqa: E402
 
 
 class ArchiveDispositionRoutesTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.registry = load_registry(ROOT)
+        # ADR-0032 record routing is the frozen generation's own contract.
+        self.registry = legacy_registry()
         self.source = PurePosixPath("docs/01.requirements/9000-fixture.md")
         self.successor = PurePosixPath("docs/01.requirements/9001-successor.md")
 

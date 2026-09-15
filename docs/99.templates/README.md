@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-15"
 layer: "templates"
 ---
 # 99.templates
@@ -79,7 +79,8 @@ form 경로의 대응은 Registry만 소유한다.
   `####-<slug>/README.md`는 `audit-pack`·`data-pack`·`research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
   `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
-- **Archive forms** (`archive/`): `migration` control과 `tombstone` record.
+- **Archive forms** (`archive/`): ADR-0038 route disposition인 `route-tombstone`과
+  `scope-migration`, 그리고 동결 generation의 `migration` 원장과 `tombstone` record.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
@@ -179,6 +180,9 @@ Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하
 identity는 Registry contract version과 Git history가 소유한다.
 "governance/*"와 README router는 stable "artifact_id"를 갖지 않는다.
 "archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
+"archive/route-tombstone"과 "archive/scope-migration"은 본문 없이 route key만 가진다.
+Registry의 "retention_classes"는 Stage 98 retention class마다 본문이 명명하는 대상과
+허용하는 source 종단 상태를 묶는다.
 
 ## Related Documents
 

@@ -1,8 +1,8 @@
 ---
 title: "Six-Disposition Archive Stage Technical Specification"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -62,8 +62,9 @@ or network action is authorized.
   branch SHA, or recovery commit. The catalog's Retention Envelope names one
   `<commit>:<original path>`.
 - Frozen content is classified by generation and never rewritten.
-- Until the machine step lands, the validators admit only ADR-0032's routes, and
-  governance prose says so wherever it states the new contract.
+- The registry routes frozen records and ledgers by exact path, so the frozen
+  generation cannot grow. Its regressions run under the registry of the last
+  merged commit before the cutover.
 
 ## Core Design
 
@@ -72,28 +73,43 @@ disposition obligations, the authoring policy owns the link rule, the Stage 98
 index owns the catalog and its generation boundary, and each stage index points
 at them instead of restating ADR-0032's four directories.
 
-The machine step makes the registry the only place a route is spelled and
-removes the three hardcoded retention-class lists. Frozen records and retained
-bodies may share a directory, so classification cannot rest on a path pattern
-alone. The registry distinguishes the frozen record generation from original
-profiles, and the validators select the generation before any other rule runs.
+The machine step makes the registry the only place a current route is spelled.
+Frozen records and retained bodies share `superseded/`, so classification cannot
+rest on a directory. The registry routes the 25 frozen records and 23 frozen
+ledgers by exact path and excludes those paths from the mirrored origin routes,
+so every path classifies to one generation before any other rule runs. The
+current retention classes come from the registry's `retention_classes`; the
+frozen generation's single class stays a named frozen constant used only to
+replay frozen ledger rows. `scripts/archive_dispositions.py` owns the class,
+citability, envelope, and catalog reading every validator shares.
 
 ## Data Modeling & Storage Strategy
 
-A retained body carries its original frontmatter unchanged. The catalog row for
-a disposition carries the record path, the original path, and one Retention
-Envelope `<commit>:<original path>`. A route disposition carries the route, its
+A retained body carries its original frontmatter unchanged. The Retention
+Catalog in the Stage 98 index has the columns `Disposition Record` and
+`Retention Envelope`, and each row names one record and one
+`<commit>:<original path>`; a catalog with no disposition has no table. A route disposition carries the route, its
 successor or absence, the reason, and for a migration the moved scope, current
 owner, and `MIG-####`. Frozen records keep their ArchiveEnvelope, `source_blob`,
 and `content_sha256`, and frozen ledgers keep their pinned rows.
 
 ## Interfaces & Data Structures
 
-The governance step changes no interface. The machine step changes the registry
-profiles for the archive family and the retention path alternatives of the
-origin profiles, the catalog row parser, and the retention-class and link
-boundary logic. Rule identifiers that name a removed obligation are retired, and
-a new rule identifier is added only for a new obligation.
+The registry gains `retention_classes` (`class`, `names`, `admitted_states`),
+the mirrored retention alternatives of the origin profiles, the lifecycle family
+`route-disposition` with one terminal state `recorded`, and the profiles
+`archive/route-tombstone` (`TOMB-####`; `retired_route`, `successor`, `reason`)
+and `archive/scope-migration` (`MIG-####`; `moved_scope`, `current_owner`) with
+their forms. The archive validator reports `ARCHIVE-CATALOG-STRUCTURE`,
+`ARCHIVE-CATALOG-ENVELOPE`, `ARCHIVE-CATALOG-PARITY`, and
+`ARCHIVE-DISPOSITION-NAMING`; the lifecycle gate reports an unproved disposition
+as `LIFECYCLE-EVIDENCE`. A superseded body must carry `superseded_by`, and a resolved Incident and its
+Postmortem are retained together; what a completed or retired body names stays
+a review obligation. Once in Stage 98, a retained body or route record never
+changes or leaves, whether a catalog row or a frozen ledger proved it. A route
+disposition's envelope must name the object the comparison base holds at that
+route. A scope migration proves ownership, state, and identity, not bytes: a
+moved document's content change stays visible in its Git diff and review.
 
 ## Edge Cases & Error Handling
 
@@ -101,8 +117,9 @@ A document that could match two classes is decided by what happened to it: a
 replacement makes it `superseded`, and withdrawal with no successor makes it
 `retired`. A closed Incident whose Postmortem is not yet published is not
 `resolved`. A citation that predates ADR-0038 acceptance is recorded as a
-consumer and left in place. A frozen record that would need a metadata repair
-stays unchanged, and the repair needs its own decision.
+consumer and left in place. A frozen record that would need a metadata repair stays unchanged, and the repair needs its own decision.
+Stage 99 forms hold no lifecycle state and retire by Git-history-only
+disposition rather than into a retention class.
 
 ## Failure Modes & Fallback / Human Escalation
 

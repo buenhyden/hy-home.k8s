@@ -306,7 +306,6 @@ def _create_diagnostics(
                 target == document.path
                 for _, target in migration_events.current_rehomes
             )
-            and document.status == "active"
             and profile.lifecycle_domain is not None
             and profile.lifecycle_domain.validation_class(document.status) == "current"
         ):
