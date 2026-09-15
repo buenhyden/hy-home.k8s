@@ -1,8 +1,8 @@
 ---
 title: "State the Six-Disposition Contract"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -59,8 +59,9 @@ evidence.
   `scripts/`, `tests/`, `gitops/`, `infrastructure/`, `policy/`, `secrets/`,
   `.github/`.
 - **Approval Required**: The request owner approved the model and the decisions
-  above. Commit, push, pull request, merge, ADR-0038 acceptance, and executing
-  any disposition were not requested and are not approved.
+  above, and on 2026-09-15 requested ADR-0038 acceptance and tsk-0002; local
+  logical commits follow from that request. Push, pull request, merge, and
+  executing any disposition were not requested and are not approved.
 - **Static Validation**: the strict profile, link, lifecycle, and archive gates
   and one `python3 scripts/qa.py full` on the final tree, with
   `git diff --check`.
@@ -100,7 +101,7 @@ exception) were fixed with the transition boundary. The MEDIUM finding, the
 active SPEC-0054 body, is enumerated below rather than edited.
 
 Residual risk: the governance prose states a contract that the validators do
-not enforce until tsk-0002, and ADR-0038 is still proposed.
+not enforce until tsk-0002.
 
 Pending, with owners:
 
@@ -117,8 +118,8 @@ Pending, with owners:
   they are. Next owner: each document's owning Spec when it is next revised.
 - Machine references to Stage 98 paths in `scripts/` and `tests/` belong to
   tsk-0002.
-- ADR-0038 acceptance and ADR-0032's move to `superseded` are the first reviewed
-  change after merge. Next owner: the architecture decision owner.
+- ADR-0038 was accepted and ADR-0032 moved to `superseded` in the change after
+  the proposal commit, at the request owner's direction on 2026-09-15.
 - SPEC-0054 TSK-0009, TSK-0013, and TSK-0014 dispositions, which SPEC-0078
   recorded as depending on the retention policy, now depend on ADR-0038 and
   remain with SPEC-0054.

@@ -1,8 +1,8 @@
 ---
 title: "Six-Disposition Archive Stage Technical Specification"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -14,7 +14,7 @@ artifact_id: "SPEC-0079"
 ## Overview
 
 [ADR-0038](../../02.architecture/decisions/0038-six-disposition-archive-stage.md)
-proposes a Stage 98 of six dispositions in two kinds: the retention classes
+records a Stage 98 of six dispositions in two kinds: the retention classes
 `completed/`, `superseded/`, `retired/`, and `resolved/` hold a whole
 once-current body, and the route dispositions `tombstones/` and `migrations/`
 hold no body. Citability is derived from what each family names, one catalog

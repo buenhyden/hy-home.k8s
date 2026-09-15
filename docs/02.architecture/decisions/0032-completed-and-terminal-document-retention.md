@@ -1,17 +1,25 @@
 ---
 title: "Terminal Document Retention and Archive Stage Taxonomy"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
 updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0032"
+superseded_by: "ADR-0038"
 ---
 
 # ADR-0032: Terminal Document Retention and Archive Stage Taxonomy
 
 ## Overview
+
+This decision is superseded by
+[ADR-0038](./0038-six-disposition-archive-stage.md), which gives Stage 98 six
+dispositions of two kinds and withdraws the decision-log exception. The clauses
+below record what was decided at the time; they are historical evidence, not
+current instructions. Until the machine cutover in Spec 0079, the validators
+still admit only the routes named below.
 
 This decision retains terminal governed documents instead of deleting them,
 keeps them out of the active stages, and gives Stage 98 four subdirectories
@@ -206,20 +214,21 @@ REQ-0006 moved their traceability to REQ-0003, and both requirement packages
 are sealed as superseded records under `docs/98.archive/superseded/01.requirements/`
 (commit `2b5e16de`).
 
-**Proposed successor (2026-09-15).** [ADR-0038](./0038-six-disposition-archive-stage.md)
-proposes a six-disposition Stage 98 that supersedes this decision on
-acceptance. It withdraws the decision-log exception, turns `superseded/` into a
-retention class that holds whole bodies, adds `retired/` and `resolved/`, makes
-`tombstones/` and `migrations/` route dispositions that hold no body, and
-replaces per-record source commit, blob, and digest with one catalog Retention
-Envelope. This decision stays accepted, and its routes stay the only ones the
-validators admit, until that acceptance and the machine cutover in Spec 0079.
+**Successor (2026-09-15).** [ADR-0038](./0038-six-disposition-archive-stage.md)
+records a six-disposition Stage 98 and supersedes this decision. It withdraws
+the decision-log exception, turns `superseded/` into a retention class that
+holds whole bodies, adds `retired/` and `resolved/`, makes `tombstones/` and
+`migrations/` route dispositions that hold no body, and replaces per-record
+source commit, blob, and digest with one catalog Retention Envelope. This
+decision's routes stay the only ones the validators admit until the machine
+cutover in Spec 0079.
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) and [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment of their deletion and Git-first terminal-history clauses for terminal documents; both remain accepted and are not superseded | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes this decision; its routes stay the only admitted ones until the cutover | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
 
 ### Implementation Traceability
 

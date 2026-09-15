@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -70,9 +70,8 @@ their owning migration work package moves them.
   redirect, path ledger, self-designed body digest, branch SHA, or recovery
   commit. The Stage 98 catalog's Retention Envelope names the source Git object
   once as `<commit>:<original path>`, and normal Git history recovers it.
-- ADR-0038 records this model as a proposed decision that supersedes ADR-0032
-  on acceptance. Until Spec 0079 moves the registry routes, archive forms, and
-  validators in one change, the machine routes admit only ADR-0032's
+- ADR-0038 records this model and supersedes ADR-0032. Until Spec 0079 moves
+  the registry routes, archive forms, and validators in one change, the machine routes admit only ADR-0032's
   `completed/`, `superseded/`, `tombstones/`, and `migrations/` forms, so no
   disposition into the new model is executed before then.
 - Frozen Stage 98 content keeps its generation. Sealed records with their

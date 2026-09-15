@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ layer: "archive"
 
 ## Overview
 
-`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 현재 `proposed` 상태다. 수락되고 [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry와 검증기를 함께 전환하기 전까지, 검증기가 인정하는 route는 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)의 `completed/`, `superseded/`, `tombstones/`, `migrations/` 형식뿐이다. 그 전에는 새 모델로의 disposition을 실행하지 않는다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 `accepted` 상태다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry와 검증기를 함께 전환하기 전까지, 검증기가 인정하는 route는 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)의 `completed/`, `superseded/`, `tombstones/`, `migrations/` 형식뿐이다. 그 전에는 새 모델로의 disposition을 실행하지 않는다.
 
 각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 

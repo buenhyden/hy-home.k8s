@@ -1,8 +1,8 @@
 ---
 title: "Move Registry Routes, Archive Forms, and Validators"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -15,8 +15,8 @@ artifact_id: "SPEC-0079-TSK-0002"
 
 This Task owns the machine step of Spec 0079: the registry, archive forms, lint
 configuration, validators, and tests move to the six-disposition model in one
-change, with every frozen Stage 98 record passing unmodified. It is not started
-and is not authorized until its entry gate holds.
+change, with every frozen Stage 98 record passing unmodified. The request owner
+authorized it on 2026-09-15 together with ADR-0038 acceptance.
 
 ## Inputs
 
@@ -72,7 +72,8 @@ and is not authorized until its entry gate holds.
 
 ## Verification Summary
 
-Not started. The entry gate, ADR-0038 acceptance, does not hold.
+Started. The entry gate holds: ADR-0038 was accepted in the change that moved
+this Task to in-progress.
 
 ## Traceability
 

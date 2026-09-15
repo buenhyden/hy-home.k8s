@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -168,7 +168,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 실행 계약은 `spec.md`, 구현 순서·위험·검증·rollback은 `plan.md`, 실행 증거는 package-local Task record가 소유한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
-5. 종단 처분은 Stage 98 disposition이 기록한다. 끝난 package는 consumer-zero 뒤 `98.archive/completed/`에 보존하고, 대체되거나 후속 없이 철회된 단독 문서는 `superseded/` 또는 `retired/`에 본문 그대로 보존한다. 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다([ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md), proposed; 수락과 machine 전환 전에는 ADR-0032 route). 원본 바이트는 Git history가 복구한다.
+5. 종단 처분은 Stage 98 disposition이 기록한다. 끝난 package는 consumer-zero 뒤 `98.archive/completed/`에 보존하고, 대체되거나 후속 없이 철회된 단독 문서는 `superseded/` 또는 `retired/`에 본문 그대로 보존한다. 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다([ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md); SPEC-0079 machine 전환 전에는 ADR-0032 route). 원본 바이트는 Git history가 복구한다.
 
 ### Relative Link Rules
 
@@ -214,7 +214,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0076-agent-role-coverage-and-contract-completion/spec.md`](./0076-agent-role-coverage-and-contract-completion/spec.md) | Responsibility-boundary coverage, the roles that close it, and routing completeness | Done | role 다섯을 admit하고 supervisor 라우팅과 doc-writer 경계를 복구해 17개 role registry를 완성했다. WORK-001..007이 done이며 관측하지 않은 lane은 Task의 DEFER로 남는다. | 2026-09-14 |
 | [`./0077-dead-contract-and-duplicate-execution-retirement/spec.md`](./0077-dead-contract-and-duplicate-execution-retirement/spec.md) | Retirement of unreachable validation code, absent-subject assertions, and same-snapshot duplicate gate execution | Active | 기준선 `qa.py full`이 22/22 PASS인 상태에서 green이 드러내지 못하는 결함을 처분한다. 도달 불가능한 cross-document 서브트리와 수집되지 않는 test class, 대상이 사라진 cutover pin, `unit-tests` 안에서 같은 snapshot에 재실행되는 등록 gate, 코퍼스가 실천하지 않는 skill 의무를 제거하고 archive cutover 워크플로에 소유 skill을 부여한다. Gate 의미, 문서 route, profile, 링크 경계 동작은 바뀌지 않는다. | 2026-09-14 |
 | [`./0078-document-currency-reconciliation/spec.md`](./0078-document-currency-reconciliation/spec.md) | Reconciliation of stale and implementation-conflicting document statements and Stage 03 lifecycle state | Draft | `docs/` 전반에서 현재 구현과 다른 명령·경로·리소스 이름·버전·결정 서술을 근거와 함께 바로잡고, 구현되었거나 후속 작업으로 대체된 Stage 03 package를 다음 단일 lifecycle edge로 옮긴다. 미완료 작업은 구현하지 않고 처분과 차단 사유만 기록한다. | 2026-09-14 |
-| [`./0079-six-disposition-archive-stage/spec.md`](./0079-six-disposition-archive-stage/spec.md) | Six-disposition Archive stage governance and machine cutover | Draft | ADR-0038의 두 종류 여섯 disposition, 명명에서 파생한 인용 규칙, 단일 Retention Envelope를 공통 거버넌스와 stage index에 먼저 적용하고, 수락 뒤 registry·archive form·검증기·테스트를 한 변경으로 전환한다. 동결 generation과 기존 인용은 다시 쓰지 않는다. | 2026-09-15 |
+| [`./0079-six-disposition-archive-stage/spec.md`](./0079-six-disposition-archive-stage/spec.md) | Six-disposition Archive stage governance and machine cutover | Active | ADR-0038의 두 종류 여섯 disposition, 명명에서 파생한 인용 규칙, 단일 Retention Envelope를 공통 거버넌스와 stage index에 먼저 적용하고, 수락 뒤 registry·archive form·검증기·테스트를 한 변경으로 전환한다. 동결 generation과 기존 인용은 다시 쓰지 않는다. | 2026-09-15 |
 
 ### Helper Templates
 

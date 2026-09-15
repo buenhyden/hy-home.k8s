@@ -1,23 +1,24 @@
 ---
 title: "Six-Disposition Archive Stage"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0038"
+supersedes: "ADR-0032"
 ---
 
 # ADR-0038: Six-Disposition Archive Stage
 
 ## Overview
 
-This proposed decision gives Stage 98 six dispositions of two kinds. Four
+This decision gives Stage 98 six dispositions of two kinds. Four
 retention classes hold a whole body that was once current, and two route
 dispositions hold no body. Each family's citability is derived from what its
-record names rather than stipulated beside it. Once accepted, this decision
-supersedes ADR-0032. It applies forward: content already frozen in Stage 98
+record names rather than stipulated beside it. This decision supersedes
+ADR-0032. It applies forward: content already frozen in Stage 98
 keeps its generation.
 
 ## Context
@@ -153,7 +154,7 @@ Recovery depends on the named commit staying reachable. A rewrite of the default
 branch would break it; that is accepted because the Git policy already forbids
 the rewrite.
 
-Until acceptance and the machine cutover, the validators admit only ADR-0032's
+Until the machine cutover in Spec 0079, the validators admit only ADR-0032's
 routes, so no disposition into the new model can be executed. Governance prose
 states the new contract together with that transition boundary.
 
@@ -184,4 +185,4 @@ family.
 
 | Decision lineage                                                | Replacement relation                                                  | Affected Spec                                                          |
 | --------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [ADR-0032](./0032-completed-and-terminal-document-retention.md) | Supersedes ADR-0032 on acceptance; ADR-0032 stays accepted until then | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| [ADR-0032](./0032-completed-and-terminal-document-retention.md) | Supersedes ADR-0032; its routes stay the only admitted ones until the cutover | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
