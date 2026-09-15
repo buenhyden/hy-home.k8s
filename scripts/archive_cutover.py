@@ -24,7 +24,21 @@ from typing import Mapping, Sequence
 import yaml
 
 if __package__:
-    from scripts.archive_dispositions import catalog_line_span
+    from scripts.archive_dispositions import (
+        catalog_line_span,
+        link_resolved_text,
+        parse_catalog,
+        retained_unit_of,
+        retention_class_of,
+        retention_source_path,
+    )
+    from scripts.archive_objects import (
+        blob_text,
+        commit_entries,
+        index_entries,
+        is_ancestor,
+        object_type,
+    )
     from scripts.archive_cutover_manifest import (
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
@@ -64,7 +78,21 @@ if __package__:
         validate_repository_archive,
     )
 else:
-    from archive_dispositions import catalog_line_span  # type: ignore[no-redef]
+    from archive_dispositions import (  # type: ignore[no-redef]
+        catalog_line_span,
+        link_resolved_text,
+        parse_catalog,
+        retained_unit_of,
+        retention_class_of,
+        retention_source_path,
+    )
+    from archive_objects import (  # type: ignore[no-redef]
+        blob_text,
+        commit_entries,
+        index_entries,
+        is_ancestor,
+        object_type,
+    )
     from archive_cutover_manifest import (  # type: ignore[no-redef]
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
@@ -1010,6 +1038,62 @@ def _finite_cutover_base_diagnostics(root: Path) -> tuple[CutoverDiagnostic, ...
     return tuple(diagnostics)
 
 
+def catalog_envelope_diagnostics(
+    root: Path, registry: Registry, index_text: str
+) -> tuple[CutoverDiagnostic, ...]:
+    """Re-verify every Retention Catalog row against the Git object it names.
+
+    Each envelope object must exist, have its unit's type, and be reachable from
+    the checked-out history. A retained unit must equal that object entry for
+    entry. The sixteen bodies ADR-0038 retained with rebased links are read
+    through link-resolved equivalence instead. A missing object or unavailable
+    history fails; it never skips.
+    """
+
+    rows, _errors = parse_catalog(index_text)
+    moves = {
+        retention_source_path(record): record
+        for record in rows
+        if retention_class_of(registry, record) is not None
+    }
+    diagnostics: list[CutoverDiagnostic] = []
+    for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
+        envelope = row.envelope
+        unit = retained_unit_of(registry, record)
+        retained = unit is not None or retention_class_of(registry, record) is not None
+        kind = object_type(root, envelope.commit, envelope.original_path)
+        if (
+            kind is None
+            or not is_ancestor(root, envelope.commit, "HEAD")
+            or (retained and kind != ("tree" if unit is not None else "blob"))
+        ):
+            diagnostics.append(_diagnostic("ARCHIVE-CATALOG-OBJECT", record.as_posix()))
+            continue
+        if not retained:
+            continue
+        if record in registry.legacy_rebased_retained_paths:
+            source = blob_text(
+                root, f"{envelope.commit}:{envelope.original_path.as_posix()}"
+            )
+            retained_text = blob_text(root, f":{record.as_posix()}")
+            same = (
+                source is not None
+                and retained_text is not None
+                and link_resolved_text(source, envelope.original_path, moves)
+                == link_resolved_text(retained_text, record)
+            )
+        else:
+            retained_entries = index_entries(root, record)
+            same = retained_entries is not None and retained_entries == commit_entries(
+                root, envelope.commit, envelope.original_path
+            )
+        if not same:
+            diagnostics.append(
+                _diagnostic("ARCHIVE-CATALOG-RETENTION", record.as_posix())
+            )
+    return tuple(diagnostics)
+
+
 def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     """Validate one complete production snapshot and reject every partial state."""
 
@@ -1261,6 +1345,10 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
+    if typed_registry is not None:
+        diagnostics.extend(
+            catalog_envelope_diagnostics(root, typed_registry, index_text)
+        )
     index_rows, index_structure_failure = _parse_archive_index(index_text)
     index_links = sum(row.historical_links for row in index_rows.values())
     markers = tuple(_INDEX_MANIFEST.finditer(index_text))

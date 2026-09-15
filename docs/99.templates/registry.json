@@ -5444,8 +5444,7 @@
       "class": "completed",
       "names": "promotion",
       "admitted_states": [
-        "done",
-        "cancelled"
+        "done"
       ]
     },
     {
@@ -5462,16 +5461,14 @@
         "retired",
         "withdrawn",
         "rejected",
-        "invalidated",
-        "cancelled"
+        "invalidated"
       ]
     },
     {
       "class": "resolved",
       "names": "corrective-owner",
       "admitted_states": [
-        "closed",
-        "published"
+        "closed"
       ]
     }
   ],

@@ -110,12 +110,10 @@ class RegistryGenerationTests(unittest.TestCase):
     def test_registry_binds_each_class_to_its_source_states(self) -> None:
         bound = {item.name: item for item in REGISTRY.retention_classes}
         self.assertEqual(set(bound), {"completed", "superseded", "retired", "resolved"})
-        self.assertIn("done", bound["completed"].admitted_states)
+        self.assertEqual(bound["completed"].admitted_states, frozenset({"done"}))
         self.assertEqual(bound["superseded"].admitted_states, frozenset({"superseded"}))
         self.assertIn("withdrawn", bound["retired"].admitted_states)
-        self.assertEqual(
-            bound["resolved"].admitted_states, frozenset({"closed", "published"})
-        )
+        self.assertEqual(bound["resolved"].admitted_states, frozenset({"closed"}))
 
 
 class RetentionPathTests(unittest.TestCase):
@@ -319,6 +317,43 @@ class CatalogParityTests(unittest.TestCase):
             self.parity(
                 text, {self.record: '---\ntype: "sdlc/architecture-decision"\n---\n'}
             ),
+        )
+
+    def test_a_unit_is_covered_by_one_row_for_its_root(self) -> None:
+        package = PurePosixPath("docs/98.archive/completed/03.specs/0090-x")
+        texts = {
+            package / "spec.md": "---\n---\n",
+            package / "tasks/tsk-0001-y.md": "---\n---\n",
+        }
+        text = catalog(row(package.as_posix(), f"{COMMIT}:docs/03.specs/0090-x"))
+        self.assertEqual(self.parity(text, texts), ())
+        member_rows = catalog(
+            *(
+                row(
+                    path.as_posix(),
+                    f"{COMMIT}:{dispositions.retention_source_path(path)}",
+                )
+                for path in texts
+            )
+        )
+        self.assertIn(
+            ("ARCHIVE-CATALOG-PARITY", package.as_posix()),
+            self.parity(member_rows, texts),
+        )
+
+    def test_a_resolved_bundle_row_needs_its_required_members(self) -> None:
+        bundle = PurePosixPath(
+            "docs/98.archive/resolved/05.operations/incidents/2026/inc-0001-x"
+        )
+        text = catalog(
+            row(
+                bundle.as_posix(),
+                f"{COMMIT}:docs/05.operations/incidents/2026/inc-0001-x",
+            )
+        )
+        self.assertIn(
+            ("ARCHIVE-DISPOSITION-NAMING", bundle.as_posix()),
+            self.parity(text, {bundle / "incident.md": "---\n---\n"}),
         )
 
     def test_route_record_envelope_names_its_route(self) -> None:

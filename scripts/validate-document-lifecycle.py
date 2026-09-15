@@ -41,6 +41,8 @@ from document_contracts import (
     DocumentContractError,
     DocumentProfile,
     Registry,
+    RetentionClass,
+    RetentionUnit,
     Route,
     classify_path,
     enumerate_target_markdown,
@@ -66,11 +68,19 @@ from archive_dispositions import (
     ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
     ROUTE_DISPOSITION_PROFILES,
     canonical_repository_path,
+    enclosing_unit,
     frontmatter_mapping,
     link_resolved_text,
     parse_catalog,
+    retained_unit_of,
     retention_class_of,
     retention_source_path,
+)
+from archive_objects import (
+    UnitEntry,
+    commit_entries,
+    index_entries,
+    object_type,
 )
 from archive_validation import (
     MIG0004_TERMINAL_SOURCE_COMMIT,
@@ -2359,6 +2369,181 @@ def _scope_migration_moves(
     return moves, gaps
 
 
+def _proposed_entries(
+    root: Path, path: PurePosixPath, proposed_commit: str | None
+) -> tuple[UnitEntry, ...] | None:
+    """Read a proposal's entries from its commit, or from the index when staged."""
+
+    if proposed_commit is None:
+        return index_entries(root, path)
+    return commit_entries(root, proposed_commit, path)
+
+
+def _identity_moves(
+    registry: Registry,
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[ArtifactIdentityLineage]:
+    """Pair a document leaving an active stage with the one that keeps its identity.
+
+    ADR-0039 tracks such a move by identity lineage without a Stage 98 record:
+    both paths lie outside Stage 98, the identity leaves one path and arrives at
+    one path, and the family and state are unchanged."""
+
+    families = {
+        profile.profile_id: profile.lifecycle_domain.family
+        for profile in registry.profiles
+        if profile.lifecycle_domain is not None
+    }
+
+    def by_identity(
+        snapshot: Mapping[PurePosixPath, LifecycleDocument],
+        other: Mapping[PurePosixPath, LifecycleDocument],
+    ) -> dict[str, list[PurePosixPath]]:
+        grouped: dict[str, list[PurePosixPath]] = {}
+        for path, document in snapshot.items():
+            if (
+                path in other
+                or path.parts[:2] == DISPOSITION_ARCHIVE_INDEX.parts[:2]
+                or document.artifact_id is None
+                or document.state_issue
+            ):
+                continue
+            grouped.setdefault(document.artifact_id, []).append(path)
+        return grouped
+
+    added = by_identity(proposed_snapshot, base_snapshot)
+    lineages: set[ArtifactIdentityLineage] = set()
+    for artifact_id, sources in by_identity(base_snapshot, proposed_snapshot).items():
+        targets = added.get(artifact_id, [])
+        if len(sources) != 1 or len(targets) != 1:
+            continue
+        before, after = base_snapshot[sources[0]], proposed_snapshot[targets[0]]
+        family = families.get(before.profile_id)
+        if (
+            family is None
+            or family != families.get(after.profile_id)
+            or before.status != after.status
+        ):
+            continue
+        lineages.add(ArtifactIdentityLineage(artifact_id, sources[0], targets[0]))
+    return frozenset(lineages)
+
+
+def _unit_state_gaps(
+    registry: Registry,
+    source: PurePosixPath,
+    retention: RetentionClass,
+    unit: RetentionUnit | None,
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+) -> list[str]:
+    """Admit a unit by its anchor's state; every other member is terminal.
+
+    A member the unit names in `member_admitted_states`, such as a published
+    Postmortem, is admitted by those states instead. A member with no lifecycle
+    holds no state to judge."""
+
+    anchor = source / unit.anchor if unit is not None else source
+    before = base_snapshot.get(anchor)
+    gaps: list[str] = []
+    if (
+        before is None
+        or before.state_issue
+        or before.status not in retention.admitted_states
+    ):
+        gaps.append(f"{retention.name}/ does not admit the anchor state")
+    if unit is None:
+        return gaps
+    gaps.extend(
+        f"required member is absent: {name}"
+        for name in unit.required_members
+        if source / name not in base_snapshot
+    )
+    admitted = dict(unit.member_admitted_states)
+    domains = {
+        profile.profile_id: profile.lifecycle_domain for profile in registry.profiles
+    }
+    for path in sorted(base_snapshot, key=PurePosixPath.as_posix):
+        if path == anchor or source not in path.parents:
+            continue
+        document, name = base_snapshot[path], path.relative_to(source).as_posix()
+        states, domain = admitted.get(name), domains.get(document.profile_id)
+        if states is None and domain is None:
+            continue
+        if (
+            document.state_issue
+            or document.status is None
+            or (
+                document.status not in states
+                if states is not None
+                else domain is None
+                or domain.validation_class(document.status) != "terminal"
+            )
+        ):
+            gaps.append(f"member state is not admitted: {name}")
+    return gaps
+
+
+def _retention_gaps(
+    root: Path,
+    registry: Registry,
+    record: PurePosixPath,
+    original_path: PurePosixPath,
+    retention: RetentionClass,
+    unit: RetentionUnit | None,
+    *,
+    named_object: str | None,
+    base_commit: str,
+    proposed_commit: str | None,
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+) -> tuple[list[str], tuple[tuple[PurePosixPath, PurePosixPath], ...]]:
+    """Prove a retained unit is its source Git object, unchanged, links included.
+
+    Returns the gaps and the document moves the retention makes. A document is a
+    blob unit; a spec package or Incident bundle is a tree unit, and a member of
+    one is never retained alone."""
+
+    source = retention_source_path(record)
+    gaps: list[str] = []
+    if original_path != source:
+        gaps.append("Retention Envelope does not name the mirrored source")
+    if unit is None and enclosing_unit(registry, source) is not None:
+        gaps.append("a unit member is retained with its unit, never alone")
+    base_object = _envelope_object(root, base_commit, source, base_commit)
+    expected = "tree" if unit is not None else "blob"
+    if base_object is None:
+        gaps.append("retained source is absent from the comparison base")
+    elif object_type(root, base_commit, source) != expected:
+        gaps.append(f"retained source is not one {expected}")
+    elif named_object is not None and named_object != base_object:
+        gaps.append("Retention Envelope object differs from the base source")
+    if _proposed_entries(root, source, proposed_commit) != ():
+        gaps.append("retained source remains in the proposal")
+    source_entries = commit_entries(root, base_commit, source)
+    if (
+        not source_entries
+        or _proposed_entries(root, record, proposed_commit) != source_entries
+    ):
+        gaps.append("retained unit differs from its source in path, mode, or bytes")
+    gaps.extend(_unit_state_gaps(registry, source, retention, unit, base_snapshot))
+    pairs = tuple(
+        (path, record / path.relative_to(source))
+        for path in sorted(base_snapshot, key=PurePosixPath.as_posix)
+        if path == source or source in path.parents
+    )
+    for before_path, after_path in pairs:
+        before, after = base_snapshot[before_path], proposed_snapshot.get(after_path)
+        if after is None or (before.profile_id, before.status, before.artifact_id) != (
+            after.profile_id,
+            after.status,
+            after.artifact_id,
+        ):
+            gaps.append("retained body changed its profile, state, or identity")
+            break
+    return gaps, pairs
+
+
 def _disposition_lifecycle_events(
     root: Path,
     registry: Registry,
@@ -2370,14 +2555,17 @@ def _disposition_lifecycle_events(
     proposed_texts: Mapping[PurePosixPath, str],
     *,
     mode: str,
+    proposed_commit: str | None = None,
 ) -> tuple[MigrationLifecycleEvents, tuple[LifecycleDiagnostic, ...]]:
-    """Admit ADR-0038 dispositions from the catalog's one Retention Envelope.
+    """Admit ADR-0039 dispositions from the catalog's one Retention Envelope.
 
-    A retained body is proved by a new catalog row whose `<commit>:<original
-    path>` names the exact source object the comparison base holds. A scope
-    migration is proved by a new body-less record the catalog names, and it
-    admits only documents that keep their current state under the new owner.
-    No row carries a digest, a blob pin, or a path ledger; Git holds the bytes.
+    A retained unit is proved by a new catalog row whose `<commit>:<original
+    path>` names the object the comparison base holds, and the retained path
+    holds that object entry for entry, links included; its anchor's state
+    admits the class. A scope migration is proved by a new body-less record the
+    catalog names. A document moving between active stages with its identity,
+    family, and state needs no record. No row carries a digest, a blob pin, or a
+    path ledger; Git holds the bytes.
     """
 
     index = DISPOSITION_ARCHIVE_INDEX
@@ -2415,9 +2603,20 @@ def _disposition_lifecycle_events(
             diagnostics.append(
                 failure(path, "a retained body or route record changed or left")
             )
+    # A retained unit is frozen entry for entry, so a file that no Markdown
+    # snapshot sees still cannot be added, removed, or rewritten beneath it.
+    for record in sorted(base_rows, key=PurePosixPath.as_posix):
+        unit = retained_unit_of(registry, record)
+        if unit is None:
+            continue
+        frozen = commit_entries(root, base_commit, record)
+        if frozen is None or frozen != _proposed_entries(root, record, proposed_commit):
+            diagnostics.append(
+                failure(record / unit[0].anchor, "a retained unit changed or left")
+            )
     archive_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    current_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    lineages: set[ArtifactIdentityLineage] = set()
+    lineages = set(_identity_moves(registry, base_snapshot, proposed_snapshot))
+    current_rehomes = {(item.source_path, item.target_path) for item in lineages}
     owner: ModuleType | None = None
     # Bodies retained together may link each other, so their links are compared
     # through the whole change's moves rather than one pair at a time.
@@ -2433,8 +2632,13 @@ def _disposition_lifecycle_events(
         if base_rows.get(record) == row:
             continue
         envelope = row.envelope
+        unit = retained_unit_of(registry, record)
+        retention = (
+            unit[1] if unit is not None else retention_class_of(registry, record)
+        )
+        report = record / unit[0].anchor if unit is not None else record
         gaps: list[str] = []
-        if record in base_blobs or record not in proposed_snapshot:
+        if report in base_blobs or report not in proposed_snapshot:
             gaps.append("catalog row does not name a record this change creates")
         named_object = _envelope_object(
             root, envelope.commit, envelope.original_path, base_commit
@@ -2443,71 +2647,40 @@ def _disposition_lifecycle_events(
             gaps.append(
                 "Retention Envelope names no object the comparison base reaches"
             )
-        retention = retention_class_of(registry, record)
         if retention is not None:
-            source = retention_source_path(record)
-            before, after = base_snapshot.get(source), proposed_snapshot.get(record)
-            if envelope.original_path != source:
-                gaps.append("Retention Envelope does not name the mirrored source")
-            if before is None or source not in base_blobs:
-                gaps.append("retained source is absent from the comparison base")
-            elif source in proposed_snapshot:
-                gaps.append("retained source remains in the proposal")
-            elif named_object is not None and named_object != base_blobs[source]:
-                gaps.append("Retention Envelope object differs from the base source")
-            if (
-                before is not None
-                and after is not None
-                and (
-                    before.state_issue
-                    or after.state_issue
-                    or before.status not in retention.admitted_states
-                )
-            ):
-                gaps.append(f"{retention.name}/ does not admit the source state")
-            if retention.name == "resolved":
-                sibling = record.with_name(
-                    "postmortem.md" if record.name == "incident.md" else "incident.md"
-                )
-                if sibling not in proposed_snapshot:
-                    gaps.append(
-                        "a resolved Incident and its Postmortem are retained together"
-                    )
-            if (
-                before is not None
-                and after is not None
-                and (
-                    before.profile_id,
-                    before.status,
-                    before.artifact_id,
-                )
-                != (after.profile_id, after.status, after.artifact_id)
-            ):
-                gaps.append("retained body changed its profile, state, or identity")
-            if (
-                not gaps
-                and before is not None
-                and link_resolved_text(base_texts[source], source, retention_moves)
-                != link_resolved_text(proposed_texts[record], record)
-            ):
-                gaps.append(
-                    "retained body differs from its source beyond relative link rebasing"
-                )
+            retention_gaps, pairs = _retention_gaps(
+                root,
+                registry,
+                record,
+                envelope.original_path,
+                retention,
+                unit[0] if unit is not None else None,
+                named_object=named_object,
+                base_commit=base_commit,
+                proposed_commit=proposed_commit,
+                base_snapshot=base_snapshot,
+                proposed_snapshot=proposed_snapshot,
+            )
+            gaps.extend(retention_gaps)
             if not gaps:
                 owner = owner or _load_canonical_markdown_module()
-                if owner.validate_document_text(
-                    proposed_texts[record],
-                    record,
-                    classify_path(registry, record),
-                    "strict",
-                ):
-                    gaps.append("canonical retained document form")
-            if not gaps and before is not None:
-                archive_rehomes.add((source, record))
-                if before.artifact_id is not None:
-                    lineages.add(
-                        ArtifactIdentityLineage(before.artifact_id, source, record)
+                gaps.extend(
+                    f"canonical retained document form: {target.as_posix()}"
+                    for _source, target in pairs
+                    if owner.validate_document_text(
+                        proposed_texts[target],
+                        target,
+                        classify_path(registry, target),
+                        "strict",
                     )
+                )
+            if not gaps:
+                archive_rehomes.update(pairs)
+                lineages.update(
+                    ArtifactIdentityLineage(artifact_id, source, target)
+                    for source, target in pairs
+                    if (artifact_id := base_snapshot[source].artifact_id) is not None
+                )
         else:
             document = proposed_snapshot.get(record)
             if (
@@ -2562,7 +2735,7 @@ def _disposition_lifecycle_events(
         if gaps:
             diagnostics.append(
                 failure(
-                    record if record in proposed_snapshot else index, "; ".join(gaps)
+                    report if report in proposed_snapshot else index, "; ".join(gaps)
                 )
             )
     return (
@@ -3903,6 +4076,7 @@ def _evaluate_comparison(
         proposed_snapshot,
         proposed_texts,
         mode=mode,
+        proposed_commit=proposed_commit,
     )
     migration_events = replace(
         migration_events,

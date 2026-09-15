@@ -22,7 +22,13 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 import yaml
 
 if TYPE_CHECKING:
-    from document_contracts import CitationRule, Registry, RetentionClass, RetentionMode
+    from document_contracts import (
+        CitationRule,
+        Registry,
+        RetentionClass,
+        RetentionMode,
+        RetentionUnit,
+    )
 
 
 def contracts_module() -> ModuleType:
@@ -380,6 +386,36 @@ def retained_body_path(source: PurePosixPath, class_name: str) -> PurePosixPath:
     return ARCHIVE_ROOT.joinpath(class_name, *source.parts[1:])
 
 
+def enclosing_unit(
+    registry: "Registry", source: PurePosixPath
+) -> tuple["RetentionUnit", PurePosixPath] | None:
+    """Return the retention unit whose root holds an active-stage document."""
+
+    for parent in source.parents:
+        for unit in registry.retention_units:
+            if unit.root.fullmatch(parent.as_posix()):
+                return unit, parent
+    return None
+
+
+def retained_unit_of(
+    registry: "Registry", record: PurePosixPath
+) -> tuple["RetentionUnit", "RetentionClass"] | None:
+    """Return the unit and class when a catalog record names a retained unit root."""
+
+    parts = record.parts
+    if len(parts) < 4 or parts[:2] != ARCHIVE_ROOT.parts:
+        return None
+    retention = retention_classes_by_name(registry).get(parts[2])
+    if retention is None:
+        return None
+    source = retention_source_path(record).as_posix()
+    for unit in registry.retention_units:
+        if unit.root.fullmatch(source):
+            return unit, retention
+    return None
+
+
 def catalog_line_span(lines: Sequence[str]) -> tuple[int, int] | None:
     """Return the first catalog table's line span so another table parser skips it."""
 
@@ -451,12 +487,21 @@ def catalog_parity_diagnostics(
         (code, ARCHIVE_INDEX.as_posix()) for code in errors
     ]
     generation: dict[PurePosixPath, tuple[str, object, str]] = {}
+    unit_members: dict[PurePosixPath, dict[PurePosixPath, str]] = {}
     for path, text in texts.items():
         if path in frozen_retained:
             continue
         retention = retention_class_of(registry, path)
         if retention is not None:
-            generation[path] = ("retention", retention, text)
+            enclosing = enclosing_unit(registry, retention_source_path(path))
+            if enclosing is None:
+                generation[path] = ("retention", retention, text)
+                continue
+            # A spec package or Incident bundle is one unit with one row.
+            unit, source_root = enclosing
+            record = retained_body_path(source_root, retention.name)
+            generation[record] = ("unit", (unit, retention), "")
+            unit_members.setdefault(record, {})[path] = text
             continue
         try:
             profile = classify_path(registry, path)
@@ -474,20 +519,28 @@ def catalog_parity_diagnostics(
         row = rows.get(path)
         if row is None:
             continue
-        metadata = frontmatter_mapping(text)
-        if family == "retention":
-            if row.envelope.original_path != retention_source_path(path):
+        if family == "route":
+            key = (
+                "moved_scope" if kind == "archive/scope-migration" else "retired_route"
+            )
+            if (
+                frontmatter_mapping(text).get(key)
+                != row.envelope.original_path.as_posix()
+            ):
                 diagnostics.append(("ARCHIVE-CATALOG-ENVELOPE", path.as_posix()))
-            if kind.names == "successor" and not metadata.get("superseded_by"):
-                diagnostics.append(("ARCHIVE-DISPOSITION-NAMING", path.as_posix()))
-            if kind.name == "resolved":
-                sibling = path.with_name(
-                    "postmortem.md" if path.name == "incident.md" else "incident.md"
-                )
-                if sibling not in generation:
-                    diagnostics.append(("ARCHIVE-DISPOSITION-NAMING", path.as_posix()))
             continue
-        key = "moved_scope" if kind == "archive/scope-migration" else "retired_route"
-        if metadata.get(key) != row.envelope.original_path.as_posix():
+        if row.envelope.original_path != retention_source_path(path):
             diagnostics.append(("ARCHIVE-CATALOG-ENVELOPE", path.as_posix()))
+        retention = kind
+        if family == "unit":
+            unit, retention = kind
+            members = unit_members[path]
+            if any(path / name not in members for name in unit.required_members):
+                diagnostics.append(("ARCHIVE-DISPOSITION-NAMING", path.as_posix()))
+                continue
+            text = members[path / unit.anchor]
+        if retention.names == "successor" and not frontmatter_mapping(text).get(
+            "superseded_by"
+        ):
+            diagnostics.append(("ARCHIVE-DISPOSITION-NAMING", path.as_posix()))
     return tuple(dict.fromkeys(diagnostics))

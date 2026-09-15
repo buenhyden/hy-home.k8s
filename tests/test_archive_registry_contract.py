@@ -91,6 +91,22 @@ class RetentionUnitTests(unittest.TestCase):
         self.assertIn("REGISTRY_RETENTION_UNIT", rule_ids(raw))
 
 
+class RetentionClassTests(unittest.TestCase):
+    def test_each_class_admits_only_its_anchor_states(self) -> None:
+        classes = dispositions.retention_classes_by_name(REGISTRY)
+        self.assertEqual(
+            {name: item.admitted_states for name, item in classes.items()},
+            {
+                "completed": frozenset({"done"}),
+                "superseded": frozenset({"superseded"}),
+                "retired": frozenset(
+                    {"withdrawn", "retired", "rejected", "invalidated"}
+                ),
+                "resolved": frozenset({"closed"}),
+            },
+        )
+
+
 class RetentionModeTests(unittest.TestCase):
     def test_four_modes_are_declared(self) -> None:
         self.assertEqual(
