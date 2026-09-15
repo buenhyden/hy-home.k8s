@@ -2,7 +2,7 @@
 title: "Cut Over the Registry and Validators"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -23,13 +23,17 @@ repository-static result to hosted, provider-runtime, or live evidence.
 - [Spec](../spec.md) owns the contract, and [Plan](../plan.md) owns order.
 - Entry gate: the proposal integration has merged, and the request owner has
   accepted ADR-0039.
+- On 2026-09-15 the request owner approved accepting ADR-0039 once the
+  proposal merged. Pull request #64 merged as `b16f23f9`, and the proposal
+  commits `c07ee272`, `cd3139e6`, `97a2101b`, and `b7ba5db2` are reachable from
+  `origin/main`. The cutover branch is `feat/archive-unit-retention-cutover`.
 - The proposal Task records the survey findings each regression starts from.
 
 ## Task Table
 
 | ID       | Upstream criterion | Work item                                                                                        | Owner    | Status | Result       | Evidence                     |
 | -------- | ------------------ | ------------------------------------------------------------------------------------------------ | -------- | ------ | ------------ | ---------------------------- |
-| WORK-001 | VAL-UAR-011        | Accept ADR-0039, supersede ADR-0038, activate this package, and close SPEC-0080 and SPEC-0081    | platform | Queued | Not executed | Lifecycle gate               |
+| WORK-001 | VAL-UAR-011        | Accept ADR-0039, supersede ADR-0038, activate this package, and close SPEC-0080 and SPEC-0081    | platform | Done   | ADR-0039 accepted, ADR-0038 superseded, SPEC-0080 and SPEC-0081 done | Lifecycle gate               |
 | WORK-002 | VAL-UAR-004        | Declare units, modes, the citation table, and the legacy set in the registry, schema, and loader | platform | Queued | Not executed | Registry regressions         |
 | WORK-003 | VAL-UAR-006        | Decide citation in the shared resolver and remove the duplicate current-link loop                | platform | Queued | Not executed | Link and archive regressions |
 | WORK-004 | VAL-UAR-005        | Compare units as Git objects and admit a class by anchor state                                   | platform | Queued | Not executed | Lifecycle regressions        |
@@ -67,7 +71,7 @@ Each work item carries its observed result.
 
 | Criterion / work item                 | Result        | Evidence                      |
 | ------------------------------------- | ------------- | ----------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | Not executed. | Lifecycle gate.               |
+| [WORK-001](../plan.md#work-breakdown) | Done. | Lifecycle gate.               |
 | [WORK-002](../plan.md#work-breakdown) | Not executed. | Registry regressions.         |
 | [WORK-003](../plan.md#work-breakdown) | Not executed. | Link and archive regressions. |
 | [WORK-004](../plan.md#work-breakdown) | Not executed. | Lifecycle regressions.        |

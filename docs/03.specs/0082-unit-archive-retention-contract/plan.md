@@ -2,7 +2,7 @@
 title: "Unit Archive Retention Contract Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -78,7 +78,7 @@ recorded only when observed.
 | Removing the duplicate current-link loop drops coverage              | A regression proves the link validator rejects every case the loop rejected before it is removed  |
 | A shallow clone cannot resolve envelopes                             | Full validation fails rather than skips, and hosted CI fetches full history                       |
 | The legacy set grows                                                 | The registry schema pins the sixteen paths and a regression rejects a seventeenth                 |
-| ADR-0039 is rejected                                                 | It takes the rejected edge, this package is withdrawn, and the statement corrections stay valid   |
+| ADR-0039 is rejected                                                 | It takes the rejected edge, this package is withdrawn through its `active` and `withdrawn` edges, and the statement corrections stay valid   |
 
 ## Completion Criteria
 

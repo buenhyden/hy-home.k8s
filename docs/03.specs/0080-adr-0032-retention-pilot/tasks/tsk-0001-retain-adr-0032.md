@@ -2,7 +2,7 @@
 title: "Retain ADR-0032"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"

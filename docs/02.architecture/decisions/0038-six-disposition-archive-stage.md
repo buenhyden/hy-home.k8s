@@ -1,13 +1,14 @@
 ---
 title: "Six-Disposition Archive Stage"
-version: "1.1.2"
+version: "1.2.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
 updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0038"
 supersedes: "ADR-0032"
+superseded_by: "ADR-0039"
 ---
 
 # ADR-0038: Six-Disposition Archive Stage
@@ -21,13 +22,12 @@ record names rather than stipulated beside it. This decision supersedes
 ADR-0032. It applies forward: content already frozen in Stage 98
 keeps its generation.
 
-**Proposed successor (2026-09-15).** [ADR-0039](./0039-unit-archive-retention-and-citation-table.md)
-proposes superseding this decision as a whole. It retains a whole unit as its
+**Superseded (2026-09-15).** [ADR-0039](./0039-unit-archive-retention-and-citation-table.md)
+supersedes this decision as a whole. It retains a whole unit as its
 source Git object, decides a class from the unit anchor's state, names one Git
 object per unit, decides every citation from one ordered registry table, and
-tracks moves between active stages by identity. This decision stays accepted,
-and its routes stay the only ones the validators admit, until that acceptance
-and the machine cutover in Spec 0082.
+tracks moves between active stages by identity. Its routes stay the only ones the validators admit
+until the machine cutover in Spec 0082.
 
 ## Context
 
@@ -196,3 +196,4 @@ family.
 | Decision lineage                                                | Replacement relation                                                  | Affected Spec                                                          |
 | --------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | ADR-0032 | Supersedes ADR-0032; its records and ledgers stay a frozen generation | [Spec 0079](../../03.specs/0079-six-disposition-archive-stage/spec.md) |
+| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes this decision; its routes stay the only admitted ones until the cutover | [Spec 0082](../../03.specs/0082-unit-archive-retention-contract/spec.md) |

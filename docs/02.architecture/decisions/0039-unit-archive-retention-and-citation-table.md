@@ -1,12 +1,13 @@
 ---
 title: "Unit Archive Retention and Citation Table"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-15"
 layer: "architecture"
 artifact_id: "ADR-0039"
+supersedes: "ADR-0038"
 ---
 
 # ADR-0039: Unit Archive Retention and Citation Table
@@ -22,8 +23,8 @@ catalog row names the unit's Git object, one ordered registry table decides
 every citation, and a move between active stages is tracked by identity rather
 than by a migration record.
 
-On acceptance this decision supersedes ADR-0038 as a whole. Until then ADR-0038
-stays accepted, and its routes stay the only ones the validators admit.
+This decision supersedes ADR-0038 as a whole. Until the machine cutover in
+Spec 0082, the validators admit only ADR-0038's routes.
 
 ## Context
 
@@ -224,4 +225,4 @@ holds no evidence body to cite.
 
 | Decision lineage | Replacement relation                                                                                                             | Affected Spec                                                            |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes ADR-0038 on acceptance; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../03.specs/0082-unit-archive-retention-contract/spec.md) |
+| [ADR-0038](./0038-six-disposition-archive-stage.md) | Supersedes ADR-0038; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../03.specs/0082-unit-archive-retention-contract/spec.md) |

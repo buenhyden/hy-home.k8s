@@ -2,7 +2,7 @@
 title: "ADR-0032 Retention Pilot Technical Specification"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"

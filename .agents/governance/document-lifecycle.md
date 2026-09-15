@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -70,7 +70,9 @@ their owning migration work package moves them.
   redirect, path ledger, self-designed body digest, branch SHA, or recovery
   commit. The Stage 98 catalog's Retention Envelope names the source Git object
   once as `<commit>:<original path>`, and normal Git history recovers it.
-- ADR-0038 records this model and supersedes ADR-0032. The Stage 99 registry
+- ADR-0038 recorded this model and superseded ADR-0032. ADR-0039 supersedes
+  ADR-0038; until the SPEC-0082 cutover the validators still admit only the
+  ADR-0038 routes described here. The Stage 99 registry
   routes a retained body under its original profile and binds each retention
   class to the terminal states it admits. Frozen records and ledgers route by
   exact path, so no new sealed record or path ledger can be created. The
