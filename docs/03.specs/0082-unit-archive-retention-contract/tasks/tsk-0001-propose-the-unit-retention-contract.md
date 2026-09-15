@@ -1,10 +1,10 @@
 ---
 title: "Propose the Unit Retention Contract"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "specs"
 artifact_id: "SPEC-0082-TSK-0001"
 ---
@@ -66,9 +66,14 @@ Consistency values: consistent, stale statement, policy–implementation gap,
 policy conflict, ambiguous, not applicable. Confidence values: source read,
 static code read, test reproduced, command observed. The survey used three
 read-only delegated searches; each claim used below was re-read in source. One
-delegated claim was corrected: the archive validator checks only `active` and
-`accepted` documents, so it never evaluates an Incident, and the two citation
-checks differ in scope rather than contradicting each other on Incidents.
+delegated claim was corrected twice. The archive validator was first reported to
+contradict the link gate on Incidents; the correction recorded here said it
+checks only `active` and `accepted` documents and so never evaluates an
+Incident. Re-reading the validator during the cutover showed that correction was
+itself wrong: a profile with a lifecycle domain is current when its state class
+is `current`, and an Incident is current while it is `open`, `mitigated`, or
+`resolved`. Both gates therefore evaluate an Incident, which is why the cutover
+gives them one citation decision to consume.
 
 | Item | Topic                     | Observed at `8a76bd3b`                                                                                                                                                                                                                                                                   | Consistency                  | Confidence       | Disposition                                                                  |
 | ---- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------------- | ---------------------------------------------------------------------------- |

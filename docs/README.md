@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.4.2"
+version: "0.5.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -65,18 +65,19 @@ skill과 provider projection을 소유한다.
 6. 완료·봉인된 본문을 새 형식에 맞추려고 다시 쓰지 않는다. ADR을 포함해 더
    이상 현재가 아닌 문서는 Stage 98의 해당 disposition으로 떠나며, 원본은 두
    번째 복구 원장 없이 Git history가 복구한다
-   ([ADR-0039](02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md), accepted. SPEC-0082 machine 전환 전까지 검증기는 ADR-0038 route를 따른다). 대체된 ADR은
+   ([ADR-0039](02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)). Disposition은
+   spec package, Incident bundle, 단일 문서를 한 단위로 원본 Git object 그대로, 링크까지 보존한다. 대체된 ADR은
    `98.archive/superseded/`에 보존되어 있고, ADR-0038은 별도 disposition 전까지 decision log에 남는다.
 
-   Archive 인용 가능 여부는 각 family가 무엇을 명명하는지에서 따라 나온다.
+   Archive 인용 가능 여부는 registry의 순서 있는 `archive_citation` 표가 판정한다.
    **허용**: `completed/`는 promote 선언을 통해, `resolved/`는 corrective-work
    owner를 통해 현재 authority로 이어지므로 인용할 수 있고, `resolved/`는 역사
-   증거로만 인용한다. **금지**: `superseded/` 본문 대신 후속 문서를, `retired/`,
+   증거로만 인용한다. `operation/incident`와 `operation/postmortem`은 네 retention
+   class 본문을 역사 증거로 인용할 수 있다. **금지**: 그 밖의 문서는 `superseded/` 본문 대신 후속 문서를, `retired/`,
    `tombstones/`, `migrations/` 대신 현재 route를 인용한다. 어느 경우든
    Archive를 탐색 목록에 현재 owner처럼 두거나 본문 복제본·redirect를 만들지
    않는다. 봉인된 본문은 재작성하지 않으므로 그 안의 기존 Archive 링크는
-   기록으로 남고, ADR-0038 수락 전에 작성된 활성 문서의 인용은 SPEC-0079가
-   consumer로 열거한다.
+   기록으로 남는다. 열거된 consumer 예외는 두지 않는다.
 7. [문서 작성 정책](../.agents/governance/document-authoring.md)과
    [품질·증거 정책](../.agents/governance/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.

@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 ---
 
 # Document Lifecycle Policy
@@ -60,10 +60,15 @@ their owning migration work package moves them.
   the reason, and `migrations/` names a moved scope and its current owner as
   `MIG-####`. A disposition's directory is created by the change that first
   uses it.
-- Citability follows from what a family names. An active-stage document may
-  cite `completed/` and, as historical evidence, `resolved/`. It cites the
-  successor instead of a `superseded/` body, and the current route instead of a
-  `retired/` body, a tombstone, or a migration.
+- Citability is decided by the registry's ordered `archive_citation` table,
+  and every citation check consumes that one decision. An active-stage document
+  may cite the index, `completed/`, and, as historical evidence, `resolved/`.
+  It cites the successor instead of a `superseded/` body, and the current route
+  instead of a `retired/` body, a tombstone, or a migration. An
+  `operation/incident` or `operation/postmortem` may also cite a body in any
+  retention class as historical evidence. No document outside Stage 98 links a
+  route record or a frozen sealed record; it names a frozen record by
+  identifier through the index.
 - Retention follows the profile: frozen bodies remain immutable, while a
   Git-history-only disposition retains recoverable provenance without a
   compatibility copy. No Stage 98 record carries a second recovery ledger: no
@@ -71,13 +76,24 @@ their owning migration work package moves them.
   commit. The Stage 98 catalog's Retention Envelope names the source Git object
   once as `<commit>:<original path>`, and normal Git history recovers it.
 - ADR-0038 recorded this model and superseded ADR-0032. ADR-0039 supersedes
-  ADR-0038; until the SPEC-0082 cutover the validators still admit only the
-  ADR-0038 routes described here. The Stage 99 registry
-  routes a retained body under its original profile and binds each retention
-  class to the terminal states it admits. Frozen records and ledgers route by
-  exact path, so no new sealed record or path ledger can be created. The
-  lifecycle gate admits a retained body through its catalog row and a move
-  through a body-less scope migration the catalog names.
+  ADR-0038, keeps its six dispositions, and retains units exactly. A spec
+  package is one unit with its anchor `spec.md`, an Incident bundle is one unit
+  with its anchor `incident.md` and a published Postmortem, and any other
+  document is its own unit. The anchor's state admits the class, and every
+  other member is terminal in its own family. The retained path equals the
+  source Git object entry for entry, links included, and its catalog row names
+  a blob or a tree. The sixteen bodies ADR-0038 retained with rebased links
+  keep that generation and cannot grow in number.
+- The Stage 99 registry declares the units, binds each retention mode to the
+  profiles that may use it, routes a retained body under its original profile,
+  and binds each retention class to the anchor states it admits. Frozen records
+  and ledgers route by exact path, so no new sealed record or path ledger can be
+  created. The lifecycle gate admits a retained unit through its catalog row,
+  and full validation re-verifies every row against the object it names.
+- A document that moves between active stages in one change, keeping its
+  `artifact_id`, family, and state, is tracked by identity lineage and needs no
+  Stage 98 record. A scope migration is recorded only when a consumer outside
+  the repository reads the moved paths.
 - Frozen Stage 98 content keeps its generation. Sealed records with their
   ArchiveEnvelope and digests, migration ledgers with pinned rows, and retained
   packages keep their bytes and historical links; validators classify them as

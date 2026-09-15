@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.5.2"
+version: "0.6.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "archive"
 ---
 
@@ -17,7 +17,7 @@ layer: "archive"
 
 ## Overview
 
-`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)이며 `accepted` 상태다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)과 이를 대체한 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)이며, ADR-0039가 `accepted` 상태의 현재 결정이다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
 
 각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 
@@ -37,15 +37,15 @@ layer: "archive"
 - `tombstones/`: 본문을 담지 않는다. 퇴역한 route, 그 후속 또는 부재, 이유를 명명하며, 인용할 수 없다.
 - `migrations/`: 본문을 담지 않는다. 이동한 scope와 현재 owner를 `MIG-####`로 명명하며, 인용할 수 없다.
 
-인용 가능성은 명명 방식에서 따라 나오며, 명명과 별도로 규정하지 않는다. retention class는 자신의 본문이 여전히 독자를 현재 authority로 이끌 때만 인용할 수 있다. `completed`는 Promotion 선언을 통해, `resolved`는 corrective-work owner를 통해 독자를 이끈다. `superseded` 본문은 대체 문서를 명명하므로 인용은 그 후속 문서에 둔다. 대체된 rule을 인용하는 것이 곧 그 rule이 되살아나는 경로이기 때문이다. `retired`에는 가리키는 대상이 없으므로, 인용하면 독자가 철회된 rule에 머문다.
+인용 가능성은 registry의 순서 있는 `archive_citation` 표가 판정하고, 인용을 판단하는 모든 검증기가 그 한 결정을 소비한다. 대상의 종류는 디렉터리 이름이 아니라 registry profile에서 읽는다. retention class는 자신의 본문이 여전히 독자를 현재 authority로 이끌 때 인용할 수 있다. `completed`는 Promotion 선언을 통해, `resolved`는 corrective-work owner를 통해 독자를 이끈다. `superseded` 본문은 대체 문서를 명명하므로 인용은 그 후속 문서에 둔다. 대체된 rule을 인용하는 것이 곧 그 rule이 되살아나는 경로이기 때문이다. `retired`에는 가리키는 대상이 없으므로, 인용하면 독자가 철회된 rule에 머문다. 예외로 `operation/incident`와 `operation/postmortem`은 네 retention class 본문을 역사 증거로 인용할 수 있지만, 증거 본문이 없는 route record와 동결 봉인 record는 인용하지 않는다.
 
 ### One Recovery Reference
 
-어떤 family의 Stage 98 record도 두 번째 복구 원장을 갖지 않는다. redirect, path ledger, 자체 설계한 본문 digest, branch SHA, recovery commit이 없다. 새 disposition은 Document Index의 Retention Catalog 표에 행 하나를 두어 source Git object를 `<commit>:<original path>` 형식으로 한 번만 명명하고, 복구는 일반 Git history가 맡는다. 표의 머리글은 `Disposition Record`와 `Retention Envelope` 두 열이며, ADR-0032를 보존한 첫 disposition이 표를 만들었다. 동결 행의 `Source Commit`, `Source Blob`, `Payload SHA-256` 열은 동결 generation의 형식이며 새 disposition의 형식이 아니다.
+어떤 family의 Stage 98 record도 두 번째 복구 원장을 갖지 않는다. redirect, path ledger, 자체 설계한 본문 digest, branch SHA, recovery commit이 없다. 새 disposition은 보존 단위(spec package, Incident bundle, 그 밖의 단일 문서)마다 Document Index의 Retention Catalog 표에 행 하나를 두어 source Git object(문서는 blob, package와 bundle은 tree)를 `<commit>:<original path>` 형식으로 한 번만 명명하고, 복구는 일반 Git history가 맡는다. 표의 머리글은 `Disposition Record`와 `Retention Envelope` 두 열이며, ADR-0032를 보존한 첫 disposition이 표를 만들었다. 동결 행의 `Source Commit`, `Source Blob`, `Payload SHA-256` 열은 동결 generation의 형식이며 새 disposition의 형식이 아니다.
 
 ### Frozen Generation
 
-Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내용은 ADR-0038 이전 generation이며 immutable이다. `completed/`는 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. `superseded/` 중 동결 record 표가 명명하는 25개 record는 ArchiveEnvelope payload와 `source_commit`·`source_blob`·`content_sha256` provenance를 가진 봉인 record이고, `migrations/`의 원장은 행마다 commit·blob·digest를 고정한다. 이 generation은 새 형식에 맞추어 다시 쓰지 않으며 검증기는 이를 역사 증거로 분류한다. `completed/`의 기존 보존본 376개는 이를 봉인한 원장 행이 증명하므로 catalog 행이 필요 없다. 이 generation을 인용하는 기존 활성 문서는 SPEC-0079가 consumer로 열거하고 그대로 둔다.
+Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내용은 ADR-0038 이전 generation이며 immutable이다. `completed/`는 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. `superseded/` 중 동결 record 표가 명명하는 25개 record는 ArchiveEnvelope payload와 `source_commit`·`source_blob`·`content_sha256` provenance를 가진 봉인 record이고, `migrations/`의 원장은 행마다 commit·blob·digest를 고정한다. 이 generation은 새 형식에 맞추어 다시 쓰지 않으며 검증기는 이를 역사 증거로 분류한다. `completed/`의 기존 보존본 376개는 이를 봉인한 원장 행이 증명하므로 catalog 행이 필요 없다. Retention Catalog의 16개 행은 ADR-0038이 상대 링크를 재기준해 보존한 본문이며, registry가 정확한 경로로 명명하고 link-resolved 동등성으로 검증하며 늘어나지 않는다. 그 밖의 새 보존 단위는 링크를 포함해 원본 object와 같다.
 
 <!-- archive-manifest:v1 records=25 historical-links=198 -->
 
@@ -58,7 +58,7 @@ Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내�
 
 ### In Scope
 
-- retention class `completed/`, `superseded/`, `retired/`, `resolved/`에 보관한 본문 전체
+- retention class `completed/`, `superseded/`, `retired/`, `resolved/`에 원본 Git object 그대로 보관한 보존 단위 전체
 - route disposition `tombstones/`, `migrations/`가 명명하는 route와 현재 owner
 - 새 disposition마다 Retention Catalog의 Retention Envelope `<commit>:<original path>` 한 개
 - ADR-0038 이전 generation의 봉인 record, 원장, completed 보존본과 그 provenance
@@ -162,10 +162,10 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 새 disposition은 다음 순서를 따른다.
 
 1. 문서에 실제로 일어난 일(완료, 대체, 후속 없는 철회, 사고 종결, route 퇴역, scope 이동)과 현재 authority를 확정하고 family를 하나 고른다. disposition 승인을 해당 Task에 기록한다.
-2. Retention class면 문서를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile, identity, 종단 상태를 유지한다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
-3. Route disposition이면 본문 없이 기록한다. `tombstones/`의 `archive/route-tombstone`(`TOMB-####`)은 `retired_route`, `successor`, `reason`을, `migrations/`의 `archive/scope-migration`(`MIG-####`)은 `moved_scope`와 `current_owner`를 명명한다.
-4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. lifecycle gate는 보존 본문의 envelope가 비교 base의 source object와 같은지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. 보존 본문과 scope migration이 옮긴 문서는 상대 링크 재기준 외에 원본과 달라질 수 없으며, 같은 변경에서 함께 옮긴 문서 사이의 링크는 새 경로를 따른다. Stage 98에 들어간 보존 본문과 route record는 이후 어떤 변경도 수정하거나 제거할 수 없다.
-5. 현재 consumer를 인용 규칙에 맞춘다. `superseded/` 인용은 후속 문서로, `retired/`·`tombstones/`·`migrations/` 인용은 현재 route로 바꾼다.
+2. Retention class면 보존 단위를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile, identity, 종단 상태를 유지한다. spec package는 디렉터리 전체가, Incident bundle은 `incident.md`와 `postmortem.md`가 한 단위이며 구성원만 따로 옮기지 않는다. anchor(`spec.md`, `incident.md`, 또는 단일 문서)의 상태가 class를 결정하고, 나머지 구성원은 자기 family에서 종단 상태여야 한다. 경로, 파일 mode, 바이트를 링크까지 바꾸지 않는다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
+3. Route disposition이면 본문 없이 기록한다. `tombstones/`의 `archive/route-tombstone`(`TOMB-####`)은 `retired_route`, `successor`, `reason`을, `migrations/`의 `archive/scope-migration`(`MIG-####`)은 `moved_scope`와 `current_owner`를 명명한다. scope migration은 저장소 밖 consumer가 옮긴 경로를 읽을 때만 기록하고, 활성 stage 사이에서 identity, family, 상태를 유지한 이동은 record 없이 identity 계보로 추적한다.
+4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. 행은 문서면 blob을, package나 bundle이면 tree를 명명한다. lifecycle gate는 보존 경로가 envelope object와 항목(상대 경로, mode, blob)마다 같은지, 그 object가 비교 base의 원래 경로 object와 같은지, anchor와 구성원 상태가 class를 허용하는지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. full 검증은 모든 catalog 행을 그 object에 대해 다시 확인하며, object가 없거나 도달할 수 없으면 실패한다. Stage 98에 들어간 보존 단위와 route record는 이후 어떤 변경도 수정하거나 제거할 수 없다.
+5. 현재 consumer를 인용 규칙에 맞춘다. `superseded/` 인용은 후속 문서로, `retired/`·`tombstones/`·`migrations/` 인용은 현재 route로 바꾼다. 인용 판정은 registry의 `archive_citation` 표를 따른다.
 6. 디렉터리가 없으면 첫 구성원과 같은 변경에서 만든다.
 
 ### ADR-0032 Generation Procedure
@@ -181,9 +181,9 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 
 ### Relative Link Rules
 
-- 동결 generation의 payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다. Retention Catalog 보존 본문의 링크는 위 ADR-0038 Disposition 절차를 따른다.
+- 동결 generation의 payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다. Retention Catalog 보존 단위의 링크는 다시 쓰지 않고 envelope commit의 원래 경로 기준으로 읽는다. ADR-0038이 재기준해 보존한 16개 본문은 그 generation을 유지한다.
 - 동결 record의 historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
-- 현재 문서가 archive로 링크할 수 있는 곳은 이 index, `completed/`, 역사 증거로서의 `resolved/`뿐이다. 그 밖의 family는 후속 문서나 현재 route를 인용하며, 동결 record는 identifier로 명명하고 이 index를 경유한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
+- 현재 문서가 archive로 링크할 수 있는 곳은 registry의 `archive_citation` 표가 정한다. 일반 문서는 이 index, `completed/`, 역사 증거로서의 `resolved/`만 링크하고, `operation/incident`와 `operation/postmortem`은 네 retention class 본문도 역사 증거로 링크한다. 그 밖의 family는 후속 문서나 현재 route를 인용하며, 동결 record는 identifier로 명명하고 이 index를 경유한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
 - 이 index가 동결 record inventory와 새 disposition의 Retention Catalog를 소유한다. 동결 generation의 Terminal ADR/문서에 있는 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
 
 ## Related Documents
@@ -192,6 +192,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Archive Retention Decision](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 - [Six-Disposition Archive Decision](../02.architecture/decisions/0038-six-disposition-archive-stage.md)
+- [Unit Archive Retention Decision](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Route Tombstone Template](../99.templates/templates/archive/route-tombstone.template.md)
 - [Scope Migration Template](../99.templates/templates/archive/scope-migration.template.md)

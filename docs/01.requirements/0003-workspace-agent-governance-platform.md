@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.4.2"
+version: "1.5.0"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -113,7 +113,7 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 역할 수, provider 수, retry 상수와 validator argv는 이 문서에 별도 고정하지 않는다.
 [ADR-0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md),
 [ADR-0031](../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md),
-[ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)의 현재 경계를 따른다.
+[ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)의 현재 경계를 따른다.
 - Model availability, effort enum, CLI schema와 authentication은 변한다. Concrete value는 기준 시점
   official source와 authenticated canary가 함께 증명해야 하며 이름 추론은 금지한다.
 - Claude/Codex native 형식 지원과 계정의 실제 실행 권한을 동일시하지 않는다.
@@ -145,7 +145,7 @@ Spec 0054의 WP-013과 TSK-0013은 여전히 미완료다. Stage 99 축소, tran
 원래 REQ-0005/0006은 REQ-0008로 대체되었다. 현재 의미는 이 문서로 다시 승계되지만
 원래 결정이 REQ-0003을 위해 작성되었다는 뜻은 아니다. 과거 고정 tranche/corpus 수,
 Spec 033의 follow-up 구분, ARD→AD identity 변환은 역사이며 현재 roster 규칙이 아니다.
-REQ-0006의 Plan/Task-only retention과 REQ-0008의 모든 Stage 98 링크 금지는 ADR-0038의 disposition과 명명에서 파생한 인용 경계로 대체된다. 봉인 record는 계속 current authority가 아니다.
+REQ-0006의 Plan/Task-only retention과 REQ-0008의 모든 Stage 98 링크 금지는 ADR-0038의 disposition과 ADR-0039의 순서 있는 인용 표로 대체된다. 봉인 record는 계속 current authority가 아니다.
 
 Current governance and QA implementation is owned by
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
@@ -175,7 +175,7 @@ frozen Stage 98 links to a retained source, is owned by
 [SPEC-0080](../03.specs/0080-adr-0032-retention-pilot/spec.md).
 Retaining the fifteen remaining superseded decisions is owned by
 [SPEC-0081](../03.specs/0081-superseded-decision-retention/spec.md).
-The unit archive retention contract that ADR-0039 proposes, its cutover, and the
+The unit archive retention contract that ADR-0039 adopts, its cutover, and the
 first exact disposition are owned by
 [SPEC-0082](../03.specs/0082-unit-archive-retention-contract/spec.md).
 

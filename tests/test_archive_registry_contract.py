@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
@@ -231,6 +232,56 @@ class LegacyRetainedSetTests(unittest.TestCase):
             "docs/98.archive/completed/03.specs/0052-document-taxonomy-consolidation/spec.md"
         )
         self.assertTrue(rule_ids(raw))
+
+
+class FastGateTests(unittest.TestCase):
+    """The archive contract regressions run in the fast local lanes."""
+
+    def validation_registry(self) -> dict:
+        return json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
+        )
+
+    def test_archive_contract_tests_run_in_quick_and_staged(self) -> None:
+        registry = self.validation_registry()
+        gate = next(
+            (
+                item
+                for item in registry["validators"]
+                if item["id"] == "archive-contract-tests"
+            ),
+            None,
+        )
+        self.assertIsNotNone(gate)
+        assert gate is not None
+        self.assertIn("staged", gate["lanes"])
+        self.assertIn("affected", gate["lanes"])
+        for profile in ("quick", "staged", "full"):
+            with self.subTest(profile=profile):
+                self.assertIn("archive-contract-tests", registry["profiles"][profile])
+        surfaces = {item["id"]: item["validators"] for item in registry["surfaces"]}
+        for surface in ("scripts", "tests", "template-documents"):
+            with self.subTest(surface=surface):
+                self.assertIn("archive-contract-tests", surfaces[surface])
+
+    def test_the_gate_runs_one_script_that_names_every_regression(self) -> None:
+        """The contract identifies a gate by its script, never by a `-m` module."""
+
+        gate = next(
+            item
+            for item in self.validation_registry()["validators"]
+            if item["id"] == "archive-contract-tests"
+        )
+        self.assertEqual(gate["argv"][0], "python3")
+        runner = gate["argv"][1]
+        self.assertFalse(runner.startswith("-"))
+        self.assertTrue(runner.startswith("scripts/") and runner.endswith(".py"))
+        source = (ROOT / runner).read_text(encoding="utf-8")
+        modules = re.findall(r'"(tests\.[a-z0-9_]+)"', source)
+        self.assertTrue(modules)
+        for module in modules:
+            with self.subTest(module=module):
+                self.assertTrue((ROOT / (module.replace(".", "/") + ".py")).is_file())
 
 
 if __name__ == "__main__":  # pragma: no cover - module entry guard

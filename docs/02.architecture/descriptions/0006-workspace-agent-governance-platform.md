@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.6.0"
+version: "1.7.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -86,10 +86,10 @@ proposal을 구현된 병렬 contract로 주장하지 않는다. 고위험 실�
 ### Terminal disposition and historical lineage
 
 처분 전에 source → current semantic owner → 모든 current consumer → legal terminal route를 증명한다.
-더 이상 현재가 아닌 문서의 보존은 [ADR-0038](../decisions/0038-six-disposition-archive-stage.md)이 두 종류로 나눴고, 이를 대체한 [ADR-0039](../decisions/0039-unit-archive-retention-and-citation-table.md)가 두 종류를 유지한다. SPEC-0082 machine 전환 전까지 검증기는 아래 ADR-0038 규칙을 따른다.
-retention class인 `completed/`, `superseded/`, `retired/`, `resolved/`는 본문 전체를 원래 profile로 보존하고,
+더 이상 현재가 아닌 문서의 보존은 [ADR-0038](../decisions/0038-six-disposition-archive-stage.md)이 두 종류로 나눴고, 이를 대체한 [ADR-0039](../decisions/0039-unit-archive-retention-and-citation-table.md)가 두 종류를 유지하고 보존 단위와 exact 보존을 더한다.
+retention class인 `completed/`, `superseded/`, `retired/`, `resolved/`는 spec package, Incident bundle, 단일 문서 단위의 원본 Git object를 링크까지 그대로 원래 profile로 보존하고,
 route disposition인 `tombstones/`와 `migrations/`는 본문 없이 route와 현재 owner만 명명한다. ADR decision-log 예외는 폐지되었다.
-인용 가능성은 각 family가 명명하는 대상에서 파생되고, catalog의 Retention Envelope가 source Git object를
+인용 가능성은 registry의 순서 있는 인용 표가 판정하고, catalog의 Retention Envelope가 source Git object를
 `<commit>:<original path>`로 한 번 명명한다. ADR-0032
 generation의 envelope와 source commit/blob/digest는 동결된 역사 증거로 편집하지 않는다. Terminal ADR의 원래 문서 인용은
 명시적 역사 링크로 유지하고 현재 문서는 보존본을 실행 authority로 소비하지 않는다.
@@ -230,7 +230,7 @@ verification require their own actual evidence and applicable authorization.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Independent CI evidence lanes and remote-observation boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-diff review and rollback-ready logical delivery units | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0038 six-disposition retention and derived citation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0039 unit retention and ordered citation table | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

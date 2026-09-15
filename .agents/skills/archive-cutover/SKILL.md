@@ -20,32 +20,39 @@ Catalog row is the only machine evidence of where it came from.
 - Choosing the profile or template for a new current document; use `docs-stage-routing`.
 - Repairing drift inside a document that stays current; use `docs-stage-conformance`.
 - Recovering or rewriting frozen history; that needs its own approval.
+- Moving a current document between active stages; identity lineage tracks a
+  move that keeps its `artifact_id`, family, and state without a Stage 98 record.
 
 ## Workflow Steps
 
-1. Confirm what happened to the document and pick one disposition. ADR-0038
-   (`docs/02.architecture/decisions/0038-six-disposition-archive-stage.md`)
-   owns the six dispositions, what each must name, and which may be cited; the
-   Stage 99 registry's `retention_classes` binds each retention class to the
-   source states it admits. Record the disposition approval in the owning Task.
-2. Check the preconditions. Every document in a package must be terminal, or
-   the whole package stays. No current document may still cite the source as
-   authority: repoint each current citation to the successor or the current
-   route first, because retention waits for consumer zero.
-3. For a retention class, move the body to the class directory at its own
-   stage path, keeping its profile, identity, and terminal state. Re-base only
-   relative link prefixes, with `rebase_relative_links` in
-   `scripts/archive_dispositions.py`, so every link keeps its target.
+1. Confirm what happened to the unit and pick one disposition. ADR-0039
+   (`docs/02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md`)
+   owns the retention units, exact retention, and the citation table on top of
+   the six dispositions ADR-0038 named. The Stage 99 registry's
+   `retention_classes` binds each class to the anchor states it admits, and
+   `archive_citation` decides what may be cited. Record the disposition
+   approval in the owning Task.
+2. Check the preconditions. A spec package or an Incident bundle leaves as one
+   unit, never member by member. Its anchor's state must admit the class and
+   every other member must be terminal in its own family, or the whole unit
+   stays. No current document may still cite the source as authority: repoint
+   each current citation to the successor or the current route first, because
+   retention waits for consumer zero.
+3. For a retention class, move the whole unit to the class directory at its
+   own stage path with `git mv`, keeping its profile, identity, and terminal
+   state. Change no path, file mode, or byte, links included; a retained body's
+   links are read at its original path in the envelope commit.
 4. For a route disposition, author the body-less record from the
    registry-selected `archive/route-tombstone` or `archive/scope-migration`
    form.
-5. Add one Retention Catalog row to the Stage 98 index that names the record
-   and `<commit>:<original path>`, where the commit is the comparison base. Add
-   no blob, digest, branch SHA, or redirect.
+5. Add one Retention Catalog row to the Stage 98 index that names the retained
+   unit, a package or bundle directory or one document, and
+   `<commit>:<original path>`, where the commit is the comparison base. Add no
+   blob, digest, branch SHA, or redirect.
 6. Validate the exact index with the staged QA profile. The lifecycle gate
-   proves the envelope object, the source state, and link-rebase equivalence;
-   the links-and-owners gate proves the citation boundary; the archive cutover
-   gate proves catalog parity.
+   proves the envelope object, the anchor and member states, and entry-for-entry
+   equality; the links-and-owners gate proves the citation decision; the archive
+   cutover gate proves catalog parity and re-verifies every catalog row.
 
 ## Boundaries
 

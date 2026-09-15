@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.6.0"
+version: "1.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 ---
 
 # Document Authoring Policy
@@ -62,16 +62,17 @@ express ownership, not a one-way waterfall.
    document answers to and no gate reads, so it is free to be wrong for as long
    as nobody follows it. Links between documents inside `docs/` keep
    their existing contracts, and a machine reference a program opens is not a
-   link. A document never links into `docs/98.archive/` beyond its index and the
+   link. The registry's ordered `archive_citation` table decides every link into
+   `docs/98.archive/`. A document links no further than the index and the
    retention classes whose own body still leads a reader to current authority:
    `completed/`, through its promotion declaration, and `resolved/`, as
    historical evidence, through its corrective-work owner. It cites the
    successor instead of a `superseded/` body and the current route instead of a
    `retired/` body, a tombstone, or a migration. A frozen record it must still
-   name is named by identifier and reached through the index. Citations that
-   predate ADR-0038 acceptance stay as enumerated consumers. Only an `operation/incident` record and its
-   `operation/postmortem` may cite an archive path directly, because the
-   evidence such an account rests on is often the archived record itself.
+   name is named by identifier and reached through the index. An
+   `operation/incident` record or its `operation/postmortem` may also cite a
+   body in any retention class as historical evidence, but never a route record
+   or a frozen sealed record, because neither holds an evidence body.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "templates"
 ---
 # 99.templates
@@ -79,8 +79,9 @@ form 경로의 대응은 Registry만 소유한다.
   `####-<slug>/README.md`는 `audit-pack`·`data-pack`·`research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
   `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
-- **Archive forms** (`archive/`): ADR-0038 route disposition인 `route-tombstone`과
+- **Archive forms** (`archive/`): route disposition인 `route-tombstone`과
   `scope-migration`, 그리고 동결 generation의 `migration` 원장과 `tombstone` record.
+  보존 단위에는 form이 없다. retention class는 원본 Git object를 그대로 옮긴다.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`와 `claude-command.template.md`, Codex는
   `codex-agent.template.toml`이며 이 form들은 provider 소유
@@ -182,7 +183,10 @@ identity는 Registry contract version과 Git history가 소유한다.
 "archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
 "archive/route-tombstone"과 "archive/scope-migration"은 본문 없이 route key만 가진다.
 Registry의 "retention_classes"는 Stage 98 retention class마다 본문이 명명하는 대상과
-허용하는 source 종단 상태를 묶는다.
+허용하는 anchor 종단 상태를 묶는다. "retention_units"는 spec package와 Incident bundle을
+보존 단위로, "retention_modes"는 profile마다 쓸 수 있는 보존 방식을, "archive_citation"은
+Stage 98 인용을 판정하는 순서 있는 표를, "legacy_rebased_retained_paths"는 ADR-0038이
+상대 링크를 재기준해 보존한 16개 본문을 선언한다.
 
 ## Related Documents
 
