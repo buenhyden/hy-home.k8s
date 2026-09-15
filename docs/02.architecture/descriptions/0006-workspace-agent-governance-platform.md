@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.5.1"
+version: "1.5.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -35,7 +35,7 @@ GitOps desired state와 플랫폼 interface는 [AD-0007](./0007-current-local-gi
 | Verifiability | Repository-static, provider-runtime, hosted-CI, remote/live 분리 | Class별 직접 관측; 미관측은 owner와 retry trigger |
 | Reliability | 제한된 retry와 no-progress stop, 안전한 resume | Loop contract 및 positive/negative recovery fixture |
 | Security | 최소 권한과 승인 경계; 비밀정보·auth·전체 transcript 배제 | Static guardrail과 독립 review; 실행 권한은 별도 승인 |
-| Recoverability | 일반 변경의 Git 복구와 봉인 evidence 무결성 분리 | Consumer 승계, source commit/blob/digest 및 legal lifecycle edge |
+| Recoverability | 일반 변경의 Git 복구와 봉인 evidence 무결성 분리 | Consumer 승계, 봉인 record의 source commit/blob/digest, 보존 본문의 Retention Envelope 및 legal lifecycle edge |
 | Maintainability | 고정 census나 중복 wrapper 대신 실제 consumer graph | Targeted/affected/staged/all-files lane과 직접 negative fixture |
 
 ### Convergence authority context
@@ -50,7 +50,7 @@ GitOps desired state와 플랫폼 interface는 [AD-0007](./0007-current-local-gi
 | Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local/CI affected-path, lane, argv; validator별 고유 실패 의미는 유지 |
 | Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; 상태·순서·검증 evidence를 중앙 roster로 복제하지 않음 |
 | Operations and reference | [Stage 05](../../05.operations/README.md), [Stage 90](../../90.references/README.md) | 운영 절차와 관측 근거 분리; Reference는 승인 또는 현재 정책의 대체물이 아님 |
-| Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | 봉인 기록과 완료 package; current 실행 authority 또는 재활성화 경로가 아님 |
+| Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | 봉인 기록, 완료 package, 보존된 대체 본문; current 실행 authority 또는 재활성화 경로가 아님 |
 
 역할과 surface 수는 공통 거버넌스 registry에서 도출한다. 과거 local/Antigravity/Gemini proposal은 현재
 지원 roster가 아니다. 현재 공통 역할·skill의 machine truth는 `.agents/roles/`가,

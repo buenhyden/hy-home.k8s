@@ -1,6 +1,6 @@
 ---
 title: "02.architecture"
-version: "0.4.1"
+version: "0.4.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -73,7 +73,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
 3. AD target은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다. 유형은 부모 폴더가 결정하고 안정 ID는 frontmatter의 `AD-####`/`ADR-####`로 유지한다.
-4. Superseded ADR은 decision log에 상호 연결해 유지한다. 삭제된 안정 경로의 복구는 Git과 필요한 최소 Stage 98 Migration/Tombstone이 소유한다.
+4. Superseded ADR은 predecessor/successor를 상호 연결한 뒤 decision log를 떠나 `98.archive/superseded/`에 보존한다. 원본 복구는 Archive index의 Retention Catalog가 명명하는 Git object 하나와 Git history가 소유한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 7. Architecture Description에는 arc42의 목적별 구조를 비례적으로 적용하고,

@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.5.1"
+version: "0.5.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -41,11 +41,11 @@ layer: "archive"
 
 ### One Recovery Reference
 
-어떤 family의 Stage 98 record도 두 번째 복구 원장을 갖지 않는다. redirect, path ledger, 자체 설계한 본문 digest, branch SHA, recovery commit이 없다. 새 disposition은 Document Index의 Retention Catalog 표에 행 하나를 두어 source Git object를 `<commit>:<original path>` 형식으로 한 번만 명명하고, 복구는 일반 Git history가 맡는다. 표의 머리글은 `Disposition Record`와 `Retention Envelope` 두 열이며, 첫 disposition이 표를 만든다. 동결 행의 `Source Commit`, `Source Blob`, `Payload SHA-256` 열은 동결 generation의 형식이며 새 disposition의 형식이 아니다.
+어떤 family의 Stage 98 record도 두 번째 복구 원장을 갖지 않는다. redirect, path ledger, 자체 설계한 본문 digest, branch SHA, recovery commit이 없다. 새 disposition은 Document Index의 Retention Catalog 표에 행 하나를 두어 source Git object를 `<commit>:<original path>` 형식으로 한 번만 명명하고, 복구는 일반 Git history가 맡는다. 표의 머리글은 `Disposition Record`와 `Retention Envelope` 두 열이며, ADR-0032를 보존한 첫 disposition이 표를 만들었다. 동결 행의 `Source Commit`, `Source Blob`, `Payload SHA-256` 열은 동결 generation의 형식이며 새 disposition의 형식이 아니다.
 
 ### Frozen Generation
 
-현재 보관된 내용은 모두 ADR-0038 이전 generation이며 immutable이다. `completed/`는 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. `superseded/`의 25개 record는 ArchiveEnvelope payload와 `source_commit`·`source_blob`·`content_sha256` provenance를 가진 봉인 record이고, `migrations/`의 원장은 행마다 commit·blob·digest를 고정한다. 이 generation은 새 형식에 맞추어 다시 쓰지 않으며 검증기는 이를 역사 증거로 분류한다. `completed/`의 기존 보존본 376개는 이를 봉인한 원장 행이 증명하므로 catalog 행이 필요 없다. 이 generation을 인용하는 기존 활성 문서는 SPEC-0079가 consumer로 열거하고 그대로 둔다.
+Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내용은 ADR-0038 이전 generation이며 immutable이다. `completed/`는 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. `superseded/` 중 동결 record 표가 명명하는 25개 record는 ArchiveEnvelope payload와 `source_commit`·`source_blob`·`content_sha256` provenance를 가진 봉인 record이고, `migrations/`의 원장은 행마다 commit·blob·digest를 고정한다. 이 generation은 새 형식에 맞추어 다시 쓰지 않으며 검증기는 이를 역사 증거로 분류한다. `completed/`의 기존 보존본 376개는 이를 봉인한 원장 행이 증명하므로 catalog 행이 필요 없다. 이 generation을 인용하는 기존 활성 문서는 SPEC-0079가 consumer로 열거하고 그대로 둔다.
 
 <!-- archive-manifest:v1 records=25 historical-links=198 -->
 
@@ -181,8 +181,8 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 
 ### Relative Link Rules
 
-- Payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다.
-- Historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
+- 동결 generation의 payload link는 archive 위치 기준으로 재계산하거나 수정하지 않는다. Retention Catalog 보존 본문의 링크는 위 ADR-0038 Disposition 절차를 따른다.
+- 동결 record의 historical validation은 `source_commit` tree에서 `original_path`를 base로 사용한다.
 - 현재 문서가 archive로 링크할 수 있는 곳은 이 index, `completed/`, 역사 증거로서의 `resolved/`뿐이다. 그 밖의 family는 후속 문서나 현재 route를 인용하며, 동결 record는 identifier로 명명하고 이 index를 경유한다. 계보·출처 인용은 [Docs README](../README.md)의 Archive 참조 규칙을 따른다.
 - 이 index가 동결 record inventory와 새 disposition의 Retention Catalog를 소유한다. 동결 generation의 Terminal ADR/문서에 있는 명시적 역사 인용은 원래 source를 가리킬 수 있지만 current authority를 부여하지 않는다.
 
