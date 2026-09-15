@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.1"
+version: "0.5.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -164,6 +164,10 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
+├── 0082-unit-archive-retention-contract/
+│   ├── plan.md
+│   ├── spec.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -225,6 +229,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0079-six-disposition-archive-stage/spec.md`](./0079-six-disposition-archive-stage/spec.md) | Six-disposition Archive stage governance and machine cutover | Done | ADR-0038의 두 종류 여섯 disposition, 명명에서 파생한 인용 규칙, 단일 Retention Envelope를 공통 거버넌스와 stage index에 먼저 적용하고, 수락 뒤 registry·archive form·검증기·테스트를 한 변경으로 전환한다. 동결 generation과 기존 인용은 다시 쓰지 않는다. | 2026-09-15 |
 | [`./0080-adr-0032-retention-pilot/spec.md`](./0080-adr-0032-retention-pilot/spec.md) | ADR-0032 retention pilot and frozen link resolution | Draft | ADR-0038의 첫 disposition으로 ADR-0032를 `superseded/`에 보존하고, 동결 Stage 98 링크를 catalog로 증명하며, 현재 consumer를 후속 결정으로 옮긴다. | 2026-09-15 |
 | [`./0081-superseded-decision-retention/spec.md`](./0081-superseded-decision-retention/spec.md) | Retention of the fifteen remaining superseded decisions | Draft | 승인된 disposition마다 대체된 ADR 15개를 `superseded/`에 보존하고, 현재 consumer 링크를 identifier 표기로 바꾸며, decision log에서 대체된 ADR을 모두 내보낸다. | 2026-09-15 |
+| [`./0082-unit-archive-retention-contract/spec.md`](./0082-unit-archive-retention-contract/spec.md) | Unit archive retention contract, citation table, and first exact disposition | Draft | ADR-0039 제안, 낡은 Archive 서술 정정, 외부 근거 기록을 첫 통합으로, 수락 뒤 registry·검증기·양식·거버넌스 전환을 두 번째로, ADR-0038의 exact 보존과 package 종료를 세 번째 통합으로 진행한다. | 2026-09-15 |
 
 ### Helper Templates
 

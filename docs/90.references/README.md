@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.1.1"
+version: "0.1.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-15"
 layer: "references"
 ---
 # 90.references
@@ -56,6 +56,7 @@ docs/90.references/
 │   └── README.md                      # Data collection router
 ├── research/
 │   ├── 0001-workspace-engineering/   # 보존된 최신 외부 조사 pack
+│   ├── 0002-archive-retention-and-provenance/  # Archive 보존·출처 외부 조사 pack
 │   └── README.md                      # Research collection router
 └── README.md                          # Stage router
 ```

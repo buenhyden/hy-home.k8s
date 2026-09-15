@@ -1,10 +1,10 @@
 ---
 title: "90.references/research"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-15"
 layer: "references"
 ---
 # 90.references/research
@@ -75,6 +75,9 @@ research/
 │   ├── m0012-source-coverage.md
 │   ├── m0004-spec-driven-sdlc-and-document-contracts.md
 │   └── m0001-workspace-governance-and-common-agent-environment.md
+├── 0002-archive-retention-and-provenance/
+│   ├── README.md
+│   └── m0001-git-provenance-and-superseded-record-citation.md
 └── README.md                            # This file
 ```
 
@@ -97,6 +100,8 @@ research/
 | [m0012-source-coverage.md](./0001-workspace-engineering/m0012-source-coverage.md)                                                   | Active pack | Source and claim coverage with bounded historical disposition             | Preserves provenance; it does not make external or runtime claims authoritative                           |
 | [m0004-spec-driven-sdlc-and-document-contracts.md](./0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)                     | Active pack | Spec-driven SDLC and document-contract research                           | Descriptive reference only; lifecycle documents and templates retain authority                            |
 | [m0001-workspace-governance-and-common-agent-environment.md](./0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md) | Active pack | Provider-neutral workspace control-plane research                         | Descriptive reference only; provider permissions and active governance remain canonical elsewhere         |
+| [0002-archive-retention-and-provenance/README.md](./0002-archive-retention-and-provenance/README.md) | Active pack | Archive retention and provenance research pack entry point | Research routing and observation-dated evidence only; canonical owners retain current authority |
+| [m0001-git-provenance-and-superseded-record-citation.md](./0002-archive-retention-and-provenance/m0001-git-provenance-and-superseded-record-citation.md) | Active pack | Git object naming and reachability, superseded-record practice, URL moves, schema annotations, and link parsing | Descriptive reference only; Stage 98 retention and citation remain with the registry and accepted decisions |
 
 `Active pack` and `Index` are collection roles,
 not report lifecycle values. This collection declares no Current pack in the
@@ -155,6 +160,7 @@ owners.
 
 - [90.references README](../README.md)
 - [Workspace Engineering Research Pack](./0001-workspace-engineering/README.md)
+- [Archive Retention and Provenance Research Pack](./0002-archive-retention-and-provenance/README.md)
 - [Archive index](../../98.archive/README.md) routes the retired packs that
   preceded this collection; no active document links their bodies directly.
 - [Research Reference Template](../../99.templates/templates/references/research.template.md)
