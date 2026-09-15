@@ -3371,10 +3371,10 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             continue
         if retention_class_of(registry, source) is not None:
             # A retained document is terminal work, and its links are the
-            # historical evidence of what it cited when it was finished. The
-            # retiring migration row pins the origin path, commit and blob that
-            # resolve them, so they are read the same way a record's links are
-            # rather than as current coupling.
+            # historical evidence of what it cited when it was finished. A
+            # frozen ledger row or a Retention Catalog envelope names the origin
+            # path and commit that resolve them, so they are read the same way a
+            # record's links are rather than as current coupling.
             continue
         diagnostics.extend(
             _stage_grammar_diagnostics(

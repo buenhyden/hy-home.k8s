@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.5.0"
+version: "0.5.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -98,7 +98,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 1. 현재 로컬 GitOps 플랫폼 기준은 [`0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `active` 문서는 현재 요구 권위다. downstream AD/ADR/Spec과 구현 증적을 함께 확인한다.
 3. `draft` 문서는 아직 현재 요구 권위가 아닌 초안이다. 구현은 승인된 downstream Spec과 Plan이 있어야 시작한다.
-4. 과거 문서가 필요한 경우 활성 문서에서 개별 Tombstone으로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해 확인한다.
+4. 과거 문서가 필요한 경우 봉인 record나 보존 본문을 개별 경로로 찾지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스(동결 record 표와 Retention Catalog)를 통해 확인한다.
 
 ### 상태 해석
 

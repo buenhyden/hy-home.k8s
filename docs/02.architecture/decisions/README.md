@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.5.1"
+version: "0.5.2"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -63,6 +63,7 @@ layer: "architecture"
 ├── 0036-common-knowledge-and-prompt-surfaces.md
 ├── 0037-kiali-operator-installation.md
 ├── 0038-six-disposition-archive-stage.md
+├── 0039-unit-archive-retention-and-citation-table.md
 └── README.md
 ```
 
@@ -103,7 +104,8 @@ layer: "architecture"
 | [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
 | [`./0036-common-knowledge-and-prompt-surfaces.md`](./0036-common-knowledge-and-prompt-surfaces.md) | Common knowledge and prompt surface adoption | Accepted | ADR-0035의 미채택 디렉터리 조항만 개정해 `.agents/knowledge/`와 `.agents/prompts/`를 채택하고, memory·rule·evaluation·script 디렉터리는 각각의 이유로 미채택을 유지한다. 나머지 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. |
 | [`./0037-kiali-operator-installation.md`](./0037-kiali-operator-installation.md) | Kiali operator 설치 결정 | Proposed | 현재 GitOps 구현(`kiali-operator` chart, operator 생성 CR, service DNS 연동)을 결정 기록으로 제안한다. 수락 시 ADR-0009 설치 조항을 대체한다. |
-| [`./0038-six-disposition-archive-stage.md`](./0038-six-disposition-archive-stage.md) | Six-disposition Archive stage decision | Accepted | Stage 98을 본문 전체를 원래 profile로 보존하는 retention class(`completed/`, `superseded/`, `retired/`, `resolved/`)와 본문 없는 route disposition(`tombstones/`, `migrations/`)으로 나누고, 인용 가능성을 명명에서 파생하며, record마다 commit·blob·digest를 두는 대신 catalog의 Retention Envelope `<commit>:<original path>` 하나를 둔다. decision-log 예외를 폐지하고 동결 generation은 다시 쓰지 않는다. ADR-0032를 대체한다. |
+| [`./0038-six-disposition-archive-stage.md`](./0038-six-disposition-archive-stage.md) | Six-disposition Archive stage decision | Accepted | Stage 98을 본문 전체를 원래 profile로 보존하는 retention class(`completed/`, `superseded/`, `retired/`, `resolved/`)와 본문 없는 route disposition(`tombstones/`, `migrations/`)으로 나누고, 인용 가능성을 명명에서 파생하며, record마다 commit·blob·digest를 두는 대신 catalog의 Retention Envelope `<commit>:<original path>` 하나를 둔다. decision-log 예외를 폐지하고 동결 generation은 다시 쓰지 않는다. ADR-0032를 대체한다. ADR-0039가 전체 대체를 제안한 상태다. |
+| [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision | Proposed | 보존 단위(Spec package, Incident bundle, 단독 문서)를 원본 Git object 그대로 보존하고 단위 anchor 상태로 class를 정하며, 단위마다 catalog 행 하나, registry의 순서 있는 인용 결정표 하나, identity 계보로 추적하는 활성 stage 간 이동을 제안한다. 수락되면 ADR-0038 전체를 대체한다. |
 
 ## Related Documents
 

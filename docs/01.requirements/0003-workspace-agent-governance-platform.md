@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.4.1"
+version: "1.4.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -175,6 +175,9 @@ frozen Stage 98 links to a retained source, is owned by
 [SPEC-0080](../03.specs/0080-adr-0032-retention-pilot/spec.md).
 Retaining the fifteen remaining superseded decisions is owned by
 [SPEC-0081](../03.specs/0081-superseded-decision-retention/spec.md).
+The unit archive retention contract that ADR-0039 proposes, its cutover, and the
+first exact disposition are owned by
+[SPEC-0082](../03.specs/0082-unit-archive-retention-contract/spec.md).
 
 ## Traceability
 

@@ -1,6 +1,6 @@
 ---
 title: "Agent Responsibilities"
-version: "1.2.0"
+version: "1.2.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -46,8 +46,9 @@ This boundary is carried by [architect](architect.md).
 Keep authored documents and navigation useful, traceable, and correctly routed.
 This boundary covers shared authoring and navigation concerns and assigned
 document edits, not authority over every stage's content. Stage owners retain
-substantive decisions and Stage 99 owns exact forms. Git history is the
-full-content archive; Stage 98 is a minimal recovery index.
+substantive decisions and Stage 99 owns exact forms. Stage 98 retains whole
+bodies that are no longer current, and Git history recovers their source
+objects.
 
 - Apply the selected profile and template and the document language boundary.
 - Keep current links and README navigation aligned with moves and deletions.
