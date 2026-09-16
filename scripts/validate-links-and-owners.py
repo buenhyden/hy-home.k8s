@@ -85,12 +85,14 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
 try:
     from archive_dispositions import (
         citation_decision,
+        frontmatter_mapping,
         parse_catalog,
         retention_class_of,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
         citation_decision,
+        frontmatter_mapping,
         parse_catalog,
         retention_class_of,
     )
@@ -492,19 +494,6 @@ def _diag(
     return Diagnostic(rule_id, path, profile, expected, actual, OWNER)
 
 
-def _frontmatter(text: str) -> dict[str, Any]:
-    if not text.startswith("---\n"):
-        return {}
-    closing = text.find("\n---\n", 4)
-    if closing < 0:
-        return {}
-    try:
-        data = yaml.safe_load(text[4:closing]) or {}
-    except yaml.YAMLError:
-        return {}
-    return data if isinstance(data, dict) else {}
-
-
 def _commonmark_splitlines(value: str, *, keepends: bool = False) -> list[str]:
     """Split only CR, LF, or CRLF without treating controls as line endings."""
 
@@ -892,7 +881,7 @@ def _build_context(
         else:
             text = read_repository_text(root, path)
         texts[path] = text
-        metadata[path] = _frontmatter(text)
+        metadata[path] = frontmatter_mapping(text)
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
         raw_target = (
