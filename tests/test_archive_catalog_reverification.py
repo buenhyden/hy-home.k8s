@@ -133,10 +133,15 @@ class CatalogReverificationTest(unittest.TestCase):
             )
 
     def test_repository_catalog_reverifies_against_its_history(self) -> None:
+        """Every row re-verifies, and each disposition adds one more of them."""
+
         index = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
         rows, errors = dispositions.parse_catalog(index)
         self.assertEqual(errors, ())
-        self.assertEqual(len(rows), 16)
+        legacy = REGISTRY.legacy_rebased_retained_paths
+        self.assertEqual(len(legacy), 16)
+        self.assertLessEqual(legacy, frozenset(rows))
+        self.assertGreaterEqual(len(rows), len(legacy))
         self.assertEqual(self.codes(index, ROOT), set())
 
 

@@ -1051,10 +1051,12 @@ def catalog_envelope_diagnostics(
     """
 
     rows, _errors = parse_catalog(index_text)
+    # A legacy body's links were rebased when its own generation moved together,
+    # so its equivalence reads that generation's moves and nothing a later
+    # disposition adds.
     moves = {
         retention_source_path(record): record
-        for record in rows
-        if retention_class_of(registry, record) is not None
+        for record in registry.legacy_rebased_retained_paths
     }
     diagnostics: list[CutoverDiagnostic] = []
     for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
