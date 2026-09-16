@@ -1,8 +1,8 @@
 ---
 title: "Document Currency Reconciliation Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -26,6 +26,8 @@ This Spec owns the reconciliation of those statements with the implementation.
 It changes documents only. It implements no pending work: where a package's
 work is genuinely unfinished, the work stays open and only its description is
 corrected.
+
+**Closure (2026-09-16).** Every criterion carries recorded evidence and every work item is done, so this change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md).
 
 ## Strategic Boundaries & Non-goals
 

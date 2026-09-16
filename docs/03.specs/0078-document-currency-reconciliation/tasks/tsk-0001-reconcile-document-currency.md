@@ -1,8 +1,8 @@
 ---
 title: "Reconcile Document Currency"
-version: "0.2.1"
+version: "0.2.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -91,7 +91,7 @@ first reviewed change after merge. **Activation (2026-09-16).** That merge
 happened, and this change takes the `draft` to `active` and `queued` to
 `in-progress` edges under
 [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md); closure follows as its
-own reviewed change, because no `draft` to `done` edge exists.
+own reviewed change, because no `draft` to `done` edge exists. **Closure (2026-09-16).** That change is this one: every work item above is `Done`, so the Task takes the declared `in-progress` to `done` edge.
 
 A working-tree run of the registry, lifecycle, link and archive validators
 fails while edits are unstaged, because those validators compare the index

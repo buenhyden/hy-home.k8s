@@ -1,8 +1,8 @@
 ---
 title: "Document Currency Reconciliation Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -16,6 +16,8 @@ artifact_id: "SPEC-0078-PLAN-0001"
 This Plan orders the reconciliation the Spec approves into six packages that
 each revert by their own commit. Every correction is checked against the
 implementation before it is written.
+
+**Closure (2026-09-16).** Every criterion carries recorded evidence and every work item is done, so this change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md).
 
 ## Context
 
