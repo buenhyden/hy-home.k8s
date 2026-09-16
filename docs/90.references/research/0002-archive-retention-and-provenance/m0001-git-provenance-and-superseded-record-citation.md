@@ -1,6 +1,6 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.1.0"
+version: "0.1.1"
 type: "reference/research"
 status: "draft"
 owner: "platform"
@@ -138,4 +138,4 @@ truth stays with the governance and registry owners named above.
 ## Related Documents
 
 - [Research pack](README.md)
-- [Spec 0082](../../../03.specs/0082-unit-archive-retention-contract/spec.md)
+- [Spec 0082](../../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md)

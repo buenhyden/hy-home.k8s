@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts for Progressive Delivery"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -63,6 +63,6 @@ Accepted — 2026-03-30
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts 이벤트 알림
 - [PRD](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
 - [ARD](../descriptions/0004-argo-rollouts-progressive-delivery.md)
-- [Spec](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
-- [Plan](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- [Task](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+- [Spec](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
+- [Plan](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+- [Task](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)

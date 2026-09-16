@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications Slack Architecture Description"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -105,19 +105,19 @@ Rollouts event template의 존재도 runtime event context나 전송 성공을 �
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | ArgoCD release 안의 Notifications controller 소유 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | Vault → ESO → Kubernetes Secret 단방향 credential 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | GitOps ConfigMap이 소유하는 template와 trigger 카탈로그 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-NFR-0001](../../01.requirements/0002-argo-notifications-slack.md) | 공통 health/sync 실패 default subscription 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-IF-0001](../../01.requirements/0002-argo-notifications-slack.md) | annotation 기반 앱별 배포 알림 opt-in 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-IF-0002](../../01.requirements/0002-argo-notifications-slack.md) | Slack/Vault bootstrap을 repository 변경과 분리하는 승인 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 01](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Notifications controller Pod readiness 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 02](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | ExternalSecret Ready 상태의 credential 동기화 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | sync 실패 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | health degraded 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Rollouts abort 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | ArgoCD release 안의 Notifications controller 소유 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | Vault → ESO → Kubernetes Secret 단방향 credential 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | GitOps ConfigMap이 소유하는 template와 trigger 카탈로그 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-NFR-0001](../../01.requirements/0002-argo-notifications-slack.md) | 공통 health/sync 실패 default subscription 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-IF-0001](../../01.requirements/0002-argo-notifications-slack.md) | annotation 기반 앱별 배포 알림 opt-in 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-IF-0002](../../01.requirements/0002-argo-notifications-slack.md) | Slack/Vault bootstrap을 repository 변경과 분리하는 승인 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 01](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Notifications controller Pod readiness 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 02](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | ExternalSecret Ready 상태의 credential 동기화 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | sync 실패 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | health degraded 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Rollouts abort 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
 
 - **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
-- **Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md)
-- **Plan**: [`../../03.specs/0005-argo-notifications-slack/plan.md`](../../03.specs/0005-argo-notifications-slack/plan.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
+- **Plan**: [`../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md`](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
 - **ADR**: [`../decisions/0012-argo-notifications-slack.md`](../decisions/0012-argo-notifications-slack.md)

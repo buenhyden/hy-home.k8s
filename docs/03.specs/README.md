@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.10"
+version: "0.5.11"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -76,14 +76,6 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 
 ```text
 03.specs/
-├── 0004-argo-rollouts-progressive-delivery/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
-├── 0005-argo-notifications-slack/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0006-workspace-harness-gap-analysis/
 │   └── spec.md
 ├── 0008-current-local-gitops-platform/
@@ -136,10 +128,6 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
-├── 0082-unit-archive-retention-contract/
-│   ├── plan.md
-│   ├── spec.md
-│   └── tasks/
 ├── 0083-finished-package-retention/
 │   ├── plan.md
 │   ├── spec.md
@@ -181,8 +169,6 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [`./0004-argo-rollouts-progressive-delivery/spec.md`](./0004-argo-rollouts-progressive-delivery/spec.md)                           | Argo Rollouts 점진적 배포 current-contract backfill 명세                      | Done | `platform-rollouts` Application, dashboard, metrics, AppProject 권한, 앱 canary AnalysisTemplate 경계를 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                            | 2026-09-09 |
-| [`./0005-argo-notifications-slack/spec.md`](./0005-argo-notifications-slack/spec.md)                                               | ArgoCD Notifications Slack current-contract backfill 명세                     | Done | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다.                                                                                                                       | 2026-09-09 |
 | [`./0006-workspace-harness-gap-analysis/spec.md`](./0006-workspace-harness-gap-analysis/spec.md)                                   | Workspace harness Gap analysis와 제한 구현 계약                               | Active | 2026-09-05 재관찰: historical harness-gap baseline과 미완료 runtime/operator 경계 때문에 active를 유지한다. Plan/Task 부재는 완료 증거가 아니며, 실행이나 완료 입증 후 별도 disposition이 필요하다. 새 Plan/Task나 runtime 증거는 만들지 않았다. | 2026-09-14 |
 | [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
 | [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Active | Spec 0052의 semantic closure 후 ADR-0031/0033와 package-local v9 경로로 Spec/Plan을 재개했다. 활성화 Task만 done이고 구현 Tasks는 queued다. stash metadata는 존재하며 tracked-hunk reconciliation은 미완료다. | 2026-09-14 |
@@ -198,7 +184,6 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
 | [`./0077-dead-contract-and-duplicate-execution-retirement/spec.md`](./0077-dead-contract-and-duplicate-execution-retirement/spec.md) | Retirement of unreachable validation code, absent-subject assertions, and same-snapshot duplicate gate execution | Active | 기준선 `qa.py full`이 22/22 PASS인 상태에서 green이 드러내지 못하는 결함을 처분한다. 도달 불가능한 cross-document 서브트리와 수집되지 않는 test class, 대상이 사라진 cutover pin, `unit-tests` 안에서 같은 snapshot에 재실행되는 등록 gate, 코퍼스가 실천하지 않는 skill 의무를 제거하고 archive cutover 워크플로에 소유 skill을 부여한다. Gate 의미, 문서 route, profile, 링크 경계 동작은 바뀌지 않는다. | 2026-09-14 |
 | [`./0078-document-currency-reconciliation/spec.md`](./0078-document-currency-reconciliation/spec.md) | Reconciliation of stale and implementation-conflicting document statements and Stage 03 lifecycle state | Draft | `docs/` 전반에서 현재 구현과 다른 명령·경로·리소스 이름·버전·결정 서술을 근거와 함께 바로잡고, 구현되었거나 후속 작업으로 대체된 Stage 03 package를 다음 단일 lifecycle edge로 옮긴다. 미완료 작업은 구현하지 않고 처분과 차단 사유만 기록한다. | 2026-09-14 |
-| [`./0082-unit-archive-retention-contract/spec.md`](./0082-unit-archive-retention-contract/spec.md) | Unit archive retention contract, citation table, and first exact disposition | Done | ADR-0039를 수락해 보존 단위와 순서 있는 인용 표를 세우고, registry·검증기·양식·거버넌스를 그 계약으로 전환했으며, ADR-0038을 첫 exact disposition으로 보존하고 종료했다. | 2026-09-16 |
 | [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished Stage 03 packages | Active | 완료된 package 일곱 개를 `completed/`에 단위 그대로 보존하고 소비자를 먼저 옮기며, 구현 전에 대체된 제안 두 개는 계약 충돌로 보존이 막힌 사실을 기록한다. | 2026-09-16 |
 
 ### Helper Templates

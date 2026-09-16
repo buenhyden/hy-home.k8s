@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications with Slack Webhook"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -64,6 +64,6 @@ Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행
 - [ADR-0003](./0003-eso-vault-k8s-auth.md) — ESO/Vault 시크릿 관리 패턴
 - [PRD](../../01.requirements/0002-argo-notifications-slack.md)
 - [ARD](../descriptions/0005-argo-notifications-slack.md)
-- [Spec](../../03.specs/0005-argo-notifications-slack/spec.md)
-- [Plan](../../03.specs/0005-argo-notifications-slack/plan.md)
-- [Task](../../03.specs/0005-argo-notifications-slack/plan.md)
+- [Spec](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
+- [Plan](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
+- [Task](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)

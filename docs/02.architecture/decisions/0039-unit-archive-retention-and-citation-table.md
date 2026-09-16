@@ -1,6 +1,6 @@
 ---
 title: "Unit Archive Retention and Citation Table"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -30,7 +30,7 @@ Spec 0082, the validators admit only ADR-0038's routes.
 
 A read-only survey at commit `8a76bd3b` compared ADR-0038 with the registry,
 validators, and tests that implement it. The
-[proposal Task](../../03.specs/0082-unit-archive-retention-contract/tasks/tsk-0001-propose-the-unit-retention-contract.md)
+[proposal Task](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/tasks/tsk-0001-propose-the-unit-retention-contract.md)
 records each finding with its evidence.
 
 - A retained body is compared with its source after relative links are
@@ -170,7 +170,7 @@ history purification, which needs its own approval.
 - It does not rewrite, re-seal, or re-home the frozen ADR-0032 generation or the
   sixteen bodies retained under ADR-0038.
 - It does not itself change the registry, forms, or validators.
-  [Spec 0082](../../03.specs/0082-unit-archive-retention-contract/spec.md) owns
+  [Spec 0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md) owns
   that cutover after acceptance.
 - It does not add lifecycle states or edges.
 - It does not retain ADR-0038. That disposition needs its own authorization
@@ -225,4 +225,4 @@ holds no evidence body to cite.
 
 | Decision lineage | Replacement relation                                                                                                             | Affected Spec                                                            |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| ADR-0038 | Supersedes ADR-0038; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../03.specs/0082-unit-archive-retention-contract/spec.md) |
+| ADR-0038 | Supersedes ADR-0038; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md) |

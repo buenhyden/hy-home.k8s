@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.7.1"
+version: "2.7.2"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -748,9 +748,9 @@ snapshot before new migration/ADR documents were finalized.
 | `docs/99.templates/templates/requirements/requirement-package.template.md` | `sdlc/requirement` | 4; `docs/01.requirements/0001-argo-rollouts-progressive-delivery.md`, `docs/01.requirements/0002-argo-notifications-slack.md` | Keep: solution-independent requirements, acceptance and complete member IDs stay owned by Stage 01. |
 | `docs/99.templates/templates/runtime/claude-agent.template.md` | `common/provider-native-metadata` | 12; `.claude/agents/code-reviewer.md`, `.claude/agents/doc-writer.md` | Update explicit registry/workflow reads; preserve native metadata placeholders and tools boundary. |
 | `docs/99.templates/templates/runtime/codex-agent.template.toml` | `common/codex-agent-binding` | 12; `.codex/agents/code-reviewer.toml`, `.codex/agents/doc-writer.toml` | Update explicit registry/workflow reads; preserve native TOML model/reasoning/developer instructions. |
-| `docs/99.templates/templates/specs/plan.template.md` | `sdlc/plan` | 57; `docs/03.specs/0004-argo-rollouts-progressive-delivery/plan.md`, `docs/03.specs/0005-argo-notifications-slack/plan.md` | Keep: execution dependencies, work packages and verification/rollback belong in Plan. |
-| `docs/99.templates/templates/specs/spec.template.md` | `sdlc/spec` | 67; `docs/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`, `docs/03.specs/0005-argo-notifications-slack/spec.md` | Keep: behavior, interfaces, failure modes and acceptance contract belong in Spec. |
-| `docs/99.templates/templates/specs/task.template.md` | `sdlc/task` | 347; `docs/03.specs/0004-argo-rollouts-progressive-delivery/tasks/tsk-0001-rol-t-001.md`, `docs/03.specs/0004-argo-rollouts-progressive-delivery/tasks/tsk-0002-rol-t-002.md` | Keep: bounded execution/evidence, approvals, secret handling and rollback remain Task-owned. |
+| `docs/99.templates/templates/specs/plan.template.md` | `sdlc/plan` | 57; `docs/98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md`, `docs/98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md` | Keep: execution dependencies, work packages and verification/rollback belong in Plan. |
+| `docs/99.templates/templates/specs/spec.template.md` | `sdlc/spec` | 67; `docs/98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`, `docs/98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md` | Keep: behavior, interfaces, failure modes and acceptance contract belong in Spec. |
+| `docs/99.templates/templates/specs/task.template.md` | `sdlc/task` | 347; `docs/98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/tasks/tsk-0001-rol-t-001.md`, `docs/98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/tasks/tsk-0002-rol-t-002.md` | Keep: bounded execution/evidence, approvals, secret handling and rollback remain Task-owned. |
 
 ### Implementation Review and Integration Evidence
 

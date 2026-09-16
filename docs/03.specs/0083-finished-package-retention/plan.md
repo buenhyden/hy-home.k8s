@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -24,7 +24,7 @@ record the blocked pair, repoint consumers, retain seven units, and close.
 
 ## Context
 
-[SPEC-0082](../0082-unit-archive-retention-contract/spec.md) built and proved
+[SPEC-0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md) built and proved
 the unit retention machinery on ADR-0038. This round applies it to Stage 03
 packages, which are tree units rather than single documents.
 

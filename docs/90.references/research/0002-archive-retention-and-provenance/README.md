@@ -1,6 +1,6 @@
 ---
 title: "Archive Retention and Provenance Research Pack"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-research-pack"
 status: "active"
 owner: "platform"
@@ -53,4 +53,4 @@ standard cited here is not adopted or certified by citing it.
 
 - [Research collection](../README.md)
 - [ADR-0039](../../../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
-- [Spec 0082](../../../03.specs/0082-unit-archive-retention-contract/spec.md)
+- [Spec 0082](../../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md)

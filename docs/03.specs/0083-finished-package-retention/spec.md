@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -23,7 +23,7 @@ This Spec owns that round: it retains the seven finished packages as exact
 units in `completed/`, repoints the documents that cite them, and closes. It
 also records why the two superseded proposals cannot be retained yet. It
 changes no contract. The machinery it uses was built and proved by
-[SPEC-0082](../0082-unit-archive-retention-contract/spec.md).
+[SPEC-0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
 
 ## Strategic Boundaries & Non-goals
 

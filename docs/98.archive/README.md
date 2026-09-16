@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.6.2"
+version: "0.6.3"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -162,6 +162,9 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0079-six-disposition-archive-stage`](./completed/03.specs/0079-six-disposition-archive-stage) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0079-six-disposition-archive-stage` |
 | [`completed/03.specs/0080-adr-0032-retention-pilot`](./completed/03.specs/0080-adr-0032-retention-pilot) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0080-adr-0032-retention-pilot` |
 | [`completed/03.specs/0081-superseded-decision-retention`](./completed/03.specs/0081-superseded-decision-retention) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0081-superseded-decision-retention` |
+| [`completed/03.specs/0004-argo-rollouts-progressive-delivery`](./completed/03.specs/0004-argo-rollouts-progressive-delivery) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0004-argo-rollouts-progressive-delivery` |
+| [`completed/03.specs/0005-argo-notifications-slack`](./completed/03.specs/0005-argo-notifications-slack) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0005-argo-notifications-slack` |
+| [`completed/03.specs/0082-unit-archive-retention-contract`](./completed/03.specs/0082-unit-archive-retention-contract) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0082-unit-archive-retention-contract` |
 
 ## Authoring Workflow
 
