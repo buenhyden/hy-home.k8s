@@ -1,8 +1,8 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.6.1"
+version: "1.6.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0054-TSK-0013"
 
 ## Overview
 
-This is the in-progress Task record for the remaining Stage 01, 02, 03, and 99
+This is the Task record for the remaining Stage 01, 02, 03, and 99
 current-corpus convergence and transition-control retirement in WP-013. Named
 dispositions are execution candidates, not permanent corpus-count policy.
 
@@ -28,6 +28,8 @@ individually, including four accepted ADRs whose citations convert rather than
 disappear. Fourteen packages are retained on unfinished scope rather than on a
 fixed list, two of them conditionally: `0062` holds three `blocked` Tasks, and
 `0006` is an `active` Spec with no Plan and no Tasks.
+
+**Closure (2026-09-16).** The executed scope of this record is committed and reviewed: the document-contract proposal, the ADR acceptances and the Spec and Plan amendment, the CI contract and regression fixes, the Spec 0052 whole-package retention, the archive guard parity, and the Requirement and Architecture owner corrections, with PRs 54 and 55 merged. Its one open scope, the disposition of the remaining Stage 03 packages, did not vanish: [SPEC-0083](../../0083-finished-package-retention/spec.md) surveyed every one of them and returned the two its contracts could not express, and [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md) executes those dispositions, closing SPEC-0071, SPEC-0078, SPEC-0062 and this package in the same round. The work moved owner rather than being abandoned, so this record closes `done` rather than `cancelled`. The Task Table result is left as observed, including its statement that the dispositions were open on that date.
 
 ## Inputs
 
@@ -45,13 +47,13 @@ result with SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 all `done`; completed
 SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility pointer,
 which named this Task while it was still `queued`
 
-**Current state:** `in-progress`; the entry blocker in the link validator is
+**Current state:** `done` as of 2026-09-16; the entry blocker in the link validator is
 released, document-contract v9 and the ADR-0032/ADR-0033 acceptance transitions
 are committed, and the remaining WP-013 dispositions are not complete
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, retain terminal governed documents under ADR-0032, remove current-authority dependencies on sealed Archive records, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Document-contract v9 proposed in `41f8144e`; ADR-0032/0033 acceptance and the Spec/Plan amendment committed in `5b7ff61f`; CI contract and regression fixes committed through `ad907cb1`; remaining WP-013 dispositions are open. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, completed-retention provenance, zero current-authority dependencies on sealed Archive records, consumer/trace/lifecycle parity, Git exact-byte recovery, Registry/template parity, delegated routing evidence, ordered logical commits, PRs 54 and 55, Hosted CI run 33885291302, and secret-safe read-only runtime observations |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, retain terminal governed documents under ADR-0032, remove current-authority dependencies on sealed Archive records, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Done | Document-contract v9 proposed in `41f8144e`; ADR-0032/0033 acceptance and the Spec/Plan amendment committed in `5b7ff61f`; CI contract and regression fixes committed through `ad907cb1`; remaining WP-013 dispositions are open. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, completed-retention provenance, zero current-authority dependencies on sealed Archive records, consumer/trace/lifecycle parity, Git exact-byte recovery, Registry/template parity, delegated routing evidence, ordered logical commits, PRs 54 and 55, Hosted CI run 33885291302, and secret-safe read-only runtime observations |
 
 ## Approval and Safety Boundaries
 
