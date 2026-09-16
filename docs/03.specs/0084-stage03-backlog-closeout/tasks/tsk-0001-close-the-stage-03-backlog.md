@@ -1,6 +1,6 @@
 ---
 title: "Close the Stage 03 Backlog"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -44,7 +44,7 @@ live evidence.
 | WORK-009 | VAL-SBC-009 | Retain every package that reached `done` in `completed/` | platform | Partial | Seven of nine units retained. SPEC-0054 and SPEC-0062 reached `done` but stay at their Stage 03 paths, recorded as named deferrals below | Link, lifecycle and archive gates PASS over the seven |
 | WORK-010 | VAL-SBC-010 | Repair the consumers the retention proves wrong | platform | Done | REQ-0003, the stage index, `tests/test_archive_citation_decision.py` and SPEC-0083's self-reference were repaired; no pin was lowered | Full QA and the unit-test suite |
 | WORK-011 | VAL-SBC-011 | Close SPEC-0077 with its blocked criteria recorded as deferrals | platform | Done | SPEC-0077 is `done` with two authority-blocked criteria recorded as deferrals with named owners | Lifecycle gate and this Task |
-| WORK-012 | VAL-SBC-012 | Close this package with its results | platform | Done | This package closes with the results recorded here, including the two deferred retentions | Staged and full QA recorded below |
+| WORK-012 | VAL-SBC-012 | Close this package with its results | platform | Done | This package closes with the results recorded here, including the two deferred retentions and the one failing gate | Staged QA PASS; full QA 22 PASS and one FAIL, recorded below |
 
 ## Approval and Safety Boundaries
 
@@ -200,6 +200,59 @@ criterion could not be met, it is recorded as a deferral with a named owner: the
 two retentions above, SPEC-0077's two authority-blocked criteria, and
 SPEC-0072's native-runtime half.
 
+### Full QA on the final tree
+
+`python3 scripts/qa.py full` over 1172 paths returns 22 PASS and one FAIL, so
+the lane's exit status is 1. The failing gate is `unit-tests`, and this record
+states that rather than reporting the round as green.
+
+The run first reported two failures and one was repaired. The frozen-generation
+fixture in `tests/archive_generation_fixture.py` derives the pre-ADR-0038
+registry by reversing what later decisions added to the current one, then proves
+the derivation equals the blob merged at `c652331c`. The two registry gap-fills
+of WORK-002 were additions of exactly that kind, and no matching reversal was
+written, so the derivation stopped reproducing the frozen blob. A parsed
+comparison of derived against frozen showed five differences and no others, all
+five being this round's own additions: `superseded_by` in the `optional` and
+`order` lists of `sdlc/spec` and `common/template-sdlc-spec`, and the `draft` to
+`withdrawn` pair in the `spec-plan` domain. The derivation now reverses them,
+and its proof passes with the whole fixture-consuming set, 126 tests over four
+modules, passing with it. This was a regression introduced in `238eac6a` and
+carried undetected for twenty-six commits, because `unit-tests` runs only in the
+full lane while every commit in this round touched paths whose surfaces select
+the staged lane's six gates.
+
+| Gate | Result |
+| --- | --- |
+| Twenty-two gates, `archive-cutover` and `archive-contract-tests` among them | PASS |
+| `unit-tests` | FAIL, one assertion, recorded below |
+
+The remaining failure is the Git subprocess bound in
+`tests/test_archive_validation.py`: the archive snapshot makes 254 subprocesses
+against a budget of 252. That budget is a documented ledger of justified
+increases, 242 to 246 to 248 to 252, each recorded with the structural reason
+that moved it, and its own comment states the cost model: a rename that vacates
+a path costs a fixed four, a new declared source commit a fixed two, a reoccupied
+retired path a fixed one. Measurement on this tree shows four packages driving
+Git-first recovery four calls each, SPEC-0006, SPEC-0068, SPEC-0070 and
+SPEC-0071, which is the vacating-rename shape the comment describes, so the
+increase is consistent with the model rather than with an unbounded per-row cost.
+
+That is not enough to raise the budget. Attributing the exact increase of two
+needs the same measurement on the round's base commit, `e062290e`, and this
+worker could not produce it: the permission layer denied cloning the repository
+to a scratch path, and branch switching is outside the approved scope. Raising a
+budget on a cost model that fits, without the baseline that proves the
+attribution, is indistinguishable from lowering a pin to pass, which this round
+forbids. The budget is therefore left at 252 and the failure is reported.
+
+Next owner: the request owner, for one of three decisions. Measure the baseline
+on `e062290e` and raise the budget with the attribution recorded the way every
+previous increase was; or accept the increase on the cost model alone; or treat
+254 as a real regression and reduce the snapshot's recovery cost. This worker
+recommends the first, because the comment block's value is the attribution and
+not the number.
+
 This record, its Spec and its Plan were created in their zero-indegree states
 because the lifecycle gate compares a change with its base, where this package
 did not yet exist. Activation followed as its own reviewed change in `10847dc2`,
@@ -228,4 +281,4 @@ Each work item carries its observed result.
 | [WORK-009](../plan.md#work-breakdown) | Partial, with two named deferrals. | Seven units retained; SPEC-0054 and SPEC-0062 recorded below with their observed blockers and next owners. |
 | [WORK-010](../plan.md#work-breakdown) | Done. | Four consumers repaired; no gate, contract or test pin lowered. |
 | [WORK-011](../plan.md#work-breakdown) | Done. | SPEC-0077 is `done` with two deferrals carrying named owners. |
-| [WORK-012](../plan.md#work-breakdown) | Done. | Results recorded here; full QA recorded in the Verification Summary. |
+| [WORK-012](../plan.md#work-breakdown) | Done, with the full lane reported honestly. | Full QA returns 22 PASS and one FAIL; `unit-tests` fails on the Git subprocess bound and is recorded with its next owner. |

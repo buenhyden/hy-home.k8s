@@ -13,7 +13,9 @@ history, so the regressions need no particular commit. The derivation reverses
 exactly what ADR-0038 added: the retention class binding, the two route
 disposition forms and their family, the mirrored retention alternatives, and
 the exact frozen routes, together with the retention units, modes, citation
-table, and legacy set that ADR-0039 added. `tests/test_archive_generation_fixture.py` proves the
+table, and legacy set that ADR-0039 added, and the optional `superseded_by` key
+and the `draft` to `withdrawn` edge that SPEC-0084 added.
+`tests/test_archive_generation_fixture.py` proves the
 derivation equals the registry merged at `LEGACY_ARCHIVE_GENERATION_COMMIT`.
 
 A regression that asserts what the current registry admits must load the
@@ -38,6 +40,15 @@ ADR0038_PROFILES = frozenset(
     }
 )
 ADR0038_FAMILY = "route-disposition"
+SPEC0084_SUPERSEDED_BY_PROFILES = frozenset(
+    {
+        "sdlc/spec",
+        "common/template-sdlc-spec",
+    }
+)
+SPEC0084_SUPERSEDED_BY_KEY = "superseded_by"
+SPEC0084_DRAFT_WITHDRAWN_FAMILY = "spec-plan"
+SPEC0084_DRAFT_WITHDRAWN_EDGE = ["draft", "withdrawn"]
 FROZEN_GENERATION_ROUTES = {
     "archive/tombstone": (
         r"^docs/98\.archive/(?!migrations/)(?!completed/)"
@@ -116,6 +127,21 @@ def legacy_registry_payload() -> dict[str, Any]:
         profile["path_pattern"] = FROZEN_GENERATION_ROUTES.get(
             profile["id"], _frozen_generation_route(profile["path_pattern"])
         )
+        if profile["id"] in SPEC0084_SUPERSEDED_BY_PROFILES:
+            frontmatter = profile["frontmatter"]
+            for key in ("optional", "order"):
+                frontmatter[key] = [
+                    name
+                    for name in frontmatter[key]
+                    if name != SPEC0084_SUPERSEDED_BY_KEY
+                ]
+    for domain in payload["lifecycle_domains"]:
+        if domain["family"] == SPEC0084_DRAFT_WITHDRAWN_FAMILY:
+            domain["transitions"] = [
+                transition
+                for transition in domain["transitions"]
+                if list(transition) != SPEC0084_DRAFT_WITHDRAWN_EDGE
+            ]
     return payload
 
 
