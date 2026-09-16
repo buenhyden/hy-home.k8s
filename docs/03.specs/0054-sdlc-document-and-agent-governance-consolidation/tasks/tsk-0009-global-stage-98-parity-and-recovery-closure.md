@@ -2,7 +2,7 @@
 title: "Task: Isolated Stage 98 archive minimization"
 version: "1.0.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-03"
 layer: "specs"

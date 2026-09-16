@@ -2,7 +2,7 @@
 title: "Task: Convergence and branch completion"
 version: "1.0.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-08-31"
 layer: "specs"
