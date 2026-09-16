@@ -2,7 +2,7 @@
 title: "Retain the Finished Stage 03 Packages"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"

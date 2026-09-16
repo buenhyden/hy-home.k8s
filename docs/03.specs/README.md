@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.7"
+version: "0.5.8"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -234,7 +234,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0080-adr-0032-retention-pilot/spec.md`](./0080-adr-0032-retention-pilot/spec.md) | ADR-0032 retention pilot and frozen link resolution | Done | ADR-0038의 첫 disposition으로 ADR-0032를 `superseded/`에 보존하고, 동결 Stage 98 링크를 catalog로 증명하며, 현재 consumer를 후속 결정으로 옮긴다. | 2026-09-15 |
 | [`./0081-superseded-decision-retention/spec.md`](./0081-superseded-decision-retention/spec.md) | Retention of the fifteen remaining superseded decisions | Done | 승인된 disposition마다 대체된 ADR 15개를 `superseded/`에 보존하고, 현재 consumer 링크를 identifier 표기로 바꾸며, decision log에서 대체된 ADR을 모두 내보낸다. | 2026-09-15 |
 | [`./0082-unit-archive-retention-contract/spec.md`](./0082-unit-archive-retention-contract/spec.md) | Unit archive retention contract, citation table, and first exact disposition | Done | ADR-0039를 수락해 보존 단위와 순서 있는 인용 표를 세우고, registry·검증기·양식·거버넌스를 그 계약으로 전환했으며, ADR-0038을 첫 exact disposition으로 보존하고 종료했다. | 2026-09-16 |
-| [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished and superseded Stage 03 packages | Draft | 완료된 package 일곱 개를 `completed/`에, 구현 전에 대체된 제안 두 개를 `superseded/`에 단위 그대로 보존하고, 소비자를 먼저 옮긴다. | 2026-09-16 |
+| [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished Stage 03 packages | Active | 완료된 package 일곱 개를 `completed/`에 단위 그대로 보존하고 소비자를 먼저 옮기며, 구현 전에 대체된 제안 두 개는 계약 충돌로 보존이 막힌 사실을 기록한다. | 2026-09-16 |
 
 ### Helper Templates
 
