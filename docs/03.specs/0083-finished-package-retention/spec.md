@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Technical Specification"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -13,31 +13,33 @@ artifact_id: "SPEC-0083"
 
 ## Overview
 
-Stage 03 holds nine packages that are no longer current. Seven finished their
-work and are `done`; two were superseded as proposals before they were
-implemented. ADR-0039 says a finished unit waits in its stage until its
-disposition is approved, and the request owner approved this round for the
-seven finished packages.
+Stage 03 accumulated packages that are no longer current. ADR-0039 says a
+finished unit waits in its stage until its disposition is approved, and the
+request owner approved this round in two groups: seven packages already `done`,
+then SPEC-0004, SPEC-0005 and SPEC-0082 once their own authorization arrived.
 
-This Spec owns that round: it retains the seven finished packages as exact
-units in `completed/`, repoints the documents that cite them, and closes. It
-also records why the two superseded proposals cannot be retained yet. It
-changes no contract. The machinery it uses was built and proved by
+This Spec owns that round: it retains ten finished packages as exact units in
+`completed/`, repoints the documents that cite them, records the disposition of
+every package that stays, and closes. It also records why the two superseded
+proposals cannot be retained yet. It changes no contract. The machinery it uses
+was built and proved by
 [SPEC-0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
 
 ## Strategic Boundaries & Non-goals
 
-In scope: the seven finished Stage 03 packages named in Core Design; the
-citations they receive from current documents; one Retention Catalog row per
-retained unit; the stage index and requirement pointers that name them; and the
-recorded finding that blocks the two superseded proposals.
+In scope: the ten finished Stage 03 packages named in Core Design; the
+citations they receive from current documents and from `tests/`; one Retention
+Catalog row per retained unit; the stage index and requirement pointers that
+name them; the recorded finding that blocks the two superseded proposals; and a
+recorded disposition for every Stage 03 package that stays.
 
 Out of scope: any change to the retention contract, the citation table, the
 registry, or the validators; the retention of SPEC-0068 and SPEC-0070, which
 the contracts block; the frozen ADR-0032 generation and the sixteen ADR-0038
-retained bodies; SPEC-0082, whose own disposition needs its own
-authorization; any package that still has a non-terminal member; and every
-live cluster, provider runtime, and network action.
+retained bodies; the disposition of any package that stays, which is recorded
+and returned rather than decided here; any package that still has a
+non-terminal member; and every live cluster, provider runtime, and network
+action.
 
 ## Contracts
 
@@ -58,8 +60,15 @@ package can be retained in `superseded/` today.
 ## Core Design
 
 `completed/` receives SPEC-0073, SPEC-0074, SPEC-0075, SPEC-0076, SPEC-0079,
-SPEC-0080, and SPEC-0081. Each has `done` for its `spec.md`, `plan.md`, and
-every Task.
+SPEC-0080, and SPEC-0081 in the first group, then SPEC-0004, SPEC-0005, and
+SPEC-0082 in the second. Each has `done` for its `spec.md`, `plan.md`, and
+every Task. SPEC-0004 and SPEC-0005 reached `done` by their own declared
+`active` to `done` edge, in a commit of their own, before any move.
+
+The sixteen packages that stay are surveyed but not disposed of. Each is
+recorded with its anchor state and the reason it stays, and the reasons divide
+into a current contract, open work, a withdrawal the registry cannot express, a
+retention the profile cannot express, and a decision nobody has taken.
 
 SPEC-0068 and SPEC-0070 stay in Stage 03. Both carry `status: "superseded"` and
 both state in their own Overview that SPEC-0072 owns the current implementation
@@ -113,9 +122,10 @@ python3 scripts/qa.py full
 | VAL-FPR-001 | Every unit in this round is recorded with its anchor state, its members, and the consumers it must move, before any move | Retention Task |
 | VAL-FPR-002 | The blocked retention of SPEC-0068 and SPEC-0070 is recorded with both observed diagnostics and the successor their bodies already name | Retention Task |
 | VAL-FPR-003 | No current document and no test pins a retained unit's active-stage path after the repointing | Link gate over the whole corpus, and the archive contract tests for the code consumer |
-| VAL-FPR-004 | The seven finished packages are retained in `completed/`, each as one exact unit with one catalog row | Lifecycle and archive gates |
+| VAL-FPR-004 | The ten finished packages are retained in `completed/`, each as one exact unit with one catalog row | Lifecycle and archive gates |
 | VAL-FPR-005 | Full validation re-verifies every catalog row, including the rows this round adds | Archive cutover and full QA |
 | VAL-FPR-006 | The stage index and the requirement pointers name the retained packages, and this package closes with observed results | Staged and full QA |
+| VAL-FPR-007 | Every Stage 03 package that stays is recorded with its anchor state and the observed reason it stays | Retention Task |
 
 ## Traceability
 
@@ -132,3 +142,4 @@ The [Implementation Plan](plan.md) owns order and risk. The
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-004 | Lifecycle gate regressions |
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-005 | Full-lane catalog re-verification |
 | [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-006 | Policy and index review |
+| [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-007 | Disposition survey recorded in the Task |

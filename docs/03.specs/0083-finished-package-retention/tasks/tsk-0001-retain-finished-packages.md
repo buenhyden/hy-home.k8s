@@ -1,6 +1,6 @@
 ---
 title: "Retain the Finished Stage 03 Packages"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -13,16 +13,19 @@ artifact_id: "SPEC-0083-TSK-0001"
 
 ## Overview
 
-This Task records the round: the survey each move starts from, the conflict
-that blocks two of the nine units, the repointing, the seven retentions, and
-the closure. It records observed results only and never promotes a
-repository-static result to hosted, provider-runtime, or live evidence.
+This Task records the round: the surveys each move starts from, the conflict
+that blocks two units, the repointing, the ten retentions, the disposition of
+every package that stays, and the closure. It records observed results only and
+never promotes a repository-static result to hosted, provider-runtime, or live
+evidence.
 
 ## Inputs
 
 - [Spec](../spec.md) owns the contract, and [Plan](../plan.md) owns order.
 - Entry gate: on 2026-09-16 the request owner approved this round after review,
-  with SPEC-0082 held back for its own authorization.
+  with SPEC-0082 held back for its own authorization, then approved SPEC-0004,
+  SPEC-0005 and SPEC-0082 as a second group and a disposition review of every
+  package that would stay.
 - The survey below reads the registry's own unit, mode, and class definitions
   through `scripts/archive_dispositions.py`, so a candidate here is a candidate
   the gates recognize.
@@ -33,19 +36,20 @@ repository-static result to hosted, provider-runtime, or live evidence.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-FPR-001 | Record the survey of the nine units | platform | Done | Recorded below | This Task |
 | WORK-002 | VAL-FPR-002 | Record the conflict that blocks SPEC-0068 and SPEC-0070 and return it to the request owner | platform | Done | Recorded below | This Task |
-| WORK-003 | VAL-FPR-003 | Repoint every current consumer of the seven retained units | platform | Queued | Not executed | Link gate |
-| WORK-004 | VAL-FPR-004 | Retain the seven finished packages in `completed/` | platform | Queued | Not executed | Lifecycle and archive gates |
+| WORK-003 | VAL-FPR-003 | Repoint every current consumer of the ten retained units | platform | Done | 100 references across 14 documents, both stage indexes, and two test fixtures | `PASS CROSS-DOCUMENT` over the whole corpus |
+| WORK-004 | VAL-FPR-004 | Retain the ten finished packages in `completed/` | platform | Done | 22 renames in the first group and 19 in the second, one catalog row each | Staged QA 7/7 PASS per commit |
 | WORK-005 | VAL-FPR-005 | Re-verify every catalog row in the full lane | platform | Queued | Not executed | Archive cutover and full QA |
 | WORK-006 | VAL-FPR-006 | Close this package with its results | platform | Queued | Not executed | Staged and full QA |
+| WORK-007 | VAL-FPR-007 | Record why every Stage 03 package that stays is staying | platform | Done | Sixteen packages in seven groups, recorded below | This Task |
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: the seven packages retained in this round, their consumers
+- **Allowed Paths**: the ten packages retained in this round, their consumers
   in documents and in `tests/`, the Stage 98 index, the Stage 03 index, and this
   package.
 - **Forbidden Paths**: frozen records, ledgers, and retained bodies under
-  `docs/98.archive/`, SPEC-0082, SPEC-0068 and SPEC-0070, `scripts/`,
-  `gitops/`, `infrastructure/`, `policy/`, `secrets/`, `.github/`.
+  `docs/98.archive/`, SPEC-0068 and SPEC-0070, every package that stays,
+  `scripts/`, `gitops/`, `infrastructure/`, `policy/`, `secrets/`, `.github/`.
 - **Approval Required**: the disposition of each unit in this round. Push, pull
   request, and merge are not approved.
 - **Static Validation**: focused checks per work item, `python3 scripts/qa.py
@@ -112,13 +116,85 @@ retention contract or the `sdlc/spec` profile, which this round is not
 authorized to make. This Task returns the question to the request owner and
 changes no contract.
 
-SPEC-0082 is finished but stays. It is the evidence trail of the contract this
-round applies, and ADR-0039 requires its own authorization for its disposition.
+SPEC-0082 was held back at first, because it is the evidence trail of the
+contract this round applies and ADR-0039 requires its own authorization. The
+request owner gave that authorization, so it was retained with the second group.
+
+### Second survey
+
+Read on 2026-09-16 at `90caf0bd`. SPEC-0004 and SPEC-0005 carried `active`
+anchors over work finished long ago. They took the single declared `active` to
+`done` edge in their own commit before any move, so the anchor state decided the
+class rather than the move deciding it.
+
+| Unit | Anchor state | Class | Files | Current consumers |
+| --- | --- | --- | --- | --- |
+| SPEC-0004 | done | `completed/` | 7 | REQ-0001, ADR-0011, AD-0004, policy 0004, runbook 0004 |
+| SPEC-0005 | done | `completed/` | 7 | REQ-0002, ADR-0012, AD-0005, AD index, policy 0004, runbook 0004 |
+| SPEC-0082 | done | `completed/` | 5 | REQ-0003, ADR-0039, research 0002, SPEC-0072 Task, SPEC-0083 |
+
+Two consumer shapes escaped the first search pattern and are recorded so the
+next round does not repeat them. A sibling package cites its neighbour without
+the stage prefix, as `../0082-.../spec.md`, so a search keyed on `03.specs/`
+cannot see it; this package's own citation of SPEC-0082 was caught by the link
+gate rather than by the survey. A slug is not unique across stages either:
+SPEC-0004 and AD-0004 share `0004-argo-rollouts-progressive-delivery`, so a
+bare-slug search also returns the architecture description, which does not move.
+The reliable key is the trailing slash, because a package is a directory and a
+single document is not.
+
+`tests/test_archive_citation_decision.py` names a retained package in two
+fixtures. Both pass the path as a string and neither reads it, so the move did
+not break them; the eighty-seven archive contract tests passed before the change
+and after it. The names had gone stale rather than broken, and the request owner
+chose to repoint them at a package that is still in Stage 03.
+
+### Disposition of the packages that stay
+
+Read on 2026-09-16 at `1698be68`. Sixteen packages remain in Stage 03, this one
+included. Every one was read. None is retained by this round, and the reasons
+differ in what they ask of the next owner.
+
+| Group | Packages | Observation |
+| --- | --- | --- |
+| Active technical contract | SPEC-0008 | Self-declares the current contract for `gitops/`, `infrastructure/` and `scripts/`; ADR-0014 names it as its Spec |
+| Work still open | SPEC-0047, SPEC-0054, SPEC-0062, SPEC-0071, SPEC-0072, SPEC-0077 | At least one member is `queued`, `in-progress` or `blocked`, so the unit has no terminal anchor |
+| Withdrawal recommended, edge undeclared | SPEC-0048, SPEC-0051 | Each carries a dated disposition note from 2026-09-14 naming the blocker and the owner |
+| Draft, no disposition recorded | SPEC-0049, SPEC-0050, SPEC-0078 | Never activated and never judged |
+| Retention blocked by the profile | SPEC-0068, SPEC-0070 | Recorded above |
+| Active, no disposition recorded | SPEC-0006 | Nothing blocks it; no decision has been taken |
+| This package | SPEC-0083 | Closes with this round |
+
+Two registry edges, not three, account for the blocked withdrawals. The
+`spec-plan` domain covers `spec.md` and `plan.md` together and declares
+`draft → active`, `active → done`, `active → superseded` and
+`active → withdrawn`, but no `draft → withdrawn`. The `task` domain declares no
+`queued → cancelled`. Withdrawing a never-activated draft therefore needs either
+a false activation or a new edge, and this round adds neither. SPEC-0078 already
+prescribes the handling those two packages carry: a package whose recommended
+disposition needs an undeclared edge keeps its state and gains a dated
+disposition note naming the blocker and the owner.
+
+SPEC-0006 is unjudged rather than blocked, and the difference decides who acts
+next. Both `active → done` and `active → withdrawn` are declared, so no contract
+stands in the way. Its own Overview says it remains active only for the
+historical harness-gap baseline and hands its live ownership to SPEC-0025, which
+is itself already retained in `completed/`. Outside the archive and the stage
+index, no current document names it as an owner. What it needs is a decision,
+not a contract change.
+
+Three observations about the open packages are recorded without judgement,
+because this round is not authorized to dispose of an open package. SPEC-0047
+holds five `queued` Tasks last touched on 2026-09-10 and no `in-progress`
+member. SPEC-0054 holds `tsk-0009` from 2026-09-03 and `tsk-0014` from
+2026-08-31 in the same shape. SPEC-0062 holds three Tasks `blocked` since
+2026-08-29, and `blocked → in-progress` is declared, so the registry is not what
+holds them.
 
 ## Verification Summary
 
-WORK-001 and WORK-002 are done and recorded above. WORK-003 to WORK-006 have
-not run.
+WORK-001 to WORK-004 and WORK-007 are done and recorded above. WORK-005 and
+WORK-006 have not run.
 
 ## Traceability
 
@@ -130,7 +206,8 @@ Each work item carries its observed result.
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done. | This Task. |
 | [WORK-002](../plan.md#work-breakdown) | Done. | This Task. |
-| [WORK-003](../plan.md#work-breakdown) | Not executed. | Link gate. |
-| [WORK-004](../plan.md#work-breakdown) | Not executed. | Lifecycle and archive gates. |
+| [WORK-003](../plan.md#work-breakdown) | Done. | Link gate over the whole corpus. |
+| [WORK-004](../plan.md#work-breakdown) | Done. | Lifecycle and archive gates, staged QA per commit. |
+| [WORK-007](../plan.md#work-breakdown) | Done. | This Task. |
 | [WORK-005](../plan.md#work-breakdown) | Not executed. | Archive cutover and full QA. |
 | [WORK-006](../plan.md#work-breakdown) | Not executed. | Staged and full QA. |
