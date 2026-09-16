@@ -69,6 +69,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry-classified lifecycle and staged-index transitions |
 | `archive_recovery.py`, `archive_validation.py`, `archive_cutover.py`, `archive_cutover_manifest.py` | bounded historical recovery and sealed Archive checks |
 | `json_schema_validation.py` | offline JSON Schema loading shared by production validators |
+| `run-archive-contract-tests.py` | runs the Stage 98 archive contract regressions as one registered gate |
 
 ### Agent governance owners
 
