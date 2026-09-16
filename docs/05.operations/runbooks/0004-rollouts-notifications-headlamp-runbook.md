@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.0.2"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -189,14 +189,14 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Rollouts Spec**: [`../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
-- **Notifications Spec**: [`../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
-- **Rollouts Task records**: [Spec 0004 Plan](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- **Notifications Task records**: [Spec 0005 Plan](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
+- **Rollouts Spec**: `SPEC-0004` (retained; reach it through the Archive index)
+- **Notifications Spec**: `SPEC-0005` (retained; reach it through the Archive index)
+- **Rollouts Task records**: Spec 0004 Plan
+- **Notifications Task records**: Spec 0005 Plan
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Argo Rollouts Progressive Delivery Spec](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
-| [Argo Notifications Slack Spec](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |
+| N/A — SPEC-0004 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| N/A — SPEC-0005 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |

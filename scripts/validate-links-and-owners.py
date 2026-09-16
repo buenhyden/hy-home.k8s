@@ -2863,12 +2863,68 @@ def _context_migration_proof(context: Context) -> MigrationProof:
         raise ConfigurationError("generic migration recovery proof differs") from exc
 
 
+def _retention_catalog_targets(
+    context: Context,
+) -> dict[PurePosixPath, PurePosixPath]:
+    """Return the moves an approved retention recorded outside any ledger.
+
+    ADR-0039 retains a finished unit by moving it into Stage 98 byte for byte
+    and recording the move as one Retention Catalog row. The document is not
+    removed, so a sealed row whose endpoint was retained still names a current
+    owner; it just lives at the retained path now. A row names one unit, so a
+    package row names the directory and a member resolves through containment.
+    """
+
+    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
+    if index_text is None:
+        try:
+            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            return {}
+    rows, errors = parse_catalog(index_text)
+    if errors:
+        return {}
+    moves: dict[PurePosixPath, PurePosixPath] = {}
+    for record, row in rows.items():
+        origin = row.envelope.original_path
+        moves[origin] = record
+        # Retention is exact, so the retained tree holds the same entries the
+        # origin held. Expanding them keeps a member of a retained package
+        # resolvable through the same successor lookup a single document uses.
+        directory = context.root / record
+        if not directory.is_dir():
+            continue
+        for member in sorted(directory.rglob("*")):
+            if not member.is_file():
+                continue
+            relative = member.relative_to(directory).as_posix()
+            moves[origin / relative] = record / relative
+    return moves
+
+
 def _generic_migration_targets(context: Context) -> dict[PurePosixPath, PurePosixPath]:
     proof = _context_migration_proof(context)
-    return {
+    targets = {
         PurePosixPath(source): PurePosixPath(target)
         for source, target in proof.targets.items()
     }
+    for source, record in _retention_catalog_targets(context).items():
+        targets.setdefault(source, record)
+    # A sealed row names the successor that was current when the row was
+    # sealed, and a later cycle may have moved that successor in turn: a
+    # retired router becomes a plan, and an approved retention then moves the
+    # plan into Stage 98. Each consumer asks this map once, so the walk ends
+    # here. A path already seen stops the walk, so a cycle resolves to itself
+    # rather than looping.
+    resolved: dict[PurePosixPath, PurePosixPath] = {}
+    for source in targets:
+        seen = {source}
+        terminal = targets[source]
+        while terminal in targets and terminal not in seen:
+            seen.add(terminal)
+            terminal = targets[terminal]
+        resolved[source] = terminal
+    return resolved
 
 
 def _work054_wp003_owner_merges(

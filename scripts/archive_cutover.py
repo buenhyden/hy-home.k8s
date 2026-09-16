@@ -542,6 +542,42 @@ def _sealed_staged_ledgers(
     return tuple(ledgers)
 
 
+def _retained_original_paths(root: Path) -> frozenset[str]:
+    """Return the active-stage paths a Retention Catalog row already retained.
+
+    A sealed row names the successor that was current when the row was sealed.
+    An approved disposition may later retain that successor as an exact unit,
+    which moves the bytes into Stage 98 without a ledger row: ADR-0039 records
+    the move in the Retention Catalog rather than in a migration, so the
+    projection learns it here. The path is proved rather than waived -- a
+    catalog row must name it in the Retention Envelope it pins.
+
+    A row names one unit, so a package row names the directory while the sealed
+    row names a document inside it. Containment is what matches the two, and it
+    is compared segment by segment so a row can never admit a sibling whose name
+    merely starts the same way.
+    """
+
+    try:
+        index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return frozenset()
+    rows, errors = parse_catalog(index_text)
+    if errors:
+        return frozenset()
+    return frozenset(row.envelope.original_path.as_posix() for row in rows.values())
+
+
+def _is_retained_original(path: str, retained_originals: frozenset[str]) -> bool:
+    """Report whether a retained unit is this path or encloses it."""
+
+    parts = PurePosixPath(path).parts
+    return any(
+        parts[: len(candidate)] == candidate
+        for candidate in (PurePosixPath(origin).parts for origin in retained_originals)
+    )
+
+
 def _work054_migration_projection(
     root: Path,
     tracked_regular_blobs: Mapping[str, str],
@@ -580,6 +616,7 @@ def _work054_migration_projection(
     later_edges, later_retired = _later_ledger_edges(
         root, tracked_regular_blobs, failure
     )
+    retained_originals = _retained_original_paths(root)
     for migration_path in WORK054_MIGRATION_PATHS:
         previous_legacy = ""
         for row in rows_by_path[migration_path]:
@@ -628,9 +665,11 @@ def _work054_migration_projection(
             if (
                 terminal in later_retired
                 or terminal in RETIRED_UNUSED_CAPACITY_FORM_PATHS
+                or _is_retained_original(terminal, retained_originals)
             ):
                 # The later ledger deleted the endpoint rather than moving it,
-                # or current authority retired its unused authoring capacity.
+                # current authority retired its unused authoring capacity, or an
+                # approved disposition retained the endpoint as an exact unit.
                 # Either way this sealed row composes no current owner and
                 # resolves through the Archive index instead.
                 dropped.add(legacy)

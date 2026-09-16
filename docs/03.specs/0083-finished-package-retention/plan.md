@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Implementation Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -13,8 +13,10 @@ artifact_id: "SPEC-0083-PLAN-0001"
 
 ## Global Constraints
 
-No contract, registry, or validator changes. No frozen rewrite. Push, pull
-request, and merge stay with the request owner. Each logical commit runs staged
+No contract, registry, or citation-table changes, and no frozen rewrite. The
+request owner authorized repairing the consumers the retention proved wrong,
+including `scripts/` and `tests/`, rather than reverting it. Push, pull request,
+and merge stay with the request owner. Each logical commit runs staged
 QA over its exact index, and the final tree runs one full QA.
 
 ## Overview
@@ -53,6 +55,7 @@ package that stays; its state is recorded and returned to the request owner.
 | WP-005 | Re-verify every Retention Catalog row in the full lane, including the seven rows this round adds | WP-004 | The seven retentions are staged | Archive cutover re-verification and full QA |
 | WP-006 | Record the results and close this package | WP-001 to WP-005, WP-007 | Full QA on the final tree | Staged and full QA |
 | WP-007 | Record the observed disposition of every Stage 03 package that stays | WP-004 | The retained units have left the stage | The Task records each remaining package, its anchor state, and the reason it stays |
+| WP-008 | Repair every consumer the retention proved wrong, in documents, validators and the test budget | WP-004 | Full QA named the failing gates | Full QA and the whole unit-test suite pass with no pin lowered |
 
 ## Verification Plan
 
@@ -92,3 +95,4 @@ the final tree passes staged and full QA.
 | [VAL-FPR-005](spec.md#success-criteria--verification-plan) | WP-005 | [tsk-0001](tasks/tsk-0001-retain-finished-packages.md) |
 | [VAL-FPR-006](spec.md#success-criteria--verification-plan) | WP-006 | [tsk-0001](tasks/tsk-0001-retain-finished-packages.md) |
 | [VAL-FPR-007](spec.md#success-criteria--verification-plan) | WP-007 | [tsk-0001](tasks/tsk-0001-retain-finished-packages.md) |
+| [VAL-FPR-008](spec.md#success-criteria--verification-plan) | WP-008 | [tsk-0001](tasks/tsk-0001-retain-finished-packages.md) |

@@ -1918,7 +1918,16 @@ class ArchiveValidationTest(unittest.TestCase):
         # retention ledger costs because every row's replacement is the
         # responsibility router, a tracked file the corpus already proves, so no
         # row adds a target proof of its own.
-        budget = 248
+        #
+        # It moved 248 -> 252 when ADR-0039 retained the finished Stage 03
+        # packages. Retaining Spec 0004 vacates `docs/03.specs/0004-.../` while
+        # MIG-0002, MIG-0004 and MIG-0011 still name paths inside it, so the
+        # archived-bytes proof goes through Git-first recovery: branch
+        # resolution, the last add-or-modify commit, that commit's exact tree
+        # entry, and one batched object read. That is the same fixed four a
+        # vacating rename costs above, and it stays four rather than eight
+        # because Spec 0004 and Spec 0005 ride one batched operand list.
+        budget = 252
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. That is a fixed

@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Technical Specification"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -33,9 +33,8 @@ Catalog row per retained unit; the stage index and requirement pointers that
 name them; the recorded finding that blocks the two superseded proposals; and a
 recorded disposition for every Stage 03 package that stays.
 
-Out of scope: any change to the retention contract, the citation table, the
-registry, or the validators; the retention of SPEC-0068 and SPEC-0070, which
-the contracts block; the frozen ADR-0032 generation and the sixteen ADR-0038
+Out of scope: any change to the retention contract, the citation table, or the
+registry; the retention of SPEC-0068 and SPEC-0070, which the contracts block; the frozen ADR-0032 generation and the sixteen ADR-0038
 retained bodies; the disposition of any package that stays, which is recorded
 and returned rather than decided here; any package that still has a
 non-terminal member; and every live cluster, provider runtime, and network
@@ -86,9 +85,28 @@ added.
 
 ## Interfaces & Data Structures
 
-No interface changes. `scripts/archive_dispositions.py`,
-`scripts/archive_objects.py`, and the lifecycle, link, and archive gates are
-consumed as they stand.
+No contract, registry, or citation-table changes. Retaining a unit did prove
+three consumers of the move that no contract had taught about ADR-0039, and the
+request owner authorized repairing them in place rather than reverting the
+retention. Each repair states a fact the retention created; none lowers a gate.
+
+- An operations document may not name Stage 98 at all, and the Promoted owner
+  table may not hold a bare label. Both hold at once through the `N/A — reason`
+  form this corpus already uses, so the two Stage 05 consumers name the package
+  by identifier and reach it through the Archive index.
+- A sealed WORK-054 or WORK-109 row names the successor that was current when
+  it was sealed. Retention moves that successor without a ledger row, so
+  `scripts/validate-links-and-owners.py` composes the Retention Catalog as
+  successor edges and resolves each chain to its end. Retention is a move, not
+  a removal, so the row still names a current owner.
+- `scripts/archive_cutover.py` asks a different question: whether a terminal
+  target is a current tracked file. A retained endpoint is not, so that sealed
+  row composes no current owner and resolves through the Archive index, which
+  is what the same branch already does for a deleted endpoint. The two modules
+  stay different because their questions differ.
+- The Git subprocess budget in `tests/test_archive_validation.py` moves 248 to
+  252. Vacating a path costs a fixed four for Git-first recovery, which the
+  constant's own history already records twice.
 
 ## Edge Cases & Error Handling
 
@@ -126,6 +144,7 @@ python3 scripts/qa.py full
 | VAL-FPR-005 | Full validation re-verifies every catalog row, including the rows this round adds | Archive cutover and full QA |
 | VAL-FPR-006 | The stage index and the requirement pointers name the retained packages, and this package closes with observed results | Staged and full QA |
 | VAL-FPR-007 | Every Stage 03 package that stays is recorded with its anchor state and the observed reason it stays | Retention Task |
+| VAL-FPR-008 | Every consumer the retention proved wrong is repaired in place, and no gate, contract, or test pin is lowered to pass | Full QA and the unit-test suite |
 
 ## Traceability
 
@@ -143,3 +162,4 @@ The [Implementation Plan](plan.md) owns order and risk. The
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-005 | Full-lane catalog re-verification |
 | [REQ-0003-FR-0012](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-006 | Policy and index review |
 | [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-007 | Disposition survey recorded in the Task |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-FPR-008 | Gate and unit-test regressions |

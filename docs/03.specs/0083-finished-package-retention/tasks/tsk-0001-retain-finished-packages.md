@@ -1,6 +1,6 @@
 ---
 title: "Retain the Finished Stage 03 Packages"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -41,15 +41,17 @@ evidence.
 | WORK-005 | VAL-FPR-005 | Re-verify every catalog row in the full lane | platform | Queued | Not executed | Archive cutover and full QA |
 | WORK-006 | VAL-FPR-006 | Close this package with its results | platform | Queued | Not executed | Staged and full QA |
 | WORK-007 | VAL-FPR-007 | Record why every Stage 03 package that stays is staying | platform | Done | Sixteen packages in seven groups, recorded below | This Task |
+| WORK-008 | VAL-FPR-008 | Repair every consumer the retention proved wrong | platform | Done | Two Stage 05 documents, two validators, one test budget | 1,099 unit tests pass with four skips; link, lifecycle and cutover gates pass |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: the ten packages retained in this round, their consumers
-  in documents and in `tests/`, the Stage 98 index, the Stage 03 index, and this
-  package.
+  in documents, in `scripts/` and in `tests/`, the Stage 98 index, the Stage 03
+  index, and this package. The request owner widened this on 2026-09-16 to the
+  consumers the retention proved wrong, having declined to revert it.
 - **Forbidden Paths**: frozen records, ledgers, and retained bodies under
   `docs/98.archive/`, SPEC-0068 and SPEC-0070, every package that stays,
-  `scripts/`, `gitops/`, `infrastructure/`, `policy/`, `secrets/`, `.github/`.
+  `gitops/`, `infrastructure/`, `policy/`, `secrets/`, `.github/`.
 - **Approval Required**: the disposition of each unit in this round. Push, pull
   request, and merge are not approved.
 - **Static Validation**: focused checks per work item, `python3 scripts/qa.py
@@ -191,10 +193,34 @@ member. SPEC-0054 holds `tsk-0009` from 2026-09-03 and `tsk-0014` from
 2026-08-29, and `blocked → in-progress` is declared, so the registry is not what
 holds them.
 
+### Consumers the retention proved wrong
+
+Full QA over the working tree named two failing gates that staged QA could not
+see, because both belong to the full lane only. Both trace to the same act:
+moving a finished package out of Stage 03. The request owner declined to revert
+the retention and authorized repairing each consumer instead. Every repair below
+states a fact the retention created; none lowers a gate, a contract or a pin.
+
+| Consumer | What the retention broke | Repair |
+| --- | --- | --- |
+| `docs/05.operations/policies/0004-...md`, `docs/05.operations/runbooks/0004-...md` | An operations document may not name Stage 98, and the Promoted owner table may not hold a bare label | Name the package by identifier and declare the exclusion in the `N/A — reason` form the corpus already uses |
+| `scripts/validate-links-and-owners.py` | A sealed WORK-054 or WORK-109 row named a successor the retention moved, so the edge read as vacated | Compose the Retention Catalog as successor edges and resolve each chain to its end |
+| `scripts/archive_cutover.py` | A sealed row's terminal target was no longer a current tracked file | Treat a retained endpoint the way the same branch already treats a deleted one: it composes no current owner and resolves through the Archive index |
+| `tests/test_archive_validation.py` | Vacating `docs/03.specs/0004-.../` sent the archived-bytes proof through Git-first recovery | Move the Git subprocess budget 248 to 252 and record why, as the constant's own history does |
+
+Two observations are recorded because they were nearly missed. The two Stage 05
+rules are not one rule: removing the archive link satisfied the first and broke
+the second, and only the `N/A — reason` form satisfies both. And the two
+validators are left deliberately different. One asks where an alias resolves, so
+a retained endpoint is a move and composes; the other asks whether a terminal
+target is a current tracked file, so a retained endpoint is not and drops.
+Making them identical for symmetry would change an answer neither question
+asked.
+
 ## Verification Summary
 
-WORK-001 to WORK-004 and WORK-007 are done and recorded above. WORK-005 and
-WORK-006 have not run.
+WORK-001 to WORK-004, WORK-007 and WORK-008 are done and recorded above.
+WORK-005 and WORK-006 have not run.
 
 ## Traceability
 
@@ -209,5 +235,6 @@ Each work item carries its observed result.
 | [WORK-003](../plan.md#work-breakdown) | Done. | Link gate over the whole corpus. |
 | [WORK-004](../plan.md#work-breakdown) | Done. | Lifecycle and archive gates, staged QA per commit. |
 | [WORK-007](../plan.md#work-breakdown) | Done. | This Task. |
+| [WORK-008](../plan.md#work-breakdown) | Done. | 1,099 unit tests pass; link, lifecycle and cutover gates pass. |
 | [WORK-005](../plan.md#work-breakdown) | Not executed. | Archive cutover and full QA. |
 | [WORK-006](../plan.md#work-breakdown) | Not executed. | Staged and full QA. |
