@@ -34,7 +34,7 @@ live evidence.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-SBC-001 | Record the survey of every remaining Stage 03 package | platform | Done | Sixteen packages recorded below with anchor state, non-terminal members, and consumers | This Task |
-| WORK-002 | VAL-SBC-002 | Close the two registry gaps as gap-fills | platform | Queued | Pending | Registry diff and lifecycle gate |
+| WORK-002 | VAL-SBC-002 | Close the two registry gaps as gap-fills | platform | Done | Two profiles and one domain changed, 14 added and 4 removed lines, no existing document newly in violation | Recorded below |
 | WORK-003 | VAL-SBC-003 | Close SPEC-0071, SPEC-0078, SPEC-0062, and SPEC-0054 | platform | Queued | Pending | Lifecycle gate |
 | WORK-004 | VAL-SBC-004 | Withdraw SPEC-0048 and SPEC-0051 and cancel their Tasks | platform | Queued | Pending | Lifecycle gate |
 | WORK-005 | VAL-SBC-005 | Repair SPEC-0006's stale sibling path and close it | platform | Queued | Pending | Link gate |
@@ -106,6 +106,38 @@ domain declares `draft` to `active`, `active` to `done`, `active` to
 `docs/98.archive/` holds `completed/`, `migrations/` and `superseded/` and no
 `retired/`, so a withdrawn package stays at its Stage 03 path in this round.
 
+### The two registry gap-fills
+
+Applied on 2026-09-16. The change is fourteen added and four removed lines in
+`docs/99.templates/registry.json`, and it was proved by comparing the parsed
+registry before and after rather than by reading the diff alone.
+
+| Gap | Before | After | Scope proof |
+| --- | --- | --- | --- |
+| A superseded spec cannot name its successor | `sdlc/spec` declared `optional` empty, so the allowed key set was exactly the eight required keys | `superseded_by` is optional and last in `order` | The only profiles that differ from their previous form are `sdlc/spec` and its template pair; `required` and `forbidden` are unchanged |
+| A draft spec or plan cannot be withdrawn | `spec-plan` declared `draft` to `active`, `active` to `done`, `active` to `superseded`, and `active` to `withdrawn` | `draft` to `withdrawn` is declared, grouped with the other `draft` edge | The only domain that differs is `spec-plan`; its `states` are unchanged and the `task` domain is unchanged, so `queued` still reaches no terminal state directly |
+
+Neither is a relaxation. The allowed key set is computed as required plus
+optional, so widening `optional` admits one key and exempts no document from any
+assertion; `superseded_by` is now optional in twenty-five profiles, required in
+none, and forbidden in none. The `withdrawn` state already existed in the
+`spec-plan` domain and only its approach was missing, which the sibling
+`requirement-architecture` domain has always declared.
+
+The template pair was not optional. `_assert_template_source_parity` in
+`scripts/validate-document-contract-registry.py` requires every template profile
+to inherit its source profile's class, frontmatter, headings, and body contract
+exactly, exempting only `artifact_id` and `layer`. Changing `sdlc/spec` alone
+split that pair, so `common/template-sdlc-spec` carries the same key. The
+template document itself gains nothing, because the key is optional.
+
+Observed after the change, on the same index: `document-contract-registry` PASS
+over 800 paths with no uncovered or ambiguous path, `markdown-profiles` PASS
+with no violation, `document-lifecycle` PASS in strict mode, `links-and-owners`
+PASS over the whole corpus, and `python3 scripts/run-archive-contract-tests.py`
+PASS with five modules and 87 tests. No existing document became a violation,
+which is the evidence that distinguishes a gap-fill from a relaxation.
+
 ### Consumers that must move before a retention
 
 | Consumer | Pins | Repair |
@@ -139,7 +171,7 @@ Each work item carries its observed result.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done. | The survey of all sixteen packages is recorded below. |
-| [WORK-002](../plan.md#work-breakdown) | Queued. | Registry diff and lifecycle gate. |
+| [WORK-002](../plan.md#work-breakdown) | Done. | Registry gap-fill recorded below; five focused gates and 87 archive contract tests pass. |
 | [WORK-003](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |
 | [WORK-004](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |
 | [WORK-005](../plan.md#work-breakdown) | Queued. | Link gate. |
