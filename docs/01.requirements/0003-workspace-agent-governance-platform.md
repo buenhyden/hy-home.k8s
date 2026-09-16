@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.5.0"
+version: "1.5.1"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -178,6 +178,9 @@ Retaining the fifteen remaining superseded decisions is owned by
 The unit archive retention contract that ADR-0039 adopts, its cutover, and the
 first exact disposition are owned by
 [SPEC-0082](../03.specs/0082-unit-archive-retention-contract/spec.md).
+Retaining the finished and superseded Stage 03 packages under that contract is
+owned by
+[SPEC-0083](../03.specs/0083-finished-package-retention/spec.md).
 
 ## Traceability
 
