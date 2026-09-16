@@ -1,8 +1,8 @@
 ---
 title: "Dead Contract and Duplicate Execution Retirement Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -17,6 +17,8 @@ This Plan orders the retirement work the Spec approves into eight independently
 revertible packages. Each package owns one rule, names its files, states its
 focused RED/GREEN check, and reverts by its own commit without disturbing the
 others.
+
+**Closure (2026-09-16).** Six of the eight criteria are met with commit evidence, `VAL-DCR-005` in this round. Closure records that the package has no remaining reason to stay open, not that every criterion passed. `VAL-DCR-006` and `VAL-DCR-007` stay unmet and are recorded as deferrals with named owners: the first needs a new sealed migration to retire two skills that a sealed ledger still pins as live successors, and the second needs a Stage 99 route for `evals` before the evaluation root can enter the document boundary. Neither authority was granted here. `VAL-DCR-005` was met more narrowly than proposed, because only two of the seven frontmatter helpers were duplicates and the rest differ in their failure contract; the Task records that finding. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md).
 
 ## Context
 

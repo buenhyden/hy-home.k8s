@@ -1,8 +1,8 @@
 ---
 title: "Retire Dead Contracts and Duplicate Execution"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -18,6 +18,8 @@ per-package focused evidence, the staged evidence for each logical commit, the
 final full result, and the handoff record. It records observed results only and
 never promotes a repository-static result to hosted, provider-runtime or live
 evidence.
+
+**Closure (2026-09-16).** Six of eight work items are executed with commit evidence, WORK-005 in this round. WORK-006 and WORK-007 stay unfinished on authority the request owner did not grant here: retiring the two remaining skills needs a new sealed migration, and routing `evals` needs a Stage 99 route first. Both are recorded above as deferrals with named owners rather than claimed, which is the pattern SPEC-0073 and SPEC-0076 used to close. This change takes the declared `in-progress` to `done` edge under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md).
 
 ## Inputs
 
@@ -36,7 +38,7 @@ evidence.
 | WORK-002 | VAL-DCR-002 | Add the collector-shape guard, remove never-collected classes, repair the empty ledger traversal | platform | Done | Guard RED on two classes, then GREEN; traversal iterates the sealed ledgers | `e09acd85`; staged QA PASS |
 | WORK-003 | VAL-DCR-003 | Remove absent-subject cutover pins with their importing tests | platform | Done | Rehome and normalization admissions and WP-004A pins removed; lifecycle output unchanged | `c9cd53b7`; staged QA PASS |
 | WORK-004 | VAL-DCR-004 | Add the single-execution guard and remove pass-through assertions | platform | Done | Guard RED on four re-executions, then GREEN | `bcf28058`; staged QA PASS |
-| WORK-005 | VAL-DCR-005 | Resolve duplicated helpers to the shared bounded-input owner | platform | Deferred | Not executed | None |
+| WORK-005 | VAL-DCR-005 | Resolve duplicated helpers to the shared bounded-input owner | platform | Done | Two of the seven frontmatter helpers were true duplicates and resolved to the public owner; the other five differ in their failure contract and were left apart | `fade5b9b`; validator stdout byte-identical at `e1925925356b`, 87 archive contract tests and 182 dependent tests pass |
 | WORK-006 | VAL-DCR-006 | Consolidate the skill roster and admit the archive cutover skill | platform | Partial | Archive cutover skill admitted; unpractised marker removed; two merges deferred on authority | `c200cf4f`; staged QA PASS |
 | WORK-007 | VAL-DCR-007 | Close the routing, evaluation-root and unreachable-selector gaps | platform | Deferred | Evaluation-root change blocked on authority; no unreachable selector proven | Read-only probe recorded below |
 | WORK-008 | VAL-DCR-008 | Record the link boundary rationale at its rule owner | platform | Done | Rationale added; boundary regressions unchanged | `33e77550`; staged QA PASS |
@@ -102,8 +104,20 @@ Deferred on authority:
   unrouted, so it needs a Stage 99 route first, which this Task forbids. Next
   owner: the Stage 99 registry owner.
 
-Not executed: WORK-005. Residual risk is unchanged duplication of front-matter,
-link, process and mapping helpers; next owner is a follow-up Task.
+Executed on 2026-09-16 under
+[SPEC-0084](../../0084-stage03-backlog-closeout/spec.md): WORK-005, narrower than
+the item proposed. Reading all seven frontmatter helpers showed that only two were
+duplicates, `archive_dispositions.frontmatter_mapping` and the private copy in
+`scripts/validate-links-and-owners.py`, with the same body and the same result.
+The private copy is gone and its one call site uses the public owner. The other
+five were left apart on purpose: they differ in what they do when parsing fails,
+one emitting a diagnostic and stopping, one raising, and three returning
+defaults, so merging them would move each gate's failure contract rather than
+remove duplication. Two helpers in that group even share the name
+`_frontmatter` while returning different shapes.
+
+Residual risk, unchanged: duplication among the link, process and mapping
+helpers, which this round did not examine. Next owner: a follow-up Task.
 
 Not proven dead and therefore kept: the `ci` selector lane. The hosted workflow
 calls `qa.py ci`, which maps it to the all-files lane.
@@ -120,7 +134,7 @@ Each work item below carries its observed result and durable evidence.
 | [WORK-002](../plan.md#work-breakdown) | Done. | Collector guard RED then GREEN; commit `e09acd85`. |
 | [WORK-003](../plan.md#work-breakdown) | Done. | Lifecycle output unchanged; commit `c9cd53b7`. |
 | [WORK-004](../plan.md#work-breakdown) | Done. | Single-execution guard RED on four, then GREEN; commit `bcf28058`. |
-| [WORK-005](../plan.md#work-breakdown) | Deferred; not executed. | None. |
+| [WORK-005](../plan.md#work-breakdown) | Done; narrower than proposed. | Byte-identical validator output `e1925925356b`; commit `fade5b9b`. |
 | [WORK-006](../plan.md#work-breakdown) | Partial; merges deferred on authority. | Governance gate PASS with seventeen skills; commit `c200cf4f`. |
 | [WORK-007](../plan.md#work-breakdown) | Deferred on authority. | Route probe: nineteen unrouted fixtures under `evals/responses/`. |
 | [WORK-008](../plan.md#work-breakdown) | Done. | Boundary regressions unchanged; commit `33e77550`. |
