@@ -2,7 +2,7 @@
 title: "Retain the Finished Stage 03 Packages"
 version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
@@ -38,8 +38,8 @@ evidence.
 | WORK-002 | VAL-FPR-002 | Record the conflict that blocks SPEC-0068 and SPEC-0070 and return it to the request owner | platform | Done | Recorded below | This Task |
 | WORK-003 | VAL-FPR-003 | Repoint every current consumer of the ten retained units | platform | Done | 100 references across 14 documents, both stage indexes, and two test fixtures | `PASS CROSS-DOCUMENT` over the whole corpus |
 | WORK-004 | VAL-FPR-004 | Retain the ten finished packages in `completed/` | platform | Done | 22 renames in the first group and 19 in the second, one catalog row each | Staged QA 7/7 PASS per commit |
-| WORK-005 | VAL-FPR-005 | Re-verify every catalog row in the full lane | platform | Queued | Not executed | Archive cutover and full QA |
-| WORK-006 | VAL-FPR-006 | Close this package with its results | platform | Queued | Not executed | Staged and full QA |
+| WORK-005 | VAL-FPR-005 | Re-verify every catalog row in the full lane | platform | Done | Archive cutover re-verified 25 records, 198 historical links, 25 secret-clean | Full QA 23/23 PASS on 2026-09-16 |
+| WORK-006 | VAL-FPR-006 | Close this package with its results | platform | Done | Recorded here and in the Stage 03 index | Staged QA 12/12 PASS and full QA 23/23 PASS |
 | WORK-007 | VAL-FPR-007 | Record why every Stage 03 package that stays is staying | platform | Done | Sixteen packages in seven groups, recorded below | This Task |
 | WORK-008 | VAL-FPR-008 | Repair every consumer the retention proved wrong | platform | Done | Two Stage 05 documents, two validators, one test budget | 1,099 unit tests pass with four skips; link, lifecycle and cutover gates pass |
 
@@ -219,8 +219,15 @@ asked.
 
 ## Verification Summary
 
-WORK-001 to WORK-004, WORK-007 and WORK-008 are done and recorded above.
-WORK-005 and WORK-006 have not run.
+Every work item is done and recorded above. The final tree ran
+`python3 scripts/qa.py full` on 2026-09-16 and reported 23 gates, 23 PASS and no
+FAIL, with `archive-cutover` re-verifying 25 records and 198 historical links
+and `unit-tests` running 1,099 tests with four skips and no failure. Each
+logical commit ran `python3 scripts/qa.py staged` over its own index and passed.
+
+These are repository-static results. No hosted CI run, provider runtime, live
+cluster or network action is claimed by them, and push, pull request and merge
+stay with the request owner.
 
 ## Traceability
 
@@ -236,5 +243,5 @@ Each work item carries its observed result.
 | [WORK-004](../plan.md#work-breakdown) | Done. | Lifecycle and archive gates, staged QA per commit. |
 | [WORK-007](../plan.md#work-breakdown) | Done. | This Task. |
 | [WORK-008](../plan.md#work-breakdown) | Done. | 1,099 unit tests pass; link, lifecycle and cutover gates pass. |
-| [WORK-005](../plan.md#work-breakdown) | Not executed. | Archive cutover and full QA. |
-| [WORK-006](../plan.md#work-breakdown) | Not executed. | Staged and full QA. |
+| [WORK-005](../plan.md#work-breakdown) | Done. | Archive cutover re-verification and full QA 23/23 PASS. |
+| [WORK-006](../plan.md#work-breakdown) | Done. | Staged QA 12/12 PASS and full QA 23/23 PASS. |

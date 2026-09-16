@@ -2,7 +2,7 @@
 title: "Finished Package Retention Technical Specification"
 version: "0.3.0"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
