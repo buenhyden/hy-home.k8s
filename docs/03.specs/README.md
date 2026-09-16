@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.13"
+version: "0.5.14"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -189,7 +189,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0077-dead-contract-and-duplicate-execution-retirement/spec.md`](./0077-dead-contract-and-duplicate-execution-retirement/spec.md) | Retirement of unreachable validation code, absent-subject assertions, and same-snapshot duplicate gate execution | Active | 기준선 `qa.py full`이 22/22 PASS인 상태에서 green이 드러내지 못하는 결함을 처분한다. 도달 불가능한 cross-document 서브트리와 수집되지 않는 test class, 대상이 사라진 cutover pin, `unit-tests` 안에서 같은 snapshot에 재실행되는 등록 gate, 코퍼스가 실천하지 않는 skill 의무를 제거하고 archive cutover 워크플로에 소유 skill을 부여한다. Gate 의미, 문서 route, profile, 링크 경계 동작은 바뀌지 않는다. | 2026-09-14 |
 | [`./0078-document-currency-reconciliation/spec.md`](./0078-document-currency-reconciliation/spec.md) | Reconciliation of stale and implementation-conflicting document statements and Stage 03 lifecycle state | Draft | `docs/` 전반에서 현재 구현과 다른 명령·경로·리소스 이름·버전·결정 서술을 근거와 함께 바로잡고, 구현되었거나 후속 작업으로 대체된 Stage 03 package를 다음 단일 lifecycle edge로 옮긴다. 미완료 작업은 구현하지 않고 처분과 차단 사유만 기록한다. | 2026-09-14 |
 | [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished Stage 03 packages | Done | 완료된 package 열 개를 `completed/`에 단위 그대로 보존하고 소비자를 먼저 옮기며, 구현 전에 대체된 제안 두 개는 계약 충돌로 보존이 막힌 사실과 잔류하는 열여섯 개의 잔류 사유를 기록하고, 보존이 어긋나게 만든 소비자를 수리한다. | 2026-09-16 |
-| [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Draft | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. | 2026-09-16 |
+| [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Active | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. | 2026-09-16 |
 
 ### Helper Templates
 

@@ -2,7 +2,7 @@
 title: "Close the Stage 03 Backlog"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
@@ -33,7 +33,7 @@ live evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-SBC-001 | Record the survey of every remaining Stage 03 package | platform | Queued | Pending | This Task |
+| WORK-001 | VAL-SBC-001 | Record the survey of every remaining Stage 03 package | platform | Done | Sixteen packages recorded below with anchor state, non-terminal members, and consumers | This Task |
 | WORK-002 | VAL-SBC-002 | Close the two registry gaps as gap-fills | platform | Queued | Pending | Registry diff and lifecycle gate |
 | WORK-003 | VAL-SBC-003 | Close SPEC-0071, SPEC-0078, SPEC-0062, and SPEC-0054 | platform | Queued | Pending | Lifecycle gate |
 | WORK-004 | VAL-SBC-004 | Withdraw SPEC-0048 and SPEC-0051 and cancel their Tasks | platform | Queued | Pending | Lifecycle gate |
@@ -70,14 +70,61 @@ live evidence.
   retained unit is frozen and only a forward decision changes it.
 - **Evidence Location**: This Task record.
 
+### Survey
+
+Read on 2026-09-16 at `e062290e`, the tree SPEC-0083 closed on. Every package
+below is one SPEC-0083 surveyed and returned. The disposition column states the
+terminal state this round takes it to, and the reason column states the observed
+fact that decides it.
+
+| Package | Anchor state | Non-terminal members | Disposition | Reason |
+| --- | --- | --- | --- | --- |
+| SPEC-0006 | active | none | `done` | Fifty-eight of its fifty-nine criteria name artifacts that exist; the residue is operator-owned runtime, which `completed/` admits. Its own text scopes it to a dated 2026-05-24 snapshot, and the gate it depended on was retired by SPEC-0072 |
+| SPEC-0008 | active | none | stays `active` | It owns the current platform contract. Six accepted ADRs name it as their Spec, REQ-0004 traces to it, four operations documents carry it in a RACI row, and three test files pin its path. No successor exists |
+| SPEC-0047 | active | five queued Tasks | stays `active` | Its CSASR-004 is obsolete by SPEC-0078's record, and its stash obligation is unowned: no validator covers the stash its Plan names. The obligation outlives the package |
+| SPEC-0048 | draft | six queued Tasks | `withdrawn` | Its own dated note of 2026-09-14 recommends withdrawal and names the missing edge as the only blocker. GRCE-002 and 005 are met by CODEOWNERS, the labeler and the surface document, 004 by SPEC-0072 and SPEC-0073, 007 by the recorded main protection. The residual contract location `.agents/contracts/` does not exist |
+| SPEC-0049 | draft | seven queued Tasks | stays `draft` | Genuinely unowned work: no `kustomize`, `kubeconform`, `kubeval` or `helm template` invocation exists anywhere in the repository, so PVSE-002 and 003 have no substitute. Its contract location must be re-planned before activation |
+| SPEC-0050 | draft | seven queued Tasks | stays `draft` | The validation registry declares zero Terraform and zero Bicep validators, while two example READMEs publish commands no gate owns. The same re-planning applies |
+| SPEC-0051 | draft | six queued Tasks | `withdrawn` | Its own dated note of 2026-09-14 recommends withdrawal: it requires a local-only fast-forward from a worktree that no longer exists while CI enforces pull requests into `main`, and it depends on a retired ledger |
+| SPEC-0054 | active | tsk-0009 queued, tsk-0013 in-progress, tsk-0014 queued | `done` | Eleven of fourteen Tasks carry committed evidence. tsk-0009 is written against record forms ADR-0039 froze and names a `tombstones/` directory that does not exist; tsk-0013 holds accepted evidence with its residual scope reassigned; tsk-0014 is the closure record and its branch-completion half is overtaken |
+| SPEC-0062 | active | three blocked Tasks, tsk-0011 in-progress | `done` | Seven Tasks are done and the 2026-08-29 closeout replaced the unfinished execution. The three blocked Tasks wait on an approved destructive replay and an execution environment the record itself states is absent; tsk-0011 states its work is complete and only the `done` edge remains |
+| SPEC-0068 | superseded | none | retained in `superseded/` | Its body names SPEC-0072 as successor; the frontmatter could not carry it because the `sdlc/spec` profile declares an empty optional key list. Twenty-four sibling profiles declare `superseded_by` optional and no profile forbids it |
+| SPEC-0070 | superseded | none | retained in `superseded/` | The same gap and the same successor. Its one live residue is three `.gitignore` lines that name a provider the roster no longer carries |
+| SPEC-0071 | active | tsk-0001 in-progress | `done` | All thirteen criteria carry recorded evidence, and both its Spec and its Plan already state that closing to `done` is the next reviewed change |
+| SPEC-0072 | active | tsk-0001 in-progress | stays `active` | Its native-runtime criteria need an operator observation the worker cannot perform. Closing would promote a repository-static result to runtime evidence, which its own record forbids. Its Task moves to `blocked`, which states that honestly |
+| SPEC-0077 | active | tsk-0001 in-progress | `done` after WORK-005 | Five of eight criteria are met. Two gaps are authority-blocked: retiring two skills needs a new sealed migration, and routing `evals` needs a Stage 99 route. The third, resolving the duplicated frontmatter readers, has no blocker and is executed in this round |
+| SPEC-0078 | draft | tsk-0001 queued | `done` | All six criteria carry evidence and all four of its commits are in history. Its own Task states that activation and closure are the first reviewed change after the merge that landed it, and that merge has happened |
+| SPEC-0083 | done | none | retained in `completed/` | It closed its own round on this tree. Every member is terminal, so it is a finished unit awaiting disposition exactly as ADR-0039 describes |
+
+Three facts in the table were read directly rather than taken from the survey
+that reported them. The `sdlc/spec` profile declares `required` with eight keys,
+`optional` empty and `forbidden` empty; `superseded_by` is optional in
+twenty-four profiles, required in none and forbidden in none. The `spec-plan`
+domain declares `draft` to `active`, `active` to `done`, `active` to
+`superseded` and `active` to `withdrawn`, while the sibling
+`requirement-architecture` domain declares `draft` to `withdrawn`.
+`docs/98.archive/` holds `completed/`, `migrations/` and `superseded/` and no
+`retired/`, so a withdrawn package stays at its Stage 03 path in this round.
+
+### Consumers that must move before a retention
+
+| Consumer | Pins | Repair |
+| --- | --- | --- |
+| `tests/test_archive_validation.py` | SPEC-0054 as its stand-in for a present current document | Repoint to a package that stays |
+| `tests/test_archive_cutover.py` | SPEC-0054 as its stand-in for an active package | Repoint to a package that stays |
+| `.gitleaks.toml` and `tests/test_qa_runner.py` | a path-exact allowlist entry inside SPEC-0062's Plan | Move the entry with the retention |
+| `.codex/provider.md` | SPEC-0072's Task path | No move; SPEC-0072 stays active |
+| `docs/01.requirements/0003-workspace-agent-governance-platform.md` | SPEC-0006, SPEC-0071, SPEC-0077, SPEC-0078, SPEC-0083 | Repoint each to its retained path |
+| This package | SPEC-0083 in its Spec, Plan and Task | Repoint when SPEC-0083 is retained in this same round |
+
 ## Verification Summary
 
 Pending. The results of each work item are recorded here as they are observed.
 
-This record, its Spec and its Plan stay in their creation states, `queued` and
-`draft`. The lifecycle gate compares a change with its base, where this package
-does not yet exist, so a document created in the same change keeps its
-zero-indegree state and activation is the next reviewed change.
+This record, its Spec and its Plan were created in their zero-indegree states
+because the lifecycle gate compares a change with its base, where this package
+did not yet exist. Activation followed as its own reviewed change in `10847dc2`,
+and WORK-001 is recorded from that point.
 
 Every result recorded here is repository-static. No hosted CI run, provider
 runtime, live cluster, or network action is claimed by any of them, and push,
@@ -91,7 +138,7 @@ Each work item carries its observed result.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | Queued. | This Task. |
+| [WORK-001](../plan.md#work-breakdown) | Done. | The survey of all sixteen packages is recorded below. |
 | [WORK-002](../plan.md#work-breakdown) | Queued. | Registry diff and lifecycle gate. |
 | [WORK-003](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |
 | [WORK-004](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |

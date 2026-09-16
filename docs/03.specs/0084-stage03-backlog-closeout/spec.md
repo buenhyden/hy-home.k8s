@@ -2,7 +2,7 @@
 title: "Stage 03 Backlog Closeout Technical Specification"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
