@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
-version: "1.4.2"
+version: "1.4.3"
 type: "sdlc/spec"
 status: "done"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "specs"
 artifact_id: "SPEC-0054"
 ---
@@ -108,6 +108,8 @@ execution package for WP-010 and WP-011; it is not a standalone program.
 SPEC-0054-TSK-0011 is the current parent acceptance record.
 
 **Closure (2026-09-16).** All fourteen Tasks are terminal, so the anchor follows its members. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Closure records that the package has no remaining reason to stay open, not that every criterion was executed to completion. Eleven Tasks carry committed evidence. WP-013 closed `done` with its one open scope, the disposition of the remaining Stage 03 packages, moved to SPEC-0083 and SPEC-0084 rather than abandoned. WP-014 closed as the convergence record it is, its branch-completion half already discharged by the merges of PRs 54 and 55. WP-009 was cancelled: it was written against the record generation ADR-0039 has frozen, and the `tombstones/` route named by VAL-SDLC-009 is absent from this tree, so that criterion is satisfied by absence rather than by execution. No result is converted to a pass, and the dated execution narrative in both documents is left as observed.
+
+**Retention deferred (2026-09-16).** This package is `done` but stays at its Stage 03 path instead of moving to `completed/` in the [SPEC-0084](../0084-stage03-backlog-closeout/spec.md) round. Its retention was prepared and stopped: `tests/test_document_strict_cutover.py` asserts this package's own structure, that `tasks.md` is absent and that exactly fourteen append-only `tsk-*.md` records carry matching identifiers and sections. Retention freezes those bytes, so that assertion would become permanently true and stop detecting the drift it was written to catch, and no other package can stand in its place because the count is this package's own fact. Redefining the test as a frozen-unit integrity check, or retiring it in favour of the archive unit contract, is a decision of its own rather than a step inside a retention commit. Next owner: whoever decides what that test asserts once this package is frozen.
 
 ## Strategic Boundaries & Non-goals
 

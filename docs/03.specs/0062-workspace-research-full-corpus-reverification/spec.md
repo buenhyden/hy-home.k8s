@@ -1,10 +1,10 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Technical Specification"
-version: "1.1.2"
+version: "1.1.3"
 type: "sdlc/spec"
 status: "done"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "specs"
 artifact_id: "SPEC-0062"
 ---
@@ -60,6 +60,8 @@ Direct human approval on 2026-08-20 authorizes this standalone execution relatio
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
 
 **Closure (2026-09-16).** Every member of this package is now terminal: seven Tasks `done`, three `cancelled` because the approved 2026-08-29 administrative closeout replaced the execution they waited on, and the follow-on cycle `done`. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Closure records that the package has no remaining reason to stay open, not that every criterion passed: `VAL-WRFR-002` stays deliberately unmet as recorded below, and `VAL-WRFR-011` through `VAL-WRFR-015` were replaced rather than satisfied. No result is converted to a pass.
+
+**Retention deferred (2026-09-16).** This package is `done` but stays at its Stage 03 path instead of moving to `completed/` in the [SPEC-0084](../0084-stage03-backlog-closeout/spec.md) round. A path-exact secret-scan allowlist entry in `.gitleaks.toml` names this package's `plan.md`, and `tests/test_qa_runner.py` pins the same path to prove that entry is read. Because the entry is path-exact rather than a prefix, retention moves both with the body, which edits a protected security surface inside a retention commit. That round retained the seven units whose consumers move inside the same commit and left this one to its own decision. Next owner: whoever moves the allowlist entry together with this package's retention.
 
 ## Strategic Boundaries & Non-goals
 
