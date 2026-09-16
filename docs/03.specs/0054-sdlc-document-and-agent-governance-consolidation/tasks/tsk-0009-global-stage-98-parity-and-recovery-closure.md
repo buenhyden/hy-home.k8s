@@ -1,8 +1,8 @@
 ---
 title: "Task: Isolated Stage 98 archive minimization"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "cancelled"
 owner: "platform"
 updated: "2026-09-03"
 layer: "specs"
@@ -24,6 +24,8 @@ MIG-0004 at thirty-five references, MIG-0002 at eighteen, and MIG-0005 at
 sixteen cannot leave until their pins do. 172 distinct forty-hex pins remain in
 `scripts/`.
 
+**Cancellation (2026-09-16).** This record was written against the ADR-0032 and ADR-0038 record forms that ADR-0039 has since frozen, and its concrete instructions name a `docs/98.archive/tombstones/` directory that does not exist in this tree. Its one surviving invariant, that no current authority cites a sealed record, is now decided by the registry's ordered citation table rather than by this work item. Nothing executable remains, so it is cancelled. It was moved out of `queued` only because the task domain routes every terminal disposition through `in-progress`; no work was started.
+
 ## Inputs
 
 - [Common execution contract](../plan.md#common-execution-contract)
@@ -41,7 +43,7 @@ sixteen cannot leave until their pins do. 172 distinct forty-hex pins remain in
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-009 | VAL-SDLC-009, VAL-SDLC-011, VAL-SDLC-012 | Minimize the isolated historical Archive after active citations and cross-links are zero, without count, current-consumer, branch, or current-state SHA gates. | platform | Queued | Not executed. | Zero inbound active links, minimal safety/readability checks, Git recovery, and logical commit |
+| WORK-054-009 | VAL-SDLC-009, VAL-SDLC-011, VAL-SDLC-012 | Minimize the isolated historical Archive after active citations and cross-links are zero, without count, current-consumer, branch, or current-state SHA gates. | platform | Cancelled | Not executed. | Zero inbound active links, minimal safety/readability checks, Git recovery, and logical commit |
 
 ## Approval and Safety Boundaries
 

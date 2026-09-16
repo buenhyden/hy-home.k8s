@@ -1,8 +1,8 @@
 ---
 title: "Task: Convergence and branch completion"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-08-31"
 layer: "specs"
@@ -14,6 +14,8 @@ artifact_id: "SPEC-0054-TSK-0014"
 ## Overview
 
 This is the terminal queued Task record for WP-014.
+
+**Closure (2026-09-16).** This record has two halves and neither is left undone. Branch completion already happened: PRs 54 and 55 merged and their evidence is held by [tsk-0013](tsk-0013-transition-only-taxonomy-terminal-cutover.md), so there is no branch left to finish. Final convergence and the closure record are what this record itself is, and it discharges them by closing under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md). It was moved out of `queued` through `in-progress` because the task domain declares no other route to a terminal state; no new execution was performed.
 
 ## Inputs
 
@@ -32,7 +34,7 @@ This is the terminal queued Task record for WP-014.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-014 | VAL-SDLC-001..VAL-SDLC-012 | Run final convergence, independent reviews, evidence update, and branch completion. | platform | Queued | Not executed. | Fixed-point terminal validation, final reviews, closure commit, finish-branch handoff |
+| WORK-054-014 | VAL-SDLC-001..VAL-SDLC-012 | Run final convergence, independent reviews, evidence update, and branch completion. | platform | Done | Not executed. | Fixed-point terminal validation, final reviews, closure commit, finish-branch handoff |
 
 ## Approval and Safety Boundaries
 
