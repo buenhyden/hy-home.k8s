@@ -1,6 +1,6 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "2.3.1"
+version: "2.3.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -25,6 +25,8 @@ follow-up. The [original Task](tasks/tsk-0001-consolidate-governance-and-quality
 preserves completed migration and native follow-up evidence. The
 [repair Task](tasks/tsk-0002-repair-governance-and-validation-contracts.md)
 owns the new local implementation and its evidence without reopening that stream.
+
+**Disposition note (2026-09-16).** This package stays `active` and is not closed by [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Its repository-static half is satisfied, but the native runtime half of VAL-AGQ-001 through VAL-AGQ-007 needs an operator observation that no repository-static run can supply, and its own Task records that as a deferral rather than a pass. Closing the package would promote a tracked-configuration result to runtime evidence, which this Spec forbids. Its Task moves to `blocked`, which states the dependency honestly, instead of staying `in-progress` and implying work in flight. One consumer also pins it: `.codex/provider.md` hard-codes the Task path, so a retention would have to repoint that file first. Next owner: the operator, for the native session.
 
 ## Strategic Boundaries & Non-goals
 

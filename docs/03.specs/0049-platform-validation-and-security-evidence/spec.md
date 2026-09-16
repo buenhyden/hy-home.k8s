@@ -1,6 +1,6 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -58,6 +58,8 @@ The tranche preserves the current local platform topology and its explicit
 local-only transport exceptions. It improves evidence about desired state; it
 does not claim that Argo CD reconciled it, Vault authenticated it, ESO synced
 it, TLS verified it, or a live cluster admitted it.
+
+**Disposition note (2026-09-16).** The resume condition above can no longer be met. Spec 0048 did not close with evidence; it was withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md), so waiting on it is waiting on something that will not happen. This package nonetheless stays `draft` rather than following it, because its scope is real and unowned: no `kustomize`, `kubeconform`, `kubeval` or `helm template` invocation exists anywhere in this repository, so VAL-PVSE-002 and VAL-PVSE-003 have no substitute owner, and no evidence contract file exists for VAL-PVSE-001. Withdrawing it would erase a recorded gap rather than resolve it. Activation now requires a new plan rather than a predecessor's closure, including a home for the contract location `.agents/contracts/`, which does not exist in the adopted layout. Next owner: the request owner.
 
 ## Strategic Boundaries & Non-goals
 

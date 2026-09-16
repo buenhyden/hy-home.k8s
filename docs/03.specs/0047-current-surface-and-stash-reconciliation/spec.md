@@ -1,6 +1,6 @@
 ---
 title: "Current Surface and Stash Reconciliation Technical Specification"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -47,6 +47,8 @@ Spec 047 is an evidence and ownership foundation. It does not implement the
 GitHub routing, platform validation, or IaC validation gaps assigned to Specs
 048 through 050. It hands only current, classified, rollback-ready facts to
 those tranches.
+
+**Disposition note (2026-09-16).** This package stays `active` and is not closed by [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Its activation Task is `done` while five implementation Tasks are `queued`, and one obligation is genuinely unowned: the stash object its Plan names is still reachable and no validator covers it. SPEC-0078 recorded on 2026-09-14 that its CSASR-004 is obsolete and that cancelling a queued Task needs two edges. Neither finding closes the package, because the stash obligation outlives the criterion that named it. Next owner: SPEC-0047, for a disposition that decides the stash rather than the state.
 
 ## Strategic Boundaries & Non-goals
 

@@ -1,6 +1,6 @@
 ---
 title: "Example IaC and Validator QA Technical Specification"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -56,6 +56,8 @@ The examples remain reference implementations outside the local Argo CD
 desired-state tree. Native static validation proves formatting, initialization,
 configuration semantics, lint, and compilation only; it does not prove account,
 subscription, cost, quota, IAM, network, managed-service, or runtime support.
+
+**Disposition note (2026-09-16).** The resume condition above can no longer be met as written. Spec 0049 stays `draft` with its own resume condition voided, because Spec 0048 was withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md) rather than closed. This package stays `draft` for the same reason its predecessor does: the validation registry declares zero Terraform and zero Bicep validators, while `examples/aws/README.md` and `examples/azure/README.md` publish `terraform fmt -check -recursive` and `az bicep build` as if something enforced them. That is a published claim no gate owns, and withdrawal would leave it published and unrecorded. Activation requires a new plan. Next owner: the request owner.
 
 ## Strategic Boundaries & Non-goals
 

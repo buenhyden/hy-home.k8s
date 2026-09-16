@@ -1,8 +1,8 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.7.2"
+version: "2.7.3"
 type: "sdlc/task"
-status: "in-progress"
+status: "blocked"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -17,6 +17,8 @@ Execute the approved 2026-09-08 follow-up in SPEC-0072-PLAN-0001. Common
 authority migration is complete; dated results below remain historical.
 Current work corrects gate, formatter, commit and environment drift through
 existing owners and creates verified logical local commits.
+
+**Blocked (2026-09-16).** WORK-001 through WORK-008 are `Done`. The one open item, WORK-009, needs an authorized provider session that no repository-static run can supply, and this record already states that native discovery, invocation, model access, sandbox enforcement and event delivery stay deferred. This change takes the declared `in-progress` to `blocked` edge under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md), because `blocked` states the dependency honestly while `in-progress` implies work in flight that does not exist. Next owner: the operator.
 
 ## Inputs
 
