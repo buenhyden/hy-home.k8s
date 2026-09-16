@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.23"
+version: "0.5.24"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -106,10 +106,6 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
-├── 0068-agent-projection-rendering-and-gate-reduction/
-│   └── spec.md
-├── 0070-retired-provider-residue-disposition/
-│   └── spec.md
 ├── 0072-agent-governance-and-quality-gate-consolidation/
 │   ├── spec.md
 │   ├── plan.md
@@ -167,8 +163,6 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0051-repository-assurance-integration-and-closure/spec.md`](./0051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Withdrawn | 2026-09-16에 SPEC-0084 회차로 draft에서 withdrawn으로 철회했다. 사라진 worktree에서의 local-only fast-forward를 요구하나 CI가 main에 대한 pull request를 강제하고, 은퇴한 progress ledger에 의존하며, merge 권한은 요청자에게 있다. Task 여섯 개는 실행 없이 취소했다. | 2026-09-14 |
 | [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Done | 승인된 B 범위(Stage 90 포함)의 통합 수용 소유자로서 문서·agent governance·operations·reference·archive·template 수렴을 관리하고, WP-010/WP-011 실행은 Spec 0066에 위임했다. 2026-09-16에 SPEC-0084 회차로 Task 14개를 모두 종결하고 done으로 닫았다. WP-013의 잔여 Stage 03 처분은 SPEC-0083·0084로 이관했고, WP-009는 대상 세대가 동결되어 취소했다. | 2026-09-07 |
 | [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Done | 2026-09-05 재관찰: 7 done/3 blocked Tasks를 유지하고, 작업 완료를 기록한 TSK-0011은 2026-09-14에 queued에서 in-progress로 옮겼다. 승인된 2026-08-29 administrative-closeout addendum이 미래의 기존 Path B replay를 대체한다. 2026-09-16에 SPEC-0084 회차로 종료했다. 차단된 Task 세 개는 승인된 종결이 그 실행을 대체했고 필요한 환경이 부재해 취소했으며, TSK-0011은 done으로 닫았다. 과거 미충족 증거는 PASS로 바꾸지 않았다. | 2026-09-07 |
-| [`./0068-agent-projection-rendering-and-gate-reduction/spec.md`](./0068-agent-projection-rendering-and-gate-reduction/spec.md) | Prior renderer proposal | Superseded | SPEC-0072가 `.agents/` 공통 원본과 명시적 네이티브 참조로 대체한다. 이전 제안은 구현 증거가 아니다. | 2026-09-05 |
-| [`./0070-retired-provider-residue-disposition/spec.md`](./0070-retired-provider-residue-disposition/spec.md) | Prior residue disposition proposal | Superseded | SPEC-0072가 항목별 현행·역사 구분과 처분을 소유한다. Task 4의 sealed-ledger와 Git recovery 증거는 역사 기록으로 보존하며, 과거 문서의 일괄 불변 예외는 현재 권위가 아니다. | 2026-09-06 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
 | [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished Stage 03 packages | Done | 완료된 package 열 개를 `completed/`에 단위 그대로 보존하고 소비자를 먼저 옮기며, 구현 전에 대체된 제안 두 개는 계약 충돌로 보존이 막힌 사실과 잔류하는 열여섯 개의 잔류 사유를 기록하고, 보존이 어긋나게 만든 소비자를 수리한다. | 2026-09-16 |
 | [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Active | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. | 2026-09-16 |
