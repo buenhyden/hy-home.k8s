@@ -1,8 +1,8 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.5.1"
+version: "1.5.2"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -295,6 +295,8 @@ fixture matrices, and census controls are not copied as a unit.
 The execution sequence first records a lossless candidate disposition, then
 closes the active taxonomy before simplifying governance, operations,
 references, archive evidence, and scripts. Deletions are deliberately late.
+
+**Closure (2026-09-16).** All fourteen Tasks are terminal, so the anchor follows its members. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Closure records that the package has no remaining reason to stay open, not that every criterion was executed to completion. Eleven Tasks carry committed evidence. WP-013 closed `done` with its one open scope, the disposition of the remaining Stage 03 packages, moved to SPEC-0083 and SPEC-0084 rather than abandoned. WP-014 closed as the convergence record it is, its branch-completion half already discharged by the merges of PRs 54 and 55. WP-009 was cancelled: it was written against the record generation ADR-0039 has frozen, and the `tombstones/` route named by VAL-SDLC-009 is absent from this tree, so that criterion is satisfied by absence rather than by execution. No result is converted to a pass, and the dated execution narrative in both documents is left as observed.
 
 ## Context
 
