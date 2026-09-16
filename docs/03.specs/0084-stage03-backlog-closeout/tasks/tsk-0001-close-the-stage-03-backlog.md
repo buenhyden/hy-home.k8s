@@ -1,8 +1,8 @@
 ---
 title: "Close the Stage 03 Backlog"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
@@ -35,16 +35,16 @@ live evidence.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-SBC-001 | Record the survey of every remaining Stage 03 package | platform | Done | Sixteen packages recorded below with anchor state, non-terminal members, and consumers | This Task |
 | WORK-002 | VAL-SBC-002 | Close the two registry gaps as gap-fills | platform | Done | Two profiles and one domain changed, 14 added and 4 removed lines, no existing document newly in violation | Recorded below |
-| WORK-003 | VAL-SBC-003 | Close SPEC-0071, SPEC-0078, SPEC-0062, and SPEC-0054 | platform | Queued | Pending | Lifecycle gate |
-| WORK-004 | VAL-SBC-004 | Withdraw SPEC-0048 and SPEC-0051 and cancel their Tasks | platform | Queued | Pending | Lifecycle gate |
-| WORK-005 | VAL-SBC-005 | Repair SPEC-0006's stale sibling path and close it | platform | Queued | Pending | Link gate |
-| WORK-006 | VAL-SBC-006 | Retain SPEC-0068 and SPEC-0070 in `superseded/` | platform | Queued | Pending | Archive gates |
-| WORK-007 | VAL-SBC-007 | Record the dated disposition note of every package that stays | platform | Queued | Pending | This Task and the stage index |
-| WORK-008 | VAL-SBC-008 | Resolve the duplicated frontmatter readers to one owner | platform | Queued | Pending | Unit tests and full QA |
-| WORK-009 | VAL-SBC-009 | Retain every package that reached `done` in `completed/` | platform | Queued | Pending | Link, lifecycle, and archive gates |
-| WORK-010 | VAL-SBC-010 | Repair the consumers the retention proves wrong | platform | Queued | Pending | Full QA and the unit-test suite |
-| WORK-011 | VAL-SBC-011 | Close SPEC-0077 with its blocked criteria recorded as deferrals | platform | Queued | Pending | Lifecycle gate and this Task |
-| WORK-012 | VAL-SBC-012 | Close this package with its results | platform | Queued | Pending | Staged and full QA |
+| WORK-003 | VAL-SBC-003 | Close SPEC-0071, SPEC-0078, SPEC-0062, and SPEC-0054 | platform | Done | SPEC-0071, SPEC-0078, SPEC-0062, and SPEC-0054 are `done`; SPEC-0078 took both declared edges | Lifecycle gate PASS strict |
+| WORK-004 | VAL-SBC-004 | Withdraw SPEC-0048 and SPEC-0051 and cancel their Tasks | platform | Done | Both are `withdrawn` over the new `draft` to `withdrawn` edge; twelve Tasks cancelled through `queued` to `in-progress` to `cancelled` | Lifecycle gate PASS strict |
+| WORK-005 | VAL-SBC-005 | Repair SPEC-0006's stale sibling path and close it | platform | Done | The stale sibling path in SPEC-0006's body was repaired before the move, and the package closed `done` | Link gate PASS; the path was a code span the gate never resolved |
+| WORK-006 | VAL-SBC-006 | Retain SPEC-0068 and SPEC-0070 in `superseded/` | platform | Done | Both carry `superseded_by: "SPEC-0072"` and are retained in `superseded/`, the first spec packages in that class | Archive gates PASS; catalog rows name envelope `b4a1db91` |
+| WORK-007 | VAL-SBC-007 | Record the dated disposition note of every package that stays | platform | Done | SPEC-0008, SPEC-0047, SPEC-0049, SPEC-0050 and SPEC-0072 carry dated notes; SPEC-0072's Task moved `in-progress` to `blocked` | This Task and the stage index |
+| WORK-008 | VAL-SBC-008 | Resolve the duplicated frontmatter readers to one owner | platform | Done | `validate-links-and-owners.py` lost its private `_frontmatter` and reads `frontmatter_mapping` from the single owner | Gate stdout sha256 `e1925925` identical before and after; 87 archive contract tests; 182 tests over four modules |
+| WORK-009 | VAL-SBC-009 | Retain every package that reached `done` in `completed/` | platform | Partial | Seven of nine units retained. SPEC-0054 and SPEC-0062 reached `done` but stay at their Stage 03 paths, recorded as named deferrals below | Link, lifecycle and archive gates PASS over the seven |
+| WORK-010 | VAL-SBC-010 | Repair the consumers the retention proves wrong | platform | Done | REQ-0003, the stage index, `tests/test_archive_citation_decision.py` and SPEC-0083's self-reference were repaired; no pin was lowered | Full QA and the unit-test suite |
+| WORK-011 | VAL-SBC-011 | Close SPEC-0077 with its blocked criteria recorded as deferrals | platform | Done | SPEC-0077 is `done` with two authority-blocked criteria recorded as deferrals with named owners | Lifecycle gate and this Task |
+| WORK-012 | VAL-SBC-012 | Close this package with its results | platform | Done | This package closes with the results recorded here, including the two deferred retentions | Staged and full QA recorded below |
 
 ## Approval and Safety Boundaries
 
@@ -149,9 +149,56 @@ which is the evidence that distinguishes a gap-fill from a relaxation.
 | `docs/01.requirements/0003-workspace-agent-governance-platform.md` | SPEC-0006, SPEC-0071, SPEC-0077, SPEC-0078, SPEC-0083 | Repoint each to its retained path |
 | This package | SPEC-0083 in its Spec, Plan and Task | Repoint when SPEC-0083 is retained in this same round |
 
+### The two retentions this round deferred
+
+VAL-SBC-009 asks that every package reaching `done` be retained. Seven units
+were. Two were not, and each is recorded here with the observed fact that
+stopped it rather than counted as met.
+
+| Package | Observed blocker | Next owner |
+| --- | --- | --- |
+| SPEC-0054 | `tests/test_document_strict_cutover.py` asserts this package's own structure: `tasks.md` absent and exactly fourteen append-only `tsk-*.md` records carrying matching identifiers and sections. Retention freezes those bytes, so the assertion becomes permanently true and stops detecting the drift it was written for. No other package can stand in, because the count is this package's own fact | Whoever decides what that test asserts once the package is frozen |
+| SPEC-0062 | `.gitleaks.toml` carries a path-exact allowlist entry naming this package's `plan.md`, and `tests/test_qa_runner.py` pins the same path to prove the entry is read. Because the entry is path-exact rather than a prefix, retention edits a protected security surface inside a retention commit | Whoever moves the allowlist entry together with the retention |
+
+Both packages are correctly `done`; only the move is outstanding. ADR-0039
+admits a finished unit waiting at its own stage for a disposition decision, so
+neither is a contract violation. Each carries the same dated note in its own
+Spec and in the stage index row, so a reader reaches the reason from the
+package rather than only from this record.
+
+### What the retention round actually moved
+
+| Class | Units | Envelope |
+| --- | --- | --- |
+| `completed/03.specs/` | SPEC-0006, SPEC-0071, SPEC-0077, SPEC-0078 | `500092f52e283356aa125e67ff46ca8d8baa95bd` |
+| `superseded/03.specs/` | SPEC-0068, SPEC-0070 | `b4a1db9143fac30df39c23183432f3495d96a8ed` |
+| `completed/03.specs/` | SPEC-0083 | `2eb5e079f8ca9f6d139fc7085fe8bebb886768ec` |
+
+Three envelopes rather than one, because a unit's retained bytes must equal the
+bytes of its envelope commit. SPEC-0068 and SPEC-0070 gained `superseded_by`
+before the move, so their key had to land in its own commit and the envelope had
+to name that commit. Writing the key and moving together was tried first and
+failed with four diagnostics at once, `LIFECYCLE-CREATE`, `LIFECYCLE-EVIDENCE`,
+`LIFECYCLE-IDENTITY-REUSE` and `ARCHIVE-CATALOG-RETENTION`. The four
+`completed/` units of the first commit matched their envelope while these two
+differed, which located the cause. Consumer repointing goes in the same commit
+as the move; body edits go in an earlier one.
+
 ## Verification Summary
 
-Pending. The results of each work item are recorded here as they are observed.
+Every work item is recorded above with its observed result. Eleven are done and
+one, WORK-009, is partial with two named deferrals.
+
+Sixteen packages were disposed of: seven reached `done`, two reached
+`withdrawn`, five stay with a dated note, and SPEC-0068 and SPEC-0070 were
+already `superseded`. Seven units were retained, two registry gaps were closed
+as gap-fills, and one duplicated frontmatter reader was resolved to a single
+owner with a byte-identical gate output.
+
+No gate, contract, or test pin was lowered at any point in this round. Where a
+criterion could not be met, it is recorded as a deferral with a named owner: the
+two retentions above, SPEC-0077's two authority-blocked criteria, and
+SPEC-0072's native-runtime half.
 
 This record, its Spec and its Plan were created in their zero-indegree states
 because the lifecycle gate compares a change with its base, where this package
@@ -172,13 +219,13 @@ Each work item carries its observed result.
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done. | The survey of all sixteen packages is recorded below. |
 | [WORK-002](../plan.md#work-breakdown) | Done. | Registry gap-fill recorded below; five focused gates and 87 archive contract tests pass. |
-| [WORK-003](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |
-| [WORK-004](../plan.md#work-breakdown) | Queued. | Lifecycle gate. |
-| [WORK-005](../plan.md#work-breakdown) | Queued. | Link gate. |
-| [WORK-006](../plan.md#work-breakdown) | Queued. | Archive gates. |
-| [WORK-007](../plan.md#work-breakdown) | Queued. | This Task and the stage index. |
-| [WORK-008](../plan.md#work-breakdown) | Queued. | Unit tests and full QA. |
-| [WORK-009](../plan.md#work-breakdown) | Queued. | Link, lifecycle, and archive gates. |
-| [WORK-010](../plan.md#work-breakdown) | Queued. | Full QA and the unit-test suite. |
-| [WORK-011](../plan.md#work-breakdown) | Queued. | Lifecycle gate and this Task. |
-| [WORK-012](../plan.md#work-breakdown) | Queued. | Staged and full QA. |
+| [WORK-003](../plan.md#work-breakdown) | Done. | SPEC-0071, SPEC-0078, SPEC-0062 and SPEC-0054 are `done`; the lifecycle gate passes in strict mode. |
+| [WORK-004](../plan.md#work-breakdown) | Done. | SPEC-0048 and SPEC-0051 are `withdrawn`; their twelve Tasks are `cancelled` through the declared two-step path. |
+| [WORK-005](../plan.md#work-breakdown) | Done. | SPEC-0006's stale sibling path was repaired in its own commit before the move, then the package closed. |
+| [WORK-006](../plan.md#work-breakdown) | Done. | SPEC-0068 and SPEC-0070 carry `superseded_by` and are retained in `superseded/` with one catalog row each. |
+| [WORK-007](../plan.md#work-breakdown) | Done. | Five staying packages carry dated notes; SPEC-0072's Task is `blocked`. |
+| [WORK-008](../plan.md#work-breakdown) | Done. | One reader remains; the link gate's stdout sha256 is unchanged at `e1925925`. |
+| [WORK-009](../plan.md#work-breakdown) | Partial, with two named deferrals. | Seven units retained; SPEC-0054 and SPEC-0062 recorded below with their observed blockers and next owners. |
+| [WORK-010](../plan.md#work-breakdown) | Done. | Four consumers repaired; no gate, contract or test pin lowered. |
+| [WORK-011](../plan.md#work-breakdown) | Done. | SPEC-0077 is `done` with two deferrals carrying named owners. |
+| [WORK-012](../plan.md#work-breakdown) | Done. | Results recorded here; full QA recorded in the Verification Summary. |

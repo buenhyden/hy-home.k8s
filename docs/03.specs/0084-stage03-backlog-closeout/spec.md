@@ -1,8 +1,8 @@
 ---
 title: "Stage 03 Backlog Closeout Technical Specification"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
@@ -137,7 +137,7 @@ python3 scripts/qa.py full
 | VAL-SBC-006 | SPEC-0068 and SPEC-0070 carry `superseded_by` and are retained in `superseded/` as exact units with one catalog row each | Archive gates |
 | VAL-SBC-007 | Every package that stays carries a dated disposition note naming the reason and the next owner | Closeout Task and the stage index |
 | VAL-SBC-008 | The duplicated frontmatter readers under `scripts/` resolve to one owner with no gate output change | Unit tests and full QA |
-| VAL-SBC-009 | Every package that reaches `done` in this round is retained as an exact unit with one catalog row, and every consumer moves first | Link, lifecycle, and archive gates |
+| VAL-SBC-009 | Every package that reaches `done` in this round is retained as an exact unit with one catalog row, and every consumer moves first | Link, lifecycle, and archive gates. Partial: seven units retained; SPEC-0054 and SPEC-0062 are recorded as named deferrals in the Task |
 | VAL-SBC-010 | Every consumer the retention proves wrong is repaired in place, and no gate, contract, or test pin is lowered to pass | Full QA and the unit-test suite |
 | VAL-SBC-011 | SPEC-0077 closes with its authority-blocked criteria recorded as deferrals with named owners | Closeout Task |
 | VAL-SBC-012 | This package closes with observed results | Staged and full QA |

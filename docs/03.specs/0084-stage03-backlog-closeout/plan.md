@@ -1,8 +1,8 @@
 ---
 title: "Stage 03 Backlog Closeout Implementation Plan"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"
@@ -60,7 +60,7 @@ which owns a current contract that six accepted ADRs name as their Spec.
 | WP-007 | Repair SPEC-0006's stale sibling path, close it, and record the disposition note of every package that stays | WP-002 | The survey names them | Link gate and the Task |
 | WP-008 | Resolve the duplicated frontmatter readers under `scripts/` to one owner | WP-001 | SPEC-0077 records the duplication and no blocker | Unit tests and full QA with no output change |
 | WP-009 | Close SPEC-0077 with its two authority-blocked criteria recorded as deferrals | WP-008 | WP-008 landed | Lifecycle gate and the Task |
-| WP-010 | Retain every package that reached a terminal state, with consumers moved first | WP-003 to WP-009 | Every member of each unit is terminal | Link, lifecycle, and archive gates |
+| WP-010 | Retain every package that reached a terminal state, with consumers moved first | WP-003 to WP-009 | Every member of each unit is terminal | Link, lifecycle, and archive gates. Seven units moved; SPEC-0054 and SPEC-0062 deferred with named owners |
 | WP-011 | Repair the consumers the retention proves wrong | WP-010 | Full QA named the failing gates | Full QA and the unit-test suite with no pin lowered |
 | WP-012 | Record the results and close this package | WP-001 to WP-011 | Full QA on the final tree | Staged and full QA |
 
