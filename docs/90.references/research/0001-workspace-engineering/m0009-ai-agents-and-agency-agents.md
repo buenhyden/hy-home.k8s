@@ -1,6 +1,6 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.2.0"
+version: "1.2.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
@@ -452,7 +452,7 @@ trigger fired on 2026-09-10 and this cycle records the outcome.
   `evals/` carry no role authorised to author them. That gap is observed in
   this repository, not inferred from the catalogue.
 - **Conclusion on adoption:** adapt, not adopt. Five roles are proposed by
-  [SPEC-0076](../../../03.specs/0076-agent-role-coverage-and-contract-completion/spec.md)
+  [SPEC-0076](../../../98.archive/completed/03.specs/0076-agent-role-coverage-and-contract-completion/spec.md)
   to close the gap above; four have a nearest counterpart in the catalogue and
   the fifth, agent evaluation, has none and rests on the local folder contract. No upstream role, file, name, frontmatter field or
   prose enters this repository, and no converter or installer was executed. The

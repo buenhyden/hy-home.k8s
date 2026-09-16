@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ layer: "archive"
 
 ## Overview
 
-`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md)과 이를 대체한 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)이며, ADR-0039가 `accepted` 상태의 현재 결정이다. [SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md)과 이를 대체한 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)이며, ADR-0039가 `accepted` 상태의 현재 결정이다. [SPEC-0079](./completed/03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
 
 각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 
@@ -134,7 +134,7 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 ### Retention Catalog
 
-ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. 대체된 ADR-0032가 첫 disposition이고, 나머지 대체된 ADR 15개가 뒤따랐다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다.
+ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. 대체된 ADR-0032가 첫 disposition이고, 나머지 대체된 ADR 15개가 뒤따랐다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다. ADR-0039의 단위 보존이 그 뒤를 잇는다. 문서는 blob을, spec package는 tree를 명명하며, 완료된 Stage 03 package 일곱 개가 첫 tree 행이다.
 
 | Disposition Record | Retention Envelope |
 | --- | --- |
@@ -155,6 +155,13 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md`](./superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md` |
 | [`superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md`](./superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md) | `1910cff510f850a3342bdd80355872c05ee12519:docs/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md` |
 | [`superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md`](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md) | `36081a0db8ed33de90eb9dd9ecd3e5d78051a474:docs/02.architecture/decisions/0038-six-disposition-archive-stage.md` |
+| [`completed/03.specs/0073-provider-native-enforcement-parity`](./completed/03.specs/0073-provider-native-enforcement-parity) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0073-provider-native-enforcement-parity` |
+| [`completed/03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty`](./completed/03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty` |
+| [`completed/03.specs/0075-common-knowledge-and-prompt-surfaces`](./completed/03.specs/0075-common-knowledge-and-prompt-surfaces) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0075-common-knowledge-and-prompt-surfaces` |
+| [`completed/03.specs/0076-agent-role-coverage-and-contract-completion`](./completed/03.specs/0076-agent-role-coverage-and-contract-completion) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0076-agent-role-coverage-and-contract-completion` |
+| [`completed/03.specs/0079-six-disposition-archive-stage`](./completed/03.specs/0079-six-disposition-archive-stage) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0079-six-disposition-archive-stage` |
+| [`completed/03.specs/0080-adr-0032-retention-pilot`](./completed/03.specs/0080-adr-0032-retention-pilot) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0080-adr-0032-retention-pilot` |
+| [`completed/03.specs/0081-superseded-decision-retention`](./completed/03.specs/0081-superseded-decision-retention) | `033532e0ce1ffd739a3e18cc273c0fdf4137089f:docs/03.specs/0081-superseded-decision-retention` |
 
 ## Authoring Workflow
 

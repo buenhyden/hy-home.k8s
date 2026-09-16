@@ -38,6 +38,9 @@ RUNBOOK = "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md
 RUNBOOK_TARGET = "docs/05.operations/runbooks/0001-argocd-bootstrap-runbook.md"
 MIGRATION = "docs/98.archive/migrations/0024-runbook-rename.md"
 PACKAGE = "docs/03.specs/0080-adr-0032-retention-pilot"
+# The seed package is retained in `completed/`. Exact retention keeps its bytes,
+# so the fixture still builds a Stage 03 source out of the same document.
+PACKAGE_SEED = "docs/98.archive/completed/03.specs/0080-adr-0032-retention-pilot"
 PACKAGE_MEMBERS = ("spec.md", "plan.md", "tasks/tsk-0001-retain-adr-0032.md")
 TASK = f"{PACKAGE}/tasks/tsk-0001-retain-adr-0032.md"
 BUNDLE = "docs/05.operations/incidents/2026/inc-0001-example"
@@ -100,7 +103,9 @@ class DispositionLifecycleTest(unittest.TestCase):
         for path in (REGISTRY_PATH, RUNBOOK):
             self.write(path, (ROOT / path).read_bytes())
         for member in PACKAGE_MEMBERS:
-            self.write(f"{PACKAGE}/{member}", (ROOT / PACKAGE / member).read_bytes())
+            self.write(
+                f"{PACKAGE}/{member}", (ROOT / PACKAGE_SEED / member).read_bytes()
+            )
         self.write(ADR, original_bytes(ADR))
         self.write(INDEX, INDEX_TEXT.encode())
         self.git("add", "--", ".")

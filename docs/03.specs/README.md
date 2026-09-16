@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.8"
+version: "0.5.9"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -128,39 +128,11 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
-├── 0073-provider-native-enforcement-parity/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
-├── 0074-provider-write-guard-ownership-and-enforcement-honesty/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
-├── 0075-common-knowledge-and-prompt-surfaces/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
-├── 0076-agent-role-coverage-and-contract-completion/
-│   ├── plan.md
-│   ├── spec.md
-│   └── tasks/
 ├── 0077-dead-contract-and-duplicate-execution-retirement/
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
 ├── 0078-document-currency-reconciliation/
-│   ├── plan.md
-│   ├── spec.md
-│   └── tasks/
-├── 0079-six-disposition-archive-stage/
-│   ├── plan.md
-│   ├── spec.md
-│   └── tasks/
-├── 0080-adr-0032-retention-pilot/
-│   ├── plan.md
-│   ├── spec.md
-│   └── tasks/
-├── 0081-superseded-decision-retention/
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
@@ -224,15 +196,8 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0070-retired-provider-residue-disposition/spec.md`](./0070-retired-provider-residue-disposition/spec.md) | Prior residue disposition proposal | Superseded | SPEC-0072가 항목별 현행·역사 구분과 처분을 소유한다. Task 4의 sealed-ledger와 Git recovery 증거는 역사 기록으로 보존하며, 과거 문서의 일괄 불변 예외는 현재 권위가 아니다. | 2026-09-06 |
 | [`./0071-document-taxonomy-and-form-identity-normalization/spec.md`](./0071-document-taxonomy-and-form-identity-normalization/spec.md) | Family/kind profile identity, stage-free layer, semantic version, and Stage 99 form naming | Active | 문서 profile 식별자의 `<family>/<kind>` 통일, stage 접두어 없는 `layer`, 3요소 semver, Stage 99 form 이동(MIG-0010), strict 실행에서 평가되는 `frontmatter.schema.json`이 이미 구현되어 있다. 2026-09-14에 draft에서 active로 옮겼으며 done 종료는 다음 검토 변경이다. | 2026-09-14 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
-| [`./0073-provider-native-enforcement-parity/spec.md`](./0073-provider-native-enforcement-parity/spec.md) | Provider-native execution scope, model binding, and write-path guard parity | Done | 두 provider의 실행 범위를 구조화된 필드로 선언하고, capability tier와 native model 결합에 단일 owner를 두었으며, pre-action guard를 shell 쓰기 경로까지 확장했다. Plan과 Task가 모두 done이고 남은 native-runtime 관측은 Task의 DEFER로 기록되어 있다. | 2026-09-14 |
-| [`./0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md`](./0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md) | Shared write-guard ownership, patch-envelope parsing, and enforcement honesty | Done | 공유 write guard 소유권을 `scripts/`로 옮겨 provider별 얇은 어댑터만 남겼고, patch envelope 대상 경로를 데이터로 파싱해 구조화 쓰기와 동일하게 평가한다. 증명되지 않은 hook 전달과 read-only 권한 클래스의 경계를 정직하게 서술했다. Plan과 Task가 모두 done이다. | 2026-09-14 |
-| [`./0075-common-knowledge-and-prompt-surfaces/spec.md`](./0075-common-knowledge-and-prompt-surfaces/spec.md) | Common knowledge and prompt surfaces with their document contracts | Done | ADR-0036에 따라 `.agents/knowledge/`와 `.agents/prompts/`를 실제 소비자와 함께 도입했고, Stage 99 profile·template, 책임 문서 통합, Stage 90 관측 갱신을 같은 검토 단위에서 처리했다. Plan과 Task가 모두 done이다. | 2026-09-14 |
-| [`./0076-agent-role-coverage-and-contract-completion/spec.md`](./0076-agent-role-coverage-and-contract-completion/spec.md) | Responsibility-boundary coverage, the roles that close it, and routing completeness | Done | role 다섯을 admit하고 supervisor 라우팅과 doc-writer 경계를 복구해 17개 role registry를 완성했다. WORK-001..007이 done이며 관측하지 않은 lane은 Task의 DEFER로 남는다. | 2026-09-14 |
 | [`./0077-dead-contract-and-duplicate-execution-retirement/spec.md`](./0077-dead-contract-and-duplicate-execution-retirement/spec.md) | Retirement of unreachable validation code, absent-subject assertions, and same-snapshot duplicate gate execution | Active | 기준선 `qa.py full`이 22/22 PASS인 상태에서 green이 드러내지 못하는 결함을 처분한다. 도달 불가능한 cross-document 서브트리와 수집되지 않는 test class, 대상이 사라진 cutover pin, `unit-tests` 안에서 같은 snapshot에 재실행되는 등록 gate, 코퍼스가 실천하지 않는 skill 의무를 제거하고 archive cutover 워크플로에 소유 skill을 부여한다. Gate 의미, 문서 route, profile, 링크 경계 동작은 바뀌지 않는다. | 2026-09-14 |
 | [`./0078-document-currency-reconciliation/spec.md`](./0078-document-currency-reconciliation/spec.md) | Reconciliation of stale and implementation-conflicting document statements and Stage 03 lifecycle state | Draft | `docs/` 전반에서 현재 구현과 다른 명령·경로·리소스 이름·버전·결정 서술을 근거와 함께 바로잡고, 구현되었거나 후속 작업으로 대체된 Stage 03 package를 다음 단일 lifecycle edge로 옮긴다. 미완료 작업은 구현하지 않고 처분과 차단 사유만 기록한다. | 2026-09-14 |
-| [`./0079-six-disposition-archive-stage/spec.md`](./0079-six-disposition-archive-stage/spec.md) | Six-disposition Archive stage governance and machine cutover | Done | ADR-0038의 두 종류 여섯 disposition, 명명에서 파생한 인용 규칙, 단일 Retention Envelope를 공통 거버넌스와 stage index에 먼저 적용하고, 수락 뒤 registry·archive form·검증기·테스트를 한 변경으로 전환한다. 동결 generation과 기존 인용은 다시 쓰지 않는다. | 2026-09-15 |
-| [`./0080-adr-0032-retention-pilot/spec.md`](./0080-adr-0032-retention-pilot/spec.md) | ADR-0032 retention pilot and frozen link resolution | Done | ADR-0038의 첫 disposition으로 ADR-0032를 `superseded/`에 보존하고, 동결 Stage 98 링크를 catalog로 증명하며, 현재 consumer를 후속 결정으로 옮긴다. | 2026-09-15 |
-| [`./0081-superseded-decision-retention/spec.md`](./0081-superseded-decision-retention/spec.md) | Retention of the fifteen remaining superseded decisions | Done | 승인된 disposition마다 대체된 ADR 15개를 `superseded/`에 보존하고, 현재 consumer 링크를 identifier 표기로 바꾸며, decision log에서 대체된 ADR을 모두 내보낸다. | 2026-09-15 |
 | [`./0082-unit-archive-retention-contract/spec.md`](./0082-unit-archive-retention-contract/spec.md) | Unit archive retention contract, citation table, and first exact disposition | Done | ADR-0039를 수락해 보존 단위와 순서 있는 인용 표를 세우고, registry·검증기·양식·거버넌스를 그 계약으로 전환했으며, ADR-0038을 첫 exact disposition으로 보존하고 종료했다. | 2026-09-16 |
 | [`./0083-finished-package-retention/spec.md`](./0083-finished-package-retention/spec.md) | Retention of the finished Stage 03 packages | Active | 완료된 package 일곱 개를 `completed/`에 단위 그대로 보존하고 소비자를 먼저 옮기며, 구현 전에 대체된 제안 두 개는 계약 충돌로 보존이 막힌 사실을 기록한다. | 2026-09-16 |
 

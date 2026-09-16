@@ -1,6 +1,6 @@
 ---
 title: "Common Knowledge and Prompt Surfaces"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -129,7 +129,7 @@ other three keep that decision's answer and its reasoning.
 
 This decision supersedes ADR-0035,
 whose body stays intact as evidence of the decision taken at that time.
-[SPEC-0075](../../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md)
+[SPEC-0075](../../98.archive/completed/03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md)
 owns the acceptance criteria, the ordered work and the execution evidence for
 the two adopted surfaces.
 
@@ -137,4 +137,4 @@ the two adopted surfaces.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0035 | Revises the unadopted-directory clause to adopt a knowledge and a prompt surface; preserves the authority-location, skill-routing, gateway, preservation and validation clauses | [SPEC-0075](../../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md) |
+| ADR-0035 | Revises the unadopted-directory clause to adopt a knowledge and a prompt surface; preserves the authority-location, skill-routing, gateway, preservation and validation clauses | [SPEC-0075](../../98.archive/completed/03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md) |

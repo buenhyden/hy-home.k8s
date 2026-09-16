@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.5.1"
+version: "1.5.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -151,16 +151,16 @@ Current governance and QA implementation is owned by
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
 Provider-native execution scope, capability-to-model binding, and write-path
 guard parity are owned by
-[SPEC-0073](../03.specs/0073-provider-native-enforcement-parity/spec.md).
+[SPEC-0073](../98.archive/completed/03.specs/0073-provider-native-enforcement-parity/spec.md).
 Shared write-guard ownership, patch-envelope parsing, and enforcement
 honesty are owned by
-[SPEC-0074](../03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md).
+[SPEC-0074](../98.archive/completed/03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty/spec.md).
 Common knowledge and prompt surfaces and their document contracts are
 owned by
-[SPEC-0075](../03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md).
+[SPEC-0075](../98.archive/completed/03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md).
 Responsibility-boundary coverage, the roles that close it, and routing
 completeness are owned by
-[SPEC-0076](../03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
+[SPEC-0076](../98.archive/completed/03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
 Retirement of unreachable validation code, absent-subject assertions, and
 same-snapshot duplicate gate execution is owned by
 [SPEC-0077](../03.specs/0077-dead-contract-and-duplicate-execution-retirement/spec.md).
@@ -169,17 +169,17 @@ and of Stage 03 lifecycle state that lagged completed work, is owned by
 [SPEC-0078](../03.specs/0078-document-currency-reconciliation/spec.md).
 The six-disposition Archive stage, its derived citation rule, and the move of
 the registry routes, archive forms, and validators to that model are owned by
-[SPEC-0079](../03.specs/0079-six-disposition-archive-stage/spec.md).
+[SPEC-0079](../98.archive/completed/03.specs/0079-six-disposition-archive-stage/spec.md).
 The first disposition under that model, which retains ADR-0032 and resolves
 frozen Stage 98 links to a retained source, is owned by
-[SPEC-0080](../03.specs/0080-adr-0032-retention-pilot/spec.md).
+[SPEC-0080](../98.archive/completed/03.specs/0080-adr-0032-retention-pilot/spec.md).
 Retaining the fifteen remaining superseded decisions is owned by
-[SPEC-0081](../03.specs/0081-superseded-decision-retention/spec.md).
+[SPEC-0081](../98.archive/completed/03.specs/0081-superseded-decision-retention/spec.md).
 The unit archive retention contract that ADR-0039 adopts, its cutover, and the
 first exact disposition are owned by
 [SPEC-0082](../03.specs/0082-unit-archive-retention-contract/spec.md).
-Retaining the finished and superseded Stage 03 packages under that contract is
-owned by
+Retaining the seven finished Stage 03 packages under that contract, and
+recording why the two superseded proposals cannot follow, is owned by
 [SPEC-0083](../03.specs/0083-finished-package-retention/spec.md).
 
 ## Traceability
