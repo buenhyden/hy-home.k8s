@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "architecture"
 ---
 # 02.architecture/descriptions (AD)
@@ -62,7 +62,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
 2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
-4. AD의 현재 의미와 소비자를 승계한 뒤 실제 lifecycle에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 원래 profile 그대로 본문을 보존한다([ADR-0038](../decisions/0038-six-disposition-archive-stage.md)). 원본은 두 번째 복구 원장 없이 Git history가 복구하며, ADR도 예외가 아니다. 기존 봉인 provenance는 동결된 역사 증거로 유지한다.
+4. AD의 현재 의미와 소비자를 승계한 뒤 실제 lifecycle에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 원래 profile 그대로 본문을 보존한다([ADR-0039](../decisions/0039-unit-archive-retention-and-citation-table.md)). 원본은 두 번째 복구 원장 없이 Git history가 복구하며, ADR도 예외가 아니다. 기존 봉인 provenance는 동결된 역사 증거로 유지한다.
 5. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
 
 ### Relative Link Rules

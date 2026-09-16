@@ -162,7 +162,7 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   which defines the current package-local delegated-execution model.
   Superseded ADR-0022 remains bounded predecessor context for the parent-only
   compatibility row until WP-013 removes that roster.
-- [ADR-0038 six-disposition Archive stage](../../02.architecture/decisions/0038-six-disposition-archive-stage.md),
+- ADR-0038, the six-disposition Archive stage decision,
   which superseded ADR-0032 and retains terminal governed documents after
   consumer-zero in the disposition that matches what happened to them.
 - [Accepted ADR-0033 common document contract v9](../../02.architecture/decisions/0033-common-document-contract-v9.md),

@@ -1,8 +1,8 @@
 ---
 title: "Propose the Unit Retention Contract"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-16"
 layer: "specs"

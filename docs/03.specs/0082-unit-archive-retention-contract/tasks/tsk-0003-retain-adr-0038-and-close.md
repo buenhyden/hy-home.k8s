@@ -1,10 +1,10 @@
 ---
 title: "Retain ADR-0038 and Close the Package"
-version: "0.1.0"
+version: "0.1.2"
 type: "sdlc/task"
-status: "queued"
+status: "done"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "specs"
 artifact_id: "SPEC-0082-TSK-0003"
 ---
@@ -32,9 +32,9 @@ evidence.
 
 | ID       | Upstream criterion | Work item                                                                         | Owner    | Status | Result       | Evidence                    |
 | -------- | ------------------ | --------------------------------------------------------------------------------- | -------- | ------ | ------------ | --------------------------- |
-| WORK-001 | VAL-UAR-010        | Repoint current documents that cite ADR-0038 to ADR-0039 or name it by identifier | platform | Queued | Not executed | Link gate                   |
-| WORK-002 | VAL-UAR-010        | Retain ADR-0038 exactly with one catalog row                                      | platform | Queued | Not executed | Lifecycle and archive gates |
-| WORK-003 | VAL-UAR-010        | Close this package and record the evidence                                        | platform | Queued | Not executed | Staged and full QA          |
+| WORK-001 | VAL-UAR-010        | Repoint current documents that cite ADR-0038 to ADR-0039 or name it by identifier | platform | Done   | Twelve documents repointed in `412cf7e1`; the link gate reports no current citation of the path | Link gate                   |
+| WORK-002 | VAL-UAR-010        | Retain ADR-0038 exactly with one catalog row                                      | platform | Done   | Retained in `3473cc85`; the row names `36081a0d:<original path>` and the body moved unchanged | Lifecycle and archive gates |
+| WORK-003 | VAL-UAR-010        | Close this package and record the evidence                                        | platform | Done   | Closed here; the full lane passed on `1b2a2121` | Staged and full QA          |
 
 ## Approval and Safety Boundaries
 
@@ -56,7 +56,34 @@ evidence.
 
 ## Verification Summary
 
-Not executed. The entry gate has not been met.
+Observed on 2026-09-16 on `feat/archive-adr-0038-disposition`, branched from
+`36081a0d`. Each result is a repository-static result from this workstation.
+
+- `python3 scripts/qa.py staged` passed its six gates before `412cf7e1` and
+  again before `3473cc85`.
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` over the
+  whole corpus reported no citation of the decision's active-stage path after
+  the repointing, which is the consumer-zero precondition the retention waits
+  for.
+- The first staged attempt at the retention failed. The link gate reported two
+  `LINK-BROKEN` diagnostics for the Stage 98 index's own links to the moved
+  path. The retention scope had covered current documents only, and the index
+  is an archive source that may link anywhere, so both links now name the
+  retained body at its own path. No other document was affected.
+- While the move was unstaged, a direct link run reported `generic migration
+  recovery proof differs`, the index/worktree drift this repository reports when
+  a tracked move exists in one snapshot only. The staged lane passed once the
+  move was staged.
+- `python3 scripts/qa.py full` first failed on this tree. Full-lane
+  re-verification read the whole catalog as one generation, so the new row
+  changed how ADR-0032's retained body resolved, and `archive-cutover`,
+  `archive-contract-tests`, and `unit-tests` rejected it. Scoping legacy
+  equivalence to the sixteen bodies of its own generation fixed it in
+  `1b2a2121`, where the repository test also stopped pinning the catalog's
+  size, which grows with every disposition.
+- `python3 scripts/qa.py full` then passed all twenty-three gates on
+  `1b2a2121`, `archive-cutover`, `archive-contract-tests`, and `unit-tests`
+  included.
 
 ## Traceability
 
@@ -66,6 +93,6 @@ Each work item carries its observed result.
 
 | Criterion / work item                 | Result        | Evidence                     |
 | ------------------------------------- | ------------- | ---------------------------- |
-| [WORK-001](../plan.md#work-breakdown) | Not executed. | Link gate.                   |
-| [WORK-002](../plan.md#work-breakdown) | Not executed. | Lifecycle and archive gates. |
-| [WORK-003](../plan.md#work-breakdown) | Not executed. | Staged and full QA.          |
+| [WORK-001](../plan.md#work-breakdown) | Done. | Link gate.                   |
+| [WORK-002](../plan.md#work-breakdown) | Done. | Lifecycle and archive gates. |
+| [WORK-003](../plan.md#work-breakdown) | Done. | Staged and full QA.          |
