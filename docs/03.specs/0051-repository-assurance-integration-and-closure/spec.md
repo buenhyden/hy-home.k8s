@@ -1,6 +1,6 @@
 ---
 title: "Repository Assurance Integration and Closure Technical Specification"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/spec"
 status: "withdrawn"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0051"
 
 ## Overview
 
-**Disposition note (2026-09-14).** This draft conflicts with the current direction: it requires a local-only fast-forward from a worktree that no longer exists while CI enforces pull requests into `main`, it depends on a progress ledger MIG-0007 retired, and merge authority belongs to the request owner. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so the draft is left unchanged. [SPEC-0078](../0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
+**Disposition note (2026-09-14).** This draft conflicts with the current direction: it requires a local-only fast-forward from a worktree that no longer exists while CI enforces pull requests into `main`, it depends on a progress ledger MIG-0007 retired, and merge authority belongs to the request owner. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so the draft is left unchanged. [SPEC-0078](../../98.archive/completed/03.specs/0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
 
 ### Current authority transfer
 

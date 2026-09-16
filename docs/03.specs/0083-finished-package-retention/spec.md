@@ -1,6 +1,6 @@
 ---
 title: "Finished Package Retention Technical Specification"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/spec"
 status: "done"
 owner: "platform"
@@ -72,7 +72,7 @@ retention the profile cannot express, and a decision nobody has taken.
 SPEC-0068 and SPEC-0070 stay in Stage 03. Both carry `status: "superseded"` and
 both state in their own Overview that SPEC-0072 owns the current implementation
 and acceptance criteria, which
-[SPEC-0071](../0071-document-taxonomy-and-form-identity-normalization/spec.md)
+[SPEC-0071](../../98.archive/completed/03.specs/0071-document-taxonomy-and-form-identity-normalization/spec.md)
 records as well. Their successor is therefore settled and neither is a
 withdrawal. Their retention is blocked instead by the contract conflict stated
 above, which only a decision owning that contract can resolve.

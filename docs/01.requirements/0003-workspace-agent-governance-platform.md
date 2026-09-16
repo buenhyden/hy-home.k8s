@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.5.4"
+version: "1.5.5"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -163,10 +163,10 @@ completeness are owned by
 [SPEC-0076](../98.archive/completed/03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
 Retirement of unreachable validation code, absent-subject assertions, and
 same-snapshot duplicate gate execution is owned by
-[SPEC-0077](../03.specs/0077-dead-contract-and-duplicate-execution-retirement/spec.md).
+[SPEC-0077](../98.archive/completed/03.specs/0077-dead-contract-and-duplicate-execution-retirement/spec.md).
 Reconciliation of document statements that drifted from the implementation,
 and of Stage 03 lifecycle state that lagged completed work, is owned by
-[SPEC-0078](../03.specs/0078-document-currency-reconciliation/spec.md).
+[SPEC-0078](../98.archive/completed/03.specs/0078-document-currency-reconciliation/spec.md).
 The six-disposition Archive stage, its derived citation rule, and the move of
 the registry routes, archive forms, and validators to that model are owned by
 [SPEC-0079](../98.archive/completed/03.specs/0079-six-disposition-archive-stage/spec.md).

@@ -1,6 +1,6 @@
 ---
 title: "GitHub Routing and CI Evidence Technical Specification"
-version: "1.1.3"
+version: "1.1.4"
 type: "sdlc/spec"
 status: "withdrawn"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0048"
 
 ## Overview
 
-**Disposition note (2026-09-14).** Re-observation found VAL-GRCE-002 and VAL-GRCE-005 implemented, VAL-GRCE-004 absorbed by SPEC-0072 and SPEC-0073, VAL-GRCE-007 settled differently by the recorded main protection, and the proposed contract location `.agents/contracts/` outside the adopted `.agents/` directories. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so this draft is left unchanged rather than activated only to be withdrawn. [SPEC-0078](../0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
+**Disposition note (2026-09-14).** Re-observation found VAL-GRCE-002 and VAL-GRCE-005 implemented, VAL-GRCE-004 absorbed by SPEC-0072 and SPEC-0073, VAL-GRCE-007 settled differently by the recorded main protection, and the proposed contract location `.agents/contracts/` outside the adopted `.agents/` directories. Withdrawal is the recommended disposition, but the registry declares no `draft` to `withdrawn` edge for Specs and Plans, so this draft is left unchanged rather than activated only to be withdrawn. [SPEC-0078](../../98.archive/completed/03.specs/0078-document-currency-reconciliation/spec.md) records the blocker; the request owner decides the route.
 
 ### Current authority transfer
 

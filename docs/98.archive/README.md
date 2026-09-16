@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.6.3"
+version: "0.6.4"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -165,6 +165,10 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0004-argo-rollouts-progressive-delivery`](./completed/03.specs/0004-argo-rollouts-progressive-delivery) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0004-argo-rollouts-progressive-delivery` |
 | [`completed/03.specs/0005-argo-notifications-slack`](./completed/03.specs/0005-argo-notifications-slack) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0005-argo-notifications-slack` |
 | [`completed/03.specs/0082-unit-archive-retention-contract`](./completed/03.specs/0082-unit-archive-retention-contract) | `90caf0bd963bcf5e8cd944d68298c02e3280f452:docs/03.specs/0082-unit-archive-retention-contract` |
+| [`completed/03.specs/0006-workspace-harness-gap-analysis`](./completed/03.specs/0006-workspace-harness-gap-analysis) | `500092f52e283356aa125e67ff46ca8d8baa95bd:docs/03.specs/0006-workspace-harness-gap-analysis` |
+| [`completed/03.specs/0071-document-taxonomy-and-form-identity-normalization`](./completed/03.specs/0071-document-taxonomy-and-form-identity-normalization) | `500092f52e283356aa125e67ff46ca8d8baa95bd:docs/03.specs/0071-document-taxonomy-and-form-identity-normalization` |
+| [`completed/03.specs/0077-dead-contract-and-duplicate-execution-retirement`](./completed/03.specs/0077-dead-contract-and-duplicate-execution-retirement) | `500092f52e283356aa125e67ff46ca8d8baa95bd:docs/03.specs/0077-dead-contract-and-duplicate-execution-retirement` |
+| [`completed/03.specs/0078-document-currency-reconciliation`](./completed/03.specs/0078-document-currency-reconciliation) | `500092f52e283356aa125e67ff46ca8d8baa95bd:docs/03.specs/0078-document-currency-reconciliation` |
 
 ## Authoring Workflow
 
