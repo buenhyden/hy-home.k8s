@@ -1,8 +1,8 @@
 ---
 title: "Workspace Harness Gap Analysis Technical Specification"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -19,6 +19,8 @@ native Docker, k3d, ArgoCD GitOps, External Secrets, Vault, PostgreSQL, Valkey,
 SDD (Spec-Driven Development), QA (Quality Assurance), CI/CD (Continuous
 Integration/Continuous Delivery), and AI Agent collaboration rules.
 
+**Closure (2026-09-16).** This Spec scopes itself to a dated 2026-05-24 snapshot with a 2026-05-25 overlay, and fifty-eight of its fifty-nine criteria name artifacts that exist in this tree. The residue is operator-owned runtime evidence, which the `completed/` class admits. Its own gate dependency, `scripts/validate-repo-quality-gates.sh`, was retired by SPEC-0072, whose Task records that its consumers now cite `python3 scripts/qa.py full`; the Stage 04 plan path it names does not exist either. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md) and corrects one stale sibling path in the body, which names Spec 025 at its pre-retention Stage 03 location. That reference is a code span rather than a link, so no gate could see it, and a retained unit is frozen byte for byte.
+
 ## Strategic Boundaries & Non-goals
 
 ### Current Ownership Boundary
@@ -26,7 +28,7 @@ Integration/Continuous Delivery), and AI Agent collaboration rules.
 This Spec remains active only for the historical harness-gap baseline and
 unresolved runtime/operator-approved boundaries. RMD-004 roster counts,
 provider stem parity, and canonical-owner pointer acceptance are owned by
-Spec 025 at `../0025-governance-owner-and-roster-currentness/spec.md`.
+Spec 025 at `../../98.archive/completed/03.specs/0025-governance-owner-and-roster-currentness/spec.md`.
 Completed provider normalization and role-addition evidence remain in Specs
 015 and 024.
 
