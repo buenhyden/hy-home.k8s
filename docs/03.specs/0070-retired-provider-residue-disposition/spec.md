@@ -1,12 +1,13 @@
 ---
 title: "Retired Provider Residue Disposition Technical Specification"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "superseded"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
 artifact_id: "SPEC-0070"
+superseded_by: "SPEC-0072"
 ---
 
 # Retired Provider Residue Disposition Technical Specification (Spec)

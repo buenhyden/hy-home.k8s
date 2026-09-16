@@ -1,12 +1,13 @@
 ---
 title: "Agent Projection Rendering and Gate Reduction Technical Specification"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "superseded"
 owner: "platform"
 updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0068"
+superseded_by: "SPEC-0072"
 ---
 
 # Agent Projection Rendering and Gate Reduction Technical Specification (Spec)
