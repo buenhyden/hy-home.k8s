@@ -1,6 +1,6 @@
 ---
 title: "Stage 03 Backlog Closeout Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0084"
 
 ## Overview
 
-[SPEC-0083](../0083-finished-package-retention/spec.md) retained the ten
+[SPEC-0083](../../98.archive/completed/03.specs/0083-finished-package-retention/spec.md) retained the ten
 finished Stage 03 packages and surveyed the sixteen that stayed, but it recorded
 their dispositions rather than deciding them. Two of those dispositions were
 blocked by the contracts themselves and were returned to the request owner.

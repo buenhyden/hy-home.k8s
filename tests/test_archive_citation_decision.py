@@ -44,7 +44,7 @@ ORDINARY_SOURCES = (
     (".agents/governance/document-lifecycle.md", "governance/rule"),
     ("docs/README.md", "common/readme-stage-index"),
     ("docs/99.templates/README.md", "common/readme-stage-index"),
-    ("docs/03.specs/0083-finished-package-retention/spec.md", "sdlc/spec"),
+    ("docs/03.specs/0001-x/spec.md", "sdlc/spec"),
     ("docs/05.operations/runbooks/0001-x.md", "operation/runbook"),
 )
 INCIDENT_SOURCES = (
@@ -192,7 +192,7 @@ class CurrentArchiveAuthorityConsumerTests(unittest.TestCase):
         )
 
     def test_an_active_spec_cites_only_completed_and_resolved_bodies(self) -> None:
-        spec = "docs/03.specs/0083-finished-package-retention/spec.md"
+        spec = "docs/03.specs/0001-x/spec.md"
         self.assertTrue(
             self.direct_link_reported(spec, "sdlc/spec", "active", SUPERSEDED)
         )

@@ -1,6 +1,6 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.6.2"
+version: "1.6.3"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -29,7 +29,7 @@ disappear. Fourteen packages are retained on unfinished scope rather than on a
 fixed list, two of them conditionally: `0062` holds three `blocked` Tasks, and
 `0006` is an `active` Spec with no Plan and no Tasks.
 
-**Closure (2026-09-16).** The executed scope of this record is committed and reviewed: the document-contract proposal, the ADR acceptances and the Spec and Plan amendment, the CI contract and regression fixes, the Spec 0052 whole-package retention, the archive guard parity, and the Requirement and Architecture owner corrections, with PRs 54 and 55 merged. Its one open scope, the disposition of the remaining Stage 03 packages, did not vanish: [SPEC-0083](../../0083-finished-package-retention/spec.md) surveyed every one of them and returned the two its contracts could not express, and [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md) executes those dispositions, closing SPEC-0071, SPEC-0078, SPEC-0062 and this package in the same round. The work moved owner rather than being abandoned, so this record closes `done` rather than `cancelled`. The Task Table result is left as observed, including its statement that the dispositions were open on that date.
+**Closure (2026-09-16).** The executed scope of this record is committed and reviewed: the document-contract proposal, the ADR acceptances and the Spec and Plan amendment, the CI contract and regression fixes, the Spec 0052 whole-package retention, the archive guard parity, and the Requirement and Architecture owner corrections, with PRs 54 and 55 merged. Its one open scope, the disposition of the remaining Stage 03 packages, did not vanish: [SPEC-0083](../../../98.archive/completed/03.specs/0083-finished-package-retention/spec.md) surveyed every one of them and returned the two its contracts could not express, and [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md) executes those dispositions, closing SPEC-0071, SPEC-0078, SPEC-0062 and this package in the same round. The work moved owner rather than being abandoned, so this record closes `done` rather than `cancelled`. The Task Table result is left as observed, including its statement that the dispositions were open on that date.
 
 ## Inputs
 

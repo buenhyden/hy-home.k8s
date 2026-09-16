@@ -1,6 +1,6 @@
 ---
 title: "Stage 03 Backlog Closeout Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -29,7 +29,7 @@ retentions, then the repairs the retentions prove necessary.
 
 ## Context
 
-[SPEC-0083](../0083-finished-package-retention/spec.md) surveyed the sixteen
+[SPEC-0083](../../98.archive/completed/03.specs/0083-finished-package-retention/spec.md) surveyed the sixteen
 remaining packages and returned two blocked dispositions to the request owner.
 This round decides them.
 

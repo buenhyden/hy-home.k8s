@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.5.5"
+version: "1.5.6"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -180,7 +180,7 @@ first exact disposition are owned by
 [SPEC-0082](../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
 Retaining the ten finished Stage 03 packages under that contract, and
 recording why the two superseded proposals cannot follow, is owned by
-[SPEC-0083](../03.specs/0083-finished-package-retention/spec.md).
+[SPEC-0083](../98.archive/completed/03.specs/0083-finished-package-retention/spec.md).
 Closing the Stage 03 backlog those rounds left, including the two registry gaps
 that blocked two of its dispositions, is owned by
 [SPEC-0084](../03.specs/0084-stage03-backlog-closeout/spec.md).
