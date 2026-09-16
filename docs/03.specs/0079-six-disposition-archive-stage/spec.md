@@ -13,7 +13,7 @@ artifact_id: "SPEC-0079"
 
 ## Overview
 
-[ADR-0038](../../02.architecture/decisions/0038-six-disposition-archive-stage.md)
+ADR-0038
 records a Stage 98 of six dispositions in two kinds: the retention classes
 `completed/`, `superseded/`, `retired/`, and `resolved/` hold a whole
 once-current body, and the route dispositions `tombstones/` and `migrations/`

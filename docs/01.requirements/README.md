@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.5.1"
+version: "0.5.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-16"
 layer: "requirements"
 ---
 # 01.requirements
@@ -74,7 +74,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 더 이상 현재가 아닌 문서는 [ADR-0038](../02.architecture/decisions/0038-six-disposition-archive-stage.md)에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 본문 전체를 보존하고, 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다.  원본 바이트는 Git history가 복구한다.
+7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 더 이상 현재가 아닌 문서는 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 본문 전체를 보존하고, 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다.  원본 바이트는 Git history가 복구한다.
 
 ### Relative Link Rules
 

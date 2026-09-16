@@ -57,7 +57,7 @@ Direct human approval on 2026-08-13 authorizes this Spec-owned execution
 relation. No separate PRD or Architecture Description is required for this
 package-local lifecycle. ADR-0025 owns the topology decision; accepted
 ADR-0031 owns the current-corpus and validation-routing model; and
-[ADR-0038](../../02.architecture/decisions/0038-six-disposition-archive-stage.md),
+ADR-0038,
 which superseded ADR-0032, owns the retention model that replaces deletion as the disposition for
 completed, stale, and deprecated documents in WP-013 and WP-009.
 [accepted ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)

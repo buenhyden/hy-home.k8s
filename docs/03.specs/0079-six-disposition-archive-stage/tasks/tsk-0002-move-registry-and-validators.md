@@ -23,7 +23,7 @@ acceptance.
 
 - [Spec](../spec.md) owns the contract and criteria, and [Plan](../plan.md)
   owns WP-005.
-- [ADR-0038](../../../02.architecture/decisions/0038-six-disposition-archive-stage.md)
+- ADR-0038
   was accepted in the change before this one.
 - The governance step recorded by
   [tsk-0001](tsk-0001-state-the-six-disposition-contract.md) states the

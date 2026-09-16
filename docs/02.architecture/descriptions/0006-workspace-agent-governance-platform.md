@@ -1,6 +1,6 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.7.0"
+version: "1.7.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -86,7 +86,7 @@ proposal을 구현된 병렬 contract로 주장하지 않는다. 고위험 실�
 ### Terminal disposition and historical lineage
 
 처분 전에 source → current semantic owner → 모든 current consumer → legal terminal route를 증명한다.
-더 이상 현재가 아닌 문서의 보존은 [ADR-0038](../decisions/0038-six-disposition-archive-stage.md)이 두 종류로 나눴고, 이를 대체한 [ADR-0039](../decisions/0039-unit-archive-retention-and-citation-table.md)가 두 종류를 유지하고 보존 단위와 exact 보존을 더한다.
+더 이상 현재가 아닌 문서의 보존은 ADR-0038이 두 종류로 나눴고, 이를 대체한 [ADR-0039](../decisions/0039-unit-archive-retention-and-citation-table.md)가 두 종류를 유지하고 보존 단위와 exact 보존을 더한다.
 retention class인 `completed/`, `superseded/`, `retired/`, `resolved/`는 spec package, Incident bundle, 단일 문서 단위의 원본 Git object를 링크까지 그대로 원래 profile로 보존하고,
 route disposition인 `tombstones/`와 `migrations/`는 본문 없이 route와 현재 owner만 명명한다. ADR decision-log 예외는 폐지되었다.
 인용 가능성은 registry의 순서 있는 인용 표가 판정하고, catalog의 Retention Envelope가 source Git object를

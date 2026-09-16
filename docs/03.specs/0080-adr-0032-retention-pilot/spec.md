@@ -14,7 +14,7 @@ artifact_id: "SPEC-0080"
 ## Overview
 
 This Spec owns the first disposition under
-[ADR-0038](../../02.architecture/decisions/0038-six-disposition-archive-stage.md):
+ADR-0038:
 ADR-0032, superseded by ADR-0038, leaves the decision log for `superseded/`.
 It uses one real document to prove the machine path SPEC-0079 built, and it
 closes the gaps the pilot exposed: a frozen Stage 98 link to the retained
