@@ -1927,7 +1927,32 @@ class ArchiveValidationTest(unittest.TestCase):
         # entry, and one batched object read. That is the same fixed four a
         # vacating rename costs above, and it stays four rather than eight
         # because Spec 0004 and Spec 0005 ride one batched operand list.
-        budget = 252
+        #
+        # It moved 252 -> 254 when SPEC-0084 retained seven more finished Stage
+        # 03 packages: Specs 0006, 0071, 0077 and 0078 into `completed/`, Specs
+        # 0068 and 0070 into `superseded/`, and Spec 0083 into `completed/`.
+        # Measured against the round's base commit, `e062290e`, on a linked
+        # worktree carrying a symbolic HEAD so the detached adjustment below does
+        # not enter: the corpus ran 252 there and 254 here, and the normalized
+        # command sets differ by three added `ls-tree` calls and one removed
+        # `cat-file --batch`.
+        #
+        # That difference refines the fixed four a vacating rename costs above.
+        # Only the exact tree entry is per recovery group; branch resolution, the
+        # last add-or-modify `log`, and the batched object read are shared. The
+        # `log` operand list grew from two paths to seven without adding a
+        # process, and the three groups merged into one `cat-file --batch` where
+        # the base needed two. The three groups are the three distinct last
+        # add-or-modify commits the retained paths resolve to: `16574635` for
+        # Spec 0006, `a5bad5ff` for Spec 0071, and `b4a1db91` for Specs 0068 and
+        # 0070, which ride one batched operand list because one commit added the
+        # `superseded_by` key to both. Specs 0077, 0078 and 0083 add no process
+        # at all: their paths join groups that already exist.
+        #
+        # So a retention round costs one process per distinct last add-or-modify
+        # commit among the vacated paths a sealed record still names, minus the
+        # `cat-file` batches it merges, and not four per package.
+        budget = 254
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. That is a fixed
