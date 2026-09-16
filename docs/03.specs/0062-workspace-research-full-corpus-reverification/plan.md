@@ -1,8 +1,8 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Implementation Plan"
-version: "1.1.2"
+version: "1.1.3"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -249,6 +249,8 @@ combined thirty-six-row result, and writes one immutable allocation map. The
 next five tasks consume disjoint allocation slices and edit only their topical
 owners. The final three tasks write shared ledgers, reconcile lifecycle and
 cross-links, and close validation.
+
+**Closure (2026-09-16).** Every member of this package is now terminal: seven Tasks `done`, three `cancelled` because the approved 2026-08-29 administrative closeout replaced the execution they waited on, and the follow-on cycle `done`. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Closure records that the package has no remaining reason to stay open, not that every criterion passed: `VAL-WRFR-002` stays deliberately unmet as recorded below, and `VAL-WRFR-011` through `VAL-WRFR-015` were replaced rather than satisfied. No result is converted to a pass.
 
 ## Context
 

@@ -1,8 +1,8 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Technical Specification"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -58,6 +58,8 @@ live-cluster behavior, or user and operator validation.
 
 Direct human approval on 2026-08-20 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
+
+**Closure (2026-09-16).** Every member of this package is now terminal: seven Tasks `done`, three `cancelled` because the approved 2026-08-29 administrative closeout replaced the execution they waited on, and the follow-on cycle `done`. This change takes the declared `active` to `done` edge under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Closure records that the package has no remaining reason to stay open, not that every criterion passed: `VAL-WRFR-002` stays deliberately unmet as recorded below, and `VAL-WRFR-011` through `VAL-WRFR-015` were replaced rather than satisfied. No result is converted to a pass.
 
 ## Strategic Boundaries & Non-goals
 

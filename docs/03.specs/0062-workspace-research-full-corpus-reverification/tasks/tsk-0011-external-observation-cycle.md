@@ -1,8 +1,8 @@
 ---
 title: "Run the approved 2026-09-05 follow-on external observation cycle"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -25,6 +25,8 @@ document contract owns creation states and admits no direct creation in a
 terminal state. The work described below is complete and its evidence is
 recorded. On 2026-09-14 the record moved `queued` to `in-progress`, the first
 declared edge toward `done`; the move to `done` is the following reviewed change.
+
+**Closure (2026-09-16).** Every work item above is `Done`, so this change takes the declared `in-progress` to `done` edge under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md). The three failures recorded verbatim in the Verification Summary predate this cycle and are not claimed as passes.
 
 ## Inputs
 
