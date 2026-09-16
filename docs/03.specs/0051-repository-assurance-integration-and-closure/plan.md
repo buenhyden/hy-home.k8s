@@ -1,8 +1,8 @@
 ---
 title: "Repository Assurance Integration and Closure Implementation Plan"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/plan"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -52,6 +52,8 @@ the reciprocal lifecycle without preclaiming its own SHA.
 **Tech Stack:** Git, Python 3, JSON Schema, Bash, pre-commit, repository SDLC
 validators, GitHub Actions static validators, Kubernetes/Kustomize static
 validators, Terraform and Bicep non-deploy validators.
+
+**Withdrawal (2026-09-16).** This package is withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md), taking the `draft` to `withdrawn` edge that the registry declares as of `238eac6a`. No document succeeds it, so withdrawal rather than supersession is the accurate class. Its own dated disposition note recorded why it cannot proceed: it requires a local-only fast-forward from a worktree that no longer exists while CI enforces pull requests into `main`, it depends on a retired progress ledger, and merge authority belongs to the request owner. Its integration criterion was unreachable in principle while its predecessors stayed open. All six Tasks were cancelled without execution.
 
 ## Context
 

@@ -1,8 +1,8 @@
 ---
 title: "GitHub Routing and CI Evidence Implementation Plan"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/plan"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -50,6 +50,8 @@ machine projection with native `.github` files and workflow claims.
 **Tech Stack:** Python 3, JSON Schema Draft 2020-12, YAML, CODEOWNERS parsing,
 GitHub Actions static validation, unittest, Bash aggregate gates, and GitHub
 CLI metadata-only reads.
+
+**Withdrawal (2026-09-16).** This package is withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md), taking the `draft` to `withdrawn` edge that the registry declares as of `238eac6a`. Withdrawal rather than supersession is the accurate class: no single document replaces this package. Its criteria were absorbed piecemeal by owners that already satisfy them, `VAL-GRCE-002` and `VAL-GRCE-005` by `.github/CODEOWNERS`, `.github/labeler.yml` and the repository surface document, `VAL-GRCE-004` by SPEC-0072 and SPEC-0073, and `VAL-GRCE-007` by the recorded main-branch protection. What remained, a routing contract at `.agents/contracts/`, has no home: that directory does not exist in the adopted `.agents/` layout. All six Tasks were cancelled without execution.
 
 ## Context
 
