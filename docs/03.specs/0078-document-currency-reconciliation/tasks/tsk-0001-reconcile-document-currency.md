@@ -1,8 +1,8 @@
 ---
 title: "Reconcile Document Currency"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-14"
 layer: "specs"
@@ -83,11 +83,15 @@ Each logical commit passed `python3 scripts/qa.py staged` over its exact index:
 tree containing this record, so its verdict is recorded in the merge handoff
 rather than here. Hosted CI is recorded only for a named observed commit.
 
-This record, its Spec and its Plan stay in their creation states (`queued` and
-`draft`). The lifecycle gate compares a pull request with its base, where this
-package does not yet exist, so a document created in the same change must keep
-its zero-indegree state. Activation and closure are the first reviewed change
-after merge.
+This record, its Spec and its Plan were created in their zero-indegree states
+(`queued` and `draft`). The lifecycle gate compares a pull request with its
+base, where this package did not yet exist, so a document created in the same
+change had to keep that state, and activation and closure were named as the
+first reviewed change after merge. **Activation (2026-09-16).** That merge
+happened, and this change takes the `draft` to `active` and `queued` to
+`in-progress` edges under
+[SPEC-0084](../../0084-stage03-backlog-closeout/spec.md); closure follows as its
+own reviewed change, because no `draft` to `done` edge exists.
 
 A working-tree run of the registry, lifecycle, link and archive validators
 fails while edits are unstaged, because those validators compare the index
