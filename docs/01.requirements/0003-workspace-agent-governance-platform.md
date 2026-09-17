@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.5.6"
+version: "1.5.7"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -184,6 +184,10 @@ recording why the two superseded proposals cannot follow, is owned by
 Closing the Stage 03 backlog those rounds left, including the two registry gaps
 that blocked two of its dispositions, is owned by
 [SPEC-0084](../03.specs/0084-stage03-backlog-closeout/spec.md).
+The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
+its cutover, the index navigation corrections, and the ordered lifecycle and
+result vocabulary work are owned by
+[SPEC-0085](../03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
 
 ## Traceability
 

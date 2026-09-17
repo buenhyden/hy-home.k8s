@@ -64,6 +64,7 @@ layer: "architecture"
 ├── 0037-kiali-operator-installation.md
 ├── 0038-six-disposition-archive-stage.md
 ├── 0039-unit-archive-retention-and-citation-table.md
+├── 0040-archive-reappraisal-and-verifiable-sources.md
 └── README.md
 ```
 
@@ -105,6 +106,7 @@ layer: "architecture"
 | [`./0036-common-knowledge-and-prompt-surfaces.md`](./0036-common-knowledge-and-prompt-surfaces.md) | Common knowledge and prompt surface adoption | Accepted | ADR-0035의 미채택 디렉터리 조항만 개정해 `.agents/knowledge/`와 `.agents/prompts/`를 채택하고, memory·rule·evaluation·script 디렉터리는 각각의 이유로 미채택을 유지한다. 나머지 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. |
 | [`./0037-kiali-operator-installation.md`](./0037-kiali-operator-installation.md) | Kiali operator 설치 결정 | Proposed | 현재 GitOps 구현(`kiali-operator` chart, operator 생성 CR, service DNS 연동)을 결정 기록으로 제안한다. 수락 시 ADR-0009 설치 조항을 대체한다. |
 | [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision | Accepted | 보존 단위(Spec package, Incident bundle, 단독 문서)를 원본 Git object 그대로 보존하고 단위 anchor 상태로 class를 정하며, 단위마다 catalog 행 하나, registry의 순서 있는 인용 결정표 하나, identity 계보로 추적하는 활성 stage 간 이동을 제안한다. ADR-0038 전체를 대체하며, SPEC-0082 machine 전환 전까지 검증기는 ADR-0038 route만 허용한다. |
+| [`./0040-archive-reappraisal-and-verifiable-sources.md`](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive reappraisal and verifiable sources decision | Proposed | 보존 단위를 승인 없는 변경으로부터 동결하되 승인된 단위 전체 제거(`git-history-only`)를 허용하고, 현재 증거 가치를 catalog 옆 `Retention Assessment` 표로 판정하며, envelope 도달 가능성을 default branch 기준으로 검증하도록 제안한다. 수락 시 ADR-0039 전체를 대체하며, 그 전까지 검증기는 ADR-0039를 그대로 집행한다. |
 
 ## Related Documents
 

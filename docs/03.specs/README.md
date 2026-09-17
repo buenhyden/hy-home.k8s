@@ -114,6 +114,10 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── plan.md
 │   ├── spec.md
 │   └── tasks/
+├── 0085-archive-reappraisal-and-document-standards/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -161,6 +165,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Done | 2026-09-05 재관찰: 7 done/3 blocked Tasks를 유지하고, 작업 완료를 기록한 TSK-0011은 2026-09-14에 queued에서 in-progress로 옮겼다. 승인된 2026-08-29 administrative-closeout addendum이 미래의 기존 Path B replay를 대체한다. 2026-09-16에 SPEC-0084 회차로 종료했다. 차단된 Task 세 개는 승인된 종결이 그 실행을 대체했고 필요한 환경이 부재해 취소했으며, TSK-0011은 done으로 닫았다. 과거 미충족 증거는 PASS로 바꾸지 않았다. 보존 이동은 2026-09-16에 보류했다: 이 package의 `plan.md`를 경로-정확하게 가리키는 secret-scan allowlist 항목을 함께 옮겨야 해서 별도 결정으로 남겼다. | 2026-09-07 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
 | [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Done | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. 2026-09-16에 종결했다: package 16건을 처분하고 단위 7건을 보존했으며, SPEC-0054·0062의 보존 이동은 소유자를 지정한 유예로 기록했다. | 2026-09-16 |
+| [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Draft | ADR-0040 제안에 따른 보존 단위 사후 평가·승인된 제거·default branch envelope 검증과 index 표류 정정을 소유하고, 공통 lifecycle·검증 결과 어휘는 각자의 승인 뒤 실행하도록 순서만 정한다. |
 
 ### Helper Templates
 
