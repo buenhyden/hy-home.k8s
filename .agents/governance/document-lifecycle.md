@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.6.0"
+version: "1.6.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 ---
 
 # Document Lifecycle Policy
@@ -45,9 +45,11 @@ their owning migration work package moves them.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
 - A governed document that is no longer current is retained rather than
-  deleted. It leaves Stages 01, 02, 03, 05, 90, and 99 for the Stage 98
+  deleted. A document in Stages 01, 02, 03, 05, or 90 leaves for the Stage 98
   disposition that matches what happened to it, and a superseded architecture
-  decision follows the same rule. Which states are terminal stays with the
+  decision follows the same rule. Stage 99 follows its retention modes: a
+  retired form leaves through `git-history-only` with no Stage 98 record, and a
+  stage or collection index is retained in place. Which states are terminal stays with the
   registry; this policy adds only the obligation that reaching one moves the
   document, and that each disposition needs its own authorization.
 - Stage 98 has six dispositions of two kinds. A retention class holds a whole

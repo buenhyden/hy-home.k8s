@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.5.27"
+version: "0.5.28"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 layer: "specs"
 ---
 # 03.specs
@@ -21,9 +21,10 @@ layer: "specs"
 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
 
 Spec은 실행 기준을 소유하는 문서다.
-활성 Spec은 현재 repo-backed 구현과 일치해야 한다. 끝난 package는 ADR-0038에 따라
-`98.archive/completed/`에 package 단위로 보존되고, Retention Catalog가 원래 경로를 한 번 명명하며,
-원본 바이트는 Git history가 복구한다.
+Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포함할 수 있다. 관측된 구현과의 의도된 차이는
+구현 대기이며, `completed`(현재 철자 `done`)는 수용 조건과 검사한 구현이 일치할 때만 인정한다. 끝난 package는
+처분이 승인될 때까지 이 stage에서 기다리고, 승인되면 ADR-0039에 따라 `98.archive/completed/`에 package
+단위로 원본 Git object 그대로 보존되며, Retention Catalog가 원래 경로를 한 번 명명하고 원본은 Git history가 복구한다.
 
 ### Stage Readers
 
@@ -69,8 +70,9 @@ whatever fails all four proofs; it is derived from lifecycle state and
 unfinished scope, not declared as a fixed list. The tree and table below are a
 point-in-time inventory, not a permanent roster or count invariant.
 
-Spec 0054 owns integrated acceptance; completed Spec 0066 owned delegated
-execution of WP-010 and WP-011, and WP-013 owns the current-corpus cutover.
+Spec 0054 owned integrated acceptance and is now `done`, waiting for its
+disposition; completed Spec 0066 owned delegated execution of WP-010 and
+WP-011, and Spec 0054 WP-013 owned the current-corpus cutover.
 The 2026-09-14 lifecycle reconciliation is recorded by
 [SPEC-0078](../98.archive/completed/03.specs/0078-document-currency-reconciliation/spec.md).
 

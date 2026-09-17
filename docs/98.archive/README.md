@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.6.6"
+version: "0.6.7"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 layer: "archive"
 ---
 
@@ -23,7 +23,7 @@ layer: "archive"
 
 ### Retention Class
 
-**Retention class**는 한때 현재였던 본문 전체를 당시 적용된 profile 그대로 보관한다. 더 이상 현재가 아닌 governed 문서는 Stage 01, 02, 03, 05, 90, 99를 떠나 실제로 일어난 일에 맞는 class에 보관되며, superseded ADR도 예외가 아니다. 보존은 profile을 따른다. 동결된 본문은 immutable로 남고, Git-history-only disposition은 호환 복제본 없이 복구 가능한 provenance만 남긴다. disposition마다 별도 승인이 필요하다.
+**Retention class**는 한때 현재였던 본문 전체를 당시 적용된 profile 그대로 보관한다. 더 이상 현재가 아닌 Stage 01, 02, 03, 05, 90의 governed 문서는 실제로 일어난 일에 맞는 class에 보관되며, superseded ADR도 예외가 아니다. Stage 99는 profile별로 다르다. 폐기된 form은 Stage 98 record 없이 Git history에만 남고(`git-history-only`), stage·collection README는 제자리에서 갱신된다(`retain-in-place`). 보존은 profile을 따른다. 동결된 본문은 immutable로 남고, Git-history-only disposition은 호환 복제본 없이 복구 가능한 provenance만 남긴다. disposition마다 별도 승인이 필요하다.
 
 - `completed/`: 끝나서 반영된 작업을 보관한다. 무엇을 promote했는지 명명하며, 활성 stage에서 인용할 수 있다.
 - `superseded/`: 더 새로운 현재 authority가 대체한 내용을 보관한다. 대체한 문서를 명명하며, 인용할 수 없으므로 후속 문서를 인용한다.

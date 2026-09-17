@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.5.2"
+version: "0.5.3"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 layer: "requirements"
 ---
 # 01.requirements
@@ -106,7 +106,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | --- | --- | --- |
 | `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
 | `active` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
-| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0038에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
+| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0039에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
 | `retired` | 대체 없이 의도적으로 종료한 요구 | 종료 사유와 마지막 추적 대상을 남기고 신규 구현의 권위로 사용하지 않는다. |
 | `withdrawn` | 승인 전에 철회한 요구 | 철회 사유를 남기고 downstream 구현을 시작하지 않는다. |
 

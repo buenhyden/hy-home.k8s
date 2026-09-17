@@ -1,8 +1,8 @@
 ---
 title: "Propose Archive Reappraisal and Document Standards"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-17"
 layer: "specs"
@@ -33,8 +33,8 @@ corrections of WP-002. It closes when both are committed with staged evidence.
 | ID       | Upstream criterion | Work item                                           | Owner    | Status | Result                  | Evidence                         |
 | -------- | ------------------ | --------------------------------------------------- | -------- | ------ | ----------------------- | -------------------------------- |
 | WORK-001 | VAL-ARS-001        | Survey the contract, implementation, and navigation | platform | Done   | Findings recorded below | Survey                           |
-| WORK-002 | VAL-ARS-002        | Propose ADR-0040 and create this package            | platform | Queued | Not executed            | Staged QA on the proposal commit |
-| WORK-003 | VAL-ARS-003        | Correct navigation drift in the indexes             | platform | Queued | Not executed            | Link gate and review             |
+| WORK-002 | VAL-ARS-002 | Propose ADR-0040 and create this package | platform | Done | ADR-0040 `proposed`, SPEC-0085 package created, indexes and REQ-0003 name them | Commit `aa64090f`; staged QA 6 PASS |
+| WORK-003 | VAL-ARS-003 | Correct navigation drift in the indexes | platform | In progress | Six indexes and one policy corrected in the working tree | Quick and staged QA on the navigation commit |
 
 ## Approval and Safety Boundaries
 
@@ -91,7 +91,7 @@ code comparison unless a row says the command was run.
 | `docs/02.architecture/descriptions/README.md`           | No finding in the ADR, archive, or inventory checks                                   | Matches                                                   | Reviewed; no change                                           |
 | `docs/03.specs/README.md` line 24                       | Explains completion by ADR-0038 and says an active Spec must match the implementation | Stale; mixes target contract with observed implementation | Name ADR-0039 and separate the target from the observed state |
 | `docs/03.specs/README.md` lines 72 to 73                | Present SPEC-0054 as owning integrated acceptance and WP-013 as owning the cutover    | Stale; SPEC-0054 is `done`                                | Present them as historical                                    |
-| `docs/03.specs/README.md` SPEC-0062 row                 | Says seven done and three blocked Tasks are kept                                      | Stale; its Tasks are done or cancelled                    | Match the Task states                                         |
+| `docs/03.specs/README.md` SPEC-0062 row | Opens with the 2026-09-05 observation of seven done and three blocked Tasks | Matches: the same row records the 2026-09-16 closure as dated history | No change |
 | `docs/98.archive/README.md` Retention Class             | Says any non-current document leaves Stages 01 to 99 alike                            | Too broad for Stage 99                                    | State the mode per profile                                    |
 | `.agents/governance/document-lifecycle.md` line 48      | The same broad Stage 99 wording                                                       | Too broad                                                 | State the mode per profile                                    |
 | `docs/99.templates/README.md` line 188                  | ADR-0038 retained sixteen rebased bodies                                              | Matches the registry                                      | No change                                                     |
@@ -126,11 +126,14 @@ conforming.
 
 ## Verification Summary
 
-WORK-001 is complete. Commands run: `git status`, `git log`, `git rev-parse
+WORK-001 and WORK-002 are complete. Commands run: `git status`, `git log`, `git rev-parse
 --show-object-format`, `git merge-base --is-ancestor` over every distinct
 catalog commit against `main` and `origin/main`, and frontmatter aggregation
-over tracked `docs/` files. No validator has run yet on the proposal; staged
-results are recorded when WORK-002 commits. Hosted CI and live lanes are not
+over tracked `docs/` files. For WORK-002, `python3 scripts/qa.py quick` first
+failed `links-and-owners` on unlinked traceability cells and a missing REQ-0003
+back-reference, both repaired; it then returned 6 PASS on the working tree, and
+`python3 scripts/qa.py staged` returned 6 PASS on the exact index committed as
+`aa64090f`, whose commit hooks and message check also passed. Hosted CI and live lanes are not
 run.
 
 ## Traceability
@@ -140,5 +143,5 @@ run.
 | Criterion / work item | Result          | Evidence          |
 | --------------------- | --------------- | ----------------- |
 | [WORK-001](../plan.md#work-breakdown) | Survey recorded | This record |
-| [WORK-002](../plan.md#work-breakdown) | Not executed | Proposal commit |
+| [WORK-002](../plan.md#work-breakdown) | Done | Commit `aa64090f`; staged QA 6 PASS |
 | [WORK-003](../plan.md#work-breakdown) | Not executed | Navigation commit |
