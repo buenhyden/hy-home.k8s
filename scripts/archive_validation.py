@@ -39,6 +39,7 @@ if TYPE_CHECKING:
 if __package__:
     from scripts.archive_dispositions import (
         ROUTE_DISPOSITION_PROFILES,
+        assessment_line_span,
         catalog_line_span,
         catalog_parity_diagnostics,
         citation_decision,
@@ -69,6 +70,7 @@ if __package__:
 else:  # Direct import-only execution from scripts/.
     from archive_dispositions import (  # type: ignore[no-redef]
         ROUTE_DISPOSITION_PROFILES,
+        assessment_line_span,
         catalog_line_span,
         catalog_parity_diagnostics,
         citation_decision,
@@ -149,6 +151,7 @@ def current_link_admitted(
     source_profile_id: str,
     target: PurePosixPath,
     registry: "Registry | None",
+    assessments: "Mapping[PurePosixPath] | None" = None,
 ) -> bool:
     """Report whether a current document may link this Stage 98 target directly.
 
@@ -158,7 +161,9 @@ def current_link_admitted(
 
     if registry is None:
         return is_retention_path(target)
-    decision = citation_decision(registry, source, source_profile_id, target)
+    decision = citation_decision(
+        registry, source, source_profile_id, target, assessments=assessments
+    )
     return decision is None or decision.admitted
 
 
@@ -3516,12 +3521,13 @@ def _read_repository_index(root: Path) -> str:
 
 
 def _parse_repository_index(
-    text: str,
+    text: str, registry: "Registry | None" = None
 ) -> tuple[dict[str, tuple[str, ...]], int, list[ArchiveDiagnostic]]:
     diagnostics: list[ArchiveDiagnostic] = []
     lines = text.splitlines()
     headers = [offset for offset, line in enumerate(lines) if line == _INDEX_HEADER]
     catalog = catalog_line_span(lines)
+    assessment = assessment_line_span(registry, lines) if registry is not None else None
     if len(headers) != 1:
         return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
     header = headers[0]
@@ -3536,8 +3542,10 @@ def _parse_repository_index(
     if any(
         line.startswith("|")
         for offset, line in enumerate(lines[end:], start=end)
-        # ADR-0038's catalog is its own table, owned by `archive_dispositions`.
-        if catalog is None or not catalog[0] <= offset < catalog[1]
+        # ADR-0038's catalog and ADR-0040's assessment are their own tables,
+        # owned by `archive_dispositions`.
+        if (catalog is None or not catalog[0] <= offset < catalog[1])
+        and (assessment is None or not assessment[0] <= offset < assessment[1])
     ):
         diagnostics.append(
             _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
@@ -3798,9 +3806,11 @@ def validate_repository_archive(
     except ArchiveContractError as exc:
         index_text = ""
         diagnostics.append(_diagnostic(exc.code, ARCHIVE_INDEX.as_posix()))
-    index_rows, index_links, index_diagnostics = _parse_repository_index(index_text)
-    diagnostics.extend(index_diagnostics)
     current_registry = repository_registry(root)
+    index_rows, index_links, index_diagnostics = _parse_repository_index(
+        index_text, current_registry
+    )
+    diagnostics.extend(index_diagnostics)
     if current_registry is not None:
         frozen_retained = frozenset(
             PurePosixPath(target)
@@ -4667,8 +4677,11 @@ def validate_current_archive_authority(
     *,
     individual_archive_paths: frozenset[str] | object = _MISSING_INVENTORY,
     registry: Registry | None = None,
+    assessments: Mapping[PurePosixPath] | None = None,
 ) -> ArchiveValidationReport:
-    """Validate passed current Markdown/profile data without filesystem reads."""
+    """Validate passed current Markdown/profile data without filesystem reads.
+
+    `assessments` is the parsed Retention Assessment table the caller read."""
 
     materialized, contract_diagnostics = _exact_sequence(
         documents,
@@ -4793,7 +4806,7 @@ def validate_current_archive_authority(
                 # record, so citing one is an ordinary link to that document
                 # at the path it now occupies.
                 and not current_link_admitted(
-                    pure_path, str(document.profile), target, registry
+                    pure_path, str(document.profile), target, registry, assessments
                 )
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))

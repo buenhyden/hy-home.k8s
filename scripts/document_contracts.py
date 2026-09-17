@@ -185,6 +185,30 @@ class CitationRule:
     decision: Literal["admit", "reject"]
     source_profile_ids: frozenset[str] = frozenset()
     target_classes: frozenset[str] = frozenset()
+    target_assessments: frozenset[str] = frozenset()
+    target_availabilities: frozenset[str] = frozenset()
+
+
+@dataclass(frozen=True)
+class ArchiveAssessment:
+    """ADR-0040's current judgment of retained units, kept beside the catalog.
+
+    A unit without a row carries the defaults. The value lists, which values
+    need a current owner, which are reserved, which mean the unit left the tree,
+    and which profiles may record a decision are owned here and nowhere else."""
+
+    index: PurePosixPath
+    heading: str
+    columns: tuple[str, ...]
+    assessments: tuple[str, ...]
+    availabilities: tuple[str, ...]
+    default_assessment: str
+    default_availability: str
+    owner_required_assessments: frozenset[str]
+    reserved_availabilities: frozenset[str]
+    removed_availabilities: frozenset[str]
+    decision_profile_ids: frozenset[str]
+    default_branch: str
 
 
 @dataclass(frozen=True)
@@ -242,6 +266,7 @@ class Registry:
     retention_units: tuple[RetentionUnit, ...] = ()
     retention_modes: tuple[RetentionMode, ...] = ()
     archive_citation: ArchiveCitation | None = None
+    archive_assessment: ArchiveAssessment | None = None
     legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
 
 
@@ -817,6 +842,49 @@ def _archive_citation_diagnostics(
     return diagnostics
 
 
+def _archive_assessment_diagnostics(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[Diagnostic]:
+    """Require the assessment defaults and subsets to come from its own lists."""
+
+    contract = raw_registry.get("archive_assessment")
+    if contract is None:
+        return []
+    assessments = set(contract["assessments"])
+    availabilities = set(contract["availabilities"])
+    faults: list[str] = []
+    if contract["default_assessment"] not in assessments:
+        faults.append("default_assessment")
+    if contract["default_availability"] not in availabilities:
+        faults.append("default_availability")
+    if not set(contract["owner_required_assessments"]) <= assessments:
+        faults.append("owner_required_assessments")
+    for key in ("reserved_availabilities", "removed_availabilities"):
+        values = set(contract[key])
+        if not values <= availabilities or contract["default_availability"] in values:
+            faults.append(key)
+    unknown = sorted(set(contract["decision_profile_ids"]) - set(profiles_by_id))
+    if unknown:
+        faults.append(f"decision_profile_ids {unknown!r}")
+    for position, rule in enumerate(
+        raw_registry.get("archive_citation", {}).get("rules", ()), start=1
+    ):
+        if (
+            not set(rule.get("target_assessments", ())) <= assessments
+            or not set(rule.get("target_availabilities", ())) <= availabilities
+        ):
+            faults.append(f"citation rule {position}")
+    return [
+        _diagnostic(
+            "REGISTRY_ARCHIVE_ASSESSMENT",
+            expected="assessment defaults, subsets, and profiles the registry declares",
+            actual=fault,
+        )
+        for fault in faults
+    ]
+
+
 def _legacy_retained_diagnostics(
     raw_registry: Mapping[str, Any], bound_modes: Mapping[str, str]
 ) -> list[Diagnostic]:
@@ -866,6 +934,7 @@ def _archive_retention_diagnostics(
         *_retention_unit_diagnostics(raw_registry, declared_states),
         *mode_diagnostics,
         *_archive_citation_diagnostics(raw_registry, profiles_by_id),
+        *_archive_assessment_diagnostics(raw_registry, profiles_by_id),
     ]
     if diagnostics:
         # The legacy check builds the typed registry, which needs the rest valid.
@@ -1220,6 +1289,9 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             for item in raw.get("retention_modes", ())
         ),
         archive_citation=_archive_citation_from_mapping(raw.get("archive_citation")),
+        archive_assessment=_archive_assessment_from_mapping(
+            raw.get("archive_assessment")
+        ),
         legacy_rebased_retained_paths=frozenset(
             PurePosixPath(value)
             for value in raw.get("legacy_rebased_retained_paths", ())
@@ -1242,9 +1314,32 @@ def _archive_citation_from_mapping(
                 decision=rule["decision"],
                 source_profile_ids=frozenset(rule.get("source_profile_ids", ())),
                 target_classes=frozenset(rule.get("target_classes", ())),
+                target_assessments=frozenset(rule.get("target_assessments", ())),
+                target_availabilities=frozenset(rule.get("target_availabilities", ())),
             )
             for rule in raw["rules"]
         ),
+    )
+
+
+def _archive_assessment_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> ArchiveAssessment | None:
+    if raw is None:
+        return None
+    return ArchiveAssessment(
+        index=PurePosixPath(raw["index"]),
+        heading=raw["heading"],
+        columns=tuple(raw["columns"]),
+        assessments=tuple(raw["assessments"]),
+        availabilities=tuple(raw["availabilities"]),
+        default_assessment=raw["default_assessment"],
+        default_availability=raw["default_availability"],
+        owner_required_assessments=frozenset(raw["owner_required_assessments"]),
+        reserved_availabilities=frozenset(raw["reserved_availabilities"]),
+        removed_availabilities=frozenset(raw["removed_availabilities"]),
+        decision_profile_ids=frozenset(raw["decision_profile_ids"]),
+        default_branch=raw["default_branch"],
     )
 
 

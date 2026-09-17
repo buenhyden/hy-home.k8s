@@ -25,7 +25,10 @@ import yaml
 
 if __package__:
     from scripts.archive_dispositions import (
+        assessment_line_span,
         catalog_line_span,
+        parse_assessment,
+        removed_records,
         link_resolved_text,
         parse_catalog,
         retained_unit_of,
@@ -79,7 +82,10 @@ if __package__:
     )
 else:
     from archive_dispositions import (  # type: ignore[no-redef]
+        assessment_line_span,
         catalog_line_span,
+        parse_assessment,
+        removed_records,
         link_resolved_text,
         parse_catalog,
         retained_unit_of,
@@ -991,7 +997,7 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
 
 
 def _parse_archive_index(
-    index_text: str,
+    index_text: str, registry: Registry | None = None
 ) -> tuple[dict[str, ArchiveIndexRow], bool]:
     """Parse the one exact manifest table and return rows plus structure failure."""
 
@@ -1012,12 +1018,15 @@ def _parse_archive_index(
     manifest_end = header_offset + 2 + len(raw_rows)
     rows: dict[str, ArchiveIndexRow] = {}
     catalog = catalog_line_span(lines)
+    assessment = assessment_line_span(registry, lines) if registry is not None else None
     structure_failure = not raw_rows or any(
         line.startswith("|")
         for offset, line in enumerate(lines)
         if not header_offset <= offset < manifest_end
-        # ADR-0038's catalog is its own table, owned by `archive_dispositions`.
+        # ADR-0038's catalog and ADR-0040's assessment are their own tables,
+        # owned by `archive_dispositions`.
         and (catalog is None or not catalog[0] <= offset < catalog[1])
+        and (assessment is None or not assessment[0] <= offset < assessment[1])
     )
     for raw_row in raw_rows:
         row = _parse_index_row(raw_row)
@@ -1090,6 +1099,9 @@ def catalog_envelope_diagnostics(
     """
 
     rows, _errors = parse_catalog(index_text)
+    removed = removed_records(
+        registry, index_text, exists=lambda path: (root / path).is_file()
+    )
     # A legacy body's links were rebased when its own generation moved together,
     # so its equivalence reads that generation's moves and nothing a later
     # disposition adds.
@@ -1110,7 +1122,8 @@ def catalog_envelope_diagnostics(
         ):
             diagnostics.append(_diagnostic("ARCHIVE-CATALOG-OBJECT", record.as_posix()))
             continue
-        if not retained:
+        if not retained or record in removed:
+            # A removed unit keeps a verifiable envelope and nothing in the tree.
             continue
         if record in registry.legacy_rebased_retained_paths:
             source = blob_text(
@@ -1390,7 +1403,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.extend(
             catalog_envelope_diagnostics(root, typed_registry, index_text)
         )
-    index_rows, index_structure_failure = _parse_archive_index(index_text)
+    index_rows, index_structure_failure = _parse_archive_index(
+        index_text, typed_registry
+    )
     index_links = sum(row.historical_links for row in index_rows.values())
     markers = tuple(_INDEX_MANIFEST.finditer(index_text))
     marker_valid = (
@@ -1501,6 +1516,11 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         tuple(current_documents),
         individual_archive_paths=expected_paths,
         registry=typed_registry,
+        assessments=(
+            parse_assessment(typed_registry, index_text)[0]
+            if typed_registry is not None and typed_registry.archive_assessment
+            else None
+        ),
     )
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in current_report.diagnostics

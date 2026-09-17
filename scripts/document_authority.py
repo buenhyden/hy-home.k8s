@@ -29,7 +29,8 @@ TOP_LEVEL_KEYS = frozenset(
     }
 )
 # ADR-0038 binds each Stage 98 retention class to the terminal states it admits,
-# and ADR-0039 adds the retention units, modes, citation table, and legacy set.
+# ADR-0039 adds the retention units, modes, citation table, and legacy set, and
+# ADR-0040 adds the assessment contract.
 # A comparison-base registry from before either decision has none of them, so
 # the keys are admitted beside the required set rather than required by it.
 OPTIONAL_TOP_LEVEL_KEYS = frozenset(
@@ -38,6 +39,7 @@ OPTIONAL_TOP_LEVEL_KEYS = frozenset(
         "retention_units",
         "retention_modes",
         "archive_citation",
+        "archive_assessment",
         "legacy_rebased_retained_paths",
     }
 )

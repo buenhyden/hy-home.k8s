@@ -397,6 +397,197 @@ class DispositionLifecycleTest(unittest.TestCase):
         self.write(INDEX, catalog((MIGRATION, f"{earlier}:{RUNBOOK}")).encode())
         self.assertIn(("LIFECYCLE-EVIDENCE", MIGRATION), self.evaluate())
 
+    # ADR-0040: a retained unit is frozen against unapproved change, and one
+    # approved whole-unit removal leaves its row and envelope behind.
+
+    def assessed(
+        self,
+        rows: tuple[tuple[str, str], ...],
+        *assessments: tuple[str, str, str, str, str],
+    ) -> str:
+        """Return a catalog with a Retention Assessment table.
+
+        Each assessment is (record, assessment, availability, decision, hold);
+        decision and hold are repository paths or "none"."""
+
+        contract = self.registry.archive_assessment
+
+        def link(value: str) -> str:
+            return (
+                "none" if value == "none" else f"[x](../{value.removeprefix('docs/')})"
+            )
+
+        lines = [
+            catalog(*rows).rstrip("\n"),
+            "",
+            f"### {contract.heading}",
+            "",
+            "| " + " | ".join(contract.columns) + " |",
+            "| " + " | ".join("---" for _ in contract.columns) + " |",
+        ]
+        for record, assessment, availability, decision, hold in assessments:
+            relative = record.removeprefix("docs/98.archive/")
+            lines.append(
+                f"| `{relative}` | {assessment} | {availability} | none | "
+                f"{link(decision)} | 2026-09-17 | {link(hold)} |"
+            )
+        return "\n".join(lines) + "\n"
+
+    def committed_package(self) -> tuple[str, tuple[tuple[str, str], ...]]:
+        record = self.retain_package()
+        rows = ((record, f"{self.base}:{PACKAGE}"),)
+        self.assertEqual(self.evaluate(), [])
+        self.commit("retain")
+        return record, rows
+
+    def remove(self, record: str) -> None:
+        self.git("rm", "-r", "--quiet", "--", record)
+
+    def test_approved_whole_unit_removal_is_admitted(self) -> None:
+        record, rows = self.committed_package()
+        self.remove(record)
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "git-history-only", ADR, "none")
+            ).encode(),
+        )
+        self.assertEqual(self.evaluate(), [])
+
+    def test_approved_document_unit_removal_is_admitted(self) -> None:
+        record = self.retain("superseded", ADR)
+        rows = ((record, f"{self.base}:{ADR}"),)
+        self.write(INDEX, catalog(*rows).encode())
+        self.assertEqual(self.evaluate(), [])
+        self.commit("retain")
+        self.remove(record)
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "superseded", "git-history-only", TASK, "none")
+            ).encode(),
+        )
+        self.assertIn(
+            ("LIFECYCLE-EVIDENCE", INDEX), self.evaluate()
+        )  # superseded needs a current owner the fixture row does not name
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "git-history-only", TASK, "none")
+            ).encode(),
+        )
+        self.assertEqual(self.evaluate(), [])
+
+    def test_removal_without_an_assessment_row_is_not_admitted(self) -> None:
+        record, _rows = self.committed_package()
+        self.remove(record)
+        self.assertIn(("LIFECYCLE-EVIDENCE", f"{record}/spec.md"), self.evaluate())
+
+    def test_removal_with_a_hold_is_not_admitted(self) -> None:
+        record, rows = self.committed_package()
+        self.remove(record)
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "git-history-only", ADR, RUNBOOK)
+            ).encode(),
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_removal_without_a_decision_is_not_admitted(self) -> None:
+        record, rows = self.committed_package()
+        self.remove(record)
+        for decision in ("none", RUNBOOK, "docs/03.specs/9999-missing/spec.md"):
+            with self.subTest(decision=decision):
+                self.write(
+                    INDEX,
+                    self.assessed(
+                        rows,
+                        (record, "withdrawn", "git-history-only", decision, "none"),
+                    ).encode(),
+                )
+                self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_partial_removal_is_not_admitted(self) -> None:
+        record, rows = self.committed_package()
+        self.git("rm", "--quiet", "--", f"{record}/plan.md")
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "git-history-only", ADR, "none")
+            ).encode(),
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", f"{record}/spec.md"), self.evaluate())
+
+    def test_removal_keeps_the_catalog_row(self) -> None:
+        record, _rows = self.committed_package()
+        self.remove(record)
+        self.write(
+            INDEX,
+            self.assessed(
+                (), (record, "withdrawn", "git-history-only", ADR, "none")
+            ).encode(),
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_a_removed_unit_is_never_recreated(self) -> None:
+        record, rows = self.committed_package()
+        members = {
+            member: (self.root / record / member).read_bytes()
+            for member in PACKAGE_MEMBERS
+        }
+        self.remove(record)
+        removed = self.assessed(
+            rows, (record, "withdrawn", "git-history-only", ADR, "none")
+        )
+        self.write(INDEX, removed.encode())
+        self.assertEqual(self.evaluate(), [])
+        self.commit("remove")
+        for member, content in members.items():
+            self.write(f"{record}/{member}", content)
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "retained", ADR, "none")
+            ).encode(),
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_reappraisal_keeps_the_unit_frozen(self) -> None:
+        record, rows = self.committed_package()
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "invalidated", "retained", ADR, "none")
+            ).encode(),
+        )
+        self.assertEqual(self.evaluate(), [])
+        self.commit("reappraise")
+        task = f"{record}/tasks/tsk-0001-retain-adr-0032.md"
+        self.write(task, (self.root / task).read_bytes() + b"\nCorrected.\n")
+        self.assertIn(("LIFECYCLE-EVIDENCE", f"{record}/spec.md"), self.evaluate())
+
+    def test_an_assessment_row_does_not_leave(self) -> None:
+        record, rows = self.committed_package()
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "invalidated", "retained", ADR, "none")
+            ).encode(),
+        )
+        self.commit("reappraise")
+        self.write(INDEX, self.assessed(rows).encode())
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_a_malformed_assessment_table_is_not_admitted(self) -> None:
+        _record, rows = self.committed_package()
+        self.write(
+            INDEX,
+            (self.assessed(rows) + "| `x` | usable |\n").encode(),
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
 
 if __name__ == "__main__":  # pragma: no cover - module entry guard
     unittest.main()

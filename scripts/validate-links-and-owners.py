@@ -86,14 +86,18 @@ try:
     from archive_dispositions import (
         citation_decision,
         frontmatter_mapping,
+        parse_assessment,
         parse_catalog,
+        removed_records,
         retention_class_of,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
         citation_decision,
         frontmatter_mapping,
+        parse_assessment,
         parse_catalog,
+        removed_records,
         retention_class_of,
     )
 
@@ -3195,7 +3199,10 @@ def _reviewed_work054_historical_owner_edges(
 
 
 def _archive_boundary_diagnostic(
-    source: PurePosixPath, profile: str, target: PurePosixPath
+    source: PurePosixPath,
+    profile: str,
+    target: PurePosixPath,
+    assessments: Mapping[PurePosixPath, Any] | None = None,
 ) -> Diagnostic | None:
     """Decide a link into Stage 98 from the registry's ordered citation table.
 
@@ -3205,7 +3212,9 @@ def _archive_boundary_diagnostic(
     reached through the index by every source, so the exemption stays bound to
     what a document is rather than to where it sits."""
 
-    decision = citation_decision(_repository_registry(), source, profile, target)
+    decision = citation_decision(
+        _repository_registry(), source, profile, target, assessments=assessments
+    )
     if decision is None or decision.admitted:
         return None
     return _diag(
@@ -3443,6 +3452,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if _catalog_retained_link(context, source, target):
                     continue
+                if _removed_unit_catalog_link(context, source, target):
+                    continue
                 diagnostics.append(
                     _diag(
                         "LINK-BROKEN",
@@ -3453,7 +3464,9 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     )
                 )
                 continue
-            archive = _archive_boundary_diagnostic(source, profile, target)
+            archive = _archive_boundary_diagnostic(
+                source, profile, target, _archive_assessments(context)
+            )
             if archive is not None:
                 diagnostics.append(archive)
             boundary = _stage_boundary_diagnostic(source, profile, target)
@@ -5107,6 +5120,53 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
             )
 
     return diagnostics
+
+
+def _archive_index_text(context: Context) -> str | None:
+    text = context.texts.get(ARCHIVE_INDEX_PATH)
+    if text is not None:
+        return text
+    try:
+        return (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def _archive_assessments(context: Context) -> Mapping[PurePosixPath, Any]:
+    """Return the Retention Assessment rows the citation table judges with.
+
+    A malformed table yields no rows here; the lifecycle gate reports it."""
+
+    registry = _repository_registry()
+    text = _archive_index_text(context)
+    if text is None or registry.archive_assessment is None:
+        return {}
+    rows, errors = parse_assessment(registry, text)
+    return {} if errors else rows
+
+
+def _removed_unit_catalog_link(
+    context: Context, source: PurePosixPath, target: PurePosixPath
+) -> bool:
+    """Admit the Archive index's own catalog link to a unit that left the tree.
+
+    ADR-0040 keeps a removed unit's catalog row unchanged, so the row still
+    links the record Git recovers. Only the index gets this admission, and only
+    for a record its assessment table names as removed."""
+
+    if source != ARCHIVE_INDEX_PATH:
+        return False
+    text = _archive_index_text(context)
+    if text is None:
+        return False
+    removed = removed_records(
+        _repository_registry(),
+        text,
+        exists=lambda path: _path_exists_without_dereference(
+            context.root, path, context.adapter_targets
+        ),
+    )
+    return any(target == record or record in target.parents for record in removed)
 
 
 def _catalog_retained_link(

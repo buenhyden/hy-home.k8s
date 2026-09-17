@@ -22,6 +22,7 @@ MODULES = (
     "tests.test_archive_dispositions",
     "tests.test_archive_disposition_lifecycle",
     "tests.test_archive_catalog_reverification",
+    "tests.test_archive_reappraisal",
 )
 
 

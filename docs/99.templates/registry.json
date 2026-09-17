@@ -5549,6 +5549,36 @@
       },
       {
         "source": "any",
+        "target": "retained-body",
+        "target_classes": [
+          "completed",
+          "superseded",
+          "retired",
+          "resolved"
+        ],
+        "target_assessments": [
+          "withdrawn",
+          "invalidated"
+        ],
+        "decision": "reject"
+      },
+      {
+        "source": "any",
+        "target": "retained-body",
+        "target_classes": [
+          "completed",
+          "superseded",
+          "retired",
+          "resolved"
+        ],
+        "target_availabilities": [
+          "git-history-only",
+          "purged"
+        ],
+        "decision": "reject"
+      },
+      {
+        "source": "any",
         "target": "route-record",
         "decision": "reject"
       },
@@ -5582,6 +5612,48 @@
         "decision": "admit"
       }
     ]
+  },
+  "archive_assessment": {
+    "index": "docs/98.archive/README.md",
+    "heading": "Retention Assessment",
+    "columns": [
+      "Disposition Record",
+      "Assessment",
+      "Availability",
+      "Current Owner",
+      "Decision",
+      "Assessed",
+      "Hold"
+    ],
+    "assessments": [
+      "unreviewed",
+      "usable",
+      "superseded",
+      "withdrawn",
+      "invalidated"
+    ],
+    "availabilities": [
+      "retained",
+      "git-history-only",
+      "purged"
+    ],
+    "default_assessment": "unreviewed",
+    "default_availability": "retained",
+    "owner_required_assessments": [
+      "superseded"
+    ],
+    "reserved_availabilities": [
+      "purged"
+    ],
+    "removed_availabilities": [
+      "git-history-only"
+    ],
+    "decision_profile_ids": [
+      "sdlc/task",
+      "sdlc/spec",
+      "sdlc/architecture-decision"
+    ],
+    "default_branch": "main"
   },
   "legacy_rebased_retained_paths": [
     "docs/98.archive/superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Own the ADR-0038 six-disposition Stage 98 contract the validators share.
 
+ADR-0040 adds the current judgment of a retained unit, read from the Archive
+index's Retention Assessment table beside the catalog.
+
 Content frozen under ADR-0032 keeps its generation and its existing owners.
 This module answers only what the current generation asks: which retention
 class a path belongs to, which classes a current document may cite, and what
@@ -10,6 +13,7 @@ recovery ledger; Git history recovers the object the envelope names.
 
 from __future__ import annotations
 
+import datetime
 import importlib
 import posixpath
 import re
@@ -17,12 +21,13 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from types import ModuleType
-from typing import TYPE_CHECKING, Mapping, Sequence
+from typing import TYPE_CHECKING, Callable, Mapping, Sequence
 
 import yaml
 
 if TYPE_CHECKING:
     from document_contracts import (
+        ArchiveAssessment,
         CitationRule,
         Registry,
         RetentionClass,
@@ -296,6 +301,7 @@ def _rule_matches(
     source_profile_id: str,
     target_kind: str,
     target_class: str | None,
+    target_judgment: tuple[str, str] | None = None,
 ) -> bool:
     """Report whether one citation-table rule applies to this source and target.
 
@@ -317,8 +323,16 @@ def _rule_matches(
         return True
     if rule.target != target_kind:
         return False
+    if rule.target != "retained-body":
+        return True
     # A retained-body rule that does not cover this class passes to the next rule.
-    return rule.target != "retained-body" or target_class in rule.target_classes
+    if target_class not in rule.target_classes:
+        return False
+    # An assessment or availability condition narrows the rule to units judged so.
+    assessment, availability = target_judgment or ("", "")
+    if rule.target_assessments and assessment not in rule.target_assessments:
+        return False
+    return not rule.target_availabilities or availability in rule.target_availabilities
 
 
 def citation_decision(
@@ -326,11 +340,15 @@ def citation_decision(
     source: PurePosixPath,
     source_profile_id: str,
     target: PurePosixPath,
+    *,
+    assessments: Mapping[PurePosixPath, "AssessmentRow"] | None = None,
 ) -> CitationDecision | None:
     """Decide a citation into Stage 98 from the registry's ordered table.
 
     The first matching rule decides; with no match the table's default does.
-    A target outside Stage 98 is not a citation decision and returns None."""
+    `assessments` is the parsed Retention Assessment table; a unit it does not
+    name carries the registry defaults. A target outside Stage 98 is not a
+    citation decision and returns None."""
 
     kind = archive_target_kind(registry, target)
     if kind is None:
@@ -341,8 +359,15 @@ def citation_decision(
             "ARCHIVE-CITATION-TABLE", "the registry declares no archive citation table"
         )
     target_kind, target_class = kind
+    judgment = (
+        assessment_of(registry, assessments or {}, target)
+        if target_kind == "retained-body"
+        else None
+    )
     for position, rule in enumerate(table.rules, start=1):
-        if _rule_matches(rule, source, source_profile_id, target_kind, target_class):
+        if _rule_matches(
+            rule, source, source_profile_id, target_kind, target_class, judgment
+        ):
             return CitationDecision(admitted=rule.decision == "admit", rule=position)
     return CitationDecision(admitted=table.default == "admit", rule=None)
 
@@ -486,6 +511,9 @@ def catalog_parity_diagnostics(
     diagnostics: list[tuple[str, str]] = [
         (code, ARCHIVE_INDEX.as_posix()) for code in errors
     ]
+    # ADR-0040: a unit approved to leave the tree keeps its row and its envelope,
+    # so its absence is its availability rather than a missing payload.
+    removed = removed_records(registry, index_text)
     generation: dict[PurePosixPath, tuple[str, object, str]] = {}
     unit_members: dict[PurePosixPath, dict[PurePosixPath, str]] = {}
     for path, text in texts.items():
@@ -512,6 +540,8 @@ def catalog_parity_diagnostics(
         if profile.profile_id in ROUTE_DISPOSITION_PROFILES:
             generation[path] = ("route", profile.profile_id, text)
     for path in sorted(set(generation) ^ set(rows), key=PurePosixPath.as_posix):
+        if path in removed and path not in generation:
+            continue
         diagnostics.append(("ARCHIVE-CATALOG-PARITY", path.as_posix()))
     for path, (family, kind, text) in sorted(
         generation.items(), key=lambda item: item[0].as_posix()
@@ -544,3 +574,279 @@ def catalog_parity_diagnostics(
         ):
             diagnostics.append(("ARCHIVE-DISPOSITION-NAMING", path.as_posix()))
     return tuple(dict.fromkeys(diagnostics))
+
+
+# ADR-0040: the Retention Assessment table beside the catalog.
+
+_DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
+_RECORD_CELL = re.compile(r"`(?P<record>[^`|]+)`")
+_LINK_CELL = re.compile(r"\[[^\]|]+\]\((?P<target>[^)|\s]+)\)")
+
+
+@dataclass(frozen=True)
+class AssessmentRow:
+    """One unit's current judgment; the catalog row keeps its source."""
+
+    record_path: PurePosixPath
+    assessment: str
+    availability: str
+    current_owner: PurePosixPath | None
+    decision: PurePosixPath | None
+    assessed: str
+    hold: PurePosixPath | None
+
+
+def _split_cells(line: str) -> list[str]:
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+
+def _assessment_contract(registry: "Registry") -> "ArchiveAssessment":
+    contract = registry.archive_assessment
+    if contract is None:
+        raise DispositionError(
+            "ARCHIVE-ASSESSMENT-CONTRACT",
+            "the registry declares no archive assessment contract",
+        )
+    return contract
+
+
+def assessment_line_span(
+    registry: "Registry", lines: Sequence[str]
+) -> tuple[int, int] | None:
+    """Return the assessment table's line span so another table parser skips it."""
+
+    contract = registry.archive_assessment
+    if contract is None:
+        return None
+    heading = f"### {contract.heading}"
+    for offset, line in enumerate(lines):
+        if line != heading:
+            continue
+        # The table is the first one in the section; prose may precede it.
+        start = offset + 1
+        while (
+            start < len(lines)
+            and not lines[start].startswith("|")
+            and not lines[start].startswith("#")
+        ):
+            start += 1
+        end = start
+        while end < len(lines) and lines[end].startswith("|"):
+            end += 1
+        return (start, end) if end > start else None
+    return None
+
+
+def _link_cell(value: str, index: PurePosixPath) -> PurePosixPath | None | str:
+    """Return `none` as None, one resolved local link as a path, else the raw cell."""
+
+    if value == "none":
+        return None
+    match = _LINK_CELL.fullmatch(value)
+    if match is None:
+        return value
+    resolved = posixpath.normpath(
+        posixpath.join(index.parent.as_posix(), match.group("target").split("#", 1)[0])
+    )
+    path = _canonical_repository_path(resolved)
+    return path if path is not None else value
+
+
+def parse_assessment(
+    registry: "Registry", text: str
+) -> tuple[dict[PurePosixPath, AssessmentRow], tuple[tuple[str, str], ...]]:
+    """Parse the Retention Assessment table; no table means no judgment yet."""
+
+    contract = _assessment_contract(registry)
+    index = contract.index.as_posix()
+    lines = text.splitlines()
+    heading = f"### {contract.heading}"
+    if sum(1 for line in lines if line == heading) > 1:
+        return {}, (("ARCHIVE-ASSESSMENT-STRUCTURE", index),)
+    span = assessment_line_span(registry, lines)
+    if span is None:
+        present = heading in lines
+        return {}, ((("ARCHIVE-ASSESSMENT-STRUCTURE", index),) if present else ())
+    start, end = span
+    width = len(contract.columns)
+    if (
+        end - start < 2
+        or tuple(_split_cells(lines[start])) != contract.columns
+        or any(
+            re.fullmatch(r":?-{3,}:?", cell) is None
+            for cell in _split_cells(lines[start + 1])
+        )
+        or len(_split_cells(lines[start + 1])) != width
+    ):
+        return {}, (("ARCHIVE-ASSESSMENT-STRUCTURE", index),)
+    rows: dict[PurePosixPath, AssessmentRow] = {}
+    errors: list[tuple[str, str]] = []
+    for line in lines[start + 2 : end]:
+        cells = _split_cells(line)
+        record_match = _RECORD_CELL.fullmatch(cells[0]) if cells else None
+        record = (
+            _canonical_repository_path(
+                f"{ARCHIVE_ROOT.as_posix()}/{record_match.group('record')}"
+            )
+            if record_match is not None
+            else None
+        )
+        links = (
+            [_link_cell(cells[column], contract.index) for column in (3, 4, 6)]
+            if len(cells) == width
+            else []
+        )
+        if (
+            len(cells) != width
+            or record is None
+            or record in rows
+            or any(isinstance(item, str) for item in links)
+        ):
+            errors.append(("ARCHIVE-ASSESSMENT-STRUCTURE", index))
+            continue
+        owner, decision, hold = links
+        rows[record] = AssessmentRow(
+            record_path=record,
+            assessment=cells[1],
+            availability=cells[2],
+            current_owner=owner,  # type: ignore[arg-type]
+            decision=decision,  # type: ignore[arg-type]
+            assessed=cells[5],
+            hold=hold,  # type: ignore[arg-type]
+        )
+    return rows, tuple(dict.fromkeys(errors))
+
+
+def assessment_of(
+    registry: "Registry",
+    rows: Mapping[PurePosixPath, AssessmentRow],
+    target: PurePosixPath,
+) -> tuple[str, str]:
+    """Return the judgment of the unit that holds a target, or the defaults."""
+
+    contract = _assessment_contract(registry)
+    for candidate in (target, *target.parents):
+        row = rows.get(candidate)
+        if row is not None:
+            return row.assessment, row.availability
+    return contract.default_assessment, contract.default_availability
+
+
+def _is_calendar_date(value: str) -> bool:
+    if _DATE.fullmatch(value) is None:
+        return False
+    try:
+        datetime.date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def assessment_diagnostics(
+    registry: "Registry",
+    rows: Mapping[PurePosixPath, AssessmentRow],
+    catalog_rows: Mapping[PurePosixPath, object],
+    *,
+    present: Callable[[PurePosixPath], bool],
+    profile_of: Callable[[PurePosixPath], str | None],
+) -> tuple[tuple[str, str], ...]:
+    """Judge each row against the catalog and the current tree.
+
+    `present` reports whether the tree still holds a record, and `profile_of`
+    returns the governed profile of a current document or None. These checks
+    prove a Decision document exists and is of an allowed kind; whether its
+    approval is real stays a review judgment."""
+
+    contract = _assessment_contract(registry)
+    diagnostics: list[tuple[str, str]] = []
+
+    def current(path: PurePosixPath | None) -> str | None:
+        if path is None or path.parts[:2] == ARCHIVE_ROOT.parts:
+            return None
+        return profile_of(path)
+
+    for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
+        where = record.as_posix()
+        if record not in catalog_rows:
+            diagnostics.append(("ARCHIVE-ASSESSMENT-RECORD", where))
+        if (
+            row.assessment not in contract.assessments
+            or row.availability not in contract.availabilities
+        ):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-VALUE", where))
+            continue
+        if (row.assessment, row.availability) == (
+            contract.default_assessment,
+            contract.default_availability,
+        ):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-NOOP", where))
+        if row.availability in contract.reserved_availabilities:
+            diagnostics.append(("ARCHIVE-ASSESSMENT-RESERVED", where))
+        if current(row.decision) not in contract.decision_profile_ids:
+            diagnostics.append(("ARCHIVE-ASSESSMENT-DECISION", where))
+        if (
+            row.assessment in contract.owner_required_assessments
+            and current(row.current_owner) is None
+        ) or (row.current_owner is not None and current(row.current_owner) is None):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-OWNER", where))
+        if not _is_calendar_date(row.assessed):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-DATE", where))
+        removed = row.availability in contract.removed_availabilities
+        if row.hold is not None and (removed or current(row.hold) is None):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-HOLD", where))
+        if removed == present(record) and row.availability not in (
+            contract.reserved_availabilities
+        ):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-AVAILABILITY", where))
+    return tuple(dict.fromkeys(diagnostics))
+
+
+def removed_records(
+    registry: "Registry",
+    index_text: str,
+    *,
+    exists: Callable[[PurePosixPath], bool] | None = None,
+) -> frozenset[PurePosixPath]:
+    """Return the catalog records a valid assessment row says left the tree.
+
+    A consumer that skips a payload check trusts this answer, so it fails
+    closed: a malformed table removes nothing, and a removal row counts only
+    when every condition that needs no tree listing holds. Its Decision, owner,
+    and Hold are classified by the registry, and, when `exists` is given, must
+    also exist. Whether the unit is really absent stays with the caller's own
+    payload comparison."""
+
+    contract = registry.archive_assessment
+    if contract is None:
+        return frozenset()
+    rows, errors = parse_assessment(registry, index_text)
+    catalog_rows, catalog_errors = parse_catalog(index_text)
+    if errors or catalog_errors:
+        return frozenset()
+
+    def profile_of(path: PurePosixPath) -> str | None:
+        if exists is not None and not exists(path):
+            return None
+        try:
+            return classify_path(registry, path).profile_id
+        except Exception as error:  # noqa: BLE001 - only the registry's own error means unrouted
+            if _is_contract_error(error):
+                return None
+            raise
+
+    candidates = {
+        record: row
+        for record, row in rows.items()
+        if row.availability in contract.removed_availabilities
+    }
+    faulty = {
+        PurePosixPath(path)
+        for code, path in assessment_diagnostics(
+            registry,
+            candidates,
+            catalog_rows,
+            present=lambda _record: False,
+            profile_of=profile_of,
+        )
+    }
+    return frozenset(record for record in candidates if record not in faulty)

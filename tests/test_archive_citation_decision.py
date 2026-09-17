@@ -59,14 +59,14 @@ ARCHIVE_SOURCE = (LEDGER, "archive/migration")
 # target -> (ordinary source, incident or postmortem source), each (admitted, rule)
 EXPECTED = {
     INDEX: ((True, 2), (True, 2)),
-    COMPLETED: ((True, 6), (True, 5)),
-    RESOLVED: ((True, 6), (True, 5)),
-    SUPERSEDED: ((False, None), (True, 5)),
-    RETIRED: ((False, None), (True, 5)),
-    SEALED: ((False, 4), (False, 4)),
-    LEDGER: ((False, 3), (False, 3)),
-    TOMBSTONE: ((False, 3), (False, 3)),
-    SCOPE_MIGRATION: ((False, 3), (False, 3)),
+    COMPLETED: ((True, 8), (True, 7)),
+    RESOLVED: ((True, 8), (True, 7)),
+    SUPERSEDED: ((False, None), (True, 7)),
+    RETIRED: ((False, None), (True, 7)),
+    SEALED: ((False, 6), (False, 6)),
+    LEDGER: ((False, 5), (False, 5)),
+    TOMBSTONE: ((False, 5), (False, 5)),
+    SCOPE_MIGRATION: ((False, 5), (False, 5)),
     UNCLASSIFIED: ((False, None), (False, None)),
 }
 

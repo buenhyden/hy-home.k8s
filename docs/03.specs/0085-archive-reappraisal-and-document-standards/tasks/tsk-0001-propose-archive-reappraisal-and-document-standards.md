@@ -1,8 +1,8 @@
 ---
 title: "Propose Archive Reappraisal and Document Standards"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-17"
 layer: "specs"
@@ -34,7 +34,7 @@ corrections of WP-002. It closes when both are committed with staged evidence.
 | -------- | ------------------ | --------------------------------------------------- | -------- | ------ | ----------------------- | -------------------------------- |
 | WORK-001 | VAL-ARS-001        | Survey the contract, implementation, and navigation | platform | Done   | Findings recorded below | Survey                           |
 | WORK-002 | VAL-ARS-002 | Propose ADR-0040 and create this package | platform | Done | ADR-0040 `proposed`, SPEC-0085 package created, indexes and REQ-0003 name them | Commit `aa64090f`; staged QA 6 PASS |
-| WORK-003 | VAL-ARS-003 | Correct navigation drift in the indexes | platform | In progress | Six indexes and one policy corrected in the working tree | Quick and staged QA on the navigation commit |
+| WORK-003 | VAL-ARS-003 | Correct navigation drift in the indexes | platform | Done | Six indexes and the lifecycle policy corrected; the SPEC-0062 row judged current | Commit `cce56df9`; quick and staged QA 7 PASS |
 
 ## Approval and Safety Boundaries
 
@@ -126,14 +126,16 @@ conforming.
 
 ## Verification Summary
 
-WORK-001 and WORK-002 are complete. Commands run: `git status`, `git log`, `git rev-parse
+WORK-001, WORK-002, and WORK-003 are complete. Commands run: `git status`, `git log`, `git rev-parse
 --show-object-format`, `git merge-base --is-ancestor` over every distinct
 catalog commit against `main` and `origin/main`, and frontmatter aggregation
 over tracked `docs/` files. For WORK-002, `python3 scripts/qa.py quick` first
 failed `links-and-owners` on unlinked traceability cells and a missing REQ-0003
 back-reference, both repaired; it then returned 6 PASS on the working tree, and
 `python3 scripts/qa.py staged` returned 6 PASS on the exact index committed as
-`aa64090f`, whose commit hooks and message check also passed. Hosted CI and live lanes are not
+`aa64090f`, whose commit hooks and message check also passed. For WORK-003, `python3 scripts/qa.py
+quick` and `python3 scripts/qa.py staged` each returned 7 PASS, and the exact
+index was committed as `cce56df9` with its hooks passing. Hosted CI and live lanes are not
 run.
 
 ## Traceability
@@ -144,4 +146,4 @@ run.
 | --------------------- | --------------- | ----------------- |
 | [WORK-001](../plan.md#work-breakdown) | Survey recorded | This record |
 | [WORK-002](../plan.md#work-breakdown) | Done | Commit `aa64090f`; staged QA 6 PASS |
-| [WORK-003](../plan.md#work-breakdown) | Not executed | Navigation commit |
+| [WORK-003](../plan.md#work-breakdown) | Done | Commit `cce56df9`; staged QA 7 PASS |

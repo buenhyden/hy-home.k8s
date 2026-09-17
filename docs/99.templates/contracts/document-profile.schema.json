@@ -583,6 +583,32 @@
                   "admit",
                   "reject"
                 ]
+              },
+              "target_assessments": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "unreviewed",
+                    "usable",
+                    "superseded",
+                    "withdrawn",
+                    "invalidated"
+                  ]
+                }
+              },
+              "target_availabilities": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "retained",
+                    "git-history-only",
+                    "purged"
+                  ]
+                }
               }
             },
             "allOf": [
@@ -627,9 +653,152 @@
                     ]
                   }
                 }
+              },
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "target_assessments"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "target_availabilities"
+                      ]
+                    }
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "target": {
+                      "const": "retained-body"
+                    }
+                  }
+                }
               }
             ]
           }
+        }
+      }
+    },
+    "archive_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "heading",
+        "columns",
+        "assessments",
+        "availabilities",
+        "default_assessment",
+        "default_availability",
+        "owner_required_assessments",
+        "reserved_availabilities",
+        "removed_availabilities",
+        "decision_profile_ids",
+        "default_branch"
+      ],
+      "properties": {
+        "index": {
+          "const": "docs/98.archive/README.md"
+        },
+        "heading": {
+          "const": "Retention Assessment"
+        },
+        "columns": {
+          "const": [
+            "Disposition Record",
+            "Assessment",
+            "Availability",
+            "Current Owner",
+            "Decision",
+            "Assessed",
+            "Hold"
+          ]
+        },
+        "assessments": {
+          "const": [
+            "unreviewed",
+            "usable",
+            "superseded",
+            "withdrawn",
+            "invalidated"
+          ]
+        },
+        "availabilities": {
+          "const": [
+            "retained",
+            "git-history-only",
+            "purged"
+          ]
+        },
+        "default_assessment": {
+          "enum": [
+            "unreviewed",
+            "usable",
+            "superseded",
+            "withdrawn",
+            "invalidated"
+          ]
+        },
+        "default_availability": {
+          "enum": [
+            "retained",
+            "git-history-only",
+            "purged"
+          ]
+        },
+        "owner_required_assessments": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "unreviewed",
+              "usable",
+              "superseded",
+              "withdrawn",
+              "invalidated"
+            ]
+          }
+        },
+        "reserved_availabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "retained",
+              "git-history-only",
+              "purged"
+            ]
+          }
+        },
+        "removed_availabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "retained",
+              "git-history-only",
+              "purged"
+            ]
+          }
+        },
+        "decision_profile_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "default_branch": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
         }
       }
     },

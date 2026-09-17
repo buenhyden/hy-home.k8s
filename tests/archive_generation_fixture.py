@@ -110,6 +110,7 @@ def legacy_registry_payload() -> dict[str, Any]:
         "retention_units",
         "retention_modes",
         "archive_citation",
+        "archive_assessment",
         "legacy_rebased_retained_paths",
     ):
         payload.pop(key, None)

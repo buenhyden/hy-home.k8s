@@ -1,8 +1,8 @@
 ---
 title: "Archive Reappraisal and Document Standards Technical Specification"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-17"
 layer: "specs"
@@ -15,7 +15,7 @@ artifact_id: "SPEC-0085"
 
 This Spec owns the cutover that
 [ADR-0040](../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)
-proposes, together with the current-navigation corrections and the two
+decides, together with the current-navigation corrections and the two
 follow-up standards that the same survey found. It delivers a reviewed exit and
 a current judgment for retained units, envelope verification against the
 default branch, README navigation that matches the tree, and ordered plans for

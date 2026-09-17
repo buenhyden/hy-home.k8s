@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.6.1"
+version: "1.7.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -66,7 +66,9 @@ their owning migration work package moves them.
   and every citation check consumes that one decision. An active-stage document
   may cite the index, `completed/`, and, as historical evidence, `resolved/`.
   It cites the successor instead of a `superseded/` body, and the current route
-  instead of a `retired/` body, a tombstone, or a migration. An
+  instead of a `retired/` body, a tombstone, or a migration. Before any class
+  admission, no source outside Stage 98 links a unit judged `withdrawn` or
+  `invalidated` or no longer `retained`. An
   `operation/incident` or `operation/postmortem` may also cite a body in any
   retention class as historical evidence. No document outside Stage 98 links a
   route record or a frozen sealed record; it names a frozen record by
@@ -86,6 +88,22 @@ their owning migration work package moves them.
   source Git object entry for entry, links included, and its catalog row names
   a blob or a tree. The sixteen bodies ADR-0038 retained with rebased links
   keep that generation and cannot grow in number.
+- ADR-0040 supersedes ADR-0039 and keeps its units and exact retention. A
+  retained unit is frozen against unapproved change, not kept forever: its
+  bytes are never edited, renamed, recreated, or partly deleted, and the one
+  admitted change is an approved removal of the whole unit, after which its
+  availability is `git-history-only`, its catalog row stays, and its envelope
+  still verifies. Removal is not purification and needs its own approval.
+- A unit's current evidential value is judged in the Archive index's
+  Retention Assessment table, never in the frozen body. A unit without a row
+  is `unreviewed` and `retained`; every other judgment names a current Task,
+  Spec, or decision that records it, a `superseded` judgment names the current
+  owner, and a Hold blocks removal. A row never leaves and a removed unit never
+  returns. `invalidated` judges old evidence and does not rewrite the old
+  state. The registry owns the values and conditions, and `purged` stays
+  reserved until a security-approved purification contract exists.
+- An envelope commit is reachable from the registry-named default branch, so a
+  unit's source is integrated before the change that retains it.
 - The Stage 99 registry declares the units, binds each retention mode to the
   profiles that may use it, routes a retained body under its original profile,
   and binds each retention class to the anchor states it admits. Frozen records

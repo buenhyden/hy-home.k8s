@@ -388,10 +388,19 @@ class FrozenIndexParserTests(unittest.TestCase):
         catalog_rows, catalog_errors = dispositions.parse_catalog(index)
         self.assertTrue(catalog_rows)
         self.assertEqual(catalog_errors, ())
-        rows, _links, diagnostics = archive_validation._parse_repository_index(index)
+        registry = load_registry(ROOT)
+        # ADR-0040's assessment table is skipped the same way as the catalog.
+        self.assertIsNotNone(
+            dispositions.assessment_line_span(registry, index.splitlines())
+        )
+        rows, _links, diagnostics = archive_validation._parse_repository_index(
+            index, registry
+        )
         self.assertEqual(len(rows), 25)
         self.assertEqual(diagnostics, [])
-        cutover_rows, structure_failure = archive_cutover._parse_archive_index(index)
+        cutover_rows, structure_failure = archive_cutover._parse_archive_index(
+            index, registry
+        )
         self.assertEqual(len(cutover_rows), 25)
         self.assertFalse(structure_failure)
 

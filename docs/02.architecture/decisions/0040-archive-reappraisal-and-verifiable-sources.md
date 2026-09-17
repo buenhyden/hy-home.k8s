@@ -1,19 +1,20 @@
 ---
 title: "Archive Reappraisal and Verifiable Sources"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-17"
 layer: "architecture"
 artifact_id: "ADR-0040"
+supersedes: "ADR-0039"
 ---
 
 # ADR-0040: Archive Reappraisal and Verifiable Sources
 
 ## Overview
 
-This decision would revise the Stage 98 contract that ADR-0039 accepted. It
+This decision revises the Stage 98 contract that ADR-0039 accepted. It
 keeps ADR-0039's units, exact retention, anchor-state classes, single catalog
 row, ordered citation table, and identity-tracked moves. It changes three
 things: a retained unit is frozen against unapproved change rather than kept
@@ -22,8 +23,8 @@ beside the catalog rather than never, and an envelope's reachability is checked
 against the default branch the decision names rather than against whatever
 `HEAD` is.
 
-If accepted, it supersedes ADR-0039 as a whole. Until acceptance and the machine
-cutover in SPEC-0085, the validators enforce ADR-0039 unchanged.
+It supersedes ADR-0039 as a whole. SPEC-0085 cut the registry, Archive index,
+validators, and tests over to it.
 
 ## Context
 
@@ -181,4 +182,4 @@ squash later makes unreachable, which the envelope exists to prevent.
 
 | Decision lineage | Replacement relation                                                       | Affected Spec                                                                       |
 | ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Would supersede ADR-0039 on acceptance; the frozen generations keep theirs | [SPEC-0085](../../03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |
+| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes ADR-0039; the frozen generations keep theirs | [SPEC-0085](../../03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |

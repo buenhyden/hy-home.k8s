@@ -161,6 +161,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "retention_units",
                 "retention_modes",
                 "archive_citation",
+                "archive_assessment",
                 "legacy_rebased_retained_paths",
             },
         )
@@ -280,6 +281,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "retention_units",
                 "retention_modes",
                 "archive_citation",
+                "archive_assessment",
                 "legacy_rebased_retained_paths",
                 "schema_version",
             },

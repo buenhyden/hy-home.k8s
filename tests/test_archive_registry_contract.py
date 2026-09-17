@@ -183,29 +183,42 @@ class CitationTableTests(unittest.TestCase):
             [
                 ("archive", "any", "admit"),
                 ("any", "index", "admit"),
+                ("any", "retained-body", "reject"),
+                ("any", "retained-body", "reject"),
                 ("any", "route-record", "reject"),
                 ("any", "sealed-record", "reject"),
                 ("profiles", "retained-body", "admit"),
                 ("any", "retained-body", "admit"),
             ],
         )
+        # ADR-0040: availability and judgment decide before any class admission.
         self.assertEqual(
-            table.rules[4].source_profile_ids,
+            table.rules[2].target_assessments,
+            frozenset({"withdrawn", "invalidated"}),
+        )
+        self.assertEqual(
+            table.rules[3].target_availabilities,
+            frozenset({"git-history-only", "purged"}),
+        )
+        self.assertEqual(table.rules[2].target_classes, RETENTION_CLASSES)
+        self.assertEqual(table.rules[3].target_classes, RETENTION_CLASSES)
+        self.assertEqual(
+            table.rules[6].source_profile_ids,
             frozenset({"operation/incident", "operation/postmortem"}),
         )
-        self.assertEqual(table.rules[4].target_classes, RETENTION_CLASSES)
+        self.assertEqual(table.rules[6].target_classes, RETENTION_CLASSES)
         self.assertEqual(
-            table.rules[5].target_classes, frozenset({"completed", "resolved"})
+            table.rules[7].target_classes, frozenset({"completed", "resolved"})
         )
 
     def test_rule_naming_an_unknown_profile_or_class_is_rejected(self) -> None:
         profile = copy.deepcopy(RAW)
-        profile["archive_citation"]["rules"][4]["source_profile_ids"].append(
+        profile["archive_citation"]["rules"][6]["source_profile_ids"].append(
             "operation/forgotten"
         )
         self.assertIn("REGISTRY_ARCHIVE_CITATION", rule_ids(profile))
         retention = copy.deepcopy(RAW)
-        retention["archive_citation"]["rules"][5]["target_classes"].append("forgotten")
+        retention["archive_citation"]["rules"][7]["target_classes"].append("forgotten")
         self.assertTrue(rule_ids(retention))
 
 

@@ -25,10 +25,11 @@ Catalog row is the only machine evidence of where it came from.
 
 ## Workflow Steps
 
-1. Confirm what happened to the unit and pick one disposition. ADR-0039
-   (`docs/02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md`)
-   owns the retention units, exact retention, and the citation table on top of
-   the six dispositions ADR-0038 named. The Stage 99 registry's
+1. Confirm what happened to the unit and pick one disposition. ADR-0040
+   (`docs/02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md`)
+   owns the retention units, exact retention, the citation table, the Retention
+   Assessment of retained units, and approved whole-unit removal, on top of the
+   six dispositions ADR-0038 named. The Stage 99 registry's
    `retention_classes` binds each class to the anchor states it admits, and
    `archive_citation` decides what may be cited. Record the disposition
    approval in the owning Task.

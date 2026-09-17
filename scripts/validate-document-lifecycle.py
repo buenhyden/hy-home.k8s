@@ -70,7 +70,9 @@ from archive_dispositions import (
     canonical_repository_path,
     enclosing_unit,
     frontmatter_mapping,
+    assessment_diagnostics,
     link_resolved_text,
+    parse_assessment,
     parse_catalog,
     retained_unit_of,
     retention_class_of,
@@ -2544,6 +2546,64 @@ def _retention_gaps(
     return gaps, pairs
 
 
+def _assessment_events(
+    root: Path,
+    registry: Registry,
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+    proposed_rows: Mapping[PurePosixPath, object],
+    proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_commit: str | None,
+) -> tuple[frozenset[PurePosixPath], list[str]]:
+    """Judge the Retention Assessment table and return the units that left.
+
+    ADR-0040 admits one change to a retained unit: an approved removal of the
+    whole unit, recorded as a removed availability with a current Decision and
+    no Hold. A row never leaves the table, and a removed unit never returns.
+    Only a unit whose row passes every check is returned as removed."""
+
+    contract = registry.archive_assessment
+    if contract is None:
+        return frozenset(), []
+    index = DISPOSITION_ARCHIVE_INDEX
+    proposed, errors = parse_assessment(registry, proposed_texts.get(index, ""))
+    base, _base_errors = parse_assessment(registry, base_texts.get(index, ""))
+    gaps = [f"{code}: {path}" for code, path in errors]
+
+    def present(record: PurePosixPath) -> bool:
+        # An unreadable listing is not proof of absence.
+        return _proposed_entries(root, record, proposed_commit) != ()
+
+    def profile_of(path: PurePosixPath) -> str | None:
+        document = proposed_snapshot.get(path)
+        return document.profile_id if document is not None else None
+
+    judged = assessment_diagnostics(
+        registry, proposed, proposed_rows, present=present, profile_of=profile_of
+    )
+    gaps.extend(f"{code}: {path}" for code, path in judged)
+    faulty = {PurePosixPath(path) for _code, path in judged}
+    for record, before in sorted(base.items(), key=lambda item: item[0].as_posix()):
+        after = proposed.get(record)
+        if after is None:
+            gaps.append(f"an assessment row left: {record.as_posix()}")
+            faulty.add(record)
+        elif (
+            before.availability in contract.removed_availabilities
+            and after.availability not in contract.removed_availabilities
+        ):
+            gaps.append(f"a removed unit returned: {record.as_posix()}")
+            faulty.add(record)
+    removed = frozenset(
+        record
+        for record, row in proposed.items()
+        if row.availability in contract.removed_availabilities
+        and record not in faulty
+        and not errors
+    )
+    return removed, gaps
+
+
 def _disposition_lifecycle_events(
     root: Path,
     registry: Registry,
@@ -2588,6 +2648,20 @@ def _disposition_lifecycle_events(
     diagnostics = [failure(index, code) for code in catalog_errors]
     if any(proposed_rows.get(path) != row for path, row in base_rows.items()):
         diagnostics.append(failure(index, "an existing catalog row changed or left"))
+    removed, assessment_gaps = _assessment_events(
+        root,
+        registry,
+        base_texts,
+        proposed_texts,
+        proposed_rows,
+        proposed_snapshot,
+        proposed_commit,
+    )
+    diagnostics.extend(failure(index, gap) for gap in assessment_gaps)
+
+    def removed_whole(path: PurePosixPath) -> bool:
+        return any(record == path or record in path.parents for record in removed)
+
     # Retention follows the profile, and a frozen body is immutable: once a
     # body or route record sits in Stage 98, no later change rewrites or
     # removes it, whether its catalog row or a frozen ledger proved it.
@@ -2595,6 +2669,8 @@ def _disposition_lifecycle_events(
         if path.parts[:2] != DISPOSITION_ARCHIVE_INDEX.parts[:2]:
             continue
         if proposed_texts.get(path) == base_texts[path]:
+            continue
+        if path not in proposed_texts and removed_whole(path):
             continue
         document = base_snapshot.get(path)
         if retention_class_of(registry, path) is not None or (
@@ -2610,7 +2686,10 @@ def _disposition_lifecycle_events(
         if unit is None:
             continue
         frozen = commit_entries(root, base_commit, record)
-        if frozen is None or frozen != _proposed_entries(root, record, proposed_commit):
+        proposed_entries = _proposed_entries(root, record, proposed_commit)
+        if record in removed and proposed_entries == ():
+            continue
+        if frozen is None or frozen != proposed_entries:
             diagnostics.append(
                 failure(record / unit[0].anchor, "a retained unit changed or left")
             )

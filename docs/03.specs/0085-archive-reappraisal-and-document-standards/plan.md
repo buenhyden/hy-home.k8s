@@ -1,8 +1,8 @@
 ---
 title: "Archive Reappraisal and Document Standards Implementation Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-17"
 layer: "specs"

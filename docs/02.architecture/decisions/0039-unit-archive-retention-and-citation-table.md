@@ -1,13 +1,14 @@
 ---
 title: "Unit Archive Retention and Citation Table"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 layer: "architecture"
 artifact_id: "ADR-0039"
 supersedes: "ADR-0038"
+superseded_by: "ADR-0040"
 ---
 
 # ADR-0039: Unit Archive Retention and Citation Table
@@ -25,6 +26,13 @@ than by a migration record.
 
 This decision supersedes ADR-0038 as a whole. Until the machine cutover in
 Spec 0082, the validators admit only ADR-0038's routes.
+
+**Superseded (2026-09-17).** [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md)
+supersedes this decision as a whole. It keeps the units, exact retention,
+anchor-state classes, catalog row, and citation table, and it replaces the
+permanent freeze with a freeze against unapproved change plus one approved
+whole-unit removal, adds a current Retention Assessment beside the catalog, and
+verifies envelopes from the default branch.
 
 ## Context
 
@@ -226,3 +234,4 @@ holds no evidence body to cite.
 | Decision lineage | Replacement relation                                                                                                             | Affected Spec                                                            |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | ADR-0038 | Supersedes ADR-0038; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md) |
+| [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md) | Supersedes this decision; the units, exact retention, and citation table carry forward | [SPEC-0085](../../03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |

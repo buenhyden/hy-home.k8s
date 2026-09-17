@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.6.7"
+version: "0.7.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ layer: "archive"
 
 ## Overview
 
-`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md)과 이를 대체한 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)이며, ADR-0039가 `accepted` 상태의 현재 결정이다. [SPEC-0079](./completed/03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
+`98.archive/`는 활성 stage가 더 이상 싣지 않는 것을 여섯 가지 disposition으로 보존하는 비현재 stage다. 모델의 결정 기록은 [ADR-0038](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md)과 이를 대체한 ADR-0039, 다시 이를 대체한 [ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)이며, ADR-0040이 `accepted` 상태의 현재 결정이다. [SPEC-0079](./completed/03.specs/0079-six-disposition-archive-stage/spec.md)가 registry route, archive form, 검증기를 이 모델로 전환했다. [ADR-0032](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md) 형식의 봉인 record 25개와 원장 23개는 registry가 정확한 경로로만 분류하므로, 새 봉인 record나 path ledger는 만들 수 없다.
 
 각 disposition은 자신을 처음 사용하는 변경이 만드는 디렉터리를 소유하므로, record가 아직 없는 disposition에는 디렉터리가 없다. family는 두 종류이며, 종류가 디렉터리에 무엇을 담는지와 현재 문서가 그것을 인용할 수 있는지를 결정한다.
 
@@ -37,7 +37,7 @@ layer: "archive"
 - `tombstones/`: 본문을 담지 않는다. 퇴역한 route, 그 후속 또는 부재, 이유를 명명하며, 인용할 수 없다.
 - `migrations/`: 본문을 담지 않는다. 이동한 scope와 현재 owner를 `MIG-####`로 명명하며, 인용할 수 없다.
 
-인용 가능성은 registry의 순서 있는 `archive_citation` 표가 판정하고, 인용을 판단하는 모든 검증기가 그 한 결정을 소비한다. 대상의 종류는 디렉터리 이름이 아니라 registry profile에서 읽는다. retention class는 자신의 본문이 여전히 독자를 현재 authority로 이끌 때 인용할 수 있다. `completed`는 Promotion 선언을 통해, `resolved`는 corrective-work owner를 통해 독자를 이끈다. `superseded` 본문은 대체 문서를 명명하므로 인용은 그 후속 문서에 둔다. 대체된 rule을 인용하는 것이 곧 그 rule이 되살아나는 경로이기 때문이다. `retired`에는 가리키는 대상이 없으므로, 인용하면 독자가 철회된 rule에 머문다. 예외로 `operation/incident`와 `operation/postmortem`은 네 retention class 본문을 역사 증거로 인용할 수 있지만, 증거 본문이 없는 route record와 동결 봉인 record는 인용하지 않는다.
+인용 가능성은 registry의 순서 있는 `archive_citation` 표가 판정하고, 인용을 판단하는 모든 검증기가 그 한 결정을 소비한다. 대상의 종류는 디렉터리 이름이 아니라 registry profile에서 읽는다. retention class는 자신의 본문이 여전히 독자를 현재 authority로 이끌 때 인용할 수 있다. `completed`는 Promotion 선언을 통해, `resolved`는 corrective-work owner를 통해 독자를 이끈다. `superseded` 본문은 대체 문서를 명명하므로 인용은 그 후속 문서에 둔다. 대체된 rule을 인용하는 것이 곧 그 rule이 되살아나는 경로이기 때문이다. `retired`에는 가리키는 대상이 없으므로, 인용하면 독자가 철회된 rule에 머문다. 예외로 `operation/incident`와 `operation/postmortem`은 네 retention class 본문을 역사 증거로 인용할 수 있지만, 증거 본문이 없는 route record와 동결 봉인 record는 인용하지 않는다. 어떤 class 판정보다 먼저, 아래 `Retention Assessment`가 `withdrawn`·`invalidated`로 판정했거나 더 이상 `retained`가 아닌 단위는 Stage 98 밖의 어느 문서도 직접 인용하지 않는다.
 
 ### One Recovery Reference
 
@@ -173,6 +173,13 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`superseded/03.specs/0070-retired-provider-residue-disposition`](./superseded/03.specs/0070-retired-provider-residue-disposition) | `b4a1db9143fac30df39c23183432f3495d96a8ed:docs/03.specs/0070-retired-provider-residue-disposition` |
 | [`completed/03.specs/0083-finished-package-retention`](./completed/03.specs/0083-finished-package-retention) | `2eb5e079f8ca9f6d139fc7085fe8bebb886768ec:docs/03.specs/0083-finished-package-retention` |
 
+### Retention Assessment
+
+Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 행이 없는 단위는 `unreviewed`이며 `retained`다. 이 표는 envelope·class·digest를 반복하지 않고, 보존 본문도 바꾸지 않는다. 허용값과 조건은 Stage 99 registry의 `archive_assessment`가 소유한다. `usable`은 역사 증거로 인용할 수 있다는 뜻이지 현재 authority가 아니다. `superseded`는 현재 owner를, 그 밖의 모든 판단은 판단과 승인을 기록한 현재 Task·Spec·ADR을 Decision으로 명명한다. `git-history-only`는 Hold가 `none`이고 단위 전체가 tree를 떠났으며 catalog envelope이 여전히 검증될 때만 쓰고, 한 번 떠난 단위는 돌아오지 않는다. `purged`는 보안 승인된 정화 계약이 없으므로 쓰지 않는다. 행은 표를 떠나지 않으며, 판단 변경 이력은 Git이 소유한다.
+
+| Disposition Record | Assessment | Availability | Current Owner | Decision | Assessed | Hold |
+| --- | --- | --- | --- | --- | --- | --- |
+
 ## Authoring Workflow
 
 ### ADR-0038 Disposition
@@ -210,7 +217,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 - [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Archive Retention Decision](./superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 - [Six-Disposition Archive Decision](./superseded/02.architecture/decisions/0038-six-disposition-archive-stage.md)
-- [Unit Archive Retention Decision](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
+- [Archive Reappraisal Decision](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Route Tombstone Template](../99.templates/templates/archive/route-tombstone.template.md)
 - [Scope Migration Template](../99.templates/templates/archive/scope-migration.template.md)

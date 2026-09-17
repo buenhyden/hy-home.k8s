@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.5.5"
+version: "0.5.6"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -71,7 +71,7 @@ layer: "architecture"
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0039](./0039-unit-archive-retention-and-citation-table.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 대체된 ADR은 모두 이 log를 떠났다. ADR-0013, ADR-0015부터 ADR-0025, ADR-0027, ADR-0032, ADR-0034, ADR-0035, ADR-0038은 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
+3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 대체된 ADR은 모두 이 log를 떠났다. ADR-0013, ADR-0015부터 ADR-0025, ADR-0027, ADR-0032, ADR-0034, ADR-0035, ADR-0038은 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
@@ -104,8 +104,8 @@ layer: "architecture"
 | [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
 | [`./0036-common-knowledge-and-prompt-surfaces.md`](./0036-common-knowledge-and-prompt-surfaces.md) | Common knowledge and prompt surface adoption | Accepted | ADR-0035의 미채택 디렉터리 조항만 개정해 `.agents/knowledge/`와 `.agents/prompts/`를 채택하고, memory·rule·evaluation·script 디렉터리는 각각의 이유로 미채택을 유지한다. 나머지 정본 위치·스킬 라우팅·게이트웨이·보존·검증 조항은 그대로 승계한다. |
 | [`./0037-kiali-operator-installation.md`](./0037-kiali-operator-installation.md) | Kiali operator 설치 결정 | Proposed | 현재 GitOps 구현(`kiali-operator` chart, operator 생성 CR, service DNS 연동)을 결정 기록으로 제안한다. 수락 시 ADR-0009 설치 조항을 대체한다. |
-| [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision | Accepted | 보존 단위(Spec package, Incident bundle, 단독 문서)를 원본 Git object 그대로 보존하고 단위 anchor 상태로 class를 정하며, 단위마다 catalog 행 하나, registry의 순서 있는 인용 결정표 하나, identity 계보로 추적하는 활성 stage 간 이동을 결정했다. ADR-0038 전체를 대체했으며, SPEC-0082의 machine 전환으로 현재 검증기가 이 결정을 집행한다. |
-| [`./0040-archive-reappraisal-and-verifiable-sources.md`](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive reappraisal and verifiable sources decision | Proposed | 보존 단위를 승인 없는 변경으로부터 동결하되 승인된 단위 전체 제거(`git-history-only`)를 허용하고, 현재 증거 가치를 catalog 옆 `Retention Assessment` 표로 판정하며, envelope 도달 가능성을 default branch 기준으로 검증하도록 제안한다. 수락 시 ADR-0039 전체를 대체하며, 그 전까지 검증기는 ADR-0039를 그대로 집행한다. |
+| [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision | Superseded | 보존 단위(Spec package, Incident bundle, 단독 문서)를 원본 Git object 그대로 보존하고 단위 anchor 상태로 class를 정하며, 단위마다 catalog 행 하나, registry의 순서 있는 인용 결정표 하나, identity 계보로 추적하는 활성 stage 간 이동을 결정했다. ADR-0038 전체를 대체했고, 2026-09-17에 ADR-0040이 이 결정 전체를 대체했다. 별도 처분 승인 전까지 이 log에서 기다린다. |
+| [`./0040-archive-reappraisal-and-verifiable-sources.md`](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive reappraisal and verifiable sources decision | Accepted | 보존 단위를 승인 없는 변경으로부터 동결하되 승인된 단위 전체 제거(`git-history-only`)를 허용하고, 현재 증거 가치를 catalog 옆 `Retention Assessment` 표로 판정하며, envelope 도달 가능성을 default branch 기준으로 검증한다. ADR-0039 전체를 대체하며, SPEC-0085가 registry·Archive index·검증기·테스트를 전환했다. |
 
 ## Related Documents
 

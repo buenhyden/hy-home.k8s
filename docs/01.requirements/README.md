@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.5.3"
+version: "0.5.4"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -74,7 +74,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 4. 문제·목표·stakeholder 요구, 기능·비기능·interface 요구, 제약, acceptance 기준과 범위·비범위를 구현 독립적으로 작성한다.
 5. 관련 `../02.architecture/descriptions/`, `../02.architecture/decisions/`, `../03.specs/` 추적 링크를 함께 갱신한다. 변경 가능한 실행 계약과 interface 구현 산출물은 Stage 03에 둔다.
 6. Agent 기능 요구에는 허용·금지 행동과 human-in-the-loop 기준을 포함하고, 에이전트 실행 요구사항은 영어로 유지한다.
-7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 더 이상 현재가 아닌 문서는 [ADR-0039](../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 본문 전체를 보존하고, 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다.  원본 바이트는 Git history가 복구한다.
+7. 변경·폐기 시 `status`, `supersedes`, `superseded_by`로 이력을 연결한다. 더 이상 현재가 아닌 문서는 [ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)에 따라 대체되면 `superseded/`, 후속 없이 철회되면 `retired/`에 본문 전체를 보존하고, 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다.  원본 바이트는 Git history가 복구한다.
 
 ### Relative Link Rules
 
@@ -106,7 +106,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | --- | --- | --- |
 | `draft` | 검토 중이며 아직 현재 권위가 아닌 요구 초안 | 구현 시작 전 승인과 downstream Spec/Plan 갭을 해소한다. |
 | `active` | 현재 solution-independent 요구 권위 | 관련 AD/ADR/Spec과 current 구현 증적을 함께 확인한다. |
-| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0039에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
+| `superseded` | 새 Requirement Package가 대체한 이전 권위 | 원래 supersession을 보존한다. 현재 의미·소비자 승계 후 ADR-0040에 따라 `98.archive/superseded/`에 본문 그대로 보존할 수 있다. |
 | `retired` | 대체 없이 의도적으로 종료한 요구 | 종료 사유와 마지막 추적 대상을 남기고 신규 구현의 권위로 사용하지 않는다. |
 | `withdrawn` | 승인 전에 철회한 요구 | 철회 사유를 남기고 downstream 구현을 시작하지 않는다. |
 

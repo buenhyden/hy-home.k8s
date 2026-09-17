@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.7.0"
+version: "1.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-17"
 ---
 
 # Document Authoring Policy
@@ -68,7 +68,9 @@ express ownership, not a one-way waterfall.
    `completed/`, through its promotion declaration, and `resolved/`, as
    historical evidence, through its corrective-work owner. It cites the
    successor instead of a `superseded/` body and the current route instead of a
-   `retired/` body, a tombstone, or a migration. A frozen record it must still
+   `retired/` body, a tombstone, or a migration. It never links a unit the
+   Archive index's Retention Assessment judges `withdrawn` or `invalidated` or
+   no longer `retained`; it names that unit by identifier through the index. A frozen record it must still
    name is named by identifier and reached through the index. An
    `operation/incident` record or its `operation/postmortem` may also cite a
    body in any retention class as historical evidence, but never a route record
