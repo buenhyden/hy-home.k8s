@@ -59,6 +59,11 @@ Accepted — 2026-03-30
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** The external
+Prometheus is reached through the host address `192.168.0.13` under
+[ADR-0046](./0046-external-services-over-host-addresses.md), not `172.18.0.10`. The rest of this decision is
+unchanged.
+
 **Current-state clarification (2026-09-23).** The browser route this decision
 assigns to the external Docker Traefik is retired. The host is served by the
 dedicated k8s router under

@@ -67,9 +67,9 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **Required**:
   - auth: `anonymous` (로컬 전용)
   - Prometheus: `http://prometheus-external.platform.svc.cluster.local:9090`
-  - Grafana: `in_cluster_url` `http://grafana-external.platform.svc.cluster.local:3000`, 브라우저 링크 `url` `http://172.18.0.14:3000`
+  - Grafana: `in_cluster_url` `http://grafana-external.platform.svc.cluster.local:3000`, 브라우저 링크 `url` `https://grafana.hy.home.arpa`
   - Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
-  - egress NetworkPolicy: `172.18.0.10/32`, `172.18.0.12/32`, `172.18.0.14/32` cidr 허용
+  - egress NetworkPolicy: host 주소 `192.168.0.13/32`의 `9090`, `3000`, `3200` 허용 (ADR-0046)
   - hostname: `kiali.hy-k8s.home.arpa`, TLS: cert-manager 발급 (`kiali-tls`)
 - **Disallowed**:
   - 프로덕션에 anonymous auth 유지

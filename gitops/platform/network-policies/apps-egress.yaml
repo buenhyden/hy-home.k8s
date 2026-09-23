@@ -1,7 +1,7 @@
 # apps namespace egress NetworkPolicy
 # 대상: apps namespace의 모든 파드 (현재: adminer)
 # 허용 egress:
-#   - postgres-write-external / postgres-read-external (172.18.0.15)
+#   - postgres-write-external / postgres-read-external (host 192.168.0.13, ADR-0046)
 #   - kube-dns (kube-system)
 #   - Istiod control plane (istio-system:15010/15012/15014)
 #   - in-cluster pod-to-pod (10.42.0.0/16) for Istio mTLS
@@ -18,7 +18,7 @@ spec:
     # PostgreSQL write/read (postgres-write-external / postgres-read-external)
     - to:
         - ipBlock:
-            cidr: 172.18.0.15/32
+            cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
           port: 15432

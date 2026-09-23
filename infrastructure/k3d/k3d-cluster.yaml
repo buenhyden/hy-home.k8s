@@ -5,8 +5,11 @@ metadata:
 image: rancher/k3s:v1.35.0-k3s1
 servers: 1
 agents: 3
+# ADR-0046: the API binds only the host address, which k3d also puts in the
+# serving certificate SAN; OpenBao Kubernetes auth reaches it there.
 kubeAPI:
-  host: 0.0.0.0
+  host: 192.168.0.13
+  hostIP: 192.168.0.13
   hostPort: '6550'
 # k8s router (ADR-0043): the serverlb binds only the dedicated host address and
 # forwards to the fixed ingress-nginx NodePorts.

@@ -13,12 +13,14 @@ ROOT_CA_FILE="${ROOT_CA_FILE:-$CERT_DIR/rootCA.pem}"
 ROOT_CA_KEY_FILE="${ROOT_CA_KEY_FILE:-$CERT_DIR/rootCA-key.pem}"
 VAULT_ADDR="${VAULT_ADDR:-https://openbao.hy.home.arpa}"
 VAULT_CA_FILE="${VAULT_CA_FILE:-$ROOT_CA_FILE}"
-POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.18.0.15}"
+# ADR-0046: external services are reached through host-published ports.
+EXTERNAL_HOST_IP="${EXTERNAL_HOST_IP:-192.168.0.13}"
+POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-$EXTERNAL_HOST_IP}"
 POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
-POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-172.18.0.15}"
+POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-$EXTERNAL_HOST_IP}"
 POSTGRES_READ_PORT="${POSTGRES_READ_PORT:-15433}"
-VALKEY_ADDR="${VALKEY_ADDR:-172.18.0.9}"
-VALKEY_PORT="${VALKEY_PORT:-6379}"
+VALKEY_ADDR="${VALKEY_ADDR:-$EXTERNAL_HOST_IP}"
+VALKEY_PORT="${VALKEY_PORT:-26379}"
 
 # ADR-0043: the k3d serverlb binds only K8S_ROUTER_IP. A listener on the same
 # port bound to that address or to every address blocks it.
@@ -99,7 +101,7 @@ warn_tcp_dependency() {
   if timeout 3 bash -c ":</dev/tcp/${host}/${port}" >/dev/null 2>&1; then
     echo "  - ${name}: ${host}:${port} reachable"
   else
-    echo "[WARN] ${name} is not reachable at ${host}:${port} (observability, non-critical)" >&2
+    echo "[WARN] ${name} is not reachable at ${host}:${port} (optional, non-critical)" >&2
   fi
 }
 
@@ -168,9 +170,10 @@ fi
 
 echo "[2/11] Validate external dependencies"
 wait_for_vault_ready
-check_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
-check_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
 check_tcp_dependency "valkey" "$VALKEY_ADDR" "$VALKEY_PORT"
+# pg-router serves apps only and its profile may be stopped (ADR-0046).
+warn_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
+warn_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
 
 VALKEY_PASSWORD="$(vault_curl \
   "$VAULT_ADDR/v1/secret/data/platform/argocd" |
@@ -184,11 +187,11 @@ require_file "$ROOT_CA_KEY_FILE"
 validate_cert_for_host "$CERT_FILE" "$ARGOCD_HOST"
 
 echo "[4/11] Pre-check observability endpoints (warn-only)"
-warn_tcp_dependency "prometheus" "172.18.0.10" "9090"
-warn_tcp_dependency "loki" "172.18.0.13" "3100"
-warn_tcp_dependency "tempo" "172.18.0.12" "3200"
-warn_tcp_dependency "alloy" "172.18.0.11" "4317"
-warn_tcp_dependency "grafana" "172.18.0.14" "3000"
+warn_tcp_dependency "prometheus" "$EXTERNAL_HOST_IP" "9090"
+warn_tcp_dependency "loki" "$EXTERNAL_HOST_IP" "3100"
+warn_tcp_dependency "tempo" "$EXTERNAL_HOST_IP" "3200"
+warn_tcp_dependency "alloy" "$EXTERNAL_HOST_IP" "4317"
+warn_tcp_dependency "grafana" "$EXTERNAL_HOST_IP" "3000"
 
 echo "[5/11] Install MetalLB and configure IP pool"
 helm repo add metallb https://metallb.github.io/metallb
@@ -221,6 +224,15 @@ kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -
 kubectl -n cert-manager create secret tls mkcert-root-ca \
   --cert="$ROOT_CA_FILE" \
   --key="$ROOT_CA_KEY_FILE" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+echo "[7.3/11] Resolve and trust OpenBao for ESO (ADR-0046)"
+kubectl apply -f "$ROOT_DIR/infrastructure/coredns-custom.yaml"
+kubectl -n kube-system rollout restart deployment/coredns
+kubectl -n kube-system rollout status deployment/coredns --timeout=120s
+kubectl create namespace external-secrets --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n external-secrets create configmap openbao-ca \
+  --from-file=ca.crt="$ROOT_CA_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
 echo "[7.5/11] Pre-create platform namespace and external service endpoints"

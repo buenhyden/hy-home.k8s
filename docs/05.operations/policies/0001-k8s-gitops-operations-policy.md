@@ -57,14 +57,16 @@ artifact_id: "POL-0001"
 
 - External-service Service와 EndpointSlice desired state는
   `gitops/platform/external-services/*.yaml`을 single source of truth로 삼는다.
-- 포트 계약은 Vault `8200`, Valkey `6379`, PostgreSQL write `15432`,
-  PostgreSQL read `15433`을 유지한다.
+- 외부 서비스는 host 주소 `192.168.0.13`의 공개 port로 닿는다(ADR-0046).
+  포트 계약은 OpenBao `443`(외부 Traefik), Valkey `6379`(host `26379`),
+  PostgreSQL write `15432`, PostgreSQL read `15433`이다.
 - Vault는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰,
   비밀번호, API key를 저장하지 않는다.
 - 시크릿 backend는 Vault API 호환 OpenBao이며, Kubernetes 식별자
-  `vault-external`·`vault-backend`와 ESO `vault` provider를 유지한다.
-- 호스트 접근은 `https://openbao.hy.home.arpa`, cluster 내부 ESO 접근은
-  `vault-external.platform.svc`를 사용한다.
+  `vault-backend`와 ESO `vault` provider를 유지한다.
+- 호스트와 cluster 내부 ESO 모두 `https://openbao.hy.home.arpa`를 쓴다.
+  cluster 안의 이름 해석은 CoreDNS custom zone이, 인증서 검증은
+  `external-secrets/openbao-ca` ConfigMap이 맡는다.
 - Vault Kubernetes auth는 현재 API endpoint와 reviewer JWT/CA 경계를
   소유 Runbook의 검증 대상으로 유지한다.
 - ArgoCD host는 `argo.hy-k8s.home.arpa`, TLS secret은 `argocd-local-tls`다.

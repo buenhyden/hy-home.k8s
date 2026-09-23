@@ -48,7 +48,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-002 ArgoCD metrics | Observability Owner | NodePorts 30082-30086 | Prometheus target evidence |
 | OBS-003 cluster metrics | Observability Owner | NodePorts 30090-30092 | expected services and targets |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment and Prometheus config | Ready streams and loaded rule groups |
-| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to `172.18.0.10:9090` | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
+| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to host `192.168.0.13:9090` (ADR-0046; the external workspace must publish the port) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
 ### Service Port Naming

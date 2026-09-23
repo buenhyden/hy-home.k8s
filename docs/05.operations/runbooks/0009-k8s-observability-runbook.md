@@ -75,7 +75,7 @@ for port in 30090 30091 30092; do
 done
 
 echo "=== Prometheus k8s Targets ==="
-curl -s http://172.18.0.10:9090/api/v1/targets | python3 -c "
+curl -s http://192.168.0.13:9090/api/v1/targets | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 jobs=['kube-state-metrics','istiod','argo-rollouts']
@@ -88,7 +88,7 @@ echo "=== alloy-k8s-logs 파드 상태 ==="
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 
 echo "=== Alert Rules 로드 상태 ==="
-curl -s http://172.18.0.10:9090/api/v1/rules | python3 -c "
+curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 for g in d['data']['groups']:
@@ -97,7 +97,7 @@ for g in d['data']['groups']:
 "
 
 echo "=== Loki k8s 로그 ==="
-curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
+curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
   --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
@@ -198,7 +198,7 @@ kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --tail=20 \
 
 ```bash
 # 현재 로드된 rule groups 확인
-curl -s http://172.18.0.10:9090/api/v1/rules \
+curl -s http://192.168.0.13:9090/api/v1/rules \
   | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
@@ -219,10 +219,10 @@ workspace의 운영자가 확인·수정한다. 수정이 반영된 뒤 아래�
 
 ```bash
 # Prometheus reload (설정 변경 후)
-curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
+curl -s -X POST http://192.168.0.13:9090/-/reload && echo "Reloaded"
 
 # reload 후 확인
-curl -s http://172.18.0.10:9090/api/v1/rules | python3 -c "
+curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 total=sum(len(g['rules']) for g in d['data']['groups']
@@ -250,7 +250,7 @@ for port in 30090 30091 30092; do
 done
 
 # Prometheus target 재확인
-curl -s "http://172.18.0.10:9090/api/v1/targets" | python3 -c "
+curl -s "http://192.168.0.13:9090/api/v1/targets" | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 for t in d['data']['activeTargets']:
@@ -277,7 +277,7 @@ for port in 30090 30091 30092; do
 done
 
 echo "[2] Prometheus Targets"
-curl -s http://172.18.0.10:9090/api/v1/targets | python3 -c "
+curl -s http://192.168.0.13:9090/api/v1/targets | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 jobs=['kube-state-metrics','istiod','argo-rollouts']
@@ -287,13 +287,13 @@ for t in d['data']['activeTargets']:
 "
 
 echo "[3] kube_node_info count"
-curl -s 'http://172.18.0.10:9090/api/v1/query?query=kube_node_info' | python3 -c "
+curl -s 'http://192.168.0.13:9090/api/v1/query?query=kube_node_info' | python3 -c "
 import sys,json; d=json.load(sys.stdin)
 print(f\"  nodes: {len(d['data']['result'])} (기대: 4)\")
 "
 
 echo "[4] Alert Rules"
-curl -s http://172.18.0.10:9090/api/v1/rules | python3 -c "
+curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
 import sys, json
 d=json.load(sys.stdin)
 for g in d['data']['groups']:
@@ -306,7 +306,7 @@ kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-hea
   | awk '{print "  "$1": "$3}'
 
 echo "[6] Loki k8s log streams"
-curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
+curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
   --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"

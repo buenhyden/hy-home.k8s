@@ -24,7 +24,7 @@ ports:
     port: 15432
 endpoints:
   - addresses:
-      - 172.18.0.15
+      - 192.168.0.13
 ---
 apiVersion: v1
 kind: Service
@@ -52,4 +52,4 @@ ports:
     port: 15433
 endpoints:
   - addresses:
-      - 172.18.0.15
+      - 192.168.0.13

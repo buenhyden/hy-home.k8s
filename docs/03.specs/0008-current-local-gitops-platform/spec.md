@@ -33,11 +33,12 @@ It does not own external service runtime creation, live cluster repair, secret v
   - Workload ApplicationSet scans `gitops/workloads/*`.
   - Platform namespace desired state lives under `gitops/platform/namespaces`.
 - **Data / Interface Contract**:
-  - Secret backend API service: `vault-external.platform.svc.cluster.local:8200`, backed by external OpenBao (Vault API compatible, ADR-0041).
+  - Secret backend API: `https://openbao.hy.home.arpa`, external OpenBao (Vault API compatible, ADR-0041) behind the external Traefik. A CoreDNS custom zone resolves the name to the host address, and ESO pins the mkcert root CA (ADR-0046).
   - PostgreSQL write service: `postgres-write-external.platform.svc.cluster.local:15432`.
   - PostgreSQL read service: `postgres-read-external.platform.svc.cluster.local:15433`.
-  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`, backed by external `mng-valkey` (ADR-0044).
-  - PostgreSQL services are backed by external `pg-router` of `postgresql-cluster`, which runs only under the external profile `postgres-ha` (ADR-0044).
+  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`, backed by external `mng-valkey` at host port `26379` (ADR-0044, ADR-0046).
+  - PostgreSQL services are backed by external `pg-router` of `postgresql-cluster`, which runs only under the external profile `postgres-ha` (ADR-0044). The bootstrap does not require it (ADR-0046).
+  - Every external service endpoint is the host address `192.168.0.13` and a host-published port, never a `k3d-hyhome` container address (ADR-0046).
   - Observability service contracts are declared under `gitops/platform/external-services`.
 - **Ingress Router Contract** (ADR-0043):
   - k8s hosts are `<name>.hy-k8s.home.arpa`; ArgoCD is `argo.hy-k8s.home.arpa`.
@@ -135,7 +136,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 - **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [../../02.architecture/descriptions/0007-current-local-gitops-platform.md](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md), [../../02.architecture/decisions/0041-openbao-secret-backend.md](../../02.architecture/decisions/0041-openbao-secret-backend.md), [../../02.architecture/decisions/0042-linux-server-single-host-baseline.md](../../02.architecture/decisions/0042-linux-server-single-host-baseline.md), [../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md), [../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md](../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md), [../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)
+- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md), [../../02.architecture/decisions/0041-openbao-secret-backend.md](../../02.architecture/decisions/0041-openbao-secret-backend.md), [../../02.architecture/decisions/0042-linux-server-single-host-baseline.md](../../02.architecture/decisions/0042-linux-server-single-host-baseline.md), [../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md), [../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md](../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md), [../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md), [../../02.architecture/decisions/0046-external-services-over-host-addresses.md](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
 
 ### Delivery and References
 

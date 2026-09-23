@@ -1,0 +1,16 @@
+# ADR-0046: pods resolve the external Traefik names they call to the host
+# address. k3s CoreDNS imports *.server keys of this ConfigMap as extra zones.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  hy-home.server: |
+    hy.home.arpa:53 {
+        errors
+        hosts {
+            192.168.0.13 openbao.hy.home.arpa
+        }
+        cache 30
+    }

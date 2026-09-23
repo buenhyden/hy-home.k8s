@@ -75,7 +75,7 @@ done
 ### 1-2. Prometheus target 상태 확인
 
 ```bash
-curl -s "http://172.18.0.10:9090/api/v1/targets" \
+curl -s "http://192.168.0.13:9090/api/v1/targets" \
   | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
@@ -161,7 +161,7 @@ grep "172.18.0." hy-home.docker/infra/06-observability/prometheus/config/prometh
   | grep "3008[2-6]"
 
 # 변경 후 Prometheus reload
-curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
+curl -s -X POST http://192.168.0.13:9090/-/reload && echo "Reloaded"
 ```
 
 > **주의**: NodePort 번호(30082-30086)는 변경하지 않는다. IP만 갱신한다.
@@ -174,11 +174,11 @@ curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
 
 ```bash
 # lifecycle API로 무중단 reload
-curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
+curl -s -X POST http://192.168.0.13:9090/-/reload && echo "Reloaded"
 
 # reload 후 target 상태 확인 (30초 대기)
 sleep 5
-curl -s "http://172.18.0.10:9090/api/v1/targets" \
+curl -s "http://192.168.0.13:9090/api/v1/targets" \
   | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
@@ -203,7 +203,7 @@ done
 # → 모두 200
 
 # 2. Prometheus target 전체 up 확인
-curl -s "http://172.18.0.10:9090/api/v1/targets" \
+curl -s "http://192.168.0.13:9090/api/v1/targets" \
   | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
@@ -218,7 +218,7 @@ for t in d['data']['activeTargets']:
 # → argocd-notifications-controller -> up
 
 # 3. argocd_app_info 메트릭 수집 수 확인
-curl -s "http://172.18.0.10:9090/api/v1/query?query=argocd_app_info" \
+curl -s "http://192.168.0.13:9090/api/v1/query?query=argocd_app_info" \
   | python3 -c "
 import sys, json
 d = json.load(sys.stdin)
@@ -272,7 +272,7 @@ kubectl get endpoints -n argocd argocd-applicationset-controller-metrics-np
 docker ps | grep prometheus
 
 # Prometheus 헬스체크
-curl -s http://172.18.0.10:9090/-/healthy
+curl -s http://192.168.0.13:9090/-/healthy
 # → Prometheus Server is Healthy.
 ```
 

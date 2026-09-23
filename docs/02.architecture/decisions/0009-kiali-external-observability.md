@@ -73,6 +73,12 @@ Docker Traefik은 `kiali.hy-k8s.home.arpa`를 k3d ingress로 프록시한다.
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** The `172.18.0.x`
+container addresses above are replaced by host-published ports on
+`192.168.0.13` under [ADR-0046](./0046-external-services-over-host-addresses.md), and the Grafana browser link is
+`https://grafana.hy.home.arpa`. Kiali still calls the backends through the
+`*-external` services; the rest of this decision is unchanged.
+
 **Current-state clarification (2026-09-23).** The browser route this decision
 assigns to the external Docker Traefik is retired. The host is served by the
 dedicated k8s router under

@@ -94,6 +94,12 @@ endpoint를 향한다. OpenBao는 Vault HTTP API, KV v2, Kubernetes auth method�
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** The cluster-internal
+`vault-external` HTTP path at `172.18.0.17:8200` is replaced under
+[ADR-0046](./0046-external-services-over-host-addresses.md): ESO reaches `https://openbao.hy.home.arpa`
+through the external Traefik and pins the mkcert root CA. OpenBao as the
+secret backend and the ESO integration are unchanged.
+
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)

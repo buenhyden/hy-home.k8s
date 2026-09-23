@@ -115,7 +115,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 현재 `apps` namespace 전체에 egress 정책이 적용된다:
 
-- postgres (172.18.0.15:15432, 15433) egress 허용
+- postgres (host `192.168.0.13:15432`, `15433`, ADR-0046) egress 허용
 - kube-dns egress 허용
 - Istiod egress 허용
 - cluster pod CIDR(`10.42.0.0/16`) egress 허용 (in-cluster mTLS 통신)

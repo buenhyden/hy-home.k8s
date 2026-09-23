@@ -10,25 +10,15 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Prometheus (infra-prometheus on k3d-hyhome network)
+    # Prometheus, Grafana and Tempo host ports on the host address (ADR-0046)
     - to:
         - ipBlock:
-            cidr: 172.18.0.10/32
+            cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
           port: 9090
-    # Grafana (infra-grafana on k3d-hyhome network)
-    - to:
-        - ipBlock:
-            cidr: 172.18.0.14/32
-      ports:
         - protocol: TCP
           port: 3000
-    # Tempo (infra-tempo on k3d-hyhome network)
-    - to:
-        - ipBlock:
-            cidr: 172.18.0.12/32
-      ports:
         - protocol: TCP
           port: 3200
     # kube-dns for service discovery
