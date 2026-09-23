@@ -263,6 +263,9 @@ require_pattern 'token:\s*secret:kiali-grafana-auth:token' "$KIALI_APP"
 # Prometheus and Grafana each name the bootstrap-created gateway CA.
 [[ "$(grep -cP 'ca_file:\s*"/kiali-cabundle/additional-ca-bundle\.pem"' "$KIALI_APP")" == 2 ]] ||
   fail 'Kiali Prometheus and Grafana auth must set ca_file to the kiali-cabundle CA'
+# Server-side apply leaves ESO-defaulted fields in the live ExternalSecret;
+# only a server-side diff treats them as in sync.
+require_pattern 'compare-options:\s*ServerSideDiff=true' "$ROOT_DIR/gitops/apps/root/platform-monitoring-app.yaml"
 require_pattern 'key:\s*platform/grafana-api' "$ROOT_DIR/gitops/platform/kiali/kiali-grafana-auth-externalsecret.yaml"
 require_pattern 'name:\s*kiali-prometheus-auth' "$ROOT_DIR/gitops/platform/kiali/kiali-prometheus-auth-externalsecret.yaml"
 require_pattern 'name:\s*prometheus-api-auth' "$ROOT_DIR/gitops/platform/monitoring/prometheus-api-auth-externalsecret.yaml"
