@@ -1,6 +1,6 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.4"
+version: "1.0.5"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -16,7 +16,7 @@ artifact_id: "POL-0003"
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
-외부 Traefik router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
+k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
 
 ## Policy Scope
 
@@ -28,7 +28,7 @@ artifact_id: "POL-0003"
 
 - **Systems**: `gitops/platform/{cert-manager,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istio-cni-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
 - **Agents**: 문서/운영 자동화 에이전트
-- **Environments**: WSL2 local cluster
+- **Environments**: Linux server local cluster
 
 ## Controls
 
@@ -70,7 +70,7 @@ artifact_id: "POL-0003"
   - Grafana: `in_cluster_url` `http://grafana-external.platform.svc.cluster.local:3000`, 브라우저 링크 `url` `http://172.18.0.14:3000`
   - Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
   - egress NetworkPolicy: `172.18.0.10/32`, `172.18.0.12/32`, `172.18.0.14/32` cidr 허용
-  - hostname: `kiali.127.0.0.1.nip.io`, TLS: cert-manager 발급 (`kiali-tls`)
+  - hostname: `kiali.hy-k8s.home.arpa`, TLS: cert-manager 발급 (`kiali-tls`)
 - **Disallowed**:
   - 프로덕션에 anonymous auth 유지
   - Kiali egress를 `0.0.0.0/0` 등 광역 cidr로 확장

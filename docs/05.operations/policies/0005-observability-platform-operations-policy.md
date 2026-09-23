@@ -1,6 +1,6 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -28,7 +28,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 - **Systems**: `gitops/platform/`, `gitops/clusters/local/`, external observability workspace
 - **Roles**: Platform Owner, Observability Owner, approved operator
-- **Environment**: WSL2 local cluster와 연결된 external observability services
+- **Environment**: Linux server local cluster와 연결된 external observability services
 
 ## Controls
 

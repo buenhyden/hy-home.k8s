@@ -1,10 +1,10 @@
 ---
 title: "sample-app"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-23"
 ---
 # sample-app
 
@@ -12,7 +12,7 @@ updated: "2026-09-04"
 
 ## Overview
 
-이 디렉터리는 `hy-home.k8s` 클러스터에 새로운 앱을 온보딩할 때 참조하는 최소 GitOps 템플릿이다. Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, Traefik dynamic config 예시를 함께 제공해 앱별 manifest 세트를 빠르게 만들 수 있게 한다. stable/canary Service와 Istio routing까지 포함한 fuller active reference는 `gitops/workloads/adminer/`를 기준으로 확인한다.
+이 디렉터리는 `hy-home.k8s` 클러스터에 새로운 앱을 온보딩할 때 참조하는 최소 GitOps 템플릿이다. Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret 예시를 함께 제공해 앱별 manifest 세트를 빠르게 만들 수 있게 한다. stable/canary Service와 Istio routing까지 포함한 fuller active reference는 `gitops/workloads/adminer/`를 기준으로 확인한다.
 
 예시는 feature branch + PR flow를 전제로 한다. `main`에 직접 반영하는 흐름은 저장소 운영 정책과 quality gate에서 허용하지 않는다.
 
@@ -34,7 +34,7 @@ updated: "2026-09-04"
 - 앱별 GitOps manifest 템플릿
 - placeholder 치환 방식
 - Argo Rollouts, ESO, Ingress, AnalysisTemplate 구성 예시
-- `hy-home.docker` Traefik dynamic config 샘플 위치 안내
+- k8s 전용 router가 받는 `<appname>.hy-k8s.home.arpa` host 계약
 
 #### Out of Scope
 
@@ -52,8 +52,7 @@ examples/sample-app/
 ├── service.yaml              # Service (Istio http- 포트 명명 규칙)
 ├── ingress.yaml              # Ingress (nginx + cert-manager mkcert TLS)
 ├── analysis-template.yaml    # AnalysisTemplate (Prometheus 재시작 검사)
-├── external-secret.yaml      # ExternalSecret (Vault 연동, 선택 사항)
-└── traefik-k3d.yaml.example  # Traefik dynamic config (hy-home.docker 레포용)
+└── external-secret.yaml      # ExternalSecret (OpenBao 연동, 선택 사항)
 ```
 
 ## Configuration Boundary
@@ -94,13 +93,10 @@ sed -i 's/<appname>/my-api/g; s/<owner>/buenhyden/g; s/<tag>/v1.0.0/g; s/<port>/
   gitops/workloads/<appname>/*.yaml
 ```
 
-### 3. Traefik 설정 추가 (hy-home.docker 레포)
+### 3. 접속 이름 확인
 
-```bash
-cp examples/sample-app/traefik-k3d.yaml.example \
-  ../hy-home.docker/infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml
-# 플레이스홀더 교체
-```
+`<appname>.hy-k8s.home.arpa`는 k8s 전용 router(`192.168.0.14`)가 받는다. 외부
+저장소 변경 없이 이름 해석만 그 주소를 가리키면 된다.
 
 ### 4. feature branch + PR flow로 반영
 

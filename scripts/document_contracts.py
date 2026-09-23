@@ -42,7 +42,6 @@ TARGET_ROOTS = (
     "scripts",
     "secrets",
     "tests",
-    "traefik",
 )
 REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
 PROFILE_SCHEMA_PATH = PurePosixPath(

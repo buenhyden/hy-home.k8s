@@ -45,7 +45,7 @@ declare -a YAML_TARGETS=(
   "$TARGET/infrastructure"
 )
 
-for optional_dir in "$TARGET/examples/sample-app" "$TARGET/traefik"; do
+for optional_dir in "$TARGET/examples/sample-app"; do
   if [[ -d "$optional_dir" ]]; then
     YAML_TARGETS+=("$optional_dir")
   fi

@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: headlamp.127.0.0.1.nip.io
+    - host: headlamp.hy-k8s.home.arpa
       http:
         paths:
           - path: /
@@ -21,5 +21,5 @@ spec:
                   number: 4466
   tls:
     - hosts:
-        - headlamp.127.0.0.1.nip.io
+        - headlamp.hy-k8s.home.arpa
       secretName: headlamp-tls # pragma: allowlist secret

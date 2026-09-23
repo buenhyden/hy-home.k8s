@@ -1122,7 +1122,7 @@
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
-        "reason": "Traefik configuration requires manifest and policy validation."
+        "reason": "ADR-0043 retired traefik/; this route keeps its deletions classified and repository-quality rejects any file reintroduced here."
       },
       "evidenceLane": "repo-static"
     },

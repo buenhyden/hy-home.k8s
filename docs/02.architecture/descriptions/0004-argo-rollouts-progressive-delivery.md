@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "1.0.2"
+version: "1.0.4"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "AD-0004"
 ---
@@ -27,7 +27,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
   - Argo Rollouts Helm chart 배포 경계
   - `argo-rollouts` namespace와 controller/dashboard runtime boundary
   - AppProject allow-list와 `apps` namespace Rollout 사용 경계
-  - Rollouts Dashboard `rollouts.127.0.0.1.nip.io` 접근 경로
+  - Rollouts Dashboard `rollouts.hy-k8s.home.arpa` 접근 경로
   - Prometheus가 수집할 controller metrics 노출
 - **Consumes**:
   - ArgoCD App-of-Apps reconciliation
@@ -45,7 +45,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 
 ## Quality Attributes
 
-- **Performance**: controller와 dashboard는 WSL2/k3d 자원 예산 안에서 동작하도록 request/limit을 고정한다.
+- **Performance**: controller와 dashboard는 single-host k3d 자원 예산 안에서 동작하도록 request/limit을 고정한다.
 - **Security**: Rollouts 관련 CRD와 namespace 권한은 AppProject allow-list로 제한한다.
 - **Reliability**: GitOps source는 `platform-rollouts` Application이 소유하고, 재시도와 self-heal을 사용한다.
 - **Scalability**: controller는 플랫폼 공용으로 유지하고, 앱별 rollout 수평 확장은 `apps` namespace의 workload 계약으로 분리한다.
@@ -57,7 +57,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 - Platform root app includes `gitops/apps/root/platform-rollouts-app.yaml`.
 - The chart source and exact revision are owned by the [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml); this AD does not maintain a second version pin.
 - The controller and dashboard run in `argo-rollouts`.
-- Dashboard traffic uses ingress-nginx TLS inside the cluster and an external Traefik dynamic config file for browser access.
+- Dashboard traffic uses ingress-nginx TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
 
 ## Data Architecture
@@ -77,9 +77,9 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 ## Infrastructure & Deployment
 
 - **Runtime / Platform**:
-  - WSL2 + k3d/k3s local platform managed by ArgoCD.
+  - Linux server + k3d/k3s local platform managed by ArgoCD.
   - Namespace: `argo-rollouts`.
-  - Dashboard host: `rollouts.127.0.0.1.nip.io`.
+  - Dashboard host: `rollouts.hy-k8s.home.arpa`.
 - **Deployment Model**:
   - `platform-rollouts` ArgoCD Application installs the Helm chart.
   - `gitops/apps/root/kustomization.yaml` includes the Application.
@@ -109,7 +109,7 @@ Argo Rollouts는 `argo-rollouts` namespace에서 controller와 dashboard를 제�
 | [REQ-0001-FR-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | controller metrics의 외부 Prometheus 관측성 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | [REQ-0001-IF-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | AppProject allow-list와 ArgoCD health 추적 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | [REQ-0001-IF-0002](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | 수동 promotion 기본값과 승인된 AnalysisTemplate 실패 안전성 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| [REQ-0001-IF-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | local Traefik artifact와 cluster ingress 사이의 route 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| [REQ-0001-IF-0003](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | k8s router와 cluster ingress 사이의 route 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | N/A — [Acceptance criterion 01](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | controller Deployment 가용성의 운영 증거 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | N/A — [Acceptance criterion 02](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | Dashboard HTTPS 응답과 진행률 표시의 live 증거 경계 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 | N/A — [Acceptance criterion 03](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) remains package-owned | ArgoCD Rollout health 상태의 reconciliation 증거 | [ADR 0011](../decisions/0011-argo-rollouts-progressive-delivery.md) and [Spec 004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |

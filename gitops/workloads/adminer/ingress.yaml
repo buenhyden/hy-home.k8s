@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: adminer.127.0.0.1.nip.io
+    - host: adminer.hy-k8s.home.arpa
       http:
         paths:
           - path: /
@@ -21,5 +21,5 @@ spec:
                   number: 8080
   tls:
     - hosts:
-        - adminer.127.0.0.1.nip.io
+        - adminer.hy-k8s.home.arpa
       secretName: adminer-tls # pragma: allowlist secret

@@ -1,6 +1,6 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.1.0"
+version: "1.1.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -32,7 +32,7 @@ Kiali와 외부 observability 연결 복구는
 ## When to Use
 
 - 신규 플랫폼 확장 컴포넌트 설치
-- WSL2 재시작 또는 k3d 클러스터 재생성 후 복구
+- host 재시작 또는 k3d 클러스터 재생성 후 복구
 - cert-manager ClusterIssuer NotReady 복구
 - Istio/Kiali 배포 실패 복구
 
@@ -52,11 +52,11 @@ Kiali와 외부 observability 연결 복구는
 
 ### Procedure
 
-0. 외부 Traefik router 반영 확인
+0. k8s router 이름 해석 확인
 
-   Kiali 호스트명에 처음 접근하는 경우, 외부 Traefik workspace 운영자가
-   `traefik/kiali-k3d.yaml` reference copy와 같은 router를 반영했는지 확인한다.
-   router 반영은 이 저장소 밖의 operator-approved 작업이며 통제는
+   Kiali 호스트명 `kiali.hy-k8s.home.arpa`는 k8s 전용 router(`192.168.0.14`)가
+   받는다. 이름 해석이 그 주소를 가리키는지 확인한다. host 주소와 이름
+   해석은 operator-approved 작업이며 통제는
    [POL-0001](../policies/0001-k8s-gitops-operations-policy.md)이 소유한다.
 
 1. 기본 플랫폼 부트스트랩을 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)
@@ -104,7 +104,7 @@ kubectl -n istio-system get deploy istiod kiali
 
 # TLS 접근
 curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
-  https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+  https://kiali.hy-k8s.home.arpa -o /dev/null -w '%{http_code}\n'
 ```
 
 ## Observability and Evidence Sources

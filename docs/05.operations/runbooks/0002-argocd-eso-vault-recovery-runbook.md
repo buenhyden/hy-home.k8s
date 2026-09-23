@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.0.4"
+version: "1.0.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -12,6 +12,9 @@ artifact_id: "RUN-0002"
 # ArgoCD ESO Vault Recovery Runbook
 
 ## Overview
+
+외부 secret backend는 Vault API 호환 OpenBao(`openbao`, k3d-hyhome `172.18.0.17:8200`)다.
+`vault-external`, `vault-backend`, ESO `vault` provider는 기존 Kubernetes 식별자로 유지한다.
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
@@ -31,7 +34,7 @@ artifact_id: "RUN-0002"
 - ESO 로그에 `connection refused`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
 - ESO 로그에 `Vault is sealed`가 반복
 - `argocd-external-valkey`가 `SecretSyncedError`
-- 복구 후 ArgoCD HTTPS 진입점(`argocd.127.0.0.1.nip.io`) 회귀가 의심될 때
+- 복구 후 ArgoCD HTTPS 진입점(`argo.hy-k8s.home.arpa`) 회귀가 의심될 때
 - Docker 재시작 후 vault 컨테이너가 k3d 네트워크에서 분리된 경우
 
 ## Procedure or Checklist
@@ -64,7 +67,7 @@ kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
 ```bash
 kubectl -n platform get svc vault-external -o yaml
 kubectl -n platform get endpointslice vault-external-1 -o yaml
-curl -sS --max-time 5 http://172.18.0.8:8200/v1/sys/health
+curl -sS --max-time 5 http://172.18.0.17:8200/v1/sys/health
 kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | \
   rg -i 'Vault is sealed|connection refused|context deadline|permission denied|invalid'
 ```
@@ -83,7 +86,7 @@ kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | 
 unseal 후에는 secret 값을 조회하지 말고 readiness metadata만 확인한다.
 
 ```bash
-curl -sS --max-time 5 http://172.18.0.8:8200/v1/sys/health
+curl -sS --max-time 5 http://172.18.0.17:8200/v1/sys/health
 kubectl -n external-secrets get clustersecretstore vault-backend
 kubectl -n argocd get externalsecret argocd-external-valkey
 ```
@@ -91,14 +94,14 @@ kubectl -n argocd get externalsecret argocd-external-valkey
 1. Vault endpoint/network drift가 확인된 경우에만 Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다. 이 단계는 human-approved break-glass 전용이다.
 
 ```bash
-# Vault가 k3d-hyhome 네트워크에 연결되어 있는지 확인
-VAULT_K3D_IP=$(docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}' 2>/dev/null)
+# OpenBao가 k3d-hyhome 네트워크에 연결되어 있는지 확인
+VAULT_K3D_IP=$(docker inspect openbao --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}' 2>/dev/null)
 
 # 연결되지 않은 경우 연결
 if [ -z "$VAULT_K3D_IP" ]; then
-  docker network connect k3d-hyhome vault
-  VAULT_K3D_IP=$(docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}')
-  echo "vault connected to k3d-hyhome: $VAULT_K3D_IP"
+  docker network connect k3d-hyhome openbao
+  VAULT_K3D_IP=$(docker inspect openbao --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}')
+  echo "openbao connected to k3d-hyhome: $VAULT_K3D_IP"
 fi
 
 # vault-external EndpointSlice를 k3d-hyhome IP로 업데이트
@@ -153,7 +156,7 @@ argocd app sync platform-argocd-config
 ```bash
 ./infrastructure/verify/verify-network-policies.sh
 ./infrastructure/verify/verify-ingress-tls.sh
-CHECK_TRAEFIK_443=true ./infrastructure/verify/verify-ingress-tls.sh
+CHECK_K8S_ROUTER=true ./infrastructure/verify/verify-ingress-tls.sh
 ./infrastructure/verify/run-all.sh
 ```
 
@@ -178,9 +181,9 @@ kubectl -n argocd get app root-platform -o yaml | \
 - [ ] `platform-eso-config`, `platform-argocd-config` Degraded 해소
 - [ ] 포트/서비스 계약 회귀 없음
 - [ ] `argocd` egress(Valkey + DNS + HTTPS) 통과
-- [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
-- [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; 외부 Traefik 443
-      확인은 gateway 런타임이 준비된 경우에만 별도 수행
+- [ ] ingress/TLS 계약(host=`argo.hy-k8s.home.arpa`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
+- [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; k8s router
+      (`192.168.0.14:443`) 확인은 host 주소가 할당된 경우에만 별도 수행
 - [ ] CI 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 
 ## Observability and Evidence Sources
@@ -199,7 +202,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 
 ```bash
 openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
-  rg '127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
+  rg 'argo\.hy-k8s\.home\.arpa|\*\.hy-k8s\.home\.arpa'
 ```
 
 SAN이 없으면 인증서를 재발급한 뒤
@@ -207,7 +210,7 @@ SAN이 없으면 인증서를 재발급한 뒤
 
 ### Vault sealed remediation
 
-`curl http://172.18.0.8:8200/v1/sys/health`가 `sealed:true`를 반환하거나 ESO 로그에 `Vault is sealed`가 반복되면 GitOps manifest를 변경하지 않는다.
+`curl http://172.18.0.17:8200/v1/sys/health`가 `sealed:true`를 반환하거나 ESO 로그에 `Vault is sealed`가 반복되면 GitOps manifest를 변경하지 않는다.
 
 - 위 Procedure의 operator-bound Vault unseal 단계와 그 비밀 입력 경계를 따른다.
 - Unseal 후 `ClusterSecretStore/vault-backend`와 dependent `ExternalSecret` readiness metadata만 재검증한다.

@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Requirement Package"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-23"
 layer: "requirements"
 artifact_id: "REQ-0001"
 ---
@@ -77,7 +77,7 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 - AppProject allow-list 업데이트 누락 시 ArgoCD sync 실패.
   - **Mitigation**: 후속 Spec/Plan에서 AppProject 변경과 검증 순서를 명시.
-- Rollouts Dashboard 접근을 위해 외부 Traefik route 계약이 필요하다.
+- Rollouts Dashboard 접근은 k8s 전용 router의 `rollouts.hy-k8s.home.arpa` 계약에 의존한다(ADR-0043).
 - 승인된 local 인증서와 ingress 경계의 준비는 현재 플랫폼 요구와 downstream 구현·운영 owner가 확인한다.
 
 ### Agent execution and approval requirements

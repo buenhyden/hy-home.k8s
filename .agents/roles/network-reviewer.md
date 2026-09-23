@@ -1,10 +1,10 @@
 ---
 title: "Network Reviewer Responsibility"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-23"
 ---
 
 # network-reviewer Responsibility
@@ -37,7 +37,7 @@ which is `security-auditor.md`'s; sync-structure and rollout concerns go to
 
 ### When to Use
 
-Ingress, Traefik, NetworkPolicy, DNS, or TLS desired state changed and the open
+Ingress, k8s router, NetworkPolicy, DNS, or TLS desired state changed and the open
 question is whether the wiring is right. Whether it is safe is a different
 question with a different owner.
 

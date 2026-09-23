@@ -1,10 +1,10 @@
 ---
 title: "cert-manager with mkcert CA as ClusterIssuer"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "ADR-0006"
 ---
@@ -28,7 +28,7 @@ mkcert rootCA는 이미 로컬 신뢰 저장소에 등록되어 있으므로, ce
 - cert-manager `ClusterIssuer`를 CA 타입으로 생성하고 해당 Secret을 참조한다.
 - **신규 서비스**(Headlamp, Kiali, Argo Rollouts Dashboard)는 cert-manager `Certificate` CR로 TLS 인증서를 발급한다.
 - **기존 ArgoCD**는 `argocd-local-tls` 수동 주입 방식을 유지한다(동작 보전, 후속 Phase에서 이관 가능).
-- ACME/Let's Encrypt는 사용하지 않는다(로컬 nip.io 도메인 부적합).
+- ACME/Let's Encrypt는 사용하지 않는다(로컬 hy-k8s.home.arpa 도메인 부적합).
 
 ## Explicit Non-goals
 

@@ -38,7 +38,6 @@ for required_path in \
   "$ROOT_DIR/gitops" \
   "$ROOT_DIR/infrastructure" \
   "$ROOT_DIR/examples" \
-  "$ROOT_DIR/traefik" \
   "$POLICY_DIR"; do
   if [[ ! -e "$required_path" ]]; then
     echo "ERR expected repo root at $ROOT_INPUT; missing ${required_path#"$ROOT_DIR"/}" >&2
@@ -64,7 +63,6 @@ mapfile -d '' POLICY_TARGETS < <(
     "$ROOT_DIR/gitops" \
     "$ROOT_DIR/infrastructure" \
     "$ROOT_DIR/examples" \
-    "$ROOT_DIR/traefik" \
     -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 |
     sort -z
 )

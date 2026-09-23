@@ -17,6 +17,11 @@ spec:
         controller:
           service:
             type: LoadBalancer
+            # k8s router (ADR-0043): the k3d serverlb forwards
+            # 192.168.0.14:80/443 to these fixed NodePorts.
+            nodePorts:
+              http: 30080
+              https: 30443
           # 이 차트는 `if or podSecurityContext sysctls` 가드를 쓰는데 둘 다 기본이
           # 비어 있어 pod securityContext 자체가 렌더되지 않는다. 이 네임스페이스는
           # istio-injection이 켜져 있고 Istio는 seccompProfile을 gateway 템플릿에만

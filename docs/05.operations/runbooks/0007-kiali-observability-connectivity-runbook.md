@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -66,7 +66,7 @@ kubectl get endpointslice -n platform
 
 출력 예시에서 `ENDPOINTS` 컬럼이 비어있거나 현재 할당 IP와 다르면 문제 있음.
 
-### 1-2. 컨테이너 실제 IP 확인 (WSL2 호스트에서)
+### 1-2. 컨테이너 실제 IP 확인 (Linux server host에서)
 
 ```bash
 docker inspect infra-grafana --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'

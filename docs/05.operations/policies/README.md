@@ -1,6 +1,6 @@
 ---
 title: "05.operations/policies"
-version: "0.1.3"
+version: "0.1.4"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -119,7 +119,7 @@ docs/05.operations/policies/
 
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/Vault/ingress·Traefik/최소권한 통합 정책과 공통 live 변경 예외 | Active | 2026-09-23 |
+| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 | Active | 2026-09-23 |
 | [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 | Active | 2026-09-23 |
 | [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-23 |
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-23 |

@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "RUN-0001"
 
 ## Overview
 
-이 런북은 WSL2 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
+이 런북은 Linux server 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 
 ### Purpose
 
@@ -33,13 +33,14 @@ artifact_id: "RUN-0001"
 
 ### Checklist
 
-- [ ] WSL2/WSL-native Docker 정상 상태
+- [ ] Linux server host의 native Docker Engine 정상 상태 (`docker context show`가 `default`)
 - [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
 - [ ] `fs.inotify.max_user_instances` 512 이상 (bootstrap이 미달 시 중단)
-- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`vault`, `vault-agent`, `mng-valkey`)
+- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`, `pg-router`). `pg-router`는 `postgresql-cluster`의 opt-in profile `postgres-ha`로만 기동한다 (ADR-0044)
+- [ ] k8s router 주소 `192.168.0.14`가 host에 할당되어 있고, 외부 Traefik이 모든 주소의 80/443을 점유하지 않음 (ADR-0043)
 - [ ] Valkey `172.18.0.9:6379` 접근 가능
 - [ ] PostgreSQL HAProxy `172.18.0.15:15432/15433` 접근 가능
-- [ ] Vault(`https://vault.127.0.0.1.nip.io`) 접근 가능 및 unseal 상태
+- [ ] OpenBao(`https://openbao.hy.home.arpa`, Vault API 호환) 접근 가능 및 unseal 상태
 - [ ] 읽기 가능한 `VAULT_CA_FILE`과 대화형 `/dev/tty` 준비
 - [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
 - [ ] `secrets/certs/cert.pem`, `secrets/certs/key.pem` 존재 및 ArgoCD host SAN 포함
@@ -58,7 +59,7 @@ artifact_id: "RUN-0001"
    VAULT_CA_FILE=secrets/certs/rootCA.pem
    curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
      -o /dev/null -w '%{http_code}\n' \
-     https://vault.127.0.0.1.nip.io/v1/sys/health
+     https://openbao.hy.home.arpa/v1/sys/health
    ```
 
 2. 저장소의 Vault/ESO 계약을 값 조회 없이 정적으로 검증한다.
@@ -73,7 +74,7 @@ artifact_id: "RUN-0001"
    test -f secrets/certs/cert.pem
    test -f secrets/certs/key.pem
    openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
-     rg 'argocd\.127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
+     rg 'argo\.hy-k8s\.home\.arpa|\*\.hy-k8s\.home\.arpa'
    ```
 
 4. 부트스트랩 스크립트를 실행한다.
@@ -131,7 +132,7 @@ artifact_id: "RUN-0001"
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
 
 ```bash
-argocd login argocd.127.0.0.1.nip.io --grpc-web
+argocd login argo.hy-k8s.home.arpa --grpc-web
 argocd proj list
 argocd app list
 ```

@@ -11,6 +11,7 @@ resources:
   - platform-cluster-config-app.yaml
   - platform-eso-config-app.yaml
   - platform-ingress-nginx-app.yaml
+  - platform-ingress-routes-app.yaml
   - platform-cert-manager-config-app.yaml
   - platform-istiod-app.yaml
   - platform-headlamp-app.yaml

@@ -1,10 +1,10 @@
 ---
 title: "secrets"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-23"
 ---
 # secrets
 
@@ -73,14 +73,13 @@ PASS는 추적된 바이트에 대한 증적이다. 로컬 워크트리에 놓�
 ## Operations
 
 - 로컬 인증서 발급 명령과 필요한 파일 목록은 `.env.example` 상단 주석을 따른다.
-- 인증서를 교체한 뒤에는 Traefik dynamic config가 참조하는 경로가 그대로인지
-  확인한다.
+- 인증서를 교체한 뒤에는 SAN이 `*.hy-k8s.home.arpa`를 포함하는지 확인한다.
+  bootstrap이 ArgoCD host 기준으로 같은 검사를 수행한다.
 - 키 파일 권한은 소유자 전용으로 유지한다. 이 경계는 운영자가 소유하며 저장소
   검증이 대신 확인하지 않는다.
 
 ## Related Documents
 
-- [Traefik](../traefik/README.md)
 - [Infrastructure](../infrastructure/README.md)
 - [GitOps](../gitops/README.md)
 - [Scripts](../scripts/README.md)

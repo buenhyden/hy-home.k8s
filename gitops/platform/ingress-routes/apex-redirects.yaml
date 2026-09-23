@@ -1,0 +1,135 @@
+# Apex path entry (ADR-0043): hy-k8s.home.arpa/<name> answers with a 301 to
+# the canonical https://<name>.hy-k8s.home.arpa/. One Ingress per path because
+# permanent-redirect applies to a whole Ingress. The backend is never reached.
+# Only apex-argo carries the issuer annotation, so cert-manager owns a single
+# Certificate for the shared hy-k8s-apex-tls secret.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apex-argo
+  namespace: ingress-nginx
+  annotations:
+    cert-manager.io/cluster-issuer: mkcert-ca-issuer
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/permanent-redirect: https://argo.hy-k8s.home.arpa/
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hy-k8s.home.arpa
+      http:
+        paths:
+          - path: /argo
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - hy-k8s.home.arpa
+      secretName: hy-k8s-apex-tls # pragma: allowlist secret
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apex-kiali
+  namespace: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/permanent-redirect: https://kiali.hy-k8s.home.arpa/
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hy-k8s.home.arpa
+      http:
+        paths:
+          - path: /kiali
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - hy-k8s.home.arpa
+      secretName: hy-k8s-apex-tls # pragma: allowlist secret
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apex-headlamp
+  namespace: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/permanent-redirect: https://headlamp.hy-k8s.home.arpa/
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hy-k8s.home.arpa
+      http:
+        paths:
+          - path: /headlamp
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - hy-k8s.home.arpa
+      secretName: hy-k8s-apex-tls # pragma: allowlist secret
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apex-rollouts
+  namespace: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/permanent-redirect: https://rollouts.hy-k8s.home.arpa/
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hy-k8s.home.arpa
+      http:
+        paths:
+          - path: /rollouts
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - hy-k8s.home.arpa
+      secretName: hy-k8s-apex-tls # pragma: allowlist secret
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apex-adminer
+  namespace: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/permanent-redirect: https://adminer.hy-k8s.home.arpa/
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hy-k8s.home.arpa
+      http:
+        paths:
+          - path: /adminer
+            pathType: Prefix
+            backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - hy-k8s.home.arpa
+      secretName: hy-k8s-apex-tls # pragma: allowlist secret

@@ -38,14 +38,14 @@ which rtk
 ```
 
 If `which rtk` returns nothing, the current shell cannot use the RTK proxy.
-In WSL, also check the local install path before treating RTK as absent:
+Also check the user-local install path before treating RTK as absent:
 
 ```bash
-/home/hy/.local/bin/rtk --version
-/home/hy/.local/bin/rtk gain
+~/.local/bin/rtk --version
+~/.local/bin/rtk gain
 ```
 
-If `/home/hy/.local/bin/rtk --version` works but `which rtk` returns nothing,
+If `~/.local/bin/rtk --version` works but `which rtk` returns nothing,
 the current shell PATH is incomplete. If `rtk gain` fails with a tracking
 database initialization error, do not inspect private databases or credential
 files; run the underlying command directly and record the PATH/DB limitation in

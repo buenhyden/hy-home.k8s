@@ -4,15 +4,14 @@ set +x
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLUSTER_NAME="hyhome"
-ARGOCD_HOST="${ARGOCD_HOST:-argocd.127.0.0.1.nip.io}"
-K3D_HTTP_PORT="${K3D_HTTP_PORT:-80}"
-K3D_HTTPS_PORT="${K3D_HTTPS_PORT:-443}"
+ARGOCD_HOST="${ARGOCD_HOST:-argo.hy-k8s.home.arpa}"
+K8S_ROUTER_IP="${K8S_ROUTER_IP:-192.168.0.14}"
 CERT_DIR="${CERT_DIR:-$ROOT_DIR/secrets/certs}"
 CERT_FILE="${CERT_FILE:-$CERT_DIR/cert.pem}"
 KEY_FILE="${KEY_FILE:-$CERT_DIR/key.pem}"
 ROOT_CA_FILE="${ROOT_CA_FILE:-$CERT_DIR/rootCA.pem}"
 ROOT_CA_KEY_FILE="${ROOT_CA_KEY_FILE:-$CERT_DIR/rootCA-key.pem}"
-VAULT_ADDR="${VAULT_ADDR:-https://vault.127.0.0.1.nip.io}"
+VAULT_ADDR="${VAULT_ADDR:-https://openbao.hy.home.arpa}"
 VAULT_CA_FILE="${VAULT_CA_FILE:-$ROOT_CA_FILE}"
 POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.18.0.15}"
 POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
@@ -21,9 +20,12 @@ POSTGRES_READ_PORT="${POSTGRES_READ_PORT:-15433}"
 VALKEY_ADDR="${VALKEY_ADDR:-172.18.0.9}"
 VALKEY_PORT="${VALKEY_PORT:-6379}"
 
-port_in_use() {
+# ADR-0043: the k3d serverlb binds only K8S_ROUTER_IP. A listener on the same
+# port bound to that address or to every address blocks it.
+router_port_in_use() {
   local port="$1"
-  ss -ltn "( sport = :$port )" | awk 'NR>1 {print $4}' | grep -q .
+  ss -ltnH "( sport = :$port )" | awk '{print $4}' |
+    grep -Eq "^(0\.0\.0\.0|\*|\[::\]|${K8S_ROUTER_IP//./\\.}):${port}$"
 }
 
 fail() {
@@ -134,8 +136,8 @@ validate_cert_for_host() {
     return 0
   fi
 
-  if printf '%s' "$host" | rg -q '^.+\.127\.0\.0\.1\.nip\.io$' &&
-    printf '%s' "$sans" | rg -q 'DNS:\*\.127\.0\.0\.1\.nip\.io(,|$)'; then
+  if printf '%s' "$host" | rg -q '^.+\.hy-k8s\.home\.arpa$' &&
+    printf '%s' "$sans" | rg -q 'DNS:\*\.hy-k8s\.home\.arpa(,|$)'; then
     return 0
   fi
 
@@ -144,29 +146,18 @@ validate_cert_for_host() {
 }
 
 if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_NAME"; then
-  if port_in_use "$K3D_HTTP_PORT"; then
-    if [ "$K3D_HTTP_PORT" = "80" ]; then
-      K3D_HTTP_PORT=8080
-      echo "port 80 already in use, fallback to $K3D_HTTP_PORT"
-    else
-      fail "configured K3D_HTTP_PORT=$K3D_HTTP_PORT is already in use"
+  ip -4 -o addr show | awk '{print $4}' | cut -d/ -f1 | grep -qx "$K8S_ROUTER_IP" ||
+    fail "k8s router address $K8S_ROUTER_IP is not assigned to this host (operator-owned, ADR-0043)"
+  for port in 80 443; do
+    if router_port_in_use "$port"; then
+      fail "port $port is already bound on $K8S_ROUTER_IP or on every address; bind the external Traefik to its own address first"
     fi
-  fi
-
-  if port_in_use "$K3D_HTTPS_PORT"; then
-    if [ "$K3D_HTTPS_PORT" = "443" ]; then
-      K3D_HTTPS_PORT=8443
-      echo "port 443 already in use, fallback to $K3D_HTTPS_PORT"
-    else
-      fail "configured K3D_HTTPS_PORT=$K3D_HTTPS_PORT is already in use"
-    fi
-  fi
+  done
 
   K3D_CONFIG_TMP="$(mktemp)"
   trap 'cleanup_sensitive; rm -f "$K3D_CONFIG_TMP"' EXIT
   sed \
-    -e "s/port: 80:80/port: ${K3D_HTTP_PORT}:80/" \
-    -e "s/port: 443:443/port: ${K3D_HTTPS_PORT}:443/" \
+    -e "s/192\.168\.0\.14:/${K8S_ROUTER_IP}:/" \
     "$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml" >"$K3D_CONFIG_TMP"
 
   echo "[1/11] Create k3d cluster"
@@ -184,13 +175,6 @@ check_tcp_dependency "valkey" "$VALKEY_ADDR" "$VALKEY_PORT"
 VALKEY_PASSWORD="$(vault_curl \
   "$VAULT_ADDR/v1/secret/data/platform/argocd" |
   jq -er '.data.data.valkey_password')"
-
-if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then
-  DETECTED_HTTPS_PORT="$(docker inspect -f '{{(index (index .NetworkSettings.Ports "443/tcp") 0).HostPort}}' "k3d-${CLUSTER_NAME}-serverlb" 2>/dev/null || true)"
-  if [ -n "$DETECTED_HTTPS_PORT" ]; then
-    K3D_HTTPS_PORT="$DETECTED_HTTPS_PORT"
-  fi
-fi
 
 echo "[3/11] Validate TLS certificate inputs"
 require_file "$CERT_FILE"
@@ -267,11 +251,7 @@ if ! kubectl -n argocd wait --for=condition=available deployment --all --timeout
 fi
 
 echo "[11/11] Done"
-if [ "$K3D_HTTPS_PORT" = "443" ]; then
-  echo "ArgoCD URL: https://$ARGOCD_HOST (Traefik 443 경유)"
-else
-  echo "ArgoCD URL: https://$ARGOCD_HOST:$K3D_HTTPS_PORT (fallback direct)"
-fi
+echo "ArgoCD URL: https://$ARGOCD_HOST (k8s router $K8S_ROUTER_IP:443)"
 
 if [ -f "$ROOT_CA_FILE" ]; then
   echo "Root CA hint: import $ROOT_CA_FILE into local trust store when browser trust is required"

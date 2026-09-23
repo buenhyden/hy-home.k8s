@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -18,7 +18,7 @@ old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현
 
 ### Current architecture summary
 
-현재 플랫폼은 WSL2 + WSL-native Docker 위의 k3d cluster, ArgoCD App-of-Apps, platform Application, workload ApplicationSet, external service interface contract로 구성된다.
+현재 플랫폼은 Linux server의 native Docker Engine 위 k3d cluster, ArgoCD App-of-Apps, platform Application, workload ApplicationSet, external service interface contract로 구성된다.
 아키텍처의 핵심 목표는 local reproducibility, GitOps-first ownership, secret-safe integration, and current-document traceability다.
 
 ## Boundaries & Non-goals
@@ -31,7 +31,7 @@ old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현
 - **Consumes**:
   - External service runtime readiness.
   - OpenBao source secrets and operator-managed secret rotation.
-  - WSL2 Docker and network state.
+  - Linux server host Docker, DNS, and network state.
 - **Does Not Own**:
   - External service containers or cloud provider resources.
   - Secret values.
@@ -42,7 +42,7 @@ old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현
 
 ## Quality Attributes
 
-- **Performance**: Local platform components must stay suitable for WSL2/k3d resource budgets.
+- **Performance**: Local platform components must stay suitable for the single-host k3d resource budget ([ADR-0042](../decisions/0042-linux-server-single-host-baseline.md)).
 - **Security**: Secrets are synced through ESO/OpenBao contracts ([ADR-0041](../decisions/0041-openbao-secret-backend.md)) without storing values in Git.
 - **Reliability**: Desired state is expressed through GitOps manifests and static contract checks.
 - **Scalability**: Workload onboarding uses ApplicationSet over `gitops/workloads/*`.
@@ -69,9 +69,9 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 | Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | Registry가 lane/argv owner; labels/CODEOWNERS native projections와의 parity는 Spec 0048의 미완료 범위 |
 | Platform verification | [static contract checks](../../../scripts/validate-infrastructure-contracts.sh), [validators](../../../scripts/) | syntax → render → schema/policy → product semantic → live observation을 분리; 실제 root 수와 도구는 실행 source에서 도출 |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep의 format/validate/lint/build; provider credential, apply 또는 deploy는 별도 승인 범위 |
-| Local browser/service transport | [Traefik](../../../traefik/), [external service interfaces](../../../gitops/platform/external-services/) | 실제 reference와 local-only transport 예외를 검사하고 예외를 일반 보안 허용으로 확대하지 않음 |
+| Local browser/service transport | [k8s router](../../../infrastructure/k3d/k3d-cluster.yaml), [apex redirects](../../../gitops/platform/ingress-routes/), [external service interfaces](../../../gitops/platform/external-services/) | k8s 전용 router(ADR-0043)와 local-only transport 예외를 검사하고 예외를 일반 보안 허용으로 확대하지 않음 |
 
-Kubernetes GVK, Traefik reference, GitOps 구조, 정책과 Vault/ESO source/secret 경계는 각각의
+Kubernetes GVK, k8s router 계약, GitOps 구조, 정책과 Vault/ESO source/secret 경계는 각각의
 product validator가 소유한다. 도구 부재·malformed input·unsafe path·fallback에는 직접
 negative fixture가 필요하며 required-tool 실패를 SKIP으로 숨기지 않는다.
 
@@ -110,9 +110,9 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 ## Infrastructure & Deployment
 
 - **Runtime / Platform**:
-  - WSL2 shell with WSL-native Docker.
+  - Linux server shell with the native Docker Engine.
   - k3d cluster named `hyhome`.
-  - ingress-nginx LoadBalancer plus local Traefik dynamic config references for browser access.
+  - ingress-nginx behind the dedicated k8s router (k3d serverlb on `192.168.0.14:443`) for browser access at `<name>.hy-k8s.home.arpa` ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - **Deployment Model**:
   - Bootstrap installs the initial ArgoCD boundary.
   - Steady-state changes flow through Git and ArgoCD reconciliation.

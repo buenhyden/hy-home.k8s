@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: kiali.127.0.0.1.nip.io
+    - host: kiali.hy-k8s.home.arpa
       http:
         paths:
           - path: /kiali
@@ -22,5 +22,5 @@ spec:
                   number: 20001
   tls:
     - hosts:
-        - kiali.127.0.0.1.nip.io
+        - kiali.hy-k8s.home.arpa
       secretName: kiali-tls # pragma: allowlist secret

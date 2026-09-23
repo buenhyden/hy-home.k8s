@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.0.5"
+version: "1.0.6"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -25,7 +25,7 @@ artifact_id: "POL-0004"
 
 - **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`
 - **Agents**: 운영 자동화 에이전트
-- **Environments**: WSL2 local cluster
+- **Environments**: Linux server local cluster
 
 ## Controls
 
@@ -37,7 +37,7 @@ artifact_id: "POL-0004"
   - canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
   - Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
   - CRD 설치: `installCRDs: true` 유지
-  - Rollouts Dashboard는 `rollouts.127.0.0.1.nip.io` + ingress-nginx + TLS 유지
+  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + ingress-nginx + TLS 유지
 - **Allowed**:
   - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택
@@ -64,9 +64,9 @@ artifact_id: "POL-0004"
 
 - **Required**:
   - Headlamp namespace: `headlamp` 고정
-  - Ingress hostname: `headlamp.127.0.0.1.nip.io`
+  - Ingress hostname: `headlamp.hy-k8s.home.arpa`
   - TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급) # pragma: allowlist secret
-  - 외부 Traefik router는 [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress 통제를 따른다
+  - k8s router 경로는 [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress 통제를 따른다
 - **Allowed**:
   - ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)
   - Headlamp 플러그인 설치 (검토 후)
@@ -84,7 +84,7 @@ artifact_id: "POL-0004"
 | --- | --- | --- |
 | Argo Rollouts | Controller/dashboard pods are running and Rollout CRDs/list output is available | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 | Argo Notifications | Controller is running, ESO-backed secret exists, and Slack send/error logs are reviewed without committing token values | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
-| Headlamp and Traefik | Headlamp pods/ingress/TLS are healthy and `headlamp`/`rollouts` hostnames return expected HTTP status through Traefik | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
+| Headlamp and k8s router | Headlamp pods/ingress/TLS are healthy and `headlamp`/`rollouts` hostnames return expected HTTP status through the k8s router | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 
 ## Review Cadence
 
