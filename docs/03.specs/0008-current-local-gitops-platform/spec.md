@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "specs"
 artifact_id: "SPEC-0008"
 ---
@@ -127,7 +127,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 - **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [../../02.architecture/descriptions/0007-current-local-gitops-platform.md](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md), [../../02.architecture/decisions/0041-openbao-secret-backend.md](../../02.architecture/decisions/0041-openbao-secret-backend.md)
 
 ### Delivery and References
 
