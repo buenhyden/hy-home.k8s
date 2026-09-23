@@ -101,6 +101,11 @@ require_pattern 'name:\s*openbao-ca' "$VAULT_STORE"
 require_file "$COREDNS_CUSTOM"
 require_pattern '192\.168\.0\.13 openbao\.hy\.home\.arpa' "$COREDNS_CUSTOM"
 require_pattern 'hostIP:\s*192\.168\.0\.13' "$K3D_CONFIG"
+# A mounted ExternalSecret must sync before its consumer; a later wave waits on
+# a consumer that cannot become healthy without the Secret.
+if grep -lP 'sync-wave:\s*"[1-9]' "$ROOT_DIR"/gitops/platform/{monitoring,kiali}/*externalsecret*.yaml; then
+  fail 'ExternalSecrets for Alloy and Kiali must sync before their consumers (wave <= 0)'
+fi
 # The admission hook Jobs run in an injected namespace; a sidecar never exits.
 require_pattern 'sidecar\.istio\.io/inject:\s*"false"' "$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
 # istio-cni must install into the only CNI bin dir the k3s containerd reads.
