@@ -1,6 +1,6 @@
 ---
 title: "Linux Server Single-Host Baseline"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -84,6 +84,11 @@ prerequisite를 잘못 안내하고, 존재하지 않는 Windows 경계를 failu
   - accepted 결정의 본문을 바꾸면 결정 당시의 기록이 사라진다.
 
 ## Traceability
+
+**Current-state clarification (2026-09-23).** k8s가 제공하는 host 이름은
+`hy.home.arpa`가 아니라 `hy-k8s.home.arpa`이며 전용 진입점을 쓴다
+([ADR-0043](./0043-dedicated-k8s-ingress-router.md)). `hy.home.arpa`는 외부
+서비스 workspace의 host 이름에만 남는다. host 조항의 나머지는 그대로다.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
