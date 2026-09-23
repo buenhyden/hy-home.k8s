@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.0"
+version: "0.7.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-23"
 layer: "archive"
 ---
 
@@ -172,6 +172,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`superseded/03.specs/0068-agent-projection-rendering-and-gate-reduction`](./superseded/03.specs/0068-agent-projection-rendering-and-gate-reduction) | `b4a1db9143fac30df39c23183432f3495d96a8ed:docs/03.specs/0068-agent-projection-rendering-and-gate-reduction` |
 | [`superseded/03.specs/0070-retired-provider-residue-disposition`](./superseded/03.specs/0070-retired-provider-residue-disposition) | `b4a1db9143fac30df39c23183432f3495d96a8ed:docs/03.specs/0070-retired-provider-residue-disposition` |
 | [`completed/03.specs/0083-finished-package-retention`](./completed/03.specs/0083-finished-package-retention) | `2eb5e079f8ca9f6d139fc7085fe8bebb886768ec:docs/03.specs/0083-finished-package-retention` |
+| [`superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md`](./superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md) | `46e5030a9a87b7550f9566641f5a834f20cb6d53:docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md` |
 
 ### Retention Assessment
 
