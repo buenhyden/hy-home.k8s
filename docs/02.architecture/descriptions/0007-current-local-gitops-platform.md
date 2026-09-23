@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.0.4"
+version: "1.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -26,11 +26,11 @@ old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현
 - **Owns**:
   - Local k3d cluster configuration and bootstrap assets.
   - ArgoCD root Application, AppProjects, platform Applications, and workload ApplicationSet manifests.
-  - Kubernetes interface contracts for external Vault, PostgreSQL, Valkey, and observability services.
+  - Kubernetes interface contracts for external OpenBao (Vault API compatible), PostgreSQL, Valkey, and observability services.
   - Headlamp, Kiali, Argo Rollouts, Argo Notifications, ingress-nginx, cert-manager, Istio, monitoring, and ESO configuration.
 - **Consumes**:
   - External service runtime readiness.
-  - Vault source secrets and operator-managed secret rotation.
+  - OpenBao source secrets and operator-managed secret rotation.
   - WSL2 Docker and network state.
 - **Does Not Own**:
   - External service containers or cloud provider resources.
@@ -43,7 +43,7 @@ old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현
 ## Quality Attributes
 
 - **Performance**: Local platform components must stay suitable for WSL2/k3d resource budgets.
-- **Security**: Secrets are synced through ESO/Vault contracts without storing values in Git.
+- **Security**: Secrets are synced through ESO/OpenBao contracts ([ADR-0041](../decisions/0041-openbao-secret-backend.md)) without storing values in Git.
 - **Reliability**: Desired state is expressed through GitOps manifests and static contract checks.
 - **Scalability**: Workload onboarding uses ApplicationSet over `gitops/workloads/*`.
 - **Observability**: Kiali and monitoring manifests integrate with external observability endpoints.
@@ -98,10 +98,10 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 
 - **Key Entities / Flows**:
   - ArgoCD reconciles Git manifests into the local cluster.
-  - ESO reads approved Vault paths through the `vault-backend` ClusterSecretStore.
+  - ESO reads approved OpenBao paths through the `vault-backend` ClusterSecretStore and its Vault-API `vault` provider.
   - External service `Service` and `EndpointSlice` resources expose local service interfaces to workloads.
 - **Storage Strategy**:
-  - Runtime data remains in external PostgreSQL, Valkey, Vault, and observability services.
+  - Runtime data remains in external PostgreSQL, Valkey, OpenBao, and observability services.
   - This repository stores only interface contracts and configuration.
 - **Data Boundaries**:
   - Secret values, tokens, and private keys stay outside Git.

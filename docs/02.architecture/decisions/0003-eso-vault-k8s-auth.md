@@ -1,12 +1,13 @@
 ---
 title: "ESO + Vault Kubernetes Auth for Runtime Secrets"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
-status: "accepted"
+status: "superseded"
 owner: "platform"
-updated: "2026-05-18"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "ADR-0003"
+superseded_by: "ADR-0041"
 ---
 
 # ADR-0003: ESO + Vault Kubernetes Auth for Runtime Secrets
@@ -14,6 +15,8 @@ artifact_id: "ADR-0003"
 ## Overview
 
 이 ADR은 런타임 시크릿 전달 패턴으로 External Secrets Operator와 Vault Kubernetes Auth를 채택한다.
+
+이 결정은 [ADR-0041](./0041-openbao-secret-backend.md)로 대체되었다. ESO와 Kubernetes Auth 패턴은 ADR-0041이 이어받고, backend는 OpenBao로 바뀌었다.
 
 ## Context
 
@@ -62,3 +65,9 @@ GitOps 환경에서 시크릿 원문이 Git에 저장되지 않으면서도 선�
 - **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - **Plan**: [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [ADR-0041](./0041-openbao-secret-backend.md) | Supersedes this decision; the ESO and Kubernetes Auth pattern carries over with OpenBao as the backend | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
