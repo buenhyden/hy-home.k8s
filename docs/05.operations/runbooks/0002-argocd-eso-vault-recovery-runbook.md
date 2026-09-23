@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -179,6 +179,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 - `x509: certificate signed by unknown authority`: `openbao-ca` ConfigMap missing or stale
 - `connection refused` on `192.168.0.13:443`: external Traefik not bound to the host address
 - `InvalidProviderConfig` in ESO controller logs
+- `403 permission denied` on `auth/kubernetes/login` although `kubernetes_host` and the CA are current: the ESO token lacks the API server audience. OpenBao has no reviewer JWT, so it sends that token to TokenReview as its own credential, and the API server answers `401` to a token scoped only to `vault`. `vault-backend` keeps both audiences (`vault`, `https://kubernetes.default.svc.cluster.local`).
 - `argocd-external-valkey SecretSyncedError`
 - TLS handshake error due to SAN mismatch (`cert.pem`)
 

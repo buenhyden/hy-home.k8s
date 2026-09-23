@@ -20,7 +20,7 @@ LOCAL_ONLY = "local-only"
 LOCAL_ONLY_HTTP = "local-only-http"
 EXPECTED_VAULT_ROLE = "eso-read-platform"
 EXPECTED_SERVICE_ACCOUNT = "external-secrets"
-EXPECTED_AUDIENCES = ["vault"]
+EXPECTED_AUDIENCES = ["vault", "https://kubernetes.default.svc.cluster.local"]
 
 VAULT_STORE_PATH = Path("gitops/platform/eso/vault-secret-store.yaml")
 TOKEN_REVIEWER_PATH = Path("gitops/platform/eso/vault-token-reviewer-binding.yaml")
@@ -29,7 +29,10 @@ BOOTSTRAP_PATH = Path("infrastructure/bootstrap-local.sh")
 
 HTTP_ANNOTATION_ERROR = "HTTP Vault transport requires local-only annotations"
 HTTPS_CA_ERROR = "HTTPS Vault transport requires caProvider or caBundle"
-AUDIENCES_ERROR = "Vault serviceAccountRef audiences must equal ['vault']"
+AUDIENCES_ERROR = (
+    "Vault serviceAccountRef audiences must equal "
+    "['vault', 'https://kubernetes.default.svc.cluster.local']"
+)
 IDENTITY_ERROR = "Vault identity must be external-secrets/external-secrets"
 YAML_PARSE_ERROR = "YAML must parse without duplicate keys"
 
