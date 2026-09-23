@@ -118,6 +118,8 @@ Kiali and the Rollouts controller call those names directly:
 - The CoreDNS custom zone resolves the names to the host address.
 - The Basic Auth credentials come from OpenBao `platform/prometheus-api`
   through ESO.
+- Grafana allows no anonymous API access, so Kiali sends a Viewer service
+  account token from OpenBao `platform/grafana-api` through ESO.
 - The gateway CA comes from bootstrap-created ConfigMaps (`hy-home-root-ca`,
   `kiali-cabundle`).
 - Egress uses `192.168.0.13:443`.

@@ -49,7 +49,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-003 cluster metrics | Observability Owner | in-cluster Alloy scrape of istiod, argo-rollouts, kube-state-metrics, kubelet, cAdvisor | `up{cluster="k3d-hyhome"}` by job and `app` |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment; external Prometheus rule config | Ready `{cluster="k3d-hyhome"}` streams; external rule groups when the external workspace defines them |
 | OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
-| OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
+| OBS-005 access | Platform Owner | Grafana service account role and AppProject destinations | Viewer-only token and monitoring destination |
 
 ### Service Port Naming
 
@@ -78,8 +78,9 @@ Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 
   containerd 로그를 Docker socket 또는 host file mount로 수집하지 않는다.
 - Prometheus `rule_files`는 필요한 고정 파일을 명시적으로 나열한다. glob이
   고정 파일의 존재를 암묵적으로 보장한다고 간주하지 않는다.
-- Grafana 내부 health/settings API의 anonymous role은 Viewer로 제한한다.
-  Editor/Admin anonymous access는 금지한다.
+- 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Viewer role의 Grafana
+  service account token(OpenBao `platform/grafana-api`, ESO `istio-system/kiali-grafana-auth`)으로
+  호출한다. Editor/Admin token이나 익명 접근은 쓰지 않는다.
 - `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
   명시하며 wildcard destination으로 대체하지 않는다.
 
@@ -95,7 +96,7 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
-| Istio and Grafana connectivity | protocol port names, Viewer-only API health | [RUN-0007](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
+| Istio and Grafana connectivity | protocol port names, Viewer-only token and Grafana health | [RUN-0007](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
 | ArgoCD metrics | ArgoCD components under `kubernetes-pods`, `argocd_app_info` presence | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
 | Cluster metrics | `kubernetes-pods`, `kubelet`, `cadvisor` jobs with `cluster="k3d-hyhome"` | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 | Alloy and Loki | deployment Ready and cluster-labelled streams received | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
