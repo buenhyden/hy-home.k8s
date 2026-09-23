@@ -84,9 +84,11 @@ kubeconfig 권한을 부여하지 않는다.
 
 ## Exceptions
 
-NodePort 또는 AppProject live 변경은 Platform Owner가 승인한 bootstrap 또는
-break-glass 상황에서만 허용한다. 변경 시 manifest, external scrape target,
-관련 Runbook을 같은 변경으로 동기화하고 GitOps reconciliation 증적을 남긴다.
+NodePort 또는 AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest, external
+scrape target, 관련 Runbook을 같은 변경으로 동기화하는 것이다. 외부
+Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
+이 저장소의 Runbook은 그 결과를 검증만 한다.
 
 ## Verification
 

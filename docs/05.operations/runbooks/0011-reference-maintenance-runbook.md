@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -60,10 +60,12 @@ artifact_id: "RUN-0011"
 5. category router와 `docs/90.references/README.md`를 같은 변경에서
    갱신한다. 빈 category나 redirect 문서는 만들지 않는다.
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
-   전환한다. consumer가 0이 된 뒤 파일을 제거하며, 전체 본문 복구는 Git
-   history를 사용한다.
-7. 공통 거버넌스와 Stage 01/02/03/05/90 문서에 Stage 98 인용 또는 cross-link가 생기지
-   않았는지 확인한다.
+   전환한다. 더 이상 현재가 아닌 Stage 90 문서는
+   [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)가
+   정한 Stage 98 disposition으로 보내며, 각 disposition은 별도 승인을 받는다.
+7. 공통 거버넌스와 Stage 01/02/03/05/90 문서의 Stage 98 링크가 registry의
+   `archive_citation` 판정을 따르는지 확인한다. `superseded/` 본문 대신 후속
+   문서를, `retired/` 본문·tombstone·migration 대신 현재 route를 인용한다.
 
 ## Verification Steps
 
@@ -77,10 +79,10 @@ git diff --check
 
 - [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.
 - [ ] 모든 pack 경로가 category별 `####-<slug>/` 규칙과 일치하는 template을 사용한다.
-- [ ] 삭제 대상의 current consumer가 0이다.
+- [ ] 종료 대상의 current consumer가 0이고 Stage 98 disposition 승인이 기록되어 있다.
 - [ ] 보존 자료의 출처·확인일·freshness trigger가 명시되어 있다.
 - [ ] 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다.
-- [ ] 현재 Stage 문서에 Stage 98 인용 또는 cross-link가 없다.
+- [ ] 현재 Stage 문서의 Stage 98 링크가 `archive_citation` 판정을 통과한다.
 
 ## Observability and Evidence Sources
 
@@ -88,17 +90,17 @@ git diff --check
 - category 및 Stage router
 - source metadata와 직접 저장소 소스
 - 위 validator의 종료 코드와 요약
-- 삭제 전 consumer 검색 결과와 Git commit ID
+- 종료 전 consumer 검색 결과와 disposition 승인 기록
 
 정적 PASS는 외부 출처의 현재성, hosted CI, provider runtime, live cluster
 상태를 증명하지 않는다.
 
 ## Safe Rollback or Recovery Procedure
 
-- 잘못된 분류는 파일을 되살리는 redirect나 Archive 복제본 대신, 동일 변경을
-  revert하거나 canonical owner에 새 수정으로 바로잡는다.
-- 삭제된 본문이 필요하면 해당 경로의 Git history에서 읽고, 현재 Stage에
-  복원하기 전 고유 목적과 consumer를 다시 검토한다.
+- 잘못된 분류는 redirect를 만들지 않고, 동일 변경을 revert하거나 canonical
+  owner에 새 수정으로 바로잡는다.
+- 보존된 본문은 Stage 98 Retention Envelope가 명명하는 Git object로 복구하며,
+  현재 Stage에 되살리기 전 고유 목적과 consumer를 다시 검토한다.
 - validator 실패 시 실패한 owner/router/link만 수정하고 무관한 문서를
   일괄 재생성하지 않는다.
 
@@ -118,4 +120,4 @@ git diff --check
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history owns removed full bodies. |
+| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; the Stage 98 disposition and its Retention Envelope own retired bodies. |

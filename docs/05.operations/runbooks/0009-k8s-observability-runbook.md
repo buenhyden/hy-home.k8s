@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -55,7 +55,7 @@ k3d cluster observability metrics, logs, and alert rule loading failures를 진�
 | alloy-k8s-logs 파드           | `1/1 Running`                                                           |
 | Prometheus kube-state-metrics | `health: up`                                                            |
 | Loki k8s 로그 스트림          | `{cluster="k3d-hyhome"}` → 스트림 수 > 0                                |
-| Alert rules                   | kubernetes_alerts 13 + etcd_alerts 8 + istio_alerts 6 + argocd_alerts 4 |
+| Alert rules                   | `kubernetes_alerts`, `etcd_alerts`, `istio_alerts`, `argocd_alerts` 그룹이 각각 1개 이상의 rule로 로드됨 |
 | AppProject destinations       | `monitoring` 포함                                                       |
 
 ---
@@ -211,16 +211,11 @@ for g in d['data']['groups']:
 cat /path/to/hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml | grep rule_files -A 10
 ```
 
-`rule_files` 정상 설정:
-
-```yaml
-rule_files:
-  - '/etc/prometheus/alert_rules/alert_rules.local.*.yml'
-  - '/etc/prometheus/alert_rules/alert_rules.k8s.yml'
-  - '/etc/prometheus/alert_rules/alert_rules.keycloak.yml'
-  - '/etc/prometheus/alert_rules/alert_rules.vault.yml'
-  - '/etc/prometheus/alert_rules/recording_rules.yml'
-```
+`rule_files`는 외부 observability workspace가 소유한다.
+[POL-0005](../policies/0005-observability-platform-operations-policy.md)의 통제대로
+필요한 고정 rule 파일을 glob에 기대지 않고 명시적으로 나열했는지 그
+workspace의 운영자가 확인·수정한다. 수정이 반영된 뒤 아래처럼 reload와
+로드 결과를 확인한다.
 
 ```bash
 # Prometheus reload (설정 변경 후)
@@ -232,7 +227,7 @@ import sys, json
 d=json.load(sys.stdin)
 total=sum(len(g['rules']) for g in d['data']['groups']
           if g['name'] in ('kubernetes_alerts','etcd_alerts','istio_alerts','argocd_alerts'))
-print(f'k8s 관련 rules: {total}건 (기대: 31건)')
+print(f'k8s 관련 rules: {total}건 (기대: 4개 그룹 모두 1건 이상)')
 "
 ```
 
@@ -264,19 +259,9 @@ for t in d['data']['activeTargets']:
 "
 ```
 
-k3d-hyhome-server-0 IP가 변경된 경우:
-
-```bash
-# 현재 IP 확인
-docker inspect k3d-hyhome-server-0 | python3 -c "
-import sys,json; d=json.load(sys.stdin)
-ip=d[0]['NetworkSettings']['Networks']
-for net,info in ip.items(): print(net, info['IPAddress'])
-"
-
-# prometheus.yml scrape target IP 업데이트 후 reload
-curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
-```
+k3d-hyhome-server-0 IP가 변경된 경우 scrape target 갱신과 Prometheus reload는
+[RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)의 Procedure 3-4를 따른다.
+NodePort 번호는 바꾸지 않는다.
 
 ---
 

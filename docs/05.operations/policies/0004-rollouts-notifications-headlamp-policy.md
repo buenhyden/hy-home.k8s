@@ -20,11 +20,10 @@ artifact_id: "POL-0004"
 - Argo Rollouts v1.9.0 (chart 2.40.9) — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
 - Headlamp v0.41.0 — `headlamp` namespace
-- Traefik 외부 artifact — `traefik/` (별도 Traefik 레포 적용)
 
 ## Applies To
 
-- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`, `traefik/`
+- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`
 - **Agents**: 운영 자동화 에이전트
 - **Environments**: WSL2 local cluster
 
@@ -67,7 +66,7 @@ artifact_id: "POL-0004"
   - Headlamp namespace: `headlamp` 고정
   - Ingress hostname: `headlamp.127.0.0.1.nip.io`
   - TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급) # pragma: allowlist secret
-  - Traefik artifact `headlamp-k3d.yaml` 별도 Traefik 레포에 적용 유지
+  - 외부 Traefik router는 [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress 통제를 따른다
 - **Allowed**:
   - ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)
   - Headlamp 플러그인 설치 (검토 후)
@@ -77,15 +76,7 @@ artifact_id: "POL-0004"
 ## Exceptions
 
 - Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
-- Direct cluster changes are allowed only for human-approved bootstrap or break-glass recovery and must be followed by GitOps state reconciliation.
-- Traefik external artifact changes must be reviewed with the matching k8s ingress and TLS contract.
-
-### Traefik 외부 Artifact 관리
-
-- `traefik/kiali-k3d.yaml` — Kiali Traefik 라우터
-- `traefik/headlamp-k3d.yaml` — Headlamp Traefik 라우터
-- `traefik/rollouts-k3d.yaml` — Rollouts Dashboard Traefik 라우터
-- 이 파일들은 별도 Traefik 레포에 수동 적용한다. 자동화 금지.
+- Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions).
 
 ## Verification
 

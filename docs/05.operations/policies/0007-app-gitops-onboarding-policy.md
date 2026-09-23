@@ -92,6 +92,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 모든 `*.127.0.0.1.nip.io` 도메인은 외부 Traefik router 설정이 있어야 한다.
 
+- **공통 router 통제**: [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress/TLS 통제
 - **위치**: `hy-home.docker/infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml`
 - **패턴**: `examples/sample-app/traefik-k3d.yaml.example` 참조
 - **Required evidence**: 별도 Traefik repo 변경이 리뷰되고 k8s Ingress host와 router rule이 일치한다.
@@ -178,7 +179,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ## Exceptions
 
-- `kubectl apply` 또는 AppProject live 반영은 human-approved bootstrap/break-glass 상황에서만 허용한다.
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 human-approved bootstrap/break-glass 공통 예외를 따른다.
 - ExternalSecret이 필요 없는 앱은 Vault 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
 
 ## Verification

@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -68,6 +68,11 @@ artifact_id: "POL-0001"
 - ArgoCD host는 `argocd.127.0.0.1.nip.io`, TLS secret은
   `argocd-local-tls`이며, 외부 Traefik `websecure/443`은 ingress-nginx
   LoadBalancer endpoint로 라우팅한다.
+- `*.127.0.0.1.nip.io` 플랫폼 UI와 앱의 외부 Traefik router는 별도 Traefik
+  workspace가 소유한다. 이 저장소의 `traefik/` 파일은 reference copy이며
+  router host는 대응하는 Kubernetes Ingress host와 일치하고
+  `insecureSkipVerify: true`, `passHostHeader: true`를 유지한다. router
+  inventory는 `traefik/README.md`가 소유한다.
 - AppProject source/destination과 RBAC는 최소 allow-list, NetworkPolicy는
   필요한 DNS·HTTPS·external-service egress만 허용한다.
 - CD는 ArgoCD pull/reconciliation이 소유한다. GitHub Actions와 로컬 gate는
@@ -85,13 +90,21 @@ artifact_id: "POL-0001"
 - 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언
 - k3d agent 동시 재시작 또는 production HA로의 과장된 증적 표현
 - Git desired state 없이 EndpointSlice를 상시 수동 관리
+- 이 저장소나 자동화에서 외부 Traefik router를 직접 배포
 
 ## Exceptions
 
-EndpointSlice patch, AppProject live 반영, 외부 Vault 변경은 즉시 복구가
-필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한 bootstrap 또는
-break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git desired state와
-맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로 복귀한다.
+이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
+component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
+
+`kubectl apply/patch/delete`, EndpointSlice patch, AppProject live 반영,
+forced ArgoCD reconciliation, 외부 Vault 변경, 외부 Docker/Traefik runtime
+변경은 즉시 복구가 필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한
+bootstrap 또는 break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git
+desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로
+복귀한다. 승인 결정 자체는
+[Approval and Safety Policy](../../../.agents/governance/approval-and-safety.md)가
+소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
 
 ## Verification
 

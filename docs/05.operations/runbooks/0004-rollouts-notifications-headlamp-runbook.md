@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.0.4"
+version: "1.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -27,7 +27,7 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 
 - Rollouts Controller가 기동하지 않거나 CRD가 없을 때
 - Notifications Slack 알림이 전달되지 않을 때
-- Headlamp에 접근 불가 (404/502) 상황
+- Headlamp에 접근 불가 (401/404/502) 또는 `headlamp-tls` 미발급 상황
 - 초기 플랫폼 부트스트랩 후 신규 컴포넌트 검증 시
 
 ---
@@ -35,6 +35,8 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 ## Procedure or Checklist
 
 아래 절차는 Notifications secret 준비, controller 상태 확인, Rollouts 상태 확인, Headlamp 및 Rollouts Dashboard 접근 검증 순서로 수행한다.
+[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 CLI 전제에 더해
+`kubectl argo rollouts` plugin이 필요하다.
 
 ### Procedure 1: Vault Notifications Secret 준비 (최초 1회)
 
@@ -70,6 +72,11 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=100 | grep 
 ```
 
 ### 복구: ESO 재동기화
+
+아래 annotation과 이 런북의 restart·promote·undo 명령은 live
+state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
+[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions)에 따른
+operator-approved 실행에서만 사용한다.
 
 ```bash
 kubectl -n argocd annotate externalsecret argocd-notifications-secret \
@@ -119,8 +126,30 @@ kubectl -n headlamp get pods,ingress,svc
 kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
 kubectl -n headlamp get secret headlamp-tls 2>/dev/null
 
-# HTTP 응답 확인
-curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
+# HTTP 응답 확인 (mkcert rootCA로 TLS 검증)
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
+```
+
+### 복구: Headlamp TLS NotReady
+
+`headlamp-tls`가 `READY=False`이면 먼저 ClusterIssuer 복구를
+[RUN-0003](./0003-platform-expansion-bootstrap-runbook.md)으로 확인한다.
+
+```bash
+kubectl -n headlamp describe certificate headlamp-tls
+kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
+argocd app get platform-headlamp-config --hard-refresh
+```
+
+### 복구: Headlamp Token Unauthorized
+
+브라우저 접근이 401이면 chart가 만든 ClusterRoleBinding을 확인하고 단기
+ServiceAccount token을 발급한다. token은 문서, 로그, 채팅에 남기지 않는다.
+
+```bash
+kubectl get clusterrolebinding headlamp-admin
+kubectl -n headlamp create token headlamp --duration=1h
 ```
 
 ### 복구: Headlamp 재시작
@@ -148,7 +177,8 @@ kubectl -n argo-rollouts get pods
 kubectl -n argo-rollouts get ingress
 
 # HTTP 응답 확인
-curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 ```
 
 ---

@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.1.2"
+version: "0.1.3"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -74,7 +74,7 @@ docs/05.operations/policies/
 3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
 5. 정책 문서에는 실행 절차를 복제하지 않는다. 검증은 필요한 증적과 성공 기준만 남기고, 실행 가능한 명령 순서와 체크리스트는 소유 runbook 링크로 연결한다.
-6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥 없이는 추가하지 않는다.
+6. 고위험 명령 예시는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
 ### Usage Instructions
 
@@ -88,7 +88,6 @@ docs/05.operations/policies/
 
 - 정책 문서 구조 검증은 [policy.template.md](../../99.templates/templates/operations/policy.template.md)와 `scripts/qa.py`를 기준으로 한다.
 - 정책 준수 증적은 연결된 Runbook의 verification output, CI 결과, GitOps diff, review evidence로 남긴다.
-- live cluster, Vault, Kubernetes mutation 증적은 human-approved bootstrap 또는 break-glass 작업에서만 수집한다.
 
 ### Incident and Recovery Links
 
@@ -120,8 +119,8 @@ docs/05.operations/policies/
 
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/Vault/ingress/최소권한 통합 정책 | Active | 2026-09-01 |
-| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Headlamp/Istio/Kiali 운영 통제 정책 | Active | 2026-09-23 |
+| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/Vault/ingress·Traefik/최소권한 통합 정책과 공통 live 변경 예외 | Active | 2026-09-23 |
+| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 | Active | 2026-09-23 |
 | [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-23 |
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-23 |
 | [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-23 |

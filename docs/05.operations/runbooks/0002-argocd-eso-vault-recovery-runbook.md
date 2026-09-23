@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -15,8 +15,6 @@ artifact_id: "RUN-0002"
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
-> **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북은 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
->
 > **Agent execution boundary**: EndpointSlice hotfix와 Docker network mutation은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
 ### Purpose
@@ -45,8 +43,8 @@ artifact_id: "RUN-0002"
 - [ ] 복구 전 상태 스냅샷 수집
 - [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정 확인
 
-`vault-external`과 `vault-backend`의 HTTP 연결은 현재 로컬 k3d 네트워크
-내부 전용 예외이며 production TLS 구성을 의미하지 않는다. 외부 Vault
+`vault-external`/`vault-backend` HTTP 연결의 local-only 예외는
+[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)과 같다. 외부 Vault
 관리 요청은 HTTPS와 검증된 CA를 사용해야 한다.
 
 ### Procedure
@@ -202,20 +200,16 @@ kubectl -n argocd get app root-platform -o yaml | \
 ```bash
 openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
   rg '127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
-# 미포함 시 인증서 재발급 후 bootstrap 재실행
-export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
-./infrastructure/bootstrap-local.sh
 ```
 
-부트스트랩은 HTTPS와 읽기 가능한 `VAULT_CA_FILE`을 강제하고 토큰을
-`/dev/tty`에서 표시 없이 입력받는다. 비대화형 또는 insecure fallback은 없다.
+SAN이 없으면 인증서를 재발급한 뒤
+[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 bootstrap 절차를 다시 실행한다.
 
 ### Vault sealed remediation
 
 `curl http://172.18.0.8:8200/v1/sys/health`가 `sealed:true`를 반환하거나 ESO 로그에 `Vault is sealed`가 반복되면 GitOps manifest를 변경하지 않는다.
 
-- Vault operator가 unseal key shares를 사용해 Vault를 unseal한다.
-- Agent는 unseal key, root token, Vault token, secret value를 조회하거나 기록하지 않는다.
+- 위 Procedure의 operator-bound Vault unseal 단계와 그 비밀 입력 경계를 따른다.
 - Unseal 후 `ClusterSecretStore/vault-backend`와 dependent `ExternalSecret` readiness metadata만 재검증한다.
 - Unseal 후에도 `InvalidProviderConfig`가 지속되면 Kubernetes auth mount/role configuration drift를 별도 operator-bound task로 분리한다.
 

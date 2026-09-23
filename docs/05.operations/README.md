@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-23"
 layer: "operations"
 ---
 # 05.operations
@@ -57,7 +57,10 @@ human-approved, operator-approved, bootstrap-only, break-glass 같은 실행
 `external secret operation`, `temporary kubeconfig` 같은 실행 경계를 밝혀야
 한다.
 
-`python3 scripts/qa.py full`는 authored docs와 examples의
+이 절이 Stage 05의 marker 규칙 단일 기준이며, 하위 README는 이 절을
+반복하지 않는다. live 변경 예외의 승인 조건은
+[POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
+소유한다. `python3 scripts/qa.py full`는 authored docs와 examples의
 high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한다. 이
 검사는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git 파일 수정,
 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
@@ -112,7 +115,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
-5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 삭제한다. 필요한 과거 내용은 Git 이력에서 복구한다.
+5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 [Document Lifecycle Policy](../../.agents/governance/document-lifecycle.md)의 Stage 98 disposition으로 보낸다. 현재 문서는 대체된 본문 대신 후속 문서를 인용한다.
 
 ### Relative Link Rules
 
