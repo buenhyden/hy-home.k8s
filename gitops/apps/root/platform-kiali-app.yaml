@@ -32,6 +32,11 @@ spec:
               grafana:
                 enabled: true
                 in_cluster_url: "https://grafana.hy.home.arpa"
+                # Viewer service account token; Grafana allows no anonymous API.
+                auth:
+                  type: bearer
+                  token: secret:kiali-grafana-auth:token # pragma: allowlist secret
+                  use_kiali_token: false
                 url: "https://grafana.hy.home.arpa"
               tracing:
                 enabled: true

@@ -42,6 +42,8 @@ EXPECTED_POLICY_PATHS = (
     "secret/metadata/platform/notifications",
     "secret/data/platform/prometheus-api",
     "secret/metadata/platform/prometheus-api",
+    "secret/data/platform/grafana-api",
+    "secret/metadata/platform/grafana-api",
 )
 
 
