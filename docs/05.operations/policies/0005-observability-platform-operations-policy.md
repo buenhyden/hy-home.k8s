@@ -48,7 +48,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-002 ArgoCD metrics | Observability Owner | in-cluster Alloy `platform_pods` relabel for ArgoCD components | `argocd_app_info{cluster="k3d-hyhome"}` in the external Prometheus |
 | OBS-003 cluster metrics | Observability Owner | in-cluster Alloy scrape of istiod, argo-rollouts, kube-state-metrics, kubelet, cAdvisor | `up{cluster="k3d-hyhome"}` by job and `app` |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment; external Prometheus rule config | Ready `{cluster="k3d-hyhome"}` streams; external rule groups when the external workspace defines them |
-| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to host `192.168.0.13:9090` (ADR-0046; the external workspace must publish the port) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
+| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` to `https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with Basic Auth (`monitoring/prometheus-api-auth`) and the `hy-home-root-ca` gateway CA, and `monitoring` egress to host `192.168.0.13:443` (ADR-0046) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
 ### Service Port Naming

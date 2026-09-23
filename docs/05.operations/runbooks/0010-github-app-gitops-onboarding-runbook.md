@@ -50,11 +50,12 @@ kubectl get peerauthentication -n apps default
 kubectl -n argo-rollouts get pods | grep argo-rollouts
 # 출력: argo-rollouts-<hash>   1/1   Running
 
-# Prometheus 접근 확인 (AnalysisTemplate 전제)
-# argo-rollouts 이미지는 distroless라 wget/curl이 없으므로 임시 curl pod를 사용한다.
-kubectl run -it --rm prom-check --image=curlimages/curl --restart=Never -- \
-  curl -s http://prometheus-external.platform.svc.cluster.local:9090/-/healthy
-# 출력: Prometheus is Healthy.
+# Prometheus API 접근 전제 (AnalysisTemplate, ADR-0046)
+# controller는 https://prometheus.hy.home.arpa를 Basic Auth header로 호출한다.
+kubectl -n apps get externalsecret prometheus-api-auth
+kubectl -n argo-rollouts get configmap hy-home-root-ca
+# host에서 조회: RUN-0009의 prom helper
+prom 'up{cluster="k3d-hyhome"}'
 ```
 
 ---
@@ -258,10 +259,9 @@ argocd app sync platform-namespaces
 # AnalysisRun 상세 확인
 kubectl describe analysisrun -n apps $(kubectl get analysisrun -n apps -o name | head -1)
 
-# Prometheus 연결 확인
-kubectl run -it --rm debug --image=curlimages/curl --restart=Never -- \
-  curl -s http://prometheus-external.platform.svc.cluster.local:9090/api/v1/query \
-  --data-urlencode 'query=up'
+# Prometheus 연결 확인 (host, RUN-0009의 prom helper)
+prom 'kube_pod_container_status_restarts_total{namespace="apps"}'
+# AnalysisRun 오류가 401이면 apps/prometheus-api-auth, x509면 hy-home-root-ca 확인
 ```
 
 ### TLS 인증서 미발급

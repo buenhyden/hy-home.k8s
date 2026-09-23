@@ -61,7 +61,8 @@ Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되�
 
 모든 Rollout은 canary 단계에서 AnalysisTemplate을 참조해야 한다.
 
-- **Prometheus 주소**: `http://prometheus-external.platform.svc.cluster.local:9090`
+- **Prometheus 주소**: `https://prometheus.hy.home.arpa`. `Authorization` header는
+  `args`의 `secretKeyRef`로 platform 소유 `apps/prometheus-api-auth` Secret에서 읽는다(ADR-0046).
 - **기본 측정 지표**: `kube_pod_container_status_restarts_total` (컨테이너 재시작 횟수)
 - **측정 주기**: 30s, failureLimit: 1
 - **Required evidence**: `analysis-template.yaml`이 Rollout canary 단계에서 참조된다.

@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.0.0"
+version: "2.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -21,9 +21,10 @@ artifact_id: "RUN-0009"
 [ADR-0046](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)):
 
 - **로그와 event**: Kubernetes API → Alloy → `loki-external`(host `192.168.0.13:3100`)
-- **메트릭**: Alloy가 pod IP와 API server proxy로 scrape한 뒤 `prometheus-external`
-  (host `192.168.0.13:9090`)로 remote write한다. 모든 series에
-  `cluster="k3d-hyhome"`가 붙는다.
+- **메트릭**: Alloy가 pod IP와 API server proxy로 scrape한 뒤 외부 Traefik의
+  Prometheus API `https://prometheus.hy.home.arpa/api/v1/write`로 remote write한다.
+  Basic Auth는 `monitoring/prometheus-api-auth`(OpenBao `platform/prometheus-api`),
+  CA는 `monitoring/hy-home-root-ca`다. 모든 series에 `cluster="k3d-hyhome"`가 붙는다.
 
 | job | 대상 |
 | --- | --- |
@@ -36,12 +37,12 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 
 주된 장애 원인:
 
-1. **remote write 실패**: 외부 Prometheus `9090`이 host에 공개되지 않았거나
-   remote write receiver가 꺼져 있다. 2026-09-23 기준 `9090`은 host에 공개되어
-   있지 않다.
+1. **remote write 실패**: 자격 증명이 외부 Traefik의 Basic Auth(`INFRA-007`)와
+   맞지 않거나(401), 이름 해석·CA가 어긋나거나(`no such host`, `x509`), remote
+   write receiver가 꺼져 있다(404).
 2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로
    미설정, 또는 미지원 속성 사용
-3. **egress 차단**: `monitoring` NetworkPolicy가 `192.168.0.13`의 `3100`/`9090`이나
+3. **egress 차단**: `monitoring` NetworkPolicy가 `192.168.0.13`의 `3100`/`443`이나
    API server `6443`을 허용하지 않는다.
 4. **target 누락**: component의 label, container port, annotation이 바뀌어
    relabel 규칙에서 빠진다.
@@ -87,8 +88,22 @@ remote write 복구, target 누락 복구 순서로 수행한다.
 
 ### Procedure 1: 전체 상태 진단
 
+### 조회 helper
+
+host에서 외부 Prometheus를 조회할 때 쓴다. 비밀번호는 외부 workspace의 secret
+파일에서 읽어 curl의 stdin 설정(`-K -`)으로 넘긴다. 명령 인자나 shell history에
+남지 않는다.
+
 ```bash
-PROM=http://192.168.0.13:9090
+prom() {
+  printf 'user = "k8s-prometheus:%s"\n' \
+    "$(cat ~/data/hy-home.docker/secrets/observability/prometheus_api_password.txt)" |
+    curl -s -K - --cacert secrets/certs/rootCA.pem \
+      https://prometheus.hy.home.arpa/api/v1/query --data-urlencode "query=$1"
+}
+```
+
+```bash
 LOKI=http://192.168.0.13:3100
 
 echo "=== alloy-k8s-logs 파드 ==="
@@ -99,12 +114,10 @@ kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --since=10m 
   | rg -i 'remote_write|prometheus.remote_write|level=error' | tail -5
 
 echo "=== job별 target ==="
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count by (job) (up{cluster="k3d-hyhome"})'
+prom 'count by (job) (up{cluster="k3d-hyhome"})'
 
 echo "=== ArgoCD 메트릭 ==="
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count(argocd_app_info{cluster="k3d-hyhome"})'
+prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 
 echo "=== Loki k8s 로그 ==="
 curl -s -G "$LOKI/loki/api/v1/query" \
@@ -113,7 +126,7 @@ curl -s -G "$LOKI/loki/api/v1/query" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
 ```
 
-외부 Prometheus가 응답하지 않으면 Procedure 4로 이동한다.
+`prom`이 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로 이동한다.
 
 ---
 
@@ -176,24 +189,31 @@ kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
 ### Procedure 4: remote write와 로그 전송 경로 복구
 
 ```bash
-# 1. host 공개 port 확인 (Linux server host에서)
-docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-(prometheus|loki)'
-curl -s http://192.168.0.13:9090/-/ready
+# 1. 외부 route: 인증 없이 401이면 route가 살아 있다 (Linux server host에서)
+curl -s -o /dev/null -w '%{http_code}\n' --cacert secrets/certs/rootCA.pem \
+  https://prometheus.hy.home.arpa/api/v1/status/buildinfo
+docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-loki'
 
-# 2. EndpointSlice가 host 주소를 가리키는지 확인
-kubectl -n platform get endpointslice prometheus-external-1 loki-external-1
+# 2. cluster 쪽 이름 해석, CA, 자격 증명
+kubectl -n kube-system get configmap coredns-custom -o yaml | rg prometheus
+kubectl -n monitoring get configmap hy-home-root-ca
+kubectl -n monitoring get externalsecret prometheus-api-auth
 
-# 3. monitoring egress가 host 주소와 port를 허용하는지 확인
-kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A6 ipBlock
+# 3. Loki EndpointSlice와 monitoring egress(443, 3100)
+kubectl -n platform get endpointslice loki-external-1
+kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A8 ipBlock
 ```
 
 판정 기준:
 
-- host에서 `9090`이 닫혀 있으면 외부 workspace가 Prometheus를 host 주소에 공개해야
-  한다. 이 저장소에서 고칠 수 없다.
-- 외부 Prometheus가 remote write를 `404`로 거부하면
-  `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
-- EndpointSlice나 NetworkPolicy가 `192.168.0.13`이 아니면 Git의
+- route가 응답하지 않으면 외부 workspace의 Traefik `prometheus-api` router 문제다.
+  이 저장소에서 고칠 수 없다.
+- Alloy 로그의 remote write가 `401`이면 OpenBao `platform/prometheus-api`와 외부
+  workspace의 Basic Auth(`INFRA-007`)가 어긋난 것이다. 외부 workspace가 값을 맞춘다.
+- `404`면 `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
+- `no such host`, `x509`면 `coredns-custom`이나 `hy-home-root-ca`를 bootstrap 파일로
+  다시 적용한다(human-approved break-glass).
+- Loki EndpointSlice나 NetworkPolicy가 `192.168.0.13`이 아니면 Git의
   `gitops/platform/`을 고치고 reconciliation으로 반영한다.
 
 ---
@@ -222,24 +242,21 @@ kubectl get pods -n istio-system -l app=istiod \
 ## Verification Steps
 
 ```bash
-PROM=http://192.168.0.13:9090
-
+# prom helper: 위 "조회 helper"
 echo "[1] alloy-k8s-logs"
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-headers \
   | awk '{print "  "$1": "$3}'
 
 echo "[2] jobs"
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count by (job) (up{cluster="k3d-hyhome"})'
+prom 'count by (job) (up{cluster="k3d-hyhome"})'
 # → kubernetes-pods, kubelet, cadvisor
 
 echo "[3] components"
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count by (app) (up{cluster="k3d-hyhome",job="kubernetes-pods"})'
+prom 'count by (app) (up{cluster="k3d-hyhome",job="kubernetes-pods"})'
 
 echo "[4] ArgoCD and node metrics"
-curl -s "$PROM/api/v1/query" --data-urlencode 'query=count(argocd_app_info{cluster="k3d-hyhome"})'
-curl -s "$PROM/api/v1/query" --data-urlencode 'query=count(kube_node_info{cluster="k3d-hyhome"})'
+prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
+prom 'count(kube_node_info{cluster="k3d-hyhome"})'
 
 echo "[5] Loki k8s log streams"
 curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
@@ -264,7 +281,8 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
 | 증상 | 원인 | 조치 |
 | --- | --- | --- |
 | platform-monitoring InvalidSpecError | AppProject에 monitoring namespace 미포함 | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
-| Alloy 로그에 remote write `connection refused` | host `9090` 미공개 | 외부 workspace에 공개 요청 (Procedure 4) |
+| Alloy 로그에 remote write `401` | Basic Auth 자격 증명 불일치 | OpenBao `platform/prometheus-api`와 외부 `INFRA-007` 대조 (Procedure 4) |
+| `no such host` / `x509` | CoreDNS custom zone 또는 CA ConfigMap 누락 | Procedure 4 |
 | remote write `404` | remote write receiver 꺼짐 | 외부 workspace가 flag 복구 |
 | `kubelet`/`cadvisor` job 없음 | `nodes/proxy` 권한 또는 API egress 누락 | Procedure 3-2, egress `6443` 확인 |
 | ArgoCD component만 빠짐 | chart 변경으로 label/port 불일치 | Procedure 5 |

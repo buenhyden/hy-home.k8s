@@ -70,6 +70,12 @@ so ADR-0009's install-mode clauses describe a state the tree no longer has.
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** Kiali reaches Prometheus and
+Grafana through the external Traefik by name (`https://prometheus.hy.home.arpa`
+with Basic Auth, `https://grafana.hy.home.arpa`) under [ADR-0046](./0046-external-services-over-host-addresses.md);
+`prometheus-external` and `grafana-external` are retired and only
+`tempo-external` remains. The operator installation decision is unchanged.
+
 Acceptance of this record should move ADR-0009 to `superseded` with reciprocal
 links, in one reviewed change.
 

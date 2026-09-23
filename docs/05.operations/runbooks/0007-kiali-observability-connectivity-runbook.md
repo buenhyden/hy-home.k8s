@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -17,7 +17,7 @@ artifact_id: "RUN-0007"
 
 주된 원인은 세 가지다:
 
-1. **host port 공개 drift**: cluster는 외부 관측 서비스에 host 주소 `192.168.0.13`의 공개 port로 닿는다(ADR-0046). 외부 workspace가 port 공개를 없애거나 loopback으로 좁히면 `gitops/platform/external-services/` 아래 EndpointSlice가 가리키는 port가 닫혀 연결이 끊긴다. 2026-09-23 기준 Prometheus `9090`과 Grafana `3000`은 host에 공개되어 있지 않다.
+1. **외부 경로 drift**: Kiali는 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)와 Grafana(`https://grafana.hy.home.arpa`)를 외부 Traefik으로, Tempo는 host port `192.168.0.13:3200`으로 호출한다(ADR-0046). 이름 해석(CoreDNS custom zone), gateway CA(`istio-system/kiali-cabundle`), Basic Auth Secret(`istio-system/kiali-prometheus-auth`) 중 하나가 어긋나거나 외부 workspace가 route나 port를 바꾸면 연결이 끊긴다.
 2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
 3. **Grafana API 익명 접근 불가**: 외부 Grafana가 anonymous Viewer API 접근을 허용하지 않으면 `/api/frontend/settings`가 401을 반환하고, 이 엔드포인트로 버전을 확인하는 Kiali는 Grafana를 Unreachable로 표시한다. 필요한 상태는 [POL-0005](../policies/0005-observability-platform-operations-policy.md)의 Viewer-only anonymous API 통제다.
 
@@ -43,15 +43,15 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 
 ### host 공개 port 계약표 (ADR-0046)
 
-| 컨테이너         | host 주소    | 포트        |
-| ---------------- | ------------ | ----------- |
-| infra-prometheus | 192.168.0.13 | 9090        |
-| infra-alloy      | 192.168.0.13 | 4317 / 4318 |
-| infra-tempo      | 192.168.0.13 | 3200        |
-| infra-loki       | 192.168.0.13 | 3100        |
-| infra-grafana    | 192.168.0.13 | 3000        |
+| 대상 | 경로 | 인증 |
+| --- | --- | --- |
+| Prometheus API | `https://prometheus.hy.home.arpa/api/v1/` (외부 Traefik `192.168.0.13:443`) | Basic Auth |
+| Grafana | `https://grafana.hy.home.arpa` (외부 Traefik `192.168.0.13:443`) | Viewer 익명 API |
+| Tempo | `tempo-external` → host `192.168.0.13:3200` | 없음 |
+| Loki | `loki-external` → host `192.168.0.13:3100` | 없음 |
+| Alloy OTLP | `alloy-external` → host `192.168.0.13:4317/4318` | 없음 |
 
-> port가 닫혀 있으면 이 저장소가 아니라 외부 workspace의 port 공개를 먼저 확인한다.
+> 닫혀 있거나 route가 응답하지 않으면 이 저장소가 아니라 외부 workspace의 route와 port 공개를 먼저 확인한다.
 
 ---
 
@@ -65,10 +65,15 @@ kubectl get endpointslice -n platform
 
 출력 예시에서 `ENDPOINTS` 컬럼이 비어있거나 `192.168.0.13`이 아니면 문제 있음.
 
-### 1-2. host port 공개 확인 (Linux server host에서)
+### 1-2. 외부 route와 host port 확인 (Linux server host에서)
 
 ```bash
-docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-(prometheus|grafana|tempo|loki|alloy)'
+# 인증 없이 401이면 Prometheus API route가 살아 있다
+curl -s -o /dev/null -w '%{http_code}\n' --cacert secrets/certs/rootCA.pem \
+  https://prometheus.hy.home.arpa/api/v1/status/buildinfo
+curl -s -o /dev/null -w '%{http_code}\n' --cacert secrets/certs/rootCA.pem \
+  https://grafana.hy.home.arpa/api/health
+docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-(tempo|loki|alloy)'
 ```
 
 ### 1-3. Kiali 파드에서 직접 연결 테스트
@@ -78,13 +83,18 @@ docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-(prometheus|grafana|temp
 ```bash
 KIALI_POD=$(kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}')
 
-# Grafana 연결 테스트
+# 외부 Traefik(Prometheus API, Grafana) 연결 테스트
 kubectl exec -n istio-system "$KIALI_POD" -- \
-  bash -c 'timeout 5 bash -c "echo >/dev/tcp/192.168.0.13/3000" && echo OK || echo FAIL'
+  bash -c 'timeout 5 bash -c "echo >/dev/tcp/192.168.0.13/443" && echo OK || echo FAIL'
 
-# Prometheus 연결 테스트
+# Tempo 연결 테스트
 kubectl exec -n istio-system "$KIALI_POD" -- \
-  bash -c 'timeout 5 bash -c "echo >/dev/tcp/192.168.0.13/9090" && echo OK || echo FAIL'
+  bash -c 'timeout 5 bash -c "echo >/dev/tcp/192.168.0.13/3200" && echo OK || echo FAIL'
+
+# 이름 해석과 CA·자격 증명 준비
+kubectl -n kube-system get configmap coredns-custom -o yaml | rg 'prometheus|grafana'
+kubectl -n istio-system get configmap kiali-cabundle
+kubectl -n istio-system get externalsecret kiali-prometheus-auth
 ```
 
 ### 1-4. ArgoCD resource.exclusions 확인
@@ -105,10 +115,6 @@ kubectl get configmap argocd-cm -n argocd \
 ### 2-1. 기존 EndpointSlice 패치 (human-approved break-glass)
 
 ```bash
-# Grafana
-kubectl patch endpointslice grafana-external-1 -n platform --type=json \
-  -p='[{"op":"replace","path":"/endpoints/0/addresses/0","value":"192.168.0.13"}]'
-
 # Alloy (EndpointSlice가 없으면 2-2 참고)
 # human-approved break-glass only
 kubectl patch endpointslice alloy-external-1 -n platform --type=json \
@@ -127,13 +133,12 @@ ArgoCD가 동기화하지 않는 경우에도 직접 apply는 운영자가 승�
 ```bash
 kubectl apply -f gitops/platform/external-services/alloy-external.yaml
 kubectl apply -f gitops/platform/external-services/loki-external.yaml
-kubectl apply -f gitops/platform/external-services/grafana-external.yaml
 ```
 
 ### 2-3. git 파일도 같은 주소로 수정 후 커밋
 
 ```bash
-# gitops/platform/external-services/grafana-external.yaml 에서 주소 수정 후
+# gitops/platform/external-services/ 아래 EndpointSlice 주소 수정 후
 git add gitops/platform/external-services/
 git commit -m "fix(platform): restore external service endpoints to the host address"
 ```
@@ -144,7 +149,7 @@ git commit -m "fix(platform): restore external service endpoints to the host add
 
 ```bash
 kubectl get endpointslice -n platform
-kubectl describe endpointslice grafana-external-1 -n platform
+kubectl describe endpointslice loki-external-1 -n platform
 ```
 
 ---
@@ -203,7 +208,7 @@ grep -i grafana gitops/apps/root/platform-kiali-app.yaml
 ```yaml
 # 예시: 현재 GitOps 계약 (cr.spec.external_services)
 grafana:
-  in_cluster_url: "http://grafana-external.platform.svc.cluster.local:3000"
+  in_cluster_url: "https://grafana.hy.home.arpa"
   url: "https://grafana.hy.home.arpa"
 ```
 
@@ -242,7 +247,7 @@ kubectl exec -n istio-system "$KIALI_POD" -- \
 
 ```bash
 kubectl run -it --rm debug --image=busybox --restart=Never -- \
-  nslookup grafana-external.platform.svc.cluster.local
+  nslookup grafana.hy.home.arpa
 ```
 
 1. Kiali 파드를 재시작하여 캐시를 초기화한다.
@@ -273,16 +278,12 @@ kubectl -n istio-system logs deploy/kiali --since=5m | grep -i "grafana\|401"
 
 ```bash
 # Grafana API 익명 접근 확인
-curl -s -o /dev/null -w "%{http_code}" http://192.168.0.13:3000/api/frontend/settings
+curl -s -o /dev/null -w "%{http_code}" --cacert secrets/certs/rootCA.pem \
+  https://grafana.hy.home.arpa/api/frontend/settings
 # → 200 이어야 함
 
-# Kiali 파드에서 확인
-kubectl -n istio-system exec deploy/kiali -- bash -c '
-  exec 3<>/dev/tcp/grafana-external.platform.svc.cluster.local/3000
-  printf "GET /api/frontend/settings HTTP/1.0\r\nHost: grafana-external\r\n\r\n" >&3
-  head -1 <&3
-'
-# → HTTP/1.0 200 OK
+# Kiali 로그에서 Grafana 버전 확인 성공 여부
+kubectl -n istio-system logs deploy/kiali --since=5m | rg -i 'grafana'
 
 # Kiali 로그에서 401 오류 사라짐 확인
 kubectl -n istio-system logs deploy/kiali --since=2m | grep -i "grafana\|401"

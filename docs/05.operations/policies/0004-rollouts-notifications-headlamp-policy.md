@@ -41,7 +41,7 @@ artifact_id: "POL-0004"
 - **Allowed**:
   - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택
-  - Prometheus AnalysisTemplate 정의 (`http://prometheus-external.platform.svc.cluster.local:9090`)
+  - Prometheus AnalysisTemplate 정의 (`https://prometheus.hy.home.arpa`, `apps/prometheus-api-auth`의 Basic Auth header, controller의 `hy-home-root-ca` 신뢰; ADR-0046)
 - **Disallowed**:
   - `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
   - `skipAnalysis: true` 임의 사용

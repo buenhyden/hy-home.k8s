@@ -43,6 +43,7 @@ artifact_id: "SPEC-0008-TSK-0001"
 | WORK-006 | VAL-SPC-001 | metrics NodePort 폐지 | platform | Done | NodePort Services `30082-30092` removed with a static check against new ones; RUN-0009 owns in-cluster collection; RUN-0008 is reduced to ArgoCD component checks on that path. Live remote write still needs a host-published Prometheus `9090` (external owner) | `dfbf63f9`; staged QA PASS except `policy-gates` (conftest absent) |
 | WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Queued | Not executed | full QA |
 | WORK-008 | VAL-SPC-001 | 외부 서비스 host 주소 경로, ESO OpenBao HTTPS, k3d API bind, PostgreSQL bootstrap 선택화 | platform | Done | EndpointSlices and egress on `192.168.0.13`, ESO over `https://openbao.hy.home.arpa` with `openbao-ca`, CoreDNS custom zone, k3d API `192.168.0.13:6550`, optional PostgreSQL; live bootstrap pending cluster recreation | `b7521749`, `4a6e5548`, `888c22be`; staged QA PASS except `policy-gates` (conftest absent) |
+| WORK-009 | VAL-SPC-001 | Prometheus API와 Grafana HTTPS 경로, Basic Auth, gateway CA | platform | Done | Alloy, Kiali and Rollouts call `https://prometheus.hy.home.arpa` with Basic Auth from OpenBao `platform/prometheus-api`, and Kiali calls `https://grafana.hy.home.arpa`. CoreDNS resolves both, and bootstrap distributes the CA. `prometheus-external` and `grafana-external` are retired. Live check waits on the OpenBao P0 provisioning (external owner) | `8125c87f`; staged QA PASS except `policy-gates` (conftest absent); `alloy validate` PASS |
 
 ## Approval and Safety Boundaries
 

@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.0.0"
+version: "2.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -56,15 +56,13 @@ ArgoCD component 메트릭이 외부 Prometheus에 들어오는지 확인하고,
 
 ## Procedure or Checklist
 
-`PROM`은 외부 Prometheus 조회 주소다. 현재 값은
-[RUN-0009](./0009-k8s-observability-runbook.md)의 기준값을 따른다.
+`prom`은 외부 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)를 조회하는
+helper이며 [RUN-0009](./0009-k8s-observability-runbook.md)의 "조회 helper"에 정의되어 있다.
 
 ### Procedure 1: 범위 판단
 
 ```bash
-PROM=http://192.168.0.13:9090
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count by (job) (up{cluster="k3d-hyhome"})'
+prom 'count by (job) (up{cluster="k3d-hyhome"})'
 ```
 
 job 자체가 없으면 ArgoCD가 아니라 수집 경로 문제다. RUN-0009로 이동한다.
@@ -72,8 +70,7 @@ job 자체가 없으면 ArgoCD가 아니라 수집 경로 문제다. RUN-0009로
 ### Procedure 2: ArgoCD component target 확인
 
 ```bash
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=up{cluster="k3d-hyhome",namespace="argocd"}'
+prom 'up{cluster="k3d-hyhome",namespace="argocd"}'
 kubectl get pods -n argocd -L app.kubernetes.io/name
 ```
 
@@ -101,12 +98,10 @@ argocd app sync platform-monitoring
 ## Verification Steps
 
 ```bash
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count by (app) (up{cluster="k3d-hyhome",namespace="argocd"} == 1)'
+prom 'count by (app) (up{cluster="k3d-hyhome",namespace="argocd"} == 1)'
 # → 위 표의 component 5개
 
-curl -s "$PROM/api/v1/query" \
-  --data-urlencode 'query=count(argocd_app_info{cluster="k3d-hyhome"})'
+prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 # → gitops/apps/root가 정의한 Application 수 이상
 ```
 
