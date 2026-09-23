@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Contract"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -64,6 +64,11 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Bad: Loses reviewable routing and replacement evidence.
 
 ## Traceability
+
+**Current-state clarification (2026-09-23).** The host named here as
+WSL2 with WSL-native Docker is a single Linux server with the native Docker
+Engine under [ADR-0042](./0042-linux-server-single-host-baseline.md). Every
+other clause of this decision is unchanged.
 
 **Current-state clarification (2026-09-23).** The secret backend named here as
 Vault is now OpenBao under

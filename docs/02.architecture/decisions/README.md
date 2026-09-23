@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.5.9"
+version: "0.5.10"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -107,7 +107,7 @@ layer: "architecture"
 | [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision | Superseded | 보존 단위(Spec package, Incident bundle, 단독 문서)를 원본 Git object 그대로 보존하고 단위 anchor 상태로 class를 정하며, 단위마다 catalog 행 하나, registry의 순서 있는 인용 결정표 하나, identity 계보로 추적하는 활성 stage 간 이동을 결정했다. ADR-0038 전체를 대체했고, 2026-09-17에 ADR-0040이 이 결정 전체를 대체했다. 별도 처분 승인 전까지 이 log에서 기다린다. |
 | [`./0040-archive-reappraisal-and-verifiable-sources.md`](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive reappraisal and verifiable sources decision | Accepted | 보존 단위를 승인 없는 변경으로부터 동결하되 승인된 단위 전체 제거(`git-history-only`)를 허용하고, 현재 증거 가치를 catalog 옆 `Retention Assessment` 표로 판정하며, envelope 도달 가능성을 default branch 기준으로 검증한다. ADR-0039 전체를 대체하며, SPEC-0085가 registry·Archive index·검증기·테스트를 전환했다. |
 | [`./0041-openbao-secret-backend.md`](./0041-openbao-secret-backend.md) | OpenBao 런타임 시크릿 backend 전환 결정 | Accepted | Current secret synchronization pattern. ESO와 Kubernetes Auth 패턴은 대체된 ADR-0003에서 이어받는다. |
-| [`./0042-linux-server-single-host-baseline.md`](./0042-linux-server-single-host-baseline.md) | Linux server single-host baseline 결정 | Proposed | 플랫폼 host를 WSL2가 아닌 Linux server와 native Docker Engine으로 기록하고, `hy.home.arpa` DNS와 host firewall을 operator 소유로 둔다. ADR-0014의 host 조항만 이어받으며 나머지 조항은 ADR-0014에 남는다. |
+| [`./0042-linux-server-single-host-baseline.md`](./0042-linux-server-single-host-baseline.md) | Linux server single-host baseline 결정 | Accepted | 플랫폼 host를 WSL2가 아닌 Linux server와 native Docker Engine으로 기록하고, `hy.home.arpa` DNS와 host firewall을 operator 소유로 둔다. ADR-0014의 host 조항만 이어받으며 나머지 조항은 ADR-0014에 남는다. |
 
 ## Related Documents
 
