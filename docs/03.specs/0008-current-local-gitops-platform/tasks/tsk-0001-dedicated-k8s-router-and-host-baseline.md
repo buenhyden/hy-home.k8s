@@ -40,8 +40,9 @@ artifact_id: "SPEC-0008-TSK-0001"
 | WORK-003 | VAL-SPC-002 | Linux server host 정렬 | platform | Done | Host prerequisite matrix, validators and documents aligned to the Linux server host | `cdf9a465` |
 | WORK-004 | VAL-SPC-001 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | platform | Done | Stage 05 router, onboarding and recovery procedures; `pg-router` and router prerequisites | `cdf9a465` |
 | WORK-005 | VAL-SPC-001 | Alloy 메트릭 수집과 remote write | platform | Done | Alloy scrapes annotated pods, platform components, kubelet and cAdvisor and remote-writes to `prometheus-external` | `e7693ff7`, `030cf5df`; `alloy validate` PASS; staged QA PASS except `policy-gates` |
-| WORK-006 | VAL-SPC-001 | live 확인 뒤 metrics NodePort 폐지 | platform | Blocked | Waits for live remote write evidence; no k3d cluster on this host | DEFER; next owner operator |
+| WORK-006 | VAL-SPC-001 | live 확인 뒤 metrics NodePort 폐지 | platform | Blocked | Waits for live remote write evidence; needs WORK-008 and a host-published Prometheus `9090` | DEFER; next owner operator |
 | WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Queued | Not executed | full QA |
+| WORK-008 | VAL-SPC-001 | 외부 서비스 host 주소 경로, ESO OpenBao HTTPS, k3d API bind, PostgreSQL bootstrap 선택화 | platform | In progress | ADR-0046 accepted | ADR-0046 commit |
 
 ## Approval and Safety Boundaries
 

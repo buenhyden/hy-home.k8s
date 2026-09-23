@@ -95,8 +95,9 @@ artifact_id: "SPEC-0008-PLAN-0001"
 | WP-003 | Linux server host 정렬 | WP-002 | WP-002 commit | staged QA 전체 PASS |
 | WP-004 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | WP-002 | WP-002 commit | staged QA PASS |
 | WP-005 | Alloy 메트릭 수집(pod와 sidecar, kube-state-metrics, kubelet/cAdvisor, istiod, ArgoCD, Rollouts)과 `prometheus-external` remote write, egress 허용 | ADR-0045 accepted | WP-002 commit | staged QA PASS |
-| WP-006 | live에서 remote write가 확인된 뒤 metrics NodePort와 관련 문서 폐지 | WP-005 | operator의 live 증거 | staged QA PASS |
-| WP-007 | 전체 검증과 handoff | WP-002..006 | 모든 commit | `python3 scripts/qa.py full` PASS |
+| WP-006 | live에서 remote write가 확인된 뒤 metrics NodePort와 관련 문서 폐지 | WP-005, WP-008 | operator의 live 증거 | staged QA PASS |
+| WP-007 | 전체 검증과 handoff | WP-002..006, WP-008 | 모든 commit | `python3 scripts/qa.py full` PASS |
+| WP-008 | 외부 서비스 경로를 host 주소 `192.168.0.13`과 host 공개 port로 이전, ESO의 OpenBao HTTPS 전환, k3d API bind와 SAN, PostgreSQL bootstrap 선택화 | ADR-0046 accepted | ADR-0046 commit | staged QA PASS; bootstrap 외부 의존성 단계 PASS |
 
 ## Verification Plan
 
@@ -128,7 +129,7 @@ artifact_id: "SPEC-0008-PLAN-0001"
 ## Traceability
 
 - **Spec**: [SPEC-0008](spec.md)
-- **Decisions**: ADR-0041, ADR-0042, ADR-0043, ADR-0044, ADR-0045
+- **Decisions**: ADR-0041, ADR-0042, ADR-0043, ADR-0044, ADR-0045, ADR-0046
 
 ### Lifecycle Traceability
 
@@ -136,4 +137,4 @@ artifact_id: "SPEC-0008-PLAN-0001"
 | --- | --- | --- |
 | [VAL-SPC-005](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
 | [VAL-SPC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-003 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
-| [VAL-SPC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-004, WP-005, WP-006, WP-007 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
+| [VAL-SPC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-004, WP-005, WP-006, WP-007, WP-008 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
