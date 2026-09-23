@@ -76,3 +76,13 @@ deny contains msg if {
 	not metric.count
 	msg := sprintf("AnalysisTemplate metric must set count: %s/%s", [resource_name, metric.name])
 }
+
+# A Prometheus result is a number; comparing it with a quoted literal errors on
+# every measurement and aborts the Rollout.
+deny contains msg if {
+	input.kind == "AnalysisTemplate"
+	some metric in input.spec.metrics
+	some field in ["successCondition", "failureCondition"]
+	regex.match(`(==|!=|<|>)\s*"`, metric[field])
+	msg := sprintf("AnalysisTemplate %s must compare with a number: %s/%s", [field, resource_name, metric.name])
+}

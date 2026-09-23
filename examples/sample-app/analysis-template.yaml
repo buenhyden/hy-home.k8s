@@ -41,5 +41,5 @@ spec:
               namespace="apps",
               container="<appname>"
             }[2m]))
-      successCondition: result[0] == "0"
-      failureCondition: result[0] != "0"
+      successCondition: result[0] == 0
+      failureCondition: result[0] != 0
