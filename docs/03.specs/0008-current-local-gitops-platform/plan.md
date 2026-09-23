@@ -1,10 +1,10 @@
 ---
 title: "Dedicated Kubernetes Router and Host Baseline Implementation Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "specs"
 artifact_id: "SPEC-0008-PLAN-0001"
 ---
@@ -108,8 +108,8 @@ artifact_id: "SPEC-0008-PLAN-0001"
   계약(serverlb bind 주소, NodePort, host 이름, apex redirect)을 강제함을
   보인다.
 - 마지막에 `python3 scripts/qa.py full`과 `git diff --check`를 실행한다.
-- live 검증(serverlb bind, TLS, 이름 해석, redirect)은 k3d cluster와 host
-  주소가 없으므로 DEFER이며, owner는 operator다.
+- live 검증은 2026-09-23..24 재구축한 cluster에서 수행했다. 결과와 남은 DEFER는
+  [Task](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md)에 있다.
 
 ## Risks & Mitigations
 
