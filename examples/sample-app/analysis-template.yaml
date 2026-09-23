@@ -24,6 +24,9 @@ spec:
   metrics:
     - name: container-restarts
       interval: 30s
+      # 30초 x 4회 = 2m query 창. count가 없으면 canary step 안에서 무한 metric으로
+      # 거부된다.
+      count: 4
       failureLimit: 1
       provider:
         prometheus:

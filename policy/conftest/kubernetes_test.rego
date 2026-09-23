@@ -102,3 +102,19 @@ test_pinned_container_tag_is_allowed if {
 		"spec": {"template": {"spec": {"containers": [{"image": "adminer:5.4.1"}]}}},
 	}
 }
+
+test_analysis_metric_without_count_is_denied if {
+	count(deny) == 1 with input as {
+		"kind": "AnalysisTemplate",
+		"metadata": {"name": "adminer-stability"},
+		"spec": {"metrics": [{"name": "container-restarts", "interval": "30s"}]},
+	}
+}
+
+test_analysis_metric_with_count_is_allowed if {
+	count(deny) == 0 with input as {
+		"kind": "AnalysisTemplate",
+		"metadata": {"name": "adminer-stability"},
+		"spec": {"metrics": [{"name": "container-restarts", "interval": "30s", "count": 4}]},
+	}
+}

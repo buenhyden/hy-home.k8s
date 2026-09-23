@@ -67,3 +67,12 @@ deny contains msg if {
 	endswith(image, ":latest")
 	msg := sprintf("container image must not use latest tag: %s uses %s", [resource_name, image])
 }
+
+# Argo Rollouts rejects a Rollout whose canary analysis step references a
+# metric that runs indefinitely, so every template metric sets a count.
+deny contains msg if {
+	input.kind == "AnalysisTemplate"
+	some metric in input.spec.metrics
+	not metric.count
+	msg := sprintf("AnalysisTemplate metric must set count: %s/%s", [resource_name, metric.name])
+}
