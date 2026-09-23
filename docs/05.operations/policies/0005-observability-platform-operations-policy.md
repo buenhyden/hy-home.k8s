@@ -14,7 +14,7 @@ artifact_id: "POL-0005"
 ## Overview
 
 이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
-수집 통제를 하나의 정책으로 정의한다. 서비스 포트, 고정 NodePort, Alloy,
+수집 통제를 하나의 정책으로 정의한다. 서비스 포트, in-cluster Alloy 수집과 remote write,
 Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 ## Policy Scope
@@ -36,7 +36,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 | Role | Responsibility | Escalation owner |
 | --- | --- | --- |
-| Platform Owner | Service, NodePort, AppProject GitOps 계약을 승인한다. | Workspace Owner |
+| Platform Owner | Service, AppProject GitOps 계약을 승인한다. | Workspace Owner |
 | Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
 | Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
 
@@ -45,15 +45,15 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | Control | Accountable role | Enforcement surface | Evidence |
 | --- | --- | --- | --- |
 | OBS-001 port naming | Platform Owner | Service and EndpointSlice manifests | protocol-prefixed port names |
-| OBS-002 ArgoCD metrics | Observability Owner | NodePorts 30082-30086 | Prometheus target evidence |
-| OBS-003 cluster metrics | Observability Owner | NodePorts 30090-30092 | expected services and targets |
-| OBS-004 logs and rules | Observability Owner | Alloy deployment and Prometheus config | Ready streams and loaded rule groups |
+| OBS-002 ArgoCD metrics | Observability Owner | in-cluster Alloy `platform_pods` relabel for ArgoCD components | `argocd_app_info{cluster="k3d-hyhome"}` in the external Prometheus |
+| OBS-003 cluster metrics | Observability Owner | in-cluster Alloy scrape of istiod, argo-rollouts, kube-state-metrics, kubelet, cAdvisor | `up{cluster="k3d-hyhome"}` by job and `app` |
+| OBS-004 logs and rules | Observability Owner | Alloy deployment; external Prometheus rule config | Ready `{cluster="k3d-hyhome"}` streams; external rule groups when the external workspace defines them |
 | OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to host `192.168.0.13:9090` (ADR-0046; the external workspace must publish the port) | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
 ### Service Port Naming
 
-`gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다. mesh 밖 namespace의 metrics NodePort는 이 명명 통제 대상이 아니다.
+`gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
 PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.
@@ -63,22 +63,12 @@ PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
 k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
 ([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)).
 Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote
-write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 아래 NodePort
-예약은 외부 Prometheus의 static scrape를 위한 과도기 경로이며, remote write가
-live로 확인된 뒤 폐지한다. 그 static target 주소 `172.18.0.2`는 외부
-Traefik과 겹치므로 NodePort 경로를 새 증거로 쓰지 않는다.
-
-### Metrics NodePort Reservations
-
-| Range | Reserved services | Owner |
-| --- | --- | --- |
-| 30082-30086 | ArgoCD application-controller, server, repo-server, ApplicationSet, notifications metrics | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
-| 30090 | istiod metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
-| 30091 | kube-state-metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
-| 30092 | argo-rollouts metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
-
-예약 번호를 다른 서비스에 재사용하거나 Prometheus 접근을 위해 과도한
-kubeconfig 권한을 부여하지 않는다.
+write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 외부
+Prometheus의 NodePort static scrape와 metrics NodePort Service(`30082-30092`)는
+폐지되었다. 그 target 주소 `172.18.0.2`는 외부 Traefik이었다.
+`scripts/validate-infrastructure-contracts.sh`는 `gitops/platform`에 NodePort
+Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 권한을 외부에
+부여하지 않는다.
 
 ### Logs, Rules, and Access
 
@@ -95,9 +85,9 @@ kubeconfig 권한을 부여하지 않는다.
 
 ## Exceptions
 
-NodePort 또는 AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
-공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest, external
-scrape target, 관련 Runbook을 같은 변경으로 동기화하는 것이다. 외부
+AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
+Runbook을 같은 변경으로 동기화하는 것이다. 외부
 Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
 이 저장소의 Runbook은 그 결과를 검증만 한다.
 
@@ -106,14 +96,14 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
 | Istio and Grafana connectivity | protocol port names, Viewer-only API health | [RUN-0007](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
-| ArgoCD metrics | reserved 30082-30086 services, `argocd-*` targets, metric presence | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
-| Cluster metrics | reserved 30090-30092 services and expected targets | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
+| ArgoCD metrics | ArgoCD components under `kubernetes-pods`, `argocd_app_info` presence | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
+| Cluster metrics | `kubernetes-pods`, `kubelet`, `cadvisor` jobs with `cluster="k3d-hyhome"` | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 | Alloy and Loki | deployment Ready and cluster-labelled streams received | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 | Rules and AppProject | required rule groups load; monitoring destination present | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 
 ## Review Cadence
 
-Service/EndpointSlice port, NodePort reservation, scrape target, Alloy version,
+Service/EndpointSlice port, Alloy relabel rule, remote write endpoint, Alloy version,
 rule file, Grafana role, Loki endpoint, AppProject destination 변경 시 검토한다.
 
 ## Traceability
@@ -127,4 +117,4 @@ rule file, Grafana role, Loki endpoint, AppProject destination 변경 시 검토
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — current GitOps and external observability contracts have no reciprocal Spec or Task policy link | Platform Owner and Observability Owner | service naming, NodePort manifests, Alloy, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |
+| N/A — current GitOps and external observability contracts have no reciprocal Spec or Task policy link | Platform Owner and Observability Owner | service naming, Alloy relabel and remote write, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |

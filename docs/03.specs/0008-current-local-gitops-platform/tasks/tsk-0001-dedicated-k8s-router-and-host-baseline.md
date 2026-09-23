@@ -40,7 +40,7 @@ artifact_id: "SPEC-0008-TSK-0001"
 | WORK-003 | VAL-SPC-002 | Linux server host 정렬 | platform | Done | Host prerequisite matrix, validators and documents aligned to the Linux server host | `cdf9a465` |
 | WORK-004 | VAL-SPC-001 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | platform | Done | Stage 05 router, onboarding and recovery procedures; `pg-router` and router prerequisites | `cdf9a465` |
 | WORK-005 | VAL-SPC-001 | Alloy 메트릭 수집과 remote write | platform | Done | Alloy scrapes annotated pods, platform components, kubelet and cAdvisor and remote-writes to `prometheus-external` | `e7693ff7`, `030cf5df`; `alloy validate` PASS; staged QA PASS except `policy-gates` |
-| WORK-006 | VAL-SPC-001 | live 확인 뒤 metrics NodePort 폐지 | platform | Blocked | Waits for live remote write evidence; needs WORK-008 and a host-published Prometheus `9090` | DEFER; next owner operator |
+| WORK-006 | VAL-SPC-001 | metrics NodePort 폐지 | platform | Done | NodePort Services `30082-30092` removed with a static check against new ones; RUN-0009 owns in-cluster collection; RUN-0008 is reduced to ArgoCD component checks on that path. Live remote write still needs a host-published Prometheus `9090` (external owner) | `dfbf63f9`; staged QA PASS except `policy-gates` (conftest absent) |
 | WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Queued | Not executed | full QA |
 | WORK-008 | VAL-SPC-001 | 외부 서비스 host 주소 경로, ESO OpenBao HTTPS, k3d API bind, PostgreSQL bootstrap 선택화 | platform | Done | EndpointSlices and egress on `192.168.0.13`, ESO over `https://openbao.hy.home.arpa` with `openbao-ca`, CoreDNS custom zone, k3d API `192.168.0.13:6550`, optional PostgreSQL; live bootstrap pending cluster recreation | `b7521749`, `4a6e5548`, `888c22be`; staged QA PASS except `policy-gates` (conftest absent) |
 
@@ -89,5 +89,5 @@ artifact_id: "SPEC-0008-TSK-0001"
 | [WORK-001](../plan.md#work-breakdown) | Done | `11f81d11` |
 | [WORK-002](../plan.md#work-breakdown) | Done | `cdf9a465` |
 | [WORK-005](../plan.md#work-breakdown) | Done | `030cf5df` |
-| [WORK-006](../plan.md#work-breakdown) | Blocked | Live remote write evidence pending |
+| [WORK-006](../plan.md#work-breakdown) | Done | `dfbf63f9` |
 | [WORK-008](../plan.md#work-breakdown) | Done | `4a6e5548` |

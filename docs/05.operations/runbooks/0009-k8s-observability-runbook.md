@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "1.0.3"
+version: "2.0.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -13,19 +13,45 @@ artifact_id: "RUN-0009"
 
 ## Overview
 
-이 런북은 k3d/k3s 클러스터의 메트릭/로그 수집 스택(kube-state-metrics, in-cluster Alloy, Prometheus alert_rules)에 장애가 발생했을 때 즉시 진단하고 복구하는 절차를 제공한다.
+이 런북은 cluster 안 Alloy(`monitoring/alloy-k8s-logs`)의 k8s 메트릭·로그 수집에
+장애가 났을 때 진단하고 복구하는 절차를 제공한다. ArgoCD component별 확인은
+[RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)이 다룬다.
+
+수집 경로([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md),
+[ADR-0046](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)):
+
+- **로그와 event**: Kubernetes API → Alloy → `loki-external`(host `192.168.0.13:3100`)
+- **메트릭**: Alloy가 pod IP와 API server proxy로 scrape한 뒤 `prometheus-external`
+  (host `192.168.0.13:9090`)로 remote write한다. 모든 series에
+  `cluster="k3d-hyhome"`가 붙는다.
+
+| job | 대상 |
+| --- | --- |
+| `kubernetes-pods` | `prometheus.io/scrape` annotation pod(istiod, Istio sidecar), ArgoCD component(`8082`, `8083`, `8084`, `8080`, `9001`), argo-rollouts `8090`, kube-state-metrics `8080` |
+| `kubelet` | 각 node의 `/api/v1/nodes/<node>/proxy/metrics` |
+| `cadvisor` | 각 node의 `/api/v1/nodes/<node>/proxy/metrics/cadvisor` |
+
+저장, 조회, dashboard, alert rule은 외부 observability workspace가 소유한다. 외부
+Prometheus의 NodePort static scrape는 폐지되었다.
 
 주된 장애 원인:
 
-1. **kube-state-metrics 미배포**: NodePort 30091 미생성으로 Prometheus가 k8s 오브젝트 상태 메트릭 수집 불가
-2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로 미설정, 또는 미지원 속성 사용
-3. **alert_rules 미로드**: `prometheus.yml` rule_files 패턴이 고정 파일명을 커버하지 않아 0 rules 반환
-4. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어 Application 배포 실패
-5. **k3d 재시작 후 NodePort 접근 실패**: 노드 IP 변경 또는 파드 재기동 지연
+1. **remote write 실패**: 외부 Prometheus `9090`이 host에 공개되지 않았거나
+   remote write receiver가 꺼져 있다. 2026-09-23 기준 `9090`은 host에 공개되어
+   있지 않다.
+2. **alloy-k8s-logs CrashLoop**: `readOnlyRootFilesystem` + storage 경로
+   미설정, 또는 미지원 속성 사용
+3. **egress 차단**: `monitoring` NetworkPolicy가 `192.168.0.13`의 `3100`/`9090`이나
+   API server `6443`을 허용하지 않는다.
+4. **target 누락**: component의 label, container port, annotation이 바뀌어
+   relabel 규칙에서 빠진다.
+5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
+   Application 배포 실패
 
 ### Purpose
 
-k3d cluster observability metrics, logs, and alert rule loading failures를 진단하고, GitOps 상태와 external observability endpoint 연결을 복구한다.
+in-cluster 메트릭·로그 수집과 remote write 장애를 진단하고, GitOps 상태와 외부
+observability endpoint 연결을 복구한다.
 
 ## Runbook Type
 
@@ -33,75 +59,61 @@ k3d cluster observability metrics, logs, and alert rule loading failures를 진�
 
 ## When to Use
 
-- Prometheus 타겟에서 `kube-state-metrics`, `istiod`, `argo-rollouts` job이 `down`으로 표시될 때
+- 외부 Prometheus에서 `up{cluster="k3d-hyhome"}` 결과가 비었거나 job이 빠졌을 때
+- `argocd_app_info`, `kube_pod_*`, `istio_requests_total`이 조회되지 않을 때
 - Loki에서 `{cluster="k3d-hyhome"}` 쿼리 결과가 비어 있을 때
 - `alloy-k8s-logs` 파드가 `CrashLoopBackOff` 상태일 때
-- Grafana에서 `kube_pod_*`, `kube_deployment_*` 메트릭이 조회되지 않을 때
-- alert_rules 로드 수가 0이거나 kubernetes_alerts 그룹이 없을 때
+- Alloy 로그에 remote write 오류가 반복될 때
 
 ---
 
 ## Procedure or Checklist
 
-아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy 로그 수집 복구, alert rule reload, NodePort 복구 순서로 수행한다.
+아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy CrashLoop 복구,
+remote write 복구, target 누락 복구 순서로 수행한다.
 
 ### 정상 상태 기준값
 
-| 항목                          | 기준값                                                                  |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| kube-state-metrics NodePort   | `172.18.0.2:30091/metrics` → HTTP 200                                   |
-| istiod NodePort               | `172.18.0.2:30090/metrics` → HTTP 200                                   |
-| argo-rollouts NodePort        | `172.18.0.2:30092/metrics` → HTTP 200                                   |
-| alloy-k8s-logs 파드           | `1/1 Running`                                                           |
-| Prometheus kube-state-metrics | `health: up`                                                            |
-| Loki k8s 로그 스트림          | `{cluster="k3d-hyhome"}` → 스트림 수 > 0                                |
-| Alert rules                   | `kubernetes_alerts`, `etcd_alerts`, `istio_alerts`, `argocd_alerts` 그룹이 각각 1개 이상의 rule로 로드됨 |
-| AppProject destinations       | `monitoring` 포함                                                       |
+| 항목 | 기준값 |
+| --- | --- |
+| alloy-k8s-logs 파드 | `1/1 Running` |
+| 외부 Prometheus job | `kubernetes-pods`, `kubelet`, `cadvisor`가 `cluster="k3d-hyhome"`로 존재 |
+| ArgoCD 메트릭 | `argocd_app_info{cluster="k3d-hyhome"}` 결과 수 ≥ `gitops/apps/root` Application 수 |
+| node 메트릭 | `kube_node_info{cluster="k3d-hyhome"}` 결과 4건 |
+| Loki k8s 로그 스트림 | `{cluster="k3d-hyhome"}` → 스트림 수 > 0 |
+| AppProject destinations | `monitoring` 포함 |
 
 ---
 
 ### Procedure 1: 전체 상태 진단
 
 ```bash
-echo "=== NodePort 상태 ==="
-for port in 30090 30091 30092; do
-  code=$(curl -s --max-time 3 -o /dev/null -w "%{http_code}" http://172.18.0.2:${port}/metrics)
-  case $port in
-    30090) label="istiod" ;;
-    30091) label="kube-state-metrics" ;;
-    30092) label="argo-rollouts" ;;
-  esac
-  echo "  $port ($label): HTTP $code"
-done
+PROM=http://192.168.0.13:9090
+LOKI=http://192.168.0.13:3100
 
-echo "=== Prometheus k8s Targets ==="
-curl -s http://192.168.0.13:9090/api/v1/targets | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-jobs=['kube-state-metrics','istiod','argo-rollouts']
-for t in d['data']['activeTargets']:
-    if t['labels'].get('job') in jobs:
-        print(' ', t['labels']['job'], '->', t['health'])
-"
-
-echo "=== alloy-k8s-logs 파드 상태 ==="
+echo "=== alloy-k8s-logs 파드 ==="
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 
-echo "=== Alert Rules 로드 상태 ==="
-curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-for g in d['data']['groups']:
-    if g['name'] in ('kubernetes_alerts','etcd_alerts','istio_alerts','argocd_alerts'):
-        print(f'  {g[\"name\"]}: {len(g[\"rules\"])} rules')
-"
+echo "=== remote write 오류 ==="
+kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --since=10m \
+  | rg -i 'remote_write|prometheus.remote_write|level=error' | tail -5
+
+echo "=== job별 target ==="
+curl -s "$PROM/api/v1/query" \
+  --data-urlencode 'query=count by (job) (up{cluster="k3d-hyhome"})'
+
+echo "=== ArgoCD 메트릭 ==="
+curl -s "$PROM/api/v1/query" \
+  --data-urlencode 'query=count(argocd_app_info{cluster="k3d-hyhome"})'
 
 echo "=== Loki k8s 로그 ==="
-curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
+curl -s -G "$LOKI/loki/api/v1/query" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
   --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
 ```
+
+외부 Prometheus가 응답하지 않으면 Procedure 4로 이동한다.
 
 ---
 
@@ -124,19 +136,7 @@ argocd app sync platform-namespaces
 argocd app sync platform-monitoring
 
 # 배포 확인
-kubectl get all -n monitoring
-```
-
-예상 출력:
-
-```text
-NAME                                  READY   STATUS    RESTARTS
-pod/alloy-k8s-logs-xxxx              1/1     Running   0
-pod/kube-state-metrics-xxxx          1/1     Running   0
-
-NAME                          TYPE        CLUSTER-IP    PORT(S)
-service/kube-state-metrics    ClusterIP   10.x.x.x      8080/TCP
-service/kube-state-metrics-np NodePort    10.x.x.x      8080:30091/TCP
+kubectl get deploy,svc -n monitoring
 ```
 
 ---
@@ -146,33 +146,23 @@ service/kube-state-metrics-np NodePort    10.x.x.x      8080:30091/TCP
 ### 3-1. 원인 파악
 
 ```bash
-# 최근 로그 확인
 kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --tail=30
-
-# 이벤트 확인
 kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 ```
 
 ### 3-2. 오류 시그니처별 조치
 
-| 오류 시그니처                                | 원인                             | 조치                                          |
-| -------------------------------------------- | -------------------------------- | --------------------------------------------- |
-| `mkdir data-alloy: read-only file system`    | `--storage.path` 미설정          | args에 `--storage.path=/var/lib/alloy` 추가   |
-| `unrecognized attribute name 'extra_labels'` | 당시 Alloy v1.13.1 미지원 속성   | `loki.process` + `stage.static_labels`로 대체 |
-| `failed to list pods: Forbidden`             | ClusterRole 권한 미할당          | ClusterRoleBinding 재적용                     |
-| `connection refused` to `loki-external`      | ExternalService/Endpoints 미설정 | `platform` 네임스페이스 loki-external 확인    |
+| 오류 시그니처 | 원인 | 조치 |
+| --- | --- | --- |
+| `mkdir data-alloy: read-only file system` | `--storage.path` 미설정 | args에 `--storage.path=/var/lib/alloy` 추가 |
+| `unrecognized attribute name 'extra_labels'` | 당시 Alloy v1.13.1 미지원 속성 | `loki.process` + `stage.static_labels`로 대체 |
+| `failed to list pods: Forbidden` | ClusterRole 권한 미할당 | ClusterRoleBinding 재적용 |
+| `nodes/proxy` `Forbidden` | kubelet/cAdvisor proxy 권한 누락 | ClusterRole의 `nodes/proxy` get 확인 |
+| `connection refused` to `loki-external` | host `3100` 미공개 또는 egress 차단 | Procedure 4 |
 
-### 3-3. storage path 수정 후 재배포
+### 3-3. 수정 후 재배포
 
-`gitops/platform/monitoring/alloy-k8s-logs.yaml`의 Deployment args 확인:
-
-```yaml
-args:
-  - run
-  - --server.http.listen-addr=0.0.0.0:12345
-  - --storage.path=/var/lib/alloy # 필수
-  - /etc/alloy/config.alloy
-```
+`gitops/platform/monitoring/alloy-k8s-logs.yaml`을 고치고 커밋한 뒤 동기화한다.
 
 ```bash
 # 기본 경로: ArgoCD sync (operator-triggered reconciliation only)
@@ -181,172 +171,117 @@ argocd app sync platform-monitoring
 kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
 ```
 
-### 3-4. Loki 전송 확인
+---
+
+### Procedure 4: remote write와 로그 전송 경로 복구
 
 ```bash
-# Loki ExternalService 상태
-kubectl get svc,endpoints -n platform loki-external
+# 1. host 공개 port 확인 (Linux server host에서)
+docker ps --format '{{.Names}}\t{{.Ports}}' | rg 'infra-(prometheus|loki)'
+curl -s http://192.168.0.13:9090/-/ready
 
-# alloy 로그에서 수집 확인
-kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --tail=20 \
-  | grep -E "tailer|loki.source.kubernetes|level=error"
+# 2. EndpointSlice가 host 주소를 가리키는지 확인
+kubectl -n platform get endpointslice prometheus-external-1 loki-external-1
+
+# 3. monitoring egress가 host 주소와 port를 허용하는지 확인
+kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A6 ipBlock
 ```
+
+판정 기준:
+
+- host에서 `9090`이 닫혀 있으면 외부 workspace가 Prometheus를 host 주소에 공개해야
+  한다. 이 저장소에서 고칠 수 없다.
+- 외부 Prometheus가 remote write를 `404`로 거부하면
+  `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
+- EndpointSlice나 NetworkPolicy가 `192.168.0.13`이 아니면 Git의
+  `gitops/platform/`을 고치고 reconciliation으로 반영한다.
 
 ---
 
-### Procedure 4: Prometheus alert_rules 미로드 복구
+### Procedure 5: target 누락 복구
+
+`kubernetes-pods` job에서 특정 component가 빠지면 label과 port를 relabel 규칙과
+비교한다.
 
 ```bash
-# 현재 로드된 rule groups 확인
-curl -s http://192.168.0.13:9090/api/v1/rules \
-  | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-for g in d['data']['groups']:
-    print(g['name'])
-"
-
-# kubernetes_alerts/etcd_alerts/istio_alerts/argocd_alerts가 없으면
-# hy-home.docker prometheus.yml rule_files 확인
-cat /path/to/hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml | grep rule_files -A 10
+kubectl get pods -n argocd -L app.kubernetes.io/name
+kubectl get pods -n argo-rollouts -L app.kubernetes.io/name
+kubectl get pods -n istio-system -l app=istiod \
+  -o jsonpath='{.items[*].metadata.annotations.prometheus\.io/scrape}'
 ```
 
-`rule_files`는 외부 observability workspace가 소유한다.
-[POL-0005](../policies/0005-observability-platform-operations-policy.md)의 통제대로
-필요한 고정 rule 파일을 glob에 기대지 않고 명시적으로 나열했는지 그
-workspace의 운영자가 확인·수정한다. 수정이 반영된 뒤 아래처럼 reload와
-로드 결과를 확인한다.
-
-```bash
-# Prometheus reload (설정 변경 후)
-curl -s -X POST http://192.168.0.13:9090/-/reload && echo "Reloaded"
-
-# reload 후 확인
-curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-total=sum(len(g['rules']) for g in d['data']['groups']
-          if g['name'] in ('kubernetes_alerts','etcd_alerts','istio_alerts','argocd_alerts'))
-print(f'k8s 관련 rules: {total}건 (기대: 4개 그룹 모두 1건 이상)')
-"
-```
-
----
-
-### Procedure 5: k3d 재시작 후 NodePort 복구
-
-k3d 재시작 시 파드가 재기동되므로 NodePort 응답이 일시적으로 실패할 수 있다.
-
-```bash
-# 파드 Ready 확인
-kubectl get pods -n monitoring
-kubectl get pods -n istio-system -l app=istiod
-kubectl get pods -n argo-rollouts
-
-# 모두 Ready가 되면 NodePort 재테스트
-for port in 30090 30091 30092; do
-  code=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" http://172.18.0.2:${port}/metrics)
-  echo "NodePort ${port}: HTTP $code"
-done
-
-# Prometheus target 재확인
-curl -s "http://192.168.0.13:9090/api/v1/targets" | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-for t in d['data']['activeTargets']:
-    if t['labels'].get('job') in ('kube-state-metrics','istiod','argo-rollouts'):
-        print(t['labels']['job'], '->', t['health'], '|', t.get('lastError',''))
-"
-```
-
-k3d-hyhome-server-0 IP가 변경된 경우 scrape target 갱신과 Prometheus reload는
-[RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)의 Procedure 3-4를 따른다.
-NodePort 번호는 바꾸지 않는다.
+- ArgoCD, argo-rollouts, kube-state-metrics는 `discovery.relabel "platform_pods"`의
+  `namespace;app.kubernetes.io/name;container port` 규칙에 맞아야 한다. chart
+  업그레이드로 이름이나 port가 바뀌면 그 규칙을 고친다.
+- istiod와 Istio sidecar는 `prometheus.io/scrape` annotation으로 잡힌다.
+- 외부 Prometheus 쪽에서 job 이름은 `kubernetes-pods`이고 component는 `app`
+  label로 구분한다.
 
 ---
 
 ## Verification Steps
 
 ```bash
-echo "=== 전체 검증 ==="
+PROM=http://192.168.0.13:9090
 
-echo "[1] NodePorts"
-for port in 30090 30091 30092; do
-  echo -n "  $port: "
-  curl -s --max-time 3 -o /dev/null -w "%{http_code}\n" http://172.18.0.2:${port}/metrics
-done
-
-echo "[2] Prometheus Targets"
-curl -s http://192.168.0.13:9090/api/v1/targets | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-jobs=['kube-state-metrics','istiod','argo-rollouts']
-for t in d['data']['activeTargets']:
-    if t['labels'].get('job') in jobs:
-        print(f\"  {t['labels']['job']}: {t['health']}\")
-"
-
-echo "[3] kube_node_info count"
-curl -s 'http://192.168.0.13:9090/api/v1/query?query=kube_node_info' | python3 -c "
-import sys,json; d=json.load(sys.stdin)
-print(f\"  nodes: {len(d['data']['result'])} (기대: 4)\")
-"
-
-echo "[4] Alert Rules"
-curl -s http://192.168.0.13:9090/api/v1/rules | python3 -c "
-import sys, json
-d=json.load(sys.stdin)
-for g in d['data']['groups']:
-    if g['name'] in ('kubernetes_alerts','etcd_alerts','istio_alerts','argocd_alerts'):
-        print(f\"  {g['name']}: {len(g['rules'])} rules\")
-"
-
-echo "[5] alloy-k8s-logs"
+echo "[1] alloy-k8s-logs"
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-headers \
   | awk '{print "  "$1": "$3}'
 
-echo "[6] Loki k8s log streams"
+echo "[2] jobs"
+curl -s "$PROM/api/v1/query" \
+  --data-urlencode 'query=count by (job) (up{cluster="k3d-hyhome"})'
+# → kubernetes-pods, kubelet, cadvisor
+
+echo "[3] components"
+curl -s "$PROM/api/v1/query" \
+  --data-urlencode 'query=count by (app) (up{cluster="k3d-hyhome",job="kubernetes-pods"})'
+
+echo "[4] ArgoCD and node metrics"
+curl -s "$PROM/api/v1/query" --data-urlencode 'query=count(argocd_app_info{cluster="k3d-hyhome"})'
+curl -s "$PROM/api/v1/query" --data-urlencode 'query=count(kube_node_info{cluster="k3d-hyhome"})'
+
+echo "[5] Loki k8s log streams"
 curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
   --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"
 ```
 
----
-
 ## Observability and Evidence Sources
 
-- **Signals**: NodePort HTTP status, Prometheus target health, Loki stream count, Alert rule group count, Alloy pod readiness.
-- **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, Prometheus rules output.
+- **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
+- **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, host port table.
 
 ## Safe Rollback or Recovery Procedure
 
-- Monitoring manifest changes should be reverted through GitOps if NodePort, Alloy, or alert rule changes regress collection.
-- Docker-side Prometheus config changes must be reverted in the owning Docker repo if reload introduces scrape failures.
+- Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
+- External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
 - AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
 
 ### Troubleshooting
 
-| 증상                                       | 원인                                               | 조치                                              |
-| ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------- |
-| platform-monitoring InvalidSpecError       | AppProject에 monitoring namespace 미포함           | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
-| alloy CrashLoop: read-only file system     | `--storage.path` 미설정                            | args에 `--storage.path=/var/lib/alloy` + emptyDir |
-| alloy CrashLoop: unrecognized extra_labels | `loki.source.kubernetes_events` 미지원 속성        | `loki.process` + `stage.static_labels` 파이프라인 |
-| kube-state-metrics target down             | NodePort 30091 미배포                              | operator-triggered reconciliation: `argocd app sync platform-monitoring` |
-| alert rules 0건                            | rule_files 패턴이 고정 파일명 미포함               | prometheus.yml rule_files 항목 추가 후 reload     |
-| Loki에 k8s 로그 없음                       | alloy-k8s-logs 미실행 또는 loki-external 연결 실패 | Procedure 3 참고                                  |
-| NodePort HTTP 000 (timeout)                | 파드 미기동 또는 k3d 재시작 중                     | 파드 Ready 대기 후 재시도                         |
+| 증상 | 원인 | 조치 |
+| --- | --- | --- |
+| platform-monitoring InvalidSpecError | AppProject에 monitoring namespace 미포함 | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
+| Alloy 로그에 remote write `connection refused` | host `9090` 미공개 | 외부 workspace에 공개 요청 (Procedure 4) |
+| remote write `404` | remote write receiver 꺼짐 | 외부 workspace가 flag 복구 |
+| `kubelet`/`cadvisor` job 없음 | `nodes/proxy` 권한 또는 API egress 누락 | Procedure 3-2, egress `6443` 확인 |
+| ArgoCD component만 빠짐 | chart 변경으로 label/port 불일치 | Procedure 5 |
+| Loki에 k8s 로그 없음 | alloy 미실행 또는 loki-external 연결 실패 | Procedure 3, 4 |
 
 ---
 
 ## Traceability
 
 - [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
-- [ArgoCD 메트릭 런북](./0008-argocd-metrics-prometheus-runbook.md)
+- [Kiali Connectivity Runbook](./0007-kiali-observability-connectivity-runbook.md)
+- [ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)
+- [ADR-0046](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
 - [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | Cluster metrics targets, Alloy log/event collection, alert-rule loading, or monitoring AppProject admission is degraded. | Platform operator captures NodePort, target, pod, Loki, rule-group, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner persists external Prometheus/Loki corrections. |
+| [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | In-cluster metric collection, remote write, ArgoCD metrics, Alloy log/event collection, or monitoring AppProject admission is degraded. | Platform operator captures pod, remote write, job, Loki, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner restores external Prometheus/Loki publication and settings. |
