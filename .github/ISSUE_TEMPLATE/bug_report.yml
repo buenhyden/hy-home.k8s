@@ -50,8 +50,8 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: OS, WSL/Docker Desktop, k3d/k3s, kubectl, Helm, ArgoCD, and relevant GitHub Actions run if applicable.
-      placeholder: Ubuntu 24.04 WSL2 / Docker Desktop 4.x / k3d 5.x / k3s v1.35.x / kubectl v1.35.x / ArgoCD 3.x
+      description: OS, Docker Engine, k3d/k3s, kubectl, Helm, ArgoCD, and relevant GitHub Actions run if applicable.
+      placeholder: Ubuntu 24.04 LTS server / Docker Engine 29.x / k3d 5.x / k3s v1.35.x / kubectl v1.35.x / ArgoCD 3.x
     validations:
       required: true
   - type: dropdown

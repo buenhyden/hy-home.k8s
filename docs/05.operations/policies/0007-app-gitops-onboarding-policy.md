@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.0.1"
+version: "1.0.3"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -25,19 +25,19 @@ artifact_id: "POL-0007"
 
 ### Purpose
 
-`운영 정책 — WSL2 k3d/k3s GitOps 앱 온보딩`
+`운영 정책 — Linux server k3d/k3s GitOps 앱 온보딩`
 
 ## Policy Scope
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
 - Argo Rollouts, AnalysisTemplate, ingress-nginx, cert-manager, Istio sidecar/mTLS 패턴
-- 앱 단위 Vault/ExternalSecret 연동과 Traefik local dynamic config 연결
+- 앱 단위 OpenBao/ExternalSecret 연동과 k8s router host 계약
 
 ## Applies To
 
 - **Systems**: `gitops/workloads/`, `examples/sample-app/`, `gitops/clusters/local/appproject-apps.yaml`
 - **Agents**: 문서/운영 자동화 에이전트
-- **Environments**: WSL2 local cluster
+- **Environments**: Linux server local cluster
 
 ## Controls
 
@@ -86,15 +86,15 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ### 2-2. Ingress 설정
 
-신규 앱 Ingress는 `ingressClassName: nginx`, `cert-manager.io/cluster-issuer: mkcert-ca-issuer`, `nginx.ingress.kubernetes.io/ssl-redirect: "true"`, `<appname>.127.0.0.1.nip.io` host 계약을 따라야 한다.
+신규 앱 Ingress는 `ingressClassName: nginx`, `cert-manager.io/cluster-issuer: mkcert-ca-issuer`, `nginx.ingress.kubernetes.io/ssl-redirect: "true"`, `<appname>.hy-k8s.home.arpa` host 계약을 따라야 한다.
 
-### 2-3. Traefik 연동 필수
+### 2-3. k8s router 경로
 
-모든 `*.127.0.0.1.nip.io` 도메인은 외부 Traefik router 설정이 있어야 한다.
+`*.hy-k8s.home.arpa` 도메인은 k8s 전용 router가 받으므로 외부 저장소 변경이 필요 없다.
 
-- **위치**: `hy-home.docker/infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml`
-- **패턴**: `examples/sample-app/traefik-k3d.yaml.example` 참조
-- **Required evidence**: 별도 Traefik repo 변경이 리뷰되고 k8s Ingress host와 router rule이 일치한다.
+- **공통 router 통제**: [POL-0001](./0001-k8s-gitops-operations-policy.md)의 ingress/TLS 통제
+- **apex path(선택)**: `hy-k8s.home.arpa/<appname>` 진입이 필요하면 `gitops/platform/ingress-routes/apex-redirects.yaml`에 같은 형식의 redirect Ingress를 추가하고 `scripts/validate-infrastructure-contracts.sh`의 앱 목록을 함께 갱신한다.
+- **Required evidence**: 앱 Ingress host가 `<appname>.hy-k8s.home.arpa`이고, 이름 해석이 k8s router 주소 `192.168.0.14`를 가리킨다.
 
 ---
 
@@ -105,6 +105,10 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 `apps` namespace에 PeerAuthentication STRICT가 적용되어 있다.
 
 - **신규 앱**: 별도 PeerAuthentication 불필요 (namespace 정책 자동 적용)
+- **현재 소유 위치**: namespace 전체 STRICT `PeerAuthentication default`는
+  `gitops/workloads/adminer/peer-authentication.yaml`이 adminer와 함께 배포한다.
+  adminer를 제거하거나 이동하는 변경은 이 리소스를 먼저 platform 소유로
+  옮겨야 하며, 그렇지 않으면 `apps` 전체의 STRICT mTLS가 함께 사라진다.
 - **전제**: Pod에 Istio sidecar가 주입되어야 함 (`apps` namespace에 `istio-injection: enabled` 라벨)
 
 ### 3-2. NetworkPolicy
@@ -114,6 +118,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 - postgres (172.18.0.15:15432, 15433) egress 허용
 - kube-dns egress 허용
 - Istiod egress 허용
+- cluster pod CIDR(`10.42.0.0/16`) egress 허용 (in-cluster mTLS 통신)
 
 **신규 외부 서비스 연결 필요 시**: `gitops/platform/network-policies/apps-egress.yaml`에 egress 규칙을 추가하고 Platform 팀(운영자 본인)에 변경 요청한다.
 
@@ -142,7 +147,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | 항목        | 규칙                           | 예시                        |
 | ----------- | ------------------------------ | --------------------------- |
 | `<appname>` | 소문자, 하이픈 구분            | `my-api`                    |
-| 도메인      | `<appname>.127.0.0.1.nip.io`   | `my-api.127.0.0.1.nip.io`   |
+| 도메인      | `<appname>.hy-k8s.home.arpa`   | `my-api.hy-k8s.home.arpa`   |
 | TLS Secret  | `<appname>-tls`                | `my-api-tls`                |
 | Vault 경로  | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
 | ESO key     | `apps/<appname>/config`        | `apps/my-api/config`        |
@@ -164,8 +169,8 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | ------------------ | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Repository/package | GitHub CI가 ghcr.io 이미지를 발행하고 패키지 가시성이 홈랩 계약에 맞음                                              | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | GitOps manifests   | `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`, `kustomization.yaml`이 필수 계약을 만족함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Network/TLS        | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, nip.io hostname이 적용됨                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| External routing   | 외부 Traefik dynamic config가 별도 Traefik repo에서 리뷰되고 k8s Ingress 계약과 일치함                              | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Network/TLS        | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, hy-k8s.home.arpa hostname이 적용됨                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| External routing   | 앱 host가 k8s router로 해석되고, apex path가 필요하면 redirect Ingress가 추가됨                                     | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | Secret handling    | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음                                        | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | Runtime health     | ArgoCD Application, Rollout, Pod readiness, Ingress/TLS 접근 증적이 남음                                            | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 
@@ -173,7 +178,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ## Exceptions
 
-- `kubectl apply` 또는 AppProject live 반영은 human-approved bootstrap/break-glass 상황에서만 허용한다.
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 human-approved bootstrap/break-glass 공통 예외를 따른다.
 - ExternalSecret이 필요 없는 앱은 Vault 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
 
 ## Verification

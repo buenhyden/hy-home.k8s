@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.0.3"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-23"
 layer: "specs"
 artifact_id: "SPEC-0049"
 ---
@@ -60,6 +60,8 @@ does not claim that Argo CD reconciled it, Vault authenticated it, ESO synced
 it, TLS verified it, or a live cluster admitted it.
 
 **Disposition note (2026-09-16).** The resume condition above can no longer be met. Spec 0048 did not close with evidence; it was withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md), so waiting on it is waiting on something that will not happen. This package nonetheless stays `draft` rather than following it, because its scope is real and unowned: no `kustomize`, `kubeconform`, `kubeval` or `helm template` invocation exists anywhere in this repository, so VAL-PVSE-002 and VAL-PVSE-003 have no substitute owner, and no evidence contract file exists for VAL-PVSE-001. Withdrawing it would erase a recorded gap rather than resolve it. Activation now requires a new plan rather than a predecessor's closure, including a home for the contract location `.agents/contracts/`, which does not exist in the adopted layout. Next owner: the request owner.
+
+**Disposition note (2026-09-23).** Two scopes above no longer match accepted decisions, and whoever activates this package must drop them. First, [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md) retires the `traefik/` reference files, so the Traefik product-semantic lane, `scripts/validate-traefik-contracts.py`, and VAL-PVSE-004 have nothing to validate. The router contract that replaces them is owned by [SPEC-0008](../0008-current-local-gitops-platform/spec.md) VAL-SPC-005. Second, `conftest` is a required tool for the `policy-gates` lane, not an optional one with a built-in fallback. [ADR-0041](../../02.architecture/decisions/0041-openbao-secret-backend.md) names the secret backend OpenBao behind the unchanged Vault API contract. The package stays `draft`.
 
 ## Strategic Boundaries & Non-goals
 

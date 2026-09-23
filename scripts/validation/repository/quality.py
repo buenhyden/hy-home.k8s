@@ -674,7 +674,6 @@ expected_sample_app_files = [
     "kustomization.yaml",
     "rollout.yaml",
     "service.yaml",
-    "traefik-k3d.yaml.example",
 ]
 actual_sample_app_files = sorted(
     path.name for path in sample_app_dir.iterdir() if path.is_file()
@@ -2203,7 +2202,6 @@ markdown_direct_push_roots = [
     root / "docs/README.md",
     root / "gitops",
     root / "infrastructure",
-    root / "traefik",
     root / "examples",
     root / "docs/05.operations",
     root / "docs/90.references",
@@ -2954,7 +2952,7 @@ else:
         if contract == "Vault API":
             for phrase, value in [
                 ("vault-external.platform.svc.cluster.local", host),
-                ("172.18.0.8", host),
+                ("172.18.0.17", host),
                 ("8200", port),
                 ("ClusterSecretStore", database_or_path),
                 ("platform/argocd", database_or_path),
@@ -4013,52 +4011,52 @@ else:
             + ", ".join(expected_infrastructure_coverage_areas)
         )
 
-wsl2_prerequisite_rows = markdown_table_after_heading(
+host_prerequisite_rows = markdown_table_after_heading(
     infrastructure_readme,
-    profiled_readme_table_headings("WSL2 Runtime Prerequisite Matrix"),
+    profiled_readme_table_headings("Host Runtime Prerequisite Matrix"),
 )
-expected_wsl2_prerequisite_header = [
+expected_host_prerequisite_header = [
     "Prerequisite",
     "Repository SSoT",
     "Owner / responsibility",
     "Validation / evidence",
     "Failure boundary",
 ]
-expected_wsl2_prerequisites = [
-    "WSL2 shell and Docker context",
+expected_host_prerequisites = [
+    "Host shell and Docker context",
     "kubectl and k3d context",
     "kubeconfig and TLS trust",
     "Port and network contracts",
-    "WSL networking constraints",
+    "Host networking constraints",
 ]
-if len(wsl2_prerequisite_rows) < 2:
+if len(host_prerequisite_rows) < 2:
     fail(
-        "infrastructure/README.md WSL2 Runtime Prerequisite Matrix must contain a header and prerequisite rows"
+        "infrastructure/README.md Host Runtime Prerequisite Matrix must contain a header and prerequisite rows"
     )
-elif wsl2_prerequisite_rows[0] != expected_wsl2_prerequisite_header:
+elif host_prerequisite_rows[0] != expected_host_prerequisite_header:
     fail(
-        "infrastructure/README.md WSL2 Runtime Prerequisite Matrix header must be: "
-        + " | ".join(expected_wsl2_prerequisite_header)
+        "infrastructure/README.md Host Runtime Prerequisite Matrix header must be: "
+        + " | ".join(expected_host_prerequisite_header)
     )
 else:
-    indexed_wsl2_prerequisites: list[str] = []
-    for row_number, row in enumerate(wsl2_prerequisite_rows[1:], start=1):
-        if len(row) != len(expected_wsl2_prerequisite_header):
+    indexed_host_prerequisites: list[str] = []
+    for row_number, row in enumerate(host_prerequisite_rows[1:], start=1):
+        if len(row) != len(expected_host_prerequisite_header):
             fail(
-                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
-                f"row {row_number} must have {len(expected_wsl2_prerequisite_header)} columns"
+                "infrastructure/README.md Host Runtime Prerequisite Matrix "
+                f"row {row_number} must have {len(expected_host_prerequisite_header)} columns"
             )
             continue
         prerequisite_cell, ssot, owner, validation, failure_boundary = row
         match = re.fullmatch(r"`([^`]+)`", prerequisite_cell)
         if not match:
             fail(
-                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
+                "infrastructure/README.md Host Runtime Prerequisite Matrix "
                 f"row {row_number} must start with a backticked prerequisite name"
             )
             continue
         prerequisite = match.group(1)
-        indexed_wsl2_prerequisites.append(prerequisite)
+        indexed_host_prerequisites.append(prerequisite)
         for label, value in [
             ("Repository SSoT", ssot),
             ("Owner / responsibility", owner),
@@ -4067,15 +4065,15 @@ else:
         ]:
             if not value:
                 fail(
-                    f"infrastructure/README.md WSL2 Runtime Prerequisite Matrix row {row_number} has empty {label}"
+                    f"infrastructure/README.md Host Runtime Prerequisite Matrix row {row_number} has empty {label}"
                 )
-        if prerequisite == "WSL2 shell and Docker context":
+        if prerequisite == "Host shell and Docker context":
             if (
-                "WSL-native Docker" not in ssot
+                "native Docker Engine" not in ssot
                 or "docker context show" not in validation
             ):
                 fail(
-                    "infrastructure/README.md Docker prerequisite row must cite WSL-native Docker and docker context show"
+                    "infrastructure/README.md Docker prerequisite row must cite native Docker Engine and docker context show"
                 )
             if "does not switch contexts automatically" not in failure_boundary:
                 fail(
@@ -4120,19 +4118,19 @@ else:
                     fail(
                         f"infrastructure/README.md port/network prerequisite row missing validation command: {command}"
                     )
-        elif prerequisite == "WSL networking constraints":
-            if "127.0.0.1.nip.io" not in ssot or "Traefik dynamic configs" not in ssot:
+        elif prerequisite == "Host networking constraints":
+            if "hy-k8s.home.arpa" not in ssot or "192.168.0.14" not in ssot:
                 fail(
-                    "infrastructure/README.md WSL networking row must cite nip.io and Traefik dynamic configs"
+                    "infrastructure/README.md host networking row must cite hy-k8s.home.arpa and the k8s router address 192.168.0.14"
                 )
             if "outside repo-static ownership" not in failure_boundary:
                 fail(
-                    "infrastructure/README.md WSL networking row must keep Windows/WSL gateway state outside repo-static ownership"
+                    "infrastructure/README.md host networking row must keep host DNS and gateway state outside repo-static ownership"
                 )
-    if indexed_wsl2_prerequisites != expected_wsl2_prerequisites:
+    if indexed_host_prerequisites != expected_host_prerequisites:
         fail(
-            "infrastructure/README.md WSL2 Runtime Prerequisite Matrix row order must be: "
-            + ", ".join(expected_wsl2_prerequisites)
+            "infrastructure/README.md Host Runtime Prerequisite Matrix row order must be: "
+            + ", ".join(expected_host_prerequisites)
         )
 
 bootstrap_boundary_rows = markdown_table_after_heading(
@@ -4240,7 +4238,7 @@ else:
             for phrase, value in [
                 ("k3d/k3d-cluster.yaml", repo_resp),
                 ("k3d-hyhome", repo_resp),
-                ("WSL-native Docker", operator_resp),
+                ("native Docker Engine", operator_resp),
                 ("human-approved", operator_resp),
                 ("k3d cluster create", command_surface),
                 ("infrastructure/verify/verify-cluster.sh", verification),
@@ -4433,174 +4431,10 @@ else:
                 + ", ".join(extra_run_all_calls)
             )
 
-traefik_dir = root / "traefik"
-traefik_readme_path = traefik_dir / "README.md"
-traefik_readme = read_text(traefik_readme_path)
-normalized_traefik_readme = re.sub(r"\s+", " ", traefik_readme)
-for phrase in [
-    "`k3d-hyhome-serverlb` is not the external Traefik gateway",
-    "hy-home.docker external gateway container",
-    "external Traefik dynamic config",
-    "not a k3d GitOps desired-state failure",
-    "repo-static 검증은 route manifest 계약만 확인",
-    "live port availability",
-    "operator-owned runtime evidence",
-]:
-    if phrase not in normalized_traefik_readme:
-        fail(
-            f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}"
-        )
-traefik_rows = markdown_table_after_heading(
-    traefik_readme,
-    profiled_readme_table_headings("Traefik Route Inventory"),
-)
-expected_traefik_header = [
-    "Config",
-    "Router host",
-    "Backend URL",
-    "Boundary",
-    "Validation",
-]
-traefik_configs = sorted(traefik_dir.glob("*.yaml"))
-traefik_config_names = {path.name for path in traefik_configs}
-if len(traefik_rows) < 2:
-    fail(
-        "traefik/README.md Traefik Route Inventory must contain a header and route rows"
-    )
-elif traefik_rows[0] != expected_traefik_header:
-    fail(
-        "traefik/README.md Traefik Route Inventory header must be: "
-        + " | ".join(expected_traefik_header)
-    )
-else:
-    indexed_traefik_configs: dict[str, list[str]] = {}
-    for row_number, row in enumerate(traefik_rows[1:], start=1):
-        if len(row) != len(expected_traefik_header):
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must have {len(expected_traefik_header)} columns"
-            )
-            continue
-        config_match = re.fullmatch(r"`([^`]+\.yaml)`", row[0])
-        host_match = re.fullmatch(r"`([^`]+)`", row[1])
-        backend_match = re.fullmatch(r"`([^`]+)`", row[2])
-        if not config_match:
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must start with a backticked config filename"
-            )
-            continue
-        if not host_match:
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Router host"
-            )
-            continue
-        if not backend_match:
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Backend URL"
-            )
-            continue
-        config_name = config_match.group(1)
-        host = host_match.group(1)
-        backend_url = backend_match.group(1)
-        boundary = row[3]
-        validation = row[4]
-        if config_name in indexed_traefik_configs:
-            fail(
-                f"traefik/README.md Traefik Route Inventory duplicates config: {config_name}"
-            )
-        indexed_traefik_configs[config_name] = row
-        if not boundary or "Reference-only" not in boundary:
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary"
-            )
-        if not validation or "python3 scripts/qa.py full" not in validation:
-            fail(
-                f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation"
-            )
-
-        config_path = traefik_dir / config_name
-        if not config_path.exists():
-            fail(
-                f"traefik/README.md Traefik Route Inventory references missing config: {config_name}"
-            )
-            continue
-        try:
-            config = load_yaml(config_path)
-        except Exception as exc:
-            fail(f"Traefik config YAML parse failed for {rel(config_path)}: {exc}")
-            continue
-        http = config.get("http") if isinstance(config, dict) else {}
-        services = http.get("services") if isinstance(http, dict) else {}
-        routers = http.get("routers") if isinstance(http, dict) else {}
-        transports = http.get("serversTransports") if isinstance(http, dict) else {}
-        if not isinstance(services, dict) or len(services) != 1:
-            fail(f"{rel(config_path)} must define exactly one Traefik service")
-            continue
-        if not isinstance(routers, dict) or len(routers) != 1:
-            fail(f"{rel(config_path)} must define exactly one Traefik router")
-            continue
-        service_name, service = next(iter(services.items()))
-        router_name, router = next(iter(routers.items()))
-        load_balancer = service.get("loadBalancer") if isinstance(service, dict) else {}
-        servers = (
-            load_balancer.get("servers") if isinstance(load_balancer, dict) else []
-        )
-        urls = [
-            server.get("url")
-            for server in servers
-            if isinstance(server, dict) and server.get("url")
-        ]
-        if urls != [backend_url]:
-            fail(
-                f"{rel(config_path)} backend URL must match README inventory: {backend_url}"
-            )
-        if load_balancer.get("passHostHeader") is not True:
-            fail(f"{rel(config_path)} loadBalancer.passHostHeader must be true")
-        transport_name = load_balancer.get("serversTransport")
-        if not transport_name or transport_name not in transports:
-            fail(
-                f"{rel(config_path)} service must reference a defined serversTransport"
-            )
-        elif transports.get(transport_name, {}).get("insecureSkipVerify") is not True:
-            fail(
-                f"{rel(config_path)} serversTransport must set insecureSkipVerify: true"
-            )
-        expected_rule = f"Host(`{host}`)"
-        if not isinstance(router, dict) or router.get("rule") != expected_rule:
-            fail(
-                f"{rel(config_path)} router rule must match README inventory host: {expected_rule}"
-            )
-        entrypoints = router.get("entryPoints") if isinstance(router, dict) else []
-        if entrypoints != ["websecure"]:
-            fail(f"{rel(config_path)} router entryPoints must be exactly ['websecure']")
-        if router.get("service") != service_name:
-            fail(
-                f"{rel(config_path)} router service must reference the defined service"
-            )
-        if "tls" not in router:
-            fail(f"{rel(config_path)} router must define tls")
-
-    for config_name in sorted(traefik_config_names - set(indexed_traefik_configs)):
-        fail(
-            f"traefik/README.md Traefik Route Inventory missing config row: {config_name}"
-        )
-    for config_name in sorted(set(indexed_traefik_configs) - traefik_config_names):
-        fail(
-            f"traefik/README.md Traefik Route Inventory references missing config: {config_name}"
-        )
-
-stale_traefik_backend_pattern = "k3d-hyhome-serverlb:443"
-for path in sorted(
-    [*traefik_configs, root / "examples/sample-app/traefik-k3d.yaml.example"]
-):
-    text = read_text(path)
-    if stale_traefik_backend_pattern in text:
-        fail(
-            f"{rel(path)} contains stale Traefik backend: {stale_traefik_backend_pattern}"
-        )
-    if "https://172.18.0.240:443" not in text:
-        fail(
-            f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443"
-        )
+# ADR-0043 retired the external Traefik reference files; k8s routes are
+# Ingress objects served by the dedicated k8s router.
+if (root / "traefik").exists():
+    fail("traefik/ was retired by ADR-0043; declare k8s routes as Ingress objects")
 
 executable_reference_source_suffixes = {
     ".md",

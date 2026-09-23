@@ -91,7 +91,7 @@ require_pattern '172\.18\.0\.15' "$POSTGRES_EXTERNAL"
 
 require_pattern 'name:\s*vault-external' "$VAULT_EXTERNAL"
 require_pattern 'port:\s*8200' "$VAULT_EXTERNAL"
-require_pattern '172\.18\.0\.8' "$VAULT_EXTERNAL"
+require_pattern '172\.18\.0\.17' "$VAULT_EXTERNAL"
 
 echo "[INFO] Vault/ESO local-only, identity, RBAC, and policy contracts are owned by scripts/validate-vault-eso-contracts.py"
 
@@ -101,9 +101,9 @@ require_pattern 'port:\s*6379' "$VALKEY_EXTERNAL"
 require_pattern '172\.18\.0\.9' "$VALKEY_EXTERNAL"
 
 echo "[INFO] verify ArgoCD host/TLS/ingress contracts"
-require_pattern 'domain:\s*argocd\.127\.0\.0\.1\.nip\.io' "$ARGOCD_VALUES"
+require_pattern 'domain:\s*argo\.hy-k8s\.home\.arpa' "$ARGOCD_VALUES"
 require_pattern 'hosts:\s*$' "$ARGOCD_VALUES"
-require_pattern 'argocd\.127\.0\.0\.1\.nip\.io' "$ARGOCD_VALUES"
+require_pattern 'argo\.hy-k8s\.home\.arpa' "$ARGOCD_VALUES"
 require_pattern 'secretName:\s*argocd-local-tls' "$ARGOCD_VALUES"
 require_pattern 'type:\s*LoadBalancer' "$INGRESS_APP"
 
@@ -172,7 +172,7 @@ require_pattern 'repoURL:\s*https://argoproj\.github\.io/argo-helm' "$ROLLOUTS_A
 require_pattern 'chart:\s*argo-rollouts' "$ROLLOUTS_APP"
 require_pattern 'targetRevision:\s*2\.40\.9' "$ROLLOUTS_APP"
 require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_APP"
-require_pattern 'rollouts\.127\.0\.0\.1\.nip\.io' "$ROLLOUTS_APP"
+require_pattern 'rollouts\.hy-k8s\.home\.arpa' "$ROLLOUTS_APP"
 require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
 require_pattern 'name:\s*argo-rollouts-metrics-np' "$METRICS_NODEPORTS"
@@ -268,7 +268,7 @@ require_pattern 'image:\s*adminer:' "$ADMINER_ROLLOUT"
 require_pattern 'templateName:\s*adminer-stability' "$ADMINER_ROLLOUT"
 require_pattern 'stableService:\s*adminer-stable' "$ADMINER_ROLLOUT"
 require_pattern 'canaryService:\s*adminer-canary' "$ADMINER_ROLLOUT"
-require_pattern 'host:\s*adminer\.127\.0\.0\.1\.nip\.io' "$ADMINER_INGRESS"
+require_pattern 'host:\s*adminer\.hy-k8s\.home\.arpa' "$ADMINER_INGRESS"
 require_pattern 'ingressClassName:\s*nginx' "$ADMINER_INGRESS"
 require_pattern 'mode:\s*STRICT' "$ADMINER_PA"
 require_pattern 'name:\s*adminer-stability' "$ADMINER_AT"
@@ -287,9 +287,21 @@ MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml
 require_file "$MONITORING_NP"
 require_pattern '172\.18\.0\.13/32' "$MONITORING_NP"
 require_pattern 'port:\s*3100' "$MONITORING_NP"
+require_pattern '172\.18\.0\.10/32' "$MONITORING_NP"
+require_pattern 'port:\s*9090' "$MONITORING_NP"
+
+# In-cluster telemetry collection (ADR-0045): the in-cluster Alloy remote-writes
+# k8s metrics to the external Prometheus instead of relying on NodePort scrapes.
+ALLOY_K8S="$ROOT_DIR/gitops/platform/monitoring/alloy-k8s-logs.yaml"
+require_pattern 'prometheus\.remote_write "external_prometheus"' "$ALLOY_K8S"
+require_pattern 'url = "http://prometheus-external\.platform\.svc\.cluster\.local:9090/api/v1/write"' "$ALLOY_K8S"
+require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
+for job in kubernetes-pods kubelet cadvisor; do
+  require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
+done
 
 echo "[INFO] verify external-secrets egress NetworkPolicy"
-require_pattern '172\.18\.0\.8/32' "$ESO_EGRESS_NP"
+require_pattern '172\.18\.0\.17/32' "$ESO_EGRESS_NP"
 require_pattern 'port:\s*8200' "$ESO_EGRESS_NP"
 require_multiline_pattern 'kubernetes\.io/metadata\.name:\s*kube-system\n([[:space:]].*\n)*[[:space:]]+k8s-app:\s*kube-dns' "$ESO_EGRESS_NP"
 require_pattern 'port:\s*53' "$ESO_EGRESS_NP"
@@ -301,6 +313,28 @@ require_pattern 'kind:\s*ExternalSecret' "$SAMPLE_EXTERNAL_SECRET"
 require_pattern 'key:\s*apps/<appname>/config' "$SAMPLE_EXTERNAL_SECRET"
 if grep -Pq 'key:\s*secret/apps/<appname>/config' "$SAMPLE_EXTERNAL_SECRET"; then
   fail 'sample ExternalSecret remoteRef.key must omit ClusterSecretStore mount prefix'
+fi
+
+# k8s router contract (ADR-0043): the k3d serverlb binds only the dedicated
+# host address and forwards to fixed ingress-nginx NodePorts; k8s hosts live
+# under hy-k8s.home.arpa and the apex path redirects to the subdomain.
+K3D_CONFIG="$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml"
+APEX_REDIRECTS="$ROOT_DIR/gitops/platform/ingress-routes/apex-redirects.yaml"
+require_pattern "port:\s*'?192\.168\.0\.14:80:30080'?" "$K3D_CONFIG"
+require_pattern "port:\s*'?192\.168\.0\.14:443:30443'?" "$K3D_CONFIG"
+if grep -Pq "port:\s*'?(80|443):(80|443)'?\s*$" "$K3D_CONFIG"; then
+  fail 'k3d serverlb must not bind host 80/443 on every address (ADR-0043)'
+fi
+require_pattern 'http:\s*30080' "$INGRESS_APP"
+require_pattern 'https:\s*30443' "$INGRESS_APP"
+require_pattern '^\s*-\s*platform-ingress-routes-app\.yaml' "$ROOT_KUSTOMIZATION"
+for app in argo kiali headlamp rollouts adminer; do
+  require_pattern "path:\s*/${app}$" "$APEX_REDIRECTS"
+  require_pattern "permanent-redirect:\s*https://${app}\.hy-k8s\.home\.arpa/$" "$APEX_REDIRECTS"
+done
+if grep -rPq '(argo|argocd|kiali|headlamp|rollouts|adminer)\.hy\.home\.arpa' \
+  "$ROOT_DIR/gitops" "$ROOT_DIR/infrastructure" "$ROOT_DIR/examples"; then
+  fail 'k8s hosts must use hy-k8s.home.arpa, not hy.home.arpa (ADR-0043)'
 fi
 
 echo "[PASS] static contract verification passed"

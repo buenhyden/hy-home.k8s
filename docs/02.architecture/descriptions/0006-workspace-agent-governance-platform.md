@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.8.0"
+version: "1.8.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -196,8 +196,8 @@ cancellation, missing results, and unexpected skips. Static QA uses pinned tools
 and minimal permissions; it does not need provider credentials or a cluster.
 
 Argo CD reconciles `gitops/` desired state within the existing operating boundary.
-`infrastructure/` supplies bootstrap support, `traefik/` carries integration
-references, and `examples/` contains examples. `policy/` is Kubernetes
+`infrastructure/` supplies bootstrap support and `examples/` contains
+examples. `policy/` is Kubernetes
 Conftest/Rego policy, separate from common agent policy. External Vault,
 PostgreSQL, and Valkey remain interface contracts, not services operated by QA.
 

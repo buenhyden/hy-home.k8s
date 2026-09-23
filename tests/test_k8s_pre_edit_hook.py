@@ -671,9 +671,9 @@ class ShellWriteObservationTests(unittest.TestCase):
         self.assertIn(SAMPLE_DOCUMENT, result.stdout)
 
     def test_shell_tee_target_is_reported(self):
-        result = run_hook(shell_payload("printf x | tee traefik/example.yaml"), ROOT)
+        result = run_hook(shell_payload("printf x | tee gitops/example.yaml"), ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("traefik/example.yaml", result.stdout)
+        self.assertIn("gitops/example.yaml", result.stdout)
 
     def test_ordinary_and_unreadable_shell_commands_never_block(self):
         for command in (

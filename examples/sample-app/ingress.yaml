@@ -4,11 +4,11 @@
 #   cert-manager가 mkcert-ca-issuer로 인증서를 발급하여 <appname>-tls Secret에 저장한다.
 #   ingress-nginx가 해당 Secret을 사용하여 TLS 종료를 수행한다.
 #
-# 접근 URL: https://<appname>.127.0.0.1.nip.io
+# 접근 URL: https://<appname>.hy-k8s.home.arpa
 #
-# Traefik 연동 필요:
-#   hy-home.docker 레포에 infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml 추가 필요.
-#   패턴: examples/sample-app/traefik-k3d.yaml.example 참조.
+# k8s 전용 router(192.168.0.14:443)가 이 host를 받으므로 외부 저장소 변경은 없다.
+# hy-k8s.home.arpa/<appname> 진입이 필요하면
+# gitops/platform/ingress-routes/apex-redirects.yaml에 redirect Ingress를 추가한다.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -20,7 +20,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: <appname>.127.0.0.1.nip.io
+    - host: <appname>.hy-k8s.home.arpa
       http:
         paths:
           - path: /
@@ -32,5 +32,5 @@ spec:
                   number: <port>
   tls:
     - hosts:
-        - <appname>.127.0.0.1.nip.io
+        - <appname>.hy-k8s.home.arpa
       secretName: <appname>-tls # pragma: allowlist secret

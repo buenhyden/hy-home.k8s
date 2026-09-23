@@ -1,10 +1,10 @@
 ---
 title: "05.operations/guides"
-version: "0.1.3"
+version: "0.1.4"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 ---
 # 05.operations/guides
@@ -73,7 +73,7 @@ docs/05.operations/guides/
 
 - 모든 Guide 문서는 [guide.template.md](../../99.templates/templates/operations/guide.template.md)의 frontmatter와 필수 섹션을 유지한다.
 - 기존 Spec, Policy, Runbook이 소유하는 계약을 중복 정의하지 않고 상대 링크로 연결한다.
-- 실행 예시는 재현 가능한 형태로 작성하되, live cluster mutation이나 secret 값 노출은 승인된 bootstrap/break-glass 문맥으로 제한한다.
+- 실행 예시는 재현 가능한 형태로 작성하고, 고위험 명령 경계는 [Operations Mutation Boundary](../README.md#operations-mutation-boundary)를 따른다.
 
 ### Traceability Rules
 

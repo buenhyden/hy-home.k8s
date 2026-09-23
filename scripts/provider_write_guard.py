@@ -452,7 +452,7 @@ def authored_doc_route(
 def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
     manifest_re = re.compile(
         r"(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|"
-        r"examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$"
+        r"examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml)$"
     )
     secret_re = re.compile(r"(secret|credential|password|token)", re.IGNORECASE)
     document_routes = load_document_routes(resolved_root)

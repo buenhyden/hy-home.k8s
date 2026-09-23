@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0008"
 ---
@@ -224,7 +224,7 @@ import sys, json
 d = json.load(sys.stdin)
 print('수집된 앱 수:', len(d['data']['result']))
 "
-# → 수집된 앱 수: 10 이상 (ArgoCD 관리 앱 수 기준)
+# → gitops/apps/root가 정의한 Application 수 이상
 ```
 
 ---

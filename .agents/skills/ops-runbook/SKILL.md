@@ -12,7 +12,7 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Purpose
 
 Author and review operations runbooks (`docs/05.operations/runbooks/`) for this repository's
-WSL2+k3d+ArgoCD platform. Ensure runbooks are executable, verifiable, and safe for operator
+Linux server + k3d + ArgoCD platform. Ensure runbooks are executable, verifiable, and safe for operator
 use without requiring cluster access delegation.
 
 ## Trigger Phrases

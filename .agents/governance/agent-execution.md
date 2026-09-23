@@ -1,17 +1,17 @@
 ---
 title: "Agent Execution Policy"
-version: "1.1.0"
+version: "1.1.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-23"
 ---
 
 # Agent Execution Policy
 
 ## Overview
 
-Keep agent work evidence-backed, scoped, and GitOps-first for this WSL2+k3d
+Keep agent work evidence-backed, scoped, and GitOps-first for this Linux server + k3d
 home-lab platform. The normal outcome is a reviewable repository change, not a
 live infrastructure mutation.
 

@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Webhook Requirement Package"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-23"
 layer: "requirements"
 artifact_id: "REQ-0002"
 ---
@@ -113,6 +113,6 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 - **Plan**: [`../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md`](../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
 - **Task**: [Spec 0005 Plan](../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
 - **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **ADR**: [`../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
+- **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
 - **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
 - **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — ESO/Vault 의존

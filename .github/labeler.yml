@@ -13,7 +13,6 @@ area/infrastructure:
   - changed-files:
       - any-glob-to-any-file:
           - "infrastructure/**"
-          - "traefik/**"
 
 area/examples:
   - changed-files:

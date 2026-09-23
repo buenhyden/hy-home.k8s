@@ -11,7 +11,7 @@ spec:
     # Vault (mng-vault on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.18.0.8/32
+            cidr: 172.18.0.17/32
       ports:
         - protocol: TCP
           port: 8200
@@ -35,7 +35,7 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-    # Kubernetes API server (post-DNAT: 172.18.0.2:6443)
+    # Kubernetes API server (post-DNAT: k3d server node in 172.18.0.0/24, port 6443)
     - to:
         - ipBlock:
             cidr: 172.18.0.0/24

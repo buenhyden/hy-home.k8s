@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.2"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -74,8 +74,10 @@ OWNER=<github-owner>   # 예: buenhyden
 TAG=<tag>              # 예: v1.0.0
 PORT=<port>            # 예: 8080
 
-# 예시 복사
-cp -r examples/sample-app gitops/workloads/${APP}
+# 예시 manifest만 복사 (README는 ApplicationSet 감지 경로에 두지 않는다)
+git switch -c feat/${APP}-gitops
+mkdir -p gitops/workloads/${APP}
+cp examples/sample-app/*.yaml gitops/workloads/${APP}/
 
 # 플레이스홀더 일괄 교체
 for f in gitops/workloads/${APP}/*.yaml; do
@@ -91,26 +93,12 @@ done
 cat gitops/workloads/${APP}/rollout.yaml | grep image
 ```
 
-### 1-2. Traefik 설정 추가 (hy-home.docker 레포)
+### 1-2. 접속 이름 확인
 
-```bash
-# traefik-k3d.yaml.example은 hy-home.docker 레포에 추가
-DOCKER_REPO=/path/to/hy-home.docker
-
-cp examples/sample-app/traefik-k3d.yaml.example \
-  ${DOCKER_REPO}/infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
-
-sed -i "s|<appname>|${APP}|g" \
-  ${DOCKER_REPO}/infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
-
-# hy-home.docker 레포 커밋
-cd ${DOCKER_REPO}
-git add infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
-git commit -m "feat: add traefik router for ${APP}"
-# feature branch로 push한 뒤 PR review/merge를 거친다
-git push origin feat/${APP}-traefik
-cd -
-```
+앱은 k8s 전용 router가 받는 `${APP}.hy-k8s.home.arpa`로 노출되므로 외부
+저장소 변경이 없다. 이름 해석(`/etc/hosts` 또는 DNS)이 `192.168.0.14`를 가리키는지
+operator가 확인한다. `hy-k8s.home.arpa/${APP}` 진입이 필요하면
+`gitops/platform/ingress-routes/apex-redirects.yaml`에 redirect Ingress를 추가한다.
 
 ### 1-3. GitOps 커밋 & 푸시
 
@@ -163,11 +151,11 @@ kubectl get ingress -n apps ${APP}
 | Pod         | `2/2 Running`                        |
 | ArgoCD      | `Synced` / `Healthy`                 |
 | AnalysisRun | `Successful`                         |
-| Ingress     | HOSTS에 `<appname>.127.0.0.1.nip.io` |
+| Ingress     | HOSTS에 `<appname>.hy-k8s.home.arpa` |
 
 ```bash
 # 브라우저 접속 확인
-curl -sk https://${APP}.127.0.0.1.nip.io | head -5
+curl -sk https://${APP}.hy-k8s.home.arpa | head -5
 ```
 
 ---
@@ -176,6 +164,7 @@ curl -sk https://${APP}.127.0.0.1.nip.io | head -5
 
 ```bash
 NEW_TAG=v1.1.0
+git switch -c chore/${APP}-${NEW_TAG}
 
 # rollout.yaml 태그 업데이트
 sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \

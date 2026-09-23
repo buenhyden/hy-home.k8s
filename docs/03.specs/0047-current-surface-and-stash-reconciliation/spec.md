@@ -1,10 +1,10 @@
 ---
 title: "Current Surface and Stash Reconciliation Technical Specification"
-version: "1.0.3"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-23"
 layer: "specs"
 artifact_id: "SPEC-0047"
 ---
@@ -49,6 +49,8 @@ GitHub routing, platform validation, or IaC validation gaps assigned to Specs
 those tranches.
 
 **Disposition note (2026-09-16).** This package stays `active` and is not closed by [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). Its activation Task is `done` while five implementation Tasks are `queued`, and one obligation is genuinely unowned: the stash object its Plan names is still reachable and no validator covers it. SPEC-0078 recorded on 2026-09-14 that its CSASR-004 is obsolete and that cancelling a queued Task needs two edges. Neither finding closes the package, because the stash obligation outlives the criterion that named it. Next owner: SPEC-0047, for a disposition that decides the stash rather than the state.
+
+**Disposition note (2026-09-23).** The `traefik` target in the current-surface disposition contract is retired by [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md). CSASR-001 records it as removed rather than inventorying it; the other targets are unchanged.
 
 ## Strategic Boundaries & Non-goals
 

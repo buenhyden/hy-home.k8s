@@ -30,7 +30,7 @@ eso_np="$(kubectl -n external-secrets get networkpolicy allow-external-secrets-e
 [ -n "$eso_np" ] || fail "missing external-secrets/allow-external-secrets-egress-to-vault"
 
 eso_np_ip="$(kubectl -n external-secrets get networkpolicy allow-external-secrets-egress-to-vault -o jsonpath='{.spec.egress[0].to[0].ipBlock.cidr}' 2>/dev/null || true)"
-[ "$eso_np_ip" = "172.18.0.8/32" ] || fail "external-secrets vault egress cidr mismatch (actual=$eso_np_ip)"
+[ "$eso_np_ip" = "172.18.0.17/32" ] || fail "external-secrets vault egress cidr mismatch (actual=$eso_np_ip)"
 
 eso_np_port="$(kubectl -n external-secrets get networkpolicy allow-external-secrets-egress-to-vault -o jsonpath='{.spec.egress[0].ports[0].port}' 2>/dev/null || true)"
 [ "$eso_np_port" = "8200" ] || fail "external-secrets vault egress port mismatch (actual=$eso_np_port)"

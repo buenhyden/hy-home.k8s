@@ -68,10 +68,9 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "Workload Image and Kind Policy Matrix",
             "Namespace Ownership Matrix",
             "Infrastructure Coverage Matrix",
-            "WSL2 Runtime Prerequisite Matrix",
+            "Host Runtime Prerequisite Matrix",
             "Bootstrap Boundary Matrix",
             "Infrastructure Test Inventory",
-            "Traefik Route Inventory",
         )
         table = "\n| Name | Value |\n| --- | --- |\n| alpha | one |\n"
         parse = self.rules["parse_markdown_table_after_heading"]

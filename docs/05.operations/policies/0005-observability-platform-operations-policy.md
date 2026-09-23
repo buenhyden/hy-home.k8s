@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.0.0"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -28,7 +28,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 - **Systems**: `gitops/platform/`, `gitops/clusters/local/`, external observability workspace
 - **Roles**: Platform Owner, Observability Owner, approved operator
-- **Environment**: WSL2 local cluster와 연결된 external observability services
+- **Environment**: Linux server local cluster와 연결된 external observability services
 
 ## Controls
 
@@ -48,14 +48,25 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-002 ArgoCD metrics | Observability Owner | NodePorts 30082-30086 | Prometheus target evidence |
 | OBS-003 cluster metrics | Observability Owner | NodePorts 30090-30092 | expected services and targets |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment and Prometheus config | Ready streams and loaded rule groups |
+| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to `172.18.0.10:9090` | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
 ### Service Port Naming
 
-Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
+`gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다. mesh 밖 namespace의 metrics NodePort는 이 명명 통제 대상이 아니다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
 PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.
+
+### In-Cluster Metric Collection
+
+k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
+([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)).
+Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote
+write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 아래 NodePort
+예약은 외부 Prometheus의 static scrape를 위한 과도기 경로이며, remote write가
+live로 확인된 뒤 폐지한다. 그 static target 주소 `172.18.0.2`는 외부
+Traefik과 겹치므로 NodePort 경로를 새 증거로 쓰지 않는다.
 
 ### Metrics NodePort Reservations
 
@@ -84,9 +95,11 @@ kubeconfig 권한을 부여하지 않는다.
 
 ## Exceptions
 
-NodePort 또는 AppProject live 변경은 Platform Owner가 승인한 bootstrap 또는
-break-glass 상황에서만 허용한다. 변경 시 manifest, external scrape target,
-관련 Runbook을 같은 변경으로 동기화하고 GitOps reconciliation 증적을 남긴다.
+NodePort 또는 AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest, external
+scrape target, 관련 Runbook을 같은 변경으로 동기화하는 것이다. 외부
+Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
+이 저장소의 Runbook은 그 결과를 검증만 한다.
 
 ## Verification
 

@@ -1,10 +1,10 @@
 ---
 title: "Project Map"
-version: "0.1.0"
+version: "0.1.1"
 type: "governance/knowledge"
 status: "draft"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-23"
 ---
 
 # Project Map
@@ -32,7 +32,6 @@ them. A disagreement between a row and its owner is resolved by the owner.
 | Desired state | `gitops/` | `gitops/README.md` | ArgoCD reconciliation stays the normal change path |
 | Cluster bootstrap | `infrastructure/` | `infrastructure/README.md` | The local k3d platform is created from tracked assets |
 | Policy rules | `policy/` | `policy/README.md` | Policy rules stay separate from the lanes that run them |
-| Local gateway reference | `traefik/` | `traefik/README.md` | The canonical deployment path stays `gitops/` |
 | Reference material | `examples/` | `examples/README.md` | Examples stay reference-only and are not deployed |
 | Repository tooling | `scripts/` | `scripts/README.md` | Validation routing stays registry-owned |
 | Tooling tests | `tests/` | `tests/README.md` | Each validator keeps an independent top-level test |

@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.3"
+version: "1.0.5"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -15,22 +15,20 @@ artifact_id: "POL-0003"
 
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
-
-> 현재 클러스터 UI 계약은 [ADR-0014](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)에 따라 Headlamp다.
-> 대체된 UI 설계는 운영 기준으로 사용하지 않으며, 운영 기준은 `0004-rollouts-notifications-headlamp-policy.md`를 따른다.
+클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
+k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
 
 ## Policy Scope
 
 - cert-manager + mkcert ClusterIssuer(`mkcert-ca-issuer`)
 - Istio(istiod) + sidecar 주입 정책
 - Kiali + 외부 Observability 연동
-- Traefik router 계약 (외부 repo)
 
 ## Applies To
 
-- **Systems**: `gitops/platform/{cert-manager,headlamp,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istio-cni-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
+- **Systems**: `gitops/platform/{cert-manager,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istio-cni-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
 - **Agents**: 문서/운영 자동화 에이전트
-- **Environments**: WSL2 local cluster
+- **Environments**: Linux server local cluster
 
 ## Controls
 
@@ -49,16 +47,10 @@ artifact_id: "POL-0003"
   - `mkcert-root-ca` Secret 평문 커밋
   - ClusterIssuer 다중 운영 (이름 오염 위험)
 
-### Cluster UI
-
-- **Required**:
-  - Headlamp 운영 기준은 [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)를 따른다.
-  - 대체된 클러스터 UI 재설치는 ADR-0014의 현재 Headlamp 계약에 의해 금지한다.
-
 ### Istio / Service Mesh
 
 - **Required**:
-  - IngressGateway 비활성화 유지 (`gateways.enabled: false`)
+  - IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008)
   - sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여
   - istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests)
   - sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`)
@@ -78,26 +70,17 @@ artifact_id: "POL-0003"
   - Grafana: `in_cluster_url` `http://grafana-external.platform.svc.cluster.local:3000`, 브라우저 링크 `url` `http://172.18.0.14:3000`
   - Tempo(Tracing): `in_cluster_url` `http://tempo-external.platform.svc.cluster.local:3200`
   - egress NetworkPolicy: `172.18.0.10/32`, `172.18.0.12/32`, `172.18.0.14/32` cidr 허용
-  - hostname: `kiali.127.0.0.1.nip.io`, TLS: cert-manager 발급 (`kiali-tls`)
+  - hostname: `kiali.hy-k8s.home.arpa`, TLS: cert-manager 발급 (`kiali-tls`)
 - **Disallowed**:
   - 프로덕션에 anonymous auth 유지
   - Kiali egress를 `0.0.0.0/0` 등 광역 cidr로 확장
-
-### Traefik Router 계약
-
-- **Required**:
-  - 외부 Traefik repo에서 `headlamp-k3d.yaml`, `kiali-k3d.yaml`, `rollouts-k3d.yaml` 라우터 관리
-  - `insecureSkipVerify: true`, `passHostHeader: true` 유지 (Traefik → k3d TLS 특성)
-  - 라우터 규칙 hostname과 ArgoCD Application Ingress hostname 일치 유지
-- **Disallowed**:
-  - 본 repo에서 Traefik 라우팅 파일 직접 배포
 
 ### CI Governance
 
 - `scripts/validate-infrastructure-contracts.sh` PASS가 모든 IP/endpoint
   변경의 선행 조건이다. 이 검사의 선택과 실행은 QA 실행 레지스트리가 소유한다.
 - shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
-- cert-manager/Headlamp/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
+- cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
 ## Exceptions
 
@@ -106,13 +89,13 @@ artifact_id: "POL-0003"
 
 ## Verification
 
-- endpoint, TLS, Traefik 경계 계약 검증 증적을 남긴다.
+- endpoint와 TLS 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
 
 ## Review Cadence
 
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
-- cert-manager, Istio, Kiali, Headlamp 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
+- cert-manager, Istio, Kiali 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
 
 ## Traceability
 
@@ -128,4 +111,4 @@ artifact_id: "POL-0003"
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — cert-manager, Headlamp, Istio, Kiali, and Traefik controls derive from accepted architecture and current operations evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for component and namespace controls; external Traefik owner for router artifacts | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, Kiali egress limits, Headlamp contract, and reviewed external router copies |
+| N/A — cert-manager, Istio, and Kiali controls derive from accepted architecture and current operations evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for component and namespace controls | ClusterIssuer and CA-secret contract, namespace injection rules, Istio sync waves, and Kiali egress limits |

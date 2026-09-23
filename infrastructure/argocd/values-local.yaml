@@ -1,5 +1,5 @@
 global:
-  domain: argocd.127.0.0.1.nip.io
+  domain: argo.hy-k8s.home.arpa
 
 configs:
   cm:
@@ -23,11 +23,11 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.127.0.0.1.nip.io
+    hostname: argo.hy-k8s.home.arpa
     tls: false
     extraTls:
       - hosts:
-          - argocd.127.0.0.1.nip.io
+          - argo.hy-k8s.home.arpa
         secretName: argocd-local-tls # pragma: allowlist secret
 
 notifications:

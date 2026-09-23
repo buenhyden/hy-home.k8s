@@ -1,10 +1,10 @@
 ---
 title: "Kiali with External Observability Stack"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "ADR-0009"
 ---
@@ -19,7 +19,7 @@ artifact_id: "ADR-0009"
 
 Istio 서비스메시의 트래픽 토폴로지와 메트릭을 시각화하기 위해 Kiali가 필요하다.
 Prometheus, Grafana, Tempo는 Docker-hosted 외부 관측성 스택으로 운영 중이며, K8s 내부에 별도 설치 없이 GitOps Service/EndpointSlice로 연동한다.
-Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
+Docker Traefik은 `kiali.hy-k8s.home.arpa`를 k3d ingress로 프록시한다.
 
 ## Decision
 
@@ -30,7 +30,7 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
   - Prometheus: `http://172.18.0.10:9090`
   - Grafana: `http://172.18.0.14:3000`
   - Tracing (Tempo): `http://172.18.0.12:3200`
-- 인그레스: `ingress-nginx`, hostname `kiali.127.0.0.1.nip.io`.
+- 인그레스: `ingress-nginx`, hostname `kiali.hy-k8s.home.arpa`.
 - TLS: cert-manager `ClusterIssuer`(mkcert CA)로 발급.
 - 인증: anonymous (로컬 환경 전용).
 - 외부 노출: Docker Traefik router `kiali-k3d` 추가 (별도 Traefik repo 관리).
@@ -72,6 +72,12 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 - Bad: Istio 서비스메시 토폴로지 시각화 불가
 
 ## Traceability
+
+**Current-state clarification (2026-09-23).** The browser route this decision
+assigns to the external Docker Traefik is retired. The host is served by the
+dedicated k8s router under
+[ADR-0043](./0043-dedicated-k8s-ingress-router.md); the rest of this decision
+is unchanged.
 
 **Current-state clarification (2026-09-14).** The install-mode clauses of this
 decision no longer describe the implementation. Since commit `b54655ad`

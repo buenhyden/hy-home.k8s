@@ -159,4 +159,4 @@ repos:
     hooks:
       - id: kube-linter
         args: [--config, .kube-linter.yaml]
-        files: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$'
+        files: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml)$'

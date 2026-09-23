@@ -1,18 +1,18 @@
 ---
 title: "infrastructure"
-version: "0.1.1"
+version: "0.1.3"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 ---
 # infrastructure
 
-> WSL2 + k3d + 외부 서비스 연동 기반 로컬 플랫폼 인프라 자산을 관리한다.
+> Linux server + k3d + 외부 서비스 연동 기반 로컬 플랫폼 인프라 자산을 관리한다.
 
 ## Overview
 
-이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다. WSL2/WSL-native Docker/k3d 클러스터, 외부 서비스 연동 계약, ArgoCD 설치 값 파일, bootstrap 검증 스크립트, 정적 계약 테스트를 포함한다.
+이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다. Linux server/native Docker Engine/k3d 클러스터, 외부 서비스 연동 계약, ArgoCD 설치 값 파일, bootstrap 검증 스크립트, 정적 계약 테스트를 포함한다.
 
 이 경로는 로컬 k3d 플랫폼을 만들기 위한 실행 자산을 보관하지만, 정상 운영 변경은 `gitops/` 선언과 ArgoCD reconciliation을 통해 처리한다.
 
@@ -68,26 +68,26 @@ infrastructure/
 | Area | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
 | --- | --- | --- | --- | --- |
 | `argocd/` | Local ArgoCD Helm values owned by platform maintainers. | Bootstrap-time values for ingress, TLS, and external Valkey integration. | Depends on k3d, ingress, mkcert CA, external Valkey, and Vault-backed secret flow. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live state requires ArgoCD and ingress/TLS checks. |
-| `k3d/` | Local cluster configuration owned by platform maintainers. | Defines local k3d cluster shape and port exposure. | Depends on WSL2, WSL-native Docker, k3d, and local network conventions. | Validate by static review and live `infrastructure/verify/verify-cluster.sh` when a cluster is available. |
+| `k3d/` | Local cluster configuration owned by platform maintainers. | Defines local k3d cluster shape and the k8s router bind `192.168.0.14:80/443` to NodePorts `30080/30443`. | Depends on the Linux server host, native Docker Engine, k3d, and local network conventions (ADR-0042). | Validate by static review and live `infrastructure/verify/verify-cluster.sh` when a cluster is available. |
 | `verify/` | Live cluster validation scripts owned by platform/ops maintainers. | Covers cluster, GitOps, external service, ingress/TLS, network policy, and secret verification. | Requires a bootstrapped k3d/ArgoCD environment and reachable external services. | Run `run-all.sh` only for intentional live validation; the repository-static contract check is `scripts/validate-infrastructure-contracts.sh`. |
 | `vault/` | Vault policy samples owned by platform/security maintainers. | Stores least-privilege HCL policy material for ESO read access; the Rego manifest rules in `policy/` are a different owner and evaluator. | Depends on external Vault runtime and approved secret paths; never stores secret values. | Validate policy expectations through static contracts; live policy state requires external Vault verification. |
 | `bootstrap-local.sh` | Local bootstrap entrypoint owned by platform maintainers. | Creates initial namespace, secret, MetalLB, and root GitOps application before ArgoCD owns desired state. | Depends on interactive `/dev/tty`, HTTPS Vault, a readable `VAULT_CA_FILE`, kubectl context, k3d, Helm, and local certificates. | Validate with `bash -n infrastructure/bootstrap-local.sh` and `python3 scripts/validate-vault-eso-contracts.py --root .`; execution is human-approved bootstrap work, not normal agent mutation. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
 
-### WSL2 Runtime Prerequisite Matrix
+### Host Runtime Prerequisite Matrix
 
-이 표는 WSL2 + WSL Linux native Docker + k3d live validation을 시작하기 전
+이 표는 Linux server + native Docker Engine + k3d live validation을 시작하기 전
 확인해야 하는 runtime 전제를 모은다. 정적 검증은 이 표의 SSoT와 failure
 boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자동으로
 수행하지 않는다.
 
 | Prerequisite | Repository SSoT | Owner / responsibility | Validation / evidence | Failure boundary |
 | --- | --- | --- | --- | --- |
-| `WSL2 shell and Docker context` | WSL2 Ubuntu shell with WSL-native Docker; Docker context must be checked from inside WSL. | Operator owns local Docker daemon/context and external runtime startup. | Run `docker context show` and confirm Docker commands work from WSL before bootstrap. | Wrong Docker context or Docker Desktop-only context blocks bootstrap; this repository records the blocker and does not switch contexts automatically. |
+| `Host shell and Docker context` | Linux server (Ubuntu 24.04 LTS) shell with the native Docker Engine; the Docker context is checked on the host. | Operator owns the host Docker daemon/context and external runtime startup. | Run `docker context show` and confirm Docker commands work on the host before bootstrap. | A wrong or remote Docker context blocks bootstrap; this repository records the blocker and does not switch contexts automatically. |
 | `kubectl and k3d context` | Local cluster name and kubectl context are `k3d-hyhome`; cluster shape lives in `k3d/k3d-cluster.yaml`. | Operator owns cluster creation/reuse through `bootstrap-local.sh` and k3d. | Run `k3d cluster list` and `kubectl config current-context`; live proof uses `infrastructure/verify/verify-cluster.sh`. | Missing cluster or wrong context blocks live validation; static gates remain valid. |
 | `kubeconfig and TLS trust` | Default kubeconfig is `~/.kube/config` unless `KUBECONFIG` is intentionally set for a temporary check. | Operator owns kubeconfig CA trust and context repair. | `kubectl version --request-timeout=5s` must reach the API server; `x509: certificate signed by unknown authority` is a TLS trust blocker. | TLS trust repair is an operator action, not an automatic doc/static-gate side effect. |
 | `Port and network contracts` | Current local contracts are ingress-nginx LoadBalancer `172.18.0.240:443`, Valkey `172.18.0.9:6379`, and PostgreSQL HAProxy `172.18.0.15:15432/15433`. | External service workspace owns service containers and addresses; this repository owns Kubernetes interface contracts. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses `run-all.sh` after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up. |
-| `WSL networking constraints` | Local UI routes use `127.0.0.1.nip.io` hostnames and Traefik dynamic configs target the k3d ingress-nginx backend. | Operator owns Windows/WSL networking, host reachability, and optional external Traefik gateway. | Validate dynamic config statically; live Traefik 443 checks are explicit runtime validation. | Windows portproxy, firewall, or external gateway state is outside repo-static ownership. |
+| `Host networking constraints` | k8s hosts are `<name>.hy-k8s.home.arpa` served by the k8s router: the k3d serverlb bound to `192.168.0.14:80/443` (ADR-0043). External service hosts stay on `hy.home.arpa` behind the external Traefik. | Operator owns assigning `192.168.0.14` to the host, `hy-k8s.home.arpa` name resolution, the host firewall, and binding the external Traefik to its own address. | `validate-infrastructure-contracts.sh` checks the serverlb bind, NodePorts, and apex redirects statically; `CHECK_K8S_ROUTER=true` in `verify-ingress-tls.sh` is the explicit runtime check. | Host address, DNS, firewall, or external gateway state is outside repo-static ownership. |
 
 ### Bootstrap Boundary Matrix
 
@@ -97,7 +97,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 | Boundary | Repository responsibility | Operator / external responsibility | Allowed command surface | Verification / evidence | Failure boundary |
 | --- | --- | --- | --- | --- | --- |
-| `k3d cluster creation` | Owns `k3d/k3d-cluster.yaml`, bootstrap prechecks, and documented `k3d-hyhome` context contract. | Operator owns WSL2 shell, WSL-native Docker context, port availability, and the human-approved bootstrap run. | `./bootstrap-local.sh` may call `k3d cluster create` during bootstrap-only execution. | Static README guardrails plus `k3d cluster list`, `kubectl config current-context`, and live `infrastructure/verify/verify-cluster.sh`. | Repo-static checks do not create, delete, or repair clusters; wrong Docker/kubectl context remains operator-owned. |
+| `k3d cluster creation` | Owns `k3d/k3d-cluster.yaml`, bootstrap prechecks, and documented `k3d-hyhome` context contract. | Operator owns the Linux server shell, native Docker Engine context, port availability, and the human-approved bootstrap run. | `./bootstrap-local.sh` may call `k3d cluster create` during bootstrap-only execution. | Static README guardrails plus `k3d cluster list`, `kubectl config current-context`, and live `infrastructure/verify/verify-cluster.sh`. | Repo-static checks do not create, delete, or repair clusters; wrong Docker/kubectl context remains operator-owned. |
 | `ArgoCD installation` | Owns `argocd/values-local.yaml`, bootstrap script install flow, and ArgoCD ingress/TLS configuration contract. | Operator owns Helm/kubectl execution, certificate inputs, and approved bootstrap timing. | `./bootstrap-local.sh` may run `helm upgrade --install` for ArgoCD before GitOps ownership is established. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Agents do not directly install or upgrade ArgoCD outside approved bootstrap/break-glass evidence. |
 | `root app application` | Owns `gitops/clusters/local/root-application.yaml`, `gitops/apps/root`, and App-of-Apps source path/branch contracts. | Operator owns the first root app apply and any approved recovery action before ArgoCD reconciliation is healthy. | `./bootstrap-local.sh` may run `kubectl apply` for the root GitOps Application as a bootstrap-only exception. | `bash scripts/validate-gitops-structure.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Steady-state app changes stay in Git PRs and ArgoCD reconciliation; direct apply is not normal operation. |
 | `Vault connection contract` | Owns `gitops/platform/external-services/vault-external.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and the in-cluster HTTP route is local-only rather than production TLS. | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
@@ -117,13 +117,13 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 | `verify-secrets.sh` | Live | External Secrets Operator, Vault auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-external-services.sh` | Live | Platform namespace services and EndpointSlices exist for external PostgreSQL, Vault, Valkey, and observability contracts. | PASS means live service ports and EndpointSlice addresses match the declared local contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional Traefik check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional k8s router check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
 
 ## Configuration Boundary
 
 Repository files own bootstrap inputs and static interface contracts. The
-operator owns WSL2, Docker, kubeconfig, live cluster, external services,
+operator owns the Linux server host, Docker, kubeconfig, live cluster, external services,
 credentials, certificates, and approved bootstrap timing. Secret values and
 private runtime state must not be copied into this tree or validation evidence.
 
@@ -168,9 +168,9 @@ result boundaries recorded in the inventory below.
 - **라이브 검증 (k3d 클러스터 필요)**: `verify-cluster.sh`, `verify-gitops.sh`, `verify-external-services.sh`, `verify-ingress-tls.sh`, `verify-network-policies.sh`, `verify-secrets.sh`, `run-all.sh` — 실행 전 k3d 클러스터가 부트스트랩되어 있어야 한다.
 
 기본 `run-all.sh`는 ingress-nginx LoadBalancer fallback 경로를 검증한다.
-외부 Traefik 443 증명은 `CHECK_TRAEFIK_443=true`를 명시한 별도 live check이며,
-Docker에 외부 Traefik gateway 컨테이너가 없으면 `hy-home.docker` runtime 또는
-dynamic config 반영 증거가 부족한 상태로 기록한다.
+k8s router(`192.168.0.14:443`)와 apex redirect 증명은 `CHECK_K8S_ROUTER=true`를
+명시한 별도 live check이며, host에 `192.168.0.14`가 할당되지 않았거나 외부
+Traefik이 모든 주소의 443을 점유하면 runtime blocker로 기록한다.
 
 `run-all.sh`가 첫 단계에서 `kubectl cannot reach cluster`로 실패하면
 클러스터가 없거나 kubeconfig/context/TLS trust가 맞지 않는 상태다. 특히

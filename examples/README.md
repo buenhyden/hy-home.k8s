@@ -1,10 +1,10 @@
 ---
 title: "examples"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-23"
 ---
 # examples
 
@@ -103,7 +103,7 @@ These repository-static checks do not prove provider or live-cluster readiness.
 
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
-| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, and ExternalSecret; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `python3 scripts/qa.py full`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 

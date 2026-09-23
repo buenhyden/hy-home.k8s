@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts for Progressive Delivery"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-07-13"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "ADR-0011"
 ---
@@ -26,7 +26,7 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 
 - Argo Rollouts v1.9.0 (chart 2.40.9)을 `argo-rollouts` namespace에 설치한다.
 - Chart: `argoproj.github.io/argo-helm`, chart name: `argo-rollouts`
-- Rollouts Dashboard를 함께 활성화하고 `rollouts.127.0.0.1.nip.io`로 노출한다.
+- Rollouts Dashboard를 함께 활성화하고 `rollouts.hy-k8s.home.arpa`로 노출한다.
 - Controller metrics 활성화 (외부 Prometheus `172.18.0.10`으로 수집).
 - 기본 promotion 정책은 자동 promotion을 강제하지 않는다. 앱별 Rollout은 승인된 Prometheus AnalysisTemplate을 사용할 수 있다.
 - Prometheus analysis provider는 외부 Prometheus endpoint 사용.
@@ -58,6 +58,12 @@ Accepted — 2026-03-30
 | 수동 배포     | 안전하지만 자동화 없음                                       |
 
 ## Traceability
+
+**Current-state clarification (2026-09-23).** The browser route this decision
+assigns to the external Docker Traefik is retired. The host is served by the
+dedicated k8s router under
+[ADR-0043](./0043-dedicated-k8s-ingress-router.md); the rest of this decision
+is unchanged.
 
 - [ADR-0002](./0002-argocd-helm-and-gitops-model.md) — ArgoCD GitOps 모델
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts 이벤트 알림

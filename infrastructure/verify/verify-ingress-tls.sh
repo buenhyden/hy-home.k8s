@@ -2,11 +2,12 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-ARGOCD_HOST="${ARGOCD_HOST:-argocd.127.0.0.1.nip.io}"
+ARGOCD_HOST="${ARGOCD_HOST:-argo.hy-k8s.home.arpa}"
 ARGOCD_FALLBACK_PORT_WAS_SET="${ARGOCD_FALLBACK_PORT+x}"
 ARGOCD_FALLBACK_PORT="${ARGOCD_FALLBACK_PORT:-443}"
 ARGOCD_FALLBACK_IP="${ARGOCD_FALLBACK_IP:-}"
-CHECK_TRAEFIK_443="${CHECK_TRAEFIK_443:-false}"
+K8S_ROUTER_IP="${K8S_ROUTER_IP:-192.168.0.14}"
+CHECK_K8S_ROUTER="${CHECK_K8S_ROUTER:-false}"
 
 fail() {
   echo "[FAIL] $*" >&2
@@ -16,7 +17,7 @@ fail() {
 TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/verify-ingress-tls.XXXXXXXX")" ||
   fail "cannot create private temporary directory"
 TLS_FALLBACK_OUTPUT="$TEMP_DIR/argocd-tls-fallback.txt"
-TLS_TRAEFIK_OUTPUT="$TEMP_DIR/argocd-tls-traefik443.txt"
+TLS_ROUTER_OUTPUT="$TEMP_DIR/argocd-tls-router443.txt"
 
 cleanup() {
   local status=$?
@@ -70,14 +71,22 @@ curl -kIs --max-time 5 \
 rg -q '^HTTP/' "$TLS_FALLBACK_OUTPUT" ||
   fail "https fallback endpoint did not return HTTP response"
 
-if [ "$CHECK_TRAEFIK_443" = "true" ]; then
-  curl -kIs --max-time 5 "https://${ARGOCD_HOST}" >"$TLS_TRAEFIK_OUTPUT" 2>/dev/null ||
-    fail "Traefik 443 endpoint is not reachable (${ARGOCD_HOST}:443)"
-  rg -q '^HTTP/' "$TLS_TRAEFIK_OUTPUT" ||
-    fail "Traefik 443 endpoint did not return HTTP response"
-  echo "[INFO] Traefik 443 check passed"
+# k8s router (ADR-0043): the k3d serverlb on K8S_ROUTER_IP:443 must answer for
+# the canonical host, and the apex path must redirect to it.
+if [ "$CHECK_K8S_ROUTER" = "true" ]; then
+  curl -kIs --max-time 5 --resolve "${ARGOCD_HOST}:443:${K8S_ROUTER_IP}" \
+    "https://${ARGOCD_HOST}" >"$TLS_ROUTER_OUTPUT" 2>/dev/null ||
+    fail "k8s router endpoint is not reachable (${ARGOCD_HOST} via ${K8S_ROUTER_IP}:443)"
+  rg -q '^HTTP/' "$TLS_ROUTER_OUTPUT" ||
+    fail "k8s router endpoint did not return HTTP response"
+  curl -kIs --max-time 5 --resolve "hy-k8s.home.arpa:443:${K8S_ROUTER_IP}" \
+    "https://hy-k8s.home.arpa/argo" >"$TLS_ROUTER_OUTPUT" 2>/dev/null ||
+    fail "k8s router apex endpoint is not reachable (hy-k8s.home.arpa via ${K8S_ROUTER_IP}:443)"
+  rg -qi "^location: https://${ARGOCD_HOST}/" "$TLS_ROUTER_OUTPUT" ||
+    fail "hy-k8s.home.arpa/argo does not redirect to https://${ARGOCD_HOST}/"
+  echo "[INFO] k8s router check passed"
 else
-  echo "[INFO] Traefik 443 check skipped (set CHECK_TRAEFIK_443=true to enforce)"
+  echo "[INFO] k8s router check skipped (set CHECK_K8S_ROUTER=true to enforce)"
 fi
 
 echo "[INFO] Checking least-privilege consistency"

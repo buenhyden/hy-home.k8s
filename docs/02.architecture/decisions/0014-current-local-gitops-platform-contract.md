@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Contract"
-version: "1.0.2"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-23"
 layer: "architecture"
 artifact_id: "ADR-0014"
 ---
@@ -64,6 +64,17 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Bad: Loses reviewable routing and replacement evidence.
 
 ## Traceability
+
+**Current-state clarification (2026-09-23).** The host named here as
+WSL2 with WSL-native Docker is a single Linux server with the native Docker
+Engine under [ADR-0042](./0042-linux-server-single-host-baseline.md). Every
+other clause of this decision is unchanged.
+
+**Current-state clarification (2026-09-23).** The secret backend named here as
+Vault is now OpenBao under
+[ADR-0041](./0041-openbao-secret-backend.md). The ESO integration, the
+`vault-external` and `vault-backend` identifiers, and the secret-value boundary
+stated above are unchanged.
 
 **Current-state clarification (2026-09-14).** The archive clauses below predate ADR-0030 and ADR-0038. A superseded decision body
 leaves the Stage 02 decision log for `docs/98.archive/superseded/` with its

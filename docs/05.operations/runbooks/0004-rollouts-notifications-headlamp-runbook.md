@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.0.4"
+version: "1.1.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -27,7 +27,7 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 
 - Rollouts Controller가 기동하지 않거나 CRD가 없을 때
 - Notifications Slack 알림이 전달되지 않을 때
-- Headlamp에 접근 불가 (404/502) 상황
+- Headlamp에 접근 불가 (401/404/502) 또는 `headlamp-tls` 미발급 상황
 - 초기 플랫폼 부트스트랩 후 신규 컴포넌트 검증 시
 
 ---
@@ -35,6 +35,8 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 ## Procedure or Checklist
 
 아래 절차는 Notifications secret 준비, controller 상태 확인, Rollouts 상태 확인, Headlamp 및 Rollouts Dashboard 접근 검증 순서로 수행한다.
+[RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 CLI 전제에 더해
+`kubectl argo rollouts` plugin이 필요하다.
 
 ### Procedure 1: Vault Notifications Secret 준비 (최초 1회)
 
@@ -70,6 +72,11 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=100 | grep 
 ```
 
 ### 복구: ESO 재동기화
+
+아래 annotation과 이 런북의 restart·promote·undo 명령은 live
+state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
+[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions)에 따른
+operator-approved 실행에서만 사용한다.
 
 ```bash
 kubectl -n argocd annotate externalsecret argocd-notifications-secret \
@@ -119,8 +126,30 @@ kubectl -n headlamp get pods,ingress,svc
 kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
 kubectl -n headlamp get secret headlamp-tls 2>/dev/null
 
-# HTTP 응답 확인
-curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
+# HTTP 응답 확인 (mkcert rootCA로 TLS 검증)
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  -o /dev/null -w '%{http_code}' https://headlamp.hy-k8s.home.arpa/
+```
+
+### 복구: Headlamp TLS NotReady
+
+`headlamp-tls`가 `READY=False`이면 먼저 ClusterIssuer 복구를
+[RUN-0003](./0003-platform-expansion-bootstrap-runbook.md)으로 확인한다.
+
+```bash
+kubectl -n headlamp describe certificate headlamp-tls
+kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
+argocd app get platform-headlamp-config --hard-refresh
+```
+
+### 복구: Headlamp Token Unauthorized
+
+브라우저 접근이 401이면 chart가 만든 ClusterRoleBinding을 확인하고 단기
+ServiceAccount token을 발급한다. token은 문서, 로그, 채팅에 남기지 않는다.
+
+```bash
+kubectl get clusterrolebinding headlamp-admin
+kubectl -n headlamp create token headlamp --duration=1h
 ```
 
 ### 복구: Headlamp 재시작
@@ -129,13 +158,15 @@ curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
 kubectl -n headlamp rollout restart deployment headlamp
 ```
 
-### Traefik artifact 적용 확인
+### k8s router 경로 확인
 
 ```bash
-# Traefik 컨테이너에서 headlamp-k3d 라우터 상태 확인
-# (Traefik 관리 UI 또는 API에서 확인)
-# Kubernetes 사이드에서는 ingress 상태만 확인 가능
+# Ingress host와 TLS 상태
 kubectl -n headlamp get ingress headlamp -o yaml
+# k8s router(192.168.0.14:443)를 직접 지정해 이름 해석 문제와 분리한다
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  --resolve headlamp.hy-k8s.home.arpa:443:192.168.0.14 \
+  -o /dev/null -w '%{http_code}' https://headlamp.hy-k8s.home.arpa/
 ```
 
 ---
@@ -148,7 +179,8 @@ kubectl -n argo-rollouts get pods
 kubectl -n argo-rollouts get ingress
 
 # HTTP 응답 확인
-curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  -o /dev/null -w '%{http_code}' https://rollouts.hy-k8s.home.arpa/
 ```
 
 ---
@@ -161,20 +193,20 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - [ ] `argocd-notifications-secret` ESO 동기화 완료
 - [ ] `argocd-notifications-cm` ConfigMap 존재
 - [ ] `headlamp` namespace에 Pod Running, Ingress Ready
-- [ ] `https://headlamp.127.0.0.1.nip.io/` → 200 응답
-- [ ] `https://rollouts.127.0.0.1.nip.io/` → 200 응답
-- [ ] Traefik artifact (`headlamp-k3d.yaml`, `rollouts-k3d.yaml`) 외부 Traefik 레포에 적용됨
+- [ ] `https://headlamp.hy-k8s.home.arpa/` → 200 응답
+- [ ] `https://rollouts.hy-k8s.home.arpa/` → 200 응답
+- [ ] `hy-k8s.home.arpa/headlamp`, `hy-k8s.home.arpa/rollouts` → 301 응답
 
 ## Observability and Evidence Sources
 
-- **Signals**: Rollouts controller readiness, notification controller logs, Headlamp ingress/TLS status, Traefik HTTP response codes.
+- **Signals**: Rollouts controller readiness, notification controller logs, Headlamp ingress/TLS status, k8s router HTTP response codes.
 - **Evidence to Capture**: pod status output, Slack send/error log snippets, HTTP response codes, ArgoCD Application health.
 
 ## Safe Rollback or Recovery Procedure
 
 - Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
 - Notifications 문제가 발생하면 Vault secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다.
-- Headlamp 접근 실패 시 Ingress/TLS/Traefik artifact를 확인하고, Dashboard 재도입이 아니라 Headlamp 경로를 복구한다.
+- Headlamp 접근 실패 시 Ingress/TLS와 k8s router 경로를 확인하고, Dashboard 재도입이 아니라 Headlamp 경로를 복구한다.
 
 ### Troubleshooting Signatures
 

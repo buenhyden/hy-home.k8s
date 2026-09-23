@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.0.0"
+version: "1.1.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -13,7 +13,7 @@ artifact_id: "POL-0001"
 
 ## Overview
 
-이 문서는 WSL2 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
+이 문서는 Linux server 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
 여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
 검증 baseline을 뜻한다.
@@ -23,14 +23,14 @@ artifact_id: "POL-0001"
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 Vault의 시크릿 경계
 - 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스
-- ingress-nginx, 외부 Traefik, AppProject, NetworkPolicy 통제
+- ingress-nginx, k8s 전용 router, AppProject, NetworkPolicy 통제
 - repository 정적 검증과 승인된 runtime 검증의 증적 경계
 
 ## Applies To
 
 - **Systems**: `infrastructure/`, `gitops/`, `.github/workflows/`
 - **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
-- **Environment**: WSL2 local cluster와 GitHub Actions
+- **Environment**: Linux server local cluster와 GitHub Actions
 
 ## Controls
 
@@ -49,7 +49,7 @@ artifact_id: "POL-0001"
 | PLAT-001 topology | Platform Owner | `infrastructure/k3d/k3d-cluster.yaml` | `servers: 1`, `agents: 3`; inotify preflight `>= 512` |
 | PLAT-002 external desired state | Platform Owner | `gitops/platform/external-services/*.yaml` | reviewed Service/EndpointSlice definitions |
 | PLAT-003 secret boundary | Security Reviewer | Vault, ESO, secret scanners | no plaintext secret; approved Vault/ESO health evidence |
-| PLAT-004 ingress and TLS | Platform Owner | ingress-nginx, Traefik, ArgoCD ingress | host, TLS secret, route target agreement |
+| PLAT-004 ingress and TLS | Platform Owner | ingress-nginx, k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
 | PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
 | PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
 
@@ -61,13 +61,20 @@ artifact_id: "POL-0001"
   PostgreSQL read `15433`을 유지한다.
 - Vault는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰,
   비밀번호, API key를 저장하지 않는다.
-- 호스트 접근은 `https://vault.127.0.0.1.nip.io`, cluster 내부 ESO 접근은
+- 시크릿 backend는 Vault API 호환 OpenBao이며, Kubernetes 식별자
+  `vault-external`·`vault-backend`와 ESO `vault` provider를 유지한다.
+- 호스트 접근은 `https://openbao.hy.home.arpa`, cluster 내부 ESO 접근은
   `vault-external.platform.svc`를 사용한다.
 - Vault Kubernetes auth는 현재 API endpoint와 reviewer JWT/CA 경계를
   소유 Runbook의 검증 대상으로 유지한다.
-- ArgoCD host는 `argocd.127.0.0.1.nip.io`, TLS secret은
-  `argocd-local-tls`이며, 외부 Traefik `websecure/443`은 ingress-nginx
-  LoadBalancer endpoint로 라우팅한다.
+- ArgoCD host는 `argo.hy-k8s.home.arpa`, TLS secret은 `argocd-local-tls`다.
+- k8s 플랫폼 UI와 앱은 `<name>.hy-k8s.home.arpa`로만 노출하고, k8s 전용
+  router(k3d serverlb, `192.168.0.14:80/443` → ingress-nginx NodePort
+  `30080/30443`)를 거친다
+  ([ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md)).
+  `hy-k8s.home.arpa/<name>`은 `gitops/platform/ingress-routes/`의 301
+  redirect가 소유한다. 외부 서비스 workspace의 Traefik은 k8s route를 싣지
+  않는다.
 - AppProject source/destination과 RBAC는 최소 allow-list, NetworkPolicy는
   필요한 DNS·HTTPS·external-service egress만 허용한다.
 - CD는 ArgoCD pull/reconciliation이 소유한다. GitHub Actions와 로컬 gate는
@@ -85,13 +92,21 @@ artifact_id: "POL-0001"
 - 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언
 - k3d agent 동시 재시작 또는 production HA로의 과장된 증적 표현
 - Git desired state 없이 EndpointSlice를 상시 수동 관리
+- 외부 서비스 workspace의 Traefik에 k8s route 추가
 
 ## Exceptions
 
-EndpointSlice patch, AppProject live 반영, 외부 Vault 변경은 즉시 복구가
-필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한 bootstrap 또는
-break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git desired state와
-맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로 복귀한다.
+이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
+component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
+
+`kubectl apply/patch/delete`, EndpointSlice patch, AppProject live 반영,
+forced ArgoCD reconciliation, 외부 OpenBao 변경, 외부 Docker runtime,
+host 주소와 이름 해석 변경은 즉시 복구가 필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한
+bootstrap 또는 break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git
+desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로
+복귀한다. 승인 결정 자체는
+[Approval and Safety Policy](../../../.agents/governance/approval-and-safety.md)가
+소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
 
 ## Verification
 

@@ -54,10 +54,10 @@ spec:
               cert-manager.io/cluster-issuer: mkcert-ca-issuer
               nginx.ingress.kubernetes.io/ssl-redirect: 'true'
             hosts:
-              - rollouts.127.0.0.1.nip.io
+              - rollouts.hy-k8s.home.arpa
             tls:
               - hosts:
-                  - rollouts.127.0.0.1.nip.io
+                  - rollouts.hy-k8s.home.arpa
                 secretName: rollouts-dashboard-tls
           resources:
             requests:

@@ -8,11 +8,13 @@ agents: 3
 kubeAPI:
   host: 0.0.0.0
   hostPort: '6550'
+# k8s router (ADR-0043): the serverlb binds only the dedicated host address and
+# forwards to the fixed ingress-nginx NodePorts.
 ports:
-  - port: 80:80
+  - port: 192.168.0.14:80:30080
     nodeFilters:
       - loadbalancer
-  - port: 443:443
+  - port: 192.168.0.14:443:30443
     nodeFilters:
       - loadbalancer
 options:

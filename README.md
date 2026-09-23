@@ -1,20 +1,20 @@
 ---
 title: "hy-home.k8s"
-version: "0.1.0"
+version: "0.1.2"
 type: "common/readme-repository"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-23"
 ---
 # hy-home.k8s
 
-> WSL2 + k3d + ArgoCD GitOps 기반 로컬 플랫폼과 문서 협업 체계를 함께 관리하는 저장소다.
+> Linux server + k3d + ArgoCD GitOps 기반 로컬 플랫폼과 문서 협업 체계를 함께 관리하는 저장소다.
 
 ## Overview
 
 `hy-home.k8s`는 단순한 로컬 Kubernetes 실험 저장소가 아니라, 사람과 AI가 같은 문서 구조를 공유하며 설계부터 운영까지 맥락을 추적하는 홈랩 프레임워크다. 모든 작업은 **Spec-Driven Development (SDD)**를 기준으로 진행되며, `docs/` 단계 체계를 통해 요구사항, 설계, 기술 결정, 실행 계획, 작업 증적, 운영 지식이 연결된다.
 
-이 저장소는 WSL2 + WSL-native Docker 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + Vault 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
+이 저장소는 Linux server + native Docker Engine 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + OpenBao(Vault API 호환) 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
 
 ### Readers
 
@@ -32,7 +32,6 @@ updated: "2026-09-04"
 - `docs/` 단계 문서 체계와 README 인덱스
 - `gitops/` 아래의 ArgoCD, 플랫폼, 워크로드 매니페스트
 - `infrastructure/` 아래의 클러스터/Helm 값/부트스트랩 및 검증 스크립트
-- `traefik/` 아래의 k3d 로컬 노출 보조용 dynamic config
 - `examples/` 아래의 앱 온보딩 및 AWS/Azure cloud target 참조 예시
 - 에이전트 게이트웨이 파일(`AGENTS.md`, `CLAUDE.md`)
 - 저장소 차원의 CI, pre-commit, 문서/정적 검증 설정
@@ -56,7 +55,6 @@ hy-home.k8s/
 ├── scripts/               # 저장소 유틸리티 및 자동화 스크립트
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
 ├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
-├── traefik/               # k3d 로컬 노출 보조용 Traefik dynamic config
 ├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
 ├── evals/                 # Agent 평가 하니스 자리. 현재 경계 문서만 추적
@@ -86,7 +84,7 @@ hy-home.k8s/
 
 - `gitops/`는 로컬 k3d 클러스터의 desired state 정본이다. 현재 구현은 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 App-of-Apps 선언, `platform/*` 공통 컴포넌트, `workloads/adminer` 참조 워크로드를 포함한다.
 - `infrastructure/`는 클러스터 bootstrap과 repo-backed static checks를 위한 실행 자산이다. MetalLB 계약은 별도 디렉터리가 아니라 `ipaddresspool.yaml`, `l2advertisement.yaml` 루트 파일로 관리한다.
-- `traefik/`은 canonical 배포 경로가 아니라 `hy-home.docker` Traefik gateway와 맞물리는 로컬 dynamic config 참조다. Kubernetes desired state는 `gitops/`와 ArgoCD reconciliation이 기준이다.
+- k8s UI와 앱은 k8s 전용 router(k3d serverlb, `192.168.0.14:443`)가 받는 `<name>.hy-k8s.home.arpa`로 노출한다. ArgoCD는 `argo.hy-k8s.home.arpa`이고 `hy-k8s.home.arpa/<name>`은 subdomain으로 redirect된다. `hy-home.docker` Traefik은 외부 서비스(`hy.home.arpa`)만 싣는다.
 - `examples/`는 앱 온보딩 템플릿과 AWS/Azure cloud target reference-only 자산이다. 실제 cloud 계정, live cluster, provider runtime 변경은 이 저장소의 일반 실행 경로가 아니다.
 
 ### Repository Workflow
@@ -132,7 +130,7 @@ hy-home.k8s/
 이 README의 링크 기준 위치는 repository root다.
 
 - `docs/` 바깥의 파일은 번호가 붙은 stage 안의 문서로 직접 링크하지 않는다. stage 문서는 경로·ID·역할을 평문으로 지칭하고, 링크가 필요하면 문서 허브를 진입점으로 사용한다. 규칙 정본은 `.agents/governance/document-authoring.md`가 소유한다.
-- `gitops/`, `infrastructure/`, `examples/`, `scripts/`, `tests/`, `traefik/` 링크는 root-level implementation/support 영역으로 연결한다.
+- `gitops/`, `infrastructure/`, `examples/`, `scripts/`, `tests/` 링크는 root-level implementation/support 영역으로 연결한다.
 - nested README 예시는 이 파일의 root-relative 링크를 복사하지 않고, 최종 README 위치에서 상대 경로를 다시 계산한다.
 
 ### Canonical Owners
@@ -152,7 +150,6 @@ hy-home.k8s/
 - `docs/` - 공식 문서 체계, 요구사항부터 운영/회고까지의 단계형 SSoT
 - `gitops/` - ArgoCD App-of-Apps 루트, 플랫폼 리소스, 워크로드 선언
 - `infrastructure/` - k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트
-- `traefik/` - k3d 로컬 ingress-nginx 뒤에서 ArgoCD/Headlamp/Kiali/Rollouts를 노출하는 보조 dynamic config
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
 - `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
@@ -170,11 +167,11 @@ hy-home.k8s/
 | Category       | Technology                                                                                      | Notes                                                                                           |
 | -------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Language       | Bash, Markdown, YAML                                                                            | 부트스트랩/문서/매니페스트 중심                                                                 |
-| Platform       | WSL2 Ubuntu, WSL-native Docker                                                                  | 로컬 실행 환경 기준                                                                             |
+| Platform       | Linux server (Ubuntu 24.04 LTS), native Docker Engine                                           | 로컬 실행 환경 기준                                                                             |
 | Kubernetes     | k3d, k3s, kubectl, Helm                                                                         | 로컬 멀티노드 클러스터와 패키징                                                                 |
 | GitOps         | ArgoCD, ApplicationSet                                                                          | App-of-Apps 선언형 배포                                                                         |
-| Ingress        | ingress-nginx, Traefik dynamic config                                                           | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
-| Secrets        | External Secrets Operator, Vault                                                                | 외부 시크릿 동기화 계약                                                                         |
+| Ingress        | ingress-nginx, k8s 전용 router(k3d serverlb)                                                    | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
+| Secrets        | External Secrets Operator, OpenBao(Vault API)                                                   | 외부 시크릿 동기화 계약                                                                         |
 | Data Services  | External PostgreSQL, External Valkey                                                            | 저장소 외부 런타임을 Service 계약으로 연결                                                      |
 | Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x                                | provider README와 인접 실행 자산이 함께 소유하는 bounded 참조 구현                              |
 | CI / Quality   | GitHub Actions, pre-commit, markdownlint, shellcheck, kube-linter, actionlint, zizmor | 정적 검증 및 정책 게이트                                                                        |
@@ -192,7 +189,7 @@ hy-home.k8s/
 - `rg` (`ripgrep`)
 - `VAULT_TOKEN` 환경변수
 - 외부 서비스 런타임 준비:
-  - Vault (`https://vault.127.0.0.1.nip.io`)
+  - OpenBao, Vault API 호환 (`https://openbao.hy.home.arpa`)
   - PostgreSQL write/read 포트
   - Valkey 접근 경로
 
@@ -241,7 +238,6 @@ cd hy-home.k8s
 
 - [gitops/README.md](./gitops/README.md) - GitOps 경계와 구조
 - [infrastructure/README.md](./infrastructure/README.md) - 인프라 자산과 bootstrap note
-- [traefik/README.md](./traefik/README.md) - k3d 로컬 노출 보조 경로
 - [examples/README.md](./examples/README.md) - 앱 온보딩 및 cloud target 참조 예시
 - [tests/README.md](./tests/README.md) - 저장소 전역 테스트 원칙
 
