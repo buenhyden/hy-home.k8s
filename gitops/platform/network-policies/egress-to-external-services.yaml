@@ -8,20 +8,16 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Vault (mng-vault on k3d-hyhome network)
+    # OpenBao through the external Traefik and mng-valkey, both on the host
+    # address (ADR-0046)
     - to:
         - ipBlock:
-            cidr: 172.18.0.17/32
+            cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
-          port: 8200
-    # External Valkey (mng-valkey on k3d-hyhome network)
-    - to:
-        - ipBlock:
-            cidr: 172.18.0.9/32
-      ports:
+          port: 443
         - protocol: TCP
-          port: 6379
+          port: 26379
     # kube-dns for service discovery
     - to:
         - namespaceSelector:

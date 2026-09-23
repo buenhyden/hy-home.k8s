@@ -29,7 +29,8 @@ echo "[INFO] static contract verification started"
 
 ROOT_APP="$ROOT_DIR/gitops/clusters/local/root-application.yaml"
 POSTGRES_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/postgres-external.yaml"
-VAULT_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/vault-external.yaml"
+COREDNS_CUSTOM="$ROOT_DIR/infrastructure/coredns-custom.yaml"
+K3D_CONFIG="$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml"
 VAULT_STORE="$ROOT_DIR/gitops/platform/eso/vault-secret-store.yaml"
 VAULT_TOKEN_REVIEWER="$ROOT_DIR/gitops/platform/eso/vault-token-reviewer-binding.yaml"
 VALKEY_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/valkey-external.yaml"
@@ -55,7 +56,6 @@ for file in \
   "$ROOT_APP" \
   "$ROOT_KUSTOMIZATION" \
   "$POSTGRES_EXTERNAL" \
-  "$VAULT_EXTERNAL" \
   "$VAULT_STORE" \
   "$VAULT_TOKEN_REVIEWER" \
   "$VALKEY_EXTERNAL" \
@@ -87,18 +87,30 @@ require_pattern 'name:\s*postgres-write-external' "$POSTGRES_EXTERNAL"
 require_pattern 'port:\s*15432' "$POSTGRES_EXTERNAL"
 require_pattern 'name:\s*postgres-read-external' "$POSTGRES_EXTERNAL"
 require_pattern 'port:\s*15433' "$POSTGRES_EXTERNAL"
-require_pattern '172\.18\.0\.15' "$POSTGRES_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$POSTGRES_EXTERNAL"
 
-require_pattern 'name:\s*vault-external' "$VAULT_EXTERNAL"
-require_pattern 'port:\s*8200' "$VAULT_EXTERNAL"
-require_pattern '172\.18\.0\.17' "$VAULT_EXTERNAL"
+# External services are reached through host-published addresses (ADR-0046),
+# never through k3d-hyhome container addresses.
+if grep -rPn '172\.18\.0\.([0-9]|1[0-9])(/32)?$' \
+  "$ROOT_DIR/gitops/platform/external-services" \
+  "$ROOT_DIR/gitops/platform/network-policies"; then
+  fail 'external service endpoints and egress must use the host address, not k3d-hyhome container addresses (ADR-0046)'
+fi
+[ ! -e "$ROOT_DIR/gitops/platform/external-services/vault-external.yaml" ] ||
+  fail 'vault-external is retired; ESO reaches OpenBao through https://openbao.hy.home.arpa (ADR-0046)'
+require_pattern 'server:\s*"https://openbao\.hy\.home\.arpa"' "$VAULT_STORE"
+require_pattern 'name:\s*openbao-ca' "$VAULT_STORE"
+require_file "$COREDNS_CUSTOM"
+require_pattern '192\.168\.0\.13 openbao\.hy\.home\.arpa' "$COREDNS_CUSTOM"
+require_pattern 'hostIP:\s*192\.168\.0\.13' "$K3D_CONFIG"
 
 echo "[INFO] Vault/ESO local-only, identity, RBAC, and policy contracts are owned by scripts/validate-vault-eso-contracts.py"
 
 require_pattern 'name:\s*valkey-external' "$VALKEY_EXTERNAL"
 require_pattern 'name:\s*valkey-external-1' "$VALKEY_EXTERNAL"
 require_pattern 'port:\s*6379' "$VALKEY_EXTERNAL"
-require_pattern '172\.18\.0\.9' "$VALKEY_EXTERNAL"
+require_pattern 'port:\s*26379' "$VALKEY_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$VALKEY_EXTERNAL"
 
 echo "[INFO] verify ArgoCD host/TLS/ingress contracts"
 require_pattern 'domain:\s*argo\.hy-k8s\.home\.arpa' "$ARGOCD_VALUES"
@@ -219,23 +231,23 @@ done
 
 require_pattern 'name:\s*prometheus-external' "$PROMETHEUS_EXTERNAL"
 require_pattern 'port:\s*9090' "$PROMETHEUS_EXTERNAL"
-require_pattern '172\.18\.0\.10' "$PROMETHEUS_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$PROMETHEUS_EXTERNAL"
 
 require_pattern 'name:\s*loki-external' "$LOKI_EXTERNAL"
 require_pattern 'port:\s*3100' "$LOKI_EXTERNAL"
-require_pattern '172\.18\.0\.13' "$LOKI_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$LOKI_EXTERNAL"
 
 require_pattern 'name:\s*tempo-external' "$TEMPO_EXTERNAL"
 require_pattern 'port:\s*3200' "$TEMPO_EXTERNAL"
-require_pattern '172\.18\.0\.12' "$TEMPO_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$TEMPO_EXTERNAL"
 
 require_pattern 'name:\s*alloy-external' "$ALLOY_EXTERNAL"
 require_pattern 'port:\s*4317' "$ALLOY_EXTERNAL"
-require_pattern '172\.18\.0\.11' "$ALLOY_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$ALLOY_EXTERNAL"
 
 require_pattern 'name:\s*grafana-external' "$GRAFANA_EXTERNAL"
 require_pattern 'port:\s*3000' "$GRAFANA_EXTERNAL"
-require_pattern '172\.18\.0\.14' "$GRAFANA_EXTERNAL"
+require_pattern '192\.168\.0\.13' "$GRAFANA_EXTERNAL"
 
 echo "[INFO] verify ClusterIssuer source"
 CLUSTER_ISSUER="$ROOT_DIR/gitops/platform/cert-manager/cluster-issuer-mkcert.yaml"
@@ -246,9 +258,10 @@ require_pattern 'secretName:\s*mkcert-root-ca' "$CLUSTER_ISSUER"
 echo "[INFO] verify Kiali egress NetworkPolicy"
 KIALI_NP="$ROOT_DIR/gitops/platform/network-policies/kiali-egress-to-observability.yaml"
 require_file "$KIALI_NP"
-require_pattern '172\.18\.0\.10/32' "$KIALI_NP"
-require_pattern '172\.18\.0\.14/32' "$KIALI_NP"
-require_pattern '172\.18\.0\.12/32' "$KIALI_NP"
+require_pattern '192\.168\.0\.13/32' "$KIALI_NP"
+for port in 9090 3000 3200; do
+  require_pattern "port:\\s*${port}" "$KIALI_NP"
+done
 
 echo "[INFO] verify adminer workload contracts"
 ADMINER_ROLLOUT="$ROOT_DIR/gitops/workloads/adminer/rollout.yaml"
@@ -279,15 +292,14 @@ require_pattern 'kind:\s*DestinationRule' "$ADMINER_DR"
 echo "[INFO] verify apps namespace NetworkPolicy"
 APPS_NP="$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
 require_file "$APPS_NP"
-require_pattern '172\.18\.0\.15/32' "$APPS_NP"
+require_pattern '192\.168\.0\.13/32' "$APPS_NP"
 require_pattern 'port:\s*15432' "$APPS_NP"
 
 echo "[INFO] verify monitoring namespace NetworkPolicy"
 MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml"
 require_file "$MONITORING_NP"
-require_pattern '172\.18\.0\.13/32' "$MONITORING_NP"
+require_pattern '192\.168\.0\.13/32' "$MONITORING_NP"
 require_pattern 'port:\s*3100' "$MONITORING_NP"
-require_pattern '172\.18\.0\.10/32' "$MONITORING_NP"
 require_pattern 'port:\s*9090' "$MONITORING_NP"
 
 # In-cluster telemetry collection (ADR-0045): the in-cluster Alloy remote-writes
@@ -301,8 +313,8 @@ for job in kubernetes-pods kubelet cadvisor; do
 done
 
 echo "[INFO] verify external-secrets egress NetworkPolicy"
-require_pattern '172\.18\.0\.17/32' "$ESO_EGRESS_NP"
-require_pattern 'port:\s*8200' "$ESO_EGRESS_NP"
+require_pattern '192\.168\.0\.13/32' "$ESO_EGRESS_NP"
+require_pattern 'port:\s*443' "$ESO_EGRESS_NP"
 require_multiline_pattern 'kubernetes\.io/metadata\.name:\s*kube-system\n([[:space:]].*\n)*[[:space:]]+k8s-app:\s*kube-dns' "$ESO_EGRESS_NP"
 require_pattern 'port:\s*53' "$ESO_EGRESS_NP"
 require_pattern '172\.18\.0\.0/24' "$ESO_EGRESS_NP"

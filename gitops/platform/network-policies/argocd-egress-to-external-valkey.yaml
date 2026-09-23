@@ -8,13 +8,13 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # External Valkey (mng-valkey on k3d-hyhome network)
+    # External Valkey (mng-valkey host port on the host address, ADR-0046)
     - to:
         - ipBlock:
-            cidr: 172.18.0.9/32
+            cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
-          port: 6379
+          port: 26379
     # kube-dns for service discovery
     - to:
         - namespaceSelector:

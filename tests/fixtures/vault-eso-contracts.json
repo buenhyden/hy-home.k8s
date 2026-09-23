@@ -2,6 +2,8 @@
   "cases": [
     {"name": "valid-local-http", "mutation": "none", "expected": []},
     {"name": "http-without-local-boundary", "mutation": "remove-local-only-annotations", "expected": ["HTTP Vault transport requires local-only annotations"]},
+    {"name": "https-with-pinned-ca", "mutation": "use-https-with-ca", "expected": []},
+    {"name": "https-without-pinned-ca", "mutation": "use-https-without-ca", "expected": ["HTTPS Vault transport requires caProvider or caBundle"]},
     {"name": "missing-audience", "mutation": "remove-vault-audience", "expected": ["Vault serviceAccountRef audiences must equal ['vault']"]},
     {"name": "wrong-service-account", "mutation": "change-service-account", "expected": ["Vault identity must be external-secrets/external-secrets"]},
     {"name": "broad-token-reviewer", "mutation": "add-token-reviewer-subject", "expected": ["TokenReview binding must contain exactly one subject"]},

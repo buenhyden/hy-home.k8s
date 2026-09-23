@@ -33,7 +33,6 @@ kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT"
 
 rg -q 'postgres-write-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-write-external"
 rg -q 'postgres-read-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-read-external"
-rg -q 'vault-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing vault-external"
 rg -q 'valkey-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing valkey-external"
 
 rw_port="$(kubectl -n platform get svc postgres-write-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
@@ -42,17 +41,14 @@ rw_port="$(kubectl -n platform get svc postgres-write-external -o jsonpath='{.sp
 ro_port="$(kubectl -n platform get svc postgres-read-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
 [ "$ro_port" = "15433" ] || fail "postgres-read-external port mismatch (actual=$ro_port)"
 
-vault_port="$(kubectl -n platform get svc vault-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-[ "$vault_port" = "8200" ] || fail "vault-external port mismatch (actual=$vault_port)"
-
 valkey_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
 [ "$valkey_port" = "6379" ] || fail "valkey-external port mismatch (actual=$valkey_port)"
 
 valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.ports[0].port}' 2>/dev/null || true)"
-[ "$valkey_ep_port" = "6379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
+[ "$valkey_ep_port" = "26379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
 
 valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
-[ "$valkey_ep_addr" = "172.18.0.9" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
+[ "$valkey_ep_addr" = "192.168.0.13" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
 echo "[INFO] Checking observability external service contracts"
 
@@ -84,10 +80,9 @@ check_obs_ep() {
   [ "$actual" = "$expected_addr" ] || fail "${slice}-1 address mismatch (expected=${expected_addr}, actual=${actual})"
 }
 
-check_obs_ep "prometheus-external" "172.18.0.10"
-check_obs_ep "loki-external" "172.18.0.13"
-check_obs_ep "tempo-external" "172.18.0.12"
-check_obs_ep "alloy-external" "172.18.0.11"
-check_obs_ep "grafana-external" "172.18.0.14"
+# ADR-0046: every external service is reached through the host address.
+for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
+  check_obs_ep "$svc" "192.168.0.13"
+done
 
 echo "[PASS] external service contract checks passed"

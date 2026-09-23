@@ -1,8 +1,8 @@
 # monitoring namespace egress NetworkPolicy
 # 대상: monitoring namespace의 모든 파드 (현재: alloy-k8s-logs, kube-state-metrics)
 # 허용 egress:
-#   - Loki external (172.18.0.13:3100) — 로그 전송
-#   - Prometheus external (172.18.0.10:9090) — 메트릭 remote write (ADR-0045)
+#   - Loki external (192.168.0.13:3100) — 로그 전송
+#   - Prometheus external (192.168.0.13:9090) — 메트릭 remote write (ADR-0045)
 #   - Kubernetes API server (172.18.0.0/24:6443) — pod/log/event watch, kubelet/cAdvisor proxy
 #   - kube-dns (kube-system)
 #   - in-cluster pod-to-pod (10.42.0.0/16)
@@ -16,18 +16,13 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Loki external (infra-loki on k3d-hyhome network)
+    # Loki push and Prometheus remote write on the host address (ADR-0046)
     - to:
         - ipBlock:
-            cidr: 172.18.0.13/32
+            cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
           port: 3100
-    # Prometheus external remote write (infra-prometheus on k3d-hyhome network)
-    - to:
-        - ipBlock:
-            cidr: 172.18.0.10/32
-      ports:
         - protocol: TCP
           port: 9090
     # Kubernetes API server (post-DNAT via k3d network)

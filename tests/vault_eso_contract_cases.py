@@ -127,6 +127,18 @@ def apply_fixture_mutation(contracts: dict[str, Any], mutation: str) -> None:
     if mutation == "remove-local-only-annotations":
         contracts["vault_store"]["metadata"].pop("annotations")
         return
+    if mutation in {"use-https-without-ca", "use-https-with-ca"}:
+        contracts["vault_store"]["metadata"].pop("annotations")
+        vault = contracts["vault_store"]["spec"]["provider"]["vault"]
+        vault["server"] = "https://vault.example.invalid"
+        if mutation == "use-https-with-ca":
+            vault["caProvider"] = {
+                "type": "ConfigMap",
+                "name": "vault-ca",
+                "key": "ca.crt",
+                "namespace": "external-secrets",
+            }
+        return
     service_account_ref = contracts["vault_store"]["spec"]["provider"]["vault"]["auth"][
         "kubernetes"
     ]["serviceAccountRef"]

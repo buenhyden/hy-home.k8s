@@ -24,17 +24,13 @@ EXPECTED_AUDIENCES = ["vault"]
 
 VAULT_STORE_PATH = Path("gitops/platform/eso/vault-secret-store.yaml")
 TOKEN_REVIEWER_PATH = Path("gitops/platform/eso/vault-token-reviewer-binding.yaml")
-VAULT_EXTERNAL_PATH = Path("gitops/platform/external-services/vault-external.yaml")
 VAULT_POLICY_PATH = Path("infrastructure/vault/policies/eso-read.hcl")
 BOOTSTRAP_PATH = Path("infrastructure/bootstrap-local.sh")
 
 HTTP_ANNOTATION_ERROR = "HTTP Vault transport requires local-only annotations"
+HTTPS_CA_ERROR = "HTTPS Vault transport requires caProvider or caBundle"
 AUDIENCES_ERROR = "Vault serviceAccountRef audiences must equal ['vault']"
 IDENTITY_ERROR = "Vault identity must be external-secrets/external-secrets"
-EXTERNAL_CONTRACT_ERROR = (
-    "Vault external manifest must contain exactly one Service and one "
-    "EndpointSlice with exact local-only annotations"
-)
 YAML_PARSE_ERROR = "YAML must parse without duplicate keys"
 
 EXPECTED_POLICY_PATHS = (
@@ -130,6 +126,10 @@ def validate_vault_store(data: dict) -> list[str]:
             diagnostics.append(
                 "HTTPS Vault transport must not use local-only-http annotation"
             )
+        if not isinstance(vault.get("caProvider"), dict) and not vault.get(
+            "caBundle"
+        ):
+            diagnostics.append(HTTPS_CA_ERROR)
     else:
         diagnostics.append("Vault server must use http:// or https://")
 
@@ -198,34 +198,6 @@ def validate_token_reviewer(data: dict) -> list[str]:
         )
 
     return diagnostics
-
-
-def validate_vault_external(documents: list[Any]) -> list[str]:
-    """Validate the exact local-only Service and EndpointSlice document pair."""
-    expected_annotations = {
-        ENVIRONMENT_SCOPE_ANNOTATION: LOCAL_ONLY,
-        TRANSPORT_BOUNDARY_ANNOTATION: LOCAL_ONLY_HTTP,
-    }
-    if not isinstance(documents, list) or len(documents) != 2:
-        return [EXTERNAL_CONTRACT_ERROR]
-
-    kinds: list[str] = []
-    for document in documents:
-        if not isinstance(document, dict):
-            return [EXTERNAL_CONTRACT_ERROR]
-        kind = document.get("kind")
-        metadata = document.get("metadata")
-        if (
-            kind not in {"Service", "EndpointSlice"}
-            or not isinstance(metadata, dict)
-            or metadata.get("annotations") != expected_annotations
-        ):
-            return [EXTERNAL_CONTRACT_ERROR]
-        kinds.append(kind)
-
-    if sorted(kinds) != ["EndpointSlice", "Service"]:
-        return [EXTERNAL_CONTRACT_ERROR]
-    return []
 
 
 def validate_vault_policy(text: str) -> list[str]:
@@ -812,13 +784,6 @@ def _run_repository(root: Path) -> int:
             ),
         )
 
-        def validate_external(text: str) -> list[str]:
-            documents, diagnostics = _load_yaml_documents(text)
-            if documents is None:
-                return diagnostics
-            return validate_vault_external(documents)
-
-        inspect(VAULT_EXTERNAL_PATH, validate_external)
         inspect(VAULT_POLICY_PATH, validate_vault_policy)
         inspect(BOOTSTRAP_PATH, validate_bootstrap)
     finally:

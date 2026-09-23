@@ -150,7 +150,7 @@ data:
 
     // ----------------------------------------------------------------
     // 3. 외부 Loki 전송
-    //    loki-external.platform.svc.cluster.local: ExternalService (172.18.0.13:3100)
+    //    loki-external.platform.svc.cluster.local: ExternalService (host 192.168.0.13:3100, ADR-0046)
     // ----------------------------------------------------------------
     loki.write "external_loki" {
       endpoint {
@@ -315,7 +315,7 @@ data:
     }
 
     // 4-4. 외부 Prometheus remote write
-    //      prometheus-external.platform.svc.cluster.local: ExternalService (172.18.0.10:9090)
+    //      prometheus-external.platform.svc.cluster.local: ExternalService (host 192.168.0.13:9090, ADR-0046)
     prometheus.remote_write "external_prometheus" {
       external_labels = {
         cluster = "k3d-hyhome",

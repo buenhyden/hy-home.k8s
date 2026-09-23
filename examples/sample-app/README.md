@@ -112,7 +112,7 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 ### 현재 플랫폼 전제 조건
 
 - `apps` namespace에 `PeerAuthentication STRICT` 적용 중 → Istio mTLS 강제
-- `apps` namespace NetworkPolicy → postgres(172.18.0.15) egress 허용
+- `apps` namespace NetworkPolicy → postgres(host `192.168.0.13:15432/15433`, ADR-0046) egress 허용
 - ExternalSecret 사용 시 Vault CLI 경로는 `secret/apps/<appname>/config`지만,
   `vault-backend` ClusterSecretStore의 `path: secret` 설정 때문에
   `remoteRef.key`는 `apps/<appname>/config` 형식을 사용한다.

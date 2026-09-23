@@ -2951,15 +2951,15 @@ else:
             )
         if contract == "Vault API":
             for phrase, value in [
-                ("vault-external.platform.svc.cluster.local", host),
-                ("172.18.0.17", host),
-                ("8200", port),
+                ("openbao.hy.home.arpa", host),
+                ("192.168.0.13", host),
+                ("443", port),
                 ("ClusterSecretStore", database_or_path),
                 ("platform/argocd", database_or_path),
                 ("platform/postgres-app", database_or_path),
                 ("platform/notifications", database_or_path),
                 ("eso-read-platform", secret_keys),
-                ("http://", tls_ca),
+                ("https://", tls_ca),
                 ("external-secrets", namespace),
             ]:
                 if phrase not in value:
@@ -2969,7 +2969,7 @@ else:
         elif contract == "PostgreSQL write":
             for phrase, value in [
                 ("postgres-write-external.platform.svc.cluster.local", host),
-                ("172.18.0.15", host),
+                ("192.168.0.13", host),
                 ("15432", port),
                 ("db_name", database_or_path),
                 ("platform/postgres-app", database_or_path),
@@ -2986,7 +2986,7 @@ else:
         elif contract == "PostgreSQL read":
             for phrase, value in [
                 ("postgres-read-external.platform.svc.cluster.local", host),
-                ("172.18.0.15", host),
+                ("192.168.0.13", host),
                 ("15433", port),
                 ("db_name", database_or_path),
                 ("postgres-app-secret", secret_keys),
@@ -2999,8 +2999,8 @@ else:
         elif contract == "Valkey auth":
             for phrase, value in [
                 ("valkey-external.platform.svc.cluster.local", host),
-                ("172.18.0.9", host),
-                ("6379", port),
+                ("192.168.0.13", host),
+                ("26379", port),
                 ("platform/argocd", database_or_path),
                 ("valkey_password", database_or_path),
                 ("argocd-external-valkey", secret_keys),
@@ -3932,6 +3932,7 @@ expected_infrastructure_coverage_areas = [
     "verify/",
     "vault/",
     "bootstrap-local.sh",
+    "coredns-custom.yaml",
     "ipaddresspool.yaml",
     "l2advertisement.yaml",
 ]
@@ -4106,8 +4107,8 @@ else:
         elif prerequisite == "Port and network contracts":
             for phrase in [
                 "172.18.0.240:443",
-                "172.18.0.9:6379",
-                "172.18.0.15:15432/15433",
+                "192.168.0.13:26379",
+                "192.168.0.13:15432/15433",
             ]:
                 if phrase not in ssot:
                     fail(
@@ -4278,7 +4279,7 @@ else:
                     )
         elif boundary == "Vault connection contract":
             for phrase, value in [
-                ("vault-external.yaml", repo_resp),
+                ("coredns-custom.yaml", repo_resp),
                 ("vault-secret-store.yaml", repo_resp),
                 ("no-secret static checks", repo_resp),
                 ("External Vault operator", operator_resp),
