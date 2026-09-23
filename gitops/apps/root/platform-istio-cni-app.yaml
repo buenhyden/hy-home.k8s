@@ -22,9 +22,11 @@ spec:
         # agent/etc/containerd/config.toml). 이전 k3d 이미지처럼 /bin에 설치하면
         # chain의 istio-cni를 찾지 못해 kube-system 밖의 새 pod가 모두 sandbox
         # 생성에 실패하고, 실패마다 flannel IP가 회수되지 않는다.
-        # global.platform=k3d 가 렌더하는 /bin 대신 두 경로를 명시적으로 고정한다.
+        # chart의 platform profile은 명시한 cniBinDir보다 우선한다. k3d profile은
+        # /bin을 렌더하므로, 두 경로가 이 노드와 같은 k3s profile을 쓴다(1.25.2의
+        # 두 profile은 cniBinDir만 다르다). 두 경로도 명시적으로 남긴다.
         global:
-          platform: k3d
+          platform: k3s
         cniBinDir: /var/lib/rancher/k3s/data/cni
         cniConfDir: /var/lib/rancher/k3s/agent/etc/cni/net.d
   destination:

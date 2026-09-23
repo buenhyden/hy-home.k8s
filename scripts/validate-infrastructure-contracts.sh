@@ -102,6 +102,8 @@ require_file "$COREDNS_CUSTOM"
 require_pattern '192\.168\.0\.13 openbao\.hy\.home\.arpa' "$COREDNS_CUSTOM"
 require_pattern 'hostIP:\s*192\.168\.0\.13' "$K3D_CONFIG"
 # istio-cni must install into the only CNI bin dir the k3s containerd reads.
+# The chart's platform profile overrides cniBinDir, so the k3s profile is pinned.
+require_pattern '^\s*platform:\s*k3s$' "$ROOT_DIR/gitops/apps/root/platform-istio-cni-app.yaml"
 require_pattern 'cniBinDir:\s*[/]var[/]lib/rancher/k3s/data/cni$' "$ROOT_DIR/gitops/apps/root/platform-istio-cni-app.yaml"
 
 echo "[INFO] Vault/ESO local-only, identity, RBAC, and policy contracts are owned by scripts/validate-vault-eso-contracts.py"
