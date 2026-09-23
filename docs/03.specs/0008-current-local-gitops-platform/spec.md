@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.0.6"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -33,11 +33,17 @@ It does not own external service runtime creation, live cluster repair, secret v
   - Workload ApplicationSet scans `gitops/workloads/*`.
   - Platform namespace desired state lives under `gitops/platform/namespaces`.
 - **Data / Interface Contract**:
-  - Vault API service: `vault-external.platform.svc.cluster.local:8200`.
+  - Secret backend API service: `vault-external.platform.svc.cluster.local:8200`, backed by external OpenBao (Vault API compatible, ADR-0041).
   - PostgreSQL write service: `postgres-write-external.platform.svc.cluster.local:15432`.
   - PostgreSQL read service: `postgres-read-external.platform.svc.cluster.local:15433`.
-  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`.
+  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`, backed by external `mng-valkey` (ADR-0044).
+  - PostgreSQL services are backed by external `pg-router` of `postgresql-cluster`, which runs only under the external profile `postgres-ha` (ADR-0044).
   - Observability service contracts are declared under `gitops/platform/external-services`.
+- **Ingress Router Contract** (ADR-0043):
+  - k8s hosts are `<name>.hy-k8s.home.arpa`; ArgoCD is `argo.hy-k8s.home.arpa`.
+  - `hy-k8s.home.arpa/<name>` returns a 301 to `https://<name>.hy-k8s.home.arpa/`.
+  - The k3d serverlb binds only `192.168.0.14:80` and `192.168.0.14:443` and forwards to ingress-nginx NodePorts `30080` and `30443`.
+  - The external services workspace Traefik carries no k8s route.
 - **Governance Contract**:
   - Active docs must describe current implementation only.
   - Old conflicting docs move to `docs/98.archive` as Tombstones.
@@ -52,17 +58,17 @@ It does not own external service runtime creation, live cluster repair, secret v
   - `gitops/workloads/adminer`: reference workload pattern.
   - `infrastructure`: k3d, bootstrap, ArgoCD values, static and live validation scripts.
 - **Key Dependencies**:
-  - WSL2 shell, WSL-native Docker, k3d, kubectl, Helm.
-  - External Vault, PostgreSQL, Valkey, and observability services.
+  - Linux server shell, native Docker Engine, k3d, kubectl, Helm.
+  - External OpenBao, PostgreSQL, Valkey, and observability services.
 - **Tech Stack**:
-  - Kubernetes/k3d, ArgoCD, ingress-nginx, cert-manager, External Secrets Operator, Vault, Istio, Kiali, Headlamp, Argo Rollouts, Argo Notifications, Alloy/kube-state-metrics.
+  - Kubernetes/k3d, ArgoCD, ingress-nginx, cert-manager, External Secrets Operator, OpenBao (Vault API), Istio, Kiali, Headlamp, Argo Rollouts, Argo Notifications, Alloy/kube-state-metrics.
 
 ## Data Modeling & Storage Strategy
 
 - **Schema / Entity Strategy**:
   - Kubernetes manifests define desired state.
   - External service contracts use Kubernetes `Service` and `EndpointSlice`.
-  - Secrets use ESO `ExternalSecret` and Vault remote references.
+  - Secrets use ESO `ExternalSecret` and OpenBao remote references through the Vault provider.
 - **Migration / Transition Plan**:
   - Old docs are archived into Tombstones.
   - Active README indexes and Related Documents point to this current contract.
@@ -111,6 +117,7 @@ bash scripts/validate-k8s-manifests.sh .
 - **VAL-SPC-002**: Static contract verification passes against current GitOps manifests.
 - **VAL-SPC-003**: GitOps structure check passes.
 - **VAL-SPC-004**: Kubernetes manifest syntax validation passes.
+- **VAL-SPC-005**: Static contracts enforce the ingress router contract: serverlb bind address and NodePorts, `hy-k8s.home.arpa` hosts, and the apex redirects.
 
 ## Traceability
 
@@ -122,6 +129,7 @@ bash scripts/validate-k8s-manifests.sh .
 | N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-002 | `scripts/validate-infrastructure-contracts.sh` verifies the current GitOps manifest contracts. |
 | N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-003 | `scripts/validate-gitops-structure.sh` checks root Application, platform Application, and workload ApplicationSet ownership. |
 | N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-004 | `scripts/validate-k8s-manifests.sh .` validates tracked Kubernetes YAML syntax. |
+| N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-005 | `scripts/validate-infrastructure-contracts.sh` and the repository-quality gate verify the ingress router contract. |
 
 ### Inputs
 
@@ -131,6 +139,8 @@ bash scripts/validate-k8s-manifests.sh .
 
 ### Delivery and References
 
+- **Plan**: [plan.md](plan.md)
+- **Task**: [tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md)
 - **Operations Policy**: [../../05.operations/policies/0001-k8s-gitops-operations-policy.md](../../05.operations/policies/0001-k8s-gitops-operations-policy.md)
 - **Runbook**: [../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - **GitOps desired state**: [../../../gitops](../../../gitops)
