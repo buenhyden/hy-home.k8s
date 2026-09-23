@@ -320,7 +320,7 @@ reconciliation으로 차이를 없앤다.
 ## Traceability
 
 - **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
-- **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
+- **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)
 - **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
 
 ### Lifecycle Traceability
