@@ -5,6 +5,9 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: '3'
+    # Server-side apply keeps the ESO-defaulted ExternalSecret fields live; a
+    # client-side diff reports them as drift and the app never settles.
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
 spec:
   project: platform
   source:

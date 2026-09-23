@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.1.0"
+version: "2.1.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -120,9 +120,9 @@ echo "=== ArgoCD 메트릭 ==="
 prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 
 echo "=== Loki k8s 로그 ==="
-curl -s -G "$LOKI/loki/api/v1/query" \
+curl -s -G "$LOKI/loki/api/v1/query_range" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
-  --data-urlencode "limit=1" \
+  --data-urlencode "since=15m" --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
 ```
 
@@ -259,9 +259,9 @@ prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 prom 'count(kube_node_info{cluster="k3d-hyhome"})'
 
 echo "[5] Loki k8s log streams"
-curl -s -G "http://192.168.0.13:3100/loki/api/v1/query" \
+curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
-  --data-urlencode "limit=1" \
+  --data-urlencode "since=15m" --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"
 ```
 

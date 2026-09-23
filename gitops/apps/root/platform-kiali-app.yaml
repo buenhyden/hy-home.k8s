@@ -22,13 +22,15 @@ spec:
             external_services:
               # Prometheus and Grafana through the external Traefik (ADR-0046).
               # The gateway CA comes from the istio-system/kiali-cabundle
-              # ConfigMap that bootstrap creates.
+              # ConfigMap that bootstrap creates. Kiali trusts that bundle for
+              # a client only when the client sets ca_file.
               prometheus:
                 url: "https://prometheus.hy.home.arpa"
                 auth:
                   type: basic
                   username: secret:kiali-prometheus-auth:username
                   password: secret:kiali-prometheus-auth:password # pragma: allowlist secret
+                  ca_file: "/kiali-cabundle/additional-ca-bundle.pem"
               grafana:
                 enabled: true
                 in_cluster_url: "https://grafana.hy.home.arpa"
@@ -37,6 +39,7 @@ spec:
                   type: bearer
                   token: secret:kiali-grafana-auth:token # pragma: allowlist secret
                   use_kiali_token: false
+                  ca_file: "/kiali-cabundle/additional-ca-bundle.pem"
                 url: "https://grafana.hy.home.arpa"
               tracing:
                 enabled: true
