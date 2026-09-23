@@ -13,7 +13,7 @@ artifact_id: "SPEC-0008-TSK-0001"
 
 ## Overview
 
-이 Task는 [Implementation Plan](../plan.md)의 WP-001..WP-005를 수행한다. 완료
+이 Task는 [Implementation Plan](../plan.md)의 WP-001..WP-007을 수행한다. 완료
 증거는 WP별 commit의 staged QA와 마지막 full QA다.
 
 ## Inputs
@@ -22,7 +22,8 @@ artifact_id: "SPEC-0008-TSK-0001"
 - [ADR-0041](../../../02.architecture/decisions/0041-openbao-secret-backend.md),
   [ADR-0042](../../../02.architecture/decisions/0042-linux-server-single-host-baseline.md),
   [ADR-0043](../../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md),
-  [ADR-0044](../../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md)
+  [ADR-0044](../../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md),
+  [ADR-0045](../../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)
 - 2026-09-23 요청 owner 결정:
   - k3d를 유지한다
   - k8s router는 전용 host IP의 443을 쓴다
@@ -38,7 +39,9 @@ artifact_id: "SPEC-0008-TSK-0001"
 | WORK-002 | VAL-SPC-005 | serverlb 전용 IP bind, NodePort 고정, host 이름, apex redirect, OpenBao endpoint, Traefik reference 폐지 | platform | Queued | Not executed | staged QA |
 | WORK-003 | VAL-SPC-002 | Linux server host 정렬 | platform | Queued | Not executed | staged QA |
 | WORK-004 | VAL-SPC-001 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | platform | Queued | Not executed | staged QA |
-| WORK-005 | VAL-SPC-001 | full QA와 handoff | platform | Queued | Not executed | full QA |
+| WORK-005 | VAL-SPC-001 | Alloy 메트릭 수집과 remote write | platform | Queued | Not executed | staged QA |
+| WORK-006 | VAL-SPC-001 | live 확인 뒤 metrics NodePort 폐지 | platform | Queued | Not executed | staged QA and live evidence |
+| WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Queued | Not executed | full QA |
 
 ## Approval and Safety Boundaries
 

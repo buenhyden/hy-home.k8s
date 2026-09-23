@@ -23,7 +23,7 @@ artifact_id: "SPEC-0008-PLAN-0001"
 
 ## Overview
 
-이 plan은 [SPEC-0008](spec.md)의 현재 플랫폼 계약에 네 가지 결정을 반영한다.
+이 plan은 [SPEC-0008](spec.md)의 현재 플랫폼 계약에 다섯 가지 결정을 반영한다.
 
 - [ADR-0041](../../02.architecture/decisions/0041-openbao-secret-backend.md):
   OpenBao backend
@@ -33,8 +33,10 @@ artifact_id: "SPEC-0008-PLAN-0001"
   k8s 전용 router와 `hy-k8s.home.arpa`
 - [ADR-0044](../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md):
   외부 data store 유지
+- [ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md):
+  cluster 안 telemetry 수집과 외부 관측 backend
 
-완료 상태는 desired state, bootstrap, 정적 검증기, 운영 문서가 네 결정과
+완료 상태는 desired state, bootstrap, 정적 검증기, 운영 문서가 다섯 결정과
 일치하고 staged와 full QA가 통과한 상태다.
 
 ## Context
@@ -52,6 +54,9 @@ artifact_id: "SPEC-0008-PLAN-0001"
   중이다. 요청 owner는 k3d 계약을 유지하기로 했다.
 - `pg-router`(`postgresql-cluster`)는 opt-in profile `postgres-ha`로만 기동하며
   중지되어 있다. `mng-valkey`는 기동 중이다.
+- 외부 관측 stack은 기동 중이며 Prometheus는 remote write를 받는다. k8s 메트릭은
+  `172.18.0.2:30082-30092` static target으로 scrape되는데, 그 주소는 외부
+  Traefik이 쓴다. sidecar, kubelet, cAdvisor 메트릭은 수집되지 않는다.
 
 ### 진행 중 문서와의 충돌 분석
 
@@ -72,12 +77,13 @@ artifact_id: "SPEC-0008-PLAN-0001"
 - Linux server host 기준의 infrastructure 전제 표, 검증기, 문서 정렬
 - Stage 05 policy와 runbook의 router, 온보딩, 복구 절차 갱신과 `pg-router`
   기동 전제 명시
+- cluster 안 Alloy의 메트릭 수집과 remote write, 그 뒤 metrics NodePort 폐지
 
 ## Non-Goals & Out-of-Scope
 
 - host 주소 할당(netplan), DNS 또는 `/etc/hosts` 변경, k3d cluster 생성
 - 외부 workspace(`hy-home.docker`)의 Traefik bind, dynamic config, data
-  cluster 변경. 필요한 변경은 Task handoff에 기록한다
+  cluster, Prometheus static job 변경. 필요한 변경은 Task handoff에 기록한다
 - native k3s의 처분
 
 ## Work Breakdown
@@ -88,7 +94,9 @@ artifact_id: "SPEC-0008-PLAN-0001"
 | WP-002 | router, host 이름, apex redirect, OpenBao endpoint 구현과 Traefik reference 폐지 | WP-001 | conftest 설치 | staged QA 전체 PASS |
 | WP-003 | Linux server host 정렬 | WP-002 | WP-002 commit | staged QA 전체 PASS |
 | WP-004 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | WP-002 | WP-002 commit | staged QA PASS |
-| WP-005 | 전체 검증과 handoff | WP-002..004 | 모든 commit | `python3 scripts/qa.py full` PASS |
+| WP-005 | Alloy 메트릭 수집(pod와 sidecar, kube-state-metrics, kubelet/cAdvisor, istiod, ArgoCD, Rollouts)과 `prometheus-external` remote write, egress 허용 | ADR-0045 accepted | WP-002 commit | staged QA PASS |
+| WP-006 | live에서 remote write가 확인된 뒤 metrics NodePort와 관련 문서 폐지 | WP-005 | operator의 live 증거 | staged QA PASS |
+| WP-007 | 전체 검증과 handoff | WP-002..006 | 모든 commit | `python3 scripts/qa.py full` PASS |
 
 ## Verification Plan
 
@@ -114,13 +122,13 @@ artifact_id: "SPEC-0008-PLAN-0001"
 
 ## Completion Criteria
 
-- WP-001..WP-004 commit이 staged QA를 통과하고 WP-005의 full QA가 통과한다.
+- WP-001..WP-006 commit이 staged QA를 통과하고 WP-007의 full QA가 통과한다.
 - live 증거와 외부 workspace 변경은 Task에 DEFER와 next owner로 남긴다.
 
 ## Traceability
 
 - **Spec**: [SPEC-0008](spec.md)
-- **Decisions**: ADR-0041, ADR-0042, ADR-0043, ADR-0044
+- **Decisions**: ADR-0041, ADR-0042, ADR-0043, ADR-0044, ADR-0045
 
 ### Lifecycle Traceability
 
@@ -128,4 +136,4 @@ artifact_id: "SPEC-0008-PLAN-0001"
 | --- | --- | --- |
 | [VAL-SPC-005](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
 | [VAL-SPC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-003 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
-| [VAL-SPC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-004, WP-005 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |
+| [VAL-SPC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-004, WP-005, WP-006, WP-007 | [SPEC-0008-TSK-0001](tasks/tsk-0001-dedicated-k8s-router-and-host-baseline.md) |

@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -135,7 +135,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 - **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [../../02.architecture/descriptions/0007-current-local-gitops-platform.md](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md), [../../02.architecture/decisions/0041-openbao-secret-backend.md](../../02.architecture/decisions/0041-openbao-secret-backend.md), [../../02.architecture/decisions/0042-linux-server-single-host-baseline.md](../../02.architecture/decisions/0042-linux-server-single-host-baseline.md), [../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md), [../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md](../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md)
+- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md), [../../02.architecture/decisions/0041-openbao-secret-backend.md](../../02.architecture/decisions/0041-openbao-secret-backend.md), [../../02.architecture/decisions/0042-linux-server-single-host-baseline.md](../../02.architecture/decisions/0042-linux-server-single-host-baseline.md), [../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md), [../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md](../../02.architecture/decisions/0044-stateful-data-stores-stay-external.md), [../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)
 
 ### Delivery and References
 
