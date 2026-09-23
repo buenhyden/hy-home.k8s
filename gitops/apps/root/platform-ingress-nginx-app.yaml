@@ -39,6 +39,10 @@ spec:
           # patchWebhookJob 쪽 키로 따로 있으며 이미 하드닝되어 있다).
           admissionWebhooks:
             patch:
+              # 주입된 istio-proxy는 끝나지 않으므로 hook Job이 완료되지 않고
+              # ArgoCD sync가 그 hook에서 멈춘다. Job pod만 주입에서 뺀다.
+              labels:
+                sidecar.istio.io/inject: "false"
               securityContext:
                 seccompProfile:
                   type: RuntimeDefault
