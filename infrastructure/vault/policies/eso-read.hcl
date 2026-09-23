@@ -31,3 +31,12 @@ path "secret/data/platform/prometheus-api" {
 path "secret/metadata/platform/prometheus-api" {
   capabilities = ["read", "list"]
 }
+
+# Grafana Viewer service account token for Kiali (ADR-0046)
+path "secret/data/platform/grafana-api" {
+  capabilities = ["read", "list"]
+}
+
+path "secret/metadata/platform/grafana-api" {
+  capabilities = ["read", "list"]
+}

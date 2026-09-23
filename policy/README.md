@@ -91,7 +91,10 @@ PASS는 저장소 정적 증적이다. 클러스터에 실제로 admission 정�
 - 규칙을 추가할 때는 위반 사례로 실패를 먼저 재현하고, 규칙 추가 후 통과를
   확인한다.
 - Conftest는 시스템 경로 또는 `~/.local/bin/conftest`에서 해석된다. 검증 러너가
-  경로를 확인해 전달하며, 해석에 실패하면 검사는 SKIP이 아니라 FAIL이다.
+  경로를 확인해 전달한다.
+- binary가 없으면 CI와 같은 release(`v0.69.0`)의 공식 image를 digest로 고정해 Docker로
+  실행한다. network 없이, 저장소를 read-only로 mount한다. binary도 Docker daemon도
+  없으면 검사는 SKIP이 아니라 FAIL이다.
 - 규칙 변경은 GitOps 매니페스트 전체에 영향을 주므로 변경 전 영향 범위를 확인한다.
 
 ## Related Documents

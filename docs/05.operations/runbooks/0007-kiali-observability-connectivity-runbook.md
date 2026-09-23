@@ -1,6 +1,6 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -19,7 +19,7 @@ artifact_id: "RUN-0007"
 
 1. **외부 경로 drift**: Kiali는 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)와 Grafana(`https://grafana.hy.home.arpa`)를 외부 Traefik으로, Tempo는 host port `192.168.0.13:3200`으로 호출한다(ADR-0046). 이름 해석(CoreDNS custom zone), gateway CA(`istio-system/kiali-cabundle`), Basic Auth Secret(`istio-system/kiali-prometheus-auth`) 중 하나가 어긋나거나 외부 workspace가 route나 port를 바꾸면 연결이 끊긴다.
 2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
-3. **Grafana API 익명 접근 불가**: 외부 Grafana가 anonymous Viewer API 접근을 허용하지 않으면 `/api/frontend/settings`가 401을 반환하고, 이 엔드포인트로 버전을 확인하는 Kiali는 Grafana를 Unreachable로 표시한다. 필요한 상태는 [POL-0005](../policies/0005-observability-platform-operations-policy.md)의 Viewer-only anonymous API 통제다.
+3. **Grafana 인증 실패**: 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Grafana Viewer service account token(`istio-system/kiali-grafana-auth`, OpenBao `platform/grafana-api`)을 bearer로 보낸다. token이 없거나 만료·폐기되면 `/api/frontend/settings`가 401을 반환하고 Kiali는 Grafana를 Unreachable로 표시한다.
 
 ### Purpose
 
@@ -46,7 +46,7 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 | 대상 | 경로 | 인증 |
 | --- | --- | --- |
 | Prometheus API | `https://prometheus.hy.home.arpa/api/v1/` (외부 Traefik `192.168.0.13:443`) | Basic Auth |
-| Grafana | `https://grafana.hy.home.arpa` (외부 Traefik `192.168.0.13:443`) | Viewer 익명 API |
+| Grafana | `https://grafana.hy.home.arpa` (외부 Traefik `192.168.0.13:443`) | Viewer service account token (bearer) |
 | Tempo | `tempo-external` → host `192.168.0.13:3200` | 없음 |
 | Loki | `loki-external` → host `192.168.0.13:3100` | 없음 |
 | Alloy OTLP | `alloy-external` → host `192.168.0.13:4317/4318` | 없음 |
@@ -258,7 +258,7 @@ kubectl rollout restart deployment/kiali -n istio-system
 
 ### Kiali 로그에 `grafana version check failed: code=[401]`가 반복된다
 
-**원인**: 외부 Grafana가 anonymous Viewer API 접근을 허용하지 않아 인증 없는 API 호출을 401로 거부한다.
+**원인**: Kiali가 보내는 Grafana service account token이 없거나 만료·폐기되었다. 외부 Grafana는 익명 API 접근을 허용하지 않는다.
 
 Kiali는 내부 URL로 `/api/frontend/settings`를 호출해 Grafana 버전을 확인한다. 이 엔드포인트가 401을 반환하면 Kiali는 Grafana를 Unreachable로 표시한다.
 
@@ -269,18 +269,21 @@ kubectl -n istio-system logs deploy/kiali --since=5m | grep -i "grafana\|401"
 # 예: grafana version check failed: url=[.../api/frontend/settings], code=[401]
 ```
 
-**해결**: Grafana 설정은 외부 observability workspace가 소유한다. 그 workspace의
-운영자가 POL-0005의 Viewer-only anonymous API 통제를 반영하도록 요청하고, 이
-저장소에서는 container 설정을 직접 바꾸지 않는다. 반영 후 아래 명령으로
-결과만 검증한다.
+**해결**: token은 외부 observability workspace가 Grafana Viewer service account로
+발급하고 OpenBao `platform/grafana-api.token`에 둔다. 이 저장소는 ESO로 받아 쓰기만 한다.
+
+1. `kubectl -n istio-system get externalsecret kiali-grafana-auth`가 Ready인지 확인한다.
+2. Ready가 아니면 외부 workspace에 KV 값이나 policy 경로를 확인하도록 요청한다.
+3. 401이 계속되면 token이 폐기되었거나 role이 Viewer 미만이다. 외부 workspace가
+   token을 재발급하고 KV를 갱신한다. ESO가 1시간 안에 따라간다.
 
 **검증:**
 
 ```bash
-# Grafana API 익명 접근 확인
+# 익명 호출은 401이 정상이다 (Grafana가 익명 접근을 허용하지 않는다)
 curl -s -o /dev/null -w "%{http_code}" --cacert secrets/certs/rootCA.pem \
   https://grafana.hy.home.arpa/api/frontend/settings
-# → 200 이어야 함
+kubectl -n istio-system get externalsecret kiali-grafana-auth
 
 # Kiali 로그에서 Grafana 버전 확인 성공 여부
 kubectl -n istio-system logs deploy/kiali --since=5m | rg -i 'grafana'

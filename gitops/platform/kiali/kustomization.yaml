@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - kiali-ingress.yaml
   - kiali-prometheus-auth-externalsecret.yaml
+  - kiali-grafana-auth-externalsecret.yaml

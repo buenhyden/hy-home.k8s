@@ -52,11 +52,31 @@ CONFTEST="${HY_HOME_K8S_CONFTEST_EXECUTABLE:-}"
 if [[ -z "$CONFTEST" ]]; then
   CONFTEST="$(command -v conftest || true)"
 fi
+# Without a host binary, run the same release as CI from its official image,
+# pinned by digest, with no network and the repository mounted read-only.
+CONFTEST_IMAGE="openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558"
+CONFTEST_MODE="binary"
 if [[ -z "$CONFTEST" || ! -x "$CONFTEST" ]]; then
-  echo "ERR conftest is required for policy validation and was not found" >&2
-  echo "    install it on the system path or at ~/.local/bin/conftest" >&2
-  exit 1
+  if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+    CONFTEST_MODE="container"
+  else
+    echo "ERR conftest is required for policy validation and was not found" >&2
+    echo "    install it on the system path or at ~/.local/bin/conftest," >&2
+    echo "    or make a Docker daemon available to run $CONFTEST_IMAGE" >&2
+    exit 1
+  fi
 fi
+
+run_conftest() {
+  if [[ "$CONFTEST_MODE" == "binary" ]]; then
+    "$CONFTEST" "$@"
+    return
+  fi
+  docker run --rm --network none --read-only --tmpfs /tmp \
+    --user "$(id -u):$(id -g)" \
+    -v "$ROOT_DIR:/project:ro" -w /project \
+    "$CONFTEST_IMAGE" "$@"
+}
 
 mapfile -d '' POLICY_TARGETS < <(
   find \
@@ -76,15 +96,23 @@ echo "=== validate-policy-gates ==="
 echo "Target : $ROOT_DIR"
 echo "Policy : $POLICY_DIR"
 echo "Files  : ${#POLICY_TARGETS[@]}"
+echo "Engine : conftest ($CONFTEST_MODE)"
 echo ""
 
 # Prove the rules still fire before trusting a clean manifest result.
 echo "--- conftest verify ---"
-"$CONFTEST" verify --policy "$POLICY_DIR"
+if [[ "$CONFTEST_MODE" == "container" ]]; then
+  # The container sees the repository at /project, so pass relative paths.
+  POLICY_ARG="policy/conftest"
+  POLICY_TARGETS=("${POLICY_TARGETS[@]#"$ROOT_DIR"/}")
+else
+  POLICY_ARG="$POLICY_DIR"
+fi
+run_conftest verify --policy "$POLICY_ARG"
 
 echo ""
 echo "--- conftest test ---"
-"$CONFTEST" test --policy "$POLICY_DIR" "${POLICY_TARGETS[@]}"
+run_conftest test --policy "$POLICY_ARG" "${POLICY_TARGETS[@]}"
 
 echo ""
 echo "=== done (exit: 0) ==="
