@@ -118,3 +118,29 @@ test_analysis_metric_with_count_is_allowed if {
 		"spec": {"metrics": [{"name": "container-restarts", "interval": "30s", "count": 4}]},
 	}
 }
+
+test_analysis_condition_with_string_literal_is_denied if {
+	count(deny) == 2 with input as {
+		"kind": "AnalysisTemplate",
+		"metadata": {"name": "adminer-stability"},
+		"spec": {"metrics": [{
+			"name": "container-restarts",
+			"count": 4,
+			"successCondition": "result[0] == \"0\"",
+			"failureCondition": "result[0] != \"0\"",
+		}]},
+	}
+}
+
+test_analysis_condition_with_number_is_allowed if {
+	count(deny) == 0 with input as {
+		"kind": "AnalysisTemplate",
+		"metadata": {"name": "adminer-stability"},
+		"spec": {"metrics": [{
+			"name": "container-restarts",
+			"count": 4,
+			"successCondition": "result[0] == 0",
+			"failureCondition": "result[0] != 0",
+		}]},
+	}
+}
