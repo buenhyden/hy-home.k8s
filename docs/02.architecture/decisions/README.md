@@ -68,6 +68,7 @@ layer: "architecture"
 ├── 0043-dedicated-k8s-ingress-router.md
 ├── 0044-stateful-data-stores-stay-external.md
 ├── 0045-in-cluster-telemetry-collection.md
+├── 0046-external-services-over-host-addresses.md
 └── README.md
 ```
 
@@ -114,6 +115,7 @@ layer: "architecture"
 | [`./0043-dedicated-k8s-ingress-router.md`](./0043-dedicated-k8s-ingress-router.md) | Dedicated Kubernetes ingress router 결정 | Accepted | k8s host를 `<name>.hy-k8s.home.arpa`(ArgoCD는 `argo`)로 옮기고 `hy-k8s.home.arpa/<name>`은 301로 넘긴다. 전용 host IP `192.168.0.14`에 bind한 k3d serverlb가 외부 Traefik과 분리된 진입점이며 `traefik/` reference 파일을 폐지한다. |
 | [`./0044-stateful-data-stores-stay-external.md`](./0044-stateful-data-stores-stay-external.md) | Stateful data store placement 결정 | Accepted | `postgresql-cluster`와 `valkey-cluster`를 k8s로 옮기지 않고 외부 workspace에 둔다. PostgreSQL 계약은 `pg-router`, Valkey 계약은 `mng-valkey`다. |
 | [`./0045-in-cluster-telemetry-collection.md`](./0045-in-cluster-telemetry-collection.md) | In-cluster telemetry collection 결정 | Accepted | 관측 저장과 조회(Prometheus, Loki, Tempo, Grafana, Alertmanager)는 외부 workspace에 두고, k8s 메트릭과 로그 수집은 cluster 안 Alloy가 맡아 외부 backend로 push한다. `172.18.0.2` static NodePort scrape는 검증 뒤 폐지한다. |
+| [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 | Proposed | 외부 서비스 계약을 `k3d-hyhome` container 주소에서 host 주소 `192.168.0.13`과 host 공개 port로 옮긴다. ESO는 외부 Traefik의 `https://openbao.hy.home.arpa`로 닿고 `vault-external` HTTP 예외를 폐지한다. |
 
 ## Related Documents
 
