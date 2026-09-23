@@ -1,6 +1,6 @@
 ---
 title: "Dedicated Kubernetes Router and Host Baseline"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -41,7 +41,7 @@ artifact_id: "SPEC-0008-TSK-0001"
 | WORK-004 | VAL-SPC-001 | Stage 05 router, 온보딩, 복구 절차와 data store 전제 | platform | Done | Stage 05 router, onboarding and recovery procedures; `pg-router` and router prerequisites | `cdf9a465` |
 | WORK-005 | VAL-SPC-001 | Alloy 메트릭 수집과 remote write | platform | Done | Alloy scrapes annotated pods, platform components, kubelet and cAdvisor and remote-writes to `prometheus-external` | `e7693ff7`, `030cf5df`; `alloy validate` PASS; staged QA PASS except `policy-gates` |
 | WORK-006 | VAL-SPC-001 | metrics NodePort 폐지 | platform | Done | NodePort Services `30082-30092` removed with a static check against new ones; RUN-0009 owns in-cluster collection; RUN-0008 is reduced to ArgoCD component checks on that path. Live remote write still needs a host-published Prometheus `9090` (external owner) | `dfbf63f9`; staged QA PASS except `policy-gates` (conftest absent) |
-| WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Done | Cluster rebuilt and verified live; seven defects found and fixed on the way (see Verification Summary). Final full QA fails only on known pre-existing or host-only lanes | PR #74..#79; full QA on `088fd4ac` |
+| WORK-007 | VAL-SPC-001 | full QA와 handoff | platform | Done | Cluster rebuilt and verified live; seven defects found and fixed on the way (see Verification Summary). Final full QA fails only on known pre-existing or host-only lanes | PR #74..#82; full QA on `088fd4ac` |
 | WORK-008 | VAL-SPC-001 | 외부 서비스 host 주소 경로, ESO OpenBao HTTPS, k3d API bind, PostgreSQL bootstrap 선택화 | platform | Done | EndpointSlices and egress on `192.168.0.13`, ESO over `https://openbao.hy.home.arpa` with `openbao-ca`, CoreDNS custom zone, k3d API `192.168.0.13:6550`, optional PostgreSQL; live bootstrap pending cluster recreation | `b7521749`, `4a6e5548`, `888c22be`; staged QA PASS except `policy-gates` (conftest absent) |
 | WORK-009 | VAL-SPC-001 | Prometheus API와 Grafana HTTPS 경로, Basic Auth, gateway CA, Kiali Grafana Viewer token | platform | Done | Alloy, Kiali and Rollouts call `https://prometheus.hy.home.arpa` with Basic Auth from OpenBao `platform/prometheus-api`, and Kiali calls `https://grafana.hy.home.arpa`. CoreDNS resolves both, and bootstrap distributes the CA. `prometheus-external` and `grafana-external` are retired. Live check waits on the OpenBao P0 provisioning (external owner) | `8125c87f`; staged QA PASS except `policy-gates` (conftest absent); `alloy validate` PASS |
 
@@ -81,11 +81,11 @@ resync, 누수된 flannel IP 정리)만 수행했다.
 | ArgoCD | PASS except known | 20개 Synced/Healthy. `platform-argocd-config`, `platform-eso-config`는 위 두 Secret 때문에 Degraded |
 | router (ADR-0043) | PASS | `CHECK_K8S_ROUTER=true verify-ingress-tls.sh`; `argo.hy-k8s.home.arpa` 200; apex 5개 path가 각 host로 301 |
 | external services, policies | PASS | `verify-external-services.sh`, `verify-network-policies.sh` |
-| CoreDNS | PASS (indirect) | custom zone이 세 이름을 `192.168.0.13`으로 매핑. ESO, Alloy, Kiali가 그 이름으로 동작한다. 임시 pod 조회는 수행하지 않았다 |
+| CoreDNS | PASS | owner 승인 임시 pod에서 `openbao`, `prometheus`, `grafana.hy.home.arpa`가 `192.168.0.13`으로 풀렸다. pod는 삭제했다 |
 | Alloy, Prometheus | PASS | Alloy 1/1, 오류 없음. `up{cluster="k3d-hyhome"}` job `kubernetes-pods`=19, `kubelet`=4, `cadvisor`=4; `argocd_app_info`=22; `istio_requests_total` 수집 |
 | Loki | PASS | `{cluster="k3d-hyhome"}` range query에서 namespace 12개 stream |
 | Kiali | PASS | Prometheus 3.14.0, Grafana 13.2.2(bearer, `/api/grafana` 200), Tempo v3.0.3 |
-| Rollouts | DEFER | adminer는 initial deploy라 analysis가 없다. controller는 `SSL_CERT_DIR`로 CA를 신뢰한다. canary 실행은 owner 승인이 필요하다 |
+| Rollouts | PASS | owner 승인 canary(pod template annotation)에서 AnalysisRun `adminer-5b74d8ff8-2-1.2` Successful, Rollout 6 step 완료. 앞선 두 시도는 아래 #81, #82 결함으로 Error였다 |
 | `run-all.sh` | PASS | `CHECK_K8S_ROUTER=true` 전체 PASS |
 
 live 검증에서 찾아 고친 결함:
@@ -98,6 +98,8 @@ live 검증에서 찾아 고친 결함:
 | #77 | ingress-nginx admission hook Job에 sidecar가 주입되어 끝나지 않음 |
 | #78 | Alloy와 Kiali ExternalSecret sync wave가 소비자보다 늦어 deadlock |
 | #79 | Kiali가 `ca_file` 없이는 CA bundle을 쓰지 않음; `platform-monitoring` server-side diff; RUN-0009 Loki instant query |
+| #81 | analysis 조건이 숫자 결과를 문자열과 비교 |
+| #82 | kube-state-metrics scrape에 `honor_labels`가 없어 `namespace`가 `monitoring`으로 덮임 |
 
 ### Final full QA
 
@@ -118,9 +120,8 @@ live 검증에서 찾아 고친 결함:
 - **Snapshot**: `main` `088fd4ac`; 이 Task 갱신은 그 뒤 문서 전용 commit이다.
 - **Approval boundary**: agent는 push, merge, OpenBao 운영, 시크릿 조회를 하지
   않았다. live mutation은 위에 적은 owner 승인 범위만 수행했다.
-- **Skipped or unavailable**: CoreDNS 임시 pod 조회, Rollouts canary analysis
-  (owner 승인 필요); host에 `argocd` CLI와 `shellcheck`가 없다(pre-commit이
-  shellcheck를 대신한다).
+- **Skipped or unavailable**: host에 `argocd` CLI와 `shellcheck`가 없다
+  (pre-commit이 shellcheck를 대신한다).
 - **Rollback**: PR별 merge commit을 `git revert`한다. live 상태는 ArgoCD가
   `main`으로 되돌린다.
 - **Residual risk**:
@@ -128,8 +129,12 @@ live 검증에서 찾아 고친 결함:
   - Grafana Viewer token 만료 2026-12-22(RUN-0096 재발급 절차)
   - Alloy OTLP `4317` 연결 거부(외부 workspace)
   - main의 archive test 4개와 Stage 05 archive governance 공백
-- **Next owner**: operator. `/tmp/bao-k8s`의 token 파일 삭제와 snapshot 보관,
-  위 KV와 Rollouts canary 확인을 맡는다.
+  - Alloy에 config reload 경로가 없어 ConfigMap 변경은 pod 재시작 전까지
+    적용되지 않는다(#82 적용 때 owner 승인으로 재시작했다)
+  - adminer Rollout pod template에 검증용 live annotation
+    `verification/canary-at`이 남아 있다(Git에 없는 필드라 ArgoCD drift 아님)
+- **Next owner**: operator. 위 KV와 Alloy reload 경로를 맡는다. `/tmp/bao-k8s`는
+  삭제되었고 5.3 snapshot은 host에서 찾지 못했다.
 
 ## Traceability
 
@@ -141,5 +146,5 @@ live 검증에서 찾아 고친 결함:
 | [WORK-002](../plan.md#work-breakdown) | Done | `cdf9a465` |
 | [WORK-005](../plan.md#work-breakdown) | Done | `030cf5df` |
 | [WORK-006](../plan.md#work-breakdown) | Done | `dfbf63f9` |
-| [WORK-007](../plan.md#work-breakdown) | Done | PR #74..#79; full QA on `088fd4ac` |
+| [WORK-007](../plan.md#work-breakdown) | Done | PR #74..#82; full QA on `088fd4ac` |
 | [WORK-008](../plan.md#work-breakdown) | Done | `4a6e5548` |
