@@ -6,7 +6,8 @@
 #   Rollout을 자동으로 이전 버전으로 rollback한다.
 #
 # 전제:
-#   - prometheus-external.platform.svc.cluster.local:9090 접근 가능
+#   - https://prometheus.hy.home.arpa 접근 가능, apps/prometheus-api-auth Secret 존재
+#     (gitops/platform/eso/prometheus-api-auth-secret.yaml, ADR-0046)
 #   - kube-state-metrics가 apps namespace 파드를 수집 중
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
@@ -14,13 +15,24 @@ metadata:
   name: <appname>-stability
   namespace: apps
 spec:
+  args:
+    - name: prometheus-authorization
+      valueFrom:
+        secretKeyRef:
+          name: prometheus-api-auth
+          key: authorization
   metrics:
     - name: container-restarts
       interval: 30s
       failureLimit: 1
       provider:
         prometheus:
-          address: http://prometheus-external.platform.svc.cluster.local:9090
+          address: https://prometheus.hy.home.arpa
+          # Basic Auth header from the platform-owned apps/prometheus-api-auth
+          # Secret; the controller trusts the gateway CA (ADR-0046).
+          headers:
+            - key: Authorization
+              value: "{{args.prometheus-authorization}}"
           query: |
             sum(increase(kube_pod_container_status_restarts_total{
               namespace="apps",

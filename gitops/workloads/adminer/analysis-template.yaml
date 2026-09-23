@@ -7,6 +7,12 @@ metadata:
   name: adminer-stability
   namespace: apps
 spec:
+  args:
+    - name: prometheus-authorization
+      valueFrom:
+        secretKeyRef:
+          name: prometheus-api-auth
+          key: authorization
   metrics:
     - name: container-restarts
       # canary step 동안 30초마다 측정, 연속 1회 실패 시 Rollout rollback
@@ -14,7 +20,12 @@ spec:
       failureLimit: 1
       provider:
         prometheus:
-          address: http://prometheus-external.platform.svc.cluster.local:9090
+          address: https://prometheus.hy.home.arpa
+          # Basic Auth header from the platform-owned apps/prometheus-api-auth
+          # Secret; the controller trusts the gateway CA (ADR-0046).
+          headers:
+            - key: Authorization
+              value: "{{args.prometheus-authorization}}"
           query: |
             sum(increase(kube_pod_container_status_restarts_total{
               namespace="apps",

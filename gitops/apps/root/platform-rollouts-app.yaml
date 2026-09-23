@@ -25,6 +25,21 @@ spec:
               memory: 256Mi
           metrics:
             enabled: true
+          # AnalysisTemplates query https://prometheus.hy.home.arpa. Go loads
+          # every certificate under SSL_CERT_DIR in addition to its default
+          # bundle, so the gateway CA from argo-rollouts/hy-home-root-ca is
+          # trusted without replacing the public roots (ADR-0046).
+          extraEnv:
+            - name: SSL_CERT_DIR
+              value: /etc/ssl/certs:/etc/hy-home-ca
+          volumes:
+            - name: hy-home-root-ca
+              configMap:
+                name: hy-home-root-ca
+          volumeMounts:
+            - name: hy-home-root-ca
+              mountPath: /etc/hy-home-ca
+              readOnly: true
         dashboard:
           enabled: true
           # 이 차트에서 대시보드는 upstream 기본값이 enabled: false 이므로 차트 기본값

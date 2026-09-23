@@ -4,3 +4,4 @@ resources:
   - vault-token-reviewer-binding.yaml
   - vault-secret-store.yaml
   - postgres-app-secret.yaml
+  - prometheus-api-auth-secret.yaml

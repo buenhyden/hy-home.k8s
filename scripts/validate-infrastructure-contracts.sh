@@ -208,24 +208,16 @@ require_pattern 'key:\s*platform/notifications' "$ARGOCD_NOTIFICATIONS_SECRET"
 require_pattern 'property:\s*slack_token' "$ARGOCD_NOTIFICATIONS_SECRET"
 
 echo "[INFO] verify observability external service contracts"
-PROMETHEUS_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/prometheus-external.yaml"
 LOKI_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/loki-external.yaml"
 TEMPO_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/tempo-external.yaml"
 ALLOY_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/alloy-external.yaml"
-GRAFANA_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/grafana-external.yaml"
 
 for file in \
-  "$PROMETHEUS_EXTERNAL" \
   "$LOKI_EXTERNAL" \
   "$TEMPO_EXTERNAL" \
-  "$ALLOY_EXTERNAL" \
-  "$GRAFANA_EXTERNAL"; do
+  "$ALLOY_EXTERNAL"; do
   require_file "$file"
 done
-
-require_pattern 'name:\s*prometheus-external' "$PROMETHEUS_EXTERNAL"
-require_pattern 'port:\s*9090' "$PROMETHEUS_EXTERNAL"
-require_pattern '192\.168\.0\.13' "$PROMETHEUS_EXTERNAL"
 
 require_pattern 'name:\s*loki-external' "$LOKI_EXTERNAL"
 require_pattern 'port:\s*3100' "$LOKI_EXTERNAL"
@@ -239,9 +231,30 @@ require_pattern 'name:\s*alloy-external' "$ALLOY_EXTERNAL"
 require_pattern 'port:\s*4317' "$ALLOY_EXTERNAL"
 require_pattern '192\.168\.0\.13' "$ALLOY_EXTERNAL"
 
-require_pattern 'name:\s*grafana-external' "$GRAFANA_EXTERNAL"
-require_pattern 'port:\s*3000' "$GRAFANA_EXTERNAL"
-require_pattern '192\.168\.0\.13' "$GRAFANA_EXTERNAL"
+# Prometheus API and Grafana are reached by name through the external Traefik
+# (ADR-0046): no in-cluster Service for them, and every client uses HTTPS.
+for retired in prometheus-external grafana-external; do
+  [ ! -e "$ROOT_DIR/gitops/platform/external-services/${retired}.yaml" ] ||
+    fail "${retired} is retired; clients call the external Traefik by name (ADR-0046)"
+done
+if grep -rn 'prometheus-external\|grafana-external' "$ROOT_DIR/gitops" "$ROOT_DIR/examples"; then
+  fail 'Prometheus and Grafana clients must use https://prometheus.hy.home.arpa and https://grafana.hy.home.arpa (ADR-0046)'
+fi
+for host in prometheus grafana; do
+  require_pattern "192\\.168\\.0\\.13 ${host}\\.hy\\.home\\.arpa" "$COREDNS_CUSTOM"
+done
+KIALI_APP="$ROOT_DIR/gitops/apps/root/platform-kiali-app.yaml"
+require_pattern 'url:\s*"https://prometheus\.hy\.home\.arpa"' "$KIALI_APP"
+require_pattern 'password:\s*secret:kiali-prometheus-auth:password' "$KIALI_APP"
+require_pattern 'in_cluster_url:\s*"https://grafana\.hy\.home\.arpa"' "$KIALI_APP"
+require_pattern 'name:\s*kiali-prometheus-auth' "$ROOT_DIR/gitops/platform/kiali/kiali-prometheus-auth-externalsecret.yaml"
+require_pattern 'name:\s*prometheus-api-auth' "$ROOT_DIR/gitops/platform/monitoring/prometheus-api-auth-externalsecret.yaml"
+require_pattern 'authorization:' "$ROOT_DIR/gitops/platform/eso/prometheus-api-auth-secret.yaml"
+require_pattern 'value:\s*/etc/ssl/certs:/etc/hy-home-ca' "$ROLLOUTS_APP"
+for template in "$ROOT_DIR/gitops/workloads/adminer/analysis-template.yaml" "$ROOT_DIR/examples/sample-app/analysis-template.yaml"; do
+  require_pattern 'address:\s*https://prometheus\.hy\.home\.arpa' "$template"
+  require_pattern 'name:\s*prometheus-api-auth' "$template"
+done
 
 echo "[INFO] verify ClusterIssuer source"
 CLUSTER_ISSUER="$ROOT_DIR/gitops/platform/cert-manager/cluster-issuer-mkcert.yaml"
@@ -253,7 +266,7 @@ echo "[INFO] verify Kiali egress NetworkPolicy"
 KIALI_NP="$ROOT_DIR/gitops/platform/network-policies/kiali-egress-to-observability.yaml"
 require_file "$KIALI_NP"
 require_pattern '192\.168\.0\.13/32' "$KIALI_NP"
-for port in 9090 3000 3200; do
+for port in 443 3200; do
   require_pattern "port:\\s*${port}" "$KIALI_NP"
 done
 
@@ -294,13 +307,15 @@ MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml
 require_file "$MONITORING_NP"
 require_pattern '192\.168\.0\.13/32' "$MONITORING_NP"
 require_pattern 'port:\s*3100' "$MONITORING_NP"
-require_pattern 'port:\s*9090' "$MONITORING_NP"
+require_pattern 'port:\s*443' "$MONITORING_NP"
 
 # In-cluster telemetry collection (ADR-0045): the in-cluster Alloy remote-writes
 # k8s metrics to the external Prometheus instead of relying on NodePort scrapes.
 ALLOY_K8S="$ROOT_DIR/gitops/platform/monitoring/alloy-k8s-logs.yaml"
 require_pattern 'prometheus\.remote_write "external_prometheus"' "$ALLOY_K8S"
-require_pattern 'url = "http://prometheus-external\.platform\.svc\.cluster\.local:9090/api/v1/write"' "$ALLOY_K8S"
+require_pattern 'url = "https://prometheus\.hy\.home\.arpa/api/v1/write"' "$ALLOY_K8S"
+require_pattern 'password_file = "/etc/prometheus-api/password"' "$ALLOY_K8S"
+require_pattern 'ca_file = "/etc/hy-home-ca/ca.crt"' "$ALLOY_K8S"
 require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
 for job in kubernetes-pods kubelet cadvisor; do
   require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"

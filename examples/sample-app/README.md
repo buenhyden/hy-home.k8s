@@ -119,7 +119,7 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 - `remoteRef.key`는 Vault mount prefix를 제외한 key convention만 기록하며,
   secret values, token, private key는 예시 manifest나 README에 남기지 않는다.
 - `ingress-nginx`에 Istio sidecar 주입 → mTLS 체인 완성
-- AnalysisTemplate이 Prometheus(`prometheus-external.platform.svc.cluster.local:9090`) 접근 필요
+- AnalysisTemplate이 Prometheus API(`https://prometheus.hy.home.arpa`)에 접근 필요. Basic Auth header는 platform이 관리하는 `apps/prometheus-api-auth` Secret에서 읽는다 (ADR-0046)
 
 ### Link Basis
 

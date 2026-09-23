@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - kube-state-metrics.yaml
   - alloy-k8s-logs.yaml
+  - prometheus-api-auth-externalsecret.yaml

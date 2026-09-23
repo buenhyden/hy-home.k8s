@@ -315,7 +315,13 @@ data:
     }
 
     // 4-4. 외부 Prometheus remote write
-    //      prometheus-external.platform.svc.cluster.local: ExternalService (host 192.168.0.13:9090, ADR-0046)
+    //      외부 Traefik의 Prometheus API route(Basic Auth)로 보낸다 (ADR-0046).
+    //      이름은 CoreDNS custom zone이 host 주소로 풀고, 인증서는 mkcert root CA로
+    //      검증한다.
+    local.file "prometheus_api_username" {
+      filename = "/etc/prometheus-api/username"
+    }
+
     prometheus.remote_write "external_prometheus" {
       external_labels = {
         cluster = "k3d-hyhome",
@@ -323,7 +329,16 @@ data:
       }
 
       endpoint {
-        url = "http://prometheus-external.platform.svc.cluster.local:9090/api/v1/write"
+        url = "https://prometheus.hy.home.arpa/api/v1/write"
+
+        basic_auth {
+          username      = local.file.prometheus_api_username.content
+          password_file = "/etc/prometheus-api/password"
+        }
+
+        tls_config {
+          ca_file = "/etc/hy-home-ca/ca.crt"
+        }
       }
     }
 ---
@@ -372,6 +387,12 @@ spec:
               mountPath: /etc/alloy
             - name: storage
               mountPath: /var/lib/alloy
+            - name: prometheus-api-auth
+              mountPath: /etc/prometheus-api
+              readOnly: true
+            - name: hy-home-root-ca
+              mountPath: /etc/hy-home-ca
+              readOnly: true
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -403,3 +424,9 @@ spec:
             name: alloy-k8s-logs-config
         - name: storage
           emptyDir: {}
+        - name: prometheus-api-auth
+          secret:
+            secretName: prometheus-api-auth # pragma: allowlist secret
+        - name: hy-home-root-ca
+          configMap:
+            name: hy-home-root-ca

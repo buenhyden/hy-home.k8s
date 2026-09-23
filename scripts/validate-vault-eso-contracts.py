@@ -40,6 +40,8 @@ EXPECTED_POLICY_PATHS = (
     "secret/metadata/platform/postgres-app",
     "secret/data/platform/notifications",
     "secret/metadata/platform/notifications",
+    "secret/data/platform/prometheus-api",
+    "secret/metadata/platform/prometheus-api",
 )
 
 

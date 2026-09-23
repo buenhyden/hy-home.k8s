@@ -187,11 +187,10 @@ require_file "$ROOT_CA_KEY_FILE"
 validate_cert_for_host "$CERT_FILE" "$ARGOCD_HOST"
 
 echo "[4/11] Pre-check observability endpoints (warn-only)"
-warn_tcp_dependency "prometheus" "$EXTERNAL_HOST_IP" "9090"
 warn_tcp_dependency "loki" "$EXTERNAL_HOST_IP" "3100"
 warn_tcp_dependency "tempo" "$EXTERNAL_HOST_IP" "3200"
 warn_tcp_dependency "alloy" "$EXTERNAL_HOST_IP" "4317"
-warn_tcp_dependency "grafana" "$EXTERNAL_HOST_IP" "3000"
+# Prometheus API and Grafana are reached through the external Traefik on 443.
 
 echo "[5/11] Install MetalLB and configure IP pool"
 helm repo add metallb https://metallb.github.io/metallb
@@ -226,13 +225,26 @@ kubectl -n cert-manager create secret tls mkcert-root-ca \
   --key="$ROOT_CA_KEY_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[7.3/11] Resolve and trust OpenBao for ESO (ADR-0046)"
+echo "[7.3/11] Resolve and trust the external Traefik names (ADR-0046)"
 kubectl apply -f "$ROOT_DIR/infrastructure/coredns-custom.yaml"
 kubectl -n kube-system rollout restart deployment/coredns
 kubectl -n kube-system rollout status deployment/coredns --timeout=120s
 kubectl create namespace external-secrets --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n external-secrets create configmap openbao-ca \
   --from-file=ca.crt="$ROOT_CA_FILE" \
+  --dry-run=client -o yaml | kubectl apply -f -
+# The same CA for the Prometheus API clients: Alloy, Rollouts, and Kiali, whose
+# operator reads the fixed kiali-cabundle name.
+for ns in monitoring argo-rollouts istio-system; do
+  kubectl create namespace "$ns" --dry-run=client -o yaml | kubectl apply -f -
+done
+for ns in monitoring argo-rollouts; do
+  kubectl -n "$ns" create configmap hy-home-root-ca \
+    --from-file=ca.crt="$ROOT_CA_FILE" \
+    --dry-run=client -o yaml | kubectl apply -f -
+done
+kubectl -n istio-system create configmap kiali-cabundle \
+  --from-file=additional-ca-bundle.pem="$ROOT_CA_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
 echo "[7.5/11] Pre-create platform namespace and external service endpoints"

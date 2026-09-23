@@ -108,11 +108,18 @@ def strip_inline_comment(value):
     return value
 
 
+# Kiali reads credentials from a named Secret through "secret:<name>:<key>";
+# the value is a reference, not the credential.
+kiali_secret_reference = re.compile(r"secret:[a-z0-9]([-a-z0-9]*[a-z0-9])?:[-._A-Za-z0-9]+")
+
+
 def allowed_placeholder(value):
     normalized = unquote(value)
     if not normalized or normalized.lower() in {"null", "~"}:
         return True
     if normalized in {"{}", "[]"}:
+        return True
+    if kiali_secret_reference.fullmatch(normalized):
         return True
     return normalized.startswith(("{", "<", "$"))
 
