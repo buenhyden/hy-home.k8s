@@ -126,9 +126,7 @@ def validate_vault_store(data: dict) -> list[str]:
             diagnostics.append(
                 "HTTPS Vault transport must not use local-only-http annotation"
             )
-        if not isinstance(vault.get("caProvider"), dict) and not vault.get(
-            "caBundle"
-        ):
+        if not isinstance(vault.get("caProvider"), dict) and not vault.get("caBundle"):
             diagnostics.append(HTTPS_CA_ERROR)
     else:
         diagnostics.append("Vault server must use http:// or https://")
