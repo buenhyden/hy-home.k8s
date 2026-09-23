@@ -259,6 +259,10 @@ require_pattern 'url:\s*"https://prometheus\.hy\.home\.arpa"' "$KIALI_APP"
 require_pattern 'password:\s*secret:kiali-prometheus-auth:password' "$KIALI_APP"
 require_pattern 'in_cluster_url:\s*"https://grafana\.hy\.home\.arpa"' "$KIALI_APP"
 require_pattern 'token:\s*secret:kiali-grafana-auth:token' "$KIALI_APP"
+# Kiali adds its CA bundle to a client only when that client sets ca_file, so
+# Prometheus and Grafana each name the bootstrap-created gateway CA.
+[[ "$(grep -cP 'ca_file:\s*"/kiali-cabundle/additional-ca-bundle\.pem"' "$KIALI_APP")" == 2 ]] ||
+  fail 'Kiali Prometheus and Grafana auth must set ca_file to the kiali-cabundle CA'
 require_pattern 'key:\s*platform/grafana-api' "$ROOT_DIR/gitops/platform/kiali/kiali-grafana-auth-externalsecret.yaml"
 require_pattern 'name:\s*kiali-prometheus-auth' "$ROOT_DIR/gitops/platform/kiali/kiali-prometheus-auth-externalsecret.yaml"
 require_pattern 'name:\s*prometheus-api-auth' "$ROOT_DIR/gitops/platform/monitoring/prometheus-api-auth-externalsecret.yaml"
