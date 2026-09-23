@@ -1,6 +1,6 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.0.2"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -48,6 +48,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 | OBS-002 ArgoCD metrics | Observability Owner | NodePorts 30082-30086 | Prometheus target evidence |
 | OBS-003 cluster metrics | Observability Owner | NodePorts 30090-30092 | expected services and targets |
 | OBS-004 logs and rules | Observability Owner | Alloy deployment and Prometheus config | Ready streams and loaded rule groups |
+| OBS-006 in-cluster metric collection | Observability Owner | in-cluster Alloy `prometheus.remote_write` and `monitoring` egress to `172.18.0.10:9090` | `cluster="k3d-hyhome"` series for jobs `kubernetes-pods`, `kubelet`, `cadvisor` in the external Prometheus |
 | OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
 ### Service Port Naming
@@ -56,6 +57,16 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
 PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.
+
+### In-Cluster Metric Collection
+
+k8s 메트릭의 기준 수집 경로는 cluster 안 Alloy다
+([ADR-0045](../../02.architecture/decisions/0045-in-cluster-telemetry-collection.md)).
+Alloy는 pod IP와 API server proxy로 scrape하고 외부 Prometheus에 remote
+write한다. 저장, 조회, alert rule은 외부 workspace가 소유한다. 아래 NodePort
+예약은 외부 Prometheus의 static scrape를 위한 과도기 경로이며, remote write가
+live로 확인된 뒤 폐지한다. 그 static target 주소 `172.18.0.2`는 외부
+Traefik과 겹치므로 NodePort 경로를 새 증거로 쓰지 않는다.
 
 ### Metrics NodePort Reservations
 

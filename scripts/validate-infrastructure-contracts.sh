@@ -287,6 +287,18 @@ MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml
 require_file "$MONITORING_NP"
 require_pattern '172\.18\.0\.13/32' "$MONITORING_NP"
 require_pattern 'port:\s*3100' "$MONITORING_NP"
+require_pattern '172\.18\.0\.10/32' "$MONITORING_NP"
+require_pattern 'port:\s*9090' "$MONITORING_NP"
+
+# In-cluster telemetry collection (ADR-0045): the in-cluster Alloy remote-writes
+# k8s metrics to the external Prometheus instead of relying on NodePort scrapes.
+ALLOY_K8S="$ROOT_DIR/gitops/platform/monitoring/alloy-k8s-logs.yaml"
+require_pattern 'prometheus\.remote_write "external_prometheus"' "$ALLOY_K8S"
+require_pattern 'url = "http://prometheus-external\.platform\.svc\.cluster\.local:9090/api/v1/write"' "$ALLOY_K8S"
+require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
+for job in kubernetes-pods kubelet cadvisor; do
+  require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
+done
 
 echo "[INFO] verify external-secrets egress NetworkPolicy"
 require_pattern '172\.18\.0\.17/32' "$ESO_EGRESS_NP"

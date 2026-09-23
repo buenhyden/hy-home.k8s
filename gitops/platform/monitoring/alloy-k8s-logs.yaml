@@ -1,5 +1,6 @@
-# Alloy in-cluster — k3d/k3s 파드 로그 + Kubernetes 이벤트 수집
-# 역할: k3d 클러스터 내부에서 실행되어 k8s API로 파드 로그를 수집, 외부 Loki로 전송
+# Alloy in-cluster — k3d/k3s 파드 로그, Kubernetes 이벤트, 메트릭 수집
+# 역할: k3d 클러스터 내부에서 실행되어 로그는 외부 Loki로, 메트릭은 외부
+# Prometheus remote write로 push한다 (ADR-0045). 저장과 조회는 외부 workspace 소유.
 # 외부 Docker Alloy는 Docker daemon 소켓 기반이라 containerd(k3d) 파드 로그를 볼 수 없음
 # 이 Alloy는 loki.source.kubernetes 컴포넌트로 k8s API 경유 로그 수집 수행
 ---
@@ -156,6 +157,175 @@ data:
         url = "http://loki-external.platform.svc.cluster.local:3100/loki/api/v1/push"
       }
     }
+
+    // ----------------------------------------------------------------
+    // 4. 메트릭 수집 (ADR-0045) → 외부 Prometheus remote write
+    //    pod IP와 API server proxy로 scrape하므로 k3d node 주소나 NodePort에
+    //    의존하지 않는다.
+    // ----------------------------------------------------------------
+
+    // 4-1. prometheus.io annotation pod. Istio sidecar가 주입된 pod는
+    //      15020 /stats/prometheus 병합 메트릭(istio_requests_total 포함)과
+    //      istiod 15014가 여기로 들어온다. 포트마다 생기는 중복 target은
+    //      relabel 뒤 label이 같아져 scrape manager가 하나로 합친다.
+    discovery.relabel "annotated_pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+        regex         = "true"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_phase"]
+        regex         = "Running"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+      }
+
+      rule {
+        source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
+        regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+        replacement   = "$1:$2"
+        target_label  = "__address__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name", "__meta_kubernetes_pod_label_app"]
+        separator     = ""
+        target_label  = "app"
+      }
+    }
+
+    // 4-2. annotation이 없는 플랫폼 component는 namespace, 이름, container
+    //      port로 고정한다.
+    discovery.relabel "platform_pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_label_app_kubernetes_io_name", "__meta_kubernetes_pod_container_port_number"]
+        regex         = "argocd;argocd-(application-controller;8082|server;8083|repo-server;8084|applicationset-controller;8080|notifications-controller;9001)|argo-rollouts;argo-rollouts;8090|monitoring;kube-state-metrics;8080"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_phase"]
+        regex         = "Running"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "app"
+      }
+    }
+
+    prometheus.scrape "pods" {
+      targets         = array.concat(discovery.relabel.annotated_pods.output, discovery.relabel.platform_pods.output)
+      job_name        = "kubernetes-pods"
+      scrape_interval = "30s"
+      forward_to      = [prometheus.remote_write.external_prometheus.receiver]
+    }
+
+    // 4-3. kubelet과 cAdvisor는 API server proxy로 가져온다 (nodes/proxy).
+    discovery.kubernetes "nodes" {
+      role = "node"
+    }
+
+    discovery.relabel "kubelet" {
+      targets = discovery.kubernetes.nodes.targets
+
+      rule {
+        target_label = "__address__"
+        replacement  = "kubernetes.default.svc:443"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        regex         = "(.+)"
+        replacement   = "/api/v1/nodes/$1/proxy/metrics"
+        target_label  = "__metrics_path__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        target_label  = "node"
+      }
+    }
+
+    discovery.relabel "cadvisor" {
+      targets = discovery.relabel.kubelet.output
+
+      rule {
+        source_labels = ["node"]
+        regex         = "(.+)"
+        replacement   = "/api/v1/nodes/$1/proxy/metrics/cadvisor"
+        target_label  = "__metrics_path__"
+      }
+    }
+
+    prometheus.scrape "kubelet" {
+      targets           = discovery.relabel.kubelet.output
+      job_name          = "kubelet"
+      scheme            = "https"
+      scrape_interval   = "30s"
+      bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      tls_config {
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+      }
+      forward_to = [prometheus.remote_write.external_prometheus.receiver]
+    }
+
+    prometheus.scrape "cadvisor" {
+      targets           = discovery.relabel.cadvisor.output
+      job_name          = "cadvisor"
+      scheme            = "https"
+      scrape_interval   = "30s"
+      bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      tls_config {
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+      }
+      forward_to = [prometheus.remote_write.external_prometheus.receiver]
+    }
+
+    // 4-4. 외부 Prometheus remote write
+    //      prometheus-external.platform.svc.cluster.local: ExternalService (172.18.0.10:9090)
+    prometheus.remote_write "external_prometheus" {
+      external_labels = {
+        cluster = "k3d-hyhome",
+        env     = "dev",
+      }
+
+      endpoint {
+        url = "http://prometheus-external.platform.svc.cluster.local:9090/api/v1/write"
+      }
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -210,11 +380,11 @@ spec:
             readOnlyRootFilesystem: true
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 100m
+              memory: 128Mi
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: 500m
+              memory: 512Mi
           livenessProbe:
             httpGet:
               path: /-/healthy
