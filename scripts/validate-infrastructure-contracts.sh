@@ -101,6 +101,8 @@ require_pattern 'name:\s*openbao-ca' "$VAULT_STORE"
 require_file "$COREDNS_CUSTOM"
 require_pattern '192\.168\.0\.13 openbao\.hy\.home\.arpa' "$COREDNS_CUSTOM"
 require_pattern 'hostIP:\s*192\.168\.0\.13' "$K3D_CONFIG"
+# The admission hook Jobs run in an injected namespace; a sidecar never exits.
+require_pattern 'sidecar\.istio\.io/inject:\s*"false"' "$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
 # istio-cni must install into the only CNI bin dir the k3s containerd reads.
 # The chart's platform profile overrides cniBinDir, so the k3s profile is pinned.
 require_pattern '^\s*platform:\s*k3s$' "$ROOT_DIR/gitops/apps/root/platform-istio-cni-app.yaml"
