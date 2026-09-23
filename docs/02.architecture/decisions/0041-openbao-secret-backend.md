@@ -1,6 +1,6 @@
 ---
 title: "OpenBao as the Runtime Secret Backend"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -16,7 +16,7 @@ supersedes: "ADR-0003"
 
 이 ADR은 런타임 시크릿의 외부 backend를 HashiCorp Vault에서 OpenBao로
 바꾼다. External Secrets Operator(ESO)와 Kubernetes Auth로 시크릿을
-전달하는 패턴은 [ADR-0003](./0003-eso-vault-k8s-auth.md)에서 그대로
+전달하는 패턴은 ADR-0003에서 그대로
 이어받고, backend 제품과 그 접근 주소만 바뀐다. ADR-0003은 이 결정으로
 대체된다.
 
@@ -104,4 +104,4 @@ endpoint를 향한다. OpenBao는 Vault HTTP API, KV v2, Kubernetes auth method�
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0003](./0003-eso-vault-k8s-auth.md) | Supersedes ADR-0003; the ESO and Kubernetes Auth pattern carries over | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| ADR-0003 | Supersedes ADR-0003; the ESO and Kubernetes Auth pattern carries over | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |

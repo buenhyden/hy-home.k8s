@@ -1,6 +1,6 @@
 ---
 title: "Argo Notifications with Slack Webhook"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -48,7 +48,7 @@ Accepted — 2026-03-30
 
 ### Operational prerequisite
 
-Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행한다. 이 ADR은 secret 값이나 실행 절차를 소유하지 않으며, 현재 운영 절차는 [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)과 [ESO/Vault 시크릿 관리 결정](./0003-eso-vault-k8s-auth.md)을 따른다.
+Slack token bootstrap은 사람이 승인한 외부 OpenBao 작업으로만 수행한다. 이 ADR은 secret 값이나 실행 절차를 소유하지 않으며, 현재 운영 절차는 [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)과 [ESO/OpenBao 시크릿 관리 결정](./0041-openbao-secret-backend.md)을 따른다.
 
 ## Alternatives
 
