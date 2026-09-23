@@ -100,6 +100,11 @@ cluster 안 Alloy가 맡고, 외부 backend로 push한다.
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** Alloy remote-writes to
+`https://prometheus.hy.home.arpa/api/v1/write` through the external Traefik with
+Basic Auth instead of the retired `prometheus-external` Service, under
+[ADR-0046](./0046-external-services-over-host-addresses.md). The rest of this decision is unchanged.
+
 **Current-state clarification (2026-09-23).** The metrics NodePort
 Services (`30082-30092`) are retired before live remote write evidence, because
 the external workspace removed their static scrape jobs

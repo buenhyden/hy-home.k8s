@@ -54,7 +54,7 @@ echo "[INFO] Checking observability external service contracts"
 
 kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT" 2>/dev/null || true
 
-for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
+for svc in loki-external tempo-external alloy-external; do
   rg -q "$svc" "$PLATFORM_SERVICES_OUTPUT" || fail "missing $svc in platform namespace"
 done
 
@@ -66,11 +66,9 @@ check_obs_port() {
   [ "$actual" = "$expected_port" ] || fail "${svc} port mismatch (expected=${expected_port}, actual=${actual})"
 }
 
-check_obs_port "prometheus-external" "9090"
 check_obs_port "loki-external" "3100"
 check_obs_port "tempo-external" "3200"
 check_obs_port "alloy-external" "4317"
-check_obs_port "grafana-external" "3000"
 
 check_obs_ep() {
   local slice="$1"
@@ -80,8 +78,9 @@ check_obs_ep() {
   [ "$actual" = "$expected_addr" ] || fail "${slice}-1 address mismatch (expected=${expected_addr}, actual=${actual})"
 }
 
-# ADR-0046: every external service is reached through the host address.
-for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
+# ADR-0046: every external service is reached through the host address;
+# Prometheus API and Grafana are called by name through the external Traefik.
+for svc in loki-external tempo-external alloy-external; do
   check_obs_ep "$svc" "192.168.0.13"
 done
 

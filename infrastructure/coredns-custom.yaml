@@ -1,4 +1,5 @@
-# ADR-0046: pods resolve the external Traefik names they call to the host
+# ADR-0046: pods resolve the external Traefik names they call (OpenBao for
+# ESO, Prometheus API and Grafana for Alloy, Kiali and Rollouts) to the host
 # address. k3s CoreDNS imports *.server keys of this ConfigMap as extra zones.
 apiVersion: v1
 kind: ConfigMap
@@ -11,6 +12,8 @@ data:
         errors
         hosts {
             192.168.0.13 openbao.hy.home.arpa
+            192.168.0.13 prometheus.hy.home.arpa
+            192.168.0.13 grafana.hy.home.arpa
         }
         cache 30
     }

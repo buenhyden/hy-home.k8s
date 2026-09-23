@@ -107,6 +107,23 @@ docker network `k3d-hyhome`의 container 주소 대신 host가 공개한 주소�
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** The external workspace chose
+not to publish Prometheus `9090` or Grafana `3000` on the host. Prometheus
+exposes only its HTTP API through the external Traefik at
+`https://prometheus.hy.home.arpa/api/v1/`, with Basic Auth
+(`hy-home.docker` PR #222). Grafana is reached at `https://grafana.hy.home.arpa`. So the
+`prometheus-external` and `grafana-external` Services are retired, and Alloy,
+Kiali and the Rollouts controller call those names directly:
+
+- The CoreDNS custom zone resolves the names to the host address.
+- The Basic Auth credentials come from OpenBao `platform/prometheus-api`
+  through ESO.
+- The gateway CA comes from bootstrap-created ConfigMaps (`hy-home-root-ca`,
+  `kiali-cabundle`).
+- Egress uses `192.168.0.13:443`.
+
+Every other clause of this decision is unchanged.
+
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)

@@ -2,7 +2,7 @@
 # 대상: monitoring namespace의 모든 파드 (현재: alloy-k8s-logs, kube-state-metrics)
 # 허용 egress:
 #   - Loki external (192.168.0.13:3100) — 로그 전송
-#   - Prometheus external (192.168.0.13:9090) — 메트릭 remote write (ADR-0045)
+#   - Prometheus API via external Traefik (192.168.0.13:443) — 메트릭 remote write (ADR-0045, ADR-0046)
 #   - Kubernetes API server (172.18.0.0/24:6443) — pod/log/event watch, kubelet/cAdvisor proxy
 #   - kube-dns (kube-system)
 #   - in-cluster pod-to-pod (10.42.0.0/16)
@@ -16,7 +16,8 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Loki push and Prometheus remote write on the host address (ADR-0046)
+    # Loki push and Prometheus remote write through the external Traefik,
+    # both on the host address (ADR-0046)
     - to:
         - ipBlock:
             cidr: 192.168.0.13/32
@@ -24,7 +25,7 @@ spec:
         - protocol: TCP
           port: 3100
         - protocol: TCP
-          port: 9090
+          port: 443
     # Kubernetes API server (post-DNAT via k3d network)
     - to:
         - ipBlock:

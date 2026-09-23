@@ -44,11 +44,11 @@ Kiali와 외부 observability 연결 복구는
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
 - [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
-- [ ] Prometheus 연결 (Kiali용): `nc -z 192.168.0.13 9090`
+- [ ] Prometheus API (Kiali, Alloy, Rollouts): `https://prometheus.hy.home.arpa/api/v1/status/buildinfo`가 인증 없이 `401`
 - [ ] Loki 연결 (로그 수집): `nc -z 192.168.0.13 3100`
 - [ ] Tempo 연결 (트레이싱): `nc -z 192.168.0.13 3200`
 - [ ] Alloy OTLP 연결: `nc -z 192.168.0.13 4317`
-- [ ] Grafana 연결 (Kiali용): `nc -z 192.168.0.13 3000`
+- [ ] Grafana (Kiali용): `https://grafana.hy.home.arpa/api/health`가 `200`
 
 ### Procedure
 

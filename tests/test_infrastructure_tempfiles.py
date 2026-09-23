@@ -80,18 +80,14 @@ VALUES = {
     ("svc", "postgres-write-external", "{.spec.ports[0].port}"): "15432",
     ("svc", "postgres-read-external", "{.spec.ports[0].port}"): "15433",
     ("svc", "valkey-external", "{.spec.ports[0].port}"): "6379",
-    ("svc", "prometheus-external", "{.spec.ports[0].port}"): "9090",
     ("svc", "loki-external", "{.spec.ports[0].port}"): "3100",
     ("svc", "tempo-external", "{.spec.ports[0].port}"): "3200",
     ("svc", "alloy-external", "{.spec.ports[0].port}"): "4317",
-    ("svc", "grafana-external", "{.spec.ports[0].port}"): "3000",
     ("endpointslice", "valkey-external-1", "{.ports[0].port}"): "26379",
     ("endpointslice", "valkey-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
-    ("endpointslice", "prometheus-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
     ("endpointslice", "loki-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
     ("endpointslice", "tempo-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
     ("endpointslice", "alloy-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
-    ("endpointslice", "grafana-external-1", "{.endpoints[0].addresses[0]}"): "192.168.0.13",
     ("svc", "ingress-nginx-controller", "{.spec.type}"): "LoadBalancer",
     ("svc", "ingress-nginx-controller", "{.status.loadBalancer.ingress[0].ip}"): "127.0.0.2",
     ("ingress", "argocd-server", "{.spec.rules[0].host}"): "argo.hy-k8s.home.arpa",
@@ -112,7 +108,7 @@ elif tool == "kubectl" and "version" not in args:
     kind = args[get_index + 1]
     if kind == "svc,endpointslice":
         print("postgres-write-external postgres-read-external valkey-external")
-        print("prometheus-external loki-external tempo-external alloy-external grafana-external")
+        print("loki-external tempo-external alloy-external")
     elif kind == "application":
         print("path: gitops/apps/root")
         print("targetRevision: main")

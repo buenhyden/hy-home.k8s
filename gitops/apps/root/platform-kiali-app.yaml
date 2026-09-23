@@ -13,18 +13,25 @@ spec:
     targetRevision: 2.10.0
     helm:
       releaseName: kiali
-      values: |
+      values: | # pragma: allowlist secret
         cr:
           create: true
           spec:
             auth:
               strategy: "anonymous"
             external_services:
+              # Prometheus and Grafana through the external Traefik (ADR-0046).
+              # The gateway CA comes from the istio-system/kiali-cabundle
+              # ConfigMap that bootstrap creates.
               prometheus:
-                url: "http://prometheus-external.platform.svc.cluster.local:9090"
+                url: "https://prometheus.hy.home.arpa"
+                auth:
+                  type: basic
+                  username: secret:kiali-prometheus-auth:username
+                  password: secret:kiali-prometheus-auth:password # pragma: allowlist secret
               grafana:
                 enabled: true
-                in_cluster_url: "http://grafana-external.platform.svc.cluster.local:3000"
+                in_cluster_url: "https://grafana.hy.home.arpa"
                 url: "https://grafana.hy.home.arpa"
               tracing:
                 enabled: true

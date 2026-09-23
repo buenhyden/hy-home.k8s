@@ -22,3 +22,12 @@ path "secret/data/platform/notifications" {
 path "secret/metadata/platform/notifications" {
   capabilities = ["read", "list"]
 }
+
+# Prometheus HTTP API Basic Auth for Alloy, Kiali and Rollouts (ADR-0046)
+path "secret/data/platform/prometheus-api" {
+  capabilities = ["read", "list"]
+}
+
+path "secret/metadata/platform/prometheus-api" {
+  capabilities = ["read", "list"]
+}

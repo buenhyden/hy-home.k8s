@@ -10,15 +10,14 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Prometheus, Grafana and Tempo host ports on the host address (ADR-0046)
+    # Prometheus API and Grafana through the external Traefik (443) and the
+    # Tempo host port, all on the host address (ADR-0046)
     - to:
         - ipBlock:
             cidr: 192.168.0.13/32
       ports:
         - protocol: TCP
-          port: 9090
-        - protocol: TCP
-          port: 3000
+          port: 443
         - protocol: TCP
           port: 3200
     # kube-dns for service discovery
