@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -74,8 +74,10 @@ OWNER=<github-owner>   # 예: buenhyden
 TAG=<tag>              # 예: v1.0.0
 PORT=<port>            # 예: 8080
 
-# 예시 복사
-cp -r examples/sample-app gitops/workloads/${APP}
+# 예시 manifest만 복사 (README와 Traefik 예시는 ApplicationSet 감지 경로에 두지 않는다)
+git switch -c feat/${APP}-gitops
+mkdir -p gitops/workloads/${APP}
+cp examples/sample-app/*.yaml gitops/workloads/${APP}/
 
 # 플레이스홀더 일괄 교체
 for f in gitops/workloads/${APP}/*.yaml; do
@@ -105,6 +107,7 @@ sed -i "s|<appname>|${APP}|g" \
 
 # hy-home.docker 레포 커밋
 cd ${DOCKER_REPO}
+git switch -c feat/${APP}-traefik
 git add infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
 git commit -m "feat: add traefik router for ${APP}"
 # feature branch로 push한 뒤 PR review/merge를 거친다
@@ -176,6 +179,7 @@ curl -sk https://${APP}.127.0.0.1.nip.io | head -5
 
 ```bash
 NEW_TAG=v1.1.0
+git switch -c chore/${APP}-${NEW_TAG}
 
 # rollout.yaml 태그 업데이트
 sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \

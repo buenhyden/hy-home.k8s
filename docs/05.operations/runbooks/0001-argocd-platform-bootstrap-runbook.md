@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -51,7 +51,7 @@ artifact_id: "RUN-0001"
 1. 외부 런타임 연결성 및 Vault 상태를 점검한다.
 
    ```bash
-   docker network inspect infra_net >/dev/null
+   docker network inspect k3d-hyhome >/dev/null
    nc -z 172.18.0.9 6379
    nc -z 172.18.0.15 15432
    nc -z 172.18.0.15 15433

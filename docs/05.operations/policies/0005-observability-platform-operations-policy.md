@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-01"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -52,7 +52,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 ### Service Port Naming
 
-Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
+`gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다. mesh 밖 namespace의 metrics NodePort는 이 명명 통제 대상이 아니다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
 PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.

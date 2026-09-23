@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -58,7 +58,7 @@ artifact_id: "POL-0003"
 ### Istio / Service Mesh
 
 - **Required**:
-  - IngressGateway 비활성화 유지 (`gateways.enabled: false`)
+  - IngressGateway를 선언하지 않는다 (istiod Application values에 gateway 없음, ADR-0008)
   - sidecar 주입 opt-in: namespace `istio-injection=enabled` 레이블 명시적 부여
   - istiod 자원 예산: `cpu: 100m, memory: 128Mi` (requests)
   - sync-wave 순서 강제: `istio-base`·`istio-cni`(wave:1) → `istiod`(wave:2, `pilot.cni.enabled: true`)

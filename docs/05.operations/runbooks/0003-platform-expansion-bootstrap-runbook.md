@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.0.3"
+version: "1.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -111,7 +111,7 @@ artifact_id: "RUN-0003"
    kubectl -n headlamp get pods,ingress,svc
    kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
    kubectl -n headlamp get secret headlamp-tls
-   curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+   curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
      -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
    ```
 
@@ -147,9 +147,9 @@ kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headl
 kubectl -n istio-system get deploy istiod kiali
 
 # TLS 접근
-curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 ```
 

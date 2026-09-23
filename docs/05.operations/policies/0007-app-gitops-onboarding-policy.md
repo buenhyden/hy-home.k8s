@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.0.1"
+version: "1.0.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -105,6 +105,10 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 `apps` namespace에 PeerAuthentication STRICT가 적용되어 있다.
 
 - **신규 앱**: 별도 PeerAuthentication 불필요 (namespace 정책 자동 적용)
+- **현재 소유 위치**: namespace 전체 STRICT `PeerAuthentication default`는
+  `gitops/workloads/adminer/peer-authentication.yaml`이 adminer와 함께 배포한다.
+  adminer를 제거하거나 이동하는 변경은 이 리소스를 먼저 platform 소유로
+  옮겨야 하며, 그렇지 않으면 `apps` 전체의 STRICT mTLS가 함께 사라진다.
 - **전제**: Pod에 Istio sidecar가 주입되어야 함 (`apps` namespace에 `istio-injection: enabled` 라벨)
 
 ### 3-2. NetworkPolicy
@@ -114,6 +118,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 - postgres (172.18.0.15:15432, 15433) egress 허용
 - kube-dns egress 허용
 - Istiod egress 허용
+- cluster pod CIDR(`10.42.0.0/16`) egress 허용 (in-cluster mTLS 통신)
 
 **신규 외부 서비스 연결 필요 시**: `gitops/platform/network-policies/apps-egress.yaml`에 egress 규칙을 추가하고 Platform 팀(운영자 본인)에 변경 요청한다.
 

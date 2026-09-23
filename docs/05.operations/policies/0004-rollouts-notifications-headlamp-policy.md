@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.0.4"
+version: "1.0.5"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-23"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -35,14 +35,14 @@ artifact_id: "POL-0004"
 - **Required**:
   - Rollouts Controller namespace: `argo-rollouts` 고정
   - Rollouts Dashboard 항상 활성화 (`dashboard.enabled: true`)
-  - 기본 promotion 전략: 수동 (`pause: {}`) — 자동 프로모션 승인 없이 활성화 금지
+  - canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
   - Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
   - CRD 설치: `installCRDs: true` 유지
   - Rollouts Dashboard는 `rollouts.127.0.0.1.nip.io` + ingress-nginx + TLS 유지
 - **Allowed**:
   - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택
-  - Prometheus AnalysisTemplate 정의 (외부 Prometheus `172.18.0.10:9090` 활용)
+  - Prometheus AnalysisTemplate 정의 (`http://prometheus-external.platform.svc.cluster.local:9090`)
 - **Disallowed**:
   - `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
   - `skipAnalysis: true` 임의 사용
@@ -59,7 +59,7 @@ artifact_id: "POL-0004"
   - template 추가 (GitOps PR 통해)
 - **Disallowed**:
   - `argocd-notifications-secret`에 webhook URL 평문 커밋
-  - notifications controller 비활성화(`notifications.enabled: false`) 임의 적용
+  - ArgoCD chart의 notifications controller 비활성화(`notifications.enabled: false`) 임의 적용 (Rollouts chart의 별도 값과 무관)
 
 ### Headlamp
 
