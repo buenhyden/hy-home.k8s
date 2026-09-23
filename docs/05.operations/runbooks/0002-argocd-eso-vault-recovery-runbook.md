@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.0.5"
+version: "1.0.6"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -130,7 +130,7 @@ YAML
 
 > **참고**: vault-external EndpointSlice는 `gitops/platform/external-services/vault-external.yaml`의 현재 k3d-reachable Vault 주소와 일치해야 한다.
 > k3d 노드는 k3d-hyhome 네트워크에서 접근 가능한 Vault 주소만 안정적으로 사용할 수 있다.
-> Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 설정되어야 한다(k3d-hyhome 경유).
+> OpenBao Kubernetes auth `kubernetes_host`는 `https://k3d-hyhome-server-0:6443`으로 설정한다. OpenBao와 k3d node가 같은 `k3d-hyhome` network에 있어 Docker DNS 이름으로 닿고, k3s serving 인증서가 node 이름을 SAN에 담는다. `172.18.0.2`는 외부 Traefik의 고정 주소라 k3d node가 받을 수 없다.
 
 1. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
 

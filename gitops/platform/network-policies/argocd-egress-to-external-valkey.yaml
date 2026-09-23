@@ -45,7 +45,7 @@ spec:
             cidr: 10.42.0.0/16
     # Kubernetes API server (k3s server on k3d-hyhome network, port 6443)
     # kube-router evaluates NetworkPolicy AFTER iptables DNAT:
-    # ClusterIP 10.43.0.1:443 -> DNAT -> 172.18.0.2:6443
+    # ClusterIP 10.43.0.1:443 -> DNAT -> <k3d server node IP in 172.18.0.0/24>:6443
     - to:
         - ipBlock:
             cidr: 172.18.0.0/24
