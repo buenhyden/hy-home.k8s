@@ -45,11 +45,9 @@ declare -a YAML_TARGETS=(
   "$TARGET/infrastructure"
 )
 
-for optional_dir in "$TARGET/examples/sample-app"; do
-  if [[ -d "$optional_dir" ]]; then
-    YAML_TARGETS+=("$optional_dir")
-  fi
-done
+if [[ -d "$TARGET/examples/sample-app" ]]; then
+  YAML_TARGETS+=("$TARGET/examples/sample-app")
+fi
 
 if [[ -d "$TARGET/examples" ]]; then
   while IFS= read -r path; do
