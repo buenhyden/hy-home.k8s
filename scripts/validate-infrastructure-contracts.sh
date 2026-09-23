@@ -43,7 +43,6 @@ ROOT_KUSTOMIZATION="$ROOT_DIR/gitops/apps/root/kustomization.yaml"
 NAMESPACES_KUSTOMIZATION="$ROOT_DIR/gitops/platform/namespaces/kustomization.yaml"
 ROLLOUTS_APP="$ROOT_DIR/gitops/apps/root/platform-rollouts-app.yaml"
 ROLLOUTS_NAMESPACE="$ROOT_DIR/gitops/platform/namespaces/namespace-argo-rollouts.yaml"
-METRICS_NODEPORTS="$ROOT_DIR/gitops/platform/monitoring/metrics-nodeports.yaml"
 ARGOCD_NOTIFICATIONS_CM="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-cm.yaml"
 ARGOCD_NOTIFICATIONS_SECRET="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-secret.yaml"
 ARGOCD_KUSTOMIZATION="$ROOT_DIR/gitops/platform/argocd/kustomization.yaml"
@@ -67,7 +66,6 @@ for file in \
   "$NAMESPACES_KUSTOMIZATION" \
   "$ROLLOUTS_APP" \
   "$ROLLOUTS_NAMESPACE" \
-  "$METRICS_NODEPORTS" \
   "$ARGOCD_NOTIFICATIONS_CM" \
   "$ARGOCD_NOTIFICATIONS_SECRET" \
   "$ARGOCD_KUSTOMIZATION" \
@@ -187,10 +185,6 @@ require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_APP"
 require_pattern 'rollouts\.hy-k8s\.home\.arpa' "$ROLLOUTS_APP"
 require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
-require_pattern 'name:\s*argo-rollouts-metrics-np' "$METRICS_NODEPORTS"
-require_pattern 'namespace:\s*argo-rollouts' "$METRICS_NODEPORTS"
-require_pattern 'port:\s*8090' "$METRICS_NODEPORTS"
-require_pattern 'nodePort:\s*30092' "$METRICS_NODEPORTS"
 
 echo "[INFO] verify ArgoCD Notifications Slack contracts"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*true' "$ARGOCD_VALUES"
@@ -311,6 +305,11 @@ require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
 for job in kubernetes-pods kubelet cadvisor; do
   require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
 done
+# The metrics NodePorts for the retired static scrape stay removed; only
+# ingress-nginx keeps fixed NodePorts (router, ADR-0043).
+if grep -rlP '^\s*type:\s*NodePort\b' "$ROOT_DIR/gitops/platform"; then
+  fail 'metrics NodePort Services are retired; the in-cluster Alloy scrapes pods directly (ADR-0045)'
+fi
 
 echo "[INFO] verify external-secrets egress NetworkPolicy"
 require_pattern '192\.168\.0\.13/32' "$ESO_EGRESS_NP"
