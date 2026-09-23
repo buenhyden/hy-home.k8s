@@ -102,8 +102,8 @@ cluster 안 Alloy가 맡고, 외부 backend로 push한다.
 
 **Current-state clarification (2026-09-23).** The metrics NodePort
 Services (`30082-30092`) are retired before live remote write evidence, because
-the external workspace removed their static scrape jobs (`hy-home.docker` PR
-#218) and no consumer remained. Remote write now reaches the host address under
+the external workspace removed their static scrape jobs
+(`hy-home.docker` PR #218) and no consumer remained. Remote write now reaches the host address under
 [ADR-0046](./0046-external-services-over-host-addresses.md). The rest of this
 decision is unchanged.
 
