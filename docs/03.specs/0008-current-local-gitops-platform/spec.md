@@ -33,11 +33,12 @@ It does not own external service runtime creation, live cluster repair, secret v
   - Workload ApplicationSet scans `gitops/workloads/*`.
   - Platform namespace desired state lives under `gitops/platform/namespaces`.
 - **Data / Interface Contract**:
-  - Secret backend API service: `vault-external.platform.svc.cluster.local:8200`, backed by external OpenBao (Vault API compatible, ADR-0041).
+  - Secret backend API: `https://openbao.hy.home.arpa`, external OpenBao (Vault API compatible, ADR-0041) behind the external Traefik. A CoreDNS custom zone resolves the name to the host address, and ESO pins the mkcert root CA (ADR-0046).
   - PostgreSQL write service: `postgres-write-external.platform.svc.cluster.local:15432`.
   - PostgreSQL read service: `postgres-read-external.platform.svc.cluster.local:15433`.
-  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`, backed by external `mng-valkey` (ADR-0044).
-  - PostgreSQL services are backed by external `pg-router` of `postgresql-cluster`, which runs only under the external profile `postgres-ha` (ADR-0044).
+  - Valkey service: `valkey-external.platform.svc.cluster.local:6379`, backed by external `mng-valkey` at host port `26379` (ADR-0044, ADR-0046).
+  - PostgreSQL services are backed by external `pg-router` of `postgresql-cluster`, which runs only under the external profile `postgres-ha` (ADR-0044). The bootstrap does not require it (ADR-0046).
+  - Every external service endpoint is the host address `192.168.0.13` and a host-published port, never a `k3d-hyhome` container address (ADR-0046).
   - Observability service contracts are declared under `gitops/platform/external-services`.
 - **Ingress Router Contract** (ADR-0043):
   - k8s hosts are `<name>.hy-k8s.home.arpa`; ArgoCD is `argo.hy-k8s.home.arpa`.

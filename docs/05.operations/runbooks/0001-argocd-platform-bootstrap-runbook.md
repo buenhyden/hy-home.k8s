@@ -36,10 +36,12 @@ artifact_id: "RUN-0001"
 - [ ] Linux server host의 native Docker Engine 정상 상태 (`docker context show`가 `default`)
 - [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
 - [ ] `fs.inotify.max_user_instances` 512 이상 (bootstrap이 미달 시 중단)
-- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`, `pg-router`). `pg-router`는 `postgresql-cluster`의 opt-in profile `postgres-ha`로만 기동한다 (ADR-0044)
+- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`). cluster는 host 주소 `192.168.0.13`의 공개 port로 닿는다 (ADR-0046). `pg-router`는 `postgresql-cluster`의 opt-in profile `postgres-ha`로만 기동하며 bootstrap 필수가 아니다 (ADR-0044)
 - [ ] k8s router 주소 `192.168.0.14`가 host에 할당되어 있고, 외부 Traefik이 모든 주소의 80/443을 점유하지 않음 (ADR-0043)
-- [ ] Valkey `172.18.0.9:6379` 접근 가능
-- [ ] PostgreSQL HAProxy `172.18.0.15:15432/15433` 접근 가능
+- [ ] Valkey `192.168.0.13:26379` 접근 가능
+- [ ] (앱이 쓰는 경우) PostgreSQL HAProxy `192.168.0.13:15432/15433` 접근 가능
+- [ ] k3d API가 `192.168.0.13:6550`에 bind되고 인증서 SAN에 그 주소가 있음. 이전 설정(`0.0.0.0`)으로 만든 cluster는 재생성한다
+- [ ] OpenBao Kubernetes auth `kubernetes_host`가 `https://192.168.0.13:6550`
 - [ ] OpenBao(`https://openbao.hy.home.arpa`, Vault API 호환) 접근 가능 및 unseal 상태
 - [ ] 읽기 가능한 `VAULT_CA_FILE`과 대화형 `/dev/tty` 준비
 - [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
@@ -52,10 +54,10 @@ artifact_id: "RUN-0001"
 1. 외부 런타임 연결성 및 Vault 상태를 점검한다.
 
    ```bash
-   docker network inspect k3d-hyhome >/dev/null
-   nc -z 172.18.0.9 6379
-   nc -z 172.18.0.15 15432
-   nc -z 172.18.0.15 15433
+   nc -z 192.168.0.13 26379
+   nc -z 192.168.0.13 15432 || echo 'pg-router stopped (optional)'
+   echo | openssl s_client -connect 192.168.0.13:6550 2>/dev/null |
+     openssl x509 -noout -ext subjectAltName | rg '192\.168\.0\.13'
    VAULT_CA_FILE=secrets/certs/rootCA.pem
    curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
      -o /dev/null -w '%{http_code}\n' \

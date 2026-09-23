@@ -84,6 +84,12 @@ artifact_id: "ADR-0044"
 
 ## Traceability
 
+**Current-state clarification (2026-09-23).** The endpoints
+above move from container addresses to host-published ports on
+`192.168.0.13` under [ADR-0046](./0046-external-services-over-host-addresses.md): `mng-valkey` at `26379`
+and `pg-router` at `15432/15433`. The bootstrap no longer requires
+`pg-router`. The placement decision is unchanged.
+
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
