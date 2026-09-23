@@ -340,6 +340,9 @@ require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
 for job in kubernetes-pods kubelet cadvisor; do
   require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
 done
+# kube-state-metrics labels name the object it describes; without
+# honor_labels the target's namespace wins and namespace="apps" matches nothing.
+require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"
 # The metrics NodePorts for the retired static scrape stay removed; only
 # ingress-nginx keeps fixed NodePorts (router, ADR-0043).
 if grep -rlP '^\s*type:\s*NodePort\b' "$ROOT_DIR/gitops/platform"; then

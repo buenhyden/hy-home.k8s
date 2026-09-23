@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.1.1"
+version: "2.1.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -230,9 +230,11 @@ kubectl get pods -n istio-system -l app=istiod \
   -o jsonpath='{.items[*].metadata.annotations.prometheus\.io/scrape}'
 ```
 
-- ArgoCD, argo-rollouts, kube-state-metrics는 `discovery.relabel "platform_pods"`의
-  `namespace;app.kubernetes.io/name;container port` 규칙에 맞아야 한다. chart
-  업그레이드로 이름이나 port가 바뀌면 그 규칙을 고친다.
+- ArgoCD와 argo-rollouts는 `discovery.relabel "platform_pods"`, kube-state-metrics는
+  `discovery.relabel "kube_state_metrics"`의 `namespace;app.kubernetes.io/name;container port`
+  규칙에 맞아야 한다. chart 업그레이드로 이름이나 port가 바뀌면 그 규칙을 고친다.
+- kube-state-metrics scrape는 `honor_labels = true`다. 없으면 `namespace`가
+  `monitoring`으로 덮이고 원래 값은 `exported_namespace`로 밀려난다.
 - istiod와 Istio sidecar는 `prometheus.io/scrape` annotation으로 잡힌다.
 - 외부 Prometheus 쪽에서 job 이름은 `kubernetes-pods`이고 component는 `app`
   label로 구분한다.
