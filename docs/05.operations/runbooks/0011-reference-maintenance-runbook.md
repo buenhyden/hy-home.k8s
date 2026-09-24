@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -60,12 +60,10 @@ artifact_id: "RUN-0011"
 5. category router와 `docs/90.references/README.md`를 같은 변경에서
    갱신한다. 빈 category나 redirect 문서는 만들지 않는다.
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
-   전환한다. 더 이상 현재가 아닌 Stage 90 문서는
-   [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)가
-   정한 Stage 98 disposition으로 보내며, 각 disposition은 별도 승인을 받는다.
-7. 공통 거버넌스와 Stage 01/02/03/05/90 문서의 Stage 98 링크가 registry의
-   `archive_citation` 판정을 따르는지 확인한다. `superseded/` 본문 대신 후속
-   문서를, `retired/` 본문·tombstone·migration 대신 현재 route를 인용한다.
+   전환한 뒤
+   [Document Lifecycle Policy](../../../.agents/governance/document-lifecycle.md)의
+   Stage 98 disposition과 Archive 인용 규칙을 따른다. disposition 승인은
+   owning Task에 기록한다.
 
 ## Verification Steps
 

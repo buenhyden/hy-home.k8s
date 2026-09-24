@@ -147,7 +147,7 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 | [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Done | ADR-0040 cutover를 완료했다. default branch envelope 검증까지 구현했고 hosted `qa`가 `a264ebad`에서 통과해 2026-09-24에 done으로 닫았다. lifecycle·결과 어휘(WP-005·006)는 각자의 승인을 기다린다. | 2026-09-24 |
 | [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
 | [`./0087-stage03-terminal-package-retention/spec.md`](./0087-stage03-terminal-package-retention/spec.md) | Stage 03 terminal package retention | Done | 2026-09-24 request owner 승인으로 withdrawn package 네 개(0047·0048·0050·0051)를 `retired/`로, done package 세 개(0054·0062·0084)를 `completed/`로 보존하고 done으로 닫았다. | 2026-09-24 |
-| [`./0088-operations-corpus-convergence/spec.md`](./0088-operations-corpus-convergence/spec.md) | Operations corpus convergence | Draft | 2026-09-25 request owner 요청으로 Stage 05 역할 중복·구현 drift, Stage 98 Operations 잔재, 검증 script의 dead·중복 logic을 감사하고 local commit으로 정리한다. | 2026-09-25 |
+| [`./0088-operations-corpus-convergence/spec.md`](./0088-operations-corpus-convergence/spec.md) | Operations corpus convergence | Active | 2026-09-25 request owner 요청으로 Stage 05 역할 중복·구현 drift, Stage 98 Operations 잔재, 검증 script의 dead·중복 logic을 감사하고 local commit으로 정리한다. | 2026-09-25 |
 
 ### Helper Templates
 

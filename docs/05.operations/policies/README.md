@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.1.4"
+version: "0.1.5"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -121,6 +121,6 @@ docs/05.operations/policies/
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
 | [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 | Active | 2026-09-23 |
 | [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 | Active | 2026-09-23 |
-| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-23 |
+| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-25 |
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-23 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-23 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-25 |

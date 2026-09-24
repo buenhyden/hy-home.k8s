@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.1.1"
+version: "1.1.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -44,10 +44,9 @@ Kiali와 외부 observability 연결 복구는
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
 - [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
-- [ ] Prometheus API (Kiali, Alloy, Rollouts): `https://prometheus.hy.home.arpa/api/v1/status/buildinfo`가 인증 없이 `401`
-- [ ] Loki 연결 (로그 수집): `nc -z 192.168.0.13 3100`
+- [ ] Prometheus API (Kiali): `https://prometheus.hy.home.arpa/api/v1/status/buildinfo`가 인증 없이 `401`
 - [ ] Tempo 연결 (트레이싱): `nc -z 192.168.0.13 3200`
-- [ ] Alloy OTLP 연결: `nc -z 192.168.0.13 4317`
+- [ ] Istio trace용 Alloy OTLP 연결: `nc -z 192.168.0.13 4317`
 - [ ] Grafana (Kiali용): `https://grafana.hy.home.arpa/api/health`가 `200`
 
 ### Procedure
@@ -150,7 +149,7 @@ kubectl -n istio-system top pod -l app=istiod
 #    POL-0003은 requests를 cpu 100m, memory 128Mi 아래로 낮추지 않는다.
 #    값 조정이 필요하면 해당 Application을 수정·커밋한 뒤 ArgoCD sync로 반영한다.
 
-# 3. 재시작
+# 3. 재시작 (operator-approved restart only)
 kubectl -n istio-system rollout restart deploy/istiod
 ```
 

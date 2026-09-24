@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.0.6"
+version: "1.0.7"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -17,9 +17,12 @@ artifact_id: "POL-0004"
 
 ## Policy Scope
 
-- Argo Rollouts v1.9.0 (chart 2.40.9) — `argo-rollouts` namespace
+- Argo Rollouts — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
-- Headlamp v0.41.0 — `headlamp` namespace
+- Headlamp — `headlamp` namespace
+
+chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이 정책은
+버전을 복제하지 않는다.
 
 ## Applies To
 
@@ -51,7 +54,8 @@ artifact_id: "POL-0004"
 - **Required**:
   - Slack token: Vault `secret/platform/notifications.slack_token` → ESO → `argocd-notifications-secret`
   - templates/triggers: `argocd-notifications-cm` (GitOps 관리)
-  - Default subscriptions: `on-health-degraded`, `on-sync-failed`
+  - `defaultTriggers`: `on-health-degraded`, `on-sync-failed`; 기본 수신자
+    `slack:hy-home-alerts` 구독은 `argocd-notifications-cm`이 소유한다
   - 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.<trigger>.slack: <channel>`
 - **Allowed**:
   - 앱 annotation으로 개별 채널 지정
@@ -98,13 +102,11 @@ artifact_id: "POL-0004"
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **Rollouts Spec**: `SPEC-0004` (retained; reach it through the Archive index)
 - **Notifications Spec**: `SPEC-0005` (retained; reach it through the Archive index)
-- **Rollouts Plan**: `SPEC-0004` Plan (retained; reach it through the Archive index)
-- **Notifications Plan**: `SPEC-0005` Plan (retained; reach it through the Archive index)
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — SPEC-0004 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
-| N/A — SPEC-0005 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |
+| N/A — SPEC-0004 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
+| N/A — SPEC-0005 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |

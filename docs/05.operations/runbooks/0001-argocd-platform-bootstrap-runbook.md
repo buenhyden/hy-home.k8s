@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.0.4"
+version: "1.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -47,7 +47,6 @@ artifact_id: "RUN-0001"
 - [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
 - [ ] `secrets/certs/cert.pem`, `secrets/certs/key.pem` 존재 및 ArgoCD host SAN 포함
 - [ ] `secret/platform/argocd.valkey_password` 존재
-- [ ] `secret/platform/postgres-app.{db_name,username,password}` 존재
 
 ### Procedure
 
@@ -89,8 +88,6 @@ artifact_id: "RUN-0001"
    스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
    표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고 CA 파일은
    읽을 수 있어야 하며, 비대화형 또는 인증서 검증 생략 fallback은 없다.
-   `vault-backend`의 클러스터 내부 HTTP 연결은 로컬 k3d 전용 예외이며
-   production TLS 구성을 의미하지 않는다.
 
 5. Bootstrap 결과로 생성되는 ingress TLS secret을 확인한다.
 
@@ -133,11 +130,11 @@ artifact_id: "RUN-0001"
 
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
 
-```bash
-argocd login argo.hy-k8s.home.arpa --grpc-web
-argocd proj list
-argocd app list
-```
+    ```bash
+    argocd login argo.hy-k8s.home.arpa --grpc-web
+    argocd proj list
+    argocd app list
+    ```
 
 ## Verification Steps
 
@@ -158,8 +155,8 @@ argocd app list
 | 에러 시그니처                                                                      | 진단 포인트                                  | 즉시 조치                                                      | 재검증                                                                                    |
 | ---------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `vault is sealed (status=503)`                                                     | Vault health code가 503                      | Vault unseal 수행 후 health 재확인                             | CA 검증을 사용하는 HTTPS health 요청                                                        |
-| `could not read secret key valkey_password from Vault path secret/platform/argocd` | 경로/키 누락 또는 토큰 권한 부족             | `secret/platform/argocd`에 `valkey_password` 확인, 권한 재설정 | Vault API + `jq -e '.data.data.valkey_password != null'`                                  |
-| `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 Vault 값 불일치              | Vault 기준으로 `argocd-external-valkey` 재동기화               | `kubectl -n argocd get secret argocd-external-valkey -o yaml` + ArgoCD 로그               |
+| bootstrap `[2/11]` 단계가 `jq` 오류로 중단                                          | `platform/argocd`의 `valkey_password` 누락 또는 토큰 권한 부족 | OpenBao 운영자가 경로·키·정책을 확인한다                      | bootstrap 재실행                                                                          |
+| `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 Vault 값 불일치              | ExternalSecret 재조정 대기, 지속되면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) | `kubectl -n argocd get externalsecret argocd-external-valkey` + ArgoCD 로그              |
 | `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | `kubectl -n argocd get application root-platform -o yaml \| rg 'path:'`                   |
 
 ## Safe Rollback or Recovery Procedure
@@ -183,7 +180,37 @@ argocd app list
   argocd app sync root-platform
   ```
 
-- [ ] 외부 endpoint mapping/IP 및 ESO auth 설정 재적용 후 재검증
+- [ ] 외부 endpoint 복구는 아래 절차를, ESO auth 복구는
+      [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)를 따른다.
+
+### External Endpoint Recovery
+
+이 절이 `gitops/platform/external-services`의 Service/EndpointSlice 복구
+절차의 단일 owner다. 이 경로는 ArgoCD Application
+`platform-external-services`가 관리하므로 기본 복구는 Git 수정, 리뷰,
+reconciliation이다.
+
+1. `kubectl -n platform get svc,endpointslice`의 주소와 port를
+   `gitops/platform/external-services/*.yaml`과 대조한다. 주소는 host
+   `192.168.0.13`이어야 한다(ADR-0046).
+2. Git desired state가 틀렸으면 그 파일을 고쳐 PR로 반영한 뒤
+   reconciliation한다.
+
+   ```bash
+   # operator-triggered reconciliation only
+   argocd app sync platform-external-services
+   ```
+
+3. ArgoCD가 기동하지 않아 reconciliation할 수 없을 때만 bootstrap과 같은
+   입력을 직접 적용한다.
+
+   ```bash
+   # human-approved break-glass only
+   kubectl apply -k gitops/platform/external-services
+   ```
+
+4. 적용 뒤 이 런북의 step 8, 9로 재검증하고, 직접 적용했다면 Git과 live
+   상태가 같은지 ArgoCD diff로 확인한다.
 
 ## Traceability
 

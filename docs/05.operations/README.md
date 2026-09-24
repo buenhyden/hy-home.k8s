@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 ---
 # 05.operations
@@ -43,27 +43,34 @@ layer: "operations"
 운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
 자동화가 직접 따라야 하는 `AI Agent Requirements`, `Agent Execution Notes`,
 tool/prompt contract, hook/validator contract 같은 섹션은 영어로 둔다. live
-cluster, Vault, secret, ArgoCD 같은 고위험 명령은 언어와 무관하게
-human-approved, operator-approved, bootstrap-only, break-glass 같은 실행
-경계를 가까운 문맥에 남긴다.
+cluster, Vault, secret, ArgoCD 같은 고위험 명령의 실행 경계는 언어와
+무관하게 아래 Operations Mutation Boundary를 따른다.
 
 ### Operations Mutation Boundary
 
 운영 문서는 `kubectl apply/patch`, `argocd app sync`, `vault kv put`,
 `vault policy write`, `helm upgrade/install`, `docker network connect`,
-`kubectl config`처럼 live state나 외부 secret/runtime에 영향을 줄 수 있는
-명령을 포함할 수 있다. 이런 예시는 반드시 가까운 문맥에서
-`human-approved`, `operator-approved`, `bootstrap-only`, `break-glass`,
-`external secret operation`, `temporary kubeconfig` 같은 실행 경계를 밝혀야
-한다.
+`kubectl config`, secret 값을 출력하는 `kubectl get secret -o yaml/json`처럼
+live state나 외부 secret/runtime에 영향을 줄 수 있는 명령을 포함할 수 있다.
+이런 예시는 반드시 가까운 문맥에서 실행 경계를 밝혀야 한다.
 
-이 절이 Stage 05의 marker 규칙 단일 기준이며, 하위 README는 이 절을
-반복하지 않는다. live 변경 예외의 승인 조건은
+| 명령 계열 | 가까운 문맥에 둘 경계 |
+| --- | --- |
+| `kubectl apply/patch`, `docker network` 변경 | `human-approved`, `operator-approved`, `bootstrap-only`, `break-glass` |
+| `argocd app sync` | `operator-triggered reconciliation`, `operator-approved`, `break-glass` |
+| `helm upgrade/install` | `human-approved`, `operator-approved`, `break-glass` |
+| `vault kv put`, `vault policy write` | `external secret operation`, `human-approved` |
+| `kubectl config` 등 kubeconfig 변경 | `temporary kubeconfig` 또는 명시적 `--kubeconfig` |
+| `kubectl get secret -o yaml/json` | `metadata-only`, `redacted` 등 값 비출력 문맥 |
+
+이 절이 Stage 05 marker 규칙의 사람용 단일 설명이며, 하위 README는 이 절을
+반복하지 않는다. 정확한 명령 패턴과 허용 marker 목록의 machine owner는
+repository quality validator의 command boundary 규칙이며, `python3
+scripts/qa.py full`이 authored docs와 examples를 스캔해 marker가 없으면
+실패한다. live 변경 예외의 승인 조건은
 [POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
-소유한다. `python3 scripts/qa.py full`는 authored docs와 examples의
-high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한다. 이
-검사는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git 파일 수정,
-리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
+소유한다. marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git
+파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
 ### Stage Readers
 

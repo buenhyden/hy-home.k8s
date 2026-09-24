@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.1.3"
+version: "1.1.4"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -84,13 +84,10 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 | secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
 | 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | full 파일 검사는 메시지 검증을 대신하지 않는다 |
 
-Dockerfile 도입 시 lint owner와 설정을 함께 도입한다. 대상이 없는 설정은
-남기지 않는다.
-
-특정 workstation의 hooksPath는 공통 규범이 아니다. 유효한 출처와 hook
-연결만 좁게 확인하고 기존 설정을 유지한다. 실제 메시지의 명시적 검증과
-정상 active hook 실행은 [Git policy](../../../.agents/governance/git.md)를 따른다.
-수동 PASS를 native 설치·실행 증거로 기록하지 않는다.
+도구별 규칙 소유와 suppression 기준은
+[Formatting and Linting Policy](../../../.agents/governance/formatting-and-linting.md),
+hook 연결과 커밋 메시지 검증 절차는
+[Git policy](../../../.agents/governance/git.md)가 소유한다.
 
 ## Common Pitfalls
 

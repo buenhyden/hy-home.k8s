@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.1.1"
+version: "1.1.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -50,8 +50,8 @@ kubectl -n argocd get externalsecret
 kubectl -n argocd get secret argocd-notifications-secret
 ```
 
-> **주의**: secret value를 출력하는 `kubectl get secret -o yaml/json` 형태는
-> 증적 수집에 사용하지 않는다.
+> **주의**: 증적은 위와 같은 metadata-only 조회로 남기고, secret 값을
+> 출력하는 `-o yaml`/`-o json` 조회는 쓰지 않는다.
 
 ---
 
@@ -155,6 +155,7 @@ kubectl -n headlamp create token headlamp --duration=1h
 ### 복구: Headlamp 재시작
 
 ```bash
+# operator-approved restart only
 kubectl -n headlamp rollout restart deployment headlamp
 ```
 
@@ -223,12 +224,10 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **Rollouts Spec**: `SPEC-0004` (retained; reach it through the Archive index)
 - **Notifications Spec**: `SPEC-0005` (retained; reach it through the Archive index)
-- **Rollouts Task records**: Spec 0004 Plan
-- **Notifications Task records**: Spec 0005 Plan
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| N/A — SPEC-0004 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
-| N/A — SPEC-0005 is retained under ADR-0039 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |
+| N/A — SPEC-0004 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| N/A — SPEC-0005 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |

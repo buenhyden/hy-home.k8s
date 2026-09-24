@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -23,6 +23,11 @@ Kubernetes 식별자로 유지한다.
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 OpenBao
 sealed 상태, 이름 해석 또는 CA drift, Kubernetes auth drift를 구분하고,
 ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
+
+bootstrap `[7.3/11]` 단계가 만드는 CoreDNS custom zone과 gateway CA
+ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
+런북의 Procedure 4단계가 단일 owner다. Kiali, Alloy, Rollouts 런북은 이름
+해석이나 `x509` 오류를 이 단계로 보낸다.
 
 > **Agent execution boundary**: CoreDNS custom zone과 `openbao-ca` ConfigMap 재적용, OpenBao auth 설정 변경은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
@@ -59,101 +64,111 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
 1. 사전 스냅샷을 저장한다.
 
-```bash
-kubectl -n external-secrets get clustersecretstore vault-backend -o yaml
-kubectl -n argocd get externalsecret argocd-external-valkey -o yaml
-kubectl -n argocd get app platform-eso-config platform-argocd-config -o wide
-kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
-  rg -i 'vault|clustersecretstore|error|connection refused|no such host|x509|sealed'
-```
+   ```bash
+   kubectl get clustersecretstore vault-backend -o yaml
+   kubectl -n kube-system get configmap coredns-custom -o yaml > "${TMPDIR:-/tmp}/coredns-custom.before.yaml"
+   kubectl -n argocd get externalsecret argocd-external-valkey -o yaml
+   kubectl -n argocd get app platform-eso-config platform-argocd-config -o wide
+   kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
+     rg -i 'vault|clustersecretstore|error|connection refused|no such host|x509|sealed'
+   ```
 
-1. sealed 상태, 경로, 인증서를 먼저 분류한다.
+2. sealed 상태, 경로, 인증서를 먼저 분류한다.
 
-```bash
-curl -sS --max-time 5 --cacert secrets/certs/rootCA.pem \
-  https://openbao.hy.home.arpa/v1/sys/health
-kubectl -n kube-system get configmap coredns-custom -o yaml
-kubectl -n external-secrets get configmap openbao-ca
-kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | \
-  rg -i 'Vault is sealed|connection refused|no such host|x509|context deadline|permission denied|invalid'
-```
+   ```bash
+   curl -sS --max-time 5 --cacert secrets/certs/rootCA.pem \
+     https://openbao.hy.home.arpa/v1/sys/health
+   kubectl -n kube-system get configmap coredns-custom -o yaml
+   kubectl -n external-secrets get configmap openbao-ca
+   kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | \
+     rg -i 'Vault is sealed|connection refused|no such host|x509|context deadline|permission denied|invalid'
+   ```
 
-판정 기준:
+   판정 기준:
 
-- `sys/health`가 `sealed:true`이고 ESO 로그가 `Vault is sealed`를 보이면 cluster 설정을 수정하지 않는다. OpenBao unseal이 먼저다.
-- host에서 `sys/health`가 응답하지 않으면 외부 Traefik이나 OpenBao runtime 문제다. 외부 workspace 운영자에게 넘긴다.
-- host에서는 응답하는데 ESO가 `no such host`를 보이면 CoreDNS custom zone을, `x509`를 보이면 `openbao-ca` ConfigMap을 확인한다.
-- `sys/health`가 `sealed:false`인데 Kubernetes auth login이 실패하면 OpenBao auth mount, role, `kubernetes_host`, TokenReview reviewer 설정을 operator-bound로 재검토한다.
+   - `sys/health`가 `sealed:true`이고 ESO 로그가 `Vault is sealed`를 보이면 cluster 설정을 수정하지 않는다. OpenBao unseal이 먼저다.
+   - host에서 `sys/health`가 응답하지 않으면 외부 Traefik이나 OpenBao runtime 문제다. 외부 workspace 운영자에게 넘긴다.
+   - host에서는 응답하는데 ESO가 `no such host`를 보이면 CoreDNS custom zone을, `x509`를 보이면 `openbao-ca` ConfigMap을 확인한다.
+   - `sys/health`가 `sealed:false`인데 Kubernetes auth login이 실패하면 OpenBao auth mount, role, `kubernetes_host`, TokenReview reviewer 설정을 operator-bound로 재검토한다.
 
-1. OpenBao가 sealed 상태면 operator-bound unseal 절차를 수행한다. Agent는
+3. OpenBao가 sealed 상태면 operator-bound unseal 절차를 수행한다. Agent는
    unseal key, root token, OpenBao token, secret value를 요청하거나 출력하지
    않는다. OpenBao 운영자는 승인된 비밀 입력 채널을 사용하고 credential을
    명령 인자, 셸 환경, 채팅, Git, 로그, PR 본문에 넣지 않는다.
 
-unseal 후에는 secret 값을 조회하지 말고 readiness metadata만 확인한다.
+   unseal 후에는 secret 값을 조회하지 말고 readiness metadata만 확인한다.
 
-```bash
-curl -sS --max-time 5 --cacert secrets/certs/rootCA.pem \
-  https://openbao.hy.home.arpa/v1/sys/health
-kubectl -n external-secrets get clustersecretstore vault-backend
-kubectl -n argocd get externalsecret argocd-external-valkey
-```
+   ```bash
+   curl -sS --max-time 5 --cacert secrets/certs/rootCA.pem \
+     https://openbao.hy.home.arpa/v1/sys/health
+   kubectl -n external-secrets get clustersecretstore vault-backend
+   kubectl -n argocd get externalsecret argocd-external-valkey
+   ```
 
-1. 이름 해석이나 CA drift가 확인된 경우에만 bootstrap이 쓰는 파일로 둘을
-   다시 적용한다. 이 단계는 human-approved break-glass 전용이다.
+4. 이름 해석이나 CA drift가 확인된 경우에만 bootstrap `[7.3/11]`과 같은
+   입력으로 다시 적용한다. 이 단계는 human-approved break-glass 전용이다.
+   증상이 난 소비자의 ConfigMap만 적용해도 된다.
 
-```bash
-# human-approved break-glass only
-kubectl apply -f infrastructure/coredns-custom.yaml
-kubectl -n kube-system rollout restart deployment/coredns
-kubectl -n external-secrets create configmap openbao-ca \
-  --from-file=ca.crt=secrets/certs/rootCA.pem \
-  --dry-run=client -o yaml | kubectl apply -f -
-```
+   ```bash
+   # human-approved break-glass only
+   kubectl apply -f infrastructure/coredns-custom.yaml
+   kubectl -n kube-system rollout restart deployment/coredns
+   kubectl -n external-secrets create configmap openbao-ca \
+     --from-file=ca.crt=secrets/certs/rootCA.pem \
+     --dry-run=client -o yaml | kubectl apply -f -
+   for ns in monitoring argo-rollouts; do
+     kubectl -n "$ns" create configmap hy-home-root-ca \
+       --from-file=ca.crt=secrets/certs/rootCA.pem \
+       --dry-run=client -o yaml | kubectl apply -f -
+   done
+   kubectl -n istio-system create configmap kiali-cabundle \
+     --from-file=additional-ca-bundle.pem=secrets/certs/rootCA.pem \
+     --dry-run=client -o yaml | kubectl apply -f -
+   ```
 
-> **참고**: OpenBao Kubernetes auth `kubernetes_host`는 `https://192.168.0.13:6550`이다. k3d API는 그 주소에만 bind하고 인증서 SAN에 그 주소를 둔다(`infrastructure/k3d/k3d-cluster.yaml`). cluster를 재생성하면 CA가 바뀌므로 OpenBao 운영자는 `kubernetes_ca_cert`를 새 CA로 갱신한다.
+   > **참고**: OpenBao Kubernetes auth `kubernetes_host`는 `https://192.168.0.13:6550`이다. k3d API는 그 주소에만 bind하고 인증서 SAN에 그 주소를 둔다(`infrastructure/k3d/k3d-cluster.yaml`). cluster를 재생성하면 CA가 바뀌므로 OpenBao 운영자는 `kubernetes_ca_cert`를 새 CA로 갱신한다.
 
-1. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
+5. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
 
-```bash
-kubectl -n external-secrets get clustersecretstore vault-backend
-kubectl -n argocd get externalsecret argocd-external-valkey
-kubectl -n argocd get app platform-eso-config platform-argocd-config
-```
+   ```bash
+   kubectl -n external-secrets get clustersecretstore vault-backend
+   kubectl -n argocd get externalsecret argocd-external-valkey
+   kubectl -n argocd get app platform-eso-config platform-argocd-config
+   ```
 
-1. 필요 시 ArgoCD 재평가/동기화를 수행한다.
+6. 필요 시 ArgoCD 재평가/동기화를 수행한다.
 
-```bash
-argocd app get platform-eso-config --hard-refresh
-argocd app get platform-argocd-config --hard-refresh
-# operator-triggered reconciliation only
-argocd app sync platform-eso-config
-argocd app sync platform-argocd-config
-```
+   ```bash
+   argocd app get platform-eso-config --hard-refresh
+   argocd app get platform-argocd-config --hard-refresh
+   # operator-triggered reconciliation only
+   argocd app sync platform-eso-config
+   argocd app sync platform-argocd-config
+   ```
 
-1. 런타임 계약 회귀를 검증한다.
+7. 런타임 계약 회귀를 검증한다.
 
-```bash
-./infrastructure/verify/verify-network-policies.sh
-./infrastructure/verify/verify-ingress-tls.sh
-CHECK_K8S_ROUTER=true ./infrastructure/verify/verify-ingress-tls.sh
-./infrastructure/verify/run-all.sh
-```
+   ```bash
+   ./infrastructure/verify/verify-network-policies.sh
+   ./infrastructure/verify/verify-ingress-tls.sh
+   CHECK_K8S_ROUTER=true ./infrastructure/verify/verify-ingress-tls.sh
+   ./infrastructure/verify/run-all.sh
+   ```
 
-1. CI 정적 계약 회귀를 검증한다.
+8. CI 정적 계약 회귀를 검증한다.
 
-```bash
-./scripts/validate-infrastructure-contracts.sh
-python3 scripts/validate-vault-eso-contracts.py --root .
-for f in infrastructure/bootstrap-local.sh infrastructure/verify/*.sh; do bash -n "$f"; done
-```
+   ```bash
+   ./scripts/validate-infrastructure-contracts.sh
+   python3 scripts/validate-vault-eso-contracts.py --root .
+   for f in infrastructure/bootstrap-local.sh infrastructure/verify/*.sh; do bash -n "$f"; done
+   ```
 
-1. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
+9. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
 
-```bash
-kubectl -n argocd get app root-platform -o yaml | \
-  rg 'path: gitops/apps/root|targetRevision: main'
-```
+   ```bash
+   kubectl -n argocd get app root-platform -o yaml | \
+     rg 'path: gitops/apps/root|targetRevision: main'
+   ```
 
 ## Verification Steps
 
@@ -193,20 +208,16 @@ openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
 SAN이 없으면 인증서를 재발급한 뒤
 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 bootstrap 절차를 다시 실행한다.
 
-### Vault sealed remediation
-
-`https://openbao.hy.home.arpa/v1/sys/health`가 `sealed:true`를 반환하거나 ESO 로그에 `Vault is sealed`가 반복되면 GitOps manifest를 변경하지 않는다.
-
-- 위 Procedure의 operator-bound OpenBao unseal 단계와 그 비밀 입력 경계를 따른다.
-- Unseal 후 `ClusterSecretStore/vault-backend`와 dependent `ExternalSecret` readiness metadata만 재검증한다.
-- Unseal 후에도 `InvalidProviderConfig`가 지속되면 Kubernetes auth mount/role configuration drift를 별도 operator-bound task로 분리한다.
-
 ## Safe Rollback or Recovery Procedure
 
-아래 live 삭제는 Platform Owner가 승인한 break-glass 복구에서만 수행한다.
+CoreDNS custom zone 재적용이 상황을 악화시키면 Procedure 1단계의 스냅샷으로
+되돌린다. zone을 삭제하면 cluster 안에서 `openbao`, `prometheus`,
+`grafana` 이름 해석이 모두 끊기므로 삭제로 롤백하지 않는다. CA
+ConfigMap은 같은 `rootCA.pem`으로 다시 적용하는 것이 롤백이다.
 
 ```bash
-kubectl -n kube-system delete configmap coredns-custom
+# human-approved break-glass only
+kubectl apply -f "${TMPDIR:-/tmp}/coredns-custom.before.yaml"
 kubectl -n kube-system rollout restart deployment/coredns
 ```
 

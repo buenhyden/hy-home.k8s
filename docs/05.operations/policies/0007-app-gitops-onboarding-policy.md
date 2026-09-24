@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.0.3"
+version: "1.0.4"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -114,11 +114,12 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ### 3-2. NetworkPolicy
 
-현재 `apps` namespace 전체에 egress 정책이 적용된다:
+현재 `apps` namespace 전체에 egress 정책(`allow-egress-apps`)이 적용된다:
 
 - postgres (host `192.168.0.13:15432`, `15433`, ADR-0046) egress 허용
+- Istio sidecar trace용 외부 Alloy OTLP(host `192.168.0.13:4317`) egress 허용
 - kube-dns egress 허용
-- Istiod egress 허용
+- Istiod(`15010`, `15012`, `15014`) egress 허용
 - cluster pod CIDR(`10.42.0.0/16`) egress 허용 (in-cluster mTLS 통신)
 
 **신규 외부 서비스 연결 필요 시**: `gitops/platform/network-policies/apps-egress.yaml`에 egress 규칙을 추가하고 Platform 팀(운영자 본인)에 변경 요청한다.

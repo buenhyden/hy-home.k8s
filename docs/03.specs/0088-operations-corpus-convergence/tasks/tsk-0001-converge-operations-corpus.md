@@ -2,7 +2,7 @@
 title: "Converge the Operations Corpus"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -32,7 +32,7 @@ actions.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-OCC-002, VAL-OCC-004 | Survey Stage 05, Stage 98 Operations units, and scripts | platform | Done | Survey below | This Task |
 | WORK-002 | VAL-OCC-003, VAL-OCC-005 | Remove dead or duplicate validation logic and close the secret-output gap | platform | Queued | Not executed | Focused tests and staged QA |
-| WORK-003 | VAL-OCC-001, VAL-OCC-002 | Converge Stage 05 ownership and facts | platform | Queued | Not executed | Document gates and staged QA |
+| WORK-003 | VAL-OCC-001, VAL-OCC-002 | Converge Stage 05 ownership and facts | platform | Done | Single owners set and drift corrected; see the survey | Document gates and staged QA |
 | WORK-004 | VAL-OCC-004, VAL-OCC-006 | Record dispositions and final evidence | platform | Queued | Not executed | Full QA |
 
 ## Approval and Safety Boundaries

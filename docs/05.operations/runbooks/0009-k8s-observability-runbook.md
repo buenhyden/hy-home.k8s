@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.1.3"
+version: "2.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -28,7 +28,7 @@ artifact_id: "RUN-0009"
 
 | job | 대상 |
 | --- | --- |
-| `kubernetes-pods` | `prometheus.io/scrape` annotation pod(istiod, Istio sidecar), ArgoCD component(`8082`, `8083`, `8084`, `8080`, `9001`), argo-rollouts `8090`, kube-state-metrics `8080` |
+| `kubernetes-pods` | `prometheus.io/scrape` annotation pod(istiod, Istio sidecar), ArgoCD component([RUN-0008](./0008-argocd-metrics-prometheus-runbook.md) 표), argo-rollouts `8090`, kube-state-metrics `8080` |
 | `kubelet` | 각 node의 `/api/v1/nodes/<node>/proxy/metrics` |
 | `cadvisor` | 각 node의 `/api/v1/nodes/<node>/proxy/metrics/cadvisor` |
 
@@ -56,7 +56,7 @@ observability endpoint 연결을 복구한다.
 
 ## Runbook Type
 
-`bootstrap`
+`troubleshooting`
 
 ## When to Use
 
@@ -168,7 +168,6 @@ kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 | 오류 시그니처 | 원인 | 조치 |
 | --- | --- | --- |
 | `mkdir data-alloy: read-only file system` | `--storage.path` 미설정 | args에 `--storage.path=/var/lib/alloy` 추가 |
-| `unrecognized attribute name 'extra_labels'` | 당시 Alloy v1.13.1 미지원 속성 | `loki.process` + `stage.static_labels`로 대체 |
 | `failed to list pods: Forbidden` | ClusterRole 권한 미할당 | ClusterRoleBinding 재적용 |
 | `nodes/proxy` `Forbidden` | kubelet/cAdvisor proxy 권한 누락 | ClusterRole의 `nodes/proxy` get 확인 |
 | `connection refused` to `loki-external` | host `3100` 미공개 또는 egress 차단 | Procedure 4 |
@@ -218,26 +217,28 @@ kubectl -n monitoring get networkpolicy allow-egress-monitoring -o yaml | rg -A8
 - Alloy 로그의 remote write가 `401`이면 OpenBao `platform/prometheus-api`와 외부
   workspace의 Basic Auth(`INFRA-007`)가 어긋난 것이다. 외부 workspace가 값을 맞춘다.
 - `404`면 `--web.enable-remote-write-receiver`가 꺼져 있다. 외부 workspace가 소유한다.
-- `no such host`, `x509`면 `coredns-custom`이나 `hy-home-root-ca`를 bootstrap 파일로
-  다시 적용한다(human-approved break-glass).
-- Loki EndpointSlice나 NetworkPolicy가 `192.168.0.13`이 아니면 Git의
-  `gitops/platform/`을 고치고 reconciliation으로 반영한다.
+- `no such host`, `x509`면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md)의
+  Procedure 4단계로 `coredns-custom`이나 `hy-home-root-ca`를 재적용한다.
+- Loki EndpointSlice가 `192.168.0.13:3100`이 아니면
+  [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 External Endpoint
+  Recovery 절차를 따른다. NetworkPolicy가 틀렸으면 Git의
+  `gitops/platform/network-policies/`를 고치고 reconciliation으로 반영한다.
 
 ---
 
 ### Procedure 5: target 누락 복구
 
 `kubernetes-pods` job에서 특정 component가 빠지면 label과 port를 relabel 규칙과
-비교한다.
+비교한다. ArgoCD component는 [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md)이
+소유한다.
 
 ```bash
-kubectl get pods -n argocd -L app.kubernetes.io/name
 kubectl get pods -n argo-rollouts -L app.kubernetes.io/name
 kubectl get pods -n istio-system -l app=istiod \
   -o jsonpath='{.items[*].metadata.annotations.prometheus\.io/scrape}'
 ```
 
-- ArgoCD와 argo-rollouts는 `discovery.relabel "platform_pods"`, kube-state-metrics는
+- argo-rollouts는 `discovery.relabel "platform_pods"`, kube-state-metrics는
   `discovery.relabel "kube_state_metrics"`의 `namespace;app.kubernetes.io/name;container port`
   규칙에 맞아야 한다. chart 업그레이드로 이름이나 port가 바뀌면 그 규칙을 고친다.
 - kube-state-metrics scrape는 `honor_labels = true`다. 없으면 `namespace`가
@@ -291,10 +292,10 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
 | --- | --- | --- |
 | platform-monitoring InvalidSpecError | AppProject에 monitoring namespace 미포함 | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
 | Alloy 로그에 remote write `401` | Basic Auth 자격 증명 불일치 | OpenBao `platform/prometheus-api`와 외부 `INFRA-007` 대조 (Procedure 4) |
-| `no such host` / `x509` | CoreDNS custom zone 또는 CA ConfigMap 누락 | Procedure 4 |
+| `no such host` / `x509` | CoreDNS custom zone 또는 CA ConfigMap 누락 | Procedure 4, [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) 4단계 |
 | remote write `404` | remote write receiver 꺼짐 | 외부 workspace가 flag 복구 |
 | `kubelet`/`cadvisor` job 없음 | `nodes/proxy` 권한 또는 API egress 누락 | Procedure 3-2, egress `6443` 확인 |
-| ArgoCD component만 빠짐 | chart 변경으로 label/port 불일치 | Procedure 5 |
+| ArgoCD component만 빠짐 | chart 변경으로 label/port 불일치 | [RUN-0008](./0008-argocd-metrics-prometheus-runbook.md) |
 | Loki에 k8s 로그 없음 | alloy 미실행 또는 loki-external 연결 실패 | Procedure 3, 4 |
 
 ---
