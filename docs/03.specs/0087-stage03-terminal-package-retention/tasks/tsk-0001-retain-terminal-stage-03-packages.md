@@ -1,8 +1,8 @@
 ---
 title: "Retain Terminal Stage 03 Packages"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-24"
 layer: "specs"
@@ -33,7 +33,7 @@ SPEC-0047 and SPEC-0050 the same day.
 | WORK-002 | VAL-STR-002, VAL-STR-003 | Retain the four withdrawn packages in `retired/` | platform | Done | Four units retained in `retired/03.specs/` with catalog rows naming `888cab04`; current citations rewritten in the same commit `d02e936f` | Staged QA and archive gates below |
 | WORK-003 | VAL-STR-005 | Rewrite the SPEC-0054 test pin and move the SPEC-0062 allowlist entry | platform | Done | Pins follow the retained paths with unchanged assertions; commit `eb37b97d` | Focused tests below |
 | WORK-004 | VAL-STR-004 | Retain SPEC-0054, SPEC-0062, and SPEC-0084 in `completed/` | platform | Done | Three units retained with catalog rows naming `27c1045d`; commit `eb37b97d` | Staged QA and archive gates below |
-| WORK-005 | VAL-STR-006 | Record the results and close this package | platform | Queued | Not executed | Staged QA and hosted CI |
+| WORK-005 | VAL-STR-006 | Record the results and close this package | platform | Done | Hosted `qa` passed on PR #98 and on `main` at `a264ebad` | Hosted CI |
 
 ## Approval and Safety Boundaries
 
@@ -105,6 +105,19 @@ their own bodies, which freeze with them.
   local unit run on `27c1045d` shows only the five known local failures, one of
   which is this budget.
 
+
+### Closure (2026-09-24)
+
+- **Hosted**: `qa` passed on PR #98 at `05e05b3e` and on `main` at `a264ebad`.
+- **Result**: all seven units are retained. Four are in `retired/03.specs/`
+  (`888cab04` envelope) and three in `completed/03.specs/` (`27c1045d`
+  envelope).
+- **Rollback**: revert the two move commits; Git restores every original path.
+- **Residual risk**: REQ-0004 FR-0005, FR-0006, FR-0009 and FR-0011 have no
+  implementation owner since their packages were withdrawn, as AD-0007 records.
+- **Next owner**: the request owner, for any new package that takes up that
+  scope.
+
 ## Traceability
 
 - Stable Task: `SPEC-0087-TSK-0001`
@@ -117,4 +130,4 @@ their own bodies, which freeze with them.
 | [WORK-002](../plan.md#work-breakdown) | Done | Commit `d02e936f` |
 | [WORK-003](../plan.md#work-breakdown) | Done | Commit `eb37b97d` |
 | [WORK-004](../plan.md#work-breakdown) | Done | Commit `eb37b97d` |
-| [WORK-005](../plan.md#work-breakdown) | Not executed | Queued |
+| [WORK-005](../plan.md#work-breakdown) | Done | Hosted `qa` on `a264ebad` |
