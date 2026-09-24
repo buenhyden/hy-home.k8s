@@ -100,6 +100,7 @@ data:
     - description: Notify when app is successfully deployed
       send:
         - app-deployed
+      oncePer: app.status.operationState?.syncResult?.revision
       when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
 
   trigger.on-health-degraded: |
@@ -112,6 +113,7 @@ data:
     - description: Notify when app sync fails
       send:
         - app-sync-failed
+      oncePer: app.status.operationState?.syncResult?.revision
       when: app.status.operationState.phase in ['Error', 'Failed']
 
   trigger.on-rollout-completed: |
@@ -130,3 +132,12 @@ data:
   defaultTriggers: |
     - on-health-degraded
     - on-sync-failed
+
+  # 수신자. token은 OpenBao `platform/notifications`의 `slack_token`에서 온다.
+  subscriptions: |
+    - recipients:
+        - slack:hy-home-alerts
+      triggers:
+        - on-health-degraded
+        - on-sync-failed
+        - on-deployed

@@ -215,6 +215,8 @@ require_pattern 'template\.rollout-completed:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'trigger\.on-health-degraded:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'trigger\.on-sync-failed:' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'defaultTriggers:' "$ARGOCD_NOTIFICATIONS_CM"
+# A trigger without a recipient sends nothing, so the subscription is part of the contract.
+require_multiline_pattern 'subscriptions:\s*\|\n([[:space:]].*\n)*[[:space:]]+-\s*slack:hy-home-alerts' "$ARGOCD_NOTIFICATIONS_CM"
 require_pattern 'kind:\s*ExternalSecret' "$ARGOCD_NOTIFICATIONS_SECRET"
 require_pattern 'kind:\s*ClusterSecretStore' "$ARGOCD_NOTIFICATIONS_SECRET"
 require_pattern 'name:\s*vault-backend' "$ARGOCD_NOTIFICATIONS_SECRET"
