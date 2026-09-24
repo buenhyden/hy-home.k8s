@@ -38,6 +38,21 @@ spec:
         meshConfig:
           defaultConfig:
             holdApplicationUntilProxyStarts: false
+            # Sidecars sample 10% of requests; the home mesh carries little
+            # traffic, and the default 1% would rarely produce a trace.
+            tracing:
+              sampling: 10
+          # Traces go over OTLP to the external Alloy, which forwards them to
+          # Tempo (ADR-0045 clarification). No Telemetry resource is needed:
+          # defaultProviders applies the provider to the whole mesh.
+          extensionProviders:
+            - name: otel-tracing
+              opentelemetry:
+                service: alloy-external.platform.svc.cluster.local
+                port: 4317
+          defaultProviders:
+            tracing:
+              - otel-tracing
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
