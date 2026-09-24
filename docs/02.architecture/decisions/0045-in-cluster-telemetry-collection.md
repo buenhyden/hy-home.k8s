@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "architecture"
 artifact_id: "ADR-0045"
 ---
@@ -111,6 +111,14 @@ the external workspace removed their static scrape jobs
 (`hy-home.docker` PR #218) and no consumer remained. Remote write now reaches the host address under
 [ADR-0046](./0046-external-services-over-host-addresses.md). The rest of this
 decision is unchanged.
+
+**Current-state clarification (2026-09-24).** The follow-up trace path is now
+in place. Istio sidecars send traces over OTLP to `alloy-external`
+(`192.168.0.13:4317`) through the mesh-wide `defaultProviders.tracing` setting
+in the istiod `meshConfig`, at 10% sampling, and the `apps` egress policy
+allows that port. The external Alloy's home configuration receives OTLP and
+forwards it to Tempo (`hy-home.docker`). The rest of this decision is
+unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

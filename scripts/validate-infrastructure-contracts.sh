@@ -354,6 +354,12 @@ config = next(d for d in docs if d["kind"] == "ConfigMap")["data"]["config.alloy
 pod = next(d for d in docs if d["kind"] == "Deployment")["spec"]["template"]["metadata"]
 sys.exit(pod.get("annotations", {}).get("checksum/config") != hashlib.sha256(config.encode()).hexdigest())
 PY
+# Istio sidecars send traces over OTLP to the external Alloy (ADR-0045
+# clarification); the apps namespace, which is injected, must reach it.
+ISTIOD_APP="$ROOT_DIR/gitops/apps/root/platform-istiod-app.yaml"
+require_pattern 'service:\s*alloy-external\.platform\.svc\.cluster\.local' "$ISTIOD_APP"
+require_multiline_pattern 'defaultProviders:\n\s+tracing:\n\s+- otel-tracing' "$ISTIOD_APP"
+require_multiline_pattern 'port:\s*15433\n(\s+- protocol: TCP\n)?\s+port:\s*4317' "$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
 # kube-state-metrics labels name the object it describes; without
 # honor_labels the target's namespace wins and namespace="apps" matches nothing.
 require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"

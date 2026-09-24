@@ -2,6 +2,7 @@
 # 대상: apps namespace의 모든 파드 (현재: adminer)
 # 허용 egress:
 #   - postgres-write-external / postgres-read-external (host 192.168.0.13, ADR-0046)
+#   - OTLP traces from the Istio sidecar to the external Alloy (192.168.0.13:4317)
 #   - kube-dns (kube-system)
 #   - Istiod control plane (istio-system:15010/15012/15014)
 #   - in-cluster pod-to-pod (10.42.0.0/16) for Istio mTLS
@@ -24,6 +25,8 @@ spec:
           port: 15432
         - protocol: TCP
           port: 15433
+        - protocol: TCP
+          port: 4317
     # kube-dns
     - to:
         - namespaceSelector:
