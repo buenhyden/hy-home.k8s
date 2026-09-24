@@ -40,7 +40,9 @@ if __package__:
         commit_entries,
         index_entries,
         is_ancestor,
+        is_shallow_repository,
         object_type,
+        resolve_default_branch,
     )
     from scripts.archive_cutover_manifest import (
         ARCHIVE_PROFILE,
@@ -97,7 +99,9 @@ else:
         commit_entries,
         index_entries,
         is_ancestor,
+        is_shallow_repository,
         object_type,
+        resolve_default_branch,
     )
     from archive_cutover_manifest import (  # type: ignore[no-redef]
         ARCHIVE_PROFILE,
@@ -1092,10 +1096,11 @@ def catalog_envelope_diagnostics(
     """Re-verify every Retention Catalog row against the Git object it names.
 
     Each envelope object must exist, have its unit's type, and be reachable from
-    the checked-out history. A retained unit must equal that object entry for
-    entry. The sixteen bodies ADR-0038 retained with rebased links are read
-    through link-resolved equivalence instead. A missing object or unavailable
-    history fails; it never skips.
+    the registry's default branch. A retained unit must equal that object entry
+    for entry. The sixteen bodies ADR-0038 retained with rebased links are read
+    through link-resolved equivalence instead. A missing object, an unresolvable
+    default branch, a shallow clone, or an unavailable history fails; it never
+    skips.
     """
 
     rows, _errors = parse_catalog(index_text)
@@ -1109,6 +1114,10 @@ def catalog_envelope_diagnostics(
         retention_source_path(record): record
         for record in registry.legacy_rebased_retained_paths
     }
+    default_ref = resolve_default_branch(
+        root, registry.archive_assessment.default_branch
+    )
+    shallow = is_shallow_repository(root)
     diagnostics: list[CutoverDiagnostic] = []
     for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
         envelope = row.envelope
@@ -1117,7 +1126,9 @@ def catalog_envelope_diagnostics(
         kind = object_type(root, envelope.commit, envelope.original_path)
         if (
             kind is None
-            or not is_ancestor(root, envelope.commit, "HEAD")
+            or default_ref is None
+            or shallow
+            or not is_ancestor(root, envelope.commit, default_ref)
             or (retained and kind != ("tree" if unit is not None else "blob"))
         ):
             diagnostics.append(_diagnostic("ARCHIVE-CATALOG-OBJECT", record.as_posix()))

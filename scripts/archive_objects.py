@@ -10,6 +10,7 @@ closed rather than skipping.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
@@ -59,6 +60,49 @@ def object_type(root: Path, commit: str, path: PurePosixPath) -> str | None:
 
 def is_ancestor(root: Path, commit: str, descendant: str) -> bool:
     return _git(root, "merge-base", "--is-ancestor", commit, descendant) is not None
+
+
+_BRANCH_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*\Z")
+
+
+def is_shallow_repository(root: Path) -> bool:
+    """Return True unless Git reports a complete, unbounded history.
+
+    Any unreadable answer fails closed as shallow, so a partial clone with an
+    unavailable history never reads as an ordinary repository.
+    """
+
+    raw = _git(root, "rev-parse", "--is-shallow-repository")
+    return raw is None or raw.strip() != b"false"
+
+
+def resolve_default_branch(root: Path, default_branch: str) -> str | None:
+    """Resolve the registry's default branch to a checkable ref.
+
+    A remote-tracking ref for the name wins when one exists; a local branch of
+    the same name is used otherwise. Neither existing resolves to None rather
+    than falling back to `HEAD`, per ADR-0040.
+    """
+
+    if _BRANCH_NAME.fullmatch(default_branch) is None:
+        return None
+    raw = _git(
+        root, "for-each-ref", "--format=%(refname)", f"refs/remotes/*/{default_branch}"
+    )
+    if raw:
+        try:
+            names = sorted(raw.decode("ascii", errors="strict").splitlines())
+        except UnicodeDecodeError:
+            return None
+        if names:
+            return names[0]
+    local = f"refs/heads/{default_branch}"
+    if (
+        _git(root, "rev-parse", "--verify", "--quiet", "--end-of-options", local)
+        is not None
+    ):
+        return local
+    return None
 
 
 def blob_text(root: Path, specification: str) -> str | None:

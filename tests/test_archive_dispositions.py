@@ -163,10 +163,22 @@ class RetentionEnvelopeTests(unittest.TestCase):
             f"{COMMIT}:docs/../a.md",
             f"{COMMIT}:docs/a.md sha256={'c' * 64}",
             f"{COMMIT.upper()}:docs/a.md",
+            f"{'a' * 63}:docs/a.md",
+            f"{'a' * 41}:docs/a.md",
         ):
             with self.subTest(value=value):
                 with self.assertRaises(dispositions.DispositionError):
                     dispositions.parse_retention_envelope(value)
+
+    def test_envelope_accepts_the_repository_object_format_length(self) -> None:
+        """ADR-0040: the catalog grammar accepts sha1 (40) and sha256 (64), the
+        same lengths the lifecycle gate and recovery module already accept."""
+
+        sha256_commit = "a" * 64
+        envelope = dispositions.parse_retention_envelope(
+            f"{sha256_commit}:docs/02.architecture/decisions/0032-x.md"
+        )
+        self.assertEqual(envelope.commit, sha256_commit)
 
 
 class CatalogTests(unittest.TestCase):

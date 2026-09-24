@@ -73,7 +73,9 @@ ROUTE_DISPOSITION_PROFILES = frozenset(
 ROUTE_RECORD_PROFILES = ROUTE_DISPOSITION_PROFILES | {"archive/migration"}
 SEALED_RECORD_PROFILES = frozenset({"archive/tombstone"})
 
-_COMMIT = re.compile(r"[0-9a-f]{40}")
+# Accepts both object-format lengths ADR-0040 requires: sha1 (40) and sha256
+# (64), matching the lifecycle gate's and recovery module's own grammar.
+_COMMIT = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 _CATALOG_ROW = re.compile(
     r"\| \[`(?P<label>[^`|]+)`\]\(\./(?P<target>[^)|]+)\) \| `(?P<envelope>[^`|]+)` \|"
 )
