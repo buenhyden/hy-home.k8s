@@ -1,6 +1,6 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -62,6 +62,8 @@ it, TLS verified it, or a live cluster admitted it.
 **Disposition note (2026-09-16).** The resume condition above can no longer be met. Spec 0048 did not close with evidence; it was withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md), so waiting on it is waiting on something that will not happen. This package nonetheless stays `draft` rather than following it, because its scope is real and unowned: no `kustomize`, `kubeconform`, `kubeval` or `helm template` invocation exists anywhere in this repository, so VAL-PVSE-002 and VAL-PVSE-003 have no substitute owner, and no evidence contract file exists for VAL-PVSE-001. Withdrawing it would erase a recorded gap rather than resolve it. Activation now requires a new plan rather than a predecessor's closure, including a home for the contract location `.agents/contracts/`, which does not exist in the adopted layout. Next owner: the request owner.
 
 **Disposition note (2026-09-23).** Two scopes above no longer match accepted decisions, and whoever activates this package must drop them. First, [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md) retires the `traefik/` reference files, so the Traefik product-semantic lane, `scripts/validate-traefik-contracts.py`, and VAL-PVSE-004 have nothing to validate. The router contract that replaces them is owned by [SPEC-0008](../0008-current-local-gitops-platform/spec.md) VAL-SPC-005. Second, `conftest` is a required tool for the `policy-gates` lane, not an optional one with a built-in fallback. [ADR-0041](../../02.architecture/decisions/0041-openbao-secret-backend.md) names the secret backend OpenBao behind the unchanged Vault API contract. The package stays `draft`.
+
+**Disposition note (2026-09-24).** The request owner reviewed this package's disposition on 2026-09-24 and chose re-plan over withdrawal (chooser: request owner; choice: "0049 draft + 0050 withdraw"). This package stays `draft`; a new plan is required before activation, not a predecessor's closure. VAL-PVSE-004 is confirmed obsolete: accepted [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md) retired Traefik, so the product-semantic lane the criterion named has no subject and a re-plan must drop it rather than implement it. The remaining open scope is VAL-PVSE-001, VAL-PVSE-002, VAL-PVSE-003, VAL-PVSE-005, VAL-PVSE-006, VAL-PVSE-007, and VAL-PVSE-008; none of these seven is retired or resolved, and none has a validator or evidence in this repository yet. Next owner: the request owner, for the re-plan.
 
 ## Strategic Boundaries & Non-goals
 
