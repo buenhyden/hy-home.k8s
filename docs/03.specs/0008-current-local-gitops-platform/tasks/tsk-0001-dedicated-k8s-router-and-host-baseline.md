@@ -142,8 +142,8 @@ Handoff 뒤 follow-up(2026-09-24):
     `ingress-nginx` controller를 재시작했고, Tempo에 service
     `ingress-nginx-controller.ingress-nginx` span이 들어왔다. cluster 안에서
     `tempo-external:3200`이 200을 반환하고 Kiali log에 tracing 오류가 없다.
-    adminer Rollout은 재시작하지 못했다(`kubectl argo rollouts` plugin 없음,
-    `kubectl patch`는 deny). 다음 rollout 때 반영된다.
+    adminer Rollout은 재시작하지 못했다(Argo Rollouts CLI plugin이 없고
+    Rollout 필드 변경은 권한 설정이 거부한다). 다음 rollout 때 반영된다.
   - adminer Rollout pod template에 검증용 live annotation
     `verification/canary-at`이 남아 있다(Git에 없는 필드라 ArgoCD drift 아님)
 - **Next owner**: operator. KV, snapshot, Grafana token은 hy-home.docker
