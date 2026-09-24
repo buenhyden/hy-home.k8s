@@ -1760,7 +1760,9 @@ class ArchiveValidationTest(unittest.TestCase):
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
         parsed_rows, link_total, parse_diagnostics = (
-            archive_validation._parse_repository_index(index_text)  # noqa: SLF001
+            archive_validation._parse_repository_index(  # noqa: SLF001
+                index_text, archive_validation.repository_registry(ROOT)
+            )
         )
         self.assertEqual(parse_diagnostics, [])
         counts = {path: int(row[-1]) for path, row in parsed_rows.items()}
@@ -1952,7 +1954,10 @@ class ArchiveValidationTest(unittest.TestCase):
         # So a retention round costs one process per distinct last add-or-modify
         # commit among the vacated paths a sealed record still names, minus the
         # `cat-file` batches it merges, and not four per package.
-        budget = 254
+        #
+        # aa64090f added five Stage 02/03 documents, which pushed the staged
+        # Markdown read past one MAX_GIT_BATCH_OBJECTS batch: one more process.
+        budget = 255
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. That is a fixed

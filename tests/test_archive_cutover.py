@@ -219,7 +219,9 @@ class ArchiveCutoverTest(unittest.TestCase):
 
     def test_repository_cutover_calls_generic_v2_boundary(self) -> None:
         index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
-        index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
+        index_rows, structure_failure = archive_cutover._parse_archive_index(
+            index_text, load_registry(ROOT)
+        )
         self.assertFalse(structure_failure)
         generic = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(generic.valid, generic.diagnostics)
@@ -652,7 +654,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         self,
     ) -> None:
         index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
-        index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
+        index_rows, structure_failure = archive_cutover._parse_archive_index(
+            index_text, load_registry(ROOT)
+        )
         self.assertFalse(structure_failure)
 
         legacy_paths = (
