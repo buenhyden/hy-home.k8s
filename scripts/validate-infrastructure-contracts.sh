@@ -197,6 +197,11 @@ require_pattern 'rollouts\.hy-k8s\.home\.arpa' "$ROLLOUTS_APP"
 require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
 
+# No workload reads postgres-app-secret and OpenBao has no platform/postgres-app
+# entry (RUN-0096 adds the KV only when an app uses it). Restore it with a consumer.
+[ ! -e "$ROOT_DIR/gitops/platform/eso/postgres-app-secret.yaml" ] ||
+  fail 'postgres-app-secret is not deployed until a workload consumes it'
+
 echo "[INFO] verify ArgoCD Notifications Slack contracts"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*true' "$ARGOCD_VALUES"
 require_pattern 'argocd-notifications-cm\.yaml' "$ARGOCD_KUSTOMIZATION"
