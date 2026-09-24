@@ -198,6 +198,20 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         )
         if git(snapshot, "rev-parse", "HEAD") != head:
             raise ValueError("source HEAD changed during snapshot")
+        # The clone maps the source's branches to remote-tracking refs and
+        # drops the source's own remote-tracking refs. A checkout whose default
+        # branch exists only as `origin/<name>`, as in CI, would lose it, and
+        # archive envelopes resolve against that branch (ADR-0040).
+        git(
+            snapshot,
+            "fetch",
+            "--quiet",
+            "--no-tags",
+            "--no-write-fetch-head",
+            "--",
+            str(root),
+            "+refs/remotes/*:refs/remotes/*",
+        )
         if staged:
             write_snapshot_file(index_file(snapshot), index_bytes)
             shared = git(root, "rev-parse", "--shared-index-path").strip()
