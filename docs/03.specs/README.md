@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.32"
+version: "0.5.33"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -120,6 +120,10 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0086-provider-native-runtime-observation/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -168,6 +172,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
 | [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Done | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. 2026-09-16에 종결했다: package 16건을 처분하고 단위 7건을 보존했으며, SPEC-0054·0062의 보존 이동은 소유자를 지정한 유예로 기록했다. | 2026-09-16 |
 | [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Active | ADR-0040에 따른 보존 단위 사후 평가·승인된 제거·default branch envelope 검증과 index 표류 정정을 소유한다. 공통 lifecycle·검증 결과 어휘는 각자의 승인 뒤 실행하도록 순서만 정한다. |
+| [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
 
 ### Helper Templates
 
