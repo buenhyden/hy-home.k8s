@@ -43,11 +43,11 @@ from document_contracts import (
 
 
 SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
-# Stage 05 holds only live, platform-owned operational documents.  The shared
-# registry cannot express either constraint: its status domain admits four
-# lifecycle states, and it constrains owner to any string.  Both values are
-# therefore pinned per profile here, where the other frontmatter values are
-# already checked.
+# Stage 05 documents are platform-owned.  The shared registry constrains owner
+# to any string, so owner is pinned per profile here, where the other
+# frontmatter values are already checked.  Status is not pinned: a document
+# reaches a terminal status in place before it moves to the archive, and the
+# registry's status domain already bounds the value.
 STAGE05_PROFILE_IDS = frozenset(
     {
         "operation/guide",
@@ -57,7 +57,7 @@ STAGE05_PROFILE_IDS = frozenset(
         "operation/postmortem",
     }
 )
-STAGE05_PINNED_FRONTMATTER = {"status": "active", "owner": "platform"}
+STAGE05_PINNED_FRONTMATTER = {"owner": "platform"}
 NATIVE_TRACKED_PATHSPECS = (
     ".github/ISSUE_TEMPLATE",
     ".github/workflows",

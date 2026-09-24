@@ -593,7 +593,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -603,7 +605,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/guide",
@@ -678,7 +681,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -688,7 +693,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/policy",
@@ -764,7 +770,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -774,7 +782,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/runbook",
@@ -4033,7 +4042,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -4043,7 +4054,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/guide",
@@ -4196,7 +4208,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -4206,7 +4220,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/policy",
@@ -4362,7 +4377,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -4372,7 +4389,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by"
         ],
         "constants": {
           "type": "operation/runbook",

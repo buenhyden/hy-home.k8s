@@ -1010,6 +1010,31 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 
+    def test_stage05_documents_may_reach_a_terminal_status_but_stay_platform_owned(
+        self,
+    ) -> None:
+        # A Stage 05 document is archived by first recording a terminal status
+        # in place, so only the owner stays pinned.
+        markdown = load_validator("stage05_terminal", VALIDATOR_PATHS["markdown"])
+        registry = markdown.load_registry(REPOSITORY_ROOT)
+        path = PurePosixPath(
+            "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md"
+        )
+        profile = markdown.classify_path(registry, path)
+        source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
+        superseded = source.replace(
+            'artifact_id: "RUN-0008"',
+            'artifact_id: "RUN-0008"\nsuperseded_by: "RUN-0009"',
+            1,
+        ).replace('status: "active"', 'status: "superseded"', 1)
+        self.assertEqual(
+            markdown.validate_document_text(superseded, path, profile, "strict"), []
+        )
+        other_owner = source.replace('owner: "platform"', 'owner: "someone"', 1)
+        self.assertTrue(
+            markdown.validate_document_text(other_owner, path, profile, "strict")
+        )
+
     def test_terminal_guide_owner_is_singular(self) -> None:
         guides = sorted(
             path.name
