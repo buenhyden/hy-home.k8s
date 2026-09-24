@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.4"
+version: "1.6.5"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -192,6 +192,9 @@ SPEC-0072 left open is owned by
 Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
 owned by
 [SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md).
+Converging Operations document ownership, disposing of Stage 98 Operations
+residue, and removing dead or duplicate validation logic is owned by
+[SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md).
 
 ## Traceability
 

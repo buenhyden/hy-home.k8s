@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -88,6 +88,8 @@ Delivery assurance는 모든 in-scope surface에 분류·검증 깊이·결과·
 보존되었고([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)), 그 범위의 구현 owner는 현재 없다.
 원래 REQ-0007 프로그램 이력은 유지하며 현재 플랫폼 의미를 이 문서로, 공통 라우팅·승인·QA 의미를 REQ-0003으로 승계한다.
 이 승계는 어느 tranche 또는 Spec 0054 WP-013의 완료 선언도 아니다.
+운영 문서의 현재 구현 사실 정합과 secret 값 비출력 경계 검증은
+[SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md)이 소유한다.
 
 ## Traceability
 
