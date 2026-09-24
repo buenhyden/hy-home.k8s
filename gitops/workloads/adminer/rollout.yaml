@@ -16,6 +16,10 @@ spec:
       labels:
         app.kubernetes.io/name: adminer
         app.kubernetes.io/component: db-admin
+      # sidecar는 mesh 설정을 기동 시에만 읽는다. mesh 설정이 바뀌면 이 값을
+      # 바꿔 canary로 pod를 교체한다.
+      annotations:
+        mesh.hy-home/sidecar-config: "otlp-tracing"
     spec:
       # UID 999는 추측이 아니라 이미지에서 직접 읽은 값이다:
       # `/etc/passwd`에 `adminer:x:999:999::/home/adminer:/bin/sh`.
