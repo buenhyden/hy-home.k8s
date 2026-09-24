@@ -1,6 +1,6 @@
 ---
 title: "Dedicated Kubernetes Router and Host Baseline"
-version: "0.3.2"
+version: "0.3.3"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -109,6 +109,10 @@ Handoff 뒤 follow-up(2026-09-24):
 | #85 | Stage 05 operation 문서가 `superseded`로 archive될 수 있게 profile 조정 |
 | #86 | Istio mesh trace를 OTLP로 외부 Alloy(`alloy-external:4317`)에 전송, sampling 10% |
 | #87 | #85가 깨뜨린 frozen archive fixture test 복구(#85, #86이 `qa` FAIL 상태로 merge됨) |
+| #88, #89 | 이 Task에 follow-up과 잔여 위험 기록 |
+| #90 | adminer pod template annotation으로 canary 재배포(AnalysisRun `adminer-7c67b97457-3-1` Successful) |
+| #91 | notifications 수신자 `slack:hy-home-alerts`와 trigger `oncePer` 추가(구독이 없어 token이 있어도 전송되지 않았다) |
+| #92 | adminer ingress를 mesh host로 보냄. ingress-nginx sidecar가 pod IP로 plaintext를 보내 STRICT mTLS가 끊었다(요청 102/102가 503) |
 
 ### Final full QA
 
@@ -127,23 +131,23 @@ Handoff 뒤 follow-up(2026-09-24):
 ### Handoff
 
 - **Snapshot**: `main` `088fd4ac`; 이 Task 갱신은 그 뒤 문서 전용 commit이다.
-- **Approval boundary**: agent는 push, merge, OpenBao 운영, 시크릿 조회를 하지
-  않았다. live mutation은 위에 적은 owner 승인 범위만 수행했다.
+- **Approval boundary**: agent는 OpenBao 운영과 시크릿 조회를 하지 않았다.
+  #87부터는 owner가 명시적으로 승인한 경로로 agent가 push와 merge를 했고,
+  merge는 `qa` 통과 뒤에만 했다. live mutation은 owner 승인 범위만 수행했다.
 - **Skipped or unavailable**: host에 `argocd` CLI와 `shellcheck`가 없다
   (pre-commit이 shellcheck를 대신한다).
 - **Rollback**: PR별 merge commit을 `git revert`한다. live 상태는 ArgoCD가
   `main`으로 되돌린다.
-- **Residual risk** (follow-up 반영, `main` `83de9cbc`):
+- **Residual risk** (follow-up 반영, `main` `adb73c8c`):
   - `platform/notifications` KV 부재로 `platform-argocd-config` Degraded.
-    owner가 root session으로 Slack token을 넣어야 한다(RUN-0096).
+    owner가 root session으로 Slack token을 넣어야 한다(RUN-0096). 넣으면 #91
+    구독으로 `#hy-home-alerts`에 전송된다.
   - OpenBao snapshot 없음. 새 snapshot과 offline 보관이 필요하다(RUN-0096 v1.2.1).
   - Grafana Viewer token 만료 2026-12-22(RUN-0096 재발급 절차, 2026-12-15 알림).
-  - trace 경로: docker `infra-alloy` 재생성(docker PR #251) 뒤 owner 승인으로
-    `ingress-nginx` controller를 재시작했고, Tempo에 service
-    `ingress-nginx-controller.ingress-nginx` span이 들어왔다. cluster 안에서
-    `tempo-external:3200`이 200을 반환하고 Kiali log에 tracing 오류가 없다.
-    adminer Rollout은 재시작하지 못했다(Argo Rollouts CLI plugin이 없고
-    Rollout 필드 변경은 권한 설정이 거부한다). 다음 rollout 때 반영된다.
+  - trace 경로는 닫혔다. docker `infra-alloy` 재생성(docker PR #251), owner
+    승인 `ingress-nginx` 재시작, #90, #92 뒤 adminer ingress 요청 60/60이 200이고
+    Tempo에 `adminer.apps`, `ingress-nginx-controller.ingress-nginx` span이 있다.
+    Kiali는 `tempo-external:3200`을 오류 없이 읽는다.
   - adminer Rollout pod template에 검증용 live annotation
     `verification/canary-at`이 남아 있다(Git에 없는 필드라 ArgoCD drift 아님)
 - **Next owner**: operator. KV, snapshot, Grafana token은 hy-home.docker
