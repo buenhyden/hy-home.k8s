@@ -1,6 +1,6 @@
 ---
 title: "Dedicated Kubernetes Router and Host Baseline"
-version: "0.3.1"
+version: "0.3.2"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -101,6 +101,15 @@ live 검증에서 찾아 고친 결함:
 | #81 | analysis 조건이 숫자 결과를 문자열과 비교 |
 | #82 | kube-state-metrics scrape에 `honor_labels`가 없어 `namespace`가 `monitoring`으로 덮임 |
 
+Handoff 뒤 follow-up(2026-09-24):
+
+| PR | Change |
+| --- | --- |
+| #84 | Alloy pod template `checksum/config`로 config 변경 시 rollout; 소비자 없는 `postgres-app-secret` 제거; archive test 4개 수정 |
+| #85 | Stage 05 operation 문서가 `superseded`로 archive될 수 있게 profile 조정 |
+| #86 | Istio mesh trace를 OTLP로 외부 Alloy(`alloy-external:4317`)에 전송, sampling 10% |
+| #87 | #85가 깨뜨린 frozen archive fixture test 복구(#85, #86이 `qa` FAIL 상태로 merge됨) |
+
 ### Final full QA
 
 `python3 scripts/qa.py full` on `main` `088fd4ac`: exit 1. 20 lanes PASS,
@@ -124,17 +133,17 @@ live 검증에서 찾아 고친 결함:
   (pre-commit이 shellcheck를 대신한다).
 - **Rollback**: PR별 merge commit을 `git revert`한다. live 상태는 ArgoCD가
   `main`으로 되돌린다.
-- **Residual risk**:
-  - `platform/notifications`, `platform/postgres-app` KV 부재
-  - Grafana Viewer token 만료 2026-12-22(RUN-0096 재발급 절차)
-  - Alloy OTLP `4317` 연결 거부(외부 workspace)
-  - main의 archive test 4개와 Stage 05 archive governance 공백
-  - Alloy에 config reload 경로가 없어 ConfigMap 변경은 pod 재시작 전까지
-    적용되지 않는다(#82 적용 때 owner 승인으로 재시작했다)
+- **Residual risk** (follow-up 반영, `main` `83de9cbc`):
+  - `platform/notifications` KV 부재로 `platform-argocd-config` Degraded.
+    owner가 root session으로 Slack token을 넣어야 한다(RUN-0096).
+  - OpenBao snapshot 없음. 새 snapshot과 offline 보관이 필요하다(RUN-0096 v1.2.1).
+  - Grafana Viewer token 만료 2026-12-22(RUN-0096 재발급 절차, 2026-12-15 알림).
+  - trace 경로는 Git에만 있다. docker `infra-alloy` 재생성(docker PR #248) 뒤
+    `apps`, `ingress-nginx` pod 재시작과 Tempo/Kiali 확인이 필요하다.
   - adminer Rollout pod template에 검증용 live annotation
     `verification/canary-at`이 남아 있다(Git에 없는 필드라 ArgoCD drift 아님)
-- **Next owner**: operator. 위 KV와 Alloy reload 경로를 맡는다. `/tmp/bao-k8s`는
-  삭제되었고 5.3 snapshot은 host에서 찾지 못했다.
+- **Next owner**: operator. KV와 snapshot, 그리고 docker Alloy 재생성은
+  hy-home.docker session에 넘겼고 모두 owner 승인 대기다.
 
 ## Traceability
 
@@ -146,5 +155,5 @@ live 검증에서 찾아 고친 결함:
 | [WORK-002](../plan.md#work-breakdown) | Done | `cdf9a465` |
 | [WORK-005](../plan.md#work-breakdown) | Done | `030cf5df` |
 | [WORK-006](../plan.md#work-breakdown) | Done | `dfbf63f9` |
-| [WORK-007](../plan.md#work-breakdown) | Done | PR #74..#82; full QA on `088fd4ac` |
+| [WORK-007](../plan.md#work-breakdown) | Done | PR #74..#82; full QA on `088fd4ac`; follow-up #84..#87 |
 | [WORK-008](../plan.md#work-breakdown) | Done | `4a6e5548` |
