@@ -360,13 +360,13 @@ class ArchiveCutoverTest(unittest.TestCase):
         # Spec 0036 was retained under ADR-0032, so this case names an active
         # package: the point is that an index-only replacement change to a
         # present current document is accepted.
-        replacement = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+        replacement = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
 
         def evolve_replacement(text: str) -> str:
             lines, rows = self._manifest_rows(text)
             cells = self._cells(lines[rows[0]])
             cells[7] = (
-                f"[`{replacement}`](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)"
+                f"[`{replacement}`](../03.specs/0008-current-local-gitops-platform/spec.md)"
             )
             lines[rows[0]] = self._row(cells)
             return "".join(lines)
@@ -396,7 +396,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         # This case needs a present current document so classification, not
         # absence or the archive route, decides the diagnostic. Spec 0036 was
         # retained under ADR-0032, so an active package stands in for it.
-        current = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+        current = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
         template = "docs/99.templates/templates/archive/tombstone.template.md"
 
         self.assertEqual(
@@ -568,13 +568,11 @@ class ArchiveCutoverTest(unittest.TestCase):
             self.assertEqual(projection.current_by_legacy[legacy], expected)
             composed += 1
         self.assertTrue(composed, "Stage 99 rows must still compose current owners")
-        spec0054_ledger = archive_validation.MIG0004_SPEC0054_LEDGER
-        spec0054_owner = str(PurePosixPath(spec0054_ledger).with_name("README.md"))
-        while spec0054_owner in later_edges:
-            spec0054_owner = later_edges[spec0054_owner]
-        self.assertEqual(
-            projection.current_by_legacy[spec0054_ledger],
-            spec0054_owner,
+        # SPEC-0087 retained the SPEC-0054 package as an exact unit, so the
+        # sealed ledger row composes no current owner and resolves through the
+        # Archive index, like every other retained endpoint.
+        self.assertNotIn(
+            archive_validation.MIG0004_SPEC0054_LEDGER, projection.current_by_legacy
         )
         # Aggregate totals are intentionally not asserted. Canonical non-terminal
         # growth is owned by

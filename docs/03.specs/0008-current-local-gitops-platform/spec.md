@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.1.1"
+version: "1.1.2"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "specs"
 artifact_id: "SPEC-0008"
 ---
@@ -18,7 +18,7 @@ local GitOps platform. Old platform specs are archived as Tombstones, and this
 spec is the active technical contract for current manifests, scripts, and
 validation evidence.
 
-**Disposition note (2026-09-16).** This package stays `active` and is not closed by [SPEC-0084](../0084-stage03-backlog-closeout/spec.md). It owns the current platform contract rather than a finished round: ADR-0002, ADR-0041, ADR-0006, ADR-0008, ADR-0009 and ADR-0014 each name it as their Spec, REQ-0004 traces to it, the Stage 05 policies and runbooks carry it in their RACI rows, three test modules pin its path, and the Archive index names it as the replacement for three superseded platform specs. Closing it would leave those citations pointing at a finished document, and no successor exists to take them. Next owner: whoever replaces the platform contract, if anyone ever does.
+**Disposition note (2026-09-16).** This package stays `active` and is not closed by [SPEC-0084](../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md). It owns the current platform contract rather than a finished round: ADR-0002, ADR-0041, ADR-0006, ADR-0008, ADR-0009 and ADR-0014 each name it as their Spec, REQ-0004 traces to it, the Stage 05 policies and runbooks carry it in their RACI rows, three test modules pin its path, and the Archive index names it as the replacement for three superseded platform specs. Closing it would leave those citations pointing at a finished document, and no successor exists to take them. Next owner: whoever replaces the platform contract, if anyone ever does.
 
 ## Strategic Boundaries & Non-goals
 

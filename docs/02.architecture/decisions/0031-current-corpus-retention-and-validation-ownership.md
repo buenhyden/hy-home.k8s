@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-24"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -53,7 +53,7 @@ not by itself evidence that the control plane is coherent.
 already establishes authority-first convergence, a minimal active topology,
 consumer-first deletion, bounded validation, and Git-backed recovery. This
 decision applies those principles to the current corpus and validation
-routing. [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+routing. [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 owns the integrated governance convergence, while
 [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) owns the
 delegated validation-tooling transition.
@@ -324,5 +324,5 @@ narrower validation-routing and execution-instance boundaries needed by Specs
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |

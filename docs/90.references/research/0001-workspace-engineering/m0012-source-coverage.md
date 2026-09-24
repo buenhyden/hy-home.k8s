@@ -1,10 +1,10 @@
 ---
 title: "Reference: Source Coverage"
-version: "1.0.1"
+version: "1.0.2"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-24"
 layer: "references"
 artifact_id: "RES-0001-m0012"
 ---
@@ -582,7 +582,7 @@ the two Spec 0054 transition owners remain unmodified.
 
 This increment re-observed the external evidence layer of the closed
 thirty-six-row corpus under the approved 2026-09-05 follow-on cycle recorded in
-[Spec 0062](../../../03.specs/0062-workspace-research-full-corpus-reverification/spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum).
+[Spec 0062](../../../98.archive/completed/03.specs/0062-workspace-research-full-corpus-reverification/spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum).
 Workspace re-observation was deliberately excluded from this cycle by direct
 user decision, so every row below carries an external result only; each
 retained workspace selector keeps its earlier observation date and no workspace

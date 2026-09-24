@@ -1,6 +1,6 @@
 ---
 title: "Retain Terminal Stage 03 Packages"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -31,8 +31,8 @@ SPEC-0047 and SPEC-0050 the same day.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-STR-001 | Record the approval and survey each unit | platform | Done | Seven units surveyed; see the survey below | This Task |
 | WORK-002 | VAL-STR-002, VAL-STR-003 | Retain the four withdrawn packages in `retired/` | platform | Done | Four units retained in `retired/03.specs/` with catalog rows naming `888cab04`; current citations rewritten in the same commit `d02e936f` | Staged QA and archive gates below |
-| WORK-003 | VAL-STR-005 | Rewrite the SPEC-0054 test pin and move the SPEC-0062 allowlist entry | platform | Queued | Not executed | Unit tests and the secret-scan gate |
-| WORK-004 | VAL-STR-004 | Retain SPEC-0054, SPEC-0062, and SPEC-0084 in `completed/` | platform | Queued | Not executed | Lifecycle, link, and archive gates |
+| WORK-003 | VAL-STR-005 | Rewrite the SPEC-0054 test pin and move the SPEC-0062 allowlist entry | platform | Done | Pins follow the retained paths with unchanged assertions; commit `eb37b97d` | Focused tests below |
+| WORK-004 | VAL-STR-004 | Retain SPEC-0054, SPEC-0062, and SPEC-0084 in `completed/` | platform | Done | Three units retained with catalog rows naming `27c1045d`; commit `eb37b97d` | Staged QA and archive gates below |
 | WORK-005 | VAL-STR-006 | Record the results and close this package | platform | Queued | Not executed | Staged QA and hosted CI |
 
 ## Approval and Safety Boundaries
@@ -76,7 +76,34 @@ their own bodies, which freeze with them.
   selects. `scripts/archive_cutover.py` and
   `scripts/run-archive-contract-tests.py` passed on a staged-index snapshot
   (136 contract tests), with Gitleaks 8.30.0 on the path.
-- **Hosted**: recorded when the pull request's `qa` check runs.
+- **Hosted**: PR #97 was merged before its `qa` finished. The `qa` run on
+  `main` at `27c1045d` then failed `unit-tests`: the archive report ran 256 Git
+  processes against its measured budget of 255. The next section records the
+  repair.
+
+### Retention of the done packages (2026-09-24)
+
+- **Envelope**: `27c1045d`; the three package trees are byte-identical there.
+- **Move**: commit `eb37b97d`, 32 pure renames into `completed/03.specs/`.
+  SPEC-0084 moves with the other two, because their bodies link to it.
+- **Pins**: the SPEC-0062 secret-scan allowlist entry keeps its anchored form
+  under the retained path, and its test follows it. The SPEC-0054
+  strict-cutover tests read the retained package. The cases that need a
+  present current document now use SPEC-0008. The MIG-0004 projection test
+  expects the SPEC-0054 ledger row to compose no current owner, which is the
+  rule the projection already applies to every retained endpoint.
+- **Consumers**: current links are repointed to the retained paths. The two
+  Stage 05 documents, which may not reference the archive stage, name SPEC-0054
+  as an explicit `N/A` exclusion.
+- **Git budget**: commit `1ae00921` raises the archive report's process budget
+  from 255 to 258. Measured on a branch checkout, the count was 255 at
+  `919ef1f8`, 256 at `27c1045d`, and 258 here. The extra processes are one
+  `ls-tree` per distinct last add-or-modify commit, less one merged `cat-file`
+  batch.
+- **Validation**: `python3 scripts/qa.py staged` passed. The four affected test
+  modules and the archive gates on a staged-index snapshot passed. The full
+  local unit run on `27c1045d` shows only the five known local failures, one of
+  which is this budget.
 
 ## Traceability
 
@@ -88,6 +115,6 @@ their own bodies, which freeze with them.
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | Survey above |
 | [WORK-002](../plan.md#work-breakdown) | Done | Commit `d02e936f` |
-| [WORK-003](../plan.md#work-breakdown) | Not executed | Queued |
-| [WORK-004](../plan.md#work-breakdown) | Not executed | Queued |
+| [WORK-003](../plan.md#work-breakdown) | Done | Commit `eb37b97d` |
+| [WORK-004](../plan.md#work-breakdown) | Done | Commit `eb37b97d` |
 | [WORK-005](../plan.md#work-breakdown) | Not executed | Queued |

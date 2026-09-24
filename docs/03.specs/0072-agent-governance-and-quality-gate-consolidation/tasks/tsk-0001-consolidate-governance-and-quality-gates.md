@@ -1,6 +1,6 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.8.0"
+version: "2.8.1"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -18,7 +18,7 @@ authority migration is complete; dated results below remain historical.
 Current work corrects gate, formatter, commit and environment drift through
 existing owners and creates verified logical local commits.
 
-**Blocked (2026-09-16).** WORK-001 through WORK-008 are `Done`. The one open item, WORK-009, needs an authorized provider session that no repository-static run can supply, and this record already states that native discovery, invocation, model access, sandbox enforcement and event delivery stay deferred. This change takes the declared `in-progress` to `blocked` edge under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md), because `blocked` states the dependency honestly while `in-progress` implies work in flight that does not exist. Next owner: the operator.
+**Blocked (2026-09-16).** WORK-001 through WORK-008 are `Done`. The one open item, WORK-009, needs an authorized provider session that no repository-static run can supply, and this record already states that native discovery, invocation, model access, sandbox enforcement and event delivery stay deferred. This change takes the declared `in-progress` to `blocked` edge under [SPEC-0084](../../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md), because `blocked` states the dependency honestly while `in-progress` implies work in flight that does not exist. Next owner: the operator.
 
 **Closure (2026-09-24).** The request owner approved splitting the native half out and closing this package ("0072: Split the native half out and close"). WORK-009 is transferred to [SPEC-0086-TSK-0001](../../0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md), which now owns the operator-authorized native observation. The transfer is recorded, not claimed as passed: native discovery, invocation, model access, sandbox enforcement and event delivery remain unobserved. This Task closes `blocked → in-progress → done` on WORK-001 through WORK-008 and that transfer.
 

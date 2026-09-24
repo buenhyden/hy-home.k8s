@@ -38,7 +38,7 @@ STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/templates"
 STAGE05_ROOT = REPOSITORY_ROOT / "docs/05.operations"
 SPEC0054_PACKAGE = (
     REPOSITORY_ROOT
-    / "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+    / "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
 )
 MIG0004_PATH = (
     REPOSITORY_ROOT
@@ -762,7 +762,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         )
         registry = markdown.load_registry(REPOSITORY_ROOT)
         path = PurePosixPath(
-            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+            "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
             "/plan.md"
         )
         contents = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
@@ -781,10 +781,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def test_current_frontmatter_requires_double_quoted_values(self) -> None:
         markdown = load_validator("frontmatter_quote", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath(
-            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
-            "/plan.md"
-        )
+        path = PurePosixPath("docs/03.specs/0008-current-local-gitops-platform/plan.md")
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
         diagnostics = markdown.validate_document_text(
@@ -1276,7 +1273,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 "--mode",
                 "strict",
                 "--include-path",
-                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
+                "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
             ),
         )
         for name, *arguments in commands:

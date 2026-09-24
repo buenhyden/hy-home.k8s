@@ -1,6 +1,6 @@
 ---
 title: "Stage 03 Terminal Package Retention Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -26,7 +26,7 @@ commit that the default branch already holds as its Retention Envelope.
 
 ## Context
 
-[SPEC-0084](../0084-stage03-backlog-closeout/spec.md) retained seven units and
+[SPEC-0084](../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md) retained seven units and
 left these seven for a separate decision. The request owner made that decision
 on 2026-09-24, after SPEC-0047 and SPEC-0050 were withdrawn the same day.
 

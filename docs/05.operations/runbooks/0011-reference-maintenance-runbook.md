@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.0.2"
+version: "1.0.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -120,4 +120,4 @@ git diff --check
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; the Stage 98 disposition and its Retention Envelope own retired bodies. |
+| N/A — Spec 0054, retained with its package by SPEC-0087, applied `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical common-governance or Stage 01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; the Stage 98 disposition and its Retention Envelope own retired bodies. |

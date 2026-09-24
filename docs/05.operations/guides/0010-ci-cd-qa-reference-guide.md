@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.1.2"
+version: "1.1.3"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-24"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -107,10 +107,9 @@ Dockerfile 도입 시 lint owner와 설정을 함께 도입한다. 대상이 없
 - [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
 - [Scripts Router](../../../scripts/README.md)
 - [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
-- [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [SPEC-0054-TSK-0006](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0006-stage-05-ownership-cutover.md) | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |
+| N/A — SPEC-0054-TSK-0006 was retained with its package by SPEC-0087 | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |
