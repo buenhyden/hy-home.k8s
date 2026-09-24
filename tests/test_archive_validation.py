@@ -1957,7 +1957,17 @@ class ArchiveValidationTest(unittest.TestCase):
         #
         # aa64090f added five Stage 02/03 documents, which pushed the staged
         # Markdown read past one MAX_GIT_BATCH_OBJECTS batch: one more process.
-        budget = 255
+        #
+        # SPEC-0087 retained seven more packages, and the same rule accounts
+        # for each move. Measured on a branch checkout: 255 at `919ef1f8`, 256
+        # after the four withdrawn packages went to `retired/` (`27c1045d`), and
+        # 258 after SPEC-0054, SPEC-0062 and SPEC-0084 went to `completed/`.
+        # The first move added two `ls-tree` calls, one for SPEC-0047 and one
+        # for SPEC-0048 with SPEC-0050 and SPEC-0051, and merged two
+        # `cat-file --batch` reads into one. The second added one `ls-tree` for
+        # SPEC-0054 and one for SPEC-0062; SPEC-0084 joins an existing group.
+        # The default-branch envelope check from SPEC-0085 adds no process.
+        budget = 258
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. That is a fixed
