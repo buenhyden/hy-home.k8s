@@ -1,8 +1,8 @@
 ---
 title: "Example IaC and Validator QA Technical Specification"
-version: "1.0.3"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -58,6 +58,8 @@ configuration semantics, lint, and compilation only; it does not prove account,
 subscription, cost, quota, IAM, network, managed-service, or runtime support.
 
 **Disposition note (2026-09-16).** The resume condition above can no longer be met as written. Spec 0049 stays `draft` with its own resume condition voided, because Spec 0048 was withdrawn under [SPEC-0084](../0084-stage03-backlog-closeout/spec.md) rather than closed. This package stays `draft` for the same reason its predecessor does: the validation registry declares zero Terraform and zero Bicep validators, while `examples/aws/README.md` and `examples/azure/README.md` publish `terraform fmt -check -recursive` and `az bicep build` as if something enforced them. That is a published claim no gate owns, and withdrawal would leave it published and unrecorded. Activation requires a new plan. Next owner: the request owner.
+
+**Withdrawal (2026-09-24).** The request owner approved withdrawing this package on 2026-09-24 (chooser: request owner; choice: "0049 draft + 0050 withdraw"), taking the `draft` to `withdrawn` edge the `spec-plan` domain declares. The 2026-09-16 note's blocker is resolved directly rather than by activation: `examples/aws/README.md` and `examples/azure/README.md` no longer publish the unenforced `terraform fmt -check -recursive` and `az bicep build` claim lines, so the published-but-unenforced gap this package existed to close is closed by removing the claim rather than by building the validator. The seven implementation Tasks are cancelled without execution through the declared two-step path. Withdrawal, not supersession: no single document replaces it, and no Terraform/Bicep validator is added.
 
 ## Strategic Boundaries & Non-goals
 

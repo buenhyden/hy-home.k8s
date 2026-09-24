@@ -1,8 +1,8 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "2.8.0"
+version: "2.9.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-10"
 layer: "specs"
@@ -22,6 +22,13 @@ limited that continuation to local review without external transmission. A
 distinct 2026-09-09 approval adds `WP-010` and
 [SPEC-0072-TSK-0002](tasks/tsk-0002-repair-governance-and-validation-contracts.md)
 for local governance and validation contract repairs.
+
+**Closure (2026-09-24).** The request owner approved splitting the native half
+out and closing this package ("0072: Split the native half out and close").
+[SPEC-0086](../0086-provider-native-runtime-observation/plan.md) now owns the
+`WORK-009` native-runtime observation this Plan deferred to the operator; that
+transfer is recorded, not claimed as passed. This package closes with every
+other work package's evidence unchanged.
 
 ## Context
 

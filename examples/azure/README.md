@@ -1,10 +1,10 @@
 ---
 title: "Azure Executable Examples"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-24"
 ---
 # Azure Executable Examples
 
@@ -44,11 +44,14 @@ official Azure support before any approved use.
 Use the component entrypoints and repository-static checks first:
 
 ```bash
-az bicep build --file examples/azure/infrastructure/main.bicep --stdout
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
 python3 scripts/qa.py full
 ```
+
+No repository gate runs `az bicep build` or any other Bicep command against
+this example; SPEC-0050, which would have added that validator, was withdrawn
+on 2026-09-24 because the validation registry declares no Bicep validator.
 
 These commands do not prove live subscription, AKS, Managed Identity, Key
 Vault, network, cost, secret, or provider readiness.

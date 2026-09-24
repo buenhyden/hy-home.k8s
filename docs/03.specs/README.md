@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.5.29"
+version: "0.5.34"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-24"
 layer: "specs"
 ---
 # 03.specs
@@ -120,6 +120,10 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0086-provider-native-runtime-observation/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -158,16 +162,17 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
-| [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Active | Spec 0052의 semantic closure 후 ADR-0031/0033와 package-local v9 경로로 Spec/Plan을 재개했다. 활성화 Task만 done이고 구현 Tasks는 queued다. stash metadata는 존재하며 tracked-hunk reconciliation은 미완료다. | 2026-09-14 |
+| [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Withdrawn | 2026-09-24에 request owner 승인("0047: Withdraw")으로 active에서 withdrawn으로 철회했다. `git stash list`가 비어 있고 Plan이 명명한 stash object `6370311e...`가 더 이상 존재하지 않아 stash reconciliation 의무의 대상이 사라졌다. Task 다섯 개는 실행 없이 취소했고, ownership inventory는 후속 package로 이관하지 않는다. | 2026-09-24 |
 | [`./0048-github-routing-and-ci-evidence/spec.md`](./0048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Withdrawn | 2026-09-16에 SPEC-0084 회차로 draft에서 withdrawn으로 철회했다. VAL-GRCE-002·004·005·007은 CODEOWNERS·labeler·SPEC-0072/0073·기록된 main 보호가 이미 개별 흡수했고, 남은 라우팅 계약 위치 `.agents/contracts/`는 채택된 배치에 존재하지 않는다. Task 여섯 개는 실행 없이 취소했다. | 2026-09-14 |
-| [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0048의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. Kustomize roots는 존재하지만 제안된 platform/Traefik validator 작업은 미완료다. | 2026-09-14 |
-| [`./0050-example-iac-and-validator-qa/spec.md`](./0050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0049의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. 현재 validation registry에 Terraform/Bicep validator가 없어 example IaC 작업은 미완료다. | 2026-09-14 |
+| [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 2026-09-24에 request owner가 철회 대신 재계획을 선택해 draft를 유지한다. 활성화에는 선행 package의 종결이 아니라 새 plan이 필요하다. VAL-PVSE-004(Traefik)는 ADR-0043으로 대상이 사라졌고, 나머지 001–003·005–008은 validator가 없어 미완료다. | 2026-09-24 |
+| [`./0050-example-iac-and-validator-qa/spec.md`](./0050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Withdrawn | 2026-09-24에 request owner 승인("0049 draft + 0050 withdraw")으로 draft에서 withdrawn으로 철회했다. validation registry에 Terraform/Bicep validator가 없고 후속 owner도 없어, `examples/aws`·`examples/azure` README의 강제되지 않던 `terraform fmt`·`az bicep build` 주장을 제거하는 것으로 공백을 닫았다. Task 일곱 개는 실행 없이 취소했다. | 2026-09-24 |
 | [`./0051-repository-assurance-integration-and-closure/spec.md`](./0051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Withdrawn | 2026-09-16에 SPEC-0084 회차로 draft에서 withdrawn으로 철회했다. 사라진 worktree에서의 local-only fast-forward를 요구하나 CI가 main에 대한 pull request를 강제하고, 은퇴한 progress ledger에 의존하며, merge 권한은 요청자에게 있다. Task 여섯 개는 실행 없이 취소했다. | 2026-09-14 |
 | [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Done | 승인된 B 범위(Stage 90 포함)의 통합 수용 소유자로서 문서·agent governance·operations·reference·archive·template 수렴을 관리하고, WP-010/WP-011 실행은 Spec 0066에 위임했다. 2026-09-16에 SPEC-0084 회차로 Task 14개를 모두 종결하고 done으로 닫았다. WP-013의 잔여 Stage 03 처분은 SPEC-0083·0084로 이관했고, WP-009는 대상 세대가 동결되어 취소했다. 보존 이동은 2026-09-16에 보류했다: append-only Task 기록 14개라는 이 package 고유의 구조를 단언하는 test가 동결된 본문 위에서 상시 참이 되기 때문이다. | 2026-09-07 |
 | [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Done | 2026-09-05 재관찰: 7 done/3 blocked Tasks를 유지하고, 작업 완료를 기록한 TSK-0011은 2026-09-14에 queued에서 in-progress로 옮겼다. 승인된 2026-08-29 administrative-closeout addendum이 미래의 기존 Path B replay를 대체한다. 2026-09-16에 SPEC-0084 회차로 종료했다. 차단된 Task 세 개는 승인된 종결이 그 실행을 대체했고 필요한 환경이 부재해 취소했으며, TSK-0011은 done으로 닫았다. 과거 미충족 증거는 PASS로 바꾸지 않았다. 보존 이동은 2026-09-16에 보류했다: 이 package의 `plan.md`를 경로-정확하게 가리키는 secret-scan allowlist 항목을 함께 옮겨야 해서 별도 결정으로 남겼다. | 2026-09-07 |
-| [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-09 |
+| [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Done | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성의 정적 수용을 완료했다. 2026-09-24에 request owner 승인("0072: Split the native half out and close")으로 native runtime 관측(WORK-009)을 SPEC-0086으로 이관하고 done으로 닫았다. native 결과는 통과로 주장하지 않는다. | 2026-09-24 |
 | [`./0084-stage03-backlog-closeout/spec.md`](./0084-stage03-backlog-closeout/spec.md) | Stage 03 잔류 package의 종결 처분 | Done | 잔류한 Stage 03 package를 기록된 증거에 따라 종결 상태로 옮기거나 날짜 박힌 잔류 사유를 남기고, 그 처분을 막던 registry 공백 두 곳(`sdlc/spec`의 `superseded_by` optional 키, `spec-plan`의 draft에서 withdrawn 간선)을 메우며, 중복된 frontmatter reader를 한 소유자로 수렴시키고, 종결된 단위를 보존한 뒤 그 이동이 어긋나게 만든 소비자를 수리한다. 2026-09-16에 종결했다: package 16건을 처분하고 단위 7건을 보존했으며, SPEC-0054·0062의 보존 이동은 소유자를 지정한 유예로 기록했다. | 2026-09-16 |
 | [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Active | ADR-0040에 따른 보존 단위 사후 평가·승인된 제거·default branch envelope 검증과 index 표류 정정을 소유한다. 공통 lifecycle·검증 결과 어휘는 각자의 승인 뒤 실행하도록 순서만 정한다. |
+| [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
 
 ### Helper Templates
 

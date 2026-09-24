@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.0"
+version: "1.6.1"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-24"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -188,6 +188,9 @@ The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
 [SPEC-0085](../03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
+The operator-authorized native-runtime observation of Claude and Codex that
+SPEC-0072 left open is owned by
+[SPEC-0086](../03.specs/0086-provider-native-runtime-observation/spec.md).
 
 ## Traceability
 

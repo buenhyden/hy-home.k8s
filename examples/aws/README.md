@@ -1,10 +1,10 @@
 ---
 title: "AWS Executable Examples"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-24"
 ---
 # AWS Executable Examples
 
@@ -42,11 +42,14 @@ constraints; re-check official AWS/provider support before any approved use.
 Use repository-static checks first:
 
 ```bash
-terraform fmt -check -recursive examples/aws/terraform
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
 python3 scripts/qa.py full
 ```
+
+No repository gate runs `terraform fmt` or any other Terraform command against
+this example; SPEC-0050, which would have added that validator, was withdrawn
+on 2026-09-24 because the validation registry declares no Terraform validator.
 
 These commands do not authenticate to AWS or prove live EKS, IAM, network,
 cost, secret, or provider readiness.
