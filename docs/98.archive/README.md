@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.1"
+version: "0.7.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "archive"
 ---
 
@@ -173,6 +173,10 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`superseded/03.specs/0070-retired-provider-residue-disposition`](./superseded/03.specs/0070-retired-provider-residue-disposition) | `b4a1db9143fac30df39c23183432f3495d96a8ed:docs/03.specs/0070-retired-provider-residue-disposition` |
 | [`completed/03.specs/0083-finished-package-retention`](./completed/03.specs/0083-finished-package-retention) | `2eb5e079f8ca9f6d139fc7085fe8bebb886768ec:docs/03.specs/0083-finished-package-retention` |
 | [`superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md`](./superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md) | `46e5030a9a87b7550f9566641f5a834f20cb6d53:docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md` |
+| [`retired/03.specs/0047-current-surface-and-stash-reconciliation`](./retired/03.specs/0047-current-surface-and-stash-reconciliation) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0047-current-surface-and-stash-reconciliation` |
+| [`retired/03.specs/0048-github-routing-and-ci-evidence`](./retired/03.specs/0048-github-routing-and-ci-evidence) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0048-github-routing-and-ci-evidence` |
+| [`retired/03.specs/0050-example-iac-and-validator-qa`](./retired/03.specs/0050-example-iac-and-validator-qa) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0050-example-iac-and-validator-qa` |
+| [`retired/03.specs/0051-repository-assurance-integration-and-closure`](./retired/03.specs/0051-repository-assurance-integration-and-closure) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0051-repository-assurance-integration-and-closure` |
 
 ### Retention Assessment
 

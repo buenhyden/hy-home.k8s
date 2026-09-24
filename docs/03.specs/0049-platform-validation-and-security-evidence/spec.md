@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.2.0"
+version: "1.2.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "specs"
 artifact_id: "SPEC-0049"
 ---
@@ -296,10 +296,10 @@ commands and tool identities selected by the approved Plan.
   [Platform Validation and Security Evidence Implementation Plan](plan.md)
 - **Task**:
   [Platform Validation and Security Evidence Task](plan.md)
-- **Predecessor**:
-  [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
-- **Successor**:
-  [Spec 050](../0050-example-iac-and-validator-qa/spec.md)
+- **Predecessor**: Spec 048, withdrawn and retained in `retired/` by
+  [SPEC-0087](../0087-stage03-terminal-package-retention/spec.md)
+- **Successor**: Spec 050, withdrawn and retained in `retired/` by
+  [SPEC-0087](../0087-stage03-terminal-package-retention/spec.md)
 
 ### Lifecycle Traceability
 

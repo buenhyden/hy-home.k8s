@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.2.0"
+version: "1.2.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-24"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -86,13 +86,11 @@ Istio CNI의 manifest는 desired state이며 실제 admission 또는 network 상
 
 ### Unfinished implementation owners
 
-[Spec 0047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md)은 active resumption owner이며
-surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료다.
-[0048](../../03.specs/0048-github-routing-and-ci-evidence/spec.md)은 GitHub routing/CI,
-[0049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 layered platform/security,
-[0050](../../03.specs/0050-example-iac-and-validator-qa/spec.md)는 native IaC/direct negative fixtures,
-[0051](../../03.specs/0051-repository-assurance-integration-and-closure/spec.md)은 최종 local-only integration을
-각각 소유하며 순차 선행 gate를 기다린다. AD 승계는 tranche 또는 WP-013 완료를 뜻하지 않는다.
+[0049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 layered platform/security를
+소유하며 재계획을 기다리는 draft다. GitHub routing/CI(Spec 0048), native IaC/direct negative fixtures(Spec 0050),
+최종 local-only integration(Spec 0051)과 surface/hunk 재조정(Spec 0047)은 후속 없이 철회되어
+`98.archive/retired/`에 보존되었고([SPEC-0087](../../03.specs/0087-stage03-terminal-package-retention/spec.md)),
+그 범위의 구현 owner는 현재 없다. AD 승계는 tranche 또는 WP-013 완료를 뜻하지 않는다.
 
 ## Data Architecture
 
@@ -151,11 +149,11 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 
 | Current requirement | Retained architecture boundary | Implementation owner |
 | --- | --- | --- |
-| REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | Spec 0047 |
-| REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | Spec 0048 and AD-0006 |
+| REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
+| REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
 | REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Spec 0049 |
-| REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | Spec 0050 |
-| REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | Spec 0051 |
+| REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
+| REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
 
 Original AD-0010 and REQ-0007 program identity remain historical lineage. These current boundaries
