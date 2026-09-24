@@ -105,7 +105,6 @@ their own bodies, which freeze with them.
   local unit run on `27c1045d` shows only the five known local failures, one of
   which is this budget.
 
-
 ### Closure (2026-09-24)
 
 - **Hosted**: `qa` passed on PR #98 at `05e05b3e` and on `main` at `a264ebad`.
