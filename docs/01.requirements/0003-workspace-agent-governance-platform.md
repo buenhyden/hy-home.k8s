@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.1"
+version: "1.6.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -191,6 +191,9 @@ result vocabulary work are owned by
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
 [SPEC-0086](../03.specs/0086-provider-native-runtime-observation/spec.md).
+Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
+owned by
+[SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md).
 
 ## Traceability
 
