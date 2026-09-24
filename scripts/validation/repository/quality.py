@@ -726,46 +726,6 @@ if "key: secret/apps/<appname>/config" in sample_app_external_secret:
         "examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix"
     )
 
-active_app_secret_contracts = [
-    (
-        root / "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
-        [
-            "Vault 경로 규칙",
-            "secret/apps/<appname>/config",
-            "ESO remoteRef",
-            "apps/<appname>/config",
-            "mount prefix 제외",
-        ],
-    ),
-    (
-        root
-        / "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
-        [
-            "secret/apps/${APP}/config",
-            "ExternalSecret remoteRef.key",
-            "apps/${APP}/config",
-            "mount prefix secret/",
-        ],
-    ),
-    (
-        root / "gitops/README.md",
-        [
-            "Sample app ExternalSecret",
-            "ESO remoteRef key",
-            "apps/<appname>/config",
-            "Vault CLI path remains",
-            "secret/apps/<appname>/config",
-        ],
-    ),
-]
-for contract_path, phrases in active_app_secret_contracts:
-    contract_text = read_text(contract_path)
-    for phrase in phrases:
-        if phrase not in contract_text:
-            fail(
-                f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}"
-            )
-
 github_native_markdown = [
     root / ".github/PULL_REQUEST_TEMPLATE.md",
     root / ".github/SECURITY.md",
@@ -1421,8 +1381,6 @@ for path in docs_dir.rglob("*"):
 
 english_first_stage_globs = [
     "docs/03.specs/*/spec.md",
-    "docs/04.execution/plans/*.md",
-    "docs/04.execution/tasks/*.md",
 ]
 hangul_pattern = re.compile(r"[\uac00-\ud7a3]")
 for glob_pattern in english_first_stage_globs:
@@ -1509,16 +1467,6 @@ else:
             continue
         location_target = normalize_markdown_target(location_targets[0])
         template_target = normalize_markdown_target(template_targets[0])
-        if not (operations_readme_path.parent / pathlib.Path(location_target)).exists():
-            fail(
-                "docs/05.operations/README.md Operations Routing Matrix "
-                f"row {row_number} location target is missing: {location_target}"
-            )
-        if not (operations_readme_path.parent / pathlib.Path(template_target)).exists():
-            fail(
-                "docs/05.operations/README.md Operations Routing Matrix "
-                f"row {row_number} template target is missing: {template_target}"
-            )
         actual_operations_routing_targets.append((location_target, template_target))
     if actual_operations_routing_targets != expected_operations_routing_targets:
         fail(
@@ -1619,13 +1567,6 @@ else:
                 fail(
                     "docs/05.operations/incidents/README.md Incident Boundary Matrix "
                     f"row {row_number} Template must be {expected['template']!r}"
-                )
-            if not (
-                incidents_readme_path.parent / pathlib.Path(template_target)
-            ).exists():
-                fail(
-                    "docs/05.operations/incidents/README.md Incident Boundary Matrix "
-                    f"row {row_number} Template target is missing: {template_target}"
                 )
         if expected["creation_phrase"] not in creation_rule:
             fail(
@@ -1935,7 +1876,6 @@ active_stale_contract_roots = [
     root / "docs/01.requirements",
     root / "docs/02.architecture",
     root / "docs/03.specs",
-    root / "docs/04.execution",
     root / "docs/05.operations",
 ]
 active_stale_contract_patterns = [
@@ -1964,7 +1904,6 @@ active_currentness_roots = [
     root / "docs/01.requirements",
     root / "docs/02.architecture",
     root / "docs/03.specs",
-    root / "docs/04.execution",
     root / "docs/05.operations",
     root / "docs/90.references",
 ]
@@ -2098,7 +2037,7 @@ command_boundary_rules = [
     ),
     (
         "kubectl get secret yaml/json",
-        re.compile(r"\bkubectl\s+get\s+secret\b.*\b-o\s+(?:yaml|json)\b"),
+        re.compile(r"\bkubectl\b.*\bget\s+secrets?\b.*\s-o[=\s]*(?:yaml|json)\b"),
         ["metadata-only", "status-only", "jsonpath", "no secret value", "redacted"],
     ),
     (

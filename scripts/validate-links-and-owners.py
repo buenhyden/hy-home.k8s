@@ -3959,11 +3959,6 @@ def lifecycle_markdown_evidence(
                 resolved.append(target)
         return tuple(resolved)
 
-    def selected_local_links(raw_links: Iterable[str]) -> tuple[PurePosixPath, ...]:
-        return tuple(
-            target for target in local_links(raw_links) if target in snapshot_profiles
-        )
-
     all_links = local_links(_extract_links(text))
     rendered_lines = _rendered_container_lines(text)
     root_h2 = tuple(

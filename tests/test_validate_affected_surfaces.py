@@ -69,10 +69,6 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     self.contract, case["paths"], "ci", ROOT
                 )
                 self.assertEqual(actual["ciJobs"], case["expectedJobs"])
-                self.assertEqual(
-                    self.validator.github_output(self.contract, actual),
-                    case["expectedGithubOutput"],
-                )
 
     def test_rejection_cases(self) -> None:
         for case in self.fixture["rejectionCases"]:

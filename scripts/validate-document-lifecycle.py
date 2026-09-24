@@ -4077,7 +4077,6 @@ def _evaluate_comparison(
     )
     if migration_immutability:
         return migration_immutability
-    work054_wp002_consumed_paths = frozenset()
     work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
         root=root,
         mode=mode,
@@ -4127,7 +4126,6 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
-    work054_wp004a_consumed_paths: frozenset[PurePosixPath] = frozenset()
     base_snapshot, base_texts = _snapshot_projection(
         root, base_classification_registry, base_blobs, historical=True
     )
@@ -4174,15 +4172,9 @@ def _evaluate_comparison(
         base_texts,
         proposed_texts,
     )
-    work105_consumed_paths: frozenset[PurePosixPath] = frozenset()
-    archive_consumed_paths: frozenset[PurePosixPath] = frozenset()
     legacy_consumed_paths = (
-        work054_wp002_consumed_paths
-        | work054_wp003_consumed_paths
-        | work054_wp004a_consumed_paths
-        | work105_consumed_paths
+        work054_wp003_consumed_paths
         | archive_rehome_consumed_paths
-        | archive_consumed_paths
         | wp004c_mig0004_consumed_paths
     )
 

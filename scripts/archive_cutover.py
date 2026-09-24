@@ -47,6 +47,7 @@ if __package__:
     from scripts.archive_cutover_manifest import (
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
+        ARCHIVE_TEMPLATE_PROFILE,
         CUTOVER_BASE_COMMIT,
         EXPECTED_ARCHIVE_PATHS,
     )
@@ -106,6 +107,7 @@ else:
     from archive_cutover_manifest import (  # type: ignore[no-redef]
         ARCHIVE_PROFILE,
         ARCHIVE_TEMPLATE,
+        ARCHIVE_TEMPLATE_PROFILE,
         CUTOVER_BASE_COMMIT,
         EXPECTED_ARCHIVE_PATHS,
     )
@@ -173,7 +175,6 @@ FIRST_SOURCE_COMMIT = (
 SECOND_SOURCE_COMMIT = (
     "82f0e1922d9748a88b1487a32a59629ba523f408"  # pragma: allowlist secret
 )
-ARCHIVE_TEMPLATE_PROFILE = "common/template-archive-tombstone"
 ARCHIVE_INDEX = "docs/98.archive/README.md"
 CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17

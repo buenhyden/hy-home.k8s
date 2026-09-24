@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.4"
+version: "1.0.5"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -216,10 +216,10 @@ Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수
 값, login, Vault write 또는 policy write 명령을 기록하지 않는다.
 
 Git 변경에서 `external-secret.yaml`을 활성화하고 Rollout의 `envFrom`을
-연결한다. `ExternalSecret remoteRef.key`는 `apps/${APP}/config` 형식이며,
-Vault CLI 경로의 `mount prefix secret/`은 remoteRef에서 제외한다.
-승인된 operator가 Vault policy를 별도 절차로 갱신한 뒤 다음 read-only 상태만
-확인한다.
+연결한다. Vault 경로와 `remoteRef.key` 규칙은
+[POL-0007](../policies/0007-app-gitops-onboarding-policy.md)의 3-3 시크릿 관리
+표가 소유한다. 승인된 operator가 Vault policy를 별도 절차로 갱신한 뒤 다음
+read-only 상태만 확인한다.
 
 ```bash
 kubectl get externalsecret -n apps ${APP}-secret

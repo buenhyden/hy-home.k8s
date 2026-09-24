@@ -128,5 +128,5 @@ docs/05.operations/runbooks/
 | [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 외부 route·Tempo·Grafana auth 진단 런북 | Active | 2026-09-25 |
 | [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD component 메트릭(in-cluster 수집) 진단 런북 | Active | 2026-09-23 |
 | [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | in-cluster Alloy 메트릭·로그·remote write·AppProject 진단 런북 | Active | 2026-09-25 |
-| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-23 |
+| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-25 |
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 | Active | 2026-09-25 |

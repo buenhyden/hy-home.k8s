@@ -30,7 +30,7 @@ def main() -> int:
     )
     parser.add_argument("--paths-file", type=Path, required=True)
     parser.add_argument("--delimiter", choices=("nul",), required=True)
-    parser.add_argument("--format", choices=("json", "github-output"), required=True)
+    parser.add_argument("--format", choices=("json",), required=True)
     args = parser.parse_args()
     contract_module = load_contract_module()
     root = args.root.resolve()
@@ -40,10 +40,7 @@ def main() -> int:
         result = contract_module.select_paths(
             contract, paths, args.lane, root, collect_unmatched=True
         )
-        if args.format == "json":
-            print(contract_module.json_output(result))
-        else:
-            print(contract_module.github_output(contract, result))
+        print(contract_module.json_output(result))
         if result["unmatchedPaths"]:
             print(
                 "[FAIL] SURFACE-PATH-UNMATCHED: " + ", ".join(result["unmatchedPaths"]),

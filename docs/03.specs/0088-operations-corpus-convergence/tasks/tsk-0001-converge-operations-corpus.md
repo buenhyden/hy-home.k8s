@@ -31,7 +31,7 @@ actions.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-OCC-002, VAL-OCC-004 | Survey Stage 05, Stage 98 Operations units, and scripts | platform | Done | Survey below | This Task |
-| WORK-002 | VAL-OCC-003, VAL-OCC-005 | Remove dead or duplicate validation logic and close the secret-output gap | platform | Queued | Not executed | Focused tests and staged QA |
+| WORK-002 | VAL-OCC-003, VAL-OCC-005 | Remove dead or duplicate validation logic and close the secret-output gap | platform | Done | Secret-output rule fixed test-first; prose pins, dead roots, dead branches, and a duplicate constant removed | Focused tests and staged QA |
 | WORK-003 | VAL-OCC-001, VAL-OCC-002 | Converge Stage 05 ownership and facts | platform | Done | Single owners set and drift corrected; see the survey | Document gates and staged QA |
 | WORK-004 | VAL-OCC-004, VAL-OCC-006 | Record dispositions and final evidence | platform | Queued | Not executed | Full QA |
 

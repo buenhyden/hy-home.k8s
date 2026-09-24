@@ -41,6 +41,15 @@ class RepositoryQualityRuleTests(unittest.TestCase):
                 for t in node.targets
             )
         )
+        boundary = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(t, ast.Name) and t.id == "command_boundary_rules"
+                for t in node.targets
+            )
+        )
         cls.rules = {
             "re": re,
             "pathlib": pathlib,
@@ -51,7 +60,9 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         }
         exec(
             compile(
-                ast.Module(body=[residue, *nodes], type_ignores=[]), str(path), "exec"
+                ast.Module(body=[residue, boundary, *nodes], type_ignores=[]),
+                str(path),
+                "exec"
             ),
             cls.rules,
         )
@@ -115,6 +126,27 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         owns = self.rules["canonical_markdown_owns_generic_residue"]
         self.assertTrue(owns(ROOT / "docs/01.requirements/9999-projection.md"))
         self.assertFalse(owns(ROOT / "AGENTS.md"))
+
+    def test_secret_value_output_is_detected_with_or_without_namespace_flag(self):
+        rule = next(
+            pattern
+            for label, pattern, _markers in self.rules["command_boundary_rules"]
+            if label == "kubectl get secret yaml/json"
+        )
+        for command in (
+            "kubectl get secret app -o yaml",
+            "kubectl -n argocd get secret argocd-external-valkey -o yaml",
+            "kubectl --namespace apps get secrets -o json",
+        ):
+            with self.subTest(command=command):
+                self.assertIsNotNone(rule.search(command))
+        for command in (
+            "kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}'",
+            "kubectl -n argocd get externalsecret argocd-external-valkey -o yaml",
+            "kubectl -n headlamp get secret headlamp-tls",
+        ):
+            with self.subTest(command=command):
+                self.assertIsNone(rule.search(command))
 
 
 if __name__ == "__main__":

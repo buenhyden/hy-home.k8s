@@ -663,14 +663,6 @@ def json_output(result: dict[str, Any]) -> str:
     )
 
 
-def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
-    selected = set(result["ciJobs"])
-    return "\n".join(
-        f"{job['output']}={'true' if job['id'] in selected else 'false'}"
-        for job in sorted(contract["ciJobs"], key=lambda row: row["output"])
-    )
-
-
 def validate_required_validators_have_a_runner(
     contract: Mapping[str, Any], root: Path
 ) -> None:
