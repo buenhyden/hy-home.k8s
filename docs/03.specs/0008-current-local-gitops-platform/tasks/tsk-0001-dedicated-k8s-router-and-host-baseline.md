@@ -138,12 +138,16 @@ Handoff 뒤 follow-up(2026-09-24):
     owner가 root session으로 Slack token을 넣어야 한다(RUN-0096).
   - OpenBao snapshot 없음. 새 snapshot과 offline 보관이 필요하다(RUN-0096 v1.2.1).
   - Grafana Viewer token 만료 2026-12-22(RUN-0096 재발급 절차, 2026-12-15 알림).
-  - trace 경로는 Git에만 있다. docker `infra-alloy` 재생성(docker PR #248) 뒤
-    `apps`, `ingress-nginx` pod 재시작과 Tempo/Kiali 확인이 필요하다.
+  - trace 경로: docker `infra-alloy` 재생성(docker PR #251) 뒤 owner 승인으로
+    `ingress-nginx` controller를 재시작했고, Tempo에 service
+    `ingress-nginx-controller.ingress-nginx` span이 들어왔다. cluster 안에서
+    `tempo-external:3200`이 200을 반환하고 Kiali log에 tracing 오류가 없다.
+    adminer Rollout은 재시작하지 못했다(`kubectl argo rollouts` plugin 없음,
+    `kubectl patch`는 deny). 다음 rollout 때 반영된다.
   - adminer Rollout pod template에 검증용 live annotation
     `verification/canary-at`이 남아 있다(Git에 없는 필드라 ArgoCD drift 아님)
-- **Next owner**: operator. KV와 snapshot, 그리고 docker Alloy 재생성은
-  hy-home.docker session에 넘겼고 모두 owner 승인 대기다.
+- **Next owner**: operator. KV, snapshot, Grafana token은 hy-home.docker
+  session에 넘겼고 owner 작업 대기다.
 
 ## Traceability
 
