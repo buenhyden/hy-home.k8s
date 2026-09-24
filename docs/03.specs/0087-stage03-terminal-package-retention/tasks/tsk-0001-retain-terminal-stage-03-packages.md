@@ -1,6 +1,6 @@
 ---
 title: "Retain Terminal Stage 03 Packages"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -30,7 +30,7 @@ SPEC-0047 and SPEC-0050 the same day.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-STR-001 | Record the approval and survey each unit | platform | Done | Seven units surveyed; see the survey below | This Task |
-| WORK-002 | VAL-STR-002, VAL-STR-003 | Retain the four withdrawn packages in `retired/` | platform | In progress | Not yet merged | Lifecycle, link, and archive gates |
+| WORK-002 | VAL-STR-002, VAL-STR-003 | Retain the four withdrawn packages in `retired/` | platform | Done | Four units retained in `retired/03.specs/` with catalog rows naming `888cab04`; current citations rewritten in the same commit `d02e936f` | Staged QA and archive gates below |
 | WORK-003 | VAL-STR-005 | Rewrite the SPEC-0054 test pin and move the SPEC-0062 allowlist entry | platform | Queued | Not executed | Unit tests and the secret-scan gate |
 | WORK-004 | VAL-STR-004 | Retain SPEC-0054, SPEC-0062, and SPEC-0084 in `completed/` | platform | Queued | Not executed | Lifecycle, link, and archive gates |
 | WORK-005 | VAL-STR-006 | Record the results and close this package | platform | Queued | Not executed | Staged QA and hosted CI |
@@ -63,6 +63,21 @@ SPEC-0047 and SPEC-0050 the same day.
 The four withdrawn packages link to one another and to SPEC-0084 only inside
 their own bodies, which freeze with them.
 
+### Retirement of the withdrawn packages (2026-09-24)
+
+- **Envelope**: `888cab04`, the merge base with the default branch. Each of the
+  four package trees is byte-identical there and on `origin/main`.
+- **Move**: commit `d02e936f`, 38 pure renames into `retired/03.specs/`, which
+  creates the `retired/` class directory with its first members.
+- **Consumers**: REQ-0003, REQ-0004, AD-0007, the requirement and architecture
+  indexes, and SPEC-0049 name the packages in plain text and point here; the
+  Stage 03 index drops their entries.
+- **Validation**: `python3 scripts/qa.py staged` passed all six gates it
+  selects. `scripts/archive_cutover.py` and
+  `scripts/run-archive-contract-tests.py` passed on a staged-index snapshot
+  (136 contract tests), with Gitleaks 8.30.0 on the path.
+- **Hosted**: recorded when the pull request's `qa` check runs.
+
 ## Traceability
 
 - Stable Task: `SPEC-0087-TSK-0001`
@@ -72,7 +87,7 @@ their own bodies, which freeze with them.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | Survey above |
-| [WORK-002](../plan.md#work-breakdown) | In progress | Pending merge |
+| [WORK-002](../plan.md#work-breakdown) | Done | Commit `d02e936f` |
 | [WORK-003](../plan.md#work-breakdown) | Not executed | Queued |
 | [WORK-004](../plan.md#work-breakdown) | Not executed | Queued |
 | [WORK-005](../plan.md#work-breakdown) | Not executed | Queued |
