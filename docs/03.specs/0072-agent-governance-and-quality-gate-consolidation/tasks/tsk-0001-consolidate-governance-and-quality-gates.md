@@ -1,10 +1,10 @@
 ---
 title: "Consolidate Agent Governance and Quality Gates"
-version: "2.7.3"
+version: "2.8.0"
 type: "sdlc/task"
-status: "blocked"
+status: "done"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-24"
 layer: "specs"
 artifact_id: "SPEC-0072-TSK-0001"
 ---
@@ -19,6 +19,8 @@ Current work corrects gate, formatter, commit and environment drift through
 existing owners and creates verified logical local commits.
 
 **Blocked (2026-09-16).** WORK-001 through WORK-008 are `Done`. The one open item, WORK-009, needs an authorized provider session that no repository-static run can supply, and this record already states that native discovery, invocation, model access, sandbox enforcement and event delivery stay deferred. This change takes the declared `in-progress` to `blocked` edge under [SPEC-0084](../../0084-stage03-backlog-closeout/spec.md), because `blocked` states the dependency honestly while `in-progress` implies work in flight that does not exist. Next owner: the operator.
+
+**Closure (2026-09-24).** The request owner approved splitting the native half out and closing this package ("0072: Split the native half out and close"). WORK-009 is transferred to [SPEC-0086-TSK-0001](../../0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md), which now owns the operator-authorized native observation. The transfer is recorded, not claimed as passed: native discovery, invocation, model access, sandbox enforcement and event delivery remain unobserved. This Task closes `blocked → in-progress → done` on WORK-001 through WORK-008 and that transfer.
 
 ## Inputs
 
@@ -40,7 +42,7 @@ existing owners and creates verified logical local commits.
 | [WORK-006](../plan.md#work-breakdown) | VAL-AGQ-010, VAL-AGQ-011, VAL-AGQ-012 | Repair formatter and secret scan coverage | platform | Done | Both Providers covered; snapshot and frozen boundaries pass | Final local handoff below |
 | [WORK-007](../plan.md#work-breakdown) | VAL-AGQ-009 | Align commit contracts | platform | Done | Pinned message, native temporary hook and changelog tests pass | Final local handoff below |
 | [WORK-008](../plan.md#work-breakdown) | VAL-AGQ-005, VAL-AGQ-008, VAL-AGQ-014 | Remove demonstrated duplication | platform | Done | Wrapper and unused hook removed; unique domain and fixture contracts retained | Final local handoff below |
-| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | In progress | Local implementation retained; continuation validates inherited evidence; overall native acceptance remains open | Continuation and final local handoff below |
+| [WORK-009](../plan.md#work-breakdown) | VAL-AGQ-001, VAL-AGQ-002, VAL-AGQ-003, VAL-AGQ-004, VAL-AGQ-006, VAL-AGQ-007 | Validate environment and handoff | platform | Transferred | Moved to SPEC-0086-TSK-0001 on 2026-09-24; static half retained, native acceptance not claimed | Continuation and final local handoff below |
 
 ## Approval and Safety Boundaries
 
@@ -62,6 +64,16 @@ existing owners and creates verified logical local commits.
 - **Evidence Location**: this Task, Git commits, pull-request checks, and workflow job logs
 
 ## Verification Summary
+
+### Closure and Transfer (2026-09-24)
+
+- **Decision**: the request owner chose "0072: Split the native half out and close" on 2026-09-24.
+- **Result**: WORK-001 through WORK-008 stay `Done` with their recorded evidence. WORK-009 is `Transferred` to SPEC-0086-TSK-0001; no native result is claimed here.
+- **Consumer cutover**: `.codex/provider.md` now names the SPEC-0086 Task as the owner of the native-attempt evidence.
+- **Validation**: staged QA and pre-commit per logical commit on branch `docs/stage03-dispositions-2026-09-24`; full QA runs on the final tree before the pull request.
+- **Rollback**: revert the closure commits; SPEC-0086 remains a draft that can be withdrawn.
+- **Residual risk**: provider-native behavior stays unobserved until the operator authorizes a session.
+- **Next owner**: the operator, through SPEC-0086.
 
 ### Approved Native Follow-up and Conditional Finish (2026-09-09)
 

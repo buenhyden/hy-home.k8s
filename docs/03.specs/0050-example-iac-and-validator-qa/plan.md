@@ -1,8 +1,8 @@
 ---
 title: "Example IaC and Validator QA Implementation Plan"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -53,6 +53,8 @@ exact binaries before invoking the focused validator.
 **Tech Stack:** Python 3, unittest, JSON Schema, Terraform CLI/provider lock,
 standalone Bicep CLI/linter/compiler, temporary tool/provider/module caches,
 GitHub Actions, affected-surface routing, Bash aggregate QA, and pre-commit.
+
+**Withdrawal (2026-09-24).** The request owner approved withdrawing this package on 2026-09-24 (chooser: request owner; choice: "0049 draft + 0050 withdraw"), taking the `draft` to `withdrawn` edge under [the Spec's withdrawal note](spec.md#overview). The published-but-unenforced AWS/Azure README validation claims this Plan would have implemented a validator for are resolved by removing the claim lines instead. EIVQ-000 through EIVQ-006 are cancelled through the declared two-step path without execution.
 
 ## Context
 

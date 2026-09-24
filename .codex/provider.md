@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.2.0"
+version: "1.2.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-24"
 ---
 
 # Codex Provider Notes
@@ -65,9 +65,11 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The SPEC-0072 Task (`docs/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md`)
-  owns that attempt's evidence. Next owner: the user/operator for a reviewed
-  project/hook trust state and an explicitly authorized observable session.
+  or hook enforcement. The SPEC-0086 Task (`docs/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+  owns that attempt's evidence; SPEC-0072's Task recorded it first and
+  transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
+  Next owner: the user/operator for a reviewed project/hook trust state and an
+  explicitly authorized observable session.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
   on this provider is the operating-system `sandbox_mode` the registry binds,
   not the hook. A role in a mutation-capable class relies on the hook only for

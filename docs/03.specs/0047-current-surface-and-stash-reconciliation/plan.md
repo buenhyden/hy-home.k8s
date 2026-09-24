@@ -1,8 +1,8 @@
 ---
 title: "Current Surface and Stash Reconciliation Implementation Plan"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "withdrawn"
 owner: "platform"
 updated: "2026-09-15"
 layer: "specs"
@@ -55,6 +55,8 @@ ignored `_workspace` scratch and is removed before closure.
 
 **Tech Stack:** Git object metadata, Python 3 document and affected-surface
 validators, JSON registry contracts, Bash repository gates, and pre-commit.
+
+**Withdrawal (2026-09-24).** The request owner approved withdrawing this package on 2026-09-24 (chooser: request owner; choice: "0047: Withdraw"), taking the `active` to `withdrawn` edge under [the Spec's withdrawal note](spec.md#overview). `git stash list` is empty and stash object `6370311e020620cc2743005896cc88db97d15465` is unreachable, so the stash reconciliation work this Plan orders is discharged by the object's absence rather than by review. CSASR-001 through CSASR-005 are cancelled through the declared two-step path without execution. The ownership inventory this Plan would have produced is not carried to a successor.
 
 ## Context
 
