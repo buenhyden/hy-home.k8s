@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.37"
+version: "0.5.38"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -140,9 +140,9 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 | [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
 | [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | 2026-09-24에 request owner가 철회 대신 재계획을 선택해 draft를 유지한다. 활성화에는 선행 package의 종결이 아니라 새 plan이 필요하다. VAL-PVSE-004(Traefik)는 ADR-0043으로 대상이 사라졌고, 나머지 001–003·005–008은 validator가 없어 미완료다. | 2026-09-24 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Done | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성의 정적 수용을 완료했다. 2026-09-24에 request owner 승인("0072: Split the native half out and close")으로 native runtime 관측(WORK-009)을 SPEC-0086으로 이관하고 done으로 닫았다. native 결과는 통과로 주장하지 않는다. | 2026-09-24 |
-| [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Active | ADR-0040에 따른 보존 단위 사후 평가·승인된 제거·default branch envelope 검증과 index 표류 정정을 소유한다. 공통 lifecycle·검증 결과 어휘는 각자의 승인 뒤 실행하도록 순서만 정한다. |
+| [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Done | ADR-0040 cutover를 완료했다. default branch envelope 검증까지 구현했고 hosted `qa`가 `a264ebad`에서 통과해 2026-09-24에 done으로 닫았다. lifecycle·결과 어휘(WP-005·006)는 각자의 승인을 기다린다. | 2026-09-24 |
 | [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
-| [`./0087-stage03-terminal-package-retention/spec.md`](./0087-stage03-terminal-package-retention/spec.md) | Stage 03 terminal package retention | Active | 2026-09-24 request owner 승인("Approve archive, separate package")으로 withdrawn package 네 개(0047·0048·0050·0051)를 `retired/`로, done package 세 개(0054·0062·0084)를 `completed/`로 두 번에 나눠 보존한다. | 2026-09-24 |
+| [`./0087-stage03-terminal-package-retention/spec.md`](./0087-stage03-terminal-package-retention/spec.md) | Stage 03 terminal package retention | Done | 2026-09-24 request owner 승인으로 withdrawn package 네 개(0047·0048·0050·0051)를 `retired/`로, done package 세 개(0054·0062·0084)를 `completed/`로 보존하고 done으로 닫았다. | 2026-09-24 |
 
 ### Helper Templates
 

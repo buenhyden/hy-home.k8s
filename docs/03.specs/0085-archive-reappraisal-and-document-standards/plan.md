@@ -1,10 +1,10 @@
 ---
 title: "Archive Reappraisal and Document Standards Implementation Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-24"
 layer: "specs"
 artifact_id: "SPEC-0085-PLAN-0001"
 ---
@@ -22,6 +22,8 @@ artifact_id: "SPEC-0085-PLAN-0001"
 - Local logical commits are approved; push, pull request, and merge are not.
 - No live cluster, Helm, Argo CD, Vault, secret, kubeconfig, network, or storage
   action.
+
+**Closure (2026-09-24).** WP-001 to WP-004 are complete with committed evidence (`5d382767`, and `11664e49` through PR #95). WP-005 and WP-006 stay recorded, each waiting for its own approval, as the completion criteria allow. The final full profile passed on `main` at `a264ebad` (hosted `qa`). PR #95 was merged before its hosted `qa` finished. `main` then failed until PR #96 kept the default branch in the QA snapshot and PR #98 re-measured the archive Git budget.
 
 ## Overview
 
