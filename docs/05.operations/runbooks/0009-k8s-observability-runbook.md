@@ -1,6 +1,6 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.1.2"
+version: "2.1.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -176,6 +176,13 @@ kubectl describe pod -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs
 ### 3-3. 수정 후 재배포
 
 `gitops/platform/monitoring/alloy-k8s-logs.yaml`을 고치고 커밋한 뒤 동기화한다.
+Alloy는 mount된 설정을 다시 읽지 않으므로 `config.alloy`를 바꾸면 Deployment의
+`checksum/config` annotation도 새 값으로 바꾼다. 그래야 pod가 다시 뜬다. 값이
+다르면 `bash scripts/validate-infrastructure-contracts.sh`가 실패한다.
+
+```bash
+python3 -c "import hashlib,yaml; d=[x for x in yaml.safe_load_all(open('gitops/platform/monitoring/alloy-k8s-logs.yaml')) if x and x['kind']=='ConfigMap'][0]; print(hashlib.sha256(d['data']['config.alloy'].encode()).hexdigest())"
+```
 
 ```bash
 # 기본 경로: ArgoCD sync (operator-triggered reconciliation only)

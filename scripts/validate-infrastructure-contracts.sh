@@ -340,6 +340,15 @@ require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
 for job in kubernetes-pods kubelet cadvisor; do
   require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
 done
+# Alloy does not reload its mounted config, so the pod template carries the
+# config checksum: a config change must change it, which rolls the pod.
+python3 - "$ALLOY_K8S" <<'PY' || fail 'alloy-k8s-logs checksum/config must equal the sha256 of config.alloy'
+import hashlib, sys, yaml
+docs = [d for d in yaml.safe_load_all(open(sys.argv[1], encoding="utf-8")) if d]
+config = next(d for d in docs if d["kind"] == "ConfigMap")["data"]["config.alloy"]
+pod = next(d for d in docs if d["kind"] == "Deployment")["spec"]["template"]["metadata"]
+sys.exit(pod.get("annotations", {}).get("checksum/config") != hashlib.sha256(config.encode()).hexdigest())
+PY
 # kube-state-metrics labels name the object it describes; without
 # honor_labels the target's namespace wins and namespace="apps" matches nothing.
 require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"

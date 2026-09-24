@@ -393,6 +393,11 @@ spec:
       labels:
         app.kubernetes.io/name: alloy-k8s-logs
         app.kubernetes.io/component: log-collector
+      annotations:
+        # sha256 of the config.alloy data above. Alloy does not reload a mounted
+        # file, so a config change must update this value to roll the pod; the
+        # infrastructure contract checks that it matches.
+        checksum/config: 0119cb46e568561e2411840a70088777bf8a18ebe8f7127200eb975fc3f8b1e2
     spec:
       serviceAccountName: alloy-k8s-logs
       automountServiceAccountToken: true
