@@ -62,7 +62,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             compile(
                 ast.Module(body=[residue, boundary, *nodes], type_ignores=[]),
                 str(path),
-                "exec"
+                "exec",
             ),
             cls.rules,
         )
