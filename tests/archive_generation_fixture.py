@@ -13,8 +13,9 @@ history, so the regressions need no particular commit. The derivation reverses
 exactly what ADR-0038 added: the retention class binding, the two route
 disposition forms and their family, the mirrored retention alternatives, and
 the exact frozen routes, together with the retention units, modes, citation
-table, and legacy set that ADR-0039 added, and the optional `superseded_by` key
-and the `draft` to `withdrawn` edge that SPEC-0084 added.
+table, and legacy set that ADR-0039 added, the optional `superseded_by` key
+and the `draft` to `withdrawn` edge that SPEC-0084 added, and the optional
+`superseded_by` key later admitted on the Stage 05 operation profiles.
 `tests/test_archive_generation_fixture.py` proves the
 derivation equals the registry merged at `LEGACY_ARCHIVE_GENERATION_COMMIT`.
 
@@ -44,6 +45,16 @@ SPEC0084_SUPERSEDED_BY_PROFILES = frozenset(
     {
         "sdlc/spec",
         "common/template-sdlc-spec",
+    }
+)
+STAGE05_SUPERSEDED_BY_PROFILES = frozenset(
+    {
+        "operation/guide",
+        "operation/policy",
+        "operation/runbook",
+        "common/template-operation-guide",
+        "common/template-operation-policy",
+        "common/template-operation-runbook",
     }
 )
 SPEC0084_SUPERSEDED_BY_KEY = "superseded_by"
@@ -128,7 +139,10 @@ def legacy_registry_payload() -> dict[str, Any]:
         profile["path_pattern"] = FROZEN_GENERATION_ROUTES.get(
             profile["id"], _frozen_generation_route(profile["path_pattern"])
         )
-        if profile["id"] in SPEC0084_SUPERSEDED_BY_PROFILES:
+        if (
+            profile["id"]
+            in SPEC0084_SUPERSEDED_BY_PROFILES | STAGE05_SUPERSEDED_BY_PROFILES
+        ):
             frontmatter = profile["frontmatter"]
             for key in ("optional", "order"):
                 frontmatter[key] = [
