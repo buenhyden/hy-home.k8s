@@ -424,7 +424,7 @@ class QaTests(unittest.TestCase):
         control = "=".join(("GH_PROMPT_DISABLED", "1"))
         documents = {
             "docs/98.archive/completed/03.specs/0024-observability-and-network-review-agents/spec.md": f"live cluster scraping, {products} query execution,\n",
-            "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md": f"non-secret controls:\n`{control}`\n",
+            "docs/98.archive/completed/03.specs/0062-workspace-research-full-corpus-reverification/plan.md": f"non-secret controls:\n`{control}`\n",
         }
         for name, content in documents.items():
             path = self.root / name

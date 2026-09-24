@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.3"
+version: "1.6.4"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -19,7 +19,7 @@ machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
 [Stage 99](../99.templates/README.md)가 소유한다. 현재 거버넌스·공통 QA 구현은
 [ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)와
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가,
-더 넓은 문서 수렴과 미완료 처분은 [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
+더 넓은 문서 수렴과 미완료 처분은 [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
 이 Requirement는 구현 inventory, provider roster 또는 일회성 migration 계획의 복제본이 아니다.
 
 ## Vision
@@ -181,7 +181,7 @@ recording why the two superseded proposals cannot follow, is owned by
 [SPEC-0083](../98.archive/completed/03.specs/0083-finished-package-retention/spec.md).
 Closing the Stage 03 backlog those rounds left, including the two registry gaps
 that blocked two of its dispositions, is owned by
-[SPEC-0084](../03.specs/0084-stage03-backlog-closeout/spec.md).
+[SPEC-0084](../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md).
 The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
@@ -315,5 +315,5 @@ owned by
 | REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
 
 - Current architecture: [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
-- Current integration: [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) and its package-local Plan/Tasks.
+- Current integration: [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) and its package-local Plan/Tasks.
 - Original decision bodies remain in the [decision log](../02.architecture/decisions/README.md); recovery is indexed in [Stage 98](../98.archive/README.md).

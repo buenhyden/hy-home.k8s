@@ -2339,7 +2339,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.context.texts[path].encode("utf-8"),
         )
         legacy = "docs/03.specs/9999-semantic-growth/tasks.md"
-        target = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md"
+        target = "docs/03.specs/0008-current-local-gitops-platform/plan.md"
         added = {
             "legacy_path": legacy,
             "stable_path": None,
@@ -2545,7 +2545,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
     def test_terminal_route_does_not_project_an_active_stale_owner_edge(self) -> None:
         source = PurePosixPath(
-            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+            "docs/03.specs/0008-current-local-gitops-platform/spec.md"
         )
         retired = PurePosixPath(
             "docs/00.agent-governance/" + "common-" + "governance.md"

@@ -1,6 +1,6 @@
 ---
 title: "Stage 03 Terminal Package Retention Technical Specification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -16,7 +16,7 @@ artifact_id: "SPEC-0087"
 Seven Stage 03 packages are terminal and still sit in the current tree. SPEC-0047,
 SPEC-0048, SPEC-0050, and SPEC-0051 are `withdrawn` with every Task terminal.
 SPEC-0054, SPEC-0062, and SPEC-0084 are `done`.
-[SPEC-0084](../0084-stage03-backlog-closeout/spec.md) left the withdrawn pair in
+[SPEC-0084](../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md) left the withdrawn pair in
 place because the `retired` class had no directory, and deferred SPEC-0054 and
 SPEC-0062 with named owners because a test pin and a secret-scan allowlist entry
 name paths inside them.

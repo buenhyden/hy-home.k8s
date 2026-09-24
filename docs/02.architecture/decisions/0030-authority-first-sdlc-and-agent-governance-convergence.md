@@ -1,10 +1,10 @@
 ---
 title: "Authority-First SDLC and Agent Governance Convergence"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-24"
 layer: "architecture"
 artifact_id: "ADR-0030"
 supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
@@ -25,7 +25,7 @@ The decision keeps the approved four-digit identity and lowercase Incident
 grammar, work-unit co-location, transition fail-closed behavior, and explicit
 Git recovery. It replaces conflicting document-family, Archive-census,
 provider-cardinality, script-census, and mutable-SHA designs in its accepted
-predecessors. [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+predecessors. [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 is the implementation authority.
 
 ## Context
@@ -343,11 +343,11 @@ the Stage 99 foundation is active.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0013 | This decision replaces its provider-specific shared surfaces and custom-hook model while preserving its historical decision body and stable identity. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0015 | Partially supersedes its fixed metadata baseline and old profile inventory; preserves the declarative document registry as sole document machine authority. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0018 | Supersedes mandatory full-body, one-record-per-source, and no-Tombstone clauses; preserves explicit recovery and non-authoritative history. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0019 | Supersedes four-provider, Gemini/Antigravity, fixed 12/48, and harness-machine-owner clauses; preserves provider-native deltas, evidence classes, bounded execution, and least privilege. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0023 | Partially supersedes `tasks.md`, old agent-contract, and ArchiveEnvelope clauses; preserves Stage 03 co-location, retired Stage 04, stable Stage 05, no Release, and consumer-first migration. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0024 | Supersedes its terminal form split, prefixed AD path, mandatory child forms, exact Archive/census/SHA design, and fixed script inventory; preserves AD/ADR meaning, stable identity integrity, native interface contracts, consumer-zero, provenance, and recovery intent. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| ADR-0025 | Partially supersedes only its old family table; preserves four-digit identity, lowercase Incident package, atomic migration, and immutable historical paths. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0013 | This decision replaces its provider-specific shared surfaces and custom-hook model while preserving its historical decision body and stable identity. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0015 | Partially supersedes its fixed metadata baseline and old profile inventory; preserves the declarative document registry as sole document machine authority. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0018 | Supersedes mandatory full-body, one-record-per-source, and no-Tombstone clauses; preserves explicit recovery and non-authoritative history. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0019 | Supersedes four-provider, Gemini/Antigravity, fixed 12/48, and harness-machine-owner clauses; preserves provider-native deltas, evidence classes, bounded execution, and least privilege. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0023 | Partially supersedes `tasks.md`, old agent-contract, and ArchiveEnvelope clauses; preserves Stage 03 co-location, retired Stage 04, stable Stage 05, no Release, and consumer-first migration. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0024 | Supersedes its terminal form split, prefixed AD path, mandatory child forms, exact Archive/census/SHA design, and fixed script inventory; preserves AD/ADR meaning, stable identity integrity, native interface contracts, consumer-zero, provenance, and recovery intent. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| ADR-0025 | Partially supersedes only its old family table; preserves four-digit identity, lowercase Incident package, atomic migration, and immutable historical paths. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment only: top-level independent tests/fixtures and responsibility/risk-based module review replace the two validation-layout clauses named above; ADR-0030 remains accepted. | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |

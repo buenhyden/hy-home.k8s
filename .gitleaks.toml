@@ -31,7 +31,7 @@ id = "generic-api-key"
   description = "The retained execution plan names a noninteractive GitHub CLI control"
   condition = "AND"
   paths = [
-    '''^docs/03\.specs/0062-workspace-research-full-corpus-reverification/plan\.md$''',
+    '''^docs/98\.archive/completed/03\.specs/0062-workspace-research-full-corpus-reverification/plan\.md$''',
   ]
   regexTarget = "secret"
   regexes = ['''^GH_PROMPT_DISABLED=1$''']

@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.7.2"
+version: "0.7.3"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -177,6 +177,9 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`retired/03.specs/0048-github-routing-and-ci-evidence`](./retired/03.specs/0048-github-routing-and-ci-evidence) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0048-github-routing-and-ci-evidence` |
 | [`retired/03.specs/0050-example-iac-and-validator-qa`](./retired/03.specs/0050-example-iac-and-validator-qa) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0050-example-iac-and-validator-qa` |
 | [`retired/03.specs/0051-repository-assurance-integration-and-closure`](./retired/03.specs/0051-repository-assurance-integration-and-closure) | `888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0051-repository-assurance-integration-and-closure` |
+| [`completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation`](./completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation` |
+| [`completed/03.specs/0062-workspace-research-full-corpus-reverification`](./completed/03.specs/0062-workspace-research-full-corpus-reverification) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0062-workspace-research-full-corpus-reverification` |
+| [`completed/03.specs/0084-stage03-backlog-closeout`](./completed/03.specs/0084-stage03-backlog-closeout) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0084-stage03-backlog-closeout` |
 
 ### Retention Assessment
 
