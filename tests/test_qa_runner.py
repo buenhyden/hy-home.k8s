@@ -91,6 +91,22 @@ class QaTests(unittest.TestCase):
         self.assertEqual((self.root / ".git/index").read_bytes(), before)
         self.assertEqual((self.root / "file.txt").read_text(), "unstaged repaired\n")
 
+    def test_snapshot_keeps_a_default_branch_that_exists_only_as_remote_tracking(self):
+        # CI checks out a named branch that is not `main`; `main` exists only as
+        # `origin/main`, and archive envelopes resolve against it.
+        head = self.git("rev-parse", "HEAD").strip()
+        self.git("update-ref", "refs/remotes/origin/main", "HEAD")
+        self.git("switch", "-q", "-c", "ci-validated-checkout")
+        self.git("branch", "-q", "-D", "master")
+        for staged in (False, True):
+            with self.qa.repository_snapshot(self.root, staged=staged) as snapshot:
+                self.assertEqual(
+                    self.qa.git(
+                        snapshot, "rev-parse", "refs/remotes/origin/main"
+                    ).strip(),
+                    head,
+                )
+
     def test_snapshot_supports_worktree_gitfile(self):
         linked = Path(self.temporary.name) / "linked"
         self.git("worktree", "add", "--detach", str(linked))
