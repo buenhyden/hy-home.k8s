@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - vault-token-reviewer-binding.yaml
   - vault-secret-store.yaml
-  - postgres-app-secret.yaml
   - prometheus-api-auth-secret.yaml
+# postgres-app-secret was removed: no workload read it and OpenBao has no
+# platform/postgres-app entry. Restore it from Git history with its first consumer.

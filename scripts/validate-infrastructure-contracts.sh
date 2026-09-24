@@ -197,6 +197,11 @@ require_pattern 'rollouts\.hy-k8s\.home\.arpa' "$ROLLOUTS_APP"
 require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
 
+# No workload reads postgres-app-secret and OpenBao has no platform/postgres-app
+# entry (RUN-0096 adds the KV only when an app uses it). Restore it with a consumer.
+[ ! -e "$ROOT_DIR/gitops/platform/eso/postgres-app-secret.yaml" ] ||
+  fail 'postgres-app-secret is not deployed until a workload consumes it'
+
 echo "[INFO] verify ArgoCD Notifications Slack contracts"
 require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*true' "$ARGOCD_VALUES"
 require_pattern 'argocd-notifications-cm\.yaml' "$ARGOCD_KUSTOMIZATION"
@@ -340,6 +345,15 @@ require_pattern 'cluster = "k3d-hyhome"' "$ALLOY_K8S"
 for job in kubernetes-pods kubelet cadvisor; do
   require_pattern "job_name\s*=\s*\"${job}\"" "$ALLOY_K8S"
 done
+# Alloy does not reload its mounted config, so the pod template carries the
+# config checksum: a config change must change it, which rolls the pod.
+python3 - "$ALLOY_K8S" <<'PY' || fail 'alloy-k8s-logs checksum/config must equal the sha256 of config.alloy'
+import hashlib, sys, yaml
+docs = [d for d in yaml.safe_load_all(open(sys.argv[1], encoding="utf-8")) if d]
+config = next(d for d in docs if d["kind"] == "ConfigMap")["data"]["config.alloy"]
+pod = next(d for d in docs if d["kind"] == "Deployment")["spec"]["template"]["metadata"]
+sys.exit(pod.get("annotations", {}).get("checksum/config") != hashlib.sha256(config.encode()).hexdigest())
+PY
 # kube-state-metrics labels name the object it describes; without
 # honor_labels the target's namespace wins and namespace="apps" matches nothing.
 require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"
