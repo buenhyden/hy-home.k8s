@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.5.29"
+version: "0.5.30"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-24"
 layer: "specs"
 ---
 # 03.specs
@@ -158,7 +158,7 @@ in [SPEC-0054-TSK-0013](./0054-sdlc-document-and-agent-governance-consolidation/
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
-| [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Active | Spec 0052의 semantic closure 후 ADR-0031/0033와 package-local v9 경로로 Spec/Plan을 재개했다. 활성화 Task만 done이고 구현 Tasks는 queued다. stash metadata는 존재하며 tracked-hunk reconciliation은 미완료다. | 2026-09-14 |
+| [`./0047-current-surface-and-stash-reconciliation/spec.md`](./0047-current-surface-and-stash-reconciliation/spec.md) | Current target inventory, canonical ownership, audit delta, protected boundary, and stash semantic reconciliation specification | Withdrawn | 2026-09-24에 request owner 승인("0047: Withdraw")으로 active에서 withdrawn으로 철회했다. `git stash list`가 비어 있고 Plan이 명명한 stash object `6370311e...`가 더 이상 존재하지 않아 stash reconciliation 의무의 대상이 사라졌다. Task 다섯 개는 실행 없이 취소했고, ownership inventory는 후속 package로 이관하지 않는다. | 2026-09-24 |
 | [`./0048-github-routing-and-ci-evidence/spec.md`](./0048-github-routing-and-ci-evidence/spec.md) | GitHub surface routing, label/CODEOWNERS parity, CI lane ownership, and read-only remote evidence specification | Withdrawn | 2026-09-16에 SPEC-0084 회차로 draft에서 withdrawn으로 철회했다. VAL-GRCE-002·004·005·007은 CODEOWNERS·labeler·SPEC-0072/0073·기록된 main 보호가 이미 개별 흡수했고, 남은 라우팅 계약 위치 `.agents/contracts/`는 채택된 배치에 존재하지 않는다. Task 여섯 개는 실행 없이 취소했다. | 2026-09-14 |
 | [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0048의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. Kustomize roots는 존재하지만 제안된 platform/Traefik validator 작업은 미완료다. | 2026-09-14 |
 | [`./0050-example-iac-and-validator-qa/spec.md`](./0050-example-iac-and-validator-qa/spec.md) | AWS Terraform, Azure Bicep, example routing, and validator regression QA specification | Draft | Spec/Plan draft, Tasks queued를 유지한다. Spec 0049의 검증된 package closure 뒤 package-local draft → active 경로로 재개한다. 현재 validation registry에 Terraform/Bicep validator가 없어 example IaC 작업은 미완료다. | 2026-09-14 |
