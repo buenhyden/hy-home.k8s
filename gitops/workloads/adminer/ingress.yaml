@@ -6,6 +6,11 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: mkcert-ca-issuer
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    # ingress-nginx에도 sidecar가 있다. pod IP와 외부 host로 보내면 sidecar가
+    # route를 찾지 못해 plaintext로 넘기고 STRICT mTLS가 끊는다(503). Service와
+    # mesh host로 보내야 VirtualService가 적용되고 mTLS로 나간다.
+    nginx.ingress.kubernetes.io/service-upstream: 'true'
+    nginx.ingress.kubernetes.io/upstream-vhost: adminer.apps.svc.cluster.local
 spec:
   ingressClassName: nginx
   rules:
