@@ -14,7 +14,7 @@ updated: "{{YYYY_MM_DD}}"
 
 ## Structure
 
-<!-- Author prompt: inventory implementation areas and entrypoints with target-relative links. -->
+<!-- Author prompt: link direct child folders or files and their entrypoints; name at most one path inside any child and show only direct children in a tree. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Configuration Boundary
 

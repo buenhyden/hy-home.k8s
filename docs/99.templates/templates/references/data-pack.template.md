@@ -19,7 +19,7 @@ layer: "{{LAYER}}"
 
 ## Item Index
 
-<!-- Author prompt: inventory each data item or supporting file and its distinct purpose. -->
+<!-- Author prompt: link each data item or supporting file in this pack once and state its distinct purpose. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Refresh and Retention
 

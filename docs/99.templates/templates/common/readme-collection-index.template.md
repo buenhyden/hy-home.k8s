@@ -19,7 +19,7 @@ layer: "{{LAYER}}"
 
 ## Item Index
 
-<!-- Author prompt: inventory current items with concise, target-relative links. -->
+<!-- Author prompt: list every direct member once, in one table or list, with a target-relative link; link a member folder, never its contents. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Add and Find
 

@@ -14,7 +14,7 @@ updated: "{{YYYY_MM_DD}}"
 
 ## Repository Map
 
-<!-- Author prompt: map the top-level areas readers need with target-relative links. -->
+<!-- Author prompt: link top-level folders or their README; name at most one path inside any folder and show only direct children in a tree. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Getting Started
 

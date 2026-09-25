@@ -19,7 +19,7 @@ layer: "{{LAYER}}"
 
 ## Report Index
 
-<!-- Author prompt: link each report and state its distinct audit responsibility. -->
+<!-- Author prompt: link each report in this pack once and state its distinct audit responsibility. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Review and Closure
 

@@ -19,7 +19,7 @@ layer: "{{LAYER}}"
 
 ## Document Index
 
-<!-- Author prompt: inventory current documents or collections with concise links. -->
+<!-- Author prompt: link every direct child folder and document once; route deeper documents through the child folder README. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
 
 ## Authoring Workflow
 
