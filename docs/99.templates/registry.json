@@ -5737,7 +5737,6 @@
     },
     "pending_paths": [
       ".agents/README.md",
-      "README.md",
       "docs/01.requirements/README.md",
       "docs/02.architecture/README.md",
       "docs/02.architecture/decisions/README.md",
