@@ -34,7 +34,7 @@ Push, merge, and live actions are not authorized.
 | WORK-004 | VAL-RNC-003 | Stage 90; remove `COLLECTION-INDEX-*` | platform | Done | Stage and research READMEs list collections and packs only; the pack findings column is renamed `Finding`; collection index code removed; two replacement tests | Focused tests, staged QA |
 | WORK-005 | VAL-RNC-003 | Knowledge index | platform | Done | Index membership check removed; README existence check kept; replacement completeness test added | Focused tests, staged QA |
 | WORK-006 | VAL-RNC-003 | Stage 05 indexes | platform | Done | One two-column document index per collection inside the navigation section; duplicate trees and copied status and date columns removed; the quality check keeps document membership and drops status and date parity | Staged QA |
-| WORK-007 | VAL-RNC-005 | Matrices follow their folders | platform | Queued | Not executed | Staged QA |
+| WORK-007 | VAL-RNC-005 | Matrices follow their folders | platform | Done | `platform/*` rows moved to `gitops/platform/README.md`, the test inventory to `infrastructure/verify/README.md`; one area-matrix check serves both gitops matrices; the stale `traefik/README.md` route removed; Vault path cells equal to a folder name written as plain text | Staged QA |
 | WORK-008 | VAL-RNC-004 | Remaining READMEs | platform | Queued | Not executed | Staged QA per area |
 | WORK-009 | VAL-RNC-006 | Template guidance | platform | Queued | Not executed | Staged QA |
 | WORK-010 | VAL-RNC-007 | Evidence and closure | platform | Queued | Not executed | Full QA |
@@ -73,7 +73,7 @@ archive ledger package.
 | [WORK-004](../plan.md#work-breakdown) | Stage 90 routed to packs | Focused tests and staged QA |
 | [WORK-005](../plan.md#work-breakdown) | Knowledge index owned by the contract | Focused tests and staged QA |
 | [WORK-006](../plan.md#work-breakdown) | Stage 05 indexes stop copying | Staged QA |
-| [WORK-007](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-007](../plan.md#work-breakdown) | Matrices follow their folders | Repository quality gate and staged QA |
 | [WORK-008](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-009](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-010](../plan.md#work-breakdown) | Not executed | Pending |

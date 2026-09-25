@@ -49,7 +49,7 @@ MetalLB bootstrap manifest는 별도 `metallb/` 디렉터리가 아니라 이 �
 infrastructure/
 ├── argocd/                  # ArgoCD Helm values
 ├── k3d/                     # k3d 클러스터 설정
-├── verify/                  # 라이브 클러스터 검증 스크립트
+├── verify/                  # 라이브 클러스터 검증 스크립트와 그 유지 계약
 ├── vault/                   # Vault 정책 샘플
 ├── bootstrap-local.sh       # 로컬 플랫폼 bootstrap 진입점
 ├── coredns-custom.yaml      # OpenBao 이름을 host 주소로 푸는 CoreDNS zone
@@ -107,20 +107,8 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 ### Infrastructure Test Inventory
 
-이 표는 `infrastructure/verify/*.sh`의 현재 유지 계약이며 전부 라이브 검증이다.
-부트스트랩된 k3d/ArgoCD 환경에서만 실행한다. 저장소 정적 계약 검사는
-`scripts/validate-infrastructure-contracts.sh`가 소유하며 QA 실행
-레지스트리가 그 선택과 실행을 결정한다.
-
-| Test script | Type | Preconditions | Result semantics | Retention / command surface |
-| --- | --- | --- | --- | --- |
-| `verify-cluster.sh` | Live | Bootstrapped k3d context, trusted kubeconfig CA, kubectl, and MetalLB. | PASS means cluster node topology and MetalLB readiness match the local platform baseline. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and synchronized root/platform applications. | PASS means the live root Application source contract and required platform Application presence checks pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-secrets.sh` | Live | External Secrets Operator, Vault auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-external-services.sh` | Live | Platform namespace services and EndpointSlices exist for external PostgreSQL, Vault, Valkey, and observability contracts. | PASS means live service ports and EndpointSlice addresses match the declared local contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional k8s router check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
+라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
+Test Inventory가 소유한다.
 
 ## Configuration Boundary
 

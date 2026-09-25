@@ -73,6 +73,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "Probe Index",
             "Example Role Matrix",
             "Service Coverage Matrix",
+            "Platform Coverage Matrix",
             "External Service Contract Matrix",
             "Secret Management Responsibility Matrix",
             "Workload Coverage Matrix",
