@@ -1,8 +1,8 @@
 ---
 title: "Retire SPEC-0049"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -29,7 +29,7 @@ of SPEC-0049 and the push of the resulting commits on 2026-09-25.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-SRT-001 | Record the approval and survey the unit | platform | Done | Survey below | This Task |
 | WORK-002 | VAL-SRT-002, VAL-SRT-003 | Retain SPEC-0049 in `retired/` | platform | Done | Unit retained in `retired/03.specs/` with a catalog row naming `62ed8f05`; current links rewritten in the same commit | Lifecycle, link, and archive gates |
-| WORK-003 | VAL-SRT-004 | Record the results and close | platform | Queued | Not executed | Staged QA |
+| WORK-003 | VAL-SRT-004 | Record the results and close | platform | Done | Results below | Staged QA |
 
 ## Approval and Safety Boundaries
 
@@ -53,6 +53,23 @@ of SPEC-0049 and the push of the resulting commits on 2026-09-25.
 The envelope is `62ed8f05`, the commit in which every member reached its
 terminal state.
 
+### Results
+
+| Commit | Scope |
+| --- | --- |
+| `7ddecc1b` | Propose this package; pushed with the envelope `62ed8f05` by the request owner |
+| `8e405331` | Retain SPEC-0049 in `retired/03.specs/`, add its catalog row, and rewrite its current links |
+| Closing commit | Record these results and close |
+
+- **Staged QA**: every selected gate passed for each commit.
+- **Archive gate**: the Retention Catalog envelope check returned no
+  diagnostic, so every row, including `62ed8f05`, equals its object and is
+  reachable from `origin/main`. `archive_cutover.py` as a whole still fails
+  on this host because Gitleaks is absent, with the same output as before the
+  move. The archive contract suite passed 136 tests.
+- **Hosted `ci-summary`**: DEFER; not observed.
+- **Rollback**: revert `8e405331`; Git restores the original path.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -61,4 +78,4 @@ terminal state.
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Survey recorded | This Task |
 | [WORK-002](../plan.md#work-breakdown) | Unit retained | Lifecycle, link, and archive gates |
-| [WORK-003](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-003](../plan.md#work-breakdown) | Package closed | Results above |
