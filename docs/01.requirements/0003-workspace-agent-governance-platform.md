@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.5"
+version: "1.6.6"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -195,6 +195,9 @@ owned by
 Converging Operations document ownership, disposing of Stage 98 Operations
 residue, and removing dead or duplicate validation logic is owned by
 [SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md).
+Resolving the conflicts SPEC-0088 deferred and withdrawing open packages that
+contradict current authority is owned by
+[SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md).
 
 ## Traceability
 

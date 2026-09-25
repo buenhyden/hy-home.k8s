@@ -1,6 +1,6 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -90,6 +90,8 @@ Delivery assurance는 모든 in-scope surface에 분류·검증 깊이·결과·
 이 승계는 어느 tranche 또는 Spec 0054 WP-013의 완료 선언도 아니다.
 운영 문서의 현재 구현 사실 정합과 secret 값 비출력 경계 검증은
 [SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md)이 소유한다.
+RUN-0004가 가리키는 cluster UI chart 객체 확인은
+[SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)가 소유한다.
 
 ## Traceability
 
