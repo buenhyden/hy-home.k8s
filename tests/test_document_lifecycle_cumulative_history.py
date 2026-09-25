@@ -65,6 +65,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 for profile_id in domain["profile_ids"]
                 if profile_id in selected
             ]
+        # README navigation names profiles this selection drops.
+        raw_registry.pop("readme_navigation", None)
         raw_registry["profiles"] = [
             profile for profile in raw_registry["profiles"] if profile["id"] in selected
         ]

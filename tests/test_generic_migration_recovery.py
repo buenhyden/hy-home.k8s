@@ -51,6 +51,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
                 for profile_id in domain["profile_ids"]
                 if profile_id in selected
             ]
+        # README navigation names profiles this selection drops.
+        registry.pop("readme_navigation", None)
         registry["profiles"] = [
             profile for profile in registry["profiles"] if profile["id"] in selected
         ]
