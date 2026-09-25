@@ -1672,7 +1672,8 @@ for operations_root in operations_index_roots:
         readme_text,
         ("## 문서 인덱스", "### 문서 인덱스"),
     )
-    expected_header = ["문서", "설명", "상태", "최종 수정"]
+    # SPEC-0091: status and dates stay in each document's frontmatter.
+    expected_header = ["문서", "설명"]
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
         continue
@@ -1707,41 +1708,6 @@ for operations_root in operations_index_roots:
         fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
     for doc_name in sorted(set(indexed_rows) - operation_doc_names):
         fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
-
-    for doc_path in operation_docs:
-        row = indexed_rows.get(doc_path.name)
-        if not row:
-            continue
-        doc_text = read_text(doc_path)
-        frontmatter = re.match(r"^---\n(.*?)\n---\n", doc_text, re.DOTALL)
-        if not frontmatter:
-            fail(
-                f"{rel(doc_path)} missing YAML frontmatter for operations index validation"
-            )
-            continue
-        try:
-            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
-        except Exception as exc:
-            fail(
-                f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}"
-            )
-            continue
-        status = str(metadata.get("status", "")).strip()
-        updated = str(metadata.get("updated", "")).strip()
-        row_status = row[2].strip()
-        row_updated = row[3].strip()
-        if not status:
-            fail(f"{rel(doc_path)} missing status for operations index validation")
-        elif row_status.lower() != status.lower():
-            fail(
-                f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}"
-            )
-        if not updated:
-            fail(f"{rel(doc_path)} missing updated for operations index validation")
-        elif row_updated != updated:
-            fail(
-                f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}"
-            )
 
 
 template_enforcement_phrase_checks = {

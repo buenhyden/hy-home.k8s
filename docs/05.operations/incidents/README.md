@@ -63,11 +63,11 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 ```text
 05.operations/incidents/
 ├── <year>/
-│   └── inc-####-<slug>/
-│       ├── incident.md         # Incident fact record
-│       └── postmortem.md       # Postmortem, created only when analysis is needed
-└── README.md                   # This file
+└── README.md
 ```
+
+사고 기록은 `<year>/inc-####-<slug>/` 폴더에 두며, 그 안의 `incident.md`가
+사실 기록을, 분석이 필요할 때만 만드는 `postmortem.md`가 사후 분석을 소유한다.
 
 ## Add and Find
 

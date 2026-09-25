@@ -52,18 +52,18 @@ layer: "operations"
 
 ## Item Index
 
-```text
-docs/05.operations/guides/
-├── 0010-ci-cd-qa-reference-guide.md                # CI/CD & QA 검증 경계 안내
-└── README.md                                       # This file
-```
+### 문서 인덱스
+
+| 문서 | 설명 |
+| --- | --- |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 |
 
 ## Add and Find
 
 1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/operations/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
-4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
+4. 문서를 추가하거나 제거할 때 이 README의 문서 인덱스를 함께 갱신한다. 상태와 수정일은 각 문서의 frontmatter가 소유한다.
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
 
@@ -103,9 +103,3 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
-
-### 문서 인덱스
-
-| 문서                                                                                           | 설명                                                                    | 상태   | 최종 수정  |
-| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ | ---------- |
-| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 | Active | 2026-09-25 |
