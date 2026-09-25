@@ -5553,6 +5553,7 @@
   ],
   "archive_citation": {
     "index": "docs/98.archive/README.md",
+    "ledger": "docs/98.archive/README.md",
     "default": "reject",
     "rules": [
       {

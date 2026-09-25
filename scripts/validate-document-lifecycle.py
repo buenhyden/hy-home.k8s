@@ -67,6 +67,7 @@ from document_lifecycle import (
 from archive_dispositions import (
     ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
     ROUTE_DISPOSITION_PROFILES,
+    archive_ledger_path,
     canonical_repository_path,
     enclosing_unit,
     frontmatter_mapping,
@@ -2546,6 +2547,23 @@ def _retention_gaps(
     return gaps, pairs
 
 
+def _archive_table_texts(
+    registry: Registry,
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+) -> tuple[str, str]:
+    """Return the archive table text on each side of a transition.
+
+    A side without the ledger file still keeps its tables in the index, which is
+    the base of the change that moves them (ADR-0047)."""
+
+    ledger = archive_ledger_path(registry)
+    base = base_texts.get(ledger)
+    if base is None:
+        base = base_texts.get(DISPOSITION_ARCHIVE_INDEX, "")
+    return base, proposed_texts.get(ledger, "")
+
+
 def _assessment_events(
     root: Path,
     registry: Registry,
@@ -2565,9 +2583,11 @@ def _assessment_events(
     contract = registry.archive_assessment
     if contract is None:
         return frozenset(), []
-    index = DISPOSITION_ARCHIVE_INDEX
-    proposed, errors = parse_assessment(registry, proposed_texts.get(index, ""))
-    base, _base_errors = parse_assessment(registry, base_texts.get(index, ""))
+    base_text, proposed_text = _archive_table_texts(
+        registry, base_texts, proposed_texts
+    )
+    proposed, errors = parse_assessment(registry, proposed_text)
+    base, _base_errors = parse_assessment(registry, base_text)
     gaps = [f"{code}: {path}" for code, path in errors]
 
     def present(record: PurePosixPath) -> bool:
@@ -2628,9 +2648,12 @@ def _disposition_lifecycle_events(
     path ledger; Git holds the bytes.
     """
 
-    index = DISPOSITION_ARCHIVE_INDEX
-    proposed_rows, catalog_errors = parse_catalog(proposed_texts.get(index, ""))
-    base_rows, _ = parse_catalog(base_texts.get(index, ""))
+    index = archive_ledger_path(registry)
+    base_text, proposed_text = _archive_table_texts(
+        registry, base_texts, proposed_texts
+    )
+    proposed_rows, catalog_errors = parse_catalog(proposed_text)
+    base_rows, _ = parse_catalog(base_text)
 
     def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
         document = proposed_snapshot.get(path)

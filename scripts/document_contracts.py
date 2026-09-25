@@ -213,9 +213,13 @@ class ArchiveAssessment:
 
 @dataclass(frozen=True)
 class ArchiveCitation:
-    """The ordered citation table into Stage 98; the first matching rule decides."""
+    """The ordered citation table into Stage 98; the first matching rule decides.
+
+    `index` is the archive identity; `ledger` is the file that holds its tables
+    (ADR-0047). Both are cited as the index."""
 
     index: PurePosixPath
+    ledger: PurePosixPath
     default: Literal["reject"]
     rules: tuple[CitationRule, ...]
 
@@ -956,6 +960,7 @@ def _archive_retention_diagnostics(
         *_archive_citation_diagnostics(raw_registry, profiles_by_id),
         *_archive_assessment_diagnostics(raw_registry, profiles_by_id),
         *_readme_navigation_registry_diagnostics(raw_registry, profiles_by_id),
+        *_archive_ledger_registry_diagnostics(raw_registry),
     ]
     if diagnostics:
         # The legacy check builds the typed registry, which needs the rest valid.
@@ -1328,6 +1333,7 @@ def _archive_citation_from_mapping(
         return None
     return ArchiveCitation(
         index=PurePosixPath(raw["index"]),
+        ledger=PurePosixPath(raw["ledger"]),
         default=raw["default"],
         rules=tuple(
             CitationRule(
@@ -1396,6 +1402,26 @@ def _readme_navigation_registry_diagnostics(
             actual=fault,
         )
         for fault in faults
+    ]
+
+
+def _archive_ledger_registry_diagnostics(
+    raw_registry: Mapping[str, Any],
+) -> list[Diagnostic]:
+    """Require the citation ledger to be the file the assessment table lives in."""
+
+    citation = raw_registry.get("archive_citation")
+    assessment = raw_registry.get("archive_assessment")
+    if citation is None or assessment is None:
+        return []
+    if citation.get("ledger") == assessment.get("index"):
+        return []
+    return [
+        _diagnostic(
+            "REGISTRY_ARCHIVE_LEDGER",
+            expected="archive_citation.ledger equals archive_assessment.index",
+            actual=f"{citation.get('ledger')} != {assessment.get('index')}",
+        )
     ]
 
 

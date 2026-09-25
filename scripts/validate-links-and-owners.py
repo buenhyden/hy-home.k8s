@@ -84,6 +84,8 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
 
 try:
     from archive_dispositions import (
+        ARCHIVE_INDEX,
+        archive_ledger_path,
         citation_decision,
         frontmatter_mapping,
         parse_assessment,
@@ -93,6 +95,8 @@ try:
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
+        ARCHIVE_INDEX,
+        archive_ledger_path,
         citation_decision,
         frontmatter_mapping,
         parse_assessment,
@@ -134,7 +138,7 @@ WORK054_MIGRATION_PATH = PurePosixPath(
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
+ARCHIVE_INDEX_PATH = ARCHIVE_INDEX
 WORK109_SOURCE_COMMIT = (
     "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 )
@@ -2807,12 +2811,9 @@ def _retention_catalog_targets(
     package row names the directory and a member resolves through containment.
     """
 
-    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
+    index_text = _archive_index_text(context)
     if index_text is None:
-        try:
-            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
-            return {}
+        return {}
     rows, errors = parse_catalog(index_text)
     if errors:
         return {}
@@ -5019,12 +5020,21 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     return diagnostics
 
 
+def _archive_ledger() -> PurePosixPath:
+    """The file that holds the archive tables (ADR-0047)."""
+
+    return archive_ledger_path(_repository_registry())
+
+
 def _archive_index_text(context: Context) -> str | None:
-    text = context.texts.get(ARCHIVE_INDEX_PATH)
+    """Return the text of the archive ledger, which holds the machine tables."""
+
+    ledger = _archive_ledger()
+    text = context.texts.get(ledger)
     if text is not None:
         return text
     try:
-        return (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
+        return (context.root / ledger).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return None
 
@@ -5051,7 +5061,7 @@ def _removed_unit_catalog_link(
     links the record Git recovers. Only the index gets this admission, and only
     for a record its assessment table names as removed."""
 
-    if source != ARCHIVE_INDEX_PATH:
+    if source != _archive_ledger():
         return False
     text = _archive_index_text(context)
     if text is None:
@@ -5089,12 +5099,9 @@ def _catalog_retained_link(
         # Only the frozen generation holds links nobody may rewrite. A route
         # record or index written under ADR-0038 follows the citation rule.
         return False
-    index_text = context.texts.get(ARCHIVE_INDEX_PATH)
+    index_text = _archive_index_text(context)
     if index_text is None:
-        try:
-            index_text = (context.root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
-            return False
+        return False
     rows, errors = parse_catalog(index_text)
     if errors:
         return False

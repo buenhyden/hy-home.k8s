@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import datetime
 import importlib
+import json
 import posixpath
 import re
 import sys
@@ -279,7 +280,9 @@ def archive_target_kind(
     if target.parts[:2] != ARCHIVE_ROOT.parts:
         return None
     table = registry.archive_citation
-    if target == (table.index if table is not None else ARCHIVE_INDEX):
+    if target in (
+        (table.index, table.ledger) if table is not None else (ARCHIVE_INDEX,)
+    ):
         return ("index", None)
     retention = retention_class_of(registry, target)
     if retention is not None:
@@ -441,6 +444,37 @@ def retained_unit_of(
         if unit.root.fullmatch(source):
             return unit, retention
     return None
+
+
+def archive_ledger_path(registry: "Registry | None") -> PurePosixPath:
+    """Return the file that holds the archive tables (ADR-0047).
+
+    A registry that declares no ledger keeps its tables in the index itself."""
+
+    table = getattr(registry, "archive_citation", None)
+    return table.ledger if table is not None else ARCHIVE_INDEX
+
+
+_LEDGER_PATH = re.compile(r"docs/98\.archive/(?:README|[a-z0-9-]+)\.md")
+
+
+def archive_ledger_path_at(root: Path) -> PurePosixPath:
+    """Return the ledger path from the registry file without loading profiles.
+
+    For readers that hold no typed registry. A missing, unreadable, or
+    malformed value keeps the tables in the index, as a registry without a
+    ledger does; the registry gate reports the malformed value itself."""
+
+    try:
+        raw = json.loads(
+            (root / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+        value = raw["archive_citation"]["ledger"]
+    except (OSError, UnicodeDecodeError, ValueError, KeyError, TypeError):
+        return ARCHIVE_INDEX
+    if isinstance(value, str) and _LEDGER_PATH.fullmatch(value):
+        return PurePosixPath(value)
+    return ARCHIVE_INDEX
 
 
 def catalog_line_span(lines: Sequence[str]) -> tuple[int, int] | None:

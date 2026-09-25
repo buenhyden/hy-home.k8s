@@ -25,6 +25,9 @@ import yaml
 
 if __package__:
     from scripts.archive_dispositions import (
+        ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
+        archive_ledger_path,
+        archive_ledger_path_at,
         assessment_line_span,
         catalog_line_span,
         parse_assessment,
@@ -85,6 +88,9 @@ if __package__:
     )
 else:
     from archive_dispositions import (  # type: ignore[no-redef]
+        ARCHIVE_INDEX as DISPOSITION_ARCHIVE_INDEX,
+        archive_ledger_path,
+        archive_ledger_path_at,
         assessment_line_span,
         catalog_line_span,
         parse_assessment,
@@ -175,7 +181,7 @@ FIRST_SOURCE_COMMIT = (
 SECOND_SOURCE_COMMIT = (
     "82f0e1922d9748a88b1487a32a59629ba523f408"  # pragma: allowlist secret
 )
-ARCHIVE_INDEX = "docs/98.archive/README.md"
+ARCHIVE_INDEX = DISPOSITION_ARCHIVE_INDEX.as_posix()
 CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
 SECRET_TIMEOUT_SECONDS = 10
@@ -570,7 +576,7 @@ def _retained_original_paths(root: Path) -> frozenset[str]:
     """
 
     try:
-        index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
+        index_text = (root / archive_ledger_path_at(root)).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return frozenset()
     rows, errors = parse_catalog(index_text)
@@ -1407,8 +1413,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 registry_path.relative_to(root).as_posix(),
             )
         )
+    ledger = archive_ledger_path(typed_registry).as_posix()
     try:
-        index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
+        index_text = (root / ledger).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
     if typed_registry is not None:
@@ -1428,9 +1435,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         and index_links == expected_historical_links
     )
     if not marker_valid:
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ledger))
     if index_structure_failure or frozenset(index_rows) != expected_paths:
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX))
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ledger))
     archive_metadata = {
         archive_path: metadata for archive_path, metadata, _link_count in metadata_rows
     }
@@ -1503,7 +1510,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     for raw_path in current_paths:
         if (
             not raw_path.endswith(".md")
-            or raw_path == ARCHIVE_INDEX
+            or raw_path in {ARCHIVE_INDEX, ledger}
             or raw_path == WORK107_MIGRATION_PATH
             or raw_path in expected_paths
             or raw_path.startswith("docs/99.templates/templates/")
