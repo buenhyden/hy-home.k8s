@@ -61,53 +61,20 @@ with their canonical owners in `.agents/`,
 ```text
 research/
 ├── 0001-workspace-engineering/
-│   ├── README.md
-│   ├── m0011-agent-memory-tiers-and-management.md
-│   ├── m0010-agent-model-routing-and-configuration.md
-│   ├── m0009-ai-agents-and-agency-agents.md
-│   ├── m0008-ci-cd-github-actions-and-qa.md
-│   ├── m0005-documentation-architecture-and-diataxis.md
-│   ├── m0002-harness-and-loop-engineering.md
-│   ├── m0007-kubernetes-infrastructure-and-security.md
-│   ├── m0006-llm-wiki-and-knowledge-routing.md
-│   ├── m0003-provider-implementation-status.md
-│   ├── m0013-scope-application-index.md
-│   ├── m0012-source-coverage.md
-│   ├── m0004-spec-driven-sdlc-and-document-contracts.md
-│   └── m0001-workspace-governance-and-common-agent-environment.md
 ├── 0002-archive-retention-and-provenance/
-│   ├── README.md
-│   └── m0001-git-provenance-and-superseded-record-citation.md
-└── README.md                            # This file
+└── README.md
 ```
 
 ### Research Pack Index
 
-| Material                                                                                                                      | Status      | Role                                                                      | Authority Boundary                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [README.md](./README.md)                                                                                                      | Index       | Research folder entry point and source-priority guide                     | Authoritative for folder routing only; not active policy                                                  |
-| [0001-workspace-engineering/README.md](./0001-workspace-engineering/README.md)                                                                        | Active pack | Successor workspace engineering research pack entry point                 | Research routing and observation-dated coverage only; canonical owners retain current authority           |
-| [m0011-agent-memory-tiers-and-management.md](./0001-workspace-engineering/m0011-agent-memory-tiers-and-management.md)                                 | Active pack | Working, durable, domain-scoped, and provider-local memory research       | Descriptive reference only; memory lifecycle contract remains with common governance                               |
-| [m0010-agent-model-routing-and-configuration.md](./0001-workspace-engineering/m0010-agent-model-routing-and-configuration.md)                         | Active pack | Model-routing and configuration research                                  | Descriptive reference only; provider availability and observed model resolution require separate evidence |
-| [m0009-ai-agents-and-agency-agents.md](./0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)                                             | Active pack | AI-agent-system and agency-agents research                                | Descriptive reference only; roster and admission remain with the agent registry                    |
-| [m0008-ci-cd-github-actions-and-qa.md](./0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md)                                             | Active pack | CI/CD, GitHub Actions, and QA research                                    | Descriptive reference only; static validation does not prove hosted CI or deployment                      |
-| [m0005-documentation-architecture-and-diataxis.md](./0001-workspace-engineering/m0005-documentation-architecture-and-diataxis.md)                     | Active pack | Documentation architecture and Diátaxis research                          | Descriptive mapping only; document profiles and templates remain canonical                                |
-| [m0002-harness-and-loop-engineering.md](./0001-workspace-engineering/m0002-harness-and-loop-engineering.md)                                           | Active pack | Harness components, loop state machine, recovery, and evaluation research | Descriptive reference only; common governance contracts remain the executable control owners                       |
-| [m0007-kubernetes-infrastructure-and-security.md](./0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)                       | Active pack | Kubernetes, infrastructure, GitOps, and security research                 | Descriptive reference only; no live-cluster or active security-policy claim                               |
-| [m0006-llm-wiki-and-knowledge-routing.md](./0001-workspace-engineering/m0006-llm-wiki-and-knowledge-routing.md)                                       | Active pack | LLM-WIKI routing and knowledge-management research                        | Descriptive reference only; generated/index owners remain canonical                                       |
-| [m0003-provider-implementation-status.md](./0001-workspace-engineering/m0003-provider-implementation-status.md)                                       | Active pack | Claude/Codex product-surface and static-adapter status research           | Product and static evidence only; native discovery/authenticated runtime remain separate                  |
-| [m0013-scope-application-index.md](./0001-workspace-engineering/m0013-scope-application-index.md)                                                     | Active pack | Governance-scope routing over the pack's requirement coverage             | Routing index only; common governance scopes retain scope authority and the pack README retains status authority   |
-| [m0012-source-coverage.md](./0001-workspace-engineering/m0012-source-coverage.md)                                                   | Active pack | Source and claim coverage with bounded historical disposition             | Preserves provenance; it does not make external or runtime claims authoritative                           |
-| [m0004-spec-driven-sdlc-and-document-contracts.md](./0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)                     | Active pack | Spec-driven SDLC and document-contract research                           | Descriptive reference only; lifecycle documents and templates retain authority                            |
-| [m0001-workspace-governance-and-common-agent-environment.md](./0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md) | Active pack | Provider-neutral workspace control-plane research                         | Descriptive reference only; provider permissions and active governance remain canonical elsewhere         |
-| [0002-archive-retention-and-provenance/README.md](./0002-archive-retention-and-provenance/README.md) | Active pack | Archive retention and provenance research pack entry point | Research routing and observation-dated evidence only; canonical owners retain current authority |
-| [m0001-git-provenance-and-superseded-record-citation.md](./0002-archive-retention-and-provenance/m0001-git-provenance-and-superseded-record-citation.md) | Active pack | Git object naming and reachability, superseded-record practice, URL moves, schema annotations, and link parsing | Descriptive reference only; Stage 98 retention and citation remain with the registry and accepted decisions |
+| Pack | Role | Authority Boundary |
+| --- | --- | --- |
+| [0001-workspace-engineering/](./0001-workspace-engineering/) | Successor workspace engineering research pack | Research routing and observation-dated coverage only; canonical owners retain current authority |
+| [0002-archive-retention-and-provenance/](./0002-archive-retention-and-provenance/) | Archive retention and provenance research pack | Research routing and observation-dated evidence only; canonical owners retain current authority |
 
-`Active pack` and `Index` are collection roles,
-not report lifecycle values. This collection declares no Current pack in the
-document-profile registry; report lifecycle is owned by the selected pack's
-`## Report Index`, and source coverage is owned by the active pack's
-[source coverage](./0001-workspace-engineering/m0012-source-coverage.md).
+Each pack README owns its own `## Report Index`, including report lifecycle
+and source coverage; this collection lists packs only and declares no Current
+pack in the document-profile registry.
 
 Current research packs exist only at `research/####-<slug>/`. The four-digit
 number is unique within Research and the slug is semantic kebab-case, never a

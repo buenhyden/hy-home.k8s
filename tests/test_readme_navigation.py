@@ -253,5 +253,54 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
         self.assertEqual(registry.readme_navigation.max_deep_links_per_child, 1)
 
 
+class RepositoryContractTests(unittest.TestCase):
+    """The repository contract replaces the collection index checks."""
+
+    def diagnostics(self, path, profile, text, files):
+        navigation = contracts.load_registry(ROOT).readme_navigation
+        navigation = contracts.ReadmeNavigation(
+            placeholders=navigation.placeholders,
+            forbidden_index_columns=navigation.forbidden_index_columns,
+            max_deep_links_per_child=navigation.max_deep_links_per_child,
+            profiles=navigation.profiles,
+            pending_paths=frozenset(),
+        )
+        return {
+            item.rule_id
+            for item in LINKS.readme_navigation_diagnostics(
+                navigation,
+                {PurePosixPath(path): LINKS.ReadmeSource(profile, text)},
+                tree(path, *files),
+            )
+        }
+
+    def test_research_pack_must_reach_every_report(self):
+        path = "docs/90.references/research/0009-x/README.md"
+        files = (
+            "docs/90.references/research/0009-x/m0001-a.md",
+            "docs/90.references/research/0009-x/m0002-b.md",
+        )
+        text = "# X\n\n## Report Index\n\n- [a](m0001-a.md)\n"
+        self.assertEqual(
+            self.diagnostics(path, "common/readme-research-pack", text, files),
+            {"README-NAV-COMPLETE"},
+        )
+
+    def test_research_collection_may_not_link_pack_members(self):
+        path = "docs/90.references/research/README.md"
+        files = (
+            "docs/90.references/research/0009-x/README.md",
+            "docs/90.references/research/0009-x/m0001-a.md",
+        )
+        text = (
+            "# R\n\n## Item Index\n\n- [0009-x/](./0009-x/)\n"
+            "- [a](./0009-x/m0001-a.md)\n"
+        )
+        self.assertIn(
+            "README-NAV-DEPTH",
+            self.diagnostics(path, "common/readme-collection-index", text, files),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

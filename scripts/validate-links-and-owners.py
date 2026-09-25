@@ -372,50 +372,6 @@ RETIRED_REFERENCE_ALIASES = {
 
 
 @dataclass(frozen=True)
-class CollectionIndex:
-    path: PurePosixPath
-    root: PurePosixPath
-    target_pattern: re.Pattern[str]
-    tree_anchor: str
-    tree_root: str
-    table_anchor: str
-    table_mode: str
-    table_includes_self: bool
-
-
-COLLECTION_INDEXES = (
-    CollectionIndex(
-        PurePosixPath("docs/90.references/research/README.md"),
-        PurePosixPath("docs/90.references/research"),
-        re.compile(
-            r"^docs/90\.references/research/(?:README\.md|"
-            r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[^/]+\.md)$"
-        ),
-        "## Item Index",
-        "research/",
-        "### Research Pack Index",
-        "section",
-        True,
-    ),
-    CollectionIndex(
-        PurePosixPath(
-            "docs/90.references/research/0001-workspace-engineering/README.md"
-        ),
-        PurePosixPath("docs/90.references/research/0001-workspace-engineering"),
-        re.compile(
-            r"^docs/90\.references/research/"
-            r"0001-workspace-engineering/[^/]+\.md$"
-        ),
-        "### Structure",
-        "0001-workspace-engineering/",
-        "## Report Index",
-        "section",
-        False,
-    ),
-)
-
-
-@dataclass(frozen=True)
 class ProfileView:
     profile_id: str
     profile_class: str
@@ -3609,61 +3565,6 @@ def _after_exact_heading(text: str, heading: str) -> str | None:
     return "\n".join(raw_lines[matches[0] + 1 :])
 
 
-_COLLECTION_TREE_LINE = re.compile(
-    r"^(?P<indent>(?:│   |    )*)(?:├── |└── )"
-    r"(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<directory>/)?"
-    r"(?:\s+#\s+.*)?$"
-)
-
-
-def _collection_tree_targets(
-    declaration: CollectionIndex, text: str
-) -> tuple[list[PurePosixPath], bool]:
-    section = _exact_heading_section(text, declaration.tree_anchor)
-    if section is None:
-        return [], False
-    comment_visible_section = _markdown_without_html_comments(section)
-    blocks = [
-        block
-        for block in _fenced_blocks(comment_visible_section)
-        if block.splitlines() and block.splitlines()[0] == declaration.tree_root
-    ]
-    if len(blocks) != 1:
-        return [], False
-    stack: list[str] = []
-    targets: list[PurePosixPath] = []
-    valid = True
-    for line in blocks[0].splitlines()[1:]:
-        if not line.strip():
-            continue
-        match = _COLLECTION_TREE_LINE.fullmatch(line)
-        if match is None:
-            valid = False
-            continue
-        indent = match.group("indent")
-        depth = len(indent) // 4
-        name = match.group("name")
-        if name in {".", ".."}:
-            valid = False
-            continue
-        if match.group("directory"):
-            if depth > len(stack):
-                valid = False
-                continue
-            stack[depth:] = [name]
-            continue
-        if depth > len(stack):
-            valid = False
-            continue
-        relative = (*stack[:depth], name)
-        target = declaration.root.joinpath(*relative)
-        if declaration.target_pattern.fullmatch(target.as_posix()) is None:
-            valid = False
-            continue
-        targets.append(target)
-    return targets, valid
-
-
 def _first_visible_table(
     text: str,
 ) -> tuple[list[str], list[list[str]]] | None:
@@ -4622,140 +4523,6 @@ def _body_contract_link_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
-def _first_cell_target(owner: PurePosixPath, cell: str) -> PurePosixPath | None:
-    match = re.fullmatch(r"\[[^\]\n]+\]\(([^)]+)\)", cell)
-    if match is None:
-        return None
-    raw = match.group(1).strip()
-    if "?" in raw or "#" in raw:
-        return None
-    kind, target = _local_destination(owner, raw)
-    return target if kind == "local" else None
-
-
-def _collection_table_targets(
-    declaration: CollectionIndex, text: str
-) -> tuple[list[PurePosixPath], bool]:
-    section = (
-        _after_exact_heading(text, declaration.table_anchor)
-        if declaration.table_mode == "after"
-        else _exact_heading_section(text, declaration.table_anchor)
-    )
-    if section is None:
-        return [], False
-    table = _first_visible_table(section)
-    if table is None:
-        return [], False
-    _, rows = table
-    targets: list[PurePosixPath] = []
-    for row in rows:
-        target = _first_cell_target(declaration.path, row[0])
-        if target is None:
-            return [], False
-        targets.append(target)
-    return targets, True
-
-
-def _collection_index_diagnostics(context: Context) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    for declaration in COLLECTION_INDEXES:
-        profile = context.profiles[declaration.path].profile_id
-        expected = {
-            path
-            for path in context.tracked_regular_paths
-            if declaration.target_pattern.fullmatch(path.as_posix())
-        }
-        tree, tree_valid = _collection_tree_targets(
-            declaration, context.texts[declaration.path]
-        )
-        rows, table_valid = _collection_table_targets(
-            declaration, context.texts[declaration.path]
-        )
-        expected_rows = set(expected)
-        if not declaration.table_includes_self:
-            expected_rows.discard(declaration.path)
-        if not tree_valid or not table_valid:
-            diagnostics.append(
-                _diag(
-                    "COLLECTION-INDEX-PARSE",
-                    declaration.path,
-                    profile,
-                    "one exact heading, bounded tree, and first-cell link table",
-                    "collection index grammar is missing or malformed",
-                )
-            )
-            continue
-        tree_counter = collections.Counter(tree)
-        row_counter = collections.Counter(rows)
-        for target in sorted(expected | set(tree), key=lambda item: item.as_posix()):
-            target_key = target.as_posix()
-            if target in expected and tree_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one tree entry",
-                        f"target={target_key}; entry is missing",
-                    )
-                )
-            if target not in expected and tree_counter[target]:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; tracked canonical artifact",
-                        f"target={target_key}; stale tree entry",
-                    )
-                )
-            if tree_counter[target] > 1:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one tree entry",
-                        f"target={target_key}; {tree_counter[target]} entries",
-                    )
-                )
-        for target in sorted(
-            expected_rows | set(rows), key=lambda item: item.as_posix()
-        ):
-            target_key = target.as_posix()
-            if target in expected_rows and row_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; row is missing",
-                    )
-                )
-            if target not in expected_rows and row_counter[target]:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; tracked canonical artifact",
-                        f"target={target_key}; stale table row",
-                    )
-                )
-            if row_counter[target] > 1:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; {row_counter[target]} rows",
-                    )
-                )
-    return diagnostics
-
-
 def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     profile = context.profiles[path]
     status = str(context.metadata[path].get("status", "")).casefold()
@@ -5592,7 +5359,6 @@ def _raw_diagnostics(
             body_contract_path_prefixes,
         )
     )
-    diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_readme_navigation_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
@@ -5743,7 +5509,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.body_contracts,
                     tuple(args.body_contract_path_prefix),
                 )
-                + _collection_index_diagnostics(context)
                 + _readme_navigation_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
                 + _owner_diagnostics(context)

@@ -24,7 +24,7 @@ not a policy, runtime, provider, or deployment control surface.
   retain their provenance.
 - **Authority**: the named canonical workspace documents remain current truth;
   this pack records observation-dated research and routing evidence.
-- **Status vocabulary**: findings use only `Verified`, `Partial`, `Unverified`,
+- **Finding vocabulary**: findings use only `Verified`, `Partial`, `Unverified`,
   `DEFER`, or `Contradicted`; the completed WERPC work packages record the
   supporting evidence and remaining limits. A compound status cell states the
   base value first and then its bounded qualifier.
@@ -110,7 +110,7 @@ GitHub surface ownership is recorded in `.github/repository-surface.md`; and Pla
 and Tasks live in each `docs/03.specs/<package>/` rather than `docs/04.execution/`.
 The rows keep their observation-time paths until the pack's next refresh.
 
-| Request ID    | Requested topic         | Primary owner                                                                                                         | Workspace evidence                                                                                  | External source class                                                                                                                                                                                                                                   | Status                                                                                                                                                                                                                                           |
+| Request ID    | Requested topic         | Primary owner                                                                                                         | Workspace evidence                                                                                  | External source class                                                                                                                                                                                                                                   | Finding                                                                                                                                                                                                                                           |
 | ------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | REQ-WERPC-001 | Harness                 | [Harness baseline](m0002-harness-and-loop-engineering.md#harness-baseline)                                                  | `.codex/CODEX.md`                                                                                   | Official OpenAI primary sources plus repository-static contracts, checked 2026-08-08                                                                                                                                                                    | Verified — static harness implementation; provider/runtime delivery remains DEFER                                                                                                                                                                |
 | REQ-WERPC-002 | Loop                    | [Loop baseline](m0002-harness-and-loop-engineering.md#loop-baseline)                                                        | `docs/00.agent-governance/rules/agentic.md`                                                         | Repository-static machine contract plus official OpenAI product context, checked 2026-08-08                                                                                                                                                             | Verified — local state/retry contract; actual provider execution remains DEFER                                                                                                                                                                   |
@@ -183,7 +183,7 @@ existing owners as dated 2026-08-11 sections in
 and [CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-11-partialdefer-incremental-refresh).
 
 All twelve candidates closed as `Partial`; none was promoted to `Verified`, so
-every Status cell in the request matrix above keeps its prior value. Rows
+every Finding cell in the request matrix above keeps its prior value. Rows
 `REQ-WERPC-014` and `REQ-WERPC-020` also carry `exclude-duplicate`, because
 Spec 052 `DOC-G1`, `DOC-G2`, and `DOC-G3` already own those questions.
 
@@ -203,12 +203,12 @@ WRCP-002, WRCP-003, WRCP-004, and WRCP-005 re-observed all twelve `Partial`
 requirement rows carried forward from the 2026-08-11 refresh: `REQ-WERPC-006`,
 `008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, and
 `033`. Every one closed as `Partial` again; none was promoted, so **no
-Status cell in the request matrix above changed as a result of this cycle**.
+Finding cell in the request matrix above changed as a result of this cycle**.
 Second, WRCP-004 separately re-observed `REQ-WERPC-034`, `035`, and `036` —
 the Spec, Task, and Plan document families — as three brand-new
 coverage-matrix owner rows admitted by Spec 057 amendment `C-WRCP-010`. Per
 that contract, admitting a family neither raises nor lowers a status: each
-new row's Status is `Verified` on structural contract (route, frontmatter,
+new row's Finding is `Verified` on structural contract (route, frontmatter,
 status domain, required H2 set, `bodyContract` reciprocity/identifier rule)
 and `DEFER` on content, implementation, and delivery effectiveness, exactly
 as WRCP-004 recorded in the
@@ -278,7 +278,7 @@ met. That is a contract signal, not a judgement call, and it means
 refresh as their next action.
 
 **No status changed.** All thirty-six rows recorded `statusEffect` of
-`no-change`; none was promoted, demoted, or contradicted, so **every Status cell
+`no-change`; none was promoted, demoted, or contradicted, so **every Finding cell
 in the request matrix above keeps its prior value**. Under Spec 058 `C-WRFC-004`
 that is a success provided the delta is recorded, and the six `changed` results
 plus the two fired triggers are that delta.

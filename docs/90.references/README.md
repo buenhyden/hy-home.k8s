@@ -51,18 +51,20 @@ Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 삭�
 ```text
 docs/90.references/
 ├── audits/
-│   └── README.md                      # Audit collection router
 ├── data/
-│   └── README.md                      # Data collection router
 ├── research/
-│   ├── 0001-workspace-engineering/   # 보존된 최신 외부 조사 pack
-│   ├── 0002-archive-retention-and-provenance/  # Archive 보존·출처 외부 조사 pack
-│   └── README.md                      # Research collection router
-└── README.md                          # Stage router
+└── README.md
 ```
+
+| Collection | 목적 |
+| --- | --- |
+| [audits/](./audits/) | 감사 pack collection |
+| [data/](./data/) | 데이터 pack collection |
+| [research/](./research/) | 외부 조사 pack collection |
 
 세 collection은 동일한 3단 구조를 따른다: collection router `README.md`,
 pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<slug>.md`.
+각 collection README가 자신의 pack을, 각 pack README가 자신의 member를 안내한다.
 현재 pack을 보유한 collection이 Research뿐인 것은 현재 처분 결과일 뿐이며, 고유
 목적과 출처 경계를 갖춘 Audit 또는 Data pack의 추가를 금지하지 않는다.
 

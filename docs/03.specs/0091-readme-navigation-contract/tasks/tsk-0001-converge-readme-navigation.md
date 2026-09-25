@@ -31,7 +31,7 @@ Push, merge, and live actions are not authorized.
 | WORK-001 | VAL-RNC-007 | Propose the package | platform | Done | Committed `3c40f700` | Staged QA 6/6 PASS |
 | WORK-002 | VAL-RNC-001, VAL-RNC-002 | Contract, validator, tests, activation | platform | Done | Contract, schema, loader, validator, and 20 tests; 23 READMEs pending | Focused tests, staged QA |
 | WORK-003 | VAL-RNC-003 | Stage 03 index; remove `INDEX-*` | platform | Done | Package folder rows without status, currency, or date; `INDEX-*` removed; pinned tests assert the navigation codes | Focused tests, staged QA |
-| WORK-004 | VAL-RNC-003 | Stage 90; remove `COLLECTION-INDEX-*` | platform | Queued | Not executed | Focused tests, staged QA |
+| WORK-004 | VAL-RNC-003 | Stage 90; remove `COLLECTION-INDEX-*` | platform | Done | Stage and research READMEs list collections and packs only; the pack findings column is renamed `Finding`; collection index code removed; two replacement tests | Focused tests, staged QA |
 | WORK-005 | VAL-RNC-003 | Knowledge index | platform | Queued | Not executed | Focused tests, staged QA |
 | WORK-006 | VAL-RNC-003 | Stage 05 indexes | platform | Queued | Not executed | Staged QA |
 | WORK-007 | VAL-RNC-005 | Matrices follow their folders | platform | Queued | Not executed | Staged QA |
@@ -70,7 +70,7 @@ archive ledger package.
 | [WORK-001](../plan.md#work-breakdown) | Proposed | Staged QA |
 | [WORK-002](../plan.md#work-breakdown) | Contract and validator added | Focused tests and staged QA |
 | [WORK-003](../plan.md#work-breakdown) | Stage 03 index routed to packages | Focused tests and staged QA |
-| [WORK-004](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-004](../plan.md#work-breakdown) | Stage 90 routed to packs | Focused tests and staged QA |
 | [WORK-005](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-006](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-007](../plan.md#work-breakdown) | Not executed | Pending |
