@@ -1967,7 +1967,11 @@ class ArchiveValidationTest(unittest.TestCase):
         # `cat-file --batch` reads into one. The second added one `ls-tree` for
         # SPEC-0054 and one for SPEC-0062; SPEC-0084 joins an existing group.
         # The default-branch envelope check from SPEC-0085 adds no process.
-        budget = 258
+        #
+        # SPEC-0090 retained SPEC-0049 in `retired/` under its own envelope
+        # commit `62ed8f05`, which no earlier row shares: one more `merge-base`
+        # reachability call. Measured 259 on a branch checkout of `438e69aa`.
+        budget = 259
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. That is a fixed
