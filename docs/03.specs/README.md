@@ -108,6 +108,10 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0091-readme-navigation-contract/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -153,6 +157,7 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 | [`./0088-operations-corpus-convergence/spec.md`](./0088-operations-corpus-convergence/spec.md) | Operations corpus convergence | Done | 2026-09-25 request owner 요청으로 Stage 05 역할 중복·구현 drift, 검증 script의 dead·중복 logic을 local commit으로 정리했다. Stage 98 Operations 봉인 기록은 보존 근거와 제거 조건을 기록했고, hosted CI와 live 검증은 DEFER다. | 2026-09-25 |
 | [`./0089-deferred-conflict-resolution/spec.md`](./0089-deferred-conflict-resolution/spec.md) | Deferred conflict resolution | Done | SPEC-0088의 deferred conflict 네 건을 해소하고 SPEC-0049를 철회했다. `retired/` 이동은 SPEC-0090이 수행했다. | 2026-09-25 |
 | [`./0090-spec0049-retirement/spec.md`](./0090-spec0049-retirement/spec.md) | SPEC-0049 retirement | Done | 2026-09-25 request owner 승인으로 철회된 SPEC-0049를 `retired/`로 보존하고 done으로 닫았다. | 2026-09-25 |
+| [`./0091-readme-navigation-contract/spec.md`](./0091-readme-navigation-contract/spec.md) | README navigation contract | Draft | 2026-09-25 request owner 승인으로 모든 README가 직접 자식만 탐색하도록 registry 계약과 검증기를 도입한다. | 2026-09-25 |
 
 ### Helper Templates
 

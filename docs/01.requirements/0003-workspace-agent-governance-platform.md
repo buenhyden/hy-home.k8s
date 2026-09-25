@@ -199,6 +199,9 @@ contradict current authority is owned by
 [SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md).
 Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
 [SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md).
+Constraining every README to its direct children under one registry
+navigation contract is owned by
+[SPEC-0091](../03.specs/0091-readme-navigation-contract/spec.md).
 
 ## Traceability
 
