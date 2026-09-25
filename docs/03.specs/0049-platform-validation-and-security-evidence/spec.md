@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Technical Specification"
-version: "1.2.2"
+version: "1.3.0"
 type: "sdlc/spec"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "specs"
 artifact_id: "SPEC-0049"
 ---
@@ -64,6 +64,8 @@ it, TLS verified it, or a live cluster admitted it.
 **Disposition note (2026-09-23).** Two scopes above no longer match accepted decisions, and whoever activates this package must drop them. First, [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md) retires the `traefik/` reference files, so the Traefik product-semantic lane, `scripts/validate-traefik-contracts.py`, and VAL-PVSE-004 have nothing to validate. The router contract that replaces them is owned by [SPEC-0008](../0008-current-local-gitops-platform/spec.md) VAL-SPC-005. Second, `conftest` is a required tool for the `policy-gates` lane, not an optional one with a built-in fallback. [ADR-0041](../../02.architecture/decisions/0041-openbao-secret-backend.md) names the secret backend OpenBao behind the unchanged Vault API contract. The package stays `draft`.
 
 **Disposition note (2026-09-24).** The request owner reviewed this package's disposition on 2026-09-24 and chose re-plan over withdrawal (chooser: request owner; choice: "0049 draft + 0050 withdraw"). This package stays `draft`; a new plan is required before activation, not a predecessor's closure. VAL-PVSE-004 is confirmed obsolete: accepted [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md) retired Traefik, so the product-semantic lane the criterion named has no subject and a re-plan must drop it rather than implement it. The remaining open scope is VAL-PVSE-001, VAL-PVSE-002, VAL-PVSE-003, VAL-PVSE-005, VAL-PVSE-006, VAL-PVSE-007, and VAL-PVSE-008; none of these seven is retired or resolved, and none has a validator or evidence in this repository yet. Next owner: the request owner, for the re-plan.
+
+**Disposition note (2026-09-25).** Withdrawn under [SPEC-0089](../0089-deferred-conflict-resolution/spec.md). The request owner's 2026-09-25 instruction to withdraw open packages that conflict with current authority supersedes the 2026-09-24 re-plan choice. This package depends on the retired Spec 0048, plans a Traefik lane that ADR-0043 retired, names a `.agents/contracts/` location the layout does not have, and treats `conftest` as optional. Its unimplemented scope (VAL-PVSE-001 to 003 and 005 to 008) is recorded as an unowned gap at REQ-0004 for a new package to plan from current authority. No criterion here is accepted.
 
 ## Strategic Boundaries & Non-goals
 

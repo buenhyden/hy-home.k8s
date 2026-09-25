@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.6"
+version: "1.6.7"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -133,9 +133,8 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 
 ### Unfinished execution and original lineage
 
-Spec 0054의 WP-013과 TSK-0013은 여전히 미완료다. Stage 99 축소, transition control 처분 및
-최종 package retention은 이 요구 승계로 완료되지 않는다.
-[0049](../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 재계획을 기다리는 draft다.
+Spec 0054는 WP-013과 TSK-0013까지 `done`으로 닫혀 `98.archive/completed/`에 보존되었다.
+[0049](../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었다([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
 Spec 0047, 0048, 0050, 0051은 후속 없이 철회되어 `98.archive/retired/`에 보존되었으며 인용하지 않는다
 ([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)).
 플랫폼별 의무는 [REQ-0004](./0004-current-local-gitops-platform.md)가 함께 소유한다.

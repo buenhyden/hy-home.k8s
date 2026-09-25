@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.2.1"
+version: "1.2.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -86,8 +86,8 @@ Istio CNI의 manifest는 desired state이며 실제 admission 또는 network 상
 
 ### Unfinished implementation owners
 
-[0049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 layered platform/security를
-소유하며 재계획을 기다리는 draft다. GitHub routing/CI(Spec 0048), native IaC/direct negative fixtures(Spec 0050),
+[0049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었다([SPEC-0089](../../03.specs/0089-deferred-conflict-resolution/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
+GitHub routing/CI(Spec 0048), native IaC/direct negative fixtures(Spec 0050),
 최종 local-only integration(Spec 0051)과 surface/hunk 재조정(Spec 0047)은 후속 없이 철회되어
 `98.archive/retired/`에 보존되었고([SPEC-0087](../../03.specs/0087-stage03-terminal-package-retention/spec.md)),
 그 범위의 구현 owner는 현재 없다. AD 승계는 tranche 또는 WP-013 완료를 뜻하지 않는다.
@@ -151,7 +151,7 @@ Istio CNI의 manifest는 desired state이며 실제 admission 또는 network 상
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Spec 0049 |
+| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | None; Spec 0049 withdrawn 2026-09-25, gap recorded at REQ-0004 |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |

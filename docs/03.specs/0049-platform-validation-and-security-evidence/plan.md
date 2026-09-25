@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation and Security Evidence Implementation Plan"
-version: "1.0.3"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "withdrawn"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-25"
 layer: "specs"
 artifact_id: "SPEC-0049-PLAN-0001"
 ---
@@ -17,6 +17,8 @@ artifact_id: "SPEC-0049-PLAN-0001"
 > preserve value-free diagnostics and the repository-static/live boundary.
 
 ## Overview
+
+**Disposition note (2026-09-25).** Withdrawn under [SPEC-0089](../0089-deferred-conflict-resolution/spec.md). The request owner's 2026-09-25 instruction to withdraw open packages that conflict with current authority supersedes the 2026-09-24 re-plan choice. This package depends on the retired Spec 0048, plans a Traefik lane that ADR-0043 retired, names a `.agents/contracts/` location the layout does not have, and treats `conftest` as optional. Its unimplemented scope (VAL-PVSE-001 to 003 and 005 to 008) is recorded as an unowned gap at REQ-0004 for a new package to plan from current authority. No criterion here is accepted.
 
 ### Current authority transfer
 

@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.5.5"
+version: "0.5.6"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "requirements"
 ---
 # 01.requirements
@@ -117,7 +117,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-09-05 |
 | [`./0002-argo-notifications-slack.md`](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 Requirement Package | `active` current-contract backfill | AD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-09-05 |
 | [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | `active` | AD-0006 및 ADR-0030..0032; 이전 member-ID의 명시적 승계. Spec 0054 WP-013은 미완료다. | 2026-09-14 |
-| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | `active` | AD-0007 및 REQ-0003의 공통 경계; Spec 0049는 재계획 대기, 0047·0048·0050·0051은 철회 후 retired 보존. | 2026-09-24 |
+| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | `active` | AD-0007 및 REQ-0003의 공통 경계; Spec 0049는 2026-09-25 철회(범위는 owner 없는 gap), 0047·0048·0050·0051은 철회 후 retired 보존. | 2026-09-25 |
 
 ### 예시
 
