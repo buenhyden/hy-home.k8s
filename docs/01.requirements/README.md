@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.5.6"
+version: "0.6.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"

@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.3.0"
+version: "0.4.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-25"
 layer: "templates"
 ---
 # 99.templates

@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-25"
 layer: "templates"
 ---
 # 99.templates/templates

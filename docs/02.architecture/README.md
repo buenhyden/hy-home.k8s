@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.4.6"
+version: "0.5.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-25"
 layer: "architecture"
 ---
 # 02.architecture
