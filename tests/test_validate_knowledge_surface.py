@@ -138,7 +138,7 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         )
         self.assertIn("KNOWLEDGE-DUPLICATED-SPAN", self.codes())
 
-    def test_unindexed_document_fails(self) -> None:
+    def test_index_membership_belongs_to_the_navigation_contract(self) -> None:
         self.write_readme()
         (self.surface / "map.md").write_text(
             document(
@@ -146,7 +146,7 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
-        self.assertIn("KNOWLEDGE-INDEX-MISSING", self.codes())
+        self.assertNotIn("KNOWLEDGE-INDEX-MISSING", self.codes())
 
     def test_absent_surface_reports_nothing(self) -> None:
         empty = Path(self._directory.name) / "empty"

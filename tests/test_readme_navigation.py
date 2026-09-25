@@ -301,6 +301,15 @@ class RepositoryContractTests(unittest.TestCase):
             self.diagnostics(path, "common/readme-collection-index", text, files),
         )
 
+    def test_knowledge_collection_must_reach_every_document(self):
+        path = ".agents/knowledge/README.md"
+        files = (".agents/knowledge/map.md", ".agents/knowledge/other.md")
+        text = "# K\n\n## Item Index\n\n- [map](map.md)\n"
+        self.assertEqual(
+            self.diagnostics(path, "common/readme-collection-index", text, files),
+            {"README-NAV-COMPLETE"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
