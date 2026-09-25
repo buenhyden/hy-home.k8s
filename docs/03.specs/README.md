@@ -80,10 +80,6 @@ The 2026-09-14 lifecycle reconciliation is recorded by
 03.specs/
 ├── 0008-current-local-gitops-platform/
 │   └── spec.md
-├── 0049-platform-validation-and-security-evidence/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0072-agent-governance-and-quality-gate-consolidation/
 │   ├── spec.md
 │   ├── plan.md
@@ -150,14 +146,13 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
-| [`./0049-platform-validation-and-security-evidence/spec.md`](./0049-platform-validation-and-security-evidence/spec.md) | Layered Kubernetes/GitOps render, schema, policy, Traefik semantics, secret, and security evidence specification | Withdrawn | 2026-09-25에 SPEC-0089로 철회했다. retired Spec 0048과 Traefik lane에 의존하고 없는 contract 위치를 가정해 현재 authority와 상충한다. 미구현 범위는 REQ-0004의 owner 없는 gap으로 남긴다. `retired/` 이동은 철회 commit이 default branch에 들어간 뒤 수행한다. | 2026-09-25 |
 | [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Done | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성의 정적 수용을 완료했다. 2026-09-24에 request owner 승인("0072: Split the native half out and close")으로 native runtime 관측(WORK-009)을 SPEC-0086으로 이관하고 done으로 닫았다. native 결과는 통과로 주장하지 않는다. | 2026-09-24 |
 | [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Done | ADR-0040 cutover를 완료했다. default branch envelope 검증까지 구현했고 hosted `qa`가 `a264ebad`에서 통과해 2026-09-24에 done으로 닫았다. lifecycle·결과 어휘(WP-005·006)는 각자의 승인을 기다린다. | 2026-09-24 |
 | [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
 | [`./0087-stage03-terminal-package-retention/spec.md`](./0087-stage03-terminal-package-retention/spec.md) | Stage 03 terminal package retention | Done | 2026-09-24 request owner 승인으로 withdrawn package 네 개(0047·0048·0050·0051)를 `retired/`로, done package 세 개(0054·0062·0084)를 `completed/`로 보존하고 done으로 닫았다. | 2026-09-24 |
 | [`./0088-operations-corpus-convergence/spec.md`](./0088-operations-corpus-convergence/spec.md) | Operations corpus convergence | Done | 2026-09-25 request owner 요청으로 Stage 05 역할 중복·구현 drift, 검증 script의 dead·중복 logic을 local commit으로 정리했다. Stage 98 Operations 봉인 기록은 보존 근거와 제거 조건을 기록했고, hosted CI와 live 검증은 DEFER다. | 2026-09-25 |
 | [`./0089-deferred-conflict-resolution/spec.md`](./0089-deferred-conflict-resolution/spec.md) | Deferred conflict resolution | Done | SPEC-0088의 deferred conflict 네 건을 해소하고 SPEC-0049를 철회했다. `retired/` 이동은 push 승인 뒤 request owner가 수행한다. | 2026-09-25 |
-| [`./0090-spec0049-retirement/spec.md`](./0090-spec0049-retirement/spec.md) | SPEC-0049 retirement | Draft | 2026-09-25 request owner 승인으로 철회된 SPEC-0049를 `retired/`로 보존한다. | 2026-09-25 |
+| [`./0090-spec0049-retirement/spec.md`](./0090-spec0049-retirement/spec.md) | SPEC-0049 retirement | Active | 2026-09-25 request owner 승인으로 철회된 SPEC-0049를 `retired/`로 보존한다. | 2026-09-25 |
 
 ### Helper Templates
 

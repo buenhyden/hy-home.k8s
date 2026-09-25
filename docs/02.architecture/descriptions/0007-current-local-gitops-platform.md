@@ -86,7 +86,7 @@ Istio CNI의 manifest는 desired state이며 실제 admission 또는 network 상
 
 ### Unfinished implementation owners
 
-[0049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었다([SPEC-0089](../../03.specs/0089-deferred-conflict-resolution/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
+Spec 0049는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었고([SPEC-0089](../../03.specs/0089-deferred-conflict-resolution/spec.md)), `98.archive/retired/`에 보존되어 인용하지 않는다([SPEC-0090](../../03.specs/0090-spec0049-retirement/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
 GitHub routing/CI(Spec 0048), native IaC/direct negative fixtures(Spec 0050),
 최종 local-only integration(Spec 0051)과 surface/hunk 재조정(Spec 0047)은 후속 없이 철회되어
 `98.archive/retired/`에 보존되었고([SPEC-0087](../../03.specs/0087-stage03-terminal-package-retention/spec.md)),

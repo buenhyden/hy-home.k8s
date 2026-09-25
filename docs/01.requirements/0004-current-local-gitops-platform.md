@@ -83,7 +83,7 @@ Delivery assurance는 모든 in-scope surface에 분류·검증 깊이·결과·
 
 ### Unfinished delivery assurance
 
-[0049](../03.specs/0049-platform-validation-and-security-evidence/spec.md)는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었다([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
+Spec 0049는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었고([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)), `98.archive/retired/`에 보존되어 인용하지 않는다([SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
 Spec 0047, 0048, 0050, 0051은 후속 없이 철회되어 `98.archive/retired/`에
 보존되었고([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)), 그 범위의 구현 owner는 현재 없다.
 원래 REQ-0007 프로그램 이력은 유지하며 현재 플랫폼 의미를 이 문서로, 공통 라우팅·승인·QA 의미를 REQ-0003으로 승계한다.

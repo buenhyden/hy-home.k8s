@@ -1,8 +1,8 @@
 ---
 title: "Retire SPEC-0049"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -28,7 +28,7 @@ of SPEC-0049 and the push of the resulting commits on 2026-09-25.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-SRT-001 | Record the approval and survey the unit | platform | Done | Survey below | This Task |
-| WORK-002 | VAL-SRT-002, VAL-SRT-003 | Retain SPEC-0049 in `retired/` | platform | Queued | Not executed | Lifecycle, link, and archive gates |
+| WORK-002 | VAL-SRT-002, VAL-SRT-003 | Retain SPEC-0049 in `retired/` | platform | Done | Unit retained in `retired/03.specs/` with a catalog row naming `62ed8f05`; current links rewritten in the same commit | Lifecycle, link, and archive gates |
 | WORK-003 | VAL-SRT-004 | Record the results and close | platform | Queued | Not executed | Staged QA |
 
 ## Approval and Safety Boundaries
@@ -60,5 +60,5 @@ terminal state.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Survey recorded | This Task |
-| [WORK-002](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-002](../plan.md#work-breakdown) | Unit retained | Lifecycle, link, and archive gates |
 | [WORK-003](../plan.md#work-breakdown) | Not executed | Pending |

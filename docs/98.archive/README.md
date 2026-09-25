@@ -180,6 +180,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation`](./completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation` |
 | [`completed/03.specs/0062-workspace-research-full-corpus-reverification`](./completed/03.specs/0062-workspace-research-full-corpus-reverification) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0062-workspace-research-full-corpus-reverification` |
 | [`completed/03.specs/0084-stage03-backlog-closeout`](./completed/03.specs/0084-stage03-backlog-closeout) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0084-stage03-backlog-closeout` |
+| [`retired/03.specs/0049-platform-validation-and-security-evidence`](./retired/03.specs/0049-platform-validation-and-security-evidence) | `62ed8f0596d508f47267b64ae978d288af628a82:docs/03.specs/0049-platform-validation-and-security-evidence` |
 
 ### Retention Assessment
 
