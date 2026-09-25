@@ -1,10 +1,10 @@
 ---
 title: "Current Corpus Retention and Validation Ownership"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "architecture"
 artifact_id: "ADR-0031"
 supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
@@ -67,10 +67,10 @@ The terminal ownership map is:
 | Responsibility | Terminal owner | Boundary |
 | --- | --- | --- |
 | Architecture and long-lived governance decisions | Accepted ADRs | Stage 00 explains the approved model but does not create a parallel decision contract. |
-| Integrated convergence implementation and acceptance | Active Spec 0054 | Delegated packages report evidence to Spec 0054 and do not replace its acceptance boundary. |
+| Integrated convergence implementation and acceptance | Spec 0054, closed `done` and retained in `98.archive/completed/` | Its delegated packages reported evidence to it; later work is accepted by its own current Spec package. |
 | Document profiles, frontmatter, lifecycle domains, and document relations | `docs/99.templates/registry.json` | The registry describes document kinds and normalized lifecycle rules, not current execution instances. |
 | Validation selection, routing, command arguments, and CI projection | `scripts/validation/registry.json` | The existing Stage 00 validation-surfaces contract and schema move atomically to this path and are reused rather than copied. |
-| Agent role, permission, skill, and handoff topology | `.agents/registry.json` | Provider projections consume this registry and do not redefine shared authority. |
+| Agent role, permission, skill, and handoff topology | `.agents/roles/registry.json` | Provider projections consume this registry and do not redefine shared authority. |
 | Terminal execution and content history | Git | Stage 98 is an isolated historical archive, not an active-document dependency or current recovery control plane. |
 
 Stage 00 remains a human-readable governance stage. Executable contracts

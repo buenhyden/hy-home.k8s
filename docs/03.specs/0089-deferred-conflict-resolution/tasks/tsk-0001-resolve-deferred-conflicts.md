@@ -30,7 +30,7 @@ moves, and live actions are not authorized.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-DCR-004, VAL-DCR-005 | Survey the deferrals and open packages | platform | Done | Survey below | This Task |
 | WORK-002 | VAL-DCR-001, VAL-DCR-002 | Covered gates and English-first scope | platform | Done | `coveredBy` and `SURFACE-COVERED-BY` added test-first; English-first checks current plans and Tasks | Focused tests and staged QA |
-| WORK-003 | VAL-DCR-003 | Correct ADR-0031 and AD-0006 | platform | Queued | Not executed | Link gate and staged QA |
+| WORK-003 | VAL-DCR-003 | Correct ADR-0031 and AD-0006 | platform | Done | Spec 0054 closure and the role registry path stated | Link gate and staged QA |
 | WORK-004 | VAL-DCR-005 | Withdraw SPEC-0049 and update its consumers | platform | Queued | Not executed | Lifecycle and link gates |
 | WORK-005 | VAL-DCR-005, VAL-DCR-006 | Cancel SPEC-0049 Tasks, record evidence, and close | platform | Queued | Not executed | Full QA |
 

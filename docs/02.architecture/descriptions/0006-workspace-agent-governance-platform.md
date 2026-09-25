@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.8.2"
+version: "1.8.3"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-25"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -119,10 +119,11 @@ hosted CI에 provider credential을 추가하지 않는다.
 
 ### Unfinished ownership
 
-Spec 0054 WP-013/TSK-0013은 미완료다. 이 authority 승계는 Stage 99 축소, transition-control 제거,
-최종 archive-link/package retention 또는 프로그램 closure를 수행하지 않는다.
-Specs 0047..0051의 플랫폼 구현·검증은 [AD-0007](./0007-current-local-gitops-platform.md)의
-package별 owner가 보유하며, 이 문서는 공통 라우팅·승인·QA 경계를 제공한다.
+Spec 0054는 WP-013/TSK-0013까지 `done`으로 닫혔고
+[98.archive/completed](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)에
+보존되었다. 이 문서에 남은 미완료 공통 거버넌스 항목은 없다. 플랫폼 구현·검증의
+현재 owner는 [AD-0007](./0007-current-local-gitops-platform.md)이 가리키는 활성
+Spec이며, 이 문서는 공통 라우팅·승인·QA 경계를 제공한다.
 이 문서는 공통 거버넌스, Claude/Codex 어댑터, 공통 QA와 GitOps 운영의
 책임 경계를 설명한다. [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)이
 설계를, [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가
