@@ -1,8 +1,8 @@
 ---
 title: "Converge the Operations Corpus"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -33,7 +33,7 @@ actions.
 | WORK-001 | VAL-OCC-002, VAL-OCC-004 | Survey Stage 05, Stage 98 Operations units, and scripts | platform | Done | Survey below | This Task |
 | WORK-002 | VAL-OCC-003, VAL-OCC-005 | Remove dead or duplicate validation logic and close the secret-output gap | platform | Done | Secret-output rule fixed test-first; prose pins, dead roots, dead branches, and a duplicate constant removed | Focused tests and staged QA |
 | WORK-003 | VAL-OCC-001, VAL-OCC-002 | Converge Stage 05 ownership and facts | platform | Done | Single owners set and drift corrected; see the survey | Document gates and staged QA |
-| WORK-004 | VAL-OCC-004, VAL-OCC-006 | Record dispositions and final evidence | platform | Queued | Not executed | Full QA |
+| WORK-004 | VAL-OCC-004, VAL-OCC-006 | Record dispositions and final evidence | platform | Done | Dispositions and deferrals below; full QA ran with three environment FAILs | Full QA |
 
 ## Approval and Safety Boundaries
 
@@ -93,13 +93,62 @@ MIG-0001 to MIG-0009 by path.
 Scripts: every file has a current consumer, so no whole file is removed. The
 round removes dead branches and duplicated rules inside live files.
 
+### Results (2026-09-25)
+
+- **Snapshot**: branch `main`, base `a939999a`; commits `c7c8af37`,
+  `8076d374`, `7a4f5f9c`, `4b1d69f6`, and this evidence commit. Not pushed.
+- **Targeted**: the new secret-output case failed before the rule change and
+  passed after it. 207 focused tests over the changed scripts passed (4
+  skipped), including the write-guard, affected-surface, lifecycle cutover,
+  and link-boundary suites.
+- **Staged**: `python3 scripts/qa.py staged` passed every selected gate on each
+  commit's exact index, and `git diff --cached --check` was clean.
+- **Full** (`python3 scripts/qa.py full` on `7a4f5f9c`): 20 gates PASS and 3
+  FAIL. The failures come from this host's tools, not the change.
+  `archive-cutover` and two `unit-tests` cases fail because Gitleaks is not
+  installed, and required-tool absence is FAIL by policy. `pre-commit` fails
+  because the runner's trusted PATH lacks `~/.local/bin`. The third
+  `unit-tests` failure, `test_escaped_descendant_is_failed_without_post_reap_group_signal`,
+  is the host-specific case SPEC-0008 recorded as failing on earlier `main`.
+  Running the pinned hooks directly over every changed file with Gitleaks
+  skipped found one ruff-format change, fixed in `4b1d69f6`, and then passed.
+- **Hosted**: DEFER. Push is not authorized, so `ci-summary` was not observed.
+- **Live**: DEFER. No runbook command was executed.
+- **Review**: self-review of each staged diff; no independent reviewer.
+
+### Kept Deliberately
+
+| Item | Current consumer | Unique responsibility | Removal condition |
+| --- | --- | --- | --- |
+| Sealed records `tomb-GDE-0004`, `tomb-RUN-0005` | Archive index manifest and sealed-record validators | Provenance of the retired Headlamp OIDC flow | A decision that brings the ADR-0032 generation under reappraisal, then an approved assessment row |
+| `docs/98.archive/migrations/` | Validators reading MIG-0001 to MIG-0009 by path | Route records naming moved scopes | The validators stop reading them and a decision admits route records to reappraisal |
+| Test-only production helpers in `validate-document-lifecycle.py`, `archive_recovery.py`, `archive_dispositions.py`, `validate-links-and-owners.py`, `document_authority.py`, `document_lifecycle.py`, `validate-markdown-profiles.py`, `validate-gitops-change-set.py` | Their tests, which use them as seams into live admission logic | Entry points over the WORK-054, WORK-107, and WORK-109 historical admission paths | Retire those admission paths, then remove the seams with their tests |
+| Stale-name deny lists in the repository quality validator | Repository quality gate | Blocks plain-text return of removed components, such as the replaced cluster UI and the Headlamp OIDC files | A decision that link and lifecycle gates alone guard those names |
+| `scripts/render-platform-chart-kinds.sh` | Operator command in the GitOps index | Chart-kind review helper | The GitOps index drops the command |
+
+### Deferred Conflicts
+
+- `archive-contract-tests` runs six modules that `unit-tests` also discovers,
+  so `full` runs them twice, against quality policy. The affected-surface
+  contract requires `full` to cover every registered gate
+  (`SURFACE-PROFILE-COVERAGE`), so removing the gate from `full` fails. Next
+  owner: a validation-routing Spec that decides which rule yields.
+- The English-first rule checks only Stage 03 `spec.md`; its plan and task
+  globs pointed at the retired Stage 04 tree and were removed as dead. Moving
+  them to Stage 03 would fail on the Korean text in the SPEC-0008 plan and
+  Task. Next owner: SPEC-0008.
+- ADR-0031 and AD-0006 still describe Spec 0054 as active or incomplete,
+  although it is retained in `completed/`. Next owner: architecture.
+- RUN-0004 names the `headlamp-admin` ClusterRoleBinding from chart defaults
+  that this round did not render. Next owner: platform operator.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | Survey recorded | This Task |
-| [WORK-002](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-003](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-004](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-001](../plan.md#work-breakdown) | Done | Commit `c7c8af37` |
+| [WORK-002](../plan.md#work-breakdown) | Done | Commits `7a4f5f9c` and `4b1d69f6` |
+| [WORK-003](../plan.md#work-breakdown) | Done | Commit `8076d374` |
+| [WORK-004](../plan.md#work-breakdown) | Done | Results below and this commit |
