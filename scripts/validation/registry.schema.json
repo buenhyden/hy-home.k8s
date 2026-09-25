@@ -241,6 +241,10 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 7200
+        },
+        "coveredBy": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

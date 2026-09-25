@@ -1379,18 +1379,39 @@ for path in docs_dir.rglob("*"):
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
 
+
+def english_first_terminal_states(registry: dict) -> frozenset[str]:
+    """Terminal Spec, Plan and Task states keep the generation they closed in."""
+    families = {"sdlc/spec", "sdlc/plan", "sdlc/task"}
+    return frozenset(
+        state
+        for domain in registry["lifecycle_domains"]
+        if families & set(domain["profile_ids"])
+        for state, state_class in domain["states"].items()
+        if state_class == "terminal"
+    )
+
+
 english_first_stage_globs = [
     "docs/03.specs/*/spec.md",
+    "docs/03.specs/*/plan.md",
+    "docs/03.specs/*/tasks/*.md",
 ]
+english_first_skipped_states = english_first_terminal_states(
+    load_json(root / "docs/99.templates/registry.json")
+)
 hangul_pattern = re.compile(r"[\uac00-\ud7a3]")
 for glob_pattern in english_first_stage_globs:
     for path in sorted(root.glob(glob_pattern)):
         if path.name == "README.md":
             continue
+        status = re.search(r'(?m)^status: "([^"]+)"$', read_text(path))
+        if status and status.group(1) in english_first_skipped_states:
+            continue
         for line_number, line in enumerate(read_text(path).splitlines(), start=1):
             if hangul_pattern.search(line):
                 fail(
-                    f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact"
+                    f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03 artifact"
                 )
 
 operations_stage_path = root / "docs/05.operations"

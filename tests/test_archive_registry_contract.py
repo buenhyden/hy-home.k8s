@@ -269,9 +269,13 @@ class FastGateTests(unittest.TestCase):
         assert gate is not None
         self.assertIn("staged", gate["lanes"])
         self.assertIn("affected", gate["lanes"])
-        for profile in ("quick", "staged", "full"):
+        for profile in ("quick", "staged"):
             with self.subTest(profile=profile):
                 self.assertIn("archive-contract-tests", registry["profiles"][profile])
+        # In full the unit discovery already runs these modules once.
+        self.assertEqual(gate.get("coveredBy"), "unit-tests")
+        self.assertIn("unit-tests", registry["profiles"]["full"])
+        self.assertNotIn("archive-contract-tests", registry["profiles"]["full"])
         surfaces = {item["id"]: item["validators"] for item in registry["surfaces"]}
         for surface in ("scripts", "tests", "template-documents"):
             with self.subTest(surface=surface):

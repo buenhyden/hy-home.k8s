@@ -108,6 +108,43 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 )
                 self.validator.validate_contract(ROOT, mutated)
 
+    def test_covered_gate_runs_once_per_profile_and_lane(self) -> None:
+        def validators(contract):
+            return {row["id"]: row for row in contract["validators"]}
+
+        covered = [row for row in self.contract["validators"] if "coveredBy" in row]
+        self.assertTrue(covered)
+        full = self.contract["profiles"]["full"]
+        for row in covered:
+            with self.subTest(gate=row["id"]):
+                self.assertNotIn(row["id"], full)
+                self.assertIn(row["coveredBy"], full)
+
+        def rejected(mutate, code):
+            mutated = copy.deepcopy(self.contract)
+            mutate(mutated)
+            with self.assertRaises(self.validator.ContractError) as raised:
+                self.validator.validate_contract(ROOT, mutated)
+            self.assertEqual(raised.exception.code, code)
+
+        gate = covered[0]["id"]
+        rejected(
+            lambda c: validators(c)[gate].pop("coveredBy"),
+            "SURFACE-PROFILE-COVERAGE",
+        )
+        rejected(
+            lambda c: c["profiles"]["full"].append(gate),
+            "SURFACE-COVERED-BY",
+        )
+        rejected(
+            lambda c: validators(c)[gate].update(coveredBy="policy-gates-missing"),
+            "SURFACE-COVERED-BY",
+        )
+        rejected(
+            lambda c: validators(c)[gate]["lanes"].append("all-files"),
+            "SURFACE-COVERED-BY",
+        )
+
     def test_mutation_cases(self) -> None:
         for case in self.fixture["mutationCases"]:
             with self.subTest(case=case["name"]):

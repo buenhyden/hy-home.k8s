@@ -98,10 +98,9 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
+      "coveredBy": "unit-tests",
       "optional": false,
       "fallback": {
         "status": "FAIL",
@@ -1187,7 +1186,6 @@
     ],
     "full": [
       "affected-surface-contract",
-      "archive-contract-tests",
       "archive-cutover",
       "agent-governance",
       "ci-python-contract",

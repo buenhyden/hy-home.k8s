@@ -592,7 +592,9 @@ class QaTests(unittest.TestCase):
         contract = self.qa.contract_module.validate_contract(ROOT)
         ids = contract["profiles"]["full"]
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertEqual(set(ids), {r["id"] for r in contract["validators"]})
+        covered = {r["id"] for r in contract["validators"] if "coveredBy" in r}
+        self.assertFalse(covered & set(ids))
+        self.assertEqual(set(ids) | covered, {r["id"] for r in contract["validators"]})
         self.assertEqual(ids.count("unit-tests"), 1)
         self.assertEqual(ids.count("pre-commit"), 1)
         for mutation in ("duplicate", "unknown", "missing"):

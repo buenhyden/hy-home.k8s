@@ -400,7 +400,28 @@ def validate_contract(
     for alias, target in contract.get("profileAliases", {}).items():
         if target not in profiles:
             fail("SURFACE-PROFILE-ALIAS", f"{alias} resolves to no profile: {target}")
-    if set(profile_gate_ids(contract, "full")) != set(validators):
+    full = set(profile_gate_ids(contract, "full"))
+    # A fast-lane gate may declare the full-profile gate that already runs its
+    # checks, so the pre-handoff profile runs them once, never twice.
+    covered = set()
+    for identifier, validator in validators.items():
+        coverer = validator.get("coveredBy")
+        if coverer is None:
+            continue
+        if (
+            coverer not in validators
+            or coverer not in full
+            or "coveredBy" in validators[coverer]
+            or identifier in full
+            or set(validator["lanes"]) & set(validators[coverer]["lanes"])
+        ):
+            fail(
+                "SURFACE-COVERED-BY",
+                f"{identifier} must be absent from full and share no lane "
+                f"with the full-profile gate that covers it: {coverer}",
+            )
+        covered.add(identifier)
+    if full | covered != set(validators):
         fail(
             "SURFACE-PROFILE-COVERAGE",
             "the pre-handoff profile must cover every registered gate",
@@ -669,7 +690,8 @@ def validate_required_validators_have_a_runner(
     """Required static checks belong to the shared full/ci profiles."""
     for validator in contract["validators"]:
         if not validator["optional"] and validator["evidenceLane"] == "repo-static":
-            if validator["id"] not in contract["profiles"]["full"]:
+            runner = validator.get("coveredBy", validator["id"])
+            if runner not in contract["profiles"]["full"]:
                 fail("SURFACE-VALIDATOR-RUNNER", validator["id"])
     if not (root / "scripts/qa.py").is_file():
         fail("SURFACE-VALIDATOR-RUNNER", "shared QA entrypoint is missing")
