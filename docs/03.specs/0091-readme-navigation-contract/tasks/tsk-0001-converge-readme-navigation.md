@@ -1,10 +1,10 @@
 ---
 title: "Converge README Navigation"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-26"
 layer: "specs"
 artifact_id: "SPEC-0091-TSK-0001"
 ---
@@ -35,9 +35,9 @@ Push, merge, and live actions are not authorized.
 | WORK-005 | VAL-RNC-003 | Knowledge index | platform | Done | Index membership check removed; README existence check kept; replacement completeness test added | Focused tests, staged QA |
 | WORK-006 | VAL-RNC-003 | Stage 05 indexes | platform | Done | One two-column document index per collection inside the navigation section; duplicate trees and copied status and date columns removed; the quality check keeps document membership and drops status and date parity | Staged QA |
 | WORK-007 | VAL-RNC-005 | Matrices follow their folders | platform | Done | `platform/*` rows moved to `gitops/platform/README.md`, the test inventory to `infrastructure/verify/README.md`; one area-matrix check serves both gitops matrices; the stale `traefik/README.md` route removed; Vault path cells equal to a folder name written as plain text | Staged QA |
-| WORK-008 | VAL-RNC-004 | Remaining READMEs | platform | Queued | Not executed | Staged QA per area |
-| WORK-009 | VAL-RNC-006 | Template guidance | platform | Queued | Not executed | Staged QA |
-| WORK-010 | VAL-RNC-007 | Evidence and closure | platform | Queued | Not executed | Full QA |
+| WORK-008 | VAL-RNC-004 | Remaining READMEs | platform | Done | Root, Stage 01/02/99, implementation, and agents READMEs route to direct children (`b88f7fc9`, `d6944c3a`, `8da0a923`, `a02597e1`, `2dfb2d25`); stale `evals/` and Azure tree facts corrected; fixtures that prune profiles drop the navigation contract (`d5cb44cc`); `pending_paths` is the Stage 98 README alone | Staged QA per area, link gate over the whole corpus |
+| WORK-009 | VAL-RNC-006 | Template guidance | platform | Done | Seven README and pack template prompts state the contract (`8d11d538`) | Profile gate, staged QA |
+| WORK-010 | VAL-RNC-007 | Evidence and closure | platform | Done | Full QA recorded below; package closed | Full QA |
 
 ## Approval and Safety Boundaries
 
@@ -61,6 +61,35 @@ enumeration, completeness, and copy findings concentrated in `docs/03.specs`,
 lists in five collection READMEs. The Stage 98 README is deferred to the
 archive ledger package.
 
+### Full QA (2026-09-26, branch head `8d11d538`)
+
+`timeout 3500 python3 scripts/qa.py full`: 19 gates PASS, 3 FAIL, all
+environment limits observed on the baseline:
+
+- `archive-cutover`: `ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE`; Gitleaks is not
+  installed.
+- `pre-commit`: required tool unavailable on the trusted `PATH`.
+- `unit-tests`: five failures, none in a module this package changed:
+  two Gitleaks-dependent `test_qa_runner` cases, the host-only
+  `test_escaped_descendant_is_failed_without_post_reap_group_signal` and
+  `test_file_reader_rejects_changes_during_read`, and the intermittent
+  `test_equal_size_same_inode_content_restore_fails_closed`.
+
+A whole-suite run during WP-008 exposed 137 fixture failures that the
+per-package focused tests missed: registries pruned to a profile subset kept
+`readme_navigation`, the frozen-generation derivation kept the key and the new
+implementation route, and two closed key sets omitted it. `d5cb44cc` fixes
+the fixtures, not the contract. Hosted `ci-summary` is not observed.
+
+### Deferrals and Residual Risk
+
+- `docs/98.archive/README.md` stays in `pending_paths` until the archive
+  ledger package moves its machine tables.
+- `README-NAV-ENUMERATION` counts resolvable targets only; plain-text member
+  lists remain a review concern, as the Spec states.
+- The implementer subagent for the root README stalled on one tool call; the
+  integrator stopped it and finished each area inline.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -74,6 +103,6 @@ archive ledger package.
 | [WORK-005](../plan.md#work-breakdown) | Knowledge index owned by the contract | Focused tests and staged QA |
 | [WORK-006](../plan.md#work-breakdown) | Stage 05 indexes stop copying | Staged QA |
 | [WORK-007](../plan.md#work-breakdown) | Matrices follow their folders | Repository quality gate and staged QA |
-| [WORK-008](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-009](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-010](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-008](../plan.md#work-breakdown) | Remaining READMEs routed | Link gate and staged QA |
+| [WORK-009](../plan.md#work-breakdown) | Template guidance stated | Profile gate and staged QA |
+| [WORK-010](../plan.md#work-breakdown) | Evidence recorded | Full QA |
