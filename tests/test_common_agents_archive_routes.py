@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import types
 import unittest
@@ -118,51 +119,52 @@ class CommonAuthorityOwnerDiagnosticsTest(unittest.TestCase):
         )
 
 
-class SpecIndexStatusTest(unittest.TestCase):
-    def diagnostics(self, status, row_status):
+class SpecIndexNavigationTest(unittest.TestCase):
+    """SPEC-0091 replaced the Stage 03 spec index with the navigation contract."""
+
+    def diagnostics(self, text):
         links = archive._load_canonical_link_module()
         index = PurePosixPath("docs/03.specs/README.md")
-        target = index.parent / "0999-status-fixture/spec.md"
-        context = types.SimpleNamespace(
-            paths=(index, target),
-            profiles={
-                index: links.ProfileView(
-                    "common/readme-stage-index", "readme", "authored"
-                )
-            },
-            metadata={target: {"status": status}},
-            texts={
-                index: (
-                    "## Document Index\n\n```text\n03.specs/\n"
-                    "└── 0999-status-fixture/\n    └── spec.md\n```\n\n"
-                    "### Current Spec Index\n\n| Spec | Purpose | Status |\n"
-                    "| --- | --- | --- |\n"
-                    f"| [Fixture](./0999-status-fixture/spec.md) | Fixture | `{row_status}` |\n"
-                )
-            },
+        package = index.parent / "0999-status-fixture"
+        tree = links.TrackedTree.from_modes(
+            {
+                index: "100644",
+                package / "spec.md": "100644",
+                package / "plan.md": "100644",
+                package / "tasks/tsk-0001-fixture.md": "100644",
+            }
         )
-        return links._index_diagnostics(context)
-
-    def test_all_registry_spec_statuses_match_their_index_rows(self):
-        links = archive._load_canonical_link_module()
-        registry = links.load_registry(ROOT)
-        profile = next(
-            item for item in registry.profiles if item.profile_id == "sdlc/spec"
+        navigation = dataclasses.replace(
+            links.load_registry(ROOT).readme_navigation, pending_paths=frozenset()
         )
-        for status in profile.status_domain:
-            with self.subTest(status=status):
-                self.assertEqual(self.diagnostics(status, status), [])
+        return {
+            item.rule_id
+            for item in links.readme_navigation_diagnostics(
+                navigation,
+                {index: links.ReadmeSource("common/readme-stage-index", text)},
+                tree,
+            )
+        }
 
-    def test_stale_or_obsolete_index_status_is_rejected(self):
-        for row_status in ("done", "completed", "archived", "unknown"):
-            with self.subTest(row_status=row_status):
-                self.assertEqual(
-                    {
-                        item.rule_id
-                        for item in self.diagnostics("superseded", row_status)
-                    },
-                    {"INDEX-STATUS"},
-                )
+    def test_member_listing_with_copied_status_is_rejected(self):
+        fence = "`" * 3
+        text = (
+            f"## Document Index\n\n{fence}text\n03.specs/\n"
+            f"└── 0999-status-fixture/\n    └── spec.md\n{fence}\n\n"
+            "| Spec | Purpose | Status |\n| --- | --- | --- |\n"
+            "| [Fixture](./0999-status-fixture/spec.md) | Fixture | `done` |\n"
+        )
+        self.assertLessEqual(
+            {"README-NAV-DEPTH", "README-NAV-TREE", "README-NAV-COPY"},
+            self.diagnostics(text),
+        )
+
+    def test_package_folder_rows_pass(self):
+        text = (
+            "## Document Index\n\n| Package | Purpose |\n| --- | --- |\n"
+            "| [0999-status-fixture/](./0999-status-fixture/) | Fixture |\n"
+        )
+        self.assertEqual(self.diagnostics(text), set())
 
 
 if __name__ == "__main__":

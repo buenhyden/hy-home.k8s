@@ -2515,19 +2515,29 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.moved_target,
         )
 
-    def test_declared_spec_index_accepts_only_four_digit_work_units(self) -> None:
-        pattern = self.validator.DECLARED_INDEXES[0].target_pattern
-
-        self.assertIsNotNone(
-            pattern.fullmatch(
-                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
-            )
+    def test_stage03_index_is_governed_by_the_navigation_contract(self) -> None:
+        self.assertFalse(hasattr(self.validator, "DECLARED_INDEXES"))
+        index = PurePosixPath("docs/03.specs/README.md")
+        tree = self.validator.TrackedTree.from_modes(
+            {
+                index: "100644",
+                PurePosixPath("docs/03.specs/0054-listed/spec.md"): "100644",
+                PurePosixPath("docs/03.specs/0055-unlisted/spec.md"): "100644",
+            }
         )
-        self.assertIsNone(
-            pattern.fullmatch(
-                "docs/03.specs/054-sdlc-document-and-agent-governance-consolidation/spec.md"
+        text = "## Document Index\n\n- [0054-listed/](./0054-listed/)\n"
+        codes = {
+            item.rule_id
+            for item in self.validator.readme_navigation_diagnostics(
+                dataclasses.replace(
+                    self.validator.load_registry(ROOT).readme_navigation,
+                    pending_paths=frozenset(),
+                ),
+                {index: self.validator.ReadmeSource("common/readme-stage-index", text)},
+                tree,
             )
-        )
+        }
+        self.assertEqual(codes, {"README-NAV-COMPLETE"})
 
     def test_work054_mig0003_historical_projection_is_byte_exact(self) -> None:
         projection = self.validator._work054_wp003_owner_merges(self.context)

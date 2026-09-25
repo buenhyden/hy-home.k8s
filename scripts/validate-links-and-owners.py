@@ -372,30 +372,6 @@ RETIRED_REFERENCE_ALIASES = {
 
 
 @dataclass(frozen=True)
-class DeclaredIndex:
-    path: PurePosixPath
-    target_pattern: re.Pattern[str]
-    tree_anchor: str
-    tree_root: str
-    table_anchor: str
-    table_mode: str
-    tree_kind: str
-
-
-DECLARED_INDEXES = (
-    DeclaredIndex(
-        PurePosixPath("docs/03.specs/README.md"),
-        re.compile(r"^docs/03\.specs/[0-9]{4}-[^/]+/spec\.md$"),
-        "## Document Index",
-        "03.specs/",
-        "### Current Spec Index",
-        "section",
-        "spec",
-    ),
-)
-
-
-@dataclass(frozen=True)
 class CollectionIndex:
     path: PurePosixPath
     root: PurePosixPath
@@ -463,6 +439,8 @@ class Context:
     document_registry: Registry | None = None
     raw_schema: object = _UNSET
     read_current_bytes: Callable[[str, int], bytes] | None = None
+    tracked_modes: Mapping[PurePosixPath, str] | None = None
+    readme_navigation: Any = None
 
 
 @dataclass(frozen=True, order=True)
@@ -905,12 +883,15 @@ def _build_context(
                 f"symlink adapter escapes repository: {adapter.as_posix()}"
             )
         adapters[adapter] = PurePosixPath(normalized)
-    tracked_regular_paths = frozenset(
-        entry.path
+    tracked_modes = {
+        entry.path: entry.mode
         for entry in _parse_ls_files_stage_z(
             _run_git(root, ("ls-files", "--stage", "-z"))
         )
-        if entry.stage == 0 and entry.mode in {"100644", "100755"}
+        if entry.stage == 0
+    }
+    tracked_regular_paths = frozenset(
+        path for path, mode in tracked_modes.items() if mode in {"100644", "100755"}
     )
     governance_current_paths, governance_current_states = (
         _terminal_governance_current_owners(
@@ -935,6 +916,8 @@ def _build_context(
         document_registry=registry if held else None,
         raw_schema=raw_schema,
         read_current_bytes=read_current_bytes,
+        tracked_modes=tracked_modes,
+        readme_navigation=getattr(registry, "readme_navigation", None),
     )
 
 
@@ -3626,168 +3609,6 @@ def _after_exact_heading(text: str, heading: str) -> str | None:
     return "\n".join(raw_lines[matches[0] + 1 :])
 
 
-def _tree_targets(declaration: DeclaredIndex, text: str) -> list[PurePosixPath]:
-    section = _exact_heading_section(text, declaration.tree_anchor)
-    if section is None:
-        return []
-    expected_root = declaration.tree_root
-    block = next(
-        (
-            item
-            for item in _fenced_blocks(section)
-            if item.splitlines() and item.splitlines()[0] == expected_root
-        ),
-        "",
-    )
-    base = declaration.path.parent
-    targets: list[PurePosixPath] = []
-    if declaration.tree_kind == "spec":
-        pending: str | None = None
-        for line in block.splitlines():
-            folder = re.match(r"^[│ ]*[├└]── ([0-9]{4}-[^/]+)/$", line)
-            if folder:
-                pending = folder.group(1)
-                continue
-            if pending and re.match(r"^[│ ]*[├└]── spec\.md$", line):
-                targets.append(base / pending / "spec.md")
-                pending = None
-    else:
-        for name in re.findall(r"^[├└]── ([^/\n]+\.md)$", block, re.MULTILINE):
-            if name != "README.md":
-                targets.append(base / name)
-    return targets
-
-
-def _table_rows(
-    declaration: DeclaredIndex, text: str
-) -> list[tuple[PurePosixPath, str]]:
-    section = (
-        _after_exact_heading(text, declaration.table_anchor)
-        if declaration.table_mode == "after"
-        else _exact_heading_section(text, declaration.table_anchor)
-    )
-    if section is None:
-        return []
-    lines = _visible_markdown(section).splitlines()
-    table_started = False
-    rows: list[tuple[PurePosixPath, str]] = []
-    for line in lines:
-        if not table_started:
-            if line.startswith("|") and "---" not in line:
-                table_started = True
-            continue
-        if not line.startswith("|"):
-            if rows:
-                break
-            continue
-        cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if not cells or all(set(cell) <= {"-", ":", " "} for cell in cells):
-            continue
-        links = re.findall(r"\]\((\./[^)]+\.md)\)", cells[0])
-        if len(links) != 1:
-            continue
-        kind, target = _local_destination(declaration.path, links[0])
-        if kind != "local" or target is None:
-            continue
-        status = cells[2].strip("` ") if len(cells) > 2 else ""
-        rows.append((target, status))
-    return rows
-
-
-def _index_diagnostics(context: Context) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    path_set = set(context.paths)
-    for declaration in DECLARED_INDEXES:
-        profile = context.profiles[declaration.path].profile_id
-        actual = sorted(
-            (
-                p
-                for p in context.paths
-                if declaration.target_pattern.fullmatch(p.as_posix())
-                and p != declaration.path
-            ),
-            key=lambda p: p.as_posix(),
-        )
-        actual_set = set(actual)
-        tree = _tree_targets(declaration, context.texts[declaration.path])
-        rows = _table_rows(declaration, context.texts[declaration.path])
-        row_counter = collections.Counter(path for path, _ in rows)
-        tree_counter = collections.Counter(tree)
-        for target, count in sorted(
-            row_counter.items(), key=lambda item: item[0].as_posix()
-        ):
-            target_key = target.as_posix()
-            if count > 1:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; {count} rows",
-                    )
-                )
-            if target not in actual_set:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; declared target",
-                        f"target={target_key}; non-target row",
-                    )
-                )
-        for target in actual:
-            target_key = target.as_posix()
-            if row_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; row is missing",
-                    )
-                )
-            for row_target, row_status in rows:
-                if row_target != target:
-                    continue
-                expected_status = str(
-                    context.metadata[target].get("status", "")
-                ).casefold()
-                # The document profile owns valid statuses; the index owns parity.
-                actual_status = row_status.casefold()
-                if actual_status != expected_status:
-                    diagnostics.append(
-                        _diag(
-                            "INDEX-STATUS",
-                            declaration.path,
-                            profile,
-                            f"target={target_key}; status={expected_status}",
-                            f"target={target_key}; status={actual_status or 'unknown'}",
-                        )
-                    )
-                break
-        for target in sorted(actual_set | set(tree), key=lambda p: p.as_posix()):
-            if tree_counter[target] != (1 if target in actual_set else 0):
-                target_key = target.as_posix()
-                diagnostics.append(
-                    _diag(
-                        "INDEX-TREE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one declared tree target",
-                        f"target={target_key}; {tree_counter[target]} entries",
-                    )
-                )
-        # A resolved row that is not even in the inventory is stale regardless of disk state.
-        if any(
-            target not in path_set and target not in actual_set for target, _ in rows
-        ):
-            pass
-    return diagnostics
-
-
 _COLLECTION_TREE_LINE = re.compile(
     r"^(?P<indent>(?:│   |    )*)(?:├── |└── )"
     r"(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<directory>/)?"
@@ -5312,8 +5133,10 @@ def readme_navigation_diagnostics(
 
 
 def _readme_navigation_diagnostics(context: Context) -> list[Diagnostic]:
-    registry = context.document_registry or load_registry(context.root)
-    navigation = getattr(registry, "readme_navigation", None)
+    navigation = getattr(context, "readme_navigation", None)
+    if navigation is None:
+        registry = context.document_registry or load_registry(context.root)
+        navigation = getattr(registry, "readme_navigation", None)
     if navigation is None:
         return []
     readmes = {
@@ -5321,13 +5144,15 @@ def _readme_navigation_diagnostics(context: Context) -> list[Diagnostic]:
         for path in context.paths
         if path.name == "README.md" and path in context.texts
     }
-    modes = {
-        entry.path: entry.mode
-        for entry in _parse_ls_files_stage_z(
-            _run_git(context.root, ("ls-files", "--stage", "-z"))
-        )
-        if entry.stage == 0
-    }
+    modes = context.tracked_modes
+    if modes is None:
+        modes = {
+            entry.path: entry.mode
+            for entry in _parse_ls_files_stage_z(
+                _run_git(context.root, ("ls-files", "--stage", "-z"))
+            )
+            if entry.stage == 0
+        }
     return readme_navigation_diagnostics(
         navigation, readmes, TrackedTree.from_modes(modes)
     )
@@ -5767,7 +5592,6 @@ def _raw_diagnostics(
             body_contract_path_prefixes,
         )
     )
-    diagnostics.extend(_index_diagnostics(context))
     diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_readme_navigation_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
@@ -5919,7 +5743,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.body_contracts,
                     tuple(args.body_contract_path_prefix),
                 )
-                + _index_diagnostics(context)
                 + _collection_index_diagnostics(context)
                 + _readme_navigation_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
