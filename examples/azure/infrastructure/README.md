@@ -1,10 +1,10 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-25"
 ---
 # Azure Infrastructure (Bicep)
 
@@ -41,8 +41,12 @@ updated: "2026-09-04"
 
 ```text
 infrastructure/
-├── main.bicep      # 전체 리소스 오케스트레이션 및 AKS 정의
+├── main.bicep      # 전체 리소스 오케스트레이션
+├── aks.bicep       # AKS 클러스터 정의
 ├── agc.bicep       # Application Gateway for Containers 정의
+├── network.bicep   # 가상 네트워크 정의
+├── database.bicep  # PostgreSQL 서버 정의
+├── redis.bicep     # Redis 캐시 정의
 └── README.md       # 본 문서
 ```
 

@@ -1,10 +1,10 @@
 ---
 title: "Azure Kubernetes (App Manifests)"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-25"
 ---
 # Azure Kubernetes (App Manifests)
 
@@ -41,6 +41,7 @@ updated: "2026-09-04"
 
 ```text
 kubernetes/
+├── manifests/          # AGC Gateway, External Secrets, 외부 서비스, Workload Identity 매니페스트
 ├── sample-app.yaml     # Workload Identity 및 CSI가 적용된 샘플 앱
 └── README.md           # 본 문서
 ```

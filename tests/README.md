@@ -1,10 +1,10 @@
 ---
 title: "tests"
-version: "0.2.1"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-25"
 ---
 
 # tests
@@ -72,12 +72,9 @@ more than one suite needs lives here instead.
 
 ### Fixture families
 
-| Fixture                                 | Independent consumer                       |
-| --------------------------------------- | ------------------------------------------ |
-| `fixtures/github-actions-security.json` | `test_validate_github_actions_security.py` |
-| `fixtures/gitops-change-set/`           | `test_validate_gitops_change_set.py`       |
-| `fixtures/validation-surfaces.json`     | `test_validate_affected_surfaces.py`       |
-| `fixtures/vault-eso-contracts.json`     | `test_validate_vault_eso_contracts.py`     |
+[fixtures/](./fixtures/) holds the GitHub Actions security, GitOps change-set,
+validation-surface, and Vault/ESO contract fixtures; each is consumed by the
+validator test of the same subject.
 
 Fixtures are bounded examples, not production registries. A fixture remains
 only while an independent test consumes it; combinations should normally be

@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.3.3"
+version: "0.4.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -51,14 +51,13 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 | Path | Responsibility |
 | --- | --- |
-| `validation/registry.json` and `validation/registry.schema.json` | validator, surface, lane, argument, fallback, and CI routing contract |
+| `validation/registry.json` and its schema | validator, surface, lane, argument, fallback, and CI routing contract |
 | `select-affected-surfaces.py` | pure path-to-surface selection projection |
 | `githooks/chained-hook.sh` and its `pre-commit`, `commit-msg`, `pre-push` links | run the user's global Git hook and then this workspace's, returning the first non-zero status |
 | `validate-affected-surfaces.py` | registry and tracked-path coverage validation |
 | `run-validation-lane.py` | bounded execution and result normalization for affected, staged, and all-files lanes |
 | `qa.py` | supported QA entrypoint; resolves a profile's gate IDs from the registry and runs them over an isolated final-tree or exact-index snapshot; contains no validator argv or rule implementation |
-| `validation/repository/quality.py` | repository-wide rules not already owned by a focused validator |
-| `validation/current_executable_references.py` | current executable target and Git-first historical recovery distinction |
+| `validation/` rule modules | repository-wide rules not already owned by a focused validator (repository/quality.py) and the current executable target versus Git-first historical recovery distinction (current_executable_references.py) |
 
 ### Document and archive owners
 

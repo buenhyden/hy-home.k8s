@@ -1,10 +1,10 @@
 ---
 title: "Azure GitOps (Platform Manifests)"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-25"
 ---
 # Azure GitOps (Platform Manifests)
 
@@ -40,10 +40,8 @@ updated: "2026-09-04"
 
 ```text
 gitops/
-├── platform/
-│   ├── managed-identity.yaml   # Managed Identity 연동
-│   └── gateway.yaml            # AGC Gateway 리소스 정의
-└── README.md                   # 본 문서
+├── platform/    # Managed Identity 연동, AGC Gateway, Secrets Store CSI SecretProviderClass
+└── README.md    # 본 문서
 ```
 
 ## Configuration Boundary
