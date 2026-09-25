@@ -1,8 +1,8 @@
 ---
 title: "Resolve Deferred Conflicts"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -32,7 +32,7 @@ moves, and live actions are not authorized.
 | WORK-002 | VAL-DCR-001, VAL-DCR-002 | Covered gates and English-first scope | platform | Done | `coveredBy` and `SURFACE-COVERED-BY` added test-first; English-first checks current plans and Tasks | Focused tests and staged QA |
 | WORK-003 | VAL-DCR-003 | Correct ADR-0031 and AD-0006 | platform | Done | Spec 0054 closure and the role registry path stated | Link gate and staged QA |
 | WORK-004 | VAL-DCR-005 | Withdraw SPEC-0049 and update its consumers | platform | Done | Spec and Plan withdrawn; seven Tasks opened for cancellation; REQ-0003, REQ-0004, AD-0007 and three indexes updated | Lifecycle and link gates |
-| WORK-005 | VAL-DCR-005, VAL-DCR-006 | Cancel SPEC-0049 Tasks, record evidence, and close | platform | Queued | Not executed | Full QA |
+| WORK-005 | VAL-DCR-005, VAL-DCR-006 | Cancel SPEC-0049 Tasks, record evidence, and close | platform | Done | Seven Tasks cancelled; package closed | Full QA below |
 
 ## Approval and Safety Boundaries
 
@@ -66,6 +66,39 @@ policy, secret, shell-fixture, image, and tool-evidence lanes) has no
 validator and stays a requirement gap under REQ-0004-FR-0008 and
 REQ-0004-FR-0010, for a new package to plan from current authority.
 
+### Results
+
+| Commit | Scope |
+| --- | --- |
+| `b5f16aaf` | Propose this package and record the survey |
+| `6d197774` | `coveredBy` and `SURFACE-COVERED-BY`; English-first scope by registry state |
+| `f1304d01` | ADR-0031 and AD-0006 corrections |
+| `12247313` | SPEC-0049 Spec and Plan withdrawn; consumers updated |
+| Closing commit | SPEC-0049 Tasks cancelled; this package closed |
+
+- **Staged QA**: passed for each commit over its exact index.
+- **Full QA** on `12247313`: every gate passed except three that fail for
+  environment reasons. `archive-cutover` and two `unit-tests` cases need
+  Gitleaks, which this host lacks. `pre-commit` is not on the runner's trusted
+  `PATH`. `test_escaped_descendant_is_failed_without_post_reap_group_signal`
+  and `test_file_reader_rejects_changes_during_read` also fail on this host;
+  the second fails identically on the pre-work baseline `8076d374~1`.
+  `test_equal_size_same_inode_content_restore_fails_closed` failed once and
+  passed three isolated reruns, so it is recorded as flaky, not as a
+  regression.
+- **Hosted `ci-summary`**: DEFER; not observed, and local results do not
+  establish it.
+- **Live validation**: DEFER; no cluster read or mutation.
+- **Deferral**: the move of SPEC-0049 into `98.archive/retired/` needs its
+  withdrawal commit on the default branch. Next owner: the request owner, after
+  push authorization.
+- **Remote note**: the request owner pushed `origin/main` to `4b1d69f6` and
+  then to `12247313`, and approved the prior work on 2026-09-25. This session
+  pushed nothing.
+  With `12247313` on the default branch, the precondition for the SPEC-0049
+  retirement move appears met, but the move stays out of this round's scope.
+- **Rollback**: revert the local commits in reverse order.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -73,7 +106,7 @@ REQ-0004-FR-0010, for a new package to plan from current authority.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Survey recorded | This Task |
-| [WORK-002](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-003](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-004](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-005](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-002](../plan.md#work-breakdown) | Covered gates and English-first scope resolved | Results above |
+| [WORK-003](../plan.md#work-breakdown) | Architecture corrected | Results above |
+| [WORK-004](../plan.md#work-breakdown) | SPEC-0049 withdrawn | Results above |
+| [WORK-005](../plan.md#work-breakdown) | Tasks cancelled; package closed | Results above |
