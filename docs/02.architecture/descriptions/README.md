@@ -48,14 +48,12 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 ## Item Index
 
-```text
-02.architecture/descriptions/
-├── 0004-argo-rollouts-progressive-delivery.md
-├── 0005-argo-notifications-slack.md
-├── 0006-workspace-agent-governance-platform.md
-├── 0007-current-local-gitops-platform.md
-└── README.md
-```
+| 문서 | 제목 |
+| --- | --- |
+| [0004-argo-rollouts-progressive-delivery.md](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts Progressive Delivery Architecture Description |
+| [0005-argo-notifications-slack.md](./0005-argo-notifications-slack.md) | Argo Notifications Slack Architecture Description |
+| [0006-workspace-agent-governance-platform.md](./0006-workspace-agent-governance-platform.md) | Agent and Document Governance Architecture |
+| [0007-current-local-gitops-platform.md](./0007-current-local-gitops-platform.md) | Current Local GitOps Platform Architecture Description |
 
 ## Add and Find
 

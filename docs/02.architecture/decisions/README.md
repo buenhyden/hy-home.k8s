@@ -44,33 +44,31 @@ layer: "architecture"
 
 ## Item Index
 
-```text
-02.architecture/decisions/
-├── 0002-argocd-helm-and-gitops-model.md
-├── 0006-cert-manager-mkcert-ca-issuer.md
-├── 0008-istio-install-and-ingress-coexist.md
-├── 0009-kiali-external-observability.md
-├── 0011-argo-rollouts-progressive-delivery.md
-├── 0012-argo-notifications-slack.md
-├── 0014-current-local-gitops-platform-contract.md
-├── 0026-argo-cd-source-integrity-non-adoption.md
-├── 0028-pod-security-admission-per-namespace-adoption.md
-├── 0029-mutable-target-revision-retention.md
-├── 0030-authority-first-sdlc-and-agent-governance-convergence.md
-├── 0031-current-corpus-retention-and-validation-ownership.md
-├── 0033-common-document-contract-v9.md
-├── 0036-common-knowledge-and-prompt-surfaces.md
-├── 0037-kiali-operator-installation.md
-├── 0039-unit-archive-retention-and-citation-table.md
-├── 0040-archive-reappraisal-and-verifiable-sources.md
-├── 0041-openbao-secret-backend.md
-├── 0042-linux-server-single-host-baseline.md
-├── 0043-dedicated-k8s-ingress-router.md
-├── 0044-stateful-data-stores-stay-external.md
-├── 0045-in-cluster-telemetry-collection.md
-├── 0046-external-services-over-host-addresses.md
-└── README.md
-```
+| 문서 | 제목 |
+| --- | --- |
+| [0002-argocd-helm-and-gitops-model.md](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm Install with App-of-Apps and ApplicationSet |
+| [0006-cert-manager-mkcert-ca-issuer.md](./0006-cert-manager-mkcert-ca-issuer.md) | cert-manager with mkcert CA as ClusterIssuer |
+| [0008-istio-install-and-ingress-coexist.md](./0008-istio-install-and-ingress-coexist.md) | Istio Default Profile with ingress-nginx Coexistence |
+| [0009-kiali-external-observability.md](./0009-kiali-external-observability.md) | Kiali with External Observability Stack |
+| [0011-argo-rollouts-progressive-delivery.md](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts for Progressive Delivery |
+| [0012-argo-notifications-slack.md](./0012-argo-notifications-slack.md) | Argo Notifications with Slack Webhook |
+| [0014-current-local-gitops-platform-contract.md](./0014-current-local-gitops-platform-contract.md) | Current Local GitOps Platform Contract |
+| [0026-argo-cd-source-integrity-non-adoption.md](./0026-argo-cd-source-integrity-non-adoption.md) | Argo CD Source Integrity Non-adoption |
+| [0028-pod-security-admission-per-namespace-adoption.md](./0028-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission Per-namespace Adoption |
+| [0029-mutable-target-revision-retention.md](./0029-mutable-target-revision-retention.md) | Mutable Target Revision Retention |
+| [0030-authority-first-sdlc-and-agent-governance-convergence.md](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-First SDLC and Agent Governance Convergence |
+| [0031-current-corpus-retention-and-validation-ownership.md](./0031-current-corpus-retention-and-validation-ownership.md) | Current Corpus Retention and Validation Ownership |
+| [0033-common-document-contract-v9.md](./0033-common-document-contract-v9.md) | Common Document Contract v9 and Governed Router Envelopes |
+| [0036-common-knowledge-and-prompt-surfaces.md](./0036-common-knowledge-and-prompt-surfaces.md) | Common Knowledge and Prompt Surfaces |
+| [0037-kiali-operator-installation.md](./0037-kiali-operator-installation.md) | Kiali Operator Installation |
+| [0039-unit-archive-retention-and-citation-table.md](./0039-unit-archive-retention-and-citation-table.md) | Unit Archive Retention and Citation Table |
+| [0040-archive-reappraisal-and-verifiable-sources.md](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive Reappraisal and Verifiable Sources |
+| [0041-openbao-secret-backend.md](./0041-openbao-secret-backend.md) | OpenBao as the Runtime Secret Backend |
+| [0042-linux-server-single-host-baseline.md](./0042-linux-server-single-host-baseline.md) | Linux Server Single-Host Baseline |
+| [0043-dedicated-k8s-ingress-router.md](./0043-dedicated-k8s-ingress-router.md) | Dedicated Kubernetes Ingress Router on hy-k8s.home.arpa |
+| [0044-stateful-data-stores-stay-external.md](./0044-stateful-data-stores-stay-external.md) | Stateful Data Stores Stay Outside the Cluster |
+| [0045-in-cluster-telemetry-collection.md](./0045-in-cluster-telemetry-collection.md) | In-Cluster Telemetry Collection with an External Backend |
+| [0046-external-services-over-host-addresses.md](./0046-external-services-over-host-addresses.md) | External Services Reached Through Host-Published Addresses |
 
 ## Add and Find
 

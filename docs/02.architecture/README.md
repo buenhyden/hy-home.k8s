@@ -61,12 +61,10 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 
 ## Document Index
 
-```text
-02.architecture/
-├── descriptions/  # Architecture Descriptions and reference models
-├── decisions/     # Architecture decision records
-└── README.md
-```
+| 폴더 | 설명 |
+| --- | --- |
+| [descriptions/](./descriptions/) | Architecture Description과 참조 모델 |
+| [decisions/](./decisions/) | 아키텍처 결정 기록(ADR) |
 
 ## Authoring Workflow
 

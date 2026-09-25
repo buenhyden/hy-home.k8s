@@ -5737,13 +5737,7 @@
     },
     "pending_paths": [
       ".agents/README.md",
-      "docs/01.requirements/README.md",
-      "docs/02.architecture/README.md",
-      "docs/02.architecture/decisions/README.md",
-      "docs/02.architecture/descriptions/README.md",
       "docs/98.archive/README.md",
-      "docs/99.templates/README.md",
-      "docs/99.templates/templates/README.md",
       "examples/azure/gitops/README.md",
       "policy/README.md",
       "scripts/README.md",

@@ -57,14 +57,12 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 ## Document Index
 
-```text
-01.requirements/
-├── 0001-argo-rollouts-progressive-delivery.md
-├── 0002-argo-notifications-slack.md
-├── 0003-workspace-agent-governance-platform.md
-├── 0004-current-local-gitops-platform.md
-└── README.md
-```
+| 문서 | 제목 |
+| --- | --- |
+| [0001-argo-rollouts-progressive-delivery.md](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts Progressive Delivery Requirement Package |
+| [0002-argo-notifications-slack.md](./0002-argo-notifications-slack.md) | Argo Notifications Slack Webhook Requirement Package |
+| [0003-workspace-agent-governance-platform.md](./0003-workspace-agent-governance-platform.md) | Workspace Agent and Document Governance Requirements |
+| [0004-current-local-gitops-platform.md](./0004-current-local-gitops-platform.md) | Local GitOps Platform and Delivery Assurance Requirements |
 
 ## Authoring Workflow
 

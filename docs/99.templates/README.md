@@ -111,25 +111,14 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 
 ## Document Index
 
-```text
-99.templates/
-├── contracts/          # machine contracts and their schemas
-│   ├── document-profile.schema.json
-│   └── frontmatter.schema.json
-├── templates/          # copyable forms only
-│   ├── README.md       # form catalog
-│   ├── common/ governance/ requirements/ architecture/
-│   ├── specs/
-│   └── operations/ references/ archive/ runtime/
-├── registry.json
-└── README.md
-```
+| 항목 | 설명 |
+| --- | --- |
+| [contracts/](./contracts/) | 기계 계약과 그 schema |
+| [templates/](./templates/) | 복사해서 쓰는 form catalog |
+| [registry.json](./registry.json) | Document Profile Registry |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
-form catalog가 소유한다.
-
-- [Document Profile Registry](./registry.json)
-- [Form Catalog](./templates/README.md)
+[form catalog](./templates/README.md)가 소유한다.
 
 ## Authoring Workflow
 
