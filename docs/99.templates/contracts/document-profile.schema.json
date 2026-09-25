@@ -811,6 +811,67 @@
         "type": "string",
         "pattern": "^docs/[^\\s]+\\.md$"
       }
+    },
+    "readme_navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "placeholders",
+        "forbidden_index_columns",
+        "max_deep_links_per_child",
+        "profiles",
+        "pending_paths"
+      ],
+      "properties": {
+        "placeholders": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "forbidden_index_columns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "max_deep_links_per_child": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "section",
+              "complete"
+            ],
+            "properties": {
+              "section": {
+                "type": "string",
+                "minLength": 1
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "pending_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "(^|/)README\\.md$"
+          }
+        }
+      }
     }
   }
 }

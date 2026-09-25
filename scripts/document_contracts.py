@@ -8,6 +8,7 @@ import stat
 import subprocess
 from dataclasses import dataclass, replace
 from functools import lru_cache
+from types import MappingProxyType
 from pathlib import Path, PurePosixPath
 from typing import Any, Literal, Mapping, NoReturn, Sequence
 
@@ -220,6 +221,25 @@ class ArchiveCitation:
 
 
 @dataclass(frozen=True)
+class ReadmeNavigationProfile:
+    """The navigation section a README profile owns and whether it is complete."""
+
+    section: str
+    complete: bool
+
+
+@dataclass(frozen=True)
+class ReadmeNavigation:
+    """SPEC-0091: what a README may list, owned by the registry alone."""
+
+    placeholders: frozenset[str]
+    forbidden_index_columns: frozenset[str]
+    max_deep_links_per_child: int
+    profiles: Mapping[str, ReadmeNavigationProfile]
+    pending_paths: frozenset[PurePosixPath]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal[
@@ -267,6 +287,7 @@ class Registry:
     archive_citation: ArchiveCitation | None = None
     archive_assessment: ArchiveAssessment | None = None
     legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
+    readme_navigation: ReadmeNavigation | None = None
 
 
 @dataclass(frozen=True)
@@ -934,6 +955,7 @@ def _archive_retention_diagnostics(
         *mode_diagnostics,
         *_archive_citation_diagnostics(raw_registry, profiles_by_id),
         *_archive_assessment_diagnostics(raw_registry, profiles_by_id),
+        *_readme_navigation_registry_diagnostics(raw_registry, profiles_by_id),
     ]
     if diagnostics:
         # The legacy check builds the typed registry, which needs the rest valid.
@@ -1295,6 +1317,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             PurePosixPath(value)
             for value in raw.get("legacy_rebased_retained_paths", ())
         ),
+        readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
     )
 
 
@@ -1319,6 +1342,61 @@ def _archive_citation_from_mapping(
             for rule in raw["rules"]
         ),
     )
+
+
+def _readme_navigation_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> ReadmeNavigation | None:
+    if raw is None:
+        return None
+    return ReadmeNavigation(
+        placeholders=frozenset(raw["placeholders"]),
+        forbidden_index_columns=frozenset(raw["forbidden_index_columns"]),
+        max_deep_links_per_child=raw["max_deep_links_per_child"],
+        profiles=MappingProxyType(
+            {
+                profile_id: ReadmeNavigationProfile(
+                    section=entry["section"], complete=entry["complete"]
+                )
+                for profile_id, entry in raw["profiles"].items()
+            }
+        ),
+        pending_paths=frozenset(PurePosixPath(value) for value in raw["pending_paths"]),
+    )
+
+
+def _readme_navigation_registry_diagnostics(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[Diagnostic]:
+    """Require navigation entries to name router profiles and their own H2s."""
+
+    contract = raw_registry.get("readme_navigation")
+    if contract is None:
+        return []
+    faults: list[str] = []
+    for profile_id, entry in contract["profiles"].items():
+        profile = profiles_by_id.get(profile_id)
+        if profile is None:
+            faults.append(f"unknown profile {profile_id}")
+            continue
+        if profile.get("mode") != "router":
+            faults.append(f"{profile_id} is not a router profile")
+        if entry["section"] not in profile.get("sections", {}).get("required", ()):
+            faults.append(f"{profile_id} section {entry['section']!r} is not required")
+    if contract["max_deep_links_per_child"] < 1:
+        faults.append("max_deep_links_per_child is below one")
+    for value in contract["pending_paths"]:
+        if PurePosixPath(value).name != "README.md":
+            faults.append(f"pending path {value} is not a README")
+    return [
+        _diagnostic(
+            "REGISTRY_README_NAVIGATION",
+            expected="router profiles, their required H2 sections, and README paths",
+            actual=fault,
+        )
+        for fault in faults
+    ]
 
 
 def _archive_assessment_from_mapping(

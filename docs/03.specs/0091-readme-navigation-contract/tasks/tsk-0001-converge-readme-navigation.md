@@ -1,8 +1,8 @@
 ---
 title: "Converge README Navigation"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -28,8 +28,8 @@ Push, merge, and live actions are not authorized.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-RNC-007 | Propose the package | platform | Queued | Not executed | Staged QA |
-| WORK-002 | VAL-RNC-001, VAL-RNC-002 | Contract, validator, tests, activation | platform | Queued | Not executed | Focused tests, staged QA |
+| WORK-001 | VAL-RNC-007 | Propose the package | platform | Done | Committed `3c40f700` | Staged QA 6/6 PASS |
+| WORK-002 | VAL-RNC-001, VAL-RNC-002 | Contract, validator, tests, activation | platform | Done | Contract, schema, loader, validator, and 20 tests; 23 READMEs pending | Focused tests, staged QA |
 | WORK-003 | VAL-RNC-003 | Stage 03 index; remove `INDEX-*` | platform | Queued | Not executed | Focused tests, staged QA |
 | WORK-004 | VAL-RNC-003 | Stage 90; remove `COLLECTION-INDEX-*` | platform | Queued | Not executed | Focused tests, staged QA |
 | WORK-005 | VAL-RNC-003 | Knowledge index | platform | Queued | Not executed | Focused tests, staged QA |
@@ -67,8 +67,8 @@ archive ledger package.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | Not executed | Pending |
-| [WORK-002](../plan.md#work-breakdown) | Not executed | Pending |
+| [WORK-001](../plan.md#work-breakdown) | Proposed | Staged QA |
+| [WORK-002](../plan.md#work-breakdown) | Contract and validator added | Focused tests and staged QA |
 | [WORK-003](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-004](../plan.md#work-breakdown) | Not executed | Pending |
 | [WORK-005](../plan.md#work-breakdown) | Not executed | Pending |

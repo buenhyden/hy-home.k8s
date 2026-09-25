@@ -1,8 +1,8 @@
 ---
 title: "README Navigation Contract Implementation Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-25"
 layer: "specs"
@@ -151,6 +151,7 @@ def load_links():
 
 
 LINKS = load_links()
+FENCE = "`" * 3
 ROUTER = "common/readme-stage-index"
 IMPLEMENTATION = "common/readme-implementation"
 
@@ -222,8 +223,8 @@ class ReadmeNavigationTests(unittest.TestCase):
         self.assertIn("README-NAV-LABEL", codes(text))
 
     def test_nested_tree_fails_and_flat_tree_passes(self):
-        nested = GOOD_ROUTER + "\n```text\ns/\n├── 0001-a/\n│   └── spec.md\n└── 0002-b/\n```\n"
-        flat = GOOD_ROUTER + "\n```text\ns/\n├── 0001-a/\n└── 0002-b/\n```\n"
+        nested = GOOD_ROUTER + f"\n{FENCE}text\ns/\n├── 0001-a/\n│   └── spec.md\n└── 0002-b/\n{FENCE}\n"
+        flat = GOOD_ROUTER + f"\n{FENCE}text\ns/\n├── 0001-a/\n└── 0002-b/\n{FENCE}\n"
         self.assertIn("README-NAV-TREE", codes(nested))
         self.assertEqual(codes(flat), [])
 
@@ -498,6 +499,7 @@ README_NAV_NESTED_TREE = re.compile(r"^(?:[│|] {2,3}| {4})+[├└]──", re
 README_NAV_CODE_SPAN = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
 README_NAV_FOLDER_LABEL = re.compile(r"\[([^\]\n]*/)\]\(<?([^)\s>]+)>?")
 README_NAV_TABLE_RULE = re.compile(r"\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?")
+README_NAV_HTML_HREF = re.compile(r"<a\s[^>]*?href\s*=\s*[\"']([^\"']+)[\"']", re.I)
 REGULAR_MODES = frozenset({"100644", "100755"})
 
 
@@ -590,8 +592,12 @@ def _readme_section(text: str, heading: str) -> str:
 def _readme_targets(
     source: PurePosixPath, markdown: str, definitions: str
 ) -> list[tuple[str, PurePosixPath]]:
+    # The canonical extractor masks inline HTML; a listing hidden in raw HTML
+    # anchors still lists children, so their href values count here too.
+    visible, _ = _readme_visible_lines(markdown)
+    hrefs = README_NAV_HTML_HREF.findall("\n".join(visible))
     found = []
-    for raw in _extract_links(markdown, definitions_text=definitions):
+    for raw in (*_extract_links(markdown, definitions_text=definitions), *hrefs):
         kind, target = _local_destination(source, raw)
         if kind == "local" and target is not None:
             found.append((raw, target))

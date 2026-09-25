@@ -5690,5 +5690,75 @@
     "docs/98.archive/superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md",
     "docs/98.archive/superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md",
     "docs/98.archive/superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md"
-  ]
+  ],
+  "readme_navigation": {
+    "placeholders": [
+      "README.md",
+      ".gitkeep"
+    ],
+    "forbidden_index_columns": [
+      "Status",
+      "Updated",
+      "Last Updated",
+      "상태",
+      "최종 수정",
+      "현재성"
+    ],
+    "max_deep_links_per_child": 1,
+    "profiles": {
+      "common/readme-repository": {
+        "section": "Repository Map",
+        "complete": false
+      },
+      "common/readme-stage-index": {
+        "section": "Document Index",
+        "complete": true
+      },
+      "common/readme-collection-index": {
+        "section": "Item Index",
+        "complete": true
+      },
+      "common/readme-implementation": {
+        "section": "Structure",
+        "complete": false
+      },
+      "common/readme-audit-pack": {
+        "section": "Report Index",
+        "complete": true
+      },
+      "common/readme-data-pack": {
+        "section": "Item Index",
+        "complete": true
+      },
+      "common/readme-research-pack": {
+        "section": "Report Index",
+        "complete": true
+      }
+    },
+    "pending_paths": [
+      ".agents/README.md",
+      "README.md",
+      "docs/01.requirements/README.md",
+      "docs/02.architecture/README.md",
+      "docs/02.architecture/decisions/README.md",
+      "docs/02.architecture/descriptions/README.md",
+      "docs/03.specs/README.md",
+      "docs/05.operations/README.md",
+      "docs/05.operations/guides/README.md",
+      "docs/05.operations/incidents/README.md",
+      "docs/05.operations/policies/README.md",
+      "docs/05.operations/runbooks/README.md",
+      "docs/90.references/README.md",
+      "docs/90.references/research/0001-workspace-engineering/README.md",
+      "docs/90.references/research/README.md",
+      "docs/98.archive/README.md",
+      "docs/99.templates/README.md",
+      "docs/99.templates/templates/README.md",
+      "examples/azure/gitops/README.md",
+      "gitops/README.md",
+      "policy/README.md",
+      "scripts/README.md",
+      "tests/README.md"
+    ]
+  }
 }

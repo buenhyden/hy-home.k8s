@@ -5046,6 +5046,293 @@ def _owner_diagnostics(context: Context) -> list[Diagnostic]:
     return _owner_state(context)[1]
 
 
+README_NAV_NESTED_TREE = re.compile(r"^(?:[│|] {2,3}| {4})+[├└]──", re.M)
+README_NAV_CODE_SPAN = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
+README_NAV_FOLDER_LABEL = re.compile(r"\[([^\]\n]*/)\]\(<?([^)\s>]+)>?")
+README_NAV_TABLE_RULE = re.compile(r"\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?")
+README_NAV_HTML_HREF = re.compile(r"<a\s[^>]*?href\s*=\s*[\"']([^\"']+)[\"']", re.I)
+REGULAR_MODES = frozenset({"100644", "100755"})
+
+
+@dataclass(frozen=True)
+class ReadmeSource:
+    profile_id: str
+    text: str
+
+
+@dataclass(frozen=True)
+class TrackedTree:
+    """Stage-0 index entries by mode, plus every folder they imply."""
+
+    modes: Mapping[PurePosixPath, str]
+    folders: frozenset[PurePosixPath]
+
+    @classmethod
+    def from_modes(cls, modes: Mapping[PurePosixPath, str]) -> "TrackedTree":
+        folders = {
+            parent
+            for path in modes
+            for parent in path.parents
+            if parent != PurePosixPath(".")
+        }
+        return cls(dict(modes), frozenset(folders))
+
+    def kind(self, path: PurePosixPath) -> str | None:
+        if path in self.folders:
+            return "folder"
+        mode = self.modes.get(path)
+        if mode is None:
+            return None
+        return "file" if mode in REGULAR_MODES else "leaf"
+
+    def children(
+        self, folder: PurePosixPath, placeholders: frozenset[str]
+    ) -> dict[str, str]:
+        prefix = "" if folder == PurePosixPath(".") else f"{folder.as_posix()}/"
+        found: dict[str, str] = {}
+        for path in self.modes:
+            value = path.as_posix()
+            if not value.startswith(prefix):
+                continue
+            head, separator, _ = value[len(prefix) :].partition("/")
+            if not separator and head in placeholders:
+                continue
+            found[head] = "folder" if separator else self.kind(path) or "file"
+        return found
+
+
+def _readme_visible_lines(text: str) -> tuple[list[str], list[str]]:
+    """Split Markdown into lines outside fences and the fenced block bodies."""
+
+    visible: list[str] = []
+    blocks: list[str] = []
+    fence: str | None = None
+    body: list[str] = []
+    for line in text.split("\n"):
+        opener = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        if fence is None and opener:
+            fence, body = opener.group(1), []
+            visible.append("")
+            continue
+        if fence is not None:
+            if line.strip().startswith(fence):
+                blocks.append("\n".join(body))
+                fence = None
+            else:
+                body.append(line)
+            visible.append("")
+            continue
+        visible.append(line)
+    return visible, blocks
+
+
+def _readme_section(text: str, heading: str) -> str:
+    visible, _ = _readme_visible_lines(text)
+    chosen: list[str] = []
+    inside = False
+    for raw, line in zip(text.split("\n"), visible):
+        match = re.match(r"^(#{1,2})\s+(.+?)\s*#*\s*$", line)
+        if match:
+            inside = len(match.group(1)) == 2 and match.group(2) == heading
+            continue
+        if inside:
+            chosen.append(raw)
+    return "\n".join(chosen)
+
+
+def _readme_targets(
+    source: PurePosixPath, markdown: str, definitions: str
+) -> list[tuple[str, PurePosixPath]]:
+    # The canonical extractor masks inline HTML; a listing hidden in raw HTML
+    # anchors still lists children, so their href values count here too.
+    visible, _ = _readme_visible_lines(markdown)
+    hrefs = README_NAV_HTML_HREF.findall("\n".join(visible))
+    found = []
+    for raw in (*_extract_links(markdown, definitions_text=definitions), *hrefs):
+        kind, target = _local_destination(source, raw)
+        if kind == "local" and target is not None:
+            found.append((raw, target))
+    return found
+
+
+def _readme_relative(
+    folder: PurePosixPath, target: PurePosixPath
+) -> tuple[str, ...] | None:
+    if folder == PurePosixPath("."):
+        return target.parts
+    try:
+        return target.relative_to(folder).parts
+    except ValueError:
+        return None
+
+
+def _readme_is_deep(parts: tuple[str, ...]) -> bool:
+    return len(parts) > 1 and not (len(parts) == 2 and parts[1] == "README.md")
+
+
+def _readme_table_headers(markdown: str) -> list[frozenset[str]]:
+    headers: list[frozenset[str]] = []
+    previous = ""
+    for line in markdown.split("\n"):
+        stripped = line.strip()
+        if previous.startswith("|") and README_NAV_TABLE_RULE.fullmatch(stripped):
+            headers.append(
+                frozenset(cell.strip() for cell in previous.strip("|").split("|"))
+            )
+        previous = stripped
+    return headers
+
+
+def _readme_findings(
+    path: PurePosixPath,
+    source: ReadmeSource,
+    rule: Any,
+    navigation: Any,
+    tree: TrackedTree,
+) -> list[Diagnostic]:
+    folder = path.parent
+    text = source.text
+    visible, blocks = _readme_visible_lines(text)
+    section = _readme_section(text, rule.section)
+    found: list[Diagnostic] = []
+
+    def report(code: str, expected: str, actual: str) -> None:
+        found.append(_diag(code, path, source.profile_id, expected, actual))
+
+    section_targets = _readme_targets(path, section, text)
+    for raw, target in section_targets:
+        parts = _readme_relative(folder, target)
+        if parts and _readme_is_deep(parts):
+            report(
+                "README-NAV-DEPTH",
+                "navigation links reach direct children",
+                f"{raw} reaches {'/'.join(parts)}",
+            )
+    for block in blocks:
+        if "──" in block and README_NAV_NESTED_TREE.search(block):
+            report(
+                "README-NAV-TREE",
+                "a fenced tree of direct children",
+                "a fenced tree nests below the first level",
+            )
+    for label, raw in README_NAV_FOLDER_LABEL.findall("\n".join(visible)):
+        kind, target = _local_destination(path, raw)
+        if kind == "local" and target is not None and tree.kind(target) != "folder":
+            report(
+                "README-NAV-LABEL",
+                f"label {label} resolves to a folder",
+                f"{raw} is not a folder",
+            )
+    deep: dict[str, set[str]] = collections.defaultdict(set)
+    for _, target in _readme_targets(path, text, text):
+        parts = _readme_relative(folder, target)
+        if parts and _readme_is_deep(parts):
+            deep[parts[0]].add("/".join(parts))
+    scoped = [section, *(line for line in visible if line.lstrip().startswith("|"))]
+    for chunk in scoped:
+        for value in README_NAV_CODE_SPAN.findall(chunk):
+            value = value.strip().rstrip("/")
+            if not value or " " in value or value.startswith(("/", "-", "~")):
+                continue
+            candidate = PurePosixPath(posixpath.normpath((folder / value).as_posix()))
+            parts = _readme_relative(folder, candidate)
+            if tree.kind(candidate) is not None and parts and _readme_is_deep(parts):
+                deep[parts[0]].add("/".join(parts))
+    for child, targets in sorted(deep.items()):
+        if len(targets) > navigation.max_deep_links_per_child:
+            report(
+                "README-NAV-ENUMERATION",
+                f"at most {navigation.max_deep_links_per_child} deep target in {child}/",
+                f"{len(targets)} targets: {', '.join(sorted(targets)[:4])}",
+            )
+    if rule.complete:
+        reached = {
+            parts[0]
+            for _, target in section_targets
+            if (parts := _readme_relative(folder, target))
+        }
+        for child, kind in sorted(
+            tree.children(folder, navigation.placeholders).items()
+        ):
+            if (kind == "folder" or child.endswith(".md")) and child not in reached:
+                report(
+                    "README-NAV-COMPLETE",
+                    f"{rule.section} reaches {child}",
+                    f"{child} is unreachable",
+                )
+    for header in _readme_table_headers(section):
+        banned = sorted(header & navigation.forbidden_index_columns)
+        if banned:
+            report(
+                "README-NAV-COPY",
+                "no copied status or date columns",
+                ", ".join(banned),
+            )
+    return found
+
+
+def readme_navigation_diagnostics(
+    navigation: Any,
+    readmes: Mapping[PurePosixPath, ReadmeSource],
+    tree: TrackedTree,
+) -> list[Diagnostic]:
+    """SPEC-0091: each README lists only its direct children."""
+
+    diagnostics: list[Diagnostic] = []
+    for path, source in sorted(readmes.items(), key=lambda item: item[0].as_posix()):
+        rule = navigation.profiles.get(source.profile_id)
+        if rule is None:
+            continue
+        found = _readme_findings(path, source, rule, navigation, tree)
+        if path in navigation.pending_paths:
+            if not found:
+                diagnostics.append(
+                    _diag(
+                        "README-NAV-PENDING",
+                        path,
+                        source.profile_id,
+                        "a pending README that still violates the contract",
+                        "it passes; remove it from pending_paths",
+                    )
+                )
+            continue
+        diagnostics.extend(found)
+    for pending in sorted(navigation.pending_paths, key=PurePosixPath.as_posix):
+        if tree.kind(pending) is None:
+            diagnostics.append(
+                _diag(
+                    "README-NAV-PENDING",
+                    pending,
+                    "",
+                    "a tracked README",
+                    "pending path is not tracked",
+                )
+            )
+    return diagnostics
+
+
+def _readme_navigation_diagnostics(context: Context) -> list[Diagnostic]:
+    registry = context.document_registry or load_registry(context.root)
+    navigation = getattr(registry, "readme_navigation", None)
+    if navigation is None:
+        return []
+    readmes = {
+        path: ReadmeSource(context.profiles[path].profile_id, context.texts[path])
+        for path in context.paths
+        if path.name == "README.md" and path in context.texts
+    }
+    modes = {
+        entry.path: entry.mode
+        for entry in _parse_ls_files_stage_z(
+            _run_git(context.root, ("ls-files", "--stage", "-z"))
+        )
+        if entry.stage == 0
+    }
+    return readme_navigation_diagnostics(
+        navigation, readmes, TrackedTree.from_modes(modes)
+    )
+
+
 def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     if not context.governance_current_paths:
@@ -5482,6 +5769,7 @@ def _raw_diagnostics(
     )
     diagnostics.extend(_index_diagnostics(context))
     diagnostics.extend(_collection_index_diagnostics(context))
+    diagnostics.extend(_readme_navigation_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -5633,6 +5921,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
                 + _index_diagnostics(context)
                 + _collection_index_diagnostics(context)
+                + _readme_navigation_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
                 + _owner_diagnostics(context)
             )
