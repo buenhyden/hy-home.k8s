@@ -518,17 +518,12 @@
       "additionalProperties": false,
       "required": [
         "index",
-        "ledger",
         "default",
         "rules"
       ],
       "properties": {
         "index": {
           "const": "docs/98.archive/README.md"
-        },
-        "ledger": {
-          "type": "string",
-          "pattern": "^docs/98\\.archive/(?:README|[a-z0-9-]+)\\.md$"
         },
         "default": {
           "const": "reject"
@@ -706,8 +701,7 @@
       ],
       "properties": {
         "index": {
-          "type": "string",
-          "pattern": "^docs/98\\.archive/(?:README|[a-z0-9-]+)\\.md$"
+          "const": "docs/98.archive/README.md"
         },
         "heading": {
           "const": "Retention Assessment"

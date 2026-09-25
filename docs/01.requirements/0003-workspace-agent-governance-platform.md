@@ -202,8 +202,6 @@ Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
 Constraining every README to its direct children under one registry
 navigation contract is owned by
 [SPEC-0091](../03.specs/0091-readme-navigation-contract/spec.md).
-Moving the archive tables out of the Stage 98 README into one ledger is owned by
-[SPEC-0092](../03.specs/0092-archive-ledger-split/spec.md).
 
 ## Traceability
 

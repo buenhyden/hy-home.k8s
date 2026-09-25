@@ -39,9 +39,6 @@ if TYPE_CHECKING:
 if __package__:
     from scripts.archive_dispositions import (
         ROUTE_DISPOSITION_PROFILES,
-        ARCHIVE_INDEX,
-        CATALOG_HEADER,
-        archive_ledger_path,
         assessment_line_span,
         catalog_line_span,
         catalog_parity_diagnostics,
@@ -73,9 +70,6 @@ if __package__:
 else:  # Direct import-only execution from scripts/.
     from archive_dispositions import (  # type: ignore[no-redef]
         ROUTE_DISPOSITION_PROFILES,
-        ARCHIVE_INDEX,
-        CATALOG_HEADER,
-        archive_ledger_path,
         assessment_line_span,
         catalog_line_span,
         catalog_parity_diagnostics,
@@ -174,6 +168,7 @@ def current_link_admitted(
 
 
 _UNSET = object()
+ARCHIVE_INDEX = ARCHIVE_ROOT / "README.md"
 CURRENT_MARKDOWN_MAX_BYTES = 1_000_000
 CURRENT_MARKDOWN_TOTAL_BYTES = 32 * 1024 * 1024
 CURRENT_MARKDOWN_MAX_FILES = 1024
@@ -3448,7 +3443,7 @@ def sealed_generic_ledgers(root: Path) -> tuple[tuple[str, bytes], ...]:
     return tuple(ledgers)
 
 
-def _read_repository_index(root: Path, path: PurePosixPath = ARCHIVE_INDEX) -> str:
+def _read_repository_index(root: Path) -> str:
     """Read the Stage 98 index through held descriptors within a fixed budget."""
 
     current_fd: int | None = None
@@ -3458,7 +3453,7 @@ def _read_repository_index(root: Path, path: PurePosixPath = ARCHIVE_INDEX) -> s
             root,
             os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
         )
-        for part in path.parts[:-1]:
+        for part in ARCHIVE_INDEX.parts[:-1]:
             child_fd = os.open(
                 part,
                 os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
@@ -3467,7 +3462,7 @@ def _read_repository_index(root: Path, path: PurePosixPath = ARCHIVE_INDEX) -> s
             os.close(current_fd)
             current_fd = child_fd
         descriptor = os.open(
-            path.name,
+            ARCHIVE_INDEX.name,
             os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
             dir_fd=current_fd,
         )
@@ -3492,7 +3487,7 @@ def _read_repository_index(root: Path, path: PurePosixPath = ARCHIVE_INDEX) -> s
             )
         after = os.fstat(descriptor)
         linked = os.stat(
-            path.name,
+            ARCHIVE_INDEX.name,
             dir_fd=current_fd,
             follow_symlinks=False,
         )
@@ -3525,63 +3520,19 @@ def _read_repository_index(root: Path, path: PurePosixPath = ARCHIVE_INDEX) -> s
                 pass
 
 
-def ledger_residue_diagnostics(
-    registry: "Registry | None", readme_text: str
-) -> list[tuple[str, str]]:
-    """Report a machine table left in the index once a ledger holds them."""
-
-    ledger = archive_ledger_path(registry)
-    if ledger == ARCHIVE_INDEX:
-        return []
-    lines = set(readme_text.splitlines())
-    assessment = getattr(registry, "archive_assessment", None)
-    tables = [_INDEX_HEADER, CATALOG_HEADER]
-    if assessment is not None:
-        tables.append(f"### {assessment.heading}")
-    found = [table for table in tables if table in lines]
-    if _INDEX_MARKER.search(readme_text):
-        found.append("manifest marker")
-    return [("ARCHIVE-LEDGER-RESIDUE", ARCHIVE_INDEX.as_posix()) for _ in found]
-
-
-def _read_archive_ledger(
-    root: Path, registry: "Registry | None"
-) -> tuple[str, list[tuple[str, str]]]:
-    """Read the ledger the registry names and check the index kept no table."""
-
-    ledger = archive_ledger_path(registry)
-    found: list[tuple[str, str]] = []
-    try:
-        text = _read_repository_index(root, ledger)
-    except ArchiveContractError as exc:
-        text = ""
-        missing = ledger != ARCHIVE_INDEX and not (root / ledger).is_file()
-        found.append(
-            ("ARCHIVE-LEDGER-MISSING" if missing else exc.code, ledger.as_posix())
-        )
-    if ledger != ARCHIVE_INDEX:
-        try:
-            readme = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
-            readme = ""
-        found.extend(ledger_residue_diagnostics(registry, readme))
-    return text, found
-
-
 def _parse_repository_index(
     text: str, registry: "Registry | None" = None
 ) -> tuple[dict[str, tuple[str, ...]], int, list[ArchiveDiagnostic]]:
     diagnostics: list[ArchiveDiagnostic] = []
-    where = archive_ledger_path(registry).as_posix()
     lines = text.splitlines()
     headers = [offset for offset, line in enumerate(lines) if line == _INDEX_HEADER]
     catalog = catalog_line_span(lines)
     assessment = assessment_line_span(registry, lines) if registry is not None else None
     if len(headers) != 1:
-        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", where)]
+        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
     header = headers[0]
     if header + 1 >= len(lines) or lines[header + 1] != _INDEX_SEPARATOR:
-        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", where)]
+        return {}, 0, [_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())]
     raw_rows: list[str] = []
     for line in lines[header + 2 :]:
         if not line.startswith("|"):
@@ -3596,13 +3547,17 @@ def _parse_repository_index(
         if (catalog is None or not catalog[0] <= offset < catalog[1])
         and (assessment is None or not assessment[0] <= offset < assessment[1])
     ):
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", where))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+        )
     rows: dict[str, tuple[str, ...]] = {}
     link_total = 0
     for line in raw_rows:
         cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
         if len(cells) != 9:
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", where))
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
         link = _INDEX_LINK.fullmatch(cells[0])
         code_cells = tuple(
@@ -3613,7 +3568,9 @@ def _parse_repository_index(
             or any(match is None for match in code_cells)
             or not cells[6].isdigit()
         ):
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", where))
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
         path = f"docs/98.archive/{link.group('target')}"
         replacement = cells[7]
@@ -3622,7 +3579,7 @@ def _parse_repository_index(
         if replacement_link is not None:
             replacement_target = posixpath.normpath(
                 posixpath.join(
-                    posixpath.dirname(where),
+                    posixpath.dirname(ARCHIVE_INDEX.as_posix()),
                     replacement_link.group("target"),
                 )
             )
@@ -3637,7 +3594,9 @@ def _parse_repository_index(
             or path in rows
             or not replacement_valid
         ):
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", where))
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
         values = tuple(
             match.group("value") for match in code_cells if match is not None
@@ -3650,7 +3609,9 @@ def _parse_repository_index(
         or int(markers[0].group("records")) != len(rows)
         or int(markers[0].group("links")) != link_total
     ):
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", where))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX.as_posix())
+        )
     return rows, link_total, diagnostics
 
 
@@ -3840,10 +3801,12 @@ def validate_repository_archive(
                 diagnostics.append(
                     _diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", record.path)
                 )
+    try:
+        index_text = _read_repository_index(root)
+    except ArchiveContractError as exc:
+        index_text = ""
+        diagnostics.append(_diagnostic(exc.code, ARCHIVE_INDEX.as_posix()))
     current_registry = repository_registry(root)
-    ledger = archive_ledger_path(current_registry).as_posix()
-    index_text, ledger_diagnostics = _read_archive_ledger(root, current_registry)
-    diagnostics.extend(_diagnostic(code, path) for code, path in ledger_diagnostics)
     index_rows, index_links, index_diagnostics = _parse_repository_index(
         index_text, current_registry
     )
@@ -3864,9 +3827,11 @@ def validate_repository_archive(
             )
         )
     if frozenset(index_rows) != actual:
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-PARITY", ledger))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-PARITY", ARCHIVE_INDEX.as_posix())
+        )
     if index_links != record_report.historical_link_count:
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", ledger))
+        diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", ARCHIVE_INDEX.as_posix()))
     record_link_counts = dict(record_report.record_link_counts)
     for path, metadata in metadata_by_path.items():
         row = index_rows.get(path)

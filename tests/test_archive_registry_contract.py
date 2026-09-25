@@ -225,9 +225,7 @@ class CitationTableTests(unittest.TestCase):
 class LegacyRetainedSetTests(unittest.TestCase):
     def test_legacy_set_is_sixteen_catalog_rows(self) -> None:
         rows, errors = dispositions.parse_catalog(
-            (ROOT / dispositions.archive_ledger_path(REGISTRY)).read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
         )
         self.assertEqual(errors, ())
         legacy = REGISTRY.legacy_rebased_retained_paths
