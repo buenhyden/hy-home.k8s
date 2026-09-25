@@ -87,6 +87,17 @@ the fixtures, not the contract. Hosted `ci-summary` is not observed.
   ledger package moves its machine tables.
 - `README-NAV-ENUMERATION` counts resolvable targets only; plain-text member
   lists remain a review concern, as the Spec states.
+- The final whole-branch review found that code spans resolved only from the
+  README folder, that code-formatted folder labels, emphasized header cells,
+  and double-backtick spans escaped their rules, and that a pending README
+  without a navigation profile was never checked. The fix commit closes these
+  with tests; the gitops and infrastructure contract matrices moved from
+  `Structure` to `Configuration Boundary`, where the repository quality gate
+  still pins their paths. Not fixed, as minor: HTML inside comments counts,
+  setext headings do not end the section, and the router or collection role is
+  descriptive only.
+- `8d405a3b` raised the archive Git budget from 258 to 259 because `main` at
+  `438e69aa` already exceeded it after the SPEC-0090 envelope commit.
 - The implementer subagent for the root README stalled on one tool call; the
   integrator stopped it and finished each area inline.
 

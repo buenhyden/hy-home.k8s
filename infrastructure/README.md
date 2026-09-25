@@ -1,10 +1,10 @@
 ---
 title: "infrastructure"
-version: "0.1.3"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 ---
 # infrastructure
 
@@ -76,6 +76,18 @@ infrastructure/
 | `coredns-custom.yaml` | CoreDNS zone owned by platform maintainers. | Bootstrap applies it to `kube-system` and restarts CoreDNS; it resolves `openbao`, `prometheus` and `grafana.hy.home.arpa` to the host address `192.168.0.13` (ADR-0046). Bootstrap also creates the gateway CA ConfigMaps `openbao-ca`, `hy-home-root-ca` and `kiali-cabundle`. | Depends on the external Traefik routes for OpenBao, the Prometheus API (Basic Auth) and Grafana, and on the k3s `coredns-custom` import. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live resolution requires a running cluster. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
 
+### Infrastructure Test Inventory
+
+라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
+Test Inventory가 소유한다.
+
+## Configuration Boundary
+
+Repository files own bootstrap inputs and static interface contracts. The
+operator owns the Linux server host, Docker, kubeconfig, live cluster, external services,
+credentials, certificates, and approved bootstrap timing. Secret values and
+private runtime state must not be copied into this tree or validation evidence.
+
 ### Host Runtime Prerequisite Matrix
 
 이 표는 Linux server + native Docker Engine + k3d live validation을 시작하기 전
@@ -104,18 +116,6 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 | `root app application` | Owns `gitops/clusters/local/root-application.yaml`, `gitops/apps/root`, and App-of-Apps source path/branch contracts. | Operator owns the first root app apply and any approved recovery action before ArgoCD reconciliation is healthy. | `./bootstrap-local.sh` may run `kubectl apply` for the root GitOps Application as a bootstrap-only exception. | `bash scripts/validate-gitops-structure.sh`; live `infrastructure/verify/verify-gitops.sh` after bootstrap. | Steady-state app changes stay in Git PRs and ArgoCD reconciliation; direct apply is not normal operation. |
 | `Vault connection contract` | Owns `coredns-custom.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, the `openbao-ca` ConfigMap bootstrap, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and ESO reaches OpenBao over TLS through the external Traefik (ADR-0046). | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
 | `PostgreSQL and Valkey connection contract` | Owns Kubernetes Service/EndpointSlice contracts, ExternalSecret target naming, and static port/address checks for PostgreSQL and Valkey. | External service workspace owns PostgreSQL/Valkey runtime, container/network state, credentials, TLS/CA material if enabled, and rotation evidence. | Bootstrap may run TCP reachability prechecks and create the initial ArgoCD Valkey Secret from approved Vault source. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-external-services.sh` and `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not start external services, change `.env` values, rotate credentials, or prove live reachability. |
-
-### Infrastructure Test Inventory
-
-라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
-Test Inventory가 소유한다.
-
-## Configuration Boundary
-
-Repository files own bootstrap inputs and static interface contracts. The
-operator owns the Linux server host, Docker, kubeconfig, live cluster, external services,
-credentials, certificates, and approved bootstrap timing. Secret values and
-private runtime state must not be copied into this tree or validation evidence.
 
 ## Validation
 

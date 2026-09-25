@@ -198,6 +198,29 @@ class ReadmeNavigationTests(unittest.TestCase):
             codes(GOOD_ROUTER, pending=("s/README.md",)), ["README-NAV-PENDING"]
         )
 
+    def test_root_relative_code_spans_count_in_navigation(self):
+        rows = (
+            "\n| Path | Use |\n| --- | --- |\n"
+            "| `s/0001-a/spec.md` | A |\n| ``s/0001-a/plan.md`` | A |\n"
+        )
+        self.assertIn("README-NAV-ENUMERATION", codes(GOOD_ROUTER + rows))
+        # Outside navigation a root path cites contract evidence.
+        self.assertEqual(codes(GOOD_ROUTER + "\n## Other\n" + rows), [])
+
+    def test_code_formatted_folder_label_on_file_fails(self):
+        text = GOOD_ROUTER + "\nSee [`0001-a/`](./0001-a/spec.md).\n"
+        self.assertIn("README-NAV-LABEL", codes(text))
+
+    def test_emphasized_status_header_fails(self):
+        text = GOOD_ROUTER.replace("| Package | Purpose |", "| Package | **Status** |")
+        self.assertIn("README-NAV-COPY", codes(text))
+
+    def test_pending_readme_without_navigation_profile_fails(self):
+        self.assertEqual(
+            codes("# W\n", profile="x/other", pending=("s/README.md",)),
+            ["README-NAV-PENDING"],
+        )
+
     def test_untracked_pending_path_fails(self):
         self.assertIn(
             "README-NAV-PENDING", codes(GOOD_ROUTER, pending=("missing/README.md",))

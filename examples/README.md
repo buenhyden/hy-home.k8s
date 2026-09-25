@@ -1,10 +1,10 @@
 ---
 title: "examples"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 ---
 # examples
 
@@ -59,7 +59,7 @@ examples/
 `examples/` is reference-only until assets are copied into their canonical
 owner and validated. Provider credentials, secret material, and live account or
 cluster mutation do not belong here; active local desired state remains under
-[`gitops/`](../gitops/README.md).
+[`gitops/`](../gitops/).
 
 ## Validation
 

@@ -137,7 +137,12 @@ folder is a collection. A README whose profile has no navigation entry, such
 as the workspace staging README, is not checked. `README-NAV-ENUMERATION` is a
 count of resolvable targets: a plain-text list that neither links nor names a
 tracked path in a code span is outside it, and `README-NAV-TREE` and review
-cover that case.
+cover that case. A code span resolves from the README folder; inside the
+navigation section it also resolves from the repository root, while a root
+path in a table outside that section cites contract evidence and is not
+counted. Code and emphasis markup around a link label or a table header cell
+is ignored. A pending README whose profile has no navigation entry fails
+`README-NAV-PENDING`.
 
 ## Failure Modes & Fallback / Human Escalation
 

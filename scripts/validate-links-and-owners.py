@@ -4635,8 +4635,10 @@ def _owner_diagnostics(context: Context) -> list[Diagnostic]:
 
 
 README_NAV_NESTED_TREE = re.compile(r"^(?:[│|] {2,3}| {4})+[├└]──", re.M)
-README_NAV_CODE_SPAN = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
-README_NAV_FOLDER_LABEL = re.compile(r"\[([^\]\n]*/)\]\(<?([^)\s>]+)>?")
+README_NAV_CODE_SPAN = re.compile(r"(?<!`)(`{1,2})(?!`)([^`\n]+?)(?<!`)\1(?!`)")
+README_NAV_FOLDER_LABEL = re.compile(r"\[([^\]\n]*)\]\(<?([^)\s>]+)>?")
+# Code and emphasis markup around a label or header cell is not its text.
+README_NAV_MARKUP = "`*_ "
 README_NAV_TABLE_RULE = re.compile(r"\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?")
 README_NAV_HTML_HREF = re.compile(r"<a\s[^>]*?href\s*=\s*[\"']([^\"']+)[\"']", re.I)
 REGULAR_MODES = frozenset({"100644", "100755"})
@@ -4765,7 +4767,10 @@ def _readme_table_headers(markdown: str) -> list[frozenset[str]]:
         stripped = line.strip()
         if previous.startswith("|") and README_NAV_TABLE_RULE.fullmatch(stripped):
             headers.append(
-                frozenset(cell.strip() for cell in previous.strip("|").split("|"))
+                frozenset(
+                    cell.strip(README_NAV_MARKUP)
+                    for cell in previous.strip("|").split("|")
+                )
             )
         previous = stripped
     return headers
@@ -4804,6 +4809,8 @@ def _readme_findings(
                 "a fenced tree nests below the first level",
             )
     for label, raw in README_NAV_FOLDER_LABEL.findall("\n".join(visible)):
+        if not label.strip(README_NAV_MARKUP).endswith("/"):
+            continue
         kind, target = _local_destination(path, raw)
         if kind == "local" and target is not None and tree.kind(target) != "folder":
             report(
@@ -4818,14 +4825,20 @@ def _readme_findings(
             deep[parts[0]].add("/".join(parts))
     scoped = [section, *(line for line in visible if line.lstrip().startswith("|"))]
     for chunk in scoped:
-        for value in README_NAV_CODE_SPAN.findall(chunk):
+        for _, value in README_NAV_CODE_SPAN.findall(chunk):
             value = value.strip().rstrip("/")
             if not value or " " in value or value.startswith(("/", "-", "~")):
                 continue
-            candidate = PurePosixPath(posixpath.normpath((folder / value).as_posix()))
-            parts = _readme_relative(folder, candidate)
-            if tree.kind(candidate) is not None and parts and _readme_is_deep(parts):
-                deep[parts[0]].add("/".join(parts))
+            # Inside the navigation section a span may name its path from the
+            # repository root; elsewhere root paths cite contract evidence.
+            bases = (folder, PurePosixPath(".")) if chunk is section else (folder,)
+            for base in bases:
+                candidate = PurePosixPath(posixpath.normpath((base / value).as_posix()))
+                parts = _readme_relative(folder, candidate)
+                if tree.kind(candidate) is not None and parts:
+                    if _readme_is_deep(parts):
+                        deep[parts[0]].add("/".join(parts))
+                    break
     for child, targets in sorted(deep.items()):
         if len(targets) > navigation.max_deep_links_per_child:
             report(
@@ -4870,6 +4883,16 @@ def readme_navigation_diagnostics(
     for path, source in sorted(readmes.items(), key=lambda item: item[0].as_posix()):
         rule = navigation.profiles.get(source.profile_id)
         if rule is None:
+            if path in navigation.pending_paths:
+                diagnostics.append(
+                    _diag(
+                        "README-NAV-PENDING",
+                        path,
+                        source.profile_id,
+                        "a pending README with a navigation profile",
+                        "its profile has no navigation entry",
+                    )
+                )
             continue
         found = _readme_findings(path, source, rule, navigation, tree)
         if path in navigation.pending_paths:

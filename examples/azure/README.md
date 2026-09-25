@@ -1,10 +1,10 @@
 ---
 title: "Azure Executable Examples"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-26"
 ---
 # Azure Executable Examples
 
@@ -27,9 +27,9 @@ readiness, cost, or provider-latest configuration.
 
 | Path | Role | Authority boundary |
 | --- | --- | --- |
-| [`infrastructure/`](infrastructure/README.md) | AKS, AGC, network, database, and cache Bicep examples. | Executable reference assets; provider inputs and approval remain external. |
-| [`gitops/`](gitops/README.md) | Managed Identity, Gateway API, and secret-provider platform examples. | Executable reference assets; not reconciled by the local ArgoCD tree. |
-| [`kubernetes/`](kubernetes/README.md) | Workload Identity, external-service, and application manifest examples. | Executable reference assets; validate before promotion to an owned desired-state tree. |
+| [`infrastructure/`](infrastructure/) | AKS, AGC, network, database, and cache Bicep examples. | Executable reference assets; provider inputs and approval remain external. |
+| [`gitops/`](gitops/) | Managed Identity, Gateway API, and secret-provider platform examples. | Executable reference assets; not reconciled by the local ArgoCD tree. |
+| [`kubernetes/`](kubernetes/) | Workload Identity, external-service, and application manifest examples. | Executable reference assets; validate before promotion to an owned desired-state tree. |
 
 ## Configuration Boundary
 

@@ -1,10 +1,10 @@
 ---
 title: "gitops"
-version: "0.1.3"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 ---
 # gitops
 
@@ -97,7 +97,7 @@ scan만으로 축소하지 않는다.
 
 | Project    | Allow-list surface                  | Current allowed kinds                                                                                           | Evidence class                                                                                                                                                 | Tightening boundary                                                                                                          | Validation                                                                                                                                                                                                                                             |
 | ---------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `apps`     | `clusterResourceWhitelist`          | None.                                                                                                           | Workloads own no cluster-scoped resources; `apps` namespace is owned by `gitops/platform/namespaces/namespace-apps.yaml`.                                      | Re-add only with an approved app-owned cluster resource design and live reconciliation impact review.                        | `python3 scripts/qa.py full` and `bash scripts/validate-gitops-structure.sh`.                                                                                                                                                       |
+| `apps`     | `clusterResourceWhitelist`          | None.                                                                                                           | Workloads own no cluster-scoped resources; `apps` namespace is owned by the platform namespace manifests.                                      | Re-add only with an approved app-owned cluster resource design and live reconciliation impact review.                        | `python3 scripts/qa.py full` and `bash scripts/validate-gitops-structure.sh`.                                                                                                                                                       |
 | `apps`     | `active namespaceResourceWhitelist` | `AnalysisTemplate`, `DestinationRule`, `Ingress`, `PeerAuthentication`, `Rollout`, `Service`, `VirtualService`. | Active `gitops/workloads/adminer` manifests use these kinds.                                                                                                   | These kinds are required for the current implemented workload pattern.                                                       | `python3 scripts/qa.py full`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`.                                                                                                          |
 | `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/policies/0007-app-gitops-onboarding-policy.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | `python3 scripts/qa.py full` and app onboarding review.                                                                                                                                                                             |
 | `platform` | `platform AppProject allow-lists`   | Raw platform manifests plus rendered chart-managed platform components.                                         | `bash scripts/render-platform-chart-kinds.sh .` renders Helm charts and confirms kind coverage against the platform AppProject after raw manifest scan review. | New platform chart kinds require chart render review and ArgoCD sync impact review before the AppProject allow-list changes. | `bash scripts/render-platform-chart-kinds.sh .`, `python3 scripts/qa.py full`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
@@ -119,6 +119,14 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 | `platform-istiod`                    | `istiod`           | `1.25.2`        | `istio-system`     | `ConfigMap`, `Service`, `ServiceAccount`, `admissionregistration.k8s.io/MutatingWebhookConfiguration`, `admissionregistration.k8s.io/ValidatingWebhookConfiguration`, `apps/Deployment`, `autoscaling/HorizontalPodAutoscaler`, `policy/PodDisruptionBudget`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`, `rbac.authorization.k8s.io/Role`, `rbac.authorization.k8s.io/RoleBinding`. |
 | `platform-kiali`                     | `kiali-operator`   | `2.10.0`        | `istio-system`     | `ServiceAccount`, `apiextensions.k8s.io/CustomResourceDefinition`, `apps/Deployment`, `kiali.io/Kiali`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                                                                  |
 | `platform-rollouts`                  | `argo-rollouts`    | `2.40.9`        | `argo-rollouts`    | `ConfigMap`, `Service`, `ServiceAccount`, `apiextensions.k8s.io/CustomResourceDefinition`, `apps/Deployment`, `networking.k8s.io/Ingress`, `rbac.authorization.k8s.io/ClusterRole`, `rbac.authorization.k8s.io/ClusterRoleBinding`.                                                                                                                                                                                               |
+
+## Configuration Boundary
+
+Git is the desired-state owner for this tree. Secret values remain in approved
+external stores, while manifests may carry only the ExternalSecret, store, and
+route references described in the matrices above. Direct cluster mutation is
+limited to an explicitly approved bootstrap or break-glass path and must be
+reconciled back to Git and operations evidence.
 
 ### Namespace Ownership Matrix
 
@@ -159,14 +167,6 @@ host, port, secret key, TLS/CA, rotation, namespace naming을 바꾸는 작업�
 | `ArgoCD argocd-external-valkey`      | ExternalSecret reads Vault path platform/argocd property `valkey_password` through `vault-backend`.                                                                          | Kubernetes target Secret name stays `argocd-external-valkey` in namespace `argocd`; target key stays `redis-password`.                                              | Platform maintainers own ArgoCD secret wiring; external Valkey owner rotates `valkey_password` in Vault.                                                           | Secret values remain outside Git; ESO refresh interval controls ArgoCD target Secret updates.                                                     | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
 | `ArgoCD argocd-notifications-secret` | ExternalSecret reads Vault path `platform/notifications` property `slack_token` through `vault-backend`.                                                                       | Kubernetes target Secret name stays `argocd-notifications-secret` in namespace `argocd`; target key stays `slack-token`.                                            | Platform maintainers own notification wiring; notification token owner rotates `slack_token` in Vault.                                                             | Secret values remain outside Git; notification tokens must not appear in manifests, docs, or logs.                                                | `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live readiness uses `infrastructure/verify/verify-secrets.sh`.                                                             |
 | `Sample app ExternalSecret`          | Optional onboarding example uses ESO remoteRef key `apps/<appname>/config` through `vault-backend`; the Vault CLI path remains `secret/apps/<appname>/config`.                 | Kubernetes target Secret name follows `<appname>-secret` in namespace `apps`; sample keys are `db_password` and `api_key`.                                          | App operator owns app-specific Vault path requests; platform/security approves Vault policy changes before enabling the sample.                                    | Sample stays value-free and remains commented out in `examples/sample-app/kustomization.yaml` until an app needs it.                              | `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .`; repo-quality validates the sample boundary.                                                                                           |
-
-## Configuration Boundary
-
-Git is the desired-state owner for this tree. Secret values remain in approved
-external stores, while manifests may carry only the ExternalSecret, store, and
-route references described in the matrices above. Direct cluster mutation is
-limited to an explicitly approved bootstrap or break-glass path and must be
-reconciled back to Git and operations evidence.
 
 ## Validation
 

@@ -83,7 +83,7 @@ hy-home.k8s/
 ### Repository Workflow
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md) -> 관련 stage 문서` 순서로 진입한다.
-2. 설계/구현/운영 판단은 가능한 한 `docs/` 단계 문서 체인 전체을 기준으로 추적한다.
+2. 설계/구현/운영 판단은 가능한 한 `docs/` 단계 문서 체인 전체를 기준으로 추적한다.
 3. 새 README나 authored stage 문서는 Template Routing Contract (`docs/99.templates/README.md`)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `.agents/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
