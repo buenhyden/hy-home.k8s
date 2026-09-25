@@ -77,6 +77,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0089-deferred-conflict-resolution/
 ├── 0090-spec0049-retirement/
 ├── 0091-readme-navigation-contract/
+├── 0092-archive-ledger-split/
 └── README.md
 ```
 
@@ -91,6 +92,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | [0089-deferred-conflict-resolution/](./0089-deferred-conflict-resolution/) | SPEC-0088 보류 충돌 해소 |
 | [0090-spec0049-retirement/](./0090-spec0049-retirement/) | SPEC-0049 `retired/` 보존 |
 | [0091-readme-navigation-contract/](./0091-readme-navigation-contract/) | README 탐색 계약 |
+| [0092-archive-ledger-split/](./0092-archive-ledger-split/) | Archive 표를 Stage 98 README에서 ledger로 분리 |
 
 ## Authoring Workflow
 
