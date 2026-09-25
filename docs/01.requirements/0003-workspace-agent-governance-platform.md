@@ -197,6 +197,8 @@ residue, and removing dead or duplicate validation logic is owned by
 Resolving the conflicts SPEC-0088 deferred and withdrawing open packages that
 contradict current authority is owned by
 [SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md).
+Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
+[SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md).
 
 ## Traceability
 
