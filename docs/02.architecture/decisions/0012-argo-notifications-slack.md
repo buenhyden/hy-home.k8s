@@ -4,7 +4,7 @@ version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0012"
 ---
@@ -13,21 +13,21 @@ artifact_id: "ADR-0012"
 
 ## Overview
 
-Argo Notifications를 ArgoCD 컨트롤러로 활성화하고 Slack webhook을 알림 destination으로 사용한다.
-ArgoCD 앱 이벤트(sync 실패, health 저하, 배포 완료)와 Rollouts 이벤트(완료, abort)를 Slack으로 전달한다.
+Argo Notifications is enabled as an ArgoCD controller, with a Slack webhook as the notification destination.
+ArgoCD app events (sync failure, health degradation, deployment completion) and Rollouts events (completion, abort) are delivered to Slack.
 
 ## Context
 
-GitOps 이벤트(앱 동기화 실패, health 저하)와 Rollouts 이벤트를 운영자에게 자동 전달할 수단이 필요하다.
-ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도 설치 없이 `notifications.enabled=true`로 활성화 가능하다.
+A way to deliver GitOps events (app sync failure, health degradation) and Rollouts events to operators automatically is needed.
+The ArgoCD Helm chart v2.x bundles the Notifications controller, so it can be enabled with `notifications.enabled=true` without a separate install.
 
 ## Decision
 
-- ArgoCD Helm values에 `notifications.enabled: true` 추가.
-- Slack token은 Vault `secret/platform/notifications` → ESO ExternalSecret → `argocd-notifications-secret` k8s Secret으로 관리.
-- ConfigMap `argocd-notifications-cm`에 templates(app-deployed, app-health-degraded, app-sync-failed, rollout-completed, rollout-aborted)와 triggers 정의.
+- `notifications.enabled: true` is added to the ArgoCD Helm values.
+- The Slack token is managed as Vault `secret/platform/notifications` → ESO ExternalSecret → the `argocd-notifications-secret` k8s Secret.
+- The ConfigMap `argocd-notifications-cm` defines the templates (app-deployed, app-health-degraded, app-sync-failed, rollout-completed, rollout-aborted) and triggers.
 - Default subscriptions: `on-health-degraded`, `on-sync-failed`.
-- 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.on-deployed.slack: <channel>`.
+- Per-app opt-in: the annotation `notifications.argoproj.io/subscribe.on-deployed.slack: <channel>`.
 
 ### Decision status
 
@@ -35,33 +35,33 @@ Accepted — 2026-03-30
 
 ## Explicit Non-goals
 
-- Email/PagerDuty 알림 (Slack webhook만)
-- 알림 채널 per-app 자동 분기 (단일 채널 기본)
-- Alertmanager 통합
+- Email/PagerDuty notifications (Slack webhook only)
+- Automatic per-app notification channel routing (a single channel is the default)
+- Alertmanager integration
 
 ## Consequences
 
-- `argocd-notifications-cm` ConfigMap: templates + triggers (GitOps 관리)
+- `argocd-notifications-cm` ConfigMap: templates + triggers (managed through GitOps)
 - `argocd-notifications-secret` (ESO): Slack token (Vault `secret/platform/notifications.slack_token`)
-- Vault에 `secret/platform/notifications` path 수동 추가 필요 (bootstrap 외부 작업)
-- `argocd-notifications-controller` Pod가 argocd namespace에 추가됨
+- The `secret/platform/notifications` path must be added to Vault by hand (an external bootstrap task)
+- An `argocd-notifications-controller` Pod is added to the argocd namespace
 
 ### Operational prerequisite
 
-Slack token bootstrap은 사람이 승인한 외부 OpenBao 작업으로만 수행한다. 이 ADR은 secret 값이나 실행 절차를 소유하지 않으며, 현재 운영 절차는 [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)과 [ESO/OpenBao 시크릿 관리 결정](./0041-openbao-secret-backend.md)을 따른다.
+Slack token bootstrap is performed only as a human-approved external OpenBao task. This ADR owns neither the secret value nor the execution procedure; the current operating procedure follows the [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md) and the [ESO/OpenBao secret management decision](./0041-openbao-secret-backend.md).
 
 ## Alternatives
 
-| 옵션                            | 평가                                                                                  |
+| Option | Assessment |
 | ------------------------------- | ------------------------------------------------------------------------------------- |
-| ArgoCD 내장 Notifications       | 추가 컴포넌트 없음, ArgoCD와 동일 lifecycle                                           |
-| 독립 Notifications 배포         | 불필요한 중복, 이 규모에서는 과도함                                                   |
-| Prometheus Alertmanager → Slack | 이미 외부 Prometheus 있지만, GitOps 이벤트는 ArgoCD가 소스이므로 Notifications가 적합 |
+| Built-in ArgoCD Notifications | No extra component; same lifecycle as ArgoCD |
+| Standalone Notifications deployment | Needless duplication; excessive at this scale |
+| Prometheus Alertmanager → Slack | An external Prometheus already exists, but ArgoCD is the source of GitOps events, so Notifications fits |
 
 ## Traceability
 
-- [ADR-0011](./0011-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
-- [ADR-0041](./0041-openbao-secret-backend.md) — ESO/OpenBao 시크릿 관리 패턴
+- [ADR-0011](./0011-argo-rollouts-progressive-delivery.md) — Rollouts event source
+- [ADR-0041](./0041-openbao-secret-backend.md) — ESO/OpenBao secret management pattern
 - [PRD](../../01.requirements/0002-argo-notifications-slack.md)
 - [ARD](../descriptions/0005-argo-notifications-slack.md)
 - [Spec](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)

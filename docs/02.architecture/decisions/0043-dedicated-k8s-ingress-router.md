@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0043"
 ---
@@ -13,95 +13,104 @@ artifact_id: "ADR-0043"
 
 ## Overview
 
-이 ADR은 k8s가 제공하는 UI와 앱에 외부 서비스 workspace의 Traefik과 분리된
-진입점과 domain을 부여한다. k8s host 이름은 `<name>.hy-k8s.home.arpa`이고,
-진입점은 전용 host IP `192.168.0.14`에 bind한 k3d serverlb다. ArgoCD UI는
-`argo.hy-k8s.home.arpa`다.
-[ADR-0042](./0042-linux-server-single-host-baseline.md)가 local UI domain으로
-정한 `hy.home.arpa`는 외부 서비스 workspace의 host 이름에만 남는다.
+This ADR gives the UIs and apps that k8s serves an entry point and domain
+separate from the external services workspace's Traefik. k8s host names are
+`<name>.hy-k8s.home.arpa`, and the entry point is the k3d serverlb bound to the
+dedicated host IP `192.168.0.14`. The ArgoCD UI is `argo.hy-k8s.home.arpa`.
+`hy.home.arpa`, which [ADR-0042](./0042-linux-server-single-host-baseline.md)
+set as the local UI domain, remains only for the external services workspace's
+host names.
 
 ## Context
 
-- 외부 서비스 workspace(`hy-home.docker`)의 Traefik은 host의 `0.0.0.0:80`과
-  `0.0.0.0:443`을 점유한다. k3d 설정도 serverlb에 `80:80`, `443:443`을
-  매핑하므로 두 진입점은 같은 host 주소에서 공존할 수 없다.
-- k8s route는 그 Traefik의 file provider에 둔 dynamic config를 거쳐 k3d로
-  전달되었다. 이 저장소의 `traefik/` reference 파일과 외부 workspace의 실제
-  파일이 backend를 서로 다르게 적었고, k8s route를 바꿀 때마다 두 저장소를
-  함께 고쳐야 했다.
-- ingress-nginx는 MetalLB `172.18.0.240`의 LoadBalancer Service다. 이 주소는
-  Docker bridge `k3d-hyhome` 위에 있어 server 자신만 도달할 수 있고 LAN
-  client는 도달할 수 없다.
-- host는 `enp4s0`에 정적 주소 `192.168.0.13/24`를 쓰며, 결정 시점에
-  `192.168.0.14`는 ARP 응답이 없었다.
+- The Traefik of the external services workspace (`hy-home.docker`) holds the
+  host's `0.0.0.0:80` and `0.0.0.0:443`. The k3d configuration also maps
+  `80:80` and `443:443` on the serverlb, so the two entry points cannot coexist
+  on the same host address.
+- k8s routes reached k3d through dynamic config placed in that Traefik's file
+  provider. This repository's `traefik/` reference files and the external
+  workspace's actual files named different backends, and every k8s route
+  change had to touch both repositories.
+- ingress-nginx is a LoadBalancer Service on MetalLB `172.18.0.240`. That
+  address sits on the Docker bridge `k3d-hyhome`, so only the server itself can
+  reach it; LAN clients cannot.
+- The host uses the static address `192.168.0.13/24` on `enp4s0`, and at the
+  time of the decision `192.168.0.14` gave no ARP reply.
 
 ## Decision
 
-- k8s가 제공하는 host 이름은 `<name>.hy-k8s.home.arpa`다. 현재 이름은
-  `argo`(ArgoCD), `kiali`, `headlamp`, `rollouts`, `adminer`이며 새 앱은
-  `<appname>.hy-k8s.home.arpa`를 쓴다. 이 subdomain이 앱이 응답하는 기준
-  주소다.
-- apex `hy-k8s.home.arpa/<name>` 요청은 ingress-nginx
-  `permanent-redirect` annotation으로 `https://<name>.hy-k8s.home.arpa/`에
-  301로 넘긴다. 앱의 root path 설정은 바꾸지 않으며 snippet annotation은 쓰지
-  않는다. TLS 인증서의 SAN은 apex와 앱 subdomain을 함께 담는다.
-- k8s 전용 진입점은 k3d serverlb다. serverlb는 host의 `192.168.0.14:80`과
-  `192.168.0.14:443`만 bind하고, 이를 ingress-nginx의 고정 NodePort `30080`과
-  `30443`으로 전달한다. TLS는 ingress-nginx가 종료한다.
-- ingress-nginx Service는 LoadBalancer(`172.18.0.240`)를 유지한다. 이 주소는
-  server 내부 검증 경로다.
-- 외부 서비스 workspace의 Traefik은 k8s route를 싣지 않는다. 이 저장소의
-  `traefik/` reference 파일과 sample app의 Traefik 예시는 폐지한다.
-- `192.168.0.14`의 host 주소 할당, `*.hy-k8s.home.arpa` 이름 해석, 외부
-  Traefik을 `192.168.0.13`에만 bind하는 변경은 operator와 외부 workspace가
-  소유한다. 저장소 정적 검증은 이 상태를 증명하지 않는다.
+- The host names k8s serves are `<name>.hy-k8s.home.arpa`. The current names
+  are `argo` (ArgoCD), `kiali`, `headlamp`, `rollouts`, and `adminer`; a new app
+  uses `<appname>.hy-k8s.home.arpa`. That subdomain is the reference address the
+  app answers on.
+- A request to the apex `hy-k8s.home.arpa/<name>` is sent with a 301 to
+  `https://<name>.hy-k8s.home.arpa/` through the ingress-nginx
+  `permanent-redirect` annotation. Apps' root path settings do not change, and
+  no snippet annotation is used. The TLS certificate's SAN carries both the
+  apex and the app subdomains.
+- The dedicated k8s entry point is the k3d serverlb. The serverlb binds only
+  the host's `192.168.0.14:80` and `192.168.0.14:443` and forwards them to the
+  fixed ingress-nginx NodePorts `30080` and `30443`. ingress-nginx terminates
+  TLS.
+- The ingress-nginx Service keeps its LoadBalancer (`172.18.0.240`). That
+  address is the server-internal validation path.
+- The external services workspace's Traefik carries no k8s routes. This
+  repository's `traefik/` reference files and the sample app's Traefik example
+  are retired.
+- The operator and the external workspace own assigning the host address
+  `192.168.0.14`, resolving `*.hy-k8s.home.arpa`, and binding the external
+  Traefik only to `192.168.0.13`. Repository static validation does not prove
+  this state.
 
 ## Explicit Non-goals
 
-- 외부 서비스(OpenBao, Grafana, Keycloak 등)의 host 이름 변경
-- ingress controller 교체나 Gateway API 도입
-- 공인 인증서, ACME, wildcard DNS 서버 운영
-- MetalLB address pool 변경
+- Changing the host names of external services (OpenBao, Grafana, Keycloak, and others)
+- Replacing the ingress controller or adopting the Gateway API
+- Public certificates, ACME, or running a wildcard DNS server
+- Changing the MetalLB address pool
 
 ## Consequences
 
 - **Positive**:
-  - k8s route의 추가와 변경이 이 저장소의 Ingress 선언만으로 끝난다.
-  - 두 진입점이 서로 다른 host 주소를 가지므로 host port 충돌이 사라진다.
-  - k8s와 외부 서비스의 domain이 분리되어 어느 router가 응답하는지 이름으로
-    구분된다.
+  - Adding or changing a k8s route takes only this repository's Ingress
+    declarations.
+  - The two entry points have different host addresses, so host port conflicts
+    disappear.
+  - k8s and external services have separate domains, so the name tells which
+    router answers.
 - **Trade-offs**:
-  - host에 두 번째 주소가 필요하고, LAN client는 `hy-k8s.home.arpa` 이름을
-    `192.168.0.14`로 해석해야 한다.
-  - 기존 `*.hy.home.arpa` k8s 주소로 들어오던 client는 새 이름으로 옮겨야 한다.
+  - The host needs a second address, and LAN clients must resolve
+    `hy-k8s.home.arpa` names to `192.168.0.14`.
+  - Clients that used the old `*.hy.home.arpa` k8s addresses must move to the
+    new names.
 - **Operational**:
-  - k3d serverlb의 host 주소는 cluster 생성 시점에 고정된다. 주소를 바꾸려면
-    cluster를 다시 만들어야 한다.
+  - The k3d serverlb's host address is fixed when the cluster is created.
+    Changing it means recreating the cluster.
 
 ## Alternatives
 
-### 외부 Traefik이 계속 k8s route를 전달
+### Keep the external Traefik forwarding k8s routes
 
 - Good:
-  - host 주소나 DNS 변경이 없다.
+  - No host address or DNS change.
 - Bad:
-  - k8s route마다 두 저장소를 함께 바꿔야 하고, 요청 owner가 명시적으로
-    배제했다.
+  - Every k8s route needs both repositories changed together, and the request
+    owner explicitly ruled it out.
 
-### 같은 host 주소의 대체 port(`8443`)
+### An alternate port (`8443`) on the same host address
 
 - Good:
-  - host 네트워크 변경이 없다.
+  - No host network change.
 - Bad:
-  - 모든 URL에 port가 붙고, 표준 port를 기대하는 client와 OAuth redirect
-    설정이 복잡해진다.
+  - Every URL carries a port, which complicates clients that expect standard
+    ports and OAuth redirect settings.
 
-### MetalLB 주소를 이름으로 직접 해석
+### Resolve names directly to the MetalLB address
 
 - Good:
-  - 추가 router가 없다.
+  - No extra router.
 - Bad:
-  - Docker bridge 주소라 LAN client가 도달하지 못한다.
+  - It is a Docker bridge address, so LAN clients cannot reach it.
 
 ## Traceability
 

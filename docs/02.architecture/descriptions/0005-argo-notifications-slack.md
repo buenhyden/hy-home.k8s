@@ -4,7 +4,7 @@ version: "1.0.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "AD-0005"
 ---
@@ -13,43 +13,43 @@ artifact_id: "AD-0005"
 
 ## Overview
 
-이 문서는 ArgoCD Notifications 기반 Slack 알림의 참조 아키텍처와 품질 속성을 정의한다.
-현재 ArgoCD values, Notifications ConfigMap, ExternalSecret이 이미 저장소에 존재하므로, 이 AD는 repo-backed 실행계약을 추적 가능한 아키텍처 입력으로 정리하는 backfill 문서다.
+This document defines the reference architecture and quality attributes of Slack notifications based on ArgoCD Notifications.
+The ArgoCD values, Notifications ConfigMap, and ExternalSecret already exist in the repository, so this AD is a backfill that turns the repo-backed execution contract into traceable architecture input.
 
 ### Current architecture summary
 
-ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되며, Slack token은 Vault에서 ESO를 통해 `argocd-notifications-secret`로 동기화된다.
-알림 template, trigger와 `defaultTriggers`는 GitOps ConfigMap으로 관리하고, 앱별 opt-in은 annotation으로 표현한다. `defaultTriggers`만으로 전체 앱의 전역 구독이나 Slack 수신이 증명되지는 않는다.
+ArgoCD Notifications is enabled as the built-in controller in the `argocd` namespace, and the Slack token syncs from Vault through ESO into `argocd-notifications-secret`.
+Notification templates, triggers, and `defaultTriggers` are managed as a GitOps ConfigMap, and per-app opt-in is expressed with annotations. `defaultTriggers` alone proves neither a global subscription for every app nor receipt in Slack.
 
 ## Boundaries & Non-goals
 
 - **Owns**:
-  - ArgoCD Helm values의 `notifications.enabled: true` 계약
-  - `argocd-notifications-cm` template/trigger/subscription 계약
-  - `argocd-notifications-secret` ExternalSecret과 Vault path 계약
-  - Slack 알림의 보안 경계와 운영 검증 경로
+  - The `notifications.enabled: true` contract in the ArgoCD Helm values
+  - The `argocd-notifications-cm` template/trigger/subscription contract
+  - The `argocd-notifications-secret` ExternalSecret and Vault path contract
+  - The security boundary and operational validation path of Slack notifications
 - **Consumes**:
-  - External Secrets Operator와 Vault `secret/platform/notifications`
+  - The External Secrets Operator and Vault `secret/platform/notifications`
   - ArgoCD application status events
   - Rollouts event template context where supported by Notifications
   - Slack workspace token/channel permission
 - **Does Not Own**:
-  - Slack workspace/channel 생성
+  - Creating the Slack workspace or channels
   - PagerDuty, Email, Alertmanager integration
-  - Rollouts chart 자체 notifications 설정
+  - The Rollouts chart's own notification settings
 - **Non-goals**:
-  - 알림 채널 per-app 자동 분기
-  - 평문 credential bootstrap
-  - 외부 incident management platform 통합
+  - Automatic per-app notification channel routing
+  - Plaintext credential bootstrap
+  - Integrating an external incident management platform
 
 ## Quality Attributes
 
-- **Performance**: Notifications controller metrics를 활성화해 처리 상태를 관측할 수 있게 한다.
-- **Security**: Slack token은 Vault -> ESO -> Kubernetes Secret 경로로만 소비한다.
-- **Reliability**: ConfigMap과 ExternalSecret은 GitOps desired state로 복구 가능해야 한다.
-- **Scalability**: 공통 실패 신호 구독은 요구사항이며, 앱별 channel opt-in은 annotation으로 확장한다.
-- **Observability**: controller logs와 metrics NodePort가 Slack 전송 성공/실패와 runtime 상태를 확인하는 증거다.
-- **Operability**: Slack 알림 장애 시 Vault secret, ExternalSecret, controller log 순서로 검증한다.
+- **Performance**: Notifications controller metrics are enabled so processing state can be observed.
+- **Security**: the Slack token is consumed only along the Vault -> ESO -> Kubernetes Secret path.
+- **Reliability**: the ConfigMap and ExternalSecret must be recoverable from the GitOps desired state.
+- **Scalability**: subscribing to the common failure signals is a requirement, and per-app channel opt-in extends through annotations.
+- **Observability**: controller logs and the metrics NodePort are the evidence for Slack delivery success or failure and runtime state.
+- **Operability**: when Slack notifications fail, check the Vault secret, then the ExternalSecret, then the controller log.
 
 ## System Overview & Context
 
@@ -59,9 +59,9 @@ ArgoCD Notifications는 `argocd` namespace의 내장 controller로 활성화되�
 - The ConfigMap and ExternalSecret are included through `gitops/platform/argocd/kustomization.yaml`.
 - ArgoCD Notifications is separate from the Rollouts Helm chart `notifications.enabled` setting, which remains disabled.
 
-현재 source는 [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml)과
-[ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml)다.
-Rollouts event template의 존재도 runtime event context나 전송 성공을 보장하지 않는다.
+The current sources are the [Notifications ConfigMap](../../../gitops/platform/argocd/argocd-notifications-cm.yaml) and
+the [ExternalSecret reference](../../../gitops/platform/argocd/argocd-notifications-secret.yaml).
+The presence of a Rollouts event template does not guarantee runtime event context or successful delivery either.
 
 ## Data Architecture
 
@@ -105,17 +105,17 @@ Rollouts event template의 존재도 runtime event context나 전송 성공을 �
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | ArgoCD release 안의 Notifications controller 소유 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | Vault → ESO → Kubernetes Secret 단방향 credential 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | GitOps ConfigMap이 소유하는 template와 trigger 카탈로그 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-NFR-0001](../../01.requirements/0002-argo-notifications-slack.md) | 공통 health/sync 실패 default subscription 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-IF-0001](../../01.requirements/0002-argo-notifications-slack.md) | annotation 기반 앱별 배포 알림 opt-in 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [REQ-0002-IF-0002](../../01.requirements/0002-argo-notifications-slack.md) | Slack/Vault bootstrap을 repository 변경과 분리하는 승인 경계 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 01](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Notifications controller Pod readiness 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 02](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | ExternalSecret Ready 상태의 credential 동기화 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | sync 실패 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | health degraded 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Rollouts abort 알림의 human-approved live 수신 증거 | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | The ownership boundary of the Notifications controller inside the ArgoCD release | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | The one-way Vault → ESO → Kubernetes Secret credential boundary | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | The template and trigger catalog owned by the GitOps ConfigMap | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-NFR-0001](../../01.requirements/0002-argo-notifications-slack.md) | The default subscription boundary for common health/sync failures | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-IF-0001](../../01.requirements/0002-argo-notifications-slack.md) | The annotation-based per-app deployment notification opt-in boundary | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| [REQ-0002-IF-0002](../../01.requirements/0002-argo-notifications-slack.md) | The approval boundary that separates Slack/Vault bootstrap from repository changes | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 01](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Notifications controller Pod readiness evidence | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 02](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Credential sync evidence from the ExternalSecret Ready state | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for sync failure notifications | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 04](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for health degraded notifications | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| N/A — [Acceptance criterion 05](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | Human-approved live receipt evidence for Rollouts abort notifications | [ADR 0012](../decisions/0012-argo-notifications-slack.md) and [Spec 005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
 
 - **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
 - **Spec**: [`../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)

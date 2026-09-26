@@ -4,7 +4,7 @@ version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0041"
 supersedes: "ADR-0003"
@@ -14,83 +14,91 @@ supersedes: "ADR-0003"
 
 ## Overview
 
-이 ADR은 런타임 시크릿의 외부 backend를 HashiCorp Vault에서 OpenBao로
-바꾼다. External Secrets Operator(ESO)와 Kubernetes Auth로 시크릿을
-전달하는 패턴은 ADR-0003에서 그대로
-이어받고, backend 제품과 그 접근 주소만 바뀐다. ADR-0003은 이 결정으로
-대체된다.
+This ADR moves the external backend for runtime secrets from HashiCorp Vault
+to OpenBao. The pattern of delivering secrets through the External Secrets
+Operator (ESO) and Kubernetes Auth carries over unchanged from ADR-0003; only
+the backend product and its access address change. This decision supersedes
+ADR-0003.
 
 ## Context
 
-외부 서비스 workspace(`hy-home.docker`)는 Vault container를 폐지하고
-OpenBao를 운영한다. 그 workspace의 현재 사실은 다음과 같다.
+The external services workspace (`hy-home.docker`) retired its Vault
+container and runs OpenBao. That workspace's current facts are:
 
-- container `openbao`와 `openbao-agent`, image `openbao/openbao:2.6.2`
-- k3d 네트워크 `k3d-hyhome`의 고정 주소 `172.18.0.17`, listener `8200`
+- containers `openbao` and `openbao-agent`, image `openbao/openbao:2.6.2`
+- the fixed address `172.18.0.17` on the k3d network `k3d-hyhome`, listener `8200`
   (HTTP, local-only)
-- 외부 Traefik route `https://openbao.hy.home.arpa`
+- the external Traefik route `https://openbao.hy.home.arpa`
 
-이 저장소는 여전히 제거된 Vault 주소(`172.18.0.8`)와 host를 desired
-state와 bootstrap 기본값으로 두고 있었다. 그 상태에서는 ESO가 존재하지 않는
-endpoint를 향한다. OpenBao는 Vault HTTP API, KV v2, Kubernetes auth method와
-호환되므로 ESO의 `vault` provider와 기존 ClusterSecretStore가 그대로 동작한다.
+This repository still kept the removed Vault address (`172.18.0.8`) and host
+as its desired state and bootstrap defaults, so ESO pointed at an endpoint that
+no longer exists. OpenBao is compatible with the Vault HTTP API, KV v2, and the
+Kubernetes auth method, so ESO's `vault` provider and the existing
+ClusterSecretStore work unchanged.
 
 ## Decision
 
-- 런타임 시크릿의 단일 소스는 외부 OpenBao다. 평문 시크릿은 Git, manifest,
-  문서, 로그에 두지 않는다.
-- 시크릿 동기화는 ESO `vault` provider로 수행하고, 인증은 Kubernetes Auth
-  role `eso-read-platform`(audience `vault`)을 유지한다. 정책은
-  namespace/path 단위 least privilege를 적용한다.
-- cluster 내부 접근 경로는 `platform` namespace의 `vault-external`
-  Service와 EndpointSlice이며, EndpointSlice 주소는 `172.18.0.17`, port는
-  `8200`이다. ESO egress NetworkPolicy도 같은 `/32`로 제한한다.
-- 호스트 쪽 관리와 bootstrap 접근은 `https://openbao.hy.home.arpa`와 검증된
-  CA를 사용한다. cluster 내부 HTTP 경로는 기존과 같은 local-only 예외다.
-- Kubernetes 식별자 `vault-external`, `vault-backend`, ESO `vault`
-  provider와 KV 경로(`secret/platform/*`, `secret/apps/<app>/config`)는
-  바꾸지 않는다. 이 이름들은 API 계약을 가리키며 제품 이름이 아니다.
+- The single source of runtime secrets is the external OpenBao. Plaintext
+  secrets are kept out of Git, manifests, documents, and logs.
+- Secrets sync through the ESO `vault` provider, and authentication keeps the
+  Kubernetes Auth role `eso-read-platform` (audience `vault`). Policy applies
+  least privilege per namespace/path.
+- The cluster-internal access path is the `vault-external` Service and
+  EndpointSlice in the `platform` namespace; the EndpointSlice address is
+  `172.18.0.17` and the port is `8200`. The ESO egress NetworkPolicy is limited
+  to the same `/32`.
+- Host-side administration and bootstrap access use
+  `https://openbao.hy.home.arpa` with a verified CA. The cluster-internal HTTP
+  path remains the same local-only exception as before.
+- The Kubernetes identifiers `vault-external` and `vault-backend`, the ESO
+  `vault` provider, and the KV paths (`secret/platform/*`,
+  `secret/apps/<app>/config`) do not change. These names refer to the API
+  contract, not the product.
 
 ## Explicit Non-goals
 
-- Kubernetes Service, ClusterSecretStore, NetworkPolicy 이름의 개명
-- 시크릿 값 이관, unseal, auth mount와 role 설정 같은 OpenBao 운영 작업.
-  이 작업은 외부 workspace 운영자가 소유한다
-- cluster 내부 OpenBao 경로의 TLS 전환
-- 앱이 OpenBao SDK를 직접 호출하도록 강제하는 것
+- Renaming the Kubernetes Service, ClusterSecretStore, or NetworkPolicy
+- OpenBao operations such as migrating secret values, unsealing, and setting
+  up auth mounts and roles; the external workspace operator owns them
+- Switching the cluster-internal OpenBao path to TLS
+- Forcing apps to call the OpenBao SDK directly
 
 ## Consequences
 
 - **Positive**:
-  - desired state, bootstrap, 정적 검증이 실제 외부 runtime과 다시 일치한다.
-  - ESO, ClusterSecretStore, ExternalSecret 구성과 KV 경로 계약이 바뀌지 않아
-    변경 범위가 endpoint 주소와 host로 한정된다.
+  - The desired state, bootstrap, and static validation match the actual
+    external runtime again.
+  - The ESO, ClusterSecretStore, and ExternalSecret configuration and the KV
+    path contract do not change, so the change is limited to the endpoint
+    address and host.
 - **Trade-offs**:
-  - `vault-*` Kubernetes 이름과 제품 이름이 달라져 문서가 둘의 관계를
-    명시해야 한다.
-  - OpenBao의 Vault API 호환성이 깨지는 upstream 변경이 생기면 ESO provider
-    선택을 다시 판단해야 한다.
+  - The `vault-*` Kubernetes names now differ from the product name, so
+    documents must state how the two relate.
+  - If an upstream change breaks OpenBao's Vault API compatibility, the ESO
+    provider choice must be reconsidered.
 - **Operational**:
-  - OpenBao의 Kubernetes auth `kubernetes_host`, reviewer JWT/CA, role 설정은
-    외부 운영자가 이 계약에 맞춰 유지한다. 저장소의 정적 PASS는 이를
-    증명하지 않는다.
+  - The external operator keeps OpenBao's Kubernetes auth `kubernetes_host`,
+    reviewer JWT/CA, and role settings aligned with this contract. The
+    repository's static PASS does not prove this.
 
 ## Alternatives
 
-### Kubernetes 식별자까지 `openbao-*`로 개명
+### Rename the Kubernetes identifiers to `openbao-*` too
 
 - Good:
-  - 제품 이름과 리소스 이름이 일치한다.
+  - Product and resource names match.
 - Bad:
-  - ClusterSecretStore, 모든 ExternalSecret, NetworkPolicy, validator를 함께
-    바꾸는 live 전환이 필요하고, 그 사이 시크릿 동기화가 끊길 수 있다.
+  - It needs a live cutover that changes the ClusterSecretStore, every
+    ExternalSecret, the NetworkPolicy, and the validators together, and secret
+    sync can break in between.
 
-### Vault 유지
+### Keep Vault
 
 - Good:
-  - 저장소 변경이 없다.
+  - No repository change.
 - Bad:
-  - 외부 workspace가 Vault를 폐지했으므로 존재하지 않는 backend를 가리킨다.
+  - The external workspace retired Vault, so it points at a backend that does
+    not exist.
 
 ## Traceability
 

@@ -4,7 +4,7 @@ version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0042"
 ---
@@ -13,82 +13,89 @@ artifact_id: "ADR-0042"
 
 ## Overview
 
-이 ADR은 로컬 GitOps 플랫폼의 host를 WSL2가 아닌 Linux server로 기록한다.
-[ADR-0014](./0014-current-local-gitops-platform-contract.md)의 host 조항
-"WSL2 + WSL-native Docker"만 이 결정이 이어받고, k3d, ArgoCD App-of-Apps,
-외부 서비스 계약을 포함한 나머지 조항은 ADR-0014에 그대로 남는다.
+This ADR records the local GitOps platform's host as a Linux server, not WSL2.
+This decision takes over only the host clause "WSL2 + WSL-native Docker" of
+[ADR-0014](./0014-current-local-gitops-platform-contract.md); the other clauses,
+including k3d, ArgoCD App-of-Apps, and the external service contract, stay in
+ADR-0014 unchanged.
 
 ## Context
 
-플랫폼은 Windows 위 WSL2가 아니라 Linux server 한 대에서 운영된다. 이 host는
-Ubuntu 24.04 LTS이고 Docker Engine을 native daemon으로 실행하며, Docker
-context는 `default`다. k3d cluster `k3d-hyhome`과 외부 서비스
-workspace(`hy-home.docker`)의 container는 같은 host의 Docker network
-`k3d-hyhome`을 공유한다.
+The platform runs on a single Linux server, not on WSL2 over Windows. The
+host is Ubuntu 24.04 LTS, runs Docker Engine as a native daemon, and its Docker
+context is `default`. The k3d cluster `k3d-hyhome` and the containers of the
+external services workspace (`hy-home.docker`) share the host's Docker network
+`k3d-hyhome`.
 
-그런데 ADR-0014, Architecture Description, Stage 05 문서, infrastructure
-README, 정적 검증기는 여전히 WSL2 shell, WSL-native Docker, Windows
-portproxy를 전제로 적고 있다. 이 전제는 operator가 확인해야 할 runtime
-prerequisite를 잘못 안내하고, 존재하지 않는 Windows 경계를 failure boundary로
-만든다.
+Yet ADR-0014, the Architecture Description, the Stage 05 documents, the
+infrastructure README, and the static validators still assume a WSL2 shell,
+WSL-native Docker, and a Windows portproxy. That assumption misdirects the
+runtime prerequisites an operator must confirm and turns a nonexistent Windows
+boundary into a failure boundary.
 
 ## Decision
 
-- 플랫폼 host는 Linux server 한 대다. Docker는 host의 native Docker Engine이며
-  Docker context는 host에서 확인한다.
-- local UI와 외부 서비스 host 이름은 `hy.home.arpa` domain을 쓴다. 이 이름을
-  해석하는 DNS, host firewall, 외부 Traefik gateway는 operator가 소유하며
-  저장소 정적 검증의 범위 밖이다.
-- k3d cluster 모양, `k3d-hyhome` network와 context, ingress-nginx
-  LoadBalancer `172.18.0.240`, 외부 서비스 EndpointSlice 계약은 바뀌지 않는다.
-- 이전 결정이 "WSL2 자원 예산"이라 적은 제약은 single-host 자원 예산으로
-  읽는다. 제약의 크기나 resource request/limit 값은 이 결정으로 바뀌지 않는다.
-- infrastructure runtime prerequisite 표와 그 정적 검증은 WSL2가 아닌 Linux
-  server host를 기준으로 한다.
+- The platform host is a single Linux server. Docker is the host's native
+  Docker Engine, and the Docker context is confirmed on the host.
+- Local UI and external service host names use the `hy.home.arpa` domain. The
+  operator owns the DNS, host firewall, and external Traefik gateway that
+  resolve these names; they are outside repository static validation.
+- The k3d cluster shape, the `k3d-hyhome` network and context, the
+  ingress-nginx LoadBalancer `172.18.0.240`, and the external service
+  EndpointSlice contract do not change.
+- A constraint an earlier decision wrote as the "WSL2 resource budget" reads
+  as the single-host resource budget. This decision changes neither the size
+  of the constraint nor any resource request/limit value.
+- The infrastructure runtime prerequisite table and its static validation are
+  based on the Linux server host, not WSL2.
 
 ## Explicit Non-goals
 
-- 여러 host나 원격 cluster로의 확장
-- `hy.home.arpa` DNS 서버, host firewall, TLS 인증서 발급 절차의 소유
-- k3d cluster 설정, node 수, resource request/limit 변경
-- 결정 당시 WSL2를 전제로 쓴 archive 기록과 accepted ADR 본문의 수정
+- Extending to multiple hosts or a remote cluster
+- Owning the `hy.home.arpa` DNS server, the host firewall, or the TLS
+  certificate issuance procedure
+- Changing the k3d cluster settings, node count, or resource requests/limits
+- Editing archive records or accepted ADR bodies written under the WSL2
+  assumption at the time of their decision
 
 ## Consequences
 
 - **Positive**:
-  - runtime prerequisite와 failure boundary가 실제 host와 일치한다.
-  - Windows portproxy와 WSL gateway 같은 존재하지 않는 경계가 운영 문서에서
-    사라진다.
+  - The runtime prerequisites and failure boundaries match the actual host.
+  - Nonexistent boundaries such as the Windows portproxy and the WSL gateway
+    disappear from the operations documents.
 - **Trade-offs**:
-  - 결정 당시 WSL2를 전제로 쓴 accepted ADR 본문은 그대로 남으므로, 독자는 이
-    결정을 함께 읽어야 한다.
+  - Accepted ADR bodies written under the WSL2 assumption stay as they are,
+    so readers must read this decision alongside them.
 - **Operational**:
-  - host DNS에서 `*.hy.home.arpa` 해석은 operator가 유지하며, 저장소 정적
-    PASS는 이를 증명하지 않는다.
+  - The operator maintains `*.hy.home.arpa` resolution in host DNS, and a
+    repository static PASS does not prove it.
 
 ## Alternatives
 
-### ADR-0014 전체를 대체
+### Supersede all of ADR-0014
 
 - Good:
-  - 현재 플랫폼 계약이 문서 하나에 모인다.
+  - The current platform contract gathers in one document.
 - Bad:
-  - host 조항 하나를 바꾸려고 바뀌지 않은 조항 전체를 새 결정으로 다시 적어야
-    하고, ADR-0014를 인용하는 문서를 모두 옮겨야 한다.
+  - Changing one host clause would mean rewriting every unchanged clause as a
+    new decision and moving every document that cites ADR-0014.
 
-### ADR-0014 본문을 직접 수정
+### Edit the ADR-0014 body directly
 
 - Good:
-  - 가장 작은 diff다.
+  - The smallest diff.
 - Bad:
-  - accepted 결정의 본문을 바꾸면 결정 당시의 기록이 사라진다.
+  - Changing an accepted decision's body erases the record of the decision as
+    it was made.
 
 ## Traceability
 
-**Current-state clarification (2026-09-23).** k8s가 제공하는 host 이름은
-`hy.home.arpa`가 아니라 `hy-k8s.home.arpa`이며 전용 진입점을 쓴다
-([ADR-0043](./0043-dedicated-k8s-ingress-router.md)). `hy.home.arpa`는 외부
-서비스 workspace의 host 이름에만 남는다. host 조항의 나머지는 그대로다.
+**Current-state clarification (2026-09-23).** The host names k8s serves are
+`hy-k8s.home.arpa`, not `hy.home.arpa`, and use a dedicated entry point
+([ADR-0043](./0043-dedicated-k8s-ingress-router.md)). `hy.home.arpa` remains
+only for the external services workspace's host names. The rest of the host
+clause is unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

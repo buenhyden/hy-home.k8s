@@ -5776,24 +5776,6 @@
       "Agent Harness Requirements"
     ],
     "min_latin_words": 8,
-    "pending_paths": [
-      "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
-      "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md",
-      "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md",
-      "docs/02.architecture/decisions/0009-kiali-external-observability.md",
-      "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
-      "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
-      "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
-      "docs/02.architecture/decisions/0041-openbao-secret-backend.md",
-      "docs/02.architecture/decisions/0042-linux-server-single-host-baseline.md",
-      "docs/02.architecture/decisions/0043-dedicated-k8s-ingress-router.md",
-      "docs/02.architecture/decisions/0044-stateful-data-stores-stay-external.md",
-      "docs/02.architecture/decisions/0045-in-cluster-telemetry-collection.md",
-      "docs/02.architecture/decisions/0046-external-services-over-host-addresses.md",
-      "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
-      "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
-      "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-      "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
-    ]
+    "pending_paths": []
   }
 }

@@ -33,8 +33,8 @@ authorized.
 | WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | Committed `9f334da8`; 52 documents pending | Profile gate PASS, staged QA PASS |
 | WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Done | `7074f928`, `f8b5f0d5`, `84ba3172`, `dae50ee0`; no README pending; 21 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Done | No operations body was pending; the five operations READMEs converted under WORK-004 | Profile gate |
-| WORK-006 | VAL-DLC-005 | Requirements to English | platform | Done | REQ-0001 to REQ-0004 in English; 17 documents pending | Digest guard 485 OK, whole suite, staged QA PASS |
-| WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Queued | Not started | Staged QA, whole suite |
+| WORK-006 | VAL-DLC-005 | Requirements to English | platform | Done | Committed `77d4820a`; 17 documents pending | Digest guard 485 OK, whole suite, staged QA PASS |
+| WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Done | 13 decisions and 4 descriptions in English; no document pending | Whole suite, lifecycle gate, staged QA PASS |
 | WORK-008 | VAL-DLC-006, VAL-DLC-007 | Governance sentence, evidence, closure | platform | Queued | Not started | Full QA |
 
 ## Approval and Safety Boundaries
@@ -128,6 +128,18 @@ is the exact list.
   failures (Gitleaks absent twice, two host-only cases, the detached-checkout
   archive Git budget).
 
+### WORK-007 (2026-09-26)
+
+- Thirteen accepted decisions and four architecture descriptions are English.
+  Translation keeps each decision's text and meaning; no decision, status, or
+  lifecycle edge changed, and the staged lifecycle gate passes.
+- ADR-0042 lists editing accepted ADR bodies as a non-goal and warns that
+  changing one erases the record of the decision. That concerns the decision
+  as recorded. These conversions change only the language, so the recorded
+  decision, its context, and its alternatives stay as they were decided. The
+  request owner approved converting the accepted decisions in the Spec.
+- `pending_paths` is empty.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -140,5 +152,5 @@ is the exact list.
 | [WORK-004](../plan.md#work-breakdown) | Done | Staged QA |
 | [WORK-005](../plan.md#work-breakdown) | Done | Profile gate |
 | [WORK-006](../plan.md#work-breakdown) | Done | Whole suite and staged QA |
-| [WORK-007](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |
+| [WORK-007](../plan.md#work-breakdown) | Done | Whole suite and staged QA |
 | [WORK-008](../plan.md#work-breakdown) | Not started | Full QA |

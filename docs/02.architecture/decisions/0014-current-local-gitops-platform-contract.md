@@ -4,7 +4,7 @@ version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0014"
 ---
@@ -13,7 +13,7 @@ artifact_id: "ADR-0014"
 
 ## Overview
 
-이 ADR은 현재 구현된 local GitOps platform contract를 하나의 active architecture decision으로 고정한다.
+This ADR fixes the currently implemented local GitOps platform contract as one active architecture decision.
 old topology, endpoint, and cluster UI decisions are archived as Tombstones and no longer serve as active implementation input.
 
 ## Context
