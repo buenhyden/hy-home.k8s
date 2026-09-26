@@ -1,8 +1,8 @@
 ---
 title: "Document Language Contract Implementation Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
-status: "active"
+status: "done"
 owner: "platform"
 updated: "2026-09-26"
 layer: "specs"

@@ -1,8 +1,8 @@
 ---
 title: "Converge Document Language"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-26"
 layer: "specs"
@@ -34,8 +34,8 @@ authorized.
 | WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Done | `7074f928`, `f8b5f0d5`, `84ba3172`, `dae50ee0`; no README pending; 21 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Done | No operations body was pending; the five operations READMEs converted under WORK-004 | Profile gate |
 | WORK-006 | VAL-DLC-005 | Requirements to English | platform | Done | Committed `77d4820a`; 17 documents pending | Digest guard 485 OK, whole suite, staged QA PASS |
-| WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Done | 13 decisions and 4 descriptions in English; no document pending | Whole suite, lifecycle gate, staged QA PASS |
-| WORK-008 | VAL-DLC-006, VAL-DLC-007 | Governance sentence, evidence, closure | platform | Queued | Not started | Full QA |
+| WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Done | Committed `16a9cc9b`; no document pending | Whole suite, lifecycle gate, staged QA PASS |
+| WORK-008 | VAL-DLC-006, VAL-DLC-007 | Governance sentence, evidence, closure | platform | Done | Review fixes `6d3ada1e` and `504b3c13`; this closure commit | Full QA, whole suite |
 
 ## Approval and Safety Boundaries
 
@@ -140,6 +140,46 @@ is the exact list.
   request owner approved converting the accepted decisions in the Spec.
 - `pending_paths` is empty.
 
+### Full QA (2026-09-26, branch head `504b3c13` plus the WORK-008 sentence)
+
+`timeout 3500 python3 scripts/qa.py full` ran on a clean checkout of that
+tree: 19 gates PASS, 3 FAIL, all environment limits observed before this
+package:
+
+- `archive-cutover`: `ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE`; Gitleaks is not
+  installed.
+- `pre-commit`: required tool unavailable on the trusted `PATH`.
+- `unit-tests`: 1210 tests, five failures, none in a module this package
+  changed: two Gitleaks-dependent `test_qa_runner` cases, the host-only
+  `test_escaped_descendant_is_failed_without_post_reap_group_signal` and
+  `test_file_reader_rejects_changes_during_read`, and the archive Git budget,
+  which is one call over on a detached checkout and fails identically on a
+  clean detached checkout of `cacd0094`.
+
+Hosted `ci-summary` is not observed.
+
+### Review, Deferrals, and Residual Risk
+
+- An independent review of the whole range found that the English-section
+  rule judged only plain paragraphs and missed qualified headings. It also
+  found fence, blockquote, and HTML parsing gaps and a phrase pin that lost its
+  object. `6d3ada1e` fixes these with regression tests that fail on the
+  previous module.
+- The review compared translations with their sources. Five requirement
+  statements had shifted in normative force; `504b3c13` restores them.
+- Not fixed, as minor:
+  - pipeless tables, setext headings, and CRLF frontmatter are judged as
+    prose, which errs toward a loud false positive;
+  - an HTML block ends at its start line rather than at the next blank line;
+  - a template serving profiles of both languages would take the last one,
+    though no template does today.
+- Converted documents changed only `updated`, not `version`, because a
+  translation keeps meaning; `document-authoring.md` moves to 1.9.0 because its
+  language rule changed.
+- Unstaged request-owner edit to `.claude/settings.json` stays untouched; it
+  fails the agent governance gate on the branch checkout only.
+- No conversion was deferred, and `pending_paths` is empty.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -153,4 +193,4 @@ is the exact list.
 | [WORK-005](../plan.md#work-breakdown) | Done | Profile gate |
 | [WORK-006](../plan.md#work-breakdown) | Done | Whole suite and staged QA |
 | [WORK-007](../plan.md#work-breakdown) | Done | Whole suite and staged QA |
-| [WORK-008](../plan.md#work-breakdown) | Not started | Full QA |
+| [WORK-008](../plan.md#work-breakdown) | Done | Full QA |
