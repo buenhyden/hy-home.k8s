@@ -158,6 +158,19 @@ package:
 
 Hosted `ci-summary` is not observed.
 
+### Full QA (2026-09-26, branch head `45c71134`)
+
+After the settings commit, full QA ran on the branch checkout: 19 gates PASS,
+3 FAIL. `agent-governance` now passes on the branch checkout. The failures are
+the same environment limits:
+
+- `archive-cutover`: `ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE` and
+  `ARCHIVE-CUTOVER-INCOMPLETE`; Gitleaks is not installed.
+- `pre-commit`: required tool unavailable on the trusted `PATH`.
+- `unit-tests`: three failures, the two Gitleaks-dependent `test_qa_runner`
+  cases and the host-only
+  `test_escaped_descendant_is_failed_without_post_reap_group_signal`.
+
 ### Review, Deferrals, and Residual Risk
 
 - An independent review of the whole range found that the English-section
@@ -176,8 +189,10 @@ Hosted `ci-summary` is not observed.
 - Converted documents changed only `updated`, not `version`, because a
   translation keeps meaning; `document-authoring.md` moves to 1.9.0 because its
   language rule changed.
-- Unstaged request-owner edit to `.claude/settings.json` stays untouched; it
-  fails the agent governance gate on the branch checkout only.
+- The request owner's `.claude/settings.json` edit, which drops the
+  `cat .env.*` deny entry, was committed at their request as `45c71134`,
+  together with removing the matching validator pin. The other `.env` read
+  denies remain.
 - No conversion was deferred, and `pending_paths` is empty.
 
 ## Traceability
