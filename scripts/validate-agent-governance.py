@@ -82,7 +82,6 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./**/.env)",
     "Read(./**/.env.*)",
     "Bash(cat .env:*)",
-    "Bash(cat .env.*:*)",
     "Bash(env:*)",
     "Bash(printenv:*)",
     "Bash(vault kv get:*)",
