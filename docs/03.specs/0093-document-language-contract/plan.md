@@ -682,12 +682,11 @@ def _document_language_registry_diagnostics(
     ]
 ```
 
-  4. Add `*_document_language_registry_diagnostics(raw_registry, profiles_by_id),`
-     to the diagnostics list in `validate_registry`, after the navigation
-     entry.
-  5. In `scripts/document_authority.py`, add `"document_language"` to
-     `OPTIONAL_TOP_LEVEL_KEYS` with the comment
-     `# SPEC-0093 adds the document language contract.`
+  Then add `*_document_language_registry_diagnostics(raw_registry, profiles_by_id),`
+  to the diagnostics list in `validate_registry`, after the navigation entry.
+  In `scripts/document_authority.py`, add `"document_language"` to
+  `OPTIONAL_TOP_LEVEL_KEYS` with the comment
+  `# SPEC-0093 adds the document language contract.`
 
 - [ ] **Step 5: Declare the schema** in `document-profile.schema.json` under
   top-level `properties`:
