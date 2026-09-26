@@ -13,19 +13,19 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Overview
 
-<!-- Author prompt: state the policy objective, accountable audience, and authority boundary. -->
+<!-- Author prompt: 정책의 목표, 책임을 지는 대상, 권한 경계를 밝힌다. -->
 
 ## Policy Scope
 
-<!-- Author prompt: define controlled systems, environments, and exclusions. -->
+<!-- Author prompt: 통제 대상 시스템과 환경, 제외 대상을 정한다. -->
 
 ## Applies To
 
-<!-- Author prompt: name responsible roles, affected assets, and enforcement contexts. -->
+<!-- Author prompt: 책임 역할, 영향받는 자산, 적용되는 맥락을 적는다. -->
 
 ## Controls
 
-<!-- Author prompt: separate control intent and accountability from procedural implementation. -->
+<!-- Author prompt: 통제의 의도와 책임을 실제 절차와 구분한다. -->
 
 ### Responsibilities
 
@@ -41,19 +41,19 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Exceptions
 
-<!-- Author prompt: define exception approval, expiry, compensating control, and evidence. -->
+<!-- Author prompt: 예외의 승인, 만료, 보완 통제, 증거를 정한다. -->
 
 ## Verification
 
-<!-- Author prompt: map each control to deterministic or approved live verification. -->
+<!-- Author prompt: 각 통제를 결정론적 검사나 승인된 live 검증에 연결한다. -->
 
 ## Review Cadence
 
-<!-- Author prompt: state review owner, trigger, cadence, and retirement condition. -->
+<!-- Author prompt: 검토 owner, 트리거, 주기, 폐기 조건을 밝힌다. -->
 
 ## Traceability
 
-<!-- Author prompt: map promoted authority, control owner, and enforcement surface. -->
+<!-- Author prompt: 승격된 권한, 통제 owner, 적용 영역을 연결한다. -->
 
 ### Lifecycle Traceability
 

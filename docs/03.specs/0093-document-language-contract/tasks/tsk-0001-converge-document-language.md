@@ -29,8 +29,8 @@ authorized.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-DLC-007 | Propose the package | platform | Done | Committed `cacd0094` | Staged QA PASS |
-| WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Contract active; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
-| WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Queued | Not started | Profile gate, staged QA |
+| WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Committed `b470e2a1`; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
+| WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | 96 prompts in 14 templates; 52 documents pending | Profile gate PASS, staged QA PASS |
 | WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Queued | Not started | Staged QA |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Queued | Not started | Staged QA |
 | WORK-006 | VAL-DLC-005 | Requirements to English | platform | Queued | Not started | Staged QA, whole suite |
@@ -107,7 +107,7 @@ is the exact list.
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Proposed | Staged QA |
 | [WORK-002](../plan.md#work-breakdown) | Done | Focused tests, whole suite, and staged QA |
-| [WORK-003](../plan.md#work-breakdown) | Not started | Profile gate |
+| [WORK-003](../plan.md#work-breakdown) | Done | Profile gate and staged QA |
 | [WORK-004](../plan.md#work-breakdown) | Not started | Staged QA |
 | [WORK-005](../plan.md#work-breakdown) | Not started | Staged QA |
 | [WORK-006](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |

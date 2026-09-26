@@ -13,11 +13,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Overview
 
-<!-- Author prompt: summarize the observed event, current state, and response boundary. -->
+<!-- Author prompt: 관측된 사건, 현재 상태, 대응 범위를 요약한다. -->
 
 ## Incident Metadata
 
-<!-- Author prompt: record incident ID, severity, start/detection time, declared state, affected environment, and next checkpoint. -->
+<!-- Author prompt: incident ID, 심각도, 시작 또는 탐지 시각, 선언된 상태, 영향받은 환경, 다음 점검 시점을 기록한다. -->
 
 | Field | Value |
 | --- | --- |
@@ -28,35 +28,35 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Roles and Coordination
 
-<!-- Author prompt: name the incident commander, operations lead, communications owner, and escalation owner; use N/A only with a reason. -->
+<!-- Author prompt: incident commander, operations lead, communications owner, escalation owner를 적는다. N/A는 이유가 있을 때만 쓴다. -->
 
 ## Impact
 
-<!-- Author prompt: state affected users, services, duration, and confirmed limits. -->
+<!-- Author prompt: 영향받은 사용자와 서비스, 지속 시간, 확인된 한계를 적는다. -->
 
 ## Timeline
 
-<!-- Author prompt: record timestamped observations, decisions, and actions without retrospective inference. -->
+<!-- Author prompt: 시각이 붙은 관측, 결정, 조치를 사후 추론 없이 기록한다. -->
 
 ## Response State
 
-<!-- Author prompt: track active roles, mitigations, escalation, and next checkpoint. -->
+<!-- Author prompt: 현재 맡은 역할, 완화 조치, escalation, 다음 점검 시점을 추적한다. -->
 
 ## Evidence
 
-<!-- Author prompt: link non-secret logs, metrics, changes, and preserved artifacts. -->
+<!-- Author prompt: 비밀이 없는 로그, 지표, 변경, 보존된 산출물을 링크한다. -->
 
 ## Follow-up Actions
 
-<!-- Author prompt: create owned follow-up Tasks with due state without performing root-cause analysis here. -->
+<!-- Author prompt: owner와 기한 상태가 있는 후속 Task를 만든다. 근본 원인 분석은 여기에서 하지 않는다. -->
 
 ## Closure
 
-<!-- Author prompt: record resolution/closure time, closure owner, remaining risk, and the evidence that permits the current state. -->
+<!-- Author prompt: 해결 또는 종료 시각, 종료 owner, 남은 위험, 현재 상태를 뒷받침하는 증거를 기록한다. -->
 
 ## Traceability
 
-<!-- Author prompt: map timeline actions and evidence to follow-up Task ownership. -->
+<!-- Author prompt: 타임라인의 조치와 증거를 후속 Task의 owner에 연결한다. -->
 
 ### Lifecycle Traceability
 

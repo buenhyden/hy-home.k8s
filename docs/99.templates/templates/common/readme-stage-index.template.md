@@ -11,20 +11,20 @@ layer: "{{LAYER}}"
 
 ## Overview
 
-<!-- Author prompt: explain this stage's reader job and the artifacts it contains. -->
+<!-- Author prompt: 이 stage를 읽는 사람이 무엇을 하러 오는지와 stage가 담는 산출물을 설명한다. -->
 
 ## Stage Contract
 
-<!-- Author prompt: define stage ownership and link its lifecycle contract. -->
+<!-- Author prompt: stage의 소유 범위를 정하고 수명 주기 계약을 링크한다. -->
 
 ## Document Index
 
-<!-- Author prompt: link every direct child folder and document once; route deeper documents through the child folder README. Do not copy status, dates, or counts; each document carries its own. A path matrix belongs to the README of the folder whose members it enumerates. -->
+<!-- Author prompt: 직접 하위 폴더와 문서를 한 번씩 링크하고, 더 깊은 문서는 하위 폴더 README를 거쳐 찾게 한다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
 ## Authoring Workflow
 
-<!-- Author prompt: describe the add, discovery, and handoff workflow through canonical rules. -->
+<!-- Author prompt: 문서를 추가하고 찾고 넘기는 흐름을 기준 규칙에 맞춰 설명한다. -->
 
 ## Related Documents
 
-<!-- Author prompt: link upstream, downstream, governance, and form owners. -->
+<!-- Author prompt: 앞뒤 단계, 거버넌스, 양식 owner를 링크한다. -->
