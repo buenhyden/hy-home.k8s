@@ -1,8 +1,8 @@
 ---
 title: "Retain Finished Packages"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -29,8 +29,8 @@ disposition of all eight units on 2026-09-27 (chooser: request owner; choice:
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-FPR-001 | Record the approval and survey each unit | platform | Done | Eight units surveyed; see the survey below | This Task |
-| WORK-002 | VAL-FPR-002, VAL-FPR-003 | Retain the eight packages in `completed/` | platform | In progress | Pending the move commit | Staged QA and archive gates |
-| WORK-003 | VAL-FPR-004 | Record the results and close this package | platform | Queued | Pending | Staged QA |
+| WORK-002 | VAL-FPR-002, VAL-FPR-003 | Retain the eight packages in `completed/` | platform | Done | Eight units retained with catalog rows naming `fbcafca1`; commit `febf70f5` | [Retention](#retention-2026-09-27) |
+| WORK-003 | VAL-FPR-004 | Record the results and close this package | platform | Done | Staged QA and the archive gates passed; hosted `qa` is handed to the request owner | [Retention](#retention-2026-09-27) |
 
 ## Approval and Safety Boundaries
 
@@ -64,6 +64,29 @@ Every unit's anchor, Plan, and Tasks are `done`, so every unit's class is
 Links between these packages stay inside bodies that freeze together. Links
 from already retained or retired bodies are read at their envelope commits.
 
+### Retention (2026-09-27)
+
+- **Envelope**: `fbcafca1`, the default-branch tip this branch starts from.
+  All eight package trees are byte-identical there.
+- **Move**: commit `febf70f5`, 29 pure renames into `completed/03.specs/`, with the
+  catalog rows and the repointed citations in the same commit.
+- **Validation**: every commit passed `python3 scripts/qa.py staged`.
+  `python3 scripts/run-archive-contract-tests.py --root .` passed 136 tests.
+  `python3 scripts/archive_cutover.py --root .` passed
+  (`records=25 historical_links=198 secret_clean=25`) with a local Gitleaks
+  build on the path. The archive report's Git budget test passed unchanged on
+  a branch checkout.
+- **Full profile**: `python3 scripts/qa.py full` passed every gate except three.
+  `archive-cutover` and two `unit-tests` cases failed only because Gitleaks is
+  off the trusted path. `pre-commit` is also off that path. Two process and IO
+  race cases (`test_escaped_descendant_is_failed_without_post_reap_group_signal`
+  and `test_file_reader_rejects_changes_during_read`) also fail on the
+  unchanged base tree, so they are environment findings, not results of this
+  round.
+- **Deferral**: SPEC-0086 closed in this branch, so its tree has no
+  default-branch envelope yet. It is retained in a later round after merge.
+  Next owner: the request owner.
+
 ## Traceability
 
 - Stable Task: `SPEC-0094-TSK-0001`
@@ -73,5 +96,5 @@ from already retained or retired bodies are read at their envelope commits.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | Survey above |
-| [WORK-002](../plan.md#work-breakdown) | In progress | Pending the move commit |
-| [WORK-003](../plan.md#work-breakdown) | Queued | Pending |
+| [WORK-002](../plan.md#work-breakdown) | Done | Commit `febf70f5` |
+| [WORK-003](../plan.md#work-breakdown) | Done | Local results below; hosted `qa` pending the pull request |
