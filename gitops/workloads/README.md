@@ -62,16 +62,16 @@ handling 검증 명령을 명시하는지 확인한다.
 
 ## Configuration Boundary
 
-Each child directory becomes active desired state only through the repository's
-branch, review, and ArgoCD reconciliation flow. Keep plaintext secrets and
-credentials out of manifests; use the approved ExternalSecret and external
-store boundaries documented by the parent GitOps contract.
+각 하위 디렉터리는 저장소의 branch, 리뷰, ArgoCD reconciliation 흐름을 거쳐야만
+활성 desired state가 된다. 평문 secret과 credential은 manifest에 넣지 않고 상위
+GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경계를 사용한다.
 
 ## Validation
 
-Run the exact static commands in the workload coverage matrix and parent
-[GitOps validation section](../README.md#validation). Repository-static success
-does not prove live rollout, route, database, Vault, or ESO readiness.
+workload coverage 매트릭스와 상위
+[GitOps validation section](../README.md#validation)에 적힌 정적 명령을 그대로
+실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
+ESO의 준비 상태는 증명되지 않는다.
 
 ## Operations
 

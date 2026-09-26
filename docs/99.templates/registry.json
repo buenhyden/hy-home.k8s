@@ -5805,16 +5805,6 @@
       "docs/90.references/research/0001-workspace-engineering/README.md",
       "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
       "docs/90.references/research/README.md",
-      "examples/README.md",
-      "examples/aws/README.md",
-      "examples/azure/README.md",
-      "examples/azure/gitops/README.md",
-      "examples/azure/infrastructure/README.md",
-      "examples/azure/kubernetes/README.md",
-      "examples/sample-app/README.md",
-      "gitops/README.md",
-      "gitops/workloads/README.md",
-      "infrastructure/README.md",
       "scripts/README.md",
       "tests/README.md"
     ]

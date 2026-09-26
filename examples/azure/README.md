@@ -12,36 +12,34 @@ updated: "2026-09-26"
 
 ### Current authority transfer
 
-The original REQ-0007 / AD-0010 program lineage remains historical context.
-Current platform requirements and architecture are REQ-0004 (`docs/01.requirements/0004-current-local-gitops-platform.md`) and
-AD-0007 (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`); shared routing, approval and QA are REQ-0003 (`docs/01.requirements/0003-workspace-agent-governance-platform.md`)
-and AD-0006 (`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`). Package-local execution state and unfinished
-0047..0051 obligations are unchanged; this transfer is not acceptance or closure.
+원래의 REQ-0007 / AD-0010 program 계보는 역사적 맥락으로만 남는다.
+현재 플랫폼 요구사항과 아키텍처는 REQ-0004(`docs/01.requirements/0004-current-local-gitops-platform.md`)와
+AD-0007(`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)이 소유하고 공통 routing, 승인, QA는 REQ-0003(`docs/01.requirements/0003-workspace-agent-governance-platform.md`)과
+AD-0006(`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`)이 소유한다. package 안의 실행 상태와 끝나지 않은
+0047..0051 의무는 그대로다. 이 이관은 acceptance나 종료를 뜻하지 않는다.
 
-This entrypoint defines the boundary of the executable Azure example assets.
-The Bicep, GitOps, and Kubernetes files are reference implementations, not
-active local desired state or proof of current Azure support, subscription
-readiness, cost, or provider-latest configuration.
+이 진입점은 실행 가능한 Azure 예시 자산의 경계를 정한다. Bicep, GitOps,
+Kubernetes 파일은 참조 구현이다. 활성 로컬 desired state가 아니며 현재의
+Azure 지원, 구독 준비 상태, 비용, provider 최신 설정을 증명하지도 않는다.
 
 ## Structure
 
-| Path | Role | Authority boundary |
+| 경로 | 역할 | 권한 경계 |
 | --- | --- | --- |
-| [`infrastructure/`](infrastructure/) | AKS, AGC, network, database, and cache Bicep examples. | Executable reference assets; provider inputs and approval remain external. |
-| [`gitops/`](gitops/) | Managed Identity, Gateway API, and secret-provider platform examples. | Executable reference assets; not reconciled by the local ArgoCD tree. |
-| [`kubernetes/`](kubernetes/) | Workload Identity, external-service, and application manifest examples. | Executable reference assets; validate before promotion to an owned desired-state tree. |
+| [`infrastructure/`](infrastructure/) | AKS, AGC, 네트워크, 데이터베이스, 캐시 Bicep 예시 | 실행 가능한 참조 자산. provider 입력값과 승인은 이 저장소 밖에 있다. |
+| [`gitops/`](gitops/) | Managed Identity, Gateway API, secret provider 플랫폼 예시 | 실행 가능한 참조 자산. 로컬 ArgoCD 트리가 reconcile하지 않는다. |
+| [`kubernetes/`](kubernetes/) | Workload Identity, 외부 서비스, 애플리케이션 manifest 예시 | 실행 가능한 참조 자산. 소유자가 있는 desired-state 트리로 올리기 전에 검증한다. |
 
 ## Configuration Boundary
 
-Do not commit Azure credentials, subscription state that is not approved for
-publication, deployment outputs, kubeconfigs, tokens, keys, certificates, or
-secret values. The exact Bicep, GitOps, and Kubernetes files own their version
-constraints. Inject parameters through reviewed interfaces and re-check
-official Azure support before any approved use.
+Azure credential, 공개 승인을 받지 않은 구독 상태, 배포 출력, kubeconfig,
+토큰, 키, 인증서, secret 값은 커밋하지 않는다. 버전 제약은 각 Bicep·GitOps·
+Kubernetes 파일이 직접 소유한다. 매개변수는 검토된 인터페이스로 주입하고
+승인된 용도로 쓰기 전에 Azure 공식 지원 범위를 다시 확인한다.
 
 ## Validation
 
-Use the component entrypoints and repository-static checks first:
+먼저 구성 요소별 진입점과 저장소 정적 검사를 사용한다.
 
 ```bash
 bash scripts/validate-k8s-manifests.sh .
@@ -49,21 +47,21 @@ bash scripts/check-secret-handling.sh .
 python3 scripts/qa.py full
 ```
 
-No repository gate runs `az bicep build` or any other Bicep command against
-this example; SPEC-0050, which would have added that validator, was withdrawn
-on 2026-09-24 because the validation registry declares no Bicep validator.
+이 예시에 `az bicep build`나 다른 Bicep 명령을 실행하는 저장소 gate는 없다.
+그 검증기를 추가하려던 SPEC-0050은 validation registry에 Bicep 검증기가
+선언되어 있지 않아 2026-09-24에 철회되었다.
 
-These commands do not prove live subscription, AKS, Managed Identity, Key
-Vault, network, cost, secret, or provider readiness.
+위 명령은 live 구독, AKS, Managed Identity, Key Vault, 네트워크, 비용, secret,
+provider 준비 상태를 증명하지 않는다.
 
 ## Operations
 
-These assets do not define a provider operation. Review the exact source diff,
-current official Azure support, credentials boundary, cost, and rollback, then
-obtain human approval before any provider or live-cluster action.
+이 자산은 provider 운영 절차를 정의하지 않는다. provider나 live cluster에
+손대기 전에 정확한 소스 diff, 현재 Azure 공식 지원 범위, credential 경계,
+비용, 롤백을 검토하고 사람의 승인을 받는다.
 
 ## Related Documents
 
 - [Examples index](../README.md)
-- REQ-0004 — current platform requirements (`docs/01.requirements/0004-current-local-gitops-platform.md`)
-- AD-0007 — current platform architecture (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)
+- REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/0004-current-local-gitops-platform.md`)
+- AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)

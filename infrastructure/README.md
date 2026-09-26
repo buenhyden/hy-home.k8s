@@ -83,10 +83,10 @@ Test Inventory가 소유한다.
 
 ## Configuration Boundary
 
-Repository files own bootstrap inputs and static interface contracts. The
-operator owns the Linux server host, Docker, kubeconfig, live cluster, external services,
-credentials, certificates, and approved bootstrap timing. Secret values and
-private runtime state must not be copied into this tree or validation evidence.
+저장소 파일은 bootstrap 입력과 정적 인터페이스 계약을 소유한다. Linux 서버
+호스트, Docker, kubeconfig, live 클러스터, 외부 서비스, credential, 인증서,
+승인된 bootstrap 시점은 운영자가 소유한다. secret 값과 비공개 runtime 상태는
+이 트리나 검증 증거에 복사하지 않는다.
 
 ### Host Runtime Prerequisite Matrix
 
@@ -119,10 +119,10 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 ## Validation
 
-Use `bash scripts/validate-infrastructure-contracts.sh` for repository-only
-evidence. Run `bash infrastructure/verify/run-all.sh` only against an
-intentionally bootstrapped environment with the prerequisites and live/static
-result boundaries recorded in the inventory below.
+저장소 범위의 증거는 `bash scripts/validate-infrastructure-contracts.sh`로
+얻는다. `bash infrastructure/verify/run-all.sh`는 의도적으로 bootstrap한
+환경에서만 실행하며 이때 아래 inventory에 기록된 전제 조건과 live·정적 결과
+경계를 따른다.
 
 ## Operations
 

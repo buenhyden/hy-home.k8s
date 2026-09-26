@@ -122,11 +122,10 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 
 ## Configuration Boundary
 
-Git is the desired-state owner for this tree. Secret values remain in approved
-external stores, while manifests may carry only the ExternalSecret, store, and
-route references described in the matrices above. Direct cluster mutation is
-limited to an explicitly approved bootstrap or break-glass path and must be
-reconciled back to Git and operations evidence.
+이 트리의 desired state는 Git이 소유한다. secret 값은 승인된 외부 저장소에
+두고 manifest에는 위 매트릭스에 나온 ExternalSecret, store, route 참조만 둔다.
+클러스터를 직접 바꾸는 일은 명시적으로 승인된 bootstrap이나 break-glass 경로로
+제한하며 그 결과는 다시 Git과 운영 증거에 반영해야 한다.
 
 ### Namespace Ownership Matrix
 
@@ -170,26 +169,25 @@ host, port, secret key, TLS/CA, rotation, namespace naming을 바꾸는 작업�
 
 ## Validation
 
-Run the exact static checks named in the coverage matrices, including
+coverage 매트릭스에 적힌 정적 검사를 그대로 실행한다. 여기에는
 `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`,
 `bash scripts/validate-gitops-structure.sh`,
 `bash scripts/validate-k8s-manifests.sh .`,
-`bash scripts/check-secret-handling.sh .`, and
-`python3 scripts/validate-vault-eso-contracts.py --root .`, and
-`python3 scripts/qa.py full`. Live ArgoCD, Vault, ESO, route,
-and external-service readiness remains operator-owned evidence.
+`bash scripts/check-secret-handling.sh .`,
+`python3 scripts/validate-vault-eso-contracts.py --root .`,
+`python3 scripts/qa.py full`이 포함된다. live ArgoCD, Vault, ESO, route,
+외부 서비스의 준비 상태는 운영자가 소유하는 증거로 남는다.
 
-GitOps change review compares immutable `apiVersion`, `kind`, `namespace`, and
-`name` identities. The source path is evidence only, so moving an unchanged
-object produces one `RETAIN`; output is limited to sorted `ADD`, `DELETE`, and
-`RETAIN` identity rows and never includes manifest `data`, `spec`,
-`stringData`, or values. This is deletion-review evidence, not proof that Argo
-CD pruned or reconciled an object. The static renderer accepts only the current
-`kustomize.config.k8s.io/v1beta1` Kustomization dialect and safe single-token
-identity/path fields. CI checks out full history and chooses the PR base SHA,
-push `before` SHA, or current SHA fallback; a forty-zero base uses an available
-HEAD parent, treats only a true root as empty, and fails closed at a shallow or
-otherwise unavailable parent.
+GitOps 변경 리뷰는 바뀌지 않는 `apiVersion`, `kind`, `namespace`,
+`name` identity를 비교한다. 소스 경로는 증거일 뿐이어서 내용이 같은 객체를
+옮기면 `RETAIN` 하나가 나온다. 출력은 정렬된 `ADD`, `DELETE`, `RETAIN` identity
+행뿐이며 manifest의 `data`, `spec`, `stringData`나 값은 절대 담지 않는다. 이
+출력은 삭제 리뷰용 증거이고 Argo CD가 객체를 prune하거나 reconcile했다는
+증명이 아니다. 정적 renderer는 현재의 `kustomize.config.k8s.io/v1beta1`
+Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받는다. CI는 전체
+이력을 checkout한 뒤 PR base SHA, push `before` SHA, 현재 SHA 순으로 기준을
+고른다. base가 0 마흔 개로만 이루어져 있으면 사용 가능한 HEAD 부모를 쓰고 진짜 root일 때만
+빈 기준으로 다룬다. 얕은 clone처럼 부모를 쓸 수 없으면 닫힌 쪽으로 실패한다.
 
 ## Operations
 

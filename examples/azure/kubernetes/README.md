@@ -48,16 +48,15 @@ kubernetes/
 
 ## Configuration Boundary
 
-Use Workload Identity and `secrets-store.csi.k8s.io` references; do not commit
-Azure credentials or secret values. Resource requests, limits, labels, and
-provider identifiers must be reviewed against the workload profile and dated
-migration specification before promotion.
+Workload Identity와 `secrets-store.csi.k8s.io` 참조를 사용하고 Azure
+credential이나 secret 값은 커밋하지 않는다. 승격하기 전에 resource request,
+limit, label, provider 식별자를 workload profile과 작성 시점이 고정된 migration
+명세에 비추어 검토한다.
 
 ## Validation
 
-Validate Kubernetes syntax and repository contracts before review. These
-static examples do not prove live AKS, Azure Key Vault, Workload Identity, or
-CSI driver readiness.
+리뷰 전에 Kubernetes 문법과 저장소 계약을 검증한다. 이 정적 예시는 live AKS,
+Azure Key Vault, Workload Identity, CSI driver의 준비 상태를 증명하지 않는다.
 
 ## Operations
 
