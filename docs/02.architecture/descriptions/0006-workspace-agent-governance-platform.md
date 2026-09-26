@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.8.3"
+version: "1.8.4"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-27"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -15,7 +15,7 @@ artifact_id: "AD-0006"
 
 This Architecture describes the current owner boundaries of agent, document, validation, and execution evidence.
 [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
-the common governance design, [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
+the common governance design, [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
 the cutover and its acceptance conditions, and [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) owns
 the wider unfinished document convergence.
 
@@ -126,7 +126,7 @@ is the active Spec that [AD-0007](./0007-current-local-gitops-platform.md) point
 this document provides the common routing, approval, and QA boundaries.
 This document describes the responsibility boundaries of common governance, the Claude/Codex adapters, common QA, and
 GitOps operations. [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
-the design, and [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
+the design, and [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
 the cutover and its acceptance conditions. The existence of a file does not prove the installed runtime's discovery or
 permission enforcement, nor hosted CI success. Actual validation state is confirmed in the relevant Task.
 
@@ -294,7 +294,7 @@ historical evidence rather than parallel operating instructions.
 
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
-- **Current implementation**: [SPEC-0072](../../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
+- **Current implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical decisions**: ADR-0019, [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), ADR-0034, ADR-0035
 

@@ -14,7 +14,7 @@ artifact_id: "SPEC-0086-TSK-0001"
 ## Overview
 
 Own the operator-authorized native-runtime observation for Claude and Codex
-that [SPEC-0072-TSK-0001](../../0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
+that [SPEC-0072-TSK-0001](../../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md)
 transferred here on 2026-09-24 rather than claiming as passed. This record is
 append-only evidence of what an operator-authorized session actually observed;
 it never promotes a repository-static or hosted-CI result to runtime evidence.
@@ -23,7 +23,7 @@ it never promotes a repository-static or hosted-CI result to runtime evidence.
 
 - [Owning Spec](../spec.md)
 - [Owning Plan](../plan.md)
-- [SPEC-0072-TSK-0001](../../0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md), which recorded `WORK-009` and transferred it here
+- [SPEC-0072-TSK-0001](../../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/tasks/tsk-0001-consolidate-governance-and-quality-gates.md), which recorded `WORK-009` and transferred it here
 - `.claude/provider.md` and `.codex/provider.md`
 
 ## Task Table

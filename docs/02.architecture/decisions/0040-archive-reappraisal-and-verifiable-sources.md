@@ -1,10 +1,10 @@
 ---
 title: "Archive Reappraisal and Verifiable Sources"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-27"
 layer: "architecture"
 artifact_id: "ADR-0040"
 supersedes: "ADR-0039"
@@ -182,4 +182,4 @@ squash later makes unreachable, which the envelope exists to prevent.
 
 | Decision lineage | Replacement relation                                                       | Affected Spec                                                                       |
 | ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes ADR-0039; the frozen generations keep theirs | [SPEC-0085](../../03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |
+| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes ADR-0039; the frozen generations keep theirs | [SPEC-0085](../../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |

@@ -13,7 +13,7 @@ artifact_id: "SPEC-0086"
 
 ## Overview
 
-[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+[SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 consolidated agent governance and shared QA and proved every static half of
 its acceptance criteria VAL-AGQ-001 through VAL-AGQ-007. Its Task recorded one
 native runtime half those criteria still name — discovery, invocation, model
@@ -131,7 +131,7 @@ in the owning Task with client identity, exact command, and observed result.
 
 ## Traceability
 
-- **Predecessor**: [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md), whose Task transferred `WORK-009` here on 2026-09-24.
+- **Predecessor**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md), whose Task transferred `WORK-009` here on 2026-09-24.
 - **Plan**: [Provider Native Runtime Observation Implementation Plan](plan.md)
 - **Task**: [Provider Native Runtime Observation Task](tasks/tsk-0001-observe-provider-native-runtime.md)
 

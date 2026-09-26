@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.3"
+version: "0.7.4"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-27"
 layer: "archive"
 ---
 
@@ -181,6 +181,14 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0062-workspace-research-full-corpus-reverification`](./completed/03.specs/0062-workspace-research-full-corpus-reverification) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0062-workspace-research-full-corpus-reverification` |
 | [`completed/03.specs/0084-stage03-backlog-closeout`](./completed/03.specs/0084-stage03-backlog-closeout) | `27c1045d47fc253f6442137162b19e5578cc6492:docs/03.specs/0084-stage03-backlog-closeout` |
 | [`retired/03.specs/0049-platform-validation-and-security-evidence`](./retired/03.specs/0049-platform-validation-and-security-evidence) | `62ed8f0596d508f47267b64ae978d288af628a82:docs/03.specs/0049-platform-validation-and-security-evidence` |
+| [`completed/03.specs/0072-agent-governance-and-quality-gate-consolidation`](./completed/03.specs/0072-agent-governance-and-quality-gate-consolidation) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0072-agent-governance-and-quality-gate-consolidation` |
+| [`completed/03.specs/0085-archive-reappraisal-and-document-standards`](./completed/03.specs/0085-archive-reappraisal-and-document-standards) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0085-archive-reappraisal-and-document-standards` |
+| [`completed/03.specs/0087-stage03-terminal-package-retention`](./completed/03.specs/0087-stage03-terminal-package-retention) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0087-stage03-terminal-package-retention` |
+| [`completed/03.specs/0088-operations-corpus-convergence`](./completed/03.specs/0088-operations-corpus-convergence) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0088-operations-corpus-convergence` |
+| [`completed/03.specs/0089-deferred-conflict-resolution`](./completed/03.specs/0089-deferred-conflict-resolution) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0089-deferred-conflict-resolution` |
+| [`completed/03.specs/0090-spec0049-retirement`](./completed/03.specs/0090-spec0049-retirement) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0090-spec0049-retirement` |
+| [`completed/03.specs/0091-readme-navigation-contract`](./completed/03.specs/0091-readme-navigation-contract) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0091-readme-navigation-contract` |
+| [`completed/03.specs/0093-document-language-contract`](./completed/03.specs/0093-document-language-contract) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0093-document-language-contract` |
 
 ### Retention Assessment
 

@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Technical Specification"
-version: "1.2.0"
+version: "1.2.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-27"
 layer: "specs"
 artifact_id: "SPEC-0008"
 ---
@@ -23,7 +23,7 @@ validation evidence.
 ## Strategic Boundaries & Non-goals
 
 This spec owns the current local platform implementation contract represented by `gitops/`, `infrastructure/`, and `scripts/`.
-README navigation is owned by [SPEC-0091](../0091-readme-navigation-contract/spec.md).
+README navigation is owned by [SPEC-0091](../../98.archive/completed/03.specs/0091-readme-navigation-contract/spec.md).
 It does not own external service runtime creation, live cluster repair, secret values, or cloud provider provisioning.
 
 ## Contracts

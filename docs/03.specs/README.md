@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.6.1"
+version: "0.7.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -69,15 +69,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-├── 0072-agent-governance-and-quality-gate-consolidation/
-├── 0085-archive-reappraisal-and-document-standards/
 ├── 0086-provider-native-runtime-observation/
-├── 0087-stage03-terminal-package-retention/
-├── 0088-operations-corpus-convergence/
-├── 0089-deferred-conflict-resolution/
-├── 0090-spec0049-retirement/
-├── 0091-readme-navigation-contract/
-├── 0093-document-language-contract/
 ├── 0094-finished-package-retention/
 └── README.md
 ```
@@ -85,15 +77,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0072-agent-governance-and-quality-gate-consolidation/](./0072-agent-governance-and-quality-gate-consolidation/) | 공통 agent governance와 local·CI QA 통합 |
-| [0085-archive-reappraisal-and-document-standards/](./0085-archive-reappraisal-and-document-standards/) | Archive 재평가와 문서 표준(ADR-0040 cutover) |
 | [0086-provider-native-runtime-observation/](./0086-provider-native-runtime-observation/) | Claude·Codex native runtime 관측 |
-| [0087-stage03-terminal-package-retention/](./0087-stage03-terminal-package-retention/) | 종료된 Stage 03 package 보존 |
-| [0088-operations-corpus-convergence/](./0088-operations-corpus-convergence/) | 운영 문서 역할 정리와 검증 script 정리 |
-| [0089-deferred-conflict-resolution/](./0089-deferred-conflict-resolution/) | SPEC-0088 보류 충돌 해소 |
-| [0090-spec0049-retirement/](./0090-spec0049-retirement/) | SPEC-0049 `retired/` 보존 |
-| [0091-readme-navigation-contract/](./0091-readme-navigation-contract/) | README 탐색 계약 |
-| [0093-document-language-contract/](./0093-document-language-contract/) | 문서 언어 계약 |
 | [0094-finished-package-retention/](./0094-finished-package-retention/) | 끝난 package 8개 보존 |
 
 ## Authoring Workflow
