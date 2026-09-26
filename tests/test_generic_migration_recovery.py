@@ -53,6 +53,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             ]
         # README navigation names profiles this selection drops.
         registry.pop("readme_navigation", None)
+        # The language contract names profiles this selection drops.
+        registry.pop("document_language", None)
         registry["profiles"] = [
             profile for profile in registry["profiles"] if profile["id"] in selected
         ]

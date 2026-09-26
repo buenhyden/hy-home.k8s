@@ -23,7 +23,6 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "profiled_readme_table_headings",
             "canonical_markdown_owns_generic_residue",
             "generic_template_residue_lines",
-            "english_first_terminal_states",
             "rel",
         }
         nodes = [
@@ -128,20 +127,6 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         owns = self.rules["canonical_markdown_owns_generic_residue"]
         self.assertTrue(owns(ROOT / "docs/01.requirements/9999-projection.md"))
         self.assertFalse(owns(ROOT / "AGENTS.md"))
-
-    def test_english_first_scope_skips_only_terminal_stage03_documents(self):
-        import json
-
-        registry = json.loads(
-            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
-        )
-        terminal = self.rules["english_first_terminal_states"](registry)
-        self.assertEqual(
-            terminal, frozenset({"done", "superseded", "withdrawn", "cancelled"})
-        )
-        for state in ("draft", "active", "queued", "in-progress", "blocked"):
-            with self.subTest(state=state):
-                self.assertNotIn(state, terminal)
 
     def test_secret_value_output_is_detected_with_or_without_namespace_flag(self):
         rule = next(

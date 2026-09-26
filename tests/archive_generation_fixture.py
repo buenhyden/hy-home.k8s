@@ -134,6 +134,7 @@ def legacy_registry_payload() -> dict[str, Any]:
         "archive_assessment",
         "legacy_rebased_retained_paths",
         "readme_navigation",
+        "document_language",
     ):
         payload.pop(key, None)
     payload["profiles"] = [

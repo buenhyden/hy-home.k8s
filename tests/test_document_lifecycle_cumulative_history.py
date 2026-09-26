@@ -67,6 +67,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             ]
         # README navigation names profiles this selection drops.
         raw_registry.pop("readme_navigation", None)
+        # The language contract names profiles this selection drops.
+        raw_registry.pop("document_language", None)
         raw_registry["profiles"] = [
             profile for profile in raw_registry["profiles"] if profile["id"] in selected
         ]

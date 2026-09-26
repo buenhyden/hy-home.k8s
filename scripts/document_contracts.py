@@ -243,6 +243,18 @@ class ReadmeNavigation:
 
 
 @dataclass(frozen=True)
+class DocumentLanguage:
+    """SPEC-0093: which language each document is written in."""
+
+    english_only_roots: tuple[str, ...]
+    english_only_suffixes: frozenset[str]
+    korean_first_profiles: frozenset[str]
+    english_sections: frozenset[str]
+    min_latin_words: int
+    pending_paths: frozenset[PurePosixPath]
+
+
+@dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
     profile_class: Literal[
@@ -291,6 +303,7 @@ class Registry:
     archive_assessment: ArchiveAssessment | None = None
     legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
     readme_navigation: ReadmeNavigation | None = None
+    document_language: DocumentLanguage | None = None
 
 
 @dataclass(frozen=True)
@@ -959,6 +972,7 @@ def _archive_retention_diagnostics(
         *_archive_citation_diagnostics(raw_registry, profiles_by_id),
         *_archive_assessment_diagnostics(raw_registry, profiles_by_id),
         *_readme_navigation_registry_diagnostics(raw_registry, profiles_by_id),
+        *_document_language_registry_diagnostics(raw_registry, profiles_by_id),
     ]
     if diagnostics:
         # The legacy check builds the typed registry, which needs the rest valid.
@@ -1321,6 +1335,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             for value in raw.get("legacy_rebased_retained_paths", ())
         ),
         readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
+        document_language=_document_language_from_mapping(raw.get("document_language")),
     )
 
 
@@ -1400,6 +1415,64 @@ def _readme_navigation_registry_diagnostics(
         _diagnostic(
             "REGISTRY_README_NAVIGATION",
             expected="router profiles, their required H2 sections, and README paths",
+            actual=fault,
+        )
+        for fault in faults
+    ]
+
+
+def _document_language_from_mapping(
+    raw: Mapping[str, Any] | None,
+) -> DocumentLanguage | None:
+    if raw is None:
+        return None
+    return DocumentLanguage(
+        english_only_roots=tuple(raw["english_only_roots"]),
+        english_only_suffixes=frozenset(raw["english_only_suffixes"]),
+        korean_first_profiles=frozenset(raw["korean_first_profiles"]),
+        english_sections=frozenset(raw["english_sections"]),
+        min_latin_words=raw["min_latin_words"],
+        pending_paths=frozenset(PurePosixPath(value) for value in raw["pending_paths"]),
+    )
+
+
+def _document_language_registry_diagnostics(
+    raw_registry: Mapping[str, Any],
+    profiles_by_id: Mapping[str, Mapping[str, Any]],
+) -> list[Diagnostic]:
+    """Require the language contract to name real, checked profiles and paths."""
+
+    contract = raw_registry.get("document_language")
+    if contract is None:
+        return []
+    faults: list[str] = []
+    for profile_id in contract["korean_first_profiles"]:
+        profile = profiles_by_id.get(profile_id)
+        if profile is None:
+            faults.append(f"unknown profile {profile_id}")
+        elif profile.get("mode") not in {"authored", "router"}:
+            faults.append(f"{profile_id} is not an authored or router profile")
+    roots = tuple(contract["english_only_roots"])
+    for root in roots:
+        if not root.endswith("/"):
+            faults.append(f"english-only root {root} does not end in /")
+    for suffix in contract["english_only_suffixes"]:
+        if not suffix.startswith("."):
+            faults.append(f"suffix {suffix} does not start with .")
+    sections = contract["english_sections"]
+    if any(not name.strip() for name in sections) or len(set(sections)) != len(
+        sections
+    ):
+        faults.append("english sections are empty or repeated")
+    if contract["min_latin_words"] < 1:
+        faults.append("min_latin_words is below one")
+    for value in contract["pending_paths"]:
+        if value.startswith(roots):
+            faults.append(f"pending path {value} is under an English-only root")
+    return [
+        _diagnostic(
+            "REGISTRY_DOCUMENT_LANGUAGE",
+            expected="checked profiles, well-formed roots and suffixes, convertible paths",
             actual=fault,
         )
         for fault in faults

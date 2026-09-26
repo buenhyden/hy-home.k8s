@@ -39,7 +39,10 @@ from document_contracts import (
     load_registry,
     read_repository_text,
     validate_registry,  # noqa: F401 - re-exported
+    _parse_ls_files_stage_z,
+    _run_git,
 )
+import document_language
 
 
 SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
@@ -1481,6 +1484,88 @@ def _body_diagnostics(
     return diagnostics
 
 
+def _terminal(registry: Any, profile: DocumentProfile, text: str) -> bool:
+    try:
+        _, metadata, _ = extract_frontmatter(text)
+    except ContractError:
+        return False
+    status = metadata.get("status")
+    if not isinstance(status, str):
+        return False
+    return any(
+        profile.profile_id in domain.profile_ids
+        and domain.validation_class(status) == "terminal"
+        for domain in registry.lifecycle_domains
+    )
+
+
+def document_language_diagnostics(
+    registry: Any,
+    documents: Sequence[tuple[PurePosixPath, DocumentProfile, str]],
+    english_only_texts: Mapping[PurePosixPath, str],
+) -> list[Diagnostic]:
+    """SPEC-0093: each document is written in the language its profile names."""
+
+    contract = getattr(registry, "document_language", None)
+    if contract is None:
+        return []
+    outputs = {
+        profile.template: profile.profile_id
+        for profile in registry.profiles
+        if profile.template is not None and profile.mode != "template"
+    }
+    diagnostics: list[Diagnostic] = []
+    checked: set[PurePosixPath] = set()
+    for path, profile, text in documents:
+        kind = document_language.classify(
+            path,
+            profile.profile_id,
+            profile.mode,
+            outputs.get(path),
+            _terminal(registry, profile, text),
+            contract,
+        )
+        if kind is None or kind == "english-only":
+            continue
+        checked.add(path)
+        found = document_language.findings(text, kind, contract)
+        if path in contract.pending_paths:
+            if not found:
+                diagnostics.append(
+                    _diagnostic(
+                        "LANG-PENDING",
+                        path,
+                        profile,
+                        "a pending document that still violates the contract",
+                        "it passes; remove it from pending_paths",
+                    )
+                )
+            continue
+        diagnostics.extend(
+            _diagnostic(code, path, profile, f"{kind} language", detail)
+            for code, detail in found
+        )
+    for path, text in sorted(english_only_texts.items()):
+        diagnostics.extend(
+            Diagnostic(code, path, "", "english-only", detail, OWNER)
+            for code, detail in document_language.findings(
+                text, "english-only", contract
+            )
+        )
+    for pending in sorted(contract.pending_paths - checked, key=PurePosixPath.as_posix):
+        diagnostics.append(
+            Diagnostic(
+                "LANG-PENDING",
+                pending,
+                "",
+                "a tracked, checked document",
+                "pending path is untracked or unchecked",
+                OWNER,
+            )
+        )
+    return diagnostics
+
+
 def validate_document(
     root: Path,
     path: PurePosixPath,
@@ -1799,6 +1884,27 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
         diagnostics.extend(artifact_identity_uniqueness_diagnostics(identity_documents))
+        language = getattr(registry, "document_language", None)
+        english_only_texts: dict[PurePosixPath, str] = {}
+        if language is not None:
+            entries = _parse_ls_files_stage_z(
+                _run_git(root, ("ls-files", "--stage", "-z"))
+            )
+            for entry in entries:
+                if (
+                    entry.stage == 0
+                    and entry.mode.startswith("100")
+                    and entry.path.as_posix().startswith(language.english_only_roots)
+                    and entry.path.suffix in language.english_only_suffixes
+                ):
+                    english_only_texts[entry.path] = read_repository_text(
+                        root, entry.path
+                    )
+        diagnostics.extend(
+            document_language_diagnostics(
+                registry, identity_documents, english_only_texts
+            )
+        )
         rows = _outcome_rows(root, diagnostics, args.mode)
         _emit_results(args.mode, args.format, rows)
         return 1 if any(row.outcome == "FAIL" for row in rows) else 0

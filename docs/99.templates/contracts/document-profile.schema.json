@@ -881,6 +881,64 @@
           }
         }
       }
+    },
+    "document_language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "english_only_roots",
+        "english_only_suffixes",
+        "korean_first_profiles",
+        "english_sections",
+        "min_latin_words",
+        "pending_paths"
+      ],
+      "properties": {
+        "english_only_roots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[^/].*/$"
+          }
+        },
+        "english_only_suffixes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^\\.[a-z0-9]+$"
+          }
+        },
+        "korean_first_profiles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "english_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "min_latin_words": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pending_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\.md$"
+          }
+        }
+      }
     }
   }
 }

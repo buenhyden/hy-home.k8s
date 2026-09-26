@@ -164,6 +164,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "archive_assessment",
                 "legacy_rebased_retained_paths",
                 "readme_navigation",
+                "document_language",
             },
         )
         self.assertEqual(self.registry["schema_version"], 9)
@@ -285,6 +286,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "archive_assessment",
                 "legacy_rebased_retained_paths",
                 "readme_navigation",
+                "document_language",
                 "schema_version",
             },
         )
