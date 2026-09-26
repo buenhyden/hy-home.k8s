@@ -110,6 +110,12 @@ class EnglishTests(unittest.TestCase):
         code = f"# T\n\nUse `\uc0c1\ud0dc` here.\n\n{FENCE}\n\ud55c\uae00\n{FENCE}\n"
         self.assertEqual(found(code, "english-first"), [])
 
+    def test_a_longer_fence_closes_only_on_its_own_length(self):
+        text = f"{FENCE}`md\n{FENCE}\n{FENCE}`\n\n{KO}\n"
+        self.assertEqual(found(text, "english-first"), ["LANG-ENGLISH-FIRST"])
+        info = f"{FENCE}\n{FENCE}bash\n{KO}\n{FENCE}\n"
+        self.assertEqual(found(info, "english-first"), [])
+
     def test_frontmatter_is_not_judged(self):
         text = f'---\ntitle: "\ud55c\uae00"\n---\n\n{EN}\n'
         self.assertEqual(found(text, "english-first"), [])
@@ -153,6 +159,29 @@ class KoreanTests(unittest.TestCase):
         self.assertEqual(found(text, "korean-first"), [])
         bad = f"# T\n\n{KO}\n\n## AI Agent Requirements\n\n{KO}\n"
         self.assertEqual(found(bad, "korean-first"), ["LANG-ENGLISH-FIRST"])
+
+    def test_english_section_judges_lists_tables_and_qualified_headings(self):
+        for body in (f"- {KO}\n", f"| a | {KO} |\n| --- | --- |\n"):
+            with self.subTest(body=body):
+                text = f"# T\n\n## AI Agent Requirements\n\n{body}"
+                self.assertEqual(found(text, "korean-first"), ["LANG-ENGLISH-FIRST"])
+        qualified = f"# T\n\n## AI Agent Requirements (Optional)\n\n{KO}\n"
+        self.assertEqual(found(qualified, "korean-first"), ["LANG-ENGLISH-FIRST"])
+        other = f"# T\n\n## AI Agent Requirementsx\n\n{KO}\n"
+        self.assertEqual(found(other, "korean-first"), [])
+
+    def test_blockquote_holds_lists_and_fences(self):
+        self.assertEqual(found(f"> - {EN}\n", "korean-first"), [])
+        fenced = f"> {FENCE}\n> {EN}\n> {FENCE}\n"
+        self.assertEqual(found(fenced, "korean-first"), [])
+
+    def test_autolink_and_inline_html_lines_are_prose(self):
+        for line in (f"<https://example.com> {EN}", f"<kbd>Ctrl</kbd> {EN}"):
+            with self.subTest(line=line):
+                self.assertEqual(
+                    found(line + "\n", "korean-first"), ["LANG-KOREAN-FIRST"]
+                )
+        self.assertEqual(found(f"<div>{EN}</div>\n", "korean-first"), [])
 
 
 class TemplateTests(unittest.TestCase):

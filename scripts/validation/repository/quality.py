@@ -2289,7 +2289,7 @@ for phrase in [
     "PULL_REQUEST_TEMPLATE.md",
     ".github/requirements/ci-validation.txt",
     ".pre-commit-config.yaml",
-    "GitHub branch protection과 ruleset이 강제한다",
+    "직접 push 제한은 저장소 로컬 파일 밖에서 GitHub branch protection과 ruleset이 강제한다",
     "QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다",
     "Source Basis",
     "Parent Spec",

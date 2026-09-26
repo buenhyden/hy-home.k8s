@@ -16,6 +16,14 @@ COMMENT = re.compile(r"<!--.*?-->", re.S)
 HEADING = re.compile(r"^ {0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
 LIST_ITEM = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:\s|$)")
 REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[[^\]]+\]:\s")
+QUOTE = re.compile(r"^ {0,3}(?:> ?)+")
+HTML_BLOCK = re.compile(
+    r"^ {0,3}(?:<!--|</?(?:address|article|aside|blockquote|details|dialog|div|dl"
+    r"|fieldset|figcaption|figure|footer|form|h[1-6]|header|hr|li|main|nav|ol|p"
+    r"|pre|section|summary|table|tbody|td|tfoot|th|thead|tr|ul)(?:\s|/?>|$)"
+    r"|</?[A-Za-z][\w-]*(?:\s[^>]*)?/?>\s*$)",
+    re.I,
+)
 AUTHOR_PROMPT = re.compile(r"<!--\s*Author prompt:(.*?)-->", re.S)
 ARCHIVE_PREFIX = "docs/98.archive/"
 ARCHIVE_INDEX = "docs/98.archive/README.md"
@@ -39,19 +47,24 @@ def _outside_code(text: str) -> list[str]:
     """Lines with fenced blocks blanked and code spans removed."""
 
     lines: list[str] = []
-    fence: str | None = None
+    closer: re.Pattern[str] | None = None
     for line in text.split("\n"):
-        opener = FENCE.match(line)
-        if fence is None and opener:
-            fence = opener.group(1)[0] * 3
-            lines.append("")
+        # A fence may sit inside a blockquote; judge it without the quote marks.
+        probe = QUOTE.sub("", line)
+        if closer is None:
+            opener = FENCE.match(probe)
+            if opener:
+                mark = opener.group(1)
+                closer = re.compile(
+                    rf"^ {{0,3}}{re.escape(mark[0])}{{{len(mark)},}}\s*$"
+                )
+                lines.append("")
+                continue
+            lines.append(CODE_SPAN.sub("", line))
             continue
-        if fence is not None:
-            if line.strip().startswith(fence):
-                fence = None
-            lines.append("")
-            continue
-        lines.append(CODE_SPAN.sub("", line))
+        if closer.match(probe):
+            closer = None
+        lines.append("")
     return lines
 
 
@@ -61,6 +74,30 @@ def _hangul_lines(lines: list[str]) -> list[str]:
         for number, line in enumerate(lines, start=1)
         if HANGUL.search(line)
     ]
+
+
+def _english_section(section: str | None, names: Any) -> bool:
+    """An English section heading is its name, alone or followed by a qualifier."""
+
+    return section is not None and any(
+        section == name or re.match(rf"{re.escape(name)}(?:\s|\()", section)
+        for name in names
+    )
+
+
+def _english_section_lines(lines: list[str], names: Any) -> list[str]:
+    """Every Hangul line, outside code, inside an English H2 section."""
+
+    found: list[str] = []
+    section: str | None = None
+    for number, line in enumerate(lines, start=1):
+        heading = HEADING.match(line)
+        if heading and len(heading.group(1)) <= 2:
+            section = heading.group(2) if len(heading.group(1)) == 2 else None
+            continue
+        if _english_section(section, names) and HANGUL.search(line):
+            found.append(f"{section}: line {number}: {line.strip()[:60]}")
+    return found
 
 
 def _paragraphs(lines: list[str]) -> list[tuple[str | None, str]]:
@@ -78,6 +115,8 @@ def _paragraphs(lines: list[str]) -> list[tuple[str | None, str]]:
             buffer.clear()
 
     for line in lines:
+        # A blockquote holds the same blocks as the body; judge what it holds.
+        line = QUOTE.sub("", line)
         stripped = line.strip()
         heading = HEADING.match(line)
         if heading:
@@ -106,15 +145,14 @@ def _paragraphs(lines: list[str]) -> list[tuple[str | None, str]]:
             in_list = False
         after_blank = False
         if (
-            stripped.startswith(("|", "<"))
+            stripped.startswith("|")
+            or HTML_BLOCK.match(line)
             or REFERENCE_DEFINITION.match(line)
             or line.startswith(("    ", "\t"))
         ):
             flush()
             continue
-        buffer.append(
-            stripped.lstrip(">").strip() if stripped.startswith(">") else stripped
-        )
+        buffer.append(stripped)
     flush()
     return found
 
@@ -169,11 +207,13 @@ def findings(text: str, language: str, contract: Any) -> list[tuple[str, str]]:
         return [
             ("LANG-ENGLISH-FIRST", item) for item in _hangul_lines(_outside_code(body))
         ]
-    result: list[tuple[str, str]] = []
-    for section, paragraph in _paragraphs(_outside_code(_blank_comments(body))):
-        if section in contract.english_sections:
-            if HANGUL.search(paragraph):
-                result.append(("LANG-ENGLISH-FIRST", f"{section}: {paragraph[:60]}"))
+    lines = _outside_code(_blank_comments(body))
+    result = [
+        ("LANG-ENGLISH-FIRST", item)
+        for item in _english_section_lines(lines, contract.english_sections)
+    ]
+    for section, paragraph in _paragraphs(lines):
+        if _english_section(section, contract.english_sections):
             continue
         if (
             not HANGUL.search(paragraph)
