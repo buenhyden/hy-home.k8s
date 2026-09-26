@@ -31,9 +31,9 @@ authorized.
 | WORK-001 | VAL-DLC-007 | Propose the package | platform | Done | Committed `cacd0094` | Staged QA PASS |
 | WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Committed `b470e2a1`; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
 | WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | Committed `9f334da8`; 52 documents pending | Profile gate PASS, staged QA PASS |
-| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Done | `7074f928`, `f8b5f0d5`, `84ba3172`, and the Stage 90 commit; no README pending; 21 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
+| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Done | `7074f928`, `f8b5f0d5`, `84ba3172`, `dae50ee0`; no README pending; 21 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Done | No operations body was pending; the five operations READMEs converted under WORK-004 | Profile gate |
-| WORK-006 | VAL-DLC-005 | Requirements to English | platform | Queued | Not started | Staged QA, whole suite |
+| WORK-006 | VAL-DLC-005 | Requirements to English | platform | Done | REQ-0001 to REQ-0004 in English; 17 documents pending | Digest guard 485 OK, whole suite, staged QA PASS |
 | WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Queued | Not started | Staged QA, whole suite |
 | WORK-008 | VAL-DLC-006, VAL-DLC-007 | Governance sentence, evidence, closure | platform | Queued | Not started | Full QA |
 
@@ -115,6 +115,19 @@ is the exact list.
   in English. The matrix rows are observation-dated evidence that the pack
   itself keeps at observation-time wording until its next refresh.
 
+### WORK-006 (2026-09-26)
+
+- REQ-0001 to REQ-0004 are English. Identifiers, links, code spans, and
+  required headings are unchanged; a script compared them between the source
+  and the translation for every file.
+- Digest guard: after REQ-0001 changed, the archive, strict cutover, generic
+  migration recovery, and lifecycle migration suites ran 485 tests, all OK.
+  No sealed or frozen proof pins a converted body, so nothing was deferred.
+- Whole suite on a clean checkout of the staged tree holding every WORK-006
+  and WORK-007 conversion: 1206 tests, 5 failures, all known environment
+  failures (Gitleaks absent twice, two host-only cases, the detached-checkout
+  archive Git budget).
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -126,6 +139,6 @@ is the exact list.
 | [WORK-003](../plan.md#work-breakdown) | Done | Profile gate and staged QA |
 | [WORK-004](../plan.md#work-breakdown) | Done | Staged QA |
 | [WORK-005](../plan.md#work-breakdown) | Done | Profile gate |
-| [WORK-006](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |
+| [WORK-006](../plan.md#work-breakdown) | Done | Whole suite and staged QA |
 | [WORK-007](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |
 | [WORK-008](../plan.md#work-breakdown) | Not started | Full QA |

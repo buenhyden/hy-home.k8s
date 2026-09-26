@@ -5777,10 +5777,6 @@
     ],
     "min_latin_words": 8,
     "pending_paths": [
-      "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
-      "docs/01.requirements/0002-argo-notifications-slack.md",
-      "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-      "docs/01.requirements/0004-current-local-gitops-platform.md",
       "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
       "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md",
       "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md",
