@@ -45,7 +45,7 @@ The repository has notification settings, but their presence alone does not guar
 ## Functional Requirements
 
 - **REQ-0002-FR-0001**: The platform must deliver GitOps events to the operators' Slack channel. The downstream Spec owns the controller and the concrete settings.
-- **REQ-0002-FR-0002**: Slack credential material must be consumed only through an approved external secret source and a bounded sync boundary, and must never appear in plaintext in the PRD, manifests, or logs.
+- **REQ-0002-FR-0002**: Slack credential material must be consumed only through an approved external secret source and a bounded sync boundary, and must not appear in plaintext in the PRD, manifests, or logs.
 - **REQ-0002-FR-0003**: Notification templates and triggers must express deployment completion, health degradation, sync failure, Rollouts completion, and Rollouts abort events.
 - **REQ-0002-NFR-0001**: The common default notification policy must apply health degradation and sync failure to every app. The presence of the current settings does not prove an all-app subscription or actual receipt.
 - **REQ-0002-IF-0001**: An application team must be able to opt in per app to a Slack channel for deployment completion notifications. The AD/Spec owns the native annotation syntax.
@@ -78,7 +78,7 @@ The repository has notification settings, but their presence alone does not guar
 - The notification credential must be prepared by a human-approved external bootstrap task.
 - Issuing the Slack Bot token and granting channel permissions needs the cooperation of the Slack workspace administrator.
 - Assumes ESO is operating normally (depends on the current baseline Requirement).
-- rollout-\* events work only with Argo Rollouts installed (depends on PRD `0001-argo-rollouts-progressive-delivery.md`).
+- rollout-\* events work when Argo Rollouts is installed (depends on PRD `0001-argo-rollouts-progressive-delivery.md`).
 
 ### Agent execution and approval requirements
 
