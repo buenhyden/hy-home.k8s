@@ -12,7 +12,7 @@ layer: "architecture"
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 

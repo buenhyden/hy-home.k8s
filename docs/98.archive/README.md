@@ -13,7 +13,7 @@ layer: "archive"
 > 활성 stage가 더 이상 싣지 않는 것을 retention class 네 가지와 route disposition 두 가지로 보존하는 비현재 archive stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 

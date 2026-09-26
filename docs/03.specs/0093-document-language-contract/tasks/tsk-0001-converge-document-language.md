@@ -30,8 +30,8 @@ authorized.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-DLC-007 | Propose the package | platform | Done | Committed `cacd0094` | Staged QA PASS |
 | WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Committed `b470e2a1`; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
-| WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | 96 prompts in 14 templates; 52 documents pending | Profile gate PASS, staged QA PASS |
-| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Queued | Not started | Staged QA |
+| WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | Committed `9f334da8`; 52 documents pending | Profile gate PASS, staged QA PASS |
+| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | In progress | Governance-hub notice in 15 READMEs; 40 documents pending | Archive tests 360 OK, staged QA PASS |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Queued | Not started | Staged QA |
 | WORK-006 | VAL-DLC-005 | Requirements to English | platform | Queued | Not started | Staged QA, whole suite |
 | WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Queued | Not started | Staged QA, whole suite |

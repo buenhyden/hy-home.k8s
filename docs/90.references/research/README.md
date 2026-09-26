@@ -12,7 +12,7 @@ layer: "references"
 > Workspace harness research pack references, source ledgers, and durable research synthesis live here.
 
 > [!NOTE]
-> All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../../.agents/README.md).
+> 이 디렉터리에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
 
 ## Overview
 
