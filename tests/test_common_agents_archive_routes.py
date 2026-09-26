@@ -135,7 +135,9 @@ class SpecIndexNavigationTest(unittest.TestCase):
             }
         )
         navigation = dataclasses.replace(
-            links.load_registry(ROOT).readme_navigation, pending_paths=frozenset()
+            links.load_registry(ROOT).readme_navigation,
+            pending_paths=frozenset(),
+            exempt_paths=frozenset(),
         )
         return {
             item.rule_id

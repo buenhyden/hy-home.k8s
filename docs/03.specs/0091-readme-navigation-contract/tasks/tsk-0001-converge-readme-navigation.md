@@ -1,6 +1,6 @@
 ---
 title: "Converge README Navigation"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 status: "done"
 owner: "platform"
@@ -58,7 +58,7 @@ A prototype of the rules over the 43 tracked READMEs reported depth, tree,
 enumeration, completeness, and copy findings concentrated in `docs/03.specs`,
 `docs/90.references`, `docs/98.archive`, `docs/99.templates/templates`,
 `gitops`, `infrastructure`, and the root README, and duplicated tree-and-table
-lists in five collection READMEs. The Stage 98 README is deferred to the
+lists in five collection READMEs. The Stage 98 README was deferred to the
 archive ledger package.
 
 ### Full QA (2026-09-26, branch head `8d11d538`)
@@ -83,8 +83,10 @@ the fixtures, not the contract. Hosted `ci-summary` is not observed.
 
 ### Deferrals and Residual Risk
 
-- `docs/98.archive/README.md` stays in `pending_paths` until the archive
-  ledger package moves its machine tables.
+- The request owner withdrew the archive ledger package on 2026-09-26 after
+  its table move broke the archive cutover proofs; `ae1f8d5c` reverts it.
+  `docs/98.archive/README.md` moved from `pending_paths` to the permanent
+  `exempt_paths`, and `pending_paths` is empty.
 - `README-NAV-ENUMERATION` counts resolvable targets only; plain-text member
   lists remain a review concern, as the Spec states.
 - The final whole-branch review found that code spans resolved only from the

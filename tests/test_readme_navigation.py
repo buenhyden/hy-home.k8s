@@ -29,7 +29,7 @@ ROUTER = "common/readme-stage-index"
 IMPLEMENTATION = "common/readme-implementation"
 
 
-def navigation(pending=()):
+def navigation(pending=(), exempt=()):
     return contracts.ReadmeNavigation(
         placeholders=frozenset({"README.md", ".gitkeep"}),
         forbidden_index_columns=frozenset(
@@ -43,6 +43,7 @@ def navigation(pending=()):
             }
         ),
         pending_paths=frozenset(PurePosixPath(p) for p in pending),
+        exempt_paths=frozenset(PurePosixPath(p) for p in exempt),
     )
 
 
@@ -61,10 +62,12 @@ SPECS = tree(
 )
 
 
-def run(text, files=SPECS, profile=ROUTER, pending=(), path="s/README.md"):
+def run(text, files=SPECS, profile=ROUTER, pending=(), path="s/README.md", exempt=()):
     readme = PurePosixPath(path)
     return LINKS.readme_navigation_diagnostics(
-        navigation(pending), {readme: LINKS.ReadmeSource(profile, text)}, files
+        navigation(pending, exempt),
+        {readme: LINKS.ReadmeSource(profile, text)},
+        files,
     )
 
 
@@ -221,6 +224,16 @@ class ReadmeNavigationTests(unittest.TestCase):
             ["README-NAV-PENDING"],
         )
 
+    def test_exempt_readme_is_never_checked(self):
+        bad = GOOD_ROUTER.replace("(./0001-a/)", "(./0001-a/spec.md)")
+        self.assertEqual(codes(bad, exempt=("s/README.md",)), [])
+        self.assertEqual(codes(GOOD_ROUTER, exempt=("s/README.md",)), [])
+
+    def test_untracked_exempt_path_fails(self):
+        self.assertIn(
+            "README-NAV-EXEMPT", codes(GOOD_ROUTER, exempt=("missing/README.md",))
+        )
+
     def test_untracked_pending_path_fails(self):
         self.assertIn(
             "README-NAV-PENDING", codes(GOOD_ROUTER, pending=("missing/README.md",))
@@ -235,6 +248,7 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
             "max_deep_links_per_child": 1,
             "profiles": {ROUTER: {"section": "Document Index", "complete": True}},
             "pending_paths": [],
+            "exempt_paths": [],
         }
         contract.update(changes)
         return {"readme_navigation": contract}
@@ -266,6 +280,8 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
             {"profiles": {ROUTER: {"section": "Not A Heading", "complete": True}}},
             {"max_deep_links_per_child": 0},
             {"pending_paths": ["docs/notes.md"]},
+            {"exempt_paths": ["docs/notes.md"]},
+            {"pending_paths": ["a/README.md"], "exempt_paths": ["a/README.md"]},
         ):
             with self.subTest(changes=changes):
                 self.assertEqual(self.faults(**changes), ["REGISTRY_README_NAVIGATION"])

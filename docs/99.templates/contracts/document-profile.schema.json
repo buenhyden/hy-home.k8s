@@ -820,7 +820,8 @@
         "forbidden_index_columns",
         "max_deep_links_per_child",
         "profiles",
-        "pending_paths"
+        "pending_paths",
+        "exempt_paths"
       ],
       "properties": {
         "placeholders": {
@@ -864,6 +865,14 @@
           }
         },
         "pending_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "(^|/)README\\.md$"
+          }
+        },
+        "exempt_paths": {
           "type": "array",
           "uniqueItems": true,
           "items": {

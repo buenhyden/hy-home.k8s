@@ -237,6 +237,9 @@ class ReadmeNavigation:
     max_deep_links_per_child: int
     profiles: Mapping[str, ReadmeNavigationProfile]
     pending_paths: frozenset[PurePosixPath]
+    # READMEs the contract never checks: the Stage 98 index carries the machine
+    # tables that sealed and frozen proofs read.
+    exempt_paths: frozenset[PurePosixPath] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -1362,6 +1365,7 @@ def _readme_navigation_from_mapping(
             }
         ),
         pending_paths=frozenset(PurePosixPath(value) for value in raw["pending_paths"]),
+        exempt_paths=frozenset(PurePosixPath(value) for value in raw["exempt_paths"]),
     )
 
 
@@ -1386,9 +1390,12 @@ def _readme_navigation_registry_diagnostics(
             faults.append(f"{profile_id} section {entry['section']!r} is not required")
     if contract["max_deep_links_per_child"] < 1:
         faults.append("max_deep_links_per_child is below one")
-    for value in contract["pending_paths"]:
-        if PurePosixPath(value).name != "README.md":
-            faults.append(f"pending path {value} is not a README")
+    for key in ("pending_paths", "exempt_paths"):
+        for value in contract[key]:
+            if PurePosixPath(value).name != "README.md":
+                faults.append(f"{key} entry {value} is not a README")
+    for value in sorted(set(contract["pending_paths"]) & set(contract["exempt_paths"])):
+        faults.append(f"{value} is both pending and exempt")
     return [
         _diagnostic(
             "REGISTRY_README_NAVIGATION",

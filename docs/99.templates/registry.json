@@ -5735,7 +5735,8 @@
         "complete": true
       }
     },
-    "pending_paths": [
+    "pending_paths": [],
+    "exempt_paths": [
       "docs/98.archive/README.md"
     ]
   }

@@ -4881,6 +4881,8 @@ def readme_navigation_diagnostics(
 
     diagnostics: list[Diagnostic] = []
     for path, source in sorted(readmes.items(), key=lambda item: item[0].as_posix()):
+        if path in navigation.exempt_paths:
+            continue
         rule = navigation.profiles.get(source.profile_id)
         if rule is None:
             if path in navigation.pending_paths:
@@ -4908,6 +4910,17 @@ def readme_navigation_diagnostics(
                 )
             continue
         diagnostics.extend(found)
+    for exempt in sorted(navigation.exempt_paths, key=PurePosixPath.as_posix):
+        if tree.kind(exempt) is None:
+            diagnostics.append(
+                _diag(
+                    "README-NAV-EXEMPT",
+                    exempt,
+                    "",
+                    "a tracked README",
+                    "exempt path is not tracked",
+                )
+            )
     for pending in sorted(navigation.pending_paths, key=PurePosixPath.as_posix):
         if tree.kind(pending) is None:
             diagnostics.append(

@@ -1,6 +1,6 @@
 ---
 title: "README Navigation Contract Technical Specification"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/spec"
 status: "done"
 owner: "platform"
@@ -27,7 +27,9 @@ may list.
 The request owner approved on 2026-09-25 a three-part program: this README
 navigation contract first, then moving the machine-read archive ledger out of
 the Stage 98 README, then a document language contract. This Spec owns the
-first part.
+first part. On 2026-09-26 the request owner withdrew the second part: the
+archive keeps its machine tables in the Stage 98 README, which this contract
+exempts.
 
 ## Strategic Boundaries & Non-goals
 
@@ -38,8 +40,8 @@ violation; moving path matrices to the README of the folder whose members they
 enumerate; the navigation guidance in the `readme-*` templates; and the
 README ownership that SPEC-0008 names.
 
-Out of scope: the machine tables in `docs/98.archive/README.md`, which the
-archive ledger package moves; the document language contract, including the
+Out of scope: the machine tables in `docs/98.archive/README.md`, which stay
+there; the document language contract, including the
 English-only rule for `.agents/`, `.claude/`, and `.codex/` and template
 language; any retained body, frozen record, or sealed ledger; any lifecycle
 state or edge; any live cluster or provider action.
@@ -68,8 +70,10 @@ state or edge; any live cluster or provider action.
   enumerates.
 - `pending_paths` names a README whose navigation is not yet checked. It
   starts with every README in violation, shrinks in each area commit, and ends
-  with `docs/98.archive/README.md` alone, which the archive ledger package
-  removes.
+  empty.
+- `exempt_paths` names a README the contract never checks. It holds
+  `docs/98.archive/README.md` alone: its record manifest links every frozen
+  record, and sealed and frozen proofs read its tables where they are.
 
 ## Core Design
 
@@ -96,17 +100,19 @@ exhaustive-list check it replaces.
     "common/readme-data-pack": {"section": "Item Index", "complete": true},
     "common/readme-research-pack": {"section": "Report Index", "complete": true}
   },
-  "pending_paths": ["docs/98.archive/README.md"]
+  "pending_paths": [],
+  "exempt_paths": ["docs/98.archive/README.md"]
 }
 ```
 
 `pending_paths` above is the final state. The registry self-consistency check
 requires every named profile to be a `router` profile, its section to be one
 of that profile's required H2 headings, the deep-link limit to be at least one,
-and every pending path to name a `README.md`. The navigation validator, which
-sees the tracked tree, requires every pending path to be a tracked README that
-still violates the contract, so the list cannot keep an entry that already
-passes. The Korean column names are machine tokens that existing Korean
+every pending or exempt path to name a `README.md`, and no path to be both.
+The navigation validator, which sees the tracked tree, requires every pending
+path to be a tracked README that still violates the contract, so the list
+cannot keep an entry that already passes, and every exempt path to be a
+tracked README. The Korean column names are machine tokens that existing Korean
 indexes use.
 
 ## Interfaces & Data Structures
@@ -120,6 +126,7 @@ indexes use.
 | `README-NAV-COMPLETE` | A required direct child is unreachable from the navigation section |
 | `README-NAV-COPY` | A navigation table carries a forbidden column |
 | `README-NAV-PENDING` | A pending path is untracked or already passes the contract |
+| `README-NAV-EXEMPT` | An exempt path is untracked |
 | `REGISTRY_README_NAVIGATION` | The registry contract contradicts its own profiles or paths |
 
 Replaced diagnostics: `INDEX-*` and `COLLECTION-INDEX-*` in
@@ -170,7 +177,7 @@ git diff --check
 | VAL-RNC-001 | The registry contract, schema, loader, and self-consistency check exist and reject contradictions | Focused tests and the registry gate |
 | VAL-RNC-002 | Each `README-NAV-*` rule passes its allowed fixtures and fails its forbidden ones, including hidden forms in `Related Documents`, HTML, and tables | Focused tests |
 | VAL-RNC-003 | The four exhaustive-list checks are removed and their tests assert the replacing codes | Focused tests and review |
-| VAL-RNC-004 | Every tracked README passes the contract, and `pending_paths` holds only the Stage 98 README | Link gate over the whole corpus |
+| VAL-RNC-004 | Every tracked README passes the contract except the exempt Stage 98 README, and `pending_paths` is empty | Link gate over the whole corpus |
 | VAL-RNC-005 | Path matrices live in the README of the folder they enumerate, and their quality checks read the new paths | Repository quality gate |
 | VAL-RNC-006 | The `readme-*` templates describe the navigation contract | Profile gate and review |
 | VAL-RNC-007 | Each commit passes staged QA and the final tree runs full QA | Staged and full QA |

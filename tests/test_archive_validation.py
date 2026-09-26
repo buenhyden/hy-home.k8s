@@ -2532,6 +2532,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 dataclasses.replace(
                     self.validator.load_registry(ROOT).readme_navigation,
                     pending_paths=frozenset(),
+                    exempt_paths=frozenset(),
                 ),
                 {index: self.validator.ReadmeSource("common/readme-stage-index", text)},
                 tree,
