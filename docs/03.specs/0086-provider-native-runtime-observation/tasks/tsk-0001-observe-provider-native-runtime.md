@@ -2,7 +2,7 @@
 title: "Observe Provider Native Runtime"
 version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
