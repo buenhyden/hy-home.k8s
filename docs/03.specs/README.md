@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.6.0"
+version: "0.6.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-27"
 layer: "specs"
 ---
 # 03.specs
@@ -78,6 +78,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0090-spec0049-retirement/
 ├── 0091-readme-navigation-contract/
 ├── 0093-document-language-contract/
+├── 0094-finished-package-retention/
 └── README.md
 ```
 
@@ -93,6 +94,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | [0090-spec0049-retirement/](./0090-spec0049-retirement/) | SPEC-0049 `retired/` 보존 |
 | [0091-readme-navigation-contract/](./0091-readme-navigation-contract/) | README 탐색 계약 |
 | [0093-document-language-contract/](./0093-document-language-contract/) | 문서 언어 계약 |
+| [0094-finished-package-retention/](./0094-finished-package-retention/) | 끝난 package 8개 보존 |
 
 ## Authoring Workflow
 

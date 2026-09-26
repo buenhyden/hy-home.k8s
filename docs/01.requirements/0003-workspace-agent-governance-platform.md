@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.7"
+version: "1.6.8"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-27"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -204,6 +204,9 @@ navigation contract is owned by
 [SPEC-0091](../03.specs/0091-readme-navigation-contract/spec.md).
 Stating each document's language in one registry contract is owned by
 [SPEC-0093](../03.specs/0093-document-language-contract/spec.md).
+Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
+through SPEC-0093 is owned by
+[SPEC-0094](../03.specs/0094-finished-package-retention/spec.md).
 
 ## Traceability
 
