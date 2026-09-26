@@ -69,6 +69,13 @@ generation identifier, and [the registry](../.agents/roles/registry.json) owns
 which alias each capability tier binds. An alias keeps the selection stable
 when a generation changes, and the validator rejects a projection whose model
 does not resolve from the binding. Observed on `claude 2.1.263` (2026-09-06).
+On `claude 2.1.283` (2026-09-27) an authorized session observed discovery of
+every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
+structured write tools for `read-only-evidence`, and delivery of the pre-edit
+hook. The client exposes no `Grep` or `Glob` tool, although projections declare
+both. The SPEC-0086 Task
+(`docs/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+owns that evidence.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

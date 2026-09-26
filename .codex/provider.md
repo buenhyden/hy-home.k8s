@@ -70,6 +70,14 @@ team document, not a special automatic entry filename.
   transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
   Next owner: the user/operator for a reviewed project/hook trust state and an
   explicitly authorized observable session.
+- On `codex-cli 0.155.1` (2026-09-27) an authorized `--sandbox read-only`
+  session in this worktree again reported the skill-context budget message.
+  It listed none of the project skills, which matches implicit invocation being
+  off. It discovered none of the `.codex/agents/*.toml` roles and did not expose
+  an exact model identifier. It refused a probe write fail-closed, because
+  `bwrap` could not start the sandbox. Hook delivery stays `DEFER`: the user
+  declined a trust bypass. The SPEC-0086 Task owns that evidence, and the user
+  and operator remain the next owners of the project and hook trust state.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
   on this provider is the operating-system `sandbox_mode` the registry binds,
   not the hook. A role in a mutation-capable class relies on the hook only for

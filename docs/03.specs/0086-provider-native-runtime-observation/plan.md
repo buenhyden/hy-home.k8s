@@ -1,10 +1,10 @@
 ---
 title: "Provider Native Runtime Observation Implementation Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-27"
 layer: "specs"
 artifact_id: "SPEC-0086-PLAN-0001"
 ---
