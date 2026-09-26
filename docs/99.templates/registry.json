@@ -5777,8 +5777,6 @@
     ],
     "min_latin_words": 8,
     "pending_paths": [
-      ".github/repository-surface.md",
-      "_workspace/README.md",
       "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
       "docs/01.requirements/0002-argo-notifications-slack.md",
       "docs/01.requirements/0003-workspace-agent-governance-platform.md",
@@ -5804,9 +5802,7 @@
       "docs/90.references/data/README.md",
       "docs/90.references/research/0001-workspace-engineering/README.md",
       "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
-      "docs/90.references/research/README.md",
-      "scripts/README.md",
-      "tests/README.md"
+      "docs/90.references/research/README.md"
     ]
   }
 }

@@ -31,7 +31,7 @@ authorized.
 | WORK-001 | VAL-DLC-007 | Propose the package | platform | Done | Committed `cacd0094` | Staged QA PASS |
 | WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Committed `b470e2a1`; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
 | WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | Committed `9f334da8`; 52 documents pending | Profile gate PASS, staged QA PASS |
-| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | In progress | Governance-hub notice (`7074f928`); examples, GitOps, and infrastructure READMEs; 30 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
+| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | In progress | Governance-hub notice (`7074f928`); examples, GitOps, and infrastructure READMEs (`f8b5f0d5`); workspace, GitHub surface, scripts, and tests READMEs; 26 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
 | WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Queued | Not started | Staged QA |
 | WORK-006 | VAL-DLC-005 | Requirements to English | platform | Queued | Not started | Staged QA, whole suite |
 | WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Queued | Not started | Staged QA, whole suite |
@@ -98,6 +98,19 @@ is the exact list.
   unstaged request-owner edit to `.claude/settings.json` that removes one deny
   entry. That edit is outside this Task and left untouched; staged QA reads
   the index and is unaffected.
+
+### WORK-004 (2026-09-26)
+
+- READMEs that were mostly English are translated in full: paragraphs, list
+  items, and descriptive table cells. READMEs that were mostly Korean change
+  only the paragraphs the contract flags.
+- A table whose cells a validator matches by English phrase stays English.
+  The `.github/repository-surface.md` Workflow Responsibility Matrix is one;
+  tables are not judged by the contract.
+- Two `quality.py` phrase pins on `.github/repository-surface.md` prose now
+  name the Korean sentences that replace the English ones.
+- Korean prose is drafted, then polished by the humanize skill in its
+  conservative light route; each batch passes its change-rate gate.
 
 ## Traceability
 
