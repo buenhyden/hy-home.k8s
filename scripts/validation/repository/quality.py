@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import pathlib
+from pathlib import Path
 import re
 import subprocess
 import sys
@@ -1380,40 +1381,6 @@ for path in docs_dir.rglob("*"):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
 
 
-def english_first_terminal_states(registry: dict) -> frozenset[str]:
-    """Terminal Spec, Plan and Task states keep the generation they closed in."""
-    families = {"sdlc/spec", "sdlc/plan", "sdlc/task"}
-    return frozenset(
-        state
-        for domain in registry["lifecycle_domains"]
-        if families & set(domain["profile_ids"])
-        for state, state_class in domain["states"].items()
-        if state_class == "terminal"
-    )
-
-
-english_first_stage_globs = [
-    "docs/03.specs/*/spec.md",
-    "docs/03.specs/*/plan.md",
-    "docs/03.specs/*/tasks/*.md",
-]
-english_first_skipped_states = english_first_terminal_states(
-    load_json(root / "docs/99.templates/registry.json")
-)
-hangul_pattern = re.compile(r"[\uac00-\ud7a3]")
-for glob_pattern in english_first_stage_globs:
-    for path in sorted(root.glob(glob_pattern)):
-        if path.name == "README.md":
-            continue
-        status = re.search(r'(?m)^status: "([^"]+)"$', read_text(path))
-        if status and status.group(1) in english_first_skipped_states:
-            continue
-        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
-            if hangul_pattern.search(line):
-                fail(
-                    f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03 artifact"
-                )
-
 operations_stage_path = root / "docs/05.operations"
 allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
 actual_operations_buckets = {
@@ -1672,7 +1639,8 @@ for operations_root in operations_index_roots:
         readme_text,
         ("## 문서 인덱스", "### 문서 인덱스"),
     )
-    expected_header = ["문서", "설명", "상태", "최종 수정"]
+    # SPEC-0091: status and dates stay in each document's frontmatter.
+    expected_header = ["문서", "설명"]
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
         continue
@@ -1707,41 +1675,6 @@ for operations_root in operations_index_roots:
         fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
     for doc_name in sorted(set(indexed_rows) - operation_doc_names):
         fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
-
-    for doc_path in operation_docs:
-        row = indexed_rows.get(doc_path.name)
-        if not row:
-            continue
-        doc_text = read_text(doc_path)
-        frontmatter = re.match(r"^---\n(.*?)\n---\n", doc_text, re.DOTALL)
-        if not frontmatter:
-            fail(
-                f"{rel(doc_path)} missing YAML frontmatter for operations index validation"
-            )
-            continue
-        try:
-            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
-        except Exception as exc:
-            fail(
-                f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}"
-            )
-            continue
-        status = str(metadata.get("status", "")).strip()
-        updated = str(metadata.get("updated", "")).strip()
-        row_status = row[2].strip()
-        row_updated = row[3].strip()
-        if not status:
-            fail(f"{rel(doc_path)} missing status for operations index validation")
-        elif row_status.lower() != status.lower():
-            fail(
-                f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}"
-            )
-        if not updated:
-            fail(f"{rel(doc_path)} missing updated for operations index validation")
-        elif row_updated != updated:
-            fail(
-                f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}"
-            )
 
 
 template_enforcement_phrase_checks = {
@@ -2181,106 +2114,6 @@ for scan_root in markdown_direct_push_roots:
                     f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
                 )
 
-tracked_language_roots = (
-    ".agents/",
-    ".claude/",
-    ".codex/",
-)
-for tracked_path in sorted(tracked):
-    if tracked_path == ".claude/settings.local.json":
-        continue
-    if not tracked_path.startswith(tracked_language_roots):
-        continue
-    path = root / tracked_path
-    if not path.is_file() or path.suffix not in {
-        ".md",
-        ".toml",
-        ".json",
-        ".sh",
-        ".yaml",
-        ".yml",
-    }:
-        continue
-    if re.search(r"[가-힣]", read_text(path)):
-        fail(
-            f"tracked governance/runtime file must remain English-only: {tracked_path}"
-        )
-
-agent_section_headings = [
-    "AI Agent Requirements",
-    "Agent Execution Notes",
-    "Agent Harness Requirements",
-]
-
-
-def current_agent_language_scan_text(tracked_path: str, source: str) -> str:
-    """Return current-document text while preserving archived payload bytes."""
-    if (
-        tracked_path.startswith("docs/98.archive/")
-        and tracked_path != "docs/98.archive/README.md"
-    ):
-        archive_marker = (
-            "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
-        )
-        marker_offset = source.find(archive_marker)
-        if marker_offset != -1:
-            return source[:marker_offset]
-    return source
-
-
-archive_language_probe = (
-    "---\ntitle: Archive probe\n---\n"
-    "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->\n"
-    "## AI Agent Requirements\n보존 페이로드\n"
-)
-if re.search(
-    r"[가-힣]",
-    current_agent_language_scan_text(
-        "docs/98.archive/probe.md", archive_language_probe
-    ),
-):
-    fail("archive language scope mutation included immutable payload bytes")
-if not re.search(
-    r"[가-힣]",
-    current_agent_language_scan_text(
-        "docs/98.archive/README.md", archive_language_probe
-    ),
-):
-    fail("archive language scope mutation excluded the current archive index")
-if not re.search(
-    r"[가-힣]",
-    current_agent_language_scan_text(
-        "docs/03.specs/probe/spec.md", archive_language_probe
-    ),
-):
-    fail("archive language scope mutation excluded a current SDLC document")
-
-
-for tracked_path in sorted(tracked):
-    if not tracked_path.startswith("docs/") or not tracked_path.endswith(".md"):
-        continue
-    path = root / tracked_path
-    if not path.is_file():
-        continue
-    text = current_agent_language_scan_text(tracked_path, read_text(path))
-    for heading in agent_section_headings:
-        match = re.search(
-            rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE
-        )
-        if not match:
-            continue
-        section_start = match.end()
-        next_heading = re.search(r"^##\s+", text[section_start:], re.MULTILINE)
-        section = (
-            text[section_start : section_start + next_heading.start()]
-            if next_heading
-            else text[section_start:]
-        )
-        if re.search(r"[가-힣]", section):
-            fail(
-                f"{tracked_path} {heading} section must remain English for AI-agent execution requirements"
-            )
-
 docs_readme_path = root / "docs/README.md"
 docs_readme_text = read_text(docs_readme_path)
 for phrase in [
@@ -2456,8 +2289,8 @@ for phrase in [
     "PULL_REQUEST_TEMPLATE.md",
     ".github/requirements/ci-validation.txt",
     ".pre-commit-config.yaml",
-    "branch protection/rulesets enforce direct-push restrictions",
-    "QA gates and release-evidence automation, not deploy CD",
+    "직접 push 제한은 저장소 로컬 파일 밖에서 GitHub branch protection과 ruleset이 강제한다",
+    "QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다",
     "Source Basis",
     "Parent Spec",
     "GitHub Actions documentation",
@@ -2735,86 +2568,76 @@ expected_gitops_service_header = [
     "Dependencies, routes, secrets",
     "Validation and operations",
 ]
-expected_gitops_service_areas = (
-    ["clusters/local", "apps/root"]
-    + [
-        f"platform/{path.name}"
-        for path in sorted((gitops_dir / "platform").iterdir())
-        if path.is_dir()
-    ]
-    + [
-        f"workloads/{path.name}"
-        for path in sorted((gitops_dir / "workloads").iterdir())
-        if path.is_dir()
-    ]
-)
-gitops_service_rows = markdown_table_after_heading(
-    gitops_readme,
-    profiled_readme_table_headings("Service Coverage Matrix"),
-)
-if len(gitops_service_rows) < 2:
-    fail(
-        "gitops/README.md Service Coverage Matrix must contain a header and service rows"
+
+
+def check_area_matrix(
+    readme_path: Path, heading: str, base: Path, expected_areas: list[str]
+) -> None:
+    label = f"{rel(readme_path)} {heading}"
+    rows = markdown_table_after_heading(
+        read_text(readme_path), profiled_readme_table_headings(heading)
     )
-elif gitops_service_rows[0] != expected_gitops_service_header:
-    fail(
-        "gitops/README.md Service Coverage Matrix header must be: "
-        + " | ".join(expected_gitops_service_header)
-    )
-else:
-    indexed_gitops_areas: list[str] = []
-    seen_gitops_areas: set[str] = set()
-    for row_number, row in enumerate(gitops_service_rows[1:], start=1):
+    if len(rows) < 2:
+        fail(f"{label} must contain a header and service rows")
+        return
+    if rows[0] != expected_gitops_service_header:
+        fail(f"{label} header must be: " + " | ".join(expected_gitops_service_header))
+        return
+    indexed: list[str] = []
+    for row_number, row in enumerate(rows[1:], start=1):
         if len(row) != len(expected_gitops_service_header):
             fail(
-                "gitops/README.md Service Coverage Matrix "
-                f"row {row_number} must have {len(expected_gitops_service_header)} columns"
+                f"{label} row {row_number} must have "
+                f"{len(expected_gitops_service_header)} columns"
             )
             continue
         area_cell, purpose, lifecycle, dependencies, validation = row
         match = re.fullmatch(r"`([^`]+)`", area_cell)
         if not match:
-            fail(
-                "gitops/README.md Service Coverage Matrix "
-                f"row {row_number} must start with a backticked area path"
-            )
+            fail(f"{label} row {row_number} must start with a backticked area path")
             continue
         area = match.group(1)
-        if area in seen_gitops_areas:
-            fail(f"gitops/README.md Service Coverage Matrix duplicates area: {area}")
-        seen_gitops_areas.add(area)
-        indexed_gitops_areas.append(area)
-        area_path = gitops_dir / area
-        if not area_path.is_dir():
-            fail(
-                f"gitops/README.md Service Coverage Matrix references missing directory: gitops/{area}"
-            )
-        for label, value in [
+        if area in indexed:
+            fail(f"{label} duplicates area: {area}")
+        indexed.append(area)
+        if not (base / area).is_dir():
+            fail(f"{label} references missing directory: {rel(base / area)}")
+        for name, value in [
             ("Purpose and owner", purpose),
             ("Lifecycle and config", lifecycle),
             ("Dependencies, routes, secrets", dependencies),
             ("Validation and operations", validation),
         ]:
             if not value:
-                fail(
-                    f"gitops/README.md Service Coverage Matrix row {row_number} has empty {label}"
-                )
+                fail(f"{label} row {row_number} has empty {name}")
         if "owned by" not in purpose:
-            fail(
-                f"gitops/README.md Service Coverage Matrix row {row_number} must name ownership"
-            )
+            fail(f"{label} row {row_number} must name ownership")
         if not any(
             marker in validation
             for marker in ["`bash ", "Validate", "validate-", "verify-"]
         ):
-            fail(
-                f"gitops/README.md Service Coverage Matrix row {row_number} must cite a validation command"
-            )
-    if indexed_gitops_areas != expected_gitops_service_areas:
+            fail(f"{label} row {row_number} must cite a validation command")
+    if indexed != expected_areas:
         fail(
-            "gitops/README.md Service Coverage Matrix area order must match actual GitOps directories: "
-            + ", ".join(expected_gitops_service_areas)
+            f"{label} area order must match actual directories: "
+            + ", ".join(expected_areas)
         )
+
+
+# SPEC-0091: each coverage matrix lives in the README of the folder whose
+# members it enumerates; workloads/* belongs to the Workload Coverage Matrix.
+check_area_matrix(
+    gitops_readme_path,
+    "Service Coverage Matrix",
+    gitops_dir,
+    ["clusters/local", "apps/root"],
+)
+check_area_matrix(
+    gitops_dir / "platform/README.md",
+    "Platform Coverage Matrix",
+    gitops_dir / "platform",
+    sorted(path.name for path in (gitops_dir / "platform").iterdir() if path.is_dir()),
+)
 
 expected_external_contract_header = [
     "Contract",
@@ -4291,8 +4114,9 @@ for script in infrastructure_shell_paths:
             f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}"
         )
 
+infrastructure_verify_readme_path = infrastructure_dir / "verify/README.md"
 infrastructure_test_rows = markdown_table_after_heading(
-    infrastructure_readme,
+    read_text(infrastructure_verify_readme_path),
     profiled_readme_table_headings("Infrastructure Test Inventory"),
 )
 expected_infra_test_header = [
@@ -4307,11 +4131,11 @@ test_script_paths = sorted((infrastructure_dir / "verify").glob("*.sh"))
 test_script_names = {path.name for path in test_script_paths}
 if len(infrastructure_test_rows) < 2:
     fail(
-        "infrastructure/README.md Infrastructure Test Inventory must contain a header and test rows"
+        "infrastructure/verify/README.md Infrastructure Test Inventory must contain a header and test rows"
     )
 elif infrastructure_test_rows[0] != expected_infra_test_header:
     fail(
-        "infrastructure/README.md Infrastructure Test Inventory header must be: "
+        "infrastructure/verify/README.md Infrastructure Test Inventory header must be: "
         + " | ".join(expected_infra_test_header)
     )
 else:
@@ -4320,21 +4144,21 @@ else:
     for row_number, row in enumerate(infrastructure_test_rows[1:], start=1):
         if len(row) != len(expected_infra_test_header):
             fail(
-                "infrastructure/README.md Infrastructure Test Inventory "
+                "infrastructure/verify/README.md Infrastructure Test Inventory "
                 f"row {row_number} must have {len(expected_infra_test_header)} columns"
             )
             continue
         match = re.fullmatch(r"`([^`]+\.sh)`", row[0])
         if not match:
             fail(
-                "infrastructure/README.md Infrastructure Test Inventory "
+                "infrastructure/verify/README.md Infrastructure Test Inventory "
                 f"row {row_number} must start with a backticked test script name"
             )
             continue
         script_name = match.group(1)
         if script_name in indexed_test_scripts:
             fail(
-                f"infrastructure/README.md Infrastructure Test Inventory duplicates test script: {script_name}"
+                f"infrastructure/verify/README.md Infrastructure Test Inventory duplicates test script: {script_name}"
             )
         indexed_test_scripts[script_name] = row
 
@@ -4344,7 +4168,7 @@ else:
         retention_surface = row[4]
         if test_type not in allowed_infra_test_types:
             fail(
-                "infrastructure/README.md Infrastructure Test Inventory "
+                "infrastructure/verify/README.md Infrastructure Test Inventory "
                 f"row {row_number} has unsupported Type: {test_type}"
             )
         for label, value in [
@@ -4354,12 +4178,12 @@ else:
         ]:
             if not value:
                 fail(
-                    "infrastructure/README.md Infrastructure Test Inventory "
+                    "infrastructure/verify/README.md Infrastructure Test Inventory "
                     f"row {row_number} has empty {label}"
                 )
         if "Tier" not in retention_surface:
             fail(
-                "infrastructure/README.md Infrastructure Test Inventory "
+                "infrastructure/verify/README.md Infrastructure Test Inventory "
                 f"row {row_number} must cite a retention or command-surface Tier"
             )
         if test_type == "Live":
@@ -4367,11 +4191,11 @@ else:
 
     for script_name in sorted(test_script_names - set(indexed_test_scripts)):
         fail(
-            f"infrastructure/README.md Infrastructure Test Inventory missing test script row: {script_name}"
+            f"infrastructure/verify/README.md Infrastructure Test Inventory missing test script row: {script_name}"
         )
     for script_name in sorted(set(indexed_test_scripts) - test_script_names):
         fail(
-            f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}"
+            f"infrastructure/verify/README.md Infrastructure Test Inventory references missing test script: {script_name}"
         )
 
     run_all_path = infrastructure_dir / "verify/run-all.sh"

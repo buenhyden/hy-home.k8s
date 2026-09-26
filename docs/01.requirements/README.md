@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.5.6"
+version: "0.6.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -12,7 +12,7 @@ layer: "requirements"
 > hy-home.k8s 플랫폼의 장기간 유지되는 solution-independent Requirement Package를 보관하는 canonical stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -57,14 +57,12 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 
 ## Document Index
 
-```text
-01.requirements/
-├── 0001-argo-rollouts-progressive-delivery.md
-├── 0002-argo-notifications-slack.md
-├── 0003-workspace-agent-governance-platform.md
-├── 0004-current-local-gitops-platform.md
-└── README.md
-```
+| 문서 | 제목 |
+| --- | --- |
+| [0001-argo-rollouts-progressive-delivery.md](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts Progressive Delivery Requirement Package |
+| [0002-argo-notifications-slack.md](./0002-argo-notifications-slack.md) | Argo Notifications Slack Webhook Requirement Package |
+| [0003-workspace-agent-governance-platform.md](./0003-workspace-agent-governance-platform.md) | Workspace Agent and Document Governance Requirements |
+| [0004-current-local-gitops-platform.md](./0004-current-local-gitops-platform.md) | Local GitOps Platform and Delivery Assurance Requirements |
 
 ## Authoring Workflow
 

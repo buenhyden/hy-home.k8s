@@ -12,7 +12,7 @@ layer: "operations"
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -55,19 +55,19 @@ layer: "operations"
 
 ## Item Index
 
-```text
-docs/05.operations/runbooks/
-├── 0001-argocd-platform-bootstrap-runbook.md               # k3d + ArgoCD 부트스트랩, 외부 endpoint 복구
-├── 0002-argocd-eso-vault-recovery-runbook.md               # Vault/ESO 복구, CoreDNS·gateway CA 재적용
-├── 0003-platform-expansion-bootstrap-runbook.md             # cert-manager/Istio/Kiali 부트스트랩
-├── 0004-rollouts-notifications-headlamp-runbook.md          # Rollouts/Notifications/Headlamp 운영·복구
-├── 0007-kiali-observability-connectivity-runbook.md         # Kiali 관측성 연결 복구
-├── 0008-argocd-metrics-prometheus-runbook.md               # ArgoCD component 메트릭 진단
-├── 0009-k8s-observability-runbook.md                        # 관측성 스택 장애 진단
-├── 0010-github-app-gitops-onboarding-runbook.md             # GitHub 앱 온보딩 절차
-├── 0011-reference-maintenance-runbook.md                     # 90.references 유지보수 절차
-└── README.md                                                # This file
-```
+### 문서 인덱스
+
+| 문서 | 설명 |
+| --- | --- |
+| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 부트스트랩과 외부 서비스 endpoint 복구의 단일 owner |
+| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | OpenBao sealed·auth drift 분류, ESO 복구, CoreDNS·gateway CA 재적용의 단일 owner |
+| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Istio/Kiali 부트스트랩 런북 |
+| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md) | Rollouts/Notifications/Headlamp 운영·복구 런북 |
+| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 외부 route·Tempo·Grafana auth 진단 런북 |
+| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD component 메트릭(in-cluster 수집) 진단 런북 |
+| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | in-cluster Alloy 메트릭·로그·remote write·AppProject 진단 런북 |
+| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 |
+| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 |
 
 ## Add and Find
 
@@ -116,17 +116,3 @@ docs/05.operations/runbooks/
 - [Operations Policy](../policies/0001-k8s-gitops-operations-policy.md)
 - [Runbook Template](../../99.templates/templates/operations/runbook.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
-
-### 문서 인덱스
-
-| 문서                                                                                                       | 설명                                                                   | 상태   | 최종 수정  |
-| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 부트스트랩과 외부 서비스 endpoint 복구의 단일 owner | Active | 2026-09-25 |
-| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | OpenBao sealed·auth drift 분류, ESO 복구, CoreDNS·gateway CA 재적용의 단일 owner | Active | 2026-09-25 |
-| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Istio/Kiali 부트스트랩 런북 | Active | 2026-09-25 |
-| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md) | Rollouts/Notifications/Headlamp 운영·복구 런북 | Active | 2026-09-25 |
-| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 외부 route·Tempo·Grafana auth 진단 런북 | Active | 2026-09-25 |
-| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md) | ArgoCD component 메트릭(in-cluster 수집) 진단 런북 | Active | 2026-09-23 |
-| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md) | in-cluster Alloy 메트릭·로그·remote write·AppProject 진단 런북 | Active | 2026-09-25 |
-| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 | Active | 2026-09-25 |
-| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 | Active | 2026-09-25 |

@@ -1,10 +1,10 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-25"
 ---
 # Azure Infrastructure (Bicep)
 
@@ -41,24 +41,27 @@ updated: "2026-09-04"
 
 ```text
 infrastructure/
-├── main.bicep      # 전체 리소스 오케스트레이션 및 AKS 정의
+├── main.bicep      # 전체 리소스 오케스트레이션
+├── aks.bicep       # AKS 클러스터 정의
 ├── agc.bicep       # Application Gateway for Containers 정의
+├── network.bicep   # 가상 네트워크 정의
+├── database.bicep  # PostgreSQL 서버 정의
+├── redis.bicep     # Redis 캐시 정의
 └── README.md       # 본 문서
 ```
 
 ## Configuration Boundary
 
-Inject deployment parameters rather than hardcoding provider state,
-credentials, or secret values. This dated Bicep example is repository-static
-reference material; an approved Azure subscription and operator-owned runtime
-are required for any deployment or what-if evidence.
+provider 상태, credential, secret 값을 하드코딩하지 말고 배포 매개변수로
+주입한다. 이 Bicep 예시는 작성 시점이 고정된 저장소 정적 참조 자료다. 배포나
+what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 runtime이 필요하다.
 
 ## Validation
 
-Run `az bicep lint` and the documented
-`az deployment group what-if --resource-group <rg-name> --template-file main.bicep`
-only in an approved provider context. Static documentation validation does not
-prove Azure deployment readiness.
+`az bicep lint`와 문서에 적힌
+`az deployment group what-if --resource-group <rg-name> --template-file main.bicep`는
+승인된 provider 환경에서만 실행한다. 정적 문서 검증은 Azure 배포 준비 상태를
+증명하지 않는다.
 
 ## Operations
 

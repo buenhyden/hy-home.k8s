@@ -1,10 +1,10 @@
 ---
 title: "examples"
-version: "0.1.1"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 ---
 # examples
 
@@ -56,17 +56,16 @@ examples/
 
 ## Configuration Boundary
 
-`examples/` is reference-only until assets are copied into their canonical
-owner and validated. Provider credentials, secret material, and live account or
-cluster mutation do not belong here; active local desired state remains under
-[`gitops/`](../gitops/README.md).
+`examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
+provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
+않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
 
 ## Validation
 
-Run `python3 scripts/qa.py full`,
-`bash scripts/validate-k8s-manifests.sh .`, and
-`bash scripts/check-secret-handling.sh .` as applicable to the copied example.
-These repository-static checks do not prove provider or live-cluster readiness.
+복사한 예시에 맞춰 `python3 scripts/qa.py full`,
+`bash scripts/validate-k8s-manifests.sh .`,
+`bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
+provider나 live cluster의 준비 상태를 증명하지 않는다.
 
 ## Operations
 

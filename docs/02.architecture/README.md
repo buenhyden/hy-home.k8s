@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.4.6"
+version: "0.5.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-25"
 layer: "architecture"
 ---
 # 02.architecture
@@ -12,7 +12,7 @@ layer: "architecture"
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -20,7 +20,7 @@ layer: "architecture"
 Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에 둔다.
 
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
-[`gitops/`](../../gitops/README.md), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
+[`gitops/`](../../gitops/), [`scripts/validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh),
 정적 검증 스크립트가 우선한다. ADR을 포함해 더 이상 현재가 아닌 문서는 current consumer와 의미를
 승계한 뒤 Stage 98로 떠난다. 대체된 문서는 `superseded/<stage>/`, 후계자 없이 철회된 문서는 `retired/<stage>/`에
 원래 profile 그대로 보존한다([ADR-0040](./decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 대체된 ADR은
@@ -32,10 +32,10 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
 | 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`validate-infrastructure-contracts.sh`](../../scripts/validate-infrastructure-contracts.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
-| 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 Requirement Package를 현재 구조와 참조 모델로 해석한다. |
-| 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
-| 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
-| 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/README.md) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
+| 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/) | AD는 Requirement Package를 현재 구조와 참조 모델로 해석한다. |
+| 기술 선택과 현재 decision record | [`decisions/`](./decisions/) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
+| 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
+| 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
 
 ### Stage Readers
 
@@ -61,12 +61,10 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 
 ## Document Index
 
-```text
-02.architecture/
-├── descriptions/  # Architecture Descriptions and reference models
-├── decisions/     # Architecture decision records
-└── README.md
-```
+| 폴더 | 설명 |
+| --- | --- |
+| [descriptions/](./descriptions/) | Architecture Description과 참조 모델 |
+| [decisions/](./decisions/) | 아키텍처 결정 기록(ADR) |
 
 ## Authoring Workflow
 

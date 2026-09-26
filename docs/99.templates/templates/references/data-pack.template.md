@@ -11,24 +11,24 @@ layer: "{{LAYER}}"
 
 ## Overview
 
-<!-- Author prompt: identify the bounded dataset or lookup material and its intended readers. -->
+<!-- Author prompt: 범위가 정해진 데이터셋이나 조회 자료와 그 대상 독자를 밝힌다. -->
 
 ## Data Contract
 
-<!-- Author prompt: record provenance, schema or shape, collection method, authority limits, and sensitivity boundary. -->
+<!-- Author prompt: 출처, 스키마나 형태, 수집 방법, 권한의 한계, 민감도 경계를 기록한다. -->
 
 ## Item Index
 
-<!-- Author prompt: inventory each data item or supporting file and its distinct purpose. -->
+<!-- Author prompt: 이 pack의 데이터 항목과 보조 파일을 한 번씩 링크하고 각각의 목적을 적는다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
 ## Refresh and Retention
 
-<!-- Author prompt: state refresh trigger, owner, retention rule, and safe removal condition. -->
+<!-- Author prompt: 갱신 트리거, owner, 보존 규칙, 안전하게 지울 수 있는 조건을 밝힌다. -->
 
 ## Evidence Boundary
 
-<!-- Author prompt: explain what the data proves and what requires separate runtime or provider evidence. -->
+<!-- Author prompt: 이 데이터가 입증하는 것과 별도의 런타임이나 제공자 증거가 필요한 것을 설명한다. -->
 
 ## Related Documents
 
-<!-- Author prompt: link the Data collection router and current semantic owners; never link Stage 98. -->
+<!-- Author prompt: Data 컬렉션 라우터와 현재 의미 owner를 링크한다. Stage 98은 링크하지 않는다. -->

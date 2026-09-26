@@ -811,6 +811,134 @@
         "type": "string",
         "pattern": "^docs/[^\\s]+\\.md$"
       }
+    },
+    "readme_navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "placeholders",
+        "forbidden_index_columns",
+        "max_deep_links_per_child",
+        "profiles",
+        "pending_paths",
+        "exempt_paths"
+      ],
+      "properties": {
+        "placeholders": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "forbidden_index_columns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "max_deep_links_per_child": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "section",
+              "complete"
+            ],
+            "properties": {
+              "section": {
+                "type": "string",
+                "minLength": 1
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "pending_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "(^|/)README\\.md$"
+          }
+        },
+        "exempt_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "(^|/)README\\.md$"
+          }
+        }
+      }
+    },
+    "document_language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "english_only_roots",
+        "english_only_suffixes",
+        "korean_first_profiles",
+        "english_sections",
+        "min_latin_words",
+        "pending_paths"
+      ],
+      "properties": {
+        "english_only_roots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[^/].*/$"
+          }
+        },
+        "english_only_suffixes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^\\.[a-z0-9]+$"
+          }
+        },
+        "korean_first_profiles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "english_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "min_latin_words": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pending_paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "\\.md$"
+          }
+        }
+      }
     }
   }
 }

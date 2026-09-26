@@ -1,10 +1,10 @@
 ---
 title: "Azure GitOps (Platform Manifests)"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-25"
 ---
 # Azure GitOps (Platform Manifests)
 
@@ -40,24 +40,21 @@ updated: "2026-09-04"
 
 ```text
 gitops/
-├── platform/
-│   ├── managed-identity.yaml   # Managed Identity 연동
-│   └── gateway.yaml            # AGC Gateway 리소스 정의
-└── README.md                   # 본 문서
+├── platform/    # Managed Identity 연동, AGC Gateway, Secrets Store CSI SecretProviderClass
+└── README.md    # 본 문서
 ```
 
 ## Configuration Boundary
 
-Azure resource IDs and client IDs enter through reviewed infrastructure
-outputs; secret values do not enter these manifests. Use Managed Identity and
-the Secret Store CSI configuration, and apply changes through the GitOps pull
-model rather than direct cluster mutation.
+Azure resource ID와 client ID는 검토된 infrastructure 출력으로만 들어오고
+secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret Store CSI
+설정을 사용하며 변경은 클러스터를 직접 바꾸지 않고 GitOps pull 모델로 적용한다.
 
 ## Validation
 
-Validate manifest syntax and repository contracts before review. Any Azure
-resource, identity, subscription, or live AKS readiness assertion requires
-separate provider/runtime evidence and is not established by this snapshot.
+리뷰 전에 manifest 문법과 저장소 계약을 검증한다. Azure 리소스, identity,
+구독, live AKS 준비 상태를 주장하려면 provider·runtime 증거가 따로 필요하며
+이 스냅샷으로는 성립하지 않는다.
 
 ## Operations
 

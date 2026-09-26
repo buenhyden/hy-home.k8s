@@ -1,10 +1,10 @@
 ---
 title: "infrastructure"
-version: "0.1.3"
+version: "0.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 ---
 # infrastructure
 
@@ -49,7 +49,7 @@ MetalLB bootstrap manifest는 별도 `metallb/` 디렉터리가 아니라 이 �
 infrastructure/
 ├── argocd/                  # ArgoCD Helm values
 ├── k3d/                     # k3d 클러스터 설정
-├── verify/                  # 라이브 클러스터 검증 스크립트
+├── verify/                  # 라이브 클러스터 검증 스크립트와 그 유지 계약
 ├── vault/                   # Vault 정책 샘플
 ├── bootstrap-local.sh       # 로컬 플랫폼 bootstrap 진입점
 ├── coredns-custom.yaml      # OpenBao 이름을 host 주소로 푸는 CoreDNS zone
@@ -75,6 +75,18 @@ infrastructure/
 | `bootstrap-local.sh` | Local bootstrap entrypoint owned by platform maintainers. | Creates initial namespace, secret, MetalLB, and root GitOps application before ArgoCD owns desired state. | Depends on interactive `/dev/tty`, HTTPS Vault, a readable `VAULT_CA_FILE`, kubectl context, k3d, Helm, and local certificates. | Validate with `bash -n infrastructure/bootstrap-local.sh` and `python3 scripts/validate-vault-eso-contracts.py --root .`; execution is human-approved bootstrap work, not normal agent mutation. |
 | `coredns-custom.yaml` | CoreDNS zone owned by platform maintainers. | Bootstrap applies it to `kube-system` and restarts CoreDNS; it resolves `openbao`, `prometheus` and `grafana.hy.home.arpa` to the host address `192.168.0.13` (ADR-0046). Bootstrap also creates the gateway CA ConfigMaps `openbao-ca`, `hy-home-root-ca` and `kiali-cabundle`. | Depends on the external Traefik routes for OpenBao, the Prometheus API (Basic Auth) and Grafana, and on the k3s `coredns-custom` import. | Validate with `bash scripts/validate-infrastructure-contracts.sh`; live resolution requires a running cluster. |
 | `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
+
+### Infrastructure Test Inventory
+
+라이브 검증 스크립트의 유지 계약은 [verify/](./verify/)의 Infrastructure
+Test Inventory가 소유한다.
+
+## Configuration Boundary
+
+저장소 파일은 bootstrap 입력과 정적 인터페이스 계약을 소유한다. Linux 서버
+호스트, Docker, kubeconfig, live 클러스터, 외부 서비스, credential, 인증서,
+승인된 bootstrap 시점은 운영자가 소유한다. secret 값과 비공개 runtime 상태는
+이 트리나 검증 증거에 복사하지 않는다.
 
 ### Host Runtime Prerequisite Matrix
 
@@ -105,36 +117,12 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 | `Vault connection contract` | Owns `coredns-custom.yaml`, `gitops/platform/eso/vault-secret-store.yaml`, the `openbao-ca` ConfigMap bootstrap, Vault policy sample, and no-secret static checks. | External Vault operator owns Vault runtime, unseal, token handling, auth mount configuration, the `vault` audience binding, policy application, and secret rotation. | Bootstrap requires HTTPS plus a readable CA, prompts silently on `/dev/tty`, and has no noninteractive or insecure fallback; secret values are not printed or committed, and ESO reaches OpenBao over TLS through the external Traefik (ADR-0046). | `python3 scripts/validate-vault-eso-contracts.py --root .`; `bash scripts/validate-infrastructure-contracts.sh`; `bash scripts/check-secret-handling.sh .`; live `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not read secret values, write Vault policy, refresh Vault auth, or repair live Vault state. |
 | `PostgreSQL and Valkey connection contract` | Owns Kubernetes Service/EndpointSlice contracts, ExternalSecret target naming, and static port/address checks for PostgreSQL and Valkey. | External service workspace owns PostgreSQL/Valkey runtime, container/network state, credentials, TLS/CA material if enabled, and rotation evidence. | Bootstrap may run TCP reachability prechecks and create the initial ArgoCD Valkey Secret from approved Vault source. | `bash scripts/validate-infrastructure-contracts.sh`; live `infrastructure/verify/verify-external-services.sh` and `infrastructure/verify/verify-secrets.sh`. | Repo-static checks do not start external services, change `.env` values, rotate credentials, or prove live reachability. |
 
-### Infrastructure Test Inventory
-
-이 표는 `infrastructure/verify/*.sh`의 현재 유지 계약이며 전부 라이브 검증이다.
-부트스트랩된 k3d/ArgoCD 환경에서만 실행한다. 저장소 정적 계약 검사는
-`scripts/validate-infrastructure-contracts.sh`가 소유하며 QA 실행
-레지스트리가 그 선택과 실행을 결정한다.
-
-| Test script | Type | Preconditions | Result semantics | Retention / command surface |
-| --- | --- | --- | --- | --- |
-| `verify-cluster.sh` | Live | Bootstrapped k3d context, trusted kubeconfig CA, kubectl, and MetalLB. | PASS means cluster node topology and MetalLB readiness match the local platform baseline. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and synchronized root/platform applications. | PASS means the live root Application source contract and required platform Application presence checks pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-secrets.sh` | Live | External Secrets Operator, Vault auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-external-services.sh` | Live | Platform namespace services and EndpointSlices exist for external PostgreSQL, Vault, Valkey, and observability contracts. | PASS means live service ports and EndpointSlice addresses match the declared local contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional k8s router check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
-
-## Configuration Boundary
-
-Repository files own bootstrap inputs and static interface contracts. The
-operator owns the Linux server host, Docker, kubeconfig, live cluster, external services,
-credentials, certificates, and approved bootstrap timing. Secret values and
-private runtime state must not be copied into this tree or validation evidence.
-
 ## Validation
 
-Use `bash scripts/validate-infrastructure-contracts.sh` for repository-only
-evidence. Run `bash infrastructure/verify/run-all.sh` only against an
-intentionally bootstrapped environment with the prerequisites and live/static
-result boundaries recorded in the inventory below.
+저장소 범위의 증거는 `bash scripts/validate-infrastructure-contracts.sh`로
+얻는다. `bash infrastructure/verify/run-all.sh`는 의도적으로 bootstrap한
+환경에서만 실행하며 이때 아래 inventory에 기록된 전제 조건과 live·정적 결과
+경계를 따른다.
 
 ## Operations
 

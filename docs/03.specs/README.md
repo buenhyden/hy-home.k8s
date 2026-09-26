@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.5.41"
+version: "0.6.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -12,7 +12,7 @@ layer: "specs"
 > Requirement Package와 Architecture를 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -57,62 +57,42 @@ Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포�
 
 ## Document Index
 
-A package proves its own navigation: `spec.md` owns the change contract,
-`plan.md` owns implementation order and risk, and `tasks/` is the Task
-inventory. The compact tree below lists the governed body families; `tasks/`
-denotes package-local `TSK-*` records rather than one package-wide ledger. Spec 0054's transitional execution ledger is a
-finite WP-004C input and is intentionally not presented as a current family.
+각 package 폴더는 자신의 탐색을 스스로 소유한다. `spec.md`는 변경 계약을,
+`plan.md`는 구현 순서와 위험을, `tasks/`는 package-local Task 기록을
+소유한다. 이 README는 package 폴더까지만 안내하며, 각 package의 상태와
+날짜는 그 package의 `spec.md` frontmatter가 소유한다.
 
-A package leaves the current tree only when it is proven obsolete, completed,
-duplicated, or conflicting, and then only after lifecycle normalization,
-mutable consumer cutover, and Git recovery. The retained set is therefore
-whatever fails all four proofs; it is derived from lifecycle state and
-unfinished scope, not declared as a fixed list. The tree and table below are a
-point-in-time inventory, not a permanent roster or count invariant.
-
-Spec 0054 owned integrated acceptance; it is `done` and retained in
-`98.archive/completed/` by [SPEC-0087](./0087-stage03-terminal-package-retention/spec.md); completed Spec 0066 owned delegated execution of WP-010 and
-WP-011, and Spec 0054 WP-013 owned the current-corpus cutover.
-The 2026-09-14 lifecycle reconciliation is recorded by
-[SPEC-0078](../98.archive/completed/03.specs/0078-document-currency-reconciliation/spec.md).
+package는 폐기·완료·중복·상충이 증명되고 lifecycle 정규화, consumer 전환,
+Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/README.md)에
+보존된다. 아래 목록은 시점 목록이며 고정 roster나 개수 불변식이 아니다.
 
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-│   └── spec.md
 ├── 0072-agent-governance-and-quality-gate-consolidation/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0085-archive-reappraisal-and-document-standards/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0086-provider-native-runtime-observation/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0087-stage03-terminal-package-retention/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0088-operations-corpus-convergence/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0089-deferred-conflict-resolution/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
 ├── 0090-spec0049-retirement/
-│   ├── spec.md
-│   ├── plan.md
-│   └── tasks/
+├── 0091-readme-navigation-contract/
+├── 0093-document-language-contract/
 └── README.md
 ```
 
-The 2026-09-05 Stage 03 dispositions and scope-specific evidence are recorded
-in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md#stage-03-current-package-convergence-2026-09-05).
+| Package | 목적 |
+| --- | --- |
+| [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
+| [0072-agent-governance-and-quality-gate-consolidation/](./0072-agent-governance-and-quality-gate-consolidation/) | 공통 agent governance와 local·CI QA 통합 |
+| [0085-archive-reappraisal-and-document-standards/](./0085-archive-reappraisal-and-document-standards/) | Archive 재평가와 문서 표준(ADR-0040 cutover) |
+| [0086-provider-native-runtime-observation/](./0086-provider-native-runtime-observation/) | Claude·Codex native runtime 관측 |
+| [0087-stage03-terminal-package-retention/](./0087-stage03-terminal-package-retention/) | 종료된 Stage 03 package 보존 |
+| [0088-operations-corpus-convergence/](./0088-operations-corpus-convergence/) | 운영 문서 역할 정리와 검증 script 정리 |
+| [0089-deferred-conflict-resolution/](./0089-deferred-conflict-resolution/) | SPEC-0088 보류 충돌 해소 |
+| [0090-spec0049-retirement/](./0090-spec0049-retirement/) | SPEC-0049 `retired/` 보존 |
+| [0091-readme-navigation-contract/](./0091-readme-navigation-contract/) | README 탐색 계약 |
+| [0093-document-language-contract/](./0093-document-language-contract/) | 문서 언어 계약 |
 
 ## Authoring Workflow
 
@@ -127,7 +107,7 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 이 README의 링크 기준 위치는 `docs/03.specs/`다.
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
-- 같은 stage의 spec은 `./<####-numbering>-<feature-id>/spec.md`로 연결한다.
+- 같은 stage의 package는 `./<####-numbering>-<feature-id>/` 폴더로 연결한다.
 - 실행 문서는 같은 work-unit의 `plan.md`와 `tasks/tsk-####-<slug>.md`, 운영 문서는 `../05.operations/`로 연결한다.
 - feature-local helper 문서 링크는 `docs/03.specs/<####-numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
@@ -140,19 +120,6 @@ in [SPEC-0054-TSK-0013](../98.archive/completed/03.specs/0054-sdlc-document-and-
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
 7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 Requirement Package/AD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
-
-### Current Spec Index
-
-| 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
-| -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [`./0008-current-local-gitops-platform/spec.md`](./0008-current-local-gitops-platform/spec.md)                                     | 현재 local GitOps platform baseline Spec                                      | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다.                                                                                                                        | 2026-09-14 |
-| [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Done | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성의 정적 수용을 완료했다. 2026-09-24에 request owner 승인("0072: Split the native half out and close")으로 native runtime 관측(WORK-009)을 SPEC-0086으로 이관하고 done으로 닫았다. native 결과는 통과로 주장하지 않는다. | 2026-09-24 |
-| [`./0085-archive-reappraisal-and-document-standards/spec.md`](./0085-archive-reappraisal-and-document-standards/spec.md) | Archive reappraisal and document standards | Done | ADR-0040 cutover를 완료했다. default branch envelope 검증까지 구현했고 hosted `qa`가 `a264ebad`에서 통과해 2026-09-24에 done으로 닫았다. lifecycle·결과 어휘(WP-005·006)는 각자의 승인을 기다린다. | 2026-09-24 |
-| [`./0086-provider-native-runtime-observation/spec.md`](./0086-provider-native-runtime-observation/spec.md) | Provider native runtime observation | Draft | 2026-09-24에 SPEC-0072에서 분리했다. Claude·Codex의 native discovery, invocation·model access, sandbox enforcement, hook event delivery 관측을 소유한다. operator가 승인한 native session만 증거가 되며, repository-static 결과로 닫을 수 없다. Task는 queued다. | 2026-09-24 |
-| [`./0087-stage03-terminal-package-retention/spec.md`](./0087-stage03-terminal-package-retention/spec.md) | Stage 03 terminal package retention | Done | 2026-09-24 request owner 승인으로 withdrawn package 네 개(0047·0048·0050·0051)를 `retired/`로, done package 세 개(0054·0062·0084)를 `completed/`로 보존하고 done으로 닫았다. | 2026-09-24 |
-| [`./0088-operations-corpus-convergence/spec.md`](./0088-operations-corpus-convergence/spec.md) | Operations corpus convergence | Done | 2026-09-25 request owner 요청으로 Stage 05 역할 중복·구현 drift, 검증 script의 dead·중복 logic을 local commit으로 정리했다. Stage 98 Operations 봉인 기록은 보존 근거와 제거 조건을 기록했고, hosted CI와 live 검증은 DEFER다. | 2026-09-25 |
-| [`./0089-deferred-conflict-resolution/spec.md`](./0089-deferred-conflict-resolution/spec.md) | Deferred conflict resolution | Done | SPEC-0088의 deferred conflict 네 건을 해소하고 SPEC-0049를 철회했다. `retired/` 이동은 SPEC-0090이 수행했다. | 2026-09-25 |
-| [`./0090-spec0049-retirement/spec.md`](./0090-spec0049-retirement/spec.md) | SPEC-0049 retirement | Done | 2026-09-25 request owner 승인으로 철회된 SPEC-0049를 `retired/`로 보존하고 done으로 닫았다. | 2026-09-25 |
 
 ### Helper Templates
 

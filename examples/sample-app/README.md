@@ -57,16 +57,15 @@ examples/sample-app/
 
 ## Configuration Boundary
 
-Replace every `<appname>`, `<owner>`, `<tag>`, and `<port>` placeholder before
-promotion to `gitops/workloads/<appname>/`. Keep secret values, tokens, and
-private keys outside the example and preserve the Vault mount-prefix boundary
-described below.
+`gitops/workloads/<appname>/`로 올리기 전에 `<appname>`, `<owner>`, `<tag>`,
+`<port>` placeholder를 모두 바꾼다. secret 값, 토큰, 개인 키는 예시 밖에 두고
+아래에 설명한 Vault mount-prefix 경계를 지킨다.
 
 ## Validation
 
-Before treating a copy as desired state, verify that no placeholder remains and
-run the repository quality, Kubernetes manifest, and secret-handling checks
-listed in the parent [examples contract](../README.md#validation).
+복사본을 desired state로 다루기 전에 placeholder가 남지 않았는지 확인하고
+상위 [examples contract](../README.md#validation)에 나열된 저장소 품질,
+Kubernetes manifest, secret 처리 검사를 실행한다.
 
 ## Operations
 

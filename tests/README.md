@@ -1,24 +1,23 @@
 ---
 title: "tests"
-version: "0.2.1"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-26"
 ---
 
 # tests
 
 ## Overview
 
-`tests/`는 repository validation code의 독립 behavior coverage와 synthetic
-fixtures를 소유한다. production validator는 현재 저장소 상태만 검사하고,
-이 폴더의 테스트가 mutation, malformed input, timeout, staged-index ambiguity,
-consumer-zero, and failure-diagnostic cases를 구성한다.
+`tests/`는 저장소 검증 코드의 독립적인 동작 coverage와 합성 fixture를
+소유한다. production validator는 현재 저장소 상태만 검사하고 mutation, 잘못된
+입력, timeout, staged index 모호성, 소비자 0개, 실패 진단 같은 경우는 이 폴더의
+테스트가 구성한다.
 
-이 폴더의 PASS는 repository-static evidence다. hosted CI, provider runtime,
-credentials, deployment, remote state, 또는 live cluster readiness를 주장하지
-않는다.
+이 폴더의 PASS는 저장소 정적 증거다. hosted CI, provider runtime, credential,
+배포, 원격 상태, live cluster 준비 상태를 주장하지 않는다.
 
 ### Audience
 
@@ -31,18 +30,18 @@ credentials, deployment, remote state, 또는 live cluster readiness를 주장�
 
 #### In Scope
 
-- production module의 공개 함수·CLI·diagnostic behavior 회귀
-- temporary repository와 synthetic mutation을 사용한 실패 경계 검증
-- staged index와 worktree authority 구분
-- fixture consumer ownership과 orphan fixture 방지
-- hooks, routing, document, archive, Agent, CI, and GitOps static contracts
+- production module의 공개 함수·CLI·진단 동작 회귀
+- 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
+- staged index와 작업 트리 권한의 구분
+- fixture 소비자 소유권과 고아 fixture 방지
+- hook, routing, 문서, archive, Agent, CI, GitOps 정적 계약
 
 #### Out of Scope
 
-- production runtime data API
-- 고정 test-case 수 또는 fixture 수 정책
-- secret, credential, kubeconfig, provider token, or live diagnostics
-- live cluster bootstrap, ArgoCD sync, Vault mutation, remote CI rerun
+- production runtime 데이터 API
+- 고정된 test case 수나 fixture 수 정책
+- secret, credential, kubeconfig, provider 토큰, live 진단 정보
+- live cluster bootstrap, ArgoCD sync, Vault 변경, 원격 CI 재실행
 
 ## Structure
 
@@ -59,51 +58,47 @@ credentials, deployment, remote state, 또는 live cluster readiness를 주장�
 
 ### Shared helper modules
 
-| Module                          | Responsibility                                                                    |
-| ------------------------------- | --------------------------------------------------------------------------------- |
-| `git_fixture.py`                | Build exact Git objects in a temporary root for archive and lifecycle regressions |
-| `affected_surface_mutations.py` | Routing mutation cases for affected-surface selection                             |
-| `gitops_change_set_cases.py`    | Change-set cases for GitOps diff rendering                                        |
-| `vault_eso_contract_cases.py`   | Vault/ESO contract and security cases                                             |
+| Module | 책임 |
+| --- | --- |
+| `git_fixture.py` | archive와 lifecycle 회귀 테스트를 위해 임시 root에 정확한 Git 객체를 만든다 |
+| `affected_surface_mutations.py` | affected surface 선택을 위한 routing mutation 사례 |
+| `gitops_change_set_cases.py` | GitOps diff rendering을 위한 change set 사례 |
+| `vault_eso_contract_cases.py` | Vault·ESO 계약과 보안 사례 |
 
-A helper module holds shared input or construction only. Importing a test
-module for its helper would re-run that module's own tests, so a helper that
-more than one suite needs lives here instead.
+helper module은 공유 입력이나 구성 코드만 담는다. helper를 쓰려고 test module을
+import하면 그 module의 테스트가 다시 실행되므로, 둘 이상의 suite가 필요로 하는
+helper는 이곳에 둔다.
 
 ### Fixture families
 
-| Fixture                                 | Independent consumer                       |
-| --------------------------------------- | ------------------------------------------ |
-| `fixtures/github-actions-security.json` | `test_validate_github_actions_security.py` |
-| `fixtures/gitops-change-set/`           | `test_validate_gitops_change_set.py`       |
-| `fixtures/validation-surfaces.json`     | `test_validate_affected_surfaces.py`       |
-| `fixtures/vault-eso-contracts.json`     | `test_validate_vault_eso_contracts.py`     |
+[fixtures/](./fixtures/)에는 GitHub Actions 보안, GitOps change set,
+validation surface, Vault·ESO 계약 fixture가 있다. 각 fixture는 같은 주제의
+validator 테스트가 사용한다.
 
-Fixtures are bounded examples, not production registries. A fixture remains
-only while an independent test consumes it; combinations should normally be
-generated in temporary directories instead of expanding a permanent matrix.
+fixture는 범위가 제한된 예시이며 production registry가 아니다. fixture는
+독립적인 테스트가 사용하는 동안에만 남는다. 조합이 필요하면 보통 영구
+매트릭스를 늘리지 말고 임시 디렉터리에서 생성한다.
 
 ## Configuration Boundary
 
-- Tests may import production modules from `scripts/`; the reverse dependency
-  is forbidden.
-- Tests may read `tests/fixtures/`; production modules may not.
-- Temporary Git repositories and directories must be disposable and contain no
-  credentials or user data.
-- Network, provider authentication, hosted CI mutation, and live cluster access
-  are outside the default test boundary.
-- Assertions target behavior, diagnostic IDs, and semantic ownership rather
-  than permanent file counts, line counts, current SHA values, or mutation counts.
-- Whether this repository passes a registered validator is that gate's own
-  result. A test that asserts only the pass runs the same check on the same
-  bytes under a second name, so it belongs to the gate rather than here. Reading
-  the real corpus stays correct where the test does something the gate does not:
-  patching a dependency to reach a failure path, pinning an exact diagnostic
-  string, or proving the validator is routed at all.
+- 테스트는 `scripts/`의 production module을 import할 수 있다. 반대 방향의
+  의존은 금지한다.
+- 테스트는 `tests/fixtures/`를 읽을 수 있지만 production module은 읽을 수 없다.
+- 임시 Git 저장소와 디렉터리는 버려도 되는 것이어야 하며 credential이나 사용자
+  데이터를 담지 않는다.
+- 네트워크, provider 인증, hosted CI 변경, live cluster 접근은 기본 테스트
+  경계 밖이다.
+- 단언의 대상은 동작, 진단 ID, 의미상 소유권이다. 영구적인 파일 수, 줄 수, 현재
+  SHA 값, mutation 수를 단언하지 않는다.
+- 이 저장소가 등록된 validator를 통과하는지는 그 gate 자신의 결과다. 통과만
+  단언하는 테스트는 같은 바이트에 같은 검사를 다른 이름으로 한 번 더 돌리는
+  것이므로, 여기가 아니라 gate에 속한다. 실제 corpus를 읽는 테스트가 맞는 경우는
+  gate가 하지 않는 일을 할 때다. 의존성을 patch해 실패 경로에 도달하거나, 정확한
+  진단 문자열을 고정하거나, validator가 routing되는지 자체를 증명하는 경우다.
 
 ## Validation
 
-Run focused suites while iterating, then the full profile once:
+반복 작업 중에는 전용 suite를 실행하고 마지막에 full profile을 한 번 실행한다.
 
 ```bash
 python3 -m unittest tests.test_reference_pack_routes
@@ -115,30 +110,30 @@ python3 scripts/qa.py full
 git diff --check
 ```
 
-The `full` profile owns the one discovery run over the whole suite, so a
-separate `unittest discover` on the same bytes repeats work the profile has
-already done rather than adding evidence. Run discovery directly only to
-reproduce a failure outside a profile.
+전체 suite에 대한 discovery 실행은 `full` profile이 한 번 소유한다. 같은
+바이트에 `unittest discover`를 따로 돌리면 증거가 늘지 않고 profile이 이미 한
+일을 반복할 뿐이다. discovery는 profile 밖에서 실패를 재현할 때만 직접 실행한다.
 
-The completion order and PASS/FAIL/SKIP/DEFER meanings are owned by the
-[Quality policy](../.agents/governance/quality.md). This README
-lists current test entrypoints but does not redefine that policy.
+완료 순서와 PASS/FAIL/SKIP/DEFER의 의미는
+[Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
+테스트 진입점을 나열할 뿐 그 정책을 다시 정의하지 않는다.
 
 ## Operations
 
 ### Working Procedure
 
-1. Reproduce a defect in the narrowest independent test.
-2. Use temporary data for a one-off mutation; add a persistent fixture only
-   when several cases share a durable semantic input.
-3. Make the production change without importing or reading this tree.
-4. Run the focused suite, ownership checks, affected/staged validation, and
-   broad validation required by the changed surface.
-5. Remove a fixture when its last independent consumer is retired.
-6. Report unavailable hosted/provider/live checks as `DEFER`, never as local PASS.
+1. 결함은 가장 좁은 독립 테스트에서 재현한다.
+2. 한 번 쓰는 mutation에는 임시 데이터를 쓴다. 영구 fixture는 여러 사례가
+   오래 유지되는 같은 의미의 입력을 공유할 때만 추가한다.
+3. production 변경은 이 트리를 import하거나 읽지 않고 한다.
+4. 전용 suite, 소유권 검사, affected·staged 검증, 바뀐 surface가 요구하는 넓은
+   검증을 실행한다.
+5. 마지막 독립 소비자가 없어지면 그 fixture도 삭제한다.
+6. 실행할 수 없는 hosted·provider·live 검사는 `DEFER`로 보고하며 로컬 PASS로
+   보고하지 않는다.
 
-Test modules may be added, merged, or retired as responsibilities change.
-Their count and exact method inventory are observations, not governance.
+test module은 책임이 바뀌면 추가, 병합, 폐기될 수 있다. module 수와 정확한
+method 목록은 관찰 결과일 뿐 거버넌스가 아니다.
 
 ## Related Documents
 
@@ -147,7 +142,6 @@ Their count and exact method inventory are observations, not governance.
 - [Work lifecycle](../.agents/workflows/work-lifecycle.md)
 - Validation ownership ADR (`docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md`)
 
-The accepted decision above is the current owner of validation responsibility.
-The completed Spec and Task that first carried out that decision are sealed
-evidence and stay reachable through the archive index; they record what was
-done once and are not a second statement of what holds now.
+위의 승인된 결정이 검증 책임의 현재 owner다. 그 결정을 처음 실행한 완료 Spec과
+Task는 봉인된 증거이며 archive index로 계속 찾아갈 수 있다. 그 문서들은 한 번
+실행한 일을 기록할 뿐, 지금 유효한 규칙을 다시 선언하는 문서가 아니다.

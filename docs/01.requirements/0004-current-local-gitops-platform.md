@@ -4,7 +4,7 @@ version: "1.0.4"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-26"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -13,85 +13,85 @@ artifact_id: "REQ-0004"
 
 ## Overview
 
-이 문서는 로컬 GitOps 플랫폼의 사용자 가치, 운영 경계 및 delivery assurance 요구를 소유한다.
-구체 topology와 구현 선택은 [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md),
-공통 거버넌스·검증·승인 요구는 [REQ-0003](./0003-workspace-agent-governance-platform.md)가 소유한다.
+This document owns the user value, operating boundaries, and delivery assurance requirements of the local GitOps platform.
+[AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns the concrete topology and implementation choices,
+and [REQ-0003](./0003-workspace-agent-governance-platform.md) owns the common governance, validation, and approval requirements.
 
 ## Vision
 
-사용자는 저장소의 desired state와 깊이가 구분된 증거로 로컬 플랫폼을 재현하고 안전하게 변경할 수 있어야 한다.
+Users must be able to reproduce the local platform and change it safely from the repository's desired state and from evidence whose depth is kept distinct.
 
 ## Problem Statement
 
-현재 desired state, 과거 문서와 실제 runtime 상태를 혼동하면 제거된 기능 또는 검증되지 않은 보안 수준을
-지원한다고 안내할 수 있다. 정적 구성이 있다는 사실과 reconciliation 또는 외부 서비스 가용성은 분리해야 한다.
+Confusing the current desired state, historical documents, and actual runtime state can present a removed feature or an unverified
+security level as supported. The existence of static configuration must be kept apart from reconciliation or external service availability.
 
 ## Personas
 
-- Platform engineer: 플랫폼 소유 경계와 외부 서비스 인터페이스를 관리한다.
-- Operator: 현재 UI, GitOps 상태와 제한된 관측 증거로 운영한다.
-- Application author: workload와 cloud example의 검증·온보딩 경계를 따른다.
+- Platform engineer: manages the platform ownership boundaries and external service interfaces.
+- Operator: operates through the current UIs, GitOps state, and bounded observed evidence.
+- Application author: follows the validation and onboarding boundaries of workloads and cloud examples.
 
 ## Key Use Cases
 
-- 변경자가 각 surface의 semantic owner와 필요한 정적 검증을 찾는다.
-- 운영자가 플랫폼/workload 경계와 외부 서비스 의존성을 확인한다.
-- 검토자가 실패·fallback·DEFER 및 live 미관측 상태를 분리해 판정한다.
-- 실행자가 미완료 assurance package를 선행 검증과 승인 범위에 맞게 재개한다.
+- A changer finds each surface's semantic owner and the static validation it needs.
+- An operator confirms the platform/workload boundary and external service dependencies.
+- A reviewer judges failure, fallback, DEFER, and live-unobserved states separately.
+- An executor resumes an unfinished assurance package within its prerequisite validation and approval scope.
 
 ## Functional Requirements
 
-- **REQ-0004-FR-0001**: 로컬 플랫폼의 desired state는 저장소에서 소유 경계를 구분해 재현 가능하게 선언되어야 한다.
-- **REQ-0004-FR-0002**: 플랫폼 구성 요소와 사용자 workload의 조정·소유·권한 경계를 분리해야 한다.
-- **REQ-0004-FR-0003**: 외부 비밀정보·데이터·관측 서비스 연결은 명시적인 서비스 인터페이스로 표현하고 외부 runtime 생성과 구분해야 한다.
-- **REQ-0004-FR-0004**: 운영자는 현재 지원되는 cluster UI에 접근할 수 있어야 하며 제거된 UI를 현재 구현으로 안내하지 않아야 한다.
-- **REQ-0004-FR-0005**: 변경 범위의 추적된 surface는 변경, 근거 있는 무변경 또는 owner·재시도 조건이 있는 DEFER로 분류되어야 한다.
-- **REQ-0004-FR-0006**: 재개·복구·미커밋 변경은 semantic owner에 따라 채택 또는 제외하고 임시 branch/stash/generated identity를 현재 권위로 고정하지 않아야 한다.
-- **REQ-0004-FR-0007**: GitHub의 label과 code ownership 투영은 단일 affected-path owner와 일치하고 누락·중복·모호한 라우팅을 검증해야 한다.
-- **REQ-0004-FR-0008**: 플랫폼 검증 결과는 syntax, render, schema/policy, product semantic 및 live observation 깊이와 도구·fallback·lane·결과를 구분해야 한다.
-- **REQ-0004-FR-0009**: 실행 가능한 cloud example은 예제 옆의 안내 및 provider-native 정적 검증을 갖추되 credential이나 apply/deploy 없이 검증할 수 있어야 한다.
-- **REQ-0004-FR-0010**: Ingress reference, 리소스 종류, GitOps 구조, policy, 비밀정보 동기화와 명시적 local-only transport 예외를 fail-closed로 검사해야 한다.
-- **REQ-0004-FR-0011**: 플랫폼 assurance 작업은 순서가 있는 package별 검토·검증·rollback 단위로 수행하고 최종 local-only integration을 증명해야 한다.
-- **REQ-0004-FR-0012**: 정확한 infrastructure·workflow·dependency·example 버전은 실행 소스 또는 검토된 lock에서 확인하고 Reference mirror를 실행 선행조건으로 요구하지 않아야 한다.
-- **REQ-0004-FR-0013**: 자기 저장소의 지속 조정 source와 외부 배포 source의 revision 정책을 구분하고 다중 운영자·환경 또는 history rewrite 도입 때 재검토해야 한다.
-- **REQ-0004-FR-0014**: Pod security 강제 수준은 저장소가 소유하고 정적으로 검증한 workload 근거에 비례해야 한다. Chart·injection·runtime 불확실성은 audit/warn으로 구분하고 CNI desired state를 live 증거로 승격하지 않는다.
-- **REQ-0004-NFR-0001**: 로컬 플랫폼은 인증서, ingress, service mesh, 관측 UI, 점진적 배포, 알림, monitoring 및 외부 비밀정보 연동의 현재 통합 범위를 제공해야 한다.
-- **REQ-0004-NFR-0002**: Secret value, token 및 private key는 Git, 문서 또는 로그에 기록하지 않아야 한다.
-- **REQ-0004-NFR-0003**: Image와 artifact assurance는 fail-closed로 유지하되 검증 없는 일괄 digest 전환은 하지 않고 후속 provenance 의무는 consumer·owner·trigger로 명시해야 한다.
-- **REQ-0004-IF-0001**: 과거 기록은 current 실행 권위와 분리해야 한다. 완료 package의 명시적 역사 인용은 허용하되 봉인 record를 현재 구현 지침으로 사용하지 않는다.
+- **REQ-0004-FR-0001**: The local platform's desired state must be declared reproducibly in the repository, with its ownership boundaries kept distinct.
+- **REQ-0004-FR-0002**: The reconciliation, ownership, and permission boundaries of platform components and user workloads must be separated.
+- **REQ-0004-FR-0003**: Connections to external secret, data, and observability services must be expressed as explicit service interfaces and kept distinct from creating the external runtime.
+- **REQ-0004-FR-0004**: Operators must be able to reach the currently supported cluster UIs, and a removed UI must not be presented as the current implementation.
+- **REQ-0004-FR-0005**: Each tracked surface in a change's scope must be classified as changed, unchanged with a reason, or DEFER with an owner and a retry condition.
+- **REQ-0004-FR-0006**: Resumed, recovered, and uncommitted changes must be adopted or excluded according to their semantic owner, and a temporary branch, stash, or generated identity must not be fixed as current authority.
+- **REQ-0004-FR-0007**: GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated.
+- **REQ-0004-FR-0008**: Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result.
+- **REQ-0004-FR-0009**: An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy.
+- **REQ-0004-FR-0010**: Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed.
+- **REQ-0004-FR-0011**: Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration.
+- **REQ-0004-FR-0012**: Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition.
+- **REQ-0004-FR-0013**: The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced.
+- **REQ-0004-FR-0014**: The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence.
+- **REQ-0004-NFR-0001**: The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration.
+- **REQ-0004-NFR-0002**: Secret values, tokens, and private keys must not be recorded in Git, documents, or logs.
+- **REQ-0004-NFR-0003**: Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger.
+- **REQ-0004-IF-0001**: Historical records must be kept apart from current execution authority. An explicit historical citation of a completed package is allowed, but a sealed record is not used as current implementation guidance.
 
 ## Success / Acceptance Criteria
 
-현재 desired-state 구조, Kubernetes syntax와 product static contract가 해당 validator를 통과해야 한다.
-Delivery assurance는 모든 in-scope surface에 분류·검증 깊이·결과·한계를 남겨야 하며
-원격·runtime 미관측을 정적 PASS로 대체하지 않는다. 아래 trace의 member별 판정은 AD와 해당 Spec에 연결된다.
+The current desired-state structure, Kubernetes syntax, and product static contract must pass their validators.
+Delivery assurance must leave a classification, validation depth, result, and limits for every in-scope surface,
+and does not substitute a static PASS for unobserved remote or runtime state. The per-member verdicts in the trace below link to the AD and its Spec.
 
-- **Acceptance criterion 01**: 현재 platform product static contract를 검증한다.
-- **Acceptance criterion 02**: Root, platform 및 workload의 GitOps 소유·조정 경계를 검증한다.
-- **Acceptance criterion 03**: 추적된 Kubernetes manifest의 syntax를 검증한다.
-- **Acceptance criterion 04**: 현재 문서와 historical Archive의 권위 분리 및 관련 repository gate를 검증한다.
+- **Acceptance criterion 01**: Validate the current platform product static contract.
+- **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
+- **Acceptance criterion 03**: Validate the syntax of tracked Kubernetes manifests.
+- **Acceptance criterion 04**: Validate the authority separation between current documents and the historical Archive, and the related repository gates.
 
 ## Scope and Non-goals
 
-현재 로컬 플랫폼, platform/workload 분리, 외부 서비스 연결, 온보딩 예제 및 local-only assurance가 범위다.
-외부 runtime 생성, cloud provisioning, 승인 없는 cluster 변경 및 검증 없는 blanket digest 전환은 범위가 아니다.
+In scope: the current local platform, the platform/workload separation, external service connections, onboarding examples, and local-only assurance.
+Out of scope: creating the external runtime, cloud provisioning, unapproved cluster changes, and an unvalidated blanket digest conversion.
 
 ## Risks, Dependencies, and Assumptions
 
-외부 서비스와 실제 클러스터 가용성은 별도 준비·관측이 필요하다. 이 문서 갱신은 live 검증이나 배포가 아니다.
-비밀정보 읽기, push, cloud 작업과 live mutation에는 별도 승인이 필요하다.
+External services and actual cluster availability need separate preparation and observation. Updating this document is not live validation or deployment.
+Reading secrets, pushing, cloud work, and live mutation each need separate approval.
 
 ### Unfinished delivery assurance
 
-Spec 0049는 retired Spec 0048과 Traefik lane에 의존해 2026-09-25에 철회되었고([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)), `98.archive/retired/`에 보존되어 인용하지 않는다([SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md)). 그 미구현 범위(render, schema, policy, secret, shell fixture, image, tool evidence lane)는 REQ-0004-FR-0008·FR-0010의 owner 없는 gap으로 남으며, 다음 owner는 현재 authority에서 새 package를 계획할 request owner다.
-Spec 0047, 0048, 0050, 0051은 후속 없이 철회되어 `98.archive/retired/`에
-보존되었고([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)), 그 범위의 구현 owner는 현재 없다.
-원래 REQ-0007 프로그램 이력은 유지하며 현재 플랫폼 의미를 이 문서로, 공통 라우팅·승인·QA 의미를 REQ-0003으로 승계한다.
-이 승계는 어느 tranche 또는 Spec 0054 WP-013의 완료 선언도 아니다.
-운영 문서의 현재 구현 사실 정합과 secret 값 비출력 경계 검증은
-[SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md)이 소유한다.
-RUN-0004가 가리키는 cluster UI chart 객체 확인은
-[SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)가 소유한다.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
+Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and kept in `98.archive/retired/`
+([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)); their scope currently has no implementation owner.
+The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003.
+This succession does not declare any tranche, or Spec 0054 WP-013, complete.
+[SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md) owns aligning operations documents with current implementation facts
+and validating the boundary that secret values are never printed.
+[SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md) owns confirming the cluster UI chart objects
+that RUN-0004 points to.
 
 ## Traceability
 
@@ -99,28 +99,28 @@ RUN-0004가 가리키는 cluster UI chart 객체 확인은
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0004-FR-0001 | 로컬 플랫폼의 desired state는 저장소에서 소유 경계를 구분해 재현 가능하게 선언되어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0002 | 플랫폼 구성 요소와 사용자 workload의 조정·소유·권한 경계를 분리해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0003 | 외부 비밀정보·데이터·관측 서비스 연결은 명시적인 서비스 인터페이스로 표현하고 외부 runtime 생성과 구분해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0004 | 운영자는 현재 지원되는 cluster UI에 접근할 수 있어야 하며 제거된 UI를 현재 구현으로 안내하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0005 | 변경 범위의 추적된 surface는 변경, 근거 있는 무변경 또는 owner·재시도 조건이 있는 DEFER로 분류되어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0006 | 재개·복구·미커밋 변경은 semantic owner에 따라 채택 또는 제외하고 임시 branch/stash/generated identity를 현재 권위로 고정하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0007 | GitHub의 label과 code ownership 투영은 단일 affected-path owner와 일치하고 누락·중복·모호한 라우팅을 검증해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0008 | 플랫폼 검증 결과는 syntax, render, schema/policy, product semantic 및 live observation 깊이와 도구·fallback·lane·결과를 구분해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0009 | 실행 가능한 cloud example은 예제 옆의 안내 및 provider-native 정적 검증을 갖추되 credential이나 apply/deploy 없이 검증할 수 있어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0010 | Ingress reference, 리소스 종류, GitOps 구조, policy, 비밀정보 동기화와 명시적 local-only transport 예외를 fail-closed로 검사해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0011 | 플랫폼 assurance 작업은 순서가 있는 package별 검토·검증·rollback 단위로 수행하고 최종 local-only integration을 증명해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0012 | 정확한 infrastructure·workflow·dependency·example 버전은 실행 소스 또는 검토된 lock에서 확인하고 Reference mirror를 실행 선행조건으로 요구하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0013 | 자기 저장소의 지속 조정 source와 외부 배포 source의 revision 정책을 구분하고 다중 운영자·환경 또는 history rewrite 도입 때 재검토해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0014 | Pod security 강제 수준은 저장소가 소유하고 정적으로 검증한 workload 근거에 비례해야 한다. Chart·injection·runtime 불확실성은 audit/warn으로 구분하고 CNI desired state를 live 증거로 승격하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0001 | 로컬 플랫폼은 인증서, ingress, service mesh, 관측 UI, 점진적 배포, 알림, monitoring 및 외부 비밀정보 연동의 현재 통합 범위를 제공해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0002 | Secret value, token 및 private key는 Git, 문서 또는 로그에 기록하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0003 | Image와 artifact assurance는 fail-closed로 유지하되 검증 없는 일괄 digest 전환은 하지 않고 후속 provenance 의무는 consumer·owner·trigger로 명시해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-IF-0001 | 과거 기록은 current 실행 권위와 분리해야 한다. 완료 package의 명시적 역사 인용은 허용하되 봉인 record를 현재 구현 지침으로 사용하지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0001 | The local platform's desired state must be declared reproducibly in the repository, with its ownership boundaries kept distinct. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0002 | The reconciliation, ownership, and permission boundaries of platform components and user workloads must be separated. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0003 | Connections to external secret, data, and observability services must be expressed as explicit service interfaces and kept distinct from creating the external runtime. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0004 | Operators must be able to reach the currently supported cluster UIs, and a removed UI must not be presented as the current implementation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0005 | Each tracked surface in a change's scope must be classified as changed, unchanged with a reason, or DEFER with an owner and a retry condition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0006 | Resumed, recovered, and uncommitted changes must be adopted or excluded according to their semantic owner, and a temporary branch, stash, or generated identity must not be fixed as current authority. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0007 | GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0008 | Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0009 | An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-FR-0014 | The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0001 | The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0002 | Secret values, tokens, and private keys must not be recorded in Git, documents, or logs. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-NFR-0003 | Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
+| REQ-0004-IF-0001 | Historical records must be kept apart from current execution authority. An explicit historical citation of a completed package is allowed, but a sealed record is not used as current implementation guidance. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 
 ### Reviewed member-ID transfer
 
-아래는 현재 의미의 승계표다. 이전 member ID는 원래 결정·프로그램의 이력 식별자이며 재할당되지 않는다.
+The table below records the succession of current meaning. Earlier member IDs are historical identifiers of the original decisions and program and are not reassigned.
 
 | Original member ID | Current semantic owner |
 | --- | --- |
@@ -140,7 +140,7 @@ RUN-0004가 가리키는 cluster UI chart 객체 확인은
 | REQ-0007-NFR-0001 | REQ-0004-NFR-0003 |
 | REQ-0007-NFR-0002 | REQ-0003-FR-0014 |
 
-REQ-0005-FR-0006의 예제와 실행 소스 인접성은 REQ-0004-FR-0009가 함께 승계한다.
+REQ-0004-FR-0009 also inherits REQ-0005-FR-0006's requirement that examples sit beside their executable sources.
 
 - Current architecture: [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
 - Platform implementation: [Spec 0008](../03.specs/0008-current-local-gitops-platform/spec.md).

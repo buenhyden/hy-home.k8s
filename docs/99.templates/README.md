@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.3.0"
+version: "0.4.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-16"
+updated: "2026-09-25"
 layer: "templates"
 ---
 # 99.templates
@@ -12,7 +12,7 @@ layer: "templates"
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -111,25 +111,14 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 
 ## Document Index
 
-```text
-99.templates/
-├── contracts/          # machine contracts and their schemas
-│   ├── document-profile.schema.json
-│   └── frontmatter.schema.json
-├── templates/          # copyable forms only
-│   ├── README.md       # form catalog
-│   ├── common/ governance/ requirements/ architecture/
-│   ├── specs/
-│   └── operations/ references/ archive/ runtime/
-├── registry.json
-└── README.md
-```
+| 항목 | 설명 |
+| --- | --- |
+| [contracts/](./contracts/) | 기계 계약과 그 schema |
+| [templates/](./templates/) | 복사해서 쓰는 form catalog |
+| [registry.json](./registry.json) | Document Profile Registry |
 
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
-form catalog가 소유한다.
-
-- [Document Profile Registry](./registry.json)
-- [Form Catalog](./templates/README.md)
+[form catalog](./templates/README.md)가 소유한다.
 
 ## Authoring Workflow
 

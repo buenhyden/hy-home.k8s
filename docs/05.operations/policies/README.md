@@ -12,7 +12,7 @@ layer: "operations"
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -57,15 +57,15 @@ layer: "operations"
 
 ## Item Index
 
-```text
-docs/05.operations/policies/
-├── 0001-k8s-gitops-operations-policy.md                         # 로컬 k3d/GitOps/Vault 통합 운영 정책
-├── 0003-service-mesh-cert-manager-policy.md                     # cert-manager/Istio/Kiali 운영 통제
-├── 0004-rollouts-notifications-headlamp-policy.md               # Rollouts/Notifications/Headlamp 운영 통제
-├── 0005-observability-platform-operations-policy.md             # 메트릭/로그/Grafana/포트 통합 정책
-├── 0007-app-gitops-onboarding-policy.md                         # 앱 GitOps 온보딩 운영 정책
-└── README.md                                                    # This file
-```
+### 문서 인덱스
+
+| 문서 | 설명 |
+| --- | --- |
+| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 |
+| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 |
+| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 |
+| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 |
 
 ## Add and Find
 
@@ -114,13 +114,3 @@ docs/05.operations/policies/
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - [Operation Template](../../99.templates/templates/operations/policy.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
-
-### 문서 인덱스
-
-| 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
-| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 | Active | 2026-09-23 |
-| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 | Active | 2026-09-23 |
-| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-25 |
-| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-23 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-25 |

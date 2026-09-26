@@ -4,7 +4,7 @@ version: "1.0.2"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "requirements"
 artifact_id: "REQ-0001"
 ---
@@ -13,72 +13,72 @@ artifact_id: "REQ-0001"
 
 ## Overview
 
-이 문서는 `hy-home.k8s` 플랫폼에 Argo Rollouts를 도입하여 canary/blue-green 점진적 배포 전략과 관측 메트릭 기반 배포 안전 점검, 실패 시 자동 abort/rollback을 지원하기 위한 제품 요구사항을 정의한다.
+This document defines the product requirements for introducing Argo Rollouts to the `hy-home.k8s` platform: canary/blue-green progressive delivery, deployment safety checks based on observed metrics, and automatic abort/rollback on failure.
 
 ### Current requirement status
 
-이 Requirement는 current-contract backfill 기준의 active 문서다.
-Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 2026-05-18에 AD/Spec/Plan/Task 추적 체인을 보강했다.
-이 문서는 제품 의도와 수용 기준을 소유하고, 구현 가능한 계약은 연결된 downstream 문서가 소유한다.
+This Requirement is an active document backfilled against the current contract.
+The Rollouts GitOps resources and operations documents already exist in the repository; the AD/Spec/Plan/Task trace chain was completed on 2026-05-18.
+This document owns product intent and acceptance criteria; the linked downstream documents own the implementable contracts.
 
 ## Vision
 
-플랫폼 엔지니어와 애플리케이션 팀이 배포 위험을 최소화하면서 점진적으로 새 버전을 출시할 수 있는 표준 GitOps 배포 전략을 갖춘다.
+Give platform engineers and application teams a standard GitOps delivery strategy for releasing new versions progressively while minimizing deployment risk.
 
 ## Problem Statement
 
-현재 플랫폼은 ArgoCD의 기본 `Deployment` 기반 배포만으로는 결함 있는 릴리스가 배포될 경우 즉각적인 서비스 영향을 초래할 수 있다. 점진적 배포(canary, blue-green), 수동 promotion 기본 경계, 관측 메트릭 기반 배포 안전 점검 abort/rollback을 통해 배포 안전성을 높여야 한다.
+With only ArgoCD's default `Deployment`-based delivery, a defective release reaches the platform with immediate service impact. Deployment safety must improve through progressive delivery (canary, blue-green), a manual promotion default, and abort/rollback driven by metric-based deployment safety checks.
 
 ## Personas
 
-- **Platform Engineer**: Rollouts 컨트롤러를 GitOps로 관리하고, 대시보드 UI로 롤아웃 상태를 시각적으로 확인하고 싶다.
-- **Application Team**: `Deployment`를 `Rollout` 리소스로 전환하여 canary/blue-green 전략을 적용하고 싶다.
-- **DevOps Engineer**: 관측 메트릭 기반 배포 안전 점검과 실패 시 자동 rollback 경계로 배포 안정성을 보장하고 싶다.
+- **Platform Engineer**: wants to manage the Rollouts controller through GitOps and see rollout state visually in the dashboard UI.
+- **Application Team**: wants to convert a `Deployment` into a `Rollout` resource and apply a canary/blue-green strategy.
+- **DevOps Engineer**: wants deployment stability guaranteed by metric-based safety checks and an automatic rollback boundary on failure.
 
 ## Key Use Cases
 
-- **STORY-01**: 운영자가 Rollouts Dashboard UI(승인된 Dashboard local 경로)에서 현재 롤아웃 상태와 진행률을 실시간으로 확인한다.
-- **STORY-02**: 애플리케이션 팀이 `Rollout` 리소스로 canary 배포를 정의하고 수동 승인으로 안전하게 promotion한다.
-- **STORY-03**: 승인된 관측 지표가 안전 임계값을 벗어나면 배포 안전 점검이 자동으로 배포를 abort한다.
-- **STORY-04**: ArgoCD가 `Rollout` 리소스를 인식하고 sync 상태를 정상적으로 추적한다.
+- **STORY-01**: An operator checks the current rollout state and progress in real time in the Rollouts Dashboard UI (the approved Dashboard local path).
+- **STORY-02**: An application team defines a canary deployment with a `Rollout` resource and promotes it safely through manual approval.
+- **STORY-03**: When an approved observed metric leaves its safety threshold, the deployment safety check aborts the deployment automatically.
+- **STORY-04**: ArgoCD recognizes `Rollout` resources and tracks their sync state correctly.
 
 ## Functional Requirements
 
-- **REQ-0001-FR-0001**: 플랫폼은 표준 GitOps 흐름 안에서 점진적 배포 기능을 제공해야 한다. 구현 제품과 chart/version은 ADR/Spec이 소유한다.
-- **REQ-0001-FR-0002**: Rollouts Dashboard UI를 승인된 local TLS 경로로 노출해야 한다.
-- **REQ-0001-FR-0003**: Controller metrics는 운영자가 rollout 상태와 실패 신호를 관찰할 수 있도록 수집 가능해야 한다.
-- **REQ-0001-IF-0001**: 플랫폼은 점진적 배포의 동기화와 health 상태를 GitOps 상태 모델로 추적할 수 있어야 한다. 구체 리소스·권한은 downstream Spec이 소유한다.
-- **REQ-0001-IF-0002**: 기본 promotion 정책은 자동 promotion을 강제하지 않아야 하며, 앱별 배포는 승인된 안전 점검으로 실패 시 자동 abort/rollback을 수행할 수 있어야 한다.
-- **REQ-0001-IF-0003**: 표준 local route를 통해 승인된 Dashboard local 경로 접근을 제공해야 한다.
+- **REQ-0001-FR-0001**: The platform must provide progressive delivery within the standard GitOps flow. The ADR/Spec owns the implementing product and chart/version.
+- **REQ-0001-FR-0002**: The Rollouts Dashboard UI must be exposed on the approved local TLS path.
+- **REQ-0001-FR-0003**: Controller metrics must be collectable so operators can observe rollout state and failure signals.
+- **REQ-0001-IF-0001**: The platform must be able to track the sync and health state of progressive deliveries in the GitOps state model. The downstream Spec owns the concrete resources and permissions.
+- **REQ-0001-IF-0002**: The default promotion policy must not force automatic promotion, and a per-application deployment must be able to abort/rollback automatically on failure through an approved safety check.
+- **REQ-0001-IF-0003**: Access to the approved Dashboard local path must be provided through the standard local route.
 
 ## Success / Acceptance Criteria
 
-- **Acceptance criterion 01**: 운영자가 Rollouts controller 상태를 확인할 수 있다. Evidence: `argo-rollouts-controller` Deployment `Available=True`.
-- **Acceptance criterion 02**: 운영자가 Dashboard에서 rollout 진행률을 확인할 수 있다. Evidence: 승인된 Dashboard local 경로 HTTPS 접근 성공.
-- **Acceptance criterion 03**: 애플리케이션 팀이 Rollout 리소스를 ArgoCD 상태 모델로 추적할 수 있다. Evidence: ArgoCD가 `Rollout` 리소스를 `Healthy` 또는 `Progressing` 상태로 표시.
-- **Acceptance criterion 04**: CI가 Rollouts 관련 정적 계약 회귀를 차단한다. Evidence: repo quality gate와 정적 계약 검증 PASS.
+- **Acceptance criterion 01**: An operator can check the Rollouts controller state. Evidence: `argo-rollouts-controller` Deployment `Available=True`.
+- **Acceptance criterion 02**: An operator can see rollout progress in the Dashboard. Evidence: HTTPS access to the approved Dashboard local path succeeds.
+- **Acceptance criterion 03**: An application team can track Rollout resources in the ArgoCD state model. Evidence: ArgoCD shows the `Rollout` resource as `Healthy` or `Progressing`.
+- **Acceptance criterion 04**: CI blocks static contract regressions related to Rollouts. Evidence: the repo quality gate and static contract validation PASS.
 
 ## Scope and Non-goals
 
 - **In Scope**:
-  - Argo Rollouts 컨트롤러 및 Rollouts Dashboard 제공 요구
-  - ArgoCD가 Rollouts 리소스를 추적하기 위한 권한/범위 요구
-  - 관측 지표 기반 배포 안전 점검 요구
-  - 표준 local route 접근 요구
-  - 문서 체인 동기화
+  - Requirements to provide the Argo Rollouts controller and the Rollouts Dashboard
+  - Permission and scope requirements for ArgoCD to track Rollouts resources
+  - Requirements for deployment safety checks based on observed metrics
+  - Requirements for access through the standard local route
+  - Synchronization of the document chain
 - **Out of Scope**:
-  - 개별 애플리케이션의 `Deployment` → `Rollout` 전환 (앱 팀 담당)
-  - 멀티클러스터 Rollouts
+  - Converting an individual application's `Deployment` to a `Rollout` (owned by the application team)
+  - Multi-cluster Rollouts
 - **Non-goals**:
-  - 자동 promotion 강제 (수동 승인이 기본)
-  - 플랫폼-wide 커스텀 Analysis metric 표준화
+  - Forcing automatic promotion (manual approval is the default)
+  - Standardizing custom Analysis metrics platform-wide
 
 ## Risks, Dependencies, and Assumptions
 
-- AppProject allow-list 업데이트 누락 시 ArgoCD sync 실패.
-  - **Mitigation**: 후속 Spec/Plan에서 AppProject 변경과 검증 순서를 명시.
-- Rollouts Dashboard 접근은 k8s 전용 router의 `rollouts.hy-k8s.home.arpa` 계약에 의존한다(ADR-0043).
-- 승인된 local 인증서와 ingress 경계의 준비는 현재 플랫폼 요구와 downstream 구현·운영 owner가 확인한다.
+- A missed AppProject allow-list update makes ArgoCD sync fail.
+  - **Mitigation**: the follow-on Spec/Plan states the AppProject change and its validation order.
+- Rollouts Dashboard access depends on the `rollouts.hy-k8s.home.arpa` contract of the dedicated k8s router (ADR-0043).
+- Readiness of the approved local certificate and the ingress boundary is confirmed by the current platform requirements and the downstream implementation and operations owners.
 
 ### Agent execution and approval requirements
 
@@ -87,8 +87,8 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **Human-in-the-loop Requirement**: Required before AppProject cluster resource allow-list changes or rollout promotion policy changes.
 - **Evaluation Expectation**: Verify controller status, Dashboard access, and ArgoCD sync traceability in a downstream validation stage.
 
-구체 manifest, hostname, annotation, 리소스 상태와 검증 명령은 연결된 AD/Spec/운영 owner가 소유한다.
-이 갱신은 runtime 상태나 live 알림 수신을 관측했다는 주장이 아니다.
+The linked AD/Spec/operations owners own the concrete manifests, hostnames, annotations, resource state, and validation commands.
+This update does not claim to have observed runtime state or received live notifications.
 
 ## Traceability
 
@@ -96,16 +96,16 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0001-FR-0001 | GitOps 정적 검증이 `platform-rollouts` 설치 계약을 통과하고 운영자가 controller 가용성을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-0001-FR-0002 | 승인된 Dashboard local 경로 HTTPS 경로에서 Dashboard 진행률을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-0001-FR-0003 | controller 상태와 metrics 노출 계약이 정적 검증 및 운영 점검에서 관찰 가능하다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-0001-IF-0001 | ArgoCD가 `Rollout`을 `Healthy` 또는 `Progressing` 상태로 추적할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-0001-IF-0002 | 승인된 안전 점검을 사용하는 앱별 배포가 실패 신호에서 abort/rollback 경계를 유지하고 자동 promotion을 강제하지 않는다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-0001-IF-0003 | 표준 local route가 Dashboard HTTPS 접근 계약과 일치한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | `argo-rollouts-controller` Deployment가 `Available=True`임을 운영자가 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | 승인된 Dashboard local 경로 HTTPS 접근이 성공하고 Dashboard에 진행률이 표시된다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD가 기준 Rollout 리소스를 `Healthy` 또는 `Progressing`으로 표시한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| N/A — Acceptance criterion 04 remains acceptance-only | repository quality gate와 Rollouts 정적 계약 검증이 PASS한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0001 | GitOps static validation passes the `platform-rollouts` install contract, and an operator can confirm controller availability. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0002 | Dashboard progress is visible over HTTPS on the approved Dashboard local path. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0003 | The controller state and metrics exposure contract are observable in static validation and operational checks. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0001 | ArgoCD can track a `Rollout` as `Healthy` or `Progressing`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0002 | A per-application deployment using an approved safety check keeps the abort/rollback boundary on failure signals and does not force automatic promotion. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0003 | The standard local route matches the Dashboard HTTPS access contract. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the `argo-rollouts-controller` Deployment is `Available=True`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 02 remains acceptance-only | HTTPS access to the approved Dashboard local path succeeds and the Dashboard shows progress. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD shows the reference Rollout resource as `Healthy` or `Progressing`. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 04 remains acceptance-only | The repository quality gate and the Rollouts static contract validation PASS. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 
 - **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
@@ -113,4 +113,4 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **Task**: [Spec 0004 Plan](../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
 - **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
-- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager 의존
+- **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager dependency

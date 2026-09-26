@@ -4,7 +4,7 @@ version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0009"
 ---
@@ -13,63 +13,63 @@ artifact_id: "ADR-0009"
 
 ## Overview
 
-이 ADR은 Kiali를 `kiali-server` Helm chart 기반으로 설치하고, 외부 Docker 호스팅 Observability 스택(Prometheus/Grafana/Tempo)과 연동하는 결정을 기록한다.
+This ADR records the decision to install Kiali from the `kiali-server` Helm chart and connect it to the external Docker-hosted observability stack (Prometheus/Grafana/Tempo).
 
 ## Context
 
-Istio 서비스메시의 트래픽 토폴로지와 메트릭을 시각화하기 위해 Kiali가 필요하다.
-Prometheus, Grafana, Tempo는 Docker-hosted 외부 관측성 스택으로 운영 중이며, K8s 내부에 별도 설치 없이 GitOps Service/EndpointSlice로 연동한다.
-Docker Traefik은 `kiali.hy-k8s.home.arpa`를 k3d ingress로 프록시한다.
+Kiali is needed to visualize the Istio service mesh's traffic topology and metrics.
+Prometheus, Grafana, and Tempo run as an external Docker-hosted observability stack and are connected through GitOps Service/EndpointSlice objects without a separate install inside K8s.
+Docker Traefik proxies `kiali.hy-k8s.home.arpa` to the k3d ingress.
 
 ## Decision
 
-- Kiali `kiali-server` Helm chart(`https://kiali.org/helm-charts`)를 `istio-system` namespace에 설치한다.
-  - 별도 Kiali Operator 없이 단일 인스턴스로 운영.
-- Kiali 버전: v2.6.x
-- 외부 Observability 연동:
+- The Kiali `kiali-server` Helm chart (`https://kiali.org/helm-charts`) is installed in the `istio-system` namespace.
+  - It runs as a single instance without a separate Kiali Operator.
+- Kiali version: v2.6.x
+- External observability integration:
   - Prometheus: `http://172.18.0.10:9090`
   - Grafana: `http://172.18.0.14:3000`
   - Tracing (Tempo): `http://172.18.0.12:3200`
-- 인그레스: `ingress-nginx`, hostname `kiali.hy-k8s.home.arpa`.
-- TLS: cert-manager `ClusterIssuer`(mkcert CA)로 발급.
-- 인증: anonymous (로컬 환경 전용).
-- 외부 노출: Docker Traefik router `kiali-k3d` 추가 (별도 Traefik repo 관리).
-- Kiali egress NetworkPolicy: Prometheus/Grafana/Tempo EndpointSlice 주소와 필수 Kubernetes/DNS/Istio control-plane egress만 허용.
+- Ingress: `ingress-nginx`, hostname `kiali.hy-k8s.home.arpa`.
+- TLS: issued by the cert-manager `ClusterIssuer` (mkcert CA).
+- Authentication: anonymous (local environment only).
+- External exposure: a Docker Traefik router `kiali-k3d` is added (managed in the separate Traefik repo).
+- Kiali egress NetworkPolicy: allows only the Prometheus/Grafana/Tempo EndpointSlice addresses and the required Kubernetes/DNS/Istio control-plane egress.
 
 ## Explicit Non-goals
 
-- Kiali Operator 방식 설치
-- 프로덕션 환경 인증 강화 (로컬 전용)
-- K8s 내부 Prometheus/Grafana 설치
-- Jaeger 연동 (Tempo 사용)
+- An operator-based Kiali install
+- Production-grade authentication hardening (this is local only)
+- Installing Prometheus/Grafana inside K8s
+- Jaeger integration (Tempo is used instead)
 
 ## Consequences
 
 - **Positive**:
-  - 서비스메시 트래픽 토폴로지, 메트릭, 트레이싱을 단일 UI에서 확인 가능.
-  - 기존 외부 Observability 스택 재활용으로 K8s 내 자원 절약.
-  - cert-manager TLS로 HTTPS 자동화.
+  - Service mesh traffic topology, metrics, and tracing are visible in one UI.
+  - Reusing the existing external observability stack saves resources inside K8s.
+  - cert-manager TLS automates HTTPS.
 - **Trade-offs**:
-  - 외부 Prometheus/Grafana/Tempo와의 네트워크 경로 유지 필요.
-  - Kiali egress NetworkPolicy에 observability 범위 명시 필요.
-  - Istio 설치가 선행되어야 함.
+  - The network path to the external Prometheus/Grafana/Tempo must be kept.
+  - The Kiali egress NetworkPolicy must state the observability scope.
+  - Istio must be installed first.
 
 ## Alternatives
 
 ### Kiali Operator
 
-- Good: 운영 자동화, lifecycle 관리 향상
-- Bad: 로컬 단일 인스턴스에는 과도한 복잡도
+- Good: operational automation and better lifecycle management
+- Bad: excessive complexity for a single local instance
 
-### K8s 내부 Prometheus 설치
+### Install Prometheus inside K8s
 
-- Good: 클러스터 자체 완결성
-- Bad: 이미 외부 스택 운영 중, 자원 중복
+- Good: the cluster is self-contained
+- Bad: an external stack already runs, so resources would be duplicated
 
-### Grafana 단독 사용
+### Use Grafana alone
 
-- Good: 기존 Grafana 활용
-- Bad: Istio 서비스메시 토폴로지 시각화 불가
+- Good: reuses the existing Grafana
+- Bad: cannot visualize the Istio service mesh topology
 
 ## Traceability
 

@@ -66,6 +66,16 @@ FROZEN_GENERATION_ROUTES = {
         r"(?!.*(?:/)?README\.md$).+\.md$"
     ),
     "archive/migration": r"^docs/98\.archive/migrations/[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$",
+    # SPEC-0091 moved coverage matrices into new implementation READMEs.
+    "common/readme-implementation": (
+        r"^(?:\.agents/README\.md|\.claude/README\.md|\.codex/README\.md|"
+        r"evals/README\.md|examples/README\.md|examples/sample\-app/README\.md|"
+        r"gitops/README\.md|gitops/workloads/README\.md|infrastructure/README\.md|"
+        r"policy/README\.md|scripts/README\.md|secrets/README\.md|tests/README\.md|"
+        r"traefik/README\.md|examples/azure/gitops/README\.md|"
+        r"examples/azure/infrastructure/README\.md|"
+        r"examples/azure/kubernetes/README\.md|examples/(?:aws|azure)/README\.md)$"
+    ),
 }
 
 
@@ -123,6 +133,8 @@ def legacy_registry_payload() -> dict[str, Any]:
         "archive_citation",
         "archive_assessment",
         "legacy_rebased_retained_paths",
+        "readme_navigation",
+        "document_language",
     ):
         payload.pop(key, None)
     payload["profiles"] = [

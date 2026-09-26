@@ -1,10 +1,10 @@
 ---
 title: "policy"
-version: "0.2.2"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-09-25"
 ---
 # policy
 
@@ -41,8 +41,7 @@ updated: "2026-09-09"
 
 | 경로 | 책임 |
 | --- | --- |
-| `conftest/kubernetes.rego` | `package main`의 deny 규칙 본문 |
-| `conftest/kubernetes_test.rego` | 각 규칙이 여전히 발화하는지 증명하는 Rego 테스트 |
+| [conftest/](./conftest/) | `package main`의 deny 규칙 본문(kubernetes.rego)과 각 규칙이 여전히 발화하는지 증명하는 Rego 테스트(kubernetes_test.rego) |
 
 현재 강제되는 규칙:
 

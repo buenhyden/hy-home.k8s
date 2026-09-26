@@ -1,10 +1,10 @@
 ---
 title: "hy-home.k8s"
-version: "0.1.2"
+version: "0.1.3"
 type: "common/readme-repository"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-25"
 ---
 # hy-home.k8s
 
@@ -57,7 +57,7 @@ hy-home.k8s/
 ├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
 ├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
-├── evals/                 # Agent 평가 하니스 자리. 현재 경계 문서만 추적
+├── evals/                 # Agent 평가 하니스: 채점 케이스와 기록된 응답 자산
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
 ├── .agents/               # 공급자 중립 역할·스킬 registry와 공유 자산
 ├── .claude/               # Claude native 투영과 권한·훅 선언
@@ -69,16 +69,9 @@ hy-home.k8s/
 
 ### Documentation Map
 
-`docs/`는 stage별 책임이 분리된 문서 SSoT다. 새 문서나 변경 증적은 아래 책임에 맞는 위치와 템플릿에서 시작한다.
-
-| Area                   | Responsibility                                                            | Template form                                                                                                                             |
-| ---------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/01.requirements` | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준                          | `requirement-package.template.md`                                                                                                         |
-| `docs/02.architecture` | 아키텍처 요구사항, 참조 구조, 의사결정                                    | `description.template.md`, `decision.template.md`                                                                                         |
-| `docs/03.specs`        | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약 | `spec.template.md`, helper template은 Stage 03 README가 안내한다.                                                                         |
-| `docs/05.operations`   | 운영 가이드, 정책, 런북, 사고 기록                                        | `guide.template.md`, `policy.template.md`, `runbook.template.md`, `incident.template.md`, `postmortem.template.md`                        |
-| `docs/90.references`   | 참조 자료, 용어, audit/research/data pack, lookup material                 | `research.template.md`                                                                                                                    |
-| `docs/99.templates`    | canonical document templates, route inventory, target-relative link 규칙  | 정확한 target pattern과 template 선택은 Template Routing Contract (`docs/99.templates/README.md`)가 소유한다.                              |
+`docs/`는 stage별 책임이 분리된 문서 SSoT다. 새 문서나 변경 증적은 stage 책임에 맞는
+위치와 템플릿에서 시작하며, stage별 책임과 template 선택 안내는 문서 허브
+(`docs/README.md`)가 소유한다.
 
 ### 현재 구현 경계
 
@@ -90,15 +83,15 @@ hy-home.k8s/
 ### Repository Workflow
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md) -> 관련 stage 문서` 순서로 진입한다.
-2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
+2. 설계/구현/운영 판단은 가능한 한 `docs/` 단계 문서 체인 전체를 기준으로 추적한다.
 3. 새 README나 authored stage 문서는 Template Routing Contract (`docs/99.templates/README.md`)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `.agents/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
 6. README와 authored 문서는 Stage 99 registry의 해당 profile에 정의된 frontmatter를 따른다. Governed README는 routing envelope를 사용하며 artifact ID나 문서 생명주기를 별도로 갖지 않는다. Claude Markdown·Codex TOML 같은 네이티브 설정에는 각 실행 환경의 형식을 적용한다.
 7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, Template Routing Contract (`docs/99.templates/README.md`), 생성 문서 적용 범위를 같은 변경에서 점검한다.
-8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`.agents/governance/git.md`](.agents/governance/git.md)를 따른다.
+8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`.agents/`](.agents/)가 라우팅하는 Git 정책을 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
-10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/repository-surface.md`](.github/repository-surface.md)와 PR template의 검증 체크리스트를 함께 확인한다.
+10. `.github` 자동화나 QA gate를 바꿀 때는 `.github/repository-surface.md`와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 12. AWS/Azure 예시의 버전 핀과 지원 범위는 각 Terraform/Bicep/Kubernetes 소스에 직접 기록하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
@@ -109,21 +102,21 @@ hy-home.k8s/
 검증 계약은 영어를 우선한다.
 
 - `.agents/**`: Agent 실행 정책과 provider/runtime 계약이므로 영어를 유지한다.
-- `docs/03.specs/**/spec.md`: 구현 명세이므로 영어로 작성한다.
+- Stage 03 spec: 구현 명세이므로 영어로 작성한다.
 - `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md`: 실행 계획, 개별 Task 레코드, 검증 증적, handoff 기록이므로 영어로 작성한다.
-- `docs/05.operations/{guides,policies,runbooks,incidents}`: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
-- `docs/90.references/**`: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
+- Stage 05 guides, policies, runbooks, incidents: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
+- Stage 90 references: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
 
 ### Common Workflows
 
 | Workflow       | Start Here                                               | Expected Follow-up                                                              |
 | -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 요구사항 변경  | `docs/01.requirements` | 관련 AD/ADR, Spec, Plan 링크를 갱신한다.                                       |
-| 아키텍처 결정  | `docs/02.architecture` | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다.                              |
-| 기능 구현      | `docs/03.specs`               | Plan/Task를 만들고 검증 증적을 남긴다.                                          |
-| 운영 절차 변경 | `docs/05.operations`     | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다.         |
-| 참조값 갱신    | `docs/90.references`     | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다.                    |
-| 문서 체계 변경 | `docs/99.templates`       | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
+| 요구사항 변경  | Stage 01 requirements | 관련 AD/ADR, Spec, Plan 링크를 갱신한다.                                       |
+| 아키텍처 결정  | Stage 02 architecture | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다.                              |
+| 기능 구현      | Stage 03 specs | Plan/Task를 만들고 검증 증적을 남긴다.                                          |
+| 운영 절차 변경 | Stage 05 operations | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다.         |
+| 참조값 갱신    | Stage 90 references | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다.                    |
+| 문서 체계 변경 | Stage 99 templates | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
 
 ### Relative Link Rules
 
@@ -138,11 +131,7 @@ hy-home.k8s/
 - [docs/README.md](docs/README.md)
 - [AGENTS.md](AGENTS.md)
 - [.agents/README.md](.agents/README.md)
-- `docs/01.requirements/0004-current-local-gitops-platform.md`
-- `docs/03.specs/0008-current-local-gitops-platform/spec.md`
-- `docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`
-- `docs/90.references/README.md`
-- [.github/repository-surface.md](.github/repository-surface.md)
+- `.github/repository-surface.md`
 - [scripts/README.md](scripts/README.md)
 
 ### Top-level Areas
@@ -155,7 +144,7 @@ hy-home.k8s/
 - `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
 - `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
 - `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
-- `evals/` - Agent 평가 하니스 자리. 하니스 도입 전까지 경계 문서만 둔다
+- `evals/` - Agent 평가 하니스. 채점 케이스(`cases/`)와 기록된 응답(`responses/`)을 보관한다
 - `_workspace/` - 비밀값을 담지 않는 임시 분석 경계. README만 추적한다
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.agents/` - 공급자 중립 역할·스킬과 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
@@ -246,7 +235,6 @@ cd hy-home.k8s
 정적 품질 검증은 CI와 pre-commit 설정을 기준으로 한다.
 
 - [`./.pre-commit-config.yaml`](./.pre-commit-config.yaml)
-- [`./.github/workflows/ci.yml`](./.github/workflows/ci.yml)
 - [`./.github/repository-surface.md`](./.github/repository-surface.md)
 
 로컬 검증은 공통 QA 진입점을 사용한다. `quick`은 변경 범위, `full`은 인계 전 전체 저장소의 정적 검증을 수행한다. CI는 같은 차단 게이트를 `ci` 프로필로 실행한다.
@@ -259,9 +247,9 @@ python3 scripts/qa.py full
 
 `full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내 (`docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
 
-표면별 승인 경계는 [승인·안전 정책](.agents/governance/approval-and-safety.md), 역할·스킬 정본은 [공통 역할](.agents/roles/README.md)을 따른다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
+표면별 승인 경계와 역할·스킬 정본은 [에이전트 거버넌스](.agents/README.md)가 라우팅한다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
 
-Cloud 예시의 정확한 버전 기준은 [`examples/aws/terraform`](./examples/aws/terraform)과 [`examples/azure/infrastructure`](./examples/azure/infrastructure)의 실행 소스가 소유한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
+Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각 cloud 예시의 실행 소스가 소유한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
 
 ## Related Documents
 

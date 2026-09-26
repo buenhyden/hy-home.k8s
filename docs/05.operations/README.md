@@ -12,7 +12,7 @@ layer: "operations"
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -109,12 +109,19 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 
 ```text
 05.operations/
-├── guides/      # Steady-state user/developer/operator guides
-├── policies/    # Shared operational policies and standards
-├── runbooks/    # Executable operational procedures
-├── incidents/   # Incident records and postmortems
+├── guides/
+├── policies/
+├── runbooks/
+├── incidents/
 └── README.md
 ```
+
+| Collection | 목적 |
+| --- | --- |
+| [guides/](./guides/) | 안정 상태의 사용자·개발자·운영자 가이드 |
+| [policies/](./policies/) | 공유 운영 정책과 표준 |
+| [runbooks/](./runbooks/) | 실행 가능한 운영 절차 |
+| [incidents/](./incidents/) | 사고 기록과 사후 분석 |
 
 ## Authoring Workflow
 

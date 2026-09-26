@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-25"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -34,18 +34,17 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 
 ## Item Index
 
-```text
-templates/
-├── architecture/   decision, description
-├── archive/        migration, route-tombstone, scope-migration, tombstone
-├── common/         repository, documentation·stage, package, implementation, workspace-staging, runtime-governance entrypoint README form
-├── governance/     contract, knowledge, prompt, provider, role, rule, skill
-├── operations/     guide, incident, policy, postmortem, runbook
-├── references/     audit·data·research 의 pack form과 reference form
-├── requirements/   requirement-package
-├── runtime/        claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML)
-└── specs/          spec, plan, task
-```
+| 폴더 | 포함 form |
+| --- | --- |
+| [architecture/](./architecture/) | decision, description |
+| [archive/](./archive/) | migration, route-tombstone, scope-migration, tombstone |
+| [common/](./common/) | repository, documentation·stage, package, implementation, workspace-staging, runtime-governance entrypoint README form |
+| [governance/](./governance/) | contract, knowledge, prompt, provider, role, rule, skill |
+| [operations/](./operations/) | guide, incident, policy, postmortem, runbook |
+| [references/](./references/) | audit·data·research 의 pack form과 reference form |
+| [requirements/](./requirements/) | requirement-package |
+| [runtime/](./runtime/) | claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML) |
+| [specs/](./specs/) | spec, plan, task |
 
 ## Add and Find
 

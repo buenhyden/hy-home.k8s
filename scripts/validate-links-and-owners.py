@@ -372,74 +372,6 @@ RETIRED_REFERENCE_ALIASES = {
 
 
 @dataclass(frozen=True)
-class DeclaredIndex:
-    path: PurePosixPath
-    target_pattern: re.Pattern[str]
-    tree_anchor: str
-    tree_root: str
-    table_anchor: str
-    table_mode: str
-    tree_kind: str
-
-
-DECLARED_INDEXES = (
-    DeclaredIndex(
-        PurePosixPath("docs/03.specs/README.md"),
-        re.compile(r"^docs/03\.specs/[0-9]{4}-[^/]+/spec\.md$"),
-        "## Document Index",
-        "03.specs/",
-        "### Current Spec Index",
-        "section",
-        "spec",
-    ),
-)
-
-
-@dataclass(frozen=True)
-class CollectionIndex:
-    path: PurePosixPath
-    root: PurePosixPath
-    target_pattern: re.Pattern[str]
-    tree_anchor: str
-    tree_root: str
-    table_anchor: str
-    table_mode: str
-    table_includes_self: bool
-
-
-COLLECTION_INDEXES = (
-    CollectionIndex(
-        PurePosixPath("docs/90.references/research/README.md"),
-        PurePosixPath("docs/90.references/research"),
-        re.compile(
-            r"^docs/90\.references/research/(?:README\.md|"
-            r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[^/]+\.md)$"
-        ),
-        "## Item Index",
-        "research/",
-        "### Research Pack Index",
-        "section",
-        True,
-    ),
-    CollectionIndex(
-        PurePosixPath(
-            "docs/90.references/research/0001-workspace-engineering/README.md"
-        ),
-        PurePosixPath("docs/90.references/research/0001-workspace-engineering"),
-        re.compile(
-            r"^docs/90\.references/research/"
-            r"0001-workspace-engineering/[^/]+\.md$"
-        ),
-        "### Structure",
-        "0001-workspace-engineering/",
-        "## Report Index",
-        "section",
-        False,
-    ),
-)
-
-
-@dataclass(frozen=True)
 class ProfileView:
     profile_id: str
     profile_class: str
@@ -463,6 +395,8 @@ class Context:
     document_registry: Registry | None = None
     raw_schema: object = _UNSET
     read_current_bytes: Callable[[str, int], bytes] | None = None
+    tracked_modes: Mapping[PurePosixPath, str] | None = None
+    readme_navigation: Any = None
 
 
 @dataclass(frozen=True, order=True)
@@ -905,12 +839,15 @@ def _build_context(
                 f"symlink adapter escapes repository: {adapter.as_posix()}"
             )
         adapters[adapter] = PurePosixPath(normalized)
-    tracked_regular_paths = frozenset(
-        entry.path
+    tracked_modes = {
+        entry.path: entry.mode
         for entry in _parse_ls_files_stage_z(
             _run_git(root, ("ls-files", "--stage", "-z"))
         )
-        if entry.stage == 0 and entry.mode in {"100644", "100755"}
+        if entry.stage == 0
+    }
+    tracked_regular_paths = frozenset(
+        path for path, mode in tracked_modes.items() if mode in {"100644", "100755"}
     )
     governance_current_paths, governance_current_states = (
         _terminal_governance_current_owners(
@@ -935,6 +872,8 @@ def _build_context(
         document_registry=registry if held else None,
         raw_schema=raw_schema,
         read_current_bytes=read_current_bytes,
+        tracked_modes=tracked_modes,
+        readme_navigation=getattr(registry, "readme_navigation", None),
     )
 
 
@@ -3626,223 +3565,6 @@ def _after_exact_heading(text: str, heading: str) -> str | None:
     return "\n".join(raw_lines[matches[0] + 1 :])
 
 
-def _tree_targets(declaration: DeclaredIndex, text: str) -> list[PurePosixPath]:
-    section = _exact_heading_section(text, declaration.tree_anchor)
-    if section is None:
-        return []
-    expected_root = declaration.tree_root
-    block = next(
-        (
-            item
-            for item in _fenced_blocks(section)
-            if item.splitlines() and item.splitlines()[0] == expected_root
-        ),
-        "",
-    )
-    base = declaration.path.parent
-    targets: list[PurePosixPath] = []
-    if declaration.tree_kind == "spec":
-        pending: str | None = None
-        for line in block.splitlines():
-            folder = re.match(r"^[│ ]*[├└]── ([0-9]{4}-[^/]+)/$", line)
-            if folder:
-                pending = folder.group(1)
-                continue
-            if pending and re.match(r"^[│ ]*[├└]── spec\.md$", line):
-                targets.append(base / pending / "spec.md")
-                pending = None
-    else:
-        for name in re.findall(r"^[├└]── ([^/\n]+\.md)$", block, re.MULTILINE):
-            if name != "README.md":
-                targets.append(base / name)
-    return targets
-
-
-def _table_rows(
-    declaration: DeclaredIndex, text: str
-) -> list[tuple[PurePosixPath, str]]:
-    section = (
-        _after_exact_heading(text, declaration.table_anchor)
-        if declaration.table_mode == "after"
-        else _exact_heading_section(text, declaration.table_anchor)
-    )
-    if section is None:
-        return []
-    lines = _visible_markdown(section).splitlines()
-    table_started = False
-    rows: list[tuple[PurePosixPath, str]] = []
-    for line in lines:
-        if not table_started:
-            if line.startswith("|") and "---" not in line:
-                table_started = True
-            continue
-        if not line.startswith("|"):
-            if rows:
-                break
-            continue
-        cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if not cells or all(set(cell) <= {"-", ":", " "} for cell in cells):
-            continue
-        links = re.findall(r"\]\((\./[^)]+\.md)\)", cells[0])
-        if len(links) != 1:
-            continue
-        kind, target = _local_destination(declaration.path, links[0])
-        if kind != "local" or target is None:
-            continue
-        status = cells[2].strip("` ") if len(cells) > 2 else ""
-        rows.append((target, status))
-    return rows
-
-
-def _index_diagnostics(context: Context) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    path_set = set(context.paths)
-    for declaration in DECLARED_INDEXES:
-        profile = context.profiles[declaration.path].profile_id
-        actual = sorted(
-            (
-                p
-                for p in context.paths
-                if declaration.target_pattern.fullmatch(p.as_posix())
-                and p != declaration.path
-            ),
-            key=lambda p: p.as_posix(),
-        )
-        actual_set = set(actual)
-        tree = _tree_targets(declaration, context.texts[declaration.path])
-        rows = _table_rows(declaration, context.texts[declaration.path])
-        row_counter = collections.Counter(path for path, _ in rows)
-        tree_counter = collections.Counter(tree)
-        for target, count in sorted(
-            row_counter.items(), key=lambda item: item[0].as_posix()
-        ):
-            target_key = target.as_posix()
-            if count > 1:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; {count} rows",
-                    )
-                )
-            if target not in actual_set:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; declared target",
-                        f"target={target_key}; non-target row",
-                    )
-                )
-        for target in actual:
-            target_key = target.as_posix()
-            if row_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "INDEX-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; row is missing",
-                    )
-                )
-            for row_target, row_status in rows:
-                if row_target != target:
-                    continue
-                expected_status = str(
-                    context.metadata[target].get("status", "")
-                ).casefold()
-                # The document profile owns valid statuses; the index owns parity.
-                actual_status = row_status.casefold()
-                if actual_status != expected_status:
-                    diagnostics.append(
-                        _diag(
-                            "INDEX-STATUS",
-                            declaration.path,
-                            profile,
-                            f"target={target_key}; status={expected_status}",
-                            f"target={target_key}; status={actual_status or 'unknown'}",
-                        )
-                    )
-                break
-        for target in sorted(actual_set | set(tree), key=lambda p: p.as_posix()):
-            if tree_counter[target] != (1 if target in actual_set else 0):
-                target_key = target.as_posix()
-                diagnostics.append(
-                    _diag(
-                        "INDEX-TREE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one declared tree target",
-                        f"target={target_key}; {tree_counter[target]} entries",
-                    )
-                )
-        # A resolved row that is not even in the inventory is stale regardless of disk state.
-        if any(
-            target not in path_set and target not in actual_set for target, _ in rows
-        ):
-            pass
-    return diagnostics
-
-
-_COLLECTION_TREE_LINE = re.compile(
-    r"^(?P<indent>(?:│   |    )*)(?:├── |└── )"
-    r"(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<directory>/)?"
-    r"(?:\s+#\s+.*)?$"
-)
-
-
-def _collection_tree_targets(
-    declaration: CollectionIndex, text: str
-) -> tuple[list[PurePosixPath], bool]:
-    section = _exact_heading_section(text, declaration.tree_anchor)
-    if section is None:
-        return [], False
-    comment_visible_section = _markdown_without_html_comments(section)
-    blocks = [
-        block
-        for block in _fenced_blocks(comment_visible_section)
-        if block.splitlines() and block.splitlines()[0] == declaration.tree_root
-    ]
-    if len(blocks) != 1:
-        return [], False
-    stack: list[str] = []
-    targets: list[PurePosixPath] = []
-    valid = True
-    for line in blocks[0].splitlines()[1:]:
-        if not line.strip():
-            continue
-        match = _COLLECTION_TREE_LINE.fullmatch(line)
-        if match is None:
-            valid = False
-            continue
-        indent = match.group("indent")
-        depth = len(indent) // 4
-        name = match.group("name")
-        if name in {".", ".."}:
-            valid = False
-            continue
-        if match.group("directory"):
-            if depth > len(stack):
-                valid = False
-                continue
-            stack[depth:] = [name]
-            continue
-        if depth > len(stack):
-            valid = False
-            continue
-        relative = (*stack[:depth], name)
-        target = declaration.root.joinpath(*relative)
-        if declaration.target_pattern.fullmatch(target.as_posix()) is None:
-            valid = False
-            continue
-        targets.append(target)
-    return targets, valid
-
-
 def _first_visible_table(
     text: str,
 ) -> tuple[list[str], list[list[str]]] | None:
@@ -4801,140 +4523,6 @@ def _body_contract_link_diagnostics(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
-def _first_cell_target(owner: PurePosixPath, cell: str) -> PurePosixPath | None:
-    match = re.fullmatch(r"\[[^\]\n]+\]\(([^)]+)\)", cell)
-    if match is None:
-        return None
-    raw = match.group(1).strip()
-    if "?" in raw or "#" in raw:
-        return None
-    kind, target = _local_destination(owner, raw)
-    return target if kind == "local" else None
-
-
-def _collection_table_targets(
-    declaration: CollectionIndex, text: str
-) -> tuple[list[PurePosixPath], bool]:
-    section = (
-        _after_exact_heading(text, declaration.table_anchor)
-        if declaration.table_mode == "after"
-        else _exact_heading_section(text, declaration.table_anchor)
-    )
-    if section is None:
-        return [], False
-    table = _first_visible_table(section)
-    if table is None:
-        return [], False
-    _, rows = table
-    targets: list[PurePosixPath] = []
-    for row in rows:
-        target = _first_cell_target(declaration.path, row[0])
-        if target is None:
-            return [], False
-        targets.append(target)
-    return targets, True
-
-
-def _collection_index_diagnostics(context: Context) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    for declaration in COLLECTION_INDEXES:
-        profile = context.profiles[declaration.path].profile_id
-        expected = {
-            path
-            for path in context.tracked_regular_paths
-            if declaration.target_pattern.fullmatch(path.as_posix())
-        }
-        tree, tree_valid = _collection_tree_targets(
-            declaration, context.texts[declaration.path]
-        )
-        rows, table_valid = _collection_table_targets(
-            declaration, context.texts[declaration.path]
-        )
-        expected_rows = set(expected)
-        if not declaration.table_includes_self:
-            expected_rows.discard(declaration.path)
-        if not tree_valid or not table_valid:
-            diagnostics.append(
-                _diag(
-                    "COLLECTION-INDEX-PARSE",
-                    declaration.path,
-                    profile,
-                    "one exact heading, bounded tree, and first-cell link table",
-                    "collection index grammar is missing or malformed",
-                )
-            )
-            continue
-        tree_counter = collections.Counter(tree)
-        row_counter = collections.Counter(rows)
-        for target in sorted(expected | set(tree), key=lambda item: item.as_posix()):
-            target_key = target.as_posix()
-            if target in expected and tree_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one tree entry",
-                        f"target={target_key}; entry is missing",
-                    )
-                )
-            if target not in expected and tree_counter[target]:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; tracked canonical artifact",
-                        f"target={target_key}; stale tree entry",
-                    )
-                )
-            if tree_counter[target] > 1:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-TREE-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one tree entry",
-                        f"target={target_key}; {tree_counter[target]} entries",
-                    )
-                )
-        for target in sorted(
-            expected_rows | set(rows), key=lambda item: item.as_posix()
-        ):
-            target_key = target.as_posix()
-            if target in expected_rows and row_counter[target] == 0:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-MISSING",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; row is missing",
-                    )
-                )
-            if target not in expected_rows and row_counter[target]:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-STALE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; tracked canonical artifact",
-                        f"target={target_key}; stale table row",
-                    )
-                )
-            if row_counter[target] > 1:
-                diagnostics.append(
-                    _diag(
-                        "COLLECTION-INDEX-ROW-DUPLICATE",
-                        declaration.path,
-                        profile,
-                        f"target={target_key}; one table row",
-                        f"target={target_key}; {row_counter[target]} rows",
-                    )
-                )
-    return diagnostics
-
-
 def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     profile = context.profiles[path]
     status = str(context.metadata[path].get("status", "")).casefold()
@@ -5044,6 +4632,333 @@ def _owner_state(context: Context) -> tuple[dict[PurePosixPath, str], list[Diagn
 
 def _owner_diagnostics(context: Context) -> list[Diagnostic]:
     return _owner_state(context)[1]
+
+
+README_NAV_NESTED_TREE = re.compile(r"^(?:[│|] {2,3}| {4})+[├└]──", re.M)
+README_NAV_CODE_SPAN = re.compile(r"(?<!`)(`{1,2})(?!`)([^`\n]+?)(?<!`)\1(?!`)")
+README_NAV_FOLDER_LABEL = re.compile(r"\[([^\]\n]*)\]\(<?([^)\s>]+)>?")
+# Code and emphasis markup around a label or header cell is not its text.
+README_NAV_MARKUP = "`*_ "
+README_NAV_TABLE_RULE = re.compile(r"\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?")
+README_NAV_HTML_HREF = re.compile(r"<a\s[^>]*?href\s*=\s*[\"']([^\"']+)[\"']", re.I)
+REGULAR_MODES = frozenset({"100644", "100755"})
+
+
+@dataclass(frozen=True)
+class ReadmeSource:
+    profile_id: str
+    text: str
+
+
+@dataclass(frozen=True)
+class TrackedTree:
+    """Stage-0 index entries by mode, plus every folder they imply."""
+
+    modes: Mapping[PurePosixPath, str]
+    folders: frozenset[PurePosixPath]
+
+    @classmethod
+    def from_modes(cls, modes: Mapping[PurePosixPath, str]) -> "TrackedTree":
+        folders = {
+            parent
+            for path in modes
+            for parent in path.parents
+            if parent != PurePosixPath(".")
+        }
+        return cls(dict(modes), frozenset(folders))
+
+    def kind(self, path: PurePosixPath) -> str | None:
+        if path in self.folders:
+            return "folder"
+        mode = self.modes.get(path)
+        if mode is None:
+            return None
+        return "file" if mode in REGULAR_MODES else "leaf"
+
+    def children(
+        self, folder: PurePosixPath, placeholders: frozenset[str]
+    ) -> dict[str, str]:
+        prefix = "" if folder == PurePosixPath(".") else f"{folder.as_posix()}/"
+        found: dict[str, str] = {}
+        for path in self.modes:
+            value = path.as_posix()
+            if not value.startswith(prefix):
+                continue
+            head, separator, _ = value[len(prefix) :].partition("/")
+            if not separator and head in placeholders:
+                continue
+            found[head] = "folder" if separator else self.kind(path) or "file"
+        return found
+
+
+def _readme_visible_lines(text: str) -> tuple[list[str], list[str]]:
+    """Split Markdown into lines outside fences and the fenced block bodies."""
+
+    visible: list[str] = []
+    blocks: list[str] = []
+    fence: str | None = None
+    body: list[str] = []
+    for line in text.split("\n"):
+        opener = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        if fence is None and opener:
+            fence, body = opener.group(1), []
+            visible.append("")
+            continue
+        if fence is not None:
+            if line.strip().startswith(fence):
+                blocks.append("\n".join(body))
+                fence = None
+            else:
+                body.append(line)
+            visible.append("")
+            continue
+        visible.append(line)
+    return visible, blocks
+
+
+def _readme_section(text: str, heading: str) -> str:
+    visible, _ = _readme_visible_lines(text)
+    chosen: list[str] = []
+    inside = False
+    for raw, line in zip(text.split("\n"), visible):
+        match = re.match(r"^(#{1,2})\s+(.+?)\s*#*\s*$", line)
+        if match:
+            inside = len(match.group(1)) == 2 and match.group(2) == heading
+            continue
+        if inside:
+            chosen.append(raw)
+    return "\n".join(chosen)
+
+
+def _readme_targets(
+    source: PurePosixPath, markdown: str, definitions: str
+) -> list[tuple[str, PurePosixPath]]:
+    # The canonical extractor masks inline HTML; a listing hidden in raw HTML
+    # anchors still lists children, so their href values count here too.
+    visible, _ = _readme_visible_lines(markdown)
+    hrefs = README_NAV_HTML_HREF.findall("\n".join(visible))
+    found = []
+    for raw in (*_extract_links(markdown, definitions_text=definitions), *hrefs):
+        kind, target = _local_destination(source, raw)
+        if kind == "local" and target is not None:
+            found.append((raw, target))
+    return found
+
+
+def _readme_relative(
+    folder: PurePosixPath, target: PurePosixPath
+) -> tuple[str, ...] | None:
+    if folder == PurePosixPath("."):
+        return target.parts
+    try:
+        return target.relative_to(folder).parts
+    except ValueError:
+        return None
+
+
+def _readme_is_deep(parts: tuple[str, ...]) -> bool:
+    return len(parts) > 1 and not (len(parts) == 2 and parts[1] == "README.md")
+
+
+def _readme_table_headers(markdown: str) -> list[frozenset[str]]:
+    headers: list[frozenset[str]] = []
+    previous = ""
+    for line in markdown.split("\n"):
+        stripped = line.strip()
+        if previous.startswith("|") and README_NAV_TABLE_RULE.fullmatch(stripped):
+            headers.append(
+                frozenset(
+                    cell.strip(README_NAV_MARKUP)
+                    for cell in previous.strip("|").split("|")
+                )
+            )
+        previous = stripped
+    return headers
+
+
+def _readme_findings(
+    path: PurePosixPath,
+    source: ReadmeSource,
+    rule: Any,
+    navigation: Any,
+    tree: TrackedTree,
+) -> list[Diagnostic]:
+    folder = path.parent
+    text = source.text
+    visible, blocks = _readme_visible_lines(text)
+    section = _readme_section(text, rule.section)
+    found: list[Diagnostic] = []
+
+    def report(code: str, expected: str, actual: str) -> None:
+        found.append(_diag(code, path, source.profile_id, expected, actual))
+
+    section_targets = _readme_targets(path, section, text)
+    for raw, target in section_targets:
+        parts = _readme_relative(folder, target)
+        if parts and _readme_is_deep(parts):
+            report(
+                "README-NAV-DEPTH",
+                "navigation links reach direct children",
+                f"{raw} reaches {'/'.join(parts)}",
+            )
+    for block in blocks:
+        if "──" in block and README_NAV_NESTED_TREE.search(block):
+            report(
+                "README-NAV-TREE",
+                "a fenced tree of direct children",
+                "a fenced tree nests below the first level",
+            )
+    for label, raw in README_NAV_FOLDER_LABEL.findall("\n".join(visible)):
+        if not label.strip(README_NAV_MARKUP).endswith("/"):
+            continue
+        kind, target = _local_destination(path, raw)
+        if kind == "local" and target is not None and tree.kind(target) != "folder":
+            report(
+                "README-NAV-LABEL",
+                f"label {label} resolves to a folder",
+                f"{raw} is not a folder",
+            )
+    deep: dict[str, set[str]] = collections.defaultdict(set)
+    for _, target in _readme_targets(path, text, text):
+        parts = _readme_relative(folder, target)
+        if parts and _readme_is_deep(parts):
+            deep[parts[0]].add("/".join(parts))
+    scoped = [section, *(line for line in visible if line.lstrip().startswith("|"))]
+    for chunk in scoped:
+        for _, value in README_NAV_CODE_SPAN.findall(chunk):
+            value = value.strip().rstrip("/")
+            if not value or " " in value or value.startswith(("/", "-", "~")):
+                continue
+            # Inside the navigation section a span may name its path from the
+            # repository root; elsewhere root paths cite contract evidence.
+            bases = (folder, PurePosixPath(".")) if chunk is section else (folder,)
+            for base in bases:
+                candidate = PurePosixPath(posixpath.normpath((base / value).as_posix()))
+                parts = _readme_relative(folder, candidate)
+                if tree.kind(candidate) is not None and parts:
+                    if _readme_is_deep(parts):
+                        deep[parts[0]].add("/".join(parts))
+                    break
+    for child, targets in sorted(deep.items()):
+        if len(targets) > navigation.max_deep_links_per_child:
+            report(
+                "README-NAV-ENUMERATION",
+                f"at most {navigation.max_deep_links_per_child} deep target in {child}/",
+                f"{len(targets)} targets: {', '.join(sorted(targets)[:4])}",
+            )
+    if rule.complete:
+        reached = {
+            parts[0]
+            for _, target in section_targets
+            if (parts := _readme_relative(folder, target))
+        }
+        for child, kind in sorted(
+            tree.children(folder, navigation.placeholders).items()
+        ):
+            if (kind == "folder" or child.endswith(".md")) and child not in reached:
+                report(
+                    "README-NAV-COMPLETE",
+                    f"{rule.section} reaches {child}",
+                    f"{child} is unreachable",
+                )
+    for header in _readme_table_headers(section):
+        banned = sorted(header & navigation.forbidden_index_columns)
+        if banned:
+            report(
+                "README-NAV-COPY",
+                "no copied status or date columns",
+                ", ".join(banned),
+            )
+    return found
+
+
+def readme_navigation_diagnostics(
+    navigation: Any,
+    readmes: Mapping[PurePosixPath, ReadmeSource],
+    tree: TrackedTree,
+) -> list[Diagnostic]:
+    """SPEC-0091: each README lists only its direct children."""
+
+    diagnostics: list[Diagnostic] = []
+    for path, source in sorted(readmes.items(), key=lambda item: item[0].as_posix()):
+        if path in navigation.exempt_paths:
+            continue
+        rule = navigation.profiles.get(source.profile_id)
+        if rule is None:
+            if path in navigation.pending_paths:
+                diagnostics.append(
+                    _diag(
+                        "README-NAV-PENDING",
+                        path,
+                        source.profile_id,
+                        "a pending README with a navigation profile",
+                        "its profile has no navigation entry",
+                    )
+                )
+            continue
+        found = _readme_findings(path, source, rule, navigation, tree)
+        if path in navigation.pending_paths:
+            if not found:
+                diagnostics.append(
+                    _diag(
+                        "README-NAV-PENDING",
+                        path,
+                        source.profile_id,
+                        "a pending README that still violates the contract",
+                        "it passes; remove it from pending_paths",
+                    )
+                )
+            continue
+        diagnostics.extend(found)
+    for exempt in sorted(navigation.exempt_paths, key=PurePosixPath.as_posix):
+        if tree.kind(exempt) is None:
+            diagnostics.append(
+                _diag(
+                    "README-NAV-EXEMPT",
+                    exempt,
+                    "",
+                    "a tracked README",
+                    "exempt path is not tracked",
+                )
+            )
+    for pending in sorted(navigation.pending_paths, key=PurePosixPath.as_posix):
+        if tree.kind(pending) is None:
+            diagnostics.append(
+                _diag(
+                    "README-NAV-PENDING",
+                    pending,
+                    "",
+                    "a tracked README",
+                    "pending path is not tracked",
+                )
+            )
+    return diagnostics
+
+
+def _readme_navigation_diagnostics(context: Context) -> list[Diagnostic]:
+    navigation = getattr(context, "readme_navigation", None)
+    if navigation is None:
+        registry = context.document_registry or load_registry(context.root)
+        navigation = getattr(registry, "readme_navigation", None)
+    if navigation is None:
+        return []
+    readmes = {
+        path: ReadmeSource(context.profiles[path].profile_id, context.texts[path])
+        for path in context.paths
+        if path.name == "README.md" and path in context.texts
+    }
+    modes = context.tracked_modes
+    if modes is None:
+        modes = {
+            entry.path: entry.mode
+            for entry in _parse_ls_files_stage_z(
+                _run_git(context.root, ("ls-files", "--stage", "-z"))
+            )
+            if entry.stage == 0
+        }
+    return readme_navigation_diagnostics(
+        navigation, readmes, TrackedTree.from_modes(modes)
+    )
 
 
 def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
@@ -5480,8 +5395,7 @@ def _raw_diagnostics(
             body_contract_path_prefixes,
         )
     )
-    diagnostics.extend(_index_diagnostics(context))
-    diagnostics.extend(_collection_index_diagnostics(context))
+    diagnostics.extend(_readme_navigation_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
     return sorted(diagnostics, key=diagnostic_sort_key)
@@ -5631,8 +5545,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.body_contracts,
                     tuple(args.body_contract_path_prefix),
                 )
-                + _index_diagnostics(context)
-                + _collection_index_diagnostics(context)
+                + _readme_navigation_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
                 + _owner_diagnostics(context)
             )

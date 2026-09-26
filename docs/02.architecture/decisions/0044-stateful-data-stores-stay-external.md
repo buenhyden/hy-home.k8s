@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0044"
 ---
@@ -13,74 +13,79 @@ artifact_id: "ADR-0044"
 
 ## Overview
 
-이 ADR은 외부 서비스 workspace(`hy-home.docker`)의 `postgresql-cluster`와
-`valkey-cluster`를 k3d cluster로 옮길지 검토한 결과를 기록한다. 두 cluster는
-외부 workspace에 남고, 이 저장소는 기존처럼 Service와 EndpointSlice 계약으로만
-연결한다.
+This ADR records the review of whether to move the `postgresql-cluster` and
+`valkey-cluster` of the external services workspace (`hy-home.docker`) into the
+k3d cluster. Both clusters stay in the external workspace, and this repository
+connects to them only through Service and EndpointSlice contracts, as before.
 
 ## Context
 
-2026-09-23 기준 두 workspace의 상태는 다음과 같다.
+The state of the two workspaces as of 2026-09-23:
 
-- `postgresql-cluster`는 Spilo(Patroni) 3개, etcd 3개, HAProxy `pg-router`로
-  이루어진다. opt-in profile `postgres-ha`로만 기동하며 결정 시점에는
-  중지되어 있었다. k3d network에는 `pg-router`만 `172.18.0.15`로 연결된다.
-- 외부 workspace의 앱(keycloak, dbt, mlflow)은 standalone `mng-pg`를 쓴다.
-  `postgresql-cluster`의 소비자는 이 저장소의 `postgres-app-secret`과 adminer
-  workload뿐이다.
-- `valkey-cluster`는 6노드 cluster 모드이고 `lab_net`에만 연결된다. 두
-  workspace 어디에도 소비자가 없다. 이 저장소의 ArgoCD가 쓰는 Valkey
-  (`172.18.0.9`)는 standalone `mng-valkey`다.
-- 두 cluster의 데이터는 host bind 디렉터리에 저장된다. 이 저장소에는 PVC,
-  StorageClass, k3d host volume 매핑이 없다. k3d 기본 local-path 볼륨은 노드
-  container 안에 있어 cluster를 다시 만들면 사라진다.
+- `postgresql-cluster` consists of three Spilo (Patroni) nodes, three etcd
+  nodes, and the HAProxy `pg-router`. It starts only with the opt-in profile
+  `postgres-ha` and was stopped at the time of the decision. Only `pg-router`
+  joins the k3d network, at `172.18.0.15`.
+- The external workspace's apps (keycloak, dbt, mlflow) use the standalone
+  `mng-pg`. The only consumers of `postgresql-cluster` are this repository's
+  `postgres-app-secret` and the adminer workload.
+- `valkey-cluster` runs in six-node cluster mode and joins only `lab_net`. It
+  has no consumer in either workspace. The Valkey this repository's ArgoCD uses
+  (`172.18.0.9`) is the standalone `mng-valkey`.
+- Both clusters store their data in host bind directories. This repository has
+  no PVC, StorageClass, or k3d host volume mapping. The k3d default local-path
+  volumes live inside the node containers and vanish when the cluster is
+  recreated.
 
 ## Decision
 
-- `postgresql-cluster`, `valkey-cluster`, `mng-pg`, `mng-valkey`는 외부
-  workspace에 남는다. 이 저장소는 그 runtime을 소유하지 않는다.
-- PostgreSQL 계약은 `pg-router`(`172.18.0.15:15432/15433`)이고, 이 계약이
-  동작하려면 외부 workspace의 profile `postgres-ha`가 기동되어 있어야 한다.
-- Valkey 계약은 `mng-valkey`(`172.18.0.9:6379`)다. `valkey-cluster`는 이
-  저장소의 계약이 아니다.
+- `postgresql-cluster`, `valkey-cluster`, `mng-pg`, and `mng-valkey` stay in
+  the external workspace. This repository does not own their runtime.
+- The PostgreSQL contract is `pg-router` (`172.18.0.15:15432/15433`); for it to
+  work, the external workspace's profile `postgres-ha` must be running.
+- The Valkey contract is `mng-valkey` (`172.18.0.9:6379`). `valkey-cluster` is
+  not a contract of this repository.
 
 ## Explicit Non-goals
 
-- 외부 workspace의 cluster 구성, 백업, profile 변경
-- 이 저장소 안의 PostgreSQL operator, StorageClass, 백업 체계 도입
-- `valkey-cluster`의 유지 또는 폐지 결정. 외부 workspace가 소유한다
+- Changing the external workspace's cluster configuration, backups, or profiles
+- Introducing a PostgreSQL operator, StorageClass, or backup system in this repository
+- Deciding whether to keep or retire `valkey-cluster`; the external workspace owns that
 
 ## Consequences
 
 - **Positive**:
-  - 데이터 수명이 k3d cluster 재생성과 분리된다.
-  - 이 저장소가 stateful operator와 백업을 새로 소유하지 않는다.
+  - Data lifetime is decoupled from recreating the k3d cluster.
+  - This repository takes on no stateful operator or backups.
 - **Trade-offs**:
-  - PostgreSQL 계약은 외부 workspace의 opt-in profile에 의존하며, 그 profile이
-    꺼져 있으면 정적 PASS와 달리 live 연결은 실패한다.
+  - The PostgreSQL contract depends on the external workspace's opt-in
+    profile; if that profile is off, the live connection fails despite a
+    static PASS.
 - **Operational**:
-  - bootstrap과 live 검증 전에 operator가 `pg-router`와 `mng-valkey` 기동을
-    확인한다.
+  - Before bootstrap and live validation, the operator confirms that
+    `pg-router` and `mng-valkey` are running.
 
 ## Alternatives
 
-### 두 cluster를 k8s로 이전
+### Move both clusters into k8s
 
 - Good:
-  - IP 기반 교차 저장소 계약이 사라지고 lifecycle이 GitOps로 관리된다.
+  - The IP-based cross-repository contract disappears, and the lifecycle is
+    managed through GitOps.
 - Bad:
-  - k3d 노드는 같은 host의 container라 Patroni와 etcd 3중화의 가용성 이점이
-    없다.
-  - persistent storage, operator, 백업을 새로 도입해야 하고 cluster 재생성 때
-    데이터를 잃을 위험이 생긴다.
-  - `valkey-cluster`는 소비자가 없다.
+  - k3d nodes are containers on the same host, so the triple redundancy of
+    Patroni and etcd brings no availability benefit.
+  - Persistent storage, an operator, and backups would have to be introduced,
+    with a risk of losing data when the cluster is recreated.
+  - `valkey-cluster` has no consumer.
 
-### PostgreSQL 계약을 `mng-pg`로 변경
+### Change the PostgreSQL contract to `mng-pg`
 
 - Good:
-  - 항상 기동된 DB를 쓴다.
+  - Uses a database that is always running.
 - Bad:
-  - 외부 workspace의 운영 관리 DB와 k8s 앱 데이터를 한 instance에 섞는다.
+  - Mixes the external workspace's operations database and k8s app data in one
+    instance.
 
 ## Traceability
 

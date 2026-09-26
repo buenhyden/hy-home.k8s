@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.8.0"
+version: "1.9.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-26"
 ---
 
 # Document Authoring Policy
@@ -118,10 +118,12 @@ native templates use double-underscore UPPER_SNAKE_CASE markers, and author
 guidance uses the registered HTML comment form. Authored documents contain none
 of those markers. Template history belongs to Registry contract version and
 Git, not to the created document's "version".
-Governance and agent execution sections remain English. Human-facing root,
-folder, requirement, operations, and reference explanation may use Korean;
-source, authority, and machine-contract sections remain English-first. Never
-hand-edit generated current output or create an off-taxonomy authored tree.
+The registry's `document_language` contract owns each document's language:
+README and operations profiles are Korean-first, files under `.agents/`,
+`.claude/`, and `.codex/` are English only, every other current document is
+English-first, agent requirement sections stay English, and a template writes
+its author prompts in its output's language. Never hand-edit generated current
+output or create an off-taxonomy authored tree.
 
 ## Validation and Refresh
 

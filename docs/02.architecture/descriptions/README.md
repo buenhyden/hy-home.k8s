@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.3.6"
+version: "0.4.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -12,7 +12,7 @@ layer: "architecture"
 > Requirement Package를 시스템 경계, 품질 속성, 참조 아키텍처로 해석하는 AD stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
+> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -48,14 +48,12 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 ## Item Index
 
-```text
-02.architecture/descriptions/
-├── 0004-argo-rollouts-progressive-delivery.md
-├── 0005-argo-notifications-slack.md
-├── 0006-workspace-agent-governance-platform.md
-├── 0007-current-local-gitops-platform.md
-└── README.md
-```
+| 문서 | 제목 |
+| --- | --- |
+| [0004-argo-rollouts-progressive-delivery.md](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts Progressive Delivery Architecture Description |
+| [0005-argo-notifications-slack.md](./0005-argo-notifications-slack.md) | Argo Notifications Slack Architecture Description |
+| [0006-workspace-agent-governance-platform.md](./0006-workspace-agent-governance-platform.md) | Agent and Document Governance Architecture |
+| [0007-current-local-gitops-platform.md](./0007-current-local-gitops-platform.md) | Current Local GitOps Platform Architecture Description |
 
 ## Add and Find
 

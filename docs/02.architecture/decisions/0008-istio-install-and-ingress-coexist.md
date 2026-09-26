@@ -4,7 +4,7 @@ version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-26"
 layer: "architecture"
 artifact_id: "ADR-0008"
 ---
@@ -13,62 +13,62 @@ artifact_id: "ADR-0008"
 
 ## Overview
 
-이 ADR은 Istio를 `default` 프로필로 Helm 기반 설치하고, 기존 ingress-nginx와 공존하는 전략을 확정한다.
+This ADR settles on installing Istio through Helm with the `default` profile, coexisting with the existing ingress-nginx.
 
 ## Context
 
-서비스메시(mTLS, 트래픽 관리, 관측가능성)가 필요하며, 기존 ingress-nginx 기반 외부 노출 구조를 유지해야 한다.
-WSL2 로컬 환경에서 자원 예산이 제한적이므로 설치 복잡도를 최소화해야 한다.
-Istio IngressGateway가 ingress-nginx와 포트 충돌 없이 공존해야 한다.
+A service mesh (mTLS, traffic management, observability) is needed, and the existing ingress-nginx-based external exposure must stay.
+The WSL2 local environment has a limited resource budget, so install complexity must be minimal.
+The Istio IngressGateway must coexist with ingress-nginx without port conflicts.
 
 ## Decision
 
-- Istio를 `istio-base` + `istiod` Helm chart(`https://istio-release.storage.googleapis.com/charts`) 조합으로 설치한다.
-- 프로필: `default` (ambient mesh 미사용, sidecar 모델).
-- `istiod` 리소스 제한 적용 (WSL2 자원 예산):
+- Istio is installed from the `istio-base` + `istiod` Helm charts (`https://istio-release.storage.googleapis.com/charts`).
+- Profile: `default` (no ambient mesh; the sidecar model).
+- `istiod` resource limits apply (WSL2 resource budget):
   - `pilot.resources.requests.cpu: 100m`
   - `pilot.resources.requests.memory: 128Mi`
-- **Istio IngressGateway 비활성화** (`gateways.istio-ingressgateway.enabled: false`).
-  - 외부 노출은 ingress-nginx가 담당하고, Istio Gateway CR은 사용하지 않는다.
-- sidecar injection은 **namespace opt-in** 방식: `istio-injection=enabled` label이 있는 namespace에만 적용.
-- 기본 sidecar injection 미적용 namespace: `argocd`, `cert-manager`, `headlamp`, `ingress-nginx`, `external-secrets`, `platform`.
-- Istio 버전: v1.25.x
+- **The Istio IngressGateway is disabled** (`gateways.istio-ingressgateway.enabled: false`).
+  - ingress-nginx handles external exposure; the Istio Gateway CR is not used.
+- Sidecar injection is **namespace opt-in**: it applies only to namespaces labeled `istio-injection=enabled`.
+- Namespaces without default sidecar injection: `argocd`, `cert-manager`, `headlamp`, `ingress-nginx`, `external-secrets`, `platform`.
+- Istio version: v1.25.x
 
 ## Explicit Non-goals
 
-- Istio IngressGateway를 ingress-nginx 대체로 사용
-- Ambient mesh 도입
-- istioctl 기반 설치 (GitOps 불가)
-- 멀티클러스터 Istio federation
+- Using the Istio IngressGateway in place of ingress-nginx
+- Adopting ambient mesh
+- An istioctl-based install (not possible through GitOps)
+- Multi-cluster Istio federation
 
 ## Consequences
 
 - **Positive**:
-  - 서비스메시(mTLS, 트래픽 정책) 기능 확보.
-  - GitOps 방식으로 Istio 수명주기 관리.
-  - ingress-nginx 기반 외부 노출 구조 변경 없음.
-  - sidecar opt-in으로 시스템 namespace 영향 없음.
+  - Service mesh capabilities (mTLS, traffic policy) are gained.
+  - The Istio lifecycle is managed through GitOps.
+  - The ingress-nginx-based external exposure does not change.
+  - Sidecar opt-in leaves system namespaces unaffected.
 - **Trade-offs**:
-  - Istio CRD 등록으로 AppProject clusterResourceWhitelist 갱신 필요.
-  - 사이드카 주입된 Pod의 컨테이너 수 증가로 자원 사용 증가.
-  - Kiali 설치 전에 Istio 설치가 선행되어야 함.
+  - Registering the Istio CRDs requires updating the AppProject clusterResourceWhitelist.
+  - Pods with an injected sidecar run more containers and use more resources.
+  - Istio must be installed before Kiali.
 
 ## Alternatives
 
-### Istio IngressGateway 활성화
+### Enable the Istio IngressGateway
 
-- Good: Istio 기능 풀 활용
-- Bad: ingress-nginx와 포트 충돌, k3d LoadBalancer 포트 경합
+- Good: full use of Istio features
+- Bad: port conflicts with ingress-nginx and contention for k3d LoadBalancer ports
 
 ### Linkerd
 
-- Good: Istio보다 가볍고 설치 단순
-- Bad: 사용자 요구사항이 Istio/Kiali이므로 기각
+- Good: lighter than Istio and simpler to install
+- Bad: rejected because the user requirement is Istio/Kiali
 
 ### istioctl install
 
-- Good: 프로파일 기반 편의 설치
-- Bad: GitOps 선언형 관리 불가
+- Good: convenient profile-based install
+- Bad: cannot be managed declaratively through GitOps
 
 ## Traceability
 

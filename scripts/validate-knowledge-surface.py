@@ -15,7 +15,6 @@ from typing import NamedTuple
 KNOWLEDGE_ROOT = ".agents/knowledge"
 KNOWLEDGE_README = f"{KNOWLEDGE_ROOT}/README.md"
 POINTER_HEADING = "## Pointer Index"
-ITEM_INDEX_HEADING = "## Item Index"
 MAX_DOCUMENT_BYTES = 256 * 1024
 DUPLICATE_SPAN_WORDS = 12
 
@@ -126,33 +125,19 @@ def _knowledge_documents(root: Path) -> list[str]:
     return [f"{KNOWLEDGE_ROOT}/{name}" for name in names]
 
 
-def _check_index(root: Path, documents: Sequence[str]) -> list[Finding]:
-    readme = root / KNOWLEDGE_README
-    if not readme.is_file():
-        if documents:
-            return [
-                Finding(
-                    "KNOWLEDGE-README-MISSING",
-                    KNOWLEDGE_README,
-                    "the surface has documents but no index",
-                )
-            ]
-        return []
-    indexed = "\n".join(
-        _section(_read_document(readme, KNOWLEDGE_README), ITEM_INDEX_HEADING)
-    )
-    findings = []
-    for document in documents:
-        name = PurePosixPath(document).name
-        if f"({name})" not in indexed:
-            findings.append(
-                Finding(
-                    "KNOWLEDGE-INDEX-MISSING",
-                    document,
-                    f"{KNOWLEDGE_README} does not link {name}",
-                )
+def _check_readme(root: Path, documents: Sequence[str]) -> list[Finding]:
+    # SPEC-0091: whether the README reaches each document is the README
+    # navigation contract's completeness rule; this surface only requires the
+    # README to exist once it has documents.
+    if documents and not (root / KNOWLEDGE_README).is_file():
+        return [
+            Finding(
+                "KNOWLEDGE-README-MISSING",
+                KNOWLEDGE_README,
+                "the surface has documents but no index",
             )
-    return findings
+        ]
+    return []
 
 
 def _check_document(root: Path, document: str) -> list[Finding]:
@@ -209,7 +194,7 @@ def validate_knowledge_surface(root: str | os.PathLike[str]) -> list[Finding]:
 
     repository_root = Path(root).resolve()
     documents = _knowledge_documents(repository_root)
-    findings = list(_check_index(repository_root, documents))
+    findings = list(_check_readme(repository_root, documents))
     for document in documents:
         findings.extend(_check_document(repository_root, document))
     return findings

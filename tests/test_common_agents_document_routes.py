@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 import importlib.util
 import os
-import re
 import sys
 import tempfile
 import unittest
@@ -158,24 +157,6 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
             self.assertTrue(failures)
 
     def test_common_agent_documents_and_native_sidecars_stay_english_only(self) -> None:
-        source = (ROOT / "scripts/validation/repository/quality.py").read_text(
-            encoding="utf-8"
-        )
-        nodes = ast.parse(source).body
-        start = next(
-            index
-            for index, node in enumerate(nodes)
-            if isinstance(node, ast.Assign)
-            and any(
-                isinstance(target, ast.Name) and target.id == "tracked_language_roots"
-                for target in node.targets
-            )
-        )
-        code = compile(
-            ast.Module(body=nodes[start : start + 2], type_ignores=[]),
-            "quality",
-            "exec",
-        )
         paths = (
             ".agents/README.md",
             ".agents/governance/quality.md",
@@ -184,26 +165,22 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
             ".claude/provider.md",
             ".codex/provider.md",
         )
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for path in paths:
-                target = root / path
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(
-                    "English policy.\n한국어 실행 계약\n", encoding="utf-8"
-                )
-            failures: list[str] = []
-            exec(
-                code,
-                {
-                    "root": root,
-                    "re": re,
-                    "tracked": set(paths),
-                    "read_text": lambda path: path.read_text(encoding="utf-8"),
-                    "fail": failures.append,
-                },
+        texts = {
+            PurePosixPath(
+                path
+            ): "English policy.\n\ud55c\uad6d\uc5b4 \uc2e4\ud589 \uacc4\uc57d\n"
+            for path in paths
+        }
+        diagnostics = [
+            item
+            for item in MARKDOWN.document_language_diagnostics(
+                contracts.load_registry(ROOT), [], texts
             )
-            self.assertEqual(len(failures), len(paths))
+            if item.rule_id == "LANG-ENGLISH-ONLY"
+        ]
+        self.assertEqual(
+            sorted(item.path.as_posix() for item in diagnostics), sorted(paths)
+        )
 
 
 class ArchiveStageIndexRouteTests(unittest.TestCase):

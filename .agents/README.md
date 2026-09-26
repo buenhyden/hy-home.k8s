@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "1.1.0"
+version: "1.2.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-25"
 ---
 
 # Common Agent Governance
@@ -19,10 +19,8 @@ loaders; the entire directory is not an automatic instruction loader.
 
 | Path | Responsibility |
 | --- | --- |
-| [governance/sdlc.md](governance/sdlc.md) | Normative lifecycle and terminology |
-| `governance/` | Approval, safety, quality, Git, documents, context and model policy |
-| [roles/README.md](roles/README.md) | Responsibility selection and common handoff contracts |
-| [roles/registry.json](roles/registry.json) | Role IDs, permissions, skill references and native paths |
+| [governance/](governance/) | Normative lifecycle and terminology (sdlc.md); approval, safety, quality, Git, documents, context and model policy |
+| [roles/](roles/) | Responsibility selection and common handoff contracts; `roles/registry.json` holds role IDs, permissions, skill references and native paths |
 | `skills/<id>/` | Callable common procedure packages; registry determines the package set |
 | `workflows/` | Ordinary lifecycle/delegation procedures, explicitly read |
 | `knowledge/` | Hand-maintained pointers to canonical owners; states no policy of its own |
@@ -50,8 +48,8 @@ reaches them, so the name `*.template.md` is refused here.
 
 ## Configuration Boundary
 
-Provider differences and native adapters live in [.claude/](../.claude/README.md)
-and [.codex/](../.codex/README.md). Edit common meaning here; retain native syntax
+Provider differences and native adapters live in [.claude/](../.claude/)
+and [.codex/](../.codex/). Edit common meaning here; retain native syntax
 there. No role copies or provider generator own a second policy.
 ADR-0036 (`docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`)
 adopts `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
@@ -75,12 +73,12 @@ permissions and hook delivery require separate evidence from a fresh session.
 ## Operations
 
 Read [work lifecycle](workflows/work-lifecycle.md),
-[agent execution](governance/agent-execution.md) and
-[approval and safety](governance/approval-and-safety.md) before acting. Select
+[agent execution](governance/agent-execution.md) and the approval and safety
+policy in `governance/` before acting. Select
 [roles](roles/README.md), then explicitly read the chosen role and its required
 skills. Both providers expose the same common skill packages for explicit
 invocation. A skill does not grant permission to write, send, deploy or read
-secrets. [Quality](governance/quality.md) owns evidence semantics, while the
+secrets. The quality policy in `governance/` owns evidence semantics, while the
 execution registry owns mutable gate commands and limits.
 
 ## Related Documents
