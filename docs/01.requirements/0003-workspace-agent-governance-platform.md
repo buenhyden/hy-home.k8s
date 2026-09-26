@@ -202,6 +202,8 @@ Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
 Constraining every README to its direct children under one registry
 navigation contract is owned by
 [SPEC-0091](../03.specs/0091-readme-navigation-contract/spec.md).
+Stating each document's language in one registry contract is owned by
+[SPEC-0093](../03.specs/0093-document-language-contract/spec.md).
 
 ## Traceability
 
