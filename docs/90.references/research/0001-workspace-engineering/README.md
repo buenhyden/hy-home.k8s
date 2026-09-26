@@ -4,58 +4,53 @@ version: "0.2.1"
 type: "common/readme-research-pack"
 status: "active"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-26"
 layer: "references"
 ---
 # Workspace Engineering Research Pack
 
 ## Overview
 
-This pack is the single successor research boundary for the three dated Workspace
-Engineering Research (WER) packs. It establishes ownership and migration
-interfaces before topical research is refreshed. It is descriptive evidence,
-not a policy, runtime, provider, or deployment control surface.
+이 pack은 날짜가 붙은 Workspace Engineering Research(WER) pack 세 개를 잇는 단일
+후속 연구 경계다. 주제별 연구를 갱신하기 전에 소유권과 migration 인터페이스를
+정한다. 서술 증거이며 정책, runtime, provider, 배포를 제어하는 surface가 아니다.
 
 ## Research Contract
 
-- **Pack date**: 2026-08-08.
-- **Baseline**: 25 predecessor files deleted by WERPC-008 after exact
-  disposition and consumer-cutover proof; Git history and source coverage
-  retain their provenance.
-- **Authority**: the named canonical workspace documents remain current truth;
-  this pack records observation-dated research and routing evidence.
-- **Finding vocabulary**: findings use only `Verified`, `Partial`, `Unverified`,
-  `DEFER`, or `Contradicted`; the completed WERPC work packages record the
-  supporting evidence and remaining limits. A compound status cell states the
-  base value first and then its bounded qualifier.
-- **Path shorthand**: bare `rules/`, `scopes/`, `providers/`, `contracts/`,
-  `memory/`, `model-policy.md`, and `harness-catalog.md` references in these
-  reports refer to the historical `docs/00.agent-governance/` tree at each
-  observation date. They are historical prose, never current load instructions.
-  Current shared authority is [the common hub](../../../../.agents/README.md);
-  [Archive](../../../98.archive/README.md) owns the Git-backed successor graph.
-- **Correction record**: a 2026-08-10 coverage re-verification corrected the
-  Claude gateway-import, common-instruction-topology, and LLM-WIKI freshness
-  statements, and resolved a source-date self-contradiction in the CI/CD and QA
-  report. Source and claim identifiers were not renumbered.
-- **Freshness record**: on 2026-08-10 the five reports that the gap-only refresh
-  did not touch had their external sources re-checked. Four returned no change
-  inside the window: harness and loop, AI agents and agency agents, model
-  routing, and memory. The Diátaxis sources were unreachable behind HTTP 429 and
-  are recorded as `unreachable`, not `unchanged`; their claims retain the
-  2026-08-08 observation date. Two findings were added as dated subsections
-  without rewriting an existing claim: the pinned MCP `2025-11-25` revision is
-  superseded by `2026-07-28`, registered as `SRC-WERPC-066`; and the two live
-  Codex pages disagree on model identifiers, reasoning-effort values, and model
-  precedence order. No requirement status changed.
-- **Source-verification record**: a third published-page attempt on 2026-08-11
-  returned HTTP 429 again, so the Diátaxis claims were instead verified against
-  the upstream source that builds the site, registered as `SRC-WERPC-067`. That
-  check also reconciled the recorded tutorial and explanation absence with
-  approved Spec 052 `DOC-G2` and `DOC-G3`: the absence is a decision resting on
-  the framework's own instruction, not an open question. `REQ-WERPC-020` keeps
-  its `Partial` status, which now reflects unenforced `DOC-G1` enum work rather
-  than an undecided route.
+- **Pack 날짜**: 2026-08-08.
+- **기준선**: 선행 파일 25개는 정확한 처분과 소비자 cutover 증명을 거친 뒤
+  WERPC-008이 삭제했다. 그 출처는 Git history와 source coverage가 보존한다.
+- **권한**: 이름이 명시된 정본 workspace 문서가 계속 현재의 사실이다. 이 pack은
+  관찰 날짜가 붙은 연구와 routing 증거를 기록한다.
+- **발견 어휘**: 발견에는 `Verified`, `Partial`, `Unverified`, `DEFER`,
+  `Contradicted`만 쓴다. 이를 뒷받침하는 증거와 남은 한계는 완료된 WERPC work
+  package가 기록한다. 복합 상태 셀은 기본값을 먼저 적고, 그 뒤에 범위를 정하는
+  한정어를 붙인다.
+- **경로 약칭**: 이 보고서들에서 접두어 없이 쓴 `rules/`, `scopes/`,
+  `providers/`, `contracts/`, `memory/`, `model-policy.md`, `harness-catalog.md`는
+  각 관찰 날짜의 역사적 `docs/00.agent-governance/` 트리를 가리킨다. 역사적
+  서술일 뿐 현재의 로드 지시가 아니다. 현재 공통 권한은
+  [the common hub](../../../../.agents/README.md)에 있고 Git 기반 후속 그래프는
+  [Archive](../../../98.archive/README.md)가 소유한다.
+- **정정 기록**: 2026-08-10 coverage 재검증에서 Claude gateway import, 공통
+  instruction topology, LLM-WIKI 최신성 서술을 바로잡고 CI/CD·QA 보고서 안의
+  출처 날짜 자기모순을 해소했다. 출처와 주장 식별자는 다시 번호를 매기지 않았다.
+- **최신성 기록**: 2026-08-10에 gap-only refresh가 손대지 않은 보고서 다섯 개의
+  외부 출처를 다시 확인했다. 그중 네 개(harness와 loop, AI agents와 agency
+  agents, model routing, memory)는 기간 안에 변화가 없었다. Diátaxis 출처는 HTTP
+  429에 막혀 도달할 수 없었으므로 `unchanged`가 아니라 `unreachable`로 기록했고
+  그 주장은 2026-08-08 관찰 날짜를 유지한다. 기존 주장을 다시 쓰지 않고 발견 두
+  개를 날짜가 붙은 하위 절로 추가했다. 하나는 고정된 MCP `2025-11-25` revision이
+  `2026-07-28`로 대체되었다는 것이며 `SRC-WERPC-066`으로 등록했다. 다른 하나는
+  live Codex 페이지 두 곳이 model 식별자, reasoning-effort 값, model 우선순위를
+  서로 다르게 적고 있다는 것이다. 요구사항 상태는 바뀌지 않았다.
+- **출처 검증 기록**: 2026-08-11에 게시된 페이지를 세 번째로 요청했지만 다시
+  HTTP 429가 돌아왔다. 그래서 Diátaxis 주장은 사이트를 빌드하는 upstream 소스로
+  대신 검증했고, 이를 `SRC-WERPC-067`로 등록했다. 이 확인으로 tutorial과
+  explanation이 없다는 기록도 승인된 Spec 052 `DOC-G2`, `DOC-G3`와 맞춰졌다. 그
+  부재는 framework 자체의 지침에 근거한 결정이지 열린 질문이 아니다.
+  `REQ-WERPC-020`은 `Partial` 상태를 유지하며 이제 그 상태는 결정되지 않은
+  route가 아니라 아직 강제되지 않은 `DOC-G1` enum 작업을 반영한다.
 
 ### Structure
 
@@ -81,34 +76,33 @@ not a policy, runtime, provider, or deployment control surface.
 
 | Reference                                                                    | Role                                                   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [workspace governance](m0001-workspace-governance-and-common-agent-environment.md) | Common workspace and application routing               |
-| [harness and loop](m0002-harness-and-loop-engineering.md)                          | Harness and control-loop analysis                      |
-| [provider status](m0003-provider-implementation-status.md)                         | Claude/Codex surface separation                        |
-| [SDLC contracts](m0004-spec-driven-sdlc-and-document-contracts.md)                 | Spec-driven lifecycle and document families            |
-| [documentation architecture](m0005-documentation-architecture-and-diataxis.md)     | Diátaxis mapping                                       |
-| [LLM-WIKI routing](m0006-llm-wiki-and-knowledge-routing.md)                        | Knowledge routing and freshness                        |
-| [platform security](m0007-kubernetes-infrastructure-and-security.md)               | Kubernetes, infrastructure, and security               |
-| [CI/CD and QA](m0008-ci-cd-github-actions-and-qa.md)                               | Delivery evidence lanes                                |
-| [AI agents](m0009-ai-agents-and-agency-agents.md)                                  | Agent-system and agency-agents analysis                |
-| [model routing](m0010-agent-model-routing-and-configuration.md)                    | Model-selection controls                               |
-| [memory](m0011-agent-memory-tiers-and-management.md)                               | Memory-class lifecycle                                 |
-| [source coverage](m0012-source-coverage.md)                                         | Sources, claims, and bounded historical disposition    |
-| [scope application index](m0013-scope-application-index.md)                        | Governance-scope routing over the pack findings        |
+| [workspace governance](m0001-workspace-governance-and-common-agent-environment.md) | 공통 workspace와 application routing |
+| [harness and loop](m0002-harness-and-loop-engineering.md)                          | harness와 control loop 분석 |
+| [provider status](m0003-provider-implementation-status.md)                         | Claude·Codex surface 분리 |
+| [SDLC contracts](m0004-spec-driven-sdlc-and-document-contracts.md)                 | Spec 중심 lifecycle과 문서 family |
+| [documentation architecture](m0005-documentation-architecture-and-diataxis.md)     | Diátaxis 대응 |
+| [LLM-WIKI routing](m0006-llm-wiki-and-knowledge-routing.md)                        | 지식 routing과 최신성 |
+| [platform security](m0007-kubernetes-infrastructure-and-security.md)               | Kubernetes, infrastructure, 보안 |
+| [CI/CD and QA](m0008-ci-cd-github-actions-and-qa.md)                               | 전달 증거 lane |
+| [AI agents](m0009-ai-agents-and-agency-agents.md)                                  | agent system과 agency agents 분석 |
+| [model routing](m0010-agent-model-routing-and-configuration.md)                    | model 선택 제어 |
+| [memory](m0011-agent-memory-tiers-and-management.md)                               | memory class lifecycle |
+| [source coverage](m0012-source-coverage.md)                                         | 출처, 주장, 범위가 정해진 역사적 처분 |
+| [scope application index](m0013-scope-application-index.md)                        | pack 발견에 대한 거버넌스 scope routing |
 
 ### Requirement Coverage Matrix
 
-Each request has one and only one primary research owner. Workspace evidence is
-current local evidence; it does not establish external product or live-runtime
-claims.
+각 요청에는 주 연구 owner가 정확히 하나 있다. workspace 증거는 현재의 로컬
+증거이며 외부 제품이나 live runtime에 대한 주장을 입증하지 않는다.
 
-Currency note (2026-09-14): several evidence paths in the matrix below name
-owners that have since moved. Agent governance now lives in `.agents/governance/`
-and `.agents/roles/registry.json` (not `docs/00.agent-governance/` or
-`.agents/agents/`); repository quality runs through `scripts/qa.py` and
-`scripts/validation/registry.json` (not `scripts/validate-repo-quality-gates.sh`);
-GitHub surface ownership is recorded in `.github/repository-surface.md`; and Plans
-and Tasks live in each `docs/03.specs/<package>/` rather than `docs/04.execution/`.
-The rows keep their observation-time paths until the pack's next refresh.
+현재성 메모(2026-09-14): 아래 매트릭스의 증거 경로 중 몇 개는 그 뒤로 옮겨진
+owner를 가리킨다. Agent governance는 이제 `docs/00.agent-governance/`나
+`.agents/agents/`가 아니라 `.agents/governance/`와 `.agents/roles/registry.json`에
+있다. 저장소 품질 검사는 `scripts/validate-repo-quality-gates.sh`가 아니라
+`scripts/qa.py`와 `scripts/validation/registry.json`으로 실행된다. GitHub surface
+소유권은 `.github/repository-surface.md`에 기록되어 있고 Plan과 Task는
+`docs/04.execution/`이 아니라 각 `docs/03.specs/<package>/`에 있다. 각 행은 pack을
+다음에 갱신할 때까지 관찰 시점의 경로를 유지한다.
 
 | Request ID    | Requested topic         | Primary owner                                                                                                         | Workspace evidence                                                                                  | External source class                                                                                                                                                                                                                                   | Finding                                                                                                                                                                                                                                           |
 | ------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -151,28 +145,25 @@ The rows keep their observation-time paths until the pack's next refresh.
 
 ### 2026-08-10 gap-only refresh reconciliation
 
-The WERG-004 closure snapshot recorded exactly 13 pack files, 33 unique request
-owners, 65 unique source IDs, and 65 unique claim IDs: frozen rows through
-`SRC-WERPC-052` and `CLM-WERPC-006-08`, document and Verification/Validation
-additions `SRC-WERPC-053`–`059` and `CLM-WERPC-007-01`–`08`, and
-Kubernetes/Security additions `SRC-WERPC-060`–`065` and
-`CLM-WERPC-008-01`–`06`. The five mutable research owners for that closure were
-this README, the SDLC report, the CI/CD and QA report, the Kubernetes/Security
-report, and the source/claim ledger.
+WERG-004 종료 스냅샷은 pack 파일 정확히 13개, 고유 요청 owner 33개, 고유 출처
+ID 65개, 고유 주장 ID 65개를 기록했다. 그 구성은 `SRC-WERPC-052`와
+`CLM-WERPC-006-08`까지의 동결된 행, 문서와 Verification/Validation 추가분인
+`SRC-WERPC-053`–`059`와 `CLM-WERPC-007-01`–`08`, Kubernetes/Security 추가분인
+`SRC-WERPC-060`–`065`와 `CLM-WERPC-008-01`–`06`이다. 그 종료 시점에 바뀔 수
+있었던 연구 owner 다섯은 이 README, SDLC 보고서, CI/CD·QA 보고서,
+Kubernetes/Security 보고서, 출처·주장 원장이었다.
 
-After the later scope index and freshness/upstream source rows, the pack
-contained 14 physical Markdown files including this README, 33 unique request
-owners, 67 unique source IDs, and 65 unique claim IDs. Static validation does
-not promote any hosted, provider-runtime, remote, credential-bearing, secret,
-artifact, or live evidence from `DEFER`.
+이후 scope index와 최신성·upstream 출처 행이 더해진 뒤, pack에는 이 README를
+포함한 실제 Markdown 파일 14개, 고유 요청 owner 33개, 고유 출처 ID 67개, 고유
+주장 ID 65개가 있었다. 정적 검증은 hosted, provider runtime, 원격, credential을
+담은 증거, secret, artifact, live 증거를 `DEFER`에서 올려 주지 않는다.
 
 ### 2026-08-11 Partial/DEFER refresh reconciliation
 
-The 2026-08-11 Partial/DEFER incremental refresh, executed and checked on
-2026-08-12, admitted exactly twelve candidates: `REQ-WERPC-006`, `008`, `009`,
-`014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, and `033`. It created no
-new research folder and no duplicate report. Findings were appended to the
-existing owners as dated 2026-08-11 sections in
+2026-08-12에 실행·확인한 2026-08-11 Partial/DEFER 증분 refresh는 후보를 정확히
+열두 개 받아들였다. `REQ-WERPC-006`, `008`, `009`, `014`, `020`, `022`, `023`,
+`025`, `026`, `028`, `032`, `033`이다. 새 연구 폴더나 중복 보고서는 만들지 않았다.
+발견은 기존 owner에 날짜가 붙은 2026-08-11 절로 덧붙였으며 대상은 다음과 같다.
 [governance](m0001-workspace-governance-and-common-agent-environment.md#2026-08-11-partialdefer-incremental-refresh),
 [AI agents](m0009-ai-agents-and-agency-agents.md#2026-08-11-partialdefer-incremental-refresh),
 [model routing](m0010-agent-model-routing-and-configuration.md#2026-08-11-partialdefer-incremental-refresh),
@@ -180,55 +171,50 @@ existing owners as dated 2026-08-11 sections in
 [Kubernetes and security](m0007-kubernetes-infrastructure-and-security.md#2026-08-11-partialdefer-incremental-refresh),
 [Diátaxis](m0005-documentation-architecture-and-diataxis.md#2026-08-11-partialdefer-incremental-refresh),
 [SDLC and document contracts](m0004-spec-driven-sdlc-and-document-contracts.md#2026-08-11-partialdefer-incremental-refresh),
-and [CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-11-partialdefer-incremental-refresh).
+[CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-11-partialdefer-incremental-refresh).
 
-All twelve candidates closed as `Partial`; none was promoted to `Verified`, so
-every Finding cell in the request matrix above keeps its prior value. Rows
-`REQ-WERPC-014` and `REQ-WERPC-020` also carry `exclude-duplicate`, because
-Spec 052 `DOC-G1`, `DOC-G2`, and `DOC-G3` already own those questions.
+열두 후보는 모두 `Partial`로 닫혔다. `Verified`로 올라간 것이 없으므로 위 요청
+매트릭스의 Finding 셀은 모두 이전 값을 유지한다. `REQ-WERPC-014`와
+`REQ-WERPC-020` 행에는 `exclude-duplicate`도 붙는다. Spec 052의 `DOC-G1`,
+`DOC-G2`, `DOC-G3`가 이미 그 질문을 소유하기 때문이다.
 
-The refresh adds `SRC-WERPC-068`–`073` and `CLM-WERPC-009-01`–`12`, so the
-current pack contains 14 physical Markdown files including this README, 33
-unique request owners, 73 unique source IDs, and 77 unique claim IDs. No
-existing source or claim row was renumbered or rewritten: `SRC-WERPC-073`
-records the package's 2026-08-12 re-verification of already registered sources,
-whose baseline `Checked on` values are preserved by contract and therefore lag
-that re-verification. Hosted-runtime, provider-runtime, product and stakeholder
-validation, cluster, credential-bearing, and live evidence remain `DEFER`.
+이 refresh로 `SRC-WERPC-068`–`073`과 `CLM-WERPC-009-01`–`12`가 더해져 현재
+pack에는 이 README를 포함한 실제 Markdown 파일 14개, 고유 요청 owner 33개, 고유
+출처 ID 73개, 고유 주장 ID 77개가 있다. 기존 출처나 주장 행은 번호를 다시
+매기거나 고쳐 쓰지 않았다. `SRC-WERPC-073`은 이미 등록된 출처를 package가
+2026-08-12에 재검증한 결과를 기록한다. 그 출처의 기준 `Checked on` 값은 계약상
+보존되므로 재검증 날짜보다 뒤처져 있다. hosted runtime, provider runtime, 제품과
+이해관계자 검증, cluster, credential을 담은 증거, live 증거는 계속 `DEFER`다.
 
 ### 2026-08-14 consistency and Partial re-observation reconciliation
 
-This cycle (WRCP-000–WRCP-007) admitted two separate candidate sets. First,
-WRCP-002, WRCP-003, WRCP-004, and WRCP-005 re-observed all twelve `Partial`
-requirement rows carried forward from the 2026-08-11 refresh: `REQ-WERPC-006`,
-`008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, and
-`033`. Every one closed as `Partial` again; none was promoted, so **no
-Finding cell in the request matrix above changed as a result of this cycle**.
-Second, WRCP-004 separately re-observed `REQ-WERPC-034`, `035`, and `036` —
-the Spec, Task, and Plan document families — as three brand-new
-coverage-matrix owner rows admitted by Spec 057 amendment `C-WRCP-010`. Per
-that contract, admitting a family neither raises nor lowers a status: each
-new row's Finding is `Verified` on structural contract (route, frontmatter,
-status domain, required H2 set, `bodyContract` reciprocity/identifier rule)
-and `DEFER` on content, implementation, and delivery effectiveness, exactly
-as WRCP-004 recorded in the
-[SDLC and document contracts](m0004-spec-driven-sdlc-and-document-contracts.md#2026-08-14-consistency-and-partial-re-observation)
-dated section. `C-WRCP-010` caps this admission at exactly three rows; no
-fourth owner was added.
+이 cycle(WRCP-000–WRCP-007)은 서로 다른 후보 집합 두 개를 받아들였다. 첫째로
+WRCP-002, WRCP-003, WRCP-004, WRCP-005가 2026-08-11 refresh에서 넘어온 `Partial`
+요구사항 행 열두 개를 모두 다시 관찰했다. `REQ-WERPC-006`, `008`, `009`, `014`,
+`020`, `022`, `023`, `025`, `026`, `028`, `032`, `033`이다. 모두 다시 `Partial`로
+닫혔고 올라간 것이 없으므로, **이 cycle의 결과로 위 요청 매트릭스의 Finding 셀은
+하나도 바뀌지 않았다**. 둘째로 WRCP-004가 Spec, Task, Plan 문서 family인
+`REQ-WERPC-034`, `035`, `036`을 따로 다시 관찰했다. 이 셋은 Spec 057 개정
+`C-WRCP-010`이 받아들인 새 coverage 매트릭스 owner 행이다. 그 계약에 따르면
+family를 받아들인다고 상태가 오르거나 내리지 않는다. 새 행의 Finding은 구조
+계약(route, frontmatter, 상태 domain, 필수 H2 집합, `bodyContract`의 상호성·식별자
+규칙)에 대해서는 `Verified`이고 내용, 구현, 전달 효과에 대해서는 `DEFER`다.
+WRCP-004가
+[SDLC and document contracts](m0004-spec-driven-sdlc-and-document-contracts.md#2026-08-14-consistency-and-partial-re-observation)의
+날짜 절에 기록한 그대로다. `C-WRCP-010`은 이번 수용을 정확히 세 행으로 제한하며
+네 번째 owner는 추가하지 않았다.
 
-These three rows were absent before this cycle because the
-[document-family contract matrix](m0004-spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)
-describes twelve document families (PRD, ARD, ADR, Spec, Plan, Task, Guide,
-Incident, Postmortem, Policy, Release, Runbook), while the coverage matrix
-above registered owner rows for only nine of them (PRD, ARD, ADR, Guide,
-Incident, Postmortem, Policy, Release, Runbook) before this cycle. No prior
-WRCP request line named Spec, Task, or Plan explicitly, so no request-driven
-research had ever produced a coverage-matrix row for them; three prior
-refresh cycles (the 2026-08-10 gap-only refresh, the 2026-08-11 Partial/DEFER
-refresh, and the intervening freshness pass) missed this for the same
-reason.
+이 세 행이 이번 cycle 전에 없었던 이유는 다음과 같다.
+[document-family contract matrix](m0004-spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix)는
+문서 family 열두 개(PRD, ARD, ADR, Spec, Plan, Task, Guide, Incident, Postmortem,
+Policy, Release, Runbook)를 설명하지만 위 coverage 매트릭스는 이번 cycle 전까지
+그중 아홉 개(PRD, ARD, ADR, Guide, Incident, Postmortem, Policy, Release,
+Runbook)에만 owner 행을 두었다. 이전 WRCP 요청 줄 가운데 Spec, Task, Plan을
+명시한 것이 없어서 요청에서 출발한 연구가 이들의 coverage 매트릭스 행을 만든
+적이 없었다. 앞선 refresh cycle 세 번(2026-08-10 gap-only refresh, 2026-08-11
+Partial/DEFER refresh, 그 사이의 최신성 점검)도 같은 이유로 이를 놓쳤다.
 
-Findings for both sets are recorded in dated 2026-08-14 sections in
+두 집합의 발견은 날짜가 붙은 2026-08-14 절에 기록되어 있으며 대상은 다음과 같다.
 [governance](m0001-workspace-governance-and-common-agent-environment.md#2026-08-14-consistency-and-partial-re-observation),
 [AI agents](m0009-ai-agents-and-agency-agents.md#2026-08-14-consistency-and-partial-re-observation),
 [model routing](m0010-agent-model-routing-and-configuration.md#2026-08-14-consistency-and-partial-re-observation),
@@ -236,30 +222,28 @@ Findings for both sets are recorded in dated 2026-08-14 sections in
 [Kubernetes and security](m0007-kubernetes-infrastructure-and-security.md#2026-08-14-consistency-and-partial-re-observation),
 [Diátaxis](m0005-documentation-architecture-and-diataxis.md#2026-08-14-consistency-and-partial-re-observation),
 [SDLC and document contracts](m0004-spec-driven-sdlc-and-document-contracts.md#2026-08-14-consistency-and-partial-re-observation),
-and [CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-14-consistency-and-partial-re-observation).
+[CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-14-consistency-and-partial-re-observation).
 
-The cycle registers `SRC-WERPC-074`–`077` (one per WRCP-002/003/004/005
-package) and `CLM-WERPC-010-01`–`15` (four, three, five, and three claims
-respectively). No existing source or claim row was renumbered or rewritten.
-Counted directly against the tracked files rather than carried forward, the
-pack now contains 14 physical Markdown files including this README
-(unchanged), 36 unique request owners (33 plus the three admitted rows), 77
-unique source IDs (73 plus `SRC-WERPC-074`–`077`), and 92 unique claim IDs
-(77 plus `CLM-WERPC-010-01`–`15`). Hosted-runtime, provider-runtime, cluster,
-credential-bearing, and live evidence remain `DEFER`.
+이 cycle은 `SRC-WERPC-074`–`077`(WRCP-002/003/004/005 package마다 하나)과
+`CLM-WERPC-010-01`–`15`(각각 주장 네 개, 세 개, 다섯 개, 세 개)를 등록한다. 기존
+출처나 주장 행은 번호를 다시 매기거나 고쳐 쓰지 않았다. 이전 값을 이어받지 않고
+추적 파일을 직접 세어 보면, pack에는 이제 이 README를 포함한 실제 Markdown 파일
+14개(변화 없음), 고유 요청 owner 36개(33개에 받아들인 세 행을 더함), 고유 출처
+ID 77개(73개에 `SRC-WERPC-074`–`077`을 더함), 고유 주장 ID 92개(77개에
+`CLM-WERPC-010-01`–`15`를 더함)가 있다. hosted runtime, provider runtime,
+cluster, credential을 담은 증거, live 증거는 계속 `DEFER`다.
 
 ### 2026-08-17 full-corpus refresh reconciliation
 
-This cycle (WRFC-000–WRFC-012, Spec 058) is the first to re-observe **all
-thirty-six** owner rows rather than a twelve-row `Partial` sample. Its scope was
-byte-equivalent to the Spec 057 request, so the cycle was deliberately redirected
-to the two places where new information was reachable: the twenty-four `Verified`
-rows that had gone unchecked since 2026-08-08, and a terminal blocking-class
-closure over every retained `Partial` and `DEFER` row.
+이 cycle(WRFC-000–WRFC-012, Spec 058)은 `Partial` 열두 행 표본이 아니라 owner
+행 **서른여섯 개 전부**를 다시 관찰한 첫 cycle이다. 범위가 Spec 057 요청과
+바이트 단위로 같았으므로, cycle은 새 정보를 얻을 수 있는 두 곳으로 일부러 방향을
+틀었다. 2026-08-08 이후 확인하지 않은 `Verified` 행 스물네 개, 그리고 남아 있는
+모든 `Partial`·`DEFER` 행에 대한 최종 blocking class 종결이다.
 
-**Six rows returned `changed` externally.** Three of them — `REQ-WERPC-004`,
-`011`, and `021` — carry status `Verified` and were therefore structurally
-outside the sample the three preceding cycles re-tested.
+**여섯 행이 외부에서 `changed`로 돌아왔다.** 그중 세 행인 `REQ-WERPC-004`,
+`011`, `021`은 상태가 `Verified`여서 앞선 cycle 세 번이 다시 시험한 표본에
+구조적으로 들어가지 않았다.
 
 | Request ID    | Prior status  | External change observed 2026-08-17                                    |
 | ------------- | ------------- | ---------------------------------------------------------------------- |
@@ -270,36 +254,34 @@ outside the sample the three preceding cycles re-tested.
 | REQ-WERPC-021 | Verified      | `llms.txt` reached v2; MCP `2026-07-28` superseded the cited path      |
 | REQ-WERPC-025 | Partial       | Argo CD `sourceIntegrity` shipped GA in `3.5.0` and `3.5.1`            |
 
-**Two of this pack's own recorded refresh triggers fired.** `SRC-WERPC-060`
-declared a kube-state-metrics version change a trigger, and `SRC-WERPC-063`
-declared an Argo CD source-integrity change a trigger. Both conditions are now
-met. That is a contract signal, not a judgement call, and it means
-`REQ-WERPC-008` and `REQ-WERPC-025` carry an admitted-but-unexecuted targeted
-refresh as their next action.
+**이 pack이 스스로 기록해 둔 refresh trigger 두 개가 발동했다.**
+`SRC-WERPC-060`은 kube-state-metrics 버전 변경을, `SRC-WERPC-063`은 Argo CD 소스
+무결성 변경을 trigger로 선언했다. 두 조건이 이제 모두 충족되었다. 이는 판단의
+문제가 아니라 계약이 보내는 신호이며 `REQ-WERPC-008`과 `REQ-WERPC-025`의 다음
+조치는 받아들였지만 아직 실행하지 않은 대상 refresh라는 뜻이다.
 
-**No status changed.** All thirty-six rows recorded `statusEffect` of
-`no-change`; none was promoted, demoted, or contradicted, so **every Finding cell
-in the request matrix above keeps its prior value**. Under Spec 058 `C-WRFC-004`
-that is a success provided the delta is recorded, and the six `changed` results
-plus the two fired triggers are that delta.
+**상태는 바뀌지 않았다.** 서른여섯 행 모두 `statusEffect`를 `no-change`로
+기록했다. 올라가거나, 내려가거나, 반박된 행이 없으므로 **위 요청 매트릭스의
+Finding 셀은 모두 이전 값을 유지한다**. Spec 058 `C-WRFC-004`에 따르면 변화분이
+기록되는 한 이는 성공이며 `changed` 결과 여섯 개와 발동한 trigger 두 개가 바로
+그 변화분이다.
 
-**Zero rows returned `unreachable`,** which is itself a delta. Prior cycles
-recorded `diataxis.fr` behind HTTP 429 on three separate attempts and fell back
-to the upstream source that builds the site (`SRC-WERPC-067`). On 2026-08-17 the
-published page responded directly, registered as `SRC-WERPC-089`, so that
-fallback was not needed. Two other hosts, `iso.org` and once
-`docs.aws.amazon.com`, returned HTTP 403 and were resolved through a
-search-mediated fallback rather than recorded as unreachable.
+**`unreachable`로 돌아온 행은 없었고,** 그 자체가 변화분이다. 이전 cycle들은
+`diataxis.fr`이 세 번의 시도에서 HTTP 429에 막혔다고 기록하고 사이트를 빌드하는
+upstream 소스(`SRC-WERPC-067`)로 대신 확인했다. 2026-08-17에는 게시된 페이지가
+직접 응답했고 이를 `SRC-WERPC-089`로 등록했으므로 그 대체 경로가 필요 없었다. 다른
+두 host인 `iso.org`와 한 번의 `docs.aws.amazon.com`은 HTTP 403을 돌려주었고
+unreachable로 기록하지 않고 검색을 거친 대체 경로로 해결했다.
 
-**Terminal blocking-class closure** is recorded in the
-[scope application index](m0013-scope-application-index.md#2026-08-17-full-corpus-re-projection-and-blocking-class-closure).
-Twelve rows are unblocked, ten are reachable by repository-static work, and
-fourteen are structurally unreachable and are closed against further static
-re-testing with a named reopen condition each. This is why Specs 055, 056, and
-057 promoted nothing: their sample was drawn without regard to whether the
-blocking evidence was reachable at all.
+**최종 blocking class 종결**은
+[scope application index](m0013-scope-application-index.md#2026-08-17-full-corpus-re-projection-and-blocking-class-closure)에
+기록되어 있다. 열두 행은 막힌 것이 없고 열 행은 저장소 정적 작업으로 도달할 수
+있으며 열네 행은 구조적으로 도달할 수 없다. 이 열네 행은 각각 이름 붙은 재개
+조건을 두고 더 이상의 정적 재시험을 하지 않도록 닫았다. Spec 055, 056, 057이
+아무것도 올리지 못한 이유가 여기에 있다. 그 표본은 막고 있는 증거에 도달할 수
+있는지를 따지지 않고 뽑혔다.
 
-Findings are recorded as dated 2026-08-17 sections in
+발견은 날짜가 붙은 2026-08-17 절로 기록되어 있으며 대상은 다음과 같다.
 [governance](m0001-workspace-governance-and-common-agent-environment.md#2026-08-17-full-corpus-refresh),
 [harness and loop](m0002-harness-and-loop-engineering.md#2026-08-17-full-corpus-refresh),
 [provider status](m0003-provider-implementation-status.md#2026-08-17-full-corpus-refresh),
@@ -310,68 +292,61 @@ Findings are recorded as dated 2026-08-17 sections in
 [CI/CD, Actions, and QA](m0008-ci-cd-github-actions-and-qa.md#2026-08-17-full-corpus-refresh),
 [AI agents](m0009-ai-agents-and-agency-agents.md#2026-08-17-full-corpus-refresh),
 [model routing](m0010-agent-model-routing-and-configuration.md#2026-08-17-full-corpus-refresh),
-and [memory](m0011-agent-memory-tiers-and-management.md#2026-08-17-full-corpus-refresh).
+[memory](m0011-agent-memory-tiers-and-management.md#2026-08-17-full-corpus-refresh).
 
-The cycle registers `SRC-WERPC-078`–`089` and `CLM-WERPC-011-01`–`39`, one claim
-per owner row plus three cycle-level claims. No existing source, claim, or
-requirement row was renumbered or rewritten. Counted directly against the tracked
-files, the pack now contains **14 physical Markdown files** including this README
-(unchanged), **36 unique request owners** (unchanged), **89 unique source IDs**
-(77 plus twelve), and **131 unique claim IDs** (92 plus thirty-nine). Every
-referenced identifier has a registered ledger row: 89 source rows and 131 claim
-rows. Hosted-runtime, provider-runtime, cluster, credential-bearing, and live
-evidence remain `DEFER`.
+이 cycle은 `SRC-WERPC-078`–`089`와 `CLM-WERPC-011-01`–`39`를 등록한다. 주장은
+owner 행마다 하나씩이고, 여기에 cycle 수준 주장 세 개가 더해진다. 기존 출처, 주장,
+요구사항 행은 번호를 다시 매기거나 고쳐 쓰지 않았다. 추적 파일을 직접 세어 보면
+pack에는 이제 이 README를 포함한 **실제 Markdown 파일 14개**(변화 없음), **고유
+요청 owner 36개**(변화 없음), **고유 출처 ID 89개**(77개에 열두 개를 더함), **고유
+주장 ID 131개**(92개에 서른아홉 개를 더함)가 있다. 참조된 모든 식별자에는 등록된
+원장 행이 있다. 출처 행 89개, 주장 행 131개다. hosted runtime, provider runtime,
+cluster, credential을 담은 증거, live 증거는 계속 `DEFER`다.
 
-Two limitations are recorded rather than concealed. The package owning the
-document-family rows executed without a shell tool, so `Spec`, `Task`, `Plan`,
-and `Guide` instance tallies were **not** re-counted and the 2026-08-14 counts
-are carried forward unverified; and the then-current LLM-WIKI generated-index
-check was **not** executed, so index freshness was inferred from unchanged
-frontmatter dates rather than proven.
+한계 두 가지는 숨기지 않고 기록한다. 문서 family 행을 소유한 package가 shell
+도구 없이 실행되었기 때문에 `Spec`, `Task`, `Plan`, `Guide` instance 수를 다시
+세지 **않았고** 2026-08-14의 수치를 검증 없이 이어받았다. 또 당시의 LLM-WIKI
+생성 index 검사를 실행하지 **않았으므로**, index 최신성은 증명된 것이 아니라
+바뀌지 않은 frontmatter 날짜에서 추론한 것이다.
 
-Both limitations were closed with executed evidence before integration, so
-neither carried into the successor cycle. The historical drift check returned
-PASS, confirming the inferred freshness at that time; the generated index and
-its generator were later retired from the current workspace.
-A fresh frontmatter tally reproduces the 2026-08-14 Spec, Task, and Plan
-baselines apart from one ordinary `active`-to-`done` transition per family, and
-zero `archived` use still holds, so no recorded tally is contradicted. Direct
-enumeration also corrected three counts that had been reported but deliberately
-not recorded: ARD, ADR, and Runbook hold eight, seventeen, and nine dated
-instances rather than nine, eighteen, and ten, each inflated by one because
-`README.md` was counted as an instance.
+두 한계 모두 통합 전에 실행한 증거로 닫았으므로 후속 cycle로 넘어간 것은 없다.
+역사적 drift 검사는 PASS를 돌려주어 당시 추론한 최신성을 확인했다. 생성 index와
+그 생성기는 이후 현재 workspace에서 폐기되었다.
+frontmatter를 새로 세어 보면 family마다 평범한 `active`→`done` 전이 하나를 빼고는
+2026-08-14의 Spec, Task, Plan 기준선이 그대로 재현되며 `archived`를 쓴 경우가
+없다는 점도 여전히 성립한다. 따라서 기록된 수치와 모순되는 것은 없다. 직접 열거는
+보고는 되었지만 일부러 기록하지 않았던 수치 세 개도 바로잡았다. ARD, ADR,
+Runbook의 날짜가 붙은 instance는 아홉, 열여덟, 열 개가 아니라 여덟, 열일곱, 아홉
+개다. 셋 다 `README.md`를 instance로 센 탓에 하나씩 부풀어 있었다.
 
 ### 2026-08-18 correction reconciliation
 
-A follow-up verification on 2026-08-18 **withdrew one claim** made by the
-2026-08-17 cycle. The cycle had stated that upstream kube-state-metrics added a
-`serviceaccounts` resource absent at `v2.14.0`. Retrieving and diffing the shipped
-standard `ClusterRole` at both tags shows them byte-identical except the version
-label, so `serviceaccounts` was already present and upstream changed no
-ClusterRole rule in that range. The statement is corrected in place in the
-[Kubernetes and security report](m0007-kubernetes-infrastructure-and-security.md#2026-08-18-correction-to-the-2026-08-17-kube-state-metrics-statement)
-and in the cycle Task, and is registered as `CLM-WERPC-012-01` with status
-`Contradicted` — the first use of that status value in this pack.
+2026-08-18의 후속 검증은 2026-08-17 cycle이 한 **주장 하나를 철회했다**. 그
+cycle은 upstream kube-state-metrics가 `v2.14.0`에는 없던 `serviceaccounts`
+리소스를 추가했다고 적었다. 두 tag에서 배포된 표준 `ClusterRole`을 받아 diff해
+보면 버전 label을 빼고는 바이트 단위로 같다. 즉 `serviceaccounts`는 이미 있었고
+그 범위에서 upstream은 ClusterRole 규칙을 하나도 바꾸지 않았다. 이 서술은
+[Kubernetes and security report](m0007-kubernetes-infrastructure-and-security.md#2026-08-18-correction-to-the-2026-08-17-kube-state-metrics-statement)와
+cycle Task 안에서 제자리 정정했고 상태 `Contradicted`인 `CLM-WERPC-012-01`로
+등록했다. 이 pack에서 그 상태 값을 처음 쓴 사례다.
 
-The correction sharpens rather than weakens the underlying finding. The real
-divergence is that this repository's hand-curated ClusterRole has always been a
-trimmed subset of upstream's, and two of its omissions —
-`certificates.k8s.io/certificatesigningrequests` and
-`coordination.k8s.io/leases` — are documented default resources that the
-deployment has been collecting without the required permissions for the life of
-the current pin. That is a live pre-existing defect rather than an upgrade
-consequence. Exactly one RBAC requirement is introduced by upgrading:
-`discovery.k8s.io/endpointslices`, because `v2.18.0` swapped it in as a default
-and the Deployment declares no `args:`.
+이 정정은 바탕의 발견을 약하게 하지 않고 오히려 더 분명하게 한다. 실제 차이는
+이 저장소가 손으로 관리하는 ClusterRole이 처음부터 upstream의 것을 줄인 부분
+집합이었다는 점이다. 빠진 것 가운데 두 개인
+`certificates.k8s.io/certificatesigningrequests`와
+`coordination.k8s.io/leases`는 문서화된 기본 리소스인데, 배포는 현재 pin이 유지된
+기간 내내 필요한 권한 없이 이것들을 수집해 왔다. 이는 upgrade의 결과가 아니라
+이미 있던 실제 결함이다. upgrade로 새로 생기는 RBAC 요구사항은 정확히 하나,
+`discovery.k8s.io/endpointslices`다. `v2.18.0`이 이를 기본값으로 바꿔 넣었고
+Deployment에는 `args:`가 선언되어 있지 않기 때문이다.
 
-The correction registers `SRC-WERPC-090` and `CLM-WERPC-012-01`–`04`. No existing
-source, claim, or requirement row was renumbered, and no requirement owner was
-created. Counted against the tracked files the pack now contains 14 physical
-Markdown files, 36 unique request owners, **90 unique source IDs**, and **135
-unique claim IDs**, with 90 source rows and 135 claim rows registered in the
-ledger. `REQ-WERPC-008` keeps `Partial`; withdrawing a claim does not change a
-status, and hosted-runtime, provider-runtime, cluster, and live evidence remain
-`DEFER`.
+이 정정은 `SRC-WERPC-090`과 `CLM-WERPC-012-01`–`04`를 등록한다. 기존 출처,
+주장, 요구사항 행은 번호를 다시 매기지 않았고 요구사항 owner도 새로 만들지
+않았다. 추적 파일을 세어 보면 pack에는 이제 실제 Markdown 파일 14개, 고유 요청
+owner 36개, **고유 출처 ID 90개**, **고유 주장 ID 135개**가 있으며 원장에는 출처
+행 90개와 주장 행 135개가 등록되어 있다. `REQ-WERPC-008`은 `Partial`을 유지한다.
+주장을 철회해도 상태는 바뀌지 않으며 hosted runtime, provider runtime, cluster,
+live 증거는 계속 `DEFER`다.
 
 ### 2026-08-20 full-corpus reverification reconciliation
 
@@ -393,67 +368,58 @@ status, and hosted-runtime, provider-runtime, cluster, and live evidence remain
 
 ### 2026-09-05 external-only reverification reconciliation
 
-The approved 2026-09-05 follow-on cycle re-observed the external evidence layer
-for all thirty-six owners and deliberately excluded workspace re-observation at
-the requester's direction. It appended one dated subsection to each topical
-owner, extended the ledger to `SRC-WERPC-154`, opened the claim block
-`CLM-WERPC-016-01` through `CLM-WERPC-016-18`, and changed no requirement
-status.
+승인된 2026-09-05 후속 cycle은 owner 서른여섯 개 전부의 외부 증거 층을 다시
+관찰했고 요청자의 지시에 따라 workspace 재관찰은 일부러 제외했다. 주제별 owner마다
+날짜가 붙은 하위 절을 하나씩 덧붙였고 원장을 `SRC-WERPC-154`까지 늘렸으며 주장
+구간 `CLM-WERPC-016-01`부터 `CLM-WERPC-016-18`까지를 열었다. 요구사항 상태는 바꾸지
+않았다.
 
-Reported outcomes:
+보고된 결과는 다음과 같다.
 
-- **Changed with a superseded prior statement.** Three statements are superseded
-  as of 2026-09-05 and their earlier forms remain truthful for their own dates:
-  the subagent model-resolution order recorded on 2026-08-14; the claim that the
-  upstream agent catalogue's default branch is byte-identical to the retained
-  comparison pin; and one delivery citation confirmed dead by direct request and
-  repointed to its current location.
-- **Changed by coverage.** Official definitions of an agent harness and of loop
-  types now exist and are registered for the first time; a cross-provider
-  instruction-import bridge is documented by both providers; the permission-mode
-  and hook surfaces are materially wider than any list this pack had enumerated;
-  and the upstream spec-driven project reached a 1.0 line with additional
-  command families.
-- **Changed by currency.** A new orchestrator minor released after the previous
-  increment and shifted the supported set; the node distribution and
-  log-collection agent drifted further beyond their recorded pins; and a
-  secret-management operator release was captured for the first time.
-- **Unchanged.** The instruction-discovery chain and its size limit, the
-  configuration reference, the sandbox and approval vocabulary, the second
-  provider's memory default, the documentation framework's four modes, the
-  current protocol revision and its resource semantics, the index proposal's
-  informal status, the standards content behind a changed access path, and the
-  delivery platform's permission, concurrency, retention, federated-identity,
-  and API-version contracts.
-- **Unreachable.** One vendor agent guide could not be read: its HTML mirror
-  returned HTTP 403 and its document body was not extracted. It is recorded as
-  `unreachable`, not `unchanged`, and no claim rests on it. Two public indexes
-  disagree on the stage of one standards successor draft and the page that would
-  settle it returned HTTP 403; that discrepancy is recorded as unresolved.
-- **Rejected before allocation.** Three link-rot candidates raised during
-  collection were withdrawn after direct requests contradicted them, and one
-  redirect contradiction supported only by search results is recorded as
-  unverified rather than as a finding.
+- **이전 서술이 대체된 변화.** 서술 세 개가 2026-09-05부로 대체되었고 이전
+  형태는 각자의 날짜에서는 여전히 사실이다. 2026-08-14에 기록한 subagent model
+  해석 순서, upstream agent catalogue의 기본 branch가 보존해 둔 비교 pin과
+  바이트 단위로 같다는 주장, 직접 요청으로 끊긴 것이 확인되어 현재 위치로 다시
+  연결한 전달 관련 인용 하나다.
+- **coverage 확대에 따른 변화.** agent harness와 loop 유형에 대한 공식 정의가
+  이제 존재하며 처음으로 등록되었다. 두 provider 모두 provider 간 instruction
+  import 연결을 문서화했다. permission mode와 hook surface는 이 pack이 열거했던
+  어떤 목록보다도 훨씬 넓다. upstream spec-driven 프로젝트는 1.0 계열에 도달했고
+  명령 family가 더 늘었다.
+- **현재성에 따른 변화.** 지난 증분 이후 orchestrator의 새 minor가 나와 지원
+  범위가 옮겨졌다. node 배포판과 로그 수집 agent는 기록된 pin에서 더 멀어졌다.
+  secret 관리 operator의 release를 처음으로 기록했다.
+- **변화 없음.** instruction 탐색 체인과 그 크기 제한, 설정 reference, sandbox와
+  승인 어휘, 두 번째 provider의 memory 기본값, 문서 framework의 네 가지 mode,
+  현재 protocol revision과 그 리소스 의미, index 제안의 비공식 상태, 접근 경로만
+  바뀐 표준 내용, 전달 플랫폼의 권한·동시성·보존·연합 identity·API 버전 계약이다.
+- **도달 불가.** vendor agent 가이드 하나를 읽지 못했다. HTML mirror가 HTTP
+  403을 돌려주었고 문서 본문을 추출하지 못했다. 이는 `unchanged`가 아니라
+  `unreachable`로 기록했으며 여기에 기대는 주장은 없다. 공개 index 두 곳이 한
+  표준 후속 초안의 단계를 서로 다르게 적고 있고 이를 가려 줄 페이지는 HTTP
+  403을 돌려주었다. 이 불일치는 미해결로 기록했다.
+- **할당 전 기각.** 수집 중에 제기된 link rot 후보 세 개는 직접 요청 결과와
+  맞지 않아 철회했다. 검색 결과로만 뒷받침되는 redirect 모순 하나는 발견이 아니라
+  미검증으로 기록했다.
 
-This cycle records an external observation only. It does not meet the
-dual-observation expectation of the earlier full-corpus cycles, every workspace
-selector retains its previous observation date, and no statement here asserts
-that the pack is currently reconciled against the repository tree.
+이 cycle은 외부 관찰만 기록한다. 이전 full-corpus cycle이 기대했던 이중 관찰을
+충족하지 않으며 모든 workspace selector는 이전 관찰 날짜를 유지한다. 여기의 어떤
+서술도 pack이 현재 저장소 트리와 맞춰져 있다고 주장하지 않는다.
 
 ## Refresh and Succession
 
-WERPC-002 through WERPC-006 add dated source-backed findings to their assigned
-owners. WERPC-007 classifies mutable consumers; WERPC-008 alone may delete
-predecessor files after its fail-closed readiness proof.
+WERPC-002부터 WERPC-006까지는 배정된 owner에 날짜가 붙은, 출처에 근거한 발견을
+추가한다. WERPC-007은 바뀔 수 있는 소비자를 분류한다. 선행 파일은 WERPC-008만이
+닫힌 쪽으로 실패하는 준비 증명을 거친 뒤에 삭제할 수 있다.
 
 ## Evidence Boundary
 
-This baseline records repository-static paths and historical predecessor
-evidence. It does not claim hosted CI, provider runtime, authentication,
-remote, credential-bearing, secret-value, or live-cluster evidence.
+이 기준선은 저장소 정적 경로와 역사적 선행 증거를 기록한다. hosted CI,
+provider runtime, 인증, 원격, credential을 담은 증거, secret 값, live cluster
+증거를 주장하지 않는다.
 
 ## Related Documents
 
-- [Archive index](../../../98.archive/README.md) routes the consolidation Plan
-  that produced this pack; it is lineage, not a current owner.
+- [Archive index](../../../98.archive/README.md)는 이 pack을 만든 통합 Plan을
+  안내한다. 계보일 뿐 현재 owner가 아니다.
 - [Source coverage](m0012-source-coverage.md)

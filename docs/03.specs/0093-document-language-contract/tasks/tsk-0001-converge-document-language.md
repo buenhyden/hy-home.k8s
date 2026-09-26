@@ -31,8 +31,8 @@ authorized.
 | WORK-001 | VAL-DLC-007 | Propose the package | platform | Done | Committed `cacd0094` | Staged QA PASS |
 | WORK-002 | VAL-DLC-001, VAL-DLC-002, VAL-DLC-003 | Contract, module, validator, tests; replace the `quality.py` blocks | platform | Done | Committed `b470e2a1`; 66 documents pending | Focused tests PASS; whole suite 1206 tests, 6 environment failures; staged QA PASS |
 | WORK-003 | VAL-DLC-004 | Korean author prompts | platform | Done | Committed `9f334da8`; 52 documents pending | Profile gate PASS, staged QA PASS |
-| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | In progress | Governance-hub notice (`7074f928`); examples, GitOps, and infrastructure READMEs (`f8b5f0d5`); workspace, GitHub surface, scripts, and tests READMEs; 26 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
-| WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Queued | Not started | Staged QA |
+| WORK-004 | VAL-DLC-005 | READMEs to Korean | platform | Done | `7074f928`, `f8b5f0d5`, `84ba3172`, and the Stage 90 commit; no README pending; 21 documents pending | Archive tests 360 OK, link gate, staged QA PASS |
+| WORK-005 | VAL-DLC-005 | Operations documents to Korean | platform | Done | No operations body was pending; the five operations READMEs converted under WORK-004 | Profile gate |
 | WORK-006 | VAL-DLC-005 | Requirements to English | platform | Queued | Not started | Staged QA, whole suite |
 | WORK-007 | VAL-DLC-005 | Architecture and remainder to English | platform | Queued | Not started | Staged QA, whole suite |
 | WORK-008 | VAL-DLC-006, VAL-DLC-007 | Governance sentence, evidence, closure | platform | Queued | Not started | Full QA |
@@ -111,6 +111,9 @@ is the exact list.
   name the Korean sentences that replace the English ones.
 - Korean prose is drafted, then polished by the humanize skill in its
   conservative light route; each batch passes its change-rate gate.
+- The Stage 90 research pack 0001 README keeps its Requirement Coverage Matrix
+  in English. The matrix rows are observation-dated evidence that the pack
+  itself keeps at observation-time wording until its next refresh.
 
 ## Traceability
 
@@ -121,8 +124,8 @@ is the exact list.
 | [WORK-001](../plan.md#work-breakdown) | Proposed | Staged QA |
 | [WORK-002](../plan.md#work-breakdown) | Done | Focused tests, whole suite, and staged QA |
 | [WORK-003](../plan.md#work-breakdown) | Done | Profile gate and staged QA |
-| [WORK-004](../plan.md#work-breakdown) | Not started | Staged QA |
-| [WORK-005](../plan.md#work-breakdown) | Not started | Staged QA |
+| [WORK-004](../plan.md#work-breakdown) | Done | Staged QA |
+| [WORK-005](../plan.md#work-breakdown) | Done | Profile gate |
 | [WORK-006](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |
 | [WORK-007](../plan.md#work-breakdown) | Not started | Whole suite and staged QA |
 | [WORK-008](../plan.md#work-breakdown) | Not started | Full QA |

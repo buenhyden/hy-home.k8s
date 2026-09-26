@@ -5797,12 +5797,7 @@
       "docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md",
       "docs/02.architecture/descriptions/0005-argo-notifications-slack.md",
       "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-      "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md",
-      "docs/90.references/audits/README.md",
-      "docs/90.references/data/README.md",
-      "docs/90.references/research/0001-workspace-engineering/README.md",
-      "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
-      "docs/90.references/research/README.md"
+      "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
     ]
   }
 }
