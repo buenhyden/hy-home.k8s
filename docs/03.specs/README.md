@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.0"
+version: "0.7.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -69,16 +69,14 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-├── 0086-provider-native-runtime-observation/
-├── 0094-finished-package-retention/
+├── 0095-closed-package-retention/
 └── README.md
 ```
 
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0086-provider-native-runtime-observation/](./0086-provider-native-runtime-observation/) | Claude·Codex native runtime 관측 |
-| [0094-finished-package-retention/](./0094-finished-package-retention/) | 끝난 package 8개 보존 |
+| [0095-closed-package-retention/](./0095-closed-package-retention/) | SPEC-0086·SPEC-0094 보존 |
 
 ## Authoring Workflow
 

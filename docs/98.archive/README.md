@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.7.4"
+version: "0.7.5"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -189,6 +189,8 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0090-spec0049-retirement`](./completed/03.specs/0090-spec0049-retirement) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0090-spec0049-retirement` |
 | [`completed/03.specs/0091-readme-navigation-contract`](./completed/03.specs/0091-readme-navigation-contract) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0091-readme-navigation-contract` |
 | [`completed/03.specs/0093-document-language-contract`](./completed/03.specs/0093-document-language-contract) | `fbcafca12a8bcde3dc078fba9767b99234321745:docs/03.specs/0093-document-language-contract` |
+| [`completed/03.specs/0086-provider-native-runtime-observation`](./completed/03.specs/0086-provider-native-runtime-observation) | `576a892707ee1a6e0a115e690778e83619dab36d:docs/03.specs/0086-provider-native-runtime-observation` |
+| [`completed/03.specs/0094-finished-package-retention`](./completed/03.specs/0094-finished-package-retention) | `576a892707ee1a6e0a115e690778e83619dab36d:docs/03.specs/0094-finished-package-retention` |
 
 ### Retention Assessment
 

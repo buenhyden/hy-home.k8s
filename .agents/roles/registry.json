@@ -47,7 +47,7 @@
       "projection_root": ".codex/agents",
       "capability_models": {
         "top": "gpt-5.5",
-        "worker": "gpt-5.3-codex-spark"
+        "worker": "gpt-6-sol"
       },
       "permission_scopes": {
         "read-only-evidence": "read-only",

@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.9"
+version: "1.6.10"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -187,7 +187,7 @@ result vocabulary work are owned by
 [SPEC-0085](../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
-[SPEC-0086](../03.specs/0086-provider-native-runtime-observation/spec.md).
+[SPEC-0086](../98.archive/completed/03.specs/0086-provider-native-runtime-observation/spec.md).
 Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
 owned by
 [SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md).
@@ -206,7 +206,9 @@ Stating each document's language in one registry contract is owned by
 [SPEC-0093](../98.archive/completed/03.specs/0093-document-language-contract/spec.md).
 Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
 through SPEC-0093 is owned by
-[SPEC-0094](../03.specs/0094-finished-package-retention/spec.md).
+[SPEC-0094](../98.archive/completed/03.specs/0094-finished-package-retention/spec.md).
+Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
+[SPEC-0095](../03.specs/0095-closed-package-retention/spec.md).
 
 ## Traceability
 

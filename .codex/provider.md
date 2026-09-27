@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.2.1"
+version: "1.2.2"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-27"
 ---
 
 # Codex Provider Notes
@@ -65,7 +65,7 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The SPEC-0086 Task (`docs/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+  or hook enforcement. The SPEC-0086 Task (`docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
   owns that attempt's evidence; SPEC-0072's Task recorded it first and
   transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
   Next owner: the user/operator for a reviewed project/hook trust state and an
@@ -78,6 +78,20 @@ team document, not a special automatic entry filename.
   `bwrap` could not start the sandbox. Hook delivery stays `DEFER`: the user
   declined a trust bypass. The SPEC-0086 Task owns that evidence, and the user
   and operator remain the next owners of the project and hook trust state.
+- Root cause and repair (2026-09-27, `codex-cli 0.155.1`). The roles were
+  undiscovered because this checkout was not a trusted project: user config
+  trusted only `/home/hyunyoun`, and an untrusted project ignores every project
+  `.codex/` layer, including `agents/` and `hooks.json`. A one-invocation `-c`
+  trust override did not load the layer. After the user added a persisted
+  `trust_level = "trusted"` entry for this checkout, all 17 projections became
+  spawnable. The first spawn then failed with HTTP 400, because
+  `gpt-5.3-codex-spark` "is not supported when using Codex with a ChatGPT
+  account" and is absent from `codex debug models`. The registry `worker` tier
+  now binds `gpt-6-sol`, which the catalog describes as the "Workhorse model for
+  coding and everyday work". A spawned `code-reviewer` then reported `gpt-6-sol`,
+  `high`, and `read-only`. A probe `apply_patch` was rejected by the read-only
+  sandbox, and no hook event was observed, so hook delivery still needs the
+  user's hook review through `/hooks`.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
   on this provider is the operating-system `sandbox_mode` the registry binds,
   not the hook. A role in a mutation-capable class relies on the hook only for
