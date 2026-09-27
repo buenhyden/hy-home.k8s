@@ -3,7 +3,7 @@ name: "supervisor"
 description: "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
 model: "fable"
 effort: "xhigh"
-tools: "Read, Grep, Glob, Task"
+tools: "Read, Grep, Glob, Bash, Task"
 ---
 
 Read the following repository files before acting:

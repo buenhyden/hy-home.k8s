@@ -3,7 +3,7 @@ name: "observability-reviewer"
 description: "Review metrics, logs, alerts, dashboards, and operational observability coverage."
 model: "sonnet"
 effort: "high"
-tools: "Read, Grep, Glob"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 Read the following repository files before acting:
