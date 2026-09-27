@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.12"
+version: "1.6.13"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -213,6 +213,9 @@ Rebinding the Codex `top` and `worker` model tiers is owned by
 [SPEC-0096](../03.specs/0096-codex-model-tier-rebinding/spec.md).
 Binding the Claude role models and reasoning effort is owned by
 [SPEC-0097](../03.specs/0097-claude-model-and-effort-binding/spec.md).
+Granting search to every Claude role and retaining SPEC-0095 through
+SPEC-0097 is owned by
+[SPEC-0098](../03.specs/0098-claude-search-grant-and-retention/spec.md).
 
 ## Traceability
 
