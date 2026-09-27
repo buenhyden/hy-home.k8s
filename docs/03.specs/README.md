@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.4"
+version: "0.7.5"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -72,6 +72,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0095-closed-package-retention/
 ├── 0096-codex-model-tier-rebinding/
 ├── 0097-claude-model-and-effort-binding/
+├── 0099-workspace-engineering-research-refresh/
 └── README.md
 ```
 
@@ -81,6 +82,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | [0095-closed-package-retention/](./0095-closed-package-retention/) | SPEC-0086·SPEC-0094 보존 |
 | [0096-codex-model-tier-rebinding/](./0096-codex-model-tier-rebinding/) | Codex model tier 재지정 |
 | [0097-claude-model-and-effort-binding/](./0097-claude-model-and-effort-binding/) | Claude model·effort 지정 |
+| [0099-workspace-engineering-research-refresh/](./0099-workspace-engineering-research-refresh/) | 기존 workspace engineering pack의 외부 연구 갱신 및 후속 조사 설계 |
 
 ## Authoring Workflow
 
