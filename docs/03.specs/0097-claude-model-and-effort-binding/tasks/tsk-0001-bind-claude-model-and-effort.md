@@ -2,7 +2,7 @@
 title: "Bind Claude Model and Effort"
 version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -109,6 +109,14 @@ doc-writer applied `medium` while its parent session ran at `high`, which shows
 that the role's own effort took effect rather than an inherited value. These
 records prove only that the configuration applied. They say nothing about
 quality or cost.
+
+### Validation
+
+`python3 scripts/qa.py staged` passed on each commit, and 154 agent-related
+unit tests passed. Local `pre-commit run --all-files --hook-stage manual`
+failed only in Gitleaks, and only on the ignored local files `.env` and
+`secrets/certs/*.pem`. `ruff format` reformatted one test file, and that change
+is committed.
 
 ## Traceability
 
