@@ -2,6 +2,7 @@
 name: "quality-engineer"
 description: "Design and run bounded repository validation and report reproducible quality evidence."
 model: "sonnet"
+effort: "high"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

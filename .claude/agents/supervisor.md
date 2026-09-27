@@ -1,7 +1,8 @@
 ---
 name: "supervisor"
 description: "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
-model: "opus"
+model: "fable"
+effort: "xhigh"
 tools: "Read, Grep, Glob, Task"
 ---
 

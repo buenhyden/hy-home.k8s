@@ -2,6 +2,7 @@
 name: "governance-steward"
 description: "Maintain the neutral agent registry, role bodies, skills, and provider projections without widening its own authority."
 model: "opus"
+effort: "xhigh"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

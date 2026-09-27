@@ -244,6 +244,23 @@ class CapabilityModelBindingTests(unittest.TestCase):
             bindings["claude"],
         )
 
+    def test_a_claude_model_override_replaces_only_claude(self) -> None:
+        role = {
+            "capability_tier_ref": ".agents/governance/model-selection.md#worker",
+            "native_model_override": {"claude": "fable"},
+        }
+        codex_worker = next(
+            provider["capability_models"]["worker"]
+            for provider in self.registry["providers"]
+            if provider["id"] == "codex"
+        )
+        self.assertEqual(
+            self.validator._bound_model(self.registry, role, "claude"), "fable"
+        )
+        self.assertEqual(
+            self.validator._bound_model(self.registry, role, "codex"), codex_worker
+        )
+
 
 class CodexSandboxScopeTests(unittest.TestCase):
     """Codex projections declare a structured scope, not prose alone."""
@@ -328,6 +345,52 @@ class CodexReasoningBindingTests(unittest.TestCase):
                     self.assertEqual(resolved, binding[tier])
                 else:
                     self.assertEqual(resolved, declared)
+
+
+class ClaudeReasoningBindingTests(unittest.TestCase):
+    """Every Claude projection's effort resolves from the registry."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def test_claude_declares_an_effort_for_every_tier(self) -> None:
+        claude = next(
+            entry for entry in self.registry["providers"] if entry["id"] == "claude"
+        )
+        self.assertEqual(set(claude.get("capability_reasoning", {})), {"top", "worker"})
+
+    def test_every_claude_projection_carries_its_bound_effort(self) -> None:
+        mismatched = []
+        for role in self.registry["roles"]:
+            bound = self.validator._bound_reasoning(self.registry, role, "claude")
+            text = (REPOSITORY_ROOT / role["projections"]["claude"]).read_text(
+                encoding="utf-8"
+            )
+            observed = self.validator._frontmatter(text)[0].get("effort")
+            if observed != bound:
+                mismatched.append((role["id"], bound, observed))
+        self.assertEqual(mismatched, [])
+
+    def test_a_claude_effort_override_replaces_only_claude(self) -> None:
+        role = {
+            "capability_tier_ref": ".agents/governance/model-selection.md#top",
+            "native_reasoning_override": {"claude": "medium"},
+        }
+        codex_top = next(
+            entry["capability_reasoning"]["top"]
+            for entry in self.registry["providers"]
+            if entry["id"] == "codex"
+        )
+        self.assertEqual(
+            self.validator._bound_reasoning(self.registry, role, "claude"), "medium"
+        )
+        self.assertEqual(
+            self.validator._bound_reasoning(self.registry, role), codex_top
+        )
 
 
 if __name__ == "__main__":

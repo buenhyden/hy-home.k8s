@@ -71,7 +71,8 @@
         "gateway",
         "projection_root",
         "capability_models",
-        "permission_scopes"
+        "permission_scopes",
+        "capability_reasoning"
       ],
       "properties": {
         "id": {
@@ -88,6 +89,9 @@
         },
         "permission_scopes": {
           "$ref": "#/$defs/claudePermissionScopes"
+        },
+        "capability_reasoning": {
+          "$ref": "#/$defs/claudeCapabilityReasoningBinding"
         }
       }
     },
@@ -403,6 +407,9 @@
       "properties": {
         "codex": {
           "$ref": "#/$defs/codexReasoningEffort"
+        },
+        "claude": {
+          "$ref": "#/$defs/claudeReasoningEffort"
         }
       }
     },
@@ -413,6 +420,35 @@
       "properties": {
         "codex": {
           "$ref": "#/$defs/nativeModelIdentifier"
+        },
+        "claude": {
+          "$ref": "#/$defs/nativeModelIdentifier"
+        }
+      }
+    },
+    "claudeReasoningEffort": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ]
+    },
+    "claudeCapabilityReasoningBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top",
+        "worker"
+      ],
+      "properties": {
+        "top": {
+          "$ref": "#/$defs/claudeReasoningEffort"
+        },
+        "worker": {
+          "$ref": "#/$defs/claudeReasoningEffort"
         }
       }
     }

@@ -11,6 +11,10 @@
         "top": "opus",
         "worker": "sonnet"
       },
+      "capability_reasoning": {
+        "top": "xhigh",
+        "worker": "high"
+      },
       "permission_scopes": {
         "read-only-evidence": [
           "Read",
@@ -196,7 +200,8 @@
         "codex": ".codex/agents/supervisor.toml"
       },
       "native_model_override": {
-        "codex": "gpt-6-astra"
+        "codex": "gpt-6-astra",
+        "claude": "fable"
       }
     },
     {
@@ -248,7 +253,8 @@
         "codex": ".codex/agents/doc-writer.toml"
       },
       "native_reasoning_override": {
-        "codex": "medium"
+        "codex": "medium",
+        "claude": "medium"
       }
     },
     {
@@ -306,7 +312,8 @@
         "codex": ".codex/agents/incident-responder.toml"
       },
       "native_reasoning_override": {
-        "codex": "high"
+        "codex": "high",
+        "claude": "high"
       }
     },
     {
@@ -413,7 +420,8 @@
         "codex": ".codex/agents/security-auditor.toml"
       },
       "native_reasoning_override": {
-        "codex": "high"
+        "codex": "high",
+        "claude": "high"
       }
     },
     {
@@ -439,7 +447,8 @@
         "codex": ".codex/agents/wiki-curator.toml"
       },
       "native_reasoning_override": {
-        "codex": "medium"
+        "codex": "medium",
+        "claude": "medium"
       }
     },
     {
@@ -514,7 +523,8 @@
         "codex": ".codex/agents/architect.toml"
       },
       "native_model_override": {
-        "codex": "gpt-6-astra"
+        "codex": "gpt-6-astra",
+        "claude": "fable"
       }
     },
     {

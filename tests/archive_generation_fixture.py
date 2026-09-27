@@ -14,8 +14,9 @@ exactly what ADR-0038 added: the retention class binding, the two route
 disposition forms and their family, the mirrored retention alternatives, and
 the exact frozen routes, together with the retention units, modes, citation
 table, and legacy set that ADR-0039 added, the optional `superseded_by` key
-and the `draft` to `withdrawn` edge that SPEC-0084 added, and the optional
-`superseded_by` key later admitted on the Stage 05 operation profiles.
+and the `draft` to `withdrawn` edge that SPEC-0084 added, the optional
+`superseded_by` key later admitted on the Stage 05 operation profiles, and the
+optional `effort` key that SPEC-0097 admitted on the Claude agent profiles.
 `tests/test_archive_generation_fixture.py` proves the
 derivation equals the registry merged at `LEGACY_ARCHIVE_GENERATION_COMMIT`.
 
@@ -41,23 +42,31 @@ ADR0038_PROFILES = frozenset(
     }
 )
 ADR0038_FAMILY = "route-disposition"
-SPEC0084_SUPERSEDED_BY_PROFILES = frozenset(
-    {
-        "sdlc/spec",
-        "common/template-sdlc-spec",
-    }
-)
-STAGE05_SUPERSEDED_BY_PROFILES = frozenset(
-    {
-        "operation/guide",
-        "operation/policy",
-        "operation/runbook",
-        "common/template-operation-guide",
-        "common/template-operation-policy",
-        "common/template-operation-runbook",
-    }
-)
-SPEC0084_SUPERSEDED_BY_KEY = "superseded_by"
+# Optional frontmatter keys that later work admitted, each with the profiles
+# that gained it. The derivation drops every listed key from those profiles; a
+# later optional key needs only one more entry here.
+LATER_OPTIONAL_KEYS = {
+    # SPEC-0084 on the spec profiles, later on the Stage 05 operation profiles.
+    "superseded_by": frozenset(
+        {
+            "sdlc/spec",
+            "common/template-sdlc-spec",
+            "operation/guide",
+            "operation/policy",
+            "operation/runbook",
+            "common/template-operation-guide",
+            "common/template-operation-policy",
+            "common/template-operation-runbook",
+        }
+    ),
+    # SPEC-0097 on the Claude agent profiles.
+    "effort": frozenset(
+        {
+            "common/provider-native-metadata",
+            "common/template-exception-provider-native-metadata",
+        }
+    ),
+}
 SPEC0084_DRAFT_WITHDRAWN_FAMILY = "spec-plan"
 SPEC0084_DRAFT_WITHDRAWN_EDGE = ["draft", "withdrawn"]
 FROZEN_GENERATION_ROUTES = {
@@ -151,16 +160,16 @@ def legacy_registry_payload() -> dict[str, Any]:
         profile["path_pattern"] = FROZEN_GENERATION_ROUTES.get(
             profile["id"], _frozen_generation_route(profile["path_pattern"])
         )
-        if (
-            profile["id"]
-            in SPEC0084_SUPERSEDED_BY_PROFILES | STAGE05_SUPERSEDED_BY_PROFILES
-        ):
+        later = {
+            key
+            for key, profiles in LATER_OPTIONAL_KEYS.items()
+            if profile["id"] in profiles
+        }
+        if later:
             frontmatter = profile["frontmatter"]
-            for key in ("optional", "order"):
-                frontmatter[key] = [
-                    name
-                    for name in frontmatter[key]
-                    if name != SPEC0084_SUPERSEDED_BY_KEY
+            for field in ("optional", "order"):
+                frontmatter[field] = [
+                    name for name in frontmatter[field] if name not in later
                 ]
     for domain in payload["lifecycle_domains"]:
         if domain["family"] == SPEC0084_DRAFT_WITHDRAWN_FAMILY:

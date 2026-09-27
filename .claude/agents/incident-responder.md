@@ -2,6 +2,7 @@
 name: "incident-responder"
 description: "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance."
 model: "opus"
+effort: "high"
 tools: "Read, Grep, Glob"
 ---
 

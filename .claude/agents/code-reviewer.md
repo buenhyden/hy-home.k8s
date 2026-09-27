@@ -2,6 +2,7 @@
 name: "code-reviewer"
 description: "Review repository changes for correctness, maintainability, regression risk, and policy alignment."
 model: "sonnet"
+effort: "high"
 tools: "Read, Grep, Glob, Bash"
 ---
 

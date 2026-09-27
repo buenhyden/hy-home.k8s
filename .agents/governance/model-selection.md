@@ -1,6 +1,6 @@
 ---
 title: "Model Selection Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -60,7 +60,7 @@ in the owning Task rather than retrying into the same limit.
 - Preserve configured native model and effort values during a documentation
   or routing change. Model promotion requires separately authorized scope and
   task-relevant evidence. The registry owns both bindings: a capability tier
-  binds the model on both providers and the reasoning effort on Codex, and a
+  binds the model and the reasoning effort on both providers, and a
   role whose model or effort genuinely differs declares that departure as data
   (`native_model_override`, `native_reasoning_override`) rather than carrying
   an unowned value in its projection.

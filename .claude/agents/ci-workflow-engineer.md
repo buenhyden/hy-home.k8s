@@ -2,6 +2,7 @@
 name: "ci-workflow-engineer"
 description: "Implement scoped hosted-surface changes under .github/ and keep workflow permissions, triggers, and action identities least-privilege."
 model: "sonnet"
+effort: "high"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
