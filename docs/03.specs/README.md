@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.2"
+version: "0.7.3"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -70,6 +70,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 03.specs/
 ├── 0008-current-local-gitops-platform/
 ├── 0095-closed-package-retention/
+├── 0096-codex-model-tier-rebinding/
 └── README.md
 ```
 
@@ -77,6 +78,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
 | [0095-closed-package-retention/](./0095-closed-package-retention/) | SPEC-0086·SPEC-0094 보존 |
+| [0096-codex-model-tier-rebinding/](./0096-codex-model-tier-rebinding/) | Codex model tier 재지정 |
 
 ## Authoring Workflow
 
