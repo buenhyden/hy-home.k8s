@@ -1,8 +1,8 @@
 ---
 title: "Grant Search and Retain Packages"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "done"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -29,7 +29,7 @@ Stage 03 packages waiting for archive to be tidied up.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-CSR-001, VAL-CSR-002 | Grant `Bash` and restate the two guardrails | platform | Done | Four scopes and projections carry `Bash`; two guardrails restated | [Grant](#grant-2026-09-27) |
-| WORK-002 | VAL-CSR-004 | Retain SPEC-0095, SPEC-0096, and SPEC-0097 | platform | Queued | Pending | Lifecycle and archive gates |
+| WORK-002 | VAL-CSR-004 | Retain SPEC-0095, SPEC-0096, and SPEC-0097 | platform | Done | Three units retained with catalog rows naming `fc469fd1`; commit `fbca6d6b` | [Retention](#retention-2026-09-27) |
 | WORK-003 | VAL-CSR-003 | Observe the scopes in a new session and close | platform | Done | All four roles received `Bash` | [Session](#session-2026-09-27) |
 
 ## Approval and Safety Boundaries
@@ -89,6 +89,22 @@ Each role now has `Bash` and so can search. The client dropped `Grep` and
 name, `Agent`. These rows are the agents' own reports. The withheld write tools
 match SPEC-0086, which observed them from the same kind of spawn.
 
+### Retention (2026-09-27)
+
+- **Envelope**: `fc469fd1`, the PR #105 merge on the default branch. Before the
+  move, `git diff fc469fd1 HEAD` was empty for all three package trees.
+- **Move**: commit `fbca6d6b`, 9 pure renames into `completed/03.specs/`, with the
+  catalog rows, the repointed REQ-0003 and SPEC-0098 links, and the Claude
+  provider note's Task path span in the same commit.
+- **Validation**: `python3 scripts/qa.py staged` passed on every commit.
+  `python3 scripts/run-archive-contract-tests.py --root .` passed 136 tests.
+  `python3 scripts/archive_cutover.py --root .` passed
+  (`records=25 historical_links=198 secret_clean=25`) with a local Gitleaks
+  build on the path. The archive Git budget test and the frozen generation
+  proof also passed.
+- **Residual**: SPEC-0008 stays `active` by design. This package is the only
+  other one left in Stage 03, and a later round retains it.
+
 ## Traceability
 
 - Stable Task: `SPEC-0098-TSK-0001`
@@ -98,5 +114,5 @@ match SPEC-0086, which observed them from the same kind of spawn.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | [Grant](#grant-2026-09-27) |
-| [WORK-002](../plan.md#work-breakdown) | Queued | Pending |
+| [WORK-002](../plan.md#work-breakdown) | Done | Commit `fbca6d6b` |
 | [WORK-003](../plan.md#work-breakdown) | Done | [Session](#session-2026-09-27) |
