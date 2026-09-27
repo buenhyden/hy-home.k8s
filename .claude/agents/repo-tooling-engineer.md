@@ -2,6 +2,7 @@
 name: "repo-tooling-engineer"
 description: "Implement repository tooling that is not a registered validation-lane member, and keep its failures identified and actionable."
 model: "sonnet"
+effort: "high"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

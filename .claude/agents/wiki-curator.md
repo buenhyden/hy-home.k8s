@@ -2,6 +2,7 @@
 name: "wiki-curator"
 description: "Maintain knowledge navigation and canonical links without creating duplicate policy authority."
 model: "sonnet"
+effort: "medium"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

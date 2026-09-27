@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-27"
 ---
 
 # Claude Provider Notes
@@ -76,6 +76,17 @@ hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
 (`docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
 owns that evidence.
+Projections also carry `effort`, which the registry binds per tier on both
+providers, with a role override where effort or model genuinely differs.
+Models stay aliases (`fable`, `opus`, `sonnet`, `haiku`), so each one follows
+the newest generation of its family. Only supervisor and architect bind
+`fable`. A running session keeps the definitions it loaded at start, so verify
+a changed projection from a new session. Native macOS and Linux builds from
+2.1.117 removed `Grep` and `Glob`, moved search into Bash, and drop the unknown
+names silently. Roles without `Bash` therefore have no search tool on those
+builds. The SPEC-0097 Task
+(`docs/03.specs/0097-claude-model-and-effort-binding/tasks/tsk-0001-bind-claude-model-and-effort.md`)
+owns that evidence and names the owner of the tool gap.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

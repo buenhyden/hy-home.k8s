@@ -2,6 +2,7 @@
 name: "agent-evaluator"
 description: "Design and run agent evaluation cases and report scored evidence and improvement findings without editing role or skill definitions."
 model: "sonnet"
+effort: "high"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

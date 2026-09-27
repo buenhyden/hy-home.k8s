@@ -2,6 +2,7 @@
 name: "doc-writer"
 description: "Author governed documentation at the canonical SDLC or common-document owner."
 model: "sonnet"
+effort: "medium"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

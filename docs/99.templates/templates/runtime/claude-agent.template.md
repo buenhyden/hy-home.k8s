@@ -1,7 +1,8 @@
 ---
 name: "__ROLE_NAME__"
 description: "One sentence naming the bounded responsibility this role executes."
-model: "__CLAUDE_MODEL_ID__"
+model: "__CLAUDE_MODEL_ALIAS__"
+effort: "__CLAUDE_EFFORT__"
 tools: "__READ_GREP_GLOB__"
 ---
 

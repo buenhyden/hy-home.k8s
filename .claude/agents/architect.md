@@ -1,7 +1,8 @@
 ---
 name: "architect"
 description: "Own structural decisions and architecture descriptions, and trace them to requirements and the owning Spec."
-model: "opus"
+model: "fable"
+effort: "xhigh"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 

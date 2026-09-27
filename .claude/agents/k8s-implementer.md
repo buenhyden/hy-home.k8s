@@ -2,6 +2,7 @@
 name: "k8s-implementer"
 description: "Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface."
 model: "sonnet"
+effort: "high"
 tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
