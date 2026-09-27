@@ -1,6 +1,6 @@
 ---
 title: "Codex Provider Notes"
-version: "1.2.2"
+version: "1.2.3"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -92,6 +92,13 @@ team document, not a special automatic entry filename.
   `high`, and `read-only`. A probe `apply_patch` was rejected by the read-only
   sandbox, and no hook event was observed, so hook delivery still needs the
   user's hook review through `/hooks`.
+- SPEC-0096 (2026-09-27) rebound the Codex tiers. `gpt-5.5`, a legacy model
+  that retires from Codex on 2026-10-14, and `gpt-5.3-codex-spark` gave way to
+  `gpt-6-sol` for both tiers. Supervisor and architect declare
+  `native_model_override.codex = gpt-6-astra`, which keeps Astra to the
+  planning roles. Rollout records of spawned threads show that the client
+  applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task owns
+  the rationale and the evidence.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
   on this provider is the operating-system `sandbox_mode` the registry binds,
   not the hook. A role in a mutation-capable class relies on the hook only for

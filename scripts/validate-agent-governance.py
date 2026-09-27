@@ -931,6 +931,25 @@ def _bound_reasoning(registry: dict[str, Any], role: dict[str, Any]) -> Any:
     return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
 
 
+def _bound_model(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
+    """Resolve one role's native model from the registry.
+
+    A capability tier binds the model for every role that carries it. A role
+    whose model genuinely differs on one provider declares the exception as
+    data, so the rule and its departure are read in the same file.
+    """
+
+    override = role.get("native_model_override", {}).get(provider)
+    if override is not None:
+        return override
+    binding = next(
+        entry.get("capability_models", {})
+        for entry in registry["providers"]
+        if entry["id"] == provider
+    )
+    return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
+
+
 def _scope_members(scope: Any) -> tuple[str, ...]:
     """Return a scope's members, whether it names one mode or lists tools."""
 
@@ -1019,12 +1038,12 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             text = _read_text(
                 root, role["projections"][provider], "AGENT-NATIVE-METADATA"
             )
-            bound_model = capability_models[provider].get(capability_tier)
-            if bound_model is None:
+            if capability_models[provider].get(capability_tier) is None:
                 fail(
                     "AGENT-NATIVE-METADATA",
                     f"{provider} declares no model for tier {capability_tier}",
                 )
+            bound_model = _bound_model(registry, role, provider)
             bound_scope = _bound_scope(registry, role, provider)
             if provider == "claude":
                 metadata, body = _frontmatter(text)
@@ -1033,7 +1052,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     fail(
                         "AGENT-NATIVE-METADATA",
                         f"{role['id']}: model must equal the registry binding "
-                        f"{bound_model!r} for tier {capability_tier}",
+                        f"{bound_model!r}",
                     )
                 raw_tools = metadata.get("tools", "")
                 observed = raw_tools.split(", ") if isinstance(raw_tools, str) else []
@@ -1067,7 +1086,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     fail(
                         "AGENT-NATIVE-METADATA",
                         f"{role['id']}: model must equal the registry binding "
-                        f"{bound_model!r} for tier {capability_tier}",
+                        f"{bound_model!r}",
                     )
                 bound_reasoning = _bound_reasoning(registry, role)
                 if metadata.get("model_reasoning_effort") != bound_reasoning:

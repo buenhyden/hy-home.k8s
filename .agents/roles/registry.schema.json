@@ -265,6 +265,9 @@
         },
         "native_reasoning_override": {
           "$ref": "#/$defs/nativeReasoningOverride"
+        },
+        "native_model_override": {
+          "$ref": "#/$defs/nativeModelOverride"
         }
       }
     },
@@ -400,6 +403,16 @@
       "properties": {
         "codex": {
           "$ref": "#/$defs/codexReasoningEffort"
+        }
+      }
+    },
+    "nativeModelOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "codex": {
+          "$ref": "#/$defs/nativeModelIdentifier"
         }
       }
     }

@@ -201,15 +201,10 @@ class CapabilityModelBindingTests(unittest.TestCase):
                 self.assertEqual(set(provider.get("capability_models", {})), tiers)
 
     def test_every_projection_model_matches_its_tier_binding(self) -> None:
-        bindings = {
-            provider["id"]: provider.get("capability_models", {})
-            for provider in self.registry["providers"]
-        }
         drift = []
         for role in self.registry["roles"]:
-            tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
             for provider in role["supported_providers"]:
-                expected = bindings[provider].get(tier)
+                expected = self.validator._bound_model(self.registry, role, provider)
                 observed = self._projection_model(
                     provider, role["projections"][provider]
                 )
@@ -217,6 +212,38 @@ class CapabilityModelBindingTests(unittest.TestCase):
                     drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
         self.assertEqual(drift, [])
 
+
+    def test_a_model_departure_is_declared_rather_than_implied(self) -> None:
+        bindings = {
+            provider["id"]: provider["capability_models"]
+            for provider in self.registry["providers"]
+        }
+        for role in self.registry["roles"]:
+            tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
+            declared = role.get("native_model_override", {})
+            for provider in role["supported_providers"]:
+                resolved = self.validator._bound_model(self.registry, role, provider)
+                with self.subTest(role=role["id"], provider=provider):
+                    self.assertEqual(
+                        resolved, declared.get(provider, bindings[provider][tier])
+                    )
+
+    def test_a_model_override_replaces_only_its_own_provider(self) -> None:
+        role = {
+            "capability_tier_ref": ".agents/governance/model-selection.md#worker",
+            "native_model_override": {"codex": "override-model"},
+        }
+        bindings = {
+            provider["id"]: provider["capability_models"]["worker"]
+            for provider in self.registry["providers"]
+        }
+        self.assertEqual(
+            self.validator._bound_model(self.registry, role, "codex"), "override-model"
+        )
+        self.assertEqual(
+            self.validator._bound_model(self.registry, role, "claude"),
+            bindings["claude"],
+        )
 
 class CodexSandboxScopeTests(unittest.TestCase):
     """Codex projections declare a structured scope, not prose alone."""
