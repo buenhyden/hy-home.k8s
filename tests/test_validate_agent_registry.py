@@ -212,7 +212,6 @@ class CapabilityModelBindingTests(unittest.TestCase):
                     drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
         self.assertEqual(drift, [])
 
-
     def test_a_model_departure_is_declared_rather_than_implied(self) -> None:
         bindings = {
             provider["id"]: provider["capability_models"]
@@ -244,6 +243,7 @@ class CapabilityModelBindingTests(unittest.TestCase):
             self.validator._bound_model(self.registry, role, "claude"),
             bindings["claude"],
         )
+
 
 class CodexSandboxScopeTests(unittest.TestCase):
     """Codex projections declare a structured scope, not prose alone."""
