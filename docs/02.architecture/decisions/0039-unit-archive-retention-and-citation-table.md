@@ -1,10 +1,10 @@
 ---
 title: "Unit Archive Retention and Citation Table"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/architecture-decision"
 status: "superseded"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-27"
 layer: "architecture"
 artifact_id: "ADR-0039"
 supersedes: "ADR-0038"
@@ -234,4 +234,4 @@ holds no evidence body to cite.
 | Decision lineage | Replacement relation                                                                                                             | Affected Spec                                                            |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | ADR-0038 | Supersedes ADR-0038; the frozen ADR-0032 generation and the sixteen ADR-0038 retained bodies keep their generation | [Spec 0082](../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md) |
-| [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md) | Supersedes this decision; the units, exact retention, and citation table carry forward | [SPEC-0085](../../03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |
+| [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md) | Supersedes this decision; the units, exact retention, and citation table carry forward | [SPEC-0085](../../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |

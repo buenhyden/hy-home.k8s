@@ -1,10 +1,10 @@
 ---
 title: "Provider Native Runtime Observation Technical Specification"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "draft"
+status: "done"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-09-27"
 layer: "specs"
 artifact_id: "SPEC-0086"
 ---
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0086"
 
 ## Overview
 
-[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+[SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 consolidated agent governance and shared QA and proved every static half of
 its acceptance criteria VAL-AGQ-001 through VAL-AGQ-007. Its Task recorded one
 native runtime half those criteria still name — discovery, invocation, model
@@ -28,6 +28,14 @@ agent to satisfy it statically. A static declaration — a role projection, a
 permission-scope entry, a hook registration file — is configuration intent,
 not proof that a client discovered the skill, resolved the declared model,
 delivered the hook event, or enforced the declared sandbox.
+
+**Closure (2026-09-27).** An operator-authorized session per provider was
+recorded in the [Task](tasks/tsk-0001-observe-provider-native-runtime.md).
+Claude satisfied VAL-PNRO-001, 003, 005, and 007. Codex satisfied VAL-PNRO-002
+and 006. VAL-PNRO-004 was not observable, and VAL-PNRO-008 is `DEFER` because
+the request owner declined a hook-trust bypass. The operator owns the Codex
+project and hook trust state named in `.codex/provider.md`, and the Task names
+an owner for each finding. This package closes on observed results only.
 
 ## Strategic Boundaries & Non-goals
 
@@ -123,7 +131,7 @@ in the owning Task with client identity, exact command, and observed result.
 
 ## Traceability
 
-- **Predecessor**: [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md), whose Task transferred `WORK-009` here on 2026-09-24.
+- **Predecessor**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md), whose Task transferred `WORK-009` here on 2026-09-24.
 - **Plan**: [Provider Native Runtime Observation Implementation Plan](plan.md)
 - **Task**: [Provider Native Runtime Observation Task](tasks/tsk-0001-observe-provider-native-runtime.md)
 

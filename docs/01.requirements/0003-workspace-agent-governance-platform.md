@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.7"
+version: "1.6.9"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-27"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -18,7 +18,7 @@ This document owns the current user requirements for agent execution and documen
 [Common governance](../../.agents/README.md) owns the human execution rules, and
 [Stage 99](../99.templates/README.md) owns document form. The current governance and common QA implementation is owned by
 [ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) and
-[SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md);
+[SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md);
 the wider document convergence and unfinished dispositions are owned by [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
 This Requirement is not a copy of the implementation inventory, the provider roster, or a one-off migration plan.
 
@@ -134,9 +134,9 @@ It follows the current boundaries of [ADR-0030](../02.architecture/decisions/003
 ### Unfinished execution and original lineage
 
 Spec 0054 closed as `done` through WP-013 and TSK-0013 and is kept in `98.archive/completed/`.
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
 Specs 0047, 0048, 0050, and 0051 were withdrawn without successors, are kept in `98.archive/retired/`, and are not cited
-([SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md)).
+([SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md)).
 [REQ-0004](./0004-current-local-gitops-platform.md) co-owns the platform-specific obligations.
 
 The original REQ-0005/0006 were superseded by REQ-0008. Their current meaning passes back to this document,
@@ -145,7 +145,7 @@ Spec 033's follow-up distinction, and the ARD→AD identity conversion are histo
 REQ-0006's Plan/Task-only retention and REQ-0008's ban on every Stage 98 link are superseded by ADR-0038's dispositions and ADR-0039's ordered citation table. Sealed records remain outside current authority.
 
 Current governance and QA implementation is owned by
-[SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
+[SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
 Provider-native execution scope, capability-to-model binding, and write-path
 guard parity are owned by
 [SPEC-0073](../98.archive/completed/03.specs/0073-provider-native-enforcement-parity/spec.md).
@@ -184,26 +184,29 @@ that blocked two of its dispositions, is owned by
 The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
-[SPEC-0085](../03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
+[SPEC-0085](../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
 [SPEC-0086](../03.specs/0086-provider-native-runtime-observation/spec.md).
 Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
 owned by
-[SPEC-0087](../03.specs/0087-stage03-terminal-package-retention/spec.md).
+[SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md).
 Converging Operations document ownership, disposing of Stage 98 Operations
 residue, and removing dead or duplicate validation logic is owned by
-[SPEC-0088](../03.specs/0088-operations-corpus-convergence/spec.md).
+[SPEC-0088](../98.archive/completed/03.specs/0088-operations-corpus-convergence/spec.md).
 Resolving the conflicts SPEC-0088 deferred and withdrawing open packages that
 contradict current authority is owned by
-[SPEC-0089](../03.specs/0089-deferred-conflict-resolution/spec.md).
+[SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md).
 Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
-[SPEC-0090](../03.specs/0090-spec0049-retirement/spec.md).
+[SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md).
 Constraining every README to its direct children under one registry
 navigation contract is owned by
-[SPEC-0091](../03.specs/0091-readme-navigation-contract/spec.md).
+[SPEC-0091](../98.archive/completed/03.specs/0091-readme-navigation-contract/spec.md).
 Stating each document's language in one registry contract is owned by
-[SPEC-0093](../03.specs/0093-document-language-contract/spec.md).
+[SPEC-0093](../98.archive/completed/03.specs/0093-document-language-contract/spec.md).
+Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
+through SPEC-0093 is owned by
+[SPEC-0094](../03.specs/0094-finished-package-retention/spec.md).
 
 ## Traceability
 
@@ -238,9 +241,9 @@ Stating each document's language in one registry contract is owned by
 | REQ-0003-FR-0008 | Registry-admitted surfaces carry native claims separate from the common semantics. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0009 | Schema, model, effort, MCP, and each admitted provider's independent canary record are validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0010 | The machine harness contract/schema validates every role and adapter. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0011 | The bounded runner's timeout, output, child cleanup, and no-progress handoff are validated by Task evidence. | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-FR-0011 | The bounded runner's timeout, output, child cleanup, and no-progress handoff are validated by Task evidence. | [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | REQ-0003-NFR-0001 | Registry-derived role/adapter parity and eval/model fitness are validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0002 | Quick, staged-index, final-tree, and CI common QA keep their input boundaries and failure propagation distinct. | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-NFR-0002 | Quick, staged-index, final-tree, and CI common QA keep their input boundaries and failure propagation distinct. | [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | REQ-0003-IF-0001 | No legacy or orphan current owner remains on an active surface. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | An external role idea is admitted only after it passes a local gap and an eval. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 01 remains acceptance-only | The common `.agents/` owner graph links without contradiction. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -251,9 +254,9 @@ Stating each document's language in one registry contract is owned by
 | N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles and admitted adapters are at parity. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 07 remains acceptance-only | Each admitted provider's canary record and runtime-readiness boundary are validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 08 remains acceptance-only | Contract, schema, and provider metadata parity PASSes. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff | [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | N/A — Acceptance criterion 10 remains acceptance-only | Per-role eval and model fitness evidence exists. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 11 remains acceptance-only | Shared QA and distinct index evidence | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| N/A — Acceptance criterion 11 remains acceptance-only | Shared QA and distinct index evidence | [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | N/A — Acceptance criterion 12 remains acceptance-only | There are zero stale legacy and orphan references. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 
 ### Reviewed member-ID transfer

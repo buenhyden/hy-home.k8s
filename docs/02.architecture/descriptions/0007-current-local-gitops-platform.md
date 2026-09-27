@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.2.2"
+version: "1.2.3"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-27"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -88,10 +88,10 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Unfinished implementation owners
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
-and kept in `98.archive/retired/` ([SPEC-0087](../../03.specs/0087-stage03-terminal-package-retention/spec.md));
+and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
 their scope currently has no implementation owner. The AD succession does not mean any tranche or WP-013 is complete.
 
 ## Data Architecture
