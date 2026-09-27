@@ -2,7 +2,7 @@
 title: "Rebind Codex Model Tiers"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -28,7 +28,7 @@ their Codex models to be improved.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-CMT-001 | Research both tiers and check the catalog | platform | Done | Rationale in the Spec; catalog check below | [Research](#research-2026-09-27) |
-| WORK-002 | VAL-CMT-002 | Rebind `top` to `gpt-6-astra` | platform | Queued | Pending | Governance validator |
+| WORK-002 | VAL-CMT-002 | Rebind `top` to `gpt-6-astra` | platform | Done | Registry and five projections rebound | Governance validator and staged QA |
 | WORK-003 | VAL-CMT-003 | Observe one spawn per tier and close | platform | Queued | Pending | Codex session record |
 
 ## Approval and Safety Boundaries
@@ -76,5 +76,5 @@ their Codex models to be improved.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | Research above |
-| [WORK-002](../plan.md#work-breakdown) | Queued | Pending |
+| [WORK-002](../plan.md#work-breakdown) | Done | Rebinding commit |
 | [WORK-003](../plan.md#work-breakdown) | Queued | Pending |
