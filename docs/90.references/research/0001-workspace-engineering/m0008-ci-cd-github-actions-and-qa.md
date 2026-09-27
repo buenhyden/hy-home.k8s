@@ -1,10 +1,10 @@
 ---
 title: "Reference: CI/CD, GitHub Actions, and QA"
-version: "1.0.1"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0008"
 ---
@@ -13,19 +13,149 @@ artifact_id: "RES-0001-m0008"
 
 ## Overview
 
+This reference synthesizes current external delivery, GitHub Actions, Git hooks and QA knowledge and distinguishes verification from intended-use validation. It covers U23/U24/U25/U27/U33/U36. Earlier repository/hosted observations remain dated history; no current workspace control or outcome is assessed.
+
+## Reference Type
+
+Primary-source external research and conditional follow-up investigation design; historical repository/hosted evidence is separately dated below. The settled profile is reference/research under the Stage 99 research template.
+
+## Authority Boundary
+
+This reference supplies decision inputs, not policy, deployment authority or a current implementation verdict. Canonical implementation, governance and operational owners retain their responsibilities. Rendering, local document QA and configuration declarations establish neither hosted execution nor provider/runtime, authorization, reconciliation, security enforcement, intended-use fitness or restore success. Every workspace result is **not observed in this cycle**.
+
+## Scope
+
+Includes build/test/package/release/deploy/promotion/rollback, Actions events/reuse/matrix/concurrency/cache/artifacts/permissions/OIDC/environments/runners, input and supply-chain trust, test and document-check methods, Git hooks and exact staged bytes, message drafts, AI review/tests/flakes, and verification/validation evidence. Excludes workflow dispatch or remote setting inspection, secrets/credentials/artifact access, deployment/publishing, provider experiments, implementation audit and changes to CI/tooling/policy.
+
+## Definitions / Facts
+
+### Current external research
+
+Directly read primary sources were observed on **2026-09-27 (Asia/Seoul)**. GitHub statements below concern **GitHub.com** unless explicitly qualified; mutable documentation does not establish GHES parity. External support, source refresh, workspace observations and document QA are distinct. Every workspace result is **not observed in this cycle**. Choices below are conditional research analysis.
+
+#### Delivery chain and promotion
+
+`CLM-WERPC-017-101` (`SRC-WERPC-038, SRC-WERPC-107, SRC-WERPC-149, SRC-WERPC-027, SRC-WERPC-065`): Build transforms identified inputs, tests compare outputs to an oracle, packaging fixes distributable identity, release records a selected artifact, deployment changes an environment, promotion selects trusted artifacts for another environment, and rollback restores an accepted earlier state. These are research stage definitions, not mandatory jobs or a claim of local CD. Prefer promotion of the same verified digest over rebuilding per environment when dependencies/configuration allow it. Keep source revision, toolchain, digest, SBOM/provenance, approval, deployment and health/rollback records linked. Attestation production and receiver verification are separate; protected environment approval is not health evidence, and Git revert is not proof of successful recovery. A docs-only change need not acquire a packaging/deployment pipeline.
+
+#### Actions orchestration and artifact state
+
+`CLM-WERPC-017-102` (`SRC-WERPC-035, SRC-WERPC-253`): Events determine trigger, SHA/ref context and permission context. Explicit permission maps leave unspecified scopes at none, but effective token authority also depends on organization/repository defaults, job overrides and fork restrictions. Choose events around trusted input and intended revision; distinguish pull_request, privileged follow-on events, push, manual and scheduled work. Test exact event/ref/head/base and selected-job outcomes, including skipped/cancelled dependencies and required summaries. Workflow syntax alone is not hosted execution.
+
+`CLM-WERPC-017-103` (`SRC-WERPC-035, SRC-WERPC-254`): Reusable workflows use workflow_call with typed inputs/secrets and job-level invocation; nested permissions can be maintained or reduced. Caller environment secrets do not pass through workflow_call, while a called job's environment selects its own secrets. Local ./ syntax references the caller commit; the newer $/ syntax is GitHub.com-specific. Pin external references to reviewed SHAs. Matrix coverage, fail-fast and max-parallel trade cost/time against platform/version coverage; reuse reduces drift but increases caller/callee interface and permission coupling. Verify all required variants and failure propagation; do not treat one matrix success as full coverage.
+
+`CLM-WERPC-017-104` (`SRC-WERPC-035, SRC-WERPC-037`): Concurrency groups are case-insensitive. Current syntax documents queue.max up to 100, incompatible with cancel-in-progress:true; waiting-run start order is distinct from dispatch ordering. Choose cancellation for obsolete verification and serialized/queued execution where partial deployment cancellation is unsafe. Bound duration, queue and capacity and inspect cancellation/cleanup behavior. A group name does not establish transactionality or exclusive locks in external services.
+
+`CLM-WERPC-017-105` (`SRC-WERPC-255`): Caches reuse dependencies for performance; fork PRs can read base caches. Keys are matching mechanisms, not authorization boundaries, and poisoned cache content may execute later in a trusted job. Choose trust-separated writers, deterministic invalidation and non-sensitive content; skip caching when its operational/security cost exceeds measured savings. Test cold/warm behavior, stale invalidation and malicious-input rejection; release input trust must not depend solely on a cache hit.
+
+`CLM-WERPC-017-106` (`SRC-WERPC-038`): Artifacts retain workflow outputs and have retention bounded by repository/organization settings. upload-artifact v4 is the documentation's immutable-artifact example, not a latest-release assertion. Upload records SHA256 and download recomputes it, but mismatch produces a **warning**, not an automatic fail-closed promotion gate. A promotion consumer must independently reject mismatched identities and untrusted producers. Verify exact artifact/run/revision, digest, access, expiry and failure behavior; an upload declaration alone proves none of them.
+
+#### Actions identity and untrusted execution
+
+`CLM-WERPC-017-107` (`SRC-WERPC-039`): id-token:write allows fetching a job JWT; it does not grant cloud-resource write access. Cloud trust must constrain issuer, audience and subject/claims. Repositories created after 2026-07-15 use the documented immutable ID subject format; older repositories may enter it through opt-in or qualifying rename/transfer. This is GitHub.com-specific and does not establish a repository's history or issued claims. Choose short-lived federation over durable secrets when provider support and trust conditions fit; test expected and rejected claims with redacted exchange evidence.
+
+`CLM-WERPC-017-108` (`SRC-WERPC-149`): Environment reviewers, waits, deployment branch/tag rules and gated secrets are different controls with plan and public/private repository restrictions. Verify feature availability and bypass authority before choosing a protection design. Bind approval to exact artifact/environment and require independent post-deploy health evidence. Missing access to an administration setting is uncertainty, not evidence that protection is absent.
+
+`CLM-WERPC-017-109` (`SRC-WERPC-036`): Full-length action SHAs give immutable references, not an audit of upstream/transitive code. Treat PR titles, branches, files and downloaded artifacts as untrusted data; avoid privileged pull_request_target/workflow_run execution that checks out attacker code or consumes unsafe outputs. Use minimum permissions, safe parameter transport and reviewed trusted scripts. Test injection and producer/consumer trust boundaries, including negative fixtures; tag comments do not authenticate an action.
+
+`CLM-WERPC-017-110` (`SRC-WERPC-036`): Public self-hosted runners are almost never appropriate under GitHub guidance; private read/fork access can also expose secrets and network reach. One-job JIT runners still require a clean underlying host. Prefer disposable hosted execution where it fits, or isolated ephemeral self-hosted capacity when hardware/network needs justify operational burden. Masking does not guarantee transformed secrets stay hidden. Check clean host/image, reachable services, job credentials, redacted logs and cleanup; avoid sharing low-trust jobs with trusted promotion environments.
+
+#### QA hooks and exact bytes
+
+`CLM-WERPC-017-111` (`SRC-WERPC-175, SRC-WERPC-176, SRC-WERPC-058, SRC-WERPC-059`): A risk-based QA plan can select formatting, lint, syntax/schema/type, unit, integration, contract, E2E, manifest render, document-profile/link and security-policy checks. These answer different questions: syntactic/schema validity does not prove runtime semantics, and Helm/Kustomize render is not admission or recovery. Choose the smallest meaningful method for the changed behavior, then required aggregate coverage; no universal framework or numeric coverage is imposed by this research. Identify oracle, versions, inputs and expected failures; name absent/unavailable required evidence rather than declaring it passed.
+
+`CLM-WERPC-017-112` (`SRC-WERPC-257, SRC-WERPC-258`): git diff compares worktree to index, while git diff --cached compares index to HEAD. pre-commit normally checks staged content and temporarily stashes unstaged changes; manual all-files uses another input set. Therefore working-tree success does not establish exact committed bytes. Verify an identified index snapshot, partial-stage behavior and selected paths separately from final working-tree and hosted checkouts.
+
+`CLM-WERPC-017-113` (`SRC-WERPC-256`): pre-commit checks before a commit is created; prepare-commit-msg can edit a draft; commit-msg validates/normalizes its message; pre-push receives refs/objects to be transferred. Nonzero relevant hook exit aborts the operation, but --no-verify can bypass pre-commit/commit-msg, not prepare-commit-msg. Hooks need installed executable discovery/core.hooksPath evidence; local hooks complement server-side gates. Choose quick commit feedback and bounded broader push feedback while preserving CI as an independent enforcement surface. Provider lifecycle hooks and IDE actions have different events and contracts.
+
+`CLM-WERPC-017-114` (`SRC-WERPC-258, SRC-WERPC-257`): Formatter changes alter the artifact being checked. Review the delta, restage only intended bytes and rerun affected/exact-index checks; a pre-format pass is stale evidence. Align local/CI tool versions, configuration, selection and failure semantics while documenting unavoidable environment differences. pre-commit autoupdate --freeze resolves commit identities; a frozen ref is not transitive hook safety. Tests should include formatter mutation and partial-stage cases instead of assuming automatic formatting preserves the index.
+
+`CLM-WERPC-017-115` (`SRC-WERPC-256, SRC-WERPC-036`): Generated commit messages are drafts, not commit approval. Conditional analysis: minimize the diff/context supplied to a generator, exclude credentials and sensitive output, review message against the exact staged change and validate the actual message through its owner. prepare-commit-msg can generate/edit; commit-msg can reject invalid content. A plausible message does not authorize committing, pushing or exposing a full diff to an external service; no automatic generator is required here.
+
+#### Automated review tests and flakes
+
+`CLM-WERPC-017-116` (`SRC-WERPC-259`): GitHub Copilot reviews do not count as approvals by default, but **opt-in approval in public preview can satisfy required approving review**; new pushes dismiss those approvals. This corrects the older blanket non-blocking claim. Instructions/skills are read from the head branch and are input trust concerns. Reviewers may miss issues or exclude files. Choose advisory assistance or explicitly governed approval only after product/plan/trust review; evaluate on independent seeded defects and retain human review proportionate to risk. Approval counting does not prove expert independence or issue detection.
+
+`CLM-WERPC-017-117` (`SRC-WERPC-261`): VS Code's AI test guidance starts from behavior requirements and asks for observable, boundary and error assertions, deliberate mocks, execution and reviewed coverage. Generated tests may mirror implementation assumptions or omit failure cases. Derive an independent oracle first, review proposed cases, execute them and retain meaningful regressions. Unexecuted tests are unverified; reducing assertions or skipping failing tests merely to obtain green defeats the purpose. This is developer/agent-invoked guidance, not proof of a universal automatic CI hook.
+
+`CLM-WERPC-017-118` (`SRC-WERPC-260`): pytest identifies shared state, ordering, parallelism, timing and thread cleanup as flaky-test causes. Reruns can mitigate symptoms but do not prove repair; permanent nonblocking xfail or removing integration suites trades away fault detection. Choose bounded retries only with original failure evidence, owner/expiry and root-cause investigation. Capture seed/order/tool/environment and repeated reproduction; demonstrate the targeted fix under the triggering conditions before restoring confidence.
+
+#### Verification validation and intended use
+
+`CLM-WERPC-017-119` (`SRC-WERPC-058, SRC-WERPC-059`): NASA distinguishes verification of an identified artifact against approved requirements from validation of stakeholder intended use in representative operational scenarios. Test, analysis, inspection and demonstration can serve either, depending on the question and oracle. Trace requirement/specification/artifact/method/result and discrepancy closure bidirectionally. These are methodology benchmarks, not repository policy or NASA compliance. CI conformance cannot by itself prove user/operator fitness.
+
+`CLM-WERPC-017-120` (`SRC-WERPC-058, SRC-WERPC-059, SRC-WERPC-182, SRC-WERPC-183, SRC-WERPC-023`): Conditional evidence design should match the question rather than reuse one PASS for everything.
+
+| Subject | Verification question and evidence | Validation question and additional evidence |
+| --- | --- | --- |
+| Documents and links | Does the exact document meet profile, identity, heading and link contracts? Record validator inputs/results. | Can representative readers find the owner and complete the intended task? Observe realistic navigation, errors and comprehension. |
+| Security policy | Do positive/negative fixtures and rendered rules meet the specified policy? Record versioned policy and oracle. | Does the intended threat boundary hold in a representative environment? Collect approved effective authorization/admission/traffic behavior. |
+| Recovery | Does a runbook state prerequisites, backup identity, commands, approvals, rollback and acceptance? Review structure and cross-links. | Can authorized operators restore correct data/service within agreed recovery objectives? Perform a separately approved isolated drill and document limitations. |
+| Delivery | Did required checks accept the exact source/artifact and approved method? Bind SHA/run/digest/results. | Does the promoted version serve anticipated user/operator needs and recover safely? Collect representative scenarios and independent post-change observations. |
+
+A second agent or automated reviewer is not automatically independent IV&V. Name reviewer authority, conflicts and separation required by risk. False green, missing requirements, unrepresentative environments and incomplete discrepancy closure are different failure cases and need different repairs.
+
+### Follow-up workspace questions
+
+Detailed evidence/approval contracts are routed through [the follow-up question ledger](m0013-scope-application-index.md#follow-up-question-ledger). The claim/source mapping for every row is the matching current claim above. Every result is **not observed in this cycle**. The central ledger owns scopes, candidate selectors, approval/risk boundaries, evidence contracts, next roles and triggers; this table preserves the question and distinguishing evidence. No secrets or credentials may be inspected.
+
+| Question / U / requirement / claim | Topic question and distinguishing evidence |
+| --- | --- |
+| Q-WERPC-126 / U23 / REQ-WERPC-022 / CLM-WERPC-017-101 | Trace source SHA to inputs, digest, attestation, approval, deployment and reversal; justify same-artifact promotion and rollback compatibility, then obtain separately approved health evidence. |
+| Q-WERPC-127 / U24 / REQ-WERPC-023 / CLM-WERPC-017-102 | Build event/SHA/ref/token matrix and skipped/cancelled/failure expectations; approved hosted outcomes must show low-trust input cannot gain privileged execution. |
+| Q-WERPC-128 / U24 / REQ-WERPC-023 / CLM-WERPC-017-103 | Inventory callable version, caller commit, typed contracts and permission chain; verify required variants and no implicit secret/environment substitution. |
+| Q-WERPC-129 / U24 / REQ-WERPC-023 / CLM-WERPC-017-104 | Derive PR and promotion collisions/order expectations; separately approved concurrent runs must preserve required work and cleanup after cancellation. |
+| Q-WERPC-130 / U24 / REQ-WERPC-023 / CLM-WERPC-017-105 | Map trusted writers/readers and invalidation; isolated dummy poisoning/read-exposure cases must show no privileged execution from untrusted cache and no sensitive content. |
+| Q-WERPC-131 / U24 / REQ-WERPC-023 / CLM-WERPC-017-106 | Bind producer/run/ref/digest; isolated corruption tests must block promotion rather than merely log warnings. Observe retention/access separately with approval. |
+| Q-WERPC-132 / U24 / REQ-WERPC-023 / CLM-WERPC-017-107 | Record applicable subject-format/history and role predicates without tokens; approved expected/denied exchange cases must constrain repository/ref/environment, not just JWT acquisition. |
+| Q-WERPC-133 / U24 / REQ-WERPC-023 / CLM-WERPC-017-108 | Check plan/public-private availability; approved settings and scenario evidence must show intended approval/bypass rules for the exact artifact/environment. |
+| Q-WERPC-134 / U24 / REQ-WERPC-023 / CLM-WERPC-017-109 | Trace code/data provenance and injection cases; pass requires immutable reviewed references and untrusted values/code never interpreted with privileged authority. |
+| Q-WERPC-135 / U24 / REQ-WERPC-023 / CLM-WERPC-017-110 | Map clean-host lifecycle, network reach and dummy-value redaction/cleanup; approved runtime checks must establish per-job isolation and bounded exposure. |
+| Q-WERPC-136 / U25 / REQ-WERPC-024 / CLM-WERPC-017-111 | Map each requirement/risk to oracle, selected bytes and failure/missing-tool behavior; acceptance is proportional meaningful coverage, with hosted/live evidence separate. |
+| Q-WERPC-137 / U33 / REQ-WERPC-024 / CLM-WERPC-017-112 | Capture staged files/tree identity and worktree differences; isolated partial-stage cases must prove gates check the intended commit bytes without including unstaged edits. |
+| Q-WERPC-138 / U33 / REQ-WERPC-024 / CLM-WERPC-017-113 | Use a temporary fixture repository to observe pre-commit/pre-push/commit-msg event execution, nonzero propagation and bypass paths; presence alone cannot pass. |
+| Q-WERPC-139 / U33 / REQ-WERPC-024 / CLM-WERPC-017-114 | Record before/after byte identities and exit outcomes; prove review/restage/rerun on final bytes and local/CI configuration parity. |
+| Q-WERPC-140 / U33 / REQ-WERPC-024 / CLM-WERPC-017-115 | Review sanitized staged context, draft authorization and actual-message gate; acceptance excludes secret disclosure and treating draft generation as commit/push approval. |
+| Q-WERPC-141 / U36 / REQ-WERPC-024 / CLM-WERPC-017-116 | Evaluate independently labeled defects/false positives and declared override criteria; inspect preview approval settings only with approval and verify dismissal/re-review after push. |
+| Q-WERPC-142 / U36 / REQ-WERPC-024 / CLM-WERPC-017-117 | Compare generated cases to independent oracle, boundary/error cases and actual executed/skipped results; a meaningful regression must fail incorrect behavior rather than mirror it. |
+| Q-WERPC-143 / U36 / REQ-WERPC-024 / CLM-WERPC-017-118 | Retain first failure and retry outcomes, owner and expiry; reproduce and close root cause or document controlled temporary exception. Retry-green alone cannot pass repair. |
+| Q-WERPC-144 / U27 / REQ-WERPC-033 / CLM-WERPC-017-119 | Bind approved spec/artifact/method/tool/environment to conformance, then separately test intended-use scenarios with named stakeholders and discrepancy closure. |
+| Q-WERPC-145 / U27 / REQ-WERPC-033 / CLM-WERPC-017-120 | Compare structural/link success with reader navigation, policy fixture success with approved allow/deny behavior, and backup presence with data-correct recovery/RPO/RTO. Each needs its own acceptance/evidence depth. |
+
+## Sources
+
+Current mappings are `CLM-WERPC-017-101` through `CLM-WERPC-017-120` in [current source observations](m0012-source-coverage.md#current-source-observations), with directly read publisher sections, access dates, version/product limits, source outcomes and later questions. Product semantics are factual only within their stated scope; the QA taxonomy, stage model and application choices are conditional research synthesis.
+
+Key primary anchors include [Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax), [secure use](https://docs.github.com/en/actions/reference/security/secure-use), [artifact storage and digest validation](https://docs.github.com/en/actions/tutorials/store-and-share-data), [Git hook semantics](https://git-scm.com/docs/githooks), [pre-commit](https://pre-commit.com/), [Copilot review](https://docs.github.com/en/copilot/concepts/agents/code-review), [NASA product verification](https://www.nasa.gov/reference/5-3-product-verification/) and [product validation](https://www.nasa.gov/reference/5-4-product-validation/).
+
+GitHub.com's mutable pages have no adopted immutable revision and do not prove GHES support or a particular plan/settings state. Git hook manual changes are qualified by the documented 2.54.0 update of 2026-04-20; artifact v4 is an example, not a latest release claim. NASA pages were updated 2023-09-29 and 2023-07-26 respectively, separate from this cycle's access date. pytest guidance has no established version/date pin. The AI-testing URL now resolves to VS Code agent testing guidance; it establishes an invoked workflow, not universal automatically triggered test generation.
+
+## Review and Freshness
+
+Recheck primary contracts before a decision when the cited release, support window, API, controller, driver, backend, event, permission, trust policy, test method, stakeholder expectation or recovery objective changes. Source freshness is distinct from historical local truth. Detailed current evidence and question contracts remain with their respective ledger owners.
+
+### External claim qualification dated 2026-09-27
+
+The retained 2026-09-05 passage describes three vendors' default advisory review and states that an advisory reviewer does not satisfy a required gate. Default-only interpretation remains bounded, but a blanket product-wide non-blocking interpretation is no longer justified: `CLM-WERPC-017-116` records GitHub Copilot's **opt-in public-preview approving review** and push-dismissal exception from `SRC-WERPC-259`. This is an external capability qualification, not observation or approval of repository settings. Artifact download digest warnings are likewise distinct from an explicit fail-closed promotion policy (`CLM-WERPC-017-106`).
+
+### Dated history retained from 2026-08-08 through 2026-09-14
+
+The material below preserves earlier observation dates, claim/source identifiers, corrections and section anchors. Its words such as current, confirmed, Verified, As-Is and defect refer to those dated cycles, not this cycle. Historical commands and retired selectors are provenance, not instructions to load or execute them. Superseding dated notes and the explicit correction above must be read with the earlier passages. No historical status is promoted by the new external access date.
+
+#### Historical overview
+
 This dated reference maps the repository's delivery and quality controls to
 their evidence depth. The checked tree has static CI and maintenance/release
 review automation; it does not contain deploy CD. It is a decision input for
 platform, QA, security, and operations owners, not an authorization to change
 a workflow, branch rule, environment, cloud identity, release, or cluster.
 
-## Reference Type
+#### Historical reference type
 
 Current-primary-source research combined with repository-static workflow,
 validation-contract, and predecessor evidence. The dated source and claim
 records are in [the pack ledger](m0012-source-coverage.md).
 
-## Authority Boundary
+#### Historical authority boundary
 
 `.github/workflows/` owns tracked workflow declarations; `.github/README.md`
 routes their repository purpose; and
@@ -42,7 +172,7 @@ enforcement, OIDC exchange, deployment, Argo CD reconciliation, or runtime
 health. Those evidence classes are `DEFER` without separately authorized,
 redacted observation.
 
-## Scope
+#### Historical scope
 
 Included: CI/CD control flow, the five tracked Actions workflows, pre-commit
 and validator topology, formatting/lint/syntax/test/security lanes, failure
@@ -57,9 +187,9 @@ Verification and Validation sources `SRC-WERPC-058` and `SRC-WERPC-059` were
 added by the gap-only refresh and checked on 2026-08-10. Their version/product
 boundaries and refresh triggers are retained in the ledger.
 
-## Definitions / Facts
+#### Historical definitions / facts
 
-### Evidence-depth model
+#### Evidence-depth model
 
 | Evidence level            | What this review can establish                                                                                                          | What it cannot establish                                                                            | Current result                                 |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -72,7 +202,7 @@ boundaries and refresh triggers are retained in the ledger.
 `Verified` above is evidence-depth wording, not an assertion that every
 control is effective. A deeper row is never promoted by inference.
 
-### CI/CD baseline
+#### CI/CD baseline
 
 The repository follows a desired-state/GitOps boundary: workflows check source
 and desired-state artifacts; they do not mutate Kubernetes, Vault, a registry,
@@ -89,7 +219,7 @@ digest-and-signer verification, a Git-revert-first or other bounded rollback
 procedure, and independent post-change health evidence. It must not label the
 current static QA setup as CD or SLSA conformance.
 
-### GitHub Actions baseline
+#### GitHub Actions baseline
 
 GitHub defines a workflow as YAML in `.github/workflows/`, with events, jobs,
 permissions, conditions, dependencies, and concurrency as distinct controls
@@ -110,7 +240,7 @@ commit pinning and least privilege as important controls, but a SHA pin is not
 an upstream-code audit, a provenance claim, or a hosted-run result
 ([SRC-WERPC-036](m0012-source-coverage.md#source-register)).
 
-### Workflow control inventory
+#### Workflow control inventory
 
 Currency note (2026-09-14): `ci.yml` now defines only `branch-policy`, `qa`
 and `ci-summary`. The `qa` job runs `python3 scripts/qa.py ci --base-ref "$BASE_SHA"`
@@ -133,7 +263,7 @@ superseded per-item/scheduled runs. GitHub documents concurrency as deliberate
 overlap/cancellation control, but scheduler behavior is `DEFER` until a run is
 observed ([SRC-WERPC-037](m0012-source-coverage.md#source-register)).
 
-### QA baseline
+#### QA baseline
 
 The canonical quality system is a validation matrix, not invented numeric code
 coverage for this Bash/YAML/Markdown infrastructure repository. The exact
@@ -160,7 +290,7 @@ process-group cleanup. It does not silently waive nonzero results; the reviewed
 workflows contain no `continue-on-error`, retry, or flaky-test quarantine rule.
 Until one is separately specified, an unstable test is `FAIL`, not `SKIP`.
 
-### Verification and Validation question matrix
+#### Verification and Validation question matrix
 
 The external terms below do not rename the repository's validation lanes or
 `VAL-*` acceptance-criterion IDs. They identify the comparison question and
@@ -178,7 +308,7 @@ validation. Traceability must bind stable identities and versions in both
 directions so a change can select affected verification and intended-use
 scenarios rather than merely link filenames.
 
-### Supply-chain, cache, artifact, environment, and identity boundaries
+#### Supply-chain, cache, artifact, environment, and identity boundaries
 
 | Control                 | Repository-static finding                                                                                                                                                            | Evidence and follow-up boundary                                                                                                                                                                                                      |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -191,7 +321,7 @@ scenarios rather than merely link filenames.
 | Attestation/SLSA        | No attestation permission/action, provenance/SBOM, signer verification, reusable build workflow, or admission enforcement was found.                                                 | GitHub attestation and SLSA documents provide a future benchmark ([SRC-WERPC-040](m0012-source-coverage.md#source-register)); no level or conformance is claimed.                                                     |
 | Hook supply chain       | Remote pre-commit repositories use unique full commits and frozen tag comments.                                                                                                      | The pre-commit update procedure preserves revision provenance ([SRC-WERPC-042](m0012-source-coverage.md#source-register)); transitive hook environments and cold offline replay remain `DEFER`.                       |
 
-### Workspace As-Is, gap, and target matrix
+#### Workspace As-Is, gap, and target matrix
 
 Recommendations below require a separate approved implementation and do not
 alter current controls.
@@ -205,7 +335,7 @@ alter current controls.
 | Medium when caching is proposed                                    | No cache threat model/policy.                                                                                    | Narrow deterministic keys, trust-separated readers/writers, secret exclusion, invalidation, and poison-response procedure.                                                                           | CI + security.              |
 | Ongoing for every delivery change                                  | No hosted run identity is preserved by this static reference.                                                    | Command/version/path/job/run URL or ID/attempt/conclusion/artifact digest as applicable; report each lane as `PASS`, `SKIP`, `FAIL`, or `DEFER`.                                                     | Change owner + QA reviewer. |
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -289,7 +419,7 @@ This follows the pack's stated convention that baseline rows are preserved and
 lag re-verification, but it means `updated:` cannot be read as the latest
 observation date for any pack file without reading the body.
 
-## Sources
+#### Historical sources
 
 Current primary-source rows are `SRC-WERPC-035` through `SRC-WERPC-044` in the
 [source register](m0012-source-coverage.md#source-register).
@@ -300,7 +430,7 @@ The gap-only V&V rows are `SRC-WERPC-058` and `SRC-WERPC-059`, checked
 Predecessor documents remain dated provenance until WERPC-008; current claims
 were reconciled against workflow, contract, and QA owners rather than copied.
 
-## Review and Freshness
+#### Historical review and freshness
 
 Refresh this reference when workflow triggers/jobs/permissions/concurrency,
 Action revisions, CI lock/toolchain, pre-commit hooks, validation surfaces,
@@ -312,7 +442,7 @@ handbooks are revised. Attach a hosted run identity before reporting hosted CI
 `PASS`; attach a separately approved bounded procedure before reporting
 remote/live `PASS`.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This incremental refresh was executed on 2026-08-12. The exact
 `github.com` repository identity, canonical URL, and default branch `main`
@@ -368,7 +498,7 @@ product/stakeholder validation, and deployment/live effects therefore remain
 five separate evidence depths. No row is promoted to `Verified`: all three
 admitted requests remain `Partial`, with the explicit `DEFER` boundaries above.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-022`, `REQ-WERPC-023`, and `REQ-WERPC-033`, checked on
@@ -540,7 +670,7 @@ run; only public documentation pages were fetched. No row is promoted to
 `Verified`; no row is `Contradicted`. New source registered: `SRC-WERPC-077`.
 New claims registered: `CLM-WERPC-010-13` through `CLM-WERPC-010-15`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This closed-corpus increment consumes the immutable delivery/quality report
 for `REQ-WERPC-022`, `023`, `024`, and `033`, checked on 2026-08-20. The report
@@ -629,7 +759,7 @@ and diff checks also passed. These are named repository-static results only.
 No result in this section authorizes workflow dispatch, rerun, approval,
 setting mutation, deployment, publication, push, or merge.
 
-### 2026-08-23 conditional OIDC and supply-chain increment
+#### 2026-08-23 conditional OIDC and supply-chain increment
 
 GitHub's current [OIDC security reference](https://docs.github.com/en/actions/reference/security/oidc)
 adds a date-sensitive boundary: the immutable subject-format behavior applies
@@ -658,7 +788,7 @@ repository, workflow, signer, and digest expectations. No attestation,
 verification, hosted run, or release artifact was inspected; those outcomes
 remain `DEFER`.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the delivery and quality owners under the approved
 2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user

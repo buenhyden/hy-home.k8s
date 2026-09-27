@@ -1,8 +1,8 @@
 ---
 title: "Workspace Engineering External Research Refresh Plan"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -48,7 +48,7 @@ Read-only source collection may proceed during WP-001 bootstrap. Member authorin
 
 Use [Spec commands](spec.md#verification-commands) resolved through the current validation registry. Targeted baseline checks precede edits; evaluate changed document profiles, headings, links/anchors, identity/lifecycle, placeholder absence and scope. Quick checks working-tree changes; staged checks the exact reviewed index for every logical commit; validate the actual UTF-8 message and commit through active hooks. Final full includes its own unit discovery and manual all-files pre-commit once. Record baseline defects separately without unrelated repairs or softened results. Task-only final evidence changes receive focused revalidation and a separately identified snapshot.
 
-Use bootstrap, related research groups and final integration/handoff as meaningful commit units. Each includes its corresponding source/coverage/index/consumer updates so intermediate commits remain consistent. Never stage all paths blindly or leave blank templates. Initial states are recorded before activation; direct authorization supplies approval evidence for the later legal transition.
+Use the bootstrap contract commit, then bundle research members, central indices, navigation and execution evidence into one coherent research commit. Shared source/claim/question relationships make artificial topic commits inconsistent; final handoff may be a separate validated evidence update. Never stage all paths blindly or leave blank templates. Initial states are recorded before activation; direct authorization supplies approval evidence for the later legal transition.
 
 ## Risks & Mitigations
 

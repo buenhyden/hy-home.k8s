@@ -1,8 +1,8 @@
 ---
 title: "Workspace Engineering External Research Refresh"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -31,6 +31,8 @@ Excluded: changes to policies, provider/agent/skill/hook settings, CI, infrastru
 - Follow-up questions carry ID, U/REQ, external claim/source, scope, question, canonical file types, candidate selectors, required evidence, verification and acceptance, approval/risk, this-cycle result, next role and refresh trigger. Unobserved candidate paths are code literals.
 
 ## Core Design
+
+The direct user request supplies approval for activation of this bounded contract. Research execution is active; completion remains pending independent review and required QA.
 
 ### Structure ruling
 

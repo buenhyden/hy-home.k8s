@@ -1,10 +1,10 @@
 ---
 title: "Reference: Spec-Driven SDLC and Document Contracts"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0004"
 ---
@@ -12,6 +12,12 @@ artifact_id: "RES-0001-m0004"
 # Reference: Spec-Driven SDLC and Document Contracts
 
 ## Overview
+
+This reference connects externally researched specification-led development, document responsibilities and project tracking with conditional follow-up investigation questions.
+
+Current external analysis is based on primary-source bodies checked on 2026-09-27. Conditional design recommendations are explicitly separate from product facts. Every workspace result is `not observed in this cycle`; candidate file paths are selectors, not findings. Historical observations below keep their dates, identifiers, corrections and original anchors.
+
+### Historical overview and observation boundary
 
 This dated research reference maps a specification-led SDLC to the workspace's
 typed document contracts. It separates external guidance from the repository's
@@ -21,10 +27,18 @@ document contract.
 
 ## Reference Type
 
+External primary-source research and conditional follow-up investigation design. It is not a local implementation assessment, installation, policy change, release approval or evidence of provider/hosted/live behavior.
+
+### Historical reference classification
+
 Source-backed Stage 90 analysis; it is not a new lifecycle policy, release
 approval, security control, or evidence of production operation.
 
 ## Authority Boundary
+
+This member establishes bounded external source findings and conditional investigation design. Local profiles, registries, policies and provider notes remain their respective owners; they were read only for this authoring contract. No current implementation audit, adoption decision, provider experiment or live operation is performed. The inherited local statements below retain their historical meaning and are not renewed by current source checks.
+
+### Historical authority statement
 
 `docs/99.templates/registry.json` and its schema own typed
 routes, frontmatter, status domains, required headings, templates, and
@@ -35,6 +49,10 @@ conformance from their existence.
 
 ## Scope
 
+Current scope includes SDD, SDLC/document lifecycle, twelve document families, and project/issue management (U07, U10–U17, U37).
+
+### Historical scope
+
 It covers REQ-WERPC-007 and REQ-WERPC-010 through REQ-WERPC-019: SDD, the SDLC
 state/authority/evidence chain, and PRD, ARD, ADR, Guide, Incident, Postmortem,
 Policy, Release, and Runbook. It intentionally keeps the existing predecessor
@@ -42,7 +60,63 @@ provenance and canonical owner anchors in the source ledger.
 
 ## Definitions / Facts
 
-### Spec-driven development baseline
+### Current external analysis
+
+#### Spec-driven method and feedback
+
+`CLM-WERPC-017-41` (`SRC-WERPC-014`, `184`) describes a method that makes intended behavior and acceptance explicit before implementation planning. GitHub Spec Kit is one implementation, not an SDLC standard: at commit `c00dc0551583428a10a94443c58c6a41e5e0138c`, its agentic reference covers constitution, specify, clarify, plan, checklist, tasks, analyze, implement and converge. Read-only analysis and reviewer-owned checklists separate preparation from execution; optional task-to-issue publication crosses an external-write boundary. A generated artifact is a review input, not acceptance evidence.
+
+The benefit is reviewable intent, interfaces and failure behavior before costly execution. Costs include stale specifications, duplicated state, tool-generated verbosity and false confidence from mechanically matching text. Small reversible work can use a bounded contract rather than a full speculative document suite. Existing-system work must distinguish observed current behavior from intended change. `CLM-WERPC-017-47` (`SRC-WERPC-185`) separates a preserved initial specification, a living specification, and a specification reconciled with implementation; the appropriate persistence model depends on the maintenance method. These are alternatives, not evidence that this workspace uses any one of them.
+
+ISO 12207:2026, ISO 29148:2018 and ISO 42010:2022 public abstracts establish scope and publication metadata only (`SRC-WERPC-100`, `110`, `111`). Paid normative clauses were not read. NIST SSDF v1.1 is secure-development guidance integrable into an SDLC, not a universal document template or compliance certificate (`SRC-WERPC-015`). Verification should trace an acceptance requirement to a test or review result and feed observed change back to the appropriate requirement, architecture, decision or implementation owner.
+
+#### Twelve document families
+
+`CLM-WERPC-017-42` is a conditional synthesis of Spec Kit, NASA requirements/architecture guidance, AWS ADR, Google SRE, NIST and release guidance (`SRC-WERPC-014`, `053`–`057`, `017`–`019`, `100`, `110`, `111`). It proposes responsibilities and review questions; it does not impose these fields, statuses or routes on local profiles.
+
+| Family | Purpose, trigger and input → output | Accountable reader/owner and change management | Failure, verification and exclusion | Approval / lifecycle / version / completion / retention |
+| --- | --- | --- | --- | --- |
+| PRD | Stakeholder problem, users and constraints → outcomes, scope, non-goals and acceptance before design | Product/stakeholder owner; stable requirement IDs and reviewed outcome changes | Ambiguous aspirations are not testable requirements; validate stakeholder understanding separately from document shape | Stakeholder review; draft→approved/revised baseline; version scope/outcomes; completion is validated acceptance, not text approval; retain superseded requirement history |
+| Architecture description (AD) | Stakeholder concerns and requirements → context, views, runtime/deployment boundaries and quality rationale | Architecture owner and engineers/operators; concern-to-view links and current view revision | A diagram without concerns or boundaries hides trade-offs; review traceability and model meaning, not notation alone | Architecture/stakeholder review; draft→accepted/current view; version material model changes; completion is concern coverage review; retain superseded rationale/view provenance |
+| ADR | Significant alternatives and forces → decision, rationale and consequences | Decision stakeholders; proposed/reviewed decision, accepted/rejected history, superseding decision | Accepted history should not be silently rewritten; inspect context, rejected options and consequences; methodology is [owned by m0005](m0005-documentation-architecture-and-diataxis.md#adr-method-and-supersession) | Decision stakeholders; proposed→accepted/rejected→superseded; new decision identity for changed choice; completion is recorded reviewed decision, not implementation; retain immutable decision history |
+| SPEC | Approved intent/constraints → behavior, interfaces, preconditions, failure handling and acceptance | Engineering owner and implementer/reviewer; stable criteria and versioned changes | A complete template can still be unimplementable; review examples, negative cases and criterion-to-result links | Engineering/reviewer approval; draft→approved baseline→implemented/withdrawn; version behavior changes; implementation completion requires criterion evidence; retain reviewed baseline and result lineage |
+| PLAN | Stable enough change contract → order, dependencies, resources, risks, verification and rollback | Delivery/engineering owner; update sequencing when dependencies change | Scheduling is not execution approval; verify feasible prerequisites, stop points and recovery assumptions | Delivery/engineering approval; planned→active→completed/aborted; version order/risk changes; completion joins work results and unresolved risk; retain approved sequence and deviations |
+| TASK | Assigned work item → bounded scope, assignee, blockers, result/evidence and handoff | Executor and reviewer; explicit state transition with supporting evidence | Closed/done text is not proof of delivery; distinguish attempted, failed, blocked and accepted outcomes | Assigned reviewer accepts evidence; queued→in progress→done/blocked/cancelled; revision dates preserve attempts; done requires scoped result; retain attempt/review/handoff history |
+| Guide | Reader learning/task need and a stable surface → prerequisites, examples and reproducible instructions | Documentation/domain owner; reader goal, supported environment and freshness trigger | Mixing novice lessons with urgent procedures obscures safety; test a named reader's intended task | Domain/editor review; draft→published→revised/retired; version instructions/environment; completion requires reader task evidence; retain supported versions and retirement successor |
+| Incident | Observed event → factual impact, timestamps, response actions, evidence and incident owner | Responders and later reviewers; contemporaneous facts with corrections distinguished | Do not replace observation with causal speculation or treat recording as permission to act | Incident owner records response state; open→mitigated→resolved; chronological corrections rather than erased facts; resolution needs impact/recovery signal; retain factual evidence with sensitive-access limits |
+| Postmortem | Incident evidence → blameless causal analysis and owned, prioritized, measurable follow-up | Operations/engineering and action owners; track completion and feedback to durable owners | Vague actions and missing owners prevent follow-through; verify action end state rather than document completion | Response/domain review; draft→reviewed with actions open→closed by evidence; version substantive analysis; completion separates review from action closure; retain causes and action outcomes |
+| Policy | Accountable intent and risk → scope, responsibilities, controls, exceptions and review | Normative authority and affected readers; controlled amendments and exception expiry | Policy prose is not enforcement; bind each control to assessment evidence and keep commands in procedures | Authorized normative approver; proposed→effective→superseded/withdrawn; version scope/control changes; completion is approval plus identified assessment, not assumed enforcement; retain authority/exception history |
+| Release | Reviewed change/artifacts → version identity, notes, approval and execution/outcome evidence | Release/change owner and consumers; distinguish notes, immutable artifact identity and approval | GitHub release notes can remain editable when artifacts are immutable; a tag, note or SemVer value does not prove approval, rollout or rollback | Release approver separate from note editor/executor; prepared→approved→released/withdrawn; version/artifact identity fixed while notes may change; completion needs execution/outcome evidence; retain approval/artifact/provenance/rollback records |
+| Runbook | Known operational trigger → permissions, signals, preconditions, steps, risk, stop/rollback and escalation | Operator/domain owner; name last-tested environment/date and review after change | Static format does not prove recovery; rehearsal needs approved environment and observed outcome; do not execute merely because a procedure exists | Operator/domain review; draft→published→retested/retired; version procedure and tested environment/date; completion requires approved rehearsal evidence; retain supported procedure versions and rehearsal results |
+
+A document may link several families while each mutable fact has one owner. Document identity, creation, modification, observation and review dates answer different questions. Review, approval, supersession, correction, retirement and retention need explicit relationships rather than relabeling old evidence as current. For a small change, omit unused families; for a high-risk change, retain the evidence required by its actual owner and safety contract.
+
+#### Project and issue tool comparison
+
+The following is an external-product comparison and conditional selection analysis (`CLM-WERPC-017-43`–`46`). It is not an account/configuration inventory. SaaS documentation was read on 2026-09-27; mutable pages have no established exact revision. Limits and plans can change.
+
+| Dimension | GitHub Issues / Projects (`SRC-WERPC-191`–`197`) | Linear (`SRC-WERPC-198`–`204`) | Jira Cloud (`SRC-WERPC-205`–`210`) | Git-owned documents: conditional option |
+| --- | --- | --- | --- | --- |
+| Lifecycle/hierarchy | Issues/PRs plus Projects fields and table/board/roadmap; sub-issues up to 100 direct children and eight levels | Team workflows, issues/sub-issues, projects/milestones, initiatives and cycles | Status/transitions/workflow schemes; default Epic/Story/Subtask hierarchy; additional levels require Premium/Enterprise | Reviewable text/history, but state and hierarchy need an explicit document contract |
+| Dependencies | Blocking relationships and hierarchy are distinct; permissions govern edits | Blocking/blocked, related and duplicate relations; resolved blockers become Related | Links/planning views depend on configuration/plan; hierarchy changes can break relationships and cannot simply be undone | Stable IDs/links are portable; dangling or circular links need validation |
+| Automation/integration | Project automation and GraphQL; issue/PR field updates link engineering work | GitHub PR status automation and optional two-way issue sync; future issues unless imported | Trigger/condition/action automation and REST v3, with account-specific permissions/quotas | Native review/CI can validate files; external synchronization is additional machinery |
+| API and permission | Project and repository-item access are separate; No access/Read/Write/Admin; GraphQL scopes include read:project/project | GraphQL/webhooks; keys can restrict actions/teams; webhooks require admin; Free members are all admins; integrations may widen visibility | User permission plus application scopes; rich text uses Atlassian Document Format | Git access/review governs changes; it does not automatically reproduce fine-grained SaaS visibility |
+| Export/recovery | View TSV is available to readers; it is not a complete relational backup | CSV/export access and view limits vary by role; attachments are excluded | Search-result CSV selects fields, not a complete restore; spreadsheet macro risks remain | Source history and plain files aid portability; attachments, external state and restoration still need separate evidence |
+| Cost/lock-in | Issues/Projects available in Free; Actions and paid additions have separate costs | Free: 250 issues/two teams; advertised yearly-billed Basic USD10/user/month, Business USD16; Enterprise custom | Free up to ten users/2GB; paid prices depend on calculator/tier, no exact paid price adopted | Avoids a new SaaS subscription but shifts maintenance/navigation burden to maintainers |
+
+Choose based on actual coordination need, privacy, access, recovery and budget. GitHub can reduce integration distance when work already centers on GitHub; Linear favors a focused product workflow; Jira offers configurable workflows with administrative cost; Git documents favor reviewable contracts with fewer moving parts. These are research inferences, not measured superiority. A spreadsheet export must not be called a backup until relationships, comments, attachments, permissions and restore are tested. Check current plan entitlements before selection.
+
+#### Traceability and field ownership
+
+`CLM-WERPC-017-46` proposes an explicit field map: choose one owner for requirement/acceptance, work status, assignee, priority, dependency, review, approval and evidence; distinguish owner fields from derived mirrors. A synchronization rule needs direction, stable identifiers, conflict precedence, deletion/archive handling, retries/idempotency and an audit trail. One-way mapping is sufficient unless bidirectional editing has a concrete need. Merge/closed status must not silently become acceptance, release approval or operational validation.
+
+Follow-up questions `Q-WERPC-041`–`056` cover persistence, all twelve families, issue-tool selection and field ownership. Candidate selectors include `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/05.operations/`, issue/project schemas and export specifications. Ask whether each criterion has a reciprocal requirement→Spec→Plan/Task→result path, whether references dangle, and whether a runbook's last-tested environment/date matches an approved recovery exercise. Obtain document/static evidence first; stakeholder, SaaS, release and live-exercise evidence need their own authorized activity. Full contracts are in the [follow-up ledger](m0013-scope-application-index.md#follow-up-question-ledger). Every result is `not observed in this cycle`.
+
+### Historical analysis and dated observations
+
+The following retained sections are historical evidence, including their dated local findings. They do not describe a current workspace observation.
+
+#### Spec-driven development baseline
 
 GitHub Spec Kit describes a specification-led workflow in which an initial
 idea is refined into a PRD/specification, then a plan and executable tasks;
@@ -75,7 +149,7 @@ security constraints, threat/risk evidence, verification results, and
 vulnerability response need named controls and independently observable
 evidence. Markdown presence alone proves none of those outcomes.
 
-### Document-family contract matrix
+#### Document-family contract matrix
 
 “Implemented” means the checked profile/template/static route exists as of
 2026-08-08. It does not assess the semantic accuracy of every authored document
@@ -98,7 +172,7 @@ stage matrix, not a machine-enforced link.
 | Release    | A discrete, auditable version/change decision; approved policy, change set, validation, version decision -> release record, approval, rollout/rollback evidence. | No canonical local owner; intended readers include release/operations and consumers. A lifecycle must be approved before use (for example `draft -> approved -> released/withdrawn`). | Should link Policy, Plan/Task, validation results, deployment/runbook and, where public API exists, SemVer decision. Must not substitute a tag or workflow for approval evidence. | **Gap:** no `sdlc/release` profile, template, canonical path/index, status domain/lifecycle, or validator was found. Target requires a separately approved cross-stage owner, state model, retention/supersession rules, template, registry/schema projection, fixtures, and negative tests together. |
 | Runbook    | Safe, repeatable operational procedure after a procedure is known; policy/observed procedure -> preconditions, steps, verification, observability, recovery.     | Operations Engineer; operators/responders; `draft -> active -> accepted/archived`.                                                                                                    | Promotes eligible policy/Spec/helper/Task; require verification, evidence sources, and safe rollback/recovery. A runbook is not an incident fact record or release approval.      | `sdlc/runbook` exists. Static validation cannot show a command is safe in a live environment.                                                                                                                                                                                                         |
 
-### 2026-08-10 gap-only source refresh
+#### 2026-08-10 gap-only source refresh
 
 This refresh adds external meaning only for the five admitted document families.
 It does not change a profile, template, lifecycle, route, or the accepted Spec
@@ -120,7 +194,7 @@ proportional to concerns; keep policy intent separate from procedures; keep a
 release record distinct from notes, versions, and provenance; and keep runbook
 automation risk-based with a recoverable manual path.
 
-### Current contract and evidence flow
+#### Current contract and evidence flow
 
 The checked profiles use exact five-key SDLC frontmatter and closed status
 domains. The registry, Markdown-profile validator, and strict links/owners
@@ -135,7 +209,7 @@ for the claim. Security-sensitive or production-changing instructions retain
 an explicit approval boundary; an Incident, Runbook, or Release-shaped text
 must never be interpreted as that approval.
 
-### Gap-to-target sequence
+#### Gap-to-target sequence
 
 1. Keep the registry/schema as the machine authority and Stage 00 routing as
    the human authority; do not duplicate lifecycle rules in research prose.
@@ -153,7 +227,7 @@ must never be interpreted as that approval.
    benchmarks. Any conformance, incident-response, release, or production
    claim needs separately dated local evidence.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -251,6 +325,16 @@ fallback.
 
 ## Sources
 
+### Current primary sources
+
+- Spec Kit `SRC-WERPC-014`, `184`, `185`: [agentic SDD](https://github.com/github/spec-kit/blob/c00dc0551583428a10a94443c58c6a41e5e0138c/docs/reference/agentic-sdd.md), [concepts](https://github.com/github/spec-kit/blob/c00dc0551583428a10a94443c58c6a41e5e0138c/docs/concepts/sdd.md), [existing projects](https://github.com/github/spec-kit/blob/c00dc0551583428a10a94443c58c6a41e5e0138c/docs/guides/existing-projects.md), checked 2026-09-27; commit dated 2026-09-25T20:31:03Z.
+- Standards/practice `SRC-WERPC-015`, `017`–`019`, `053`–`057`, `100`, `110`, `111`: public ISO abstracts, NIST SSDF/control guidance, NASA requirements/architecture guidance, AWS ADR, Google SRE incident/postmortem/release/toil and SemVer bodies checked 2026-09-27. Narrow retained practice claims unchanged; ISO access recovered; paid clauses unread.
+- GitHub `SRC-WERPC-191`–`197`, Linear `198`–`204`, Jira Cloud `205`–`210`: official product workflow, permissions, API, export and pricing/licensing bodies checked 2026-09-27; exact page revisions/publication dates unknown. New comparison coverage; no account or synchronization observed.
+
+The [current source observations](m0012-source-coverage.md#current-source-observations) own complete URL, revision, selector, claim and refresh metadata. Dates above are source checks, not publication dates.
+
+### Historical sources
+
 - [GitHub Spec Kit — Specification-Driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md) and [agentic SDD reference](https://github.com/github/spec-kit/blob/main/docs/reference/agentic-sdd.md), checked 2026-08-08: specification/plan/task flow and feedback framing; toolkit guidance only.
 - [NIST SP 800-218 SSDF v1.1](https://csrc.nist.gov/pubs/sp/800/218/final), checked 2026-08-08: high-level secure-development practices integrable into an SDLC; no local implementation inference.
 - [ISO/IEC/IEEE 12207:2026 abstract](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/09/02/90219.html), checked 2026-08-08: lifecycle-process framework boundary from the official abstract; paid clauses were not consulted.
@@ -265,6 +349,12 @@ fallback.
 
 ## Review and Freshness
 
+### Current review boundary
+
+Recheck when cited methods, product plans/schemas, source revisions, permission/export behavior or an actual adoption proposal changes. Current external claims, source refresh outcomes, workspace observations and document QA are independent axes. Historical statuses are not promoted by a new external check. Document QA results belong to the owning Task; this member claims no provider-runtime or live evidence.
+
+### Historical refresh record
+
 Refresh on any Stage 01–05 taxonomy/profile/template/validator change, a
 Release-family proposal, changes to traceability or retention rules, security
 control ownership, incident/postmortem practice, or upstream revision of the
@@ -275,7 +365,7 @@ announced revision is published, NIST policy/control assessment guidance
 changes, the Release-family decision advances, or DOC-G10/WORK-013 changes the
 Runbook automation contract.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**; the heading
 retains the approved package date. It addresses only REQ-WERPC-014 and does not
@@ -313,7 +403,7 @@ claim change exists and no claim proposal is created. Refresh when Spec 052 is
 superseded, `WORK-013` changes Guide typing, a current Guide stops satisfying
 the static contract, or a named reader-validation activity is approved.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace for `REQ-WERPC-014`, checked
 on **2026-08-14**, and separately re-observed the Spec, Task, and Plan
@@ -473,7 +563,7 @@ three families. No claim is promoted beyond this split. New claims
 registered: `CLM-WERPC-010-10` (`REQ-WERPC-034`), `CLM-WERPC-010-11`
 (`REQ-WERPC-035`), `CLM-WERPC-010-12` (`REQ-WERPC-036`).
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment consumes the reviewed SDLC/documentation report at workspace
 baseline `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. External and workspace
@@ -732,7 +822,7 @@ allocation slice adds no source and assigns only
   owners. Reopen on profile/template/body-contract/source change or a named
   instance effectiveness review.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the spec-driven, SDLC, and document-family owners
 under the approved 2026-09-05 follow-on cycle. Workspace re-observation was
