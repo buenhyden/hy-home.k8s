@@ -46,7 +46,7 @@
       "gateway": "AGENTS.md",
       "projection_root": ".codex/agents",
       "capability_models": {
-        "top": "gpt-5.5",
+        "top": "gpt-6-sol",
         "worker": "gpt-6-sol"
       },
       "permission_scopes": {
@@ -194,6 +194,9 @@
         "neutral": ".agents/roles/supervisor.md",
         "claude": ".claude/agents/supervisor.md",
         "codex": ".codex/agents/supervisor.toml"
+      },
+      "native_model_override": {
+        "codex": "gpt-6-astra"
       }
     },
     {
@@ -509,6 +512,9 @@
         "neutral": ".agents/roles/architect.md",
         "claude": ".claude/agents/architect.md",
         "codex": ".codex/agents/architect.toml"
+      },
+      "native_model_override": {
+        "codex": "gpt-6-astra"
       }
     },
     {

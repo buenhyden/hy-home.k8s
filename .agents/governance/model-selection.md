@@ -1,10 +1,10 @@
 ---
 title: "Model Selection Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-27"
 ---
 
 # Model Selection Policy
@@ -61,8 +61,9 @@ in the owning Task rather than retrying into the same limit.
   or routing change. Model promotion requires separately authorized scope and
   task-relevant evidence. The registry owns both bindings: a capability tier
   binds the model on both providers and the reasoning effort on Codex, and a
-  role whose effort genuinely differs declares that departure as data rather
-  than carrying an unowned value in its projection.
+  role whose model or effort genuinely differs declares that departure as data
+  (`native_model_override`, `native_reasoning_override`) rather than carrying
+  an unowned value in its projection.
 - Shared reasoning intent is not a universal provider enum. Check the intended
   client's supported native configuration when a model or effort change is
   actually requested.
