@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.11"
+version: "1.6.12"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -211,6 +211,8 @@ Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
 [SPEC-0095](../03.specs/0095-closed-package-retention/spec.md).
 Rebinding the Codex `top` and `worker` model tiers is owned by
 [SPEC-0096](../03.specs/0096-codex-model-tier-rebinding/spec.md).
+Binding the Claude role models and reasoning effort is owned by
+[SPEC-0097](../03.specs/0097-claude-model-and-effort-binding/spec.md).
 
 ## Traceability
 
