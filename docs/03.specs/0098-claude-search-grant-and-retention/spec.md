@@ -17,7 +17,7 @@ On 2026-09-27 the request owner asked for two things: give search to the
 Claude roles that have none, and retain the finished packages still waiting
 in Stage 03.
 
-- **Search**: [SPEC-0097](../0097-claude-model-and-effort-binding/spec.md)
+- **Search**: [SPEC-0097](../../98.archive/completed/03.specs/0097-claude-model-and-effort-binding/spec.md)
   recorded that native macOS and Linux builds from Claude Code 2.1.117 removed
   the `Grep` and `Glob` tools, moved search into Bash, and drop the unknown
   names silently. Four Claude scopes carried no `Bash`: docs-researcher

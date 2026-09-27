@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.5"
+version: "0.7.6"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -69,9 +69,6 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-├── 0095-closed-package-retention/
-├── 0096-codex-model-tier-rebinding/
-├── 0097-claude-model-and-effort-binding/
 ├── 0098-claude-search-grant-and-retention/
 └── README.md
 ```
@@ -79,9 +76,6 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0095-closed-package-retention/](./0095-closed-package-retention/) | SPEC-0086·SPEC-0094 보존 |
-| [0096-codex-model-tier-rebinding/](./0096-codex-model-tier-rebinding/) | Codex model tier 재지정 |
-| [0097-claude-model-and-effort-binding/](./0097-claude-model-and-effort-binding/) | Claude model·effort 지정 |
 | [0098-claude-search-grant-and-retention/](./0098-claude-search-grant-and-retention/) | Claude 검색 도구 허용과 package 보존 |
 
 ## Authoring Workflow
