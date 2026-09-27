@@ -442,11 +442,9 @@ Each URL-specific row was directly read on **2026-09-27 Asia/Seoul**, except the
 | `SRC-WERPC-260` | pytest flaky tests — pytest project | Official primary documentation | [document](https://docs.pytest.org/en/stable/explanation/flaky.html) | Mutable documentation; immutable page revision unknown | Publication/update date unknown | 2026-09-27 | Root causes; strict xfail; split suites | `CLM-WERPC-017-118` | Reruns do not prove cause fixed | Trigger: source/version/contract change or approved adoption; result: new — accepted URL-specific/subarea coverage; no unchanged comparison inferred |
 | `SRC-WERPC-261` | AI-assisted test generation — Microsoft | Official primary documentation | [original](https://code.visualstudio.com/docs/copilot/guides/test-with-copilot) → [observed final](https://code.visualstudio.com/docs/agents/guides/test-code-with-ai) | Mutable documentation; immutable page revision unknown | Publication/update date unknown | 2026-09-27 | Behavior; tests without implementation changes; run/review | `CLM-WERPC-017-117` | Generated assertions require independent requirements oracle | Trigger: source/version/contract change or approved adoption; result: new — accepted URL-specific/subarea coverage; no unchanged comparison inferred |
 
-
 ### Historical source and claim provenance
 
 The following dated register is retained as history. Its present-tense wording applies only to the recorded observation date. Current corrections and external ownership appear above; historical statuses are not today's implementation status.
-
 
 #### Source register
 
@@ -1102,7 +1100,6 @@ These are the original router's dated coverage and reconciliation paragraphs, mi
 └── m0001-workspace-governance-and-common-agent-environment.md
 ```
 
-
 #### Historical requirement coverage matrix
 
 Each request has exactly one primary research owner. Workspace evidence is local evidence at the recorded observation date; it does not establish external product or live-runtime claims.
@@ -1278,8 +1275,6 @@ WERPC-002 through WERPC-006 add dated, source-backed findings to assigned owners
 #### Evidence Boundary
 
 This baseline records repository-static paths and historical predecessor evidence. It claims no hosted CI, provider runtime, authentication, remote, credential-bearing, secret-value or live-cluster evidence.
-
-
 
 ## Sources
 

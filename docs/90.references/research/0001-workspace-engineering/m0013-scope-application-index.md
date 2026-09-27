@@ -164,13 +164,11 @@ The four evidence axes remain separate: external Verified/Partial/Unverified/DEF
 | `Q-WERPC-180` | U30 U38; `REQ-WERPC-029`, `REQ-WERPC-030`, `REQ-WERPC-031`, `REQ-WERPC-032`, `REQ-WERPC-006` | `CLM-WERPC-017-145`; `SRC-WERPC-087`, `SRC-WERPC-013`, `SRC-WERPC-008`, `SRC-WERPC-068` | task/session; repository; provider/product | Which source/tool context can poison memory and what quarantine, least access and injection boundary limits it? ([topic question owner](m0011-agent-memory-tiers-and-management.md#memory-verification-questions)) | `memory threat model` | `external context; MCP URI; promotion; access control` | bounded untrusted-content and policy-boundary checks | retrieval never grants permissions; no claim complete prevention | Read/static review only; account access, runtime probes, installs, settings changes or paid execution need separately bounded authorization; redact credentials | not observed in this cycle | governance-steward; agent-evaluator; trigger: source/version/contract change, approved adoption, acceptance gap or expiry |
 | `Q-WERPC-181` | U30 U38; `REQ-WERPC-029`, `REQ-WERPC-030`, `REQ-WERPC-031`, `REQ-WERPC-032`, `REQ-WERPC-006` | `CLM-WERPC-017-147`, `CLM-WERPC-017-148`, `CLM-WERPC-017-150`; `SRC-WERPC-096`, `SRC-WERPC-125`, `SRC-WERPC-137`, `SRC-WERPC-123`, `SRC-WERPC-004`, `SRC-WERPC-068`, `SRC-WERPC-050`, `SRC-WERPC-087`, `SRC-WERPC-013`, `SRC-WERPC-008` | task/session; repository; provider/product | What compaction loses and which acceptance/Git/evidence/approval facts must be reread after handoff? ([topic question owner](m0011-agent-memory-tiers-and-management.md#memory-verification-questions)) | `handoff/checkpoint` | `base SHA; current files; unknowns; next owner` | fresh context reconstruction against authoritative documents | summary loss disclosed and current authority reread | Read/static review only; account access, runtime probes, installs, settings changes or paid execution need separately bounded authorization; redact credentials | not observed in this cycle | governance-steward; agent-evaluator; trigger: source/version/contract change, approved adoption, acceptance gap or expiry |
 
-
 ### Historical scope projections
 
 All following dated scope/queue/path/status observations are historical only. They were not reread as implementation facts in this cycle. Their original IDs and claims remain for traceability; the analytical axes and current question contract above do not inherit their permission or scope assertions.
 
 #### Historical framing and authority
-
 
 `docs/00.agent-governance/scopes/` remains the authoritative owner of scope
 membership, file ownership, and write permission. This index cannot create a
@@ -188,7 +186,6 @@ No status in this index may differ from the pack README's
 [Requirement Coverage Matrix](README.md). Where the two disagree, the README is
 correct and this index is stale.
 
-
 Its base map covers `REQ-WERPC-001`–`REQ-WERPC-033` and the ten governance
 scopes as they stood on 2026-08-14. The 2026-08-28 pack-level addendum also
 routes `REQ-WERPC-034`–`REQ-WERPC-036` without claiming a current scope-topology
@@ -198,7 +195,6 @@ from this dated map.
 It excludes any change to a requirement status, any new external source, and any
 evidence that requires cluster, hosted CI, provider runtime, or stakeholder
 access.
-
 
 > [!NOTE]
 > The rows below are observations at the dates their cycles record, not the
