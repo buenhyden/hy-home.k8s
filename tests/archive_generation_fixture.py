@@ -42,30 +42,31 @@ ADR0038_PROFILES = frozenset(
     }
 )
 ADR0038_FAMILY = "route-disposition"
-SPEC0084_SUPERSEDED_BY_PROFILES = frozenset(
-    {
-        "sdlc/spec",
-        "common/template-sdlc-spec",
-    }
-)
-STAGE05_SUPERSEDED_BY_PROFILES = frozenset(
-    {
-        "operation/guide",
-        "operation/policy",
-        "operation/runbook",
-        "common/template-operation-guide",
-        "common/template-operation-policy",
-        "common/template-operation-runbook",
-    }
-)
-SPEC0084_SUPERSEDED_BY_KEY = "superseded_by"
-SPEC0097_EFFORT_PROFILES = frozenset(
-    {
-        "common/provider-native-metadata",
-        "common/template-exception-provider-native-metadata",
-    }
-)
-SPEC0097_EFFORT_KEY = "effort"
+# Optional frontmatter keys that later work admitted, each with the profiles
+# that gained it. The derivation drops every listed key from those profiles; a
+# later optional key needs only one more entry here.
+LATER_OPTIONAL_KEYS = {
+    # SPEC-0084 on the spec profiles, later on the Stage 05 operation profiles.
+    "superseded_by": frozenset(
+        {
+            "sdlc/spec",
+            "common/template-sdlc-spec",
+            "operation/guide",
+            "operation/policy",
+            "operation/runbook",
+            "common/template-operation-guide",
+            "common/template-operation-policy",
+            "common/template-operation-runbook",
+        }
+    ),
+    # SPEC-0097 on the Claude agent profiles.
+    "effort": frozenset(
+        {
+            "common/provider-native-metadata",
+            "common/template-exception-provider-native-metadata",
+        }
+    ),
+}
 SPEC0084_DRAFT_WITHDRAWN_FAMILY = "spec-plan"
 SPEC0084_DRAFT_WITHDRAWN_EDGE = ["draft", "withdrawn"]
 FROZEN_GENERATION_ROUTES = {
@@ -159,22 +160,16 @@ def legacy_registry_payload() -> dict[str, Any]:
         profile["path_pattern"] = FROZEN_GENERATION_ROUTES.get(
             profile["id"], _frozen_generation_route(profile["path_pattern"])
         )
-        if (
-            profile["id"]
-            in SPEC0084_SUPERSEDED_BY_PROFILES | STAGE05_SUPERSEDED_BY_PROFILES
-        ):
+        later = {
+            key
+            for key, profiles in LATER_OPTIONAL_KEYS.items()
+            if profile["id"] in profiles
+        }
+        if later:
             frontmatter = profile["frontmatter"]
-            for key in ("optional", "order"):
-                frontmatter[key] = [
-                    name
-                    for name in frontmatter[key]
-                    if name != SPEC0084_SUPERSEDED_BY_KEY
-                ]
-        if profile["id"] in SPEC0097_EFFORT_PROFILES:
-            frontmatter = profile["frontmatter"]
-            for key in ("optional", "order"):
-                frontmatter[key] = [
-                    name for name in frontmatter[key] if name != SPEC0097_EFFORT_KEY
+            for field in ("optional", "order"):
+                frontmatter[field] = [
+                    name for name in frontmatter[field] if name not in later
                 ]
     for domain in payload["lifecycle_domains"]:
         if domain["family"] == SPEC0084_DRAFT_WITHDRAWN_FAMILY:
