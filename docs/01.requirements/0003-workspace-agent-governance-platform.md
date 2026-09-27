@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.9"
+version: "1.6.10"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -207,6 +207,8 @@ Stating each document's language in one registry contract is owned by
 Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
 through SPEC-0093 is owned by
 [SPEC-0094](../03.specs/0094-finished-package-retention/spec.md).
+Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
+[SPEC-0095](../03.specs/0095-closed-package-retention/spec.md).
 
 ## Traceability
 
