@@ -1,10 +1,10 @@
 ---
 title: "Reference: Agent Model Routing and Configuration"
-version: "1.1.0"
+version: "1.2.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0010"
 ---
@@ -13,15 +13,91 @@ artifact_id: "RES-0001-m0010"
 
 ## Overview
 
+This reference compares task-sensitive model selection, configuration resolution, cost and rate controls. Vendor workload labels and published prices provide hypotheses and estimates; promotion needs measured task quality, latency, total cost and independent review. No model, role or adapter is changed.
+
+## Reference Type
+
+External primary-source research directly read on 2026-09-27, with conditional investigation design and preserved historical evidence.
+
+## Authority Boundary
+
+Official documentation establishes only bounded external product facts. This reference defines no local permission, model promotion, memory retention rule or provider configuration change. Current workspace availability, parsing, entitlement, effective settings, execution, cost, retrieval and correct application are `not observed in this cycle`. Candidate selectors are unobserved. Private settings, account records, memory stores, credentials and conversations are excluded. External claim judgment is separate from source refresh result and repository-static document QA.
+
+## Scope
+
+Primary owner of U29 and U35 and existing REQ-WERPC-028. Covers model family/ID, reasoning, context/output/tool limits, fallback/escalation, API versus subscription usage, caching/compaction, budgets, concurrency and bounded retry. Excludes account catalogs, actual invoices, effective local model selection, fitness experiments and permanent price/model policy.
+
+## Definitions / Facts
+
+### Model selection and escalation
+
+`CLM-WERPC-017-131` treats selection as a task-risk hypothesis. Mechanical edits and bounded formatting may fit a smaller/lower-effort model; investigation and implementation need evidence coverage and tool fitness; architecture, root-cause/security review and uncertain sources may justify stronger reasoning plus independent review. Final verification relies on the right test/evidence contract, not the reviewer model's name. Larger models and effort can increase latency/spend without proportional task benefit. Compare the same representative suite, quality/safety thresholds, failed attempts, review effort and total latency/cost before adoption. Vendor family labels are not repository-quality measurements.
+
+`CLM-WERPC-017-132` and `CLM-WERPC-017-133` record API catalog facts, directly read **2026-09-27**:
+
+| API model ID / version boundary | Context / maximum output | Reasoning / input-output / tool boundary | Evidence limit |
+| --- | --- | --- | --- |
+| `gpt-6-sol`, `gpt-6-luna` | 1,050,000 / 128,000 tokens | Text/image input, text output; no audio/video. `none`, `low`, default `medium`, `high`, `xhigh`, `max`. Responses lists built-in tools/function/MCP and product-specific tools; Chat Completions function calling is restricted to effort `none`. | No immutable dated snapshot ID was exposed in the read snapshot; alias/revision is mutable. No listed fine-tuning support established. |
+| `gpt-6-astra` | 1,050,000 / 128,000 | Text/image input, text output; `low` through `max`, with `none` unsupported; catalog-specific Responses tools. | API catalog does not prove Codex account availability, native product feature parity or actual accepted settings. |
+| `claude-fable-5-1` | 1,000,000 / 128,000 | Always adaptive thinking; high default effort. | API ID is not a Claude Code role alias or entitlement proof. |
+| `claude-opus-5-5` | 1,000,000 / 128,000 | Always adaptive thinking; medium default effort. | Account/product/provider route may differ. |
+| `claude-sonnet-5` | 1,000,000 / 128,000 | Adaptive thinking; high default effort. | Verify exact supported effort/tools for the intended endpoint. |
+| `claude-haiku-4-5`; dated `claude-haiku-4-5-20251001` | 200,000 / 64,000 | Fixed extended thinking, no effort control. | Dated API ID and mutable alias are distinct identities. |
+
+These bounded documented values are `Verified` from SRC-WERPC-229–231 and SRC-WERPC-128 in [current source observations](m0012-source-coverage.md#current-source-observations). Immutable pinning where absent, effective entitlement and measured fitness remain `Partial`/unknown. Output ceilings are limits, not typical response sizes, and maximum context is not a requirement to fill it.
+
+`CLM-WERPC-017-134` resolves three historical ambiguities. The current Codex configuration reference describes `model_reasoning_effort` as a string against the catalog; the old finite five-value enumeration is **Contradicted as current guidance**. The product catalog includes `low`, `medium`, `high`, `xhigh`, `max`, `ultra`, with no Luna `ultra`; `ultra` is product orchestration, not an API effort. Codex base resolution is explicit spawn → `[agents]` default → parent, followed by an agent-file explicit model/effort override. File-only model preserves resolved effort; explicit new spawn model without effort uses the model default. Thus “spawn beats default” and “file beats spawn” concern different layers and the prior apparent precedence conflict is resolved; no local parser check occurred. Sources: SRC-WERPC-049, 136 and 011.
+
+`CLM-WERPC-017-135` bounds Claude resolution and fallback. Main conversation selection is `/model` → `--model` → `ANTHROPIC_MODEL` → settings → default-model environment, subject to managed available-model constraints. Normal subagent resolution is invocation → definition → default `CLAUDE_CODE_SUBAGENT_MODEL` → main; the documented FORCE override introduced at v2.1.257 has exceptions. Fallback tries up to three deduplicated alternatives for the current turn and eligible availability/nonretryable server errors; it excludes auth, billing, rate, size, transport and policy-denial errors. Compaction does not fall back to smaller-context models; subagent fallback has a v2.1.247 gate. Exact parsing, fallback and resolution require authorized client evidence. Source: SRC-WERPC-236.
+
+### Cost context and rate control
+
+`CLM-WERPC-017-136` and `CLM-WERPC-017-137` record **standard API list prices in USD per million tokens**, read 2026-09-27. They are not subscription plan fees, included allowance, account quotes or actual bills.
+
+| API model | Uncached input | Cache write | Cache read | Output | Conditions |
+| --- | --- | --- | --- | --- | --- |
+| GPT-6 Sol | 2.00 | 2.50 | 0.20 | 10.00 | Current standard list pricing. |
+| GPT-6 Luna | 0.10 | 0.125 | 0.01 | 0.50 | Current standard list pricing. |
+| GPT-6 Astra | 10.00 | 12.50 | 1.00 | 50.00 | Current standard list pricing. |
+| Claude Fable 5.1 | 10.00 | 1.25× input for 5-minute cache; 2× for 1-hour | 0.25 | 50.00 | Cache multipliers apply to write, not every cached request. |
+| Claude Opus 5.5 | 4.00 | Same stated write multipliers | 0.20 | 20.00 | Cache read is not a universal 0.1× rule. |
+| Claude Sonnet 5 | 2.00 | Same stated write multipliers | 0.20 | 10.00 | Current standard list pricing. |
+| Claude Haiku 4.5 | 1.00 | Same stated write multipliers | 0.10 | 5.00 | Current standard list pricing. |
+
+OpenAI input above 272K tokens changes whole-request input/cache pricing to 2× and output to 1.5×. The read catalog also documents Fast 2×, Batch/Flex half price and regional premiums; do not assume tier modifiers combine. Anthropic documents 50% Batch pricing, applicable regional 1.1× and additional partner/tool fees. Its newer-tokenizer approximately 30% token increase is a vendor content-dependent observation, not a universal cost-normalization constant. Sources: SRC-WERPC-229–231 and SRC-WERPC-233. Choose caching only when repeated prefixes and invalidation justify write/storage cost; cache hits and bill savings require usage evidence. Smaller relevant context lowers spend and stale-content risk, while compaction can lose details required for acceptance.
+
+`CLM-WERPC-017-138` separates Codex product credits from dollars and API tokens. API-key billing applies to local CLI/SDK/IDE, excluding cloud, GitHub review and Slack. Subscription local/cloud usage shares an allowance that varies by model/task and may have weekly limits; Enterprise/Edu flexible credits are not fixed request counts. Documented standard credits per million input/cache/output tokens are Astra 250/25/1250, Sol 50/5/250 and Luna 2.5/0.25/12.5, with no cache-write charge on that product surface. Credits are neither USD nor included account allowance. The product catalog dates GPT-5.5 retirement from ChatGPT Work/Codex at 2026-10-14 and GPT-5.4's ChatGPT-sign-in retirement at 2026-08-31; these exclusions do not establish API retirement. Sources: SRC-WERPC-169 and 136. Account-specific remaining limits and availability were not queried.
+
+`CLM-WERPC-017-139` proposes an estimate over uncached input, cache write/read and output at the exact product/tier/region rates, plus tools and all children/retries/review. Reserve capacity for compaction, fallback and verification; measure sanitized usage against the applicable billing contract; set warning and stop thresholds at a durable host owner. Context/output, RPM, input/output-token-per-minute, spend and concurrency caps are distinct. A per-run CLI budget is not a project-wide durable budget: Claude print-only `--max-budget-usd` counts current-run children and documented spawn/background stops, but excludes previous resumed-session costs. Sources: SRC-WERPC-235 and 237.
+
+Ordinary rate-limit recovery should honor retry timing and use bounded exponential backoff/jitter; failed OpenAI requests consume allowance. Anthropic acceleration limits call for gradual ramp-up. Hard spend-limit 429 with `enforced_spend_limit_reached` lacks retry-after and needs account/budget recovery; user caps can return 400. Never retry authentication/policy denial by switching model or widen privileges to regain throughput. Limit simultaneous agents to the lower applicable rate/budget bound and terminate when recovery cannot make new authorized progress. Sources: SRC-WERPC-232 and 234; [harness/loop failure controls](m0002-harness-and-loop-engineering.md#loop-design-and-failure-controls) own the host-recovery comparison.
+
+### Model and budget questions
+
+`CLM-WERPC-017-140` links to the [central question evidence contracts](m0013-scope-application-index.md#follow-up-question-ledger). All workspace results are `not observed in this cycle`; candidates include `.codex/config.toml`, `.codex/agents/`, `.claude/agents/`, SDK model/run options, budget/concurrency declarations and redacted usage summaries. Private account dashboards, invoices and environment values are excluded here.
+
+- Q-WERPC-161: what exact alias or snapshot, product/client/account/region, effort, tools and context/output limits does each task require, and which retirement trigger mandates recheck?
+- Q-WERPC-162: what same-suite quality, safety, latency and total cost justify routing and risk-proportional independent review?
+- Q-WERPC-163: which file/spawn/default/environment/managed layer actually resolves the model and effort without silent fallback?
+- Q-WERPC-164: which failures allow fallback, how are smaller context and policy denials excluded, and do fallback attempts preserve budget and stop history?
+- Q-WERPC-165: are API dollars, subscription credits, cache/tier/tool charges and spend/rate/concurrency limits measured separately against the correct contract?
+- Q-WERPC-166: do sibling agents, retries, compaction and review share durable counters, warnings, stop thresholds and a recoverable checkpoint?
+
+### Historical observations and corrections — 2026-08-08 to 2026-09-05
+
+The following preserves original observation dates, identities, statuses, evidence limits and correction relationships. Retired owners and product assumptions are dated provenance, not current instructions or workspace findings. Current workspace result: `not observed in this cycle`.
+
+#### Historical Overview
+
 This reference defines evidence-bound routing from task characteristics to a
 role, tier, provider configuration, tool/sandbox boundary, and reviewer. It
 does not select a new model or change an adapter.
 
-## Reference Type
+#### Historical Reference Type
 
 Repository-static research baseline.
 
-## Authority Boundary
+#### Historical Authority Boundary
 
 Model policy and the model-fitness contract own the local tier and promotion
 contract; provider documentation owns provider configuration vocabulary.
@@ -29,15 +105,15 @@ Tracked adapters prove a configured incumbent only. Authentication, model
 availability, parsing, resolution, performance, cost, latency, and access are
 `DEFER` without matching evidence.
 
-## Scope
+#### Historical Scope
 
 It covers task-characteristic routing, model/reasoning configuration,
 evaluation, fallback, and promotion. It does not reassign roles, consume an
 account catalog, or alter provider configuration.
 
-## Definitions / Facts
+#### Historical Definitions / Facts
 
-### Model-routing baseline
+#### Model-routing baseline
 
 > [!NOTE]
 > The rows below are observations at the dates their cycles record, not the
@@ -63,7 +139,7 @@ observed runtime/promotion/canary tuples remain `DEFER`.
 | Security, GitOps, incident, destructive, or external-affecting work       | Specialist with risk-appropriate tier   | Least privilege; human approval controls live/secret/remote/destructive tools. | Independent specialist review and explicit rollback/handoff; no self-promotion. |
 | Unknown model fitness or provider feature                                 | Existing safe incumbent or no execution | Do not broaden tools or change configuration to compensate.                    | `DEFER`; collect approved parsing and same-suite evaluation evidence first.     |
 
-### Configuration baseline
+#### Configuration baseline
 
 Codex's current configuration reference documents `agents.<name>` settings and
 `model_reasoning_effort` values `minimal`, `low`, `medium`, `high`, and
@@ -72,7 +148,7 @@ subagent model/tool configuration. These current product facts do not prove
 this worktree's effective provider configuration. Local adapters and the
 model-fitness contract remain the repository-static incumbent projection.
 
-### Routing, evaluation, and fallback rules
+#### Routing, evaluation, and fallback rules
 
 1. Select risk, reversibility, sensitivity, required context, and independent
    review before selecting a provider/model name.
@@ -87,7 +163,7 @@ model-fitness contract remain the repository-static incumbent projection.
 5. If an evaluation is unavailable or fails, preserve the approved incumbent,
    narrow the task or add review; do not infer a better model from its name.
 
-### Evidence and confidence boundaries
+#### Evidence and confidence boundaries
 
 `Implemented` applies to the static tier/contract and declared adapter
 projection. `Partial` may describe a locally recorded candidate or evaluation
@@ -96,7 +172,7 @@ token/cost/latency measurements, account availability, and canary outcomes are
 `DEFER`. Product-specific surfaces (Codex CLI, OpenAI API/SDK, and Claude Code)
 are separate: evidence for one does not transfer to another.
 
-### 2026-08-10 freshness re-check
+#### 2026-08-10 freshness re-check
 
 All four external sources were re-read on 2026-08-10. No cited claim changed
 inside the 2026-08-08 to 2026-08-10 window. The re-check did record three
@@ -119,7 +195,7 @@ claims, and it should not be cited for the latter.
 canary, and promotion still require provider runtime evidence that is `DEFER`,
 and the disagreements above make that runtime check more necessary, not less.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -172,14 +248,7 @@ permanently redirects to `learn.chatgpt.com/docs`. This is an uncorrected stale
 reference in a Stage 00 owner rather than in this pack, and correcting a Stage 00
 owner is outside this cycle's scope.
 
-## Sources
-
-- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`).
-- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`, `SRC-WERPC-050`).
-- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
-- [Model Selection Policy](../../../../.agents/governance/model-selection.md) is the current model-policy owner; `contracts/agent-model-fitness.json` remains part of the dated local observation.
-
-## Review and Freshness
+#### Historical Review and Freshness
 
 Refresh when a provider changes configuration/model/reasoning semantics or when
 a role, model-policy tuple, adapter, evaluation corpus, threshold, candidate,
@@ -192,7 +261,7 @@ identifiers, reasoning-effort values, and precedence order, so no single page is
 sufficient on its own. None of the four sources publishes a last-modified date,
 so an unchanged result is content identity rather than a publisher signal.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**. The heading
 preserves the approved package date; no model was invoked and no cost, latency,
@@ -229,7 +298,7 @@ bindings, and adapters. Owner: Stage 00 model policy and model-fitness
 contract. Refresh when a cited provider configuration contract or a local
 model/evaluation selector materially changes.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-028` only, checked on **2026-08-14**. No model was
@@ -278,7 +347,7 @@ model/evaluation selector materially changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-03`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 The allocation slice assigns no new source or claim ID for this row.
 
@@ -310,7 +379,7 @@ The allocation slice assigns no new source or claim ID for this row.
   without changing adapters. Refresh when cited configuration, model,
   reasoning, precedence, tool mapping, or a local fitness selector changes.
 
-### 2026-08-23 Codex routing guidance gap increment
+#### 2026-08-23 Codex routing guidance gap increment
 
 This gap-only increment records current documentation without changing any
 model, role, adapter, effort value, evaluation binding, or terminal document
@@ -345,7 +414,7 @@ topology. It applies only to the Spec 0054 Claude/Codex provider boundary.
 repository-static depth. The dated guidance refines a candidate hypothesis; it
 does not change the model-fitness contract or any configured incumbent.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the model-routing owner under the approved
 2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user
@@ -396,6 +465,21 @@ decision. New sources are `SRC-WERPC-128`, `SRC-WERPC-129`, `SRC-WERPC-130`, and
   and to resolve concrete identifiers only at the adapter edge, under a separate
   authorisation that admits entitlement evidence. Refresh when any cited page
   changes, or when the three pages converge.
+
+## Sources
+
+See [m0012 current source observations](m0012-source-coverage.md#current-source-observations) for SRC-WERPC-011, 049, 128, 136, 169 and 229–237. API model/pricing/rate, Claude costs/configuration/CLI and Codex product catalog/pricing pages were directly read on 2026-09-27. No publisher modification date was exposed in the read snapshots. Mutable aliases, feature gates, rollout dates and retirement dates are different metadata; list prices never prove effective account cost or access.
+
+### Historical source provenance
+
+- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`).
+- [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`, `SRC-WERPC-050`).
+- [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
+- [Model Selection Policy](../../../../.agents/governance/model-selection.md) is the current model-policy owner; `contracts/agent-model-fitness.json` remains part of the dated local observation.
+
+## Review and Freshness
+
+Refresh before material routing/budget decisions and on alias/snapshot, effort/tool/endpoint, context/output, configuration precedence, model retirement, price/region/tier, caching, rate/spend or entitlement changes. Preserve dated price observations rather than presenting them as permanent policy. The next owner needs an authorized exact-model parse and same-suite evaluation, independent adjudication and rollback before any local promotion; actual billing remains separate evidence.
 
 ## Related Documents
 

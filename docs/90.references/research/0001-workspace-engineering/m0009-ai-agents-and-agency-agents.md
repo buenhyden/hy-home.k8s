@@ -1,10 +1,10 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.2.1"
+version: "1.3.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0009"
 ---
@@ -13,6 +13,12 @@ artifact_id: "RES-0001-m0009"
 
 ## Overview
 
+This reference analyzes bounded agent responsibilities and provider-native definitions, then compares a reproducible Agency Agents pin, representative personas and inspected conversion/install code without adopting them.
+
+Current external analysis is based on primary-source bodies checked on 2026-09-27. Conditional design recommendations are explicitly separate from product facts. Every workspace result is `not observed in this cycle`; candidate file paths are selectors, not findings. Historical observations below keep their dates, identifiers, corrections and original anchors.
+
+### Historical overview and observation boundary
+
 This reference compares a governed AI-agent system with the pinned upstream
 `msitarzewski/agency-agents` prompt catalog. It treats roles, instructions,
 tools, isolation, evaluation, and review as a system; a persona file alone is
@@ -20,9 +26,17 @@ not an admitted agent. All external observations were checked on 2026-08-08.
 
 ## Reference Type
 
+External primary-source research and conditional follow-up investigation design. It is not a local implementation assessment, installation, policy change, release approval or evidence of provider/hosted/live behavior.
+
+### Historical reference classification
+
 Repository-static and pinned-upstream comparison research.
 
 ## Authority Boundary
+
+This member establishes bounded external source findings and conditional investigation design. Local profiles, registries, policies and provider notes remain their respective owners; they were read only for this authoring contract. No current implementation audit, adoption decision, provider experiment or live operation is performed. The inherited local statements below retain their historical meaning and are not renewed by current source checks.
+
+### Historical authority statement
 
 The [Agent Registry](../../../../.agents/roles/registry.json) owns current local role
 and permission membership; provider notes own native behavior. External catalogs are
@@ -32,13 +46,60 @@ delegation, and effectiveness remain `DEFER` without matching runtime evidence.
 
 ## Scope
 
+Current scope includes agent responsibilities, native definitions and pinned Agency Agents structure, roles and reuse boundaries (U28).
+
+### Historical scope
+
 It covers the agent-system control plane, the Agency Agents pin and comparison,
 and an adopt/adapt/reject decision rule. Model selection and memory controls
 are primary-owned by the sibling references.
 
 ## Definitions / Facts
 
-### AI-agent-systems baseline
+### Current external analysis
+
+#### Role and native definition boundaries
+
+`CLM-WERPC-017-121` separates persona (descriptive identity/style), role (responsibility and handoff), skill (reusable procedure), workflow (ordered coordination), tool permission (allowed effects) and provider-native definition (product-specific loading/configuration). None is interchangeable. `SRC-WERPC-011` documents Codex TOML's required `name`, `description` and `developer_instructions`; parent permissions and child approval constraints remain separate from prompt prose. `SRC-WERPC-007` documents Claude Markdown definitions with tool/MCP, permission, hooks, skills, memory and isolation options. Worktree isolation is not a full sandbox. Agent Skills metadata/loading (`SRC-WERPC-243`) provides procedure discovery, not authority or measured competence.
+
+The [provider comparison](m0003-provider-implementation-status.md#provider-surface-comparison) owns detailed product support. Same-name files, matching descriptions and role titles establish neither discovery/invocation nor effective denial, tool enforcement or expertise. A role needs bounded inputs, one accountable work owner, allowed tools/effects, completion evidence, review, escalation and handoff. These are conditional design criteria, not a new local permission system. Every current workspace result is `not observed in this cycle`.
+
+#### Agency agents pinned implementation
+
+`CLM-WERPC-017-122` (`SRC-WERPC-127`, `048`) uses commit `053ddbbf392a1688fc7043d81529f47ef2cf86c8`, committed 2026-09-22T02:38:51Z, checked 2026-09-27 with a nontruncated tree response and inspected bodies. Division directories contain descriptive Markdown personas; scripts provide conversion and installation. The MIT license names Copyright 2025 AgentLand Contributors, preserves copyright/permission notices and carries an AS IS warranty disclaimer. License presence does not certify prompt security, specialist competence or runtime behavior.
+
+`CLM-WERPC-017-124` (`SRC-WERPC-221`) records [convert.sh](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/convert.sh)'s Codex conversion, lines 171–190: it emits `name`, `description` and `developer_instructions`. It does not manufacture tool, sandbox or memory enforcement. `CLM-WERPC-017-125` (`SRC-WERPC-222`) records [install.sh](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/install.sh): tool/division/agent selection, dry-run/link/path options, Codex default `~/.codex/agents`, and copy/symlink operations. `cp` and `ln -sf` can overwrite same-name destinations; symlinks also propagate upstream edits into a loaded surface. Neither script was run. Flags and source inspection are not proof of safe execution or successful provider consumption.
+
+Upstream updates require a new full pin, relevant file/license/converter diff and renewed evaluation; mutable main and roster size do not prove quality. The retained `ebe9c99...` and `9f3e401...` historical baselines remain distinct evidence, and their disagreement is not silently adjudicated by this fresh comparison. Earlier claims that a branch was byte-identical to a historical pin remain withdrawn for the dates already recorded.
+
+#### Representative role fit
+
+`CLM-WERPC-017-123` (`SRC-WERPC-215`–`220`) compares six actually read personas at the current pin. Their descriptive `name`, `description`, `color`, `emoji` and `vibe` frontmatter grants no tool or permission boundary.
+
+| Inspected upstream file | Potential purpose | Fit, overlap and evidence needed before reuse |
+| --- | --- | --- |
+| `engineering/engineering-devops-automator.md` | Infrastructure/delivery automation | Can overlap CI, tooling and infrastructure ownership; test a bounded repository task, keep live effects operator-approved |
+| `engineering/engineering-sre.md` | Reliability/operations reasoning | Separate incident response, observability and implementation; check evidence/recovery quality rather than title |
+| `engineering/engineering-software-architect.md` | Structure and trade-off reasoning | Evaluate concern/requirement traceability and reviewable alternatives; architecture advice is not execution authority |
+| `engineering/engineering-technical-writer.md` | Documentation authoring | Separate source research, authored content and navigation ownership; check source fidelity and selected profile |
+| `security/security-architect.md` | Security design/threat boundaries | May overlap architecture/security review; use independent evaluation and least privilege, never infer safety from persona prose |
+| `testing/testing-reality-checker.md` | QA and acceptance skepticism | Evaluate concrete reproducible counterexamples and missed risks; self-reported confidence is not independent acceptance |
+
+This identifies useful comparison subjects, not current local gaps or an admission decision. Productivity claims and roster counts are author claims, not controlled quality measurements. The remaining catalog has not been exhaustively validated.
+
+#### Bounded selection and evaluation
+
+`CLM-WERPC-017-126` is a conditional strategy from the inspected catalog/scripts: start with a concrete task that existing responsibilities cannot satisfactorily cover; select the minimum candidate; review license, embedded instructions and overwrite/update behavior; adapt only bounded responsibilities into the local owner contract. Bulk installation saves initial copying but expands overlap, permissions ambiguity and update review. A selective adapter costs review effort but keeps file ownership and tool boundaries explicit. Reject or defer duplicated roles, unapproved effects or candidates without an evaluable need.
+
+Evaluate task accuracy, source fidelity, refusal/escalation, handoff completeness and regression risks with representative tasks and independent review. Keep discovery, effective model/settings, permissions, tool invocation and task quality as separate evidence dimensions. Define an admission threshold and a rollback/retirement route before reuse. A later failed evaluation or changed upstream pin should withhold admission or revert the scoped adapter change, not authorize destructive cleanup.
+
+Follow-up questions `Q-WERPC-151`–`155` ask for role/skill/permission separation, pin/license/overwrite review, actual responsibility overlap, native discovery/enforcement and quality/update/retirement evaluation. Candidate selectors are role registries, provider-native definition schemas, candidate source files and evaluation records; no user-global agent directory, installer, provider runtime or live infrastructure is inspected. Full contracts are in the [follow-up ledger](m0013-scope-application-index.md#follow-up-question-ledger); all results are `not observed in this cycle`.
+
+### Historical analysis and dated observations
+
+The following retained sections are historical evidence, including their dated local findings. They do not describe a current workspace observation.
+
+#### AI-agent-systems baseline
 
 The 2026-08-08 observation described a repository-static 12-role,
 four-provider-surface roster in `harness-catalog.md` and
@@ -56,7 +117,7 @@ configuration; Anthropic documents model/tool frontmatter, allow/deny controls,
 MCP scoping, and optional worktree isolation. These are product capabilities,
 not proof that either provider enforces this workspace's files.
 
-### Agency-agents baseline
+#### Agency-agents baseline
 
 > [!NOTE]
 > The rows below are observations at the dates their cycles record, not the
@@ -80,7 +141,7 @@ only; they were not executed.
 | MIT license                 | License text exists at the pin.                             | License counsel, attribution plan, or approval to copy content.                       |
 | README marketing            | It is upstream author prose.                                | Production readiness, automatic update behavior, or a workspace admission decision.   |
 
-### Adopt, adapt, or reject rule
+#### Adopt, adapt, or reject rule
 
 | Decision       | Required condition                                                                                                                                    | Current result                                                                         |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -88,7 +149,7 @@ only; they were not executed.
 | Adapt          | Only bounded role language is useful; repository rules, tool/sandbox limits, evidence lanes, and local canonical owners replace external assumptions. | Existing local roles remain the canonical adapted roster.                              |
 | Reject / defer | The proposal duplicates an existing role, assumes unapproved tools/authority, lacks a benchmark, or requires runtime proof not collected.             | Bulk import, installer execution, and unreviewed prompt copying are rejected/deferred. |
 
-### Agent-system admission and operating rules
+#### Agent-system admission and operating rules
 
 1. Classify the work by reversibility, sensitivity, external effect, context,
    and verification burden before assigning a role.
@@ -103,7 +164,7 @@ only; they were not executed.
 5. Promote reusable conclusions only after source, validation, and review
    evidence are captured by a canonical repository owner.
 
-### Confidence, promotion, and rollback
+#### Confidence, promotion, and rollback
 
 An agent output is a proposal until its cited source, repository observation,
 and required validation/review lane agree. Promotion means updating the
@@ -112,7 +173,7 @@ evaluation, security concern, incorrect routing, or stale external pin rolls
 back by withholding admission or reverting the isolated approved change; it
 does not authorize external cleanup or provider configuration changes.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -160,12 +221,29 @@ pinned commit or the local role count changes.
 
 ## Sources
 
+### Current primary sources
+
+- Native definition `SRC-WERPC-007`, `011`, `243`: official Claude/Codex subagent and Agent Skills bodies checked 2026-09-27; no local discovery or execution claim.
+- `SRC-WERPC-127`, `048`: [Agency Agents tree](https://github.com/msitarzewski/agency-agents/tree/053ddbbf392a1688fc7043d81529f47ef2cf86c8) and [MIT license](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/LICENSE), checked 2026-09-27; commit 2026-09-22T02:38:51Z; tree response nontruncated.
+- `SRC-WERPC-215`–`220`: six role bodies listed above at that pin, checked 2026-09-27; persona analysis only, no complete roster-quality claim.
+- `SRC-WERPC-221`, `222`: [converter](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/convert.sh) and [installer](https://github.com/msitarzewski/agency-agents/blob/053ddbbf392a1688fc7043d81529f47ef2cf86c8/scripts/install.sh), checked 2026-09-27; converter lines 171–190; installer options lines 1–55, copy/link lines 281–282 and default Codex path lines 1028–1040. Inspected only, never executed. Current tree comparison is changed relative to historical pins.
+
+The [current source observations](m0012-source-coverage.md#current-source-observations) own complete URL, revision, selector, claim and refresh metadata. Dates above are source checks, not publication dates.
+
+### Historical sources
+
 - [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`).
 - [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
 - [Agency Agents pinned tree](https://github.com/msitarzewski/agency-agents/tree/ebe9c99acb5c96f9468de368d8bead775387d1a7), [MIT license](https://github.com/msitarzewski/agency-agents/blob/ebe9c99acb5c96f9468de368d8bead775387d1a7/LICENSE), and inspected converter/installer sources, checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-047`–`048`).
 - The [source ledger](m0012-source-coverage.md#source-register) records claim limits and refresh triggers.
 
 ## Review and Freshness
+
+### Current review boundary
+
+Recheck when cited methods, product plans/schemas, source revisions, permission/export behavior or an actual adoption proposal changes. Current external claims, source refresh outcomes, workspace observations and document QA are independent axes. Historical statuses are not promoted by a new external check. Document QA results belong to the owning Task; this member claims no provider-runtime or live evidence.
+
+### Historical refresh record
 
 Refresh after a roster, adapter, evaluation, tool/sandbox boundary, Agency
 Agents pin/license, or upstream conversion/install-script change. Re-resolve
@@ -183,7 +261,7 @@ publish no last-modified date, so their unchanged result is content identity
 rather than a publisher signal and is a weaker class of evidence than the pinned
 commit comparison.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**; the heading
 retains the approved package date and does not backdate the source review. It
@@ -219,7 +297,7 @@ contract plus exact repo-static roster, contract, evaluation, and adapter
 selectors. Owner: Stage 00 harness and roster-admission contracts. Refresh when
 a cited provider agent contract or the local roster/adapter contract changes.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-026` only, checked on **2026-08-14**. It continues not
@@ -268,7 +346,7 @@ Agents pin changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-02`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment re-observed the two agent-system rows at workspace baseline
 `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The allocation slice assigns no
@@ -323,7 +401,7 @@ Agency Agents comparison remain separate from local adoption authority.
   admission before executing a converter or installer. Refresh when the pin,
   license, inspected scripts, or adoption policy changes.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the two agent-system owners under the approved
 2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct
@@ -389,7 +467,7 @@ and `CLM-WERPC-016-04`.
   reuse, with licence, security, overwrite-safety, and admission review
   unchanged as prerequisites.
 
-### 2026-09-07 upstream currency re-observation
+#### 2026-09-07 upstream currency re-observation
 
 This entry is additive. The pinned-tree comparison, its licence check and its
 script inspection keep their original wording and dates; the branch-currency
@@ -421,7 +499,7 @@ premise was already withdrawn on 2026-09-05 and stays withdrawn.
   adjudicated here. Refresh when a role is proposed for adoption, or when the
   licence field changes.
 
-### 2026-09-10 role-admission trigger and upstream re-observation
+#### 2026-09-10 role-admission trigger and upstream re-observation
 
 This entry is additive. The pinned-tree comparison, its licence check and its
 script inspection keep their original wording and dates, and the

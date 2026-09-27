@@ -1,10 +1,10 @@
 ---
 title: "90.references/research"
-version: "0.1.1"
+version: "0.1.2"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-27"
 layer: "references"
 ---
 # 90.references/research
@@ -70,9 +70,9 @@ research/
 | [0001-workspace-engineering/](./0001-workspace-engineering/) | 후속 workspace engineering research pack | 연구 routing과 관찰 날짜가 붙은 coverage만 담는다. 현재 권한은 정본 소유자에게 있다. |
 | [0002-archive-retention-and-provenance/](./0002-archive-retention-and-provenance/) | archive 보존과 출처 research pack | 연구 routing과 관찰 날짜가 붙은 증거만 담는다. 현재 권한은 정본 소유자에게 있다. |
 
-각 pack README는 보고서 lifecycle과 출처 coverage를 포함한 자신의
-`## Report Index`를 소유한다. 이 collection은 pack만 나열하며 document-profile
-registry에 Current pack을 선언하지 않는다.
+각 pack README는 보고서별 연구 책임을 안내하는 `## Report Index`를 소유한다.
+보고서의 lifecycle·관찰일은 각 보고서가, 출처·주장·요구사항 대응은 pack의
+해당 보고서가 소유한다. 이 collection은 pack 탐색만 안내한다.
 
 현재 research pack은 `research/####-<slug>/`에만 있다. 네 자리 번호는 Research
 안에서 유일하고 slug는 의미 있는 kebab-case이며 날짜가 아니다. pack 안의 보고서는
@@ -102,7 +102,8 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
   형식을 쓴다.
 - 상위 reference로 가는 링크는 `../README.md`를 쓴다.
 - 정본 소유 stage는 `../../../.agents/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, `../../05.operations/`를 쓴다.
-- 작성된 research reference 파일에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.
+- 이 collection README에서 저장소 최상위 소스를 가리킬 때는 `../../../<path>`를 쓴다.
+- pack README와 member는 한 단계 더 깊으므로 저장소 최상위에 `../../../../<path>`, stage에 `../../../<stage>/`를 쓴다. 최종 파일 위치에서 상대 경로를 계산한다.
 - 선택 사항이거나 계획 중인 대상 경로는 대상이 생길 때까지 code literal로 둔다.
 
 ### Source Priority
@@ -122,10 +123,6 @@ market scan 발견은 권위가 없다. 맥락, 지형, 용어를 파악하는 �
 ## Related Documents
 
 - [90.references README](../README.md)
-- [Workspace Engineering Research Pack](./0001-workspace-engineering/README.md)
-- [Archive Retention and Provenance Research Pack](./0002-archive-retention-and-provenance/README.md)
-- [Archive index](../../98.archive/README.md)는 이 collection 이전에 있던 폐기된
-  pack을 안내한다. 활성 문서는 그 본문에 직접 링크하지 않는다.
 - [Research Reference Template](../../99.templates/templates/references/research.template.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../../.agents/README.md)
