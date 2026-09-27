@@ -2,7 +2,7 @@
 title: "Retain Closed Packages"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -29,7 +29,7 @@ archiving the finished packages on 2026-09-27 (chooser: request owner; choice:
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-CPR-001 | Record the approval and survey each unit | platform | Done | Two units surveyed; see the survey below | This Task |
-| WORK-002 | VAL-CPR-002, VAL-CPR-003 | Retain both packages in `completed/` | platform | Queued | Pending the move commit | Staged QA and archive gates |
+| WORK-002 | VAL-CPR-002, VAL-CPR-003 | Retain both packages in `completed/` | platform | In progress | Pending the move commit | Staged QA and archive gates |
 | WORK-003 | VAL-CPR-003 | Record the results and close this package | platform | Queued | Pending | Staged QA |
 
 ## Approval and Safety Boundaries
@@ -61,5 +61,5 @@ archiving the finished packages on 2026-09-27 (chooser: request owner; choice:
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Done | Survey above |
-| [WORK-002](../plan.md#work-breakdown) | Queued | Pending the move commit |
+| [WORK-002](../plan.md#work-breakdown) | In progress | Pending the move commit |
 | [WORK-003](../plan.md#work-breakdown) | Queued | Pending |

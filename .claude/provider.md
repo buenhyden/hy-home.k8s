@@ -74,7 +74,7 @@ every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
 structured write tools for `read-only-evidence`, and delivery of the pre-edit
 hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
-(`docs/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+(`docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
 owns that evidence.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.

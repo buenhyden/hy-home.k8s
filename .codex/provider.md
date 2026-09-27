@@ -65,7 +65,7 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The SPEC-0086 Task (`docs/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+  or hook enforcement. The SPEC-0086 Task (`docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
   owns that attempt's evidence; SPEC-0072's Task recorded it first and
   transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
   Next owner: the user/operator for a reviewed project/hook trust state and an

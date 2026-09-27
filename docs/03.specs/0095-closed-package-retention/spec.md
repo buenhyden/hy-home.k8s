@@ -2,7 +2,7 @@
 title: "Closed Package Retention Technical Specification"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0095"
 
 ## Overview
 
-[SPEC-0094](../0094-finished-package-retention/spec.md) retained eight finished
+[SPEC-0094](../../98.archive/completed/03.specs/0094-finished-package-retention/spec.md) retained eight finished
 packages and deferred SPEC-0086, because SPEC-0086 closed in the same pull
 request and had no default-branch envelope yet. PR #102 merged both on
 2026-09-27. SPEC-0086 and SPEC-0094 are now `done`, with every member terminal,
