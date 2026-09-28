@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.13"
+version: "1.6.14"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -216,6 +216,8 @@ Binding the Claude role models and reasoning effort is owned by
 Granting search to every Claude role and retaining SPEC-0095 through
 SPEC-0097 is owned by
 [SPEC-0098](../03.specs/0098-claude-search-grant-and-retention/spec.md).
+Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
+[SPEC-0101](../03.specs/0101-closed-spec-retention/spec.md).
 
 ## Traceability
 
