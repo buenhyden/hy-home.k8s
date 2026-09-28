@@ -1,8 +1,8 @@
 ---
 title: "Retain Closed Spec Packages"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-28"
 layer: "specs"
@@ -26,7 +26,7 @@ asked for SPEC-0098, SPEC-0099, and SPEC-0100 to be closed and then retained.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-CSP-001, VAL-CSP-002 | Retain the three packages | platform | Queued | Pending | This Task |
+| WORK-001 | VAL-CSP-001, VAL-CSP-002 | Retain the three packages | platform | In progress | Moved under envelope `4046bb71` | This Task |
 | WORK-002 | VAL-CSP-001 | Record the evidence and close | platform | Queued | Pending | This Task |
 
 ## Approval and Safety Boundaries

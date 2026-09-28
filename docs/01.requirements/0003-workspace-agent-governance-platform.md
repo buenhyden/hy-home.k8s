@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.14"
+version: "1.6.15"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -215,13 +215,13 @@ Binding the Claude role models and reasoning effort is owned by
 [SPEC-0097](../98.archive/completed/03.specs/0097-claude-model-and-effort-binding/spec.md).
 Granting search to every Claude role and retaining SPEC-0095 through
 SPEC-0097 is owned by
-[SPEC-0098](../03.specs/0098-claude-search-grant-and-retention/spec.md).
+[SPEC-0098](../98.archive/completed/03.specs/0098-claude-search-grant-and-retention/spec.md).
 Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 [SPEC-0101](../03.specs/0101-closed-spec-retention/spec.md).
 
 ## Traceability
 
-Current Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 is owned by [SPEC-0100](../03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
+Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was delivered by [SPEC-0100](../98.archive/completed/03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
 
 ### Lifecycle Traceability
 
