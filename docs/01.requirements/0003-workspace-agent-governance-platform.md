@@ -208,11 +208,14 @@ Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
 through SPEC-0093 is owned by
 [SPEC-0094](../98.archive/completed/03.specs/0094-finished-package-retention/spec.md).
 Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
-[SPEC-0095](../03.specs/0095-closed-package-retention/spec.md).
+[SPEC-0095](../98.archive/completed/03.specs/0095-closed-package-retention/spec.md).
 Rebinding the Codex `top` and `worker` model tiers is owned by
-[SPEC-0096](../03.specs/0096-codex-model-tier-rebinding/spec.md).
+[SPEC-0096](../98.archive/completed/03.specs/0096-codex-model-tier-rebinding/spec.md).
 Binding the Claude role models and reasoning effort is owned by
-[SPEC-0097](../03.specs/0097-claude-model-and-effort-binding/spec.md).
+[SPEC-0097](../98.archive/completed/03.specs/0097-claude-model-and-effort-binding/spec.md).
+Granting search to every Claude role and retaining SPEC-0095 through
+SPEC-0097 is owned by
+[SPEC-0098](../03.specs/0098-claude-search-grant-and-retention/spec.md).
 
 ## Traceability
 

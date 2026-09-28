@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -83,10 +83,10 @@ the newest generation of its family. Only supervisor and architect bind
 `fable`. A running session keeps the definitions it loaded at start, so verify
 a changed projection from a new session. Native macOS and Linux builds from
 2.1.117 removed `Grep` and `Glob`, moved search into Bash, and drop the unknown
-names silently. Roles without `Bash` therefore have no search tool on those
-builds. The SPEC-0097 Task
-(`docs/03.specs/0097-claude-model-and-effort-binding/tasks/tsk-0001-bind-claude-model-and-effort.md`)
-owns that evidence and names the owner of the tool gap.
+names silently. SPEC-0098 therefore gives every role's Claude scope `Bash`, and
+`Grep` and `Glob` stay for the builds that still ship them. The two read-only
+roles that held no shell now confine it to read-only repository search by
+policy. The SPEC-0097 and SPEC-0098 Tasks own that evidence.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

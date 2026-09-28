@@ -899,19 +899,20 @@ class RetiredSurfaceTests(unittest.TestCase):
 
 
 class ReadOnlyShellScopeTests(unittest.TestCase):
-    """A read-only evidence role carries a shell only where it needs one.
+    """Every Claude role can search the repository on a native build.
 
-    The class withholds the structured write tools on Claude but leaves a shell
-    available, and a shell can write. The registry's per-role native scope
-    override is therefore the only mechanism that narrows a role here, and the
-    determination behind each narrowing is recorded in the owning Task.
+    Native macOS and Linux builds from Claude Code 2.1.117 removed the `Grep`
+    and `Glob` tools and moved search into the Bash tool, and they drop the
+    unknown names silently. A role without `Bash` therefore has no search tool
+    there, so every Claude scope carries `Bash`. `Grep` and `Glob` stay for the
+    builds that still ship them. A shell can write, so a read-only role's
+    restraint is policy that its guardrails state, observed advisorily by the
+    write guard, not a withheld tool.
     """
 
-    # A role needs a shell when its required skills instruct running a tool, or
-    # when its stated evidence form is a command result. The roles below need
-    # none: their skills are analytical document procedures and their own
-    # guardrails restrict them to static review.
-    NO_SHELL_ROLES = ("incident-responder", "observability-reviewer")
+    # These roles held no shell before SPEC-0098. Their guardrails now confine
+    # the shell to read-only repository search.
+    SEARCH_ONLY_SHELL_ROLES = ("incident-responder", "observability-reviewer")
 
     @classmethod
     def setUpClass(cls):
@@ -958,29 +959,34 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
 
         self.assertEqual(scopes["read-only-evidence"], ["Read", "Grep", "Glob", "Bash"])
 
-    def test_roles_needing_no_shell_declare_a_narrowed_native_scope(self):
-        for role_id in self.NO_SHELL_ROLES:
-            with self.subTest(role=role_id):
-                role = self.role(role_id)
-
-                self.assertEqual(role["permission_class"], "read-only-evidence")
-                override = role.get("native_scope_override", {}).get("claude")
-                self.assertIsNotNone(
-                    override, f"{role_id} must declare a narrowed Claude scope"
+    def test_every_claude_role_resolves_a_search_tool(self):
+        scopes = self.claude["permission_scopes"]
+        for role in self.registry["roles"]:
+            with self.subTest(role=role["id"]):
+                scope = (
+                    role.get("native_scope_override", {}).get("claude")
+                    or scopes[role["permission_class"]]
                 )
-                self.assertNotIn("Bash", override)
+                self.assertIn("Bash", scope)
 
-    def test_the_narrowed_projection_matches_its_override(self):
-        for role_id in self.NO_SHELL_ROLES:
-            with self.subTest(role=role_id):
-                role = self.role(role_id)
-                override = role["native_scope_override"]["claude"]
-                projection = (ROOT / role["projections"]["claude"]).read_text(
+    def test_every_claude_projection_carries_bash(self):
+        import re
+
+        for role in self.registry["roles"]:
+            with self.subTest(role=role["id"]):
+                text = (ROOT / role["projections"]["claude"]).read_text(
                     encoding="utf-8"
                 )
+                tools = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
+                self.assertIn("Bash", tools.split(", "))
 
-                self.assertIn(f'tools: "{", ".join(override)}"', projection)
-                self.assertNotIn("Bash", projection)
+    def test_search_only_shell_roles_state_the_limit(self):
+        for role_id in self.SEARCH_ONLY_SHELL_ROLES:
+            with self.subTest(role=role_id):
+                body = (ROOT / f".agents/roles/{role_id}.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertIn("read-only repository search", body)
 
 
 if __name__ == "__main__":

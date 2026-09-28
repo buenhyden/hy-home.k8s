@@ -113,6 +113,33 @@ class QaTests(unittest.TestCase):
         with self.qa.repository_snapshot(linked, staged=True) as snapshot:
             self.assertEqual((snapshot / "file.txt").read_text(), "original\n")
 
+    def test_snapshot_preserves_in_progress_merge_parent(self):
+        primary = self.git("symbolic-ref", "--short", "HEAD").decode().strip()
+        self.git("switch", "-q", "-c", "side")
+        (self.root / "side.txt").write_text("side\n")
+        self.git("add", "side.txt")
+        self.git("commit", "-qm", "side")
+        side = self.git("rev-parse", "HEAD").strip()
+        self.git("switch", "-q", primary)
+        (self.root / "main.txt").write_text("main\n")
+        self.git("add", "main.txt")
+        self.git("commit", "-qm", "main")
+        self.git("merge", "--no-commit", "--no-ff", "side")
+
+        for staged in (False, True):
+            with self.subTest(staged=staged):
+                with self.qa.repository_snapshot(self.root, staged=staged) as snapshot:
+                    merge_head = self.qa.git(
+                        snapshot,
+                        "rev-parse",
+                        "--path-format=absolute",
+                        "--git-path",
+                        "MERGE_HEAD",
+                    ).strip()
+                    self.assertEqual(
+                        Path(merge_head.decode()).read_bytes(), side + b"\n"
+                    )
+
     def test_full_snapshot_handles_indexed_leaf_replaced_by_directory(self):
         adapter = self.root / ".claude/skills"
         adapter.parent.mkdir()

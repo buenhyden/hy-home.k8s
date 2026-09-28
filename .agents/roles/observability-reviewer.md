@@ -1,10 +1,10 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-27"
 ---
 
 # observability-reviewer Responsibility
@@ -52,11 +52,13 @@ coverage and wiring. Reading live telemetry is not this role.
 
 - No live cluster scraping, querying, or dashboard probing; manifest-static
   review only.
-- This role holds no shell, and the registry narrows the class default to say
-  so. Its subject puts live telemetry closer to hand than any other review, and
-  a live reading answers a different question from the desired state under
-  review; withholding the tool is what keeps the two apart, since the write
-  guard observes a shell rather than stopping it.
+- This role's shell exists only for read-only repository search, because
+  native Claude builds moved search from the `Grep` and `Glob` tools into Bash.
+  Its subject puts live telemetry closer to hand than any other review, and a
+  live reading answers a different question from the desired state under
+  review, so never use the shell to query a cluster, scrape an endpoint, or
+  probe a dashboard. This limit is policy: the write guard observes a shell
+  rather than stopping it, so no tool withholding enforces it.
 - Stop the review when a conclusion requires live cluster or dashboard access,
   exposes secret material, or crosses into security isolation judgment.
 
