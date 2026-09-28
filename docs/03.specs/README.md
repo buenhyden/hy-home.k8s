@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.7"
+version: "0.7.9"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -72,18 +72,14 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-├── 0098-claude-search-grant-and-retention/
-├── 0099-workspace-engineering-research-refresh/
-├── 0100-archive-lifecycle-standardization/
+├── 0101-closed-spec-retention/
 └── README.md
 ```
 
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0098-claude-search-grant-and-retention/](./0098-claude-search-grant-and-retention/) | Claude 검색 도구 허용과 package 보존 |
-| [0099-workspace-engineering-research-refresh/](./0099-workspace-engineering-research-refresh/) | 기존 workspace engineering pack의 외부 연구 갱신 및 후속 조사 설계 |
-| [0100-archive-lifecycle-standardization/](./0100-archive-lifecycle-standardization/) | Archive 수명주기 표준화의 변경 범위·수용 기준과 검증 증거 |
+| [0101-closed-spec-retention/](./0101-closed-spec-retention/) | 완료된 SPEC-0098–0100 package 보존 |
 
 ## Authoring Workflow
 

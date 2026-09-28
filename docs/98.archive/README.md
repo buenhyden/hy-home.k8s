@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.6"
+version: "0.7.7"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "archive"
 ---
 
@@ -194,6 +194,9 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0095-closed-package-retention`](./completed/03.specs/0095-closed-package-retention) | `fc469fd139e6b92d98cc8aabeb3f3e7141f18a54:docs/03.specs/0095-closed-package-retention` |
 | [`completed/03.specs/0096-codex-model-tier-rebinding`](./completed/03.specs/0096-codex-model-tier-rebinding) | `fc469fd139e6b92d98cc8aabeb3f3e7141f18a54:docs/03.specs/0096-codex-model-tier-rebinding` |
 | [`completed/03.specs/0097-claude-model-and-effort-binding`](./completed/03.specs/0097-claude-model-and-effort-binding) | `fc469fd139e6b92d98cc8aabeb3f3e7141f18a54:docs/03.specs/0097-claude-model-and-effort-binding` |
+| [`completed/03.specs/0098-claude-search-grant-and-retention`](./completed/03.specs/0098-claude-search-grant-and-retention) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0098-claude-search-grant-and-retention` |
+| [`completed/03.specs/0099-workspace-engineering-research-refresh`](./completed/03.specs/0099-workspace-engineering-research-refresh) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0099-workspace-engineering-research-refresh` |
+| [`completed/03.specs/0100-archive-lifecycle-standardization`](./completed/03.specs/0100-archive-lifecycle-standardization) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0100-archive-lifecycle-standardization` |
 
 ### Retention Assessment
 
