@@ -1,6 +1,6 @@
 ---
 title: "Archive Lifecycle Standardization Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0100-PLAN-0001"
 
 ## Global Constraints
 
-Inherit the [Spec](spec.md)'s non-destructive scope. The user approved changing current Spec/Plan/Task `done` to `completed` on 2026-09-28; migrate that spelling without changing terminal meaning or other states. Do not accept an ADR, remove or rewrite Archive material, access live systems or secrets, or push/merge. Preserve unrelated work, exact frozen Git objects and the existing QA gates. Repository-static evidence never proves live behavior.
+Inherit the [Spec](spec.md)'s non-destructive scope. The user approved changing current Spec/Plan/Task `done` to `completed` on 2026-09-28; migrate that spelling without changing terminal meaning or other states. The original implementation scope did not authorize accepting an ADR, removing or rewriting Archive material, accessing live systems or secrets, or pushing/merging; the later publication is recorded in the Task. Preserve unrelated work, exact frozen Git objects and the existing QA gates. Repository-static evidence never proves live behavior.
 
 ## Overview
 
@@ -21,7 +21,7 @@ Inspect and align the current implementation of [ADR-0040](../../02.architecture
 
 ## Context
 
-The observed baseline is `d2296de9ea66ea80c27fcc965c21d552febb057d` on the managed detached worktree. The baseline Registry families use `done`; the user has since approved `completed` as the same terminal meaning for current Spec/Plan/Task. ADR-0040's Archive disposition semantics stay intact. The Incident profile includes `closed`. Stage 90 research pack `0002-archive-retention-and-provenance` owns external-source evidence; SPEC-0099 owns workspace-engineering research, and SPEC-0095–0098 concern other retention/provider work.
+The original implementation baseline was `d2296de9ea66ea80c27fcc965c21d552febb057d` on a managed detached worktree; the Task records later publication. The baseline Registry families use `done`; the user has since approved `completed` as the same terminal meaning for current Spec/Plan/Task. ADR-0040's Archive disposition semantics stay intact. The Incident profile includes `closed`. Stage 90 research pack `0002-archive-retention-and-provenance` owns external-source evidence; SPEC-0099 owns workspace-engineering research, and SPEC-0095–0098 concern other retention/provider work.
 
 ## Goals & In-Scope
 
@@ -62,7 +62,7 @@ Rollback is a reviewed forward correction of only this work's mutable current fi
 
 ## Completion Criteria
 
-Every in-scope acceptance criterion has actual, snapshot-specific evidence; S01–S16 and V01–V40 have applied/deferred/not-applicable dispositions; independent review and required full QA have no unresolved failure. Otherwise the acceptance remains open with a named next owner. New SPEC-0100 files retain their legal initial draft/draft/queued frontmatter until real lifecycle transitions are evidenced; completing local editing alone neither promotes them nor approves Archive disposition.
+Every in-scope acceptance criterion has actual, snapshot-specific evidence; S01–S16 and V01–V40 have applied/deferred/not-applicable dispositions; independent review and required full QA have no unresolved failure. Otherwise the acceptance remains open with a named next owner. The published SPEC-0100 files retain their legal initial draft/draft/queued frontmatter until real lifecycle transitions are evidenced; publication alone neither promotes them nor approves Archive disposition.
 
 ## Traceability
 
