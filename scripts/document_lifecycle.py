@@ -913,6 +913,7 @@ def document_from_text(
     text: str,
     *,
     retired_types: frozenset[str] | None = None,
+    legacy_completion: bool = False,
 ) -> LifecycleDocument:
     """Classify one document and extract only its registry-owned status."""
 
@@ -979,6 +980,23 @@ def document_from_text(
             status=None,
             state_issue="frontmatter status is missing or not a string",
         )
+    if status == "done" and selected_profile.profile_id in {
+        "sdlc/spec",
+        "sdlc/plan",
+        "sdlc/task",
+    }:
+        domain = selected_profile.lifecycle_domain
+        if (
+            domain is not None
+            and domain.validation_class("completed") == "terminal"
+            and domain.validation_class("done") is None
+        ):
+            from archive_dispositions import retention_class_of
+
+            if legacy_completion or retention_class_of(registry, path) is not None:
+                # Compare old evidence against the current spelling; the source
+                # text and its Git object remain byte-for-byte unchanged.
+                status = "completed"
     if selected_profile.profile_id == "archive/migration" and status == "accepted":
         # Only byte-verified historical controls use the predecessor spelling.
         # The registry domain continues to reject accepted for future records.

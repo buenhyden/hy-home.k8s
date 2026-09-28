@@ -2,7 +2,7 @@
 title: "Dedicated Kubernetes Router and Host Baseline Implementation Plan"
 version: "0.3.0"
 type: "sdlc/plan"
-status: "done"
+status: "completed"
 owner: "platform"
 updated: "2026-09-24"
 layer: "specs"

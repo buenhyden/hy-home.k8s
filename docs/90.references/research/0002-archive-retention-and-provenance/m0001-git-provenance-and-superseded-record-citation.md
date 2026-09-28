@@ -1,10 +1,10 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-28"
 layer: "references"
 artifact_id: "RES-0002-m0001"
 ---
@@ -134,6 +134,26 @@ Refresh when a cited Git, HTTP, JSON Schema, or CommonMark section changes, when
 PREMIS becomes reachable and an object, event, agent, or rights distinction is
 needed, or when ADR-0039 or its successor revises retention or citation. Current
 truth stays with the governance and registry owners named above.
+
+### 2026-09-28 Retention and Provenance Addendum
+
+The earlier 2026-09-15 findings and source results above remain their dated evidence. The sources below were read directly on 2026-09-28 to assess the proposed Archive standard; they do not grant repository approval. The current local decision is [ADR-0040](../../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md).
+
+- Digital Preservation Coalition describes iterative retention review, documented responsibility, timing, circumstances and approval for de-accession, and retaining a catalogue entry and process record after disposal. Acquisition and appraisal considers context, value, long-term cost and access. Neither guide prescribes a Git layout, a fixed retention period, local status enum or exact-byte rule. Age alone is not an appraisal result.
+- AWS describes an ADR's context, decision and consequences, and a later ADR superseding an accepted decision. Its advice to mark an old ADR superseded must be reconciled with this repository's frozen exact-byte bodies; current judgment in the Archive index and successor decision is a local choice, not an AWS-prescribed form.
+- GitHub's README guide supports purpose, getting started, help, maintainers and relative links. It does not require this repository's one-list navigation owner or prohibit every direct document link.
+- Git distinguishes `<rev>:<path>` (a blob or tree within a revision) from `:<path>` (an index blob). `git ls-tree -r -z` exposes tree membership with mode, type, object and path; `git ls-files --stage` exposes index mode, object and stage, while `--eol` describes index/worktree conversion. Attributes may transform checkout bytes through text/eol, working-tree encoding and clean/smudge filters. A worktree byte difference alone therefore does not prove a source Git object changed. Comparing source and retained Git objects, modes and member sets before diagnosing checkout differences is this repository's design inference, not an external requirement.
+
+| Source | URL | Checked | Result and limit |
+| --- | --- | --- | --- |
+| DPC, Retention and review | https://www.dpconline.org/handbook/organisational-activities/retention-and-review | 2026-09-28 | Read directly; no local Git or status prescription |
+| DPC, Acquisition and appraisal | https://www.dpconline.org/handbook/organisational-activities/acquisition-and-appraisal | 2026-09-28 | Read directly; appraisal principles, no age-only disposal |
+| AWS, ADR process | https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html | 2026-09-28 | Read directly; old-ADR marking differs from frozen local bodies |
+| GitHub, About READMEs | https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes | 2026-09-28 | Read directly; no universal deep-link prohibition |
+| Git, gitrevisions | https://git-scm.com/docs/gitrevisions | 2026-09-28 | Read directly; distinguishes revision path from index path |
+| Git, git-ls-tree | https://git-scm.com/docs/git-ls-tree | 2026-09-28 | Read directly; tree mode/type/object/path with recursive NUL output |
+| Git, git-ls-files | https://git-scm.com/docs/git-ls-files | 2026-09-28 | Read directly; stage and eol expose index/worktree facts |
+| Git, gitattributes | https://git-scm.com/docs/gitattributes | 2026-09-28 | Read directly; path attributes and checkout transformations |
 
 ## Related Documents
 

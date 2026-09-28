@@ -108,13 +108,25 @@ def read_regular_file(
             total += len(chunk)
             if total > max_bytes:
                 raise BoundedInputError("input exceeds its byte budget")
+        contents = b"".join(chunks)
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        verified = 0
+        while verified < total:
+            chunk = os.read(descriptor, min(65536, total - verified))
+            if not chunk or chunk != contents[verified : verified + len(chunk)]:
+                raise BoundedInputError("input changed during read")
+            verified += len(chunk)
+        if os.read(descriptor, 1):
+            raise BoundedInputError("input changed during read")
+        # ponytail: two matching reads are observable stability, not an atomic
+        # snapshot; use a Git object when a concurrent writer is adversarial.
         final = os.fstat(descriptor)
         entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
         if stable_file_state(metadata) != stable_file_state(final) or stable_file_state(
             final
         ) != stable_file_state(entry):
             raise BoundedInputError("input changed during read")
-        return metadata, b"".join(chunks)
+        return metadata, contents
     except OSError as exc:
         raise BoundedInputError("input could not be read safely") from exc
     finally:

@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.12"
+version: "1.6.13"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -19,7 +19,7 @@ This document owns the current user requirements for agent execution and documen
 [Stage 99](../99.templates/README.md) owns document form. The current governance and common QA implementation is owned by
 [ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) and
 [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md);
-the wider document convergence and unfinished dispositions are owned by [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
+the completed document convergence is recorded by [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), whose remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084. Current ownerless obligations remain identified below rather than assigned to that completed package.
 This Requirement is not a copy of the implementation inventory, the provider roster, or a one-off migration plan.
 
 ## Vision
@@ -215,6 +215,8 @@ Binding the Claude role models and reasoning effort is owned by
 [SPEC-0097](../03.specs/0097-claude-model-and-effort-binding/spec.md).
 
 ## Traceability
+
+Current Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 is owned by [SPEC-0100](../03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
 
 ### Lifecycle Traceability
 

@@ -110,7 +110,7 @@ class RegistryGenerationTests(unittest.TestCase):
     def test_registry_binds_each_class_to_its_source_states(self) -> None:
         bound = {item.name: item for item in REGISTRY.retention_classes}
         self.assertEqual(set(bound), {"completed", "superseded", "retired", "resolved"})
-        self.assertEqual(bound["completed"].admitted_states, frozenset({"done"}))
+        self.assertEqual(bound["completed"].admitted_states, frozenset({"completed"}))
         self.assertEqual(bound["superseded"].admitted_states, frozenset({"superseded"}))
         self.assertIn("withdrawn", bound["retired"].admitted_states)
         self.assertEqual(bound["resolved"].admitted_states, frozenset({"closed"}))

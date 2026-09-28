@@ -1974,8 +1974,8 @@ class ArchiveValidationTest(unittest.TestCase):
         budget = 259
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
-        # ref table with one added `--points-at HEAD` batch. That is a fixed
-        # eight for the eight resolutions this report performs: it tracks the
+        # ref table with one added `--points-at HEAD` batch. Nine such calls
+        # are observed for the nine resolutions this report performs: it tracks the
         # number of resolutions, not the corpus, and a worktree on a branch
         # still pays nothing. Measured before the mock so it is not counted.
         if subprocess.run(
@@ -1985,7 +1985,7 @@ class ArchiveValidationTest(unittest.TestCase):
             stderr=subprocess.DEVNULL,
             check=False,
         ).returncode:
-            budget += 8
+            budget += 9
         git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):

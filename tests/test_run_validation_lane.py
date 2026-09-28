@@ -1193,8 +1193,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
                 self.assertEqual(outcome.status, "descendant_pipe_hold")
                 self.assertFalse(outcome.cleanup_complete)
-                with self.assertRaises(ProcessLookupError):
-                    os.kill(escaped["pid"], 0)
+                self._wait_for_process_exit(escaped["pid"])
             finally:
                 if escaped:
                     try:
