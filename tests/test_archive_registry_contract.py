@@ -98,7 +98,7 @@ class RetentionClassTests(unittest.TestCase):
         self.assertEqual(
             {name: item.admitted_states for name, item in classes.items()},
             {
-                "completed": frozenset({"done"}),
+                "completed": frozenset({"completed"}),
                 "superseded": frozenset({"superseded"}),
                 "retired": frozenset(
                     {"withdrawn", "retired", "rejected", "invalidated"}

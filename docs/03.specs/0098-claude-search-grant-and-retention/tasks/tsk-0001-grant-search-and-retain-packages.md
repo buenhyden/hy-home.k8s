@@ -2,7 +2,7 @@
 title: "Grant Search and Retain Packages"
 version: "0.3.0"
 type: "sdlc/task"
-status: "done"
+status: "completed"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"

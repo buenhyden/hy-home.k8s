@@ -49,6 +49,41 @@ class ValidationBoundedIoTests(unittest.TestCase):
                 with self.assertRaises(BoundedInputError):
                     read_bytes(target, max_bytes=64)
 
+    def test_same_size_edit_is_seen_when_timestamps_collide(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="bounded-coarse-time-") as raw:
+            target = Path(raw) / "input"
+            target.write_bytes(b"original")
+            real_read = os.read
+            changed = False
+
+            def read(descriptor, count):
+                nonlocal changed
+                payload = real_read(descriptor, count)
+                if not changed:
+                    changed = True
+                    target.write_bytes(b"modified")
+                return payload
+
+            def coarse_state(metadata):
+                return (
+                    metadata.st_dev,
+                    metadata.st_ino,
+                    metadata.st_mode,
+                    metadata.st_size,
+                    0,
+                    0,
+                )
+
+            with (
+                mock.patch.object(os, "read", side_effect=read),
+                mock.patch(
+                    "scripts.validation.repository.bounded_io.stable_file_state",
+                    side_effect=coarse_state,
+                ),
+            ):
+                with self.assertRaisesRegex(BoundedInputError, "changed during read"):
+                    read_bytes(target, max_bytes=64)
+
     def test_growing_file_cannot_extend_the_byte_budget(self) -> None:
         with tempfile.TemporaryDirectory(prefix="bounded-growth-") as raw:
             target = Path(raw) / "input"

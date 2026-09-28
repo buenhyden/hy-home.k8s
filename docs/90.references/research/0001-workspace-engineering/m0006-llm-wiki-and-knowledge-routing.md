@@ -1,10 +1,10 @@
 ---
 title: "Reference: LLM-WIKI and Knowledge Routing"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0006"
 ---
@@ -12,6 +12,12 @@ artifact_id: "RES-0001-m0006"
 # Reference: LLM-WIKI and Knowledge Routing
 
 ## Overview
+
+This reference distinguishes external LLM-maintained wiki patterns, website export proposals, MCP resources and search/RAG from the retired local generated owner map.
+
+Current external analysis is based on primary-source bodies checked on 2026-09-27. Conditional design recommendations are explicitly separate from product facts. Every workspace result is `not observed in this cycle`; candidate file paths are selectors, not findings. Historical observations below keep their dates, identifiers, corrections and original anchors.
+
+### Historical overview and observation boundary
 
 At the recorded observation dates, LLM-WIKI was a repository-local generated
 canonical-owner link map. It made the correct document easier to find; it was
@@ -26,10 +32,18 @@ authoritative, fresh, or safe.
 
 ## Reference Type
 
+External primary-source research and conditional follow-up investigation design. It is not a local implementation assessment, installation, policy change, release approval or evidence of provider/hosted/live behavior.
+
+### Historical reference classification
+
 Source-backed routing and freshness analysis. It neither publishes a web file
 nor operates an MCP server, search system, RAG pipeline, or provider runtime.
 
 ## Authority Boundary
+
+This member establishes bounded external source findings and conditional investigation design. Local profiles, registries, policies and provider notes remain their respective owners; they were read only for this authoring contract. No current implementation audit, adoption decision, provider experiment or live operation is performed. The inherited local statements below retain their historical meaning and are not renewed by current source checks.
+
+### Historical authority statement
 
 Canonical documents own their facts, policy, lifecycle, and evidence. At the
 observation date, the retired LLM-WIKI README declared the link-map boundary,
@@ -39,12 +53,50 @@ ingestion, retrieval quality, access control, or external exposure.
 
 ## Scope
 
+Current scope includes external LLM-maintained wiki patterns, llms.txt, MCP Resources, search and RAG (U22).
+
+### Historical scope
+
 It covers REQ-WERPC-021: generated owner routing, schema/generator/drift and
 freshness rules, and the boundary from llms.txt, MCP Resources, search, and RAG.
 
 ## Definitions / Facts
 
-### LLM-WIKI baseline
+### Current external analysis
+
+#### Distinct knowledge surfaces
+
+`CLM-WERPC-017-71`–`75` distinguish five external patterns from the historical local map. Karpathy's LLM Wiki gist is an original-author proposal, not a standard or a benchmark (`SRC-WERPC-190`). Its recorded creation timestamp is 2026-04-04 16:25; a fresh immutable revision SHA was not obtained. The historical retired local generated link map below remains a different implementation with its original retirement dates. No wiki, generator or gate is restored here.
+
+| Surface | Components, purpose and implementation choice | Limits and exclusion |
+| --- | --- | --- |
+| LLM-maintained wiki | Original sources plus derived synthesis, authoring schema, index/cross-links and change log; model-assisted maintenance | Synthesized prose is not source truth; original author's experience around 100 sources is anecdotal, not measured scale/performance |
+| `llms.txt` | Community v2 docs-export proposal for root/subpath Markdown guidance; most specific path applies; H1 required and other structures optional (`SRC-WERPC-021`) | Does not imply a maintained wiki, retrieval engine, publication or consumer behavior |
+| MCP Resources | Revision 2026-07-28 URI-addressed application-driven server data: list/read, capability negotiation, pagination, optional subscription and cache semantics (`SRC-WERPC-087`) | Resource contract does not prove server authorization, publication, client use or runtime enforcement |
+| Search | Keyword/metadata matching with index/update/access ownership | Finds candidates rather than settling provenance or authority; start here when exact names/IDs answer the task |
+| RAG | Parametric generation combined with nonparametric retrieval (`SRC-WERPC-213`) | Original research abstract was read; benchmarks/full paper were not verified and no local quality claim follows |
+
+For a small stable corpus, direct links and lexical search may suffice. A derived wiki can explain relationships but adds review/change propagation. RAG can retrieve selected evidence for a question but adds corpus/chunk/access/evaluation complexity. MCP is an interface that may expose data from these systems, not an alternative guarantee of their content quality. qmd functionality/performance was not verified and is not adopted as evidence.
+
+#### Wiki ingest query and lint
+
+`CLM-WERPC-017-72` describes the author's ingest/query/lint pattern. Ingest reads source material and updates derived synthesis/cross-links; query answers using the corpus and may produce a reviewed reusable synthesis; lint checks missing links, inconsistencies and maintenance issues. The raw source, synthesis, schema, index and log have different responsibilities. Implementation needs stable source/claim identity, provenance selectors, explicit uncertainty and review ownership; an index must not become a second policy owner.
+
+Conditional management proposal (`CLM-WERPC-017-77`): retain original evidence with its observation date; record claims and supporting/contradicting sources; separate a changed source from a changed conclusion; send unresolved contradictions to a responsible reviewer. A correction should identify the superseded claim. Source edits/deletion/access withdrawal must invalidate dependent summaries, search entries, chunks and caches as applicable. Preservation for audit and removal from active retrieval are different requirements and need an explicit retention/access decision. No license for the gist was confirmed, so content-copy permission is not inferred.
+
+#### Retrieval risk and maintenance
+
+`CLM-WERPC-017-76` uses OWASP LLM01 guidance (`SRC-WERPC-214`) on direct/indirect prompt injection. Extending it to persistent wiki poisoning is explicitly a research inference: ingesting hostile source instructions into durable synthesis can propagate them into future context. Treat fetched text as data, constrain tools/external writes independently, preserve provenance and review substantive changes. Retrieved content never grants authority.
+
+Sensitive-data and copyright review must happen before ingestion/export, with access filtering applied to queries as well as storage. Review summaries and logs for leakage; embeddings/caches and derived answers can preserve content after the original is removed. Staleness, fabricated citations, unresolved contradictions and deleted sources demand change propagation rather than a cosmetic new review date. Verify provenance and deletion with a known changed/withdrawn source; evaluate search/retrieval with representative questions, relevance, citation correctness, access isolation and stale-source exclusion. Generated answers are hypotheses until checked against evidence. Exclude unapproved sensitive corpora and retrieval systems whose permission/deletion contract cannot be demonstrated.
+
+Follow-up questions `Q-WERPC-081`–`087` cover surface identity, source/derived separation, ingest/query/lint and contradiction handling, llms publication/consumer evidence, MCP capability/authorization, scale-driven search/RAG selection and withdrawal/access propagation. Candidate selectors include source manifests, synthesis metadata, index configurations, `llms.txt`, MCP capability schemas and retrieval evaluation records. They are literals and no runtime check is performed. Full contracts are in the [follow-up ledger](m0013-scope-application-index.md#follow-up-question-ledger); every workspace result is `not observed in this cycle`.
+
+### Historical analysis and dated observations
+
+The following retained sections are historical evidence, including their dated local findings. They do not describe a current workspace observation.
+
+#### LLM-WIKI baseline
 
 At the observation date, the now-retired generator emitted a fixed Markdown
 canonical-owner map to the then-tracked `docs/90.references/llm-wiki/wiki-index.md`
@@ -62,7 +114,7 @@ document-discovery experiment; Git history preserves the former implementation.
 | Search        | Keyword/metadata lookup over an indexed corpus.                                                                   | A canonical-authority decision or source-freshness guarantee.                                          | Requires index ownership, update policy, access and quality evaluation.                                     |
 | RAG           | Retrieval plus model-context assembly over selected content.                                                      | A deterministic owner map or proof retrieved content is current/correct.                               | Requires corpus boundaries, ingestion/deletion, permissions, provenance, evaluation, and incident handling. |
 
-### Historical owner, drift, and freshness rules
+#### Historical owner, drift, and freshness rules
 
 1. **Canonical-owner-first.** Each index entry is a pointer to the owner that
    controls the claim. The index must not copy mutable policy, procedure,
@@ -91,7 +143,7 @@ document-discovery experiment; Git history preserves the former implementation.
    designed authorization, data classification, retention/deletion, provenance,
    audit, and incident boundaries.
 
-### Implementation proposal boundary
+#### Implementation proposal boundary
 
 The generator/readme/check contract described here was later retired. A future
 proposal may add a structured owner manifest only if it preserves one owner per
@@ -100,7 +152,7 @@ updates the generated metadata, and supplies stale-output and broken-link tests.
 It must remain a repository-navigation change until a separate authority
 approves web publication, MCP Resources, search, or RAG.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -166,18 +218,36 @@ owns its own citations.
 
 ## Sources
 
+### Current primary sources
+
+- `SRC-WERPC-190`: [Karpathy LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), checked 2026-09-27; body lines 62–117 excluding comments, creation 2026-04-04 16:25, fresh immutable revision unavailable after API 502; license unconfirmed.
+- `SRC-WERPC-021`: [llms.txt](https://llmstxt.org/), v2 proposal checked 2026-09-27; published 2024-09-03, modified 2026-08-10; Proposal/Format sections, not a formal standards-body specification.
+- `SRC-WERPC-087`: [MCP Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources), revision 2026-07-28 checked 2026-09-27; User Interaction Model, Capabilities and Protocol Messages, not runtime evidence.
+- `SRC-WERPC-213`: [Lewis et al. RAG paper](https://arxiv.org/abs/2005.11401), 2020, abstract/submission history checked 2026-09-27; full paper and benchmark results not verified.
+- `SRC-WERPC-214`: [OWASP LLM01:2025](https://genai.owasp.org/llmrisk/llm01-prompt-injection/), Indirect/Prevention guidance checked 2026-09-27; persistent-wiki poisoning is a labeled inference.
+
+The [current source observations](m0012-source-coverage.md#current-source-observations) own full claim/refresh metadata. The retired local surface's dates remain historical.
+
+### Historical sources
+
 - [llms.txt proposal](https://llmstxt.org/), checked 2026-08-08: website-root Markdown proposal and its intentionally unspecified application processing boundary.
 - [MCP server primitives](https://modelcontextprotocol.io/specification/2025-06-18/server/index) and [MCP Resources](https://modelcontextprotocol.io/specification/2024-11-05/server/resources), checked 2026-08-08: server-exposed URI resources and capability/incorporation boundary.
 - Workspace observation, 2026-08-08: LLM-WIKI README, generated index, curation guide, generator, and scripts inventory. No MCP server, llms.txt publication, search index, RAG corpus, or retrieval-quality test was evaluated.
 
 ## Review and Freshness
 
+### Current review boundary
+
+Recheck when cited methods, product plans/schemas, source revisions, permission/export behavior or an actual adoption proposal changes. Current external claims, source refresh outcomes, workspace observations and document QA are independent axes. Historical statuses are not promoted by a new external check. Document QA results belong to the owning Task; this member claims no provider-runtime or live evidence.
+
+### Historical refresh record
+
 Refresh when the generator, declared inputs, canonical owner paths, taxonomy,
 stage routing, script inventory, GitOps/examples/version ownership, or generated
 output changes; recheck the external proposal/spec when a web/MCP/retrieval
 design is proposed. Run the generator check after every owner-map change.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment consumes the reviewed `REQ-WERPC-021` row and its empty
 source/claim allocation slice. It preserves the distinction among canonical
@@ -213,7 +283,7 @@ retrieval, and provider runtime.
   llms.txt status, or MCP Resources revision change; require a separately
   approved security and evaluation design before publication or retrieval.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the knowledge-routing owner under the approved
 2026-09-05 follow-on cycle. Workspace re-observation was excluded by direct user

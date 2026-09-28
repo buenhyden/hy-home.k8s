@@ -1,10 +1,10 @@
 ---
 title: "Reference: Documentation Architecture and Diataxis"
-version: "1.0.0"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0005"
 ---
@@ -13,6 +13,12 @@ artifact_id: "RES-0001-m0005"
 
 ## Overview
 
+This reference compares reader-purpose documentation, architecture views and decision records, arc42 tailoring and README entrypoints. It proposes review questions without changing document ownership.
+
+Current external analysis is based on primary-source bodies checked on 2026-09-27. Conditional design recommendations are explicitly separate from product facts. Every workspace result is `not observed in this cycle`; candidate file paths are selectors, not findings. Historical observations below keep their dates, identifiers, corrections and original anchors.
+
+### Historical overview and observation boundary
+
 This reference applies the official Diátaxis framework to the workspace without
 mistaking its four user needs for the workspace's SDLC document types. The
 stage taxonomy answers who owns a document and its lifecycle; Diátaxis answers
@@ -20,10 +26,18 @@ what kind of help a reader needs from a passage or document.
 
 ## Reference Type
 
+External primary-source research and conditional follow-up investigation design. It is not a local implementation assessment, installation, policy change, release approval or evidence of provider/hosted/live behavior.
+
+### Historical reference classification
+
 Source-backed documentation-architecture analysis, not a profile/schema change
 or a declaration that a document is complete, usable, or accessible.
 
 ## Authority Boundary
+
+This member establishes bounded external source findings and conditional investigation design. Local profiles, registries, policies and provider notes remain their respective owners; they were read only for this authoring contract. No current implementation audit, adoption decision, provider experiment or live operation is performed. The inherited local statements below retain their historical meaning and are not renewed by current source checks.
+
+### Historical authority statement
 
 The Stage 99 profile/schema, selected templates, stage-routing rule, and
 canonical stage owners remain authoritative. This document neither adds a
@@ -33,12 +47,60 @@ against an intended reader and task.
 
 ## Scope
 
+Current scope includes Diátaxis, C4, ADR, arc42 and README responsibilities (U18–U21, U39).
+
+### Historical scope
+
 It covers REQ-WERPC-020: the four Diátaxis quadrants, their partial current
 application, the tutorial/explanation gaps, and safe target-state guidance.
 
 ## Definitions / Facts
 
-### Diátaxis baseline
+### Current external analysis
+
+#### Diataxis reader purpose
+
+`CLM-WERPC-017-61` (`SRC-WERPC-020`, `071`) retains four reader needs: tutorial teaches through a guided lesson; how-to helps an already capable reader accomplish a real goal; reference provides accurate lookup; explanation develops understanding and rationale. These modes answer reader need, while document families answer authority/lifecycle. An ADR can explain and a runbook can include reference without becoming a new family.
+
+The framework advises incremental improvement rather than empty four-part structures. Begin with the actual reader/task and review one useful section. Mixing lessons, commands and conceptual digressions can make urgent instructions unusable. Validation needs a named audience, task, environment and success criterion; headings and schema checks do not establish comprehension, accessibility or safe task completion. Do not create unused profiles or four directories merely to resemble the framework.
+
+#### C4 views and diagram review
+
+`CLM-WERPC-017-62`–`63` (`SRC-WERPC-116`, `186`–`189`, `211`) describe system context, container, component and code views as different zoom levels; only useful levels need diagrams. A C4 container is a deployable/runnable application or data store, not a synonym for Docker container. Context explains people and neighboring systems; container shows major applications/data stores; component explains internal responsibility; code detail may be unnecessary or generated where it actually helps.
+
+Dynamic diagrams explain selected runtime interactions; deployment diagrams explain instances and infrastructure in an environment. A runtime sequence and an environment topology answer different questions. Review title/scope, legend, element types/technology, responsibility and relationship labels/protocol, and the correspondence to the modeled concern. Ambiguous arrows and diagrams disconnected from change ownership become misleading quickly. Diagram-as-code offers reviewable source but requires tooling; drawing tools lower editing friction but may separate source from rendered output; generated diagrams reduce manual inventory drift but cannot invent architecture rationale. Choose the smallest view that answers a real reader question, name its source/freshness owner, and do not infer live topology from a picture.
+
+#### ADR method and supersession
+
+`CLM-WERPC-017-64` (`SRC-WERPC-017`, `118`) uses Nygard's 2011-11-15 original article and AWS's process as method guidance: capture significant context/forces, decision and consequences with alternatives when helpful. Review before acceptance; preserve accepted or rejected rationale and use a superseding decision when the choice changes. Decision status and recorded stakeholder/date identify intent, not implementation success. An ADR log should make the reason for a change discoverable rather than silently editing away its predecessor. The exact local state machine remains the local profile's responsibility. [m0004](m0004-spec-driven-sdlc-and-document-contracts.md#twelve-document-families) connects this method to document-family roles.
+
+#### Arc42 tailoring
+
+`CLM-WERPC-017-65` (`SRC-WERPC-117`, `212`) describes arc42's twelve areas: introduction/goals, constraints, context/scope, solution strategy, building blocks, runtime view, deployment view, crosscutting concepts, decisions, quality requirements, risks/technical debt and glossary. Stakeholder concerns and quality scenarios guide coverage; C4 views can illustrate structure and ADRs can preserve decision rationale. These complement the outline rather than replace concern/risk analysis.
+
+Tailor depth to system size, risk and audience. Filling every area without a reader need increases stale duplication. Leaving a material quality constraint or risk unexplained is also a failure. Review whether relevant concerns have a view, quality scenarios are assessable and risks have owners. The checked source exposes CC-BY-SA 4.0 licensing; reuse requires its applicable attribution/share-alike analysis. It is not authority to copy a template as local policy or create architecture artifacts in this research cycle.
+
+#### README reader contracts
+
+`CLM-WERPC-017-66`–`67` (`SRC-WERPC-154`) distinguish GitHub's platform behavior from research recommendations. GitHub describes a README as explaining what a project does, usefulness, getting started, help and maintainers. Its `.github`, root and `docs` lookup/render order is GitHub-specific, not a universal filesystem rule.
+
+| Scope | Conditional reader contract | Avoided duplication and verification |
+| --- | --- | --- |
+| Repository | Purpose, intended readers, quick start, scope/non-goals and major owner links | Avoid copying policy and volatile implementation inventory; test newcomer navigation |
+| Stage | Responsibility and transitions to canonical stage owners | Do not repeat member lifecycle or claims; verify owner links |
+| Collection | Explain category and route readers to distinct packages | Avoid parallel source/status ledgers; check unique discoverable entries |
+| Package | Explain package entry only where its existing contract requires one | Do not invent a README where a Spec entry already owns the package; verify the selected profile |
+| Module | Purpose, supported interface/use and module-specific prerequisites | Keep mutable behavior at its actual implementation/interface owner |
+
+These scope distinctions are conditional authoring guidance, not new local router requirements. Duplicated policy, counts, dates and lifecycle tables drift independently. Link to the mutable owner and retain only the information the router itself owns. Usability review asks whether readers find and understand the correct owner; link QA alone cannot answer that.
+
+Follow-up questions `Q-WERPC-066`–`073` ask for primary reader purpose, useful C4 levels/runtime/deployment distinctions, decision/supersession trace, tailored arc42 concern coverage, and README entrypoint/duplication review. Candidate selectors are documentation frontmatter/body, diagram source/render pairs, ADR logs and `README.md`; they are not observed paths or current findings. Full evidence/approval contracts are in the [follow-up ledger](m0013-scope-application-index.md#follow-up-question-ledger). Every workspace result is `not observed in this cycle`.
+
+### Historical analysis and dated observations
+
+The following retained sections are historical evidence, including their dated local findings. They do not describe a current workspace observation.
+
+#### Diátaxis baseline
 
 Diátaxis separates documentation by reader need and writing mode:
 
@@ -54,7 +116,7 @@ while remaining an ADR; a Runbook can include a short reference table while
 remaining an operational procedure. Forcing a one-to-one mapping would obscure
 authority, safety, and reader intent.
 
-### Architecture rules by scope
+#### Architecture rules by scope
 
 | Scope               | Canonical owner                                       | Authoring rule                                                                                                            | Failure boundary                                                                           |
 | ------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -64,7 +126,7 @@ authority, safety, and reader intent.
 | Operations/security | Policy, Runbook, Incident, Postmortem.                | Keep commands, impact facts, controls, and recovery evidence in their respective owners; label assumptions and approvals. | Helpful prose never authorizes secrets, production access, deployment, or recovery action. |
 | Reference/research  | Stage 90 owner and source ledger.                     | Date sources, record claim/support/limitation/refresh trigger, and distinguish inference.                                 | Research cannot promote an external framework into local policy.                           |
 
-### As-Is, gap, target
+#### As-Is, gap, target
 
 | Area           | As-Is evidence                                                                                                     | Gap or risk                                                                                           | Target application (analysis only)                                                                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -74,7 +136,7 @@ authority, safety, and reader intent.
 | Tutorial       | No dedicated route/profile/template or index was found.                                                            | Newcomers may receive goal-oriented steps without concepts, safe setup, or a learning outcome.        | Begin with a review checklist and a small pilot only if a named audience/use case warrants it; do not create a profile by implication.                                   |
 | Explanation    | No dedicated route/profile/template or index was found.                                                            | Rationale and trade-offs may be embedded in ADRs or guides where readers cannot find them.            | Prefer an explicitly labelled explanation section or a canonical reference where routing justifies it; design a typed family only with an owner/consumer/validator need. |
 
-### Authoring and review checklist
+#### Authoring and review checklist
 
 1. Identify whether the primary reader needs to learn, accomplish, look up, or
    understand. Record one primary mode; a supporting section may have another.
@@ -89,7 +151,7 @@ authority, safety, and reader intent.
 5. Run the profile/link/owner checks and use a human reader review for clarity,
    accessibility, and safety; no static validator can infer those properties.
 
-### 2026-08-11 upstream-source verification and decision reconciliation
+#### 2026-08-11 upstream-source verification and decision reconciliation
 
 The published pages remain unreachable, but the claims are now verified against
 the upstream source that generates them, and the local "gap" framing is
@@ -129,7 +191,7 @@ validating that the eight current guides declare their type and recording the
 `DOC-G2` and `DOC-G3` absences deliberately. That work is the queued `WORK-013`
 package and belongs to its owning Plan, not to this reference.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -172,11 +234,29 @@ static contract, or when a reader-validation activity is approved.
 
 ## Sources
 
+### Current primary sources
+
+- Diátaxis `SRC-WERPC-020`, `071`: [Start here](https://diataxis.fr/start-here/) and [incremental use](https://diataxis.fr/how-to-use-diataxis/), checked 2026-09-27; retained four-mode and no-empty-structure claims unchanged.
+- C4 `SRC-WERPC-116`, `186`–`189`, `211`: [diagrams](https://c4model.com/diagrams), [notation](https://c4model.com/diagrams/notation), [tooling](https://c4model.com/tooling), [dynamic](https://c4model.com/diagrams/dynamic), [deployment](https://c4model.com/diagrams/deployment), [container](https://c4model.com/diagrams/container), checked 2026-09-27; exact page publication/revision unknown.
+- ADR `SRC-WERPC-017`, `118`: AWS process and [Nygard original article](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), checked 2026-09-27; original article published 2011-11-15.
+- arc42 `SRC-WERPC-117`, `212`: [overview](https://arc42.org/overview/) and [decisions](https://docs.arc42.org/section-9/), checked 2026-09-27; exact page revision unknown; license reuse is bounded by the checked source's CC-BY-SA 4.0 terms.
+- README `SRC-WERPC-154`: [GitHub about READMEs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes), checked 2026-09-27; exact page revision unknown.
+
+The [current source observations](m0012-source-coverage.md#current-source-observations) own full selectors, claims and refresh metadata. Checks are not publication dates.
+
+### Historical sources
+
 - [Diátaxis — Start here](https://diataxis.fr/start-here/) and [Diátaxis home](https://diataxis.fr/), checked 2026-08-08. They define tutorials, how-to guides, reference, and explanation as distinct documentation needs; they do not prescribe this repository's schema.
 - [Diátaxis upstream source](https://github.com/evildmp/diataxis-documentation-framework) `source/start-here.rst` and `source/how-to-use-diataxis.rst` at `main`, checked 2026-08-11 (`SRC-WERPC-067`). This is the source that builds the site, not the published page.
 - Workspace observation, 2026-08-08: `document-profiles.json`, selected Guide/Runbook templates, Stage 90 reference profiles, stage-routing and stage-authoring documents. This is static configuration evidence only.
 
 ## Review and Freshness
+
+### Current review boundary
+
+Recheck when cited methods, product plans/schemas, source revisions, permission/export behavior or an actual adoption proposal changes. Current external claims, source refresh outcomes, workspace observations and document QA are independent axes. Historical statuses are not promoted by a new external check. Document QA results belong to the owning Task; this member claims no provider-runtime or live evidence.
+
+### Historical refresh record
 
 Refresh when documentation taxonomy, public audience, Guide/Runbook/reference
 templates, profile schema, collection navigation, or authoring/review standards
@@ -196,7 +276,7 @@ and 2026-08-10, and the last change to the `start-here` source was a 2026-08-01
 typo fix; an upstream repository state cannot establish what the published pages
 currently say. A second independent attempt later on 2026-08-10 also failed: ten requests across `/start-here/`, `/`, `www.diataxis.fr`, and an unrelated `/map/` probe all returned HTTP 429, so the block is host-wide for this egress rather than specific to the cited pages. Two failed re-checks on the same day make this a persistent condition, not a transient one. A third attempt on 2026-08-11 from a different client also returned HTTP 429, so the published pages stay unverified. The four-mode claims and the no-mandated-structure boundary are now verified against the upstream source instead, which is a different and slightly weaker evidence class than the published page. Re-run the page check from a different egress if page-level verification is required.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**; the heading
 retains the approved package date. It addresses only REQ-WERPC-020 and uses
@@ -232,7 +312,7 @@ concrete owner, reader, consumer, instance, and validation need is approved.
 Guide classification correctness, usability, accessibility, safe execution,
 and effectiveness remain `DEFER` without actual reader evidence.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-020` only, checked on **2026-08-14**. It did not
@@ -297,7 +377,7 @@ or a named reader-validation activity is approved.
 promotion. New source registered: `SRC-WERPC-076`. New claim registered:
 `CLM-WERPC-010-09`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment consumes the reviewed `REQ-WERPC-020` row and its empty
 source/claim allocation slice. The current official pages remain unchanged and
@@ -333,7 +413,7 @@ published site generator, or reader study was executed.
   separately approved activity names reader, task, environment, method,
   threshold, and evidence owner.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the documentation-architecture owner under the
 approved 2026-09-05 follow-on cycle. Workspace re-observation was excluded by

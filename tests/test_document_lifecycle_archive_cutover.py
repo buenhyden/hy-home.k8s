@@ -624,7 +624,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                             (),
                             True,
                             True,
-                            status == "done",
+                            status == "completed",
                         )
                     },
                     changed_paths=frozenset({path}),
@@ -634,7 +634,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                 ),
             )
 
-        for status in ("draft", "active", "done"):
+        for status in ("draft", "active", "completed"):
             with self.subTest(status=status):
                 self.assertEqual(compare_body_change(status), ())
 

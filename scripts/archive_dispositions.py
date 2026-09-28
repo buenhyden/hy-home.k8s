@@ -852,3 +852,82 @@ def removed_records(
         )
     }
     return frozenset(record for record in candidates if record not in faulty)
+
+
+def historical_catalog_diagnostics(
+    root: Path, registry: "Registry", index_text: str, target_commit: str
+) -> tuple[tuple[str, str], ...]:
+    """Keep every catalog-generation row reachable from the target commit.
+
+    Path history includes merged parents but never unrelated refs. Older frozen
+    records had no catalog and do not acquire this generation's contract.
+    """
+
+    if __package__:
+        from scripts.archive_objects import (
+            _git,
+            blob_text,
+            commit_entries,
+            is_shallow_repository,
+        )
+    else:
+        from archive_objects import (
+            _git,
+            blob_text,
+            commit_entries,
+            is_shallow_repository,
+        )
+
+    where = ARCHIVE_INDEX.as_posix()
+    failure = (("ARCHIVE-CATALOG-HISTORY", where),)
+    current, current_errors = parse_catalog(index_text)
+    missing_assessment = registry.archive_assessment is None
+    if current_errors or (missing_assessment and CATALOG_HEADER in index_text):
+        return failure
+    if is_shallow_repository(root):
+        return failure
+    raw = _git(root, "log", "--full-history", "--format=%H", target_commit, "--", where)
+    if raw is None:
+        return failure
+    try:
+        commits = raw.decode("ascii").splitlines()
+    except UnicodeDecodeError:
+        return failure
+    if any(_COMMIT.fullmatch(commit) is None for commit in commits):
+        return failure
+    assessments, assessment_errors = (
+        ({}, ()) if missing_assessment else parse_assessment(registry, index_text)
+    )
+    if assessment_errors:
+        return failure
+    diagnostics: list[tuple[str, str]] = []
+    for commit in commits:
+        previous = blob_text(root, f"{commit}:{where}")
+        if previous is None:
+            # The index may be absent before creation or at a deletion commit.
+            entries = commit_entries(root, commit, ARCHIVE_INDEX)
+            if entries is None or entries:
+                return failure
+            continue
+        if CATALOG_HEADER not in previous:
+            continue
+        # A missing current contract is truly legacy only if no reachable
+        # generation had a catalog. Otherwise both may have been erased.
+        if missing_assessment:
+            return failure
+        rows, errors = parse_catalog(previous)
+        prior_assessments, prior_errors = parse_assessment(registry, previous)
+        if errors or prior_errors:
+            return failure
+        if any(current.get(record) != row for record, row in rows.items()):
+            diagnostics.append(("ARCHIVE-CATALOG-HISTORY", where))
+        if any(
+            record not in assessments
+            or (
+                row.availability == "git-history-only"
+                and assessments[record].availability != row.availability
+            )
+            for record, row in prior_assessments.items()
+        ):
+            diagnostics.append(("ARCHIVE-ASSESSMENT-HISTORY", where))
+    return tuple(dict.fromkeys(diagnostics))

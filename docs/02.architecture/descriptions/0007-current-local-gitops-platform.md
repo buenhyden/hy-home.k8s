@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.2.3"
+version: "1.2.4"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -88,7 +88,7 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Unfinished implementation owners
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Current structure, YAML, required policy-tool, secret, Vault/ESO, manifest image-version and product checks continue to cover parts of REQ-0004-FR-0008 and FR-0010; [Spec 008](../../03.specs/0008-current-local-gitops-platform/spec.md) owns the current ingress path. Observed unassigned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner scopes those residuals against current implementation before assigning a new package; the retired Traefik lane is not a current target.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
@@ -153,7 +153,7 @@ their scope currently has no implementation owner. The AD succession does not me
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | None; Spec 0049 withdrawn 2026-09-25, gap recorded at REQ-0004 |
+| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Spec 008 owns current ingress and existing validators cover parts; unowned residuals include render/schema, per-target evidence and ingress cross-reference/resource-kind coverage after Spec 0049 withdrawal; conditional provenance follow-on remains as stated above |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |

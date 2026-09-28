@@ -176,6 +176,15 @@ def index_file(root: Path) -> Path:
     )
 
 
+def merge_head_bytes(root: Path) -> bytes | None:
+    path = Path(
+        os.fsdecode(
+            git(root, "rev-parse", "--path-format=absolute", "--git-path", "MERGE_HEAD")
+        ).strip()
+    )
+    return read_bounded_bytes(path, max_bytes=128) if os.path.lexists(path) else None
+
+
 @contextmanager
 def repository_snapshot(root: Path, *, staged: bool = False):
     """Copy only Git-selected bytes; never write the source worktree or index."""
@@ -183,6 +192,7 @@ def repository_snapshot(root: Path, *, staged: bool = False):
     head = git(root, "rev-parse", "HEAD")
     source_index = index_file(root)
     index_bytes = read_bounded_bytes(source_index, max_bytes=GIT_INDEX_LIMIT_BYTES)
+    merge_head = merge_head_bytes(root)
     before = None if staged else tree_identity(root)
     with tempfile.TemporaryDirectory(prefix="hy-qa-") as directory:
         snapshot = Path(directory) / "repository"
@@ -211,6 +221,19 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         for line in remote_refs.decode("ascii").splitlines():
             object_name, reference = line.split(" ", 1)
             git(snapshot, "update-ref", "--no-deref", reference, object_name)
+        if merge_head is not None:
+            merge_path = Path(
+                os.fsdecode(
+                    git(
+                        snapshot,
+                        "rev-parse",
+                        "--path-format=absolute",
+                        "--git-path",
+                        "MERGE_HEAD",
+                    )
+                ).strip()
+            )
+            write_snapshot_file(merge_path, merge_head)
         if staged:
             write_snapshot_file(index_file(snapshot), index_bytes)
             shared = git(root, "rev-parse", "--shared-index-path").strip()
@@ -252,6 +275,7 @@ def repository_snapshot(root: Path, *, staged: bool = False):
             read_bounded_bytes(source_index, max_bytes=GIT_INDEX_LIMIT_BYTES)
             != index_bytes
             or git(root, "rev-parse", "HEAD") != head
+            or merge_head_bytes(root) != merge_head
         ):
             raise ValueError("source index or HEAD changed during snapshot")
         if before is not None and tree_identity(root) != before:

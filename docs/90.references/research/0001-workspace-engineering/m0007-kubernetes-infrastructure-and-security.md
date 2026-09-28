@@ -1,10 +1,10 @@
 ---
 title: "Reference: Kubernetes, Infrastructure, and Security"
-version: "1.0.1"
+version: "1.1.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0007"
 ---
@@ -13,18 +13,141 @@ artifact_id: "RES-0001-m0007"
 
 ## Overview
 
+This reference synthesizes current external Kubernetes, infrastructure and security knowledge for platform, delivery, security and operations decisions. It covers U08/U09/U26 and preserves earlier local observations as dated history. It does not assess this workspace's current deployment or authorize implementation.
+
+## Reference Type
+
+Primary-source external research and conditional follow-up investigation design; historical repository/hosted evidence is separately dated below. The settled profile is reference/research under the Stage 99 research template.
+
+## Authority Boundary
+
+This reference supplies decision inputs, not policy, deployment authority or a current implementation verdict. Canonical implementation, governance and operational owners retain their responsibilities. Rendering, local document QA and configuration declarations establish neither hosted execution nor provider/runtime, authorization, reconciliation, security enforcement, intended-use fitness or restore success. Every workspace result is **not observed in this cycle**.
+
+## Scope
+
+Includes API/controller and declarative delivery, support/skew/API/CRD lifecycle, network/DNS/Gateway/TLS, storage and recovery, resources/scheduling/probes/SLO/cost, Linux/provisioning/IaC/environment separation, RBAC/admission/secrets, artifact trust, vulnerability response and rollback. Single-host development/home-lab and multi-host operational trade-offs are distinguished without deciding which is deployed here. No local implementation audit, live cluster/cloud/Vault/Argo access, credential reading, configuration change or recovery execution is included.
+
+## Definitions / Facts
+
+### Current external research
+
+This synthesis was researched against directly read primary sources on **2026-09-27 (Asia/Seoul)**. The claim register distinguishes external support from source refresh outcomes; every workspace result is **not observed in this cycle**. Implementation choices below are conditional analysis, not decisions or detected local deficiencies.
+
+#### API reconciliation and declarative delivery
+
+`CLM-WERPC-017-81` (`SRC-WERPC-170, SRC-WERPC-171, SRC-WERPC-172`): Kubernetes controllers watch desired and current state and reconcile differences, including reporting external state. An API write is not an atomic transaction across controllers, networking and applications. Workload controllers manage Pods; namespaces scope namespaced objects but not Nodes, PVs or StorageClasses, and labels acquire meaning through selectors rather than intrinsic security semantics. Choose workload, namespace and label conventions around ownership and selection; namespace separation alone is not tenant isolation. Verification needs rendered selectors, controller ownership and status transitions; a completed API request alone is insufficient.
+
+`CLM-WERPC-017-82` (`SRC-WERPC-175, SRC-WERPC-176, SRC-WERPC-250`): Kustomize composes bases, overlays, patches and generated configuration; Helm packages templates and release inputs. Choose plain YAML for small stable sets, Kustomize for reviewed environment differences, and Helm where upstream chart lifecycle is useful. Complexity grows when multiple tools own the same field. Resolve tool versions and inputs, render deterministically, then check schemas and policy. Rendering cannot establish API admission or controller effect. The generic Helm page identifies 4.3.0 but explicitly warns its text is not updated for Helm 4: its CRD installation/upgrade limitations are adopted only as **Helm 3** guidance.
+
+`CLM-WERPC-017-99` (`SRC-WERPC-027, SRC-WERPC-063`): OpenGitOps v1.0.0 defines declarative desired state with versioned immutable history, automatic pulling and continuous reconciliation (`SRC-WERPC-264`). Argo CD documents explicit prune/self-heal settings and source-integrity failure preventing sync. Automated-sync rollback is unavailable while automation is enabled; a controlled Git reversal is one recovery option, whose effect still needs observation. Bootstrap installs the management plane and trust inputs; ongoing desired-state reconciliation has a different owner and recovery path. Pinning a Git revision improves reproducibility but adds promotion work; branch tracking eases updates but requires precise revision records. Test deletion/prune effects, source-policy failures, fetched revision, sync and application health independently. Do not infer chart/OCI authentication from Git verification.
+
+#### Version API and CRD lifecycle
+
+`CLM-WERPC-017-83` (`SRC-WERPC-143`): The release page lists 1.37.0 released 2026-08-26, and maintained lines 1.37, 1.36 and 1.35. It also lists 1.34.11 with EOL 2026-10-27; the apparent wording/table difference remains unresolved rather than silently reclassified. Version-skew policy permits HA API servers one minor apart; kubelets and proxies must not be newer than the API server and generally may be three minors older (older than 1.25: two); controllers may be one older, and kubectl one either side. Distribution rules may be stricter. Upgrade one minor at a time with the documented sequence, capacity, drain and recovery prerequisites; patch currency is not compatibility evidence.
+
+`CLM-WERPC-017-84` (`SRC-WERPC-173, SRC-WERPC-174`): Kubernetes GA, beta and alpha API deprecation guarantees differ; vendor CRDs do not inherit those guarantees. CRD served versions, selected storage version and recorded storedVersions are separate. Preserve conversion support and migrate stored objects before removing an old storage version. Compare API discovery, release/deprecation notes, rendered resources and CRD conversion/storage contracts before upgrade. A successful render cannot detect every removed live API or failed conversion; deleting a CRD risks deleting its instances. Helm 3's non-templated CRD installation does not provide automatic upgrade, rollback or deletion.
+
+#### Network DNS Gateway and TLS
+
+`CLM-WERPC-017-85` (`SRC-WERPC-023`): NetworkPolicy needs an enforcing network implementation. Ingress and egress isolation are independent and allowed policies are additive; selected traffic can require both source egress and destination ingress permission. Default-deny plus explicit DNS/service exceptions improves bounded isolation but requires complete dependency mapping. Existing-connection behavior on a policy change is implementation dependent. Verify CNI capability, exact selectors and separately controlled allowed/denied new flows; do not substitute YAML review for packet evidence.
+
+`CLM-WERPC-017-86` (`SRC-WERPC-177, SRC-WERPC-178, SRC-WERPC-179, SRC-WERPC-180`): Service DNS search is namespace-sensitive; cross-namespace access needs an appropriate name. Ingress is frozen but not planned for removal and requires a controller. Gateway API separates GatewayClass, Gateway and Route responsibilities and requires compatible CRDs/controller/conformance. Choose Ingress for sufficient stable routing or Gateway for required role separation and richer routing, accounting for migration cost. Downstream TLS termination/passthrough and upstream BackendTLSPolicy are distinct trust legs. The TLS guide's TLSRoute v1.5.0 stable statement is a documented feature boundary, not a local installed version. Verify DNS, routes, certificate identity/expiry/renewal and backend TLS separately; avoid assuming controller-independent feature support.
+
+#### Storage backup and recovery
+
+`CLM-WERPC-017-87` (`SRC-WERPC-181`): A PV represents backing storage; a namespaced PVC requests it. Dynamic provisioning depends on StorageClass/CSI/topology and reclaim behavior. Delete commonly removes backing storage; Retain requires manual disposition. ReadWriteOnce is a node constraint, not a guarantee of one Pod. Choose storage on durability, placement, access and recovery requirements; local storage lowers operational cost but constrains rescheduling. Check reclaim rules, CSI capabilities, binding, attach/mount and deletion finalizers before destructive changes.
+
+`CLM-WERPC-017-88` (`SRC-WERPC-182, SRC-WERPC-183`): K3s recovery differs for SQLite, external databases and embedded etcd, and restore requires the protected server-token material to decrypt datastore content. Velero **v1.17 is an example version**, not a latest-version assertion: it backs up API objects and supported volume snapshots, requires restore API versions to exist, and describes a default 30-day TTL whose expiry deletes backups/snapshots. Neither control-plane snapshots nor volume snapshots guarantee application-consistent or external-database recovery. Choose backup scope, off-host copies, retention and encryption from loss scenarios and agreed RPO/RTO; verify a representative isolated restore, data correctness and service recovery without recording tokens.
+
+#### Resources scheduling availability and SLO
+
+`CLM-WERPC-017-89` (`SRC-WERPC-223`): Requests drive scheduling; CPU limits throttle and memory limits can lead to reactive OOM termination. Disk-backed ephemeral storage and memory-backed emptyDir have different accounting. Choose requests from measurements plus headroom; under-requesting increases contention and over-requesting strands capacity/cost. Test workload peaks, CPU throttling, OOM/eviction and storage pressure; manifest values are not utilization measurements.
+
+`CLM-WERPC-017-90` (`SRC-WERPC-226, SRC-WERPC-227`): Topology spread can be hard DoNotSchedule or soft ScheduleAnyway; affinity can be required or preferred. Hard placement protects separation but may leave Pods pending. IgnoredDuringExecution does not evict on later label change; security-relevant node labels require the documented Node authorizer/NodeRestriction boundary. Observe eligible topology domains and scheduling outcomes. Multiple containers or logical nodes on one host do not create physical failure independence.
+
+`CLM-WERPC-017-91` (`SRC-WERPC-224`): Liveness can restart a container, readiness controls traffic eligibility and startup probes protect slow initialization. A bad liveness threshold can amplify overload into cascading restarts. Choose checks around a failure action, avoid treating a temporarily unavailable dependency as a reason to restart everything, and measure startup/load/failure transitions. Probe declaration alone is not availability proof.
+
+`CLM-WERPC-017-92` (`SRC-WERPC-225, SRC-WERPC-245`): PDBs constrain voluntary eviction but cannot prevent involuntary loss or enforce application-controller rolling-update availability. K3s embedded-etcd HA needs at least three servers with an odd quorum and suitable disk performance. A one-host home lab may accept outage and simple restore; multi-host operation needs genuine failure domains, redundant capacity and maintenance tests. A PDB cannot make a singleton highly available and may block drain.
+
+`CLM-WERPC-017-93` (`SRC-WERPC-228`): Choose a few user-relevant SLIs such as availability, latency, durability or correctness, then agree SLOs and error budgets appropriate to the service. Observability combines user outcomes with controller, node and application signals; metric collection alone is not an SLO. Capacity and cost analysis should include requests versus use, peaks, spare failure capacity, storage/backup growth and operational effort. No numerical home-lab SLO is prescribed here. Verify indicators against actual user paths and use breach/burn and capacity evidence to justify changes.
+
+#### Host provisioning state and environment separation
+
+`CLM-WERPC-017-94` (`SRC-WERPC-244, SRC-WERPC-245, SRC-WERPC-246`): K3s prerequisites include Linux/cgroups, unique node identities, suitable storage I/O and CNI-dependent connectivity; minimum host resources exclude workload demand. Do not expose VXLAN UDP 8472 publicly or translate troubleshooting advice into blanket firewall removal. Kubernetes Linux-security guidance warns that secret/memory-backed data can reach swap under older or unsupported configurations; kernel/backport support matters. The context-dependent, nonexhaustive Kubernetes security checklist (`SRC-WERPC-265`) describes syscall/security profiles, image scanning/patching and protected audit logs; a profile declaration does not prove an active kernel control. Provisioning should bind host/cluster versions, ports, storage, recovery assets and upgrade ownership. Disposable development clusters trade fidelity for cheap reset; replicas on one Linux host share its failure boundary. Verify host and network prerequisites separately from cluster creation and workload behavior.
+
+`CLM-WERPC-017-95` (`SRC-WERPC-247, SRC-WERPC-248, SRC-WERPC-249`): Terraform 1.16.x documentation makes locking backend dependent, lock acquisition failure a stop condition and force-unlock appropriate only for one's own lock. Sensitive redaction does not remove values from state; local state can be plaintext, and ephemeral/write-only facilities have version/provider conditions. CLI workspaces isolate state but are inappropriate for boundaries requiring separate credentials or access control. Choose separate state/backends/credentials where trust separation matters; one tool is not mandatory. Inspect sanitized backend/lock/access contracts, environment-to-state identity and concurrent-operation behavior, never raw state containing secrets.
+
+#### Identity policy secrets and supply chain
+
+`CLM-WERPC-017-96` (`SRC-WERPC-031, SRC-WERPC-108`): Prefer bounded ServiceAccounts and least-privilege authorization with short-lived, audience-bound TokenRequest credentials where needed. Secret list/watch permits object data, and nodes/proxy GET can reach privileged kubelet operations while bypassing API audit/admission. A metadata-only exporter does not narrow that authorization. Choose explicit resource/namespace scope and disable unneeded automatic token mounts after compatibility review; verify effective permissions and consumer need, not just role text.
+
+`CLM-WERPC-017-97` (`SRC-WERPC-025, SRC-WERPC-250`): Pod Security Admission separates enforce/audit/warn; enforcement checks Pods while audit/warn also inspect workload templates, and exemptions skip checks. Native CEL ValidatingAdmissionPolicy needs a binding and explicit actions/failure behavior. Choose baseline/restricted PSA for standard posture, native CEL for compatible custom rules or a separately evaluated webhook policy engine. Audit/warn eases adoption but does not deny; fail-open policies ease outages but weaken enforcement. Test exemptions, invalid cases, failure paths and rollback with the exact API version. CI policy-as-code is a separate pre-merge boundary.
+
+`CLM-WERPC-017-98` (`SRC-WERPC-024, SRC-WERPC-029`): Kubernetes Secrets are unencrypted in etcd by default; Pod-creation permission can expose namespace Secrets through mounts. Secret volume updates are eventual and subPath mounts do not automatically update. ESO Vault guidance documents audience warnings for Vault 1.20 and an audience requirement at 1.21+, plus namespace requirements for ClusterSecretStore ServiceAccount references. Choose backend/transport/at-rest access and rotation/reload contracts together. Observe redacted identity/conditions and consumer reload; never collect Secret values, tokens or private keys.
+
+`CLM-WERPC-017-100` (`SRC-WERPC-064, SRC-WERPC-065, SRC-WERPC-015, SRC-WERPC-251, SRC-WERPC-252`): Image digests fix bytes; tags may move. Helm **v3.22.0** provenance binds chart checksum/signature to a trusted key and fails verification before rendering. Cosign keyless verification needs expected identity/issuer and digest claims; attestation verification is separate. SLSA v1.2 verification checks signed provenance, subject digest, trusted builder and expected parameters; presence establishes neither a level nor artifact safety. SPDX/CycloneDX describe SBOM inventory/dependencies and related completeness/vulnerability context, not vulnerability absence. Choose artifact/registry retention, SBOM format, signature/provenance production and receiver policy to match release risk; reassess affected dependencies, replace or revoke unsafe artifacts and retain audit/rollback evidence. Immutable artifacts can remain vulnerable. Public NIST SSDF v1.1 metadata supplies practice vocabulary, not certification; inaccessible CISA SBOM pages supply no verified minimum-element claim.
+
+### Follow-up workspace questions
+
+The complete evidence contracts are indexed in [the follow-up question ledger](m0013-scope-application-index.md#follow-up-question-ledger). Each row below uses its corresponding current claim/source mapping; all results are **not observed in this cycle**. The central ledger owns scopes, candidate selectors, approval/risk boundaries, evidence contracts, next roles and triggers; this table supplies topic-specific questions without duplicating that contract. No credential or Secret value may be collected.
+
+| Question / U / requirement / claim | Topic question and distinguishing evidence |
+| --- | --- |
+| Q-WERPC-096 / U08 / REQ-WERPC-008 / CLM-WERPC-017-81 | Map controller ownership and selected objects; resolve ambiguous ownership and dangling selectors. Observe reconciliation status separately from the static graph. |
+| Q-WERPC-097 / U08 / REQ-WERPC-008 / CLM-WERPC-017-82 | Capture render versions/inputs/output identities; check intended resources, field ownership and CRD installation order. Admission requires its own approved test. |
+| Q-WERPC-098 / U08 / REQ-WERPC-008 / CLM-WERPC-017-83 | Build current/proposed vendor-specific skew/support matrix and sequential upgrade/drain/rollback prerequisites; newest release alone cannot pass compatibility. |
+| Q-WERPC-099 / U08 / REQ-WERPC-008 / CLM-WERPC-017-84 | Inventory removed/deprecated APIs and conversion/storage migration; removal acceptance requires successful migration and rollback compatibility, not render success. |
+| Q-WERPC-100 / U08 / REQ-WERPC-008 / CLM-WERPC-017-85 | Produce static allow/deny matrix including DNS; separately approve positive/negative new and established TCP/UDP flow tests against exact CNI. |
+| Q-WERPC-101 / U08 / REQ-WERPC-008 / CLM-WERPC-017-86 | Map DNS, downstream termination and upstream trust/renewal owner; approved probes must meet hostname/chain/route/denial/renewal expectations without private keys. |
+| Q-WERPC-102 / U09 / REQ-WERPC-009 / CLM-WERPC-017-87 | Resolve storage ownership, deletion/retention, placement and snapshot compatibility; any destructive/node-failure test needs operator approval and recoverable fixtures. |
+| Q-WERPC-103 / U09 / REQ-WERPC-009 / CLM-WERPC-017-88 | Record backup IDs/version/TTL/off-host scope and key-availability procedure; approved isolated restore must prove agreed data correctness, RPO/RTO and service recovery without token values. |
+| Q-WERPC-104 / U08 / REQ-WERPC-008 / CLM-WERPC-017-89 | Compare requests/limits with sanitized peak/throttle/OOM/eviction measurements and headroom; capacity acceptance must cover workload and failure load. |
+| Q-WERPC-105 / U08 / REQ-WERPC-008 / CLM-WERPC-017-90 | Map eligible physical failure domains; test intended hard/soft scheduling and pending behavior, separately approving scheduler/runtime evidence. |
+| Q-WERPC-106 / U08 / REQ-WERPC-008 / CLM-WERPC-017-91 | Define failure actions and timing; approved slow-start/load/dependency-loss tests must show readiness and restart behavior without cascading failure. |
+| Q-WERPC-107 / U08 / REQ-WERPC-008 / CLM-WERPC-017-92 | Distinguish voluntary maintenance from host loss; demonstrate spare capacity, quorum and expected drain/rollout behavior under approved scenarios. |
+| Q-WERPC-108 / U08 / REQ-WERPC-008 / CLM-WERPC-017-93 | Select user paths, objectives, error budget and capacity/cost model; acceptance needs measured user outcomes and justified targets rather than metric presence. |
+| Q-WERPC-109 / U09 / REQ-WERPC-009 / CLM-WERPC-017-94 | Check distro/Linux/cgroups/swap support, private CNI exposure, disk capacity and physical failure independence; approved host/runtime evidence stays separate from declarations. |
+| Q-WERPC-110 / U09 / REQ-WERPC-009 / CLM-WERPC-017-95 | Map each environment to credentials and state owner; check locking/conflict handling and access/encryption contract without raw state. Pass requires the intended trust separation, not workspace names. |
+| Q-WERPC-111 / U26 / REQ-WERPC-025 / CLM-WERPC-017-96 | Map resource/verb/namespace need, Secret-read and nodes/proxy access; approved effective authorization and exporter-consumer evidence must justify each permission. |
+| Q-WERPC-112 / U26 / REQ-WERPC-025 / CLM-WERPC-017-97 | Check modes/exemptions/version/failure policy; separately approved negative admission and dependency-failure cases must prove denials and usable rollback. |
+| Q-WERPC-113 / U26 / REQ-WERPC-025 / CLM-WERPC-017-98 | Observe only sanitized role/condition/reference metadata; approved tests must establish audience alignment, encrypted transport/storage and timely consumer reload without payloads. |
+| Q-WERPC-114 / U08 / REQ-WERPC-008 / CLM-WERPC-017-99 | Trace source policy, revision, render, sync and health; approved bad-source/prune/Git-reversal scenarios must meet explicit recovery criteria. |
+| Q-WERPC-115 / U26 / REQ-WERPC-025 / CLM-WERPC-017-100 | Bind accepted artifact to signer/builder/parameters and vulnerability decisions; approved invalid-identity/digest tests fail closed. Track patch/rebuild/promotion and compatible rollback audit evidence. |
+
+## Sources
+
+Current claim mappings are `CLM-WERPC-017-81` through `CLM-WERPC-017-100` in [current source observations](m0012-source-coverage.md#current-source-observations). These link directly read primary sources, dates, section selectors, version/revision limits and source refresh results. The current definition of factual `Verified` applies only within those external scopes; conditional choices and future criteria are research analysis.
+
+Key primary anchors include [Kubernetes controller concepts](https://kubernetes.io/docs/concepts/architecture/controller/), [version skew policy](https://kubernetes.io/releases/version-skew-policy/), [NetworkPolicy semantics](https://kubernetes.io/docs/concepts/services-networking/network-policies/), [K3s datastore backup/restore](https://docs.k3s.io/datastore/backup-restore), [Terraform state locking](https://developer.hashicorp.com/terraform/language/state/locking), [Argo automated sync](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/), and [SLSA v1.2 verification](https://slsa.dev/spec/v1.2/verifying-artifacts).
+
+Currency/access limits: mutable `stable`/`latest` and publisher footer abbreviations are not reproducible full immutable page pins. Helm 4 equivalence is unverified; Helm 3 CRD/provenance scope is explicit. Velero v1.17 and Terraform's 1.16.x documentation are qualified examples/surfaces, not installed-version observations. The release-page 1.34 wording/table ambiguity is retained. SPDX landing and CycloneDX overview do not establish full standard compliance or a latest patch release; the CycloneDX 1.7 mediaType example is not release verification. NIST SSDF public metadata was read, not the complete standard. CISA SBOM and OWASP vulnerability-management pages were inaccessible to the research tool; this is `unreachable`, not a proven HTTP 404 or an implementation gap. Their unverified contents support no claim.
+
+## Review and Freshness
+
+Recheck primary contracts before a decision when the cited release, support window, API, controller, driver, backend, event, permission, trust policy, test method, stakeholder expectation or recovery objective changes. Source freshness is distinct from historical local truth. Detailed current evidence and question contracts remain with their respective ledger owners.
+
+### Evidence insufficiency correction dated 2026-09-27
+
+The retained 2026-08-18 paragraph associated with `CLM-WERPC-012-02` inferred that default collectors had been running without required RBAC and called it a live pre-existing defect. Static image/argument/RBAC declarations do not establish running collectors, effective authorization, requests or failures. **That live-effect inference is unsupported and is withdrawn as a current conclusion**; the original dated wording remains below for correction provenance. `CLM-WERPC-017-96` supplies the current authorization boundary, and Q-WERPC-111 specifies the next evidence. Neither this correction nor later dated pin notes establish present workspace state.
+
+### Dated history retained from 2026-08-08 through 2026-09-14
+
+The material below preserves earlier observation dates, claim/source identifiers, corrections and section anchors. Its words such as current, confirmed, Verified, As-Is and defect refer to those dated cycles, not this cycle. Historical commands and retired selectors are provenance, not instructions to load or execute them. Superseding dated notes and the explicit correction above must be read with the earlier passages. No historical status is promoted by the new external access date.
+
+#### Historical overview
+
 This reference records a 2026-08-08 repository-static baseline, plus a bounded
 2026-08-10 gap-only refresh, for the local k3d platform, its Argo CD GitOps
 desired state, and related security controls.
 It is a decision input for platform, security, delivery, and operations owners;
 it is not a change authorization, live-cluster assessment, or certification.
 
-## Reference Type
+#### Historical reference type
 
 Current-primary-source research combined with repository-static platform and
 security evidence. The source register is [the pack ledger](m0012-source-coverage.md#source-register).
 
-## Authority Boundary
+#### Historical authority boundary
 
 `gitops/` remains the Kubernetes desired-state authority, `infrastructure/`
 owns bootstrap and static/live test boundaries, and Stage 05 owners retain
@@ -34,7 +157,7 @@ Vault/ESO readiness, secret rotation, CI execution, or an external gateway.
 Those remote/live/credential-bearing observations remain `DEFER` unless a
 separately approved read-only check collects them without secret values.
 
-## Scope
+#### Historical scope
 
 Included: Kubernetes desired state, GitOps reconciliation, infrastructure
 boundaries, network/RBAC/secret/admission controls, rollout and rollback
@@ -47,9 +170,9 @@ any implementation or policy decision. Baseline external pages were checked on
 delivery sources were checked on 2026-08-10. Product version and configuration
 applicability remain bounded in the ledger.
 
-## Definitions / Facts
+#### Historical definitions / facts
 
-### Evidence-depth model
+#### Evidence-depth model
 
 | Evidence level                     | What this review can establish                                                     | What it cannot establish                                                       | Current result                               |
 | ---------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------- |
@@ -63,7 +186,7 @@ applicability remain bounded in the ledger.
 The statuses deliberately describe evidence depth, not control quality. A
 `Verified` repository declaration cannot promote a deeper row to `Verified`.
 
-### Layered platform model and trust boundaries
+#### Layered platform model and trust boundaries
 
 The intended reconciliation path is:
 
@@ -108,7 +231,7 @@ not an Argo-managed Kubernetes deployment path. Its local endpoint and TLS
 claims must not be used as evidence that a gateway is running or that an
 external service is healthy.
 
-### Kubernetes baseline
+#### Kubernetes baseline
 
 Kubernetes NetworkPolicy is meaningful only when the selected networking
 implementation enforces it; isolation behavior follows the policies selecting a
@@ -137,7 +260,7 @@ dropped capabilities, read-only root filesystems, resource settings, and probe
 configuration. They are examples, not a tree-wide workload-hardening policy or
 runtime evidence.
 
-### Infrastructure baseline
+#### Infrastructure baseline
 
 `infrastructure/README.md` separates `verify-contracts-static.sh` from
 cluster-dependent checks such as `verify-cluster.sh`, `verify-gitops.sh`,
@@ -150,7 +273,7 @@ desired-state topology, but track a branch (`main`) rather than an immutable
 commit. This is an observation for change-control and recovery design, not a
 finding that the selected revision was fetched or reconciled.
 
-### Security baseline
+#### Security baseline
 
 `policy/conftest/kubernetes.rego` denies plaintext `Secret` manifests,
 `CreateNamespace=true`, AppProject wildcard groups/kinds, and `:latest` image
@@ -175,7 +298,7 @@ default. No cluster encryption configuration, effective Secret RBAC, or
 generated Secret metadata/value was inspected here. [SRC-WERPC-024](m0012-source-coverage.md#source-register)
 is a platform benchmark, not evidence of the local setting.
 
-### 2026-08-10 gap-only Kubernetes/Security refresh
+#### 2026-08-10 gap-only Kubernetes/Security refresh
 
 This refresh admits only three question-level deltas left under-sourced by the
 baseline. The proposed targets are decision inputs, not manifest changes. The
@@ -287,7 +410,7 @@ preserve these non-equivalences.
 | Adminer token/hardening  | `gitops/workloads/adminer/rollout.yaml`: `Rollout/adminer spec.template.spec` lacks `serviceAccountName`, `automountServiceAccountToken`, and pod/container `securityContext`                 | Kubernetes defaults and workload fields leave token and hardening intent implicit.                                     | API need and image compatibility are unknown; linter exemptions do not establish safety.           | Approved ServiceAccount/RBAC decision, token-disabled manifest, image compatibility test, restricted-field static checks, and separately authorized admission/runtime evidence.                                         |
 | Git/chart/image identity | `gitops/clusters/local/root-application.yaml`, `gitops/clusters/local/applicationset-apps.yaml`, `gitops/apps/root/`, `infrastructure/bootstrap-local.sh`, Adminer/KSM/Alloy image fields     | Git sources track `main`; chart applications mix exact versions with an unpinned bootstrap chart; images are tag-only. | Identity, authenticity, build provenance, and policy enforcement are separate unproven properties. | Environment-specific immutable-ref policy, full Git SHA where required, pinned bootstrap chart, image `tag@digest`, and independently configured/verified provenance or signatures against explicit trust expectations. |
 
-### Threat, control, and evidence matrix
+#### Threat, control, and evidence matrix
 
 | Scope / threat                                        | Existing preventive or detective control                                                   | Local evidence                                                                                                      | Missing deeper evidence / status                                                                                                                | Next owner                                   |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
@@ -302,7 +425,7 @@ preserve these non-equivalences.
 | Destructive or failed deployment                      | Argo automated sync, prune/self-heal declaration and recovery runbooks.                    | Root/ApplicationSet YAML; Argo/Vault recovery runbooks.                                                             | Sync history, health, retry, prune effect, recovery exercise, Git revert evidence: DEFER.                                                       | Platform operations.                         |
 | Gateway or cloud boundary drift                       | Reference-only Traefik documentation and explicit static/live split.                       | `traefik/README.md`; infrastructure inventory.                                                                      | External gateway config/load, TLS, endpoint, cloud IAM/provider health: DEFER.                                                                  | External gateway operator + platform.        |
 
-### Policy, reconciliation, rollout, and rollback design implications
+#### Policy, reconciliation, rollout, and rollback design implications
 
 Static Conftest, shell, Python, YAML, and optional kube-linter checks prevent
 some repository regressions before merge. PSA, native admission policies,
@@ -330,7 +453,7 @@ provenance, attestation, or signature verification was observed. [SRC-WERPC-032]
 and [SRC-WERPC-034](m0012-source-coverage.md#source-register)
 must not be converted into implementation claims.
 
-### Workspace As-Is, gap, and target matrix
+#### Workspace As-Is, gap, and target matrix
 
 | Priority | As-Is / bounded gap                                                                                                                                      | Target acceptance evidence                                                                                                                 | Owner and scope boundary                                    |
 | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
@@ -343,7 +466,7 @@ must not be converted into implementation claims.
 | Medium   | Hardened contexts appear on selected workloads only.                                                                                                     | Compatible baseline template/policy, resource and privilege controls, audit/warn before enforcement.                                       | Workload/platform + security.                               |
 | Low      | External Traefik reference copies can drift from the actual gateway.                                                                                     | Retain reference-only label and add an approved external-gateway evidence procedure, or retire stale copies.                               | External gateway operator + platform.                       |
 
-### Required deferred-validation backlog
+#### Required deferred-validation backlog
 
 - Read-only API-server/version/admission configuration, namespace PSA labels,
   effective Roles/ClusterRoles/bindings, and Secret encryption configuration
@@ -361,7 +484,7 @@ must not be converted into implementation claims.
   ServiceAccount permissions, and Pod Security admission/runtime outcome.
 - An approved Git-revert/prune/auto-sync-aware recovery exercise.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -530,7 +653,7 @@ therefore already outside the documented compatibility matrix by four minor
 versions; upstream states neither that it works nor that it breaks, and actual
 behavior against this cluster remains `live-cluster` blocked.
 
-## Sources
+#### Historical sources
 
 The dated baseline primary-source rows are `SRC-WERPC-023` through
 `SRC-WERPC-034`, and the admitted gap-only rows are `SRC-WERPC-060` through
@@ -543,7 +666,7 @@ version limitations and refresh triggers are part of each row. Predecessor
 documents remain dated provenance until WERPC-008; their current findings were
 reconciled here without rewriting historical claims.
 
-## Review and Freshness
+#### Historical review and freshness
 
 Refresh this reference when Kubernetes/k3s, Argo CD, ESO, Vault, CNI,
 admission/policy, GitOps root/AppProject, secret transport, image/release, or
@@ -555,7 +678,7 @@ digest, signature/attestation tooling, or trust policy changes. Recheck the
 current primary sources before a policy decision. The required deferred
 observations must remain distinct even if a local static validator passes.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**. The heading
 preserves the approved package date. Public-source refresh was limited to
@@ -636,7 +759,7 @@ reconciliation do not close their runtime and compatibility questions. No
 `Contradicted` row was found. PDRR-006 owns final shared-ledger integration and
 contiguous source/claim IDs; this increment creates proposals only.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-008`, `REQ-WERPC-009`, and `REQ-WERPC-025`, checked on
@@ -809,7 +932,7 @@ fetched. No row is promoted to `Verified`; no row is `Contradicted`. New
 source registered: `SRC-WERPC-075`. New claims registered:
 `CLM-WERPC-010-05` through `CLM-WERPC-010-07`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment consumes the reviewed platform/security report at workspace
 baseline `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` and its exact allocation
@@ -942,7 +1065,7 @@ attestation, or recovery output was inspected.
   NIST, Adminer, identity/admission, trust-policy, artifact-flow, or recovery
   change.
 
-### 2026-08-23 reconciliation and workload-identity increment
+#### 2026-08-23 reconciliation and workload-identity increment
 
 The current [Argo CD automated-sync contract](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
 preserves an important trigger boundary: a live-cluster change alone does not
@@ -969,7 +1092,7 @@ statement, verifier policy, and admission result remain distinct evidence
 classes; no registry object, trust decision, reconciliation, or runtime result
 was inspected.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the Kubernetes, infrastructure, and security owners
 under the approved 2026-09-05 follow-on cycle. Workspace re-observation was

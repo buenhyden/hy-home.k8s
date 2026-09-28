@@ -346,7 +346,7 @@
         "status_domain": [
           "draft",
           "active",
-          "done",
+          "completed",
           "superseded",
           "withdrawn"
         ]
@@ -444,7 +444,7 @@
         "status_domain": [
           "draft",
           "active",
-          "done",
+          "completed",
           "superseded",
           "withdrawn"
         ]
@@ -536,7 +536,7 @@
           "queued",
           "in-progress",
           "blocked",
-          "done",
+          "completed",
           "cancelled"
         ]
       },
@@ -5202,7 +5202,7 @@
       "states": {
         "draft": "mutable",
         "active": "current",
-        "done": "terminal",
+        "completed": "terminal",
         "superseded": "terminal",
         "withdrawn": "terminal"
       },
@@ -5217,7 +5217,7 @@
         ],
         [
           "active",
-          "done"
+          "completed"
         ],
         [
           "active",
@@ -5238,7 +5238,7 @@
         "queued": "mutable",
         "in-progress": "current",
         "blocked": "current",
-        "done": "terminal",
+        "completed": "terminal",
         "cancelled": "terminal"
       },
       "transitions": [
@@ -5248,7 +5248,7 @@
         ],
         [
           "in-progress",
-          "done"
+          "completed"
         ],
         [
           "in-progress",
@@ -5476,7 +5476,7 @@
       "class": "completed",
       "names": "promotion",
       "admitted_states": [
-        "done"
+        "completed"
       ]
     },
     {

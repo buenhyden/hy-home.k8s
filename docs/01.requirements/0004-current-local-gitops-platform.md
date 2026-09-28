@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.0.5"
+version: "1.0.6"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -83,7 +83,7 @@ Reading secrets, pushing, cloud work, and live mutation each need separate appro
 
 ### Unfinished delivery assurance
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its unimplemented scope (render, schema, policy, secret, shell fixture, image, and tool evidence lanes) remains an ownerless gap of REQ-0004-FR-0008 and FR-0010; the next owner is the request owner who plans a new package under current authority.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its withdrawal does not remove current validation: the repository already checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries, and product semantics; [SPEC-0008](../03.specs/0008-current-local-gitops-platform/spec.md) owns the current ingress path. Current manifest image-version checks require an explicit tag or `@sha256:` reference and reject `:latest`; they do not establish provenance or validate digest identity. REQ-0004-FR-0008 and FR-0010 remain open. Observed unowned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence, and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner should scope those residuals against current implementation before assigning new work; the retired Traefik lane is not a current target.
 Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and kept in `98.archive/retired/`
 ([SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md)); their scope currently has no implementation owner.
 The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003.

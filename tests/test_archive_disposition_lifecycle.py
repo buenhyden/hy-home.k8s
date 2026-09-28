@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 import subprocess
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
 
@@ -39,7 +41,7 @@ RUNBOOK_TARGET = "docs/05.operations/runbooks/0001-argocd-bootstrap-runbook.md"
 MIGRATION = "docs/98.archive/migrations/0024-runbook-rename.md"
 PACKAGE = "docs/03.specs/0080-adr-0032-retention-pilot"
 # The seed package is retained in `completed/`. Exact retention keeps its bytes,
-# so the fixture still builds a Stage 03 source out of the same document.
+# so the fixture builds a current Stage 03 source with only its status migrated.
 PACKAGE_SEED = "docs/98.archive/completed/03.specs/0080-adr-0032-retention-pilot"
 PACKAGE_MEMBERS = ("spec.md", "plan.md", "tasks/tsk-0001-retain-adr-0032.md")
 TASK = f"{PACKAGE}/tasks/tsk-0001-retain-adr-0032.md"
@@ -103,8 +105,11 @@ class DispositionLifecycleTest(unittest.TestCase):
         for path in (REGISTRY_PATH, RUNBOOK):
             self.write(path, (ROOT / path).read_bytes())
         for member in PACKAGE_MEMBERS:
+            frozen = (ROOT / PACKAGE_SEED / member).read_bytes()
+            assert frozen.count(b'status: "done"') == 1
             self.write(
-                f"{PACKAGE}/{member}", (ROOT / PACKAGE_SEED / member).read_bytes()
+                f"{PACKAGE}/{member}",
+                frozen.replace(b'status: "done"', b'status: "completed"', 1),
             )
         self.write(ADR, original_bytes(ADR))
         self.write(INDEX, INDEX_TEXT.encode())
@@ -529,6 +534,100 @@ class DispositionLifecycleTest(unittest.TestCase):
             ).encode(),
         )
         self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_pre_catalog_registry_skips_history_without_assessment_contract(
+        self,
+    ) -> None:
+        legacy = replace(self.registry, archive_assessment=None)
+        self.assertEqual(
+            dispositions.historical_catalog_diagnostics(
+                self.root, legacy, INDEX_TEXT, self.base
+            ),
+            (),
+        )
+        self.assertEqual(
+            dispositions.historical_catalog_diagnostics(
+                self.root,
+                legacy,
+                INDEX_TEXT + dispositions.CATALOG_HEADER + "\n",
+                self.base,
+            ),
+            (("ARCHIVE-CATALOG-HISTORY", INDEX),),
+        )
+
+    def test_prior_catalog_survives_assessment_contract_deletion(self) -> None:
+        record, _rows = self.committed_package()
+        self.remove(record)
+        self.write(INDEX, INDEX_TEXT.encode())
+        registry_data = json.loads((self.root / REGISTRY_PATH).read_text())
+        registry_data.pop("archive_assessment")
+        self.write(REGISTRY_PATH, (json.dumps(registry_data) + "\n").encode())
+        target = self.commit("erase catalog and assessment contract")
+        # The fixture omits schema files; mirror the deleted contract in the
+        # already loaded registry while Git retains the actual deleted bytes.
+        legacy = replace(self.registry, archive_assessment=None)
+        self.assertEqual(
+            dispositions.historical_catalog_diagnostics(
+                self.root, legacy, INDEX_TEXT, target
+            ),
+            (("ARCHIVE-CATALOG-HISTORY", INDEX),),
+        )
+
+    def test_prior_commit_cannot_erase_unit_and_catalog_together(self) -> None:
+        record, _rows = self.committed_package()
+        self.remove(record)
+        self.write(INDEX, INDEX_TEXT.encode())
+        self.commit("erase retained unit and its catalog row")
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_prior_assessment_cannot_disappear_after_commit(self) -> None:
+        record, rows = self.committed_package()
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "invalidated", "retained", ADR, "none")
+            ).encode(),
+        )
+        self.commit("assess retained unit")
+        self.write(INDEX, catalog(*rows).encode())
+        self.commit("erase prior assessment")
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_committed_history_only_unit_keeps_its_catalog(self) -> None:
+        record, rows = self.committed_package()
+        self.remove(record)
+        self.write(
+            INDEX,
+            self.assessed(
+                rows, (record, "withdrawn", "git-history-only", ADR, "none")
+            ).encode(),
+        )
+        self.commit("remove approved unit")
+        self.assertEqual(self.evaluate(), [])
+
+    def test_merge_parent_catalog_cannot_disappear(self) -> None:
+        main = self.git("symbolic-ref", "--short", "HEAD")
+        self.git("checkout", "--quiet", "-b", "retained")
+        self.committed_package()
+        self.git("checkout", "--quiet", main)
+        self.git(
+            "merge",
+            "--quiet",
+            "--no-ff",
+            "-s",
+            "ours",
+            "-m",
+            "discarded side",
+            "retained",
+        )
+        self.assertIn(("LIFECYCLE-EVIDENCE", INDEX), self.evaluate())
+
+    def test_unmerged_branch_catalog_does_not_constrain_current_branch(self) -> None:
+        main = self.git("symbolic-ref", "--short", "HEAD")
+        self.git("checkout", "--quiet", "-b", "retained")
+        self.committed_package()
+        self.git("checkout", "--quiet", main)
+        self.assertEqual(self.evaluate(), [])
 
     def test_a_removed_unit_is_never_recreated(self) -> None:
         record, rows = self.committed_package()

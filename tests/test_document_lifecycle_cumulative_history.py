@@ -343,6 +343,256 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
 
+    def test_staged_merge_admits_only_exact_legal_side_parent_create(self) -> None:
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        self.commit("draft")
+        self.commit("active")
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        self.git.run("merge", "--no-commit", "--no-ff", "side")
+
+        result, output = self.invoke("staged")
+        self.assertEqual(result, 0, output)
+
+        (self.root / self.path).write_bytes(self.document("active", "tampered"))
+        self.git.run("add", "--", self.path)
+        result, output = self.invoke("staged")
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_staged_merge_admits_one_committed_merge_boundary(self) -> None:
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        self.commit("draft")
+        self.commit("active")
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.commit("notes/main.txt", b"unrelated main history")
+        self.git.run("merge", "--no-ff", "--no-edit", "side")
+        self.git.run("checkout", "--quiet", "-b", "feature", self.base)
+        self.git.commit("notes/feature.txt", b"unrelated feature history")
+        self.git.run("merge", "--no-commit", "--no-ff", self.primary_branch)
+
+        result, output = self.invoke("staged")
+
+        self.assertEqual(result, 0, output)
+
+    def test_staged_merge_rejects_copied_document_without_distinct_identity(
+        self,
+    ) -> None:
+        source = ".agents/governance/source.md"
+        self.git.commit(source, self.document("draft"))
+        self.base = self.oid("HEAD")
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        self.commit("draft")
+        self.commit("active")
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.commit("notes/feature.txt", b"unrelated feature history")
+        self.git.run("merge", "--no-commit", "--no-ff", "side")
+
+        result, output = self.invoke("staged")
+
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_staged_merge_rejects_missing_malformed_and_fake_parent(self) -> None:
+        self.git.run("checkout", "--quiet", "-b", "fake", self.base)
+        fake = self.commit("active")
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        self.commit("draft")
+        self.commit("active")
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        self.git.run("merge", "--no-commit", "--no-ff", "side")
+        merge_path = Path(
+            self.git.run(
+                "rev-parse", "--path-format=absolute", "--git-path", "MERGE_HEAD"
+            )
+            .decode()
+            .strip()
+        )
+        actual = merge_path.read_bytes()
+        for payload in (b"bad\n", actual + actual, fake.encode() + b"\n"):
+            with self.subTest(payload=payload):
+                merge_path.write_bytes(payload)
+                result, output = self.invoke("staged")
+                self.assertNotEqual(result, 0, output)
+                self.assertIn("LIFECYCLE-CREATE", output)
+        merge_path.unlink()
+        result, output = self.invoke("staged")
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_staged_merge_rejects_illegal_or_unavailable_side_history(self) -> None:
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        self.commit("draft")
+        self.commit("retired")
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        self.git.run("merge", "--no-commit", "--no-ff", "side")
+
+        result, output = self.invoke("staged")
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+        with mock.patch.object(
+            VALIDATOR,
+            "_first_parent_history",
+            side_effect=VALIDATOR.InvocationError("no history"),
+        ):
+            result, output = self.invoke("staged")
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_staged_copy_signal_requires_distinct_canonical_unique_identity(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/03.specs/0095-closed-package-retention/plan.md")
+        target = PurePosixPath(
+            "docs/03.specs/0099-workspace-engineering-research-refresh/plan.md"
+        )
+        source_document = VALIDATOR.LifecycleDocument(
+            source, "sdlc/plan", "draft", artifact_id="SPEC-0095-PLAN-0001"
+        )
+        target_document = VALIDATOR.LifecycleDocument(
+            target, "sdlc/plan", "draft", artifact_id="SPEC-0099-PLAN-0001"
+        )
+        raw = (
+            b"C007\0"
+            + source.as_posix().encode()
+            + b"\0"
+            + target.as_posix().encode()
+            + b"\0"
+        )
+        cache = mock.Mock()
+        cache.registry = self.registry
+        cache._snapshot.side_effect = [
+            ({source: source_document}, {}),
+            ({target: target_document}, {}),
+        ]
+        with (
+            mock.patch.object(VALIDATOR, "_run_git", return_value=raw),
+            mock.patch.object(VALIDATOR, "_tree_blob_oid", return_value="a" * 40),
+        ):
+            self.assertFalse(
+                VALIDATOR._history_rename_or_copy_into_path(
+                    self.root,
+                    self.base,
+                    self.base,
+                    target,
+                    target_document=target_document,
+                    cache=cache,
+                )
+            )
+            for source_id, proposed in (
+                (None, {target: target_document}),
+                (target_document.artifact_id, {target: target_document}),
+                (
+                    source_document.artifact_id,
+                    {target: target_document, source: target_document},
+                ),
+            ):
+                with self.subTest(source_id=source_id, proposed=len(proposed)):
+                    candidate = VALIDATOR.LifecycleDocument(
+                        source, "sdlc/plan", "draft", artifact_id=source_id
+                    )
+                    cache._snapshot.side_effect = [
+                        ({source: candidate}, {}),
+                        (proposed, {}),
+                    ]
+                    self.assertTrue(
+                        VALIDATOR._history_rename_or_copy_into_path(
+                            self.root,
+                            self.base,
+                            self.base,
+                            target,
+                            target_document=target_document,
+                            cache=cache,
+                        )
+                    )
+            duplicate_source = PurePosixPath(
+                "docs/03.specs/0095-closed-package-retention/spec.md"
+            )
+            wrong_profile = VALIDATOR.LifecycleDocument(
+                source, "sdlc/spec", "draft", artifact_id=source_document.artifact_id
+            )
+            for base_documents in (
+                {source: source_document, duplicate_source: source_document},
+                {source: wrong_profile},
+            ):
+                cache._snapshot.side_effect = [
+                    (base_documents, {}),
+                    ({target: target_document}, {}),
+                ]
+                self.assertTrue(
+                    VALIDATOR._history_rename_or_copy_into_path(
+                        self.root,
+                        self.base,
+                        self.base,
+                        target,
+                        target_document=target_document,
+                        cache=cache,
+                    )
+                )
+            cache._snapshot.side_effect = [
+                ({source: source_document}, {}),
+                ({target: target_document}, {}),
+            ]
+            with mock.patch.object(
+                VALIDATOR, "_run_git", return_value=raw.replace(b"C007", b"R007")
+            ):
+                self.assertTrue(
+                    VALIDATOR._history_rename_or_copy_into_path(
+                        self.root,
+                        self.base,
+                        self.base,
+                        target,
+                        target_document=target_document,
+                        cache=cache,
+                    )
+                )
+
+    def test_staged_seed_reuses_exact_blob_and_reparses_changed_or_legacy_blobs(
+        self,
+    ) -> None:
+        draft = self.commit("draft")
+        blobs = VALIDATOR._tree_blob_map(self.root, draft)
+        documents, texts = VALIDATOR._snapshot_projection(
+            self.root,
+            self.registry,
+            blobs,
+            historical=True,
+            legacy_completion=VALIDATOR._legacy_completion_generation(self.root, draft),
+        )
+        seed = dict(
+            seed_blobs=blobs,
+            seed_documents=documents,
+            seed_texts=texts,
+            seed_legacy_completion=VALIDATOR._legacy_completion_generation(
+                self.root, draft
+            ),
+        )
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry, **seed)
+        with mock.patch.object(
+            VALIDATOR, "_snapshot_projection", wraps=VALIDATOR._snapshot_projection
+        ) as project:
+            self.assertEqual(
+                cache._snapshot(draft)[0][PurePosixPath(self.path)].status, "draft"
+            )
+            self.assertEqual(len(project.call_args.args[2]), 0)
+            active = self.commit("active")
+            self.assertEqual(
+                cache._snapshot(active)[0][PurePosixPath(self.path)].status, "active"
+            )
+            self.assertEqual(len(project.call_args.args[2]), 1)
+        wrong_legacy = VALIDATOR._CumulativeHistoryCache(
+            self.root,
+            self.registry,
+            **{**seed, "seed_legacy_completion": not seed["seed_legacy_completion"]},
+        )
+        with mock.patch.object(
+            VALIDATOR, "_snapshot_projection", wraps=VALIDATOR._snapshot_projection
+        ) as project:
+            wrong_legacy._snapshot(draft)
+            self.assertEqual(len(project.call_args.args[2]), len(blobs))
+
     def test_rename_rewrite_and_copy_into_target_remain_rejected(self) -> None:
         source = "notes/source.txt"
         self.git.commit(source, b"x" * 20_000)

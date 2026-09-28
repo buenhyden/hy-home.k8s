@@ -1,10 +1,10 @@
 ---
 title: "Reference: Workspace Governance and Common Agent Environment"
-version: "1.1.0"
+version: "1.2.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0001"
 ---
@@ -13,6 +13,73 @@ artifact_id: "RES-0001-m0001"
 
 ## Overview
 
+This reference compares instruction loading, shared governance and context handoff across Claude Code and Codex. A small versioned entrypoint plus provider-specific adapters is a conditional design option; it does not imply that either provider loaded this workspace. Current external synthesis leads, followed by dated historical evidence.
+
+## Reference Type
+
+Primary-source external research and conditional investigation design, directly observed on 2026-09-27. Dated prior repository observations are retained below as history.
+
+## Authority Boundary
+
+Official sources establish only the identified external product or method. This reference grants no local permission, policy change, installation, model promotion or operational approval. Every current workspace implementation, discovery, authentication, enforcement, runtime, billing and live result is `not observed in this cycle`. Candidate paths are investigation selectors, not observed files. External finding judgments and source refresh results remain separate from document QA and future workspace observations.
+
+## Scope
+
+Primary owner of U03, U05, U06, U31, U32 and U38, preserving REQ-WERPC-003 and REQ-WERPC-006. Includes organization/user, repository, directory/domain and task/session guidance; system prompt versus instructions/configuration/tools; common ownership; transfer and handoff. Excludes a local topology audit, private instructions or memory inspection, import execution and continuous synchronization.
+
+## Definitions / Facts
+
+### Instruction and context loading
+
+`CLM-WERPC-017-01` separates authority from discovery. Organization-managed configuration can constrain a product; user guidance expresses personal preferences; repository guidance describes shared stack and standards; directory/domain guidance narrows applicable work; task/session context names the goal and acceptance evidence. These are analysis scopes, not a new repository permission taxonomy. A provider's built-in system prompt, authored instructions, settings, tool definitions and sandbox/approval controls are different surfaces. Prose may affect model behavior without enforcing an action boundary.
+
+| Analysis scope | Purpose | Governance choice and verification boundary |
+| --- | --- | --- |
+| Organization / user | Managed restrictions and personal preferences | Identify accountable owner and exceptions; do not copy private global configuration into a repository. |
+| Repository | Shared technical stack, coding standards, explanation style and completion expectations | Keep a small map to versioned canonical owners; link checks prove routing, not native loading. |
+| Directory / domain | Narrow relevant constraints and context | Identify applicability and conflict owner; avoid multiplying copies of repository rules. |
+| Task / session | Goal, owned paths, acceptance evidence and handoff | Re-observe current state and authority after resume; a past summary does not grant future permission. |
+
+Exact source-backed loader/import/mode/version contracts and the correction of the old universal no-`AGENTS.md` statement belong to [provider surface comparison](m0003-provider-implementation-status.md#provider-surface-comparison). SRC-WERPC-009 and 004 support the product-specific loading distinction; SRC-WERPC-005 and 238 support settings/trust boundaries in [current source observations](m0012-source-coverage.md#current-source-observations). Configuration precedence is separate from prose-instruction precedence. Required verification includes both static owner/precedence evidence and a separately authorized native context trace.
+
+`CLM-WERPC-017-02` supports a concise map to canonical stack, coding standards, explanation style, permissions and completion evidence. OpenAI's harness case describes an approximately 100-line `AGENTS.md` map; that size is an example, not a standard or this repository's required limit. Anthropic's long-running harness case uses an initializer, incremental feature list, Git and progress records. A map reduces duplicated context and review cost, but dangling links or undiscovered referenced files lose guidance. Candidate verification separates link/owner checks from an authorized native read trace. Sources: SRC-WERPC-155 and SRC-WERPC-123.
+
+### Cross-provider governance
+
+`CLM-WERPC-017-03` and `CLM-WERPC-017-04` support sharing a reviewed procedure body while preserving each provider's discovery, schema, namespace, trust and permission adapter. Agent Skills specifies metadata and progressive loading; Codex and Claude document different skill locations and plugin behavior. Matching `SKILL.md` syntax does not establish path, hook or permission parity. Choose one canonical rule owner and review adapters against it; avoid bidirectional rule copies unless a concrete synchronization owner and conflict policy exist. A static adapter comparison proves declared semantics only; discovery, invocation and enforcement need separate observations. Sources: SRC-WERPC-156, SRC-WERPC-157, SRC-WERPC-158 and SRC-WERPC-243.
+
+`CLM-WERPC-017-05` compares context transfer options:
+
+| Option | Purpose and trade-off | Prerequisites and failure/verification question |
+| --- | --- | --- |
+| Versioned files plus Git/Task references | Reviewable shared knowledge and handoff; low service cost, but summaries can become stale or omit dependencies. | Name source, observation date, base and current owner; recipient re-observes Git and the Task before action. |
+| Bounded summary or checkpoint | Compact next action across session limits; cheaper context, with loss of detail and possible stale approval. | Preserve acceptance, unresolved evidence and scope; compare a resumed summary with fresh repository facts. |
+| MCP Resources | Application-driven retrieval of external/domain context; reduces prompt bulk but adds access, cache, connection and maintenance cost. | Validate resource URI, authorization, negotiated protocol, freshness/cache policy and sensitive-data handling; successful connection is not write authority. |
+| Search or RAG | Selective evidence at larger scale; retrieval coverage and ranking can omit or favor misleading sources. | Retain provenance and review retrieved data as untrusted context; verify citation support and revoked/deleted-item exclusion. |
+
+SRC-WERPC-013, SRC-WERPC-008, SRC-WERPC-087 and SRC-WERPC-125 support the product/context mechanisms, not a shared live session or guaranteed transfer. Retrieved content never becomes an instruction merely because a tool returned it.
+
+`CLM-WERPC-017-06` proposes a handoff containing goal/acceptance, base SHA and branch, owned paths, changes, dated evidence/results, unknowns, approval scope, checkpoint or recovery reference, rollback, next action and next owner. The recipient checks current Git state, canonical Task, changed instructions and remaining authority before proceeding. These fields are this research's conditional evidence design, not a vendor standard. The cited harness cases support incremental recovery, not universal replay or rollback.
+
+`CLM-WERPC-017-07` bounds Codex `/import`: the directly read guide documents one-time conversion of Claude/Cursor instructions and related settings, skills/plugins, MCP, hooks/subagents, with Claude project memory/recent chats among supported inputs. Review semantic differences and reauthentication before use. Import is `Verified` as a documented product route; continuous/bidirectional synchronization and equivalent behavior are `Unverified`, and no import ran here. Sources: SRC-WERPC-137. Importing private chat or memory content is outside this cycle.
+
+### Workspace governance questions
+
+`CLM-WERPC-017-08` connects the research to the [central follow-up evidence contracts](m0013-scope-application-index.md#follow-up-question-ledger). Each question's present workspace result is `not observed in this cycle`.
+
+- Q-WERPC-001: who owns each organization/user, repository, directory and session rule, and how does each exact product resolve conflicts? Candidate selectors: `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`, `.codex/config.toml` and approved non-secret managed policy metadata.
+- Q-WERPC-002: which minimal gateway and references actually enter context, and are duplicated rules stale? Compare static owner/link evidence with a separately authorized client/version load trace.
+- Q-WERPC-003: which adapter fields are parsed, discovered, invoked and permissioned? Compare `.agents/skills/`, `.claude/agents/` and `.codex/agents/` candidates without equating a listing with execution.
+- Q-WERPC-004: which file, summary or retrieval channel supplies shared context, under what access/freshness/redaction and cost bounds?
+- Q-WERPC-005: does a redacted handoff retain goal, base, changes, evidence, unknowns, approval and next action, and can a recipient recover from current canonical records?
+- Q-WERPC-006: which claims have only static validation, and what separately approved native runtime evidence would establish loading or enforcement?
+
+### Historical observations and corrections — 2026-08-08 to 2026-09-07
+
+The following records preserve their original observation dates, evidence boundaries, status and correction relationships. They are historical provenance, not current workspace findings or instructions. Retired paths and old counts remain statements about their recorded cycles. Current workspace result: `not observed in this cycle`.
+
+#### Historical Overview
+
 This reference maps the shared workspace environment that Claude and Codex
 adapters are intended to serve. Its design conclusion is a provider-neutral
 control plane: the repository owns task scope, governance, evidence, recovery,
@@ -20,12 +87,12 @@ and durable knowledge; each provider owns how it discovers instructions,
 configures tools, asks for approval, executes hooks, authenticates, and resolves
 models. The distinction preserves portability without inventing provider parity.
 
-## Reference Type
+#### Historical Reference Type
 
 Repository-static implementation analysis supported by dated primary provider
 sources, observed on 2026-08-08.
 
-## Authority Boundary
+#### Historical Authority Boundary
 
 Stage 00 is authoritative for shared workspace policy and contracts. This
 reference does not change those policies, create a runtime permission, or
@@ -34,15 +101,15 @@ trees are reviewed configuration surfaces only. Provider discovery, hook trust
 and delivery, model resolution, external-tool authentication, CI execution, and
 live platform readiness stay `DEFER` without separately authorized evidence.
 
-## Scope
+#### Historical Scope
 
 This owner covers REQ-WERPC-003 (workspace application) and REQ-WERPC-006
 (common system). It covers application at work-item, session, project, provider,
 and CI scope; harness and provider details are linked rather than duplicated.
 
-## Definitions / Facts
+#### Historical Definitions / Facts
 
-### Common-system baseline
+#### Common-system baseline
 
 The 2026-08-08 baseline used `harness-catalog.md` as the repository's
 common-harness inventory. Current navigation starts at the
@@ -55,7 +122,7 @@ and escalation. `AGENTS.md` and `CLAUDE.md` are thin gateways, while
 These are `Verified` as tracked files on the reviewed commit; no native provider
 discovery was tested in this research task.
 
-### Workspace-application baseline
+#### Workspace-application baseline
 
 The JIT workflow encoded in bootstrap and both runtime baselines is:
 
@@ -66,7 +133,7 @@ every document. The route binds provider behavior to canonical workspace owners
 before substantial work, rather than embedding mutable policy in an individual
 task prompt or provider adapter.
 
-### Common Provider-Neutral Control Plane
+#### Common Provider-Neutral Control Plane
 
 > [!NOTE]
 > The rows below are observations at the dates their cycles record, not the
@@ -94,7 +161,7 @@ fact supports a provider edge; neither changes the local canonical owner.
 [SRC-WERPC-009](m0012-source-coverage.md#source-register) record
 the source boundaries.
 
-### Application Rules by Scope
+#### Application Rules by Scope
 
 | Scope     | Apply                                                                                                                                 | Do not infer                                                                         | Security / failure response                                                                                              |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
@@ -104,7 +171,7 @@ the source boundaries.
 | Provider  | Map shared semantics to that provider's native instruction/config/hook/agent/MCP/sandbox/approval surface.                            | Equal adapter stems, filenames, or intent mean semantic/runtime equivalence.         | Record static config separately from discovery and authenticated execution; request provider-specific proof when needed. |
 | CI        | Run selected static checks with bounded output and report exact path scope.                                                           | CI pass proves live cluster, provider runtime, remote action, or deployment health.  | Classify remote/live as `DEFER` unless it ran under approved authority and exact evidence is retained.                   |
 
-### Workspace Gap and Target Matrix
+#### Workspace Gap and Target Matrix
 
 | Area                        | Current evidence                                                                                                                                                                                                                                                                                         | Gap                                                                                                                      | Recommended target state                                                                                                          | Application rule                                                                                           |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -118,7 +185,7 @@ the source boundaries.
 | Memory                      | Four authority classes and a progress ledger are explicit.                                                                                                                                                                                                                                               | Provider memory may be stale, private, or unreviewed.                                                                    | Repository-wins recovery; only reviewed/redacted lessons promote to durable/domain owners.                                        | Never write secret/raw transcript/tool output into durable memory.                                         |
 | Models/runtime              | Role policy and adapters declare intended values.                                                                                                                                                                                                                                                        | Availability, reasoning options, and authentication are client/account dependent.                                        | Maintain configured/candidate/observed distinctions and evaluate before promotion.                                                | `DEFER` any resolved-model claim without the specific authenticated observation.                           |
 
-### Target-State Rollout
+#### Target-State Rollout
 
 The target is incremental and control-first. It does not require an external
 platform migration or a new provider surface.
@@ -139,7 +206,7 @@ platform migration or a new provider surface.
    add a separate approved lane rather than calling static validation live
    readiness.
 
-### Failure and Security Boundaries
+#### Failure and Security Boundaries
 
 The control plane treats the following as boundary crossings rather than normal
 retry candidates: permission denial, credential/secret exposure, destructive
@@ -156,7 +223,7 @@ outside the default path. The provider's own permission feature may add
 technical enforcement, but no repository declaration substitutes for explicit
 human approval of the protected action.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -221,7 +288,7 @@ The `Glob` tool does not traverse the `.claude/skills`, `.claude/workflows`, or
 trusting `Glob` alone could wrongly conclude the shared assets are absent. This
 is a tool artifact, not workspace drift.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment consumes the reviewed provider/common report and its empty
 source/claim allocation slice. It adds no identifier and does not restate the
@@ -286,18 +353,7 @@ provider contracts only; tracked files are repository-static evidence only.
   change, and use a versioned non-secret runtime canary only with separate
   authorization.
 
-## Sources
-
-- **SRC-WERPC-004–008**: official Anthropic Claude Code documentation, checked
-  2026-08-08, establishes product-specific surfaces only.
-- **SRC-WERPC-009–013**: official OpenAI Codex documentation, checked
-  2026-08-08. A non-repository manual cache was the first review surface; it is
-  ephemeral, so the ledger's official URLs are the durable citation.
-- **Workspace evidence**: `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `.codex/**`,
-  `docs/00.agent-governance/{rules,providers,contracts}/**`, and
-  `harness-catalog.md`, inspected in the WERPC worktree on 2026-08-08.
-
-## Review and Freshness
+#### Historical Review and Freshness
 
 Recheck this reference if a gateway, provider adapter, Stage 00 control,
 validation contract, MCP inventory, or official provider document changes.
@@ -306,7 +362,7 @@ and date; they cannot inherit freshness from a static-config review. The source
 ledger keeps the URLs, date, claim boundary, and refresh triggers. WERPC-002 did
 not inspect secret values, private configuration, accounts, or live systems.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and the cited live documentation was
 checked on **2026-08-12**. The date in the heading identifies the approved
@@ -345,7 +401,7 @@ provider edge with observation-time evidence, but effective parity remains
 `DEFER`. Owner: Stage 00 harness/provider governance. Refresh when one of the
 cited provider contracts or named workspace selectors materially changes.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-006` only, checked on **2026-08-14**. It did not
@@ -391,7 +447,7 @@ or a named workspace selector materially changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-01`.
 
-### 2026-08-23 Spec 0054 authority-convergence increment
+#### 2026-08-23 Spec 0054 authority-convergence increment
 
 This is an additive terminal correction, not a topology migration. Under the
 approved Spec 0054 direction, the current provider set is Claude and Codex, and
@@ -417,7 +473,7 @@ changes remain with their Spec 0054 work packages. Until those owners land the
 terminal topology, this research pack uses existing owner paths and records the
 transition instead of creating a duplicate report or competing authority.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the workspace-application and common-system owners
 under the approved 2026-09-05 follow-on cycle. Workspace re-observation was
@@ -476,7 +532,7 @@ claim is `CLM-WERPC-016-08`.
   00 common execution policy. Refresh when either provider changes what its
   import carries, or when the local common-control surface changes.
 
-### 2026-09-07 registry and capability re-observation
+#### 2026-09-07 registry and capability re-observation
 
 This entry is additive. The 2026-08-17 and 2026-08-20 observations above keep
 their wording, subject and date; each described the tree at its own cutoff and
@@ -510,6 +566,25 @@ observation or an explicit absence; it is never inferred from the static column.
   execution policy under `.agents/governance/`. Refresh when a provider surface
   is added or retired, when the registry counts change, or when a runtime cell
   gains its first observation.
+
+## Sources
+
+Current source and claim metadata, exact original/final URLs, access dates, versions, limitations and refresh triggers are owned by [m0012 current source observations](m0012-source-coverage.md#current-source-observations). This synthesis uses SRC-WERPC-004, 005, 008, 009, 013, 087, 123, 125, 137, 155–158, 238 and 243; all current direct reads occurred on 2026-09-27. OpenAI harness is published 2026-02-11; Anthropic long-running harness 2025-11-26 and context engineering 2025-09-29. MCP Resources is revision 2026-07-28. Other publication/modification dates were not exposed; access date is not publisher freshness.
+
+### Historical source provenance
+
+- **SRC-WERPC-004–008**: official Anthropic Claude Code documentation, checked
+  2026-08-08, establishes product-specific surfaces only.
+- **SRC-WERPC-009–013**: official OpenAI Codex documentation, checked
+  2026-08-08. A non-repository manual cache was the first review surface; it is
+  ephemeral, so the ledger's official URLs are the durable citation.
+- **Workspace evidence**: `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `.codex/**`,
+  `docs/00.agent-governance/{rules,providers,contracts}/**`, and
+  `harness-catalog.md`, inspected in the WERPC worktree on 2026-08-08.
+
+## Review and Freshness
+
+Refresh on instruction-family/version gates, discovery/import limits, settings trust/precedence, skill/plugin schema, MCP revision or handoff-source changes. Reverify current product claims rather than advancing historical workspace dates. Future gateway/adapter adoption belongs to its authorized owner; discovery and enforcement require a versioned non-secret runtime contract.
 
 ## Related Documents
 

@@ -831,6 +831,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         payload = root / "payload.txt"
         original = b"safe content\n"
         payload.write_bytes(original)
+        initial_state = payload.stat()
         original_read = os.read
         restored = False
 
@@ -841,6 +842,14 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 restored = True
                 payload.write_bytes(b"stale-token\n")
                 payload.write_bytes(original)
+                # A fully restored byte and metadata state cannot be observed.
+                os.utime(
+                    payload,
+                    ns=(
+                        initial_state.st_atime_ns,
+                        initial_state.st_mtime_ns + 1_000_000_000,
+                    ),
+                )
             return chunk
 
         with (

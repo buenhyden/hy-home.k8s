@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.1.2"
+version: "0.1.3"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-09-27"
 layer: "references"
 ---
 # 90.references
@@ -64,7 +64,9 @@ docs/90.references/
 
 세 collection은 동일한 3단 구조를 따른다: collection router `README.md`,
 pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<slug>.md`.
-각 collection README가 자신의 pack을, 각 pack README가 자신의 member를 안내한다.
+각 collection README가 자신의 pack을, 각 pack README가 자신의 member와 연구
+책임을 안내한다. 관찰일·lifecycle·주장·coverage는 해당 보고서가 소유하며
+라우터는 이를 중복 관리하지 않는다.
 현재 pack을 보유한 collection이 Research뿐인 것은 현재 처분 결과일 뿐이며, 고유
 목적과 출처 경계를 갖춘 Audit 또는 Data pack의 추가를 금지하지 않는다.
 
@@ -105,6 +107,5 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 - [Architecture](../02.architecture/README.md)
 - [Specs](../03.specs/README.md)
 - [Operations](../05.operations/README.md)
-- [Research Collection](./research/README.md)
 - [Research Reference Template](../99.templates/templates/references/research.template.md)
 - [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)

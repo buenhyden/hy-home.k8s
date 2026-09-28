@@ -2,7 +2,7 @@
 title: "Dedicated Kubernetes Router and Host Baseline"
 version: "0.3.3"
 type: "sdlc/task"
-status: "done"
+status: "completed"
 owner: "platform"
 updated: "2026-09-24"
 layer: "specs"

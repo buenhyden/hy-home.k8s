@@ -28,6 +28,7 @@ if __package__:
         assessment_line_span,
         catalog_line_span,
         parse_assessment,
+        historical_catalog_diagnostics,
         removed_records,
         link_resolved_text,
         parse_catalog,
@@ -88,6 +89,7 @@ else:
         assessment_line_span,
         catalog_line_span,
         parse_assessment,
+        historical_catalog_diagnostics,
         removed_records,
         link_resolved_text,
         parse_catalog,
@@ -176,7 +178,7 @@ SECOND_SOURCE_COMMIT = (
     "82f0e1922d9748a88b1487a32a59629ba523f408"  # pragma: allowlist secret
 )
 ARCHIVE_INDEX = "docs/98.archive/README.md"
-CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
+CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "completed"})
 SECRET_DETECTED_EXIT = 17
 SECRET_TIMEOUT_SECONDS = 10
 MAX_REPLACEMENT_BLOB_BYTES = 2_000_000
@@ -1119,7 +1121,12 @@ def catalog_envelope_diagnostics(
         root, registry.archive_assessment.default_branch
     )
     shallow = is_shallow_repository(root)
-    diagnostics: list[CutoverDiagnostic] = []
+    diagnostics: list[CutoverDiagnostic] = [
+        _diagnostic(code, path)
+        for code, path in historical_catalog_diagnostics(
+            root, registry, index_text, "HEAD"
+        )
+    ]
     for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
         envelope = row.envelope
         unit = retained_unit_of(registry, record)

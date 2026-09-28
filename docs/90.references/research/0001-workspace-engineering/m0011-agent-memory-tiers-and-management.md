@@ -1,10 +1,10 @@
 ---
 title: "Reference: Agent Memory Tiers and Management"
-version: "1.1.0"
+version: "1.2.0"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-27"
 layer: "references"
 artifact_id: "RES-0001-m0011"
 ---
@@ -13,29 +13,93 @@ artifact_id: "RES-0001-m0011"
 
 ## Overview
 
+This reference distinguishes task context, reviewed durable project knowledge, domain knowledge and provider-local recall. Storage, eligibility, retrieval, context inclusion and correct application are separate stages. The current external research describes lifecycle choices and risks without inspecting memory stores.
+
+## Reference Type
+
+External primary-source research directly read on 2026-09-27, with conditional investigation design and preserved historical evidence.
+
+## Authority Boundary
+
+Official documentation establishes only bounded external product facts. This reference defines no local permission, model promotion, memory retention rule or provider configuration change. Current workspace availability, parsing, entitlement, effective settings, execution, cost, retrieval and correct application are `not observed in this cycle`. Candidate selectors are unobserved. Private settings, account records, memory stores, credentials and conversations are excluded. External claim judgment is separate from source refresh result and repository-static document QA.
+
+## Scope
+
+Primary owner of U30 and existing REQ-WERPC-029 through REQ-WERPC-032. Includes authority/lifetime/readers, storage choices, promotion/review/provenance, TTL/expiry/deletion/correction, conflicts, poisoning, sensitive-data exclusion, compaction and portable handoff. Excludes private memories, conversations, ignored checkpoints, connected-resource contents and runtime recall/deletion experiments.
+
+## Definitions / Facts
+
+### Memory authority and lifecycle
+
+`CLM-WERPC-017-141` proposes tiers by authority, audience and lifetime rather than one generic memory folder. These names are analytical choices, not a universal vendor standard or a new local retention policy.
+
+| Tier / audience | Purpose and storage choice | Lifecycle and trade-off |
+| --- | --- | --- |
+| Task/session context / active executor | Current goal, acceptance and short-lived observations in a bounded session or checkpoint. | Fast and relevant, but context truncation/compaction and stale approval can lose meaning. Re-observe on resume and expire temporary work through its authorized owner. |
+| Durable reviewed project knowledge / team | Canonical versioned Task, decision, guide or other existing owner plus Git evidence. | Reviewable and portable, but duplicate ledgers create conflicting truth. Promote only reusable redacted facts; correct with provenance. |
+| Domain-scoped knowledge / authorized domain readers | Owning domain records or a controlled retrieval backend. | Better relevance and access boundaries; cross-domain promotion requires reviewed links and explicit readership. |
+| Provider-local recall / product-user scope | Generated notes or product/session backend convenience. | Low maintenance for recall, with product-specific defaults, lifecycle and portability. It does not become shared authority merely by being stored. |
+
+`CLM-WERPC-017-142` records Claude Code's documented default auto memory: machine/repository scope shared across worktrees, with separate subagent memory; startup reads only the first 200 lines or 25KB of `MEMORY.md`, while topic files load on demand. Memory files persist until edited/deleted and are outside the session-transcript `cleanupPeriodDays` sweep. Authored required instructions remain separate. File edit/delete is not secure backup erasure or proof of use. Source: SRC-WERPC-004 in [current source observations](m0012-source-coverage.md#current-source-observations).
+
+`CLM-WERPC-017-143` records Codex local memories as off by default, enabled through `features.memories`, generated below Codex home `memories/` and controlled per chat for generation/use. When the feature is enabled, documented generate/use defaults are true; `disable_on_external_context` defaults false and can exclude MCP/web/tool-search threads from generation when enabled. `max_rollout_age_days` defaults 30 with 0–90 clamp; `max_unused_days` defaults 30 with 0–365 clamp. These are consolidation eligibility bounds, **not a secure deletion TTL**. Other generation defaults include six-hour idle eligibility and 25% rate-limit headroom. Required team rules belong in instruction files/checked-in documents; recall is not guaranteed. Sources: SRC-WERPC-068 and 049. No store, generation or effective setting was observed.
+
+`CLM-WERPC-017-144` separates SDK session backends from knowledge stores. OpenAI Agents SDK sessions expose get/add/pop/clear with SQL, Redis, hosted and custom choices; host namespace, access and storage security remain host responsibilities. `clear_session` is an interface operation, not backup destruction. Serialized compaction may attempt restoration and still fail at the backend, leaving history unrestored. Session history is neither Codex local memories nor a fact registry. Source: SRC-WERPC-050. Prefer existing versioned records for reviewed project facts; add a retrieval store only when scale/access requirements justify its maintenance and deletion burden.
+
+`CLM-WERPC-017-145` proposes provenance fields: claim/source URL or Git revision, creation and last-review date, canonical owner, scope/readership, trust/confidence, sensitivity, expiry and correction/successor relationship. MCP revision 2026-07-28 requires URI validation/sanitization and recommends access checks; transport/tool authentication and authorization scopes remain separate. A resource read supplies untrusted data, not instruction authority or permission. Provider external-context exclusion is not a complete poisoning defense. Quarantine untrusted candidates, review/redact before promotion and restrict readership to the least necessary scope. Source: SRC-WERPC-087; the protocol revision is externally reverified through SRC-WERPC-066, not locally negotiated.
+
+`CLM-WERPC-017-146` proposes capture → review/redact/deduplicate → promote to an existing canonical owner → refresh/expire → correct/delete with retained successor provenance. Keep fact, inference and preference distinct. Resolve duplicates and conflicts through source/date/evidence and accountable owner; neither a newer timestamp nor repeated retrieval can overrule current configuration or approval. Define TTL separately for temporary context, stale cached evidence, retained decisions and legal/security holds. Correction must affect the index/cache and future retrieval as well as the source body. Deletion must state its scope, backup/retention limits and authorized owner; do not promise secure erasure from a file removal. Anthropic structured-note/relevant-retrieval guidance supports these mechanisms, not this proposed full TTL workflow. Sources: SRC-WERPC-125, 004, 049, 050 and 087.
+
+### Retrieval poisoning and handoff
+
+`CLM-WERPC-017-147` bounds compaction and recovery. Summaries and tool-output clearing can lose qualifiers, exact source support, failed attempts and approval limits. Claude resume/fork can retain old history while current files differ; a file checkpoint is not Git history or external-database rollback. Re-read goal, current Git identity, owned paths, canonical Task/evidence and approval unknowns after compaction or handoff. Durable records need enough provenance to recover the source rather than preserve every transcript. Sources: SRC-WERPC-125 and 096.
+
+`CLM-WERPC-017-148` treats provider transfer as a one-time reviewed operation. Codex import can include Claude project memory and recent chats, but does not establish continuous sync, universal formats or semantic parity. Versioned canonical files, Git and Task references are the more portable shared handoff option, with source freshness and recipient re-observation. The proposed handoff fields and cross-provider cost/security comparisons are owned by [workspace governance](m0001-workspace-governance-and-common-agent-environment.md#cross-provider-governance). Private memory/chat import is excluded in this cycle. Source: SRC-WERPC-137.
+
+`CLM-WERPC-017-149` distinguishes **stored → indexed/eligible → retrieved → included in context → correctly applied**. Startup bounds, topic retrieval, exclusion settings, authorization and lossy compaction can fail at different stages. A file count demonstrates none of relevance, freshness or safe application. A later authorized synthetic evaluation should check cited source support, relevant recall, exclusion of expired/retracted facts, correction propagation, deleted-item cache invalidation, permission separation and task accuracy. Keep storage/deletion metadata and behavioral retrieval evidence distinct; the current result of every workspace stage is `not observed in this cycle`.
+
+Memory poisoning and prompt injection can persist a malicious instruction as an apparently useful remembered fact. Treat retrieved/ingested text as data, keep executable/system instructions at their authorized owner, block sensitive content before persistence, preserve provenance and independent review, and test with synthetic conflicting and revoked notes. Domain namespaces and access checks reduce accidental leakage but do not certify resistance to adversarial context. Recovery must identify affected facts/readers and correction/deletion scope without collecting raw private memory. These are conditional controls, not observed filtering effectiveness.
+
+### Memory verification questions
+
+`CLM-WERPC-017-150` points to the [central evidence-contract ledger](m0013-scope-application-index.md#follow-up-question-ledger). Current results are `not observed in this cycle`; candidate file types are canonical Tasks/domain records, memory policy/schema, synthetic backend fixtures, retrieval indexes and non-secret provider feature declarations. Private memories, transcripts and credential-bearing stores remain excluded.
+
+- Q-WERPC-176: which tier, owner, lifetime, authorized readers and backend holds each kind of context, and how does one-time provider import affect portability/scope?
+- Q-WERPC-177: what source/date/trust/sensitivity fields and review/redaction gate permit promotion into a canonical owner?
+- Q-WERPC-178: do TTL, consolidation eligibility, correction/deletion, cache invalidation and backup retention have distinct contracts and demonstrable boundaries?
+- Q-WERPC-179: how do deduplication, stale-source withdrawal and conflicts avoid shadow policy and ensure stored knowledge is actually retrieved and correctly applied?
+- Q-WERPC-180: do synthetic poisoning/injection and cross-domain access cases remain quarantined and unable to change authority or expose sensitive data?
+- Q-WERPC-181: what compaction losses occur, and can a recipient recover goal, Git/Task identity, evidence and approval by re-observing canonical records?
+
+### Historical observations and corrections — 2026-08-08 to 2026-09-05
+
+The following preserves original observation dates, identities, statuses, evidence limits and correction relationships. Retired owners and product assumptions are dated provenance, not current instructions or workspace findings. Current workspace result: `not observed in this cycle`.
+
+#### Historical Overview
+
 This reference records the workspace's four memory classes and the lifecycle
 controls that prevent transient or provider-local context from becoming
 authority without review.
 
-## Reference Type
+#### Historical Reference Type
 
 Repository-static research baseline.
 
-## Authority Boundary
+#### Historical Authority Boundary
 
 The Stage 00 memory contract owns class definitions and canonical authority.
 Provider-local stores and externally retrieved resources are advisory. They
 never override observed repository state or a canonical domain owner.
 
-## Scope
+#### Historical Scope
 
 It covers working short-term, durable long-term, domain-scoped, and
 provider-local auxiliary memory, plus their retention, promotion, compaction,
 conflict, staleness, and deletion rules.
 
-## Definitions / Facts
+#### Historical Definitions / Facts
 
-### Short-term-memory baseline
+#### Short-term-memory baseline
 
 > [!NOTE]
 > The rows below are observations at the dates their cycles record, not the
@@ -52,7 +116,7 @@ credentials, tokens, account identifiers, or secret-bearing data. On resume,
 re-observe the repository and recompute; the checkpoint cannot establish
 current state. Its runtime existence/use is `DEFER` and was not inspected.
 
-### Long-term-memory baseline
+#### Long-term-memory baseline
 
 At the 2026-08-14 observation the durable shared progress ledger was
 `docs/00.agent-governance/memory/progress.md`. That ledger and the whole
@@ -64,7 +128,7 @@ canonical owner, evidence path/URL/commit, observation date, sensitivity,
 reviewer, retention/expiry, and handoff, as a concise fact/decision/evidence
 summary rather than an operational trace or a second policy owner.
 
-### Domain-scoped-memory baseline
+#### Domain-scoped-memory baseline
 
 The owning Spec, Runbook, Incident, or Postmortem is the domain-scoped owner
 for domain constraints, decisions, recovery knowledge, and invalidation. A
@@ -72,7 +136,7 @@ cross-domain promotion requires review plus links between the prior and new
 canonical owners. On supersession, archive with original/replacement provenance
 instead of overwriting the historical decision.
 
-### Memory-management baseline
+#### Memory-management baseline
 
 | Tier                       | Authority and typical payload                                                        | Promotion / retention                                                                                                     | Compaction, conflict, and deletion                                                                                                                                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -81,7 +145,7 @@ instead of overwriting the historical decision.
 | `domain-scoped`            | Owning Spec/Runbook/Incident/Postmortem; domain decision and operating knowledge.    | Promote across domains only after review and reciprocal owner links.                                                      | A compacted domain record retains the reviewed conclusion, its evidence references, and the archive/replacement provenance link; domain owner resolves conflicts; archive superseded records with replacement provenance. |
 | `provider-local-auxiliary` | Provider/user-local recall, auto memory, or sandbox context.                         | Re-observe before use; never promotes directly to canonical memory. Provider/user retention applies after re-observation. | It is lowest authority and follows provider/user deletion controls; content must pass the same never-list as the checkpoint contract before it enters `working-short-term`.                                               |
 
-### Lifecycle rules and evidence limits
+#### Lifecycle rules and evidence limits
 
 1. **Provenance and sensitivity:** capture a source identity, observation time,
    authority, fact/decision/inference/limitation label, reviewer, and a
@@ -107,7 +171,7 @@ MCP Resources describes retrieval and optional change notifications. These
 surfaces do not define this repository's retention, authorization, truth, or
 deletion policy, and no local provider-memory state was inspected.
 
-### 2026-08-10 freshness re-check
+#### 2026-08-10 freshness re-check
 
 All four external sources were re-read on 2026-08-10 and none changed inside
 the 2026-08-08 to 2026-08-10 window. The re-check did surface one material fact
@@ -124,7 +188,7 @@ No status in this report is promoted by this re-check. `REQ-WERPC-032` stays
 `Partial` because provider retention, deletion, compaction, and
 connected-resource behavior still require runtime evidence that is `DEFER`.
 
-### 2026-08-17 full-corpus refresh
+#### 2026-08-17 full-corpus refresh
 
 This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
@@ -172,15 +236,7 @@ contents; `REQ-WERPC-030` reopens if the durable ledger is relocated or a second
 tracked `progress.md` appears; `REQ-WERPC-032` reopens if a cited provider or
 MCP memory contract changes retention, compaction, or subscription semantics.
 
-## Sources
-
-- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`–`050`).
-- [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-051`).
-- [Model Context Protocol Resources specification](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), checked 2026-08-08, re-checked 2026-08-10 and confirmed superseded (`SRC-WERPC-052`).
-- [Model Context Protocol versioning](https://modelcontextprotocol.io/specification/versioning) and the [2026-07-28 Resources specification](https://modelcontextprotocol.io/specification/2026-07-28/server/resources), checked 2026-08-10 (`SRC-WERPC-066`).
-- [Context and memory policy](../../../../.agents/governance/context-and-memory.md) and `contracts/agent-checkpoint.schema.json` are local static owners.
-
-## Review and Freshness
+#### Historical Review and Freshness
 
 Refresh after a memory/checkpoint contract, canonical owner, provider memory,
 MCP Resource, retention/privacy, or lifecycle-validator change. Static PASS
@@ -193,7 +249,7 @@ superseded by `2026-07-28`, so treat every MCP statement here as revision-scoped
 rather than current-protocol. None of the four sources publishes a last-modified
 date, so an unchanged result is content identity rather than a publisher signal.
 
-### 2026-08-11 Partial/DEFER incremental refresh
+#### 2026-08-11 Partial/DEFER incremental refresh
 
 This bounded increment was executed and checked on **2026-08-12**. The heading
 identifies the approved package date rather than the check date. The ignored
@@ -236,7 +292,7 @@ Owner: Stage 00 memory lifecycle and checkpoint schema. Refresh when a cited
 provider/MCP memory contract or a named local memory selector materially
 changes.
 
-### 2026-08-14 consistency and Partial re-observation
+#### 2026-08-14 consistency and Partial re-observation
 
 This bounded increment re-observed the workspace and re-checked external
 sources for `REQ-WERPC-032` only, checked on **2026-08-14**. The ignored
@@ -290,7 +346,7 @@ memory contract or a named local memory selector materially changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-04`.
 
-### 2026-08-20 full-corpus reverification
+#### 2026-08-20 full-corpus reverification
 
 This increment re-observed the four memory rows at workspace baseline
 `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The allocation slice assigns no
@@ -386,7 +442,7 @@ auxiliary evidence and never replace a canonical repository owner.
   do not read ignored checkpoint contents. Refresh when a cited provider
   memory, SDK session, MCP lifecycle, or named local selector changes.
 
-### 2026-08-23 provider-memory gap increment
+#### 2026-08-23 provider-memory gap increment
 
 This gap-only increment follows the Spec 0054 Claude/Codex-only terminal
 provider boundary and changes no memory owner, checkpoint, adapter, retention
@@ -415,7 +471,7 @@ contracts and `REQ-WERPC-032` remains `Partial`. Provider enablement, actual
 compaction, retention, deletion, retrieval, and secure-erasure behavior remain
 `provider-runtime` / `DEFER`; no provider store or ignored checkpoint was read.
 
-### 2026-09-05 external-source reverification
+#### 2026-09-05 external-source reverification
 
 This increment re-observed the four memory owners under the approved 2026-09-05
 follow-on cycle. Workspace re-observation was excluded by direct user decision.
@@ -458,8 +514,24 @@ New sources are `SRC-WERPC-125` and `SRC-WERPC-138`; the cycle claim is
   which documented bound corresponds to which local tier. Refresh when memory
   classes, storage locations, loading bounds, or default enablement change.
 
+## Sources
+
+Current [source observations](m0012-source-coverage.md#current-source-observations) own exact URLs/claim support for SRC-WERPC-004, 049, 050, 066, 068, 087, 096, 123, 125 and 137. Direct external reads: 2026-09-27. MCP current revision is externally confirmed as 2026-07-28; this says nothing about a connected client. Anthropic context-engineering article is published 2025-09-29; long-running harness 2025-11-26. Other read pages exposed no publication/modification date. Product storage/default/eligibility controls are not a local privacy, retention or secure-erasure guarantee.
+
+### Historical source provenance
+
+- [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`–`050`).
+- [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-051`).
+- [Model Context Protocol Resources specification](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), checked 2026-08-08, re-checked 2026-08-10 and confirmed superseded (`SRC-WERPC-052`).
+- [Model Context Protocol versioning](https://modelcontextprotocol.io/specification/versioning) and the [2026-07-28 Resources specification](https://modelcontextprotocol.io/specification/2026-07-28/server/resources), checked 2026-08-10 (`SRC-WERPC-066`).
+- [Context and memory policy](../../../../.agents/governance/context-and-memory.md) and `contracts/agent-checkpoint.schema.json` are local static owners.
+
+## Review and Freshness
+
+Refresh on provider memory defaults, storage/loading limits, SDK session/compaction recovery, MCP Resources/version/access/cache, instruction import or canonical memory/correction/deletion contracts. Reverify expired and retracted sources before promotion. Future tests need exact product/backend and authorized synthetic data, separate evidence for each retrieval stage and a responsible retention/access owner; this cycle neither reads private stores nor advances historical lifecycle observations.
+
 ## Related Documents
 
-- [Pack coverage matrix](README.md#requirement-coverage-matrix)
+- [Pack coverage matrix](m0012-source-coverage.md#requirement-coverage-matrix)
 - [Source ledger](m0012-source-coverage.md)
 - [Context and memory policy](../../../../.agents/governance/context-and-memory.md)

@@ -58,6 +58,7 @@ from document_lifecycle import (
     LifecycleRename,
     MigrationLifecycleEvents,
     RETIRED_DOCUMENT_TYPES,
+    artifact_identity_reuse_diagnostics,
     compare_lifecycle,
     document_from_text,
     lifecycle_diagnostic_sort_key,
@@ -71,6 +72,7 @@ from archive_dispositions import (
     enclosing_unit,
     frontmatter_mapping,
     assessment_diagnostics,
+    historical_catalog_diagnostics,
     link_resolved_text,
     parse_assessment,
     parse_catalog,
@@ -107,6 +109,7 @@ from document_authority import (
     REGISTRY_PATH as CURRENT_REGISTRY_PATH,
     assert_staged_authority_matches_worktree,
 )
+from validation.repository.bounded_io import read_bytes as read_bounded_bytes
 
 
 RETIRED_REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
@@ -2646,6 +2649,15 @@ def _disposition_lifecycle_events(
         )
 
     diagnostics = [failure(index, code) for code in catalog_errors]
+    diagnostics.extend(
+        failure(index, code)
+        for code, _path in historical_catalog_diagnostics(
+            root,
+            registry,
+            proposed_texts.get(index, ""),
+            proposed_commit or base_commit,
+        )
+    )
     if any(proposed_rows.get(path) != row for path, row in base_rows.items()):
         diagnostics.append(failure(index, "an existing catalog row changed or left"))
     removed, assessment_gaps = _assessment_events(
@@ -3286,12 +3298,56 @@ def _classification_registry(
     )
 
 
+def _legacy_completion_generation(root: Path, commit: str) -> bool:
+    """Admit old `done` only when that commit's registry owned that spelling."""
+
+    path = PurePosixPath(CURRENT_REGISTRY_PATH)
+    oid = _tree_blob_oid(root, commit, path)
+    if oid is None:
+        return False
+    text = _blob_text(root, oid, path)
+    if text is None:
+        return False
+    try:
+        raw = json.loads(text)
+    except (TypeError, ValueError):
+        return False
+    if not isinstance(raw, dict):
+        return False
+    profiles = raw.get("profiles")
+    domains = raw.get("lifecycle_domains")
+    if not isinstance(profiles, list) or not isinstance(domains, list):
+        return False
+    profile_states = {
+        item.get("id"): item.get("lifecycle", {}).get("status_domain")
+        for item in profiles
+        if isinstance(item, dict) and isinstance(item.get("lifecycle"), dict)
+    }
+    domain_states = {
+        item.get("family"): item.get("states")
+        for item in domains
+        if isinstance(item, dict)
+    }
+    return all(
+        isinstance(profile_states.get(profile_id), list)
+        and "done" in profile_states[profile_id]
+        and "completed" not in profile_states[profile_id]
+        for profile_id in ("sdlc/spec", "sdlc/plan", "sdlc/task")
+    ) and all(
+        isinstance(domain_states.get(family), dict)
+        and domain_states[family].get("done") == "terminal"
+        and "completed" not in domain_states[family]
+        for family in ("spec-plan", "task")
+    )
+
+
 def _snapshot_projection(
     root: Path,
     registry: Registry,
     blobs: Mapping[PurePosixPath, str],
     *,
     historical: bool = False,
+    legacy_completion: bool = False,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -3305,6 +3361,7 @@ def _snapshot_projection(
                 path,
                 text,
                 retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+                legacy_completion=legacy_completion,
             )
         except DocumentContractError:
             documents[path] = LifecycleDocument(
@@ -3468,6 +3525,7 @@ def _comparison_documents(
     *,
     base_oid: Callable[[PurePosixPath], str | None],
     proposed_oid: Callable[[PurePosixPath], str | None],
+    base_legacy_completion: bool = False,
 ) -> tuple[
     Mapping[PurePosixPath, LifecycleDocument],
     Mapping[PurePosixPath, LifecycleDocument],
@@ -3493,6 +3551,7 @@ def _comparison_documents(
                 path,
                 text,
                 retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+                legacy_completion=base_legacy_completion if historical else False,
             )
         except DocumentContractError:
             return LifecycleDocument(
@@ -3615,6 +3674,9 @@ def _history_rename_or_copy_into_path(
     parent: str,
     commit: str,
     path: PurePosixPath,
+    *,
+    target_document: LifecycleDocument | None = None,
+    cache: _CumulativeHistoryCache | None = None,
 ) -> bool:
     """Reject bounded Git evidence of a rename or copy into the target path."""
 
@@ -3653,10 +3715,55 @@ def _history_rename_or_copy_into_path(
                 raise InvocationError(
                     "cumulative lifecycle provenance evidence is truncated"
                 )
-            _decode_path(records[cursor])
+            source = _decode_path(records[cursor])
             destination = _decode_path(records[cursor + 1])
             cursor += 2
             if destination == path:
+                if (
+                    status.startswith("C")
+                    and target_document is not None
+                    and cache is not None
+                ):
+                    base_documents = cache._snapshot(parent)[0]
+                    source_document = base_documents.get(source)
+                    proposed_documents = cache._snapshot(commit)[0]
+                    target_id = target_document.artifact_id
+                    source_blob = _tree_blob_oid(root, parent, source)
+                    owner = _load_canonical_markdown_module()
+                    if (
+                        source_document is not None
+                        and source_document.state_issue is None
+                        and source_document.artifact_id is not None
+                        and target_id is not None
+                        and source_document.artifact_id != target_id
+                        and source_document.profile_id
+                        == classify_path(cache.registry, source).profile_id
+                        and source_document.artifact_id
+                        == owner.expected_artifact_id(
+                            source, classify_path(cache.registry, source)
+                        )
+                        and sum(
+                            doc.artifact_id == source_document.artifact_id
+                            for doc in base_documents.values()
+                        )
+                        == 1
+                        and target_id
+                        == owner.expected_artifact_id(
+                            path, classify_path(cache.registry, path)
+                        )
+                        and all(
+                            doc.artifact_id != target_id
+                            for doc in base_documents.values()
+                        )
+                        and sum(
+                            doc.artifact_id == target_id
+                            for doc in proposed_documents.values()
+                        )
+                        == 1
+                        and source_blob is not None
+                        and source_blob == _tree_blob_oid(root, commit, source)
+                    ):
+                        continue
                 return True
         elif status[:1] in {"A", "D", "M", "T"}:
             if cursor >= len(records):
@@ -3750,6 +3857,10 @@ class _CumulativeHistoryCache:
 
     root: Path
     registry: Registry
+    seed_blobs: Mapping[PurePosixPath, str] | None = None
+    seed_documents: Mapping[PurePosixPath, LifecycleDocument] | None = None
+    seed_texts: Mapping[PurePosixPath, str] | None = None
+    seed_legacy_completion: bool | None = None
     snapshots: OrderedDict[
         str,
         tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]],
@@ -3769,7 +3880,26 @@ class _CumulativeHistoryCache:
             self.snapshots.move_to_end(commit)
             return cached
         blobs = _tree_blob_map(self.root, commit)
-        size = _snapshot_blob_size(self.root, blobs)
+        has_seed = (
+            self.seed_blobs is not None
+            and self.seed_documents is not None
+            and self.seed_texts is not None
+            and self.seed_legacy_completion is not None
+        )
+        legacy_completion = (
+            _legacy_completion_generation(self.root, commit) if has_seed else None
+        )
+        reuse_seed = has_seed and self.seed_legacy_completion == legacy_completion
+        changed_blobs = (
+            {
+                path: oid
+                for path, oid in blobs.items()
+                if self.seed_blobs.get(path) != oid
+            }
+            if reuse_seed
+            else blobs
+        )
+        size = _snapshot_blob_size(self.root, changed_blobs)
         if size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES or (
             self.snapshot_work_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
         ):
@@ -3785,9 +3915,35 @@ class _CumulativeHistoryCache:
                     del self.evidence[key]
         if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
-        snapshot = _snapshot_projection(
-            self.root, self.registry, blobs, historical=True
+        if legacy_completion is None:
+            legacy_completion = _legacy_completion_generation(self.root, commit)
+        changed_documents, changed_texts = _snapshot_projection(
+            self.root,
+            self.registry,
+            changed_blobs,
+            historical=True,
+            legacy_completion=legacy_completion,
         )
+        if reuse_seed:
+            assert self.seed_documents is not None and self.seed_texts is not None
+            snapshot = (
+                MappingProxyType(
+                    {
+                        path: changed_documents.get(path, self.seed_documents.get(path))
+                        for path in blobs
+                    }
+                ),
+                MappingProxyType(
+                    {
+                        path: changed_texts.get(path, self.seed_texts.get(path))
+                        for path in blobs
+                    }
+                ),
+            )
+            if any(value is None for mapping in snapshot for value in mapping.values()):
+                raise _CumulativeHistoryBudgetExceeded
+        else:
+            snapshot = changed_documents, changed_texts
         self.snapshot_work_bytes += size
         self.snapshots[commit] = snapshot
         self.snapshot_sizes[commit] = size
@@ -3816,17 +3972,13 @@ class _CumulativeHistoryCache:
 
 
 def _history_document(
-    root: Path,
-    registry: Registry,
-    path: PurePosixPath,
-    oid: str,
+    cache: _CumulativeHistoryCache, commit: str, path: PurePosixPath
 ) -> LifecycleDocument:
-    text = _blob_text(root, oid, path)
-    assert text is not None
-    document = document_from_text(registry, path, text)
-    profile = classify_path(registry, path)
+    document = cache._snapshot(commit)[0].get(path)
+    profile = classify_path(cache.registry, path)
     if (
-        document.state_issue is not None
+        document is None
+        or document.state_issue is not None
         or document.profile_id != profile.profile_id
         or profile.lifecycle_domain is None
     ):
@@ -3847,6 +3999,24 @@ def _history_event_diagnostics(
     """Use the normal lifecycle comparison with exact parent/commit evidence."""
 
     base_documents = {} if before is None else {path: before}
+    if cache.seed_blobs is not None:
+        # Ordinary initial/forward edges need no cross-document body evidence.
+        # Terminal supersession and archive events retain the full-snapshot path.
+        if after.status == "superseded" or after.profile_id.startswith("archive/"):
+            raise InvocationError("staged cumulative edge needs full evidence")
+        parent_documents = cache._snapshot(parent)[0]
+        commit_documents = cache._snapshot(commit)[0]
+        identity_diagnostics = artifact_identity_reuse_diagnostics(
+            parent_documents, commit_documents, base_mode="explicit-ref"
+        )
+        if any(item.path == path for item in identity_diagnostics):
+            return tuple(item for item in identity_diagnostics if item.path == path)
+        return compare_lifecycle(
+            registry,
+            base_documents,
+            {path: after},
+            base_mode="explicit-ref",
+        )
     return compare_lifecycle(
         registry,
         base_documents,
@@ -3865,8 +4035,11 @@ def _history_proves_cumulative_create(
     expected_proposed_blob: str | None = None,
     commits: tuple[str, ...] | None = None,
     cache: _CumulativeHistoryCache | None = None,
+    allow_merge_create: bool = False,
+    allow_distinct_artifact_copy: bool = False,
+    remaining_events: list[int] | None = None,
 ) -> bool:
-    """Prove a path's complete legal lifecycle on one closed first-parent path."""
+    """Prove a path's legal history, allowing at most one merge import when requested."""
 
     try:
         if _tree_blob_oid(root, base_commit, path) is not None:
@@ -3883,6 +4056,11 @@ def _history_proves_cumulative_create(
         )
         if not history:
             return False
+        if remaining_events is None:
+            remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
+        if len(history) > remaining_events[0]:
+            return False
+        remaining_events[0] -= len(history)
         history_cache = (
             _CumulativeHistoryCache(root, registry) if cache is None else cache
         )
@@ -3897,7 +4075,19 @@ def _history_proves_cumulative_create(
                     return False
                 parent = commit
                 continue
-            if _history_rename_or_copy_into_path(root, parent, commit, path) or (
+            target_document = (
+                _history_document(history_cache, commit, path)
+                if allow_distinct_artifact_copy and not appeared
+                else None
+            )
+            if _history_rename_or_copy_into_path(
+                root,
+                parent,
+                commit,
+                path,
+                target_document=target_document,
+                cache=history_cache if target_document is not None else None,
+            ) or (
                 not appeared
                 and _history_first_appearance_has_deletion(root, parent, commit)
             ):
@@ -3909,11 +4099,37 @@ def _history_proves_cumulative_create(
             )
             parent_fields = parent_raw.decode("ascii", errors="strict").split()
             if len(parent_fields) != 2 and current_blob != prior_blob:
-                return False
-            if not appeared:
+                if not (
+                    allow_merge_create
+                    and not appeared
+                    and prior_blob is None
+                    and len(parent_fields) == 3
+                    and parent_fields[:2] == [commit, parent]
+                    and _tree_blob_oid(root, parent, path) is None
+                    and _tree_blob_oid(root, parent_fields[2], path) == current_blob
+                ):
+                    return False
+                side_base = _merge_base(root, parent, parent_fields[2])
+                side_history = _first_parent_history(root, side_base, parent_fields[2])
+                if not _history_proves_cumulative_create(
+                    root,
+                    registry,
+                    path,
+                    side_base,
+                    parent_fields[2],
+                    current_blob,
+                    commits=side_history,
+                    cache=history_cache,
+                    allow_distinct_artifact_copy=allow_distinct_artifact_copy,
+                    remaining_events=remaining_events,
+                ):
+                    return False
+                appeared = True
+                prior_document = _history_document(history_cache, commit, path)
+            elif not appeared:
                 if prior_blob is not None:
                     return False
-                current = _history_document(root, registry, path, current_blob)
+                current = _history_document(history_cache, commit, path)
                 profile = classify_path(registry, path)
                 domain = profile.lifecycle_domain
                 assert domain is not None
@@ -3937,7 +4153,7 @@ def _history_proves_cumulative_create(
                 appeared = True
                 prior_document = current
             elif current_blob != prior_blob:
-                current = _history_document(root, registry, path, current_blob)
+                current = _history_document(history_cache, commit, path)
                 if (
                     prior_document is None
                     or current.profile_id != prior_document.profile_id
@@ -3961,6 +4177,27 @@ def _history_proves_cumulative_create(
         return False
 
 
+def _staged_merge_parent(root: Path, head: str) -> tuple[str, str] | None:
+    """Return the actual divergent merge parent and its unique common base."""
+
+    raw_path = _run_git(
+        root, ("rev-parse", "--path-format=absolute", "--git-path", "MERGE_HEAD")
+    )
+    path = Path(raw_path.decode("utf-8").strip())
+    if not os.path.lexists(path):
+        return None
+    raw = read_bounded_bytes(path, max_bytes=128)
+    if re.fullmatch(rb"(?:[0-9a-f]{40}|[0-9a-f]{64})\n", raw) is None:
+        return None
+    parent = raw.decode("ascii").strip()
+    if parent == head or _resolve_commit(root, parent, "MERGE_HEAD") != parent:
+        return None
+    common = _merge_base(root, head, parent)
+    if common in {head, parent}:
+        return None
+    return common, parent
+
+
 def _admit_cumulative_create_diagnostics(
     diagnostics: Sequence[LifecycleDiagnostic],
     *,
@@ -3971,10 +4208,14 @@ def _admit_cumulative_create_diagnostics(
     proposed_commit: str | None,
     base_blobs: Mapping[PurePosixPath, str],
     proposed_blobs: Mapping[PurePosixPath, str],
+    base_snapshot: Mapping[PurePosixPath, LifecycleDocument] | None = None,
+    base_texts: Mapping[PurePosixPath, str] | None = None,
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Remove only history-proved create diagnostics in committed comparisons."""
 
-    if mode not in {"ci", "explicit-ref"} or proposed_commit is None:
+    if mode not in {"ci", "explicit-ref", "staged"}:
+        return tuple(diagnostics)
+    if mode != "staged" and proposed_commit is None:
         return tuple(diagnostics)
     candidates = [
         (index, diagnostic)
@@ -3993,12 +4234,34 @@ def _admit_cumulative_create_diagnostics(
     if len(candidate_paths) > CUMULATIVE_HISTORY_MAX_CANDIDATES:
         return tuple(diagnostics)
     try:
-        history = _first_parent_history(root, base_commit, proposed_commit)
+        if mode == "staged":
+            merge_parent = _staged_merge_parent(root, base_commit)
+            if merge_parent is None:
+                return tuple(diagnostics)
+            history_base, history_tip = merge_parent
+        else:
+            history_base, history_tip = base_commit, proposed_commit
+        assert history_tip is not None
+        history = _first_parent_history(root, history_base, history_tip)
     except (InvocationError, UnicodeDecodeError, ValueError):
         return tuple(diagnostics)
     if len(candidate_paths) * len(history) > CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS:
         return tuple(diagnostics)
-    cache = _CumulativeHistoryCache(root, registry)
+    cache = _CumulativeHistoryCache(
+        root,
+        registry,
+        seed_blobs=base_blobs
+        if mode == "staged" and base_snapshot is not None
+        else None,
+        seed_documents=base_snapshot if mode == "staged" else None,
+        seed_texts=base_texts if mode == "staged" else None,
+        seed_legacy_completion=(
+            _legacy_completion_generation(root, base_commit)
+            if mode == "staged" and base_snapshot is not None
+            else None
+        ),
+    )
+    remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
     admitted_indices: set[int] = set()
     proved_paths: set[PurePosixPath] = set()
     try:
@@ -4009,11 +4272,14 @@ def _admit_cumulative_create_diagnostics(
                 root,
                 registry,
                 diagnostic.path,
-                base_commit,
-                proposed_commit,
+                history_base,
+                history_tip,
                 proposed_blobs[diagnostic.path],
                 commits=history,
                 cache=cache,
+                allow_merge_create=mode == "staged",
+                allow_distinct_artifact_copy=mode == "staged",
+                remaining_events=remaining_events,
             ):
                 admitted_indices.add(index)
                 proved_paths.add(diagnostic.path)
@@ -4118,6 +4384,7 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
+    base_legacy_completion = _legacy_completion_generation(root, base_commit)
     base_documents, proposed_documents, renames = _comparison_documents(
         root,
         base_classification_registry,
@@ -4125,9 +4392,14 @@ def _evaluate_comparison(
         selected,
         base_oid=base_oid,
         proposed_oid=proposed_oid,
+        base_legacy_completion=base_legacy_completion,
     )
     base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs, historical=True
+        root,
+        base_classification_registry,
+        base_blobs,
+        historical=True,
+        legacy_completion=base_legacy_completion,
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
@@ -4207,6 +4479,8 @@ def _evaluate_comparison(
         proposed_commit=proposed_commit,
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
+        base_snapshot=base_snapshot if mode == "staged" else None,
+        base_texts=base_texts if mode == "staged" else None,
     )
 
 

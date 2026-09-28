@@ -171,6 +171,22 @@ def legacy_registry_payload() -> dict[str, Any]:
                 frontmatter[field] = [
                     name for name in frontmatter[field] if name not in later
                 ]
+    # This fixture reconstructs the frozen pre-migration generation, so its
+    # three Stage 03 profiles and two domains retain the original spelling.
+    for profile in payload["profiles"]:
+        if profile["id"] in {"sdlc/spec", "sdlc/plan", "sdlc/task"}:
+            states = profile["lifecycle"]["status_domain"]
+            states[states.index("completed")] = "done"
+    for domain in payload["lifecycle_domains"]:
+        if domain["family"] in {"spec-plan", "task"}:
+            domain["states"] = {
+                "done" if name == "completed" else name: state
+                for name, state in domain["states"].items()
+            }
+            domain["transitions"] = [
+                ["done" if state == "completed" else state for state in edge]
+                for edge in domain["transitions"]
+            ]
     for domain in payload["lifecycle_domains"]:
         if domain["family"] == SPEC0084_DRAFT_WITHDRAWN_FAMILY:
             domain["transitions"] = [

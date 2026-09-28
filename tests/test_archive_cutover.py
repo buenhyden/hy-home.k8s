@@ -746,7 +746,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         target = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
         path = PurePosixPath(target)
         staged_draft = "---\ntype: sdlc/spec\nstatus: draft\n---\n\n# Staged draft\n"
-        worktree_done = staged_draft.replace("status: draft", "status: done")
+        worktree_completed = staged_draft.replace("status: draft", "status: completed")
 
         with TemporaryDirectory(prefix="archive-cutover-index-authority-") as raw:
             repository = Path(raw)
@@ -769,7 +769,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 stderr=subprocess.DEVNULL,
                 timeout=10,
             )
-            target_path.write_text(worktree_done, encoding="utf-8")
+            target_path.write_text(worktree_completed, encoding="utf-8")
 
             tracked = archive_cutover._tracked_regular_blobs(repository)
             worktree_document = document_from_text(
@@ -778,7 +778,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 target_path.read_text(encoding="utf-8"),
             )
 
-            self.assertEqual(worktree_document.status, "done")
+            self.assertEqual(worktree_document.status, "completed")
             self.assertEqual(
                 archive_cutover._replacement_target_diagnostic(
                     repository,
@@ -789,7 +789,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 "ARCHIVE-REPLACEMENT-NONCURRENT",
             )
 
-            target_path.write_text(worktree_done, encoding="utf-8")
+            target_path.write_text(worktree_completed, encoding="utf-8")
             subprocess.run(
                 ["git", "add", "--", target],
                 cwd=repository,
@@ -818,7 +818,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 stderr=subprocess.DEVNULL,
                 timeout=10,
             )
-            target_path.write_text(worktree_done, encoding="utf-8")
+            target_path.write_text(worktree_completed, encoding="utf-8")
             tracked = archive_cutover._tracked_regular_blobs(repository)
             self.assertEqual(
                 archive_cutover._replacement_target_diagnostic(
