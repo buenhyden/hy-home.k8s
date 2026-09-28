@@ -1,6 +1,6 @@
 ---
 title: "Archive Lifecycle Standardization"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -13,11 +13,11 @@ artifact_id: "SPEC-0100"
 
 ## Overview
 
-Align the current Archive lifecycle explanation, template, routing and existing validators with the accepted [ADR-0040](../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md). The direct user request dated 2026-09-28 authorizes non-destructive repository changes and local verification. The observed base is `d2296de9ea66ea80c27fcc965c21d552febb057d`; this managed worktree begins at that detached HEAD. The common 3.0.0 proposal is an input to assess, not an accepted local decision.
+Align the current Archive lifecycle explanation, template, routing and existing validators with the accepted [ADR-0040](../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md). The original implementation request dated 2026-09-28 authorized non-destructive repository changes and local verification. Its observed base was `d2296de9ea66ea80c27fcc965c21d552febb057d`; publication is recorded separately in the [Task](tasks/tsk-0001-standardize-archive-lifecycle.md). The common 3.0.0 proposal is an input to assess, not an accepted local decision.
 
 ## Strategic Boundaries & Non-goals
 
-This package owns change-specific acceptance and evidence. Durable Archive meaning remains with [document lifecycle](../../../.agents/governance/document-lifecycle.md), machine fields and state transitions with the [Stage 99 registry](../../99.templates/registry.json), and history with Git. Preserve every frozen body and sealed catalog capture row. No actual Archive removal, history rewrite, ADR acceptance, incident closure, cluster/service/secret access, remote push or merge is authorized. No new validation engine, duplicate registry, or research pack is needed.
+This package owns change-specific acceptance and evidence. Durable Archive meaning remains with [document lifecycle](../../../.agents/governance/document-lifecycle.md), machine fields and state transitions with the [Stage 99 registry](../../99.templates/registry.json), and history with Git. Preserve every frozen body and sealed catalog capture row. The original implementation scope did not authorize actual Archive removal, history rewrite, ADR acceptance, incident closure, cluster/service/secret access, remote push or merge; the later publication is recorded in the Task. No new validation engine, duplicate registry, or research pack is needed.
 
 The user approved changing the current Spec/Plan/Task terminal spelling from `done` to `completed` on 2026-09-28. This preserves the terminal meaning and existing transitions; it does not approve a new state, Incident semantics or Archive disposition. Migrate current profiles, transition consumers and live frontmatter together. Admit historical `done` only in explicitly historical validation, and preserve frozen Stage 98 bodies and original Task evidence. `closed` remains a permitted Incident state.
 
@@ -38,7 +38,7 @@ The user approved changing the current Spec/Plan/Task terminal spelling from `do
 | `governance-guide-policy-runbook` | `active`, `superseded`, `retired` unchanged | `active` is a current publication state, not an execution phase | No rewrite to sealed governance history | No change proposed |
 | Archive assessment | `withdrawn` unchanged | Evidential judgment differs from document lifecycle `withdrawn` | Assessment rows and citation decision remain independent | No change proposed |
 
-The migration inventory found 11 live frontmatter `done` values and 492 frozen Stage 98 values. Only the live values change. Historical validators may normalize `done` for a frozen body or prior Git generation, while a current `done` must fail. ADR-0040 already decides Archive disposition semantics; Incident and conditional metadata proposals remain separate.
+The migration inventory found 11 live frontmatter `done` values and 492 frozen Stage 98 values. Only the live values change. Historical validators may normalize `done` for a frozen body or prior Git generation, while a current `done` must fail. ADR-0040 already decides Archive disposition semantics; Incident state mapping and new conditional metadata are not adopted without a demonstrated need.
 
 ## Core Design
 
@@ -79,11 +79,11 @@ Use `python3 scripts/qa.py quick --root . --base-ref HEAD` for the affected work
 
 | Owner or document family | Disposition | Reason and Task owner | Acceptance |
 | --- | --- | --- | --- |
-| REQ-0003 and AD-0006 current text | Change only stale SPEC-0054 unfinished wording | This Task; preserve ownerless REQ-0004 gap | VAL-ARC-002 |
+| REQ-0003 and AD-0006 current text | Change only stale SPEC-0054 unfinished wording | This Task; preserve narrowed open REQ-0004 obligations | VAL-ARC-002 |
 | ADR-0040 and document lifecycle policy | Keep accepted Archive meaning; state the approved terminal spelling at the current policy owner | This Task; architect owns any new semantic decision | VAL-ARC-001, VAL-ARC-006 |
 | Stage 99 registry, schema and validators | Migrate current terminal spelling and historical compatibility at existing owners; repair reproduced enforcement defects | This Task and tooling owner | VAL-ARC-001, VAL-ARC-003, VAL-ARC-006 |
 | Incident template and current stage/AD READMEs | Change duplicate or stale current guidance | This Task; wiki-curator owns navigation | VAL-ARC-002 |
-| REQ and ADR decision READMEs | Change stale SPEC-0054 work pointer and duplicate ADR navigation | Wiki-curator; retain current ownerless REQ-0004 obligations | VAL-ARC-002 |
+| REQ and ADR decision READMEs | Change stale SPEC-0054 work pointer and duplicate ADR navigation | Wiki-curator; retain narrowed open REQ-0004 obligations | VAL-ARC-002 |
 | Stage 98 frozen units and sealed catalog capture rows | Keep byte-for-byte | No removal approval exists | VAL-ARC-003 |
 | Research pack 0002 and SPEC-0099 | Keep separate owners | Existing Archive research and workspace engineering refresh already own their topics | VAL-ARC-004 |
 | SPEC-0095–0098 provider/retention work | Keep historical scope and evidence | Their closed or active contracts do not authorize this state migration | VAL-ARC-004 |

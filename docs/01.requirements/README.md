@@ -1,6 +1,6 @@
 ---
 title: "01.requirements"
-version: "0.6.1"
+version: "0.6.2"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -64,7 +64,7 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 | [REQ-0001](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 요구 | AD·Spec·Plan·Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유한다. |
 | [REQ-0002](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 요구 | AD·Spec·Plan·Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유한다. |
 | [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)이 구조를 설명한다. [SPEC-0054 WP-013](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)은 2026-09-16 완료되었고 잔여 Stage 03 처분은 [SPEC-0083](../98.archive/completed/03.specs/0083-finished-package-retention/spec.md)·[SPEC-0084](../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md)로 승계되었다. |
-| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md)이 구조를 설명한다. SPEC-0049 철회 후 REQ-0004-FR-0008·REQ-0004-FR-0010의 미구현 검증 범위는 새 package 소유자가 없다. SPEC-0047·0048·0050·0051도 후속 없이 철회되어 Archive에 보존되었다. |
+| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md)이 구조를 설명한다. SPEC-0049 철회 후에도 기존 구조·YAML·정책·비밀·Vault/ESO 및 이미지 버전 표기 검사는 유지된다. REQ-0004-FR-0008·REQ-0004-FR-0010의 Kustomize render·Kubernetes schema 검사, 대상별 검증 깊이·도구 버전·fallback 증거, ingress 참조·resource kind의 미완료 범위는 새 package 소유자가 없다. SPEC-0047·0048·0050·0051도 후속 없이 철회되어 Archive에 보존되었다. |
 
 ## Authoring Workflow
 
