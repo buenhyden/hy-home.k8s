@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering External Research Refresh"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "active"
+status: "completed"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "specs"
 artifact_id: "SPEC-0099"
 ---
@@ -32,7 +32,7 @@ Excluded: changes to policies, provider/agent/skill/hook settings, CI, infrastru
 
 ## Core Design
 
-The direct user request supplies approval for activation of this bounded contract. Research execution is active; completion remains pending independent review and required QA.
+The direct user request supplies approval for activation of this bounded contract. Research execution is complete; the [Task](tasks/tsk-0001-refresh-external-research.md) records independent review, the resolved full-QA evidence and acceptance.
 
 ### Structure ruling
 

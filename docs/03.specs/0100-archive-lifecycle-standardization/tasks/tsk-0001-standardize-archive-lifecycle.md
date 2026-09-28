@@ -1,8 +1,8 @@
 ---
 title: "Standardize Archive Lifecycle"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-28"
 layer: "specs"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0100-TSK-0001"
 
 ## Overview
 
-Record execution of [SPEC-0100](../spec.md) on the `d2296de9ea66ea80c27fcc965c21d552febb057d` baseline in the managed detached worktree. The approved scoped implementation and repository-static verification are complete. The published package retains its legal initial `draft`/`draft`/`queued` frontmatter until actual lifecycle transitions; Archive disposition remains pending. Past Task or CI results are not this run's test results.
+Record execution of [SPEC-0100](../spec.md) on the `d2296de9ea66ea80c27fcc965c21d552febb057d` baseline in the managed detached worktree. The approved scoped implementation and repository-static verification are complete, published in PR #108 and PR #109, and the package is `completed` as of 2026-09-28. Archive disposition is a separate, separately approved change. Past Task or CI results are not this run's test results.
 
 ## Inputs
 
@@ -27,7 +27,7 @@ The [Plan](../plan.md), [ADR-0040](../../../02.architecture/decisions/0040-archi
 | WORK-002 | VAL-ARC-001, VAL-ARC-003 | Reproduce and repair confirmed shared-validator and QA defects | repo-tooling/quality | Verified | V12/V27 RED/GREEN; three initial unit failures repaired; independent review found no remaining finding; final unit suite PASS | Focused regressions and full QA chronology below |
 | WORK-003 | VAL-ARC-002 | Reconcile current template, policy, REQ/AD and README guidance | doc-writer/wiki-curator | Verified | Current documents and four READMEs authored; links/profiles and final full QA PASS | 17-path repair recheck, 45-path quick and 1,228-path full below |
 | WORK-004 | VAL-ARC-004, VAL-ARC-006 | Integrate research and migrate approved Spec/Plan/Task terminal spelling | docs-researcher/architect/doc-writer | Verified | Dated source addendum and spelling migration complete: 11 live `completed`, 492 frozen `done` unchanged; focused state tests and full QA PASS | Research m0001, Spec contract, consumer inventory and migration checks below |
-| WORK-005 | VAL-ARC-005 | Targeted, quick, full QA, review and final handoff | quality/supervisor | Verified; follow-up reviewed | Prior FAIL attempts preserved; original quick 13/13 and full 22/22 PASS; current follow-up full 22/22 PASS | Original and dated follow-up evidence below; Task-only refresh pending |
+| WORK-005 | VAL-ARC-005 | Targeted, quick, full QA, review and final handoff | quality/supervisor | Verified | Prior FAIL attempts preserved; original quick 13/13 and full 22/22 PASS; follow-up full 22/22 PASS; the Task-only refresh was published in PR #109, whose hosted `qa` passed | Original and dated follow-up evidence and closure below |
 
 ## Approval and Safety Boundaries
 
@@ -163,6 +163,12 @@ The QA investigator classified test existence at `d2296de9` on 2026-09-28. `cove
 
 The focused V12/V27 suite and bounded Archive gate passed. V25 keeps path/profile checks and human approval review; approval-authenticity automation is not a backlog item. Existing V28 endpoint/ancestor behavior remains checked; transient deletion/restoration is an unproved observation limit under ADR-0040’s no-row-loss obligation. This follow-up does not add a graph validator. V37 keeps Git object/index verification, with CRLF checkout probed and other filter/encoding variants untested; a new attributes engine is not adopted. REQ-0004-FR-0008 and FR-0010 remain open after SPEC-0049 withdrawal. Observed residuals include render/schema, per-target evidence and ingress cross-reference/resource-kind coverage; existing structure, YAML, policy, secret, Vault/ESO, manifest image-version and product checks remain implemented; image provenance is not established by the version check. The request owner should scope a concrete residual before assigning work. SPEC-0100 does not close those requirements. The approved Spec/Plan/Task `completed` spelling satisfies VAL-ARC-006. Incident `resolved`→`closed` mapping and new conditional metadata are not adopted without a demonstrated need.
 
+### Closure (2026-09-28)
+
+The Task-only evidence refresh left open above was published as commit `94691e71` in PR #109 (merge `8edbf5e0`), and hosted `qa` run [36380905585](https://github.com/buenhyden/hy-home.k8s/actions/runs/36380905585) passed on that head. PR #110 run [36417738265](https://github.com/buenhyden/hy-home.k8s/actions/runs/36417738265) later passed on a tree that contains the whole change. VAL-ARC-001 through VAL-ARC-006 therefore have evidence. The package took the legal `draft`→`active` and `queued`→`in-progress` edges in one commit, then `completed` in the next, and no transition was inferred from publication alone.
+
+Completion closes only this conformance work. These items stay open with their named owners and do not block closure: the Incident `resolved`→`closed` mapping, which needs a new accepted ADR (architect); the V01–V40 rows marked `partial`, which the matrix above already dispositions; and REQ-0004-FR-0008 and FR-0010, which the request owner must scope before assigning work. Completion grants no Archive authority.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -173,4 +179,4 @@ The focused V12/V27 suite and bounded Archive gate passed. V25 keeps path/profil
 | [WORK-002](../plan.md#work-breakdown) | Focused RED/GREEN and final guard regression PASS; independent review has no remaining finding | [VAL-ARC-001](../spec.md#success-criteria--verification-plan), VAL-ARC-003 |
 | [WORK-003](../plan.md#work-breakdown) | Current documents authored; links/profiles and final quick/full PASS; Task-only refresh handled at handoff | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) |
 | [WORK-004](../plan.md#work-breakdown) | User-approved spelling migration complete; 11 live frontmatter values and all consumers aligned, 492 frozen values preserved; 87 focused state tests and full QA PASS | [VAL-ARC-004](../spec.md#success-criteria--verification-plan), VAL-ARC-006 |
-| [WORK-005](../plan.md#work-breakdown) | Prior failures preserved; original quick 13/13 PASS and full 22/22 PASS with 1,232 tests (four skipped); publication followed in PR #108; current follow-up semantic review approved and full QA 22/22 PASS before Task-only refresh | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) |
+| [WORK-005](../plan.md#work-breakdown) | Prior failures preserved; original quick 13/13 PASS and full 22/22 PASS with 1,232 tests (four skipped); publication in PR #108; follow-up semantic review, full QA 22/22 PASS and Task-only refresh published in PR #109 with hosted `qa` PASS | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) |

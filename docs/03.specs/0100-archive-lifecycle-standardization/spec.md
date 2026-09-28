@@ -1,8 +1,8 @@
 ---
 title: "Archive Lifecycle Standardization"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "active"
+status: "completed"
 owner: "platform"
 updated: "2026-09-28"
 layer: "specs"

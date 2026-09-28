@@ -2,7 +2,7 @@
 title: "Refresh External Workspace Engineering Research"
 version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-28"
 layer: "specs"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0099-TSK-0001"
 
 ## Overview
 
-Single execution evidence owner for external research refresh, document integration, ordered validation and local commits under the direct user request dated 2026-09-27. The initial queued boundary was committed before authoring. The Spec/Plan remain active and this Task remains in progress. Member authoring, integration and the historical-prose English translation review are complete. Corrected quick, research exact-index staged QA and actual-message validation passed, and the research was committed. Final full QA failed three required gates, so overall acceptance remains incomplete. The bounded host-failure handoff was committed as f6b9e464 after six staged gates and actual-message validation passed. Renewed isolated local full QA also failed. Its documentation formatting findings were repaired, but the secret-baseline metadata and one test-fixture exception await explicit approval; overall acceptance remains incomplete.
+Single execution evidence owner for external research refresh, document integration, ordered validation and local commits under the direct user request dated 2026-09-27. The initial queued boundary was committed before authoring. Member authoring, integration, review and local commits were completed on the research branch, whose final local full QA failed on environment and baseline-metadata findings recorded below. Those findings were resolved after integration: SPEC-0100 corrected the secret-baseline metadata and repaired the failing tests, and every later default-branch integration passed hosted `qa`. All six acceptance criteria now have evidence, so the Spec, Plan and this Task are `completed`.
 
 ## Inputs
 
@@ -30,8 +30,8 @@ Single execution evidence owner for external research refresh, document integrat
 | WORK-002 | VAL-WER-002, VAL-WER-003 | Research topic details using primary external sources | researchers | Done | Three independent research groups returned primary-source packets integrated into the pack | Assigned m0001–m0011 evidence |
 | WORK-003 | VAL-WER-001, VAL-WER-003, VAL-WER-005 | Author member bodies after source handoff | doc writers | Done | Eleven topic members authored and independently reviewed; historical-prose English translation rereview PASS | Member source records and dispositions |
 | WORK-004 | VAL-WER-002, VAL-WER-004, VAL-WER-005 | Integrate U coverage, scope questions and navigation | integration owner | Done | Central coverage/questions and three navigation files integrated and corrected; historical-prose translation reviewed | README, m0012 and m0013 |
-| WORK-005 | VAL-WER-006 | Review and validate each coherent local commit | independent reviewer / integration owner | In progress | Research review, corrected quick and research staged/message passed; final full FAIL keeps VAL-WER-006 incomplete | Exact snapshot command results and Git |
-| WORK-006 | VAL-WER-006 | Close acceptance and preserve branch/worktree handoff | integration owner | In progress | Host failure handoff committed; isolated full also FAIL, scoped fixes/approvals and fresh validation pending | This Task |
+| WORK-005 | VAL-WER-006 | Review and validate each coherent local commit | independent reviewer / integration owner | Done | Research review, corrected quick and research staged/message passed; the local full FAIL was resolved by SPEC-0100 and hosted `qa` passed on PRs #108–#110 | Exact snapshot command results, post-integration resolution and Git |
+| WORK-006 | VAL-WER-006 | Close acceptance and preserve branch/worktree handoff | integration owner | Done | Host failure handoff committed; research integrated by PR #106; acceptance closed on the resolved evidence | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -119,7 +119,7 @@ Every later default-branch integration passed hosted `qa` over a tree that conta
 
 ### Legal closure and retained execution state
 
-Spec/Plan remain active and Task remains in progress. Required full QA failed, so completion is not legal. Additionally `done` is terminal in the registry and requires whole-package Stage 98 disposition whose source object is reachable from the default branch. Stage 98 writes and push/merge are outside this request; terminal disposition remains DEFER to authorized post-integration lifecycle work. Preserved failure handoff neither closes acceptance nor grants archive authority.
+The research branch's own full QA failed, so completion was not legal before integration. The post-integration resolution above supplies the missing VAL-WER-006 evidence, and the Spec, Plan and this Task take the `completed` terminal state on 2026-09-28. Completion grants no Archive authority. Whole-package Stage 98 disposition is a separate, separately approved change, and its source must be reachable from the default branch.
 
 ## Traceability
 
@@ -131,5 +131,5 @@ Spec/Plan remain active and Task remains in progress. Required full QA failed, s
 | [WP-002](../plan.md#work-breakdown) | Primary-source research packets integrated and independently reviewed; translation rereview PASS | [VAL-WER-002](../spec.md#success-criteria--verification-plan), VAL-WER-003 |
 | [WP-003](../plan.md#work-breakdown) | Member authoring and independent review complete; historical-prose translation rereview PASS | [VAL-WER-003](../spec.md#success-criteria--verification-plan), VAL-WER-005 |
 | [WP-004](../plan.md#work-breakdown) | Coverage, questions and navigation integrated and corrected; translation rereview PASS | [VAL-WER-004](../spec.md#success-criteria--verification-plan), VAL-WER-002, VAL-WER-005 |
-| [WP-005](../plan.md#work-breakdown) | Research/translation review, corrected quick and research staged/message PASS; research committed; final full FAIL, VAL-WER-006 incomplete | [VAL-WER-006](../spec.md#success-criteria--verification-plan) |
-| [WP-006](../plan.md#work-breakdown) | Host failure handoff committed as f6b9e464 with staged/message PASS; isolated full FAIL, scoped approvals/validation pending; overall acceptance incomplete | [VAL-WER-006](../spec.md#success-criteria--verification-plan) |
+| [WP-005](../plan.md#work-breakdown) | Research/translation review, corrected quick and research staged/message PASS; research committed; local full FAIL resolved by SPEC-0100, hosted `qa` PASS on PRs #108–#110 | [VAL-WER-006](../spec.md#success-criteria--verification-plan) |
+| [WP-006](../plan.md#work-breakdown) | Host failure handoff committed as f6b9e464; integrated by PR #106; acceptance closed | [VAL-WER-006](../spec.md#success-criteria--verification-plan) |
