@@ -1,10 +1,10 @@
 ---
 title: "Workspace Engineering External Research Refresh Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "completed"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "specs"
 artifact_id: "SPEC-0099-PLAN-0001"
 ---
@@ -65,7 +65,7 @@ These are research-delivery risks. No cluster, provider or hosted configuration 
 
 ## Completion Criteria
 
-All six Spec criteria have concrete evidence; U01–U39 and topic detail are covered; required QA and independent review are satisfied; external uncertainty remains bounded without masquerading as completed investigation; logical commits are coherent. Task records baseline/branch, changes, major external corrections/conflicts, question entrypoints, lane results, reviewer, commit SHAs, final Git status, bounded rollback and next owner. Branch/worktree remain; push/PR/merge are not attempted.
+All six Spec criteria have concrete evidence; U01–U39 and topic detail are covered; required QA and independent review are satisfied; external uncertainty remains bounded without masquerading as completed investigation; logical commits are coherent. Task records baseline/branch, changes, major external corrections/conflicts, question entrypoints, lane results, reviewer, commit SHAs, final Git status, bounded rollback and next owner. Branch/worktree remain; push/PR/merge are not attempted. The user later integrated the branch through PR #106, which the Task records.
 
 ## Traceability
 
