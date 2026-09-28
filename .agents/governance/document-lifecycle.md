@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.7.0"
+version: "1.7.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-09-28"
 ---
 
 # Document Lifecycle Policy
@@ -33,7 +33,11 @@ their owning migration work package moves them.
 ## Current Contract
 
 - A proposed status change must be one directed edge declared by the selected
-  profile family.
+  profile family. The 2026-09-28 approved Spec/Plan/Task terminal spelling is
+  `completed`, with the prior `done` meaning and transition edges unchanged.
+  Historical `done` remains valid in its frozen body or earlier Git generation;
+  a current Spec, Plan, or Task uses `completed`. Completion still grants no
+  disposition, removal, or new-execution authority.
 - Meaningful supersession requires the old owner to link `superseded_by` to the
   successor and the successor to link `supersedes` back in the same change.
 - A mutable or current owner cannot disappear without replacement coverage,
@@ -50,8 +54,10 @@ their owning migration work package moves them.
   decision follows the same rule. Stage 99 follows its retention modes: a
   retired form leaves through `git-history-only` with no Stage 98 record, and a
   stage or collection index is retained in place. Which states are terminal stays with the
-  registry; this policy adds only the obligation that reaching one moves the
-  document, and that each disposition needs its own authorization.
+  registry. Reaching one requires the matching disposition, and executing that
+  disposition needs its own authorization. A finished unit waits intact in its
+  source stage until that authorization; completion alone authorizes neither
+  its move nor new execution.
 - Stage 98 has six dispositions of two kinds. A retention class holds a whole
   once-current body under the profile that governed it: `completed/` names what
   it promoted, `superseded/` names the document that replaced it, `retired/`

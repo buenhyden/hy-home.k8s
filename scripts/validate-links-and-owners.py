@@ -3813,7 +3813,8 @@ def lifecycle_markdown_evidence(
                     r"evidence|tbd|todo|n/?a|[-—])$"
                 )
                 task_terminal_valid = all(
-                    row[positions["Status"]].strip().casefold() in {"done", "archived"}
+                    row[positions["Status"]].strip().casefold()
+                    in {"done", "completed", "archived"}
                     and placeholder.fullmatch(row[positions["Result"]].strip()) is None
                     and placeholder.fullmatch(row[positions["Evidence"]].strip())
                     is None

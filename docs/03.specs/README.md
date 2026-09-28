@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.7.5"
+version: "0.7.6"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "specs"
 ---
 # 03.specs
@@ -22,7 +22,10 @@ layer: "specs"
 
 Spec은 실행 기준을 소유하는 문서다.
 Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포함할 수 있다. 관측된 구현과의 의도된 차이는
-구현 대기이며, `completed`(현재 철자 `done`)는 수용 조건과 검사한 구현이 일치할 때만 인정한다. 끝난 package는
+구현 대기다. Spec·Plan·Task의 현재 완료 상태 이름은 2026-09-28 승인에 따라
+`completed`로 바뀌었고 이전 `done`과 같은 종단 의미를 가진다. Stage 98의 동결된
+`done` 기록은 원문 그대로 남는다. 수용 조건과 검사한 구현이 일치할 때만
+`completed`를 인정한다. 끝난 package는
 처분이 승인될 때까지 이 stage에서 기다리고, 승인되면 ADR-0040에 따라 `98.archive/completed/`에 package
 단위로 원본 Git object 그대로 보존되며, Retention Catalog가 원래 경로를 한 번 명명하고 원본은 Git history가 복구한다.
 
@@ -73,6 +76,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0096-codex-model-tier-rebinding/
 ├── 0097-claude-model-and-effort-binding/
 ├── 0099-workspace-engineering-research-refresh/
+├── 0100-archive-lifecycle-standardization/
 └── README.md
 ```
 
@@ -83,6 +87,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | [0096-codex-model-tier-rebinding/](./0096-codex-model-tier-rebinding/) | Codex model tier 재지정 |
 | [0097-claude-model-and-effort-binding/](./0097-claude-model-and-effort-binding/) | Claude model·effort 지정 |
 | [0099-workspace-engineering-research-refresh/](./0099-workspace-engineering-research-refresh/) | 기존 workspace engineering pack의 외부 연구 갱신 및 후속 조사 설계 |
+| [0100-archive-lifecycle-standardization/](./0100-archive-lifecycle-standardization/) | Archive 수명주기 표준화의 변경 범위·수용 기준과 검증 증거 |
 
 ## Authoring Workflow
 

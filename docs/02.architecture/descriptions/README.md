@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-28"
 layer: "architecture"
 ---
 # 02.architecture/descriptions (AD)
@@ -48,12 +48,12 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 
 ## Item Index
 
-| 문서 | 제목 |
+| 문서 | 현재 책임과 후속 경로 |
 | --- | --- |
-| [0004-argo-rollouts-progressive-delivery.md](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts Progressive Delivery Architecture Description |
-| [0005-argo-notifications-slack.md](./0005-argo-notifications-slack.md) | Argo Notifications Slack Architecture Description |
-| [0006-workspace-agent-governance-platform.md](./0006-workspace-agent-governance-platform.md) | Agent and Document Governance Architecture |
-| [0007-current-local-gitops-platform.md](./0007-current-local-gitops-platform.md) | Current Local GitOps Platform Architecture Description |
+| [AD-0004](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 구조. [SPEC-0004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)는 완료된 구현의 역사 근거다. |
+| [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 Vault/ESO credential 경계. [SPEC-0005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)는 완료된 구현의 역사 근거다. |
+| [AD-0006](./0006-workspace-agent-governance-platform.md) | 공통 거버넌스 구조의 현재 소유자. [SPEC-0054 WP-013](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)은 2026-09-16 완료되었고 잔여 Stage 03 처분은 [SPEC-0083](../../98.archive/completed/03.specs/0083-finished-package-retention/spec.md)·[SPEC-0084](../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md)로 승계되었다. |
+| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자. 구현 계약은 [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md)이 소유한다. [REQ-0004-FR-0008·REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md)의 미구현 검증 범위는 SPEC-0049 철회 후 새 구현 package 소유자가 아직 없다. |
 
 ## Add and Find
 
@@ -71,15 +71,6 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 - sibling ADR stage는 `../decisions/`로 연결한다.
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../05.operations/`로 연결한다.
 - 새 AD의 실제 Markdown 링크는 최종 AD 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
-
-### Current AD Index
-
-| 문서 | 역할 | 문서 상태 | 현재성 | 다음 단계 |
-| --- | --- | --- | --- | --- |
-| [`./0004-argo-rollouts-progressive-delivery.md`](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 참조 아키텍처 | Active | Current-contract backfill. `platform-rollouts` Application, dashboard, metrics, AppProject 경계를 소유한다. | [`../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| [`./0005-argo-notifications-slack.md`](./0005-argo-notifications-slack.md) | ArgoCD Notifications Slack 알림 참조 아키텍처 | Active | Current-contract backfill. ArgoCD Notifications와 Vault/ESO credential 경계를 소유한다. | [`../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| [AD-0006](./0006-workspace-agent-governance-platform.md) | Agent·문서·검증 authority 구조 | Active | 공통 `.agents/` 소유 경계와 Stage 99 문서 profile, execution/history, native/static/runtime 경계 및 이전 AD 책임 승계. | [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), WP-013 미완료 |
-| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps와 delivery assurance 구조 | Active | Desired-state topology, external interfaces, layered validation, native IaC, revision/namespace evidence; AD-0006과 공통 경계 분리. | Spec 0049 2026-09-25 철회, 범위는 owner 없는 gap; 0047·0048·0049·0050·0051 철회 후 retired 보존 |
 
 ## Related Documents
 

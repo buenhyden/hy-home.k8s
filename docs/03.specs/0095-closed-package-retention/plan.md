@@ -2,7 +2,7 @@
 title: "Closed Package Retention Implementation Plan"
 version: "0.2.0"
 type: "sdlc/plan"
-status: "done"
+status: "completed"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"

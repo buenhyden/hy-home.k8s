@@ -174,7 +174,7 @@ CURRENT_MARKDOWN_TOTAL_BYTES = 32 * 1024 * 1024
 CURRENT_MARKDOWN_MAX_FILES = 1024
 _INDEX_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
 CURRENT_STATUSES = frozenset(
-    {"draft", "active", "accepted", "done", "archived", "sealed"}
+    {"draft", "active", "accepted", "completed", "done", "archived", "sealed"}
 )
 CURRENT_MARKDOWN_PROFILES = frozenset(
     {
@@ -4732,13 +4732,25 @@ def validate_current_archive_authority(
         )
         if profile is not None:
             profile_valid = True
+            checked_status = document.status
+            domain = profile.lifecycle_domain
+            if (
+                checked_status == "done"
+                and profile.profile_id in {"sdlc/spec", "sdlc/plan", "sdlc/task"}
+                and domain is not None
+                and domain.validation_class("completed") == "terminal"
+                and domain.validation_class("done") is None
+                and registry is not None
+                and is_retention_path(PurePosixPath(path), registry)
+            ):
+                checked_status = "completed"
             status_valid = (
-                isinstance(document.status, str)
-                and document.status in profile.status_domain
+                isinstance(checked_status, str)
+                and checked_status in profile.status_domain
             )
             if profile.lifecycle_domain is not None:
                 state_class = (
-                    profile.lifecycle_domain.validation_class(document.status)
+                    profile.lifecycle_domain.validation_class(checked_status)
                     if status_valid
                     else None
                 )

@@ -88,6 +88,17 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         self.assertEqual(diagnostics, ())
         self.assertEqual(recovered, [target])
 
+    def test_completed_spec_reference_uses_git_first_recovery(self) -> None:
+        target = PurePosixPath("scripts/retired/deep/check-contract.py")
+        recovered: list[PurePosixPath] = []
+        diagnostics = self.validate(
+            "docs/03.specs/0001-example/spec.md",
+            f"---\nstatus: completed\n---\n\nHistorical command: `python3 {target}`.\n",
+            historical_path_exists=lambda path: recovered.append(path) or True,
+        )
+        self.assertEqual(diagnostics, ())
+        self.assertEqual(recovered, [target])
+
     def test_active_spec_proposal_does_not_claim_a_current_executable(self) -> None:
         invoked: list[PurePosixPath] = []
         diagnostics = self.validate(

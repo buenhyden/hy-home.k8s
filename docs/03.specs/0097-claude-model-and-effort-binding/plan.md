@@ -2,7 +2,7 @@
 title: "Claude Model and Effort Binding Implementation Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "done"
+status: "completed"
 owner: "platform"
 updated: "2026-09-27"
 layer: "specs"

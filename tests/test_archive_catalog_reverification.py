@@ -98,6 +98,18 @@ class CatalogReverificationTest(unittest.TestCase):
         )
         self.assertEqual(self.codes(text), set())
 
+    def test_prior_catalog_cannot_disappear_with_its_record(self) -> None:
+        self.retain()
+        index = "docs/98.archive/README.md"
+        self.write(
+            index, catalog((DOCUMENT_RECORD, f"{self.source}:{DOCUMENT}")).encode()
+        )
+        self.commit("catalog retained document")
+        self.git("rm", "--quiet", "--", DOCUMENT_RECORD)
+        self.write(index, b"# Archive\n")
+        self.commit("erase document and catalog")
+        self.assertIn(("ARCHIVE-CATALOG-HISTORY", index), self.codes("# Archive\n"))
+
     def test_a_missing_object_fails(self) -> None:
         self.retain()
         text = catalog((DOCUMENT_RECORD, f"{'0' * 40}:{DOCUMENT}"))

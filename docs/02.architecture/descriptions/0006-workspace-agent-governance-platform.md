@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.8.4"
+version: "1.8.5"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -17,7 +17,7 @@ This Architecture describes the current owner boundaries of agent, document, val
 [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
 the common governance design, [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
 the cutover and its acceptance conditions, and [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) owns
-the wider unfinished document convergence.
+the completed convergence record; its remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084.
 
 ### Convergence boundaries
 

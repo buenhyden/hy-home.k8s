@@ -71,6 +71,7 @@ from archive_dispositions import (
     enclosing_unit,
     frontmatter_mapping,
     assessment_diagnostics,
+    historical_catalog_diagnostics,
     link_resolved_text,
     parse_assessment,
     parse_catalog,
@@ -2646,6 +2647,15 @@ def _disposition_lifecycle_events(
         )
 
     diagnostics = [failure(index, code) for code in catalog_errors]
+    diagnostics.extend(
+        failure(index, code)
+        for code, _path in historical_catalog_diagnostics(
+            root,
+            registry,
+            proposed_texts.get(index, ""),
+            proposed_commit or base_commit,
+        )
+    )
     if any(proposed_rows.get(path) != row for path, row in base_rows.items()):
         diagnostics.append(failure(index, "an existing catalog row changed or left"))
     removed, assessment_gaps = _assessment_events(
@@ -3286,12 +3296,56 @@ def _classification_registry(
     )
 
 
+def _legacy_completion_generation(root: Path, commit: str) -> bool:
+    """Admit old `done` only when that commit's registry owned that spelling."""
+
+    path = PurePosixPath(CURRENT_REGISTRY_PATH)
+    oid = _tree_blob_oid(root, commit, path)
+    if oid is None:
+        return False
+    text = _blob_text(root, oid, path)
+    if text is None:
+        return False
+    try:
+        raw = json.loads(text)
+    except (TypeError, ValueError):
+        return False
+    if not isinstance(raw, dict):
+        return False
+    profiles = raw.get("profiles")
+    domains = raw.get("lifecycle_domains")
+    if not isinstance(profiles, list) or not isinstance(domains, list):
+        return False
+    profile_states = {
+        item.get("id"): item.get("lifecycle", {}).get("status_domain")
+        for item in profiles
+        if isinstance(item, dict) and isinstance(item.get("lifecycle"), dict)
+    }
+    domain_states = {
+        item.get("family"): item.get("states")
+        for item in domains
+        if isinstance(item, dict)
+    }
+    return all(
+        isinstance(profile_states.get(profile_id), list)
+        and "done" in profile_states[profile_id]
+        and "completed" not in profile_states[profile_id]
+        for profile_id in ("sdlc/spec", "sdlc/plan", "sdlc/task")
+    ) and all(
+        isinstance(domain_states.get(family), dict)
+        and domain_states[family].get("done") == "terminal"
+        and "completed" not in domain_states[family]
+        for family in ("spec-plan", "task")
+    )
+
+
 def _snapshot_projection(
     root: Path,
     registry: Registry,
     blobs: Mapping[PurePosixPath, str],
     *,
     historical: bool = False,
+    legacy_completion: bool = False,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -3305,6 +3359,7 @@ def _snapshot_projection(
                 path,
                 text,
                 retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+                legacy_completion=legacy_completion,
             )
         except DocumentContractError:
             documents[path] = LifecycleDocument(
@@ -3468,6 +3523,7 @@ def _comparison_documents(
     *,
     base_oid: Callable[[PurePosixPath], str | None],
     proposed_oid: Callable[[PurePosixPath], str | None],
+    base_legacy_completion: bool = False,
 ) -> tuple[
     Mapping[PurePosixPath, LifecycleDocument],
     Mapping[PurePosixPath, LifecycleDocument],
@@ -3493,6 +3549,7 @@ def _comparison_documents(
                 path,
                 text,
                 retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+                legacy_completion=base_legacy_completion if historical else False,
             )
         except DocumentContractError:
             return LifecycleDocument(
@@ -3786,7 +3843,11 @@ class _CumulativeHistoryCache:
         if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
         snapshot = _snapshot_projection(
-            self.root, self.registry, blobs, historical=True
+            self.root,
+            self.registry,
+            blobs,
+            historical=True,
+            legacy_completion=_legacy_completion_generation(self.root, commit),
         )
         self.snapshot_work_bytes += size
         self.snapshots[commit] = snapshot
@@ -3816,17 +3877,13 @@ class _CumulativeHistoryCache:
 
 
 def _history_document(
-    root: Path,
-    registry: Registry,
-    path: PurePosixPath,
-    oid: str,
+    cache: _CumulativeHistoryCache, commit: str, path: PurePosixPath
 ) -> LifecycleDocument:
-    text = _blob_text(root, oid, path)
-    assert text is not None
-    document = document_from_text(registry, path, text)
-    profile = classify_path(registry, path)
+    document = cache._snapshot(commit)[0].get(path)
+    profile = classify_path(cache.registry, path)
     if (
-        document.state_issue is not None
+        document is None
+        or document.state_issue is not None
         or document.profile_id != profile.profile_id
         or profile.lifecycle_domain is None
     ):
@@ -3913,7 +3970,7 @@ def _history_proves_cumulative_create(
             if not appeared:
                 if prior_blob is not None:
                     return False
-                current = _history_document(root, registry, path, current_blob)
+                current = _history_document(history_cache, commit, path)
                 profile = classify_path(registry, path)
                 domain = profile.lifecycle_domain
                 assert domain is not None
@@ -3937,7 +3994,7 @@ def _history_proves_cumulative_create(
                 appeared = True
                 prior_document = current
             elif current_blob != prior_blob:
-                current = _history_document(root, registry, path, current_blob)
+                current = _history_document(history_cache, commit, path)
                 if (
                     prior_document is None
                     or current.profile_id != prior_document.profile_id
@@ -4118,6 +4175,7 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
+    base_legacy_completion = _legacy_completion_generation(root, base_commit)
     base_documents, proposed_documents, renames = _comparison_documents(
         root,
         base_classification_registry,
@@ -4125,9 +4183,14 @@ def _evaluate_comparison(
         selected,
         base_oid=base_oid,
         proposed_oid=proposed_oid,
+        base_legacy_completion=base_legacy_completion,
     )
     base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs, historical=True
+        root,
+        base_classification_registry,
+        base_blobs,
+        historical=True,
+        legacy_completion=base_legacy_completion,
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs

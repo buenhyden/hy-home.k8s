@@ -17,13 +17,13 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Incident Metadata
 
-<!-- Author prompt: incident ID, 심각도, 시작 또는 탐지 시각, 선언된 상태, 영향받은 환경, 다음 점검 시점을 기록한다. -->
+<!-- Author prompt: incident ID, 심각도, 시작 또는 탐지 시각, frontmatter status에서 파생한 현재 상태, 영향받은 환경, 다음 점검 시점을 기록한다. 허용 상태값은 Registry의 operation/incident 프로필을 따른다. -->
 
 | Field | Value |
 | --- | --- |
 | Severity | SEV-1 / SEV-2 / SEV-3 / SEV-4 |
 | Started / detected | {{TIMESTAMP}} / {{TIMESTAMP}} |
-| Current state | open / mitigated / resolved / closed |
+| Current state | frontmatter `status`의 현재 값 |
 | Next checkpoint | {{TIMESTAMP}} or N/A — closed |
 
 ## Roles and Coordination
