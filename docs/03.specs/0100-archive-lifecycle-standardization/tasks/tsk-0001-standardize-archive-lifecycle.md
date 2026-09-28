@@ -1,8 +1,8 @@
 ---
 title: "Standardize Archive Lifecycle"
-version: "0.1.1"
+version: "0.2.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-28"
 layer: "specs"

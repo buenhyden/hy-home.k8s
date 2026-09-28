@@ -1,10 +1,10 @@
 ---
 title: "Refresh External Workspace Engineering Research"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-28"
 layer: "specs"
 artifact_id: "SPEC-0099-TSK-0001"
 ---
@@ -108,6 +108,14 @@ Important external corrections distinguish Spec Kit implementation from an SDLC 
 Committed recovery points are bootstrap 64685d5fda7faf40b2c8ed294ba4e53355baa156 and research 915c9a95a603cab6789ab641d922c8ce7c16ed3f. The research worktree was clean before the prior Task-only evidence update. The prior Task-only evidence was committed as f6b9e464 after six staged gates and actual-message validation passed. Its committed worktree was clean for the new isolated clone; the current update comprises m0012, m0013 and this Task rather than a Task-only change. Quick QA passed all six selected gates over those three documents before these final evidence precision edits. The exact-index staged and actual-message checks and local commit remain pending; this document embeds no future/self SHA. Keep branch codex/research-refresh and the research worktree. No push, PR, merge, branch/worktree removal, secret collection or provider/live action occurred. Bounded rollback is a reviewed forward reversal of only these task-owned logical commits/paths, preserving unrelated work; never reset, amend, rebase or blanket clean.
 
 Execution evidence is preserved here before deletion of explicitly enumerated task-owned scratch. Scratch logs are not durable authority. The user/operator owns later investigation scope and default-branch integration; repo-tooling-engineer/quality-engineer own the separately scoped QA follow-up. Overall acceptance remains incomplete and is not reported as done.
+
+### Post-integration resolution (2026-09-28)
+
+The research branch was published after the evidence above. PR #106 merged head `95ea3effcb344cd068c8a1cf7fb33f9ff71d544e` as `d3800129`, although its hosted `qa` run [36311357923](https://github.com/buenhyden/hy-home.k8s/actions/runs/36311357923) failed. The only failed gate was pre-commit: the `detect-secrets` hook exited 3 because it modified `.secrets.baseline` metadata. That is the same pending baseline refresh recorded above, not a new finding.
+
+SPEC-0100 then resolved both open exceptions under its own approval. Commit `5bc55bbb` (PR #108, merge `3d2ad806`) corrected the metadata-only `.secrets.baseline` line numbers, including the m0012 entries, with no detection value changed. It fixed the bounded-file mutation failure in the reader, which now performs a same-descriptor second read. The fixture exception proposed here was therefore never needed. The same commit repaired the escaped-descendant and Archive budget failures. The [SPEC-0100 Task](../../0100-archive-lifecycle-standardization/tasks/tsk-0001-standardize-archive-lifecycle.md) owns that repair evidence.
+
+Every later default-branch integration passed hosted `qa` over a tree that contains this research: PR #108 run [36374095637](https://github.com/buenhyden/hy-home.k8s/actions/runs/36374095637), PR #109 run [36380905585](https://github.com/buenhyden/hy-home.k8s/actions/runs/36380905585) and PR #110 run [36417738265](https://github.com/buenhyden/hy-home.k8s/actions/runs/36417738265). These hosted repository-static results satisfy the full-QA part of VAL-WER-006. They establish no provider-runtime or live result. Branch `codex/research-refresh` no longer exists locally or on the remote, and its worktree is gone. That retention obligation ended at integration.
 
 ### Legal closure and retained execution state
 
