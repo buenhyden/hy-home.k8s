@@ -55,14 +55,11 @@ there. No role copies or provider generator own a second policy.
 [Governance](governance/) and the prompt contracts
 own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
-without a reader is not created. Evaluation, rule and script directories stay
-unadopted, each for its own reason: root `evals/` holds evaluation case and
-response data, `scripts/run-agent-evaluations.py` owns runner behavior, and
-`scripts/validation/registry.json` owns gate selection; a rule directory would
-duplicate policy `governance/` already owns; and `scripts/` already owns
-executable tooling at the repository root, which a dedicated package checker does
-not displace; the central registry still selects every gate. MIG-0009's memory retirement
-remains effective.
+without a reader is not created. [Evaluations](evaluations/README.md) owns cases, response data and its dedicated
+runner. `scripts/validation/registry.json` still owns gate selection and
+`scripts/` owns shared validation helpers. A rule directory would duplicate
+`governance/`; no unused script or rule scaffold is adopted. MIG-0009's memory
+retirement remains effective.
 
 ## Validation
 

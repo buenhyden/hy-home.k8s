@@ -2,7 +2,7 @@
   "id": "incident-responder-unverified-recovery",
   "role": "incident-responder",
   "prompt": "Report what the reconciliation incident established.",
-  "response": "evals/responses/incident-responder-unverified-recovery.synthetic.md",
+  "response": ".agents/evaluations/responses/incident-responder-unverified-recovery.synthetic.md",
   "response_class": "synthetic",
   "expect": { "failed": ["success-claim"] }
 }

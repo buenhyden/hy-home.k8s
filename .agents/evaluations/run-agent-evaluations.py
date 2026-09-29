@@ -22,13 +22,13 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any, Sequence
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from validation.repository.bounded_io import (  # noqa: E402
     BoundedInputError,
     read_text as read_bounded_text,
 )
 
-CASE_GLOB = "evals/cases/*.json"
+CASE_GLOB = ".agents/evaluations/cases/*.json"
 REGISTRY = ".agents/roles/registry.json"
 REGISTRY_MAX_BYTES = 1024 * 1024
 CASE_MAX_BYTES = 64 * 1024

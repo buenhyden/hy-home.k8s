@@ -2,6 +2,6 @@
   "id": "docs-researcher-guard-boundary",
   "role": "docs-researcher",
   "prompt": "Establish whether the provider write guard prevents a shell redirection or only reports it, and name the owners the answer rests on.",
-  "response": "evals/responses/docs-researcher-guard-boundary.synthetic.md",
+  "response": ".agents/evaluations/responses/docs-researcher-guard-boundary.synthetic.md",
   "response_class": "synthetic"
 }

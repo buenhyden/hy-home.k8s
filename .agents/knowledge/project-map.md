@@ -35,7 +35,7 @@ them. A disagreement between a row and its owner is resolved by the owner.
 | Reference material | `examples/` | `examples/README.md` | Examples stay reference-only and are not deployed |
 | Repository tooling | `scripts/` | `scripts/README.md` | Validation routing stays registry-owned |
 | Tooling tests | `tests/` | `tests/README.md` | Each validator keeps an independent top-level test |
-| Agent evaluation | `evals/` | `evals/README.md` | The evaluation harness stays outside the common governance tree |
+| Agent evaluation | `.agents/evaluations/` | `.agents/evaluations/README.md` | Cases, responses and the dedicated runner share the common agent owner |
 | Local sensitive files | `secrets/` | `secrets/README.md` | No secret value is tracked in this repository |
 | Hosted surface | `.github/` | `.github/repository-surface.md` | Hosted execution stays separate from repository-static evidence |
 

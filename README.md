@@ -57,7 +57,6 @@ hy-home.k8s/
 ├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
 ├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
-├── evals/                 # Agent 평가 하니스: 채점 케이스와 기록된 응답 자산
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
 ├── .agents/               # 공급자 중립 역할·스킬 registry와 공유 자산
 ├── .claude/               # Claude native 투영과 권한·훅 선언
@@ -144,10 +143,9 @@ hy-home.k8s/
 - `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
 - `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
 - `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
-- `evals/` - Agent 평가 하니스. 채점 케이스(`cases/`)와 기록된 응답(`responses/`)을 보관한다
 - `_workspace/` - 비밀값을 담지 않는 임시 분석 경계. README만 추적한다
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
-- `.agents/` - 공급자 중립 역할·스킬과 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
+- `.agents/` - 공급자 중립 역할·스킬·평가 하니스와 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
 - `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 - `.codex/` - 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 

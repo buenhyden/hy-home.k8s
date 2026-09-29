@@ -62,6 +62,7 @@ class ValidationProfileTests(unittest.TestCase):
     def test_common_and_provider_authority_select_all_document_gates(self):
         cases = {
             ".agents/README.md": "governance-documents",
+            ".agents/evaluations/README.md": "governance-documents",
             ".agents/governance/quality.md": "governance-documents",
             ".agents/workflows/work-lifecycle.md": "governance-documents",
             ".agents/roles/registry.json": "agent-shared",

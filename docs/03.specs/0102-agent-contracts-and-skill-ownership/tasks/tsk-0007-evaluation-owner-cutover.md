@@ -1,8 +1,8 @@
 ---
 title: "Evaluation owner cutover"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-007 | VAL-ACS-032 | WP-006: Evaluation owner cutover | platform | Queued | Not executed | This Task |
+| WORK-007 | VAL-ACS-032 | WP-006: Evaluation owner cutover | platform | In Progress | Owner-cutover RED reproduced | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -43,10 +43,41 @@ the final branch receives independent review.
 
 ## Verification Summary
 
-Not executed. Branch `codex/agent-contracts`, initial base
+Owner presence test failed before relocation, as expected. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
 never establishes hosted, provider, account-limit or live behavior.
+
+### Cutover evidence
+
+The owner-presence regression failed before the move. The corpus and dedicated
+runner now live in `.agents/evaluations/`; root `evals/` and the old runner are
+absent. All 19 original expectation sets and 12 negative cases are preserved.
+Recorded synthetic text is data; it is never dispatched to a tool or provider.
+The central registry still selects the gate and common bounded I/O remains in
+`scripts/`. Native execution and model-quality claims remain DEFER.
+
+C6 plus governance/reference regressions: 118 tests passed (exit 0). The new
+runner returned exit 0 with 19 synthetic, 0 recorded, 12 negative cases. An
+additional missing evaluation-command reference test first failed RED, then
+passed after the shared current-reference matcher admitted the new owner.
+The frozen archive-generation equality test first failed; its derivation now
+reverses SPEC-0102's later skill profile additions while preserving the original
+historical route and asserting byte equality with the frozen Git object.
+
+The first affected QA rejected the deleted `evals/README.md` as unmatched.
+The central surface now classifies both retired-path deletions and new paths;
+this is deletion routing, not a live compatibility runner or duplicate corpus.
+Affected QA then exposed the document/data boundary: newly located response
+Markdown was entering current document routing and exact renames from the old,
+unmanaged root lacked a base document blob. The shared document inventory and
+lifecycle scope now exclude only evaluation responses; the grader still checks
+those inputs. Cross-scope renames become additions or deletions in the managed
+scope. The new owner README is English as required for `.agents/`. Dedicated
+regressions cover data exclusion and both rename directions. The historical
+response bodies remain byte-identical. A direct link check on an unstaged
+registry refused index/worktree drift as designed; staged QA uses one snapshot.
+Affected/staged QA is rerun on the corrected contracts.
 
 ## Traceability
 
@@ -54,4 +85,4 @@ never establishes hosted, provider, account-limit or live behavior.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-007](../plan.md#work-breakdown) | Queued | No implementation or verification yet |
+| [WORK-007](../plan.md#work-breakdown) | In Progress | Original 19 expectation sets frozen; owner cutover in validation |

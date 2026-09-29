@@ -70,6 +70,11 @@ LATER_OPTIONAL_KEYS = {
 SPEC0084_DRAFT_WITHDRAWN_FAMILY = "spec-plan"
 SPEC0084_DRAFT_WITHDRAWN_EDGE = ["draft", "withdrawn"]
 FROZEN_GENERATION_ROUTES = {
+    # SPEC-0102 admits nested references and dedicated skill assets only now.
+    "common/native-skill-reference": (
+        r"^\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/references/"
+        r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.md$"
+    ),
     "archive/tombstone": (
         r"^docs/98\.archive/(?!migrations/)(?!completed/)"
         r"(?!.*(?:/)?README\.md$).+\.md$"
@@ -149,7 +154,7 @@ def legacy_registry_payload() -> dict[str, Any]:
     payload["profiles"] = [
         profile
         for profile in payload["profiles"]
-        if profile["id"] not in ADR0038_PROFILES
+        if profile["id"] not in ADR0038_PROFILES | {"common/native-skill-asset"}
     ]
     payload["lifecycle_domains"] = [
         domain

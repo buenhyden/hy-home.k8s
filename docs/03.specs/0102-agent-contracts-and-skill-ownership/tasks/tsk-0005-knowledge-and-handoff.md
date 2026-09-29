@@ -76,4 +76,4 @@ or fabricated approval state was added.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-005](../plan.md#work-breakdown) | Completed | C4: 126 tests passed; affected QA and all 14 exact-index gates passed; committed as 68fd0d64. Independent final branch review follows in TSK-0008 |
+| [WORK-005](../plan.md#work-breakdown) | Completed | C4: 126 tests passed; affected QA and all 13 exact-index gates passed; committed as 68fd0d64. Independent final branch review follows in TSK-0008 |

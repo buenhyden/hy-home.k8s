@@ -2,6 +2,6 @@
   "id": "supervisor-bounded-delegation",
   "role": "supervisor",
   "prompt": "Split the provider parity follow-up into bounded packages with a single writer per file.",
-  "response": "evals/responses/supervisor-bounded-delegation.synthetic.md",
+  "response": ".agents/evaluations/responses/supervisor-bounded-delegation.synthetic.md",
   "response_class": "synthetic"
 }

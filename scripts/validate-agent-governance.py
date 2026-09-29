@@ -669,6 +669,10 @@ def validate_current_sources(root: Path) -> None:
     governance = root / ".agents"
     if governance.is_dir():
         for parent, directories, files in os.walk(governance, followlinks=False):
+            # The grader owns response data, including deliberately false claims.
+            if Path(parent) == governance / "evaluations" / "responses":
+                directories[:] = []
+                continue
             for name in directories:
                 if (Path(parent) / name).is_symlink():
                     fail(
@@ -1027,6 +1031,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         {
             "README.md": stat.S_IFREG,
             "governance": stat.S_IFDIR,
+            "evaluations": stat.S_IFDIR,
             "knowledge": stat.S_IFDIR,
             "prompts": stat.S_IFDIR,
             "roles": stat.S_IFDIR,

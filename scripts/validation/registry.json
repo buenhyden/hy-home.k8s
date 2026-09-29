@@ -50,7 +50,7 @@
       "id": "agent-evaluation-cases",
       "argv": [
         "python3",
-        "scripts/run-agent-evaluations.py",
+        ".agents/evaluations/run-agent-evaluations.py",
         "--root",
         "."
       ],
@@ -786,7 +786,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
+          "value": "^\\.agents/(?:README\\.md|evaluations/README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
         }
       ],
       "validators": [
@@ -866,7 +866,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^evals/.*$"
+          "value": "^(?:evals/.*|\\.agents/evaluations/(?!README\\.md$).*)$"
         }
       ],
       "validators": [

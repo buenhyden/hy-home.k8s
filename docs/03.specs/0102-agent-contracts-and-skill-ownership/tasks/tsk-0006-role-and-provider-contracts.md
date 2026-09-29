@@ -2,7 +2,7 @@
 title: "Role and provider contract alignment"
 version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | VAL-ACS-001, VAL-ACS-004, VAL-ACS-005, VAL-ACS-008, VAL-ACS-009, VAL-ACS-010, VAL-ACS-013, VAL-ACS-015, VAL-ACS-016, VAL-ACS-017, VAL-ACS-018, VAL-ACS-019, VAL-ACS-020, VAL-ACS-021, VAL-ACS-028, VAL-ACS-029, VAL-ACS-031 | WP-005: Role and provider contract alignment | platform | In Progress | Role-skill RED reproduced | This Task |
+| WORK-006 | VAL-ACS-001, VAL-ACS-004, VAL-ACS-005, VAL-ACS-008, VAL-ACS-009, VAL-ACS-010, VAL-ACS-013, VAL-ACS-015, VAL-ACS-016, VAL-ACS-017, VAL-ACS-018, VAL-ACS-019, VAL-ACS-020, VAL-ACS-021, VAL-ACS-028, VAL-ACS-029, VAL-ACS-031 | WP-005: Role and provider contract alignment | platform | Completed | Role-skill tests and exact-index QA passed; operator-only R35 remains DEFER | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -160,4 +160,4 @@ resource decisions; no such automatic coverage is claimed.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-006](../plan.md#work-breakdown) | In Progress | C5: 255 initial passes; three fixture-dependent failures repaired, all 54 hook tests passed; registry validation passed. Exact-index QA pending |
+| [WORK-006](../plan.md#work-breakdown) | In Progress | C5: 255 initial passes; three fixture-dependent failures repaired, all 54 hook tests passed; registry validation passed. Affected quick and 9 exact-index gates passed; logical commit recorded in Git. R35 self-entry stays DEFER; final branch review in TSK-0008 |

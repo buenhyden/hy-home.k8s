@@ -78,6 +78,7 @@ class NativeBoundaryTests(unittest.TestCase):
             # directions, so an adopted directory must be present in the
             # fixture; an empty one would not survive a Git-based snapshot.
             ".agents/knowledge/README.md",
+            ".agents/evaluations/README.md",
             ".agents/prompts/README.md",
             *role["projections"].values(),
             *(skill["path"] for skill in self.registry["skills"]),

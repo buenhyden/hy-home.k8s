@@ -236,6 +236,9 @@ class StageLinkBoundaryTests(unittest.TestCase):
     def test_normalized_reference_forms_cannot_hide_individual_documents(self) -> None:
         self.assertTrue(hasattr(validator, "_stage_reference_diagnostics"))
         forms = (
+            "<https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md>",
+            "Follow `../docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md`.",
+            "Follow `/checkout/docs/03.specs/0102-agent-contracts-and-skill-ownership/spec.md`.",
             "[rule](../docs/03.specs/0008-current-local-gitops-platform/spec.md)",
             "[rule][x]\n\n[x]: ../docs/03.specs/0008-current-local-gitops-platform/spec.md",
             '<a href="../docs/03.specs/0008-current-local-gitops-platform/spec.md">rule</a>',

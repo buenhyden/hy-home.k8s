@@ -77,7 +77,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `agent_registry_loader.py` | governance 검증이 함께 쓰는 제한된 Stage 00 role registry 로딩 |
 | `validate-agent-governance.py` | role·schema, native metadata, 권한, skill, 소비자 무결성 |
 | `agent_governance_consumers.py` | 제한된 현재 소비자 검사와 Git 기반 역사 복구 검사 |
-| `run-agent-evaluations.py` | 기록된 agent 응답을 registry에서 도출한 기준으로 채점 |
+| `.agents/evaluations/run-agent-evaluations.py` | Agent 평가 전용 소유 경로; 공통 도우미와 게이트 선택만 `scripts/` 소유 |
 
 ### Platform and supply-chain owners
 

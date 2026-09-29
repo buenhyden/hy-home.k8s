@@ -31,6 +31,40 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = contracts.load_registry(ROOT)
 
+    def test_evaluation_responses_are_data_not_current_document_authority(self):
+        self.assertFalse(
+            contracts._is_target_markdown(
+                PurePosixPath(".agents/evaluations/responses/case.synthetic.md")
+            )
+        )
+        self.assertTrue(
+            contracts._is_target_markdown(
+                PurePosixPath(".agents/evaluations/README.md")
+            )
+        )
+        spec = importlib.util.spec_from_file_location(
+            "evaluation_lifecycle", ROOT / "scripts/validate-document-lifecycle.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        old = PurePosixPath("evals/README.md")
+        new = PurePosixPath(".agents/evaluations/README.md")
+        selected = module._select_changes(
+            [module.Change("R", new, old)],
+            [],
+            base_oid=lambda _: "a",
+            proposed_oid=lambda _: "b",
+        )
+        self.assertEqual(selected, (module.Change("A", new),))
+        selected = module._select_changes(
+            [module.Change("R", old, new)],
+            [],
+            base_oid=lambda _: "a",
+            proposed_oid=lambda _: "b",
+        )
+        self.assertEqual(selected, (module.Change("D", new),))
+
     def test_common_authorities_select_existing_semantic_profiles(self) -> None:
         routes = {
             ".agents/README.md": "common/readme-implementation",

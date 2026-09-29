@@ -67,7 +67,7 @@ session evidence that produced them. Do not restate a role's permission class
 inside a case, because the criteria derive it from the registry. Do not add a
 criterion without stating what it cannot judge. Do not edit a role body, a
 skill procedure, or a provider projection; route the finding to its owner
-instead. `scripts/run-agent-evaluations.py` and its regression test belong to
+instead. `.agents/evaluations/run-agent-evaluations.py` and its regression test belong to
 this role, because a criterion and the code that fires it are one contract;
 that script's lane membership stays owned by the validation execution registry.
 

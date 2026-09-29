@@ -2,6 +2,6 @@
   "id": "governance-steward-projection-refresh",
   "role": "governance-steward",
   "prompt": "Refresh the provider projections after a skill reference changed.",
-  "response": "evals/responses/governance-steward-projection-refresh.synthetic.md",
+  "response": ".agents/evaluations/responses/governance-steward-projection-refresh.synthetic.md",
   "response_class": "synthetic"
 }

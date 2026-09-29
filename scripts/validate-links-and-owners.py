@@ -3287,6 +3287,10 @@ def _stage_reference_diagnostics(
     candidates.extend((target, "link") for target in README_NAV_HTML_HREF.findall(body))
     candidates.extend(
         (match.group(1), "link")
+        for match in re.finditer(r"<(https?://[^<>\s]+)>", body, re.I)
+    )
+    candidates.extend(
+        (match.group(1), "link")
         for match in re.finditer(r"<a\b[^>]*?\bhref\s*=\s*([^\s\"'>]+)", body, re.I)
     )
     candidates.extend(
@@ -3298,7 +3302,7 @@ def _stage_reference_diagnostics(
     candidates.extend(
         (match.group(0), "machine-read")
         for match in re.finditer(
-            r"(?<![A-Za-z0-9_/:])docs/[0-9]{2}\.[^\s`\"'()<>\[\],;]+\.(?:md|json)",
+            r"(?<![A-Za-z0-9_/:])(?:(?:\.\.?/)+|/[^\s`\"'()<>\[\],;]*/)?docs/[0-9]{2}\.[^\s`\"'()<>\[\],;]+\.(?:md|json)",
             body,
             re.I,
         )

@@ -487,6 +487,9 @@ def _run_git(
 
 
 def _within_target_scope(path: PurePosixPath) -> bool:
+    # Graded response bodies are untrusted evaluation data, not authored policy.
+    if path.parts[:3] == (".agents", "evaluations", "responses"):
+        return False
     if path.as_posix() == "RTK.md":
         return False
     if not path.parts:
