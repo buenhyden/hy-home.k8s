@@ -83,7 +83,15 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(self.contract, path)
                 self.assertEqual(surface["id"], owner)
-                self.assertEqual(set(surface["validators"]), expected)
+                self.assertEqual(
+                    set(surface["validators"]),
+                    expected
+                    | (
+                        {"external-service-contracts"}
+                        if owner == "agent-shared"
+                        else set()
+                    ),
+                )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
     def test_retired_governance_root_has_no_functional_selector(self):

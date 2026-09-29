@@ -345,7 +345,8 @@ def validate_contract(
         if any(lane not in LANES for lane in validator["lanes"]):
             fail("SURFACE-VALIDATOR-LANE", validator["id"])
         script = _validate_direct_script_argv(validator["id"], validator["argv"])
-        if script and script.startswith(SKILL_PACKAGE_ROOT):
+        # Supplied owner facts are held snapshots: their caller validates file ownership.
+        if raw_contract is None and script and script.startswith(SKILL_PACKAGE_ROOT):
             validate_skill_checker(root, script)
         if validator["evidenceLane"] not in EVIDENCE_LANES:
             fail("SURFACE-EVIDENCE-LANE", validator["id"])

@@ -13,5 +13,6 @@ Read the following repository files before acting:
 - `.agents/skills/deployment-strategies/SKILL.md`
 - `.agents/skills/gitops-workflow/SKILL.md`
 - `.agents/skills/k8s-validate/SKILL.md`
+- `.agents/skills/external-service-contract-audit/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

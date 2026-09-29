@@ -55,6 +55,21 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                     )
                     self.assertIsNotNone(profile.lifecycle_domain)
 
+    def test_dedicated_nested_resources_have_owned_document_routes(self):
+        for path, expected in (
+            (
+                ".agents/skills/routing/references/nested/detail.md",
+                "common/native-skill-reference",
+            ),
+            (
+                ".agents/skills/routing/assets/report.template.md",
+                "common/native-skill-asset",
+            ),
+        ):
+            with self.subTest(path=path):
+                profile = contracts.classify_path(self.registry, PurePosixPath(path))
+                self.assertEqual(profile.profile_id, expected)
+
     def test_unowned_and_retired_routes_are_not_catch_all_native_exceptions(
         self,
     ) -> None:

@@ -115,6 +115,10 @@
       "path": ".agents/skills/execution-plan/SKILL.md"
     },
     {
+      "id": "external-service-contract-audit",
+      "path": ".agents/skills/external-service-contract-audit/SKILL.md"
+    },
+    {
       "id": "gitops-workflow",
       "path": ".agents/skills/gitops-workflow/SKILL.md"
     },
@@ -270,7 +274,8 @@
       ],
       "skill_refs": [
         "gitops-workflow",
-        "k8s-validate"
+        "k8s-validate",
+        "external-service-contract-audit"
       ],
       "handoff_to": [
         "k8s-implementer",
@@ -323,7 +328,8 @@
       "skill_refs": [
         "deployment-strategies",
         "gitops-workflow",
-        "k8s-validate"
+        "k8s-validate",
+        "external-service-contract-audit"
       ],
       "handoff_to": [
         "gitops-reviewer",

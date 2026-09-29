@@ -2499,7 +2499,7 @@
       "id": "common/native-skill-reference",
       "family": "common",
       "mode": "native",
-      "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/references/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/references/(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*/)*[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
@@ -2521,6 +2521,33 @@
         "body_contract": null
       },
       "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "common/native-skill-asset",
+      "family": "common",
+      "mode": "native",
+      "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/assets/(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*/)*[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.template)?\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
     },
     {
       "id": "common/repository-runtime-baseline",
@@ -5704,9 +5731,9 @@
       "Status",
       "Updated",
       "Last Updated",
-      "상태",
-      "최종 수정",
-      "현재성"
+      "\uc0c1\ud0dc",
+      "\ucd5c\uc885 \uc218\uc815",
+      "\ud604\uc7ac\uc131"
     ],
     "max_deep_links_per_child": 1,
     "profiles": {
