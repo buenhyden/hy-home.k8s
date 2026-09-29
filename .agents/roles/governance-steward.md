@@ -1,10 +1,10 @@
 ---
 title: "Governance Steward Responsibility"
-version: "1.0.0"
+version: "1.0.1"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # governance-steward Responsibility
@@ -47,7 +47,7 @@ evaluation finding names a contract defect to repair.
 
 ### Outputs
 
-- Registry and role-body changes with the derived provider projections regenerated, together with the governance validation result for that change
+- Registry and role-body changes with the manually derived provider projections updated and reviewed together, plus the governance validation result for that change
 
 ### Guardrails
 

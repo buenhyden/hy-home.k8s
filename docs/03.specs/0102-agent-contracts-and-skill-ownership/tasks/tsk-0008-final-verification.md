@@ -1,6 +1,6 @@
 ---
 title: "Final verification and handoff"
-version: "0.1.2"
+version: "0.2.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -222,6 +222,79 @@ remain available for review. The request owner/operator owns R35's separately
 reserved self-entry and all native/hosted/live follow-up; the reviewer owns any
 new finding, routed back to the owning WP before another implementation change.
 The Spec/Plan remain active because dependent R35 acceptance is still DEFER.
+
+### Closure supplement
+
+On 2026-09-29, after PR #113 merged, the request owner explicitly requested
+Spec/Plan/Task completion, commit, push, merge, main synchronization and branch
+and worktree cleanup. This is the new operator-directed scope for the previously
+reserved R35 correction; it is not governance-steward self-authorization.
+The earlier DEFER and local-only statements above remain the evidence of that
+earlier snapshot, rather than current blockers after this supplement.
+
+The owner also requested examination of unfinished Spec/Plan/Task records
+against later completed work, with completion, supersession or withdrawal only
+where supported. The current Stage 03 inventory contains three packages; all
+Tasks and all Plans other than SPEC-0102 were already completed.
+
+| Package | Disposition and evidence |
+| --- | --- |
+| [SPEC-0008](../../0008-current-local-gitops-platform/spec.md) | Keep active Spec; Plan/Task already completed. Its dated disposition and SPEC-0084 closure distinguish the standing platform contract from a finished implementation round. REQ-0004, AD-0007, operations and Archive replacement links still use it; no successor exists. REQ-0004-FR-0008/0010 retain actual render/schema, per-target and ingress validation gaps. |
+| [SPEC-0101](../../0101-closed-spec-retention/spec.md) | Spec/Plan/Task already completed; no state change. |
+| SPEC-0102 | Complete Spec/Plan after the R35 correction and closure validation; all Tasks already completed. |
+
+No remaining current unfinished package is contradicted or replaced by later
+completed work. Earlier superseded/withdrawn units already have their recorded
+Stage 98 disposition; nonterminal status inside retained/frozen evidence is
+historical, not active backlog to rewrite. This audit neither withdraws current
+platform requirements nor invents acceptance of their open residuals.
+
+Scope: `.agents/roles/governance-steward.md` corrects “regenerated” to manually
+derived projections updated and reviewed together. The neutral registry row,
+Claude/Codex projections, skill references, handoffs, models, permission classes
+and self-edit prohibition are preserved after review. This resolves R35/T28 and
+VAL-ACS-001/028 at repository-static depth; no generator or authority is added.
+Spec and Plan close at `completed`; Tasks 0001–0008 were already completed.
+Their original execution evidence is retained. Stage 98 disposition is a
+separate decision; the package remains intact in Stage 03.
+
+Snapshot: branch `codex/agent-contracts-close`, base and initial HEAD
+`5d9126ea034c998e2a5dd9e1cdde6a0c3313277e`; clean at intake. Allowed changes are
+this role wording, package closure evidence, matching stage navigation and a bounded WP-003 checker repair with its regression test.
+No revocation or concurrent writer was observed. No live/global/private-state
+write is authorized. Rollback is a reviewed revert of the closure commit,
+retaining implementation and earlier evidence, with no history rewrite.
+
+Prior integration evidence: final implementation commit
+`b965079f37db60566dc086e9d76c5f9b4aed0ba9` passed full QA, 23/23 gates over
+1,251 paths (fresh integration run recorded in `/tmp/hy-home-k8s-integration-full.log`, exit 0); tree `542298547c9f544e55116cc4143e1f438043ef53` equals the
+PR #113 merge tree. [PR CI](https://github.com/buenhyden/hy-home.k8s/actions/runs/36535329427)
+passed QA, branch policy and required ci-summary.
+[Main CI](https://github.com/buenhyden/hy-home.k8s/actions/runs/36537145057)
+passed after merge at `5d9126ea`; branch-policy was inapplicable on push.
+The observed main protection requires ci-summary, strict up-to-date checks and
+resolved review conversations; force-push and deletion are disabled.
+These observations close hosted portions of T19/T31/T33, not ticket integration
+or native/live behavior. Original external DEFER rows retain their owners and
+retry triggers; none becomes PASS by this lifecycle transition.
+
+Independent closure reviewers `closure_audit`, `closure_gitops_review` and
+`closure_network_review` checked document disposition and the actual Argo CD,
+Service/EndpointSlice and client port paths. The specialist reviews found one
+minor gap: the FQDN validator admitted empty, leading-hyphen and overlong labels.
+A focused regression reproduced three failures; label-wise validation now
+rejects these while preserving valid mixed-case and 63-character labels.
+All 12 external-service tests pass. The repair changes only the owned checker
+and its existing test module; actual IPv4 declarations remain unchanged.
+Earlier full QA was intentionally interrupted (exit 130) to incorporate this
+new review/repair evidence; that attempt is not PASS. Fresh final validation
+follows the final reviewed bytes.
+
+Closure validation and independent review are recorded in the closure commit
+and its PR against the final candidate, avoiding a self-SHA evidence rewrite
+loop. The request owner remains next owner for native trust/discovery/model/hook,
+account limits, editor and live observations. No remaining repository-static
+implementation item is assigned to that external follow-up.
 
 ## Traceability
 
