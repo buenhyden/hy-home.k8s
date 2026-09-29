@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.15"
+version: "1.6.16"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-09-29"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -220,6 +220,8 @@ Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 [SPEC-0101](../03.specs/0101-closed-spec-retention/spec.md).
 
 ## Traceability
+
+Proposed change contract: [SPEC-0102](../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is a draft downstream Spec for the current requirements; this link grants no implementation approval.
 
 Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was delivered by [SPEC-0100](../98.archive/completed/03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
 
