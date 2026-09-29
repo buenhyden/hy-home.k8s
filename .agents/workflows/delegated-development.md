@@ -1,10 +1,10 @@
 ---
 title: "Delegated Development"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-08-28"
+updated: "2026-09-29"
 ---
 
 # Delegated Development
@@ -46,7 +46,10 @@ applicable instruction authorization and an available runtime mechanism.
 6. Require returning workers to report the
    [quality handoff fields](../governance/quality.md#handoff-evidence-contract).
    Review actual changes and commands; a worker's assertion alone is not
-   verification.
+   verification. Reconcile the worker snapshot, file hashes and outstanding
+   writes using the [resume decision](../governance/context-and-memory.md#resume-decision).
+   A partial result or conflicting writer stops dependent work; preserve its
+   verified subset, command limits, approval state and next owner in the Task.
 7. Keep durable results in the owning Task and bounded temporary coordination
    in approved ignored scratch. Do not create another progress authority.
 

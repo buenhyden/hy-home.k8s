@@ -1,10 +1,10 @@
 ---
 title: "Handoff Prompt Contract"
-version: "0.1.0"
+version: "0.2.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-29"
 ---
 
 # Handoff Prompt Contract
@@ -38,6 +38,16 @@ a handoff without a snapshot describes no state.
 
 The handoff fields the quality policy lists, in its order, each either filled or
 explicitly marked `none` or `DEFER` with a reason. No field is omitted.
+
+Within snapshot evidence include worktree, divergence base, relevant file
+hashes, staged/unstaged scope and changed consumers. Within approval evidence
+include the current authorization and revocation check, plus concurrent writer
+ownership. Within limitations include command bounds, partial output and known
+budget state. The operator supplies facts not available to these read-only
+commands; the assembler must not invent them or authenticate approval.
+Apply the [resume decision](../governance/context-and-memory.md#resume-decision)
+before dependent mutation. Failed, timed-out, over-limit or invalid-encoding
+input produces no draft; no partial stdout or raw stderr is retained.
 
 The committed scope is bounded rather than diffed against a base branch. A base
 ref is a property of the checkout, not of the contract: a clone that carries

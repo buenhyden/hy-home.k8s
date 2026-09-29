@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
-"""Validate that the common knowledge surface points at owners it does not restate."""
+"""Validate knowledge owner pointers and bounded observation provenance."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+from datetime import date
 import os
 import re
 import sys
+import subprocess
 from collections.abc import Sequence
 from pathlib import Path, PurePosixPath
 from typing import NamedTuple
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validation.repository.bounded_io import (
+    BoundedInputError,
+    BoundedOutputError,
+    read_bytes,
+    run as run_bounded_process,
+)  # noqa: E402
 
 
 KNOWLEDGE_ROOT = ".agents/knowledge"
@@ -42,15 +54,11 @@ class KnowledgeSurfaceError(Exception):
 
 def _read_document(path: Path, relative: str) -> str:
     try:
-        size = path.stat().st_size
-    except OSError as exc:
-        raise KnowledgeSurfaceError(f"{relative} is not readable") from exc
-    if size > MAX_DOCUMENT_BYTES:
-        raise KnowledgeSurfaceError(f"{relative} exceeds the bounded read size")
-    try:
-        return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError) as exc:
-        raise KnowledgeSurfaceError(f"{relative} is not valid UTF-8 text") from exc
+        return read_bytes(path, max_bytes=MAX_DOCUMENT_BYTES).decode("utf-8")
+    except (BoundedInputError, UnicodeError) as exc:
+        raise KnowledgeSurfaceError(
+            f"{relative} is unavailable, unsafe or exceeds its read bound"
+        ) from exc
 
 
 def _body(text: str) -> str:
@@ -140,11 +148,103 @@ def _check_readme(root: Path, documents: Sequence[str]) -> list[Finding]:
     return []
 
 
+FACT_FIELDS = frozenset(
+    (
+        "owner",
+        "scope",
+        "source",
+        "observed_at",
+        "valid_for",
+        "invalidated_by",
+        "review_status",
+        "sensitivity",
+    )
+)
+FACT_BLOCK = re.compile(r"^```knowledge-fact\n(.*?)^```\s*$", re.MULTILINE | re.DOTALL)
+
+
+def _unique_fact_pairs(pairs):
+    if len(dict(pairs)) != len(pairs):
+        raise ValueError("duplicate fact field")
+    return dict(pairs)
+
+
+def _check_facts(root: Path, document: str, text: str) -> list[Finding]:
+    blocks = FACT_BLOCK.findall(text)
+    invalid = len(blocks) != len(re.findall(r"^```knowledge-fact", text, re.MULTILINE))
+    for block in blocks:
+        try:
+            fact = json.loads(block, object_pairs_hook=_unique_fact_pairs)
+            if not isinstance(fact, dict) or set(fact) != FACT_FIELDS:
+                raise ValueError("fact metadata differs")
+            if any(
+                not isinstance(fact[key], str) or not fact[key].strip()
+                for key in ("owner", "scope", "observed_at", "valid_for")
+            ):
+                raise ValueError("fact metadata missing")
+            if fact["sensitivity"] != "public" or fact["review_status"] not in (
+                "advisory",
+                "current",
+            ):
+                raise ValueError("fact is not reusable")
+            if (
+                not date.fromisoformat(fact["observed_at"])
+                <= date.today()
+                <= date.fromisoformat(fact["valid_for"])
+            ):
+                raise ValueError("fact validity expired")
+            if not isinstance(fact["invalidated_by"], list) or set(
+                fact["invalidated_by"]
+            ) != {"source", "scope", "approval", "validity"}:
+                raise ValueError("invalidation contract missing")
+            source = fact["source"]
+            if not isinstance(source, dict) or set(source) != {"path", "sha256"}:
+                raise ValueError("source contract missing")
+            path = source["path"]
+            if (
+                not isinstance(path, str)
+                or not _looks_like_path(path)
+                or PurePosixPath(path).is_absolute()
+            ):
+                raise ValueError("source is not repository local")
+            tracked = run_bounded_process(
+                ["git", "ls-files", "--error-unmatch", "--", path],
+                cwd=root,
+                timeout=5,
+                stdout_limit=4096,
+                stderr_limit=4096,
+            )
+            if tracked.returncode:
+                raise ValueError("source is not tracked")
+            payload = read_bytes(root / path, max_bytes=MAX_DOCUMENT_BYTES)
+            if hashlib.sha256(payload).hexdigest() != source["sha256"]:
+                raise ValueError("source changed")
+        except (
+            ValueError,
+            TypeError,
+            RecursionError,
+            OSError,
+            BoundedInputError,
+            BoundedOutputError,
+            subprocess.TimeoutExpired,
+        ):
+            invalid = True
+    if invalid:
+        return [
+            Finding(
+                "KNOWLEDGE-FACT-INVALID",
+                document,
+                "fact metadata, source hash, review, sensitivity or validity requires owner review; dependent cache is invalid",
+            )
+        ]
+    return []
+
+
 def _check_document(root: Path, document: str) -> list[Finding]:
     text = _read_document(root / document, document)
     body = _body(text)
     rows = _pointer_rows(body)
-    findings: list[Finding] = []
+    findings = _check_facts(root, document, text)
 
     if not rows:
         findings.append(

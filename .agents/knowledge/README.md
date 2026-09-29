@@ -1,17 +1,17 @@
 ---
 title: "Common Knowledge"
-version: "0.1.0"
+version: "0.2.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-09-29"
 ---
 # Common Knowledge
 
 ## Overview
 
 This surface answers orientation questions: which tree owns what, and which
-document a reader opens first for a given domain. It holds pointers only. Every
+document a reader opens first for a given domain. It holds pointers and bounded observation metadata. Every
 statement of policy, design, procedure or current state stays with the owner a
 row names.
 
@@ -42,7 +42,9 @@ row that would restate one is a defect rather than a convenience.
    A row that repeats what the owner's own index already states is not added.
 3. Name the owner path and the entry path as they exist in the tree. A row
    whose owner or entry path is missing fails validation.
-4. Write the validity condition as an observable change, not as a date.
+4. Write pointer validity as an observable change. Optional observation metadata
+   follows the context-and-memory policy, with a source hash and expiry date;
+   it does not duplicate the source statement or authorize a change.
 5. Index every new document in the Item Index above.
 
 ## Related Documents

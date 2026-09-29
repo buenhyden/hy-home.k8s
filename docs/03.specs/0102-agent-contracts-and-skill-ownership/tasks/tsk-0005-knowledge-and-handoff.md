@@ -1,8 +1,8 @@
 ---
 title: "Knowledge, resume and bounded prompt input"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-005 | VAL-ACS-006, VAL-ACS-007, VAL-ACS-014, VAL-ACS-022 | WP-004: Knowledge, resume and bounded prompt input | platform | Queued | Not executed | This Task |
+| WORK-005 | VAL-ACS-006, VAL-ACS-007, VAL-ACS-014, VAL-ACS-022 | WP-004: Knowledge, resume and bounded prompt input | platform | In Progress | Prompt bounded-capture RED reproduced | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -43,10 +43,32 @@ the final branch receives independent review.
 
 ## Verification Summary
 
-Not executed. Branch `codex/agent-contracts`, initial base
+RED: the oversized Git diff produced a partial draft instead of refusing; the bounded-runner timeout seam was absent. The existing bounded I/O helper is now used during capture with redacted explicit failure and no draft. GREEN: 30 prompt/knowledge tests pass. Fact metadata RED produced nine failures, then missing fields, expiry, sensitivity, stale/deleted source and review-state cases passed; a separate untracked-source RED failed before tracked-source enforcement. An intermediate test edit had an indentation error and was corrected, not counted as behavioral RED. The existing bounded reader rejects source symlinks and prevents reading untracked/private source files. Actual knowledge validation passed for both current documents. C4 initially ran 126 tests and exposed the new external-service gate missing from the runner expectation; that owning WP-003 consumer is corrected. Final C4 passed 126 tests. Affected QA passed all selected gates on the 32-path working-tree snapshot. The exact WP-004 index and independent final review remain pending. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
 never establishes hosted, provider, account-limit or live behavior.
+
+### Resume contract review
+
+The context policy is the single resume-decision owner. Work lifecycle,
+delegated development and the handoff prompt now consume it. Under the existing
+quality snapshot/approval/limitation fields, the receiving agent must re-observe
+worktree, branch, HEAD/base, file hashes, staged/unstaged scope, changed consumers,
+authorization/revocation, writer ownership and incomplete output.
+
+| Reviewed condition | Required decision / evidence limit |
+| --- | --- |
+| Matching branch/HEAD but changed relevant hash | Stop dependent writes; refresh the affected evidence. |
+| Different branch or HEAD/base | Stop and reconcile the current Task snapshot. |
+| Missing or revoked approval | Stop; next owner is the request owner/operator. |
+| Concurrent writer conflict | Preserve work; resolve ownership before another write. |
+| Expired/deleted fact source | Invalidate observation/cache; re-read current owner. |
+| Partial/over-limit input | No assembled draft; retain only separately verified evidence. |
+
+These are static contract review cases. The prompt assembler collects read-only
+inputs and cannot authenticate user approval or enforce another provider's
+mutation boundary. Native enforcement remains DEFER; no generic resume engine
+or fabricated approval state was added.
 
 ## Traceability
 
@@ -54,4 +76,4 @@ never establishes hosted, provider, account-limit or live behavior.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-005](../plan.md#work-breakdown) | Queued | No implementation or verification yet |
+| [WORK-005](../plan.md#work-breakdown) | In Progress | C4 and affected QA passed; exact index and independent final review pending |

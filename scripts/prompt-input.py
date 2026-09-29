@@ -11,6 +11,12 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validation.repository.bounded_io import (  # noqa: E402
+    BoundedOutputError,
+    run as run_bounded_process,
+)
+
 
 PROMPT_ROOT = ".agents/prompts"
 INPUTS_HEADING = "## Inputs"
@@ -149,27 +155,36 @@ def subject_names(text: str) -> tuple[str, ...]:
 
 def run_input(root: Path, name: str, argv: Sequence[str]) -> str:
     try:
-        completed = subprocess.run(
+        completed = run_bounded_process(
             argv,
             cwd=root,
-            capture_output=True,
-            text=True,
             timeout=COMMAND_TIMEOUT_SECONDS,
+            stdout_limit=MAX_INPUT_CHARACTERS,
+            stderr_limit=64 * 1024,
         )
+    except BoundedOutputError as exc:
+        raise PromptInputError(
+            "PROMPT-OUTPUT-LIMIT", f"{name}: output incomplete; no draft"
+        ) from exc
+    except subprocess.TimeoutExpired as exc:
+        raise PromptInputError(
+            "PROMPT-INPUT-TIMEOUT", f"{name}: timed out; no draft"
+        ) from exc
     except (OSError, subprocess.SubprocessError) as exc:
-        raise PromptInputError("PROMPT-INPUT-FAILED", f"{name}: {exc}") from exc
+        raise PromptInputError(
+            "PROMPT-INPUT-FAILED", f"{name}: input unavailable; no draft"
+        ) from exc
     if completed.returncode != 0:
         raise PromptInputError(
             "PROMPT-INPUT-FAILED",
-            f"{name}: `{' '.join(argv)}` exited {completed.returncode}",
+            f"{name}: command exited {completed.returncode}; no draft",
         )
-    output = completed.stdout
-    if len(output) > MAX_INPUT_CHARACTERS:
-        output = (
-            output[:MAX_INPUT_CHARACTERS]
-            + "\n[truncated at the builder's bounded read size]\n"
-        )
-    return output
+    try:
+        return completed.stdout.decode("utf-8", errors="strict")
+    except UnicodeError as exc:
+        raise PromptInputError(
+            "PROMPT-INPUT-ENCODING", f"{name}: invalid UTF-8; no draft"
+        ) from exc
 
 
 def assemble(root: Path, identifier: str) -> str:

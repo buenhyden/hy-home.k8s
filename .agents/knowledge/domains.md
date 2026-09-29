@@ -1,6 +1,6 @@
 ---
 title: "Domain Index"
-version: "0.1.1"
+version: "0.2.0"
 type: "governance/knowledge"
 status: "draft"
 owner: "platform"
@@ -38,6 +38,31 @@ and the row is stale.
 | Agent responsibilities and permissions | `.agents/roles/` | `.agents/roles/README.md` | The registry stays the single source for roles and permission classes |
 
 ## Validation and Refresh
+
+The external-service audit uses this bounded provenance observation. Re-read
+the source for its values; owner review is required before promotion or reuse
+after invalidation.
+
+```knowledge-fact
+{
+  "owner": "platform",
+  "scope": "external Valkey frontend and backend port observation",
+  "source": {
+    "path": "gitops/platform/external-services/valkey-external.yaml",
+    "sha256": "99b67cdd1f884979a771a1b7ca80174f3ff0dab97551014ffe7e06104f4a80e6"
+  },
+  "observed_at": "2026-09-29",
+  "valid_for": "2026-12-28",
+  "invalidated_by": [
+    "source",
+    "scope",
+    "approval",
+    "validity"
+  ],
+  "review_status": "advisory",
+  "sensitivity": "public"
+}
+```
 
 Every canonical owner and entry path above must exist; a missing path fails the
 knowledge validator. A row is refreshed when its domain changes owner, and
