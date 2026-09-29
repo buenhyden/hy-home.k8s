@@ -216,7 +216,6 @@ The source T IDs and meanings remain in the Spec. The table identifies the inten
 
 The request owner authorized completion and remote integration on 2026-09-29. The [closure supplement](tasks/tsk-0008-final-verification.md#closure-supplement) resolves the previously reserved R35 wording correction through an operator-directed edit, records hosted evidence, and closes this Plan. Earlier work-package approval restrictions describe the original execution boundary; native/account/editor/live observations retain their named owner and retry trigger.
 
-
 The Plan completes only when an approved Task records each WP's reviewed change, exact paths, T01–T33/VAL-ACS-001–033 disposition, applicable focused/affected/staged/final full PASS, explicit SKIP/DEFER and next owner, no orphan current caller, and logical local commit/rollback evidence. Required static failures remain incomplete. Native trust/discovery/model/hook, account limits, hosted CI, and live cluster results are not labeled PASS without separate authorized observation. The operator-directed closure correction resolves the prior R35 self-entry deferral without changing its self-edit prohibition or permission bindings. Initial Plan approval preceded implementation; Task evidence records the results and retained external limitations.
 
 ## Traceability
