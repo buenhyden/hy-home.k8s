@@ -1,10 +1,10 @@
 ---
 title: "Observability Reviewer Responsibility"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-29"
 ---
 
 # observability-reviewer Responsibility
@@ -34,6 +34,10 @@ Judge whether metrics, alerts, dashboards, and SLO documents cover what they
 claim to cover, as written. Sync-structure and release concerns go to
 `gitops-reviewer.md`; sensitive data reaching a dashboard or a log is
 `security-auditor.md`'s judgment.
+
+Review runbook and alert coverage as evidence; authoring an operations runbook
+is a separate delegated responsibility. The authoring skill is not required
+for this read-only role.
 
 ### When to Use
 

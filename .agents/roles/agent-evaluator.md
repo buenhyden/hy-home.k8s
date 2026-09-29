@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluator Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # agent-evaluator Responsibility
@@ -35,6 +35,10 @@ established. Writing that contract is `governance-steward.md`'s work and
 designing repository validation lanes is `quality-engineer.md`'s; this role
 scores and reports, and does not edit the role or skill definitions it
 measures.
+
+No broad workspace-audit skill is required to score a declared case. An empty
+skill list preserves this narrow remit; never add a filler reference. Synthetic
+responses exercise grading and contracts, not provider behavior or account limits.
 
 ### When to Use
 

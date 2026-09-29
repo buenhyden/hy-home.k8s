@@ -10,6 +10,5 @@ Read the following repository files before acting:
 - `.agents/roles/agent-evaluator.md`
 - `.agents/roles/registry.json`
 - `.agents/workflows/work-lifecycle.md`
-- `.agents/skills/workspace-harness-audit/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

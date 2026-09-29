@@ -1,10 +1,10 @@
 ---
 title: "Supervisor Responsibility"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # supervisor Responsibility
@@ -36,6 +36,11 @@ judgment to `security-auditor.md`, manifest changes to `k8s-implementer.md`,
 documents to `doc-writer.md`, and validation design to `quality-engineer.md`.
 This role holds no write tool, so what it produces is a plan and a reconciled
 account, never an edit.
+
+Before resuming or delegating dependent work, reconcile the current Task
+snapshot, approval/revocation and writer ownership through the context policy.
+Carry partial results, limits and the next owner; a prior PASS never substitutes
+for re-observation.
 
 ### When to Use
 

@@ -18,6 +18,10 @@ report what each one found, at a severity that says what the finding obliges.
 - Checking manifest and GitOps structure rather than posture; use `k8s-validate`.
 - Carrying a finding forward as a tracked operational risk; use `risk-report`.
 
+- Joining external Service and EndpointSlice declarations; use
+  `external-service-contract-audit`. Its static relationship result does not
+  establish security posture or permission to contact an endpoint.
+
 ## Workflow Steps
 
 1. Fix the audit scope and type: which namespaces, paths, or manifests, and

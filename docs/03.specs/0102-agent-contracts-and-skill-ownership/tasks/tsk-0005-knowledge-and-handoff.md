@@ -2,7 +2,7 @@
 title: "Knowledge, resume and bounded prompt input"
 version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-005 | VAL-ACS-006, VAL-ACS-007, VAL-ACS-014, VAL-ACS-022 | WP-004: Knowledge, resume and bounded prompt input | platform | In Progress | Prompt bounded-capture RED reproduced | This Task |
+| WORK-005 | VAL-ACS-006, VAL-ACS-007, VAL-ACS-014, VAL-ACS-022 | WP-004: Knowledge, resume and bounded prompt input | platform | Completed | Prompt bounded-capture RED reproduced | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -76,4 +76,4 @@ or fabricated approval state was added.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-005](../plan.md#work-breakdown) | In Progress | C4 and affected QA passed; exact index and independent final review pending |
+| [WORK-005](../plan.md#work-breakdown) | Completed | C4: 126 tests passed; affected QA and all 14 exact-index gates passed; committed as 68fd0d64. Independent final branch review follows in TSK-0008 |

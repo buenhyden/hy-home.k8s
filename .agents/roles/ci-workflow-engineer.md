@@ -1,10 +1,10 @@
 ---
 title: "CI Workflow Engineer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # ci-workflow-engineer Responsibility
@@ -36,6 +36,10 @@ is `security-auditor.md`'s judgment; what a lane means and which gates it runs
 is `quality-engineer.md`'s; the tooling those lanes invoke is
 `repo-tooling-engineer.md`'s. This role establishes how the hosted surface is
 wired and under which triggers, permissions, and action identities it runs.
+
+Use hosted workflow security contracts for this domain. A Kubernetes pattern
+catalog is not a required skill for reviewing Actions triggers, permissions or
+untrusted pull-request input.
 
 ### When to Use
 

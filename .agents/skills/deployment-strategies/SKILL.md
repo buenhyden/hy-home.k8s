@@ -39,7 +39,7 @@ design the verification and reversal that make the choice safe to review.
 `references/strategies.md` holds the catalog and `references/verification.md`
 holds probe, abort, and measurement detail. Both are read when a decision needs
 them rather than carried through every use of this skill, because a rollout
-question is usually about one strategy and not about all five.
+question is usually about one strategy and not about all six.
 
 ## Branch and Promotion Model
 

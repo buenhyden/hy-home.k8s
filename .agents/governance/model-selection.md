@@ -1,10 +1,10 @@
 ---
 title: "Model Selection Policy"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-29"
 ---
 
 # Model Selection Policy
@@ -54,6 +54,14 @@ Usage windows, rate limits, and per-request budgets belong to the provider
 account, not to this repository, and no local run produces evidence about them.
 When a limit interrupts work, record the interruption and the remaining scope
 in the owning Task rather than retrying into the same limit.
+
+Use only an available, permitted model. An unsupported or rejected model is
+DEFER until an authorized supported selection is established. Stop when the
+observed elapsed or shared budget is exhausted; a worker cannot spend another
+worker's allocation. Honor an observed `Retry-After` within the remaining
+budget, otherwise defer to the next owner. Never silently choose a more
+expensive fallback. Unknown cost, RPM, TPM and subscription/API limits remain
+DEFER; these rules do not claim native hard enforcement or invent account caps.
 
 ### Selection and escalation
 

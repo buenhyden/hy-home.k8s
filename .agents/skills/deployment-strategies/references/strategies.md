@@ -1,7 +1,7 @@
 # Kubernetes and Argo CD Deployment Strategy Catalog
 
-Five strategies with their manifest shape, trade-offs, and the conditions
-that suit each one, plus the comparison table that separates them. Read this
+Six strategies appear in the comparison table; five have detailed manifest
+examples below. Recreate is the downtime-bearing comparison baseline. Read this
 when choosing; `../SKILL.md` owns the procedure that turns a choice into a
 reviewable change.
 

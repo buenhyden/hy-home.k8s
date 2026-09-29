@@ -69,6 +69,18 @@ class AgentRegistryTests(unittest.TestCase):
             )
         self.assertEqual(raised.exception.code, code)
 
+    def test_role_skill_assignments_preserve_domain_and_read_only_boundaries(self):
+        roles = {row["id"]: row for row in self.registry["roles"]}
+        for role, inappropriate in (
+            ("network-reviewer", "k8s-security-audit"),
+            ("observability-reviewer", "ops-runbook"),
+            ("ci-workflow-engineer", "vulnerability-patterns"),
+            ("agent-evaluator", "workspace-harness-audit"),
+        ):
+            with self.subTest(role=role):
+                self.assertNotIn(inappropriate, roles[role]["skill_refs"])
+        self.assertEqual(roles["agent-evaluator"]["skill_refs"], [])
+
     def test_production_registry_is_the_closed_two_provider_authority(self) -> None:
         counts = self.validator.validate_registry(REPOSITORY_ROOT)
         role_ids = [item["id"] for item in self.registry["roles"]]
