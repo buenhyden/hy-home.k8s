@@ -1,6 +1,6 @@
 ---
 title: "Final verification and handoff"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -295,6 +295,48 @@ and its PR against the final candidate, avoiding a self-SHA evidence rewrite
 loop. The request owner remains next owner for native trust/discovery/model/hook,
 account limits, editor and live observations. No remaining repository-static
 implementation item is assigned to that external follow-up.
+
+### Semantic review follow-up
+
+The request owner subsequently asked that recurring human semantic checks use
+applicable automation plus an independent read-only agent, then authorized
+resuming the interrupted work, completing its evidence, integration and branch
+cleanup. The initially named dev target was corrected by the owner to main.
+On resume, fetch and remote-ref inspection found only main, with local and
+origin/main both at `c67d7124b3d727c39270267042d2729060260bcd`.
+
+The preserved two-file policy change is now on `codex/semantic-review-policy`
+from that base. The quality policy owns the new semantic-review contract; the
+work lifecycle links to it. Review must use the actual diff, current contracts,
+acceptance criteria and automated results. The reviewer is a separate agent
+who did not author or modify the change and does not perform repairs. Findings
+return to the writer, with affected checks and independent review refreshed.
+Passing this pair removes repeat human semantic confirmation for unchanged
+scope/evidence; explicit approvals and protected actions remain with their
+existing owners. Missing evidence and unresolved findings are not PASS.
+
+This is a follow-up evidence supplement to WP-007/WORK-008 and VAL-ACS-011/033,
+not a rewrite of prior acceptance. The Spec, Plan and Tasks remain completed;
+SPEC-0008's standing platform contract and open residuals are unaffected.
+Allowed paths are `.agents/governance/quality.md`,
+`.agents/workflows/work-lifecycle.md` and this supplement. No permission,
+provider, secret, archived body or runtime surface changes. Rollback is a
+reviewed revert of this follow-up commit, preserving earlier implementation.
+
+The prior read-only reviewer `semantic_policy_review` reported PASS on the two
+policy files and their approval/delegation consumers without editing them.
+Markdown lint and quick QA (7/7) passed. The preserved full-QA log
+`/tmp/hy-home-k8s-semantic-policy-full.log` ends with all 23 gates PASS, including
+unit tests and all-file hooks. Its process session expired across the
+interruption, so no recovered aggregate process exit code is claimed.
+The unchanged policy Git blob identities observed on resume are
+`81b53dd37906e229c73757a729924218acf98daf` and
+`f008c85d15e79e7ebfa397ec9707855a05b60bda`, respectively; base and policy bytes
+match the interrupted candidate. This Task-only supplement receives its own
+strict/staged verification and renewed independent review. Final commit and PR
+record those results and hosted QA on the committed candidate, without a
+self-referential evidence rewrite. Next owner is the request owner for any
+new scope or protected decision, rather than repeat review of this snapshot.
 
 ## Traceability
 

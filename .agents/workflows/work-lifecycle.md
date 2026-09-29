@@ -1,6 +1,6 @@
 ---
 title: "Work Lifecycle"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
@@ -70,7 +70,9 @@ owner. Never weaken a contract, a gate, or a test to end the loop.
 
 ### Completion
 
-1. Check acceptance, links, owner boundaries, language, and README navigation.
+1. Check acceptance, links, owner boundaries, language, and README navigation
+   through the [semantic review contract](../governance/quality.md#semantic-review):
+   applicable automated checks plus an independent read-only reviewer.
 2. Follow the complete ordered sequence in
    [quality policy](../governance/quality.md#canonical-completion-sequence).
 3. Review final diff scope and remove task-owned scratch/debug residue.

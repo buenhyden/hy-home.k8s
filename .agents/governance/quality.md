@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-09-29"
 ---
 
 # Quality and Evidence Policy
@@ -85,6 +85,37 @@ leader exits is `FAIL`.
 - `DEFER`: required authority, environment, provider, or external evidence is
   unavailable. This is a visible limitation, never a pass.
 
+### Semantic review
+
+Routine repository meaning checks previously repeated by a human use both
+applicable automated checks and an independent read-only agent review. This
+includes acceptance/implementation alignment, document completion or
+supersession, ownership, and consistency with current contracts. When both
+parts pass with no unresolved finding, do not request another human semantic
+confirmation for the same scope and evidence snapshot.
+
+- Run the applicable checks selected by the validation registry. Automation
+  establishes only what those checks cover; the reviewer examines remaining
+  meaning against the actual diff, current owners, acceptance criteria and
+  command results, rather than endorsing the author's summary.
+- Select a reviewer with the relevant registered responsibility who did not
+  author or modify the reviewed changes. A separate agent identity and a
+  read-only assignment are required; an author cannot certify their own work
+  by changing roles. The reviewer reports findings without repairing files.
+- Record the checked snapshot, check results, reviewer identity, inspected
+  scope, findings and disposition in the existing handoff evidence. The writer
+  repairs findings; refresh affected checks and independent review after
+  changes. Reuse unchanged evidence under the validation lane contract.
+- A failed required check or unresolved finding blocks completion. Missing
+  applicable automation or an unavailable independent reviewer is an explicit
+  evidence gap, not PASS; route it to the responsible owner. Human judgment is
+  needed for unresolved intent, conflicting authority or a decision reserved
+  to the request owner, not routine repetition of a completed review.
+- This review rule supplies quality evidence, not authorization. Explicit
+  human/operator approvals, protected external actions and required hosted
+  reviews remain governed by their existing owners. Native and live claims
+  still require the corresponding observed evidence.
+
 ### Canonical completion sequence
 
 1. **targeted**: reproduce changed behavior and run focused checks while implementing.
@@ -101,7 +132,8 @@ leader exits is `FAIL`.
    never fixes source files. A final full failure keeps the work incomplete.
 6. **evidence handoff**: record the checked snapshot and any subsequent Task-only
    changes separately, validating those document changes without a self-SHA or
-   elapsed-time rewrite loop. Review final diff scope and remaining acceptance.
+   elapsed-time rewrite loop. Review final diff scope and remaining acceptance using the semantic review
+   contract above.
 
 For a no-commit request preserve the index and record staged/message evidence
 as N/A. Input identity includes bytes, base/history, configuration and mode;
