@@ -1,10 +1,10 @@
 ---
 title: "workspace"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-workspace-staging"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # _workspace
 
@@ -47,7 +47,7 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 
 오래 남길 결과는 정본 소유 경로로 옮긴다.
 
-- 에이전트 거버넌스와 재사용 memory는 Stage 00
+- 에이전트 거버넌스는 `.agents/governance/`, 검토된 도메인 지식은 해당 현재 소유자
 - 변경 범위의 Spec, Plan, Task, 검증 계약은 Stage 03
 - 오래 유지할 감사와 참조 자료는 Stage 90
 - registry, schema, template 계약은 Stage 99
@@ -81,4 +81,4 @@ _workspace/
 - [Approval Boundaries](../.agents/governance/approval-and-safety.md)
 - [Subagent Protocol](../.agents/workflows/delegated-development.md)
 - Documentation Contract (`docs/99.templates/README.md`)
-- Workspace-staging README form (`docs/99.templates/templates/common/readme-workspace-staging.template.md`)
+- [Workspace-staging 문서 양식 탐색](../docs/99.templates/README.md)

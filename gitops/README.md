@@ -1,10 +1,10 @@
 ---
 title: "gitops"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # gitops
 
@@ -99,7 +99,7 @@ scan만으로 축소하지 않는다.
 | ---------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `apps`     | `clusterResourceWhitelist`          | None.                                                                                                           | Workloads own no cluster-scoped resources; `apps` namespace is owned by the platform namespace manifests.                                      | Re-add only with an approved app-owned cluster resource design and live reconciliation impact review.                        | `python3 scripts/qa.py full` and `bash scripts/validate-gitops-structure.sh`.                                                                                                                                                       |
 | `apps`     | `active namespaceResourceWhitelist` | `AnalysisTemplate`, `DestinationRule`, `Ingress`, `PeerAuthentication`, `Rollout`, `Service`, `VirtualService`. | Active `gitops/workloads/adminer` manifests use these kinds.                                                                                                   | These kinds are required for the current implemented workload pattern.                                                       | `python3 scripts/qa.py full`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`.                                                                                                          |
-| `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/policies/0007-app-gitops-onboarding-policy.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | `python3 scripts/qa.py full` and app onboarding review.                                                                                                                                                                             |
+| `apps`     | `policy namespaceResourceWhitelist` | `ExternalSecret`.                                                                                               | `docs/05.operations/policies/README.md` allows optional secret-backed workloads through ESO only.                                   | Remove only if app onboarding policy no longer supports ESO-backed app secrets.                                              | `python3 scripts/qa.py full` and app onboarding review.                                                                                                                                                                             |
 | `platform` | `platform AppProject allow-lists`   | Raw platform manifests plus rendered chart-managed platform components.                                         | `bash scripts/render-platform-chart-kinds.sh .` renders Helm charts and confirms kind coverage against the platform AppProject after raw manifest scan review. | New platform chart kinds require chart render review and ArgoCD sync impact review before the AppProject allow-list changes. | `bash scripts/render-platform-chart-kinds.sh .`, `python3 scripts/qa.py full`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
 
 ### Platform Chart Render Review Matrix
@@ -193,7 +193,7 @@ Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받�
 
 ### Working Procedure
 
-1. 플랫폼 계약은 먼저 Spec (`docs/03.specs/0008-current-local-gitops-platform/spec.md`)과 Operations Policy (`docs/05.operations/policies/0001-k8s-gitops-operations-policy.md`)에서 확인한다.
+1. 플랫폼 계약은 먼저 Spec (`docs/03.specs/README.md`)과 Operations Policy (`docs/05.operations/policies/README.md`)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
 3. 변경은 feature branch와 PR review를 거쳐 `main`에 병합하고, ArgoCD가 Git 상태를 reconcile하도록 둔다.
 4. 매니페스트 변경 후 `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`, `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
@@ -226,8 +226,8 @@ Kustomization 문법과 안전한 단일 토큰 identity·경로 필드만 받�
 
 ## Related Documents
 
-- ADR-0002 (`docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`)
-- ADR-0014 (`docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md`)
-- Spec (`docs/03.specs/0008-current-local-gitops-platform/spec.md`)
+- ADR-0002 (`docs/02.architecture/decisions/README.md`)
+- ADR-0014 (`docs/02.architecture/decisions/README.md`)
+- Spec (`docs/03.specs/README.md`)
 - [Workloads README](./workloads/README.md)
 - [Examples README](../examples/README.md)

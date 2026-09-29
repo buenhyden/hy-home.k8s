@@ -22,7 +22,7 @@ from pathlib import Path
 from pathlib import PurePosixPath
 from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping, Sequence
-from urllib.parse import unquote
+from urllib.parse import unquote, urlsplit
 
 import yaml
 
@@ -3170,26 +3170,152 @@ def _stage_boundary_diagnostic(
 ) -> Diagnostic | None:
     if source.parts and source.parts[0] == "docs":
         return None
-    if not NUMBERED_STAGE_TARGET.match(target.as_posix()):
+    if not NUMBERED_STAGE_TARGET.match(target.as_posix().casefold()):
+        return None
+    if target.name.casefold() == "readme.md":
         return None
     return _diag(
         "LINK-STAGE-BOUNDARY",
         source,
         profile,
-        "plain-text stage reference",
+        "current owner or stage README navigation",
         target.as_posix(),
     )
 
 
-# The stage boundary above sends a file outside `docs/` to plain text rather
-# than a link, and this is the limit of what that plain text may say. Naming a
-# document, or the collection a profile owns, costs nothing: the registry still
-# decides the route. Writing the route out as a grammar
-# (`docs/05.operations/incidents/YYYY/INC-###-<title>/`) is a second copy of a
-# `path_pattern` that no document answers to, no gate reads, and nothing keeps
-# in step with the registry — so it is free to be wrong for as long as nobody
-# follows it. The prefixes come from the registry for the same reason: a list
-# of directories written here would be that same second copy.
+# Exact data reads needed by current document procedures; no path glob or
+# directory admission. A machine-read exception never permits a rendered link.
+_STAGE_MACHINE_READS = frozenset(
+    {
+        (
+            ".agents/skills/docs-stage-routing/SKILL.md",
+            "docs/99.templates/registry.json",
+            "machine-read",
+        ),
+        (
+            ".agents/skills/incident-postmortem/SKILL.md",
+            "docs/99.templates/registry.json",
+            "machine-read",
+        ),
+        (
+            ".agents/governance/document-authoring.md",
+            "docs/99.templates/registry.json",
+            "machine-read",
+        ),
+        (
+            ".agents/governance/document-authoring.md",
+            "docs/99.templates/contracts/frontmatter.schema.json",
+            "machine-read",
+        ),
+        (
+            ".agents/governance/document-lifecycle.md",
+            "docs/99.templates/registry.json",
+            "machine-read",
+        ),
+        (
+            ".agents/governance/sdlc.md",
+            "docs/99.templates/registry.json",
+            "machine-read",
+        ),
+    }
+)
+
+
+def _stage_machine_reference_allowed(
+    source: PurePosixPath, target: PurePosixPath, access_kind: str
+) -> bool:
+    return (source.as_posix(), target.as_posix(), access_kind) in _STAGE_MACHINE_READS
+
+
+def _normalized_stage_reference(
+    source: PurePosixPath, raw: str
+) -> PurePosixPath | None:
+    value = html.unescape(raw.strip())
+    for _ in range(8):
+        decoded = unquote(value)
+        if decoded == value:
+            break
+        value = decoded
+    value = value.replace("\\", "/")
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return None
+    if parsed.scheme or parsed.netloc:
+        host = (parsed.hostname or "").casefold()
+        path = parsed.path.casefold()
+        if host == "github.com" and path.startswith("/buenhyden/hy-home.k8s/"):
+            if not path.startswith(
+                ("/buenhyden/hy-home.k8s/blob/", "/buenhyden/hy-home.k8s/raw/")
+            ):
+                return None
+        elif host == "raw.githubusercontent.com" and path.startswith(
+            "/buenhyden/hy-home.k8s/"
+        ):
+            pass
+        elif parsed.scheme != "file":
+            return None
+        value = parsed.path
+    else:
+        value = value.split("#", 1)[0].split("?", 1)[0]
+    value = value.casefold()
+    if value.startswith("docs/"):
+        normalized = posixpath.normpath(value)
+    elif value.startswith("/") or re.match(r"^[a-z]:/", value):
+        normalized = posixpath.normpath(value)
+        marker = normalized.find("/docs/")
+        if marker < 0:
+            return None
+        normalized = normalized[marker + 1 :]
+    else:
+        normalized = posixpath.normpath(
+            posixpath.join(source.parent.as_posix().casefold(), value)
+        )
+    if not NUMBERED_STAGE_TARGET.match(normalized):
+        return None
+    return PurePosixPath(normalized)
+
+
+def _stage_reference_diagnostics(
+    source: PurePosixPath, profile: str, text: str
+) -> list[Diagnostic]:
+    if source.parts and source.parts[0].casefold() == "docs":
+        return []
+    visible, _ = _readme_visible_lines(text)
+    body = "\n".join(visible)
+    candidates = [(target, "link") for target in _extract_links(body)]
+    candidates.extend((target, "link") for target in README_NAV_HTML_HREF.findall(body))
+    candidates.extend(
+        (match.group(1), "link")
+        for match in re.finditer(r"<a\b[^>]*?\bhref\s*=\s*([^\s\"'>]+)", body, re.I)
+    )
+    candidates.extend(
+        (match.group(1), "link")
+        for match in re.finditer(r"\[\[([^]\n|]+)(?:\|[^]\n]*)?\]\]", body)
+    )
+    # Backtick/plain paths in instructions must not keep individual stage
+    # records as hidden authority. Examples inside fences remain examples.
+    candidates.extend(
+        (match.group(0), "machine-read")
+        for match in re.finditer(
+            r"(?<![A-Za-z0-9_/:])docs/[0-9]{2}\.[^\s`\"'()<>\[\],;]+\.(?:md|json)",
+            body,
+            re.I,
+        )
+    )
+    findings: dict[str, Diagnostic] = {}
+    for raw, access in candidates:
+        target = _normalized_stage_reference(source, raw)
+        if target is None or _stage_machine_reference_allowed(source, target, access):
+            continue
+        diagnostic = _stage_boundary_diagnostic(source, profile, target)
+        if diagnostic is not None:
+            findings.setdefault(target.as_posix(), diagnostic)
+    return list(findings.values())
+
+
+# Route grammars still belong to Stage 99. Normalized individual-document
+# references are checked separately above; this check detects copied grammars.
 _STAGE_PATH_TOKEN = re.compile(r"docs/[0-9]{2}\.[A-Za-z][^\s`\"'()\[\],;]*")
 _PATH_PATTERN_META = frozenset(".^$*+?()[]{}|\\")
 
@@ -3346,6 +3472,9 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             # path and commit that resolve them, so they are read the same way a
             # record's links are rather than as current coupling.
             continue
+        diagnostics.extend(
+            _stage_reference_diagnostics(source, profile, context.texts[source])
+        )
         diagnostics.extend(
             _stage_grammar_diagnostics(
                 source,

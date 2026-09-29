@@ -2,7 +2,7 @@
 title: "Document authority and normalized links"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -43,7 +43,7 @@ the final branch receives independent review.
 
 ## Verification Summary
 
-Not executed. Branch `codex/agent-contracts`, initial base
+WP-000 passed six staged gates for each of commits `8e811506` and `79c97514`; both actual messages passed Commitizen. Additional RED/GREEN: unquoted HTML href was missed, then rejected; the same 65-test suite passed again. Ruff explicitly formatted only the two edited Python files. R23 RED: six failures exposed rejected README navigation and missing normalization/exception handling. GREEN: `python3 -m unittest tests.test_documentation_link_boundary tests.test_common_agents_document_routes tests.test_readme_navigation` passed 65 tests. Quick QA first attempt: 12/14 gates passed; link/navigation and repository-quality exposed stale current-owner checks and a staging README template reference. Ruling: update those exact consumers and required current-owner checks, preserving failure semantics; do not waive them. Second quick result: 13/14 PASS; the only remaining error was my reference to a nonexistent governance README. Corrected it to the actual governance directory; final exact-index validation covers that repair. Manual audit converted current Markdown consumers; synthetic evaluation responses and retained documents remain data/history. Shared policy, archive procedure, GitHub and scripts guidance now name current owners instead of historical decisions as execution prerequisites. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
 never establishes hosted, provider, account-limit or live behavior.

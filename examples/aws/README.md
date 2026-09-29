@@ -1,10 +1,10 @@
 ---
 title: "AWS Executable Examples"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # AWS Executable Examples
 
@@ -13,9 +13,9 @@ updated: "2026-09-26"
 ### Current authority transfer
 
 원래의 REQ-0007 / AD-0010 program 계보는 역사적 맥락으로만 남는다.
-현재 플랫폼 요구사항과 아키텍처는 REQ-0004(`docs/01.requirements/0004-current-local-gitops-platform.md`)와
-AD-0007(`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)이 소유하고 공통 routing, 승인, QA는 REQ-0003(`docs/01.requirements/0003-workspace-agent-governance-platform.md`)과
-AD-0006(`docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md`)이 소유한다. package 안의 실행 상태와 끝나지 않은
+현재 플랫폼 요구사항과 아키텍처는 REQ-0004(`docs/01.requirements/README.md`)와
+AD-0007(`docs/02.architecture/descriptions/README.md`)이 소유하고 공통 routing, 승인, QA는 REQ-0003(`docs/01.requirements/README.md`)과
+AD-0006(`docs/02.architecture/descriptions/README.md`)이 소유한다. package 안의 실행 상태와 끝나지 않은
 0047..0051 의무는 그대로다. 이 이관은 acceptance나 종료를 뜻하지 않는다.
 
 이 진입점은 실행 가능한 AWS 예시 자산의 경계를 정한다. Terraform과
@@ -62,5 +62,5 @@ provider 준비 상태를 증명하지 않는다.
 ## Related Documents
 
 - [Examples index](../README.md)
-- REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/0004-current-local-gitops-platform.md`)
-- AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)
+- REQ-0004 — 현재 플랫폼 요구사항 (`docs/01.requirements/README.md`)
+- AD-0007 — 현재 플랫폼 아키텍처 (`docs/02.architecture/descriptions/README.md`)

@@ -1,10 +1,10 @@
 ---
 title: "hy-home.k8s"
-version: "0.1.3"
+version: "0.1.4"
 type: "common/readme-repository"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-29"
 ---
 # hy-home.k8s
 
@@ -198,7 +198,7 @@ cd hy-home.k8s
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 단계형 문서 체계 개요
 3. [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md) - provider별 얇은 에이전트 게이트웨이
-4. `docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md` - 실제 부트스트랩 절차
+4. `docs/05.operations/runbooks/README.md` - 실제 부트스트랩 절차
 
 ### 3. External Dependencies Readiness
 
@@ -209,7 +209,7 @@ cd hy-home.k8s
 - PostgreSQL write/read 포트가 열려 있다.
 - Valkey가 저장소 문서에 정의된 호스트/포트로 노출된다.
 
-필요한 확인 방법은 runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)에 정리되어 있다.
+필요한 확인 방법은 runbook (`docs/05.operations/runbooks/README.md`)에 정리되어 있다.
 
 ### 4. Bootstrap Local Platform
 
@@ -245,7 +245,7 @@ python3 scripts/qa.py quick
 python3 scripts/qa.py full
 ```
 
-`full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내 (`docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
+`full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내 (`docs/05.operations/guides/README.md`)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
 
 표면별 승인 경계와 역할·스킬 정본은 [에이전트 거버넌스](.agents/README.md)가 라우팅한다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
 
@@ -255,7 +255,7 @@ Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각
 
 - [문서 허브](./docs/README.md)
 - [에이전트 실행 거버넌스](.agents/README.md)
-- 현재 로컬 GitOps 플랫폼 요구사항 (`docs/01.requirements/0004-current-local-gitops-platform.md`)
-- 현재 로컬 GitOps 플랫폼 Spec (`docs/03.specs/0008-current-local-gitops-platform/spec.md`)
-- ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)
+- 현재 로컬 GitOps 플랫폼 요구사항 (`docs/01.requirements/README.md`)
+- 현재 로컬 GitOps 플랫폼 Spec (`docs/03.specs/README.md`)
+- ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/runbooks/README.md`)
 - [저장소 스크립트 인덱스](./scripts/README.md)

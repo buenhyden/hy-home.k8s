@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.3.0"
+version: "1.3.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-09-29"
 ---
 
 # Claude Provider Notes
@@ -74,7 +74,7 @@ every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
 structured write tools for `read-only-evidence`, and delivery of the pre-edit
 hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
-(`docs/98.archive/completed/03.specs/0086-provider-native-runtime-observation/tasks/tsk-0001-observe-provider-native-runtime.md`)
+(`docs/98.archive/README.md`)
 owns that evidence.
 Projections also carry `effort`, which the registry binds per tier on both
 providers, with a role override where effort or model genuinely differs.

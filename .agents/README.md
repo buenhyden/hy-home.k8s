@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "1.2.0"
+version: "1.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-29"
 ---
 
 # Common Agent Governance
@@ -51,8 +51,8 @@ reaches them, so the name `*.template.md` is refused here.
 Provider differences and native adapters live in [.claude/](../.claude/)
 and [.codex/](../.codex/). Edit common meaning here; retain native syntax
 there. No role copies or provider generator own a second policy.
-ADR-0036 (`docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`)
-adopts `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
+[Governance](governance/) and the prompt contracts
+own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
 without a reader is not created. Evaluation, rule and script directories stay
 unadopted, each for its own reason: root `evals/` holds evaluation case and
@@ -86,4 +86,4 @@ execution registry owns mutable gate commands and limits.
 - Document profiles and templates (`docs/99.templates/README.md`)
 - [Repository documentation](../docs/README.md)
 - Memory retirement: MIG-0009 through the archive index (`docs/98.archive/README.md`)
-- Authority decision (`docs/02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md`)
+- [Governance contracts](governance/)

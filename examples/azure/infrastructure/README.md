@@ -1,10 +1,10 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-29"
 ---
 # Azure Infrastructure (Bicep)
 
@@ -87,7 +87,7 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 ### Reference Links
 
 - **Example boundary**: [Azure reference implementation](../README.md)
-- **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/0007-current-local-gitops-platform.md`)
+- **Repository architecture**: Current local GitOps platform (`docs/02.architecture/descriptions/README.md`)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
 ### AI Agent Guidance

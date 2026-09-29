@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # scripts
 
@@ -93,7 +93,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 ## Configuration Boundary
 
-- 문서 route·profile 값은 `docs/99.templates/registry.json`에서만 온다.
+- 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
 - Agent role, 권한, skill, handoff, projection은
   `.agents/roles/registry.json`에서만 온다.
 - 검증 선택과 명령 인자는 `scripts/validation/registry.json`에서만 온다.
@@ -209,9 +209,9 @@ branch protection 설정은 바꾸지 않는다.
 - [Agent execution policy](../.agents/governance/agent-execution.md)
 - [Quality policy](../.agents/governance/quality.md)
 - [Document authoring policy](../.agents/governance/document-authoring.md)
-- Validation ownership ADR (`docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md`)
+- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
 
-위의 승인된 결정이 검증 책임의 현재 owner다. 그 결정을 처음 실행한 완료 Spec과
-Task는 봉인된 증거이며 archive index로 계속 찾아갈 수 있다. 그 문서들은 한 번
-실행한 일을 기록할 뿐, 지금 유효한 규칙을 다시 선언하는 문서가 아니다.
+검증 책임의 현재 owner는 공통 Quality policy와 `scripts/validation/registry.json`이다.
+과거 결정과 완료 기록은 문서·archive 탐색을 통해 확인하는 배경 증거이며,
+현재 실행 절차의 선행 조건이 아니다.
 - [Tests](../tests/README.md)

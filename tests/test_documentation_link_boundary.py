@@ -209,12 +209,9 @@ class CatalogRetainedLinkTests(unittest.TestCase):
 class StageLinkBoundaryTests(unittest.TestCase):
     def test_reports_every_numbered_stage_target_written_outside_docs(self) -> None:
         for target in (
-            "docs/01.requirements/README.md",
             "docs/02.architecture/decisions/0031-validation-ownership.md",
             "docs/03.specs/0008-current-local-gitops-platform/spec.md",
             "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
-            "docs/90.references/README.md",
-            "docs/98.archive/README.md",
             "docs/99.templates/registry.json",
         ):
             with self.subTest(target=target):
@@ -225,6 +222,60 @@ class StageLinkBoundaryTests(unittest.TestCase):
                 self.assertEqual(diagnostic.rule_id, "LINK-STAGE-BOUNDARY")
                 self.assertEqual(diagnostic.path, CONSUMER)
                 self.assertEqual(diagnostic.actual, target)
+
+    def test_stage_readmes_are_navigation_not_individual_authority(self) -> None:
+        for target in (
+            "docs/01.requirements/README.md",
+            "docs/03.specs/README.md",
+            "docs/98.archive/README.md",
+            "docs/99.templates/README.md",
+        ):
+            with self.subTest(target=target):
+                self.assertIsNone(_report(CONSUMER, target))
+
+    def test_normalized_reference_forms_cannot_hide_individual_documents(self) -> None:
+        self.assertTrue(hasattr(validator, "_stage_reference_diagnostics"))
+        forms = (
+            "[rule](../docs/03.specs/0008-current-local-gitops-platform/spec.md)",
+            "[rule][x]\n\n[x]: ../docs/03.specs/0008-current-local-gitops-platform/spec.md",
+            '<a href="../docs/03.specs/0008-current-local-gitops-platform/spec.md">rule</a>',
+            "<a href=../docs/03.specs/0008-current-local-gitops-platform/spec.md>rule</a>",
+            "[[docs/03.specs/0008-current-local-gitops-platform/spec.md|rule]]",
+            "[rule](https://github.com/buenhyden/hy-home.k8s/blob/main/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
+            "[rule](https://raw.githubusercontent.com/buenhyden/hy-home.k8s/main/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
+            "[rule](/checkout/docs/03.specs/0008-current-local-gitops-platform/spec.md)",
+            "[rule](../DOCS/03.SPECS/0008-current-local-gitops-platform/SPEC.MD)",
+            r"[[..\docs\03.specs\0008-current-local-gitops-platform\spec.md]]",
+            "[rule](../docs%252f03.specs%252f0008-current-local-gitops-platform%252fspec.md)",
+            "Follow `docs/03.specs/0008-current-local-gitops-platform/spec.md` as current policy.",
+        )
+        for text in forms:
+            with self.subTest(text=text):
+                result = validator._stage_reference_diagnostics(CONSUMER, PROFILE, text)
+                self.assertTrue(result)
+                self.assertEqual(result[0].rule_id, "LINK-STAGE-BOUNDARY")
+        for text in (
+            "[index](../docs/03.specs/README.md)",
+            "[source](https://example.org/docs/03.specs/example.md)",
+        ):
+            self.assertEqual(
+                validator._stage_reference_diagnostics(CONSUMER, PROFILE, text), []
+            )
+        self.assertEqual(
+            validator._stage_reference_diagnostics(HUB, PROFILE, forms[0]), []
+        )
+
+    def test_machine_exception_is_exact_in_all_three_dimensions(self) -> None:
+        self.assertTrue(hasattr(validator, "_stage_machine_reference_allowed"))
+        check = validator._stage_machine_reference_allowed
+        source = PurePosixPath(".agents/skills/docs-stage-routing/SKILL.md")
+        target = PurePosixPath("docs/99.templates/registry.json")
+        self.assertTrue(check(source, target, "machine-read"))
+        self.assertFalse(check(CONSUMER, target, "machine-read"))
+        self.assertFalse(
+            check(source, PurePosixPath("docs/99.templates/other.json"), "machine-read")
+        )
+        self.assertFalse(check(source, target, "link"))
 
     def test_leaves_the_documentation_hub_reachable_from_outside(self) -> None:
         self.assertIsNone(_report(CONSUMER, "docs/README.md"))

@@ -1,10 +1,10 @@
 ---
 title: "Azure GitOps (Platform Manifests)"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-09-29"
 ---
 # Azure GitOps (Platform Manifests)
 
@@ -76,7 +76,7 @@ secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret
 
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
-- **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)
+- **Repository operations**: GitOps platform runbook (`docs/05.operations/runbooks/README.md`)
 
 ### AI Agent Guidance
 

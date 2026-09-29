@@ -1,10 +1,10 @@
 ---
 title: "workloads"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-29"
 ---
 # workloads
 
@@ -93,5 +93,5 @@ ESO의 준비 상태는 증명되지 않는다.
 ## Related Documents
 
 - [GitOps README](../README.md)
-- App Onboarding Policy (`docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`)
-- App Onboarding Runbook (`docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`)
+- App Onboarding Policy (`docs/05.operations/policies/README.md`)
+- App Onboarding Runbook (`docs/05.operations/runbooks/README.md`)
