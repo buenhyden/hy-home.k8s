@@ -1,8 +1,8 @@
 ---
 title: "Agent Contracts and Skill Ownership"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -15,7 +15,7 @@ artifact_id: "SPEC-0102"
 
 This work unit renews the repository's agent contracts across shared governance, skills, native adapters, validation, and their consumers. The 2026-09-29 investigation found 17 registered roles, 17 canonical skills, 17 Claude role projections, 17 Codex role projections, and one homogeneous 19-case synthetic agent evaluation corpus. The approved design direction is incremental convergence at existing owners. This draft specifies the resulting behavior and evidence, not a completed implementation.
 
-The user approved the incremental design, this Spec, and ADR-0047 on 2026-09-29, then authorized Plan drafting. This new untracked Spec retains its initial `draft` frontmatter until the first logical commit; a separate reviewed lifecycle change records `active` after that commit. The request owner subsequently approved the Plan and implementation on 2026-09-29; the linked Tasks record that execution scope. No historical SPEC-0072 or SPEC-0099 approval is inherited. The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md), [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), accepted [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), and proposed [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) are inputs with their distinct authority states. ADR-0047 also retains initial `proposed` frontmatter until its first logical commit and separate reviewed acceptance transition.
+The user approved the incremental design, this Spec, and ADR-0047 on 2026-09-29, then authorized Plan drafting. Initial document state was committed in `8e811506`; this approved Spec now transitions to `active`. The request owner subsequently approved the Plan and implementation on 2026-09-29; the linked Tasks record that execution scope. No historical SPEC-0072 or SPEC-0099 approval is inherited. The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md), [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), accepted [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), and accepted [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) are inputs with their distinct authority states. ADR-0047 now records the separately approved `accepted` state after its initial commit.
 
 The request's R01–R39 labels are aliases for this work unit, not new durable Requirement IDs. The final traceability table maps them to criteria and maps those criteria to full current `REQ-0003-*` IDs. Requirements stay solution-independent; this Spec owns change-specific behavior.
 
@@ -233,7 +233,7 @@ These are the 33 supplied scenario IDs and subjects, preserved without reassigni
 
 ## Traceability
 
-The full user request alias mapping below prevents an item from disappearing into a grouped paragraph. Current Requirement IDs remain the durable need; criterion IDs are this Spec's acceptance contract. ADR-0047 is a **proposed** structural successor, not an accepted source or permission to implement.
+The full user request alias mapping below prevents an item from disappearing into a grouped paragraph. Current Requirement IDs remain the durable need; criterion IDs are this Spec's acceptance contract. ADR-0047 is an accepted scoped amendment; the approved Plan bounds implementation.
 
 ### Request Alias Traceability
 
@@ -320,8 +320,8 @@ The full user request alias mapping below prevents an item from disappearing int
 ### Related Inputs and Documents
 
 - Current requirement: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md). Current architecture: [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
-- Existing decision: [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md); proposed successor [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) is not yet accepted.
-- Stage 03 [index](../README.md) and [Stage 99 authoring contract](../../99.templates/README.md) own navigation and form. The [draft Plan](plan.md) records implementation order; Task links are absent until Plan approval and Task authoring.
+- Existing decision: [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md); accepted scoped amendment [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) governs the amended boundaries.
+- Stage 03 [index](../README.md) and [Stage 99 authoring contract](../../99.templates/README.md) own navigation and form. The [approved Plan](plan.md) records implementation order; the Tasks below own execution evidence.
 
 ### Execution Tasks
 

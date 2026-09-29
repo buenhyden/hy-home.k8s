@@ -1,8 +1,8 @@
 ---
 title: "Agent Contract and Resource Ownership"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-29"
 layer: "architecture"
@@ -20,13 +20,10 @@ domain facts, and one common evaluation package owns its cases, responses and
 exclusive runner. Current execution authority remains in common governance and
 native adapters, independent of individual development records.
 
-The request owner approved this decision and SPEC-0102 on 2026-09-29. The
-frontmatter remains `proposed` because this new document has no committed
-creation state: the lifecycle contract admits initial creation only in
-`proposed`. Record that initial state before the separate `accepted` transition
-and version `1.0.0`. This is a pending persisted transition, not a request to
-approve the decision again. Plan approval and implementation remain pending;
-no commit or implementation is authorized by this approval record.
+The request owner approved this decision, SPEC-0102 and the execution Plan on
+2026-09-29. Commit `8e811506` records the initial `proposed` creation state;
+this reviewed change records `accepted` and version `1.0.0`. Implementation
+follows the approved Plan, without external or live authority.
 [SPEC-0102](../../03.specs/0102-agent-contracts-and-skill-ownership/spec.md)
 owns the approved behavior, migration boundaries and acceptance criteria.
 

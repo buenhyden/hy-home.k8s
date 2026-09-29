@@ -71,7 +71,7 @@ layer: "architecture"
 | [`./0044-stateful-data-stores-stay-external.md`](./0044-stateful-data-stores-stay-external.md) | Stateful data store placement 결정 | `postgresql-cluster`와 `valkey-cluster`를 k8s로 옮기지 않고 외부 workspace에 둔다. PostgreSQL 계약은 `pg-router`, Valkey 계약은 `mng-valkey`다. |
 | [`./0045-in-cluster-telemetry-collection.md`](./0045-in-cluster-telemetry-collection.md) | In-cluster telemetry collection 결정 | 관측 저장과 조회(Prometheus, Loki, Tempo, Grafana, Alertmanager)는 외부 workspace에 두고, k8s 메트릭과 로그 수집은 cluster 안 Alloy가 맡아 외부 backend로 push한다. `172.18.0.2` static NodePort scrape는 검증 뒤 폐지한다. |
 | [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 | 외부 서비스 계약을 `k3d-hyhome` container 주소에서 host 주소 `192.168.0.13`과 host 공개 port로 옮긴다. ESO는 외부 Traefik의 `https://openbao.hy.home.arpa`로 닿고 `vault-external` HTTP 예외를 폐지한다. |
-| [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 | 2026-09-29 사용자 승인. 최초 `proposed` 커밋 후 `accepted` 전이를 기록하며, ADR-0036의 나머지 조항은 유지한다. 구현은 계획 승인 후 진행한다. |
+| [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 | 2026-09-29 승인되어 `accepted`로 전이했다. ADR-0036의 나머지 조항은 유지하며 승인된 계획에 따라 구현한다. |
 
 ## Add and Find
 

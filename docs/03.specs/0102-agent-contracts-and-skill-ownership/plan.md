@@ -1,8 +1,8 @@
 ---
 title: "Agent Contracts and Skill Ownership Implementation Plan"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -19,7 +19,7 @@ artifact_id: "SPEC-0102-PLAN-0001"
 
 **Tech stack:** Python 3.12 repository validators/tests, YAML manifests, Markdown governance and Stage 99 documents, Claude/Codex native adapters, GitHub Actions. Reuse installed PyYAML and repository `scripts/validation/repository/bounded_io.py`.
 
-**Spec:** [SPEC-0102](spec.md); structural constraint: [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md). The user approved both contents on 2026-09-29, but newly authored files keep initial `draft`/`proposed` frontmatter until the first commit and a separately reviewed lifecycle transition. The request owner approved this Plan for execution on 2026-09-29. Initial `draft` frontmatter persists until the first commit and then transitions to `active`.
+**Spec:** [SPEC-0102](spec.md); structural constraint: [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md). The user approved both contents on 2026-09-29, initial `draft`/`proposed` states were committed in `8e811506`, and this change records the reviewed lifecycle transitions. The request owner approved this Plan for execution on 2026-09-29. Initial `draft` state was committed in `8e811506`; this approved Plan now transitions to `active`.
 
 ## Global Constraints
 

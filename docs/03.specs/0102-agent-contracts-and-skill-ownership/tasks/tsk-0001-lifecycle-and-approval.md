@@ -2,7 +2,7 @@
 title: "Document lifecycle and approval"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -52,7 +52,7 @@ Pre-flight: WP-001 supplies owner links to WP-002/WP-004; WP-002 supplies
 resource admission to WP-003; WP-004/WP-005 supply the contracts consumed by
 WP-006; WP-007 verifies the resulting branch. Preserve those dependencies.
 
-Not executed. Branch `codex/agent-contracts`, initial base
+Initial authoring commit `8e811506` passed all six staged QA gates. Normal Git hooks ran, but the workspace pre-commit and commit-msg files are absent; the first actual message passed `pre-commit run commitizen --hook-stage commit-msg --commit-msg-filename /tmp/hy-home-k8s-initial-message.txt` after commit. Ruling: subsequent messages are explicitly checked before commit; no hook is disabled or configured. Approval-state transition validation is pending. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
 never establishes hosted, provider, account-limit or live behavior.
