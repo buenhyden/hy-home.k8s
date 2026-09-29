@@ -75,34 +75,55 @@ def _json_string(value: str) -> str:
     return json.dumps(value)
 
 
+_LINKED_FIXTURE = None
+
+
+def setUpModule():
+    """Use disposable matching revisions, never mutate a user's linked checkout."""
+    global _LINKED_FIXTURE
+    _LINKED_FIXTURE = tempfile.TemporaryDirectory(prefix="pre-edit-linked-fixture-")
+    main = Path(_LINKED_FIXTURE.name) / "main"
+    linked = Path(_LINKED_FIXTURE.name) / "linked"
+    try:
+        subprocess.run(
+            ["git", "clone", "--quiet", "--shared", str(ROOT), str(main)],
+            check=True,
+            capture_output=True,
+            timeout=60,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(main),
+                "worktree",
+                "add",
+                "--quiet",
+                "--detach",
+                str(linked),
+                "HEAD",
+            ],
+            check=True,
+            capture_output=True,
+            timeout=60,
+        )
+    except BaseException:
+        _LINKED_FIXTURE.cleanup()
+        _LINKED_FIXTURE = None
+        raise
+
+
+def tearDownModule():
+    if _LINKED_FIXTURE is not None:
+        _LINKED_FIXTURE.cleanup()
+
+
 def repository_worktrees() -> tuple[Path, ...]:
-    """Return every linked worktree of this repository, excluding the main one."""
-    completed = subprocess.run(
-        ("git", "-C", str(ROOT), "worktree", "list", "--porcelain"),
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    roots = [
-        Path(line.split(" ", 1)[1])
-        for line in completed.stdout.splitlines()
-        if line.startswith("worktree ")
-    ]
-    main_root = roots[0] if roots else ROOT
-    return tuple(root for root in roots[1:] if root != main_root)
+    return (Path(_LINKED_FIXTURE.name) / "linked",)
 
 
 def main_checkout() -> Path:
-    completed = subprocess.run(
-        ("git", "-C", str(ROOT), "worktree", "list", "--porcelain"),
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    for line in completed.stdout.splitlines():
-        if line.startswith("worktree "):
-            return Path(line.split(" ", 1)[1])
-    return ROOT
+    return Path(_LINKED_FIXTURE.name) / "main"
 
 
 class PreEditAcceptanceTest(unittest.TestCase):

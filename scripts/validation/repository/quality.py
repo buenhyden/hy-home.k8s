@@ -2292,8 +2292,8 @@ for phrase in [
     "직접 push 제한은 저장소 로컬 파일 밖에서 GitHub branch protection과 ruleset이 강제한다",
     "QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다",
     "Source Basis",
-    "Parent Spec",
-    "GitHub Actions documentation",
+    ".agents/governance/quality.md",
+    ".github/workflows/*.yml",
 ]:
     if phrase not in github_about_text:
         fail(
@@ -3282,7 +3282,7 @@ else:
                     + ", ".join(sorted(policy_apps_namespace_kinds))
                 )
             for phrase in [
-                "0007-app-gitops-onboarding-policy.md",
+                "docs/05.operations/policies/README.md",
                 "ESO",
                 "app onboarding policy",
             ]:

@@ -40,15 +40,16 @@ use without requiring cluster access delegation.
 
 ## Workflow Steps
 
-1. Identify the runbook type: bootstrap, recovery, deployment, backup, or incident.
+1. Identify the runbook type and current operations index. Resolve its profile
+   through `docs-stage-routing`; the Stage 99 owner supplies the current path
+   grammar and form. A read-only reviewer returns findings and writes nothing.
 2. State the pre-conditions (required cluster state, credentials, environment variables).
 3. List every step with the exact command, expected output, and failure signal.
 4. Include a verification step after each destructive or irreversible action.
 5. Write a Rollback section that undoes each step in reverse order.
 6. State post-conditions that confirm the procedure succeeded.
 7. Link to the relevant ArgoCD apps, Vault paths, or ESO SecretStore resources.
-8. Save the file under `docs/05.operations/runbooks/` following the existing
-   naming convention.
+8. An authorized author saves the file at the resolved runbook profile path.
 9. Update `docs/05.operations/README.md` to include the new runbook link.
 
 ## Safety Rules

@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluator Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # agent-evaluator Responsibility
@@ -36,6 +36,10 @@ designing repository validation lanes is `quality-engineer.md`'s; this role
 scores and reports, and does not edit the role or skill definitions it
 measures.
 
+No broad workspace-audit skill is required to score a declared case. An empty
+skill list preserves this narrow remit; never add a filler reference. Synthetic
+responses exercise grading and contracts, not provider behavior or account limits.
+
 ### When to Use
 
 A role or skill needs measuring, a criterion needs adding or correcting, or an
@@ -63,7 +67,7 @@ session evidence that produced them. Do not restate a role's permission class
 inside a case, because the criteria derive it from the registry. Do not add a
 criterion without stating what it cannot judge. Do not edit a role body, a
 skill procedure, or a provider projection; route the finding to its owner
-instead. `scripts/run-agent-evaluations.py` and its regression test belong to
+instead. `.agents/evaluations/run-agent-evaluations.py` and its regression test belong to
 this role, because a criterion and the code that fires it are one contract;
 that script's lane membership stays owned by the validation execution registry.
 

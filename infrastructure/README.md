@@ -1,10 +1,10 @@
 ---
 title: "infrastructure"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # infrastructure
 
@@ -128,7 +128,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 ### Working Procedure
 
-1. bootstrap 전 Runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)의 외부 의존성 점검을 확인한다.
+1. bootstrap 전 Runbook (`docs/05.operations/runbooks/README.md`)의 외부 의존성 점검을 확인한다.
 2. `bootstrap-local.sh` 변경 시 bootstrap-only 예외 범위와 GitOps 소유권 전환 지점을 함께 점검한다.
 3. Helm values, k3d config, static test 변경은 관련 Spec/Operations/Runbook 링크를 함께 갱신한다.
 4. 변경 후 `bash scripts/validate-infrastructure-contracts.sh`와 shell syntax check를 실행한다.
@@ -145,9 +145,9 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 ### Reference Links
 
-- PRD (`docs/01.requirements/0004-current-local-gitops-platform.md`)
-- Spec (`docs/03.specs/0008-current-local-gitops-platform/spec.md`)
-- Runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)
+- PRD (`docs/01.requirements/README.md`)
+- Spec (`docs/03.specs/README.md`)
+- Runbook (`docs/05.operations/runbooks/README.md`)
 - [GitOps README](../gitops/README.md)
 - [Bootstrap version pins](./bootstrap-local.sh)
 
@@ -194,5 +194,5 @@ rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 
 ## Related Documents
 
-- Infrastructure Spec (`docs/03.specs/0008-current-local-gitops-platform/spec.md`)
-- Platform bootstrap runbook (`docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`)
+- Infrastructure Spec (`docs/03.specs/README.md`)
+- Platform bootstrap runbook (`docs/05.operations/runbooks/README.md`)

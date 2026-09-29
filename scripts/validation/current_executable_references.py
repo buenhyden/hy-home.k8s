@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 _SEGMENT = r"[A-Za-z0-9_](?:[A-Za-z0-9_.-]*[A-Za-z0-9_])?"
 _SCRIPT_REFERENCE = re.compile(
     rf"(?<![A-Za-z0-9_./-])(?:\./)?"
-    rf"(?P<path>scripts/(?:{_SEGMENT}/)*{_SEGMENT})"
+    rf"(?P<path>(?:(?:\.agents/skills/{_SEGMENT}/)?scripts/|\.agents/evaluations/)(?:{_SEGMENT}/)*{_SEGMENT})"
     rf"(?![A-Za-z0-9_./-])"
 )
 _TERMINAL_STATUSES = frozenset(
@@ -87,6 +87,8 @@ def _frontmatter_status(text: str) -> str:
 
 
 def _source_kind(path: PurePosixPath, text: str) -> str:
+    if path.parts[:3] == (".agents", "evaluations", "responses"):
+        return "data"
     if (
         path == PurePosixPath("docs/98.archive")
         or PurePosixPath("docs/98.archive") in path.parents
@@ -107,18 +109,21 @@ def _source_kind(path: PurePosixPath, text: str) -> str:
 
 
 def _reference_targets(
-    text: str, executable_suffixes: frozenset[str]
+    text: str, executable_suffixes: frozenset[str], source: PurePosixPath
 ) -> tuple[PurePosixPath, ...]:
-    return tuple(
-        sorted(
-            {
-                PurePosixPath(match.group("path"))
-                for match in _SCRIPT_REFERENCE.finditer(text)
-                if PurePosixPath(match.group("path")).suffix in executable_suffixes
-            },
-            key=PurePosixPath.as_posix,
-        )
-    )
+    targets = set()
+    for match in _SCRIPT_REFERENCE.finditer(text):
+        target = PurePosixPath(match.group("path"))
+        if target.suffix not in executable_suffixes:
+            continue
+        if (
+            source.parts[:2] == (".agents", "skills")
+            and text[max(0, match.start() - 2) : match.start()] == "]("
+            and target.parts[0] == "scripts"
+        ):
+            target = source.parent / target
+        targets.add(target)
+    return tuple(sorted(targets, key=PurePosixPath.as_posix))
 
 
 def _tracked_regular_file(
@@ -154,9 +159,9 @@ def validate_current_executable_references(
     for source in sorted(source_texts, key=PurePosixPath.as_posix):
         text = source_texts[source]
         kind = _source_kind(source, text)
-        if kind in {"proposal", "sealed"}:
+        if kind in {"proposal", "sealed", "data"}:
             continue
-        for target in _reference_targets(text, executable_suffixes):
+        for target in _reference_targets(text, executable_suffixes, source):
             if _tracked_regular_file(root, target, tracked_paths):
                 continue
             if kind == "current":

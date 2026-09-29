@@ -10,7 +10,6 @@ Read the following repository files before acting:
 - `.agents/roles/network-reviewer.md`
 - `.agents/roles/registry.json`
 - `.agents/workflows/work-lifecycle.md`
-- `.agents/skills/k8s-security-audit/SKILL.md`
 - `.agents/skills/risk-report/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

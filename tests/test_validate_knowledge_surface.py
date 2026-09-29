@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+import json
+import subprocess
+from datetime import date, timedelta
 import sys
 import tempfile
 import unittest
@@ -79,6 +83,69 @@ class KnowledgeSurfaceValidatorTests(unittest.TestCase):
         (self.root / "owner").mkdir()
         (self.root / "owner" / "README.md").write_text(OWNER_TEXT, encoding="utf-8")
         self.surface = surface
+
+    def test_bounded_fact_metadata_invalidates_stale_and_sensitive_observations(self):
+        owner = self.root / "owner/README.md"
+        subprocess.run(
+            ["git", "init", "-q", str(self.root)], check=True, capture_output=True
+        )
+        subprocess.run(
+            ["git", "-C", str(self.root), "add", "owner/README.md"],
+            check=True,
+            capture_output=True,
+        )
+        record = {
+            "owner": "platform",
+            "scope": "owner navigation",
+            "source": {
+                "path": "owner/README.md",
+                "sha256": hashlib.sha256(owner.read_bytes()).hexdigest(),
+            },
+            "observed_at": date.today().isoformat(),
+            "valid_for": (date.today() + timedelta(days=30)).isoformat(),
+            "invalidated_by": ["source", "scope", "approval", "validity"],
+            "review_status": "advisory",
+            "sensitivity": "public",
+        }
+        self.write_readme("sample.md")
+        base = document(
+            "| Domain | `owner/README.md` | `owner/README.md` | Owner exists |"
+        )
+
+        def findings(value):
+            (self.surface / "sample.md").write_text(
+                base + "\n```knowledge-fact\n" + json.dumps(value) + "\n```\n"
+            )
+            return self.module.validate_knowledge_surface(self.root)
+
+        self.assertEqual(findings(record), [])
+        private = self.root / "private.md"
+        private.write_text("private-payload")
+        self.assertTrue(
+            findings(
+                {
+                    **record,
+                    "source": {
+                        "path": "private.md",
+                        "sha256": hashlib.sha256(private.read_bytes()).hexdigest(),
+                    },
+                }
+            )
+        )
+        for key in record:
+            with self.subTest(missing=key):
+                self.assertTrue(
+                    findings(
+                        {name: value for name, value in record.items() if name != key}
+                    )
+                )
+        self.assertTrue(findings({**record, "valid_for": "2000-01-01"}))
+        self.assertTrue(findings({**record, "sensitivity": "secret"}))
+        self.assertTrue(findings({**record, "review_status": "expired"}))
+        owner.write_text("Changed owner")
+        self.assertTrue(findings(record))
+        owner.unlink()
+        self.assertTrue(findings(record))
 
     def write_readme(self, *names: str) -> None:
         entries = "\n".join(f"- [Sample]({name}): a map." for name in names)

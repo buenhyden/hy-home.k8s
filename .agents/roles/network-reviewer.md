@@ -1,10 +1,10 @@
 ---
 title: "Network Reviewer Responsibility"
-version: "1.1.1"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-09-29"
 ---
 
 # network-reviewer Responsibility
@@ -34,6 +34,10 @@ Judge whether routing, ingress, DNS, and TLS desired state is structurally
 correct as written. Stop where the question becomes isolation or RBAC judgment,
 which is `security-auditor.md`'s; sync-structure and rollout concerns go to
 `gitops-reviewer.md`.
+
+Use the external-service audit result for Service/EndpointSlice wiring. The
+security posture procedure is not a required skill for this structural review;
+route isolation and RBAC judgments to the security owner.
 
 ### When to Use
 

@@ -30,9 +30,39 @@ class ValidationProfileTests(unittest.TestCase):
             (ROOT / "scripts/validation/registry.json").read_text()
         )
 
+    def test_skill_checker_requires_registered_owner_and_regular_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            package = root / ".agents/skills/example"
+            (package / "scripts").mkdir(parents=True)
+            (package / "SKILL.md").write_text("scripts/check.py")
+            checker = package / "scripts/check.py"
+            checker.write_text("# checker")
+            registry = root / ".agents/roles/registry.json"
+            registry.parent.mkdir()
+            registry.write_text(json.dumps({"skills": []}))
+            path = ".agents/skills/example/scripts/check.py"
+            with self.assertRaises(ROUTES.ContractError):
+                ROUTES.validate_skill_checker(root, path)
+            registry.write_text(
+                json.dumps(
+                    {
+                        "skills": [
+                            {"id": "example", "path": ".agents/skills/example/SKILL.md"}
+                        ]
+                    }
+                )
+            )
+            ROUTES.validate_skill_checker(root, path)
+            checker.unlink()
+            checker.symlink_to(package / "SKILL.md")
+            with self.assertRaises(ROUTES.ContractError):
+                ROUTES.validate_skill_checker(root, path)
+
     def test_common_and_provider_authority_select_all_document_gates(self):
         cases = {
             ".agents/README.md": "governance-documents",
+            ".agents/evaluations/README.md": "governance-documents",
             ".agents/governance/quality.md": "governance-documents",
             ".agents/workflows/work-lifecycle.md": "governance-documents",
             ".agents/roles/registry.json": "agent-shared",
@@ -54,7 +84,15 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(self.contract, path)
                 self.assertEqual(surface["id"], owner)
-                self.assertEqual(set(surface["validators"]), expected)
+                self.assertEqual(
+                    set(surface["validators"]),
+                    expected
+                    | (
+                        {"external-service-contracts"}
+                        if owner == "agent-shared"
+                        else set()
+                    ),
+                )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
     def test_retired_governance_root_has_no_functional_selector(self):
@@ -107,25 +145,19 @@ class ValidationProfileTests(unittest.TestCase):
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
-    def test_a_skill_local_helper_cannot_be_registered_as_a_gate(self):
-        """A skill package carries helpers; this registry carries gates.
-
-        The two are kept apart by address rather than by convention, because a
-        path that was both would let a skill edit change what QA enforces
-        without the change ever reaching this contract."""
-
-        with self.assertRaises(ROUTES.ContractError) as raised:
-            ROUTES._validate_direct_script_argv(
-                "synthetic",
-                ["python3", ".agents/skills/k8s-validate/scripts/check.py"],
-            )
-        self.assertEqual(raised.exception.code, "SURFACE-VALIDATOR-ARGV-SCRIPT")
+    def test_central_registry_may_select_a_skill_owned_checker(self):
         self.assertEqual(
             ROUTES._validate_direct_script_argv(
-                "synthetic", ["python3", "scripts/validate-k8s-manifests.py"]
+                "synthetic", ["python3", ".agents/skills/k8s-validate/scripts/check.py"]
             ),
-            "scripts/validate-k8s-manifests.py",
+            ".agents/skills/k8s-validate/scripts/check.py",
         )
+        for path in (
+            ".agents/skills/k8s-validate/assets/check.py",
+            ".agents/skills/k8s-validate/scripts/../check.py",
+        ):
+            with self.subTest(path=path), self.assertRaises(ROUTES.ContractError):
+                ROUTES._validate_direct_script_argv("synthetic", ["python3", path])
 
     def test_every_tested_repository_validator_runs_in_a_profile(self):
         """A validator with its own test module must be reachable from a profile."""

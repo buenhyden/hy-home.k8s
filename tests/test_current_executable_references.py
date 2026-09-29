@@ -61,6 +61,35 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
 
         self.assertEqual(diagnostics, ())
 
+    def test_skill_link_resolves_locally_and_missing_full_skill_command_fails(self):
+        source = ".agents/skills/example/SKILL.md"
+        target = ".agents/skills/example/scripts/check.py"
+        self.write(target)
+        self.assertEqual(
+            self.validate(source, "[checker](scripts/check.py)", tracked=(target,)), ()
+        )
+        findings = self.validate(source, f"Run `python3 {target}`")
+        self.assertEqual([finding.code for finding in findings], ["EXECUTABLE-CURRENT"])
+
+    def test_evaluation_response_is_data_but_its_readme_is_current(self):
+        text = "I ran `python3 scripts/retired.py`."
+        self.assertEqual(
+            self.validate(".agents/evaluations/responses/a.synthetic.md", text), ()
+        )
+        self.assertEqual(len(self.validate(".agents/evaluations/README.md", text)), 1)
+
+    def test_evaluation_owner_command_must_exist(self):
+        target = ".agents/evaluations/run-agent-evaluations.py"
+        findings = self.validate(".agents/README.md", f"Run `python3 {target}`")
+        self.assertEqual([finding.code for finding in findings], ["EXECUTABLE-CURRENT"])
+        self.write(target)
+        self.assertEqual(
+            self.validate(
+                ".agents/README.md", f"Run `python3 {target}`", tracked=(target,)
+            ),
+            (),
+        )
+
     def test_missing_current_reference_is_not_waived_by_git_history(self) -> None:
         target = "scripts/validation/document/check-contract.py"
         recovered: list[PurePosixPath] = []

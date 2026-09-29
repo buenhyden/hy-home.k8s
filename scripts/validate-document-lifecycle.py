@@ -1661,6 +1661,8 @@ def _normalize_path(value: str) -> PurePosixPath:
 def _approved_markdown(path: PurePosixPath) -> bool:
     if path.suffix != ".md" or not path.parts:
         return False
+    if path.parts[:3] == (".agents", "evaluations", "responses"):
+        return False
     if path.as_posix() == "RTK.md" or path.parts[0] == ".worktrees":
         return False
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
@@ -3497,11 +3499,20 @@ def _select_changes(
     base_oid: Callable[[PurePosixPath], str | None],
     proposed_oid: Callable[[PurePosixPath], str | None],
 ) -> tuple[Change, ...]:
-    target_changes = [
-        change
-        for change in changes
-        if any(_approved_markdown(path) for path in change.paths)
-    ]
+    target_changes = []
+    for change in changes:
+        if change.kind == "R" and change.old_path is not None:
+            old_target = _approved_markdown(change.old_path)
+            new_target = _approved_markdown(change.path)
+            if old_target != new_target:
+                target_changes.append(
+                    Change("A", change.path)
+                    if new_target
+                    else Change("D", change.old_path)
+                )
+                continue
+        if any(_approved_markdown(path) for path in change.paths):
+            target_changes.append(change)
     if not include_paths:
         return tuple(target_changes)
     selected = list(target_changes)

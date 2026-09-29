@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-09-06"
+updated: "2026-09-29"
 ---
 
 # Work Lifecycle
@@ -43,6 +43,15 @@ state on resume; historical progress and provider-local memory are auxiliary.
 4. Resolve the Stage 99 profile and template before authored document changes.
 5. Define focused checks, expected evidence lanes, rollback, unavailable tools,
    and the next owner before implementation.
+
+### Resume
+
+Apply the [context policy resume decision](../governance/context-and-memory.md#resume-decision)
+before dependent writes. Put worktree identity, relevant file hashes, current
+approval/revocation and writer ownership under the existing Task snapshot and
+approval fields. Carry command limits, partial output and known budget state
+under evidence limitations. On conflict, retain completed work and name the
+next owner; refresh the affected evidence before resuming.
 
 ### Implementation
 

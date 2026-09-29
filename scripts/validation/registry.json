@@ -50,7 +50,7 @@
       "id": "agent-evaluation-cases",
       "argv": [
         "python3",
-        "scripts/run-agent-evaluations.py",
+        ".agents/evaluations/run-agent-evaluations.py",
         "--root",
         "."
       ],
@@ -505,6 +505,27 @@
         "reason": "Workspace boundary validation is required."
       },
       "evidenceLane": "repo-static"
+    },
+    {
+      "id": "external-service-contracts",
+      "argv": [
+        "python3",
+        ".agents/skills/external-service-contract-audit/scripts/validate-service-endpoints.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "affected",
+        "staged",
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "External Service and EndpointSlice contracts are required."
+      },
+      "evidenceLane": "repo-static"
     }
   ],
   "ciJobs": [
@@ -671,7 +692,8 @@
         "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
-        "repository-quality"
+        "repository-quality",
+        "external-service-contracts"
       ],
       "ciJobs": [
         "qa"
@@ -764,7 +786,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
+          "value": "^\\.agents/(?:README\\.md|evaluations/README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
         }
       ],
       "validators": [
@@ -844,7 +866,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^evals/.*$"
+          "value": "^(?:evals/.*|\\.agents/evaluations/(?!README\\.md$).*)$"
         }
       ],
       "validators": [
@@ -901,7 +923,8 @@
         "k8s-manifests",
         "policy-gates",
         "repository-quality",
-        "secret-handling"
+        "secret-handling",
+        "external-service-contracts"
       ],
       "ciJobs": [
         "qa"
@@ -963,7 +986,8 @@
         "policy-gates",
         "repository-quality",
         "secret-handling",
-        "vault-eso-contracts"
+        "vault-eso-contracts",
+        "external-service-contracts"
       ],
       "ciJobs": [
         "qa"
@@ -1164,7 +1188,8 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluation-cases"
+      "agent-evaluation-cases",
+      "external-service-contracts"
     ],
     "staged": [
       "agent-governance",
@@ -1182,7 +1207,8 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluation-cases"
+      "agent-evaluation-cases",
+      "external-service-contracts"
     ],
     "full": [
       "affected-surface-contract",
@@ -1206,7 +1232,8 @@
       "vault-eso-contracts",
       "unit-tests",
       "pre-commit",
-      "agent-evaluation-cases"
+      "agent-evaluation-cases",
+      "external-service-contracts"
     ]
   },
   "profileAliases": {

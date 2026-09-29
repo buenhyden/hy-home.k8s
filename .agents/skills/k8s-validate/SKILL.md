@@ -32,7 +32,9 @@ Define the validation sequence for manifest changes before GitOps review or merg
 2. Run kube-linter where the selected profile reaches it. The pinned pre-commit
    hook owns that tool and the change-scoped profiles do not run it, so a
    change-scoped result covers syntax, structure and secrets but not lint.
-3. Run GitOps structure checks.
+3. Run GitOps structure checks. Delegate selectorless cross-file Service and
+   EndpointSlice relationships to `external-service-contract-audit`; the central
+   QA registry selects its dedicated checker.
 4. Run secret-handling checks.
 5. Report each check using the result meanings quality policy owns, and name
    every check the selected profile did not reach.

@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "1.9.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 
 # Document Authoring Policy
@@ -50,19 +50,17 @@ express ownership, not a one-way waterfall.
    describes something the repository does not give a stable identity.
 6. Replace prompts with concrete content, use complete stable IDs for
    traceability, and calculate links from the final target path. A file outside
-   `docs/` never links directly into a numbered stage tree; it names the stage
-   document by path, artifact ID, or role in plain text and reaches the tree
-   through the documentation hub. A stage index is inside that tree, not a
-   second way in: it is the stage's own navigation, reachable from the hub, and
-   a link to it from outside would give each stage an entry the hub does not
-   route, so the hub would stop being the one place the tree is entered from.
-   That plain-text path names a document that exists, or the collection a
-   profile owns, and stops there. A route spelled
-   out as a grammar is a second copy of a registry `path_pattern` that no
-   document answers to and no gate reads, so it is free to be wrong for as long
-   as nobody follows it. Links between documents inside `docs/` keep
-   their existing contracts, and a machine reference a program opens is not a
-   link. The registry's ordered `archive_citation` table decides every link into
+   `docs/` links to current owners and stage or collection README navigation,
+   never directly to an individual numbered-stage document, including historical
+   records. Renaming a link to a plain path or artifact ID does not remove a
+   current authority dependency: promote the needed rule to its current owner.
+   The boundary normalizes relative/absolute references, Markdown references,
+   HTML/wiki links, repository blob/raw URLs, encoding, case and separators.
+   Machine reads are admitted only by the exact consumer, target and access-kind
+   tuples in the link validator; they do not authorize rendered links. Route
+   grammars stay in the Stage 99 registry. Links inside `docs/` retain their
+   historical and current relationship contracts.
+   The registry's ordered `archive_citation` table decides every link into
    `docs/98.archive/`. A document links no further than the index and the
    retention classes whose own body still leads a reader to current authority:
    `completed/`, through its promotion declaration, and `resolved/`, as

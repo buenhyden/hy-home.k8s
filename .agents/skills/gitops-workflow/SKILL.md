@@ -29,7 +29,9 @@ Define the approved GitOps path for workload onboarding, change review, and sync
 ## Workflow Steps
 
 1. Define the target workload or GitOps object and confirm the repository path.
-2. Apply or update repository-backed manifests only; do not mutate the cluster directly.
+2. For an external endpoint change, use `external-service-contract-audit` to
+   compare the current declarations and consumer before a scoped edit. Apply
+   repository-backed changes only; live reconciliation remains operator-owned.
 3. Run the validation path through `k8s-validate`.
 4. Review release structure, sync targets, and rollout safety.
 5. Report PR and Argo CD reconciliation readiness. Creating a PR or triggering reconciliation requires separate explicit authorization.

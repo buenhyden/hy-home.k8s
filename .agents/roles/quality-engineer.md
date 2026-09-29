@@ -1,10 +1,10 @@
 ---
 title: "Quality Engineer Responsibility"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # quality-engineer Responsibility
@@ -35,6 +35,10 @@ authorized lanes, and classify each result. Whether the code is correct is
 `code-reviewer.md`'s judgment and whether it is safe is `security-auditor.md`'s;
 this role establishes what was checked, under what boundary, and what the
 result class means.
+
+The central validation registry alone selects global gates. A dedicated checker
+may live with the skill that owns its domain; keep its regular-file, registered
+owner, invocation and evidence checks in the same review as its admission.
 
 ### When to Use
 

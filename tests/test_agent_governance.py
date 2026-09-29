@@ -78,6 +78,7 @@ class NativeBoundaryTests(unittest.TestCase):
             # directions, so an adopted directory must be present in the
             # fixture; an empty one would not survive a Git-based snapshot.
             ".agents/knowledge/README.md",
+            ".agents/evaluations/README.md",
             ".agents/prompts/README.md",
             *role["projections"].values(),
             *(skill["path"] for skill in self.registry["skills"]),
@@ -432,10 +433,38 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.unlink()
                 path.parent.rmdir()
 
-    def test_an_asset_cannot_claim_the_stage_template_name(self):
-        """Stage 99 owns document templates and the route that reaches them."""
-
+    def test_a_dedicated_output_template_is_not_stage_authority(self):
         self.place_bundle("assets/report.template.md", reachable=True)
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+
+    def test_nested_resources_are_reached_transitively_and_cycles_terminate(self):
+        self.place_bundle(
+            "references/start.md", "[detail](nested/detail.md)", reachable=True
+        )
+        self.place_bundle(
+            "references/nested/detail.md",
+            "[start](../start.md) [output](../../assets/report.template.md)",
+            reachable=False,
+        )
+        self.place_bundle(
+            "assets/report.template.md", "# Dedicated output", reachable=False
+        )
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+
+    def test_nested_orphan_is_rejected(self):
+        self.place_bundle(
+            "references/start.md", "no outbound references", reachable=True
+        )
+        self.place_bundle("references/nested/orphan.md", reachable=False)
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_nested_resource_link_cannot_escape_package(self):
+        self.place_bundle(
+            "references/start.md", "[next](nested/outside.md)", reachable=True
+        )
+        nested = self.bundle_package() / "references/nested"
+        nested.mkdir()
+        (nested / "outside.md").symlink_to(self.bundle_package() / "SKILL.md")
         self.assert_rejected("AGENT-REGISTRY-SKILL")
 
     def test_an_empty_bundle_directory_rejects(self):

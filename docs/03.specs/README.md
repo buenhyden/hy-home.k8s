@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.7.9"
+version: "0.7.10"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-09-29"
 layer: "specs"
 ---
 # 03.specs
@@ -73,6 +73,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 03.specs/
 ├── 0008-current-local-gitops-platform/
 ├── 0101-closed-spec-retention/
+├── 0102-agent-contracts-and-skill-ownership/
 └── README.md
 ```
 
@@ -80,6 +81,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
 | [0101-closed-spec-retention/](./0101-closed-spec-retention/) | 완료된 SPEC-0098–0100 package 보존 |
+| [0102-agent-contracts-and-skill-ownership/](./0102-agent-contracts-and-skill-ownership/) | Agent 계약과 skill 소유 경계 설계 |
 
 ## Authoring Workflow
 

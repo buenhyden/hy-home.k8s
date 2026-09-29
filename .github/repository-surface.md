@@ -1,10 +1,10 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.1.2"
+version: "0.1.3"
 type: "common/readme-runtime-governance"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 # GitHub Configuration Hub
 
@@ -62,8 +62,9 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 
 ## Source Basis
 
-- Parent Spec: Workspace Document Governance Hardening Spec(`docs/98.archive/completed/03.specs/0013-workspace-document-governance-hardening/spec.md`)이 GitHub Actions documentation, release 증거, 공급망 개념, Markdown·YAML formatting 주장의 공식 출처 근거를 기록한다.
-- 이 hub의 workflow 역할 주장은 추적되는 `.github/workflows/*.yml` 파일과 대조해 맞춘다. 외부 도구의 최신성이 바뀌면 이 hub의 동작을 바꾸기 전에 Spec이나 Stage 90 참조 문서를 먼저 갱신한다.
+- 현재 workflow 계약은 `.github/workflows/*.yml`과 공통 [Quality policy](../.agents/governance/quality.md)가 소유한다.
+- 과거 조사 기록은 [archive 탐색](../docs/98.archive/README.md)을 통해 찾는다. 완료 Spec을 실행 권위나 선행 읽기 조건으로 사용하지 않는다.
+- 외부 도구 계약이 바뀌면 공식 출처를 확인하고 해당 현재 workflow·정책·참조 소유자를 함께 갱신한다.
 
 ## Workflow Responsibility Matrix
 

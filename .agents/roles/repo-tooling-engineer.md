@@ -1,10 +1,10 @@
 ---
 title: "Repository Tooling Engineer Responsibility"
-version: "1.0.0"
+version: "1.1.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # repo-tooling-engineer Responsibility
@@ -36,11 +36,15 @@ helpers, and the policy rules under `policy/conftest/`. The split is decided by
 registry membership rather than by reading a filename — a script that
 `scripts/validation/registry.json` registers is `quality-engineer.md`'s
 assigned scope and reaches this role only by explicit delegation in the active
-Task. One registered member is carved out by name: `scripts/run-agent-evaluations.py`
+Task. One registered member is carved out by name: `.agents/evaluations/run-agent-evaluations.py`
 and its regression test are `agent-evaluator.md`'s, because a scoring criterion
 and the code that fires it are one contract. What a lane result means is
 `quality-engineer.md`'s; the hosted job that invokes it is
 `ci-workflow-engineer.md`'s.
+
+Place a resource with its single skill consumer when it is dedicated to that
+procedure; retain shared helpers for independent consumers. Directory placement
+does not change the registry-based ownership boundary of a gate.
 
 ### When to Use
 

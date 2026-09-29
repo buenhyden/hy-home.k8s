@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -90,6 +91,54 @@ class PromptInputBuilderTests(unittest.TestCase):
             cwd=self.root,
             check=True,
         )
+
+    def test_oversized_input_refuses_instead_of_assembling_a_partial_draft(self):
+        self.write("sample", contract("git diff --cached"))
+        self.stage("large.txt", "bounded output\n" * 100)
+        with mock.patch.object(self.module, "MAX_INPUT_CHARACTERS", 64):
+            with self.assertRaises(self.module.PromptInputError) as raised:
+                self.module.assemble(self.root, "sample")
+        self.assertEqual(raised.exception.code, "PROMPT-OUTPUT-LIMIT")
+
+    def test_timeout_does_not_echo_partial_output_or_stderr(self):
+        with mock.patch.object(
+            self.module,
+            "run_bounded_process",
+            side_effect=subprocess.TimeoutExpired(
+                ["git"], 1, output=b"private-output", stderr=b"private-stderr"
+            ),
+        ):
+            with self.assertRaises(self.module.PromptInputError) as raised:
+                self.module.run_input(
+                    self.root, "Subject", ["git", "status", "--porcelain"]
+                )
+        self.assertEqual(raised.exception.code, "PROMPT-INPUT-TIMEOUT")
+        self.assertNotIn("private", str(raised.exception))
+
+    def test_failed_or_non_utf8_input_produces_no_draft_and_no_payload(self):
+        self.write("sample", contract("git status --porcelain"))
+        for result, code in (
+            (
+                subprocess.CompletedProcess(
+                    ["git"], 1, b"private-output", b"private-error"
+                ),
+                "PROMPT-INPUT-FAILED",
+            ),
+            (
+                subprocess.CompletedProcess(["git"], 0, b"\xff", b""),
+                "PROMPT-INPUT-ENCODING",
+            ),
+        ):
+            with (
+                self.subTest(code=code),
+                mock.patch.object(
+                    self.module, "run_bounded_process", return_value=result
+                ),
+            ):
+                with self.assertRaises(self.module.PromptInputError) as raised:
+                    self.module.assemble(self.root, "sample")
+                self.assertEqual(raised.exception.code, code)
+                self.assertNotIn("private", str(raised.exception))
 
     def test_unknown_identifier_exits_non_zero(self) -> None:
         with self.assertRaises(self.module.PromptInputError) as raised:

@@ -1,10 +1,10 @@
 ---
 title: "tests"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-09-29"
 ---
 
 # tests
@@ -140,7 +140,7 @@ method 목록은 관찰 결과일 뿐 거버넌스가 아니다.
 - [Scripts](../scripts/README.md)
 - [Quality policy](../.agents/governance/quality.md)
 - [Work lifecycle](../.agents/workflows/work-lifecycle.md)
-- Validation ownership ADR (`docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md`)
+- Validation ownership ADR (`docs/02.architecture/decisions/README.md`)
 
 위의 승인된 결정이 검증 책임의 현재 owner다. 그 결정을 처음 실행한 완료 Spec과
 Task는 봉인된 증거이며 archive index로 계속 찾아갈 수 있다. 그 문서들은 한 번

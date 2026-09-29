@@ -1886,6 +1886,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(
             statuses,
             {
+                "external-service-contracts": "PASS",
                 "gitops-change-set": "PASS",
                 "gitops-structure": "PASS",
                 "infrastructure-contracts": "PASS",
@@ -1895,7 +1896,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "secret-handling": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 7)
+        self.assertEqual(invoked.call_count, 8)
         self.assertIn('scope="affected:paths=1"', output)
 
     def test_docs_selector_executes_every_validator_and_propagates_path(self):

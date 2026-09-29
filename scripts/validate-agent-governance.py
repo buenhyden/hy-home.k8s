@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import posixpath
 import re
 import stat
 import sys
@@ -668,6 +669,10 @@ def validate_current_sources(root: Path) -> None:
     governance = root / ".agents"
     if governance.is_dir():
         for parent, directories, files in os.walk(governance, followlinks=False):
+            # The grader owns response data, including deliberately false claims.
+            if Path(parent) == governance / "evaluations" / "responses":
+                directories[:] = []
+                continue
             for name in directories:
                 if (Path(parent) / name).is_symlink():
                     fail(
@@ -748,63 +753,96 @@ def _validate_directory_entries(
             os.close(descriptor)
 
 
-# A long procedure carries material that is not itself a step: a pattern
-# catalog, a helper the steps would otherwise describe in prose, a file the
-# output is built from. These three directories give that material a home so
-# the procedure can stay a procedure, and each one keeps its own contract so
-# the material cannot quietly become something else. The package stays a closed
-# set either way — every file here is named by SKILL.md, so nothing a provider
-# loads is unreachable from the procedure that owns it.
+# Resources stay owned by their package; the central registry alone selects gates.
 SKILL_BUNDLE_SUFFIXES: dict[str, frozenset[str] | None] = {
     "references": frozenset({".md"}),
     "scripts": frozenset({".py", ".sh"}),
     "assets": None,
 }
-# Stage 99 owns document templates and routes them through its registry. An
-# asset that took this name would be a second template authority reachable
-# without that route.
-STAGE_TEMPLATE_SUFFIX = ".template.md"
 
 
-def _validate_skill_bundle(
-    root: Path, package: str, directory: str, body: str, code: str
+def _skill_bundle_files(descriptor: int, prefix: str, code: str) -> set[str]:
+    """Walk bounded directories without following links, including directory links."""
+    if len(PurePosixPath(prefix).parts) > 8:
+        fail(code, "skill bundle exceeds directory depth limit")
+    files: set[str] = set()
+    names = []
+    with os.scandir(descriptor) as entries:
+        for entry in entries:
+            names.append(entry)
+            if len(names) > 256:
+                fail(code, "skill bundle exceeds entry limit")
+    if not names:
+        fail(code, "skill bundle directory is empty")
+    for entry in names:
+        name = f"{prefix}/{entry.name}"
+        mode = stat.S_IFMT(entry.stat(follow_symlinks=False).st_mode)
+        if mode == stat.S_IFDIR:
+            child = os.open(
+                entry.name,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                dir_fd=descriptor,
+            )
+            try:
+                files.update(_skill_bundle_files(child, name, code))
+            finally:
+                os.close(child)
+        elif mode == stat.S_IFREG:
+            files.add(name)
+        else:
+            fail(code, "skill bundle entry is not a regular file or directory")
+        if len(files) > 256:
+            fail(code, "skill bundle exceeds entry limit")
+    return files
+
+
+def _validate_skill_bundles(
+    root: Path, package: str, directories: frozenset[str], body: str, code: str
 ) -> None:
-    """Check one optional bundle directory of a skill package."""
-
-    allowed = SKILL_BUNDLE_SUFFIXES[directory]
-    relative = f"{package}/{directory}"
-    strict_root = _strict_root(root, code=code)
+    files: set[str] = set()
     descriptors: list[int] = []
-    names: set[str] = set()
     try:
         flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
-        descriptor = os.open(strict_root, flags)
+        descriptor = os.open(_strict_root(root, code=code), flags)
         descriptors.append(descriptor)
-        for part in _normalized_relative(relative, code=code).parts:
+        for part in _normalized_relative(package, code=code).parts:
             descriptor = os.open(part, flags, dir_fd=descriptor)
             descriptors.append(descriptor)
-        with os.scandir(descriptor) as entries:
-            for entry in entries:
-                if (
-                    stat.S_IFMT(entry.stat(follow_symlinks=False).st_mode)
-                    != stat.S_IFREG
-                ):
-                    fail(code, "skill bundle entry is not a regular file")
-                names.add(entry.name)
+        for directory in sorted(directories):
+            child = os.open(directory, flags, dir_fd=descriptor)
+            try:
+                files.update(_skill_bundle_files(child, directory, code))
+            finally:
+                os.close(child)
     except OSError:
         fail(code, "native package directory is unavailable")
     finally:
         for descriptor in reversed(descriptors):
             os.close(descriptor)
-    if not names:
-        fail(code, "skill bundle directory is empty")
-    for name in sorted(names):
+    if len(files) > 256:
+        fail(code, "skill bundle exceeds entry limit")
+    for name in files:
+        allowed = SKILL_BUNDLE_SUFFIXES[name.split("/", 1)[0]]
         if allowed is not None and PurePosixPath(name).suffix not in allowed:
             fail(code, "skill bundle entry has an unregistered suffix")
-        if directory == "assets" and name.endswith(STAGE_TEMPLATE_SUFFIX):
-            fail(code, "skill asset claims the Stage 99 template name")
-        if f"{directory}/{name}" not in body:
-            fail(code, "skill bundle entry is unreachable from SKILL.md")
+    pending = [("SKILL.md", body)]
+    reached: set[str] = set()
+    # ponytail: at most 256 resources; use an index if larger packages are admitted.
+    while pending:
+        source, text = pending.pop()
+        for target in sorted(files - reached):
+            relative = posixpath.relpath(target, posixpath.dirname(source) or ".")
+            candidates = (relative, f"{package}/{target}")
+            if not any(
+                re.search(r"(?<![\w./-])" + re.escape(value) + r"(?![\w./-])", text)
+                for value in candidates
+            ):
+                continue
+            reached.add(target)
+            if PurePosixPath(target).suffix in {".md", ".py", ".sh"}:
+                pending.append((target, _read_text(root, f"{package}/{target}", code)))
+    if reached != files:
+        fail(code, "skill bundle entry is unreachable from SKILL.md")
 
 
 def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
@@ -831,8 +869,7 @@ def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
         bundles = entries & frozenset(SKILL_BUNDLE_SUFFIXES)
         if bundles:
             body = _read_text(root, f"{package}/SKILL.md", code)
-            for directory in sorted(bundles):
-                _validate_skill_bundle(root, package, directory, body, code)
+            _validate_skill_bundles(root, package, bundles, body, code)
         text = _read_text(root, f"{package}/agents/openai.yaml", code)
         try:
             metadata = yaml.load(text, Loader=UniqueMetadataLoader)
@@ -994,6 +1031,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         {
             "README.md": stat.S_IFREG,
             "governance": stat.S_IFDIR,
+            "evaluations": stat.S_IFDIR,
             "knowledge": stat.S_IFDIR,
             "prompts": stat.S_IFDIR,
             "roles": stat.S_IFDIR,

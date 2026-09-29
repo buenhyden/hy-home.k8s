@@ -1,10 +1,10 @@
 ---
 title: "Wiki Curator Responsibility"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-09-29"
 ---
 
 # wiki-curator Responsibility
@@ -35,6 +35,10 @@ canonical owners. No generator writes to that surface, and the retired
 generated index is not recreated. Write navigation, never policy: when the answer needs a
 durable document rather than a better route, that is `doc-writer.md`'s work,
 and a contested ownership question goes to `supervisor.md`.
+
+Apply the current document-authoring boundary to outside-doc navigation: route
+to current owners or stage README indexes. Check observation metadata and
+invalidation without promoting it into policy or a progress ledger.
 
 ### When to Use
 

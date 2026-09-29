@@ -22,8 +22,8 @@ skill never expands the responder's permissions.
 `_workspace/` is scratch-only for intermediate analysis. A durable fact record
 belongs to the `operation/incident` profile and its analysis to
 `operation/postmortem`. The Stage 99 registry (`docs/99.templates/registry.json`)
-owns the directory grammar, filename, template, and required sections for both;
-resolve the profile at write time rather than copying a path out of this
+owns the directory grammar, filename, template, and required sections for both.
+Use the current operations README for navigation and resolve the profile at write time rather than copying a path out of this
 procedure, because a path restated here drifts from the grammar the gate
 actually enforces.
 
@@ -210,7 +210,7 @@ which techniques the incident needs and where the result is written.
 ### Normal Flow
 
 **Prompt**: "Yesterday at 14:00 UTC the payment namespace was unavailable for 30 minutes. It happened right after an ArgoCD sync and was recovered by rollback. Write a postmortem."
-**Expected**: Full pipeline → timeline with sync event → RCA identifying misconfigured resource limits → impact with user count estimate → remediation with canary rollout adoption → formatted postmortem.
+**Expected**: Full pipeline → timeline with sync event → RCA separating observed evidence from unconfirmed causes → impact with explicitly bounded estimates → remediation justified by the established cause → formatted postmortem.
 
 ### Existing File Flow
 

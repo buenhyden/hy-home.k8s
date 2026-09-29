@@ -380,7 +380,18 @@ print(json.dumps(result, sort_keys=True))
                 self.assertIn('"unmatchedPaths": []', result.stdout)
 
     def test_direct_cli_fallback_preserves_nul_inputs_and_output(self):
-        for relative in (self.selector.CONTRACT_PATH, self.selector.SCHEMA_PATH):
+        # A direct CLI loads the contract and its registered checker owners.
+        owner_paths = [Path(".agents/roles/registry.json")]
+        for script in self.selector.validator_script_paths(ROOT):
+            if script.startswith(".agents/skills/"):
+                owner_paths.extend(
+                    (Path(script), Path(*Path(script).parts[:3]) / "SKILL.md")
+                )
+        for relative in (
+            self.selector.CONTRACT_PATH,
+            self.selector.SCHEMA_PATH,
+            *owner_paths,
+        ):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((ROOT / relative).read_bytes())

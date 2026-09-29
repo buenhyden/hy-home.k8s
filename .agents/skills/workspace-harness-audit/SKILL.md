@@ -37,7 +37,10 @@ wrong finding.
 
 Resolve each instruction, safety constraint, validation signal, and durable
 knowledge claim to its current owner: `.agents/roles/registry.json` for roles
-and skills, Stage 99 for document contracts, `scripts/` for executable checks.
+and skills, Stage 99 for document contracts, and the central validation registry
+for gate selection. Dedicated checkers remain with their skill owner; common
+helpers remain shared only for independent consumers. Route outside-doc
+authority references through current owners or stage README indexes.
 An external catalog, benchmark, or third-party agent definition is evidence or
 a strategy lens. It never authorizes expanding the roster or standing up
 governance beside an existing owner.

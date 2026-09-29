@@ -30,7 +30,10 @@ second policy or role roster.
    `.agents/knowledge/domains.md` for the entry document of a domain; take the
    owner path, entry path and validity condition from the row and verify each
    against the tree rather than trusting the row.
-3. Compare current indexes and links with their owners. Classify a finding as
+3. Apply the current document-authoring rule: outside-doc navigation reaches
+   a current owner or stage README, not an individual numbered-stage authority.
+   Check bounded observations against the context policy before reusing them.
+   Compare current indexes and links with their owners. Classify a finding as
    missing, stale, orphaned, generated drift, or historical-only.
 4. Verify each finding against current source files and their canonical indexes.
    A generated graph snapshot is not a required input or an authority for

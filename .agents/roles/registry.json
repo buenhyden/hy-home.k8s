@@ -115,6 +115,10 @@
       "path": ".agents/skills/execution-plan/SKILL.md"
     },
     {
+      "id": "external-service-contract-audit",
+      "path": ".agents/skills/external-service-contract-audit/SKILL.md"
+    },
+    {
       "id": "gitops-workflow",
       "path": ".agents/skills/gitops-workflow/SKILL.md"
     },
@@ -270,7 +274,8 @@
       ],
       "skill_refs": [
         "gitops-workflow",
-        "k8s-validate"
+        "k8s-validate",
+        "external-service-contract-audit"
       ],
       "handoff_to": [
         "k8s-implementer",
@@ -323,7 +328,8 @@
       "skill_refs": [
         "deployment-strategies",
         "gitops-workflow",
-        "k8s-validate"
+        "k8s-validate",
+        "external-service-contract-audit"
       ],
       "handoff_to": [
         "gitops-reviewer",
@@ -346,7 +352,6 @@
         "codex"
       ],
       "skill_refs": [
-        "k8s-security-audit",
         "risk-report"
       ],
       "handoff_to": [
@@ -370,7 +375,6 @@
         "codex"
       ],
       "skill_refs": [
-        "ops-runbook",
         "risk-report"
       ],
       "handoff_to": [
@@ -550,7 +554,6 @@
         "codex"
       ],
       "skill_refs": [
-        "vulnerability-patterns",
         "risk-report"
       ],
       "handoff_to": [
@@ -600,9 +603,7 @@
         "claude",
         "codex"
       ],
-      "skill_refs": [
-        "workspace-harness-audit"
-      ],
+      "skill_refs": [],
       "handoff_to": [
         "governance-steward",
         "quality-engineer",
