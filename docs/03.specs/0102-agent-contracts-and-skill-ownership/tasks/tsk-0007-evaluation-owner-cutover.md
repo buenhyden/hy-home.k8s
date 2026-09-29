@@ -83,8 +83,8 @@ Final cutover evidence: `python3 scripts/qa.py staged` returned 0 with all
 15 selected gates PASS over 104 changed paths. Commit `c80fd050` records the
 reviewed implementation and final repairs after actual-message Commitizen
 validation and the normal hook chain. Its tree is
-`f313097650d0429054307e7d47ca2690273b5346`. The final full run uses these same
-implementation bytes; final evidence and limitations belong to TSK-0008.
+`f313097650d0429054307e7d47ca2690273b5346`. Subsequent final-QA fixture and formatting repairs are recorded in TSK-0008,
+which owns the final full snapshot, evidence and limitations.
 
 ## Traceability
 

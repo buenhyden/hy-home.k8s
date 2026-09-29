@@ -1,8 +1,8 @@
 ---
 title: "Final verification and handoff"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -16,7 +16,7 @@ artifact_id: "SPEC-0102-TSK-0008"
 Execute WP-007 of the approved [Plan](../plan.md). The request owner approved
 the Spec and ADR, then approved Plan execution on 2026-09-29.
 The current session implements this bounded unit under its assigned role;
-the final branch receives independent review.
+the final branch received independent review; all findings were closed.
 
 ## Inputs
 
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | VAL-ACS-011, VAL-ACS-030, VAL-ACS-033 | WP-007: Final verification and handoff | platform | In Progress | Independent review repair and final QA in progress | This Task |
+| WORK-008 | VAL-ACS-011, VAL-ACS-030, VAL-ACS-033 | WP-007: Final verification and handoff | platform | Completed | 23 full QA gates passed; independent review closed; external DEFER retained | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -43,9 +43,9 @@ the final branch receives independent review.
 
 ## Verification Summary
 
-Final verification in progress. Branch `codex/agent-contracts`, initial base
-`efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
-Plan implementer, followed by independent branch review. Static evidence
+Repository-static verification completed. Branch `codex/agent-contracts`, initial base
+`efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the request owner/operator for the separately reserved R35 and
+external DEFER items. Static evidence
 never establishes hosted, provider, account-limit or live behavior.
 
 ### Snapshot and review
@@ -64,8 +64,8 @@ No permission widening or secret exposure was found in the initial review.
 
 The Plan's C1–C6 command sets and each unit's RED/GREEN evidence are recorded in
 Tasks 0002–0007. WP-004 staged QA had 13 gates, WP-005 had 9; exact counts follow
-selection, not the previous broader change set. Full QA and final exact-index
-results are pending; this table does not turn pending execution into PASS.
+selection, not the previous broader change set. Final static results are
+recorded below; external DEFER items are not counted as PASS.
 
 The first final staged candidate found two further owner/navigation errors:
 root README exceeded its deep-link budget, and the shared executable-reference
@@ -78,7 +78,7 @@ with exit 130 after this new mapping defect was identified; it is not PASS.
 The final narrow re-review found no Critical/Important/Minor issue and passed
 three focused data/README/route checks. The corrected candidate passed all
 15 staged gates over 104 changed paths, then was committed as `c80fd050`.
-The full run below uses tree `f313097650d0429054307e7d47ca2690273b5346`;
+That candidate used tree `f313097650d0429054307e7d47ca2690273b5346`;
 its unit-test budget is the existing central 2,400 seconds, unchanged.
 No percentage line-coverage or provider-quality claim is made.
 
@@ -91,7 +91,30 @@ Independent security review verified both secret-scanner warnings as non-secret:
 operator-approval prose and the exact digest of its declared public manifest.
 The prose was clarified and the checksum uses the existing admitted integrity
 metadata layout. No scan rule, baseline, allowlist or threshold was widened.
-These failures remain recorded; a fresh full run is required after the repairs.
+These failures remain recorded. The required fresh full run passed after the repairs.
+
+### Final verification result
+
+The final implementation snapshot is commit `a8c483de`, tree
+`27e091cf2112535ba7490b65e3fbd34f9e4ad62b`. The branch keeps all logical commits;
+no history rewrite, remote action or live operation occurred.
+
+| Check | Actual result | Scope / limit |
+| --- | --- | --- |
+| `python3 -m unittest tests.test_affected_surface_migration` | Exit 0; 16 tests passed | Both normal and isolated CLI fixture variants preserve NUL inputs/output |
+| `pre-commit run --all-files --hook-stage manual` | Exit 0; all selected hooks passed | Includes both secret scanners, Markdown, Python, workflow and manifest lint |
+| `python3 scripts/qa.py quick` | Exit 0; 8/8 gates PASS | Six repair/evidence paths, working-tree snapshot |
+| `python3 scripts/qa.py staged` | Exit 0; 8/8 gates PASS | Same six paths, exact-index snapshot, before `a8c483de` |
+| `python3 scripts/qa.py full` | Exit 0; 23/23 gates PASS; no SKIP/DEFER | All 1,251 paths in the immutable implementation snapshot |
+| Full unit-test gate | Exit 0; complete stdout/stderr and cleanup | `python3 -m unittest discover -s tests -t .`; actual full suite, not only repaired tests |
+| Full pre-commit gate | Exit 0; complete output and cleanup | All files in the same full-QA snapshot |
+| Independent final review and bounded repair reviews | No unresolved Critical/Important/Minor finding | Correctness, security, owner routing and fixture repairs; no native/live verdict |
+
+The final full run log is `/tmp/hy-home-k8s-final-full-repaired.log`; the durable
+result and reproducible snapshot are recorded here. This final evidence update
+changes only Tasks 0007/0008. Its separate quick/staged results and actual
+message validation are recorded in the closing commit message, after execution.
+No further implementation change follows the full PASS.
 
 ### Original scenario dispositions
 
@@ -134,7 +157,7 @@ owner can observe the stated environment.
 | T30 | PASS static: C5 17 IDs/51 projections and removed skill-reference callers; no role rename/deletion | Runtime agent_type/permission inheritance: operator, session |
 | T31 | Manual two common workflows and five hosted workflow dispositions; C5 required-summary fixtures | Remote branch protection: operator, approved hosted observation |
 | T32 | PASS static: C4/C5 args/help/cwd/failure/timeout and four adapter caller review | Editor/native command delivery: operator, observed installation |
-| T33 | C6 new path consumers and baseline equality passed; C7 final QA pending | Native/hosted/live lanes remain separately DEFER |
+| T33 | C6 new path consumers and baseline equality passed; C7 full QA passed all 23 gates | Native/hosted/live lanes remain separately DEFER |
 
 ### Criterion evidence routing
 
@@ -145,39 +168,39 @@ remain active until that dependent criterion is resolved.
 
 | Criterion | Original scenario evidence | Current disposition |
 | --- | --- | --- |
-| VAL-ACS-001 | T10, T28 | See scenario dispositions above; final QA pending |
-| VAL-ACS-002 | T03, T04, T22, T29 | See scenario dispositions above; final QA pending |
-| VAL-ACS-003 | T21 | See scenario dispositions above; final QA pending |
-| VAL-ACS-004 | T12, T24 | See scenario dispositions above; final QA pending |
-| VAL-ACS-005 | T10, T30 | See scenario dispositions above; final QA pending |
-| VAL-ACS-006 | T25 | See scenario dispositions above; final QA pending |
-| VAL-ACS-007 | T26 | See scenario dispositions above; final QA pending |
-| VAL-ACS-008 | T21, T26, T31 | See scenario dispositions above; final QA pending |
-| VAL-ACS-009 | T06, T32 | See scenario dispositions above; final QA pending |
-| VAL-ACS-010 | T27 | See scenario dispositions above; final QA pending |
-| VAL-ACS-011 | T03 | See scenario dispositions above; final QA pending |
-| VAL-ACS-012 | T01, T02, T04, T05, T06, T24, T29 | See scenario dispositions above; final QA pending |
-| VAL-ACS-013 | T11, T13, T30 | See scenario dispositions above; final QA pending |
-| VAL-ACS-014 | T14, T15, T25 | See scenario dispositions above; final QA pending |
-| VAL-ACS-015 | T11, T12, T23, T30 | See scenario dispositions above; final QA pending |
-| VAL-ACS-016 | T13, T27 | See scenario dispositions above; final QA pending |
-| VAL-ACS-017 | T16, T32 | See scenario dispositions above; final QA pending |
-| VAL-ACS-018 | T17, T32 | See scenario dispositions above; final QA pending |
-| VAL-ACS-019 | T05, T18 | See scenario dispositions above; final QA pending |
-| VAL-ACS-020 | T12, T16, T19, T23, T24, T31 | See scenario dispositions above; final QA pending |
-| VAL-ACS-021 | T19 | See scenario dispositions above; final QA pending |
-| VAL-ACS-022 | T14, T15, T26 | See scenario dispositions above; final QA pending |
-| VAL-ACS-023 | T07, T08, T09 | See scenario dispositions above; final QA pending |
-| VAL-ACS-024 | T04 | See scenario dispositions above; final QA pending |
-| VAL-ACS-025 | T01, T02 | See scenario dispositions above; final QA pending |
-| VAL-ACS-026 | T01, T02, T03, T29 | See scenario dispositions above; final QA pending |
-| VAL-ACS-027 | T04, T22, T29 | See scenario dispositions above; final QA pending |
-| VAL-ACS-028 | T10, T28 | See scenario dispositions above; final QA pending |
-| VAL-ACS-029 | T10, T22, T30 | See scenario dispositions above; final QA pending |
-| VAL-ACS-030 | T21, T24 | See scenario dispositions above; final QA pending |
-| VAL-ACS-031 | T07, T08, T11, T13, T23 | See scenario dispositions above; final QA pending |
-| VAL-ACS-032 | T20 | See scenario dispositions above; final QA pending |
-| VAL-ACS-033 | T09, T21, T25, T33, T05, T06 | See scenario dispositions above; final QA pending |
+| VAL-ACS-001 | T10, T28 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-002 | T03, T04, T22, T29 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-003 | T21 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-004 | T12, T24 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-005 | T10, T30 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-006 | T25 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-007 | T26 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-008 | T21, T26, T31 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-009 | T06, T32 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-010 | T27 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-011 | T03 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-012 | T01, T02, T04, T05, T06, T24, T29 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-013 | T11, T13, T30 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-014 | T14, T15, T25 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-015 | T11, T12, T23, T30 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-016 | T13, T27 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-017 | T16, T32 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-018 | T17, T32 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-019 | T05, T18 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-020 | T12, T16, T19, T23, T24, T31 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-021 | T19 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-022 | T14, T15, T26 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-023 | T07, T08, T09 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-024 | T04 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-025 | T01, T02 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-026 | T01, T02, T03, T29 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-027 | T04, T22, T29 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-028 | T10, T28 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-029 | T10, T22, T30 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-030 | T21, T24 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-031 | T07, T08, T11, T13, T23 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-032 | T20 | See scenario dispositions above; static checks passed, explicit DEFER retained |
+| VAL-ACS-033 | T09, T21, T25, T33, T05, T06 | See scenario dispositions above; static checks passed, explicit DEFER retained |
 
 ### Logical commits, rollback and next owner
 
@@ -191,6 +214,7 @@ remain active until that dependent criterion is resolved.
 | Knowledge/prompt bounds | `68fd0d64` | After dependent handoff/evidence updates |
 | Role/provider fit | `0442efc7` | After evaluation consumers |
 | Evaluation cutover and review repairs | `c80fd050` | Reverse with moved corpus, grader and every consumer together |
+| Final fixture and evidence-format repairs | `a8c483de` | Reverse before the affected checker-owner contract |
 
 Rollback is a reviewed reverse sequence preserving unrelated changes, not an
 authorized reset, forced push or live rollback. The worktree and local branch
@@ -205,4 +229,4 @@ The Spec/Plan remain active because dependent R35 acceptance is still DEFER.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-008](../plan.md#work-breakdown) | In Progress | One independent Important finding repaired; final QA pending |
+| [WORK-008](../plan.md#work-breakdown) | Completed | Independent findings closed; full QA 23/23 PASS on `a8c483de`; final record receives its own staged check before commit |
