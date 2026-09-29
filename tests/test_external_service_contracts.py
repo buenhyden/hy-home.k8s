@@ -100,6 +100,22 @@ class ExternalServiceContractsTests(unittest.TestCase):
                 docs[1]["endpoints"][0]["addresses"] = [address]
                 self.assertTrue(self.check(docs))
 
+    def test_fqdn_requires_valid_bounded_dns_labels(self):
+        for address, valid in (
+            ("db.example", True),
+            ("db-1.Example", True),
+            ("a" * 63 + ".example", True),
+            ("a..b", False),
+            ("a.-b", False),
+            ("a.b-", False),
+            ("a" * 64 + ".example", False),
+        ):
+            with self.subTest(address=address):
+                docs = copy.deepcopy(self.documents)
+                docs[1]["addressType"] = "FQDN"
+                docs[1]["endpoints"][0]["addresses"] = [address]
+                self.assertEqual(not self.check(docs), valid)
+
     def test_malformed_selector_cannot_be_classified_as_selectorless(self):
         for selector in ([], "", 0):
             with self.subTest(selector=selector):

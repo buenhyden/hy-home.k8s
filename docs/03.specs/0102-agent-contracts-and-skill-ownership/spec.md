@@ -1,8 +1,8 @@
 ---
 title: "Agent Contracts and Skill Ownership"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "active"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -13,17 +13,19 @@ artifact_id: "SPEC-0102"
 
 ## Overview
 
-This work unit renews the repository's agent contracts across shared governance, skills, native adapters, validation, and their consumers. The 2026-09-29 investigation found 17 registered roles, 17 canonical skills, 17 Claude role projections, 17 Codex role projections, and one homogeneous 19-case synthetic agent evaluation corpus. The approved design direction is incremental convergence at existing owners. This draft specifies the resulting behavior and evidence, not a completed implementation.
+This work unit renews the repository's agent contracts across shared governance, skills, native adapters, validation, and their consumers. The 2026-09-29 investigation found 17 registered roles, 17 canonical skills, 17 Claude role projections, 17 Codex role projections, and one homogeneous 19-case synthetic agent evaluation corpus. The approved design direction is incremental convergence at existing owners. Implementation and static acceptance are complete; the dated closure supplement in Task 0008 records the final R35 disposition and separately bounded external evidence.
 
-The user approved the incremental design, this Spec, and ADR-0047 on 2026-09-29, then authorized Plan drafting. Initial document state was committed in `8e811506`; this approved Spec now transitions to `active`. The request owner subsequently approved the Plan and implementation on 2026-09-29; the linked Tasks record that execution scope. No historical SPEC-0072 or SPEC-0099 approval is inherited. The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md), [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), accepted [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), and accepted [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) are inputs with their distinct authority states. ADR-0047 now records the separately approved `accepted` state after its initial commit.
+The user approved the incremental design, this Spec, and ADR-0047 on 2026-09-29, then authorized Plan drafting. Initial document state was committed in `8e811506`; the approved Spec transitioned to `active`. The request owner subsequently approved the Plan and implementation on 2026-09-29; the linked Tasks record that execution scope. No historical SPEC-0072 or SPEC-0099 approval is inherited. The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md), [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), accepted [ADR-0036](../../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md), and accepted [ADR-0047](../../02.architecture/decisions/0047-agent-contract-and-resource-ownership.md) are inputs with their distinct authority states. ADR-0047 now records the separately approved `accepted` state after its initial commit.
 
 The request's R01–R39 labels are aliases for this work unit, not new durable Requirement IDs. The final traceability table maps them to criteria and maps those criteria to full current `REQ-0003-*` IDs. Requirements stay solution-independent; this Spec owns change-specific behavior.
+
+The request owner subsequently authorized package completion and commit/push/merge/branch-worktree cleanup on 2026-09-29. This narrowly authorizes the operator-directed R35 wording correction recorded in [Task 0008](tasks/tsk-0008-final-verification.md#closure-supplement). Native, account, editor and live observations remain explicitly deferred to their named operators; package completion does not claim them as PASS.
 
 ## Strategic Boundaries & Non-goals
 
 - In scope: `.agents/` common policy, roles, skills, knowledge, prompts, workflows and their dedicated resources; `.claude/` and `.codex/` native adapters; `.github/` static CI contracts; repository validation, tests, evaluation corpus, related navigation and reciprocal current links. `gitops/`, `infrastructure/`, `examples/`, and `policy/` are inspected as consumers and safe fixtures; their live declarations change only if a later approved Plan names a necessary scoped fix.
 - No new role or native agent is justified. No empty output-style, editor, Traefik, or command directory is created to meet a checklist. The external Traefik workspace is outside this repository; local ingress and router contracts remain here.
-- No live cluster, Argo CD, Vault/OpenBao, cloud, provider account, or GitHub remote mutation; no secrets, credential values, raw transcript, personal/global configuration scan or edit; no push, PR, merge, destructive Git cleanup, or deployment. Operator approval remains necessary for protected actions.
+- Original implementation boundary (later remote integration approval is recorded above): no live cluster, Argo CD, Vault/OpenBao, cloud, provider account, or GitHub remote mutation; no secrets, credential values, raw transcript, personal/global configuration scan or edit; no push, PR, merge, destructive Git cleanup, or deployment. Operator approval remains necessary for protected actions.
 - Existing governance, Stage 99 document profiles, the role registry, validation registry, GitOps reconciliation, and Stage 98 retained bodies keep their current authority. A successor decision may change future policy, never rewrite an accepted ADR or frozen/archive evidence. No parallel progress or recovery ledger is added.
 - Native discovery, resolved model, hook delivery, authenticated execution, hosted CI, and live state are separate evidence lanes. A static PASS cannot satisfy any other lane. Unavailable account cost/RPM/TPM or native capabilities are recorded `DEFER`, not filled with assumed limits.
 
@@ -53,7 +55,7 @@ All 17 current role identities remain. The target disposition after Spec and Pla
 | `ci-workflow-engineer` | Modify | Remove or justify K8s-only vulnerability skill in hosted CI remit. |
 | `repo-tooling-engineer` | Modify | Common tool versus skill-dedicated resource ownership. |
 | `agent-evaluator` | Modify | Evaluation corpus and broad workspace-audit skill fit. |
-| `governance-steward` | Operator-only modify | Self-entry edit prohibited; separate operator-owned scope required. |
+| `governance-steward` | Operator-directed correction completed | Manual projection maintenance wording corrected under the request owner's closure instruction; self-edit prohibition, registry entry and projections preserved. |
 
 Empty `skill_refs` is valid where no skill fits; filler references are prohibited. All current 17 skill packages remain; no merge or deletion is supported by the investigated consumers:
 

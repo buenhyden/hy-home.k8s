@@ -82,8 +82,11 @@ def _endpoints(document):
             if not isinstance(value, str):
                 raise ValueError("invalid address")
             if family == "FQDN":
-                if len(value) > 253 or not re.fullmatch(
-                    r"[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?", value
+                if len(value) > 253 or any(
+                    not re.fullmatch(
+                        r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?", label
+                    )
+                    for label in value.split(".")
                 ):
                     raise ValueError("invalid DNS address")
             else:
