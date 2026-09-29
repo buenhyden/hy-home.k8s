@@ -53,7 +53,6 @@ tests passed. Actual governance validation passed with 2 providers, 17 roles,
 4 permission classes, 18 skills, 67 handoffs and 51 projections. Broader final
 QA and independent review remain pending.
 
-
 RED: role-skill fit produced five assertion failures for four inappropriate mandatory references and the evaluator empty-list contract. Removed those references with matching Claude/Codex projection edits; preserved every permission class, handoff and model binding. Operator-only governance-steward body, role row and both projections remain unchanged: DEFER with the operator as next owner; R35 is not claimed complete. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
@@ -160,4 +159,4 @@ resource decisions; no such automatic coverage is claimed.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-006](../plan.md#work-breakdown) | In Progress | C5: 255 initial passes; three fixture-dependent failures repaired, all 54 hook tests passed; registry validation passed. Affected quick and 9 exact-index gates passed; logical commit recorded in Git. R35 self-entry stays DEFER; final branch review in TSK-0008 |
+| [WORK-006](../plan.md#work-breakdown) | Completed | C5: 255 initial passes; three fixture-dependent failures repaired, all 54 hook tests passed; registry validation passed. Affected quick and 9 exact-index gates passed; logical commit `0442efc7`. R35 self-entry stays DEFER; final branch review in TSK-0008 |

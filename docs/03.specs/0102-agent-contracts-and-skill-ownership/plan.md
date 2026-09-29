@@ -23,7 +23,7 @@ artifact_id: "SPEC-0102-PLAN-0001"
 
 ## Global Constraints
 
-- No live cluster, Argo CD, Vault/OpenBao, cloud, remote Git/GitHub, credential, private/global configuration, or paid provider mutation without separate operator authority. No secret values or raw transcripts in evidence.
+- External changes require separately scoped operator approval: live cluster, Argo CD, Vault/OpenBao, cloud, remote Git/GitHub, account authentication, personal/global settings and paid provider operations. Evidence excludes sensitive material and raw transcripts.
 - Preserve registry permission classes, root gateways, Stage 99 form authority, global QA gate selection, and Stage 98 frozen/retained bodies. A skill cannot grant rights; a static PASS cannot prove native, hosted, remote, or live behavior.
 - No new role, generic model runner, speculative native config key, empty output-style/editor/Traefik/command tree, central progress ledger, or mandatory per-Task agent fan-out. Model bindings stay as observed unless an approved and authenticated reason changes them.
 - The `governance-steward` must not edit its own role, projection, or registry self-entry. Such a change requires a separately approved operator-owned scope; otherwise that portion is `DEFER` while independent work proceeds.
@@ -133,7 +133,6 @@ This Plan does not authorize its own execution, Task creation before approval, a
 ## Verification Plan
 
 The original scenario IDs keep their SPEC-0102 meanings: T01/T02 safe bundle, T03/T04 ownership and trigger, T05/T06 required-tool and command error, T07–T09 document owner link, T10–T13 role/native/hook, T14/T15 memory and resume, T16–T19 Git/editor/budget/PR trust, T20 eval cutover, T21/T22 disposition/new value, T23/T24 distribution/operational boundary, T25–T27 knowledge/prompt/style, T28–T33 per-item role/skill/agent/workflow/command and freshness. No test ID is repurposed. Focused tests are written before changed behavior, then executed RED/GREEN. For repository QA, use `python3 scripts/qa.py quick`, exact-index `python3 scripts/qa.py staged`, and final `python3 scripts/qa.py full` according to the quality policy; gate commands/profile membership remain in `scripts/validation/registry.json`. Read-only corpus inspection and manual semantic review complement validators where intent cannot be parsed. Neither a simulated agent response nor a mock `kubectl` proves provider or live operation.
-
 
 ### Focused Command Sets
 

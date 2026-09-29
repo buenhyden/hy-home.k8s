@@ -75,7 +75,23 @@ response data, with a RED/GREEN test proving the owner README remains current.
 A separate RED/GREEN profile test gives the new evaluation README document gates
 while cases/responses remain evaluation data. The first full run was interrupted
 with exit 130 after this new mapping defect was identified; it is not PASS.
-Final QA below uses the corrected snapshot.
+The final narrow re-review found no Critical/Important/Minor issue and passed
+three focused data/README/route checks. The corrected candidate passed all
+15 staged gates over 104 changed paths, then was committed as `c80fd050`.
+The full run below uses tree `f313097650d0429054307e7d47ca2690273b5346`;
+its unit-test budget is the existing central 2,400 seconds, unchanged.
+No percentage line-coverage or provider-quality claim is made.
+
+The completed full attempt on the corrected candidate returned 1: 21 gates
+passed, while unit-tests and pre-commit failed. The unit failures were the normal
+and isolated CLI variants of one migration fixture that omitted the new required
+skill owner registry/checker files; the fixture now supplies real registered
+owner inputs. Markdown lint found two extra blank lines, repaired at source.
+Independent security review verified both secret-scanner warnings as non-secret:
+operator-approval prose and the exact digest of its declared public manifest.
+The prose was clarified and the checksum uses the existing admitted integrity
+metadata layout. No scan rule, baseline, allowlist or threshold was widened.
+These failures remain recorded; a fresh full run is required after the repairs.
 
 ### Original scenario dispositions
 
@@ -162,6 +178,26 @@ remain active until that dependent criterion is resolved.
 | VAL-ACS-031 | T07, T08, T11, T13, T23 | See scenario dispositions above; final QA pending |
 | VAL-ACS-032 | T20 | See scenario dispositions above; final QA pending |
 | VAL-ACS-033 | T09, T21, T25, T33, T05, T06 | See scenario dispositions above; final QA pending |
+
+### Logical commits, rollback and next owner
+
+| Unit | Local commit | Reversal dependency |
+| --- | --- | --- |
+| Authored package | `8e811506` | Last, after dependent implementation and activation |
+| Approved activation | `79c97514` | After implementation is reversed |
+| R23 document authority | `1a6e089e` | After consumers and later normalization repair |
+| Skill resource owner | `f9e0dafa` | After the new checker and its gate |
+| External service checker | `025ada90` | After consumers and later role dispositions |
+| Knowledge/prompt bounds | `68fd0d64` | After dependent handoff/evidence updates |
+| Role/provider fit | `0442efc7` | After evaluation consumers |
+| Evaluation cutover and review repairs | `c80fd050` | Reverse with moved corpus, grader and every consumer together |
+
+Rollback is a reviewed reverse sequence preserving unrelated changes, not an
+authorized reset, forced push or live rollback. The worktree and local branch
+remain available for review. The request owner/operator owns R35's separately
+reserved self-entry and all native/hosted/live follow-up; the reviewer owns any
+new finding, routed back to the owning WP before another implementation change.
+The Spec/Plan remain active because dependent R35 acceptance is still DEFER.
 
 ## Traceability
 

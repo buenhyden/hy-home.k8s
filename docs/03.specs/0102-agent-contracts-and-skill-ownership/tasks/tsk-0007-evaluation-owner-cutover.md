@@ -1,8 +1,8 @@
 ---
 title: "Evaluation owner cutover"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-007 | VAL-ACS-032 | WP-006: Evaluation owner cutover | platform | In Progress | Owner-cutover RED reproduced | This Task |
+| WORK-007 | VAL-ACS-032 | WP-006: Evaluation owner cutover | platform | Completed | 19-case parity, 12 negatives and 15 exact-index gates passed | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -79,10 +79,17 @@ response bodies remain byte-identical. A direct link check on an unstaged
 registry refused index/worktree drift as designed; staged QA uses one snapshot.
 Affected/staged QA is rerun on the corrected contracts.
 
+Final cutover evidence: `python3 scripts/qa.py staged` returned 0 with all
+15 selected gates PASS over 104 changed paths. Commit `c80fd050` records the
+reviewed implementation and final repairs after actual-message Commitizen
+validation and the normal hook chain. Its tree is
+`f313097650d0429054307e7d47ca2690273b5346`. The final full run uses these same
+implementation bytes; final evidence and limitations belong to TSK-0008.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-007](../plan.md#work-breakdown) | In Progress | Original 19 expectation sets frozen; owner cutover in validation |
+| [WORK-007](../plan.md#work-breakdown) | Completed | Frozen 19 expectation sets preserved; 15 staged gates passed; commit `c80fd050` |
