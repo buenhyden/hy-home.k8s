@@ -155,7 +155,7 @@ def _unique_ids(rows: Sequence[dict[str, Any]], kind: str) -> dict[str, dict[str
     return indexed
 
 
-# Skill packages hold procedures and their helpers, never gates.
+# The central registry selects gates; their implementation can be skill-owned.
 SKILL_PACKAGE_ROOT = ".agents/skills/"
 
 
@@ -241,18 +241,24 @@ def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | 
             "SURFACE-VALIDATOR-ARGV-SCRIPT",
             f"{identifier} script {normalized_script!r} does not match {executable}",
         )
-    # A skill package may carry a helper its own procedure runs. A gate is a
-    # different thing: it decides whether work may proceed, and this registry
-    # is where that decision lives. Letting one file be both would mean a skill
-    # edit silently changed what QA enforces, so the two stay separate by
-    # address rather than by convention.
     if normalized_script.startswith(SKILL_PACKAGE_ROOT):
-        fail(
-            "SURFACE-VALIDATOR-ARGV-SCRIPT",
-            f"{identifier} script {normalized_script!r} is a skill-local helper, "
-            "which cannot also be a registered gate",
-        )
+        parts = PurePosixPath(normalized_script).parts
+        if len(parts) < 5 or parts[3] != "scripts":
+            fail(
+                "SURFACE-VALIDATOR-ARGV-SCRIPT",
+                f"{identifier} skill-owned checker must be in its scripts directory",
+            )
     return normalized_script
+
+
+def validate_skill_checker(root: Path, script: str) -> None:
+    skill_id = PurePosixPath(script).parts[2]
+    if (
+        shared_skill_link_target(root, PurePosixPath(f".claude/skills/{skill_id}"))
+        is None
+    ):
+        fail("SURFACE-VALIDATOR-OWNER", "skill checker has no registered owner")
+    reject_symlink_traversal(root, script, require_present=True)
 
 
 def validator_script_paths(
@@ -338,7 +344,9 @@ def validate_contract(
     for validator in validators.values():
         if any(lane not in LANES for lane in validator["lanes"]):
             fail("SURFACE-VALIDATOR-LANE", validator["id"])
-        _validate_direct_script_argv(validator["id"], validator["argv"])
+        script = _validate_direct_script_argv(validator["id"], validator["argv"])
+        if script and script.startswith(SKILL_PACKAGE_ROOT):
+            validate_skill_checker(root, script)
         if validator["evidenceLane"] not in EVIDENCE_LANES:
             fail("SURFACE-EVIDENCE-LANE", validator["id"])
         status = validator["fallback"]["status"]

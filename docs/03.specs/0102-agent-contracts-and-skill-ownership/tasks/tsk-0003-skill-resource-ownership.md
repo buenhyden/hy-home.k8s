@@ -1,8 +1,8 @@
 ---
 title: "Skill resource and central gate ownership"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-ACS-002, VAL-ACS-012, VAL-ACS-024, VAL-ACS-025, VAL-ACS-026 | WP-002: Skill resource and central gate ownership | platform | Queued | Not executed | This Task |
+| WORK-003 | VAL-ACS-002, VAL-ACS-012, VAL-ACS-024, VAL-ACS-025, VAL-ACS-026 | WP-002: Skill resource and central gate ownership | platform | In Progress | RED reproduced; implementation underway | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -43,7 +43,7 @@ the final branch receives independent review.
 
 ## Verification Summary
 
-Not executed. Branch `codex/agent-contracts`, initial base
+RED: 19 focused tests executed; three expected feature-rejection errors demonstrated the dedicated-template, transitive-resource and skill-owned-gate restrictions. Existing negative cases remain in scope. GREEN: command set C2 passed 101 tests; an additional nested symlink case passed. Actual governance validation passed: 2 providers, 17 roles, 4 permission classes, 17 skills, 67 handoffs and 51 projections. Ruff check passed; formatter changes were applied explicitly. Registered-owner and regular-file RED was demonstrated before its shared-helper implementation; no parallel gate selector was added. Affected and staged QA pending. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
 never establishes hosted, provider, account-limit or live behavior.
@@ -54,4 +54,4 @@ never establishes hosted, provider, account-limit or live behavior.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | Queued | No implementation or verification yet |
+| [WORK-003](../plan.md#work-breakdown) | In Progress | Focused RED/GREEN complete; aggregate QA and final independent review pending |

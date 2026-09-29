@@ -1,6 +1,6 @@
 ---
 title: "Common Agent Governance"
-version: "1.2.1"
+version: "1.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
@@ -35,16 +35,17 @@ steps run, and `assets/` for a file the output is built from. Reaching for one
 is a judgment about what the material is — a step belongs in `SKILL.md`, and
 everything else belongs where a reader can skip it.
 
-The package stays a closed set. `SKILL.md` names every file in those
-directories, so nothing a provider loads is unreachable from the procedure that
-owns it, and an empty directory is refused rather than left as a placeholder.
+The package stays a closed set. Every resource is reachable from `SKILL.md`,
+either directly or through other package resources. The bounded traversal
+allows nested directories and terminates cycles; it rejects empty directories,
+orphans, symlinks and non-regular files. References are Markdown, scripts are
+Python or shell, and assets are dedicated output resources.
 
-Two boundaries keep the new directories from becoming second authorities, and
-both are enforced rather than advised. A skill script is a helper and never a
-gate: `scripts/validation/registry.json` refuses a gate whose script lives in a
-package, so editing a skill can never change what QA enforces. An asset is a
-resource and never a document template: Stage 99 owns those and the route that
-reaches them, so the name `*.template.md` is refused here.
+`scripts/validation/registry.json` alone selects QA gates. It may select a
+registered skill's checker under that package's `scripts/` directory; carrying
+a checker does not register it or grant execution authority. Dedicated assets
+may include `*.template.md` output forms. Stage 99 still owns shared document
+profiles and templates; a package asset cannot replace their authority.
 
 ## Configuration Boundary
 
@@ -59,8 +60,8 @@ unadopted, each for its own reason: root `evals/` holds evaluation case and
 response data, `scripts/run-agent-evaluations.py` owns runner behavior, and
 `scripts/validation/registry.json` owns gate selection; a rule directory would
 duplicate policy `governance/` already owns; and `scripts/` already owns
-executable tooling at the repository root, which a package-local helper does
-not displace because it can never be a registered gate. MIG-0009's memory retirement
+executable tooling at the repository root, which a dedicated package checker does
+not displace; the central registry still selects every gate. MIG-0009's memory retirement
 remains effective.
 
 ## Validation

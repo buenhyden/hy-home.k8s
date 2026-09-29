@@ -1,8 +1,8 @@
 ---
 title: "Document authority and normalized links"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-09-29"
 layer: "specs"
@@ -28,7 +28,7 @@ the final branch receives independent review.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | VAL-ACS-003, VAL-ACS-023 | WP-001: Document authority and normalized links | platform | Queued | Not executed | This Task |
+| WORK-002 | VAL-ACS-003, VAL-ACS-023 | WP-001: Document authority and normalized links | platform | Completed | C1 and exact-index QA passed | This Task |
 
 ## Approval and Safety Boundaries
 
@@ -43,6 +43,8 @@ the final branch receives independent review.
 
 ## Verification Summary
 
+Final exact-index QA passed all 14 gates for 25 paths, exit 0; logical commit `1a6e089e` passed actual-message Commitizen and normal Git invocation. An earlier staged session lost its output handle on context restoration; its result was not claimed and the same index was rerun with a captured log. Independent branch review remains assigned to TSK-0008.
+
 WP-000 passed six staged gates for each of commits `8e811506` and `79c97514`; both actual messages passed Commitizen. Additional RED/GREEN: unquoted HTML href was missed, then rejected; the same 65-test suite passed again. Ruff explicitly formatted only the two edited Python files. R23 RED: six failures exposed rejected README navigation and missing normalization/exception handling. GREEN: `python3 -m unittest tests.test_documentation_link_boundary tests.test_common_agents_document_routes tests.test_readme_navigation` passed 65 tests. Quick QA first attempt: 12/14 gates passed; link/navigation and repository-quality exposed stale current-owner checks and a staging README template reference. Ruling: update those exact consumers and required current-owner checks, preserving failure semantics; do not waive them. Second quick result: 13/14 PASS; the only remaining error was my reference to a nonexistent governance README. Corrected it to the actual governance directory; final exact-index validation covers that repair. Manual audit converted current Markdown consumers; synthetic evaluation responses and retained documents remain data/history. Shared policy, archive procedure, GitHub and scripts guidance now name current owners instead of historical decisions as execution prerequisites. Branch `codex/agent-contracts`, initial base
 `efc3643fdce17e0c5f454c3046e7ec8a3c37d13d`. Next owner: the assigned
 Plan implementer, followed by independent branch review. Static evidence
@@ -54,4 +56,4 @@ never establishes hosted, provider, account-limit or live behavior.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | Queued | No implementation or verification yet |
+| [WORK-002](../plan.md#work-breakdown) | Completed | C1: 65 tests; staged QA: 14/14 PASS; commit `1a6e089e` |
