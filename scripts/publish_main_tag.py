@@ -50,6 +50,17 @@ def current_main(github, target):
     require_target(github.get("git/ref/heads/main"), "refs/heads/main", target)
 
 
+def existing_tag(github, target):
+    try:
+        existing = github.get("git/ref/tags/main-" + target)
+    except HTTPError as error:
+        if error.code == 404:
+            return False
+        raise
+    require_target(existing, "refs/tags/main-" + target, target)
+    return True
+
+
 def authenticate(event, github, verifier_app_id):
     """Rebuild the complete main verdict and require the verifier App's check."""
     expected = core.verify_main(event, github)
@@ -77,7 +88,8 @@ def authenticate(event, github, verifier_app_id):
             )
             check_ids.append(core.positive(check["id"]))
     require(check_ids, "no exact verifier-App main verdict")
-    current_main(github, target)
+    if not existing_tag(github, target):
+        current_main(github, target)
     # A verifier rerun may issue identical checks; conflicting records fail above.
     return expected, max(check_ids)
 
@@ -132,14 +144,7 @@ def publish_main_tag(
     )
     tag = "refs/tags/main-" + after_sha
     route = "git/ref/tags/main-" + after_sha
-    current_main(github, after_sha)
-    try:
-        existing = github.get(route)
-    except HTTPError as error:
-        if error.code != 404:
-            raise
-    else:
-        require_target(existing, tag, after_sha)
+    if existing_tag(github, after_sha):
         return Publication("noop", tag, after_sha)
     current_main(github, after_sha)
     try:

@@ -27,6 +27,13 @@ def missing():
     return HTTPError("https://api.github.com/", 404, "missing", {}, None)
 
 
+class TagReader(FakeGitHub):
+    def get(self, route):
+        if route.startswith("git/ref/tags/") and route not in self.data:
+            raise missing()
+        return super().get(route)
+
+
 class PublisherTests(unittest.TestCase):
     def setUp(self):
         self.clock = patch.object(
@@ -34,7 +41,7 @@ class PublisherTests(unittest.TestCase):
         )
         self.clock.start()
         self.addCleanup(self.clock.stop)
-        self.github = FakeGitHub()
+        self.github = TagReader()
         self.github.run.update(
             event="push", head_branch="main", head_sha=MERGE, pull_requests=[]
         )
@@ -161,6 +168,42 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.authenticate()
 
+    def test_advanced_main_exact_existing_tag_remains_authenticated_noop(self):
+        self.github.data["git/ref/heads/main"] = ref_object("refs/heads/main", HEAD)
+        self.github.data["git/ref/tags/main-" + MERGE] = ref_object()
+        verdict, _ = self.authenticate()
+        self.assertEqual(verdict.record, self.verdict.record)
+        with patch.object(self.writer, "request", return_value=ref_object()) as request:
+            self.assertEqual(self.publish().status, "noop")
+        self.assertEqual(request.call_count, 1)
+        self.assertEqual(
+            request.call_args.args, ("/repos/" + REPO + "/git/ref/tags/main-" + MERGE,)
+        )
+
+    def test_advanced_main_missing_or_conflicting_tag_never_creates(self):
+        self.github.data["git/ref/heads/main"] = ref_object("refs/heads/main", HEAD)
+        with self.assertRaises(ValueError):
+            self.authenticate()
+        with patch.object(
+            self.writer,
+            "request",
+            side_effect=[missing(), ref_object("refs/heads/main", HEAD)],
+        ) as request:
+            with self.assertRaises(ValueError):
+                self.publish()
+        self.assertFalse(
+            any(call.kwargs.get("method") == "POST" for call in request.call_args_list)
+        )
+        self.github.data["git/ref/tags/main-" + MERGE] = ref_object(target=HEAD)
+        with self.assertRaises(ValueError):
+            self.authenticate()
+        with patch.object(
+            self.writer, "request", return_value=ref_object(target=HEAD)
+        ) as request:
+            with self.assertRaises(ValueError):
+                self.publish()
+        self.assertEqual(request.call_count, 1)
+
     def test_stale_tip_and_wrong_tested_checkout_fail_before_key_access(self):
         self.github.data["git/ref/heads/main"] = ref_object("refs/heads/main", HEAD)
         with self.assertRaises(ValueError):
@@ -190,7 +233,6 @@ class PublisherTests(unittest.TestCase):
             self.writer,
             "request",
             side_effect=[
-                ref_object("refs/heads/main"),
                 missing(),
                 ref_object("refs/heads/main"),
                 ref_object(),
@@ -219,7 +261,7 @@ class PublisherTests(unittest.TestCase):
                 patch.object(
                     self.writer,
                     "request",
-                    side_effect=[ref_object("refs/heads/main"), existing],
+                    side_effect=[existing],
                 ) as request,
             ):
                 if accepted:
@@ -250,7 +292,6 @@ class PublisherTests(unittest.TestCase):
                     self.writer,
                     "request",
                     side_effect=[
-                        ref_object("refs/heads/main"),
                         missing(),
                         ref_object("refs/heads/main"),
                         HTTPError("https://api.github.com/", code, "error", {}, None),
@@ -275,7 +316,6 @@ class PublisherTests(unittest.TestCase):
             self.writer,
             "request",
             side_effect=[
-                ref_object("refs/heads/main"),
                 missing(),
                 ref_object("refs/heads/main", HEAD),
             ],
@@ -306,17 +346,14 @@ class PublisherTests(unittest.TestCase):
     def test_failed_ref_reads_and_wrong_creation_response_remain_failures(self):
         for replies in (
             [
-                ref_object("refs/heads/main"),
                 HTTPError("https://api.github.com/", 403, "denied", {}, None),
             ],
             [
-                ref_object("refs/heads/main"),
                 missing(),
                 ref_object("refs/heads/main"),
                 ref_object(target=HEAD),
             ],
             [
-                ref_object("refs/heads/main"),
                 missing(),
                 ref_object("refs/heads/main"),
                 HTTPError("https://api.github.com/", 422, "invalid", {}, None),
@@ -494,6 +531,9 @@ class PublisherTests(unittest.TestCase):
         }
         github.data["git/ref/heads/main"] = ref_object(
             "refs/heads/main", fixtures.AFTER
+        )
+        github.data["git/ref/tags/main-" + fixtures.AFTER] = ref_object(
+            "refs/tags/main-" + fixtures.AFTER, fixtures.AFTER
         )
         with patch.dict(os.environ, {"QA_VERIFIER_APP_ID": str(APP)}):
             verdict = core.verify_main(event, github)
