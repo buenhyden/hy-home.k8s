@@ -64,6 +64,7 @@ def partition(registry, name):
 
 
 def git(root, *arguments):
+    root = Path(root).resolve(strict=True)
     env = {
         **ENVIRONMENT,
         "GIT_CONFIG_NOSYSTEM": "1",
@@ -73,6 +74,8 @@ def git(root, *arguments):
     result = subprocess.run(
         [
             "/usr/bin/git",
+            "-c",
+            f"safe.directory={root}",
             "-c",
             "core.hooksPath=/dev/null",
             "-c",

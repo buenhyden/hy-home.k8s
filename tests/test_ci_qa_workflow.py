@@ -3,8 +3,10 @@
 from pathlib import Path
 import json
 import fnmatch
+import os
 import re
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -16,6 +18,68 @@ ROOT = Path(__file__).resolve().parents[1]
 class CiQaWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+
+    def test_isolated_bootstrap_reads_checkout_with_different_owner(self):
+        step = next(
+            step
+            for step in self.workflow["jobs"]["qa-isolated"]["steps"]
+            if step.get("name") == "Validate isolated repository gate"
+        )
+        source = re.search(r"<<'PYTHON'\n(.*?)\n\s*PYTHON", step["run"], re.S)
+        self.assertIsNotNone(source)
+        with tempfile.TemporaryDirectory(prefix="ci-isolated-") as temporary:
+            root = Path(temporary)
+
+            def git(*args):
+                return (
+                    subprocess.run(
+                        ["git", *args], cwd=root, capture_output=True, check=True
+                    )
+                    .stdout.decode()
+                    .strip()
+                )
+
+            git("init", "--quiet")
+            git("config", "user.email", "ci-fixture@example.invalid")
+            git("config", "user.name", "CI Fixture")
+            (root / "scripts").mkdir()
+            (root / "scripts/qa_provenance_hosted.py").write_text(
+                "print('isolated-bootstrap-ok')\n", encoding="utf-8"
+            )
+            git("add", ".")
+            git("commit", "--quiet", "-m", "fixture")
+            commit = git("rev-parse", "HEAD")
+            # Inject Git's ownership test knob only at the Git call, while
+            # verifying that the bootstrap strips ambient Git configuration.
+            probe = (
+                "import subprocess\n"
+                "from pathlib import Path\n"
+                "_original = subprocess.check_output\n"
+                "def _checked(args, **kwargs):\n"
+                "    assert args[:3] == ['/usr/bin/git', '-c', f'safe.directory={Path.cwd().resolve()}'], args\n"
+                "    assert kwargs['cwd'] == Path.cwd().resolve(), kwargs\n"
+                "    assert set(kwargs['env']) == {'HOME', 'LANG', 'LC_ALL', 'PATH', 'TZ', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_OPTIONAL_LOCKS'}, kwargs\n"
+                "    assert kwargs['env']['GIT_CONFIG_NOSYSTEM'] == '1', kwargs\n"
+                "    return _original(args, **{**kwargs, 'env': {**kwargs['env'], 'GIT_TEST_ASSUME_DIFFERENT_OWNER': '1'}})\n"
+                "subprocess.check_output = _checked\n"
+            )
+            result = subprocess.run(
+                [sys.executable, "-I", "-B", "-"],
+                input=probe + source.group(1),
+                cwd=root,
+                env={
+                    **os.environ,
+                    "EXPECTED_COMMIT": commit,
+                    "GIT_CONFIG_COUNT": "1",
+                    "GIT_CONFIG_KEY_0": "safe.directory",
+                    "GIT_CONFIG_VALUE_0": "*",
+                },
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout.strip(), "isolated-bootstrap-ok")
 
     def test_one_qa_job_owns_setup_and_execution(self):
         jobs = self.workflow["jobs"]

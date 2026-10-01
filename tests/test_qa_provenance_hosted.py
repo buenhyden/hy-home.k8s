@@ -3,6 +3,7 @@
 import copy
 import json
 from pathlib import Path
+import subprocess
 import unittest
 from datetime import datetime, timezone
 from unittest.mock import patch
@@ -60,6 +61,19 @@ class PartitionTests(unittest.TestCase):
 class CommittedInputTests(unittest.TestCase):
     setUp = qa_tests.QaTests.setUp
     git = qa_tests.QaTests.git
+
+    def test_git_accepts_only_its_canonical_checkout_when_owner_differs(self):
+        commit = self.git("rev-parse", "HEAD")
+        sibling = self.root.parent / "sibling"
+        sibling.mkdir()
+        subprocess.run(
+            ["git", "init", "-q", str(sibling)], check=True, capture_output=True
+        )
+        with patch.dict(hosted.ENVIRONMENT, {"GIT_TEST_ASSUME_DIFFERENT_OWNER": "1"}):
+            self.assertEqual(hosted.git(self.root, "rev-parse", "HEAD"), commit)
+            with self.assertRaises(subprocess.CalledProcessError) as failed:
+                hosted.git(self.root, "-C", str(sibling), "status", "--porcelain")
+            self.assertIn(b"dubious ownership", failed.exception.stderr)
 
     def test_raw_checkout_accepts_exact_tree_and_rejects_checkout_transform(self):
         commit = self.git("rev-parse", "HEAD").decode().strip()
