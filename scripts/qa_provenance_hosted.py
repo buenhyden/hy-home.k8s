@@ -151,7 +151,8 @@ def raw_leaf(root, path):
             )
             payload = source.read(FILE_LIMIT + 1)
             require(
-                stable_leaf_state(before) == stable_leaf_state(os.fstat(source.fileno()))
+                stable_leaf_state(before)
+                == stable_leaf_state(os.fstat(source.fileno()))
                 and stable_leaf_state(before)
                 == stable_leaf_state(
                     os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False)

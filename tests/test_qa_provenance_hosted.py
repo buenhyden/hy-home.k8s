@@ -79,11 +79,7 @@ class CommittedInputTests(unittest.TestCase):
             nonlocal calls
             calls += 1
             metadata = original(descriptor)
-            return (
-                self.ChangedStat(metadata, "st_atime_ns")
-                if calls == 2
-                else metadata
-            )
+            return self.ChangedStat(metadata, "st_atime_ns") if calls == 2 else metadata
 
         with patch.object(hosted.os, "fstat", side_effect=changed_atime):
             mode, payload = hosted.raw_leaf(self.root, "file.txt")
@@ -122,9 +118,11 @@ class CommittedInputTests(unittest.TestCase):
                 metadata = original_fstat(descriptor)
                 return self.ChangedStat(metadata, field) if calls == 2 else metadata
 
-            with self.subTest(field=field), patch.object(
-                hosted.os, "fstat", side_effect=changed_state
-            ), self.assertRaisesRegex(ValueError, "committed input changed"):
+            with (
+                self.subTest(field=field),
+                patch.object(hosted.os, "fstat", side_effect=changed_state),
+                self.assertRaisesRegex(ValueError, "committed input changed"),
+            ):
                 hosted.raw_leaf(self.root, "file.txt")
             self.assertEqual(calls, 2)
 
