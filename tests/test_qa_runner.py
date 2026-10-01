@@ -898,3 +898,438 @@ class PreCommitResolutionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LocalEvidenceTests(unittest.TestCase):
+    setUp = QaTests.setUp
+    git = QaTests.git
+
+    def test_exact_input_identity_changes_for_bytes_mode_paths_base_and_argv(self):
+        gate = {
+            "id": "agent-evaluation-cases",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+        env = {"PATH": "/usr/bin", "LANG": "C.UTF-8"}
+
+        def identity(lane="affected", paths=("file.txt",), base="base-a"):
+            return self.qa.gate_input_identity(
+                self.root, gate, lane=lane, paths=paths, base_ref=base, environment=env
+            )
+
+        initial = identity()
+        self.assertEqual(initial, identity())
+        self.assertEqual(initial, identity(lane="staged"))
+        env["LANG"] = "C"
+        self.assertNotEqual(initial, identity())
+        env["LANG"] = "C.UTF-8"
+        self.assertNotEqual(initial, identity(paths=("gone.txt",)))
+        self.assertNotEqual(initial, identity(base="base-b"))
+        self.assertNotEqual(initial, identity(lane="all-files"))
+        gate["argv"] = ["python3", "changed.py"]
+        self.assertNotEqual(initial, identity())
+        gate["argv"] = ["python3", "check.py"]
+        (self.root / "file.txt").write_text("changed\n")
+        self.assertNotEqual(initial, identity())
+        (self.root / "file.txt").write_text("original\n")
+        (self.root / "file.txt").chmod(0o755)
+        self.assertNotEqual(initial, identity())
+        (self.root / "file.txt").chmod(0o644)
+        (self.root / "new.txt").write_text("new\n")
+        self.assertNotEqual(initial, identity())
+
+    def test_quick_repeat_and_exact_quick_to_staged_run_once(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        contract = {
+            "validators": [
+                {
+                    "id": "agent-evaluation-cases",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as child,
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+        ):
+            # Count only the gate command; Git snapshot commands also use the bounded runner.
+            import io
+            from contextlib import redirect_stdout
+
+            results = []
+            for profile in ("quick", "quick", "staged"):
+                if profile == "staged":
+                    self.git("add", "check.py")
+                sys.argv[1] = profile
+                with redirect_stdout(io.StringIO()) as output:
+                    results.append((self.qa.main(), output.getvalue()))
+            gate_calls = [
+                call
+                for call in child.call_args_list
+                if call.args and any("check.py" == arg for arg in call.args[0])
+            ]
+        self.assertEqual([result for result, _ in results], [0, 0, 0])
+        self.assertEqual(len(gate_calls), 1)
+        self.assertIn("[REUSED] agent-evaluation-cases", results[1][1])
+        self.assertIn("[REUSED] agent-evaluation-cases", results[2][1])
+
+        # The same selected path must execute again when its staged bytes change.
+        (self.root / "check.py").write_text("print('changed gate')\n")
+        self.git("add", "check.py")
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as changed_child,
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+        ):
+            with redirect_stdout(io.StringIO()) as changed_output:
+                self.assertEqual(self.qa.main(), 0)
+            (self.root / "check.py").chmod(0o755)
+            self.git("add", "check.py")
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(self.qa.main(), 0)
+            (self.root / "new.txt").write_text("new path\n")
+            sys.argv[1] = "quick"
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(self.qa.main(), 0)
+            gate_calls = [
+                call
+                for call in changed_child.call_args_list
+                if call.args and "check.py" in call.args[0]
+            ]
+        self.assertEqual(len(gate_calls), 3)
+        self.assertIn("[PASS] agent-evaluation-cases", changed_output.getvalue())
+
+    def test_changed_tool_config_and_argv_execute_again(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        (self.root / "config.json").write_text('{"rule":1}\n')
+        self.git("add", "check.py", "config.json")
+        contract = {
+            "validators": [
+                {
+                    "id": "agent-evaluation-cases",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+        import io
+        from contextlib import redirect_stdout
+
+        baseline = ["fixed-base"]
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(
+                self.qa, "base_revision", side_effect=lambda *_: baseline[0]
+            ),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as child,
+        ):
+            for step in range(5):
+                if step == 1:
+                    (self.root / "config.json").write_text('{"rule":2}\n')
+                    self.git("add", "config.json")
+                if step == 2:
+                    contract["validators"][0]["argv"].append("--flag")
+                if step == 3:
+                    baseline[0] = "changed-base"
+                if step == 4:
+                    alternate = Path(self.temporary.name) / "python3"
+                    alternate.symlink_to(sys.executable)
+                    original_resolve = self.qa.runner.resolve_tool
+                    with mock.patch.object(
+                        self.qa.runner,
+                        "resolve_tool",
+                        side_effect=lambda token, root: (
+                            str(alternate)
+                            if token == "python3"
+                            else original_resolve(token, root)
+                        ),
+                    ):
+                        with redirect_stdout(io.StringIO()):
+                            self.assertEqual(self.qa.main(), 0)
+                    continue
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(self.qa.main(), 0)
+            gate_calls = [
+                call
+                for call in child.call_args_list
+                if call.args and "check.py" in call.args[0]
+            ]
+        self.assertEqual(len(gate_calls), 5)
+
+    def test_formatter_rewrite_cannot_record_pass(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        contract = {
+            "validators": [
+                {
+                    "id": "agent-evaluation-cases",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+
+        def mutating_run(snapshot, *_args, **kwargs):
+            kwargs["completed_passes"]["agent-evaluation-cases"] = "PASS"
+            (snapshot / "check.py").write_text("formatter rewrite\n")
+            return 0
+
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(self.qa.runner, "run_selected", side_effect=mutating_run),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+        ):
+            import io
+            from contextlib import redirect_stderr
+
+            with redirect_stderr(io.StringIO()):
+                self.assertEqual(self.qa.main(), 1)
+        self.assertEqual(self.qa.LocalEvidenceStore(self.root)._passes(), {})
+
+    def test_pr_merge_identity_never_replaces_main_history_or_named_refs(self):
+        gate = {
+            "id": "agent-evaluation-cases",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+        base = self.git("rev-parse", "HEAD").decode().strip()
+        tree = self.git("rev-parse", "HEAD^{tree}").decode().strip()
+
+        def commit(label, parents):
+            return (
+                self.git(
+                    "commit-tree",
+                    tree,
+                    *[arg for parent in parents for arg in ("-p", parent)],
+                    "-m",
+                    label,
+                )
+                .decode()
+                .strip()
+            )
+
+        first = commit("feature one", [base])
+        head = commit("feature two", [first])
+        tested = commit("synthetic PR merge", [base, head])
+        self.git("checkout", "--detach", tested)
+
+        def identity():
+            return self.qa.gate_input_identity(
+                self.root,
+                gate,
+                lane="all-files",
+                paths=("file.txt",),
+                base_ref=base,
+                environment={"LANG": "C.UTF-8"},
+            )
+
+        with mock.patch.object(
+            self.qa.importlib.metadata, "distributions", return_value=[]
+        ):
+            original = identity()
+            advanced = commit("advanced main", [base])
+            for label, parents in (
+                ("merge", [base, head]),
+                ("squash", [base]),
+                ("multi-commit rebase", [first]),
+                ("advanced main merge", [advanced, head]),
+            ):
+                integrated = commit(label, parents)
+                self.git("checkout", "--detach", integrated)
+                self.assertEqual(
+                    self.git("rev-parse", "HEAD^{tree}").decode().strip(), tree
+                )
+                self.assertNotEqual(original, identity(), label)
+            self.git("checkout", "--detach", tested)
+            self.assertEqual(original, identity())
+            self.git("update-ref", "refs/remotes/origin/main", advanced)
+            self.assertNotEqual(original, identity(), "named ref changed")
+            self.git("checkout", "--detach", head)
+            self.assertEqual(self.qa.base_revision(self.root, "ci", base), base)
+            self.assertEqual(self.qa.base_revision(self.root, "ci", None), first)
+            self.assertNotEqual(
+                self.qa.base_revision(self.root, "ci", base),
+                self.qa.base_revision(self.root, "ci", None),
+            )
+
+    def test_full_and_ci_execute_registry_completely_without_local_evidence(self):
+        import io
+        from contextlib import redirect_stdout
+
+        contract = self.qa.contract_module.validate_contract(ROOT)
+        identifiers = contract["profiles"]["full"]
+        real_run = self.qa.runner.run_bounded_command
+        for profile, partition, failed_gate in (
+            ("full", None, None),
+            ("ci", None, None),
+            ("ci", None, "agent-evaluation-cases"),
+            ("ci", "complement", None),
+        ):
+            expected_ids = (
+                self.qa.hosted.partition(contract, partition)
+                if partition
+                else identifiers
+            )
+            arguments = ["qa.py", profile, "--root", str(self.root)]
+            if partition:
+                arguments += ["--partition", partition]
+            observed = []
+
+            def child(argv, *, cwd, env, **kwargs):
+                if argv[0] == "/usr/bin/git":
+                    return real_run(argv, cwd=cwd, env=env, **kwargs)
+                observed.append(argv)
+                failed = (
+                    failed_gate
+                    and ".agents/evaluations/run-agent-evaluations.py" in argv
+                )
+                return real_run(
+                    [
+                        sys.executable,
+                        "-c",
+                        "print('[PASS] repository quality gates passed'); raise SystemExit("
+                        + ("1" if failed else "0")
+                        + ")",
+                    ],
+                    cwd=cwd,
+                    env=env,
+                )
+
+            with (
+                self.subTest(profile=profile, failed_gate=failed_gate),
+                mock.patch.object(sys, "argv", arguments),
+                mock.patch.object(
+                    self.qa.contract_module, "validate_contract", return_value=contract
+                ),
+                mock.patch.object(
+                    self.qa.contract_module,
+                    "select_paths",
+                    return_value={"validators": identifiers},
+                ),
+                mock.patch.object(
+                    self.qa.runner,
+                    "resolve_tool",
+                    side_effect=lambda tool, root: "/trusted/" + tool,
+                ),
+                mock.patch.object(
+                    self.qa.runner, "run_bounded_command", side_effect=child
+                ),
+                mock.patch.object(
+                    self.qa,
+                    "LocalEvidenceStore",
+                    side_effect=AssertionError("full/ci must not read local evidence"),
+                ),
+                redirect_stdout(io.StringIO()) as output,
+            ):
+                self.assertEqual(self.qa.main(), 1 if failed_gate else 0)
+            self.assertEqual(len(observed), len(expected_ids))
+            for identifier in expected_ids:
+                expected = "FAIL" if identifier == failed_gate else "PASS"
+                self.assertEqual(
+                    output.getvalue().count(
+                        "[" + expected + "] " + identifier + " command="
+                    ),
+                    1,
+                )
+            self.assertNotIn("[REUSED]", output.getvalue())
+
+    def test_record_is_private_and_rejects_forged_or_unreadable_data(self):
+        store = self.qa.LocalEvidenceStore(self.root)
+        identity = "a" * 64
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.record_pass("gate", identity)
+        self.assertTrue(store.matching_pass("gate", identity))
+        self.assertEqual(stat.S_IMODE(store.path.stat().st_mode), 0o600)
+        store.path.write_text(
+            '{"version":1,"passes":{"gate":"' + identity + '"},"evil":true}'
+        )
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.path.write_text("[]")
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.path.chmod(0)
+        self.assertFalse(store.matching_pass("gate", identity))

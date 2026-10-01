@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.16"
+version: "1.6.21"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-02"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -74,6 +74,8 @@ A static declaration must not be mistaken for runtime evidence, and past program
 - **REQ-0003-FR-0026**: Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation.
 - **REQ-0003-FR-0027**: Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Integrity checks of the sealed Archive stay separate.
 - **REQ-0003-FR-0028**: Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP.
+- **REQ-0003-FR-0029**: Each successfully validated push to main, including a PR merge's resulting push, must publish one immutable `main-<full commit SHA>` GitHub tag at the integrated tip. Retries must not move an existing tag; unsuccessful validation must not publish one, and tag publication must not repeat QA.
+- **REQ-0003-FR-0030**: CI/QA/validation scripts, tests they invoke or discover, and all `.github/` surfaces must be checked against their active consumers, unique rules, triggers, permissions, and current repository state. Proven obsolete, one-off, legacy, deprecated, duplicate, or conflicting execution must be corrected or retired with unique contracts preserved; oversized scripts are simplified only with behavior-preserving evidence. Guidance must not require repeat work at the same delivery boundary.
 - **REQ-0003-NFR-0001**: Roster and adapter counts must be derived from the current Registry, and role and surface admission and model fitness must be justified by local need, least privilege, and evaluation evidence.
 - **REQ-0003-NFR-0002**: Targeted, affected, staged, full unit, all-files, and formatter/diff revalidation must check the same required contracts while recording each result and change snapshot.
 - **REQ-0003-NFR-0003**: Document form and change decisions must be traceable to their primary basis, applicable scope, and validation evidence, and must not confuse an external standard with a repository convention.
@@ -100,6 +102,8 @@ are not reported as PASS without their observation, and each limitation has an o
 - **Acceptance criterion 10**: Evidence exists for each role's input/output, permission, stop, handoff, eval, and model fitness.
 - **Acceptance criterion 11**: Results of the required local/CI lanes, full QA, and formatter/diff revalidation are traceable.
 - **Acceptance criterion 12**: Current surfaces carry no duplicate authority, stale claim, or orphan consumer, and actual runtime limits are preserved.
+- **Acceptance criterion 13**: A validated main update has exactly one immutable tag at its exact SHA; a failed update, duplicate merge notification, or tag event creates none.
+- **Acceptance criterion 14**: The active script and `.github/` execution graph has no proven obsolete or duplicate work, while distinct security and environment checks remain covered.
 
 ## Scope and Non-goals
 
@@ -221,7 +225,7 @@ Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 
 ## Traceability
 
-Proposed change contract: [SPEC-0102](../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is a draft downstream Spec for the current requirements; this link grants no implementation approval.
+[SPEC-0102](../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is the completed agent-contract work unit. The current [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) owns QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
 
 Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was delivered by [SPEC-0100](../98.archive/completed/03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
 
@@ -246,6 +250,8 @@ Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was del
 | REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0027 | Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Integrity checks of the sealed Archive stay separate. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0028 | Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0029 | A successful main push publishes an immutable exact-commit tag once; failed checks do not publish, retries do not rewrite, and tag publication does not repeat QA. Whether it is met is judged by the owner's static validation and separate hosted observation. | [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) |
+| REQ-0003-FR-0030 | Active CI/QA scripts, invoked or discovered tests, and `.github/` surfaces are traced to their consumers; proven obsolete, duplicate, or conflicting execution is removed without losing distinct failure meanings. Whether it is met is judged by static inventory, negative fixtures, and separate hosted observation. | [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) |
 | REQ-0003-FR-0001 | The common governance and owner graph validate as a single current source. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0002 | Provider gateways keep the thin adapter boundary. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0003 | Skill provenance and missing gaps are machine-validated. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -273,6 +279,8 @@ Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was del
 | N/A — Acceptance criterion 10 remains acceptance-only | Per-role eval and model fitness evidence exists. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 11 remains acceptance-only | Shared QA and distinct index evidence | [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | N/A — Acceptance criterion 12 remains acceptance-only | There are zero stale legacy and orphan references. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 13 remains acceptance-only | Hosted tag publication shows one immutable exact-SHA tag for a successful main update and no tag for a failed update. | [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) |
+| N/A — Acceptance criterion 14 remains acceptance-only | Script dispositions and `.github/` consumers have no unresolved duplicate or ownerless check. | [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) |
 
 ### Reviewed member-ID transfer
 

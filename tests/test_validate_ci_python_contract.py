@@ -1436,3 +1436,49 @@ class CiPythonShellGitSubcommandTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class QaPartitionContractTests(unittest.TestCase):
+    def test_exact_partitions_and_full_only_legacy_contract(self):
+        import yaml
+
+        workflow = yaml.safe_load((REPO_ROOT / ".github/workflows/ci.yml").read_text())
+        VALIDATOR._validate_qa_execution(
+            workflow, {"qa": workflow["jobs"]["qa"]["steps"]}
+        )
+
+    def test_missing_duplicate_overlapping_and_unconditional_partitions_reject(self):
+        import copy
+        import yaml
+
+        original = yaml.safe_load((REPO_ROOT / ".github/workflows/ci.yml").read_text())
+        for change in (
+            "missing",
+            "duplicate",
+            "overlap",
+            "unguarded",
+            "environment",
+            "other-job",
+        ):
+            with self.subTest(change=change):
+                workflow = copy.deepcopy(original)
+                steps = workflow["jobs"]["qa"]["steps"]
+                selected = [
+                    step for step in steps if "scripts/qa.py" in step.get("run", "")
+                ]
+                if change == "missing":
+                    steps.remove(selected[-1])
+                elif change == "duplicate":
+                    steps.append(copy.deepcopy(selected[-1]))
+                elif change == "overlap":
+                    selected[-1]["if"] = selected[0]["if"]
+                elif change == "unguarded":
+                    selected[-1].pop("if")
+                elif change == "environment":
+                    selected[-1]["run"] = (
+                        'python3 scripts/qa.py ci --base-ref "$BASE_SHA" $PARTITION'
+                    )
+                else:
+                    workflow["jobs"]["qa-source"]["steps"].append(selected.pop())
+                with self.assertRaises(VALIDATOR.ContractError):
+                    VALIDATOR._validate_qa_execution(workflow, {"qa": steps})

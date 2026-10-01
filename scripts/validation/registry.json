@@ -48,6 +48,16 @@
     },
     {
       "id": "agent-evaluation-cases",
+      "reuse": {
+        "mode": "change-scoped",
+        "hosted": {
+          "image": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d",
+          "platform": "linux/amd64",
+          "python": "/usr/local/bin/python3",
+          "version": "3.12.14",
+          "inputs": "committed-tree-v1"
+        }
+      },
       "argv": [
         "python3",
         ".agents/evaluations/run-agent-evaluations.py",

@@ -2165,7 +2165,7 @@ if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTIL
 pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
-    "- [ ] `full` result (`python3 scripts/qa.py full`):",
+    "hosted `ci-summary` result",
     "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
 ]:
     if phrase not in pull_request_template_text:

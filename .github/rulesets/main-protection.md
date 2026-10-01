@@ -126,13 +126,22 @@ workflow roles.
 
 - `ci-summary`
 
-`ci-summary` runs with `if: always()` and depends on `branch-policy` and `qa`.
-It fails closed: a `skipped`, `cancelled` or `failure` result for `qa` is a
-failure, and a `skipped` `branch-policy` is accepted only for the `push` and
-`workflow_dispatch` events where that job does not apply. Require `ci-summary`
-alone. Requiring `branch-policy` directly would leave a permanently pending
-check on those two events, because it declares
-`if: github.event_name == 'pull_request'`.
+`ci-summary` runs with `if: always()` after `branch-policy`, `qa`, `qa-isolated`
+and `qa-source`. It checks the first three results: ordinary QA must succeed,
+and the PR-specific branch/isolated jobs must succeed on PRs or be skipped on
+main push/manual dispatch. `qa-source` is an ordering dependency; missing proof
+selects full QA. A skipped required QA result cannot satisfy the summary.
+Requiring `branch-policy` or `qa-isolated` directly would leave an inapplicable
+check on main push/manual dispatch.
+
+The dated observed configuration above requires only `ci-summary`; it does not
+establish protected proof activation. Before enabling hosted reuse, the operator
+must authenticate the verifier App installation and main-only environment, observe
+its PR check, pin `qa-provenance` to that exact App ID as an additional required
+source, and prove hostile/control-change rejection. Independent `qa-main-verdict`
+authentication and separately observed publisher/tag protections govern main
+tagging. The [GitHub hub](../repository-surface.md#protected-main-tags) routes
+that default-off activation boundary. No setting is changed by this guidance.
 
 GitHub treats a job skipped by a job-level condition as successful for required
 checks, and a whole workflow skipped by a path or branch filter can leave its

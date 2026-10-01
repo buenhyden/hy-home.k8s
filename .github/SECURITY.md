@@ -17,7 +17,7 @@ integration branch rather than a version series.
 If you discover a security vulnerability within this project, please follow these steps:
 
 1. **Do NOT** open a public issue.
-2. Contact the maintainer directly through the repository owner profile or an existing private maintainer channel.
+2. [Open a private vulnerability report](https://github.com/buenhyden/hy-home.k8s/security/advisories/new).
 3. Provide a detailed description of the vulnerability and steps to reproduce.
 
 Do not include secret values, Vault tokens, private keys, or credential

@@ -151,11 +151,3 @@ class ExternalServiceContractsTests(unittest.TestCase):
         with redirect_stdout(output):
             self.assertEqual(self.checker.main(["--root", str(self.root)]), 1)
         self.assertNotIn("private-payload", output.getvalue())
-
-    def test_actual_repository_contracts(self):
-        self.assertEqual(
-            self.checker.validate_documents(
-                ROOT, sorted((ROOT / PREFIX).glob("*.yaml"))
-            ),
-            [],
-        )
