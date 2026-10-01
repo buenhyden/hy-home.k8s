@@ -609,7 +609,7 @@ class PublisherTests(unittest.TestCase):
                     return super().__getitem__(key)
 
             observed_env = KeyTrackingEnvironment(
-                env | {"QA_PUBLISHER_PRIVATE_KEY": "unused"}
+                env | {"QA_PUBLISHER_PRIVATE_KEY": "unused"}  # pragma: allowlist secret
             )
             with (
                 patch.object(os, "environ", observed_env),
