@@ -46,26 +46,19 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-Follow the completion order in [Quality Policy](../.agents/governance/quality.md).
-Record distinct input snapshots and reuse the full profile's unit/pre-commit
-results without repeating those commands on the same inputs.
+Follow the [Quality Policy](../.agents/governance/quality.md#canonical-completion-sequence)
+for the delivery route and evidence required for this PR. Record the focused
+checks and exact-index staged result for local commits, then link the required
+hosted `ci-summary` result with its exact SHA and run identity when available.
+Classify unavailable hosted or live evidence as `DEFER` with its owner.
 
-- [ ] `targeted` result:
-- [ ] `quick` working-tree result:
-- [ ] Exact-index `python3 scripts/qa.py staged` result for each logical commit:
-- [ ] Actual commit-message validation and normal active-hook evidence:
-- [ ] `full` result (`python3 scripts/qa.py full`):
-- [ ] Formatter findings, explicit fixes and evidence refreshed after changed bytes:
-- [ ] Post-full documentation changes and their separate validation, if any:
-- [ ] `git diff --check` and `git diff --cached --check` result:
-- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
-- [ ] GitHub CI `ci-summary` passed for the `qa` job and applicable branch policy, or hosted verification is explicitly `DEFER`; exact SHA and run identity:
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow triggers and job ownership reviewed (if `.github` automation changed)
 - [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs are routed through `docs/98.archive/README.md` only.
 - [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve each provider README and adjacent executable assets as one boundary; they are not live provider-latest guidance unless an approved provider refresh spec exists.
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable; source-code test surfaces own coverage evidence, while Bash/YAML/Markdown infrastructure changes use validation-matrix evidence instead of application coverage claims
-- [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced
+- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
+- [ ] No live cluster mutation or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)
 
 ## 7. Checklist
@@ -88,17 +81,9 @@ results without repeating those commands on the same inputs.
 - [ ] Bootstrap-only behavior changed
 - [ ] Live runtime evidence is required
 
-If any harness surface changed, record exact static validation evidence:
-
-```bash
-python3 scripts/qa.py full
-```
-
-Live checks, only when explicitly approved:
-
-```bash
-bash infrastructure/verify/run-all.sh
-```
+For harness changes, record the applicable local checks and hosted result under
+[Quality Policy](../.agents/governance/quality.md). Live checks require explicit
+operator approval.
 
 Secret handling:
 

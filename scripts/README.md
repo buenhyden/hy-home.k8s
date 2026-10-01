@@ -113,19 +113,18 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 ## Validation
 
 가장 작은 owner부터 실행하고 이어서 현재 작업에 필요한 affected·staged lane을
-실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하며 full은 공통
-품질 정책에 따라 최종 handoff 전에 실행한다.
+실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. PR 전달의
+최종 full은 hosted CI가 맡고, 로컬에서만 인계할 때는 local full을 한 번 실행한다.
+자세한 delivery 경계는 [Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
 
 ```bash
 python3 -m unittest tests.test_validation_tooling_ownership
-python3 scripts/validate-affected-surfaces.py --root .
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-agent-governance.py --root .
-python3 scripts/qa.py full
+python3 scripts/qa.py quick
 git diff --check
 ```
+
+로컬 전용 인계에서는 마지막 작업 트리에 대해 `python3 scripts/qa.py full`을
+한 번 실행한다. PR 전달의 최종 full은 hosted CI가 담당한다.
 
 QA는 추적 경로와, 해당하는 ignore되지 않은 미추적 경로를 직접 고른다. 숨김
 경로, 삭제, 이름 변경도 포함한다. 작업 트리 변경에는 `qa.py quick`을, 정확한

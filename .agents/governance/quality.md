@@ -116,6 +116,22 @@ confirmation for the same scope and evidence snapshot.
   reviews remain governed by their existing owners. Native and live claims
   still require the corresponding observed evidence.
 
+### Delivery ownership
+
+| Route | Required owner and evidence |
+| --- | --- |
+| Routine editing | Focused checks and affected `quick` evidence for changed bytes; full QA is not an editing prerequisite. |
+| Local commit | Review the logical index, run exact-index `staged` QA and commit-message validation, then commit with active hooks. |
+| Feature push | Preserve the commit evidence; pushing requires the selected Git finish authorization. A feature push does not add a local full QA obligation. |
+| Pull request | Hosted CI owns final full QA on its immutable checkout. Record the required `ci-summary` SHA/run and applicable branch policy; a local full run is optional diagnostic evidence. |
+| Main integration | Required hosted branch/protected checks own the verdict for the exact integrated SHA. Until protected reuse is implemented and observed, main CI runs its full QA profile; local evidence does not replace it. |
+| Local-only handoff | Run full QA once on the final working tree because no PR hosted full result will follow. |
+
+The registry selects gates within a profile. Reuse only a successful result for
+identical declared input bytes, configuration, tool identity, scope, and mode;
+changed inputs require a fresh result. A static workflow file cannot establish
+hosted execution or remote branch protection.
+
 ### Canonical completion sequence
 
 1. **targeted**: reproduce changed behavior and run focused checks while implementing.
@@ -124,12 +140,13 @@ confirmation for the same scope and evidence snapshot.
    reviewed logical set, inspect the cached diff, run `git diff --check` and
    `git diff --cached --check`, then exact-index staged QA. Validate the actual
    message under Git policy and commit through normal active hooks.
-4. **final full**: before handoff run full QA on the final working tree. Its unit
-   discovery and pre-commit gate are not repeated on identical inputs under
-   another command name. Full/ci equality is checked by contract tests.
+4. **delivery validation**: for a PR, rely on hosted full CI at the exact PR
+   SHA; for a local-only handoff, run full QA once on the final working tree.
+   Full/ci equality is checked by contract tests. Unit discovery and the
+   all-files pre-commit gate run once per identical input and mode.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself
-   never fixes source files. A final full failure keeps the work incomplete.
+   never fixes source files. A failed required delivery check keeps the work incomplete.
 6. **evidence handoff**: record the checked snapshot and any subsequent Task-only
    changes separately, validating those document changes without a self-SHA or
    elapsed-time rewrite loop. Review final diff scope and remaining acceptance using the semantic review

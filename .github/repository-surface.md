@@ -38,9 +38,10 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
   갱신한다. `scripts/validate-ci-python-contract.py`가 해석된 pin을 정확히
   단언하므로, lock 변경과 그 단언은 리뷰를 거친 한 변경에서 함께 바뀌어야 한다.
   자동 bump는 자기 gate를 통과할 수 없는 pull request를 열게 된다.
-- 로컬 완료 순서, lane, 결과, formatter, handoff의 유일한 정본 소유자는
-  [`quality.md`](../.agents/governance/quality.md)다.
-  이 hub와 PR template은 GitHub 고유 소비자를 그곳으로 안내할 뿐이다.
+- 로컬 커밋, PR, main, 로컬 전용 인계의 delivery owner와 증거 순서는
+  [`quality.md`](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
+  PR의 최종 full QA는 hosted CI가 담당한다. 이 hub와 PR template은
+  GitHub 고유 소비자를 그곳으로 안내한다.
 - 현재 검증기 명령과 fixture inventory는
   [`scripts/README.md`](../scripts/README.md)와
   [`tests/README.md`](../tests/README.md)에 있다. 이 hub는 그 개수를 옮겨
