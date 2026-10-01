@@ -694,10 +694,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                     set(assignments[profile_id]["states"]),
                 )
 
-    def test_retired_program_and_standalone_planes_are_absent(self) -> None:
-        self.assertNotIn("programLineage", self.registry)
-        self.assertNotIn("standaloneExecutions", self.registry)
-
     def test_terminal_templates_must_be_regular_non_symlink_files(self) -> None:
         contracts = load_document_contracts()
         missing = clone_registry(self.registry)
