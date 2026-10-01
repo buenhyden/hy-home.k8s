@@ -1,6 +1,6 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme-runtime-governance"
 status: "active"
 owner: "platform"
@@ -74,7 +74,7 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` checks `branch-policy`, `qa`, `qa-isolated` and `qa-source`; PR uses the registry complement plus isolated gate, main uses full or independently proven reuse, and manual dispatch uses full. Ordinary QA prepares locked dependencies once on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` requires successful applicable `branch-policy`, `qa` and `qa-isolated` results; `qa-source` is an ordering dependency whose absent proof selects full QA; PR uses the registry complement plus isolated gate, main uses full or independently proven reuse, and manual dispatch uses full. Ordinary QA prepares locked dependencies once on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs on pushed release tags matching `v*.*.*`. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |

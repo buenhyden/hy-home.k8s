@@ -1,10 +1,10 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.20"
+version: "1.6.21"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-10-01"
+updated: "2026-10-02"
 layer: "requirements"
 artifact_id: "REQ-0003"
 ---
@@ -225,7 +225,7 @@ Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 
 ## Traceability
 
-[SPEC-0102](../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is the completed agent-contract work unit. The current [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) draft owns QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
+[SPEC-0102](../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is the completed agent-contract work unit. The current [SPEC-0103](../03.specs/0103-qa-evidence-reuse/spec.md) owns QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
 
 Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was delivered by [SPEC-0100](../98.archive/completed/03.specs/0100-archive-lifecycle-standardization/spec.md); its state-vocabulary proposal does not alter these requirements.
 

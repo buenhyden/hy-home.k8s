@@ -1,10 +1,10 @@
 ---
 title: "QA Evidence Reuse Implementation Plan"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-10-01"
+updated: "2026-10-02"
 layer: "specs"
 artifact_id: "SPEC-0103-PLAN-0001"
 ---
@@ -43,7 +43,7 @@ artifact_id: "SPEC-0103-PLAN-0001"
 
 ## Overview
 
-The request owner approved the Plan on 2026-10-01. The later test-disposition request adds Task 7 before protected-host implementation. Tasks 1 and 2 have local reviewed commits; hosted reuse and tags remain inactive until the protected GitHub control is observed.
+The request owner approved the Plan on 2026-10-01. The later test-disposition request adds Task 7 before protected-host implementation. Tasks 1–5 and 7 have locally reviewed implementation or audit commits; Task 6 reconciles final local QA and handoff. Hosted reuse and tags remain inactive until the protected GitHub control is observed. The Plan stays active; Tasks 3–5 retain their hosted deferrals.
 
 ## Context
 

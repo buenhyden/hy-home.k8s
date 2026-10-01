@@ -1,10 +1,10 @@
 ---
 title: "Active QA test disposition"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-10-01"
+updated: "2026-10-02"
 layer: "specs"
 artifact_id: "SPEC-0103-TSK-0007"
 ---
@@ -70,7 +70,7 @@ an explicit `test_*.py` inventory and exact argv discover the same cases.
 The one-time census used `unittest.TestLoader().discover('tests', top_level_dir='.')`,
 recursively flattened the suite, counted `case.id()` and owning modules, and
 checked `loader.errors`. Baseline: **56 modules / 1,290 cases / no load errors**.
-Final: **56 modules / 1,288 cases / 1,288 unique IDs / no load errors**. Subtests
+Task 7 historical final snapshot: **56 modules / 1,288 cases / 1,288 unique IDs / no load errors**. Later Tasks 3–5 add test modules and cases; [Task 6](tsk-0006-integration.md#test-disposition-since-task-7) owns the final integration census and their dispositions. Subtests
 are assertion scenarios within those cases, not extra discovered cases. The
 external-service module changes from 12 to 11 cases and strict-cutover from
 58 to 57; all other counts are stable.
@@ -285,7 +285,7 @@ The final full unit gate reported stdout SHA-256
 `4230fe8fa306f4fc5024332564c0f87f007ecbe8cab1bdd77b80029e2edb7a9c`;
 its pinned `pre-commit run --all-files --hook-stage manual` gate reported stdout
 SHA-256 `ed873238f5f28f072a6c188ccf9690cf67d65abe1554872445869f431282d5ae`.
-The retirement scope remains 56 modules and 1,288 unique cases, compared with
+The historical Task 7 retirement scope is 56 modules and 1,288 unique cases, compared with
 1,290 baseline cases. The two retained-negative proofs above remain the deletion
 basis; the format-only repair changes no assertion, import or test name.
 

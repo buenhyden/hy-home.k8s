@@ -1,10 +1,10 @@
 ---
 title: "QA Evidence Reuse Across Delivery Boundaries"
-version: "0.1.3"
+version: "0.1.4"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-10-01"
+updated: "2026-10-02"
 layer: "specs"
 artifact_id: "SPEC-0103"
 ---
@@ -20,8 +20,9 @@ main updates also publish one immutable commit tag. Each required
 gate executes once for a proven-equivalent input; a reused result names its
 actual successful source. Changed input, Git history, toolchain, or environment
 receives a new check. The request owner approved this Spec and its implementation Plan on 2026-10-01.
-Implementation is in progress; the later request to audit invoked tests is tracked
-in Plan Task 7.
+Local implementation and the invoked-test audit are reconciled in
+[Task 6](tasks/tsk-0006-integration.md). Protected hosted activation and trials
+remain DEFER; this Spec stays active until its remote criteria pass.
 
 The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md),
 [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md),
