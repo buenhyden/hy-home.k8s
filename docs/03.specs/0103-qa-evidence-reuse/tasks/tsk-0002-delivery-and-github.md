@@ -1,6 +1,6 @@
 ---
 title: "Delivery policy, scripts, and GitHub routes"
-version: "0.2.0"
+version: "0.2.1"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0103-TSK-0002"
 
 ## Overview
 
-Execute [Plan WP-0002](../plan.md) against the approved [SPEC-0103](../spec.md). This record tracks the local Task 2 implementation. Hosted execution is separate evidence.
+Execute [Plan WP-0002](../plan.md) against the approved [SPEC-0103](../spec.md). Implementation landed in `b105708fcc545566aa89a97daadd409b8b1aa4ef` on `codex/qa-evidence-implementation`. Hosted execution is separate evidence.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Execute [Plan WP-0002](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-002 | VAL-QER-003, VAL-QER-009, VAL-QER-011 | Assign delivery owners, repair routes, audit script consumers | platform | In progress | Local route tests and quick QA PASS; commit/review pending | This record and Task 2 report. |
+| WORK-002 | VAL-QER-003, VAL-QER-009, VAL-QER-011 | Assign delivery owners, repair routes, audit script consumers | platform | In progress | Implementation committed; local focused, quick, and exact-index staged evidence PASS; follow-up handoff review pending | `b105708fcc545566aa89a97daadd409b8b1aa4ef` and verification below. |
 
 ## Approval and Safety Boundaries
 
@@ -40,6 +40,15 @@ Execute [Plan WP-0002](../plan.md) against the approved [SPEC-0103](../spec.md).
 ## Verification Summary
 
 Local evidence is recorded below. Static fixtures are not hosted or provider observations.
+
+### Implementation snapshot and validation
+
+- Branch: `codex/qa-evidence-implementation`; base: `a18d1ed92a9d76eda07e71cc90a4689a24427b8e`; implementation commit: `b105708fcc545566aa89a97daadd409b8b1aa4ef`. That commit changed 13 Task-owned files; its post-commit worktree was clean.
+- RED: `python3 -m unittest tests.test_ci_qa_workflow tests.test_validation_profiles tests.test_validation_tooling_ownership` ran 53 tests with five expected route failures (PR local-full demand, Discussions contact, Dependabot label, cluster label, private reporting). The manifest missing-directory/nonempty negative passed. A separate projection-transfer test failed against the old PR-template validator assertion, as expected.
+- GREEN: `python3 -m unittest tests.test_ci_qa_workflow tests.test_validation_profiles tests.test_validation_tooling_ownership tests.test_repository_quality_rules` ran 57 tests, all passed. `python3 scripts/validate-github-actions-security.py --root .` returned `PASS: GitHub Actions security`.
+- `python3 scripts/qa.py quick` passed all 13 selected gates on 13 working-tree paths. After a Task-only evidence wording correction, `python3 scripts/qa.py staged` passed all 13 gates against the corrected exact index committed as `b105708f`. `git diff --check` and `git diff --cached --check` passed; the normal commit used `scripts/githooks` without bypass. An earlier quick run failed on invalid Task status/headings and an obsolete PR-template assertion; those were repaired before the passing runs.
+- Delivery lane: local full QA was not required for this PR-bound unit. The hosted `ci-summary` SHA/run is `DEFER` until a PR exists. No push, PR, merge, or live mutation was performed.
+- Independent read-only review round 1 found the code/config changes aligned with the brief but found this tracked handoff incomplete. This Task-only correction records the missing evidence; its follow-up review remains pending and is not claimed as approval. Rollback is a forward revert of the implementation and Task-only follow-up commits together. The parent reviewer owns re-review; the operator owns hosted and remote evidence.
 
 ### Active CI/QA script disposition
 
@@ -111,4 +120,4 @@ entries; the tracked ruleset note is not remote enforcement evidence.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | In progress | Local route tests and caller audit below; final evidence pending. |
+| [WORK-002](../plan.md#work-breakdown) | In progress | Implementation `b105708f`; local evidence in Verification Summary; follow-up review and hosted evidence pending. |
