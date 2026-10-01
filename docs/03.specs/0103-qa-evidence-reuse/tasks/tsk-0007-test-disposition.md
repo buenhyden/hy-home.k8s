@@ -250,8 +250,10 @@ escalated local execution was then used, without changing provider trust.
 | Final focused checks | `python3 -m unittest tests.test_external_service_contracts tests.test_validation_profiles tests.test_validate_affected_surfaces tests.test_validation_tooling_ownership tests.test_document_strict_cutover.Stage99TerminalAuthorityTests.test_v9_registry_uses_the_common_public_model` | PASS: 63 tests / 7.525s; final test bytes |
 | Initial affected lane | `python3 scripts/qa.py quick` | FAIL only repository-quality: this Task included a machine-local absolute checkout path; 6 other gates PASS. Repaired to a portable worktree name |
 | Final affected lane | `python3 scripts/qa.py quick` on tree `fa30de75389d523eadbf45f0815e53103b6cdd72` | PASS: all 7 selected gates; complete pipes and cleanup. Subsequent edits only record evidence |
-| Exact index | `python3 scripts/qa.py staged` on tree `e3593e0291bdc9d31dfe989e19681bcf072397e9` | PASS: all 7 selected gates; complete pipes and cleanup. The subsequent Task-only receipt is restaged and checked again before commit |
-| Diff/message/commit | `git diff --check`; `git diff --cached --check`; active hooks at `scripts/githooks`; `git commit -m "test: retire proven redundant QA tests"` | Diff checks PASS; reviewed logical set is three owned files. Commit uses active staged formatting and commit-message hooks; its identity belongs to the enclosing Git commit and handoff report, avoiding a self-SHA rewrite |
+| Exact index | `python3 scripts/qa.py staged` on trees `e3593e0291bdc9d31dfe989e19681bcf072397e9` and final implementation tree `c5e22a8b83ecdddfd516ba4f682328768c04ae4e` | PASS: all 7 selected gates on each distinct Task-evidence snapshot; complete pipes and cleanup |
+| Diff and file hooks | `git diff --check`; `git diff --cached --check`; `pre-commit run --files docs/03.specs/0103-qa-evidence-reuse/tasks/tsk-0007-test-disposition.md tests/test_document_strict_cutover.py tests/test_external_service_contracts.py` | PASS: exact three-file set; applicable file hooks including Ruff, Markdown and secrets passed; irrelevant file types explicitly skipped |
+| Implementation commit | `git commit -m "test: retire proven redundant QA tests"` | PASS: `e0c6955e74ae15e958976908b666866eab922fd5`; hooks were not disabled or changed |
+| Message verification | `pre-commit run commitizen --hook-stage commit-msg --commit-msg-filename /tmp/task7-implementation-message.txt`; same argv for `/tmp/task7-evidence-message.txt` | PASS for the actual implementation message extracted with `git log -1 --format=%B` and planned evidence message. Implementation message check occurred after its commit; follow-up message check occurred before its commit |
 
 The removed-method file's final SHA-256 is
 `27d620d3421731c9a703474f18a2fdfb12bb81ae5a656c14db558ada34798510`;
@@ -315,6 +317,23 @@ The tool display truncated two headers; a bounded rerun of the two
 configuration error (2 cases / 2 errors). No second raw aggregate was run.
 
 ### Review, limits and handoff
+
+Implementation commit: `e0c6955e74ae15e958976908b666866eab922fd5`
+(`test: retire proven redundant QA tests`), based on `7ad42d2e`. This later
+Task-only evidence change records its final dispositions without naming its
+own future commit. Final test bytes remain those of the recorded full unit
+gate; the Task-only change receives affected and exact-index document checks.
+
+Hook observation: repository-local `core.hooksPath` resolves to `scripts/githooks`;
+both configured hook wrappers are present. Their shared `chained-hook.sh`
+attempts a configured global hook and then a common Git-directory workspace
+hook, treating an absent nonexecutable target as no work. The latter targets
+are absent in this clone; that does not mean the configured wrappers are absent.
+The successful commit output contains no per-hook trace, so this record makes
+no automatic Commitizen execution claim. File hooks passed explicitly before
+the implementation commit; its actual message passed explicit pinned Commitizen
+afterward. No hook configuration was changed; the follow-up message is checked
+before commit.
 
 - Writer: `/root/implement_task7`, scoped quality responsibility; self-review
   confirms only two method removals (12 lines total) and this evidence record.
