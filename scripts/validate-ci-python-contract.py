@@ -109,7 +109,26 @@ INSTALL_COMMAND = (
 )
 QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
 # Only this complete audited bootstrap may bypass the install shell grammar.
-ISOLATED_BOOTSTRAP = '# Bootstrap raw Git bytes, before importing any checkout module.\n/usr/local/bin/python3 -I -B - <<\'PYTHON\'\nimport os, subprocess, sys\ncommit = os.environ["EXPECTED_COMMIT"]\ncode = subprocess.check_output(["/usr/bin/git", "show", commit + ":scripts/qa_provenance_hosted.py"], timeout=30)\nsys.argv = ["qa_provenance_hosted.py", "isolated", "--commit", commit]\nexec(compile(code, "qa_provenance_hosted.py", "exec"), {"__name__": "__main__"})\nPYTHON'
+ISOLATED_BOOTSTRAP = """\
+# Bootstrap raw Git bytes, before importing any checkout module.
+/usr/local/bin/python3 -I -B - <<'PYTHON'
+import os, subprocess, sys
+from pathlib import Path
+commit = os.environ["EXPECTED_COMMIT"]
+root = Path.cwd().resolve(strict=True)
+env = {
+    "HOME": "/nonexistent", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/local/bin:/usr/bin:/bin", "TZ": "UTC",
+    "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_OPTIONAL_LOCKS": "0",
+}
+code = subprocess.check_output(
+    ["/usr/bin/git", "-c", f"safe.directory={root}", "show", commit + ":scripts/qa_provenance_hosted.py"],
+    cwd=root, env=env, timeout=30,
+)
+sys.argv = ["qa_provenance_hosted.py", "isolated", "--commit", commit]
+exec(compile(code, "qa_provenance_hosted.py", "exec"), {"__name__": "__main__"})
+PYTHON"""
 GITLEAKS_JOBS = ("qa",)
 GITLEAKS_INSTALL_COMMAND = f"""\
 set -euo pipefail
