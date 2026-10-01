@@ -2180,6 +2180,35 @@ if __name__ == "__main__":
 
 
 class ReuseCandidateTest(unittest.TestCase):
+    def test_external_dependency_gate_executes_despite_supplied_candidate(self):
+        row = dict(CONTRACT["validators"][0], id="external-service-contracts")
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER, "run_bounded_command", return_value=bounded_result()
+            ) as child,
+            redirect_stdout(StringIO()) as output,
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["file.txt"],
+                    {"validators": [row]},
+                    _ContractModule,
+                    validator_ids=["external-service-contracts"],
+                    reuse_candidates={
+                        "external-service-contracts": {
+                            "identity": "a" * 64,
+                            "source": "local",
+                        }
+                    },
+                ),
+                0,
+            )
+        child.assert_called_once()
+        self.assertNotIn("[REUSED]", output.getvalue())
+
     def test_unknown_reuse_metadata_executes(self):
         row = dict(CONTRACT["validators"][0], reuse="unrecognized")
         contract = {"validators": [row]}

@@ -145,17 +145,41 @@ class ValidationProfileTests(unittest.TestCase):
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
+    def test_opted_in_validator_has_only_stdlib_and_snapshot_imports(self):
+        import ast
+        import sys
+
+        for path, expected_local in (
+            (ROOT / ".agents/evaluations/run-agent-evaluations.py", {"validation"}),
+            (ROOT / "scripts/validation/repository/bounded_io.py", set()),
+        ):
+            source = path.read_text()
+            imports = {
+                alias.name.split(".")[0]
+                for node in ast.walk(ast.parse(source))
+                if isinstance(node, ast.Import)
+                for alias in node.names
+            } | {
+                node.module.split(".")[0]
+                for node in ast.walk(ast.parse(source))
+                if isinstance(node, ast.ImportFrom) and node.module
+            }
+            self.assertEqual(imports - sys.stdlib_module_names, expected_local)
+        registry = {row["id"]: row for row in self.contract["validators"]}
+        self.assertNotIn("reuse", registry["external-service-contracts"])
+        self.assertEqual(
+            registry["agent-evaluation-cases"]["reuse"], {"mode": "change-scoped"}
+        )
+
     def test_reuse_declaration_is_opt_in_and_invalid_forms_fail(self):
         reusable = [row for row in self.contract["validators"] if "reuse" in row]
-        self.assertEqual(
-            [row["id"] for row in reusable], ["external-service-contracts"]
-        )
+        self.assertEqual([row["id"] for row in reusable], ["agent-evaluation-cases"])
         for change in ({"mode": "unknown"}, {"mode": "change-scoped", "extra": True}):
             contract = copy.deepcopy(self.contract)
             next(
                 row
                 for row in contract["validators"]
-                if row["id"] == "external-service-contracts"
+                if row["id"] == "agent-evaluation-cases"
             )["reuse"] = change
             with self.assertRaises(ROUTES.ContractError):
                 ROUTES.validate_contract(ROOT, contract)
@@ -163,7 +187,7 @@ class ValidationProfileTests(unittest.TestCase):
         next(
             row
             for row in contract["validators"]
-            if row["id"] == "external-service-contracts"
+            if row["id"] == "agent-evaluation-cases"
         )["optional"] = True
         with self.assertRaises(ROUTES.ContractError):
             ROUTES.validate_contract(ROOT, contract)

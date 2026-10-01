@@ -906,7 +906,7 @@ class LocalEvidenceTests(unittest.TestCase):
 
     def test_exact_input_identity_changes_for_bytes_mode_paths_base_and_argv(self):
         gate = {
-            "id": "external-service-contracts",
+            "id": "agent-evaluation-cases",
             "argv": ["python3", "check.py"],
             "reuse": {"mode": "change-scoped"},
         }
@@ -943,7 +943,7 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = {
             "validators": [
                 {
-                    "id": "external-service-contracts",
+                    "id": "agent-evaluation-cases",
                     "argv": ["python3", "check.py"],
                     "lanes": ["affected", "staged"],
                     "optional": False,
@@ -960,12 +960,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["external-service-contracts"]},
+                return_value={"validators": ["agent-evaluation-cases"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["external-service-contracts"],
+                return_value=["agent-evaluation-cases"],
             ),
             mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
             mock.patch.object(
@@ -995,15 +995,140 @@ class LocalEvidenceTests(unittest.TestCase):
             ]
         self.assertEqual([result for result, _ in results], [0, 0, 0])
         self.assertEqual(len(gate_calls), 1)
-        self.assertIn("[REUSED] external-service-contracts", results[1][1])
-        self.assertIn("[REUSED] external-service-contracts", results[2][1])
+        self.assertIn("[REUSED] agent-evaluation-cases", results[1][1])
+        self.assertIn("[REUSED] agent-evaluation-cases", results[2][1])
+
+        # The same selected path must execute again when its staged bytes change.
+        (self.root / "check.py").write_text("print('changed gate')\n")
+        self.git("add", "check.py")
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as changed_child,
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+        ):
+            with redirect_stdout(io.StringIO()) as changed_output:
+                self.assertEqual(self.qa.main(), 0)
+            (self.root / "check.py").chmod(0o755)
+            self.git("add", "check.py")
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(self.qa.main(), 0)
+            (self.root / "new.txt").write_text("new path\n")
+            sys.argv[1] = "quick"
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(self.qa.main(), 0)
+            gate_calls = [
+                call
+                for call in changed_child.call_args_list
+                if call.args and "check.py" in call.args[0]
+            ]
+        self.assertEqual(len(gate_calls), 3)
+        self.assertIn("[PASS] agent-evaluation-cases", changed_output.getvalue())
+
+    def test_changed_tool_config_and_argv_execute_again(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        (self.root / "config.json").write_text('{"rule":1}\n')
+        self.git("add", "check.py", "config.json")
+        contract = {
+            "validators": [
+                {
+                    "id": "agent-evaluation-cases",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+        import io
+        from contextlib import redirect_stdout
+
+        baseline = ["fixed-base"]
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["agent-evaluation-cases"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["agent-evaluation-cases"],
+            ),
+            mock.patch.object(
+                self.qa, "base_revision", side_effect=lambda *_: baseline[0]
+            ),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as child,
+        ):
+            for step in range(5):
+                if step == 1:
+                    (self.root / "config.json").write_text('{"rule":2}\n')
+                    self.git("add", "config.json")
+                if step == 2:
+                    contract["validators"][0]["argv"].append("--flag")
+                if step == 3:
+                    baseline[0] = "changed-base"
+                if step == 4:
+                    alternate = Path(self.temporary.name) / "python3"
+                    alternate.symlink_to(sys.executable)
+                    original_resolve = self.qa.runner.resolve_tool
+                    with mock.patch.object(
+                        self.qa.runner,
+                        "resolve_tool",
+                        side_effect=lambda token, root: (
+                            str(alternate)
+                            if token == "python3"
+                            else original_resolve(token, root)
+                        ),
+                    ):
+                        with redirect_stdout(io.StringIO()):
+                            self.assertEqual(self.qa.main(), 0)
+                    continue
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(self.qa.main(), 0)
+            gate_calls = [
+                call
+                for call in child.call_args_list
+                if call.args and "check.py" in call.args[0]
+            ]
+        self.assertEqual(len(gate_calls), 5)
 
     def test_formatter_rewrite_cannot_record_pass(self):
         (self.root / "check.py").write_text("print('gate passed')\n")
         contract = {
             "validators": [
                 {
-                    "id": "external-service-contracts",
+                    "id": "agent-evaluation-cases",
                     "argv": ["python3", "check.py"],
                     "lanes": ["affected", "staged"],
                     "optional": False,
@@ -1015,7 +1140,7 @@ class LocalEvidenceTests(unittest.TestCase):
         }
 
         def mutating_run(snapshot, *_args, **kwargs):
-            kwargs["completed_passes"]["external-service-contracts"] = "PASS"
+            kwargs["completed_passes"]["agent-evaluation-cases"] = "PASS"
             (snapshot / "check.py").write_text("formatter rewrite\n")
             return 0
 
@@ -1026,12 +1151,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["external-service-contracts"]},
+                return_value={"validators": ["agent-evaluation-cases"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["external-service-contracts"],
+                return_value=["agent-evaluation-cases"],
             ),
             mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
             mock.patch.object(self.qa.runner, "run_selected", side_effect=mutating_run),

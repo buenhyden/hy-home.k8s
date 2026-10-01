@@ -48,6 +48,7 @@
     },
     {
       "id": "agent-evaluation-cases",
+      "reuse": {"mode": "change-scoped"},
       "argv": [
         "python3",
         ".agents/evaluations/run-agent-evaluations.py",
@@ -508,7 +509,6 @@
     },
     {
       "id": "external-service-contracts",
-      "reuse": {"mode": "change-scoped"},
       "argv": [
         "python3",
         ".agents/skills/external-service-contract-audit/scripts/validate-service-endpoints.py",
