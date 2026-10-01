@@ -1,6 +1,6 @@
 ---
 title: "Protected App PR proof"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -119,7 +119,22 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   tags were created or changed. Rollback disables proof/reuse activation and
   preserves full main QA; use a reviewed forward revert of implementation
   commit `21bfec9dee70f64a52044190c7d548657141a0ed` for these local files.
-- Next owner: supervisor for independent review, then operator for hosted
+- Review fix round 1 resumes from `5a8401639349e32308b5083c57545e0c7196131a`.
+  Independent `review_task3_code` found that a fork PR can have an empty
+  workflow-run PR relation, leaving a required App check pending. RED: the
+  new valid-fork provider fixture failed in a 34-case focused run. GREEN:
+  all 34 focused cases passed after bounded authenticated PR discovery.
+  The changed three-file checkpoint passed all 12 quick gates; final index
+  validation covers this subsequent evidence-only result update.
+- The fallback queries open PRs against main using the URL-encoded provider
+  head repository owner and exact branch. It requires exactly one candidate,
+  then re-reads that PR and binds repository IDs, branch, head/base SHAs and
+  the current synthetic merge SHA to the already authenticated run/attempt.
+  The durable merge-parent and control-closure checks remain mandatory.
+  Missing, ambiguous, stale, changed-repository and changed-branch candidates
+  reject proof before App-key access. No head-SHA-only inference is used.
+  No workflow-path relaxation, permission or activation change is included.
+- Next owner: supervisor for independent re-review, then operator for hosted
   activation. Local targeted checks are not an activated protected check.
 
 ## Traceability

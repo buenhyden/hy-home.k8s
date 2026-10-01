@@ -21,6 +21,7 @@ import sys
 import time
 from typing import Any, Mapping
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 PROOF_LIMIT = 16 * 1024
@@ -258,7 +259,8 @@ class GitHubReader:
     def pages(self, route, *, field=None, count=None):
         items = []
         for page in range(1, MAX_PAGES + 1):
-            response = self.get(route + f"?per_page=100&page={page}")
+            separator = "&" if "?" in route else "?"
+            response = self.get(route + separator + f"per_page=100&page={page}")
             rows = response[field] if field else response
             require(isinstance(rows, list) and len(rows) <= 100, "invalid API page")
             if field:
@@ -355,6 +357,44 @@ def verify_pr(event: Mapping[str, Any], github: GitHubReader) -> Proof | Reject:
         )
 
 
+def source_pull(run, github):
+    relations = run["pull_requests"]
+    require(isinstance(relations, list) and len(relations) <= 1, "ambiguous PR source")
+    discovered = not relations
+    if discovered:
+        repository = run["head_repository"]
+        owner, branch = repository["owner"]["login"], run["head_branch"]
+        require(
+            isinstance(owner, str) and re.fullmatch(r"[A-Za-z0-9-]{1,100}", owner),
+            "invalid head owner",
+        )
+        require(
+            isinstance(branch, str)
+            and 0 < len(branch) <= 1024
+            and branch.isprintable(),
+            "invalid head branch",
+        )
+        require(repository["full_name"].startswith(owner + "/"), "head owner mismatch")
+        query = urlencode(
+            {"state": "open", "base": "main", "head": owner + ":" + branch}
+        )
+        relations = github.pages("pulls?" + query)
+    require(len(relations) == 1, "missing or ambiguous PR source")
+    relation = relations[0]
+    if discovered:
+        require(
+            relation["state"] == "open"
+            and relation["base"]["ref"] == "main"
+            and repo_matches(relation["base"]["repo"], github)
+            and relation["head"]["ref"] == run["head_branch"]
+            and relation["head"]["repo"]["id"] == run["head_repository"]["id"]
+            and relation["head"]["repo"]["full_name"]
+            == run["head_repository"]["full_name"],
+            "PR lookup does not match source branch/repository",
+        )
+    return relation, github.get(f"pulls/{positive(relation['number'])}"), discovered
+
+
 def _verify_pr(event, github):
     require(
         event["action"] == "completed" and repo_matches(event["repository"], github),
@@ -370,7 +410,15 @@ def _verify_pr(event, github):
     route = f"actions/runs/{run_id}"
     current = github.get(route)
     run = github.get(route + f"/attempts/{attempt}")
-    fields = ("id", "run_attempt", "workflow_id", "event", "head_sha", "path")
+    fields = (
+        "id",
+        "run_attempt",
+        "workflow_id",
+        "event",
+        "head_sha",
+        "head_branch",
+        "path",
+    )
     require(
         all(run[key] == source[key] == current[key] for key in fields),
         "source run or attempt changed",
@@ -398,10 +446,15 @@ def _verify_pr(event, github):
         and workflow["state"] == "active",
         "workflow is not active CI",
     )
-    require(len(run["pull_requests"]) == 1, "ambiguous PR source")
-    relation = run["pull_requests"][0]
+    require(
+        all(
+            value["head_repository"]["id"] == run["head_repository"]["id"]
+            for value in (source, current)
+        ),
+        "source head repository changed",
+    )
+    relation, pr, discovered = source_pull(run, github)
     number = positive(relation["number"])
-    pr = github.get(f"pulls/{number}")
     require(pr["number"] == number and pr["state"] == "open", "PR no longer open")
     base, head = sha(pr["base"]["sha"]), sha(pr["head"]["sha"])
     require(
@@ -414,8 +467,9 @@ def _verify_pr(event, github):
         "run PR relation changed",
     )
     require(
-        run["head_repository"]["id"] == pr["head"]["repo"]["id"],
-        "wrong head repository",
+        run["head_repository"]["id"] == pr["head"]["repo"]["id"]
+        and run["head_branch"] == pr["head"]["ref"],
+        "wrong head branch or repository",
     )
     baseline = github.controls(github.commit(base))
     # Audit every commit tree before interpreting any PR-controlled step name.
@@ -491,6 +545,10 @@ def _verify_pr(event, github):
     successful(aggregate[0])
     require(checkout[0]["number"] < aggregate[0]["number"], "wrong step order")
     checkout_sha = sha(checkout[0]["name"][len(CHECKOUT_PREFIX) :])
+    if discovered:
+        require(
+            pr["merge_commit_sha"] == checkout_sha, "PR lookup merge checkout changed"
+        )
     checkout_commit = github.commit(checkout_sha)
     require(
         [parent["sha"] for parent in checkout_commit["parents"]] == [base, head],

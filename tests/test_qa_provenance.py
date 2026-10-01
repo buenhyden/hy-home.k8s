@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 import unittest
 from unittest.mock import patch
+from urllib.parse import urlencode
 
 from scripts import qa_provenance as provenance
 
@@ -26,11 +27,16 @@ def blob(data):
 class FakeGitHub(provenance.GitHubReader):
     def __init__(self):
         super().__init__("unused", REPO, 10, 20, BASE, root=ROOT)
-        repo = {"id": 10, "full_name": REPO, "default_branch": "main"}
+        repo = {
+            "id": 10,
+            "full_name": REPO,
+            "default_branch": "main",
+            "owner": {"login": "buenhyden"},
+        }
         pr_ref = {
             "number": 7,
             "base": {"sha": BASE, "repo": repo},
-            "head": {"sha": HEAD, "repo": repo},
+            "head": {"sha": HEAD, "repo": repo, "ref": "codex/test-provenance"},
         }
         self.run = {
             "id": 30,
@@ -40,6 +46,7 @@ class FakeGitHub(provenance.GitHubReader):
             "status": "completed",
             "conclusion": "success",
             "head_sha": HEAD,
+            "head_branch": "codex/test-provenance",
             "path": ".github/workflows/ci.yml",
             "repository": repo,
             "head_repository": repo,
@@ -78,7 +85,11 @@ class FakeGitHub(provenance.GitHubReader):
             "actions/runs/30": self.run,
             "actions/runs/30/attempts/2": self.run,
             "pulls/7": dict(
-                pr_ref, state="open", commits=1, base=dict(pr_ref["base"], ref="main")
+                pr_ref,
+                state="open",
+                commits=1,
+                merge_commit_sha=MERGE,
+                base=dict(pr_ref["base"], ref="main"),
             ),
             "pulls/7/commits?per_page=100&page=1": [{"sha": HEAD}],
             "git/commits/" + BASE: {
@@ -171,6 +182,83 @@ class ProvenanceTests(unittest.TestCase):
         self.assertEqual(set(proof.record["gates"]), set(registry["profiles"]["full"]))
         self.assertEqual(set(proof.record["gates"].values()), {"PASS"})
         self.assertEqual(proof.record["tools"]["runtime"], "unattested")
+
+    def fork_source(self):
+        self.github = FakeGitHub()
+        fork = {
+            "id": 90,
+            "full_name": "fork-owner/hy-home.k8s",
+            "owner": {"login": "fork-owner"},
+        }
+        branch = "codex/fork&title=encoded"
+        self.github.run.update(
+            head_repository=fork, head_branch=branch, pull_requests=[]
+        )
+        self.github.event["workflow_run"] = copy.deepcopy(self.github.run)
+        pr = self.github.data["pulls/7"]
+        pr["head"] = {"repo": fork, "sha": HEAD, "ref": branch}
+        query = urlencode(
+            {"state": "open", "base": "main", "head": "fork-owner:" + branch}
+        )
+        route = "pulls?" + query + "&per_page=100&page=1"
+        self.github.data[route] = [copy.deepcopy(pr)]
+        return route, pr
+
+    def test_empty_fork_relation_uses_unique_provider_lookup(self):
+        route, _ = self.fork_source()
+        proof = self.verify()
+        self.assertIsInstance(proof, provenance.Proof)
+        self.assertEqual(proof.record["pr"], 7)
+        self.assertEqual(proof.record["checkout"]["commit"], MERGE)
+        self.assertIn(("/repos/" + REPO + "/" + route, "GET", None), self.github.calls)
+        self.assertIn("head=fork-owner%3Acodex%2Ffork%26title%3Dencoded", route)
+
+    def test_fork_lookup_rejects_missing_ambiguous_or_changed_candidates(self):
+        for change in (
+            "missing",
+            "ambiguous",
+            "stale-list-head",
+            "stale-list-repo",
+            "closed",
+            "head-ref",
+            "head-repo",
+            "head-sha",
+            "base-sha",
+            "merge-sha",
+        ):
+            with self.subTest(change=change):
+                route, pr = self.fork_source()
+                if change == "missing":
+                    self.github.data[route] = []
+                elif change == "ambiguous":
+                    self.github.data[route].append(copy.deepcopy(pr))
+                elif change == "stale-list-head":
+                    self.github.data[route][0]["head"]["sha"] = BASE
+                elif change == "stale-list-repo":
+                    self.github.data[route][0]["head"]["repo"]["id"] = 91
+                elif change == "closed":
+                    pr["state"] = "closed"
+                elif change.startswith("head-"):
+                    pr["head"] = copy.deepcopy(pr["head"])
+                    if change == "head-repo":
+                        pr["head"]["repo"]["id"] = 91
+                    else:
+                        pr["head"][change[5:]] = BASE
+                elif change == "base-sha":
+                    pr["base"]["sha"] = HEAD
+                else:
+                    pr["merge_commit_sha"] = HEAD
+                self.assertIsInstance(self.verify(), provenance.Reject)
+
+    def test_empty_relation_requires_source_owner_and_branch_not_just_sha(self):
+        for missing in ("head_repository", "owner", "head_branch"):
+            with self.subTest(missing=missing):
+                self.fork_source()
+                if missing == "owner":
+                    del self.github.run["head_repository"]["owner"]
+                else:
+                    del self.github.run[missing]
+                self.assertIsInstance(self.verify(), provenance.Reject)
 
     def test_failed_missing_cancelled_or_wrong_source_is_rejected(self):
         for field, values in {
