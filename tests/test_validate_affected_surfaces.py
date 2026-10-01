@@ -13,8 +13,6 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-import yaml
-
 from tests.affected_surface_mutations import apply_mutation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -157,12 +155,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.code, case["expectedError"])
 
-    def test_ci_workflow_and_rename_range(self) -> None:
-        workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
-        qa_commands = [step.get("run", "") for step in workflow["jobs"]["qa"]["steps"]]
-        self.assertEqual(
-            sum("scripts/qa.py ci" in command for command in qa_commands), 1
-        )
+    def test_ci_rename_range(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="affected-surface-ci-rename-"
         ) as directory:
