@@ -180,6 +180,90 @@ class HostedSourceTests(unittest.TestCase):
         with self.assertRaises((ValueError, KeyError)):
             self.source(HEAD)
 
+    def closed_fork_relation(self):
+        from urllib.parse import urlencode
+
+        fork = {
+            "id": 90,
+            "full_name": "fork-owner/hy-home.k8s",
+            "owner": {"login": "fork-owner"},
+        }
+        branch = "codex/fork&title=encoded"
+        self.github.run.update(
+            pull_requests=[], head_repository=fork, head_branch=branch
+        )
+        self.github.data["pulls/7"]["head"] = {"sha": HEAD, "repo": fork, "ref": branch}
+        pr = copy.deepcopy(self.github.data["pulls/7"])
+        query = urlencode(
+            {"state": "closed", "base": "main", "head": "fork-owner:" + branch}
+        )
+        route = "pulls?" + query + "&per_page=100&page=1"
+        self.github.data[route] = [pr]
+        return route
+
+    def test_merged_empty_relation_source_reconstructs_unique_historical_pr(self):
+        self.closed_fork_relation()
+        self.assertEqual(self.source().record, self.proof.record)
+
+    def test_historical_discovery_rejects_ambiguity_and_changed_identities(self):
+        route = self.closed_fork_relation()
+        original = copy.deepcopy(self.github.data[route])
+        for change in (
+            "ambiguous",
+            "base",
+            "head",
+            "merge",
+            "branch",
+            "repository",
+            "unmerged",
+        ):
+            with self.subTest(change=change):
+                self.github.data[route] = copy.deepcopy(original)
+                self.github.data["pulls/7"]["merged"] = True
+                relation = self.github.data[route][0]
+                if change == "ambiguous":
+                    self.github.data[route].append(copy.deepcopy(relation))
+                elif change == "base":
+                    relation["base"]["sha"] = HEAD
+                elif change == "head":
+                    relation["head"]["sha"] = BASE
+                elif change == "merge":
+                    relation["merge_commit_sha"] = MERGE
+                elif change == "branch":
+                    relation["head"]["ref"] = "codex/other"
+                elif change == "repository":
+                    relation["head"]["repo"]["id"] = 99
+                else:
+                    self.github.data["pulls/7"]["merged"] = False
+                with self.assertRaises(ValueError):
+                    self.source()
+
+    def test_stale_candidate_does_not_hide_one_current_authenticated_source(self):
+        stale = copy.deepcopy(self.github.run)
+        stale.update(id=29, run_attempt=1)
+        current = copy.deepcopy(stale)
+        current["run_attempt"] = 2
+        self.github.data["actions/runs/29"] = current
+        self.github.data["actions/runs/29/attempts/1"] = stale
+        route = f"actions/workflows/20/runs?event=pull_request&head_sha={HEAD}&status=success&per_page=100&page=1"
+        self.github.data[route] = {
+            "total_count": 2,
+            "workflow_runs": [stale, self.github.run],
+        }
+        self.assertEqual(self.source().record, self.proof.record)
+        self.github.data[route] = {"total_count": 1, "workflow_runs": [stale]}
+        with self.assertRaises(ValueError):
+            self.source()
+
+    def test_multiple_valid_source_matches_still_fall_back(self):
+        route = f"commits/{MERGE}/check-runs?per_page=100&page=1"
+        self.github.data[route] = {
+            "total_count": 2,
+            "check_runs": [self.check, copy.deepcopy(self.check)],
+        }
+        with self.assertRaises(ValueError):
+            self.source()
+
     def test_failed_candidate_or_duplicate_full_execution_never_reuses(self):
         for conclusion in ("failure", "cancelled", "skipped"):
             with self.subTest(conclusion=conclusion):

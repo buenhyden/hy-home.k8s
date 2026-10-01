@@ -159,6 +159,11 @@ class CiQaWorkflowTests(unittest.TestCase):
                         timeout=5,
                     )
                     self.assertEqual(result.returncode, 0 if qa == "success" else 1)
+                    expected = "PASS" if event == "pull_request" else "SKIP"
+                    self.assertIn(
+                        ("verdict=" + expected).encode(),
+                        result.stdout.split(b"qa-isolated result=")[-1],
+                    )
         for branch in ("failure", "cancelled", "skipped", ""):
             result = subprocess.run(
                 ["/bin/bash", "-c", script],

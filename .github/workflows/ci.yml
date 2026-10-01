@@ -215,8 +215,11 @@ jobs:
               ;;
           esac
           case "$EVENT_NAME:$ISOLATED_RESULT" in
-            pull_request:success|push:skipped|workflow_dispatch:skipped)
+            pull_request:success)
               isolated_verdict=PASS
+              ;;
+            push:skipped|workflow_dispatch:skipped)
+              isolated_verdict=SKIP
               ;;
             *)
               isolated_verdict=FAIL

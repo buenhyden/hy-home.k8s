@@ -210,6 +210,7 @@ class GitHubReader:
             if entry["type"] != "tree" and (
                 path.startswith(CONTROL_PREFIXES)
                 or path in CONTROL_FILES
+                or path.rsplit("/", 1)[-1] == ".gitattributes"
                 or (path.startswith(".agents/skills/") and "/scripts/" in path)
             ):
                 require(
@@ -266,7 +267,7 @@ def verify_pr(event: Mapping[str, Any], github: GitHubReader) -> Proof | Reject:
         )
 
 
-def source_pull(run, github):
+def source_pull(run, github, *, history=None):
     relations = run["pull_requests"]
     require(isinstance(relations, list) and len(relations) <= 1, "ambiguous PR source")
     discovered = not relations
@@ -284,15 +285,25 @@ def source_pull(run, github):
             "invalid head branch",
         )
         require(repository["full_name"].startswith(owner + "/"), "head owner mismatch")
+        state = "closed" if history else "open"
         query = urlencode(
-            {"state": "open", "base": "main", "head": owner + ":" + branch}
+            {"state": state, "base": "main", "head": owner + ":" + branch}
         )
         relations = github.pages("pulls?" + query)
+        if history:
+            before, merged = history
+            relations = [
+                relation
+                for relation in relations
+                if relation["base"]["sha"] == before
+                and relation["head"]["sha"] == run["head_sha"]
+                and relation["merge_commit_sha"] == merged
+            ]
     require(len(relations) == 1, "missing or ambiguous PR source")
     relation = relations[0]
     if discovered:
         require(
-            relation["state"] == "open"
+            relation["state"] == ("closed" if history else "open")
             and relation["base"]["ref"] == "main"
             and repo_matches(relation["base"]["repo"], github)
             and relation["head"]["ref"] == run["head_branch"]
@@ -365,16 +376,24 @@ def authenticated_run(event, github, event_name):
     return run
 
 
-def _verify_pr(event, github, *, proof_base=None):
+def _verify_pr(event, github, *, proof_base=None, merged_to=None):
+    require(
+        (proof_base is None) == (merged_to is None),
+        "incomplete historical source binding",
+    )
+    history = (sha(proof_base), sha(merged_to)) if proof_base else None
     run = authenticated_run(event, github, "pull_request")
-    relation, pr, discovered = source_pull(run, github)
+    relation, pr, discovered = source_pull(run, github, history=history)
     number = positive(relation["number"])
     require(
         pr["number"] == number and pr["state"] == ("closed" if proof_base else "open"),
         "wrong PR state",
     )
     if proof_base:
-        require(pr["merged"] is True, "PR was not merged")
+        require(
+            pr["merged"] is True and pr["merge_commit_sha"] == merged_to,
+            "wrong merged PR target",
+        )
     base, head = sha(proof_base or pr["base"]["sha"]), sha(pr["head"]["sha"])
     require(
         pr["base"]["ref"] == "main" and repo_matches(pr["base"]["repo"], github),
@@ -417,7 +436,7 @@ def _verify_pr(event, github, *, proof_base=None):
         sys.modules[__name__], run, github, main=False
     )
     qa = jobs["qa"]
-    if discovered:
+    if discovered and not proof_base:
         require(
             pr["merge_commit_sha"] == checkout_sha, "PR lookup merge checkout changed"
         )

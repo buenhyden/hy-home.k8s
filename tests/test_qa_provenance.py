@@ -633,6 +633,39 @@ class ProvenanceTests(unittest.TestCase):
                     )
                     self.assertIsInstance(self.verify(), provenance.Reject)
 
+    def test_root_and_nested_attributes_reverted_before_head_still_reject(self):
+        for path in (
+            ".gitattributes",
+            "docs/.gitattributes",
+            "tests/fixtures/nested/.gitattributes",
+        ):
+            with self.subTest(path=path):
+                self.github = FakeGitHub()
+                intermediate, changed_tree = "2" * 40, "3" * 40
+                self.github.data["pulls/7"]["commits"] = 2
+                self.github.data["pulls/7/commits?per_page=100&page=1"] = [
+                    {"sha": intermediate},
+                    {"sha": HEAD},
+                ]
+                self.github.data["git/commits/" + intermediate] = {
+                    "sha": intermediate,
+                    "tree": {"sha": changed_tree},
+                    "parents": [{"sha": BASE}],
+                }
+                self.github.data["git/commits/" + HEAD]["parents"] = [
+                    {"sha": intermediate}
+                ]
+                entries = copy.deepcopy(self.github.entries)
+                entries.append(
+                    {"path": path, "type": "blob", "mode": "100644", "sha": "4" * 40}
+                )
+                self.github.data["git/trees/" + changed_tree + "?recursive=1"] = {
+                    "sha": changed_tree,
+                    "truncated": False,
+                    "tree": entries,
+                }
+                self.assertIsInstance(self.verify(), provenance.Reject)
+
     def test_truncated_history_or_tree_is_not_a_clean_closure(self):
         self.github.data["pulls/7"]["commits"] = 2
         self.assertIsInstance(self.verify(), provenance.Reject)

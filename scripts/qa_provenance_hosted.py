@@ -383,7 +383,20 @@ def source_for_main(core, github, before, after, app_id):
         }
         # Rebuild every field from authenticated provider/Git data. The check
         # supplies no trusted input identities or executable bytes.
-        fresh = core._verify_pr(event, github, proof_base=before)
+        try:
+            fresh = core._verify_pr(event, github, proof_base=before, merged_to=after)
+            require(isinstance(fresh, core.Proof), "PR candidate rejected")
+        except (
+            ValueError,
+            TypeError,
+            KeyError,
+            IndexError,
+            AttributeError,
+            RecursionError,
+        ):
+            # An ineligible historical run cannot hide a later valid candidate.
+            # Provider transport errors still fail the complete lookup closed.
+            continue
         if (
             fresh.record["pr"] != pr["number"]
             or fresh.record["checkout"]["tree"] != current["tree"]["sha"]
