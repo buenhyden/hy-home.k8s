@@ -18,13 +18,13 @@ Execute [Plan WP-0006](../plan.md) against the approved [SPEC-0103](../spec.md).
 ## Inputs
 
 - [Plan](../plan.md), [Spec](../spec.md), and the current [quality policy](../../../../.agents/governance/quality.md).
-- Criteria: VAL-QER-001–011.
+- Criteria: VAL-QER-001–012.
 
 ## Task Table
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-006 | VAL-QER-001–011 | Follow Plan Task 6 verification, review, and handoff steps | platform | Queued | Not executed | This record; fill actual commits, commands, run IDs and reviewer on execution. |
+| WORK-006 | VAL-QER-001–012 | Follow Plan Task 6 verification, review, and handoff steps | platform | Queued | Not executed | This record; fill actual commits, commands, run IDs and reviewer on execution. |
 
 ## Approval and Safety Boundaries
 

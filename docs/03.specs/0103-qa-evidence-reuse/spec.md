@@ -1,6 +1,6 @@
 ---
 title: "QA Evidence Reuse Across Delivery Boundaries"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -19,8 +19,9 @@ main validation. Successful
 main updates also publish one immutable commit tag. Each required
 gate executes once for a proven-equivalent input; a reused result names its
 actual successful source. Changed input, Git history, toolchain, or environment
-receives a new check. The request owner approved this Spec on 2026-10-01. The implementation Plan
-is awaiting review; implementation has not begun.
+receives a new check. The request owner approved this Spec and its implementation Plan on 2026-10-01.
+Implementation is in progress; the later request to audit invoked tests is tracked
+in Plan Task 7.
 
 The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md),
 [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md),
@@ -237,7 +238,7 @@ current changelog trigger; any future consumer must be specified and tested
 separately. See [GitHub token event behavior](https://docs.github.com/en/actions/concepts/security/github_token)
 and [workflow permission syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
 
-### Active script and GitHub surface disposition
+### Active script, test, and GitHub surface disposition
 
 The Plan must trace the active CI/QA/validation execution graph from
 `.github/` events, Git hooks, QA profiles, and the validation registry through
@@ -251,6 +252,17 @@ contract are transferred or proven absent; update routing, callers, tests, and
 docs in the same reviewed change. File size or an old name is not proof of
 obsolescence. Existing independent security, GitOps, and history checks retain
 their failure meanings.
+
+The same disposition rule applies to tests invoked directly by a CI/QA gate
+or discovered by its unit-test command. Trace each active test module to its
+caller and distinct assertion or failure meaning; inspect one-off, legacy,
+deprecated, duplicated, conflicting, and oversized tests for actual overlap.
+Retire or consolidate a test only after its still-required behavior is
+covered by a retained negative check, or after its caller and requirement are
+shown to have no current contract and the retirement is reviewed. Keep discovery and
+coverage of retained tests intact. A test name, age, or file size alone is not
+a retirement reason; record before/after discovery and execution counts in
+Task evidence rather than adding a permanent test registry.
 
 The 2026-10-01 static audit found no active-path script with both zero
 consumers and zero unique diagnostics. `run-archive-contract-tests.py` has a
@@ -410,12 +422,13 @@ workflow lint is repository-static evidence, not a hosted execution.
 | VAL-QER-003 | Local commit, PR, and local-only handoff run their assigned checks; local full is no longer mandatory before a PR hosted full. | Lifecycle/policy and fixture-flow tests. |
 | VAL-QER-004 | Protected PR proof names the actual hosted checkout and complete successful gate set; QA children cannot modify proof code or output. | Isolated-verifier, passing-test mutation, and malformed-proof tests. |
 | VAL-QER-005 | Main push reuses only authenticated matching PR gate results; changed Git base, ancestry, refs, or environment rerun affected gates. | Merge/squash/rebase and identity fixtures, then observed hosted run. |
-| VAL-QER-006 | All unit tests remain discovered; only independently proven equivalent groups are reused. | Partition/discovery and invocation-count tests. |
+| VAL-QER-006 | All retained required unit tests remain discovered; only independently proven equivalent groups are reused. | Partition/discovery and invocation-count tests. |
 | VAL-QER-007 | Missing, failed, cancelled, expired, forged, or ambiguous evidence and any PR-commit control change fall back to execution; execution failure reaches ci-summary. | Adversarial verifier, multi-commit changed-producer, caller spoofing, and CI-summary tests. |
 | VAL-QER-008 | Reuse stays off until an independently protected required check is authenticated; it attests PR eligibility and publishes an independent main-push verdict over the complete gate set. Hooks, scanners, permissions, and native/live evidence stay intact. | Settings read-back, hostile-PR and green-ci-summary spoof tests, security review, Actions validator, and direct lane observations. |
 | VAL-QER-009 | Feature pushes, PRs, main pushes, and manual dispatch run only their assigned checks; routine editing does not require full QA. | Event/branch matrix tests and focused/quick/staged/full invocation counts. |
 | VAL-QER-010 | Once the protected main verdict and `main-*` rulesets are active, each successful main push publishes only its validated tip as immutable `main-<40-hex SHA>`; merge has no second publication, retries are idempotent, mismatched tags and failed verdicts publish nothing, and tag events cause no repeat QA. | Protected full-QA and protected reuse verdict fixtures, event matrix, exact-SHA/conflict and denied update/delete fixtures, authenticated ruleset/writer read-back, and hosted publication observation. |
 | VAL-QER-011 | Every active-path script and `.github/` surface has a traced consumer and distinct purpose or a reviewed retirement; proven duplicates and obsolete entries are removed without dropping unique checks, guidance no longer requires redundant local full before PR CI, and contact/label/security routes resolve to active destinations. | Caller/registry/templating inventory, YAML presence and parser negative fixtures, policy/projection tests, authenticated GitHub settings and destination read-back, fork-permission review, and before/after execution counts. |
+| VAL-QER-012 | Every CI/QA/validation-invoked or discovered test has an active owner and distinct failure meaning or a reviewed retirement; candidates are corrected or removed only after retained checks prove still-required behavior or current caller/requirement evidence proves the contract obsolete. | Discovery/caller and assertion inventory, retained negative checks for transferred behavior, obsolete-contract evidence, before/after test counts and focused/full gate results, independent semantic review. |
 
 ## Traceability
 
@@ -437,6 +450,7 @@ evidence. This Spec does not edit an accepted ADR. The [Plan](plan.md) uses the 
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-009 | Branch/event matrix and protected summary tests. |
 | [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-010 | Main push/merge event matrix, tag target and permission tests. |
 | [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-011 | Script consumer and `.github/` projection inventory, distinct-rule and retirement tests. |
+| [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-012 | Invoked/discovered test disposition and retained-failure coverage. |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-003 | Lifecycle flow and proportional final validation. |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-006 | Lifecycle flow and proportional final validation. |
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-003 | Local/hosted separation and source-run identity. |

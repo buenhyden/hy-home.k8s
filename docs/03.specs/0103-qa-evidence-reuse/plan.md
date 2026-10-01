@@ -1,6 +1,6 @@
 ---
 title: "QA Evidence Reuse Implementation Plan"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -43,7 +43,7 @@ artifact_id: "SPEC-0103-PLAN-0001"
 
 ## Overview
 
-The request owner approved this six-task Plan for implementation on 2026-10-01. Task 0001 is implemented and under independent review. Local reuse and repository guidance can land independently; hosted reuse and tags remain inactive until the protected GitHub control is observed.
+The request owner approved the Plan on 2026-10-01. The later test-disposition request adds Task 7 before protected-host implementation. Tasks 1 and 2 have local reviewed commits; hosted reuse and tags remain inactive until the protected GitHub control is observed.
 
 ## Context
 
@@ -55,7 +55,7 @@ The baseline is `0ed105b8` on `main`/`origin/main`; this plan follows the approv
 | Delivery guidance and repository surface | `.agents/governance/{quality,git}.md`, `.agents/workflows/work-lifecycle.md`, `scripts/README.md`, `.github/{PULL_REQUEST_TEMPLATE.md,repository-surface.md,ISSUE_TEMPLATE/config.yml,dependabot.yml,labeler.yml,SECURITY.md}`, relevant `tests/test_ci_qa_workflow.py` and governance tests | Delivery owners, proved script disposition, valid GitHub routes. |
 | Protected control plane | This repository's `.github/workflows/qa-verifier.yml`, `scripts/qa_provenance.py`, `tests/test_qa_provenance.py`; `.github/workflows/ci.yml` supplies ordinary QA only | Separate App-sourced PR/main verdict, bounded provider lookup, no execution of PR code. After activation, default-branch control code is protected by its App check over the entire privileged execution closure; an external control repository is a fallback only if authenticated tests cannot prove that chain of trust. |
 | Hosted decision and tag | `scripts/qa.py`, `scripts/run-validation-lane.py`, registry/schema, `.github/workflows/ci.yml`, `scripts/qa_provenance.py` and `scripts/publish_main_tag.py` | Per-gate full-or-reused verdict and post-verdict tag publication. |
-| Task evidence | `docs/03.specs/0103-qa-evidence-reuse/tasks/tsk-0001-*.md` through `tsk-0006-*.md` | Actual commands, reviewer, remote settings, run/attempt, decisions, rollback. |
+| Task evidence | `docs/03.specs/0103-qa-evidence-reuse/tasks/tsk-0001-*.md` through `tsk-0007-*.md` | Actual commands, reviewer, remote settings, run/attempt, decisions, rollback. |
 
 Do not add a permanent duplicate script inventory. Task 2's caller table is the evidence of the one-time disposition audit. Separate verifier/publisher App installations, their `main`-only environments and secrets, App-sourced required check, trusted control-code baseline, and tag rulesets are separate operator actions requiring review; Plan approval alone does not claim they happened.
 
@@ -73,10 +73,11 @@ No deployment CD, live cluster or Vault mutation, version-release tagging, globa
 | --- | --- | --- | --- | --- |
 | WP-001 | Local exact-input reuse and registry contract | Approved Plan | VAL-QER-001–002 | Focused RED/GREEN and one-run/same-path-change counts; full/ci parity. |
 | WP-002 | Delivery policy, script disposition, `.github` route repair | Approved Plan | VAL-QER-003/009/011 | Caller/unique-contract table, template/route negatives, independent semantic review. |
+| WP-007 | Active invoked/discovered test disposition | WP-002; later user scope addition | VAL-QER-012 | Test caller/assertion table, reviewed retirements, discovery and failure-meaning parity. |
 | WP-003 | Protected PR verifier and App check | WP-001; operator verifier App/environment | Reviewed inert control code; App/environment bootstrap | Protected source read-back, hostile PR/control-change tests, bounded proof record. |
 | WP-004 | Main per-gate reuse and test-group classification | WP-003 | Protected App check observed; VAL-QER-005–008 | Merge/rebase/changed-ref fixtures, full fallback, observed PR/main verdict. |
 | WP-005 | Protected immutable main tag publisher | WP-004; protected main verdict; operator rulesets | Ruleset read-back and denied update/delete | Create/retry/conflict/denied-write tests and hosted exact-SHA observation. |
-| WP-006 | Integration, security review, and handoff | WP-001–005 or explicit inactive DEFER | Changed-file and criterion matrix | Criterion matrix, final QA, independent review, activated vs inactive states recorded. |
+| WP-006 | Integration, security review, and handoff | WP-001–005 and WP-007 or explicit inactive DEFER for hosted criteria | Changed-file and criterion matrix | Criterion matrix, final QA, independent review, activated vs inactive states recorded. |
 
 ### Task 1: Local evidence identity and single registry owner
 
@@ -101,6 +102,17 @@ No deployment CD, live cluster or Vault mutation, version-release tagging, globa
 - [ ] Make the smallest guidance/config fixes. Keep all currently unique script checks and pre-push hook chaining. Do not add `pull_request_target`, label-creation permission, or a second full QA trigger. Delete/consolidate a script only if Task 0002 proves consumer transfer and the negative fixture passes.
 - [ ] Run the focused command, relevant policy tests, `python3 scripts/qa.py quick`, and independent read-only semantic/security review. Record authenticated destinations/settings separately from static YAML evidence.
 - [ ] Commit the reviewed unit with `git commit -m "ci: align QA guidance and GitHub routes"` and update Task 0002.
+
+### Task 7: Audit and retire obsolete or redundant active tests
+
+**Files:** Inspect every `tests/test_*.py` module discovered by the registry's `unit-tests` argv and tests invoked by other CI/QA/validation gates. Modify only proved obsolete, redundant, or conflicting test modules, their direct callers, and `.agents/governance/quality.md` if its test-retirement rule needs clarification; record decisions in `tasks/tsk-0007-test-disposition.md`. Do not add a permanent inventory script.
+
+**Interfaces:** Task 0007 owns a one-time table of active test module/caller, distinct assertion or failure meaning, one-off/legacy/deprecated/duplicate/conflict/size candidate, and keep/consolidate/retire disposition. Discovery and failure meaning of retained tests remain complete. A candidate without a proved equivalent retained assertion is kept; file age, name, or size alone is not grounds for deletion. The `unit-tests` aggregate stays intact unless Task 4 separately proves a disjoint partition.
+
+- [ ] Record the registry's exact test argv and baseline discovered module/case counts. Trace direct standalone test invocations, imports, fixtures, and each discovered module's unique assertion families; identify exact and semantic duplicates, stale targets, contradictory expectations, and excessive helper/test repetition.
+- [ ] For each proposed deletion or consolidation, identify a retained negative check for still-required behavior or prove the caller and requirement have no current contract; record before/after discovery and failure evidence. Preserve security, GitOps, archive, history, and provider-boundary checks. Remove proven obsolete or redundant tests and their dead fixtures/callers; if none qualify, record the concrete keep decisions rather than deleting a test to meet a quota.
+- [ ] Run focused tests for each changed contract, registry/discovery tests, `python3 scripts/qa.py quick`, and exact-index staged QA when required. Run the full unit-test aggregate once on final changed inputs, not once per candidate. Get an independent read-only semantic review of the disposition table and diff.
+- [ ] Commit with `git commit -m "test: retire proven redundant QA tests"` if tests change, or `git commit -m "docs: record active QA test disposition"` if the audit proves no safe retirement; update Task 0007 with exact commands, counts, reviewer, and deferred hosted observations.
 
 ### Task 3: Separate protected PR proof from PR-controlled QA
 
@@ -142,9 +154,9 @@ No deployment CD, live cluster or Vault mutation, version-release tagging, globa
 
 **Files:** Package-local Task records, Spec/Plan lifecycle metadata, affected current policy links and navigation only; implementation files return to their task owner if review finds a defect.
 
-**Interfaces:** Task 0006 maps VAL-QER-001–011 to actual local, hosted, settings, and denied-operation evidence or explicit `DEFER` with owner/retry trigger. No mock is presented as remote enforcement.
+**Interfaces:** Task 0006 maps VAL-QER-001–012 to actual local, hosted, settings, and denied-operation evidence or explicit `DEFER` with owner/retry trigger. No mock is presented as remote enforcement.
 
-- [ ] Review the full diff against SPEC-0103, registry gate count, all active script dispositions, `.github` workflow matrix, permissions, security paths, and a fresh independent read-only semantic and security review.
+- [ ] Review the full diff against SPEC-0103, registry gate count, all active script and test dispositions (including tests added by Tasks 3–5 after Task 7), `.github` workflow matrix, permissions, security paths, and a fresh independent read-only semantic and security review.
 - [ ] Run affected focused suites on final bytes, `python3 scripts/qa.py quick`, exact-index `python3 scripts/qa.py staged` for each logical commit, `git diff --check`, and one `python3 scripts/qa.py full` only for a local-only handoff or a changed full-input snapshot requiring it. Do not repeat already proven same-input full/pre-commit/unit work.
 - [ ] Record PR hosted `ci-summary`, protected App PR/main checks, tag/ruleset read-back and publication result if activated. If the protected Apps/environments or operator settings are absent, record VAL-QER-004/005/008/010 as `DEFER`, retain full main QA/no tag, and do not mark the Spec completed.
 - [ ] Commit the reviewed handoff with `git commit -m "docs: record QA evidence reuse verification"`; push/PR/merge only under separately confirmed delivery authorization. Keep `main` and `origin/main` synchronized after any authorized merge, then remove the merged development branch/worktree only with explicit cleanup authorization under the Git policy.
@@ -180,3 +192,4 @@ A work package is complete only with its Task's named evidence. SPEC-0103 reache
 | [VAL-QER-009](spec.md#success-criteria--verification-plan) | WP-002 | [TSK-0002](tasks/tsk-0002-delivery-and-github.md) |
 | [VAL-QER-010](spec.md#success-criteria--verification-plan) | WP-005 | [TSK-0005](tasks/tsk-0005-main-tags.md) |
 | [VAL-QER-011](spec.md#success-criteria--verification-plan) | WP-002, WP-006 | [TSK-0002](tasks/tsk-0002-delivery-and-github.md), [TSK-0006](tasks/tsk-0006-integration.md) |
+| [VAL-QER-012](spec.md#success-criteria--verification-plan) | WP-007, WP-006 | [TSK-0007](tasks/tsk-0007-test-disposition.md), [TSK-0006](tasks/tsk-0006-integration.md) |
