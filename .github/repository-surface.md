@@ -75,6 +75,7 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs on pushed release tags matching `v*.*.*`. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
+| `qa-verifier.yml` | Inert protected PR provenance verifier; disabled until operator activation. | Default-branch `workflow_run` after completed CI, with main-only control and authenticated PR source. | Verifier-App-authored `qa-provenance` proof after full QA; App/environment/required-source settings and hostile trials remain DEFER. | No PR code, cache or artifacts; no publisher key, tags or hosted gate reuse; main remains full. |
 | `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |
 
 ## Boundaries

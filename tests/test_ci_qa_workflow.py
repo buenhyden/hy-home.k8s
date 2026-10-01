@@ -49,6 +49,52 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertNotIn("if", jobs["qa"])
         self.assertEqual(self.workflow["permissions"], {"contents": "read"})
 
+    def test_verifier_has_no_pr_execution_or_publisher_credentials(self):
+        workflow = yaml.safe_load(
+            (ROOT / ".github/workflows/qa-verifier.yml").read_text()
+        )
+        # PyYAML's YAML 1.1 loader represents the Actions `on` key as True.
+        self.assertEqual(
+            workflow[True],
+            {"workflow_run": {"workflows": ["CI"], "types": ["completed"]}},
+        )
+        self.assertEqual(
+            workflow["permissions"],
+            {"contents": "read", "actions": "read", "pull-requests": "read"},
+        )
+        job = workflow["jobs"]["verify-pr"]
+        self.assertEqual(job["environment"], "qa-control")
+        for condition in (
+            "vars.QA_PROVENANCE_ENABLED == 'true'",
+            "github.ref == 'refs/heads/main'",
+            "github.event.workflow_run.event == 'pull_request'",
+            "github.event.workflow_run.repository.id == github.repository_id",
+        ):
+            self.assertIn(condition, job["if"])
+        steps = job["steps"]
+        self.assertEqual(steps[0]["with"]["ref"], "${{ github.sha }}")
+        self.assertFalse(steps[0]["with"]["persist-credentials"])
+        self.assertIn(
+            "python3 -I scripts/qa_provenance.py authenticate", steps[1]["run"]
+        )
+        self.assertNotIn("secrets.", str(steps[1]))
+        self.assertIn("python3 -I scripts/qa_provenance.py publish", steps[2]["run"])
+        self.assertEqual(
+            steps[2]["env"]["QA_VERIFIER_PRIVATE_KEY"],
+            "${{ secrets.QA_VERIFIER_PRIVATE_KEY }}",
+        )
+        self.assertNotIn("qa-tag-publish", str(job))
+        self.assertNotIn("actions/cache", str(job))
+        self.assertNotIn("download-artifact", str(job))
+        self.assertNotIn("workflow_run.head_sha", str(steps))
+        self.assertNotIn("QA_REUSE_ENABLED", str(self.workflow["jobs"]))
+        checkout = next(
+            step
+            for step in self._qa_steps()
+            if step.get("uses", "").startswith("actions/checkout@")
+        )
+        self.assertEqual(checkout["name"], "Checkout QA commit ${{ github.sha }}")
+
     def test_summary_fails_closed_for_required_results(self):
         job = self.workflow["jobs"]["ci-summary"]
         self.assertEqual(job["if"], "always()")

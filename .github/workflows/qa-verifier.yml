@@ -1,0 +1,47 @@
+name: QA Provenance
+
+# Reviewed exception: only main control code runs; no source-run artifacts or
+# caches are read, and source authentication precedes verifier App key access.
+on: # zizmor: ignore[dangerous-triggers]
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+# Inert until the operator installs the verifier-only App and configures the
+# qa-control environment (deployment branches: refs/heads/main only).
+# Pin qa-provenance to that App ID in branch protection after observing it.
+# This variable does not enable QA_REUSE_ENABLED; main still runs full QA.
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+jobs:
+  verify-pr:
+    if: >-
+      vars.QA_PROVENANCE_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.repository.id == github.repository_id
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: qa-control
+    steps:
+      - name: Checkout protected default-branch control
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Authenticate source before App key access
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_CI_WORKFLOW_ID: ${{ vars.QA_CI_WORKFLOW_ID }}
+        run: python3 -I scripts/qa_provenance.py authenticate --proof "$RUNNER_TEMP/qa-proof.json"
+      - name: Reauthenticate and issue verifier App check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_CI_WORKFLOW_ID: ${{ vars.QA_CI_WORKFLOW_ID }}
+          QA_VERIFIER_APP_ID: ${{ vars.QA_VERIFIER_APP_ID }}
+          QA_VERIFIER_PRIVATE_KEY: ${{ secrets.QA_VERIFIER_PRIVATE_KEY }}
+        run: python3 -I scripts/qa_provenance.py publish --proof "$RUNNER_TEMP/qa-proof.json"
