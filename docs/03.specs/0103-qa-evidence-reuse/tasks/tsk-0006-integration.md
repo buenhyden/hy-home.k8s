@@ -1,8 +1,8 @@
 ---
 title: "Integration, review, and handoff"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-02"
 layer: "specs"
@@ -14,7 +14,8 @@ artifact_id: "SPEC-0103-TSK-0006"
 ## Overview
 
 Execute [Plan WP-006](../plan.md) against [SPEC-0103](../spec.md). This Task
-reconciles local implementation, the final script/test audit and delivery evidence.
+completes the local integration handoff: implementation reconciliation, the final
+script/test audit, independent review and repository-static validation evidence.
 Protected hosted activation remains DEFER; the Spec and Plan stay active, and
 Tasks 3–5 stay in progress. No local result establishes remote enforcement.
 
@@ -32,7 +33,7 @@ Tasks 3–5 stay in progress. No local result establishes remote enforcement.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | VAL-QER-001–012 | Reconcile final local validation, independent review and hosted deferrals | platform | In progress | Local integration audit; final validation and review being recorded | Criterion, disposition and snapshot tables below |
+| WORK-006 | VAL-QER-001–012 | Reconcile final local validation, independent review and hosted deferrals | platform | Completed | Local integration handoff complete; hosted activation DEFER | Criterion, disposition and snapshot tables below |
 
 ## Approval and Safety Boundaries
 
@@ -49,7 +50,8 @@ Tasks 3–5 stay in progress. No local result establishes remote enforcement.
   tag activation still require their operator-owned authorization and evidence.
   No external mutation occurred in this Task.
 - **Static Validation**: frozen full QA attempts on distinct recorded inputs;
-  final discovery census without test execution; affected quick and exact-index staged QA per document commit;
+  final discovery census without test execution; affected quick and exact-index
+  staged QA per document commit;
   whitespace, document/schema/links and actual-message checks with active hooks.
 - **Live Validation**: DEFER with operator/PR owner and retry triggers below.
 - **Secret / Vault Handling**: no private values read or recorded. Setting names,
@@ -104,9 +106,9 @@ required; artifacts, QA logs and green names are not authority.
 ### Criterion and requirement reconciliation
 
 The local column maps retained runnable evidence; owning Tasks record its prior
-focused results. Both recorded integration full attempts failed; final full is
-pending on the latest repaired input. This matrix does not claim an overall local
-or hosted PASS.
+focused results. The first two full attempts remain FAIL; the third frozen run
+passed all 23 repository-static gates on the repaired input. This completes the
+local handoff, while every named hosted/settings DEFER remains open.
 Requirement lineage is the full stable ID in the owning Spec's traceability table.
 
 | Criterion | Requirement lineage | Local evidence | Hosted/settings disposition and retry owner |
@@ -202,7 +204,7 @@ hub: qa-source is an ordering dependency; required result checks are branch-poli
 qa and qa-isolated. Scoped review of the first document commit `3d3d10bb`
 returned Spec PASS / quality Approved from `task6_whole_code_review`, with both
 findings resolved; `task6_whole_security_review` reported no findings. These
-review results do not replace the still-required successful final full QA.
+review results are separate from the successful final full QA recorded below.
 
 Authenticated read-only GitHub observations supplied by the controller on
 2026-10-02: repository environments, rulesets and Actions variables lists were
@@ -266,15 +268,39 @@ independent code review returned Spec PASS / quality Approved and security
 review PASS. Both failed full attempts remain recorded FAIL; the narrow repair
 is not represented as a successful replacement full run.
 
+The second in-progress evidence commit
+`162e10f82fa34e5daa74cf8ca67eff5f659b62f5`, tree
+`328a2d6390107879e97db6a808fdfdb3d1a456b9`, changed only this Task. Quick and
+exact-index staged each passed the same six document gates listed above;
+Markdown lint, whitespace and the actual Commitizen message check passed.
+Independent `task6_whole_code_review` returned Spec PASS / quality Approved after
+rechecking both failed full logs; `task6_whole_security_review` found no issue.
+The normal commit preserved active hooks and left a clean worktree.
+
+The final `python3 scripts/qa.py full` ran once on that frozen clean HEAD/tree
+and returned exit 0, profile `full`, snapshot `working-tree`, scope
+`all-files:paths=1268`. All 23 unique gate records matched the registry's full
+membership and order: 23 PASS, zero FAIL/SKIP/DEFER/REUSED. This includes one
+successful whole `unit-tests` discovery and one successful all-files `pre-commit`
+invocation at the manual stage. Every gate returned rc=0 with complete stdout,
+stderr and cleanup. The QA snapshot integrity check succeeded; no snapshot
+mutation diagnostic occurred, source HEAD/tree stayed unchanged and the source
+worktree remained clean. The bounded log is `/tmp/qa-task6-final3-full.log`.
+This is local repository-static PASS; it establishes no hosted App, environment,
+required-check, ruleset, denied-operation or tag-publication result. The two
+previous failed runs and their corrective commits remain part of this evidence.
+
 Tools: Python 3.12.3, pre-commit 4.6.1, RTK 0.49.0. Initial sandbox startup
 failed before executing a command (`bwrap` network namespace setup); scoped
 local commands used approved escalation. Existing `core.hooksPath` remained
 `scripts/githooks`; no bypass or private/global configuration change occurred.
-Final full validation remains pending under controller coordination on the
-near-final tree after the scanner-fixture repair and this evidence-only update.
-Task 6 remains in-progress. This document commit uses affected quick, exact-index
-staged and actual-message validation; its results and identity are retained in
-the ignored Task 6 report without a self-SHA rewrite loop.
+Task 6 is completed as a local integration handoff. This subsequent Task-only
+completion record is outside the frozen full-QA snapshot; it uses affected quick,
+exact-index staged, Markdown and actual-message validation plus independent
+review. Its exact checks, review disposition and commit identity are retained in
+the ignored Task 6 report. Quality policy step 6 permits this evidence-only
+update without repeating unchanged full/unit/manual-pre-commit aggregates.
+Final hosted PR validation still belongs to the controller/PR owner.
 The controller owns review reconciliation; the operator owns every hosted deferral
 in the criterion table.
 
@@ -291,4 +317,4 @@ commit, never an unvalidated target. No automatic tag cleanup is authorized.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-006](../plan.md#work-breakdown) | In progress: local integration evidence; hosted DEFER | Criterion matrix, final script/test dispositions and checked snapshot above |
+| [WORK-006](../plan.md#work-breakdown) | Completed: local integration handoff; hosted DEFER | Criterion matrix, final script/test dispositions and checked snapshot above |
