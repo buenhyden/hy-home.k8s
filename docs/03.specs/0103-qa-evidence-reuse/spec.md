@@ -1,6 +1,6 @@
 ---
 title: "QA Evidence Reuse Across Delivery Boundaries"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -13,8 +13,9 @@ artifact_id: "SPEC-0103"
 
 ## Overview
 
-This work unit removes repeated equivalent QA and test execution across local
-commit, push, pull request, merge, and post-merge main validation. Successful
+This work unit removes repeated equivalent QA, validation, verification, and
+test execution across local commit, push, pull request, merge, and post-merge
+main validation. Successful
 main updates also publish one immutable commit tag. Each required
 gate executes once for a proven-equivalent input; a reused result names its
 actual successful source. Changed input, Git history, toolchain, or environment
@@ -38,8 +39,9 @@ reusable gate evidence or target budgets.
 ## Strategic Boundaries & Non-goals
 
 - Scope includes QA routing and evidence identity, the hosted QA workflow,
-  local completion rules, immutable main tag publication, affected security
-  contracts, regression tests, and current usage guidance.
+  local completion rules, immutable main tag publication, active-path script
+  disposition, all `.github/` surfaces, affected security contracts, regression
+  tests, and current usage guidance.
 - The validation registry remains the single gate-selection and argv owner.
   Validators retain independent meanings. The bounded runner remains the
   executor; no parallel gate catalog or external cache service is added.
@@ -182,7 +184,11 @@ Installed local hooks and exact-index QA check a developer's commit boundary.
 PR CI checks the immutable hosted merge checkout and locked dependencies.
 Main push checks integrated Git history and any properties not proven by the
 PR evidence. The same named gate executes at two boundaries only if its input
-or trust claim differs. K8s plaintext-pattern scanning, Gitleaks, and
+or trust claim differs. Static verification of a repository contract does not
+replace intended-use validation or observed provider/live evidence. Routine
+semantic checks follow the [quality policy](../../../.agents/governance/quality.md):
+applicable automation plus one independent read-only agent review per changed
+evidence snapshot. K8s plaintext-pattern scanning, Gitleaks, and
 detect-secrets retain separate contracts. Labeling, greetings, stale issue
 maintenance, and changelog workflows remain separate non-QA functions.
 
@@ -230,6 +236,66 @@ trigger a tag workflow. This `main-*` tag intentionally does not match the
 current changelog trigger; any future consumer must be specified and tested
 separately. See [GitHub token event behavior](https://docs.github.com/en/actions/concepts/security/github_token)
 and [workflow permission syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
+
+### Active script and GitHub surface disposition
+
+The Plan must trace the active CI/QA/validation execution graph from
+`.github/` events, Git hooks, QA profiles, and the validation registry through
+their direct and imported scripts. Each candidate needs observed callers,
+unique failure meaning, tests, documentation consumers, and a proposed
+keep/consolidate/retire disposition. Decisions belong in package Task evidence,
+not a second permanent script registry. One-off, legacy, deprecated,
+duplicated, conflicting, and oversized scripts are investigated by this graph.
+Remove or consolidate a script only after its current consumers and unique
+contract are transferred or proven absent; update routing, callers, tests, and
+docs in the same reviewed change. File size or an old name is not proof of
+obsolescence. Existing independent security, GitOps, and history checks retain
+their failure meanings.
+
+The 2026-10-01 static audit found no active-path script with both zero
+consumers and zero unique diagnostics. `run-archive-contract-tests.py` has a
+quick/staged owner and is already covered by unit tests in full; the affected
+surface selector serves the provider write guard; the pre-push wrapper still
+chains user hooks even without a repository QA stage. The Actions security
+and CI Python validators inspect different contracts. The full/CI
+`k8s-manifests` YAML parse overlaps pinned `check-yaml`, but its required
+directory and nonempty-manifest checks are not supplied by that hook.
+A later Plan may use the existing `coveredBy` relation only after fixtures
+prove equivalent syntax/error coverage and assign those presence checks to a
+surviving gate; quick/staged retain the standalone script. Until then it stays.
+The scripts README's focused-then-full example must be rewritten so it does
+not prescribe rerunning already covered work.
+
+All `.github/` files are in the review surface: workflows, workflow
+dependencies, CODEOWNERS, branch/tag rule guidance, issue and PR templates,
+label configuration, security notice, and the repository hub. Keep maintenance
+workflows distinct from QA. The PR template currently asks for local full
+before a PR hosted full, contrary to the proposed delivery owner; the later
+change must point to the canonical quality sequence instead. The GitHub hub
+currently has no protected tag-writer route; it must describe the narrowly
+protected immutable-tag write once that writer exists while retaining its
+existing ban on workflow commit pushes and deployment writes. Check issue-contact destinations and label targets against
+authenticated repository state, not only YAML syntax. A tracked ruleset note
+is not enforcement evidence; record effective branch/tag settings read-back.
+Authenticated repository reads on 2026-10-01 found four concrete
+`.github/` drifts: Discussions is disabled while the issue contact points
+there; Dependabot requests absent `github-actions` although the repository
+has `github_actions`; Labeler targets absent `area/cluster` while its job
+has only `pull-requests: write`; and private vulnerability reporting is
+enabled while SECURITY.md directs reporters to find an unspecified private
+channel. The later change must remove or replace the dead contact, align the
+Dependabot label with the existing specific label, and route cluster paths to
+an existing label unless a distinct one has a demonstrated consumer. It must
+point security reporters to the enabled private reporting UI. These are
+repository-configuration corrections, not QA gates. Labeler on fork PRs has
+a separate token-permission limit; do not switch to `pull_request_target` or
+widen write permissions without a reviewed untrusted-input design. See the
+[action's permission contract](https://github.com/actions/labeler/blob/v7/README.md#recommended-permissions)
+and [GitHub's private-reporting guide](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately).
+
+Only demonstrated defects receive edits, and every changed trigger,
+permission, action pin, and template route receives its relevant static and
+hosted observation.
 
 ## Core Design
 
@@ -325,7 +391,8 @@ behavior without history rewrite.
 
 The later Plan binds exact commands to the changed files and snapshots.
 Focused checks include registry/schema and selection tests, QA runner call
-counts, workflow/security contracts, and adversarial provenance tests.
+counts, script consumer/disposition and distinct-rule tests, `.github/`
+workflow/template contracts, and adversarial provenance tests.
 python3 scripts/qa.py quick checks affected working-tree bytes, and
 python3 scripts/qa.py staged checks each exact logical index. Final PR-hosted
 python3 scripts/qa.py ci must pass on its actual checkout. Local-only handoff
@@ -348,6 +415,7 @@ workflow lint is repository-static evidence, not a hosted execution.
 | VAL-QER-008 | Reuse stays off until an independently protected required check is authenticated; it attests PR eligibility and publishes an independent main-push verdict over the complete gate set. Hooks, scanners, permissions, and native/live evidence stay intact. | Settings read-back, hostile-PR and green-ci-summary spoof tests, security review, Actions validator, and direct lane observations. |
 | VAL-QER-009 | Feature pushes, PRs, main pushes, and manual dispatch run only their assigned checks; routine editing does not require full QA. | Event/branch matrix tests and focused/quick/staged/full invocation counts. |
 | VAL-QER-010 | Once the protected main verdict and `main-*` rulesets are active, each successful main push publishes only its validated tip as immutable `main-<40-hex SHA>`; merge has no second publication, retries are idempotent, mismatched tags and failed verdicts publish nothing, and tag events cause no repeat QA. | Protected full-QA and protected reuse verdict fixtures, event matrix, exact-SHA/conflict and denied update/delete fixtures, authenticated ruleset/writer read-back, and hosted publication observation. |
+| VAL-QER-011 | Every active-path script and `.github/` surface has a traced consumer and distinct purpose or a reviewed retirement; proven duplicates and obsolete entries are removed without dropping unique checks, guidance no longer requires redundant local full before PR CI, and contact/label/security routes resolve to active destinations. | Caller/registry/templating inventory, YAML presence and parser negative fixtures, policy/projection tests, authenticated GitHub settings and destination read-back, fork-permission review, and before/after execution counts. |
 
 ## Traceability
 
@@ -369,6 +437,7 @@ whether a new structural decision is needed.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-008 | Hosted proof, required summary, permission and security tests. |
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-009 | Branch/event matrix and protected summary tests. |
 | [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-010 | Main push/merge event matrix, tag target and permission tests. |
+| [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-011 | Script consumer and `.github/` projection inventory, distinct-rule and retirement tests. |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-003 | Lifecycle flow and proportional final validation. |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-006 | Lifecycle flow and proportional final validation. |
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-QER-003 | Local/hosted separation and source-run identity. |
