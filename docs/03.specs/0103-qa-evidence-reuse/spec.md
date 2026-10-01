@@ -1,8 +1,8 @@
 ---
 title: "QA Evidence Reuse Across Delivery Boundaries"
-version: "0.1.1"
+version: "0.1.2"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-10-01"
 layer: "specs"
@@ -19,8 +19,8 @@ main validation. Successful
 main updates also publish one immutable commit tag. Each required
 gate executes once for a proven-equivalent input; a reused result names its
 actual successful source. Changed input, Git history, toolchain, or environment
-receives a new check. The request owner approved this design direction for Spec
-authoring on 2026-10-01. Plan and implementation review have not occurred.
+receives a new check. The request owner approved this Spec on 2026-10-01. The implementation Plan
+is awaiting review; implementation has not begun.
 
 The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md),
 [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md),
@@ -51,7 +51,7 @@ reusable gate evidence or target budgets.
   CI summary remain active. No global/private hooks or settings are changed.
 - GitHub Actions remains repository QA, not live CD. Provider-native, cluster,
   service, and deployment evidence keep separate lanes.
-- This draft does not authorize workflow permission expansion, a remote action,
+- This Spec approval does not authorize workflow permission expansion, a remote action,
   or live mutation. The later Plan must review narrow actions: read on a
   hosted evidence lookup job, an independently protected required check, and
   scoped write access for tag publication. Reuse remains disabled until that
@@ -389,7 +389,7 @@ behavior without history rewrite.
 
 ## Verification Commands
 
-The later Plan binds exact commands to the changed files and snapshots.
+The [Plan](plan.md) binds exact commands to the changed files and snapshots.
 Focused checks include registry/schema and selection tests, QA runner call
 counts, script consumer/disposition and distinct-rule tests, `.github/`
 workflow/template contracts, and adversarial provenance tests.
@@ -422,8 +422,7 @@ workflow lint is repository-static evidence, not a hosted execution.
 These criteria implement the current Requirement Package without adding a
 second requirement owner. [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 places validation routing in the registry and distinguishes local from hosted
-evidence. This draft does not edit an accepted ADR. A later Plan determines
-whether a new structural decision is needed.
+evidence. This Spec does not edit an accepted ADR. The [Plan](plan.md) uses the existing AD and does not create a new ADR.
 
 ### Lifecycle Traceability
 
