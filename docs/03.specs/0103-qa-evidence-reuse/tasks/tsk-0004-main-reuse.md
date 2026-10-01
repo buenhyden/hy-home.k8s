@@ -159,6 +159,13 @@ provider trials remain DEFER; no hosted reuse or Spec completion is claimed.
   That change was never applied. QA only selects the registry complement;
   authenticated lookup and the protected main verdict own REUSED evidence.
 
+- Task-only evidence commit `defae927ef70c64631984d6e0f60f16d0f7ef7b7`, checked
+  tree `7804e8df8f038932233f0906b531b9924b5083b8`: documentation quick 6/6
+  and exact-index staged 6/6 PASS on this Task path; cached whitespace and
+  actual-message pinned Commitizen PASS. The commit succeeded through unchanged
+  active hooks. This later evidence snapshot is separate from the code checks;
+  no full QA was repeated.
+
 ### Independent review and repair
 
 - Independent code review of the candidate requested two availability fixes:
