@@ -1,8 +1,8 @@
 ---
 title: "Active QA test disposition"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-01"
 layer: "specs"
@@ -15,8 +15,10 @@ artifact_id: "SPEC-0103-TSK-0007"
 
 Execute [Plan WP-007](../plan.md) against [SPEC-0103](../spec.md). The active
 CI/QA/validation audit retains every discovered module and removes two redundant
-assertions: a gate-owned positive corpus check and a repeated forbidden-key check. Independent semantic review
-and final integration evidence remain pending; this record does not close them.
+assertions: a gate-owned positive corpus check and a repeated forbidden-key check.
+Independent semantic review approved the disposition. The subsequent scoped
+formatter repair and local full QA PASS close the remaining completion condition;
+hosted integration stays with Task 0006.
 
 ## Inputs
 
@@ -27,12 +29,15 @@ and final integration evidence remain pending; this record does not close them.
 - Starting snapshot: branch `codex/qa-evidence-implementation`, HEAD/base
   `7ad42d2e`, linked worktree named `qa-evidence-implementation/hy-home.k8s`.
   The assigned paths were clean. Tasks 0001/0002 are prior reviewed work.
+- Completion snapshot: branch unchanged; HEAD `4f06cf92c20fad479417326e5ffa621d5c4a82a8`,
+  tree `d59d98f2b4b1e5de89ec4b36e307803e8c5f5950`; clean before this Task-only
+  evidence update. The supervisor assigned only this Task and its ignored report.
 
 ## Task Table
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-007 | VAL-QER-012 | Trace active test callers and distinct failure meanings; retire proven redundant or obsolete tests | platform | In Progress | Audit complete; two redundant methods removed; independent review pending | Inventory, retirement proof, and commands below |
+| WORK-007 | VAL-QER-012 | Trace active test callers and distinct failure meanings; retire proven redundant or obsolete tests | platform | Completed | Audit and two retirements approved; final local full QA 23/23 PASS | Inventory, retirement proof, and commands below |
 
 ## Approval and Safety Boundaries
 
@@ -247,6 +252,8 @@ escalated local execution was then used, without changing provider trust.
 | Interrupted isolated attempt | `python3 scripts/qa.py full` on tree `002bfa84d873247fe73a110e36074989bdf9cb20` | Interrupted (exit 130): source review found MD012 duplicate blank line; 19 gates had passed and unit aggregate had started, without a completion result. Supervisor directed normal interruption before correcting the known-invalid Task input |
 | Focused Markdown | `pre-commit run markdownlint-cli2 --files docs/03.specs/0103-qa-evidence-reuse/tasks/tsk-0007-test-disposition.md` | PASS after MD012 repair; subsequent change only records this result |
 | Isolated full | `python3 scripts/qa.py full` on tree `e2b4310b9e75b90f2073cb7f8672cf6d50da06a6` | FAIL overall: pre-commit Ruff formatter modified pre-existing `tests/test_ci_qa_workflow.py` in the disposable snapshot. Unit-tests and all 22 non-pre-commit gates PASS; completed pipes and cleanup |
+| Repaired final full | `python3 scripts/qa.py full` at commit `4f06cf92c20fad479417326e5ffa621d5c4a82a8`, tree `d59d98f2b4b1e5de89ec4b36e307803e8c5f5950` | PASS: exit 0, 23/23 selected gates, `all-files:paths=1260`; unit-tests and all-files manual pre-commit both rc=0. Reported by the Task 0002 repair owner and reconciled by the supervisor; clean committed tree unchanged by QA |
+| Formatter repair scope | `python3 -m unittest tests.test_ci_qa_workflow`; `python3 scripts/qa.py quick`; `python3 scripts/qa.py staged` | PASS: 14/14 focused cases, 3/3 affected gates and 3/3 exact-index gates; independent `review_task2_formatter` Spec PASS / quality Approved, format-only with no semantic change |
 | Final focused checks | `python3 -m unittest tests.test_external_service_contracts tests.test_validation_profiles tests.test_validate_affected_surfaces tests.test_validation_tooling_ownership tests.test_document_strict_cutover.Stage99TerminalAuthorityTests.test_v9_registry_uses_the_common_public_model` | PASS: 63 tests / 7.525s; final test bytes |
 | Initial affected lane | `python3 scripts/qa.py quick` | FAIL only repository-quality: this Task included a machine-local absolute checkout path; 6 other gates PASS. Repaired to a portable worktree name |
 | Final affected lane | `python3 scripts/qa.py quick` on tree `fa30de75389d523eadbf45f0815e53103b6cdd72` | PASS: all 7 selected gates; complete pipes and cleanup. Subsequent edits only record evidence |
@@ -268,9 +275,19 @@ The isolated full failure was traced with `pre-commit run ruff-format --all-file
 --hook-stage manual` inside an exact-index `qa.repository_snapshot(staged=True)`.
 Only `tests/test_ci_qa_workflow.py` changed (29 added / 7 removed formatting lines);
 97 files were unchanged. The source checkout was not changed. This pre-existing
-Task 0002-owned file is outside Task 0007 ownership. The supervisor routes its
-repair and fresh full evidence to that owner. The successful unit gate covers
-this recorded tree only; it does not prove later changed test bytes.
+Task 0002-owned file was outside Task 0007 ownership. Its owner repaired only
+formatting in commit `4f06cf92c20fad479417326e5ffa621d5c4a82a8` and ran fresh
+full QA on the committed tree. The earlier FAIL remains historical evidence;
+the new 23/23 PASS establishes the final local verdict. Task 0007 performs no
+additional full run for this evidence-only update.
+
+The final full unit gate reported stdout SHA-256
+`4230fe8fa306f4fc5024332564c0f87f007ecbe8cab1bdd77b80029e2edb7a9c`;
+its pinned `pre-commit run --all-files --hook-stage manual` gate reported stdout
+SHA-256 `ed873238f5f28f072a6c188ccf9690cf67d65abe1554872445869f431282d5ae`.
+The retirement scope remains 56 modules and 1,288 unique cases, compared with
+1,290 baseline cases. The two retained-negative proofs above remain the deletion
+basis; the format-only repair changes no assertion, import or test name.
 
 ### Diagnostic aggregate disposition
 
@@ -321,8 +338,9 @@ configuration error (2 cases / 2 errors). No second raw aggregate was run.
 Implementation commit: `e0c6955e74ae15e958976908b666866eab922fd5`
 (`test: retire proven redundant QA tests`), based on `7ad42d2e`. This later
 Task-only evidence change records its final dispositions without naming its
-own future commit. Final test bytes remain those of the recorded full unit
-gate; the Task-only change receives affected and exact-index document checks.
+own future commit. The two retired-test files remain unchanged; final full QA includes the separately
+reviewed formatter repair. This Task-only change receives affected and exact-index
+document checks without repeating the full aggregate.
 
 Hook observation: repository-local `core.hooksPath` resolves to `scripts/githooks`;
 both configured hook wrappers are present. Their shared `chained-hook.sh`
@@ -337,18 +355,21 @@ before commit.
 
 - Writer: `/root/implement_task7`, scoped quality responsibility; self-review
   confirms only two method removals (12 lines total) and this evidence record.
-- Independent reviewer: `/root` or its separately assigned read-only reviewer,
-  **PENDING**. The writer does not certify independent review. Reviewer should
-  check each disposition family, gate equivalence and retained negative proof.
-- Hosted CI/full integration: **DEFER** to Task 0006 and the supervising agent's
+- Independent reviewer: `/root/review_task7`, snapshot `6b333b71`: **APPROVED**
+  scoped implementation; Spec audit/retirements PASS, no code finding. Completion
+  was withheld solely for the Task 0002-owned formatter failure. The supervisor
+  reconciled the final full PASS and `/root/review_task2_formatter` approval
+  (Spec PASS / quality Approved, format-only) as closing that condition. The writer
+  records these independent dispositions and does not self-certify review.
+- Hosted CI/integration: **DEFER** to Task 0006 and the supervising agent's
   final SHA/run; local test success makes no hosted or provider-runtime claim.
-- Required full lane: **FAIL** from the pre-existing CI test formatting defect;
-  supervisor owns the Task 0002 repair and refreshed integration evidence.
+- Required local full lane: **PASS**, 23/23 at commit `4f06cf92` and tree
+  `d59d98f2`; the prior failed snapshot is preserved above.
 - Residual risk: source/AST family audit cannot prove all possible semantic
   equivalences. Unproved candidates stay. A standalone unittest invocation still
   tests behavior; current-corpus correctness belongs to the registered gate.
-- Next owner: supervisor for independent semantic review, final integration and
-  durable completion evidence. No external action or additional cleanup inferred.
+- Next owner: supervisor and Task 0006 for final hosted integration and
+  package-level completion evidence. No external action or additional cleanup inferred.
 
 ## Traceability
 
@@ -356,4 +377,4 @@ before commit.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-007](../plan.md#work-breakdown) | In progress: VAL-QER-012 audit complete; two redundant assertions retired; focused/quick/staged PASS, full FAIL from pre-existing formatting; independent review pending | Module/caller table, retained-negative proof and command results in this record |
+| [WORK-007](../plan.md#work-breakdown) | Completed: VAL-QER-012 audit and two retirements approved; focused/quick/staged PASS; final local full QA 23/23 PASS after scoped formatter repair | Module/caller table, retained-negative proof and command results in this record |
