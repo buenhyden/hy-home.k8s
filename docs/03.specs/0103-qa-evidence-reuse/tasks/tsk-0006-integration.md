@@ -1,6 +1,6 @@
 ---
 title: "Integration, review, and handoff"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -48,8 +48,8 @@ Tasks 3–5 stay in progress. No local result establishes remote enforcement.
   and Git policy. App/environment configuration, remote settings, rulesets and
   tag activation still require their operator-owned authorization and evidence.
   No external mutation occurred in this Task.
-- **Static Validation**: one frozen-code full QA; final discovery census without
-  test execution; affected quick and exact-index staged QA per document commit;
+- **Static Validation**: frozen full QA attempts on distinct recorded inputs;
+  final discovery census without test execution; affected quick and exact-index staged QA per document commit;
   whitespace, document/schema/links and actual-message checks with active hooks.
 - **Live Validation**: DEFER with operator/PR owner and retry triggers below.
 - **Secret / Vault Handling**: no private values read or recorded. Setting names,
@@ -73,6 +73,7 @@ Branch `codex/qa-evidence-implementation`, clean HEAD
 as recorded below. The authorized repair is now committed at
 `0820ee0ef015d45edd4e6919e3f0d1c7f5c3deba`, tree
 `bd10d2eb1cd8f1cd04b5fd120f61f960015b4a42`; the resumed checkout was clean.
+The later scanner-fixture repair is `b8438e5736c3445c1bd137fd580556a722eebe3a`.
 This handoff changes documentation only. Its quick/staged evidence is separate
 from the controller-coordinated final full run on the repaired near-final input.
 No unchanged full/unit/manual-pre-commit aggregate is repeated independently.
@@ -103,8 +104,9 @@ required; artifacts, QA logs and green names are not authority.
 ### Criterion and requirement reconciliation
 
 The local column maps retained runnable evidence; owning Tasks record its prior
-focused results. The initial integration full failed, and final full is pending
-on the repaired input. This matrix does not claim an overall local or hosted PASS.
+focused results. Both recorded integration full attempts failed; final full is
+pending on the latest repaired input. This matrix does not claim an overall local
+or hosted PASS.
 Requirement lineage is the full stable ID in the owning Spec's traceability table.
 
 | Criterion | Requirement lineage | Local evidence | Hosted/settings disposition and retry owner |
@@ -197,7 +199,10 @@ DEFER. `task6_whole_code_review` found no code defect, but requested the latest
 test census/dispositions (MEDIUM) and correction of the hub claim that ci-summary
 checks the qa-source result (LOW). This handoff adds the census and corrects the
 hub: qa-source is an ordering dependency; required result checks are branch-policy,
-qa and qa-isolated. Scoped document re-review remains pending before local completion.
+qa and qa-isolated. Scoped review of the first document commit `3d3d10bb`
+returned Spec PASS / quality Approved from `task6_whole_code_review`, with both
+findings resolved; `task6_whole_security_review` reported no findings. These
+review results do not replace the still-required successful final full QA.
 
 Authenticated read-only GitHub observations supplied by the controller on
 2026-10-02: repository environments, rulesets and Actions variables lists were
@@ -230,14 +235,46 @@ stayed identical. The focused detect-secrets hook returned rc=0 without changing
 bytes, combined staged passed 3/3, and `task6_whole_security_review` accepted
 that metadata-only repair. No secret was added, exposed or allowlisted.
 
+The first document commit `3d3d10bb83df88f8a260507014101fef63edfd4b`, tree
+`4e0bc0baa5f195b387aacd9c5bedb6ce27ea7cc7`, passed affected quick and exact-index
+staged 6/6 across nine documentation paths. Both selected agent-governance,
+document-contract-registry, document-lifecycle, links-and-owners,
+markdown-profiles and repository-quality. Markdown lint, whitespace and the
+actual Commitizen message check passed; normal active hooks were preserved.
+
+A second frozen `python3 scripts/qa.py full` on that clean commit returned exit 1,
+scope `all-files:paths=1268`: 22 of 23 gates PASS and `pre-commit` FAIL. Unlike
+the initial run, `unit-tests` passed and no snapshot-mutation diagnostic appeared;
+source HEAD/tree stayed unchanged and the worktree remained clean. All 23 gate
+records matched registry order and had complete stdout, stderr and cleanup.
+The pre-commit gate returned rc=1, with detect-secrets hook rc=1. The bounded log
+is `/tmp/qa-task6-final-full.log`; it is local diagnostic evidence, not hosted proof.
+
+Sanitized diagnosis located a Secret Keyword candidate at
+`tests/test_publish_main_tag.py:612`. Independent security AST review confirmed
+that the key-order fixture uses a six-character lowercase dummy for
+`QA_PUBLISHER_PRIVATE_KEY`, not a credential. The initial hook rc=3 and snapshot
+mutation did not establish absence of this separate candidate: partition return
+code aggregation could have masked rc=1. The earlier baseline-only repair and
+focused check therefore did not prove the whole all-files scanner would pass.
+
+Task 5 repair `b8438e5736c3445c1bd137fd580556a722eebe3a` adds only an exact inline
+scanner allowlist pragma on that dummy fixture line; no baseline entry, broad
+exclude or runtime behavior changed. Owner-reported detect-secrets GREEN,
+publisher suite 20/20, quick 3/3 and staged 3/3 passed. Controller-reported
+independent code review returned Spec PASS / quality Approved and security
+review PASS. Both failed full attempts remain recorded FAIL; the narrow repair
+is not represented as a successful replacement full run.
+
 Tools: Python 3.12.3, pre-commit 4.6.1, RTK 0.49.0. Initial sandbox startup
 failed before executing a command (`bwrap` network namespace setup); scoped
 local commands used approved escalation. Existing `core.hooksPath` remained
 `scripts/githooks`; no bypass or private/global configuration change occurred.
-Final full validation is pending under controller coordination after this first
-in-progress document commit. Documentation quick/staged and actual-message
-results are retained with its commit identity in the ignored Task 6 report;
-the completed handoff will reconcile that exact snapshot without a self-SHA loop.
+Final full validation remains pending under controller coordination on the
+near-final tree after the scanner-fixture repair and this evidence-only update.
+Task 6 remains in-progress. This document commit uses affected quick, exact-index
+staged and actual-message validation; its results and identity are retained in
+the ignored Task 6 report without a self-SHA rewrite loop.
 The controller owns review reconciliation; the operator owns every hosted deferral
 in the criterion table.
 
