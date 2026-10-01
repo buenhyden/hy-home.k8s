@@ -1,8 +1,8 @@
 ---
 title: "QA Evidence Reuse Implementation Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-10-01"
 layer: "specs"
@@ -43,7 +43,7 @@ artifact_id: "SPEC-0103-PLAN-0001"
 
 ## Overview
 
-This package turns the approved SPEC-0103 into six reviewable implementation units. Local reuse and repository guidance can land independently; hosted reuse and tags remain inactive until the protected GitHub control is observed.
+The request owner approved this six-task Plan for implementation on 2026-10-01. Task 0001 is implemented and under independent review. Local reuse and repository guidance can land independently; hosted reuse and tags remain inactive until the protected GitHub control is observed.
 
 ## Context
 
