@@ -31,6 +31,12 @@ _records_spec = importlib.util.spec_from_file_location(
 records = importlib.util.module_from_spec(_records_spec)
 sys.modules[_records_spec.name] = records
 _records_spec.loader.exec_module(records)
+_hosted_spec = importlib.util.spec_from_file_location(
+    "qa_provenance_hosted", Path(__file__).with_name("qa_provenance_hosted.py")
+)
+hosted = importlib.util.module_from_spec(_hosted_spec)
+_hosted_spec.loader.exec_module(hosted)
+
 PROOF_LIMIT = records.PROOF_LIMIT
 Proof, MainVerdict, Reject = records.Proof, records.MainVerdict, records.Reject
 require, sha, positive = records.require, records.sha, records.positive
@@ -359,17 +365,25 @@ def authenticated_run(event, github, event_name):
     return run
 
 
-def _verify_pr(event, github):
+def _verify_pr(event, github, *, proof_base=None):
     run = authenticated_run(event, github, "pull_request")
     relation, pr, discovered = source_pull(run, github)
     number = positive(relation["number"])
-    require(pr["number"] == number and pr["state"] == "open", "PR no longer open")
-    base, head = sha(pr["base"]["sha"]), sha(pr["head"]["sha"])
+    require(
+        pr["number"] == number and pr["state"] == ("closed" if proof_base else "open"),
+        "wrong PR state",
+    )
+    if proof_base:
+        require(pr["merged"] is True, "PR was not merged")
+    base, head = sha(proof_base or pr["base"]["sha"]), sha(pr["head"]["sha"])
     require(
         pr["base"]["ref"] == "main" and repo_matches(pr["base"]["repo"], github),
         "wrong PR base",
     )
-    require(base == github.baseline and head == run["head_sha"], "PR base/head changed")
+    require(
+        (proof_base or base == github.baseline) and head == run["head_sha"],
+        "PR base/head changed",
+    )
     require(
         relation["base"]["sha"] == base and relation["head"]["sha"] == head,
         "run PR relation changed",
@@ -380,6 +394,10 @@ def _verify_pr(event, github):
         "wrong head branch or repository",
     )
     baseline = github.controls(github.commit(base))
+    require(
+        baseline == github.controls(github.commit(github.baseline)),
+        "protected baseline changed",
+    )
     # Audit every commit tree before interpreting any PR-controlled step name.
     # ponytail: all scripts are protected; narrow only after a dependency audit.
     count = positive(pr["commits"])
@@ -395,7 +413,10 @@ def _verify_pr(event, github):
             "PR changes protected control closure",
         )
     gates = full_gate_contract(github, baseline)
-    qa, checkout_sha = authenticated_qa_job(run, github, main=False)
+    jobs, checkout_sha, _ = hosted.job_partition(
+        sys.modules[__name__], run, github, main=False
+    )
+    qa = jobs["qa"]
     if discovered:
         require(
             pr["merge_commit_sha"] == checkout_sha, "PR lookup merge checkout changed"
@@ -411,7 +432,10 @@ def _verify_pr(event, github):
     proof = Proof(
         full_record(github, baseline, run, qa, checkout_commit, gates)
         | {
-            "version": 1,
+            "version": 3,
+            "isolated": hosted.isolated_record(
+                sys.modules[__name__], github, baseline, jobs, checkout_commit
+            ),
             "pr": number,
             "base": base,
             "head": head,
@@ -420,55 +444,11 @@ def _verify_pr(event, github):
     return parse_proof(encode_proof(proof).encode())
 
 
-def authenticated_qa_job(run, github, *, main):
-    run_id, attempt, head = run["id"], run["run_attempt"], run["head_sha"]
-    jobs = github.pages(f"actions/runs/{run_id}/attempts/{attempt}/jobs", field="jobs")
-    require(
-        len(jobs) == 3
-        and {job["name"] for job in jobs} == {"qa", "branch-policy", "ci-summary"},
-        "ambiguous CI jobs",
-    )
-    require(
-        len({positive(job["id"]) for job in jobs}) == len(jobs),
-        "duplicate job identity",
-    )
-    for job in jobs:
-        require(
-            job["run_id"] == run_id
-            and job["run_attempt"] == attempt
-            and job["head_sha"] == head,
-            "wrong job source",
-        )
-        if main and job["name"] == "branch-policy":
-            require(
-                job["status"] == "completed" and job["conclusion"] == "skipped",
-                "unexpected main branch policy",
-            )
-        else:
-            successful(job)
-    qa = next(job for job in jobs if job["name"] == "qa")
-    steps = qa["steps"]
-    require(
-        0 < len(steps) <= 100
-        and len({positive(step["number"]) for step in steps}) == len(steps),
-        "invalid steps",
-    )
-    checkout = [step for step in steps if step["name"].startswith(CHECKOUT_PREFIX)]
-    aggregate = [
-        step for step in steps if step["name"] == "Validate repository checkout"
-    ]
-    require(len(checkout) == len(aggregate) == 1, "missing or ambiguous QA step")
-    successful(checkout[0])
-    successful(aggregate[0])
-    require(checkout[0]["number"] < aggregate[0]["number"], "wrong step order")
-    checkout_sha = sha(checkout[0]["name"][len(CHECKOUT_PREFIX) :])
-    return qa, checkout_sha
-
-
 def full_gate_contract(github, baseline):
     ci = trusted_bytes(github, baseline, CI_PATH)
     trusted_bytes(github, baseline, "scripts/qa_provenance.py")
     trusted_bytes(github, baseline, "scripts/qa_provenance_records.py")
+    trusted_bytes(github, baseline, "scripts/qa_provenance_hosted.py")
     require(
         b"name: Checkout QA commit ${{ github.sha }}" in ci
         and b"ref: ${{ github.sha }}" in ci
@@ -476,6 +456,11 @@ def full_gate_contract(github, baseline):
         "unsupported CI contract",
     )
     registry = decode(trusted_bytes(github, baseline, REGISTRY_PATH), API_LIMIT)
+    hosted.partition(registry, "isolated")
+    require(
+        hosted.IMAGE.encode() in ci and b"/usr/local/bin/python3 -I -B -" in ci,
+        "unsupported isolated runtime",
+    )
     gates = registry["profiles"]["full"]
     require(
         registry["profileAliases"]["ci"] == "full"
@@ -523,13 +508,22 @@ def _verify_main(event, github):
         github.controls(checkout_commit) == baseline, "main control closure changed"
     )
     gates = full_gate_contract(github, baseline)
-    qa, observed_checkout = authenticated_qa_job(run, github, main=True)
+    jobs, observed_checkout, mode = hosted.job_partition(
+        sys.modules[__name__], run, github, main=True
+    )
+    qa = jobs["qa"]
     require(observed_checkout == checkout_sha, "wrong QA checkout")
-    # This attests fresh full QA only. No PR/base or runtime equivalence is claimed.
+    reused = hosted.main_reuse(sys.modules[__name__], github, jobs, checkout_sha, mode)
+    record = full_record(github, baseline, run, qa, checkout_commit, gates)
+    if reused:
+        record = record | {
+            "gates": {**record["gates"], hosted.GATE: "REUSED"},
+            "reuse": reused,
+        }
     verdict = MainVerdict(
-        full_record(github, baseline, run, qa, checkout_commit, gates)
+        record
         | {
-            "version": 2,
+            "version": 4 if reused else 2,
             "event": "push",
             "ref": "refs/heads/main",
             "control": github.baseline,

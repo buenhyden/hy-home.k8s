@@ -1244,11 +1244,20 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = self.qa.contract_module.validate_contract(ROOT)
         identifiers = contract["profiles"]["full"]
         real_run = self.qa.runner.run_bounded_command
-        for profile, failed_gate in (
-            ("full", None),
-            ("ci", None),
-            ("ci", "agent-evaluation-cases"),
+        for profile, partition, failed_gate in (
+            ("full", None, None),
+            ("ci", None, None),
+            ("ci", None, "agent-evaluation-cases"),
+            ("ci", "complement", None),
         ):
+            expected_ids = (
+                self.qa.hosted.partition(contract, partition)
+                if partition
+                else identifiers
+            )
+            arguments = ["qa.py", profile, "--root", str(self.root)]
+            if partition:
+                arguments += ["--partition", partition]
             observed = []
 
             def child(argv, *, cwd, env, **kwargs):
@@ -1273,9 +1282,7 @@ class LocalEvidenceTests(unittest.TestCase):
 
             with (
                 self.subTest(profile=profile, failed_gate=failed_gate),
-                mock.patch.object(
-                    sys, "argv", ["qa.py", profile, "--root", str(self.root)]
-                ),
+                mock.patch.object(sys, "argv", arguments),
                 mock.patch.object(
                     self.qa.contract_module, "validate_contract", return_value=contract
                 ),
@@ -1300,8 +1307,8 @@ class LocalEvidenceTests(unittest.TestCase):
                 redirect_stdout(io.StringIO()) as output,
             ):
                 self.assertEqual(self.qa.main(), 1 if failed_gate else 0)
-            self.assertEqual(len(observed), len(identifiers))
-            for identifier in identifiers:
+            self.assertEqual(len(observed), len(expected_ids))
+            for identifier in expected_ids:
                 expected = "FAIL" if identifier == failed_gate else "PASS"
                 self.assertEqual(
                     output.getvalue().count(

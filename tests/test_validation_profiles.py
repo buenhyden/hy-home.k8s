@@ -168,7 +168,7 @@ class ValidationProfileTests(unittest.TestCase):
         registry = {row["id"]: row for row in self.contract["validators"]}
         self.assertNotIn("reuse", registry["external-service-contracts"])
         self.assertEqual(
-            registry["agent-evaluation-cases"]["reuse"], {"mode": "change-scoped"}
+            registry["agent-evaluation-cases"]["reuse"]["mode"], "change-scoped"
         )
 
     def test_reuse_declaration_is_opt_in_and_invalid_forms_fail(self):

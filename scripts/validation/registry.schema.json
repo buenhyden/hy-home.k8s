@@ -245,8 +245,50 @@
         "reuse": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["mode"],
-          "properties": {"mode": {"enum": ["same-lane", "change-scoped"]}}
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "same-lane",
+                "change-scoped"
+              ]
+            },
+            "hosted": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "image",
+                "platform",
+                "python",
+                "version",
+                "inputs"
+              ],
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "const": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d"
+                },
+                "platform": {
+                  "type": "string",
+                  "const": "linux/amd64"
+                },
+                "python": {
+                  "type": "string",
+                  "const": "/usr/local/bin/python3"
+                },
+                "version": {
+                  "type": "string",
+                  "const": "3.12.14"
+                },
+                "inputs": {
+                  "type": "string",
+                  "const": "committed-tree-v1"
+                }
+              }
+            }
+          }
         },
         "coveredBy": {
           "type": "string",

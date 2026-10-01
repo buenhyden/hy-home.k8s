@@ -108,6 +108,8 @@ INSTALL_COMMAND = (
     "--requirement .github/requirements/ci-validation.txt"
 )
 QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
+# Only this complete audited bootstrap may bypass the install shell grammar.
+ISOLATED_BOOTSTRAP = '# Bootstrap raw Git bytes, before importing any checkout module.\n/usr/local/bin/python3 -I -B - <<\'PYTHON\'\nimport os, subprocess, sys\ncommit = os.environ["EXPECTED_COMMIT"]\ncode = subprocess.check_output(["/usr/bin/git", "show", commit + ":scripts/qa_provenance_hosted.py"], timeout=30)\nsys.argv = ["qa_provenance_hosted.py", "isolated", "--commit", commit]\nexec(compile(code, "qa_provenance_hosted.py", "exec"), {"__name__": "__main__"})\nPYTHON'
 GITLEAKS_JOBS = ("qa",)
 GITLEAKS_INSTALL_COMMAND = f"""\
 set -euo pipefail
@@ -924,6 +926,8 @@ def shell_contains_pip_install(text: str) -> bool:
 
 
 def _guarded_pip_install(command: str) -> bool:
+    if command == ISOLATED_BOOTSTRAP:
+        return False
     try:
         return shell_contains_pip_install(command)
     except ShellGuardError:
@@ -1512,13 +1516,55 @@ def _validate_qa_execution(
         if isinstance(step, dict)
     ]
     qa_commands = [command for command in commands if "scripts/qa.py" in command]
-    if qa_commands != [QA_COMMAND] or any(
+    if any(
         "pre-commit run" in command or "unittest discover" in command
         for command in commands
     ):
-        fail("CI-QA-EXECUTION", "CI must execute the shared QA profile exactly once")
-    if [_run_text(step) for step in job_steps["qa"]].count(QA_COMMAND) != 1:
-        fail("CI-QA-EXECUTION", "the shared QA profile must run in qa")
+        fail("CI-QA-EXECUTION", "CI must not duplicate nested QA gates")
+    partition_jobs = {"qa-isolated", "qa-source"} & set(workflow["jobs"])
+    if not partition_jobs:
+        if (
+            qa_commands != [QA_COMMAND]
+            or [_run_text(step) for step in job_steps["qa"]].count(QA_COMMAND) != 1
+        ):
+            fail(
+                "CI-QA-EXECUTION",
+                "CI must execute the shared QA profile exactly once in qa",
+            )
+        return
+    complement = QA_COMMAND + " --partition complement"
+    expected = [
+        {
+            "name": "Validate repository checkout",
+            "if": "github.event_name != 'pull_request' && needs.qa-source.outputs.source == ''",
+            "env": {
+                "BASE_SHA": "${{ github.event.pull_request.base.sha || github.event.before || '' }}"
+            },
+            "run": QA_COMMAND,
+        },
+        {
+            "name": "Validate repository complement",
+            "if": "github.event_name == 'pull_request'",
+            "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
+            "run": complement,
+        },
+        {
+            "name": "Reuse isolated gate ${{ needs.qa-source.outputs.source }}",
+            "if": "github.event_name == 'push' && needs.qa-source.outputs.source != ''",
+            "env": {"BASE_SHA": "${{ github.event.before }}"},
+            "run": complement,
+        },
+    ]
+    actual = [step for step in job_steps["qa"] if "scripts/qa.py" in _run_text(step)]
+    if (
+        partition_jobs != {"qa-isolated", "qa-source"}
+        or actual != expected
+        or qa_commands != [QA_COMMAND, complement, complement]
+    ):
+        fail(
+            "CI-QA-EXECUTION",
+            "CI requires the exact disjoint full, PR complement and main reuse steps",
+        )
 
 
 def _validate_gitleaks_tool(
@@ -1639,20 +1685,57 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     if workflow.get("permissions") != {"contents": "read"}:
         fail("CI-TOPOLOGY", "CI permissions must remain contents: read")
     jobs = workflow.get("jobs", {})
-    if set(jobs) != {"branch-policy", "qa", "ci-summary"}:
-        fail("CI-TOPOLOGY", "CI has one QA job, branch policy, and required summary")
+    if set(jobs) != {"branch-policy", "qa", "ci-summary", "qa-isolated", "qa-source"}:
+        fail(
+            "CI-TOPOLOGY",
+            "CI requires QA, isolated gate, lookup, branch policy and summary",
+        )
     qa, branch, summary = (jobs[key] for key in ("qa", "branch-policy", "ci-summary"))
-    if "if" in qa or qa.get("needs"):
+    if qa.get("if") != "${{ !cancelled() }}" or qa.get("needs") != ["qa-source"]:
         fail("CI-TOPOLOGY", "QA cannot be conditionally skipped")
     if branch.get("if") != "github.event_name == 'pull_request'":
         fail("CI-TOPOLOGY", "branch policy applies only to pull requests")
     if summary.get("if") != "always()" or summary.get("needs") != [
         "branch-policy",
         "qa",
+        "qa-isolated",
+        "qa-source",
     ]:
-        fail("CI-TOPOLOGY", "ci-summary must always inspect both predecessor results")
-    for job in jobs.values():
-        if job.get("permissions") or job.get("continue-on-error"):
+        fail("CI-TOPOLOGY", "ci-summary must always inspect all predecessor results")
+    isolated, source = jobs["qa-isolated"], jobs["qa-source"]
+    if (
+        isolated.get("if") != "github.event_name == 'pull_request'"
+        or isolated.get("container")
+        != {
+            "image": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d",
+            "options": "--platform linux/amd64",
+        }
+        or [_run_text(step) for step in isolated.get("steps", []) if "run" in step]
+        != [ISOLATED_BOOTSTRAP]
+    ):
+        fail(
+            "CI-TOPOLOGY",
+            "isolated gate requires the exact immutable runtime and bootstrap",
+        )
+    if (
+        source.get("if")
+        != "github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.QA_REUSE_ENABLED == 'true' && vars.QA_PROVENANCE_ENABLED == 'true'"
+    ):
+        fail("CI-TOPOLOGY", "source lookup must be default-off and main-push-only")
+    for name, job in jobs.items():
+        expected_permissions = (
+            {
+                "contents": "read",
+                "actions": "read",
+                "pull-requests": "read",
+                "checks": "read",
+            }
+            if name == "qa-source"
+            else None
+        )
+        if job.get("permissions") != expected_permissions or job.get(
+            "continue-on-error"
+        ):
             fail("CI-TOPOLOGY", "jobs cannot widen permissions or suppress failures")
         for step in job.get("steps", []):
             if step.get("continue-on-error"):
@@ -1669,6 +1752,7 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         "EVENT_NAME": "${{ github.event_name }}",
         "BRANCH_POLICY_RESULT": "${{ needs.branch-policy.result }}",
         "QA_RESULT": "${{ needs.qa.result }}",
+        "ISOLATED_RESULT": "${{ needs.qa-isolated.result }}",
     }:
         fail("CI-TOPOLOGY", "summary must consume actual event and predecessor results")
     summary_text = _run_text(steps[0])
@@ -1678,6 +1762,8 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         "push:skipped|workflow_dispatch:skipped)",
         "branch_verdict=FAIL",
         'case "$QA_RESULT" in',
+        'case "$EVENT_NAME:$ISOLATED_RESULT" in',
+        "pull_request:success|push:skipped|workflow_dispatch:skipped)",
         "qa_verdict=PASS",
         "qa_verdict=FAIL",
         'if [ "$failed" -ne 0 ]; then',

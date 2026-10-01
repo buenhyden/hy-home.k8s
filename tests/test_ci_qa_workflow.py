@@ -18,9 +18,11 @@ class CiQaWorkflowTests(unittest.TestCase):
 
     def test_one_qa_job_owns_setup_and_execution(self):
         jobs = self.workflow["jobs"]
-        self.assertEqual(set(jobs), {"branch-policy", "qa", "ci-summary"})
+        self.assertEqual(
+            set(jobs), {"branch-policy", "qa", "ci-summary", "qa-isolated", "qa-source"}
+        )
         runs = [step.get("run", "") for job in jobs.values() for step in job["steps"]]
-        self.assertEqual(sum("python3 scripts/qa.py ci" in run for run in runs), 1)
+        self.assertEqual(sum("python3 scripts/qa.py ci" in run for run in runs), 3)
         self.assertFalse(
             any("pre-commit run" in run or "unittest discover" in run for run in runs)
         )
@@ -46,7 +48,7 @@ class CiQaWorkflowTests(unittest.TestCase):
                 "fetch-depth": 0,
             },
         )
-        self.assertNotIn("if", jobs["qa"])
+        self.assertEqual(jobs["qa"]["if"], "${{ !cancelled() }}")
         self.assertEqual(self.workflow["permissions"], {"contents": "read"})
 
     def test_verifier_has_no_pr_execution_or_publisher_credentials(self):
@@ -60,7 +62,12 @@ class CiQaWorkflowTests(unittest.TestCase):
         )
         self.assertEqual(
             workflow["permissions"],
-            {"contents": "read", "actions": "read", "pull-requests": "read"},
+            {
+                "contents": "read",
+                "actions": "read",
+                "pull-requests": "read",
+                "checks": "read",
+            },
         )
         job = workflow["jobs"]["verify-qa"]
         self.assertEqual(job["environment"], "qa-control")
@@ -87,7 +94,7 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertNotIn("actions/cache", str(job))
         self.assertNotIn("download-artifact", str(job))
         self.assertNotIn("workflow_run.head_sha", str(steps))
-        self.assertNotIn("QA_REUSE_ENABLED", str(self.workflow["jobs"]))
+        self.assertIn("QA_REUSE_ENABLED", self.workflow["jobs"]["qa-source"]["if"])
         checkout = next(
             step
             for step in self._qa_steps()
@@ -118,13 +125,18 @@ class CiQaWorkflowTests(unittest.TestCase):
             "${{ github.event.pull_request.base.sha || github.event.before || '' }}",
         )
         self.assertEqual(step["run"], 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"')
-        self.assertNotIn("if", step)
+        self.assertEqual(
+            step["if"],
+            "github.event_name != 'pull_request' && needs.qa-source.outputs.source == ''",
+        )
         self.assertNotIn("--reuse", step["run"])
 
     def test_summary_fails_closed_for_required_results(self):
         job = self.workflow["jobs"]["ci-summary"]
         self.assertEqual(job["if"], "always()")
-        self.assertEqual(set(job["needs"]), {"branch-policy", "qa"})
+        self.assertEqual(
+            set(job["needs"]), {"branch-policy", "qa", "qa-isolated", "qa-source"}
+        )
         script = job["steps"][0]["run"]
         for event, branch in [
             ("pull_request", "success"),
@@ -139,6 +151,9 @@ class CiQaWorkflowTests(unittest.TestCase):
                             "EVENT_NAME": event,
                             "BRANCH_POLICY_RESULT": branch,
                             "QA_RESULT": qa,
+                            "ISOLATED_RESULT": "success"
+                            if event == "pull_request"
+                            else "skipped",
                         },
                         capture_output=True,
                         timeout=5,
@@ -151,11 +166,36 @@ class CiQaWorkflowTests(unittest.TestCase):
                     "EVENT_NAME": "pull_request",
                     "BRANCH_POLICY_RESULT": branch,
                     "QA_RESULT": "success",
+                    "ISOLATED_RESULT": "success",
                 },
                 capture_output=True,
                 timeout=5,
             )
             self.assertEqual(result.returncode, 1)
+
+    def test_summary_rejects_failed_missing_or_inapplicable_isolated_job(self):
+        script = self.workflow["jobs"]["ci-summary"]["steps"][0]["run"]
+        for event, branch, isolated in (
+            ("pull_request", "success", "skipped"),
+            ("pull_request", "success", "failure"),
+            ("pull_request", "success", "cancelled"),
+            ("pull_request", "success", ""),
+            ("push", "skipped", "success"),
+            ("workflow_dispatch", "skipped", "success"),
+        ):
+            with self.subTest(event=event, isolated=isolated):
+                result = subprocess.run(
+                    ["/bin/bash", "-c", script],
+                    env={
+                        "EVENT_NAME": event,
+                        "BRANCH_POLICY_RESULT": branch,
+                        "QA_RESULT": "success",
+                        "ISOLATED_RESULT": isolated,
+                    },
+                    capture_output=True,
+                    timeout=5,
+                )
+                self.assertNotEqual(result.returncode, 0)
 
     def test_pr_template_routes_delivery_evidence_to_quality_policy(self):
         template = (ROOT / ".github/PULL_REQUEST_TEMPLATE.md").read_text()

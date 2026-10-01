@@ -62,6 +62,7 @@ class FakeGitHub(provenance.GitHubReader):
             ".github/workflows/ci.yml",
             "scripts/qa_provenance.py",
             "scripts/qa_provenance_records.py",
+            "scripts/qa_provenance_hosted.py",
             "scripts/qa.py",
             "scripts/run-validation-lane.py",
             "scripts/validation/registry.json",
@@ -126,7 +127,9 @@ class FakeGitHub(provenance.GitHubReader):
                 "conclusion": "success",
                 "steps": [],
             }
-            for i, name in enumerate(("branch-policy", "qa", "ci-summary"))
+            for i, name in enumerate(
+                ("branch-policy", "qa", "ci-summary", "qa-isolated", "qa-source")
+            )
         ]
         self.jobs[1]["steps"] = [
             {
@@ -137,13 +140,42 @@ class FakeGitHub(provenance.GitHubReader):
             },
             {
                 "number": 2,
-                "name": "Validate repository checkout",
+                "name": "Validate repository complement",
                 "status": "completed",
                 "conclusion": "success",
             },
         ]
+        self.jobs[1]["steps"] += [
+            {
+                "number": 3,
+                "name": "Validate repository checkout",
+                "status": "completed",
+                "conclusion": "skipped",
+            },
+            {
+                "number": 4,
+                "name": "Reuse isolated gate ",
+                "status": "completed",
+                "conclusion": "skipped",
+            },
+        ]
+        self.jobs[3]["steps"] = [
+            {
+                "number": 1,
+                "name": "Checkout QA commit " + MERGE,
+                "status": "completed",
+                "conclusion": "success",
+            },
+            {
+                "number": 2,
+                "name": "Validate isolated repository gate",
+                "status": "completed",
+                "conclusion": "success",
+            },
+        ]
+        self.jobs[4]["conclusion"] = "skipped"
         self.data["actions/runs/30/attempts/2/jobs?per_page=100&page=1"] = {
-            "total_count": 3,
+            "total_count": 5,
             "jobs": self.jobs,
         }
         self.calls = []
@@ -169,6 +201,9 @@ class MainVerdictTests(unittest.TestCase):
         for job in self.github.jobs:
             job["head_sha"] = MERGE
         self.github.jobs[0]["conclusion"] = "skipped"
+        self.github.jobs[3]["conclusion"] = "skipped"
+        self.github.jobs[1]["steps"][1]["name"] = "Validate repository checkout"
+        self.github.jobs[1]["steps"][2]["name"] = "Validate repository complement"
         self.clock = patch.object(
             provenance,
             "utc_now",
@@ -561,6 +596,7 @@ class ProvenanceTests(unittest.TestCase):
             "scripts/qa.py",
             "scripts/qa_provenance.py",
             "scripts/qa_provenance_records.py",
+            "scripts/qa_provenance_hosted.py",
             "scripts/publish_main_tag.py",
             "scripts/validation/repository/bounded_io.py",
             "scripts/validation/registry.json",
@@ -641,7 +677,7 @@ class ProvenanceTests(unittest.TestCase):
                 text=payload.replace(NOW, "2026-08-01T00:00:00Z")
             ),
             lambda c: c["output"].update(
-                text=payload.replace('"version":1', '"version":1,"version":1')
+                text=payload.replace('"version":3', '"version":3,"version":3')
             ),
         ):
             candidate = copy.deepcopy(check)

@@ -10,11 +10,12 @@ on: # zizmor: ignore[dangerous-triggers]
 # Inert until the operator installs the verifier-only App and configures the
 # qa-control environment (deployment branches: refs/heads/main only).
 # Pin qa-provenance to that App ID in branch protection after observing it.
-# This variable enables PR proof and full-main verdict only; no gate reuse.
+# Source reuse has a separate default-off QA_REUSE_ENABLED guard.
 permissions:
   contents: read
   actions: read
   pull-requests: read
+  checks: read
 
 jobs:
   verify-qa:
@@ -39,6 +40,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           QA_CI_WORKFLOW_ID: ${{ vars.QA_CI_WORKFLOW_ID }}
+          QA_VERIFIER_APP_ID: ${{ vars.QA_VERIFIER_APP_ID }}
         run: python3 -I scripts/qa_provenance.py authenticate --proof "$RUNNER_TEMP/qa-proof.json"
       - name: Reauthenticate and issue verifier App check
         env:

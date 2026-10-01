@@ -74,6 +74,12 @@ def encode_proof(proof):
 
 def parse_record(payload, *, main, now):
     record = decode(payload, PROOF_LIMIT)
+    version = record.get("version")
+    extension = (
+        {"reuse"}
+        if main and version == 4
+        else ({"isolated"} if not main and version == 3 else set())
+    )
     require(
         set(record)
         == {
@@ -87,11 +93,12 @@ def parse_record(payload, *, main, now):
             "gates",
             "completed_at",
         }
-        | ({"event", "ref", "control"} if main else {"pr", "base", "head"}),
+        | ({"event", "ref", "control"} if main else {"pr", "base", "head"})
+        | extension,
         "invalid proof fields",
     )
     require(
-        type(record["version"]) is int and record["version"] == (2 if main else 1),
+        type(version) is int and version in ((2, 4) if main else (1, 3)),
         "unsupported proof version",
     )
     repository = record["repository"]
@@ -136,8 +143,52 @@ def parse_record(payload, *, main, now):
     require(isinstance(gates, dict) and 0 < len(gates) <= 128, "invalid gates")
     for name, disposition in gates.items():
         require(
-            re.fullmatch(r"[a-z][a-z0-9-]{0,127}", name) and disposition == "PASS",
+            re.fullmatch(r"[a-z][a-z0-9-]{0,127}", name)
+            and (
+                disposition == "PASS"
+                or (
+                    main
+                    and version == 4
+                    and name == record["reuse"]["gate"]
+                    and disposition == "REUSED"
+                )
+            ),
             "incomplete gate",
         )
+    if version == 3:
+        isolated = record["isolated"]
+        require(
+            set(isolated) == {"gate", "job", "runtime", "input"}
+            and isolated["gate"] == "agent-evaluation-cases"
+            and gates.get(isolated["gate"]) == "PASS",
+            "invalid isolated record",
+        )
+        positive(isolated["job"])
+        runtime = isolated["runtime"]
+        require(
+            set(runtime) == {"image", "platform", "python", "version"}
+            and re.fullmatch(
+                r"docker.io/library/python@sha256:[0-9a-f]{64}", runtime["image"]
+            )
+            and runtime["platform"] == "linux/amd64"
+            and runtime["python"] == "/usr/local/bin/python3"
+            and re.fullmatch(r"3\.12\.[0-9]+", runtime["version"]),
+            "invalid isolated runtime",
+        )
+        require(
+            re.fullmatch(r"[0-9a-f]{64}", isolated["input"]), "invalid isolated input"
+        )
+    if version == 4:
+        reused = record["reuse"]
+        require(
+            set(reused) == {"gate", "pr", "run", "attempt", "job", "checkout", "input"}
+            and reused["gate"] == "agent-evaluation-cases"
+            and gates.get(reused["gate"]) == "REUSED",
+            "invalid reused gate",
+        )
+        for key in ("pr", "run", "attempt", "job"):
+            positive(reused[key])
+        sha(reused["checkout"])
+        require(re.fullmatch(r"[0-9a-f]{64}", reused["input"]), "invalid reused input")
     fresh(record["completed_at"], now)
     return MainVerdict(record) if main else Proof(record)
