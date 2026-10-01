@@ -1,6 +1,6 @@
 ---
 title: "Protected App PR proof"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0103-TSK-0003"
 
 ## Overview
 
-Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The inert local verifier is implemented; independent review and operator activation remain outstanding. No hosted check or reuse activation is claimed.
+Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The inert local verifier is implemented and independently reviewed; operator activation remains outstanding. No hosted check or reuse activation is claimed.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | Local focused PASS; hosted DEFER | Source authentication, bounded proof, App permission and workflow-isolation fixtures; review and commit evidence below. |
+| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | Local implementation reviewed; hosted DEFER | Focused 34 PASS, quick 12 PASS, staged 12 PASS; scoped code and static security review PASS below. |
 
 ## Approval and Safety Boundaries
 
@@ -101,9 +101,8 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   code, cache or artifacts to verifier execution or credentials. The initial
   pinned zizmor run reported that trigger as HIGH; the exception applies only
   at this workflow's `on` key, with its isolation rationale beside it. This is
-  a scoped trigger disposition, not a broad code/security signoff. The
-  supervisor owns whole-Task independent review after this handoff; any
-  unresolved finding keeps this Task in progress.
+  a scoped trigger disposition, separate from the subsequent independent
+  code and static security reviews recorded below.
 - Hosted/live DEFER: no verifier App ID, installation permission read-back,
   environment branch policy, required-check source setting, hosted run/attempt,
   hostile-PR or control-change trial is available. `QA_PROVENANCE_ENABLED`
@@ -124,8 +123,10 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   workflow-run PR relation, leaving a required App check pending. RED: the
   new valid-fork provider fixture failed in a 34-case focused run. GREEN:
   all 34 focused cases passed after bounded authenticated PR discovery.
-  The changed three-file checkpoint passed all 12 quick gates; final index
-  validation covers this subsequent evidence-only result update.
+  Fix commit `606de370ab844434fd58cb86f77cb5a3b9adcfb6`, tree
+  `8f165c615dd88f8db27e374fd760f669e1154642`, passed all 34 focused cases,
+  12 changed quick gates and 12 exact-index staged gates. Pinned ruff, both
+  whitespace checks and the actual-message Commitizen check also passed.
 - The fallback queries open PRs against main using the URL-encoded provider
   head repository owner and exact branch. It requires exactly one candidate,
   then re-reads that PR and binds repository IDs, branch, head/base SHAs and
@@ -134,8 +135,15 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   Missing, ambiguous, stale, changed-repository and changed-branch candidates
   reject proof before App-key access. No head-SHA-only inference is used.
   No workflow-path relaxation, permission or activation change is included.
-- Next owner: supervisor for independent re-review, then operator for hosted
-  activation. Local targeted checks are not an activated protected check.
+- Independent scoped re-review of fix commit
+  `606de370ab844434fd58cb86f77cb5a3b9adcfb6`:
+  `review_task3_code` returned Spec PASS / quality Approved with no residual
+  finding; `review_task3_security` returned static security PASS with no
+  actionable spoofing finding. These dispositions approve the local
+  implementation; they do not establish hosted enforcement or Spec completion.
+- Next owner: operator for App/environment/required-check configuration and
+  hosted trials, with supervisor reconciliation of the final delivery package.
+  Task status remains in progress; hosted activation remains DEFER.
 
 ## Traceability
 
@@ -143,4 +151,4 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | Local implementation; hosted DEFER | Implementation `21bfec9dee70f64a52044190c7d548657141a0ed`, focused/quick/staged PASS; independent whole-Task review pending. |
+| [WORK-003](../plan.md#work-breakdown) | Local implementation reviewed; hosted DEFER | Scoped fix `606de370ab844434fd58cb86f77cb5a3b9adcfb6`, tree `8f165c615dd88f8db27e374fd760f669e1154642`; focused 34, quick 12 and staged 12 PASS; `review_task3_code` Spec PASS / quality Approved; `review_task3_security` static security PASS. |
