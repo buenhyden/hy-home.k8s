@@ -350,6 +350,16 @@ def validate_contract(
             validate_skill_checker(root, script)
         if validator["evidenceLane"] not in EVIDENCE_LANES:
             fail("SURFACE-EVIDENCE-LANE", validator["id"])
+        reuse = validator.get("reuse")
+        if reuse and (
+            validator["optional"]
+            or validator["evidenceLane"] != "repo-static"
+            or (
+                reuse["mode"] == "change-scoped"
+                and not {"affected", "staged"} <= set(validator["lanes"])
+            )
+        ):
+            fail("SURFACE-REUSE", validator["id"])
         status = validator["fallback"]["status"]
         if (not validator["optional"] and status != "FAIL") or (
             validator["optional"] and status not in {"DEFER", "SKIP"}

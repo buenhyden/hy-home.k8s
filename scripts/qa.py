@@ -7,8 +7,12 @@ import argparse
 from contextlib import contextmanager
 import hashlib
 import importlib.util
+import importlib.metadata
+import json
+import re
 import os
 from pathlib import Path, PurePosixPath
+from typing import Any, Mapping, Sequence
 import stat
 import sys
 import tempfile
@@ -367,6 +371,169 @@ def changed_paths(root: Path, *, staged: bool) -> list[str]:
     return result
 
 
+def gate_input_identity(
+    snapshot: Path,
+    gate: Mapping[str, Any],
+    *,
+    lane: str,
+    paths: Sequence[str],
+    base_ref: str,
+    environment: Mapping[str, str],
+) -> str:
+    """Hash a versioned, bounded canonical description of an audited gate input."""
+    if lane not in ("affected", "staged", "all-files"):
+        raise ValueError("unsupported reuse lane")
+    mode = gate.get("reuse", {}).get("mode")
+    if mode not in ("same-lane", "change-scoped"):
+        raise ValueError("gate has no reuse contract")
+    canonical_lane = (
+        "change-scoped"
+        if mode == "change-scoped" and lane in ("affected", "staged")
+        else lane
+    )
+    tree = tree_identity(snapshot)
+    if len(tree) > 100_000:
+        raise ValueError("reuse input has too many files")
+    files = [
+        [
+            path,
+            None
+            if value is None
+            else [
+                stat.S_IFMT(value[0]),
+                stat.S_IMODE(value[0]),
+                hashlib.sha256(value[1]).hexdigest(),
+            ],
+        ]
+        for path, value in sorted(tree.items())
+    ]
+    # These declarations are deliberately conservative: any repository edit,
+    # ref movement, or installed Python distribution change causes a miss.
+    versions = sorted(
+        (distribution.metadata.get("Name", ""), distribution.version)
+        for distribution in importlib.metadata.distributions()
+    )
+    executable = Path(sys.executable).resolve(strict=True)
+    executable_stat = executable.stat()
+    fields = {
+        "version": 1,
+        "gate": gate["id"],
+        "lane": canonical_lane,
+        "paths": sorted(set(paths)),
+        "base": base_ref,
+        "argv": gate["argv"],
+        "reuse": gate["reuse"],
+        "environment": sorted(environment.items()),
+        "python": [
+            str(executable),
+            sys.version,
+            executable_stat.st_size,
+            executable_stat.st_mtime_ns,
+            versions,
+        ],
+        "gitVersion": git(snapshot, "--version").decode("ascii").strip(),
+        "head": git(snapshot, "rev-parse", "HEAD").decode("ascii").strip(),
+        "refs": git(
+            snapshot, "for-each-ref", "--format=%(refname) %(objectname)"
+        ).decode("ascii"),
+        "files": files,
+    }
+    if any(
+        len(str(value).encode("utf-8", "surrogateescape")) > 1024 * 1024
+        for value in (
+            gate["id"],
+            base_ref,
+            *paths,
+            *gate["argv"],
+            *(item for pair in environment.items() for item in pair),
+        )
+    ):
+        raise ValueError("reuse identity field exceeds byte budget")
+    payload = json.dumps(
+        fields, sort_keys=True, ensure_ascii=True, separators=(",", ":")
+    ).encode()
+    if len(payload) > 16 * 1024 * 1024:
+        raise ValueError("reuse identity exceeds byte budget")
+    return hashlib.sha256(payload).hexdigest()
+
+
+class LocalEvidenceStore:
+    """One private atomic pass index under this repository's Git common dir."""
+
+    def __init__(self, root: Path):
+        common = git(root, "rev-parse", "--path-format=absolute", "--git-common-dir")
+        self.path = Path(os.fsdecode(common).strip()) / "qa-local-evidence.json"
+
+    def _passes(self) -> dict[str, str]:
+        try:
+            with open_parent(self.path) as (parent, name):
+                metadata, payload = read_regular_file(
+                    parent, name, max_bytes=128 * 1024
+                )
+            if (
+                stat.S_IMODE(metadata.st_mode) != 0o600
+                or metadata.st_uid != os.geteuid()
+            ):
+                return {}
+            data = json.loads(payload)
+            if not isinstance(data, dict):
+                return {}
+            passes = data.get("passes")
+            if (
+                set(data) != {"version", "passes"}
+                or data["version"] != 1
+                or not isinstance(passes, dict)
+                or len(passes) > 256
+            ):
+                return {}
+            if any(
+                not isinstance(key, str)
+                or re.fullmatch(r"[a-z][a-z0-9-]{0,127}", key) is None
+                or not isinstance(value, str)
+                or re.fullmatch(r"[0-9a-f]{64}", value) is None
+                for key, value in passes.items()
+            ):
+                return {}
+            return passes
+        except (OSError, ValueError, TypeError, KeyError):
+            return {}
+
+    def matching_pass(self, gate_id: str, identity: str) -> bool:
+        return self._passes().get(gate_id) == identity
+
+    def record_pass(self, gate_id: str, identity: str) -> None:
+        if (
+            re.fullmatch(r"[a-z][a-z0-9-]{0,127}", gate_id) is None
+            or re.fullmatch(r"[0-9a-f]{64}", identity) is None
+        ):
+            raise ValueError("invalid local evidence identity")
+        passes = self._passes()
+        passes[gate_id] = identity
+        payload = json.dumps(
+            {"version": 1, "passes": passes}, sort_keys=True, separators=(",", ":")
+        ).encode()
+        if len(payload) > 128 * 1024:
+            raise ValueError("local evidence exceeds byte budget")
+        descriptor, temporary = tempfile.mkstemp(
+            prefix=".qa-evidence-", dir=self.path.parent
+        )
+        try:
+            with os.fdopen(descriptor, "wb") as output:
+                os.fchmod(output.fileno(), 0o600)
+                output.write(payload)
+                output.flush()
+                os.fsync(output.fileno())
+            os.replace(temporary, self.path)
+            directory = os.open(self.path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+        finally:
+            if os.path.lexists(temporary):
+                os.unlink(temporary)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("profile", nargs="?", choices=PROFILES)
@@ -414,6 +581,38 @@ def main() -> int:
                 f"[INFO] qa profile={args.profile} snapshot={'index' if args.profile == 'staged' else 'working-tree'} gates={len(ids)}"
             )
             index_tree_before = index_tree_identity(snapshot)
+            store = (
+                LocalEvidenceStore(root)
+                if args.profile in ("quick", "staged")
+                else None
+            )
+            validators = {row["id"]: row for row in contract["validators"]}
+            identities = {}
+            candidates = {}
+            for identifier in ids:
+                gate = validators[identifier]
+                if store is None or not gate.get("reuse"):
+                    continue
+                effective = dict(gate)
+                effective["argv"] = runner.validator_argv(
+                    snapshot, lane, paths, gate, contract, contract_module, baseline
+                )
+                resolved_tool = runner.resolve_tool(effective["argv"][0], snapshot)
+                if resolved_tool is None:
+                    continue
+                effective["argv"][0] = os.path.abspath(resolved_tool)
+                identity = gate_input_identity(
+                    snapshot,
+                    effective,
+                    lane=lane,
+                    paths=paths,
+                    base_ref=baseline,
+                    environment=runner.validation_environment(snapshot),
+                )
+                identities[identifier] = identity
+                if store.matching_pass(identifier, identity):
+                    candidates[identifier] = {"identity": identity, "source": "local"}
+            completed_passes = {}
             result = runner.run_selected(
                 snapshot,
                 lane,
@@ -422,8 +621,14 @@ def main() -> int:
                 contract_module,
                 validator_ids=ids,
                 base_ref=baseline,
+                reuse_candidates=candidates,
+                completed_passes=completed_passes,
             )
             require_unchanged_snapshot(snapshot, index_tree_before)
+            if store is not None:
+                for identifier in completed_passes:
+                    if identifier in identities:
+                        store.record_pass(identifier, identities[identifier])
             return result
     except (OSError, ValueError) as exc:
         print("[FAIL] qa: " + runner.encoded(str(exc)[:1024]), file=sys.stderr)

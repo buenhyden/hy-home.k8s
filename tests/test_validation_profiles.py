@@ -145,6 +145,29 @@ class ValidationProfileTests(unittest.TestCase):
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
+    def test_reuse_declaration_is_opt_in_and_invalid_forms_fail(self):
+        reusable = [row for row in self.contract["validators"] if "reuse" in row]
+        self.assertEqual(
+            [row["id"] for row in reusable], ["external-service-contracts"]
+        )
+        for change in ({"mode": "unknown"}, {"mode": "change-scoped", "extra": True}):
+            contract = copy.deepcopy(self.contract)
+            next(
+                row
+                for row in contract["validators"]
+                if row["id"] == "external-service-contracts"
+            )["reuse"] = change
+            with self.assertRaises(ROUTES.ContractError):
+                ROUTES.validate_contract(ROOT, contract)
+        contract = copy.deepcopy(self.contract)
+        next(
+            row
+            for row in contract["validators"]
+            if row["id"] == "external-service-contracts"
+        )["optional"] = True
+        with self.assertRaises(ROUTES.ContractError):
+            ROUTES.validate_contract(ROOT, contract)
+
     def test_central_registry_may_select_a_skill_owned_checker(self):
         self.assertEqual(
             ROUTES._validate_direct_script_argv(

@@ -23,7 +23,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
-from typing import Any, BinaryIO, Sequence
+from typing import Any, BinaryIO, MutableMapping, Mapping, Sequence
 
 
 LOCAL_LANES = ("affected", "staged", "all-files")
@@ -1431,8 +1431,11 @@ def validator_argv(
     validator: dict[str, Any],
     contract: dict[str, Any],
     contract_module: Any,
+    base_ref: str | None = None,
 ) -> list[str]:
     argv = list(validator["argv"])
+    if validator["id"] == "gitops-change-set" and base_ref is not None:
+        argv[argv.index("--base-ref") + 1] = base_ref
     if validator.get("pathInput") != "include-existing-markdown":
         return argv
     if lane == "all-files":
@@ -1459,6 +1462,18 @@ def validator_argv(
     return argv
 
 
+def validation_environment(root: Path) -> dict[str, str]:
+    """Return the exact shared environment passed to repository validators."""
+    environment = closed_subprocess_environment()
+    gitleaks = secure_gitleaks_executable(root)
+    if gitleaks is not None:
+        environment[GITLEAKS_EXECUTABLE_ENV] = gitleaks
+    conftest = secure_conftest_executable(root)
+    if conftest is not None:
+        environment[CONFTEST_EXECUTABLE_ENV] = conftest
+    return environment
+
+
 def run_selected(
     root: Path,
     lane: str,
@@ -1468,6 +1483,8 @@ def run_selected(
     *,
     validator_ids: Sequence[str] | None = None,
     base_ref: str | None = None,
+    reuse_candidates: Mapping[str, dict[str, str]] | None = None,
+    completed_passes: MutableMapping[str, str] | None = None,
 ) -> int:
     scope = f"{lane}:paths={len(paths)}"
     if not paths and validator_ids is None:
@@ -1509,18 +1526,12 @@ def run_selected(
         return 0
 
     failed = False
-    subprocess_environment = closed_subprocess_environment()
-    gitleaks_executable = secure_gitleaks_executable(root)
-    if gitleaks_executable is not None:
-        subprocess_environment[GITLEAKS_EXECUTABLE_ENV] = gitleaks_executable
-    conftest_executable = secure_conftest_executable(root)
-    if conftest_executable is not None:
-        subprocess_environment[CONFTEST_EXECUTABLE_ENV] = conftest_executable
+    subprocess_environment = validation_environment(root)
     for identifier in selected["validators"]:
         validator = validators[identifier]
-        argv = validator_argv(root, lane, paths, validator, contract, contract_module)
-        if identifier == "gitops-change-set" and base_ref is not None:
-            argv[argv.index("--base-ref") + 1] = base_ref
+        argv = validator_argv(
+            root, lane, paths, validator, contract, contract_module, base_ref
+        )
         tool_token = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":
@@ -1578,6 +1589,35 @@ def run_selected(
             failed = True
             continue
 
+        candidate = (reuse_candidates or {}).get(identifier)
+        if (
+            isinstance(validator.get("reuse"), dict)
+            and validator["reuse"].get("mode") in ("same-lane", "change-scoped")
+            and isinstance(candidate, dict)
+            and set(candidate) == {"identity", "source"}
+            and isinstance(candidate["identity"], str)
+            and re.fullmatch(r"[0-9a-f]{64}", candidate["identity"])
+            and isinstance(candidate["source"], str)
+            and re.fullmatch(r"[A-Za-z0-9._:/-]{1,256}", candidate["source"])
+            and not (
+                candidate["source"] == "local" and lane not in ("affected", "staged")
+            )
+        ):
+            print(
+                result_line(
+                    "REUSED",
+                    identifier,
+                    command=argv,
+                    tool=argv[0],
+                    scope=scope,
+                    limitation="source="
+                    + candidate["source"]
+                    + ";identity="
+                    + candidate["identity"],
+                    evidence=validator["evidenceLane"],
+                )
+            )
+            continue
         tool = os.path.abspath(resolved_tool)
         argv[0] = tool
 
@@ -1630,6 +1670,9 @@ def run_selected(
                 evidence=evidence,
             )
         )
+        if passed and completed_passes is not None:
+            # The caller persists these only after checking snapshot integrity.
+            completed_passes[identifier] = "PASS"
         failed = failed or not passed
     return 1 if failed else 0
 

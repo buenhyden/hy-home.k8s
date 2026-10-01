@@ -898,3 +898,166 @@ class PreCommitResolutionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LocalEvidenceTests(unittest.TestCase):
+    setUp = QaTests.setUp
+    git = QaTests.git
+
+    def test_exact_input_identity_changes_for_bytes_mode_paths_base_and_argv(self):
+        gate = {
+            "id": "external-service-contracts",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+        env = {"PATH": "/usr/bin", "LANG": "C.UTF-8"}
+
+        def identity(lane="affected", paths=("file.txt",), base="base-a"):
+            return self.qa.gate_input_identity(
+                self.root, gate, lane=lane, paths=paths, base_ref=base, environment=env
+            )
+
+        initial = identity()
+        self.assertEqual(initial, identity())
+        self.assertEqual(initial, identity(lane="staged"))
+        env["LANG"] = "C"
+        self.assertNotEqual(initial, identity())
+        env["LANG"] = "C.UTF-8"
+        self.assertNotEqual(initial, identity(paths=("gone.txt",)))
+        self.assertNotEqual(initial, identity(base="base-b"))
+        self.assertNotEqual(initial, identity(lane="all-files"))
+        gate["argv"] = ["python3", "changed.py"]
+        self.assertNotEqual(initial, identity())
+        gate["argv"] = ["python3", "check.py"]
+        (self.root / "file.txt").write_text("changed\n")
+        self.assertNotEqual(initial, identity())
+        (self.root / "file.txt").write_text("original\n")
+        (self.root / "file.txt").chmod(0o755)
+        self.assertNotEqual(initial, identity())
+        (self.root / "file.txt").chmod(0o644)
+        (self.root / "new.txt").write_text("new\n")
+        self.assertNotEqual(initial, identity())
+
+    def test_quick_repeat_and_exact_quick_to_staged_run_once(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        contract = {
+            "validators": [
+                {
+                    "id": "external-service-contracts",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["external-service-contracts"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["external-service-contracts"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(
+                self.qa.runner,
+                "run_bounded_command",
+                wraps=self.qa.runner.run_bounded_command,
+            ) as child,
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+        ):
+            # Count only the gate command; Git snapshot commands also use the bounded runner.
+            import io
+            from contextlib import redirect_stdout
+
+            results = []
+            for profile in ("quick", "quick", "staged"):
+                if profile == "staged":
+                    self.git("add", "check.py")
+                sys.argv[1] = profile
+                with redirect_stdout(io.StringIO()) as output:
+                    results.append((self.qa.main(), output.getvalue()))
+            gate_calls = [
+                call
+                for call in child.call_args_list
+                if call.args and any("check.py" == arg for arg in call.args[0])
+            ]
+        self.assertEqual([result for result, _ in results], [0, 0, 0])
+        self.assertEqual(len(gate_calls), 1)
+        self.assertIn("[REUSED] external-service-contracts", results[1][1])
+        self.assertIn("[REUSED] external-service-contracts", results[2][1])
+
+    def test_formatter_rewrite_cannot_record_pass(self):
+        (self.root / "check.py").write_text("print('gate passed')\n")
+        contract = {
+            "validators": [
+                {
+                    "id": "external-service-contracts",
+                    "argv": ["python3", "check.py"],
+                    "lanes": ["affected", "staged"],
+                    "optional": False,
+                    "fallback": {"status": "FAIL", "reason": "required"},
+                    "evidenceLane": "repo-static",
+                    "reuse": {"mode": "change-scoped"},
+                }
+            ]
+        }
+
+        def mutating_run(snapshot, *_args, **kwargs):
+            kwargs["completed_passes"]["external-service-contracts"] = "PASS"
+            (snapshot / "check.py").write_text("formatter rewrite\n")
+            return 0
+
+        with (
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["external-service-contracts"]},
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "profile_gate_ids",
+                return_value=["external-service-contracts"],
+            ),
+            mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
+            mock.patch.object(self.qa.runner, "run_selected", side_effect=mutating_run),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+            ),
+        ):
+            import io
+            from contextlib import redirect_stderr
+
+            with redirect_stderr(io.StringIO()):
+                self.assertEqual(self.qa.main(), 1)
+        self.assertEqual(self.qa.LocalEvidenceStore(self.root)._passes(), {})
+
+    def test_record_is_private_and_rejects_forged_or_unreadable_data(self):
+        store = self.qa.LocalEvidenceStore(self.root)
+        identity = "a" * 64
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.record_pass("gate", identity)
+        self.assertTrue(store.matching_pass("gate", identity))
+        self.assertEqual(stat.S_IMODE(store.path.stat().st_mode), 0o600)
+        store.path.write_text(
+            '{"version":1,"passes":{"gate":"' + identity + '"},"evil":true}'
+        )
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.path.write_text("[]")
+        self.assertFalse(store.matching_pass("gate", identity))
+        store.path.chmod(0)
+        self.assertFalse(store.matching_pass("gate", identity))

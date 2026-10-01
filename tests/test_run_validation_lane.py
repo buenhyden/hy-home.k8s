@@ -2177,3 +2177,128 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReuseCandidateTest(unittest.TestCase):
+    def test_unknown_reuse_metadata_executes(self):
+        row = dict(CONTRACT["validators"][0], reuse="unrecognized")
+        contract = {"validators": [row]}
+        candidate = {"repository-quality": {"identity": "a" * 64, "source": "local"}}
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as child,
+            redirect_stdout(StringIO()) as output,
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["file.txt"],
+                    contract,
+                    _ContractModule,
+                    reuse_candidates=candidate,
+                ),
+                0,
+            )
+        child.assert_called_once()
+        self.assertNotIn("[REUSED]", output.getvalue())
+
+    def test_local_candidate_cannot_satisfy_hosted_or_missing_tool(self):
+        row = dict(CONTRACT["validators"][0], reuse={"mode": "same-lane"})
+        contract = {"validators": [row]}
+        candidate = {"repository-quality": {"identity": "a" * 64, "source": "local"}}
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as child,
+            redirect_stdout(StringIO()) as output,
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "all-files",
+                    ["file.txt"],
+                    contract,
+                    _ContractModule,
+                    reuse_candidates=candidate,
+                ),
+                0,
+            )
+        child.assert_called_once()
+        self.assertNotIn("[REUSED]", output.getvalue())
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value=None),
+            patch.object(RUNNER, "run_bounded_command") as child,
+            redirect_stdout(StringIO()) as output,
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["file.txt"],
+                    contract,
+                    _ContractModule,
+                    reuse_candidates=candidate,
+                ),
+                1,
+            )
+        child.assert_not_called()
+        self.assertIn("[FAIL] repository-quality", output.getvalue())
+
+    def test_matching_declared_candidate_skips_child_but_unknown_executes(self):
+        row = dict(CONTRACT["validators"][0], reuse={"mode": "same-lane"})
+        contract = {"validators": [row]}
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as child,
+            redirect_stdout(StringIO()) as output,
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["file.txt"],
+                    contract,
+                    _ContractModule,
+                    reuse_candidates={
+                        "repository-quality": {"identity": "a" * 64, "source": "local"}
+                    },
+                ),
+                0,
+            )
+        child.assert_not_called()
+        self.assertIn("[REUSED] repository-quality", output.getvalue())
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(QUALITY_MARKER + "\n"),
+            ) as child,
+            redirect_stdout(StringIO()),
+        ):
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["file.txt"],
+                    contract,
+                    _ContractModule,
+                    reuse_candidates={
+                        "repository-quality": {"identity": "bad", "source": "local"}
+                    },
+                ),
+                0,
+            )
+        child.assert_called_once()

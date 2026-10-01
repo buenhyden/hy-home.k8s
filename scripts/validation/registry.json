@@ -508,6 +508,7 @@
     },
     {
       "id": "external-service-contracts",
+      "reuse": {"mode": "change-scoped"},
       "argv": [
         "python3",
         ".agents/skills/external-service-contract-audit/scripts/validate-service-endpoints.py",
