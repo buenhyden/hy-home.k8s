@@ -1,6 +1,6 @@
 ---
 title: "Protected App PR proof"
-version: "0.1.3"
+version: "0.1.4"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -116,8 +116,10 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 - Authorization: scoped local code/tests/Task and logical commits only. No
   remote settings, secrets, Apps, environments, rulesets, variables, pushes or
   tags were created or changed. Rollback disables proof/reuse activation and
-  preserves full main QA; use a reviewed forward revert of implementation
-  commit `21bfec9dee70f64a52044190c7d548657141a0ed` for these local files.
+  preserves full main QA. A reviewed forward revert must cover the final
+  combined implementation: fix `606de370ab844434fd58cb86f77cb5a3b9adcfb6`
+  and original `21bfec9dee70f64a52044190c7d548657141a0ed`. Preserve evidence
+  history; do not rewrite branch history.
 - Review fix round 1 resumes from `5a8401639349e32308b5083c57545e0c7196131a`.
   Independent `review_task3_code` found that a fork PR can have an empty
   workflow-run PR relation, leaving a required App check pending. RED: the
@@ -141,6 +143,15 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   finding; `review_task3_security` returned static security PASS with no
   actionable spoofing finding. These dispositions approve the local
   implementation; they do not establish hosted enforcement or Spec completion.
+- Review evidence commit `ab2747fdd5ddf4ce7b4d70ab5a77c5924c37e66c`
+  changed only this Task document. On its checked and committed tree
+  `b23d5bc00b6b84a8aa2da18a49d0414d34e0172c`,
+  `python3 scripts/qa.py quick` PASS (six affected gates) and
+  `python3 scripts/qa.py staged` PASS (six exact-index gates).
+  `git diff --check`, `git diff --cached --check` and the committed-diff
+  whitespace check passed; the actual commit message passed pinned Commitizen.
+  The final quick ran on stable input after an earlier run overlapped the
+  message hook's temporary stash; that earlier run is not final evidence.
 - Next owner: operator for App/environment/required-check configuration and
   hosted trials, with supervisor reconciliation of the final delivery package.
   Task status remains in progress; hosted activation remains DEFER.
