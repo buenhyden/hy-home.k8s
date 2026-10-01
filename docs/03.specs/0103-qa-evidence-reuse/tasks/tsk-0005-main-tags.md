@@ -52,8 +52,10 @@ DEFER; this record claims no remote publication or Spec completion.
   complete bypass-actor read-back; ordinary publisher token denied update/delete;
   exact main tag and retry with source SHA/run/attempt/check ID. All remain DEFER.
 - **Secret / Vault Handling**: no secret values read or stored in local evidence.
-  The publisher App key is confined to `qa-tag-publish`; the verifier App key
-  remains in `qa-control`. No App/settings/tag/remote Git/live resource changed.
+  Static `qa-verifier.yml` references the publisher and verifier keys in separate
+  jobs/steps bound to `qa-tag-publish` and `qa-control`, respectively. Actual App
+  installation, environment branch restrictions, secret placement and authenticated
+  read-back remain DEFER. No App/settings/tag/remote Git/live resource changed.
 - **Rollback Plan**: disable environment `QA_TAG_ENABLED`; never move or delete
   published main tags. Revert the local publisher unit only through a reviewed
   forward change, preserving protected verifier and full main QA.
