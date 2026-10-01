@@ -62,7 +62,7 @@ class CiQaWorkflowTests(unittest.TestCase):
             workflow["permissions"],
             {"contents": "read", "actions": "read", "pull-requests": "read"},
         )
-        job = workflow["jobs"]["verify-pr"]
+        job = workflow["jobs"]["verify-qa"]
         self.assertEqual(job["environment"], "qa-control")
         for condition in (
             "vars.QA_PROVENANCE_ENABLED == 'true'",
@@ -94,6 +94,32 @@ class CiQaWorkflowTests(unittest.TestCase):
             if step.get("uses", "").startswith("actions/checkout@")
         )
         self.assertEqual(checkout["name"], "Checkout QA commit ${{ github.sha }}")
+
+    def test_main_verifier_is_default_off_and_accepts_only_main_push_or_pr(self):
+        workflow = yaml.safe_load(
+            (ROOT / ".github/workflows/qa-verifier.yml").read_text()
+        )
+        job = workflow["jobs"]["verify-qa"]
+        self.assertIn("vars.QA_PROVENANCE_ENABLED == 'true'", job["if"])
+        self.assertIn("github.event.workflow_run.event == 'push'", job["if"])
+        self.assertIn("github.event.workflow_run.head_branch == 'main'", job["if"])
+        self.assertNotIn("QA_REUSE_ENABLED", str(workflow["jobs"]))
+        self.assertNotIn("qa-tag-publish", str(workflow["jobs"]))
+        self.assertNotIn("secrets.", str(job["steps"][1]))
+
+    def test_ci_uses_push_before_for_the_entire_multi_commit_update(self):
+        step = next(
+            step
+            for step in self._qa_steps()
+            if step.get("name") == "Validate repository checkout"
+        )
+        self.assertEqual(
+            step["env"]["BASE_SHA"],
+            "${{ github.event.pull_request.base.sha || github.event.before || '' }}",
+        )
+        self.assertEqual(step["run"], 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"')
+        self.assertNotIn("if", step)
+        self.assertNotIn("--reuse", step["run"])
 
     def test_summary_fails_closed_for_required_results(self):
         job = self.workflow["jobs"]["ci-summary"]

@@ -2180,6 +2180,41 @@ if __name__ == "__main__":
 
 
 class ReuseCandidateTest(unittest.TestCase):
+    def test_unverified_hosted_candidate_executes_and_failure_is_preserved(self):
+        row = dict(
+            CONTRACT["validators"][0],
+            id="agent-evaluation-cases",
+            reuse={"mode": "change-scoped"},
+        )
+        for lane in ("affected", "staged", "all-files"):
+            for source in ("github:30:2:41", "qa-provenance/30/2/41", "REUSED-main"):
+                with (
+                    self.subTest(lane=lane, source=source),
+                    patch.object(
+                        RUNNER, "resolve_tool", return_value="/usr/bin/python3"
+                    ),
+                    patch.object(
+                        RUNNER,
+                        "run_bounded_command",
+                        return_value=bounded_result(returncode=1),
+                    ) as child,
+                    redirect_stdout(StringIO()) as output,
+                ):
+                    result = RUNNER.run_selected(
+                        ROOT,
+                        lane,
+                        ["file.txt"],
+                        {"validators": [row]},
+                        _ContractModule,
+                        validator_ids=[row["id"]],
+                        reuse_candidates={
+                            row["id"]: {"identity": "a" * 64, "source": source}
+                        },
+                    )
+                    self.assertEqual(result, 1)
+                    child.assert_called_once()
+                    self.assertNotIn("[REUSED]", output.getvalue())
+
     def test_external_dependency_gate_executes_despite_supplied_candidate(self):
         row = dict(CONTRACT["validators"][0], id="external-service-contracts")
         with (

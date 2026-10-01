@@ -1171,6 +1171,146 @@ class LocalEvidenceTests(unittest.TestCase):
                 self.assertEqual(self.qa.main(), 1)
         self.assertEqual(self.qa.LocalEvidenceStore(self.root)._passes(), {})
 
+    def test_pr_merge_identity_never_replaces_main_history_or_named_refs(self):
+        gate = {
+            "id": "agent-evaluation-cases",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+        base = self.git("rev-parse", "HEAD").decode().strip()
+        tree = self.git("rev-parse", "HEAD^{tree}").decode().strip()
+
+        def commit(label, parents):
+            return (
+                self.git(
+                    "commit-tree",
+                    tree,
+                    *[arg for parent in parents for arg in ("-p", parent)],
+                    "-m",
+                    label,
+                )
+                .decode()
+                .strip()
+            )
+
+        first = commit("feature one", [base])
+        head = commit("feature two", [first])
+        tested = commit("synthetic PR merge", [base, head])
+        self.git("checkout", "--detach", tested)
+
+        def identity():
+            return self.qa.gate_input_identity(
+                self.root,
+                gate,
+                lane="all-files",
+                paths=("file.txt",),
+                base_ref=base,
+                environment={"LANG": "C.UTF-8"},
+            )
+
+        with mock.patch.object(
+            self.qa.importlib.metadata, "distributions", return_value=[]
+        ):
+            original = identity()
+            advanced = commit("advanced main", [base])
+            for label, parents in (
+                ("merge", [base, head]),
+                ("squash", [base]),
+                ("multi-commit rebase", [first]),
+                ("advanced main merge", [advanced, head]),
+            ):
+                integrated = commit(label, parents)
+                self.git("checkout", "--detach", integrated)
+                self.assertEqual(
+                    self.git("rev-parse", "HEAD^{tree}").decode().strip(), tree
+                )
+                self.assertNotEqual(original, identity(), label)
+            self.git("checkout", "--detach", tested)
+            self.assertEqual(original, identity())
+            self.git("update-ref", "refs/remotes/origin/main", advanced)
+            self.assertNotEqual(original, identity(), "named ref changed")
+            self.git("checkout", "--detach", head)
+            self.assertEqual(self.qa.base_revision(self.root, "ci", base), base)
+            self.assertEqual(self.qa.base_revision(self.root, "ci", None), first)
+            self.assertNotEqual(
+                self.qa.base_revision(self.root, "ci", base),
+                self.qa.base_revision(self.root, "ci", None),
+            )
+
+    def test_full_and_ci_execute_registry_completely_without_local_evidence(self):
+        import io
+        from contextlib import redirect_stdout
+
+        contract = self.qa.contract_module.validate_contract(ROOT)
+        identifiers = contract["profiles"]["full"]
+        real_run = self.qa.runner.run_bounded_command
+        for profile, failed_gate in (
+            ("full", None),
+            ("ci", None),
+            ("ci", "agent-evaluation-cases"),
+        ):
+            observed = []
+
+            def child(argv, *, cwd, env, **kwargs):
+                if argv[0] == "/usr/bin/git":
+                    return real_run(argv, cwd=cwd, env=env, **kwargs)
+                observed.append(argv)
+                failed = (
+                    failed_gate
+                    and ".agents/evaluations/run-agent-evaluations.py" in argv
+                )
+                return real_run(
+                    [
+                        sys.executable,
+                        "-c",
+                        "print('[PASS] repository quality gates passed'); raise SystemExit("
+                        + ("1" if failed else "0")
+                        + ")",
+                    ],
+                    cwd=cwd,
+                    env=env,
+                )
+
+            with (
+                self.subTest(profile=profile, failed_gate=failed_gate),
+                mock.patch.object(
+                    sys, "argv", ["qa.py", profile, "--root", str(self.root)]
+                ),
+                mock.patch.object(
+                    self.qa.contract_module, "validate_contract", return_value=contract
+                ),
+                mock.patch.object(
+                    self.qa.contract_module,
+                    "select_paths",
+                    return_value={"validators": identifiers},
+                ),
+                mock.patch.object(
+                    self.qa.runner,
+                    "resolve_tool",
+                    side_effect=lambda tool, root: "/trusted/" + tool,
+                ),
+                mock.patch.object(
+                    self.qa.runner, "run_bounded_command", side_effect=child
+                ),
+                mock.patch.object(
+                    self.qa,
+                    "LocalEvidenceStore",
+                    side_effect=AssertionError("full/ci must not read local evidence"),
+                ),
+                redirect_stdout(io.StringIO()) as output,
+            ):
+                self.assertEqual(self.qa.main(), 1 if failed_gate else 0)
+            self.assertEqual(len(observed), len(identifiers))
+            for identifier in identifiers:
+                expected = "FAIL" if identifier == failed_gate else "PASS"
+                self.assertEqual(
+                    output.getvalue().count(
+                        "[" + expected + "] " + identifier + " command="
+                    ),
+                    1,
+                )
+            self.assertNotIn("[REUSED]", output.getvalue())
+
     def test_record_is_private_and_rejects_forged_or_unreadable_data(self):
         store = self.qa.LocalEvidenceStore(self.root)
         identity = "a" * 64

@@ -1597,11 +1597,10 @@ def run_selected(
             and set(candidate) == {"identity", "source"}
             and isinstance(candidate["identity"], str)
             and re.fullmatch(r"[0-9a-f]{64}", candidate["identity"])
-            and isinstance(candidate["source"], str)
-            and re.fullmatch(r"[A-Za-z0-9._:/-]{1,256}", candidate["source"])
-            and not (
-                candidate["source"] == "local" and lane not in ("affected", "staged")
-            )
+            # Only the local caller currently authenticates candidate identities.
+            # A provider-looking string is not a protected hosted source proof.
+            and candidate["source"] == "local"
+            and lane in ("affected", "staged")
         ):
             print(
                 result_line(

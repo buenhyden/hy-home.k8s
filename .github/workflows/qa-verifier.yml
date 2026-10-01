@@ -10,18 +10,20 @@ on: # zizmor: ignore[dangerous-triggers]
 # Inert until the operator installs the verifier-only App and configures the
 # qa-control environment (deployment branches: refs/heads/main only).
 # Pin qa-provenance to that App ID in branch protection after observing it.
-# This variable does not enable QA_REUSE_ENABLED; main still runs full QA.
+# This variable enables PR proof and full-main verdict only; no gate reuse.
 permissions:
   contents: read
   actions: read
   pull-requests: read
 
 jobs:
-  verify-pr:
+  verify-qa:
     if: >-
       vars.QA_PROVENANCE_ENABLED == 'true' &&
       github.ref == 'refs/heads/main' &&
-      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.event == 'pull_request' ||
+       (github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main')) &&
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.repository.id == github.repository_id
     runs-on: ubuntu-latest

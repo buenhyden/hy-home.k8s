@@ -61,6 +61,7 @@ class FakeGitHub(provenance.GitHubReader):
         files = [
             ".github/workflows/ci.yml",
             "scripts/qa_provenance.py",
+            "scripts/qa_provenance_records.py",
             "scripts/qa.py",
             "scripts/run-validation-lane.py",
             "scripts/validation/registry.json",
@@ -156,6 +157,239 @@ class FakeGitHub(provenance.GitHubReader):
                 )
             ]
         )
+
+
+class MainVerdictTests(unittest.TestCase):
+    def setUp(self):
+        self.github = FakeGitHub()
+        self.github.run.update(
+            event="push", head_branch="main", head_sha=MERGE, pull_requests=[]
+        )
+        self.github.event["workflow_run"] = copy.deepcopy(self.github.run)
+        for job in self.github.jobs:
+            job["head_sha"] = MERGE
+        self.github.jobs[0]["conclusion"] = "skipped"
+        self.clock = patch.object(
+            provenance,
+            "utc_now",
+            return_value=datetime(2026, 10, 2, tzinfo=timezone.utc),
+        )
+        self.clock.start()
+        self.addCleanup(self.clock.stop)
+
+    def verify(self):
+        return provenance.verify_main(self.github.event, self.github)
+
+    def test_main_full_verdict_binds_source_commit_not_verifier_tip(self):
+        verdict = self.verify()
+        self.assertIsInstance(verdict, provenance.MainVerdict)
+        self.assertEqual(verdict.record["checkout"], {"commit": MERGE, "tree": TREE})
+        self.assertEqual(verdict.record["control"], BASE)
+        self.assertEqual(verdict.record["source"], {"run": 30, "attempt": 2, "job": 41})
+        registry = json.loads((ROOT / provenance.REGISTRY_PATH).read_text())
+        self.assertEqual(
+            verdict.record["gates"], dict.fromkeys(registry["profiles"]["full"], "PASS")
+        )
+        self.assertEqual(verdict.record["event"], "push")
+        self.assertEqual(verdict.record["ref"], "refs/heads/main")
+        self.assertNotIn("base", verdict.record)
+        with self.assertRaises(ValueError):
+            provenance.parse_proof(provenance.encode_proof(verdict).encode())
+
+    def test_full_main_does_not_assume_an_integration_strategy_or_parent(self):
+        for parents in ([BASE, HEAD], [BASE], [HEAD], []):
+            with self.subTest(parents=parents):
+                self.github.data["git/commits/" + MERGE]["parents"] = [
+                    {"sha": parent} for parent in parents
+                ]
+                self.assertIsInstance(self.verify(), provenance.MainVerdict)
+
+    def test_main_rejects_wrong_event_branch_repository_attempt_and_checkout(self):
+        for field, value in (
+            ("event", "pull_request"),
+            ("event", "workflow_dispatch"),
+            ("head_branch", "codex/feature"),
+            ("run_attempt", 3),
+            ("workflow_id", 99),
+            ("head_sha", HEAD),
+        ):
+            with self.subTest(field=field, value=value):
+                original = self.github.run[field]
+                self.github.run[field] = value
+                self.assertIsInstance(self.verify(), provenance.Reject)
+                self.github.run[field] = original
+        self.github.event["repository"] = {"id": 99, "full_name": REPO}
+        self.assertIsInstance(self.verify(), provenance.Reject)
+
+    def test_main_rejects_failed_candidate_summary_or_aggregate(self):
+        for job_index in (1, 2):
+            for conclusion in ("failure", "skipped", "cancelled", None):
+                with self.subTest(job=job_index, conclusion=conclusion):
+                    self.github.jobs[job_index]["conclusion"] = conclusion
+                    self.assertIsInstance(self.verify(), provenance.Reject)
+            self.github.jobs[job_index]["conclusion"] = "success"
+        self.github.jobs[1]["steps"][1]["conclusion"] = "skipped"
+        self.assertIsInstance(self.verify(), provenance.Reject)
+
+    def test_main_rejects_changed_control_lock_missing_commit_or_expired_run(self):
+        for path in (
+            "scripts/qa.py",
+            "scripts/qa_provenance.py",
+            ".github/workflows/ci.yml",
+            provenance.LOCK_PATH,
+        ):
+            with self.subTest(path=path):
+                entries = self.github.data["git/trees/" + TREE + "?recursive=1"]["tree"]
+                entry = next(row for row in entries if row["path"] == path)
+                original = entry["sha"]
+                entry["sha"] = "1" * 40
+                self.assertIsInstance(self.verify(), provenance.Reject)
+                entry["sha"] = original
+        self.github.run["updated_at"] = "2026-08-01T00:00:00Z"
+        self.assertIsInstance(self.verify(), provenance.Reject)
+        self.github.run["updated_at"] = NOW
+        del self.github.data["git/commits/" + MERGE]
+        self.assertIsInstance(self.verify(), provenance.Reject)
+
+    def test_main_rejects_missing_duplicate_or_wrong_attempt_jobs(self):
+        original = copy.deepcopy(self.github.jobs)
+        for change in ("missing", "duplicate", "wrong-attempt", "wrong-checkout"):
+            with self.subTest(change=change):
+                self.github.jobs[:] = copy.deepcopy(original)
+                if change == "missing":
+                    self.github.jobs.pop()
+                    self.github.data[
+                        "actions/runs/30/attempts/2/jobs?per_page=100&page=1"
+                    ]["total_count"] = 2
+                elif change == "duplicate":
+                    self.github.jobs[2]["id"] = self.github.jobs[1]["id"]
+                elif change == "wrong-attempt":
+                    self.github.jobs[1]["run_attempt"] = 1
+                else:
+                    self.github.jobs[1]["steps"][0]["name"] = (
+                        "Checkout QA commit " + HEAD
+                    )
+                self.assertIsInstance(self.verify(), provenance.Reject)
+                self.github.data["actions/runs/30/attempts/2/jobs?per_page=100&page=1"][
+                    "total_count"
+                ] = 3
+
+    def test_main_cli_reauthenticates_before_publication_and_rejects_changed_source(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as directory:
+            event = Path(directory) / "event.json"
+            output = Path(directory) / "proof.json"
+            event.write_text(json.dumps(self.github.event))
+            environment = {
+                "GITHUB_EVENT_NAME": "workflow_run",
+                "GITHUB_REF": "refs/heads/main",
+                "GITHUB_REPOSITORY": REPO,
+                "GITHUB_REPOSITORY_ID": "10",
+                "GITHUB_SHA": BASE,
+                "GITHUB_EVENT_PATH": str(event),
+                "GH_TOKEN": "unused",
+                "QA_CI_WORKFLOW_ID": "20",
+                "QA_VERIFIER_APP_ID": "77",
+            }
+            with (
+                patch.dict(os.environ, environment, clear=True),
+                patch.object(provenance, "GitHubReader", return_value=self.github),
+                patch.object(
+                    provenance.sys,
+                    "argv",
+                    ["qa_provenance.py", "authenticate", "--proof", str(output)],
+                ),
+            ):
+                self.assertEqual(provenance.main(), 0)
+            recorded = provenance.parse_main_verdict(output.read_bytes())
+            self.assertEqual(recorded.record["checkout"]["commit"], MERGE)
+            self.assertEqual(output.stat().st_mode & 0o777, 0o600)
+            self.github.run["conclusion"] = "failure"
+            with (
+                patch.dict(os.environ, environment, clear=True),
+                patch.object(provenance, "GitHubReader", return_value=self.github),
+                patch.object(provenance, "publish") as publish,
+                patch.object(
+                    provenance.sys,
+                    "argv",
+                    ["qa_provenance.py", "publish", "--proof", str(output)],
+                ),
+            ):
+                self.assertEqual(provenance.main(), 1)
+                publish.assert_not_called()
+
+    def test_main_publication_names_exact_source_commit_and_revokes_narrow_token(self):
+        verdict = self.verify()
+        installation = {
+            "app_id": 77,
+            "id": 88,
+            "permissions": provenance.APP_PERMISSIONS,
+            "suspended_at": None,
+        }
+        check = {
+            "name": "qa-main-verdict",
+            "app": {"id": 77},
+            "head_sha": MERGE,
+            "status": "completed",
+            "conclusion": "success",
+            "external_id": "30:2:41",
+            "output": {"text": provenance.encode_proof(verdict)},
+        }
+        with (
+            patch.object(provenance, "app_jwt", return_value="unused"),
+            patch.object(
+                self.github,
+                "request",
+                side_effect=[
+                    installation,
+                    {"token": "unused", "permissions": provenance.APP_PERMISSIONS},
+                    check,
+                    None,
+                ],
+            ) as request,
+        ):
+            provenance.publish(verdict, self.github, 77, "unused")
+        body = request.call_args_list[2].kwargs["body"]
+        self.assertEqual(body["name"], "qa-main-verdict")
+        self.assertEqual(body["head_sha"], MERGE)
+        self.assertEqual(request.call_args_list[-1].kwargs["method"], "DELETE")
+        self.assertEqual(
+            request.call_args_list[1].kwargs["body"]["permissions"]["contents"], "read"
+        )
+
+    def test_main_check_is_app_bound_complete_and_never_a_reuse_source(self):
+        verdict = self.verify()
+        payload = provenance.encode_proof(verdict)
+        check = {
+            "name": "qa-main-verdict",
+            "app": {"id": 77},
+            "head_sha": MERGE,
+            "status": "completed",
+            "conclusion": "success",
+            "external_id": "30:2:41",
+            "output": {"text": payload},
+        }
+        self.assertEqual(provenance.read_main_check(check, 77).record, verdict.record)
+        self.assertIsInstance(provenance.read_check(check, 77), provenance.Reject)
+        for mutate in (
+            lambda c: c["app"].update(id=88),
+            lambda c: c.update(head_sha=BASE),
+            lambda c: c.update(external_id="30:1:41"),
+            lambda c: c["output"].update(text=payload.replace('"PASS"', '"REUSED"')),
+            lambda c: c["output"].update(
+                text=payload.replace('"unattested"', '"forged-runtime"')
+            ),
+            lambda c: c["output"].update(text="x" * 16385),
+            lambda c: c["output"].update(
+                text=payload.replace(NOW, "2026-08-01T00:00:00Z")
+            ),
+        ):
+            candidate = copy.deepcopy(check)
+            mutate(candidate)
+            self.assertIsInstance(
+                provenance.read_main_check(candidate, 77), provenance.Reject
+            )
 
 
 class ProvenanceTests(unittest.TestCase):
@@ -326,6 +560,7 @@ class ProvenanceTests(unittest.TestCase):
             ".github/workflows/evil.yml",
             "scripts/qa.py",
             "scripts/qa_provenance.py",
+            "scripts/qa_provenance_records.py",
             "scripts/publish_main_tag.py",
             "scripts/validation/repository/bounded_io.py",
             "scripts/validation/registry.json",
