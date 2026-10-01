@@ -92,6 +92,20 @@ def git(root, *arguments):
     return result.stdout
 
 
+def stable_leaf_state(metadata):
+    return (
+        metadata.st_mode,
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_nlink,
+        metadata.st_uid,
+        metadata.st_gid,
+        metadata.st_size,
+        metadata.st_mtime_ns,
+        metadata.st_ctime_ns,
+    )
+
+
 def raw_leaf(root, path):
     parts = PurePosixPath(path).parts
     require(
@@ -118,8 +132,10 @@ def raw_leaf(root, path):
                 "escaping committed symlink",
             )
             require(
-                metadata
-                == os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False),
+                stable_leaf_state(metadata)
+                == stable_leaf_state(
+                    os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False)
+                ),
                 "committed symlink changed",
             )
             return "120000", os.fsencode(target)
@@ -135,9 +151,11 @@ def raw_leaf(root, path):
             )
             payload = source.read(FILE_LIMIT + 1)
             require(
-                before == os.fstat(source.fileno())
-                and before
-                == os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False)
+                stable_leaf_state(before) == stable_leaf_state(os.fstat(source.fileno()))
+                and stable_leaf_state(before)
+                == stable_leaf_state(
+                    os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False)
+                )
                 and len(payload) <= FILE_LIMIT,
                 "committed input changed",
             )

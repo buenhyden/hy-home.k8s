@@ -62,6 +62,110 @@ class CommittedInputTests(unittest.TestCase):
     setUp = qa_tests.QaTests.setUp
     git = qa_tests.QaTests.git
 
+    class ChangedStat:
+        def __init__(self, original, field):
+            self.original = original
+            self.field = field
+
+        def __getattr__(self, name):
+            value = getattr(self.original, name)
+            return value + 1 if name == self.field else value
+
+    def test_raw_leaf_ignores_atime_only_change_during_regular_read(self):
+        original = hosted.os.fstat
+        calls = 0
+
+        def changed_atime(descriptor):
+            nonlocal calls
+            calls += 1
+            metadata = original(descriptor)
+            return (
+                self.ChangedStat(metadata, "st_atime_ns")
+                if calls == 2
+                else metadata
+            )
+
+        with patch.object(hosted.os, "fstat", side_effect=changed_atime):
+            mode, payload = hosted.raw_leaf(self.root, "file.txt")
+        self.assertEqual(calls, 2)
+        self.assertEqual(mode, "100644")
+        self.assertEqual(payload, b"original\n")
+
+    def test_raw_leaf_ignores_atime_only_change_during_symlink_read(self):
+        (self.root / "link.txt").symlink_to("file.txt")
+        original = hosted.os.stat
+        calls = 0
+
+        def changed_atime(path, *args, **kwargs):
+            nonlocal calls
+            metadata = original(path, *args, **kwargs)
+            if path == "link.txt" and kwargs.get("follow_symlinks") is False:
+                calls += 1
+                if calls == 2:
+                    return self.ChangedStat(metadata, "st_atime_ns")
+            return metadata
+
+        with patch.object(hosted.os, "stat", side_effect=changed_atime):
+            mode, payload = hosted.raw_leaf(self.root, "link.txt")
+        self.assertEqual(calls, 2)
+        self.assertEqual(mode, "120000")
+        self.assertEqual(payload, b"file.txt")
+
+    def test_raw_leaf_still_rejects_regular_mutation_and_leaf_replacement(self):
+        original_fstat = hosted.os.fstat
+        for field in ("st_ino", "st_size", "st_mtime_ns", "st_ctime_ns"):
+            calls = 0
+
+            def changed_state(descriptor):
+                nonlocal calls
+                calls += 1
+                metadata = original_fstat(descriptor)
+                return self.ChangedStat(metadata, field) if calls == 2 else metadata
+
+            with self.subTest(field=field), patch.object(
+                hosted.os, "fstat", side_effect=changed_state
+            ), self.assertRaisesRegex(ValueError, "committed input changed"):
+                hosted.raw_leaf(self.root, "file.txt")
+            self.assertEqual(calls, 2)
+
+        replacement = self.root / "replacement.txt"
+        replacement.write_bytes((self.root / "file.txt").read_bytes())
+        original_stat = hosted.os.stat
+        calls = 0
+
+        def replace_after_read(path, *args, **kwargs):
+            nonlocal calls
+            if path == "file.txt" and kwargs.get("follow_symlinks") is False:
+                calls += 1
+                if calls == 2:
+                    replacement.replace(self.root / "file.txt")
+            return original_stat(path, *args, **kwargs)
+
+        with patch.object(hosted.os, "stat", side_effect=replace_after_read):
+            with self.assertRaisesRegex(ValueError, "committed input changed"):
+                hosted.raw_leaf(self.root, "file.txt")
+        self.assertEqual(calls, 2)
+
+    def test_raw_leaf_still_rejects_symlink_retarget_and_escape(self):
+        link = self.root / "link.txt"
+        link.symlink_to("file.txt")
+        original = hosted.os.readlink
+
+        def retarget_after_read(path, *args, **kwargs):
+            target = original(path, *args, **kwargs)
+            if path == "link.txt":
+                link.unlink()
+                link.symlink_to("other.txt")
+            return target
+
+        with patch.object(hosted.os, "readlink", side_effect=retarget_after_read):
+            with self.assertRaisesRegex(ValueError, "committed symlink changed"):
+                hosted.raw_leaf(self.root, "link.txt")
+        link.unlink()
+        link.symlink_to("../escape.txt")
+        with self.assertRaisesRegex(ValueError, "escaping committed symlink"):
+            hosted.raw_leaf(self.root, "link.txt")
+
     def test_git_accepts_only_its_canonical_checkout_when_owner_differs(self):
         commit = self.git("rev-parse", "HEAD")
         sibling = self.root.parent / "sibling"
