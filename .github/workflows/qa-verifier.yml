@@ -49,3 +49,45 @@ jobs:
           QA_VERIFIER_APP_ID: ${{ vars.QA_VERIFIER_APP_ID }}
           QA_VERIFIER_PRIVATE_KEY: ${{ secrets.QA_VERIFIER_PRIVATE_KEY }}
         run: python3 -I scripts/qa_provenance.py publish --proof "$RUNNER_TEMP/qa-proof.json"
+
+  # Only a completed main push can enter this separate key environment.
+  # QA_TAG_ENABLED is environment-scoped, so evaluate it at step/runtime time.
+  # Operator activation also requires creation-only and immutability rulesets.
+  publish-main-tag:
+    needs: [verify-qa]
+    if: >-
+      vars.QA_PROVENANCE_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      needs.verify-qa.result == 'success' &&
+      github.event.workflow_run.repository.id == github.repository_id
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: qa-tag-publish
+    steps:
+      - name: Checkout protected default-branch publisher
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Authenticate main source and verifier check before publisher key access
+        if: vars.QA_TAG_ENABLED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_TAG_ENABLED: ${{ vars.QA_TAG_ENABLED }}
+          QA_CI_WORKFLOW_ID: ${{ vars.QA_CI_WORKFLOW_ID }}
+          QA_VERIFIER_APP_ID: ${{ vars.QA_VERIFIER_APP_ID }}
+          QA_PUBLISHER_APP_ID: ${{ vars.QA_PUBLISHER_APP_ID }}
+        run: python3 -I scripts/publish_main_tag.py authenticate --proof "$RUNNER_TEMP/qa-tag-proof.json"
+      - name: Reauthenticate and publish immutable main tag
+        if: vars.QA_TAG_ENABLED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_TAG_ENABLED: ${{ vars.QA_TAG_ENABLED }}
+          QA_CI_WORKFLOW_ID: ${{ vars.QA_CI_WORKFLOW_ID }}
+          QA_VERIFIER_APP_ID: ${{ vars.QA_VERIFIER_APP_ID }}
+          QA_PUBLISHER_APP_ID: ${{ vars.QA_PUBLISHER_APP_ID }}
+          QA_PUBLISHER_PRIVATE_KEY: ${{ secrets.QA_PUBLISHER_PRIVATE_KEY }}
+        run: python3 -I scripts/publish_main_tag.py publish --proof "$RUNNER_TEMP/qa-tag-proof.json"

@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import json
+import fnmatch
 import re
 import subprocess
 import tempfile
@@ -111,8 +112,90 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertIn("github.event.workflow_run.event == 'push'", job["if"])
         self.assertIn("github.event.workflow_run.head_branch == 'main'", job["if"])
         self.assertNotIn("QA_REUSE_ENABLED", str(workflow["jobs"]))
-        self.assertNotIn("qa-tag-publish", str(workflow["jobs"]))
+        self.assertNotIn("qa-tag-publish", str(job))
         self.assertNotIn("secrets.", str(job["steps"][1]))
+
+    def test_publisher_environment_is_only_for_enabled_successful_main_push(self):
+        workflow = yaml.safe_load(
+            (ROOT / ".github/workflows/qa-verifier.yml").read_text()
+        )
+        job = workflow["jobs"]["publish-main-tag"]
+        self.assertEqual(job["needs"], ["verify-qa"])
+        self.assertEqual(job["environment"], "qa-tag-publish")
+        terms = {
+            "vars.QA_PROVENANCE_ENABLED": "true",
+            "github.ref": "refs/heads/main",
+            "github.event.workflow_run.event": "push",
+            "github.event.workflow_run.head_branch": "main",
+            "github.event.workflow_run.conclusion": "success",
+            "needs.verify-qa.result": "success",
+        }
+        # Parse the actual job condition's conjunctions, including repository equality.
+        condition = job["if"].split("&&")
+        expected = [f"{key} == '{value}'" for key, value in terms.items()]
+        expected.append(
+            "github.event.workflow_run.repository.id == github.repository_id"
+        )
+        self.assertEqual({term.strip() for term in condition}, set(expected))
+        for event, branch, allowed in (
+            ("push", "main", True),
+            ("pull_request", "main", False),
+            ("push", "codex/feature", False),
+            ("push", "refs/tags/main", False),
+            ("workflow_dispatch", "main", False),
+            ("push", "main-deadbeef", False),
+        ):
+            actual = terms | {
+                "github.event.workflow_run.event": event,
+                "github.event.workflow_run.head_branch": branch,
+            }
+            self.assertEqual(
+                all(actual[key] == value for key, value in terms.items()), allowed
+            )
+        self.assertNotIn("permissions", job)  # Inherits read-only GITHUB_TOKEN.
+        steps = job["steps"]
+        self.assertEqual(steps[0]["with"]["ref"], "${{ github.sha }}")
+        self.assertFalse(steps[0]["with"]["persist-credentials"])
+        self.assertIn(
+            "python3 -I scripts/publish_main_tag.py authenticate", steps[1]["run"]
+        )
+        self.assertNotIn("secrets.", str(steps[1]))
+        self.assertIn("python3 -I scripts/publish_main_tag.py publish", steps[2]["run"])
+        self.assertEqual(
+            steps[2]["env"]["QA_PUBLISHER_PRIVATE_KEY"],
+            "${{ secrets.QA_PUBLISHER_PRIVATE_KEY }}",
+        )
+        for step in steps[1:]:
+            self.assertEqual(step["if"], "vars.QA_TAG_ENABLED == 'true'")
+            self.assertEqual(
+                step["env"]["QA_TAG_ENABLED"], "${{ vars.QA_TAG_ENABLED }}"
+            )
+        self.assertNotIn("QA_VERIFIER_PRIVATE_KEY", str(job))
+        self.assertNotIn("QA_PUBLISHER_PRIVATE_KEY", str(workflow["jobs"]["verify-qa"]))
+        for disallowed in (
+            "actions/cache",
+            "download-artifact",
+            "workflow_run.head_sha",
+        ):
+            self.assertNotIn(disallowed, str(steps))
+
+    def test_app_created_main_tags_match_neither_qa_nor_changelog_push_filter(self):
+        # App tokens can create new workflow events; filters, not token non-recursion,
+        # are the control here. A branches-only push filter excludes all tags.
+        self.assertEqual(self.workflow[True]["push"], {"branches": ["main"]})
+        changelog = yaml.safe_load(
+            (ROOT / ".github/workflows/generate-changelog.yml").read_text()
+        )
+        patterns = changelog[True]["push"]["tags"]
+        self.assertEqual(patterns, ["v*.*.*"])
+        self.assertFalse(
+            any(
+                fnmatch.fnmatchcase("main-" + "a" * 40, pattern) for pattern in patterns
+            )
+        )
+        self.assertTrue(
+            any(fnmatch.fnmatchcase("v1.2.3", pattern) for pattern in patterns)
+        )
 
     def test_ci_uses_push_before_for_the_entire_multi_commit_update(self):
         step = next(
