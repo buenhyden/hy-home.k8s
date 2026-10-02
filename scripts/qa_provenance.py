@@ -99,9 +99,12 @@ def _read_check(check, app_id, name, parse):
             "check did not pass",
         )
         proof = parse(check["output"]["text"].encode())
-        require(
-            check["head_sha"] == proof.record["checkout"]["commit"], "wrong check SHA"
+        expected_sha = (
+            proof.record["checkout"]["commit"]
+            if isinstance(proof, MainVerdict)
+            else proof.record["head"]
         )
+        require(check["head_sha"] == expected_sha, "wrong check SHA")
         require(check["external_id"] == source_id(proof), "wrong check source")
         return proof
     except (ValueError, TypeError, KeyError, AttributeError, RecursionError):
@@ -643,7 +646,7 @@ def publish(proof, github, app_id, key):
         main = isinstance(proof, MainVerdict)
         body = {
             "name": "qa-main-verdict" if main else "qa-provenance",
-            "head_sha": record["checkout"]["commit"],
+            "head_sha": record["checkout"]["commit"] if main else record["head"],
             "external_id": source_id(proof),
             "status": "completed",
             "conclusion": "success",

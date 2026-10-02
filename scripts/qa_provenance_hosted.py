@@ -433,7 +433,7 @@ def source_for_main(core, github, before, after, app_id):
         )
         require(fresh.record["isolated"] == expected, "candidate input/runtime changed")
         checks = github.pages(
-            f"commits/{fresh.record['checkout']['commit']}/check-runs",
+            f"commits/{fresh.record['head']}/check-runs",
             field="check_runs",
         )
         for check in checks:
