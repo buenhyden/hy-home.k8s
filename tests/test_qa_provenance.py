@@ -693,7 +693,7 @@ class ProvenanceTests(unittest.TestCase):
         check = {
             "name": "qa-provenance",
             "app": {"id": 77},
-            "head_sha": MERGE,
+            "head_sha": HEAD,
             "status": "completed",
             "conclusion": "success",
             "external_id": "30:2:41",
@@ -702,7 +702,7 @@ class ProvenanceTests(unittest.TestCase):
         self.assertEqual(provenance.read_check(check, 77).record, proof.record)
         for mutate in (
             lambda c: c["app"].update(id=88),
-            lambda c: c.update(head_sha=HEAD),
+            lambda c: c.update(head_sha=MERGE),
             lambda c: c.update(external_id="30:1:41"),
             lambda c: c["output"].update(text="{}"),
             lambda c: c["output"].update(text="x" * 16385),
@@ -869,7 +869,7 @@ class ProvenanceTests(unittest.TestCase):
         check = {
             "name": "qa-provenance",
             "app": {"id": 77},
-            "head_sha": MERGE,
+            "head_sha": HEAD,
             "status": "completed",
             "conclusion": "success",
             "external_id": "30:2:41",
@@ -889,6 +889,11 @@ class ProvenanceTests(unittest.TestCase):
             ) as request,
         ):
             provenance.publish(proof, self.github, 77, "unused")
+            body = request.call_args_list[2].kwargs["body"]
+            self.assertEqual(body["head_sha"], HEAD)
+            self.assertEqual(
+                json.loads(body["output"]["text"])["checkout"]["commit"], MERGE
+            )
             token_request = request.call_args_list[1].kwargs["body"]
             self.assertEqual(
                 token_request,

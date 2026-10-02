@@ -1,6 +1,6 @@
 ---
 title: "Protected App PR proof"
-version: "0.1.4"
+version: "0.1.5"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0103-TSK-0003"
 
 ## Overview
 
-Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The inert local verifier is implemented and independently reviewed; operator activation remains outstanding. No hosted check or reuse activation is claimed.
+Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The local verifier is implemented and independently reviewed. The first hosted App check exposed a PR-head versus synthetic-merge check-target mismatch; a scoped local repair is independently reviewed. Protected required-check activation and reuse remain outstanding.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | Local implementation reviewed; hosted DEFER | Focused 34 PASS, quick 12 PASS, staged 12 PASS; scoped code and static security review PASS below. |
+| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | First hosted App check observed; protected activation and repair trial DEFER | Hosted run/check and scoped repair evidence below. |
 
 ## Approval and Safety Boundaries
 
@@ -69,7 +69,8 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   repository-restricted and revoked after the check request. No publisher key
   is referenced. The proof is at most 16 KiB, version 1, and expires after
   30 days for consumers. API bytes, pages, calls and network waits are bounded.
-- The App check targets the tested merge commit. Its complete proof records
+- At the initial implementation checkpoint, the App check targeted the tested
+  merge commit. Its complete proof records
   dependency-lock identity but explicitly leaves runtime identity `unattested`;
   Task 4 must establish actual tool/environment equality before gate reuse.
   Local evidence and same-name checks from a different App are rejected.
@@ -103,12 +104,14 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   at this workflow's `on` key, with its isolation rationale beside it. This is
   a scoped trigger disposition, separate from the subsequent independent
   code and static security reviews recorded below.
-- Hosted/live DEFER: no verifier App ID, installation permission read-back,
+- At the initial local checkpoint, hosted/live DEFER: no verifier App ID,
+  installation permission read-back,
   environment branch policy, required-check source setting, hosted run/attempt,
   hostile-PR or control-change trial is available. `QA_PROVENANCE_ENABLED`
   defaults off; `QA_REUSE_ENABLED` remains disabled and main keeps ordinary full
   QA. Static YAML cannot enforce or prove a main-only environment policy.
-- Operator next steps: merge inert code through ordinary full QA; install the
+- Original operator sequence, partly observed below: merge inert code through
+  ordinary full QA; install the
   verifier-only App and configure `qa-control` for main only; set the CI workflow
   ID and App ID; observe an App-authored check; pin that App ID using branch
   protection; run hostile-PR/control-change trials; only then consider reuse.
@@ -156,10 +159,37 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   hosted trials, with supervisor reconciliation of the final delivery package.
   Task status remains in progress; hosted activation remains DEFER.
 
+### Hosted supplement — 2026-10-02
+
+- PR [#118](https://github.com/buenhyden/hy-home.k8s/pull/118) passed the
+  disjoint 1+22 QA partition and `ci-summary` in [CI run
+  36945619228](https://github.com/buenhyden/hy-home.k8s/actions/runs/36945619228).
+  The isolated [verifier run 36947289910](https://github.com/buenhyden/hy-home.k8s/actions/runs/36947289910)
+  succeeded and App 5156553 authored successful `qa-provenance` check
+  110652259257 on tested synthetic merge `25f2ec19`. The triggering
+  workflow run's `pull_requests` array was empty, confirming the authenticated fallback was
+  used. The App's public permission map is Actions/read, Checks/write,
+  Contents/read, Metadata/read and Pull requests/read. Secret values were not
+  read.
+- Pinning `qa-provenance` to that App as a required check left the PR
+  **UNSTABLE**: GitHub required the check on the PR head, while this check was
+  attached to the tested merge commit. Strict branch protection was restored
+  to its prior `ci-summary`-only requirement before PR #118 merged as
+  `c2987739`. An App-authored success on the merge SHA is therefore not proof
+  of effective protected PR enforcement.
+- The scoped repair moves the check envelope to the authenticated PR head;
+  proof still binds the v3 synthetic merge checkout. Focused tests: 94 PASS
+  on the repair working tree. Hosted repair run, App-pinned required-check
+  read-back, hostile-PR and control-change trials remain DEFER. Keep
+  `QA_REUSE_ENABLED` off and full main QA active. Next owners: operator and
+  supervisor for a protected trial and
+  exact source/SHA/check read-back. Rollback: retain `ci-summary` protection
+  and full main QA; disable provenance/reuse if the trial fails.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | Local implementation reviewed; hosted DEFER | Scoped fix `606de370ab844434fd58cb86f77cb5a3b9adcfb6`, tree `8f165c615dd88f8db27e374fd760f669e1154642`; focused 34, quick 12 and staged 12 PASS; `review_task3_code` Spec PASS / quality Approved; `review_task3_security` static security PASS. |
+| [WORK-003](../plan.md#work-breakdown) | First hosted App check observed; protected activation DEFER | Scoped fix `606de370ab844434fd58cb86f77cb5a3b9adcfb6`, tree `8f165c615dd88f8db27e374fd760f669e1154642`; initial focused 34, quick 12 and staged 12 PASS; PR #118 and verifier run 36947289910 exposed the PR-head target mismatch; repair focused 94 PASS, hosted trial pending. |

@@ -269,13 +269,13 @@ class HostedSourceTests(unittest.TestCase):
             "id": 90,
             "name": "qa-provenance",
             "app": {"id": 80},
-            "head_sha": MERGE,
+            "head_sha": HEAD,
             "external_id": core.source_id(proof),
             "status": "completed",
             "conclusion": "success",
             "output": {"text": core.encode_proof(proof)},
         }
-        self.github.data[f"commits/{MERGE}/check-runs?per_page=100&page=1"] = {
+        self.github.data[f"commits/{HEAD}/check-runs?per_page=100&page=1"] = {
             "total_count": 1,
             "check_runs": [self.check],
         }
@@ -295,6 +295,13 @@ class HostedSourceTests(unittest.TestCase):
         self.assertEqual(self.source().record, self.proof.record)
         with self.assertRaises((ValueError, KeyError)):
             self.source(HEAD)
+
+    def test_main_lookup_accepts_head_check_only_for_exact_merge_record(self):
+        self.assertEqual(self.check["head_sha"], HEAD)
+        self.assertNotIn(
+            f"commits/{MERGE}/check-runs?per_page=100&page=1", self.github.data
+        )
+        self.assertEqual(self.source().record, self.proof.record)
 
     def closed_fork_relation(self):
         from urllib.parse import urlencode
@@ -372,13 +379,33 @@ class HostedSourceTests(unittest.TestCase):
             self.source()
 
     def test_multiple_valid_source_matches_still_fall_back(self):
-        route = f"commits/{MERGE}/check-runs?per_page=100&page=1"
+        route = f"commits/{HEAD}/check-runs?per_page=100&page=1"
         self.github.data[route] = {
             "total_count": 2,
             "check_runs": [self.check, copy.deepcopy(self.check)],
         }
         with self.assertRaises(ValueError):
             self.source()
+
+    def test_same_head_check_from_other_pr_base_or_run_never_reuses(self):
+        original = copy.deepcopy(self.check)
+        for field, value in (
+            ("pr", 8),
+            ("base", "9" * 40),
+            ("source", {"run": 31, "attempt": 2, "job": 41}),
+            ("checkout", {"commit": "9" * 40, "tree": TREE}),
+        ):
+            with self.subTest(field=field):
+                self.check.clear()
+                self.check.update(copy.deepcopy(original))
+                record = copy.deepcopy(self.proof.record)
+                record[field] = value
+                self.check["output"]["text"] = json.dumps(record)
+                self.check["external_id"] = ":".join(
+                    str(record["source"][key]) for key in ("run", "attempt", "job")
+                )
+                with self.assertRaises(ValueError):
+                    self.source()
 
     def test_failed_candidate_or_duplicate_full_execution_never_reuses(self):
         for conclusion in ("failure", "cancelled", "skipped"):
