@@ -1,6 +1,6 @@
 ---
 title: "Integration, review, and handoff"
-version: "0.4.0"
+version: "0.4.1"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -18,6 +18,8 @@ completes the local integration handoff: implementation reconciliation, the fina
 script/test audit, independent review and repository-static validation evidence.
 Protected hosted activation remains DEFER; the Spec and Plan stay active, and
 Tasks 3–5 stay in progress. No local result establishes remote enforcement.
+This delivery also owns the request owner's approved Stage 03 lifecycle
+disposition recorded below.
 
 ## Inputs
 
@@ -33,14 +35,16 @@ Tasks 3–5 stay in progress. No local result establishes remote enforcement.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | VAL-QER-001–012 | Reconcile final local validation, independent review and hosted deferrals | platform | Completed | Local integration handoff complete; hosted activation DEFER | Criterion, disposition and snapshot tables below |
+| WORK-006 | VAL-QER-001–012 | Reconcile final local validation, independent review, hosted deferrals and approved lifecycle disposition | platform | Completed | Local integration handoff complete; hosted activation DEFER | Criterion, disposition, lifecycle and snapshot sections below |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: this Task; Spec/Plan lifecycle metadata; explicitly delegated
   stale review/evidence lines in Tasks 1/2; Task 7 historical-census wording;
   the stale Requirement navigation adjective, GitHub hub and branch-protection
-  guidance.
+  guidance. The request owner's later lifecycle instruction additionally covers
+  whole-package retention of completed SPEC-0101 and SPEC-0102, their Stage 03/98
+  indexes, and current citations in REQ-0003 and ADR-0047.
   Implementation defects return to their owning Task through the controller.
 - **Forbidden Paths**: implementation/workflow/test changes; private credentials,
   global hooks, archived bodies, live Kubernetes/Vault resources and unrelated work.
@@ -60,6 +64,8 @@ Tasks 3–5 stay in progress. No local result establishes remote enforcement.
   full main QA and required protection; forward-revert reviewed implementation
   units in reverse dependency order. Never move/delete tags or rewrite history.
   Task-only wording corrections can be reverted as their own logical unit.
+  Revert the whole-package retention commit to restore its original paths and
+  citations together if its disposition must be reversed.
 - **Evidence Location**: this Task and linked owning Tasks; ignored handoff report
   `.superpowers/sdd/plan/task-6-report.md` records the final document commit identity
   without a self-SHA rewrite loop.
@@ -107,8 +113,9 @@ required; artifacts, QA logs and green names are not authority.
 
 The local column maps retained runnable evidence; owning Tasks record its prior
 focused results. The first two full attempts remain FAIL; the third frozen run
-passed all 23 repository-static gates on the repaired input. This completes the
-local handoff, while every named hosted/settings DEFER remains open.
+passed all 23 repository-static gates on the repaired input. This completed the
+local handoff at its recorded snapshot. The dated hosted supplement below
+supersedes the PR/main QA deferrals; protected settings remain open.
 Requirement lineage is the full stable ID in the owning Spec's traceability table.
 
 | Criterion | Requirement lineage | Local evidence | Hosted/settings disposition and retry owner |
@@ -310,6 +317,59 @@ and same-user local cache editing is outside the hosted trust boundary. The tag
 publisher rechecks main before creation but the provider offers no atomic
 compare-main-and-create operation; a race can tag the authenticated tested source
 commit, never an unvalidated target. No automatic tag cleanup is authorized.
+
+### Hosted delivery supplement, 2026-10-02
+
+The earlier criterion table is the completed local handoff snapshot. Subsequent
+authenticated read-only GitHub observations resolve its ordinary PR/main QA
+deferral. [PR #116](https://github.com/buenhyden/hy-home.k8s/pull/116) merged
+head `33c3449760acc1357f89179478ea8441e3da9855` as
+`2a9c66b793f23ad1d388736efbd36847eb8d6d80`. Its
+[main run 36940113311](https://github.com/buenhyden/hy-home.k8s/actions/runs/36940113311),
+attempt 1, failed 22/23 QA gates: the sole failure was `pre-commit` because
+`ruff-format` modified a file; `ci-summary` failed. This verdict remains FAIL.
+
+The format repair in [PR #117](https://github.com/buenhyden/hy-home.k8s/pull/117)
+reached head `690458870552760686b588b1277ded5b445af20d`.
+[PR run 36940406441](https://github.com/buenhyden/hy-home.k8s/actions/runs/36940406441),
+attempt 1, passed `branch-policy`, `qa-isolated`, `qa` and `ci-summary`;
+`qa-source` skipped. The PR route ran one isolated agent-evaluation gate and
+its disjoint 22-gate complement without duplicate gate execution. The PR merged
+as `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd`.
+[Main run 36941596750](https://github.com/buenhyden/hy-home.k8s/actions/runs/36941596750),
+attempt 1, passed all 23 fresh QA gates and `ci-summary` at that exact SHA.
+The main QA job ran about 18 minutes 42 seconds. Current default-off routing
+uses the full 23-gate main run; protected reuse would skip only the isolated
+`agent-evaluation-cases` gate after its proof and settings are activated and
+observed. Ordinary feature pushes have no hosted QA. Local development uses
+quick and exact-index staged QA, with hosted full QA on PR/main delivery.
+
+The final active-path script/test audit above found no further proven safe
+deletion. The successful hosted checks do not activate or evidence the App,
+environment, effective rulesets, protected reuse, fork-labeler/private-report
+UI behavior or tag publication. Those observations remain with the PR
+owner/operator under Tasks 2–5. This supplement changes no Spec/Plan status,
+remote setting, or completed local handoff verdict.
+
+### Approved lifecycle disposition, 2026-10-02
+
+The request owner explicitly authorized review of remaining Stage 03
+Spec/Plan/Task lifecycles and completion of eligible work in this delivery.
+This Task owns that disposition. SPEC-0101 and SPEC-0102 each have a completed
+Spec, Plan and every Task, with no active successor claim. Retain each entire
+package, byte-identical, under docs/98.archive/completed/03.specs/ using
+2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd as its source envelope.
+The Stage 98 Retention Catalog is the sole recovery route. Repoint the current
+REQ-0003 and ADR-0047 citations, remove both Stage 03 index entries, and
+verify no current authority link still targets either original path.
+
+The archive cutover, lifecycle, links-and-owners, Markdown and archive contract
+checks, plus exact-index staged QA, own repository-static acceptance. An
+independent read-only reviewer checks source bytes, link authority and this
+approval record before delivery. The platform PR owner retains the check
+results and merge identity; a later reversal reverts the complete move commit.
+SPEC-0008 remains active by its current contract, and SPEC-0103 remains active
+until protected hosted acceptance, so neither is eligible for this retention.
 
 ## Traceability
 

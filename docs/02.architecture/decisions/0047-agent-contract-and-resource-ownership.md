@@ -24,7 +24,7 @@ The request owner approved this decision, SPEC-0102 and the execution Plan on
 2026-09-29. Commit `8e811506` records the initial `proposed` creation state;
 this reviewed change records `accepted` and version `1.0.0`. Implementation
 follows the approved Plan, without external or live authority.
-[SPEC-0102](../../03.specs/0102-agent-contracts-and-skill-ownership/spec.md)
+[SPEC-0102](../../98.archive/completed/03.specs/0102-agent-contracts-and-skill-ownership/spec.md)
 owns the approved behavior, migration boundaries and acceptance criteria.
 
 The amendment concerns ADR-0036's skill-resource boundary, pointer-only
@@ -183,4 +183,4 @@ decision claim no completed migration or implemented acceptance criterion.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | User-approved scoped amendment for skill resources, knowledge facts and evaluation ownership, adding current-authority boundaries; ADR-0036 remains accepted for unchanged clauses, with no whole-document supersession | [SPEC-0102](../../03.specs/0102-agent-contracts-and-skill-ownership/spec.md) |
+| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | User-approved scoped amendment for skill resources, knowledge facts and evaluation ownership, adding current-authority boundaries; ADR-0036 remains accepted for unchanged clauses, with no whole-document supersession | [SPEC-0102](../../98.archive/completed/03.specs/0102-agent-contracts-and-skill-ownership/spec.md) |
