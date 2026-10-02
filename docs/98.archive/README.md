@@ -1,6 +1,6 @@
 ---
 title: "98.archive"
-version: "0.7.8"
+version: "0.7.9"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -199,6 +199,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0100-archive-lifecycle-standardization`](./completed/03.specs/0100-archive-lifecycle-standardization) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0100-archive-lifecycle-standardization` |
 | [`completed/03.specs/0101-closed-spec-retention`](./completed/03.specs/0101-closed-spec-retention) | `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd:docs/03.specs/0101-closed-spec-retention` |
 | [`completed/03.specs/0102-agent-contracts-and-skill-ownership`](./completed/03.specs/0102-agent-contracts-and-skill-ownership) | `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd:docs/03.specs/0102-agent-contracts-and-skill-ownership` |
+| [`completed/03.specs/0103-qa-evidence-reuse`](./completed/03.specs/0103-qa-evidence-reuse) | `b5003e483e8507bec4a25340d0b2571359720099:docs/03.specs/0103-qa-evidence-reuse` |
 
 ### Retention Assessment
 
