@@ -29,7 +29,7 @@ artifact_id: "SPEC-0103-PLAN-0001"
 - No global/private Git hooks, provider credentials, Kubernetes, Vault, deployment CD, or release-version workflow are changed.
 - Read-only QA jobs retain `contents: read`; any `actions: read`, check-write, or `contents: write` grant belongs to a separately reviewed protected identity.
 - Existing independent secret, policy, GitOps, archive, and history failure meanings stay intact. An old name or large file is not a deletion criterion.
-- No `main-*` tag is created until the protected main check, publisher identity, and effective creation/update/deletion rulesets are read back and observed.
+- No `main-*` tag is created until the protected main check, publisher identity and scope, and effective creation/update/deletion rulesets are read back. The first protected tag supplies the existing ref needed for live denied-write trials before steady-state activation.
 
 ### Review Focus
 
@@ -76,7 +76,7 @@ No deployment CD, live cluster or Vault mutation, version-release tagging, globa
 | WP-007 | Active invoked/discovered test disposition | WP-002; later user scope addition | VAL-QER-012 | Test caller/assertion table, reviewed retirements, discovery and failure-meaning parity. |
 | WP-003 | Protected PR verifier and App check | WP-001; operator verifier App/environment | Reviewed inert control code; App/environment bootstrap | Protected source read-back, hostile PR/control-change tests, bounded proof record. |
 | WP-004 | Main per-gate reuse and test-group classification | WP-003 | Protected App check observed; VAL-QER-005–008 | Merge/rebase/changed-ref fixtures, full fallback, observed PR/main verdict. |
-| WP-005 | Protected immutable main tag publisher | WP-004; protected main verdict; operator rulesets | Ruleset read-back and denied update/delete | Create/retry/conflict/denied-write tests and hosted exact-SHA observation. |
+| WP-005 | Protected immutable main tag publisher | WP-004; protected main verdict; operator rulesets | App-pinned PR control, publisher identity/scope, and ruleset read-back | Bounded first publication, denied update/delete on its unchanged ref, same-target retry, and hosted exact-SHA observation before steady-state activation. |
 | WP-006 | Integration, security review, and handoff | WP-001–005 and WP-007 or explicit inactive DEFER for hosted criteria | Changed-file and criterion matrix | Criterion matrix, final QA, independent review, activated vs inactive states recorded. |
 
 ### Task 1: Local evidence identity and single registry owner
@@ -146,8 +146,8 @@ No deployment CD, live cluster or Vault mutation, version-release tagging, globa
 
 - [ ] Add RED tests for PR/feature/tag/manual events attempting to enter the publisher environment, failed or wrong-SHA verdict, multi-commit push, same-target retry, collision, concurrent creation, and failed API write. Assert no tag creation except one successful main tip.
 - [ ] Run `python3 -m unittest tests.test_publish_main_tag`; record RED.
-- [ ] Implement publisher and post-verdict job in `.github/workflows/qa-verifier.yml`. Operator installs the separate publisher App, verifies its key is unavailable to PR-originated verifier jobs, and enforces two `main-*` tag rulesets: creation restricted to publisher App, and update/delete blocked for that App; read back both effective rules and attempt a normal denied update/delete before activation. Keep the writer off behind an operator-owned `QA_TAG_ENABLED` variable in `qa-tag-publish` until these and the protected main verdict pass. A negative test must show the verifier App cannot mint contents/write even when requested.
-- [ ] Run GREEN, security review, then observe one successful hosted main push and a same-target retry. Confirm `main-*` does not match `v*.*.*`, and tag push starts no QA. Record tag target and independent verdict ID.
+- [ ] Implement publisher and post-verdict job in `.github/workflows/qa-verifier.yml`. Operator installs the separate publisher App, verifies its key is unavailable to PR-originated verifier jobs, and enforces two `main-*` tag rulesets: creation restricted to publisher App, and update/delete blocked for that App. A negative test must show the verifier App cannot mint contents/write even when requested. Keep the writer off behind an operator-owned `QA_TAG_ENABLED` variable in `qa-tag-publish` until the App-pinned PR control, protected main verdict, publisher identity/scope, and both effective rulesets have been read back.
+- [ ] Run GREEN and security review. With main updates held, allow one bounded first publication for a successful protected main push; record the exact tag, target, publisher identity, and independent verdict ID. Turn the writer off pending a normal writer's denied update and deletion against that tag; read the ref back unchanged after each attempt, then allow one bounded same-target publisher retry and prove it is a no-op. An unexpected successful write is `FAIL`: disable publication and investigate. If deletion succeeded, restore the exact original ref through the protected publisher while main remains held; if an update succeeded, preserve evidence for operator recovery. Do not relax rules or force-update. Enable steady-state publication only after both denials and retry pass. Confirm `main-*` does not match `v*.*.*`, and tag push starts no QA.
 - [ ] Commit with `git commit -m "ci: publish immutable validated main tags"`; record remote activation and rollback in Task 0005. Rollback disables publication without deleting or moving tags.
 
 ### Task 6: Integrate, verify, and hand off

@@ -230,8 +230,20 @@ and block updates and deletions even by that publisher, apart from explicit
 operator bypass. Separate creation and immutability rules may be required so
 a creation bypass does not also bypass update/delete restrictions. The
 operator must read back the effective rules, bypass actors, and writer identity
-through authenticated settings before enabling tagging. A normal writer's
-attempted update and deletion must be denied. See [GitHub tag ruleset rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
+through authenticated settings before the first tag. Because no `main-*` tag
+exists initially, a bounded first publication may follow a successful
+protected main verdict only after the required App-pinned PR control and
+publisher identity and permission scope are observed. Hold main updates,
+record its exact tag and target, then attempt a normal writer's update and
+deletion against that existing tag. Both must be denied and the ref must
+remain unchanged; verify a same-target publisher retry is a no-op. Keep
+steady-state publication disabled until these observations pass. If either
+write succeeds unexpectedly, disable publication and report failure. If
+deletion succeeded, restore the exact original ref through the protected
+publisher while main is held; if an update succeeded, preserve the evidence
+and route recovery to the operator. Do not relax a ruleset, force-update a
+tag, or claim VAL-QER-010 passed.
+See [GitHub tag ruleset rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
 GitHub documents that events generated with `GITHUB_TOKEN` do not normally
 start another workflow run, so a token-created tag cannot be assumed to
 trigger a tag workflow. This `main-*` tag intentionally does not match the

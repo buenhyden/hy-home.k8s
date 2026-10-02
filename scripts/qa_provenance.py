@@ -141,7 +141,14 @@ class GitHubReader:
         )
         require(
             route.startswith(("/repos/" + self.repository, "/app/", "/installation/"))
-            and ".." not in route
+            and (
+                ".." not in route
+                or re.fullmatch(
+                    rf"/repos/{re.escape(self.repository)}/compare/[0-9a-f]{{40}}\.\.\.[0-9a-f]{{40}}",
+                    route,
+                )
+                is not None
+            )
             and not re.search(r"[\s#]", route),
             "invalid API route",
         )

@@ -194,6 +194,40 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   exact source/SHA/check read-back. Rollback: retain `ci-summary` protection
   and full main QA; disable provenance/reuse if the trial fails.
 
+### Protected control transition — 2026-10-02
+
+- The App-pinned positive PR #121 used CI run 36956836213 and verifier run
+  36958534800; `qa-provenance` check 110686923231 passed on head
+  `a8d63142c2d4b07901132a44e978afc093f6e312`. Strict branch protection
+  read-back required `ci-summary` from App 15368 and `qa-provenance` from App
+  5156553. The control-change negative PR #122 passed CI run 36958945183
+  and `ci-summary`, but verifier run 36960429886 rejected it before App-key
+  access. It remained `BLOCKED` and was closed without merging.
+- Main merge `3fa2f14d57d7d2cd0886e8eb5c7c8f7ff71f0c2a` exposed a narrow
+  control-code defect: the transport route guard rejects GitHub's authenticated
+  `compare/<40-hex>...<40-hex>` endpoint. `qa-source` therefore selected full
+  fallback in CI run 36960567064. `QA_REUSE_ENABLED` was set back to `false`;
+  `QA_TAG_ENABLED` remains off. A RED route test reproduced the rejection;
+  the corrected guard accepts only the exact repository and two SHA segments,
+  retains traversal rejection, and 54 focused tests pass. A read-only hosted
+  replay using the original main control bytes and corrected route matched PR
+  source run 36956836213. This replay is diagnostic, not hosted activation.
+- Pending transition owner: repository operator acting under the user's
+  delivery authorization. Target: one reviewed control-fix PR at an exact
+  recorded head SHA. Before merge, require its successful hosted full QA and
+  `ci-summary`, independent code/security review, no other open merge activity,
+  reuse and tag flags off, and protected settings read-back. The verifier
+  intentionally rejects changed control code. Independent security review
+  found that dropping `qa-provenance` and relying on PR-authored `ci-summary`
+  alone would conflict with the no-bypass policy and Plan rollback. Keep both
+  App-pinned checks required while an independently enforced replacement or
+  an explicit operator-approved policy exception is resolved; do not merge a
+  blocked PR. After an authorized transition, observe full main QA, a fresh
+  protected main verdict, an ordinary PR App check and a control-change denial
+  before re-enabling reuse. Rollback retains the two-check protection, full
+  main QA and disabled tags. This records a pending transition, not a completed
+  hosted reuse result.
+
 ## Traceability
 
 ### Lifecycle Traceability
