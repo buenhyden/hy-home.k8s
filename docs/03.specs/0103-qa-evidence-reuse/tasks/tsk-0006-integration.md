@@ -410,6 +410,19 @@ SPEC-0103 remained active until the protected hosted acceptance recorded above;
 its later completion is governed by the owning Spec/Plan lifecycle fields, not
 by the SPEC-0101/0102 retention decision.
 
+### SPEC-0103 retention authorization, 2026-10-02
+
+The request owner separately authorized cleanup of completed Stage 03 packages.
+SPEC-0103, its Plan and all seven Tasks are completed, so retain this entire
+package under `docs/98.archive/completed/03.specs/0103-qa-evidence-reuse/`
+without changing any member bytes or modes. Use the integrated default-branch
+commit containing this authorization as the source envelope. Repoint current
+REQ-0003 citations and Stage 03 navigation in the cutover, then add one Stage
+98 Retention Catalog row. No repository-external path consumer is known for
+this package, so no scope-migration record is required absent new evidence.
+Verify exact source equality, lifecycle, links, archive cutover and staged QA;
+obtain independent read-only semantic review. SPEC-0008 remains active.
+
 ## Traceability
 
 ### Lifecycle Traceability
