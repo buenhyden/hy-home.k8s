@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.7"
+version: "0.7.8"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-02"
 layer: "archive"
 ---
 
@@ -134,7 +134,7 @@ Spec·Plan과 17개 Task를 원래 문서 타입과 완료 상태로 보존한�
 
 ### Retention Catalog
 
-ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. 대체된 ADR-0032가 첫 disposition이고, 나머지 대체된 ADR 15개가 뒤따랐다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다. ADR-0039의 단위 보존이 그 뒤를 잇는다. 문서는 blob을, spec package는 tree를 명명하며, 완료된 Stage 03 package 일곱 개가 첫 tree 행이다.
+ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. 대체된 ADR-0032가 첫 disposition이고, 나머지 대체된 ADR 15개가 뒤따랐다. 각 행은 record 하나와 Retention Envelope 하나를 명명한다. ADR-0039의 단위 보존이 그 뒤를 잇는다. 문서는 blob을, spec package는 tree를 명명하며, 완료된 Stage 03 package가 첫 tree 행이다.
 
 | Disposition Record | Retention Envelope |
 | --- | --- |
@@ -197,6 +197,8 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0098-claude-search-grant-and-retention`](./completed/03.specs/0098-claude-search-grant-and-retention) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0098-claude-search-grant-and-retention` |
 | [`completed/03.specs/0099-workspace-engineering-research-refresh`](./completed/03.specs/0099-workspace-engineering-research-refresh) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0099-workspace-engineering-research-refresh` |
 | [`completed/03.specs/0100-archive-lifecycle-standardization`](./completed/03.specs/0100-archive-lifecycle-standardization) | `4046bb7168e7f093bbfa34137e71dff4eb52adeb:docs/03.specs/0100-archive-lifecycle-standardization` |
+| [`completed/03.specs/0101-closed-spec-retention`](./completed/03.specs/0101-closed-spec-retention) | `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd:docs/03.specs/0101-closed-spec-retention` |
+| [`completed/03.specs/0102-agent-contracts-and-skill-ownership`](./completed/03.specs/0102-agent-contracts-and-skill-ownership) | `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd:docs/03.specs/0102-agent-contracts-and-skill-ownership` |
 
 ### Retention Assessment
 

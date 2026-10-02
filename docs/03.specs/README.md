@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.7.11"
+version: "0.7.12"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-02"
 layer: "specs"
 ---
 # 03.specs
@@ -72,8 +72,6 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── 0008-current-local-gitops-platform/
-├── 0101-closed-spec-retention/
-├── 0102-agent-contracts-and-skill-ownership/
 ├── 0103-qa-evidence-reuse/
 └── README.md
 ```
@@ -81,8 +79,6 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0101-closed-spec-retention/](./0101-closed-spec-retention/) | 완료된 SPEC-0098–0100 package 보존 |
-| [0102-agent-contracts-and-skill-ownership/](./0102-agent-contracts-and-skill-ownership/) | Agent 계약과 skill 소유 경계 구현 완료 |
 | [0103-qa-evidence-reuse/](./0103-qa-evidence-reuse/) | QA 실행 중복 제거를 위한 승인된 증거 재사용 계약 |
 
 ## Authoring Workflow
