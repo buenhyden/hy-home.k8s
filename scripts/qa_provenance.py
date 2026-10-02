@@ -7,6 +7,8 @@ Fetched trees, job metadata and proof records are data, never executable input.
 
 from __future__ import annotations
 
+# Protected control trial only: close this PR without merging.
+
 import argparse
 import base64
 from datetime import datetime, timezone
