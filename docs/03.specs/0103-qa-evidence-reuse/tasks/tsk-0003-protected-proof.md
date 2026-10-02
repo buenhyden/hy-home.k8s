@@ -179,8 +179,16 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   of effective protected PR enforcement.
 - The scoped repair moves the check envelope to the authenticated PR head;
   proof still binds the v3 synthetic merge checkout. Focused tests: 94 PASS
-  on the repair working tree. Hosted repair run, App-pinned required-check
-  read-back, hostile-PR and control-change trials remain DEFER. Keep
+  on the repair working tree. PR [#119](https://github.com/buenhyden/hy-home.k8s/pull/119)
+  passed disjoint hosted QA and `ci-summary` on run 36951722638, then merged
+  as `98a6b00e`. Its protected-control change was rejected by verifier run
+  36953277086 before App key access, as designed. Main full QA run
+  36953307326 and App 5156553 `qa-main-verdict` check 110675592214 passed on
+  that merge commit. PR [#120](https://github.com/buenhyden/hy-home.k8s/pull/120)
+  passed hosted QA on run 36954162376 and merged as `cdd1a0b8`; its CI lock
+  change is also protected control input. Hosted ordinary-PR head-check trial,
+  App-pinned required-check read-back and hostile/control-change enforcement
+  trials remain DEFER; the pre-pinning control-change rejection is observed. Keep
   `QA_REUSE_ENABLED` off and full main QA active. Next owners: operator and
   supervisor for a protected trial and
   exact source/SHA/check read-back. Rollback: retain `ci-summary` protection

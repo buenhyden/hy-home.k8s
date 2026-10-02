@@ -222,6 +222,10 @@ Official contracts were checked on 2026-10-02:
   24341547 has no bypass. These are configuration read-backs, not successful
   denied-write trials. A 404 against a nonexistent tag ref says nothing about
   whether a matching existing tag resists update or deletion.
+- Full main QA run 36953307326 passed on `98a6b00e`, and the verifier
+  App authored successful `qa-main-verdict` check 110675592214 on that exact
+  SHA. The publisher remains disabled; this is verdict evidence, not a tag or
+  publisher-permission read-back.
 - Safe one-time bootstrap: first observe a protected successful main verdict
   and publisher installation permission ceiling. Then enable environment
   `QA_TAG_ENABLED` for one main push, record the exact source SHA, run/attempt,
@@ -229,8 +233,8 @@ Official contracts were checked on 2026-10-02:
   attempt ordinary-token update and deletion against that **existing** matching
   ref and record both denials; disable tagging if either denial fails. Finally
   observe a same-target retry. No tag publication or immutability claim is
-  made yet. Next owner: operator/supervisor for protected main verdict,
-  permission read-back and hosted trials. Rollback: set `QA_TAG_ENABLED` off;
+  made yet. Next owner: operator/supervisor for publisher permission read-back
+  and hosted tag/denial trials. Rollback: set `QA_TAG_ENABLED` off;
   retain existing immutable refs rather than moving or deleting them.
 
 ## Traceability
