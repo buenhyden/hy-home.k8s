@@ -7,6 +7,7 @@ Fetched trees, job metadata and proof records are data, never executable input.
 
 from __future__ import annotations
 
+# Protection trial only: this branch must be closed without merging.
 import argparse
 import base64
 from datetime import datetime, timezone
