@@ -16,8 +16,8 @@ artifact_id: "SPEC-0103-TSK-0004"
 Execute [Plan WP-0004](../plan.md) against the approved [SPEC-0103](../spec.md).
 Local implementation provides an isolated PR gate, its 22-gate complement,
 fail-closed main reuse, and an independently authenticated main App verdict.
-The local implementation is independently reviewed. Hosted activation and
-provider trials remain DEFER; no hosted reuse or Spec completion is claimed.
+The local implementation is independently reviewed. Hosted PR and main fallback
+trials are recorded below; hosted reuse and Spec completion remain unclaimed.
 
 ## Inputs
 
@@ -30,7 +30,7 @@ provider trials remain DEFER; no hosted reuse or Spec completion is claimed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-004 | VAL-QER-005, VAL-QER-006, VAL-QER-007 | Follow Plan Task 4 RED, GREEN, review, and handoff steps | platform | In progress | Local implementation reviewed; hosted DEFER | Commits, focused tests, exact-index checks, and per-gate matrix below. |
+| WORK-004 | VAL-QER-005, VAL-QER-006, VAL-QER-007 | Follow Plan Task 4 RED, GREEN, review, and handoff steps | platform | In progress | PR partition and full-main fallback PASS; reuse pending | Commits, focused tests, exact-index checks, and per-gate matrix below. |
 
 ## Approval and Safety Boundaries
 
@@ -54,7 +54,7 @@ provider trials remain DEFER; no hosted reuse or Spec completion is claimed.
   workflow security, canonical CI Python contract, pinned formatting/lint and
   actual-message Commitizen checks.
 - **Live Validation**: exact PR/main SHA, run, attempt, isolated job, expected App
-  author, complete gate verdict and protection read-back; DEFER until configured.
+  author, complete gate verdict and protection read-back; PR partition and full fallback observed, reuse pending.
 - **Secret / Vault Handling**: no secret values, App keys or publisher credentials
   used. The separate lookup job has only contents/actions/pull-requests/checks
   read permissions. Checks:read authenticates the expected App's original check.
@@ -236,7 +236,7 @@ all 23 gates. Only one gate may be reused after activation and full authenticati
 | `agent-evaluation-cases` | isolated job | REUSED from authenticated PR | EXECUTE | DEFER |
 | `external-service-contracts` | QA complement | EXECUTE | EXECUTE | DEFER |
 
-### Hosted deferral and handoff
+### Initial hosted deferral and handoff
 
 - DEFER: no App/environment/required-check activation, provider PR/main trial,
   or source check from this new workflow has been observed. The five-job and
@@ -255,10 +255,32 @@ all 23 gates. Only one gate may be reused after activation and full authenticati
   can consume the full-main v2 verdict even while reuse remains disabled.
   No push, dispatch, remote setting, secret, App, tag or cluster change occurred.
 
+### Hosted PR and main fallback supplement (2026-10-02)
+
+- Normal [PR #121](https://github.com/buenhyden/hy-home.k8s/pull/121)
+  completed disjoint isolated 1-gate and complement 22-gate QA in
+  [CI run 36956836213](https://github.com/buenhyden/hy-home.k8s/actions/runs/36956836213).
+  The verifier App published `qa-provenance` check `110686923231` on exact PR
+  head `a8d63142c2d4b07901132a44e978afc093f6e312`. It merged as main commit
+  `3fa2f14d57d7d2cd0886e8eb5c7c8f7ff71f0c2a`.
+- `QA_REUSE_ENABLED=true` was set for that main integration, but the main
+  source lookup rejected a valid `base...head` compare because of its transport
+  guard. [Main CI run 36960567064](https://github.com/buenhyden/hy-home.k8s/actions/runs/36960567064)
+  therefore executed all 23 gates and passed; verifier App
+  `qa-main-verdict` check `110697612642` passed for the exact main commit.
+  This is a successful fail-closed fallback, **not** a reuse observation.
+- `QA_REUSE_ENABLED` was reset to `false`. [PR #123](https://github.com/buenhyden/hy-home.k8s/pull/123)
+  corrected the compare transport guard and merged as
+  `91ecc7757727a966f35cc36aa012a4266eaa9e8f`. This Task remains
+  **in-progress** until a subsequent main run proves exactly one `REUSED`
+  evaluator gate, 22 freshly executed gates, and a successful protected main
+  App verdict on that exact SHA. Rollback remains disabling reuse so main runs
+  all 23 gates.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-004](../plan.md#work-breakdown) | Local implementation reviewed; hosted DEFER | Candidate `1a13ea42f36676038f60eb8a9e436866c1564e82` and fix `c5a9ddac38f4d4425a8325fe4dfc6f2d7bb3843f`; focused 266, repair 136, final proof 46, repair quick 12 and staged 8 PASS; per-gate matrix above. |
+| [WORK-004](../plan.md#work-breakdown) | PR partition and full-main fallback PASS; hosted reuse pending | PR #121 CI `36956836213` ran 1+22 and App check `110686923231` passed. Main CI `36960567064` safely executed all 23 after source lookup rejection; App verdict `110697612642` passed. The compare guard was fixed by PR #123; no main `REUSED` gate is claimed yet. |

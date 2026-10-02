@@ -13,7 +13,7 @@ artifact_id: "SPEC-0103-TSK-0003"
 
 ## Overview
 
-Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The local verifier is implemented and independently reviewed. The first hosted App check exposed a PR-head versus synthetic-merge check-target mismatch; a scoped local repair is independently reviewed. Protected required-check activation and reuse remain outstanding.
+Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The local verifier is implemented and independently reviewed. The first hosted App check exposed a PR-head versus synthetic-merge check-target mismatch; a scoped local repair is independently reviewed. The App-pinned PR check and protected control denial are observed; post-transition trials and reuse remain outstanding.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | First hosted App check observed; protected activation and repair trial DEFER | Hosted run/check and scoped repair evidence below. |
+| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | App-pinned PR check and control denial observed; post-transition trial pending | Hosted run/check and scoped repair evidence below. |
 
 ## Approval and Safety Boundaries
 
@@ -32,7 +32,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 - **Forbidden Paths**: private credentials, global hooks, live Kubernetes/Vault mutation, archived Spec bodies.
 - **Approval Required**: Operator review before verifier App creation/install, main-only environment secret, required-check settings, or control-code bootstrap
 - **Static Validation**: python3 -m unittest tests.test_qa_provenance tests.test_ci_qa_workflow; python3 scripts/qa.py quick
-- **Live Validation**: Authenticated verifier App ID and permission ceiling, environment policy, required-check source, hostile PR and control-change trials; DEFER until configured
+- **Live Validation**: Authenticated verifier App ID and permission ceiling, environment policy, required-check source, hostile PR and control-change trials; initial activation observed, post-transition recheck pending
 - **Secret / Vault Handling**: no secret values in Task evidence; only setting names, permission scope, source identity, and redacted outcome.
 - **Rollback Plan**: Disable App-sourced reuse, retain full main QA; never remove a required check without protected replacement.
 - **Evidence Location**: this Task record, with links to exact commits, tests, checks, or authenticated settings observations.
@@ -227,6 +227,18 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   before re-enabling reuse. Rollback retains the two-check protection, full
   main QA and disabled tags. This records a pending transition, not a completed
   hosted reuse result.
+- The user approved a one-time administrator merge exception for exactly PR
+  [#123](https://github.com/buenhyden/hy-home.k8s/pull/123) head
+  `c5a50f5f5917cd50ecff4f7a881408c11e794f00`. Its [CI run
+  36962460263](https://github.com/buenhyden/hy-home.k8s/actions/runs/36962460263)
+  and `ci-summary` passed; [verifier run
+  36963307065](https://github.com/buenhyden/hy-home.k8s/actions/runs/36963307065)
+  rejected the protected control change before App-key access, as expected.
+  The PR merged as `91ecc7757727a966f35cc36aa012a4266eaa9e8f` with both
+  App-pinned required checks still strict. `QA_REUSE_ENABLED=false` and
+  `QA_TAG_ENABLED` remains absent. No main PASS or reuse claim follows from
+  this exception. Task status remains in progress pending a new ordinary-PR
+  positive trial and protected control-change negative trial on this main.
 
 ## Traceability
 
@@ -234,4 +246,4 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | First hosted App check observed; protected activation DEFER | Scoped fix `606de370ab844434fd58cb86f77cb5a3b9adcfb6`, tree `8f165c615dd88f8db27e374fd760f669e1154642`; initial focused 34, quick 12 and staged 12 PASS; PR #118 and verifier run 36947289910 exposed the PR-head target mismatch; repair focused 94 PASS, hosted trial pending. |
+| [WORK-003](../plan.md#work-breakdown) | Protected PR check and control denial observed; post-transition trial pending | PR #121 App check `110686923231` passed on head `a8d63142`; PR #122 CI passed but verifier `36960429886` rejected the control change and merge stayed blocked. Approved one-SHA PR #123 exception merged `91ecc775` without changing two pinned checks; new-main ordinary-PR and control-denial trials remain pending. |
