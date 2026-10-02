@@ -402,8 +402,7 @@ class HostedSourceTests(unittest.TestCase):
                 record[field] = value
                 self.check["output"]["text"] = json.dumps(record)
                 self.check["external_id"] = ":".join(
-                    str(record["source"][key])
-                    for key in ("run", "attempt", "job")
+                    str(record["source"][key]) for key in ("run", "attempt", "job")
                 )
                 with self.assertRaises(ValueError):
                     self.source()
