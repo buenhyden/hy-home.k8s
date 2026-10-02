@@ -40,12 +40,12 @@ EXPECTED_RESOLVED_PINS = {
     "nodeenv": "1.10.0",
     "platformdirs": "4.11.0",
     "pre-commit": "4.6.1",
-    "python-discovery": "1.5.0",
+    "python-discovery": "1.6.1",
     "pyyaml": "6.0.3",
     "referencing": "0.37.0",
     "rpds-py": "2026.6.3",
     "typing-extensions": "4.16.0",
-    "virtualenv": "21.7.0",
+    "virtualenv": "21.7.13",
 }
 EXPECTED_PRE_COMMIT_REVISIONS = {
     "https://github.com/commitizen-tools/commitizen": (

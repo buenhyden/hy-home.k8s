@@ -43,12 +43,12 @@ RESOLVED_PINS = {
     "nodeenv": "1.10.0",
     "platformdirs": "4.11.0",
     "pre-commit": "4.6.1",
-    "python-discovery": "1.5.0",
+    "python-discovery": "1.6.1",
     "pyyaml": "6.0.3",
     "referencing": "0.37.0",
     "rpds-py": "2026.6.3",
     "typing-extensions": "4.16.0",
-    "virtualenv": "21.7.0",
+    "virtualenv": "21.7.13",
 }
 
 PRE_COMMIT_REVISIONS = {
@@ -509,6 +509,9 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         self.inject_non_validation_job(root, command)
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
+
+    def test_checked_in_lock_uses_patched_virtualenv(self) -> None:
+        self.assertIn("virtualenv==21.7.13", make_lock())
 
     def test_valid_temporary_repository_passes(self) -> None:
         self.assertEqual(VALIDATOR.validate_dependencies(self.make_valid_root()), 1)
