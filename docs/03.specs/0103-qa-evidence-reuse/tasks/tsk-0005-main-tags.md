@@ -2,7 +2,7 @@
 title: "Protected immutable main tag publisher"
 version: "0.2.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-02"
 layer: "specs"
@@ -14,12 +14,12 @@ artifact_id: "SPEC-0103-TSK-0005"
 ## Overview
 
 Execute [Plan WP-0005](../plan.md) against the approved [SPEC-0103](../spec.md).
-Local implementation publishes only an authenticated successful main tip using
-a separate, default-off publisher identity. Independent code and security
-reviews passed after the authenticated retry correction. App/environment and
-tag-ruleset setup has been observed in part; publisher permission read-back,
-denied-write trials and publication remain DEFER. This record claims no tag or
-Spec completion.
+The separate publisher App created an authenticated, immutable
+`main-<full SHA>` tag for a successful main tip. Independent code and security
+reviews, protected main verdict, hosted publication, ordinary-token denied
+update/deletion trials, and authenticated same-target retry passed. Publisher
+permissions and token narrowing were enforced inside the successful job; no
+external read-back of a private key or installation permissions is claimed.
 
 ## Inputs
 
@@ -34,7 +34,7 @@ Spec completion.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-005 | VAL-QER-010 | Follow Plan Task 5 RED, GREEN, review, and handoff steps | platform | In progress | Local implementation reviewed; protected publication DEFER | Snapshot, partial settings read-back and remaining operator obligations below. |
+| WORK-005 | VAL-QER-010 | Follow Plan Task 5 RED, GREEN, review, and handoff steps | platform | Completed | Protected publication, denied-write trials, and same-target retry passed | Local evidence and hosted activation record below. |
 
 ## Approval and Safety Boundaries
 
@@ -51,14 +51,17 @@ Spec completion.
   and exact-index staged QA, Actions security, pinned ruff/actionlint/zizmor,
   whitespace and actual-message validation.
 - **Live Validation**: authenticated App/environment/required-check/ruleset and
-  complete bypass-actor read-back; ordinary publisher token denied update/delete;
-  exact main tag and retry with source SHA/run/attempt/check ID. Partial settings
-  are observed below; permission, denied-write and publication evidence remain DEFER.
+  bypass-actor read-back; ordinary PAT denied update/delete against the existing
+  tag; exact main tag and retry with source SHA/run/attempt/check ID. The
+  publisher job's successful `created` and `noop` results indirectly evidence
+  its in-job installation permission and repository-scope enforcement; they are
+  not external permission or private-key read-backs.
 - **Secret / Vault Handling**: no secret values read or stored in local evidence.
   Static `qa-verifier.yml` references the publisher and verifier keys in separate
   jobs/steps bound to `qa-tag-publish` and `qa-control`, respectively. At the
   original implementation checkpoint, App installation, environment branch
-  restrictions, secret placement and authenticated read-back were DEFER. No App/settings/tag/remote Git/live resource changed.
+  restrictions, secret placement and authenticated read-back were DEFER.
+  Subsequent hosted activation is recorded below; no secret value was read.
 - **Rollback Plan**: disable environment `QA_TAG_ENABLED`; never move or delete
   published main tags. Revert the local publisher unit only through a reviewed
   forward change, preserving protected verifier and full main QA.
@@ -180,25 +183,19 @@ Spec completion.
   four-path quick run passed all 12 gates, including document profiles, links,
   lifecycle and repository quality.
 - `contents: write` is an App permission ceiling, not immutable tag enforcement.
-  Operator activation must observe two active `refs/tags/main-*` rulesets:
-  creation permits the publisher through a creation-only bypass, while update
-  and deletion forbid publisher bypass. Record separately authorized operator
-  bypass, inherited rules and all effective actors. Missing `bypass_actors` from
-  an API caller without ruleset-write visibility is unknown, never an empty list.
-  App/environment/required-source read-back and ordinary-token denied update/delete
-  remain DEFER; local transport-denial tests do not establish remote denial.
-- After settings evidence, the operator must observe one successful main
-  publication and same-target retry, retaining exact repository/SHA/source
-  run/attempt/verdict check ID/tag target. Until then `QA_TAG_ENABLED` stays off.
-  Protected main checks can attest full QA before PR reuse is activated.
+  Two active `refs/tags/main-*` rulesets separate publisher-only creation from
+  update/deletion without bypass. The authenticated remote API trials below establish
+  denial against the existing ref. Missing `bypass_actors` from an API caller
+  without ruleset-write visibility remains unknown, never an empty list.
+  The protected main verdict above attests the complete gate set after one
+  independently reauthenticated PR-source reuse.
 - GitHub main-ref read and tag POST are separate API operations. The writer
   rechecks main immediately before creation but cannot make an atomic
   compare-main-and-create-tag transaction. A main advance within that final
   API interval can leave a tag on the fully authenticated tested source commit;
   it cannot redirect the tag to an unvalidated commit. No automatic tag cleanup
   is permitted. API ambiguity, bounded lookup failure or stale proof rejects.
-- Next owners: supervisor for final evidence review and Task 6 integration;
-  operator for all hosted settings, denied-operation and publication observations.
+- Next owner: supervisor for final evidence review and Task 6 integration.
 
 Official contracts were checked on 2026-10-02:
 [workflow_run identity](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run),
@@ -208,34 +205,50 @@ Official contracts were checked on 2026-10-02:
 [environment timing](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#configuration-variable-precedence),
 [App-created events](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
 
-### Hosted activation supplement — 2026-10-02
+### Hosted activation — 2026-10-02
 
 - `qa-control` and `qa-tag-publish` each expose the expected secret **name** and
   an exact `main` deployment-branch restriction; no secret value was read.
   Repository variables identify CI workflow 227337643, verifier App 5156553
-  and publisher candidate App 5156559. `QA_PROVENANCE_ENABLED` is true;
-  `QA_REUSE_ENABLED` and environment `QA_TAG_ENABLED` remain off. The
-  publisher App's effective installation permissions have not yet been read
-  back, so its ID alone does not satisfy the publisher-identity gate.
+  and publisher App 5156559. `QA_PROVENANCE_ENABLED` and `QA_REUSE_ENABLED`
+  are true. `QA_TAG_ENABLED` was enabled for publication, temporarily disabled
+  for denied-write trials, then re-enabled for the same-target retry. The
+  publisher secret is named `QA_PUBLISHER_PRIVATE_KEY` in `qa-tag-publish`;
+  its value was not read.
 - Two active rulesets target `refs/tags/main-*`: creation-only rule 24342332
   has Integration 5156559 as an `always` bypass actor; update/deletion rule
-  24341547 has no bypass. These are configuration read-backs, not successful
-  denied-write trials. A 404 against a nonexistent tag ref says nothing about
-  whether a matching existing tag resists update or deletion.
-- Full main QA run 36953307326 passed on `98a6b00e`, and the verifier
-  App authored successful `qa-main-verdict` check 110675592214 on that exact
-  SHA. The publisher remains disabled; this is verdict evidence, not a tag or
-  publisher-permission read-back.
-- Safe one-time bootstrap: first observe a protected successful main verdict
-  and publisher installation permission ceiling. Then enable environment
-  `QA_TAG_ENABLED` for one main push, record the exact source SHA, run/attempt,
-  App verdict check ID and resulting `main-<full SHA>` target. Immediately
-  attempt ordinary-token update and deletion against that **existing** matching
-  ref and record both denials; disable tagging if either denial fails. Finally
-  observe a same-target retry. No tag publication or immutability claim is
-  made yet. Next owner: operator/supervisor for publisher permission read-back
-  and hosted tag/denial trials. Rollback: set `QA_TAG_ENABLED` off;
-  retain existing immutable refs rather than moving or deleting them.
+  24341547 has no bypass. The effective `qa-tag-publish` environment allows
+  only the `main` deployment branch.
+- Main CI [run 36966489221](https://github.com/buenhyden/hy-home.k8s/actions/runs/36966489221)
+  succeeded on `997aa67d4a7ddb5dcdecf7048a68900155178231` with one REUSED
+  gate and 22 PASS gates. Verifier App 5156553 issued successful
+  `qa-main-verdict` [check 110715901051](https://github.com/buenhyden/hy-home.k8s/runs/110715901051)
+  on that exact commit.
+- With `QA_TAG_ENABLED=true`, protected verifier
+  [run 36967966896, attempt 2](https://github.com/buenhyden/hy-home.k8s/actions/runs/36967966896/attempts/2)
+  produced authenticated [check 110716545512](https://github.com/buenhyden/hy-home.k8s/runs/110716545512).
+  Publisher job 110716555045 returned `created`: lightweight
+  `refs/tags/main-997aa67d4a7ddb5dcdecf7048a68900155178231` targeted that
+  exact main commit. The publisher's successful result required its in-job
+  checks of App identity, exact `contents:write`/`metadata:read` installation
+  permissions, one allowed repository ID, narrowed token permissions and
+  repository scope. No external installation-permission API read-back is claimed.
+- With `QA_TAG_ENABLED=false`, an ordinary PAT attempted PATCH with
+  `force=false` toward `91ecc7757727a966f35cc36aa012a4266eaa9e8f` and
+  DELETE against that **existing** ref. Both returned HTTP 422 ruleset
+  violations. Exact ref read-back after each attempt retained target
+  `997aa67d4a7ddb5dcdecf7048a68900155178231`.
+- With `QA_TAG_ENABLED=true` again, the same protected verifier
+  [run 36967966896, attempt 3](https://github.com/buenhyden/hy-home.k8s/actions/runs/36967966896/attempts/3)
+  issued authenticated [check 110717374294](https://github.com/buenhyden/hy-home.k8s/runs/110717374294).
+  Publisher job 110717385734 returned `noop`; the ref and main tip remained
+  unchanged. `main-*` does not match `generate-changelog.yml`'s `v*.*.*`
+  filter, and the observed push-run list after 05:17 UTC was empty: tag
+  publication did not start another QA push run.
+- Rollback remains environment `QA_TAG_ENABLED=false`; published refs are
+  retained and never moved or deleted. The separate 2026-10-02 main push
+  `98a6b00e`/run 36953307326/check 110675592214 was an earlier pre-tag
+  checkpoint, not the publication source.
 
 ## Traceability
 
@@ -243,4 +256,4 @@ Official contracts were checked on 2026-10-02:
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-005](../plan.md#work-breakdown) | Local implementation PASS; protected publication DEFER | RED/GREEN and review above; 2026-10-02 settings read-back below; no remote tag or denied-write result claimed. |
+| [WORK-005](../plan.md#work-breakdown) | Completed | RED/GREEN and independent review above; main CI 36966489221, App verdict 110715901051, verifier attempts 2/3, tag creation, ordinary-token HTTP 422 update/deletion denials, and authenticated `noop` retry. |

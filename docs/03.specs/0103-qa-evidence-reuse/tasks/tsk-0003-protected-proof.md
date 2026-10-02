@@ -1,8 +1,8 @@
 ---
 title: "Protected App PR proof"
-version: "0.1.5"
+version: "0.2.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-02"
 layer: "specs"
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0103-TSK-0003"
 
 ## Overview
 
-Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The local verifier is implemented and independently reviewed. The first hosted App check exposed a PR-head versus synthetic-merge check-target mismatch; a scoped local repair is independently reviewed. The App-pinned PR check and protected control denial are observed; post-transition trials and reuse remain outstanding.
+Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md). The verifier is implemented and independently reviewed. App-pinned positive and protected-control negative PR trials passed again after the one-time control transition. Main gate reuse and tag publication belong to later Tasks and are not established here.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | In progress | App-pinned PR check and control denial observed; post-transition trial pending | Hosted run/check and scoped repair evidence below. |
+| WORK-003 | VAL-QER-004, VAL-QER-007, VAL-QER-008 | Follow Plan Task 3 RED, GREEN, review, and handoff steps | platform | Completed | Post-transition App-pinned positive PR and control-change denial observed | Hosted run/check, branch protection, and scoped repair evidence below. |
 
 ## Approval and Safety Boundaries
 
@@ -32,7 +32,7 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
 - **Forbidden Paths**: private credentials, global hooks, live Kubernetes/Vault mutation, archived Spec bodies.
 - **Approval Required**: Operator review before verifier App creation/install, main-only environment secret, required-check settings, or control-code bootstrap
 - **Static Validation**: python3 -m unittest tests.test_qa_provenance tests.test_ci_qa_workflow; python3 scripts/qa.py quick
-- **Live Validation**: Authenticated verifier App ID and permission ceiling, environment policy, required-check source, hostile PR and control-change trials; initial activation observed, post-transition recheck pending
+- **Live Validation**: Authenticated verifier App ID and permission ceiling, main-only environment policy, required-check source, and post-transition positive and control-change negative PR trials observed; main reuse and tag publication are separate work
 - **Secret / Vault Handling**: no secret values in Task evidence; only setting names, permission scope, source identity, and redacted outcome.
 - **Rollback Plan**: Disable App-sourced reuse, retain full main QA; never remove a required check without protected replacement.
 - **Evidence Location**: this Task record, with links to exact commits, tests, checks, or authenticated settings observations.
@@ -240,10 +240,47 @@ Execute [Plan WP-0003](../plan.md) against the approved [SPEC-0103](../spec.md).
   this exception. Task status remains in progress pending a new ordinary-PR
   positive trial and protected control-change negative trial on this main.
 
+### Post-transition protected PR proof — 2026-10-02
+
+- The one-time exception above was limited to PR #123 at head
+  `c5a50f5f5917cd50ecff4f7a881408c11e794f00`; it does not authorize a
+  later bypass. On its merged main commit
+  `91ecc7757727a966f35cc36aa012a4266eaa9e8f`, [CI run
+  36963468189](https://github.com/buenhyden/hy-home.k8s/actions/runs/36963468189)
+  executed all 23 required gates and passed. [Verifier run
+  36964586052](https://github.com/buenhyden/hy-home.k8s/actions/runs/36964586052)
+  and App 5156553 `qa-main-verdict` check 110705506102 passed on that exact
+  main commit. This is full-QA fallback evidence, not reuse evidence.
+- Ordinary PR [#124](https://github.com/buenhyden/hy-home.k8s/pull/124)
+  passed [CI run
+  36964595959](https://github.com/buenhyden/hy-home.k8s/actions/runs/36964595959)
+  and [verifier run
+  36966042270](https://github.com/buenhyden/hy-home.k8s/actions/runs/36966042270).
+  App 5156553 authored successful `qa-provenance` check 110709969682 on its
+  exact PR head `eaeedad63e24f5e5347f458cfc57c1c574cfeb58`. Strict branch
+  protection required `ci-summary` from App 15368 and `qa-provenance` from
+  App 5156553. The PR merged through the ordinary protected route as
+  `997aa67d4a7ddb5dcdecf7048a68900155178231`.
+- Negative PR [#125](https://github.com/buenhyden/hy-home.k8s/pull/125)
+  changed a protected control path at head
+  `ac1a7475fed3a06348d1768bc88f940e29eb1839`. [CI run
+  36964854015](https://github.com/buenhyden/hy-home.k8s/actions/runs/36964854015)
+  and `ci-summary` succeeded, but [verifier run
+  36966284636](https://github.com/buenhyden/hy-home.k8s/actions/runs/36966284636)
+  rejected the changed control before App-key use. No App `qa-provenance`
+  check was published; required-check protection kept the PR `BLOCKED`.
+  It was closed without merge and its remote branch deleted.
+- `QA_REUSE_ENABLED=true` was enabled only after both post-transition PR
+  trials. `QA_TAG_ENABLED` remains off. The protected proof is complete for
+  WORK-003; main reuse disposition, publisher identity and tag protection
+  remain with Tasks 0004 and 0005. Rollback for any subsequent proof failure
+  is to disable reuse and execute all main gates while keeping both required
+  checks pinned. No secret values were inspected.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | Protected PR check and control denial observed; post-transition trial pending | PR #121 App check `110686923231` passed on head `a8d63142`; PR #122 CI passed but verifier `36960429886` rejected the control change and merge stayed blocked. Approved one-SHA PR #123 exception merged `91ecc775` without changing two pinned checks; new-main ordinary-PR and control-denial trials remain pending. |
+| [WORK-003](../plan.md#work-breakdown) | Completed: protected PR check and control denial re-observed after the one-time transition | PR #124 App 5156553 check `110709969682` passed on exact head `eaeedad6` and merged normally as `997aa67d`; PR #125 CI passed but verifier `36966284636` rejected control change before App-key use, and protection blocked merge. Main at `91ecc775` passed full 23-gate QA and App main verdict. Main reuse is Task 0004. |

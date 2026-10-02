@@ -1,6 +1,6 @@
 ---
 title: "Integration, review, and handoff"
-version: "0.4.1"
+version: "0.5.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -14,12 +14,12 @@ artifact_id: "SPEC-0103-TSK-0006"
 ## Overview
 
 Execute [Plan WP-006](../plan.md) against [SPEC-0103](../spec.md). This Task
-completes the local integration handoff: implementation reconciliation, the final
-script/test audit, independent review and repository-static validation evidence.
-Protected hosted activation remains DEFER; the Spec and Plan stay active, and
-Tasks 3–5 stay in progress. No local result establishes remote enforcement.
-This delivery also owns the request owner's approved Stage 03 lifecycle
-disposition recorded below.
+completes the integration handoff: implementation reconciliation, the final
+script/test audit, independent review, repository-static validation, and the
+subsequently observed protected PR/main reuse and immutable main tag. The
+historical local and early hosted snapshots below remain intact; the final
+hosted disposition supersedes their activation deferrals. This delivery also
+owns the request owner's approved Stage 03 lifecycle disposition recorded below.
 
 ## Inputs
 
@@ -35,7 +35,7 @@ disposition recorded below.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | VAL-QER-001–012 | Reconcile final local validation, independent review, hosted deferrals and approved lifecycle disposition | platform | Completed | Local integration handoff complete; hosted activation DEFER | Criterion, disposition, lifecycle and snapshot sections below |
+| WORK-006 | VAL-QER-001–012 | Reconcile local validation, independent review, hosted activation and approved lifecycle disposition | platform | Completed | Local handoff and protected hosted acceptance complete; optional fork-labeler and reporter UI trials DEFER | Criterion, disposition, lifecycle and snapshot sections below |
 
 ## Approval and Safety Boundaries
 
@@ -50,14 +50,17 @@ disposition recorded below.
   global hooks, archived bodies, live Kubernetes/Vault resources and unrelated work.
 - **Approval Required**: this document worker performs no push, PR, merge or
   cleanup; the controller handles delivery under the existing user authorization
-  and Git policy. App/environment configuration, remote settings, rulesets and
-  tag activation still require their operator-owned authorization and evidence.
-  No external mutation occurred in this Task.
+  and Git policy. At the original local handoff, App/environment configuration,
+  remote settings, rulesets and tag activation required operator-owned
+  authorization and evidence. The final supplement records the later observed
+  operator activation. This Task author performed no external mutation.
 - **Static Validation**: frozen full QA attempts on distinct recorded inputs;
   final discovery census without test execution; affected quick and exact-index
   staged QA per document commit;
   whitespace, document/schema/links and actual-message checks with active hooks.
-- **Live Validation**: DEFER with operator/PR owner and retry triggers below.
+- **Live Validation**: protected PR/main checks, authenticated settings, tag
+  publication and denied ordinary writes are recorded in the final supplement;
+  actual fork labeling and private-reporting UI navigation remain DEFER.
 - **Secret / Vault Handling**: no private values read or recorded. Setting names,
   intended permission ceilings and static references are not installed settings.
 - **Rollback Plan**: operator disables tag publication and reuse first, retaining
@@ -114,8 +117,9 @@ required; artifacts, QA logs and green names are not authority.
 The local column maps retained runnable evidence; owning Tasks record its prior
 focused results. The first two full attempts remain FAIL; the third frozen run
 passed all 23 repository-static gates on the repaired input. This completed the
-local handoff at its recorded snapshot. The dated hosted supplement below
-supersedes the PR/main QA deferrals; protected settings remain open.
+local handoff at its recorded snapshot. The original right-hand column records
+the initial deferral, superseded by the final hosted disposition after the
+historical supplement. No local result alone establishes remote enforcement.
 Requirement lineage is the full stable ID in the owning Spec's traceability table.
 
 | Criterion | Requirement lineage | Local evidence | Hosted/settings disposition and retry owner |
@@ -345,11 +349,44 @@ observed. Ordinary feature pushes have no hosted QA. Local development uses
 quick and exact-index staged QA, with hosted full QA on PR/main delivery.
 
 The final active-path script/test audit above found no further proven safe
-deletion. The successful hosted checks do not activate or evidence the App,
-environment, effective rulesets, protected reuse, fork-labeler/private-report
-UI behavior or tag publication. Those observations remain with the PR
-owner/operator under Tasks 2–5. This supplement changes no Spec/Plan status,
-remote setting, or completed local handoff verdict.
+deletion. At this historical checkpoint, the successful hosted checks did not
+activate or evidence the App, environment, effective rulesets, protected reuse,
+fork-labeler/private-report UI behavior or tag publication. Those observations
+remained with the PR owner/operator under Tasks 2–5. This checkpoint changed no
+Spec/Plan status, remote setting, or completed local handoff verdict.
+
+### Final protected-host disposition, 2026-10-02
+
+This dated disposition supersedes only the early hosted `DEFER` entries above;
+the failed runs and local handoff remain historical facts. Task 2 owns the
+delivery and authenticated route review, Task 3 the verifier and hostile trial,
+Task 4 the per-gate reuse proof, and Task 5 the publisher and tag controls.
+The operator observed these hosted results at exact refs and authenticated
+settings; static tests are not used as substitutes for them.
+Tasks 1 and 7 retain their completed local dispositions; Tasks 2–5 can now
+close on their recorded hosted criteria; Task 6 closes this cross-criterion
+handoff. The optional UI trials below are explicit deferrals, not missing
+evidence for the named automation criteria.
+
+| Criterion | Final hosted/settings evidence and disposition |
+| --- | --- |
+| VAL-QER-001–002 | PASS at the recorded local snapshot: one registry of 23 unique full gates and exact local-only cache identity. No remote cache claim. |
+| VAL-QER-003, VAL-QER-006, VAL-QER-009 | PASS: [PR #124](https://github.com/buenhyden/hy-home.k8s/pull/124) [CI run 36964595959](https://github.com/buenhyden/hy-home.k8s/actions/runs/36964595959), attempt 1, passed one isolated `agent-evaluation-cases` gate plus 22 disjoint complement gates and `ci-summary`. Main [CI run 36966489221](https://github.com/buenhyden/hy-home.k8s/actions/runs/36966489221), attempt 1, passed 22 fresh gates plus one verified REUSED gate. `unit-tests` ran whole on both delivery routes; ordinary feature push has no hosted full QA. |
+| VAL-QER-004, VAL-QER-007, VAL-QER-008 | PASS: verifier App `5156553` authored `qa-provenance` check `110709969682` on PR #124's exact head `eaeedad63e24f5e5347f458cfc57c1c574cfeb58`. [PR #125](https://github.com/buenhyden/hy-home.k8s/pull/125) passed ordinary CI but protected verifier [run 36966284636](https://github.com/buenhyden/hy-home.k8s/actions/runs/36966284636) rejected a control change before App-key use; App PASS was absent and branch protection blocked the merge. The one-time approved control transition was limited to PR #123 head `c5a50f5f5917cd50ecff4f7a881408c11e794f00`; it is not a standing bypass. Authenticated settings showed `qa-control` main-only, strict required `ci-summary` from App `15368` and `qa-provenance` from App `5156553`, and verifier installation without contents/write. |
+| VAL-QER-005 | PASS: PR #124 merged normally as exact main SHA `997aa67d4a7ddb5dcdecf7048a68900155178231`. Main CI `36966489221:1` reused only the authenticated original PR `agent-evaluation-cases` result and executed the remaining 22 gates. Protected [verifier run 36967966896](https://github.com/buenhyden/hy-home.k8s/actions/runs/36967966896), attempt 1, authored successful `qa-main-verdict` check `110715901051` on that SHA. The earlier full 23-gate fallback after source lookup failure remains recorded in Task 4. |
+| VAL-QER-010 | PASS: separate publisher App `5156559`, main-only `qa-tag-publish` environment, publisher-only creation and immutable update/delete rulesets were read back. Protected run `36967966896` attempt 2 created lightweight `refs/tags/main-997aa67d4a7ddb5dcdecf7048a68900155178231` at that exact SHA; ordinary authenticated PATCH and DELETE each returned HTTP 422 and ref read-back stayed unchanged. Attempt 3's same-target publisher retry returned `noop`. `QA_TAG_ENABLED=true` and `QA_REUSE_ENABLED=true` were read back after the trial. The `main-*` tag does not match the `v*.*.*` changelog trigger, and no tag push QA route is configured. |
+| VAL-QER-011–012 | PASS for the active script/test and `.github` audit: no candidate was deleted without a proven replacement; distinct scanners, hooks, GitOps and history checks remain. Private vulnerability reporting was authenticated as enabled. Actual fork PR label application and private-reporting UI navigation remain **DEFER** to an authorized fork contributor/reporter and operator; no such UI trial is claimed. |
+
+The tag ref and run status were re-read after activation: tag target remains
+`997aa67d4a7ddb5dcdecf7048a68900155178231`, and verifier and publisher jobs
+in protected run `36967966896` are successful. Dependabot API returned zero open
+alerts and four fixed alerts (`#1`–`#4`, `virtualenv`) after PR #120. The user's
+earlier Security and quality UI count of eight is not reproducible in the
+authenticated repository API; no disposition is claimed for four unseen alerts.
+Rollback remains bounded: set `QA_TAG_ENABLED=false` and
+`QA_REUSE_ENABLED=false`; main then executes all 23 gates. Preserve published
+tags, required checks and both rulesets. New control-code changes still require
+an independently reviewed protected transition, not the consumed PR #123 exception.
 
 ### Approved lifecycle disposition, 2026-10-02
 
@@ -368,8 +405,10 @@ checks, plus exact-index staged QA, own repository-static acceptance. An
 independent read-only reviewer checks source bytes, link authority and this
 approval record before delivery. The platform PR owner retains the check
 results and merge identity; a later reversal reverts the complete move commit.
-SPEC-0008 remains active by its current contract, and SPEC-0103 remains active
-until protected hosted acceptance, so neither is eligible for this retention.
+SPEC-0008 remains active by its current contract. At this historical cutover,
+SPEC-0103 remained active until the protected hosted acceptance recorded above;
+its later completion is governed by the owning Spec/Plan lifecycle fields, not
+by the SPEC-0101/0102 retention decision.
 
 ## Traceability
 
@@ -377,4 +416,4 @@ until protected hosted acceptance, so neither is eligible for this retention.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-006](../plan.md#work-breakdown) | Completed: local integration handoff; hosted DEFER | Criterion matrix, final script/test dispositions and checked snapshot above |
+| [WORK-006](../plan.md#work-breakdown) | Completed: local integration and protected hosted acceptance; two optional UI trials DEFER | Criterion matrix, script/test dispositions, checked local snapshot and final protected-host disposition above |
