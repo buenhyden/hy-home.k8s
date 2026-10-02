@@ -1,8 +1,8 @@
 ---
 title: "Delivery policy, scripts, and GitHub routes"
-version: "0.2.3"
+version: "0.2.4"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-02"
 layer: "specs"
@@ -24,7 +24,7 @@ Execute [Plan WP-0002](../plan.md) against the approved [SPEC-0103](../spec.md).
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| WORK-002 | VAL-QER-003, VAL-QER-009, VAL-QER-011 | Assign delivery owners, repair routes, audit script consumers | platform | In progress | Local evidence and PR/main hosted QA observed; fork-labeler and private-report UI behavior remain DEFER | `b105708fcc545566aa89a97daadd409b8b1aa4ef` and verification below. |
+| WORK-002 | VAL-QER-003, VAL-QER-009, VAL-QER-011 | Assign delivery owners, repair routes, audit script consumers | platform | Completed | Local delivery and PR/main hosted QA, script/route audit, authenticated destinations, and fork-permission review meet the named criteria; actual fork labeling and reporter UI navigation remain DEFER | `b105708fcc545566aa89a97daadd409b8b1aa4ef` and verification below. |
 
 ## Approval and Safety Boundaries
 
@@ -147,10 +147,44 @@ behavior, the private-report UI route, App-backed proof, effective rulesets or
 tag publication. The PR owner/operator retains those observations and any
 activation handoff; no remote setting was changed by this Task refresh.
 
+### Authenticated route and fork-permission refresh, 2026-10-02
+
+At `codex/qa-evidence-closure` HEAD `997aa67d4a7ddb5dcdecf7048a68900155178231`,
+read-only `gh api` returned `private=false`, `visibility=public`, and
+`default_branch=main` for
+[`repos/buenhyden/hy-home.k8s`](https://api.github.com/repos/buenhyden/hy-home.k8s).
+[`private-vulnerability-reporting`](https://api.github.com/repos/buenhyden/hy-home.k8s/private-vulnerability-reporting)
+returned `enabled=true`. The tracked [security policy](../../../../.github/SECURITY.md)
+points reporters to the repository's
+[private advisory creation route](https://github.com/buenhyden/hy-home.k8s/security/advisories/new);
+no report was submitted and no reporter-session UI navigation was attempted.
+Authenticated, paginated read-only inspection of all PRs returned no fork PR,
+so a live fork-labeler result is unavailable.
+
+The tracked [labeler workflow](../../../../.github/workflows/labeler.yml) runs
+on `pull_request` and requests job-local `pull-requests: write`. GitHub's
+[workflow permission calculation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#how-permissions-are-calculated-for-a-workflow-job)
+describes fork-originated `pull_request` runs as receiving read-only tokens,
+so the requested job-local write scope is expected to be downgraded on this
+public repository. The static job permission therefore does not prove a fork
+PR can be labeled. A live fork PR label application is `DEFER`
+until an authorized fork PR exists; neither is a required QA gate. The route
+review deliberately retains `pull_request`, rather than widening to
+`pull_request_target` merely to make labeling work.
+
+VAL-QER-003 is met by the local delivery policy/fixture tests and the observed
+PR #117 hosted `ci-summary`; no local full QA was required before PR delivery.
+VAL-QER-009 is met by the event/branch fixture matrix and observed PR/main
+runs above; the optional fork-labeler trial has no QA ownership. VAL-QER-011
+is met by the consumer/unique-failure table, route negatives, authenticated
+repository setting read-back, and explicit fork-permission review. A live
+fork-labeler trial and reporter UI navigation are additional provider evidence,
+not unobserved acceptance passes; Task 6 keeps their handoff visible.
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | In progress | Implementation `b105708f`; local reviews PASS; hosted PR #117 and integrated main SHA `2bc46c9b` QA/`ci-summary` PASS after retained main failure `36940113311`. Fork-labeler/private-report UI and protected activation remain DEFER. Task 6 reconciles the later isolated/verifier/publisher routes. |
+| [WORK-002](../plan.md#work-breakdown) | Completed for VAL-QER-003/009/011 | Implementation `b105708f`; local reviews PASS; hosted PR #117 and integrated main SHA `2bc46c9b` QA/`ci-summary` PASS after retained main failure `36940113311`; authenticated public/private-report settings and fork-permission review above. Actual fork-labeler and reporter UI trials remain DEFER to an authorized operator/fork contributor; Task 6 reconciles isolated/verifier/publisher activation. |

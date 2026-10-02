@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.12"
+version: "0.7.13"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -79,7 +79,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 | Package | 목적 |
 | --- | --- |
 | [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 현재 local GitOps platform baseline의 구현 계약 |
-| [0103-qa-evidence-reuse/](./0103-qa-evidence-reuse/) | QA 실행 중복 제거를 위한 승인된 증거 재사용 계약 |
+| [0103-qa-evidence-reuse/](./0103-qa-evidence-reuse/) | QA 실행 중복 제거를 완료한 증거 재사용 계약; 보존 처분 대기 |
 
 ## Authoring Workflow
 

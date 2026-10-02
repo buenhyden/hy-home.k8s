@@ -1,8 +1,8 @@
 ---
 title: "QA Evidence Reuse Across Delivery Boundaries"
-version: "0.1.4"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "active"
+status: "completed"
 owner: "platform"
 updated: "2026-10-02"
 layer: "specs"
@@ -20,18 +20,24 @@ main updates also publish one immutable commit tag. Each required
 gate executes once for a proven-equivalent input; a reused result names its
 actual successful source. Changed input, Git history, toolchain, or environment
 receives a new check. The request owner approved this Spec and its implementation Plan on 2026-10-01.
-Local implementation and the invoked-test audit are reconciled in
-[Task 6](tasks/tsk-0006-integration.md). Protected hosted activation and trials
-remain DEFER; this Spec stays active until its remote criteria pass.
+The implementation, invoked-test audit, protected hosted trials, and remaining
+provider limitations are reconciled in [Task 6](tasks/tsk-0006-integration.md).
+PR #124 supplied protected PR proof; main CI run 36966489221 reused one proven
+gate and executed the other 22. Verifier App 5156553 passed the independent
+main verdict for `997aa67d4a7ddb5dcdecf7048a68900155178231`, and protected
+publisher App 5156559 created its immutable `main-<SHA>` tag. The denied
+update/deletion and same-target no-op trials are recorded in
+[Task 5](tasks/tsk-0005-main-tags.md). The named criteria are complete; live
+fork labeling and reporter UI navigation remain separately recorded as DEFER.
 
 The current [Requirement Package](../../01.requirements/0003-workspace-agent-governance-platform.md),
 [Architecture Description](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md),
 [quality policy](../../../.agents/governance/quality.md), and
 [validation registry](../../../scripts/validation/registry.json) are inputs.
 The QA entrypoint is scripts/qa.py; ci aliases the full gate set. A single full
-run already executes unit discovery and manual pre-commit once each. Current
-duplication occurs across local final full, PR hosted full, and main push hosted
-full. GitHub reported 16m37s for PR #115 QA in [run 36558654976, attempt 1](https://github.com/buenhyden/hy-home.k8s/actions/runs/36558654976),
+run already executes unit discovery and manual pre-commit once each. The
+baseline duplicated equivalent work across local final full, PR hosted full,
+and main push hosted full. GitHub reported 16m37s for PR #115 QA in [run 36558654976, attempt 1](https://github.com/buenhyden/hy-home.k8s/actions/runs/36558654976),
 whose API head SHA was 6b80bf2886c1c6e0cd27021cad49da28170007b4,
 and 13m49s for [main run 36561110350, attempt 1](https://github.com/buenhyden/hy-home.k8s/actions/runs/36561110350)
 at 0ed105b832d85c88b1000ad58959531d1ae23cae. The PR checkout SHA was
