@@ -800,6 +800,23 @@ class ProvenanceTests(unittest.TestCase):
                 None, None, 302, "", {}, "https://elsewhere.invalid"
             )
 
+    def test_compare_route_allows_exact_shas_but_rejects_traversal(self):
+        reader = provenance.GitHubReader("unused", REPO, 10, 20, BASE)
+        with patch.object(provenance, "build_opener") as opener:
+            opener.return_value.open.return_value.__enter__.return_value.read.return_value = b"{}"
+            self.assertEqual(reader.get(f"compare/{BASE}...{HEAD}"), {})
+            self.assertIn(
+                f"compare/{BASE}...{HEAD}",
+                opener.return_value.open.call_args.args[0].full_url,
+            )
+            for route in (
+                "../secret",
+                f"compare/{BASE}...{HEAD}/../secret",
+                f"compare/{BASE}...{'g' * 40}",
+            ):
+                with self.subTest(route=route), self.assertRaises(ValueError):
+                    reader.get(route)
+
     def test_rejected_source_never_reads_app_key_or_publishes(self):
         with tempfile.TemporaryDirectory() as directory:
             event_path = Path(directory) / "event.json"
