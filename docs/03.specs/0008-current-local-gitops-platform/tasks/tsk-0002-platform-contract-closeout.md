@@ -1,8 +1,8 @@
 ---
 title: "Local GitOps Platform Contract Closeout"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -36,9 +36,9 @@ closeout does not re-run their historical live observations or erase failures.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-SPC-001 | Promote ongoing architecture/execution authority and repoint current consumers | architect, doc-writer, wiki-curator | Queued | Current AD/consumer diff under review | AD-0007; REQ-0004; current policy/runbook links |
-| WORK-002 | VAL-SPC-001..005 | Confirm static and hosted acceptance at exact source/review SHA | quality-engineer | Queued | Source-main static PASS; final changed SHA pending | Main CI `36978509630`; `scripts/validate-infrastructure-contracts.sh`, `scripts/validate-gitops-structure.sh`, `scripts/validate-k8s-manifests.sh .` |
-| WORK-003 | VAL-SPC-001 | Close and retain the package as completed historical evidence | platform | Queued | Completion text drafted; retention awaits consumer-zero and integrated source | This Task, SPEC-0008, Stage 98 catalog |
+| WORK-001 | VAL-SPC-001 | Promote ongoing architecture/execution authority and repoint current consumers | architect, doc-writer, wiki-curator | In progress | Current AD/consumer diff under review | AD-0007; REQ-0004; current policy/runbook links |
+| WORK-002 | VAL-SPC-001..005 | Confirm static and hosted acceptance at exact source/review SHA | quality-engineer | In progress | Source-main static PASS; final changed SHA pending | Main CI `36978509630`; `scripts/validate-infrastructure-contracts.sh`, `scripts/validate-gitops-structure.sh`, `scripts/validate-k8s-manifests.sh .` |
+| WORK-003 | VAL-SPC-001 | Close and retain the package as completed historical evidence | platform | In progress | Completion text drafted; retention awaits consumer-zero and integrated source | This Task, SPEC-0008, Stage 98 catalog |
 
 ## Approval and Safety Boundaries
 
@@ -84,8 +84,8 @@ of gaps becomes complete merely because this Spec closes.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [VAL-SPC-001](../spec.md#success-criteria--verification-plan) | WORK-001 and WORK-003 queued; source-main hosted PASS, final SHA pending | AD-0007 transfer; CI run `36978509630` on `f2b6167be1dae6a066344e9c84719980295d010a` |
-| [VAL-SPC-002](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 queued | `validate-infrastructure-contracts.sh` |
-| [VAL-SPC-003](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 queued | `validate-gitops-structure.sh` |
-| [VAL-SPC-004](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 queued | `validate-k8s-manifests.sh .` |
-| [VAL-SPC-005](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 queued | Ingress assertions in `validate-infrastructure-contracts.sh` |
+| [VAL-SPC-001](../spec.md#success-criteria--verification-plan) | WORK-001 and WORK-003 in progress; source-main hosted PASS, final SHA pending | AD-0007 transfer; CI run `36978509630` on `f2b6167be1dae6a066344e9c84719980295d010a` |
+| [VAL-SPC-002](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 in progress | `validate-infrastructure-contracts.sh` |
+| [VAL-SPC-003](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 in progress | `validate-gitops-structure.sh` |
+| [VAL-SPC-004](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 in progress | `validate-k8s-manifests.sh .` |
+| [VAL-SPC-005](../spec.md#success-criteria--verification-plan) | Source-main static PASS; WORK-002 in progress | Ingress assertions in `validate-infrastructure-contracts.sh` |
