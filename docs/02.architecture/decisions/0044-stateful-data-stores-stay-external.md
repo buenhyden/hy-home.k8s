@@ -97,11 +97,11 @@ and `pg-router` at `15432/15433`. The bootstrap no longer requires
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0014](./0014-current-local-gitops-platform-contract.md) | Confirms ADR-0014's external service contract for PostgreSQL and Valkey; replaces nothing | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0014](./0014-current-local-gitops-platform-contract.md) | Confirms ADR-0014's external service contract for PostgreSQL and Valkey; replaces nothing | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |

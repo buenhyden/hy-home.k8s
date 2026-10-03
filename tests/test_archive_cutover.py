@@ -357,16 +357,17 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_index_only_replacement_evolution_preserves_immutable_envelope(
         self,
     ) -> None:
-        # Spec 0036 was retained under ADR-0032, so this case names an active
-        # package: the point is that an index-only replacement change to a
-        # present current document is accepted.
-        replacement = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
+        # An index-only replacement change to a present current document is
+        # accepted without changing the immutable archive envelope.
+        replacement = (
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        )
 
         def evolve_replacement(text: str) -> str:
             lines, rows = self._manifest_rows(text)
             cells = self._cells(lines[rows[0]])
             cells[7] = (
-                f"[`{replacement}`](../03.specs/0008-current-local-gitops-platform/spec.md)"
+                f"[`{replacement}`](../02.architecture/descriptions/0007-current-local-gitops-platform.md)"
             )
             lines[rows[0]] = self._row(cells)
             return "".join(lines)
@@ -394,9 +395,8 @@ class ArchiveCutoverTest(unittest.TestCase):
         registry = load_registry(ROOT)
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
         # This case needs a present current document so classification, not
-        # absence or the archive route, decides the diagnostic. Spec 0036 was
-        # retained under ADR-0032, so an active package stands in for it.
-        current = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
+        # absence or the archive route, decides the diagnostic.
+        current = "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
         template = "docs/99.templates/templates/archive/tombstone.template.md"
 
         self.assertEqual(

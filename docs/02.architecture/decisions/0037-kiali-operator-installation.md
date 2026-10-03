@@ -85,7 +85,7 @@ The endpoint and browser-route decisions remain with
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0009](0009-kiali-external-observability.md) | Replaces only the install-mode/version clauses and operator non-goal; ADR-0009 stays accepted for its remaining boundaries, with no whole-document supersession | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0009](0009-kiali-external-observability.md) | Replaces only the install-mode/version clauses and operator non-goal; ADR-0009 stays accepted for its remaining boundaries, with no whole-document supersession | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 
 - **Requirement**: [REQ-0004-FR-0004 and REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)
 - **Current architecture**: [AD-0007](../descriptions/0007-current-local-gitops-platform.md)

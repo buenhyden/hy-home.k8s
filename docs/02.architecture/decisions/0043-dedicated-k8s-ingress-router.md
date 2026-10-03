@@ -116,11 +116,11 @@ host names.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0042-linux-server-single-host-baseline.md`](./0042-linux-server-single-host-baseline.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0042](./0042-linux-server-single-host-baseline.md) | Narrows ADR-0042's `hy.home.arpa` clause to external service hosts; k8s hosts move to `hy-k8s.home.arpa` | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0042](./0042-linux-server-single-host-baseline.md) | Narrows ADR-0042's `hy.home.arpa` clause to external service hosts; k8s hosts move to `hy-k8s.home.arpa` | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |

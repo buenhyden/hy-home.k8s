@@ -99,7 +99,7 @@ clause is unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 - **Infrastructure**: [`../../../infrastructure/README.md`](../../../infrastructure/README.md)
 
@@ -107,4 +107,4 @@ clause is unchanged.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0014](./0014-current-local-gitops-platform-contract.md) | Carries ADR-0014's host clause only; ADR-0014 stays accepted for every other clause | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0014](./0014-current-local-gitops-platform-contract.md) | Carries ADR-0014's host clause only; ADR-0014 stays accepted for every other clause | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |

@@ -1922,7 +1922,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
-        path = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
+        path = "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
         result, statuses, output, invoked = self._run([path], lane="staged")
 
         self.assertEqual(result, 0)
