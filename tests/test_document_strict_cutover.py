@@ -781,7 +781,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def test_current_frontmatter_requires_double_quoted_values(self) -> None:
         markdown = load_validator("frontmatter_quote", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath("docs/03.specs/0008-current-local-gitops-platform/plan.md")
+        path = PurePosixPath(
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        )
         profile = markdown.classify_path(registry, path)
         source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
         diagnostics = markdown.validate_document_text(
@@ -1063,8 +1065,8 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                     self.assertNotIn(artifact_id, seen)
                 seen.add(artifact_id)
 
-    def test_active_operations_do_not_reference_retired_stages(self) -> None:
-        retired_stage = re.compile(r"(?:docs/)?(?:04\.execution|98\.archive)")
+    def test_active_operations_do_not_reference_retired_execution_stage(self) -> None:
+        retired_stage = re.compile(r"(?:docs/)?04\.execution")
         for path in sorted(STAGE05_ROOT.rglob("*.md")):
             with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
                 self.assertIsNone(

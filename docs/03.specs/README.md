@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.7.15"
+version: "0.7.16"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -71,13 +71,11 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 
 ```text
 03.specs/
-├── 0008-current-local-gitops-platform/
 └── README.md
 ```
 
-| Package | 목적 |
-| --- | --- |
-| [0008-current-local-gitops-platform/](./0008-current-local-gitops-platform/) | 완료된 local GitOps platform 구현 증적; 현재 구조는 [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md), 운영은 [Policy](../05.operations/policies/0001-k8s-gitops-operations-policy.md)와 [Runbook](../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)이 소유하며 package는 archive cutover를 기다림 |
+현재 stage에 등록된 package는 없다. 완료된 local GitOps platform 구현 증적은
+[Archive Retention Catalog](../98.archive/README.md#document-index)에 보존한다.
 
 ## Authoring Workflow
 

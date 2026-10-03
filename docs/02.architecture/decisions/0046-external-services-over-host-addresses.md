@@ -136,13 +136,13 @@ Every other clause of this decision is unchanged.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0041-openbao-secret-backend.md`](./0041-openbao-secret-backend.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0041](./0041-openbao-secret-backend.md) | Keeps OpenBao as the secret backend; replaces the cluster-internal `vault-external` HTTP path with HTTPS through the external Traefik | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
-| [ADR-0044](./0044-stateful-data-stores-stay-external.md) | Keeps PostgreSQL and Valkey external; moves their endpoints from container addresses to host-published ports | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
-| [ADR-0045](./0045-in-cluster-telemetry-collection.md) | Keeps in-cluster collection with an external backend; moves the backend endpoints to host-published ports | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0041](./0041-openbao-secret-backend.md) | Keeps OpenBao as the secret backend; replaces the cluster-internal `vault-external` HTTP path with HTTPS through the external Traefik | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0044](./0044-stateful-data-stores-stay-external.md) | Keeps PostgreSQL and Valkey external; moves their endpoints from container addresses to host-published ports | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [ADR-0045](./0045-in-cluster-telemetry-collection.md) | Keeps in-cluster collection with an external backend; moves the backend endpoints to host-published ports | [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |

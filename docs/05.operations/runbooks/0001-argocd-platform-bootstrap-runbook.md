@@ -222,8 +222,8 @@ reconciliation이다.
 
 ### Lifecycle Traceability
 
-완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+완료된 [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [SPEC-0008 (completed)](../../03.specs/0008-current-local-gitops-platform/spec.md) | A new or rebuilt local cluster needs the current ArgoCD, ESO/Vault, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |
+| [SPEC-0008 (historical promotion evidence)](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) | A new or rebuilt local cluster needs the current ArgoCD, ESO/Vault, TLS, and external-service contracts established and checked. | Platform operator captures bootstrap, ArgoCD/ESO, endpoint, and connectivity evidence and owns bounded ArgoCD rollback or configuration recovery. |

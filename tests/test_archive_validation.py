@@ -1365,8 +1365,11 @@ class ArchiveValidationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="mig0004-untracked-task-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
-            task = sorted(root.glob("docs/03.specs/*/tasks/tsk-*.md"))[0]
+            task = root / "docs/03.specs/9999-untracked/tasks/tsk-0001-untracked.md"
+            task.parent.mkdir(parents=True)
+            task.write_bytes(b"untracked Task fixture\n")
             relative = task.relative_to(root).as_posix()
+            fixture.run("add", "--", relative)
             fixture.run("rm", "--cached", "--quiet", "--", relative)
             self.assertTrue(task.is_file())
 
@@ -1385,6 +1388,7 @@ class ArchiveValidationTest(unittest.TestCase):
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
             consumer = root / "docs/03.specs/9999-oversized.md"
+            consumer.parent.mkdir(parents=True, exist_ok=True)
             consumer.write_bytes(
                 b"x" * (archive_validation.CURRENT_MARKDOWN_MAX_BYTES + 1)
             )
@@ -1971,7 +1975,9 @@ class ArchiveValidationTest(unittest.TestCase):
         # SPEC-0090 retained SPEC-0049 in `retired/` under its own envelope
         # commit `62ed8f05`, which no earlier row shares: one more `merge-base`
         # reachability call. Measured 259 on a branch checkout of `438e69aa`.
-        budget = 259
+        # Retaining SPEC-0008 adds one historical tree lookup for its vacated
+        # current path; the lookup is batched across the package's records.
+        budget = 260
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. Nine such calls
@@ -2353,7 +2359,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.context.texts[path].encode("utf-8"),
         )
         legacy = "docs/03.specs/9999-semantic-growth/tasks.md"
-        target = "docs/03.specs/0008-current-local-gitops-platform/plan.md"
+        target = (
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        )
         added = {
             "legacy_path": legacy,
             "stable_path": None,
@@ -2570,7 +2578,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
     def test_terminal_route_does_not_project_an_active_stale_owner_edge(self) -> None:
         source = PurePosixPath(
-            "docs/03.specs/0008-current-local-gitops-platform/spec.md"
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
         )
         retired = PurePosixPath(
             "docs/00.agent-governance/" + "common-" + "governance.md"
@@ -2864,10 +2872,11 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                     "docs/02.architecture/descriptions/"
                     "0007-current-local-gitops-platform.md"
                 ),
-                PurePosixPath(
-                    "docs/03.specs/0008-current-local-gitops-platform/spec.md"
-                ),
             }.issubset(local_targets)
+        )
+        self.assertNotIn(
+            PurePosixPath("docs/03.specs/0008-current-local-gitops-platform/spec.md"),
+            local_targets,
         )
 
     def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:

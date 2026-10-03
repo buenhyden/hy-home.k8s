@@ -71,7 +71,7 @@ current authority chain is [REQ-0004](../../01.requirements/0004-current-local-g
 desired state and validators in [gitops](../../../gitops/),
 [infrastructure](../../../infrastructure/) and [scripts](../../../scripts/).
 AD-0007 names the current operating owners.
-[SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) is completed
+[SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) is completed
 implementation evidence, not ongoing execution authority. A later platform
 change uses its own scoped work unit; this clarification preserves the accepted
 platform decisions and does not declare remaining delivery-assurance gaps closed.
@@ -103,6 +103,6 @@ The platform baseline this decision records is unchanged.
 
 - **PRD**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [../descriptions/0007-current-local-gitops-platform.md](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [../../03.specs/0008-current-local-gitops-platform/spec.md](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

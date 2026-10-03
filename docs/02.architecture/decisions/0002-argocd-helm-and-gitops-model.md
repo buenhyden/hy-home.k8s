@@ -59,6 +59,6 @@ Given the external Valkey backend settings, version upgrades, and declarative re
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Plan**: [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)

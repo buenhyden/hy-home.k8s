@@ -133,8 +133,8 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 
 ### Lifecycle Traceability
 
-완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+완료된 [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| [SPEC-0008 (completed)](../../03.specs/0008-current-local-gitops-platform/spec.md) | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
+| [SPEC-0008 (historical promotion evidence)](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
