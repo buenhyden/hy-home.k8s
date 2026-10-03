@@ -1,0 +1,50 @@
+{
+  "commit": "8df8a883b68a24a104b4a9e43c1288090ae60b3b",
+  "kubernetesVersion": "1.35.0",
+  "license": "Apache-2.0",
+  "normalization": "append-one-final-newline-to-upstream-files",
+  "profile": "v1.35.0-standalone-strict",
+  "schemas": {
+    "apps/v1:Deployment": {
+      "file": "deployment-apps-v1.json",
+      "sha256": "bac1fd92a08fe5655c9464d735a6d8edf18f6597b257f348e9dd05ba7b9ef262"
+    },
+    "discovery.k8s.io/v1:EndpointSlice": {
+      "file": "endpointslice-discovery-v1.json",
+      "sha256": "145aa302ea5bc2506f774471305824f8a731a568474a729486b7fc0d4782d4e7"
+    },
+    "networking.k8s.io/v1:Ingress": {
+      "file": "ingress-networking-v1.json",
+      "sha256": "52a8ac4967de42dd4e0cb70fafc34cefc4da06afbfb085b8dfbec8d07d963681"
+    },
+    "networking.k8s.io/v1:NetworkPolicy": {
+      "file": "networkpolicy-networking-v1.json",
+      "sha256": "a97e0f3514bb0995d966abbd6fcda478f27e0262dd1d4b36dfb09656ba2edb2a"
+    },
+    "rbac.authorization.k8s.io/v1:ClusterRole": {
+      "file": "clusterrole-rbac-v1.json",
+      "sha256": "5b7cd39eeeaf7c317ba11c49a20f01a5dbfe77968d329936395d4c20272e5eb1"
+    },
+    "rbac.authorization.k8s.io/v1:ClusterRoleBinding": {
+      "file": "clusterrolebinding-rbac-v1.json",
+      "sha256": "2037928934677414237375bd5843f4af7f91e5a571bc66edba0e77728af82321"
+    },
+    "v1:ConfigMap": {
+      "file": "configmap-v1.json",
+      "sha256": "7b781c998f6637f0367533b20d96689f726da01fd76d0c224589eaa1cfc1abbf"
+    },
+    "v1:Namespace": {
+      "file": "namespace-v1.json",
+      "sha256": "bd59cbbb944174e655f60a60a500ca32d0ea6de452fba9ea22d235afe985267a"
+    },
+    "v1:Service": {
+      "file": "service-v1.json",
+      "sha256": "cd3a7e76add06b9ebc062029c906d4a650b799b1cb598a340019f9eeaaf35874"
+    },
+    "v1:ServiceAccount": {
+      "file": "serviceaccount-v1.json",
+      "sha256": "dd6d31eb483bce8c23cf4843fbe6165bb15999107d3d538a869ba0015b851269"
+    }
+  },
+  "source": "https://github.com/yannh/kubernetes-json-schema"
+}

@@ -99,6 +99,286 @@ def bounded_result(stdout: str = "", stderr: str = "", returncode: int = 0) -> o
     )
 
 
+class StructuredPlatformResultTest(unittest.TestCase):
+    CONTRACT = {
+        "validators": [
+            {
+                "id": "platform-assurance",
+                "argv": ["python3", "scripts/validate-platform-assurance.py"],
+                "lanes": ["all-files", "ci"],
+                "evidenceLane": "repo-static",
+                "optional": False,
+                "fallback": {"status": "FAIL", "reason": "required"},
+                "structuredResults": "platform-depth-v1",
+            }
+        ]
+    }
+
+    @staticmethod
+    def row(**changes):
+        return {
+            "target": "gitops/apps/root",
+            "depth": "render",
+            "tool": "kubectl",
+            "toolVersion": "v1.35.0",
+            "fallback": "none",
+            "result": "PASS",
+        } | changes
+
+    def complete_report(self):
+        roots = {
+            path.parent.relative_to(ROOT).as_posix()
+            for path in ROOT.glob("gitops/**/kustomization.yaml")
+        } | {"examples/sample-app"}
+        rows = []
+        for target in sorted(roots):
+            rows.extend(
+                (
+                    self.row(
+                        target=target,
+                        depth="syntax",
+                        tool="none",
+                        toolVersion="none",
+                        fallback="separate-required-gate",
+                        result="DEFER",
+                    ),
+                    self.row(target=target),
+                    self.row(
+                        target=f"{target}#v1:ConfigMap",
+                        depth="schema-policy",
+                        tool="jsonschema",
+                        toolVersion="4.26.0+k8s1.35.0",
+                    ),
+                    self.row(
+                        target=target,
+                        depth="product-semantic",
+                        tool="none",
+                        toolVersion="none",
+                        fallback="separate-required-gate",
+                        result="DEFER",
+                    ),
+                    self.row(
+                        target=target,
+                        depth="live-observation",
+                        tool="none",
+                        toolVersion="none",
+                        fallback="operator-live-check",
+                        result="DEFER",
+                    ),
+                )
+            )
+        return {"version": 1, "results": rows}
+
+    def run_report(self, payload: str, *, returncode: int = 0, complete: bool = True):
+        completed = bounded_result(payload, returncode=returncode)
+        if not complete:
+            completed = replace(
+                completed,
+                stdout=replace(completed.stdout, complete=False),
+            )
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(RUNNER, "run_bounded_command", return_value=completed),
+            redirect_stdout(StringIO()) as output,
+        ):
+            status = RUNNER.run_selected(
+                ROOT,
+                "all-files",
+                ["gitops/apps/root/kustomization.yaml"],
+                self.CONTRACT,
+                _ContractModule,
+                validator_ids=["platform-assurance"],
+            )
+        return status, output.getvalue()
+
+    def test_target_depth_results_expose_safe_metadata_and_defer(self):
+        report = self.complete_report()
+        report["results"].append(
+            self.row(
+                target="gitops/apps/root#argoproj.io/v1alpha1:Application",
+                depth="schema-policy",
+                tool="none",
+                toolVersion="none",
+                fallback="external-crd-schema-unavailable",
+                result="DEFER",
+            )
+        )
+        status, output = self.run_report(json.dumps(report))
+        self.assertEqual(status, 0)
+        self.assertIn("[PASS] platform-assurance ", output)
+        self.assertIn("[PASS] platform-assurance-depth ", output)
+        self.assertIn("[DEFER] platform-assurance-depth ", output)
+        self.assertIn('target="gitops/apps/root"', output)
+        self.assertIn('depth="render"', output)
+        self.assertIn('toolVersion="v1.35.0"', output)
+        self.assertIn('fallback="operator-live-check"', output)
+        self.assertIn('lane="all-files"', output)
+
+    def test_only_deferred_depths_do_not_pass_static_gate(self):
+        payload = json.dumps(
+            {
+                "version": 1,
+                "results": [
+                    self.row(
+                        depth="live-observation",
+                        tool="none",
+                        toolVersion="none",
+                        fallback="operator-live-check",
+                        result="DEFER",
+                    )
+                ],
+            }
+        )
+        status, output = self.run_report(payload)
+        self.assertEqual(status, 1)
+        self.assertIn("structured_report=invalid", output)
+        self.assertIn("[FAIL] platform-assurance ", output)
+
+    def test_failed_depth_fails_required_gate_even_when_child_exits_zero(self):
+        report = self.complete_report()
+        report["results"] = [
+            self.row(result="FAIL")
+            if row["target"] == "gitops/apps/root" and row["depth"] == "render"
+            else row
+            for row in report["results"]
+            if row["target"]
+            not in {
+                "gitops/apps/root#v1:ConfigMap",
+            }
+            and not (
+                row["target"] == "gitops/apps/root"
+                and row["depth"] == "product-semantic"
+            )
+        ]
+        payload = json.dumps(report)
+        status, output = self.run_report(payload)
+        self.assertEqual(status, 1)
+        self.assertIn("[FAIL] platform-assurance-depth ", output)
+        self.assertIn("[FAIL] platform-assurance ", output)
+
+    def test_missing_malformed_and_unsafe_reports_fail_without_raw_stdout(self):
+        valid = self.complete_report()
+        cases = (
+            "",
+            json.dumps({"version": 1, "results": []}),
+            json.dumps(valid | {"payload": "SENTINEL_SECRET_VALUE"}),
+            json.dumps(
+                valid
+                | {"results": [*valid["results"], self.row(target="gitops/../private")]}
+            ),
+            json.dumps(
+                valid
+                | {
+                    "results": [
+                        *valid["results"],
+                        self.row(fallback="SENTINEL_SECRET_VALUE"),
+                    ]
+                }
+            ),
+            json.dumps(valid | {"results": [*valid["results"], self.row()]}),
+            '{"version":1,"version":1,"results":[]}',
+            "SENTINEL_SECRET_VALUE",
+            " " * (RUNNER.PLATFORM_REPORT_LIMIT_BYTES + 1),
+        )
+        for payload in cases:
+            with self.subTest(payload=payload[:60]):
+                status, output = self.run_report(payload)
+                self.assertEqual(status, 1)
+                self.assertIn("[FAIL] platform-assurance ", output)
+                self.assertNotIn("SENTINEL_SECRET_VALUE", output)
+
+    def test_incomplete_report_fails_closed(self):
+        payload = json.dumps({"version": 1, "results": [self.row()]})
+        status, output = self.run_report(payload, complete=False)
+        self.assertEqual(status, 1)
+        self.assertIn("[FAIL] platform-assurance ", output)
+
+    def test_missing_root_or_required_depth_fails_closed(self):
+        valid = self.complete_report()
+        cases = (
+            [
+                row
+                for row in valid["results"]
+                if not row["target"].startswith("gitops/apps/root")
+            ],
+            [
+                row
+                for row in valid["results"]
+                if not (
+                    row["target"] == "gitops/apps/root" and row["depth"] == "syntax"
+                )
+            ],
+            [
+                row
+                for row in valid["results"]
+                if not (
+                    row["target"] == "gitops/apps/root" and row["depth"] == "render"
+                )
+            ],
+            [
+                row
+                for row in valid["results"]
+                if row["target"] != "gitops/apps/root#v1:ConfigMap"
+            ],
+            [
+                row
+                for row in valid["results"]
+                if not (
+                    row["target"] == "gitops/apps/root"
+                    and row["depth"] == "product-semantic"
+                )
+            ],
+            [
+                row
+                for row in valid["results"]
+                if not (
+                    row["target"] == "gitops/apps/root"
+                    and row["depth"] == "live-observation"
+                )
+            ],
+        )
+        for rows in cases:
+            with self.subTest(rows=len(rows)):
+                status, output = self.run_report(json.dumps(valid | {"results": rows}))
+                self.assertEqual(status, 1)
+                self.assertIn("[FAIL] platform-assurance ", output)
+
+    def test_required_depth_cannot_claim_unobserved_evidence(self):
+        cases = (
+            ("render", {"result": "DEFER", "fallback": "operator-live-check"}),
+            (
+                "syntax",
+                {
+                    "result": "PASS",
+                    "fallback": "none",
+                    "tool": "python3",
+                    "toolVersion": "3.12.14",
+                },
+            ),
+            (
+                "live-observation",
+                {
+                    "result": "PASS",
+                    "fallback": "none",
+                    "tool": "kubectl",
+                    "toolVersion": "v1.35.0",
+                },
+            ),
+        )
+        for depth, change in cases:
+            with self.subTest(depth=depth):
+                report = self.complete_report()
+                report["results"] = [
+                    row | change
+                    if row["target"] == "gitops/apps/root" and row["depth"] == depth
+                    else row
+                    for row in report["results"]
+                ]
+                status, output = self.run_report(json.dumps(report))
+                self.assertEqual(status, 1)
+                self.assertIn("[FAIL] platform-assurance ", output)
+
+
 class ProductionRunnerIsolationTest(unittest.TestCase):
     def _run(
         self,
@@ -1759,6 +2039,17 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             key=lambda row: row["id"],
         )
         completed = bounded_result(QUALITY_MARKER + "\n")
+        platform_completed = bounded_result(
+            json.dumps(StructuredPlatformResultTest().complete_report())
+        )
+
+        def gate_result(argv, **_kwargs):
+            return (
+                platform_completed
+                if "scripts/validation/platform/assurance.py" in argv
+                else completed
+            )
+
         output = StringIO()
         with (
             patch.object(
@@ -1771,7 +2062,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             patch.object(
                 RUNNER,
                 "run_bounded_command",
-                return_value=completed,
+                side_effect=gate_result,
             ) as invoked,
             redirect_stdout(output),
         ):

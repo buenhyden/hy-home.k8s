@@ -487,6 +487,69 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertEqual(len(installs), 1)
         self.assertIn("sudo install", installs[0])
 
+    def test_kustomize_is_pinned_verified_and_published_before_qa(self):
+        steps = self._qa_steps()
+        installs = [
+            (index, step)
+            for index, step in enumerate(steps)
+            if step.get("name") == "Install Kustomize"
+        ]
+        self.assertEqual(len(installs), 1)
+        index, step = installs[0]
+        run = step["run"]
+        self.assertIn(
+            "https://github.com/kubernetes-sigs/kustomize/releases/download/"
+            "kustomize/v5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz",
+            run,
+        )
+        self.assertEqual(
+            step["env"]["KUSTOMIZE_SHA256"],
+            "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d",  # pragma: allowlist secret
+        )
+        self.assertIn('"$KUSTOMIZE_SHA256"', run)
+        self.assertIn("sha256sum --check --strict", run)
+        self.assertIn("sudo install -o root -g root -m 0755", run)
+        self.assertIn("/usr/local/bin/kustomize", run)
+        self.assertLess(run.index("sha256sum --check --strict"), run.index("tar -xzf"))
+        self.assertLess(run.index("tar -xzf"), run.index("/usr/local/bin/kustomize"))
+        self.assertLess(
+            index,
+            next(
+                i
+                for i, step in enumerate(steps)
+                if step.get("name") == "Validate repository checkout"
+            ),
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            for tool, script in {
+                "curl": '#!/bin/sh\nwhile [ "$#" -gt 0 ]; do\n'
+                '  if [ "$1" = "--output" ]; then printf corrupt > "$2"; exit 0; fi\n'
+                "  shift\ndone\nexit 2\n",
+                "tar": '#!/bin/sh\nprintf tar >> "$MARKER"\n',
+                "sudo": '#!/bin/sh\nprintf sudo >> "$MARKER"\n',
+            }.items():
+                path = bin_dir / tool
+                path.write_text(script)
+                path.chmod(0o755)
+            marker = root / "executed"
+            result = subprocess.run(
+                ["/bin/bash", "-e", "-c", run],
+                env={
+                    "PATH": f"{bin_dir}:/usr/bin:/bin",
+                    "RUNNER_TEMP": str(root),
+                    "MARKER": str(marker),
+                    "KUSTOMIZE_SHA256": step["env"]["KUSTOMIZE_SHA256"],
+                },
+                capture_output=True,
+                timeout=10,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(marker.exists(), "unverified bytes reached tar or sudo")
+
     def test_tool_publication_directory_satisfies_the_strict_resolver(self):
         """Publishing a root-owned file into a writable directory is not enough.
 

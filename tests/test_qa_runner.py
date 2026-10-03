@@ -1241,6 +1241,47 @@ class LocalEvidenceTests(unittest.TestCase):
         import io
         from contextlib import redirect_stdout
 
+        kustomization = self.root / "gitops/apps/root/kustomization.yaml"
+        kustomization.parent.mkdir(parents=True)
+        kustomization.write_text("fixture\n")
+        self.git("add", "gitops/apps/root/kustomization.yaml")
+        self.git("commit", "-qm", "add platform report fixture")
+        target = "gitops/apps/root"
+        row = {
+            "target": target,
+            "depth": "render",
+            "tool": "kustomize",
+            "toolVersion": "v5.8.1",
+            "fallback": "none",
+            "result": "PASS",
+        }
+        platform_report = json.dumps(
+            {
+                "version": 1,
+                "results": [
+                    row
+                    | {
+                        "depth": "syntax",
+                        "tool": "none",
+                        "toolVersion": "none",
+                        "fallback": "separate-required-gate",
+                        "result": "DEFER",
+                    },
+                    row,
+                    row
+                    | {"target": f"{target}#v1:ConfigMap", "depth": "schema-policy"},
+                    row | {"depth": "product-semantic"},
+                    row
+                    | {
+                        "depth": "live-observation",
+                        "tool": "none",
+                        "toolVersion": "none",
+                        "fallback": "operator-live-check",
+                        "result": "DEFER",
+                    },
+                ],
+            }
+        )
         contract = self.qa.contract_module.validate_contract(ROOT)
         identifiers = contract["profiles"]["full"]
         real_run = self.qa.runner.run_bounded_command
@@ -1268,11 +1309,18 @@ class LocalEvidenceTests(unittest.TestCase):
                     failed_gate
                     and ".agents/evaluations/run-agent-evaluations.py" in argv
                 )
+                output = (
+                    platform_report
+                    if "scripts/validation/platform/assurance.py" in argv
+                    else "[PASS] repository quality gates passed"
+                )
                 return real_run(
                     [
                         sys.executable,
                         "-c",
-                        "print('[PASS] repository quality gates passed'); raise SystemExit("
+                        "print("
+                        + repr(output)
+                        + "); raise SystemExit("
                         + ("1" if failed else "0")
                         + ")",
                     ],

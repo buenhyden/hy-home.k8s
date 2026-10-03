@@ -29,7 +29,7 @@ spec:
               service:
                 name: <appname>
                 port:
-                  number: <port>
+                  number: 8080
   tls:
     - hosts:
         - <appname>.hy-k8s.home.arpa
