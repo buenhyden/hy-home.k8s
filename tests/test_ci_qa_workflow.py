@@ -504,7 +504,7 @@ class CiQaWorkflowTests(unittest.TestCase):
         )
         self.assertEqual(
             step["env"]["KUSTOMIZE_SHA256"],
-            "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d",
+            "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d",  # pragma: allowlist secret
         )
         self.assertIn('"$KUSTOMIZE_SHA256"', run)
         self.assertIn("sha256sum --check --strict", run)

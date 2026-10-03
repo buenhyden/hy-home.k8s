@@ -64,12 +64,21 @@ on public schema hashes. The authors corrected the fixtures, narrowed the CI
 environment allowlist, and normalized schema bytes/local hashes. Five affected
 legacy tests, 22 workflow tests, seven assurance tests, the CI security
 contract, and focused EOF/detect-secrets checks now pass. Independent security
-review approved this correction. These are local/review results; corrected
-hosted full CI is still pending and this Task remains in progress.
+review approved this correction. The second hosted run
+[37131844929](https://github.com/buenhyden/hy-home.k8s/actions/runs/37131844929)
+also passed the platform gate but failed overall: two existing surface tests
+expected the old gate roster, and detect-secrets flagged a public hash literal
+in `tests/test_ci_qa_workflow.py`. The routing fixtures now pass 11 focused
+tests; the CI owner corrected the literal, and 22 workflow tests plus the
+actual detect-secrets hook now pass. The security reviewer
+confirmed all four Task documents pass detect-secrets; the public commit SHA
+here is not the finding. Independent review approved the scoped correction.
+A new hosted full result is pending, so this Task remains in progress.
 The active checkout is `codex/req0004-platform-assurance`, created from
 `cb939a9e` (`main` and `origin/main` at intake); the initial governed package
 is `bd0aa15f`; implementation source `7a224ed0f64401b48e0fade9205599c9f11989e6`
-is PR #131's first head. Corrective bytes await a new commit and hosted run.
+is PR #131's first head, and `514cc7ea` is the second hosted head. Further
+corrective bytes await a new commit and hosted run.
 The supervisor owns the exact-index snapshot, final independent
 review, hosted PR result, protected merge, branch cleanup, and main sync.
 No live target or credential was accessed. Root-owned binary installation was
@@ -82,4 +91,4 @@ diagnostic, and the reviewed hosted installer is the required retry path.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-004](../plan.md#work-breakdown) | In progress | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS; hosted 37129367670 FAIL, corrective local checks PASS, hosted retry pending |
+| [WORK-004](../plan.md#work-breakdown) | In progress | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS; hosted 37129367670 and 37131844929 overall FAIL with platform gate PASS; retry pending |

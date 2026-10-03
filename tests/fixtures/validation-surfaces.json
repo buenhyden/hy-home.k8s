@@ -359,6 +359,7 @@
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
+          "platform-assurance",
           "policy-gates",
           "repository-quality",
           "secret-handling"
@@ -405,6 +406,7 @@
           "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
+          "platform-assurance",
           "policy-gates",
           "repository-quality",
           "secret-handling"
