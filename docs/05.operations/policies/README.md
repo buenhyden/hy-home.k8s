@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.1.5"
+version: "0.1.6"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-03"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -110,7 +110,6 @@ layer: "operations"
 - [05.operations/incidents](../incidents/README.md)
 - [03.specs](../../03.specs/README.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - [Operation Template](../../99.templates/templates/operations/policy.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

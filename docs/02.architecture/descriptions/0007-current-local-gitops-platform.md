@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.2.4"
+version: "1.3.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-03"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -14,7 +14,10 @@ artifact_id: "AD-0007"
 ## Overview
 
 This document defines the reference architecture of the currently implemented local GitOps platform.
-Old endpoints and removed UI contracts are split out into archive Tombstones, and the current structure is described from the GitOps desired state and static contract evidence.
+Current structure is described from GitOps desired state and static contract evidence.
+This AD owns the durable platform view promoted from SPEC-0008; the Spec records
+the implementation and its verification. Operating controls and procedures remain
+with the Stage 05 owners below, and later changes use their own scoped work units.
 
 ### Current architecture summary
 
@@ -55,6 +58,20 @@ The root application in `gitops/clusters/local/root-application.yaml` points to 
 Platform Applications then install or configure ArgoCD, namespaces, cert-manager, ingress-nginx, ESO, external services, Headlamp, Istio/Kiali, monitoring, Rollouts, and network policies.
 The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 
+### Current platform sources and operating owners
+
+| Boundary | Current source and contract | Operating owner |
+| --- | --- | --- |
+| Reconciliation and permissions | [Cluster declarations](../../../gitops/clusters/local/) own the root Application, AppProjects and workload ApplicationSet; the root targets `gitops/apps/root`, and the ApplicationSet scans `gitops/workloads/*`. [Platform Applications](../../../gitops/apps/root/) and [namespace declarations](../../../gitops/platform/namespaces/) own platform desired state. | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| Host and browser entry | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml) binds the API to `192.168.0.13:6550` and serverlb to `192.168.0.14:80/443`, forwarding to ingress-nginx NodePorts `30080/30443`. k8s hosts use `<name>.hy-k8s.home.arpa` (`argo` for ArgoCD); [apex redirects](../../../gitops/platform/ingress-routes/) send `hy-k8s.home.arpa/<name>` to the HTTPS subdomain with 301. The external Traefik carries no k8s route (ADR-0042, ADR-0043, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); operator owns host addresses and name resolution |
+| External secrets | [ESO configuration](../../../gitops/platform/eso/) uses the `vault-backend` store and Vault API provider to reach external OpenBao at `https://openbao.hy.home.arpa` with a pinned CA. Bootstrap owns the CoreDNS host mapping and CA distribution; secret values stay outside Git (ADR-0041, ADR-0046). | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0002](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) expose PostgreSQL write/read through `postgres-write-external:15432` and `postgres-read-external:15433`, and Valkey through `valkey-external:6379`, all in `platform.svc.cluster.local`. Endpoints use host `192.168.0.13`; Valkey targets `26379`. PostgreSQL requires the external `postgres-ha` profile, but is optional for bootstrap (ADR-0044, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); external workspace owns data runtime and backups |
+| Telemetry and service UIs | [Alloy](../../../gitops/platform/monitoring/), [Kiali](../../../gitops/apps/root/platform-kiali-app.yaml) and [Rollouts](../../../gitops/apps/root/platform-rollouts-app.yaml) use the external observability backend. Prometheus and Grafana use HTTPS gateway names, authentication and CA verification; Loki, Tempo and Alloy OTLP retain Service/EndpointSlice interfaces. Metrics collection stays in-cluster; storage stays external (ADR-0037, ADR-0045, ADR-0046). | [RUN-0009](../../05.operations/runbooks/0009-k8s-observability-runbook.md), [POL-0003](../../05.operations/policies/0003-service-mesh-cert-manager-policy.md) |
+
+The executable sources own exact values and versions. These boundaries and the
+accepted decisions explain their purpose; neither a document nor a static PASS
+proves current external availability, secret provisioning or live reconciliation.
+
 ### Delivery assurance architecture transferred from AD-0010
 
 This AD inherits AD-0010's boundaries for platform validation, interfaces, examples, source revisions, and namespace evidence.
@@ -66,7 +83,7 @@ This AD inherits AD-0010's boundaries for platform validation, interfaces, examp
 | --- | --- | --- |
 | Desired-state tree | [root Application](../../../gitops/clusters/local/root-application.yaml), [root kustomization](../../../gitops/apps/root/kustomization.yaml) | The static structure of root → platform Applications / workload ApplicationSet, not live reconciliation evidence |
 | Local runtime and namespace policy | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml), [namespace declarations](../../../gitops/platform/namespaces/) | Enforce only on workloads the repository owns and validates statically; chart/injection uncertainty is audit/warn |
-| Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | The Registry owns lanes and argv; parity with the labels/CODEOWNERS native projections is Spec 0048's unfinished scope |
+| Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | The Registry owns lanes and argv; labels/CODEOWNERS projection parity remains an unassigned assurance residual after Spec 0048 was withdrawn without a successor |
 | Platform verification | [static contract checks](../../../scripts/validate-infrastructure-contracts.sh), [validators](../../../scripts/) | Separate syntax → render → schema/policy → product semantic → live observation; derive the actual root count and tools from the executable source |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep format/validate/lint/build; provider credentials, apply, or deploy need separate approval |
 | Local browser/service transport | [k8s router](../../../infrastructure/k3d/k3d-cluster.yaml), [apex redirects](../../../gitops/platform/ingress-routes/), [external service interfaces](../../../gitops/platform/external-services/) | Check the dedicated k8s router (ADR-0043) and the local-only transport exceptions without widening an exception into a general security allowance |
@@ -88,7 +105,7 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Unfinished implementation owners
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Current structure, YAML, required policy-tool, secret, Vault/ESO, manifest image-version and product checks continue to cover parts of REQ-0004-FR-0008 and FR-0010; [Spec 008](../../03.specs/0008-current-local-gitops-platform/spec.md) owns the current ingress path. Observed unassigned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner scopes those residuals against current implementation before assigning a new package; the retired Traefik lane is not a current target.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Current structure, YAML, required policy-tool, secret, Vault/ESO, manifest image-version and product checks continue to cover parts of REQ-0004-FR-0008 and FR-0010; this AD and ADR-0043 own the current ingress boundary, with its source and operating owners above. Observed unassigned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner scopes those residuals against current implementation before assigning a new package; the retired Traefik lane is not a current target. SPEC-0008 completion does not close these residual requirements.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
@@ -99,7 +116,7 @@ their scope currently has no implementation owner. The AD succession does not me
 - **Key Entities / Flows**:
   - ArgoCD reconciles Git manifests into the local cluster.
   - ESO reads approved OpenBao paths through the `vault-backend` ClusterSecretStore and its Vault-API `vault` provider.
-  - External service `Service` and `EndpointSlice` resources expose local service interfaces to workloads.
+  - External service `Service` and `EndpointSlice` resources expose data and selected telemetry interfaces to workloads; OpenBao, Prometheus and Grafana use the HTTPS gateway paths defined by ADR-0046.
 - **Storage Strategy**:
   - Runtime data remains in external PostgreSQL, Valkey, OpenBao, and observability services.
   - This repository stores only interface contracts and configuration.
@@ -133,6 +150,10 @@ their scope currently has no implementation owner. The AD succession does not me
 
 ### Lifecycle Traceability
 
+ADR links identify durable decisions. SPEC-0008 links identify the implementing
+work and its evidence; they do not delegate the current architecture back to a
+completed work unit.
+
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
 | [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | Desired-state root ownership of clusters, root apps, platform, and workloads | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
@@ -153,7 +174,7 @@ their scope currently has no implementation owner. The AD succession does not me
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Spec 008 owns current ingress and existing validators cover parts; unowned residuals include render/schema, per-target evidence and ingress cross-reference/resource-kind coverage after Spec 0049 withdrawal; conditional provenance follow-on remains as stated above |
+| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Current ingress sources and operating owners are named above and existing validators cover parts; unowned residuals include render/schema, per-target evidence and ingress cross-reference/resource-kind coverage after Spec 0049 withdrawal; conditional provenance follow-on remains as stated above |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |
@@ -162,7 +183,7 @@ Original AD-0010 and REQ-0007 program identity remain historical lineage. These 
 do not rewrite which description the original ADRs served; superseded bodies are retained under `98.archive/superseded/`.
 
 - **Requirement**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
-- **Spec**: [../../03.specs/0008-current-local-gitops-platform/spec.md](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- **Implementation evidence**: [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md); current structure is owned here, operating controls by the named Stage 05 documents.
 - **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
 - **ADR**: [../decisions/0014-current-local-gitops-platform-contract.md](../decisions/0014-current-local-gitops-platform-contract.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

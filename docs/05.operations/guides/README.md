@@ -1,10 +1,10 @@
 ---
 title: "05.operations/guides"
-version: "0.1.6"
+version: "0.1.7"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-03"
 layer: "operations"
 ---
 # 05.operations/guides
@@ -60,7 +60,7 @@ layer: "operations"
 
 ## Add and Find
 
-1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
+1. 현재 플랫폼 구조는 [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md), 운영 통제와 절차는 관련 Policy/Runbook에서 확인한다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/operations/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서를 추가하거나 제거할 때 이 README의 문서 인덱스를 함께 갱신한다. 상태와 수정일은 각 문서의 frontmatter가 소유한다.
@@ -100,6 +100,5 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/incidents](../incidents/README.md)
 - [PRD](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

@@ -1,10 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.1.5"
+version: "0.1.6"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-03"
 layer: "operations"
 ---
 # 05.operations/runbooks
@@ -112,7 +112,6 @@ layer: "operations"
 - [05.operations/incidents](../incidents/README.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Operations Policy](../policies/0001-k8s-gitops-operations-policy.md)
 - [Runbook Template](../../99.templates/templates/operations/runbook.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

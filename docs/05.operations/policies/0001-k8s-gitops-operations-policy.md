@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.1.1"
+version: "1.1.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-10-03"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -128,12 +128,13 @@ NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 j
 ## Traceability
 
 - [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- [Spec 0008 Current Local GitOps Platform](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Platform Bootstrap Runbook](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [ArgoCD/ESO/Vault Recovery Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ### Lifecycle Traceability
 
+완료된 SPEC-0008은 초기 구현 증적이며, 현재 플랫폼 구조는 위 AD-0007이 소유한다.
+
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| [Spec 0008](../../03.specs/0008-current-local-gitops-platform/spec.md) | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
+| [SPEC-0008 (completed)](../../03.specs/0008-current-local-gitops-platform/spec.md) | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |
