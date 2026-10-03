@@ -490,21 +490,23 @@ class CiQaWorkflowTests(unittest.TestCase):
     def test_kustomize_is_pinned_verified_and_published_before_qa(self):
         steps = self._qa_steps()
         installs = [
-            (index, step["run"])
+            (index, step)
             for index, step in enumerate(steps)
             if step.get("name") == "Install Kustomize"
         ]
         self.assertEqual(len(installs), 1)
-        index, run = installs[0]
+        index, step = installs[0]
+        run = step["run"]
         self.assertIn(
             "https://github.com/kubernetes-sigs/kustomize/releases/download/"
             "kustomize/v5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz",
             run,
         )
-        self.assertIn(
+        self.assertEqual(
+            step["env"]["KUSTOMIZE_SHA256"],
             "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d",
-            run,
         )
+        self.assertIn('"$KUSTOMIZE_SHA256"', run)
         self.assertIn("sha256sum --check --strict", run)
         self.assertIn("sudo install -o root -g root -m 0755", run)
         self.assertIn("/usr/local/bin/kustomize", run)
@@ -540,6 +542,7 @@ class CiQaWorkflowTests(unittest.TestCase):
                     "PATH": f"{bin_dir}:/usr/bin:/bin",
                     "RUNNER_TEMP": str(root),
                     "MARKER": str(marker),
+                    "KUSTOMIZE_SHA256": step["env"]["KUSTOMIZE_SHA256"],
                 },
                 capture_output=True,
                 timeout=10,

@@ -22,6 +22,7 @@ from ingress import validate as validate_ingress
 
 KUSTOMIZE_SHA256 = "f7b1605aa5143e0dcbd754a4d43c47ad7a560c540b1356b064d69fe236164494"
 KUSTOMIZE_VERSION = "v5.8.1"
+SCHEMA_SOURCE_COMMIT = "8df8a883b68a24a104b4a9e43c1288090ae60b3b"
 SOURCE_REPO = "https://github.com/buenhyden/hy-home.k8s.git"
 SOURCE_REVISION = "main"
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
@@ -146,8 +147,9 @@ def _schema_manifest(corpus: Path) -> dict[str, Any]:
     except (ValueError, UnicodeError) as exc:
         raise AssuranceError("invalid pinned schema manifest") from exc
     if not isinstance(data, dict) or (
-        data.get("commit") != "8df8a883b68a24a104b4a9e43c1288090ae60b3b"
+        data.get("commit") != SCHEMA_SOURCE_COMMIT
         or data.get("profile") != "v1.35.0-standalone-strict"
+        or data.get("normalization") != "append-one-final-newline-to-upstream-files"
         or not isinstance(data.get("schemas"), dict)
     ):
         raise AssuranceError("unexpected pinned schema source")

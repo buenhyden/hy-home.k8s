@@ -98,7 +98,14 @@ class PublisherTests(unittest.TestCase):
         verdict, check_id = self.authenticate()
         self.assertEqual(verdict.record, self.verdict.record)
         self.assertEqual(check_id, 90)
-        self.assertEqual(len(verdict.record["gates"]), 23)
+        self.assertEqual(
+            set(verdict.record["gates"]),
+            set(
+                json.loads((ROOT / "scripts/validation/registry.json").read_text())[
+                    "profiles"
+                ]["full"]
+            ),
+        )
         self.assertNotEqual(MERGE, self.github.baseline)
         self.assertNotIn("after", self.github.event)
 
@@ -474,7 +481,7 @@ class PublisherTests(unittest.TestCase):
             publisher.publish_with_app(self.verdict, self.github, APP, APP, "unused")
         sign.assert_not_called()
 
-    def test_v4_protected_verdict_retains_22_executed_and_one_reauthenticated_gate(
+    def test_v4_protected_verdict_retains_executed_and_one_reauthenticated_gate(
         self,
     ):
         from tests import test_qa_provenance_hosted as fixtures
@@ -548,8 +555,12 @@ class PublisherTests(unittest.TestCase):
             ] = {"total_count": 1, "check_runs": [check]}
             actual, _ = publisher.authenticate(event, github, APP)
             self.assertEqual(actual.record["version"], 4)
-            self.assertEqual(list(actual.record["gates"].values()).count("PASS"), 22)
+            self.assertEqual(
+                list(actual.record["gates"].values()).count("PASS"),
+                len(actual.record["gates"]) - 1,
+            )
             self.assertEqual(list(actual.record["gates"].values()).count("REUSED"), 1)
+            self.assertEqual(actual.record["gates"]["platform-assurance"], "PASS")
             fixture.check["app"]["id"] = 99
             with self.assertRaises(ValueError):
                 publisher.authenticate(event, github, APP)

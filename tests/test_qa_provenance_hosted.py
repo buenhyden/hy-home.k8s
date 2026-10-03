@@ -27,7 +27,9 @@ class PartitionTests(unittest.TestCase):
         isolated = hosted.partition(self.registry, "isolated")
         complement = hosted.partition(self.registry, "complement")
         self.assertEqual(isolated, ["agent-evaluation-cases"])
-        self.assertEqual(len(complement), 22)
+        self.assertEqual(
+            len(complement), len(self.registry["profiles"]["full"]) - len(isolated)
+        )
         self.assertFalse(set(isolated) & set(complement))
         self.assertEqual(
             set(isolated + complement), set(self.registry["profiles"]["full"])
@@ -36,6 +38,7 @@ class PartitionTests(unittest.TestCase):
             "archive-cutover",
             "document-lifecycle",
             "gitops-change-set",
+            "platform-assurance",
             "unit-tests",
         ):
             self.assertIn(required, complement)
@@ -534,8 +537,20 @@ class HostedSourceTests(unittest.TestCase):
             verdict = core.verify_main(event, self.github)
             self.assertIsInstance(verdict, core.MainVerdict)
             self.assertEqual(verdict.record["version"], 4)
+            self.assertEqual(
+                set(verdict.record["gates"]),
+                set(
+                    json.loads((ROOT / "scripts/validation/registry.json").read_text())[
+                        "profiles"
+                    ]["full"]
+                ),
+            )
             self.assertEqual(list(verdict.record["gates"].values()).count("REUSED"), 1)
-            self.assertEqual(list(verdict.record["gates"].values()).count("PASS"), 22)
+            self.assertEqual(
+                list(verdict.record["gates"].values()).count("PASS"),
+                len(verdict.record["gates"]) - 1,
+            )
+            self.assertEqual(verdict.record["gates"]["platform-assurance"], "PASS")
             with self.assertRaises(ValueError):
                 core.parse_proof(core.encode_proof(verdict).encode())
             for change in ("source", "before", "app"):

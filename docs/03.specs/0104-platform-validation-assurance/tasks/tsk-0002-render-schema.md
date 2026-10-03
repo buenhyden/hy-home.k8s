@@ -62,6 +62,14 @@ schema corpus is pinned to upstream commit
 per-file hashes are included. Hosted CI's pinned installer must prove the
 required full/CI gate on the actual PR checkout before completion. Custom
 resource schemas and live admission remain explicit DEFER, not schema PASS.
+The first hosted run [37129367670](https://github.com/buenhyden/hy-home.k8s/actions/runs/37129367670)
+passed `platform-assurance` on 14 roots and 92 rows, but full CI failed.
+Ten vendored schema files lacked a final newline and detect-secrets flagged
+public schema hashes. The correction normalizes one final newline, updates
+the manifest's local byte hashes, and retains the pinned upstream commit and
+license; it does not claim byte identity with upstream files. Seven assurance
+tests and focused EOF/detect-secrets checks now pass. A new hosted result on
+the corrected commit is pending.
 The reviewed CR set is Argo CD Application, ApplicationSet, AppProject; Argo
 Rollouts Rollout and AnalysisTemplate; cert-manager ClusterIssuer; ESO
 ClusterSecretStore and ExternalSecret; Istio DestinationRule, VirtualService,
@@ -77,4 +85,4 @@ reviewer approved the current code snapshot, with final PR evidence pending.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | In progress | [VAL-PVA-002](../spec.md#success-criteria--verification-plan); seven tests and temporary pinned-binary probe PASS, hosted pending |
+| [WORK-002](../plan.md#work-breakdown) | In progress | [VAL-PVA-002](../spec.md#success-criteria--verification-plan); first hosted platform gate PASS, overall run 37129367670 FAIL; corrected focused checks PASS, hosted retry pending |

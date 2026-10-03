@@ -55,10 +55,22 @@ Independent read-only security review approved the current implementation
 snapshot and ran 25 focused checks; final snapshot review and
 hosted full CI remain pending. Live observation is `DEFER` to an approved
 platform operator when a cluster target and retry condition are available.
+The first PR #131 hosted run
+[37129367670](https://github.com/buenhyden/hy-home.k8s/actions/runs/37129367670)
+failed overall despite the 14-root platform gate PASS: older unit fixtures
+assumed fixed full-gate counts and a report without structured results, while
+pre-commit found missing schema EOF newlines and detect-secrets false positives
+on public schema hashes. The authors corrected the fixtures, narrowed the CI
+environment allowlist, and normalized schema bytes/local hashes. Five affected
+legacy tests, 22 workflow tests, seven assurance tests, the CI security
+contract, and focused EOF/detect-secrets checks now pass. Independent security
+review approved this correction. These are local/review results; corrected
+hosted full CI is still pending and this Task remains in progress.
 The active checkout is `codex/req0004-platform-assurance`, created from
 `cb939a9e` (`main` and `origin/main` at intake); the initial governed package
-is `bd0aa15f`. Implementation bytes are still uncommitted on the shared
-branch. The supervisor owns the exact-index snapshot, final independent
+is `bd0aa15f`; implementation source `7a224ed0f64401b48e0fade9205599c9f11989e6`
+is PR #131's first head. Corrective bytes await a new commit and hosted run.
+The supervisor owns the exact-index snapshot, final independent
 review, hosted PR result, protected merge, branch cleanup, and main sync.
 No live target or credential was accessed. Root-owned binary installation was
 unavailable without `sudo` credentials; the temporary pinned-binary probe is
@@ -70,4 +82,4 @@ diagnostic, and the reviewed hosted installer is the required retry path.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-004](../plan.md#work-breakdown) | In progress | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS, implementation/hosted pending |
+| [WORK-004](../plan.md#work-breakdown) | In progress | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS; hosted 37129367670 FAIL, corrective local checks PASS, hosted retry pending |
