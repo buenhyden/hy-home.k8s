@@ -1,10 +1,10 @@
 ---
 title: "Integrate and Review Platform Validation Assurance"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104-TSK-0004"
 ---
@@ -28,7 +28,7 @@ and the results of [Task 1](tsk-0001-evidence.md),
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-004 | VAL-PVA-004 | Validate final bytes, review meaning and safety, record delivery and lane limits | supervisor / doc-writer | In progress | Initial package QA pass; implementation QA and hosted CI pending | Initial docs commit `bd0aa15f`, independent review reports, final PR/run evidence pending |
+| WORK-004 | VAL-PVA-004 | Validate implementation bytes, review meaning and safety, record delivery and lane limits | supervisor / doc-writer | Completed | Repository-static implementation accepted; final document delivery pending | Initial docs `bd0aa15f`, implementation head `4bfe2192`, hosted run 37133944612, independent reviews |
 
 ## Approval and Safety Boundaries
 
@@ -40,6 +40,7 @@ and the results of [Task 1](tsk-0001-evidence.md),
 - **Secret / Vault Handling**: No secret value read or output.
 - **Rollback Plan**: Revert the scoped delivery commit; keep former required checks active.
 - **Evidence Location**: this Task's Verification Summary and Traceability, linked final PR/commit/run.
+- **Archive disposition**: The user's standing request authorizes completed-package retention. Move the entire package byte-identically only after this terminal source is integrated into `main`, current consumers are repointed, and the source Git tree is recorded once in the Stage 98 Retention Catalog.
 
 ## Verification Summary
 
@@ -73,17 +74,43 @@ tests; the CI owner corrected the literal, and 22 workflow tests plus the
 actual detect-secrets hook now pass. The security reviewer
 confirmed all four Task documents pass detect-secrets; the public commit SHA
 here is not the finding. Independent review approved the scoped correction.
-A new hosted full result is pending, so this Task remains in progress.
+A third hosted PR #131
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612)
+on implementation head `4bfe21923b059843736c1414025f34dcd65e406f`
+and synthetic checkout `de4646e62b3e1bc331b64db8394427879eed4c84`
+passed branch policy, isolated QA, full QA, and `ci-summary`. The full
+platform gate covered 14 roots and returned 92 rows: 46 PASS, 45 DEFER,
+one SKIP and zero FAIL; unit tests and manual pre-commit passed. The
+read-only security and document reviewers approved the implementation
+snapshot. This completes the repository-static acceptance criteria.
 The active checkout is `codex/req0004-platform-assurance`, created from
 `cb939a9e` (`main` and `origin/main` at intake); the initial governed package
 is `bd0aa15f`; implementation source `7a224ed0f64401b48e0fade9205599c9f11989e6`
-is PR #131's first head, and `514cc7ea` is the second hosted head. Further
-corrective bytes await a new commit and hosted run.
+is PR #131's first head, `514cc7ea` its second head, and `4bfe2192` the
+hosted passing implementation head. The final documentation head has not
+yet passed its own CI and must be checked before PR delivery.
 The supervisor owns the exact-index snapshot, final independent
 review, hosted PR result, protected merge, branch cleanup, and main sync.
 No live target or credential was accessed. Root-owned binary installation was
 unavailable without `sudo` credentials; the temporary pinned-binary probe is
 diagnostic, and the reviewed hosted installer is the required retry path.
+
+`qa-provenance` [run 37134963943](https://github.com/buenhyden/hy-home.k8s/actions/runs/37134963943)
+rejected this PR's control-closure changes before a protected App verdict.
+The protected check has not passed. The supervisor must obtain an exact-head,
+one-time administrator exception from the user after final-head CI and
+independent review; a prior PR #123 SHA exception is not reusable. No
+protected gate is waived by this Task's static completion.
+
+Remaining evidence is assigned explicitly. The quality/GitOps owner may
+replace `external-crd-schema-unavailable` only when exact reviewed CRD schema
+sources and negative fixtures are available. The platform operator may check
+generated chart/operator output when a pinned render or approved cluster
+target is available; tracked values/template declarations alone do not prove
+that output. Live API admission, reconciliation, DNS, TLS and routing remain
+`DEFER` until an authorized platform operator observes a named cluster/host
+target without reading secret values. These limits do not re-open the
+repository-static criteria or close unrelated REQ-0004-FR-0014/NFR-0003.
 
 ## Traceability
 
@@ -91,4 +118,4 @@ diagnostic, and the reviewed hosted installer is the required retry path.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-004](../plan.md#work-breakdown) | In progress | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS; hosted 37129367670 and 37131844929 overall FAIL with platform gate PASS; retry pending |
+| [WORK-004](../plan.md#work-breakdown) | Completed | [VAL-PVA-004](../spec.md#success-criteria--verification-plan); initial docs staged 6/6 PASS; hosted 37129367670 and 37131844929 overall FAIL retained; implementation run 37133944612 PASS; final docs/provenance/merge pending |

@@ -1,10 +1,10 @@
 ---
 title: "Classify Platform Validation Evidence"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104-TSK-0001"
 ---
@@ -28,7 +28,7 @@ checks, preserving exact snapshot identity and current fail-closed behavior.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-PVA-001 | Classify selected target results and test required-tool/fallback/no-promoted-PASS cases | quality-engineer | In progress | Focused tests pass; hosted final pending | `scripts/run-validation-lane.py`, `scripts/validation/registry.schema.json`, `tests/test_run_validation_lane.py` |
+| WORK-001 | VAL-PVA-001 | Classify selected target results and test required-tool/fallback/no-promoted-PASS cases | quality-engineer | Completed | Focused and hosted QA PASS for implementation head | `scripts/run-validation-lane.py`, `scripts/validation/registry.schema.json`, `tests/test_run_validation_lane.py`; hosted run 37133944612 |
 
 ## Approval and Safety Boundaries
 
@@ -51,8 +51,12 @@ path. The `platform-depth-v1` result protocol
 uses bounded per-target fields and the runner supplies lane; ordinary syntax
 continues through the separate required manifest gate. The read-only security
 reviewer, separate from the author, reports 25 focused checks passing on the
-current code snapshot. Final exact-index and hosted results remain pending; this local
-evidence does not establish a hosted or live result.
+reviewed code snapshot. Exact-index implementation staged QA passed 14
+selected gates before commit `7a224ed0`. Hosted PR #131
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612)
+passed the full QA and `ci-summary` for implementation head `4bfe2192`;
+its bounded structured records carry per-target depth and runner lane. This
+does not establish live observation or a passing final documentation head.
 
 ## Traceability
 
@@ -60,4 +64,4 @@ evidence does not establish a hosted or live result.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | In progress | [VAL-PVA-001](../spec.md#success-criteria--verification-plan); focused runner tests 102 PASS, hosted pending |
+| [WORK-001](../plan.md#work-breakdown) | Completed | [VAL-PVA-001](../spec.md#success-criteria--verification-plan); focused runner tests 102 PASS; hosted run 37133944612 PASS |

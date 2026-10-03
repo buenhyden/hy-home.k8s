@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation Assurance Delivery Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104-PLAN-0001"
 ---
@@ -87,11 +87,20 @@ when common QA identity requirements prove the same input and contract.
 ## Completion Criteria
 
 All four Spec criteria have reproducible evidence in Task records, affected
-gates and hosted CI pass for final bytes, independent read-only review
+gates and hosted CI pass for the implementation bytes, independent read-only review
 dispositions are recorded, and REQ-0004/AD-0007 current links name the new
 owner. The Task records any unavailable external/live evidence as DEFER and
 its retry owner. Terminal lifecycle and archive cutover occur only after
 their own registry gates and consumer-zero assessment.
+The final documentation head must pass its own required hosted checks before
+PR delivery; the earlier implementation result does not replace that gate.
+
+The implementation acceptance passed in PR #131 hosted
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612)
+on head `4bfe21923b059843736c1414025f34dcd65e406f`. The document-only
+closeout commit must pass its required hosted checks before merge. Archive
+cutover follows only after this terminal package's source is integrated into
+`main`, with current consumers repointed and an exact Git recovery envelope.
 
 ## Traceability
 

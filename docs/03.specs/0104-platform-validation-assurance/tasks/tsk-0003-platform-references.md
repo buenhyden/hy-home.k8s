@@ -1,10 +1,10 @@
 ---
 title: "Close Platform Resource and Ingress References"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104-TSK-0003"
 ---
@@ -28,7 +28,7 @@ and current platform validators.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-PVA-003 | Reject invalid GVK/Ingress references and regressions in structure, policy, secret, ESO, and local transport gates | quality-engineer | In progress | Focused reference tests pass; final integration pending | `scripts/validation/platform/ingress.py`, `tests/test_platform_ingress.py`, sample-app Service/Ingress |
+| WORK-003 | VAL-PVA-003 | Reject invalid GVK/Ingress references and regressions in structure, policy, secret, ESO, and local transport gates | quality-engineer | Completed | Focused references and hosted required gates PASS | `scripts/validation/platform/ingress.py`, `tests/test_platform_ingress.py`, sample-app Service/Ingress; hosted run 37133944612 |
 
 ## Approval and Safety Boundaries
 
@@ -52,9 +52,13 @@ Kubernetes schema passes in the pinned local probe. The author reproduced
 schema failure for the two placeholder ports before replacing them with
 numeric values and naming the target port. The check covers tracked
 declarations and reviewed chart values, not generated resources observed from
-a cluster. Retained GitOps, policy, secret, and ESO gates need final exact-index
-and hosted evidence before this Task is complete. A separate read-only security
-reviewer approved the current code snapshot.
+a cluster. Retained GitOps, policy, secret, and ESO gates passed the 14-gate
+exact-index implementation staged check and hosted PR #131
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612).
+A separate read-only security reviewer approved the reviewed code snapshot.
+The generated controller Service and live ingress path remain unobserved;
+an authorized platform operator owns a later render/runtime check when a
+specific cluster target is available.
 
 ## Traceability
 
@@ -62,4 +66,4 @@ reviewer approved the current code snapshot.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | In progress | [VAL-PVA-003](../spec.md#success-criteria--verification-plan); 11 focused tests PASS, final gates pending |
+| [WORK-003](../plan.md#work-breakdown) | Completed | [VAL-PVA-003](../spec.md#success-criteria--verification-plan); 11 focused tests and hosted run 37133944612 PASS, generated/live checks DEFER |

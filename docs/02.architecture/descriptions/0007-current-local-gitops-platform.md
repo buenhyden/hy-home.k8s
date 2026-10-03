@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -131,7 +131,7 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Implementation owners and remaining boundaries
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md) owns the remaining repository-static implementation and acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the owning Spec's Tasks record delivery evidence and the explicit custom-schema, generated-output and live-observation limitations. SPEC-0008 completion remains evidence for its original scope.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the completed Spec's Tasks record delivery evidence and explicit custom-CRD-schema, generated-output and live-observation DEFER owners and retry conditions. SPEC-0008 completion remains evidence for its original scope.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
@@ -202,7 +202,7 @@ completed work unit.
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010 | Layered validation evidence and fail-closed platform reference integrity | [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md); current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation limitations explicitly reported |
+| REQ-0004-FR-0008, REQ-0004-FR-0010 | Delivered repository-static layered validation evidence and fail-closed platform reference integrity | [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md); current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation DEFER explicitly reported |
 | REQ-0004-FR-0014, REQ-0004-NFR-0003 | Namespace and artifact assurance | Existing validators retain their current coverage; conditional digest/SBOM/provenance follow-on remains as stated above and is outside SPEC-0104 |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |

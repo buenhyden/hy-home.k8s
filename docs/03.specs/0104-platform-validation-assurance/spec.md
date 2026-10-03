@@ -1,10 +1,10 @@
 ---
 title: "Platform Validation Depth and Reference Assurance"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
-status: "active"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104"
 ---
@@ -25,6 +25,17 @@ owners. [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-p
 and [ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md)
 define the current ingress-nginx topology; retired Traefik validation is not
 restored.
+
+The repository-static criteria were demonstrated on PR #131 implementation
+head `4bfe21923b059843736c1414025f34dcd65e406f`: hosted
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612)
+passed branch policy, isolated QA, full QA, and `ci-summary` on synthetic
+checkout `de4646e62b3e1bc331b64db8394427879eed4c84`. The platform gate
+reported 14 roots and 92 rows: 46 PASS, 45 DEFER, one SKIP, zero FAIL.
+Custom-resource schema, generated chart output, and live observation retain
+the separate owners and retry conditions in [Task 4](tasks/tsk-0004-integration.md).
+The final documentation head still needs its own required hosted checks before
+PR delivery; this completed static contract does not assert live readiness.
 
 ## Strategic Boundaries & Non-goals
 

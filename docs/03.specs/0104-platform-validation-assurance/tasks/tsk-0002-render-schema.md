@@ -1,10 +1,10 @@
 ---
 title: "Validate Offline Render and Kubernetes Schemas"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 artifact_id: "SPEC-0104-TSK-0002"
 ---
@@ -33,7 +33,7 @@ limitations; unknown/malformed input cannot silently pass.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | VAL-PVA-002 | Pin offline tool/schema inputs, render declared roots, reject invalid/missing inputs, and prove lane selection | quality-engineer / ci-workflow-engineer | In progress | Focused offline tests and pinned-binary local probe pass; hosted full/CI pending | `scripts/validation/platform/assurance.py`, `tests/test_platform_assurance.py`, `.github/workflows/ci.yml` |
+| WORK-002 | VAL-PVA-002 | Pin offline tool/schema inputs, render declared roots, reject invalid/missing inputs, and prove lane selection | quality-engineer / ci-workflow-engineer | Completed | Focused and hosted full/CI platform gate PASS | `scripts/validation/platform/assurance.py`, `tests/test_platform_assurance.py`, `.github/workflows/ci.yml`; hosted run 37133944612 |
 
 ## Approval and Safety Boundaries
 
@@ -68,8 +68,12 @@ Ten vendored schema files lacked a final newline and detect-secrets flagged
 public schema hashes. The correction normalizes one final newline, updates
 the manifest's local byte hashes, and retains the pinned upstream commit and
 license; it does not claim byte identity with upstream files. Seven assurance
-tests and focused EOF/detect-secrets checks now pass. A new hosted result on
-the corrected commit is pending.
+tests and focused EOF/detect-secrets checks passed. The corrected implementation
+head `4bfe2192` passed hosted PR #131
+[run 37133944612](https://github.com/buenhyden/hy-home.k8s/actions/runs/37133944612):
+the pinned full/CI platform gate covered 14 roots with 46 PASS, 45 DEFER,
+one SKIP and zero FAIL. Its schema files retain local-byte hashes after final
+newline normalization; no upstream byte-identity claim is made.
 The reviewed CR set is Argo CD Application, ApplicationSet, AppProject; Argo
 Rollouts Rollout and AnalysisTemplate; cert-manager ClusterIssuer; ESO
 ClusterSecretStore and ExternalSecret; Istio DestinationRule, VirtualService,
@@ -77,7 +81,8 @@ and PeerAuthentication. The code's full GVK table is the executable identity
 owner; this list names the current schema limitation, not an API admission
 result.
 The implementation author and read-only security reviewer are separate; the
-reviewer approved the current code snapshot, with final PR evidence pending.
+reviewer approved the reviewed code snapshot. A final documentation head still
+requires its own hosted checks before merge.
 
 ## Traceability
 
@@ -85,4 +90,4 @@ reviewer approved the current code snapshot, with final PR evidence pending.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | In progress | [VAL-PVA-002](../spec.md#success-criteria--verification-plan); first hosted platform gate PASS, overall run 37129367670 FAIL; corrected focused checks PASS, hosted retry pending |
+| [WORK-002](../plan.md#work-breakdown) | Completed | [VAL-PVA-002](../spec.md#success-criteria--verification-plan); first hosted overall run 37129367670 FAIL retained; corrected hosted run 37133944612 PASS |
