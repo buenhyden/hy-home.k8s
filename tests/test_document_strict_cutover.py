@@ -1065,8 +1065,8 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                     self.assertNotIn(artifact_id, seen)
                 seen.add(artifact_id)
 
-    def test_active_operations_do_not_reference_retired_stages(self) -> None:
-        retired_stage = re.compile(r"(?:docs/)?(?:04\.execution|98\.archive)")
+    def test_active_operations_do_not_reference_retired_execution_stage(self) -> None:
+        retired_stage = re.compile(r"(?:docs/)?04\.execution")
         for path in sorted(STAGE05_ROOT.rglob("*.md")):
             with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
                 self.assertIsNone(

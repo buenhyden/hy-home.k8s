@@ -396,7 +396,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
         # This case needs a present current document so classification, not
         # absence or the archive route, decides the diagnostic.
-        current = "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        current = (
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        )
         template = "docs/99.templates/templates/archive/tombstone.template.md"
 
         self.assertEqual(
