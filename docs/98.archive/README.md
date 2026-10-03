@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.10"
+version: "0.7.11"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "archive"
 ---
 
@@ -201,6 +201,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 | [`completed/03.specs/0102-agent-contracts-and-skill-ownership`](./completed/03.specs/0102-agent-contracts-and-skill-ownership) | `2bc46c9b04bdc93f6380fd1a45fd267f42fa62fd:docs/03.specs/0102-agent-contracts-and-skill-ownership` |
 | [`completed/03.specs/0103-qa-evidence-reuse`](./completed/03.specs/0103-qa-evidence-reuse) | `b5003e483e8507bec4a25340d0b2571359720099:docs/03.specs/0103-qa-evidence-reuse` |
 | [`completed/03.specs/0008-current-local-gitops-platform`](./completed/03.specs/0008-current-local-gitops-platform) | `1f7bddd1604d106f5fab2128f17f04bac3e92108:docs/03.specs/0008-current-local-gitops-platform` |
+| [`completed/03.specs/0104-platform-validation-assurance`](./completed/03.specs/0104-platform-validation-assurance) | `589155f8d30952f6a51783865cbfb21c337cb6e8:docs/03.specs/0104-platform-validation-assurance` |
 
 ### Retention Assessment
 
