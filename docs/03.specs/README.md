@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.8.0"
+version: "0.9.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-04"
 layer: "specs"
 ---
 # 03.specs
@@ -71,13 +71,12 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 
 ```text
 03.specs/
-├── 0104-platform-validation-assurance/
 └── README.md
 ```
 
-현재 package는 [0104-platform-validation-assurance/](./0104-platform-validation-assurance/)다.
-완료된 local GitOps platform 구현 증적은
-[Archive Retention Catalog](../98.archive/README.md#document-index)에 보존한다.
+현재 stage에 등록된 package는 없다. SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
+각 package의 원본을 보존하는
+[Archive Retention Catalog](../98.archive/README.md#document-index)에서 찾는다.
 
 ## Authoring Workflow
 
