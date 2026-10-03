@@ -234,6 +234,9 @@
         "evidenceLane": {
           "type": "string"
         },
+        "structuredResults": {
+          "const": "platform-depth-v1"
+        },
         "pathInput": {
           "const": "include-existing-markdown"
         },

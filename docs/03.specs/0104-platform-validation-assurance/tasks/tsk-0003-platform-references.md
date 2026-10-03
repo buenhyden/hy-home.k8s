@@ -1,8 +1,8 @@
 ---
 title: "Close Platform Resource and Ingress References"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -28,7 +28,7 @@ and current platform validators.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-003 | VAL-PVA-003 | Reject invalid GVK/Ingress references and regressions in structure, policy, secret, ESO, and local transport gates | quality-engineer | Queued | Not executed | Focused negative fixtures and existing gate results |
+| WORK-003 | VAL-PVA-003 | Reject invalid GVK/Ingress references and regressions in structure, policy, secret, ESO, and local transport gates | quality-engineer | In progress | Focused reference tests pass; final integration pending | `scripts/validation/platform/ingress.py`, `tests/test_platform_ingress.py`, sample-app Service/Ingress |
 
 ## Approval and Safety Boundaries
 
@@ -43,8 +43,18 @@ and current platform validators.
 
 ## Verification Summary
 
-Queued; record actual files, chart-output evidence, results, and limitations
-during execution.
+The quality engineer reports
+`python3 -m unittest tests.test_platform_ingress -q` with 11 passing focused
+Ingress tests, including 14 mutations
+of reviewed chart-owned declarations, default backend, and snippet cases.
+Sample-app backend ports were aligned with the actual Service and its built-in
+Kubernetes schema passes in the pinned local probe. The author reproduced
+schema failure for the two placeholder ports before replacing them with
+numeric values and naming the target port. The check covers tracked
+declarations and reviewed chart values, not generated resources observed from
+a cluster. Retained GitOps, policy, secret, and ESO gates need final exact-index
+and hosted evidence before this Task is complete. A separate read-only security
+reviewer approved the current code snapshot.
 
 ## Traceability
 
@@ -52,4 +62,4 @@ during execution.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-003](../plan.md#work-breakdown) | Queued | [VAL-PVA-003](../spec.md#success-criteria--verification-plan) and WP-003 |
+| [WORK-003](../plan.md#work-breakdown) | In progress | [VAL-PVA-003](../spec.md#success-criteria--verification-plan); 11 focused tests PASS, final gates pending |

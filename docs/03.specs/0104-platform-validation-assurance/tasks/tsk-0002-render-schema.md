@@ -1,8 +1,8 @@
 ---
 title: "Validate Offline Render and Kubernetes Schemas"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -33,7 +33,7 @@ limitations; unknown/malformed input cannot silently pass.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | VAL-PVA-002 | Pin offline tool/schema inputs, render declared roots, reject invalid/missing inputs, and prove lane selection | quality-engineer / ci-workflow-engineer | Queued | Not executed | Focused negative fixtures, pinned source/digest, hosted full/CI run |
+| WORK-002 | VAL-PVA-002 | Pin offline tool/schema inputs, render declared roots, reject invalid/missing inputs, and prove lane selection | quality-engineer / ci-workflow-engineer | In progress | Focused offline tests and pinned-binary local probe pass; hosted full/CI pending | `scripts/validation/platform/assurance.py`, `tests/test_platform_assurance.py`, `.github/workflows/ci.yml` |
 
 ## Approval and Safety Boundaries
 
@@ -48,8 +48,28 @@ limitations; unknown/malformed input cannot silently pass.
 
 ## Verification Summary
 
-Queued; record the fixed upstream commit/digests, actual covered roots/kinds,
-known CR schema DEFER list, commands, and result when executed.
+The quality engineer reports a reproduced RED for conflicting identity and
+AppProject scope cases, followed by
+`python3 -m unittest tests.test_platform_assurance -q` with seven passing
+focused tests. A local
+probe used the downloaded official Kustomize archive after verifying SHA-256
+`029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d`;
+the binary ran from a temporary path because root-owned installation was
+unavailable without `sudo` credentials. Its 92 result rows were 46 `PASS`, 45
+`DEFER`, and one `SKIP` (sample-app product semantics). The versioned offline
+schema corpus is pinned to upstream commit
+`8df8a883b68a24a104b4a9e43c1288090ae60b3b`, and source/license plus
+per-file hashes are included. Hosted CI's pinned installer must prove the
+required full/CI gate on the actual PR checkout before completion. Custom
+resource schemas and live admission remain explicit DEFER, not schema PASS.
+The reviewed CR set is Argo CD Application, ApplicationSet, AppProject; Argo
+Rollouts Rollout and AnalysisTemplate; cert-manager ClusterIssuer; ESO
+ClusterSecretStore and ExternalSecret; Istio DestinationRule, VirtualService,
+and PeerAuthentication. The code's full GVK table is the executable identity
+owner; this list names the current schema limitation, not an API admission
+result.
+The implementation author and read-only security reviewer are separate; the
+reviewer approved the current code snapshot, with final PR evidence pending.
 
 ## Traceability
 
@@ -57,4 +77,4 @@ known CR schema DEFER list, commands, and result when executed.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-002](../plan.md#work-breakdown) | Queued | [VAL-PVA-002](../spec.md#success-criteria--verification-plan) and WP-002 |
+| [WORK-002](../plan.md#work-breakdown) | In progress | [VAL-PVA-002](../spec.md#success-criteria--verification-plan); seven tests and temporary pinned-binary probe PASS, hosted pending |

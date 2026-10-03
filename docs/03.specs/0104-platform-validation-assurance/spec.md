@@ -1,8 +1,8 @@
 ---
 title: "Platform Validation Depth and Reference Assurance"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -33,10 +33,11 @@ restored.
   runner as executor; preserve quick/staged latency and run the deeper offline
   render/schema check only at the appropriate full/CI boundary.
 - Validate tracked desired-state declarations and explicit references. A Helm
-  chart's generated resources are separately identified by their pinned chart
-  source; a missing tracked resource cannot be silently treated as generated.
-- Do not claim that an offline check proves API-server admission, chart runtime
-  output outside the selected render scope, host DNS/IP bindings, TLS
+  chart's expected resources are identified from reviewed pinned chart values
+  and template declarations; a missing tracked resource cannot be silently
+  treated as chart-managed.
+- Do not claim that an offline check proves API-server admission, generated
+  chart output, host DNS/IP bindings, TLS
   availability, or live Argo CD reconciliation. Those require separately
   authorized observation.
 - Do not broaden local-only transport exceptions, image provenance, namespace
@@ -71,8 +72,8 @@ It uses standalone Kustomize 5.8.1 (Linux amd64 release SHA-256
 `029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d`),
 existing jsonschema 4.26.0, and vendored strict Kubernetes 1.35.0 built-in
 schemas from upstream commit `8df8a883b68a24a104b4a9e43c1288090ae60b3b`,
-with source/license and per-file hashes retained. Repeating a check at another boundary requires a
-different input, trust claim, or environment as defined by the common
+with source/license and per-file hashes retained. Repeating a check at another
+boundary requires a different input, trust claim, or environment as defined by the common
 [quality policy](../../../.agents/governance/quality.md).
 
 ### Platform reference integrity
@@ -81,9 +82,10 @@ The platform validator checks the full Kubernetes group/version/kind of
 tracked declarations and their allowed AppProject resource kinds. It verifies
 tracked Ingress class, host, TLS secret reference, backend Service name and
 port, and namespace against the tracked destination or an explicitly declared
-chart/operator-owned output. The ingress-nginx apex redirect's controller
-Service is a chart-owned reference and must be checked against that chart's
-reviewed values/render contract, not falsely rejected as an absent tracked
+chart/operator-managed destination. The ingress-nginx apex redirect's
+controller Service is a chart-managed reference checked against reviewed
+pinned chart values and template declarations, rather than rejected as an
+absent tracked Service. This static check does not observe the generated
 Service. Broken, ambiguous, or unsupported references fail closed.
 
 Existing GitOps tree, policy, secret handling, Vault/ESO, and local-only
@@ -107,7 +109,7 @@ supplied schema receive explicit `DEFER` with
 `external-crd-schema-unavailable` and their separate semantic gate; unknown or
 malformed GVKs fail. The platform contract validator resolves
 resource identity and Ingress references from the same tracked desired state
-and checked chart output boundaries. The Task records which roots and kinds
+and reviewed chart declaration boundaries. The Task records which roots and kinds
 are covered and which require another owner or live observation.
 
 This design keeps YAML parsing, structural GitOps checks, policy evaluation,
@@ -137,7 +139,7 @@ than rerunning YAML parsing. Result values follow the
 [quality vocabulary](../../../.agents/governance/quality.md#result-vocabulary).
 The validator accepts repository-owned paths only. Kustomize root inventory,
 resource identities (`apiVersion`, `kind`, `metadata.namespace`,
-`metadata.name`), Ingress destination references, and chart-output boundaries
+`metadata.name`), Ingress destination references, and chart-declaration boundaries
 come from reviewed declarative inputs, not arbitrary user-supplied commands.
 Any format extension stays backward compatible with existing human QA logs.
 
@@ -146,14 +148,20 @@ Any format extension stays backward compatible with existing human QA logs.
 - Reject missing required tools, malformed or duplicate YAML documents,
   unsafe path/symlink escape, an absent declared Kustomize root, failed build,
   and schema-source mismatch or unavailable covered-kind schema.
-- Reject unknown or disallowed group/kind pairs, duplicate resource identities,
-  missing tracked Ingress backend/port/TLS destination, and ambiguous
-  chart-generated destinations. A deliberate external/chart boundary needs
+- Reject unknown or disallowed group/kind pairs and duplicate resource
+  identities within one rendered root. Identical declarations reached through
+  overlapping parent/child roots are deduplicated; the same identity with
+  conflicting content across roots fails.
+- Reject missing tracked Ingress backend/port/TLS destination and ambiguous
+  chart-managed destinations. A deliberate external/chart boundary needs
   explicit source evidence before it can satisfy a reference.
 - Show the selected fallback and actual depth when an optional tool is absent.
   A fallback that does not execute the required check fails its required gate.
 - An API schema check does not replace security policy or product-specific
   meaning. A syntax-only result cannot be promoted to schema PASS.
+- The sample app receives schema evidence for supported built-in kinds. Its
+  platform product-semantic row is `SKIP` with `not-applicable`, because it is
+  an example rather than a platform Application; this is not a schema skip.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -161,7 +169,7 @@ A required gate fails on missing tools, invalid inputs, unresolved references,
 or unavailable required schema; the existing runner reports command and
 evidence lane. The fix is to repair desired state or supply the reviewed tool
 or schema input, not to downgrade the requirement. If an upstream chart or
-operator output is not safely resolvable offline, report that target's
+operator declaration cannot be verified from reviewed inputs, report that target's
 limitation and owner explicitly. Live observation remains operator-owned and
 DEFER until authorized runtime evidence is collected. Rollback is a revert of
 the scoped validator/registry/CI changes, preserving the prior required
@@ -174,6 +182,11 @@ checks.
   schema validation, full GVK, and Ingress reference failures.
 - Run `python3 scripts/qa.py quick` for affected-path checks and
   `python3 scripts/qa.py staged` on the exact index before each logical commit.
+- The full/CI registry invokes
+  `python3 scripts/validation/platform/assurance.py --root .` with its pinned
+  tool in the hosted environment. A standalone local probe may use a
+  separately verified temporary Kustomize binary, but it is diagnostic and
+  does not replace the registered full/CI run.
 - Run hosted full/CI on the PR checkout for the deep gate and full registry
   contract. Record exact run, job and result in the integration Task.
 - Independent read-only review checks requirement coverage and that no

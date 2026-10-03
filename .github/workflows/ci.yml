@@ -182,6 +182,16 @@ jobs:
           printf '%s  %s\n' "$conftest_sha256" "$RUNNER_TEMP/conftest_0.69.0_Linux_x86_64.tar.gz" | sha256sum --check --strict
           tar -xzf "$RUNNER_TEMP/conftest_0.69.0_Linux_x86_64.tar.gz" -C "$RUNNER_TEMP" conftest
           sudo install -o root -g root -m 0755 "$RUNNER_TEMP/conftest" /usr/local/bin/conftest
+      - name: Install Kustomize
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/kustomize_v5.8.1_linux_amd64.tar.gz"
+          kustomize_sha256='029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d' # pragma: allowlist secret
+          printf '%s  %s\n' "$kustomize_sha256" "$RUNNER_TEMP/kustomize_v5.8.1_linux_amd64.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/kustomize_v5.8.1_linux_amd64.tar.gz" -C "$RUNNER_TEMP" kustomize
+          sudo install -o root -g root -m 0755 "$RUNNER_TEMP/kustomize" /usr/local/bin/kustomize
       - name: Validate repository checkout
         if: github.event_name != 'pull_request' && needs.qa-source.outputs.source == ''
         env:

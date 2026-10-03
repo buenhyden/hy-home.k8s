@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/descriptions (AD)"
-version: "0.4.2"
+version: "0.5.0"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -53,7 +53,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 | [AD-0004](./0004-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 구조. [SPEC-0004](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)는 완료된 구현의 역사 근거다. |
 | [AD-0005](./0005-argo-notifications-slack.md) | ArgoCD Notifications와 Vault/ESO credential 경계. [SPEC-0005](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)는 완료된 구현의 역사 근거다. |
 | [AD-0006](./0006-workspace-agent-governance-platform.md) | 공통 거버넌스 구조의 현재 소유자. [SPEC-0054 WP-013](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)은 2026-09-16 완료되었고 잔여 Stage 03 처분은 [SPEC-0083](../../98.archive/completed/03.specs/0083-finished-package-retention/spec.md)·[SPEC-0084](../../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md)로 승계되었다. |
-| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자이며, 실행 가능한 desired state와 검증기가 구체적인 구현 계약을 소유한다. [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)은 완료된 구현의 증거다. [REQ-0004-FR-0008·REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md)의 미구현 검증 범위는 계속 열려 있으며, SPEC-0049 철회 후 새 구현 package 소유자가 아직 없다. |
+| [AD-0007](./0007-current-local-gitops-platform.md) | 로컬 GitOps 구조의 현재 소유자이며, 실행 가능한 desired state와 검증기가 구체적인 구현 계약을 소유한다. [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)은 완료된 구현의 증거다. [REQ-0004-FR-0008·REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md)의 남은 정적 검증 범위는 현재 [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md)가 구현 중이다. Live 관측은 별도 운영 증거다. |
 
 ## Add and Find
 

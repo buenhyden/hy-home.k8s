@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -84,7 +84,7 @@ This AD inherits AD-0010's boundaries for platform validation, interfaces, examp
 | Desired-state tree | [root Application](../../../gitops/clusters/local/root-application.yaml), [root kustomization](../../../gitops/apps/root/kustomization.yaml) | The static structure of root → platform Applications / workload ApplicationSet, not live reconciliation evidence |
 | Local runtime and namespace policy | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml), [namespace declarations](../../../gitops/platform/namespaces/) | Enforce only on workloads the repository owns and validates statically; chart/injection uncertainty is audit/warn |
 | Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | The Registry owns lanes and argv; labels/CODEOWNERS projection parity remains an unassigned assurance residual after Spec 0048 was withdrawn without a successor |
-| Platform verification | [static contract checks](../../../scripts/validate-infrastructure-contracts.sh), [validators](../../../scripts/) | Separate syntax → render → schema/policy → product semantic → live observation; derive the actual root count and tools from the executable source |
+| Platform verification | [Validation Registry](../../../scripts/validation/registry.json), [platform assurance](../../../scripts/validation/platform/assurance.py), [static contract checks](../../../scripts/validate-infrastructure-contracts.sh) | Existing syntax, structure, policy and product gates compose with one full/CI offline render/schema gate. Per-target evidence identifies depth, tool/version, fallback and result; the runner owns the execution lane. Live observation remains separate. |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep format/validate/lint/build; provider credentials, apply, or deploy need separate approval |
 | Local browser/service transport | [k8s router](../../../infrastructure/k3d/k3d-cluster.yaml), [apex redirects](../../../gitops/platform/ingress-routes/), [external service interfaces](../../../gitops/platform/external-services/) | Check the dedicated k8s router (ADR-0043) and the local-only transport exceptions without widening an exception into a general security allowance |
 
@@ -92,6 +92,32 @@ Each product validator owns its own area: Kubernetes GVKs, the k8s router contra
 structure, policy, and the Vault/ESO source and secret boundary. A missing tool, malformed
 input, an unsafe path, and a fallback each need a direct negative fixture, and a required-tool
 failure is not hidden as a SKIP.
+
+The full/CI platform gate renders reviewed local GitOps and sample-app roots
+with an immutable Kustomize tool and validates covered built-in GVKs with the
+existing JSON Schema engine and a pinned offline Kubernetes schema corpus.
+The [schema manifest](../../../scripts/validation/platform/schemas/manifest.json)
+owns its source identities; executable inputs own the roots, tool versions and
+supported kinds. Local-only loading rejects unsafe paths, remote resources and
+unreviewed loading directives before rendering. This choice reuses the upstream
+renderer and installed schema engine; a local renderer implementation or a
+second schema CLI would duplicate their responsibilities. Remote bases,
+generators and plugin flexibility are outside the reviewed loading contract.
+
+[Platform reference checks](../../../scripts/validation/platform/ingress.py)
+resolve rendered Ingress class, host, TLS, namespace, backend Service and port
+references. Tracked resources are distinguished from explicitly declared
+chart/operator-owned outputs. AppProject checks use group/kind identity and
+verify repository source, revision, path, project assignment and the `argocd`
+namespace of control resources. Existing structure checks retain their scoped
+root and ApplicationSet destination assertions; these checks do not establish
+general Application destination authorization. Unknown GVKs or broken checked
+declarations fail closed. Known custom GVKs without vendored
+schemas carry an explicit schema `DEFER`; their product checks do not become
+API-schema evidence. Helm-generated Argo CD and Rollouts routes and generated
+Service references retain declaration-only evidence. API-server admission,
+generated runtime output, the Argo CD renderer's version parity and live
+reconciliation require separately authorized observation.
 
 Exact chart, infrastructure, workflow, dependency, and example versions live in the executable
 source or a reviewed lock. The Stage 90 version mirror is not an execution precondition.
@@ -103,9 +129,9 @@ Images keep the current non-latest tag-or-digest check, with no unverified blank
 Further digest/SBOM/provenance obligations are approved follow-on work with a consumer, owner, and trigger.
 The Istio CNI manifest is desired state and proves no actual admission or network state.
 
-### Unfinished implementation owners
+### Implementation owners and remaining boundaries
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Current structure, YAML, required policy-tool, secret, Vault/ESO, manifest image-version and product checks continue to cover parts of REQ-0004-FR-0008 and FR-0010; this AD and ADR-0043 own the current ingress boundary, with its source and operating owners above. Observed unassigned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner scopes those residuals against current implementation before assigning a new package; the retired Traefik lane is not a current target. SPEC-0008 completion does not close these residual requirements.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md) owns the remaining repository-static implementation and acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the owning Spec's Tasks record delivery evidence and the explicit custom-schema, generated-output and live-observation limitations. SPEC-0008 completion remains evidence for its original scope.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
@@ -160,6 +186,8 @@ completed work unit.
 | [REQ-0004-FR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The App-of-Apps and ApplicationSet reconciliation boundary | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | [REQ-0004-FR-0003](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the external runtime from the Kubernetes Service/EndpointSlice interface | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | [REQ-0004-FR-0004](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the current Headlamp UI from archived UI history | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct | [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md) |
+| [REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md) | Fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks | [ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md) and [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md) |
 | [REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The explicit scope of the current platform component graph | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | [REQ-0004-NFR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The trust boundary between ESO/Vault references and secret values | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | [REQ-0004-IF-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The authority boundary between the active current contract and archive Tombstones | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
@@ -174,7 +202,8 @@ completed work unit.
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010, REQ-0004-FR-0014, REQ-0004-NFR-0003 | Layered product/policy evidence, local exceptions, namespace and artifact assurance | Current ingress sources and operating owners are named above and existing validators cover parts; unowned residuals include render/schema, per-target evidence and ingress cross-reference/resource-kind coverage after Spec 0049 withdrawal; conditional provenance follow-on remains as stated above |
+| REQ-0004-FR-0008, REQ-0004-FR-0010 | Layered validation evidence and fail-closed platform reference integrity | [SPEC-0104](../../03.specs/0104-platform-validation-assurance/spec.md); current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation limitations explicitly reported |
+| REQ-0004-FR-0014, REQ-0004-NFR-0003 | Namespace and artifact assurance | Existing validators retain their current coverage; conditional digest/SBOM/provenance follow-on remains as stated above and is outside SPEC-0104 |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
 | REQ-0004-FR-0012, REQ-0004-FR-0013 | Direct executable-source versions and self-source/external-source distinction | Executable manifests and ADR-0029 |

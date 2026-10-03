@@ -1,8 +1,8 @@
 ---
 title: "Classify Platform Validation Evidence"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "queued"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -28,7 +28,7 @@ checks, preserving exact snapshot identity and current fail-closed behavior.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-PVA-001 | Classify selected target results and test required-tool/fallback/no-promoted-PASS cases | quality-engineer | Queued | Not executed | Focused test and changed registry/runner lines |
+| WORK-001 | VAL-PVA-001 | Classify selected target results and test required-tool/fallback/no-promoted-PASS cases | quality-engineer | In progress | Focused tests pass; hosted final pending | `scripts/run-validation-lane.py`, `scripts/validation/registry.schema.json`, `tests/test_run_validation_lane.py` |
 
 ## Approval and Safety Boundaries
 
@@ -43,8 +43,16 @@ checks, preserving exact snapshot identity and current fail-closed behavior.
 
 ## Verification Summary
 
-Queued; no result is claimed. Record failures, skipped tools, reviewer
-disposition, and evidence lane during execution.
+The quality engineer reports an initial reproduced RED of three assertion
+failures and one error before the protocol change, followed by
+`python3 -m unittest tests.test_run_validation_lane tests.test_validation_profiles -q`
+with 102 passing tests and pinned Ruff passing on the changed runner/contract
+path. The `platform-depth-v1` result protocol
+uses bounded per-target fields and the runner supplies lane; ordinary syntax
+continues through the separate required manifest gate. The read-only security
+reviewer, separate from the author, reports 25 focused checks passing on the
+current code snapshot. Final exact-index and hosted results remain pending; this local
+evidence does not establish a hosted or live result.
 
 ## Traceability
 
@@ -52,4 +60,4 @@ disposition, and evidence lane during execution.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | Queued | [VAL-PVA-001](../spec.md#success-criteria--verification-plan) and WP-001 |
+| [WORK-001](../plan.md#work-breakdown) | In progress | [VAL-PVA-001](../spec.md#success-criteria--verification-plan); focused runner tests 102 PASS, hosted pending |

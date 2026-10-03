@@ -1,8 +1,8 @@
 ---
 title: "Platform Validation Assurance Delivery Plan"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-10-03"
 layer: "specs"
@@ -44,7 +44,7 @@ the relevant gate is enabled.
 - Add one standalone Kustomize 5.8.1 render and Kubernetes 1.35 built-in
   API-schema gate at the full/CI lane, reusing jsonschema 4.26.0.
 - Close bounded GVK/Ingress-reference gaps using current ingress-nginx and
-  explicit chart/operator output ownership.
+  explicit chart/operator declaration ownership.
 - Prove negative cases and complete reciprocal requirement/architecture trace
   without conflating static and live evidence.
 
@@ -60,7 +60,7 @@ provenance/SBOM expansion, and resurrecting withdrawn Specs.
 | --- | --- | --- | --- | --- |
 | WP-001 | Extend per-target runner/registry evidence and result fixtures | None | Current registry/result contract reviewed | Focused metadata/fallback/required-tool results in [Task 1](tasks/tsk-0001-evidence.md) |
 | WP-002 | Select pinned offline tool/schema source, render declared roots, and verify covered API kinds | WP-001 | Tool/source and root inventory reviewed | Positive/negative build/schema fixtures and full/CI result in [Task 2](tasks/tsk-0002-render-schema.md) |
-| WP-003 | Resolve full GVK, tracked Ingress references, chart-owned outputs, and transport exception boundaries | WP-001, WP-002 | Current AD/ADR and generated-resource ownership reviewed | Broken-reference/GVK fixtures and existing-gate parity in [Task 3](tasks/tsk-0003-platform-references.md) |
+| WP-003 | Resolve full GVK, tracked Ingress references, chart-managed destinations, and transport exception boundaries | WP-001, WP-002 | Current AD/ADR and chart declaration ownership reviewed | Broken-reference/GVK fixtures and existing-gate parity in [Task 3](tasks/tsk-0003-platform-references.md) |
 | WP-004 | Reconcile documentation, exact-index/hosted checks, independent review, and delivery | WP-001–WP-003 | All focused checks pass | Handoff and lane-limited acceptance in [Task 4](tasks/tsk-0004-integration.md) |
 
 ## Verification Plan
@@ -78,7 +78,7 @@ when common QA identity requirements prove the same input and contract.
 
 | Risk | Mitigation / owner |
 | --- | --- |
-| A chart-created controller Service is mistaken for absent tracked state | Platform validator checks the reviewed chart render/values contract; quality engineer records exact source and limitation. |
+| A chart-managed controller Service is mistaken for absent tracked state | Platform validator checks reviewed pinned chart values/template declarations; quality engineer records source and that generated output was not observed. |
 | Missing API schema is reported as success or a network download changes validation | Required covered kinds fail without the pinned offline schema; quality engineer owns fixed source and negative fixture. |
 | Deep validation slows every local edit | Registry places it at full/CI; quick/staged keep existing scoped checks. |
 | CI tool installation widens permissions or control-plane trust | CI workflow engineer makes a scoped pinned install only if needed; security reviewer checks it. |

@@ -36,6 +36,20 @@ TRUSTED_SEARCH_DIRECTORIES = (
     "/bin",
 )
 QUALITY_SUCCESS_MARKER = "[PASS] repository quality gates passed"
+PLATFORM_REPORT_LIMIT_BYTES = 64 * 1024
+PLATFORM_REPORT_MAX_ROWS = 256
+PLATFORM_DEPTHS = frozenset(
+    ("syntax", "render", "schema-policy", "product-semantic", "live-observation")
+)
+PLATFORM_FALLBACKS = frozenset(
+    (
+        "none",
+        "external-crd-schema-unavailable",
+        "operator-live-check",
+        "separate-required-gate",
+        "not-applicable",
+    )
+)
 GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 CONFTEST_EXECUTABLE_ENV = "HY_HOME_K8S_CONFTEST_EXECUTABLE"
 VALIDATOR_TIMEOUT_SECONDS = 1_200.0
@@ -150,6 +164,129 @@ def result_line(
         f"tool={encoded(tool)} scope={encoded(scope)} "
         f"limitation={encoded(limitation)} evidence={encoded(evidence)}"
     )
+
+
+def platform_result_line(
+    row: Mapping[str, str], identifier: str, lane: str, scope: str, evidence: str
+) -> str:
+    """Expose only validated, non-secret metadata from an opted-in platform gate."""
+    return (
+        f"[{row['result']}] {identifier}-depth "
+        f"target={encoded(row['target'])} depth={encoded(row['depth'])} "
+        f"tool={encoded(row['tool'])} toolVersion={encoded(row['toolVersion'])} "
+        f"fallback={encoded(row['fallback'])} lane={encoded(lane)} "
+        f"scope={encoded(scope)} evidence={encoded(evidence)}"
+    )
+
+
+def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
+    """Validate a bounded closed report before any child-supplied text is printed."""
+    if not payload or len(payload) > PLATFORM_REPORT_LIMIT_BYTES:
+        raise ValueError("platform report has invalid size")
+
+    def unique_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("platform report has duplicate keys")
+            result[key] = value
+        return result
+
+    try:
+        report = json.loads(payload.decode("utf-8"), object_pairs_hook=unique_pairs)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError("platform report is not UTF-8 JSON") from exc
+    if (
+        type(report) is not dict
+        or set(report) != {"version", "results"}
+        or type(report["version"]) is not int
+        or report["version"] != 1
+        or type(report["results"]) is not list
+        or not 1 <= len(report["results"]) <= PLATFORM_REPORT_MAX_ROWS
+    ):
+        raise ValueError("platform report envelope is invalid")
+
+    allowed_roots = {
+        path.parent.relative_to(root).as_posix()
+        for path in root.glob("gitops/**/kustomization.yaml")
+        if path.is_file()
+    }
+    sample = root / "examples/sample-app/kustomization.yaml"
+    if sample.is_file():
+        allowed_roots.add("examples/sample-app")
+    rows: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    base_results: dict[str, dict[str, str]] = {}
+    schema_roots: set[str] = set()
+    fields = {"target", "depth", "tool", "toolVersion", "fallback", "result"}
+    for row in report["results"]:
+        if (
+            type(row) is not dict
+            or set(row) != fields
+            or any(type(value) is not str for value in row.values())
+        ):
+            raise ValueError("platform report row is invalid")
+        target = row["target"]
+        base, separator, gvk = target.partition("#")
+        if (
+            len(target) > 256
+            or base not in allowed_roots
+            or (
+                separator
+                and not re.fullmatch(
+                    r"(?:[a-z0-9][a-z0-9.-]*/)?v[0-9][A-Za-z0-9]*:[A-Z][A-Za-z0-9]*",
+                    gvk,
+                )
+            )
+            or row["depth"] not in PLATFORM_DEPTHS
+            or not re.fullmatch(r"[A-Za-z][A-Za-z0-9._-]{0,63}", row["tool"])
+            or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.+_-]{0,63}", row["toolVersion"])
+            or row["fallback"] not in PLATFORM_FALLBACKS
+            or row["result"] not in {"PASS", "FAIL", "SKIP", "DEFER"}
+            or (separator and row["depth"] != "schema-policy")
+            or (not separator and row["depth"] == "schema-policy")
+            or (
+                not separator
+                and row["depth"] == "render"
+                and row["result"] not in {"PASS", "FAIL"}
+            )
+            or (
+                not separator
+                and row["depth"] in {"syntax", "live-observation"}
+                and (
+                    row["result"] != "DEFER"
+                    or row["tool"] != "none"
+                    or row["toolVersion"] != "none"
+                    or row["fallback"]
+                    != (
+                        "separate-required-gate"
+                        if row["depth"] == "syntax"
+                        else "operator-live-check"
+                    )
+                )
+            )
+            or (row["result"] == "PASS" and row["fallback"] != "none")
+            or (row["result"] == "PASS" and "none" in (row["tool"], row["toolVersion"]))
+            or (row["result"] in {"DEFER", "SKIP"} and row["fallback"] == "none")
+            or (target, row["depth"]) in seen
+        ):
+            raise ValueError("platform report row violates the closed contract")
+        seen.add((target, row["depth"]))
+        if separator:
+            schema_roots.add(base)
+        else:
+            base_results.setdefault(base, {})[row["depth"]] = row["result"]
+        rows.append(row)
+    if not allowed_roots or set(base_results) != allowed_roots:
+        raise ValueError("platform report omits a Kustomize root")
+    for base, depths in base_results.items():
+        if not {"syntax", "render", "live-observation"} <= depths.keys():
+            raise ValueError("platform report omits a required depth")
+        if depths["render"] == "PASS" and (
+            "product-semantic" not in depths or base not in schema_roots
+        ):
+            raise ValueError("platform report omits post-render evidence")
+    return rows
 
 
 def bounded_metadata(label: str, value: str) -> str:
@@ -1637,6 +1774,25 @@ def run_selected(
                 validator.get("timeoutSeconds", VALIDATOR_TIMEOUT_SECONDS)
             ),
         )
+        structured = validator.get("structuredResults") == "platform-depth-v1"
+        platform_rows: list[dict[str, str]] = []
+        report_error = False
+        if structured:
+            if (
+                completed.status == "completed"
+                and completed.returncode == 0
+                and completed.cleanup_complete
+                and completed.stdout.complete
+                and completed.stdout.observed_bytes == len(completed.stdout.retained)
+            ):
+                try:
+                    platform_rows = parse_platform_report(
+                        completed.stdout.retained, root
+                    )
+                except ValueError:
+                    report_error = True
+            else:
+                report_error = True
         marker = QUALITY_SUCCESS_MARKER if identifier == "repository-quality" else None
         marker_count = (
             exact_success_marker_count(completed.stdout.retained, marker)
@@ -1647,11 +1803,23 @@ def run_selected(
             completed.status == "completed"
             and completed.returncode == 0
             and completed.cleanup_complete
+            and not report_error
+            and not any(row["result"] == "FAIL" for row in platform_rows)
+            and (
+                not structured or any(row["result"] == "PASS" for row in platform_rows)
+            )
             and (marker_count == 1 if marker is not None else True)
         )
         status = "PASS" if passed else "FAIL"
         limitation = observation(completed)
-        if not passed:
+        if structured:
+            if report_error:
+                limitation += ";structured_report=invalid"
+            elif any(row["result"] == "FAIL" for row in platform_rows):
+                limitation += ";structured_report=failed-depth"
+            elif not any(row["result"] == "PASS" for row in platform_rows):
+                limitation += ";structured_report=no-static-pass"
+        elif not passed:
             limitation += ";diagnostic=" + failure_snippet(completed)
         if marker is not None:
             rendered_marker_count = (
@@ -1669,6 +1837,8 @@ def run_selected(
                 evidence=evidence,
             )
         )
+        for row in platform_rows:
+            print(platform_result_line(row, identifier, lane, scope, evidence))
         if passed and completed_passes is not None:
             # The caller persists these only after checking snapshot integrity.
             completed_passes[identifier] = "PASS"

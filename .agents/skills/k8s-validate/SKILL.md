@@ -28,7 +28,11 @@ Define the validation sequence for manifest changes before GitOps review or merg
 
 ## Workflow Steps
 
-1. Run manifest YAML syntax validation for the changed scope.
+1. Run manifest YAML syntax validation for the changed scope. Where the
+   selected profile includes the registered platform assurance check, run its
+   offline Kustomize render and Kubernetes API-schema validation as a separate
+   depth. Quick and staged profiles retain their change-scoped checks; do not
+   treat a syntax pass as render or schema evidence.
 2. Run kube-linter where the selected profile reaches it. The pinned pre-commit
    hook owns that tool and the change-scoped profiles do not run it, so a
    change-scoped result covers syntax, structure and secrets but not lint.
@@ -36,21 +40,26 @@ Define the validation sequence for manifest changes before GitOps review or merg
    EndpointSlice relationships to `external-service-contract-audit`; the central
    QA registry selects its dedicated checker.
 4. Run secret-handling checks.
-5. Report each check using the result meanings quality policy owns, and name
-   every check the selected profile did not reach.
+5. Report each selected target's actual depth, tool identity/version, fallback,
+   lane, and result using the meanings quality policy owns. Name every check
+   the selected profile did not reach, explicitly distinguish any unsupported
+   custom-resource schema from a schema PASS, and report unobserved live state
+   as DEFER.
 
 ## Constraints
 
 - `.kube-linter.yaml` is the lint baseline.
 - Secret-handling violations are blocking.
-- No gate here validates manifests against Kubernetes API schemas, so a syntax
-  result is never reported as a schema result.
+- API-schema coverage is limited to the built-in kinds and fixed offline source
+  selected by the registered checker. An unavailable required tool or schema
+  fails that check; do not promote a partial result or a fallback to PASS.
 - Validation must remain repository-backed and cluster-specific.
 - Do not downgrade blocking failures into informational output.
 
 ## Expected Outputs
 
-- Validation summary across syntax, lint, structure, and secrets
+- Validation summary across selected syntax, render, schema, lint, structure,
+  and secret checks, with actual depth and limitations per target
 - Blocking reasons, if any
 - Next action guidance for review or remediation
 
