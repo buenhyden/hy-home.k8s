@@ -1,10 +1,10 @@
 ---
 title: "Kiali Operator Installation"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
-updated: "2026-09-14"
+updated: "2026-10-03"
 layer: "architecture"
 artifact_id: "ADR-0037"
 ---
@@ -13,10 +13,11 @@ artifact_id: "ADR-0037"
 
 ## Overview
 
-This proposed decision records how Kiali is installed today so that the decision
-log matches the GitOps implementation. It would replace the install-mode clauses
-of ADR-0009 once accepted, and it keeps ADR-0009's external observability
-boundary.
+This decision accepts the Kiali Operator installation already declared in GitOps.
+It replaces only ADR-0009's `kiali-server` installation, fixed Kiali version and
+operator non-goal clauses. ADR-0009 remains accepted for its external backend,
+local authentication, certificate and network isolation boundaries; ADR-0043 and
+ADR-0046 own the later router and endpoint changes.
 
 ## Context
 
@@ -32,10 +33,12 @@ so ADR-0009's install-mode clauses describe a state the tree no longer has.
   version (currently `2.10.0`).
 - Let the operator create the Kiali custom resource (`cr.create: true`) in
   `istio-system`, with anonymous authentication for the local-only platform.
-- Point Kiali at the external observability stack through `platform` service DNS
-  names: `prometheus-external`, `grafana-external` and `tempo-external`. Keep the
-  Grafana browser link on the external IP, because that link opens in the
-  operator's browser, not inside the cluster.
+- Keep the external observability paths selected by ADR-0046: Prometheus at
+  `https://prometheus.hy.home.arpa` with Basic Auth and Grafana at
+  `https://grafana.hy.home.arpa` with a Viewer service account token. Both clients
+  verify the gateway CA supplied by bootstrap; ESO supplies credentials from
+  OpenBao references. The Grafana browser link uses the same HTTPS name.
+  Tempo remains `http://tempo-external.platform.svc.cluster.local:3200`.
 - Keep ADR-0009's ingress host, cert-manager TLS and egress NetworkPolicy
   boundary unchanged.
 
@@ -70,17 +73,20 @@ so ADR-0009's install-mode clauses describe a state the tree no longer has.
 
 ## Traceability
 
-**Current-state clarification (2026-09-23).** Kiali reaches Prometheus and
-Grafana through the external Traefik by name (`https://prometheus.hy.home.arpa`
-with Basic Auth, `https://grafana.hy.home.arpa`) under [ADR-0046](./0046-external-services-over-host-addresses.md);
-`prometheus-external` and `grafana-external` are retired and only
-`tempo-external` remains. The operator installation decision is unchanged.
-
-Acceptance of this record should move ADR-0009 to `superseded` with reciprocal
-links, in one reviewed change.
+The request owner authorized reviewing SPEC-0008 against implementation and
+selecting the standards-aligned contract on 2026-10-03. This accepts the bounded
+installation amendment with its documented controller/CRD trade-off. It does not
+supersede ADR-0009 as a whole or claim a new deployment or live verification.
+The endpoint and browser-route decisions remain with
+[ADR-0046](./0046-external-services-over-host-addresses.md) and
+[ADR-0043](./0043-dedicated-k8s-ingress-router.md).
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0009](0009-kiali-external-observability.md) | Proposed successor for ADR-0009's install-mode clauses; ADR-0009 stays accepted until this record is accepted | N/A — standalone decision record with no execution scope |
+| [ADR-0009](0009-kiali-external-observability.md) | Replaces only the install-mode/version clauses and operator non-goal; ADR-0009 stays accepted for its remaining boundaries, with no whole-document supersession | [SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) |
+
+- **Requirement**: [REQ-0004-FR-0004 and REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)
+- **Current architecture**: [AD-0007](../descriptions/0007-current-local-gitops-platform.md)
+- **Implementation source**: [Kiali Application](../../../gitops/apps/root/platform-kiali-app.yaml)

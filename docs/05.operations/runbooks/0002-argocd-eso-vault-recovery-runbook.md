@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-03"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -230,7 +230,6 @@ kubectl -n kube-system rollout restart deployment/coredns
 - [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../02.architecture/decisions/0046-external-services-over-host-addresses.md`](../../02.architecture/decisions/0046-external-services-over-host-addresses.md)
-- [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 
 ### Lifecycle Traceability
 

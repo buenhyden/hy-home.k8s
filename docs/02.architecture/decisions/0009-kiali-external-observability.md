@@ -1,10 +1,10 @@
 ---
 title: "Kiali with External Observability Stack"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-03"
 layer: "architecture"
 artifact_id: "ADR-0009"
 ---
@@ -72,6 +72,16 @@ Docker Traefik proxies `kiali.hy-k8s.home.arpa` to the k3d ingress.
 - Bad: cannot visualize the Istio service mesh topology
 
 ## Traceability
+
+**Current-state clarification (2026-10-03).**
+[ADR-0037](0037-kiali-operator-installation.md) is accepted for the Kiali Operator
+installation and replaces only this record's install-mode/version clauses and
+operator non-goal. This record remains accepted for the external backend, local
+authentication, certificate and network isolation boundaries. Prometheus and
+Grafana now use the verified HTTPS gateway names defined by
+[ADR-0046](0046-external-services-over-host-addresses.md); only Tempo keeps its
+`tempo-external` service path. The earlier clarifications below record the
+intermediate states and confer no current authority on retired service names.
 
 **Current-state clarification (2026-09-23).** The `172.18.0.x`
 container addresses above are replaced by host-published ports on

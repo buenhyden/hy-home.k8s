@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Contract"
-version: "1.0.4"
+version: "1.0.5"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-03"
 layer: "architecture"
 artifact_id: "ADR-0014"
 ---
@@ -64,6 +64,17 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Bad: Loses reviewable routing and replacement evidence.
 
 ## Traceability
+
+**Current-state clarification (2026-10-03).** The agent application clause's
+current authority chain is [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+→ [AD-0007](../descriptions/0007-current-local-gitops-platform.md) → executable
+desired state and validators in [gitops](../../../gitops/),
+[infrastructure](../../../infrastructure/) and [scripts](../../../scripts/).
+AD-0007 names the current operating owners.
+[SPEC-0008](../../03.specs/0008-current-local-gitops-platform/spec.md) is completed
+implementation evidence, not ongoing execution authority. A later platform
+change uses its own scoped work unit; this clarification preserves the accepted
+platform decisions and does not declare remaining delivery-assurance gaps closed.
 
 **Current-state clarification (2026-09-23).** The
 `vault-external` identifier is retired under [ADR-0046](./0046-external-services-over-host-addresses.md): ESO

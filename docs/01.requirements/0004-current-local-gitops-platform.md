@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.0.6"
+version: "1.0.7"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-03"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -64,7 +64,7 @@ security level as supported. The existence of static configuration must be kept 
 
 The current desired-state structure, Kubernetes syntax, and product static contract must pass their validators.
 Delivery assurance must leave a classification, validation depth, result, and limits for every in-scope surface,
-and does not substitute a static PASS for unobserved remote or runtime state. The per-member verdicts in the trace below link to the AD and its Spec.
+and does not substitute a static PASS for unobserved remote or runtime state. The per-member trace below routes current architecture to AD-0007 and implementation checks to executable validators.
 
 - **Acceptance criterion 01**: Validate the current platform product static contract.
 - **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
@@ -83,7 +83,7 @@ Reading secrets, pushing, cloud work, and live mutation each need separate appro
 
 ### Unfinished delivery assurance
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its withdrawal does not remove current validation: the repository already checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries, and product semantics; [SPEC-0008](../03.specs/0008-current-local-gitops-platform/spec.md) owns the current ingress path. Current manifest image-version checks require an explicit tag or `@sha256:` reference and reject `:latest`; they do not establish provenance or validate digest identity. REQ-0004-FR-0008 and FR-0010 remain open. Observed unowned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence, and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner should scope those residuals against current implementation before assigning new work; the retired Traefik lane is not a current target.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its withdrawal does not remove current validation: the repository already checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries, and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and `gitops/platform/ingress-routes/` own the current ingress architecture and desired state; [SPEC-0008](../03.specs/0008-current-local-gitops-platform/spec.md) is completed delivery evidence. Current manifest image-version checks require an explicit tag or `@sha256:` reference and reject `:latest`; they do not establish provenance or validate digest identity. REQ-0004-FR-0008 and FR-0010 remain open. Observed unowned coverage includes Kustomize render/Kubernetes schema checks, per-target depth/tool-version/fallback evidence, and incomplete ingress cross-reference/resource-kind checks. Map the required missing-tool, malformed-input, unsafe-path and fallback cases to existing negative fixtures, and add a focused fixture for any uncovered required case. The request owner should scope those residuals against current implementation before assigning new work; the retired Traefik lane is not a current target.
 Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and kept in `98.archive/retired/`
 ([SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md)); their scope currently has no implementation owner.
 The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003.
@@ -143,6 +143,7 @@ The table below records the succession of current meaning. Earlier member IDs ar
 REQ-0004-FR-0009 also inherits REQ-0005-FR-0006's requirement that examples sit beside their executable sources.
 
 - Current architecture: [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
-- Platform implementation: [Spec 0008](../03.specs/0008-current-local-gitops-platform/spec.md).
+- Current desired state and validation: `gitops/`, `infrastructure/`, and `scripts/` as routed by [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md).
+- Completed platform delivery evidence: [SPEC-0008](../03.specs/0008-current-local-gitops-platform/spec.md).
 - Shared architecture: [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md).
 - Current self-source and namespace decisions remain in the [decision log](../02.architecture/decisions/README.md).
