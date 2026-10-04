@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "1.6.23"
+version: "1.6.24"
 type: "sdlc/requirement"
 status: "active"
 owner: "platform"
@@ -16,9 +16,12 @@ artifact_id: "REQ-0003"
 This document owns the current user requirements for agent execution and document governance. The
 [common role registry](../../.agents/roles/registry.json) owns the machine truth of roles and skills,
 [Common governance](../../.agents/README.md) owns the human execution rules, and
-[Stage 99](../99.templates/README.md) owns document form. The current governance and common QA implementation is owned by
-[ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md) and
-[SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md);
+[Stage 99](../99.templates/README.md) owns document form. Common governance and
+the [validation registry](../../scripts/validation/registry.json) own current
+execution and QA contracts. [ADR-0036](../02.architecture/decisions/0036-common-knowledge-and-prompt-surfaces.md)
+records durable decisions; [SPEC-0072](../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
+preserves historical implementation evidence. [SPEC-0105](../03.specs/0105-authority-and-safe-authoring/spec.md)
+owns the scoped common authority and safe-authoring change;
 the completed document convergence is recorded by [Spec 0054](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), whose remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084. Current ownerless obligations remain identified below rather than assigned to that completed package.
 This Requirement is not a copy of the implementation inventory, the provider roster, or a one-off migration plan.
 
