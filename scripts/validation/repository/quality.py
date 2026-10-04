@@ -2037,7 +2037,8 @@ command_boundary_rules = [
         "kubectl get secret yaml/json",
         re.compile(
             r"\bkubectl\b.*\bget\s+secrets?\b.*"
-            r"\s(?:-o(?:=|\s*)|--output(?:=|\s+))(?:yaml|json)\b"
+            r"\s(?:-o(?:=|\s*)|--output(?:=|\s+))"
+            r"(?:(['\"])(?:yaml|json)\1(?!\w)|(?:yaml|json)\b)"
         ),
         [],
     ),

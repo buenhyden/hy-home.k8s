@@ -151,20 +151,35 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         )
         for command in (
             "kubectl get secret app -o yaml",
+            'kubectl get secret app -o yaml""',
             "kubectl get secret app -o=json",
+            "kubectl get secret app -oyaml",
             "kubectl -n argocd get secret argocd-external-valkey -o yaml",
             "kubectl --namespace apps get secrets -o json",
             "kubectl get secret app --output yaml",
             "kubectl get secret app --output=yaml",
+            "kubectl get secret app --output=json''",
             "kubectl -n apps get secrets --output=json",
         ):
             with self.subTest(command=command):
                 self.assertIsNotNone(rule.search(command))
+        for option in ("-o ", "-o=", "--output ", "--output="):
+            for value in ("yaml", "json"):
+                for quote in ("'", '"'):
+                    command = f"kubectl get secret app {option}{quote}{value}{quote}"
+                    with self.subTest(command=command):
+                        self.assertIsNotNone(rule.search(command))
         for command in (
             "kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}'",
             "kubectl -n apps get secret app --output=jsonpath='{.type}'",
+            "kubectl -n apps get secret app --output='jsonpath={.type}'",
+            "kubectl get secret app -o 'json'path='{.type}'",
+            "kubectl get secret app --output='json'path='{.type}'",
             "kubectl -n argocd get externalsecret argocd-external-valkey -o yaml",
             "kubectl -n headlamp get secret headlamp-tls",
+            "kubectl get secret app -o 'yaml\"",
+            "kubectl get secret app -o=\"json'",
+            "kubectl get secret app --output='yaml\"",
         ):
             with self.subTest(command=command):
                 self.assertIsNone(rule.search(command))
@@ -182,6 +197,10 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             [raw + " # redacted metadata-only"],
             ["# prohibited-example: `kubectl get secret app -o yaml`", raw],
             ["redacted", "kubectl get secret app --output=yaml"],
+            ["redacted", "kubectl get secret app -o 'yaml'"],
+            ["redacted", 'kubectl get secret app --output="json"'],
+            ["redacted", 'kubectl get secret app -o yaml""'],
+            ["redacted", "kubectl get secret app --output=json''"],
         ):
             with self.subTest(lines=lines):
                 self.assertTrue(
@@ -206,6 +225,32 @@ class RepositoryQualityRuleTests(unittest.TestCase):
                 markers,
                 True,
             )
+        )
+        self.assertFalse(
+            decide(
+                ['do-not-run: `kubectl get secret app --output="json"`'],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertFalse(
+            decide(
+                ["kubectl get secret app --output='json'path='{.type}'"],
+                0,
+                label,
+                pattern,
+                markers,
+                False,
+            )
+        )
+        fenced = "```sh\n# do-not-run: `kubectl get secret app -o 'yaml'`\n```\n"
+        visible = {index for index, _ in self.rules["visible_markdown_lines"](fenced)}
+        self.assertNotIn(1, visible)
+        self.assertTrue(
+            decide(fenced.splitlines(), 1, label, pattern, markers, 1 in visible)
         )
         self.assertTrue(
             decide(
