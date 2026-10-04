@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -50,6 +50,12 @@ after comparison with exact source and consumer in the [Task](tasks/tsk-0001-aut
 Converge rules at their existing owner and update only conflicting consumers.
 Use the supported human/operator approval route when no authenticated machine
 input exists. Implement no assertion that a repository record authenticates it.
+
+The authorized follow-up [Task](tasks/tsk-0002-quoted-secret-output.md) closes
+one observed VAL-P01-002 scanner gap: paired single- or double-quoted YAML/JSON
+values after `-o` or `--output` remain raw Secret output. The same existing
+decision and prose prohibition grammar apply. VAL-P01-006 covers its local
+verification and handoff; the original Task's evidence remains intact.
 
 ## Data Modeling & Storage Strategy
 

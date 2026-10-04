@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -21,9 +21,10 @@ Task owns all execution state. A structural check never authenticates approval.
 
 ## Overview
 
-Implement [SPEC-0105](spec.md) through one coherent
-[Task](tasks/tsk-0001-authority-and-authoring.md), updating existing owners
-and real consumers together.
+The original [Task](tasks/tsk-0001-authority-and-authoring.md) implemented
+[SPEC-0105](spec.md). The authorized bounded
+[follow-up Task](tasks/tsk-0002-quoted-secret-output.md) repairs one missed
+scanner form under WP-002 and records review and local delivery under WP-003.
 
 ## Context
 
@@ -91,3 +92,5 @@ Do not mark incomplete checks or protected actions as completed.
 | [VAL-P01-004](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
 | [VAL-P01-005](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
+| [VAL-P01-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) |
+| [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) |
