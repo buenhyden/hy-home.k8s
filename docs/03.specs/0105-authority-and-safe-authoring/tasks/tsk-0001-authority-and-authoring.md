@@ -1,8 +1,8 @@
 ---
 title: "Authority and Safe Authoring Execution"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-04"
 layer: "specs"
@@ -30,8 +30,8 @@ and independent review supply evidence rather than authorization.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | VAL-P01-001 | Trace source and actual consumers | platform | Completed | Direct baseline and independent traces reconciled | Source and consumer comparison below |
-| WORK-002 | VAL-P01-002, VAL-P01-003, VAL-P01-004, VAL-P01-005 | Repair authorized owners and consumers | platform | In progress | Owner and consumer repairs under final review | Changed-path disposition below |
-| WORK-003 | VAL-P01-006 | Validate, review and commit | platform | In progress | Focused tests and intake commit observed; final gates pending | Verification Summary |
+| WORK-002 | VAL-P01-002, VAL-P01-003, VAL-P01-004, VAL-P01-005 | Repair authorized owners and consumers | platform | Completed | Repairs and scoped independent review accepted | Changed-path disposition below |
+| WORK-003 | VAL-P01-006 | Validate, review and commit | platform | Completed | Implementation commit, exact-index and full QA observed | Verification Summary |
 
 ## Approval and Safety Boundaries
 
@@ -214,8 +214,44 @@ native deny patterns and executable runner limits are unchanged.
   mutation, followed by scoped Ruff lint PASS. Optional Black invocation failed
   because it is absent; Black is not the repository formatter and was not
   installed. Final changed bytes require their scoped checks.
-- Final affected quick, implementation exact-index staged and local full:
-  pending. No previous input result is claimed for changed base/index/bytes.
+- `python3 scripts/qa.py quick`: 14 selected gates PASS over the 15-path
+  working-tree implementation snapshot. Later Task evidence corrections are
+  covered separately by the exact-index result below.
+- First implementation `python3 scripts/qa.py staged`: 13 gates PASS and
+  markdown-profiles FAIL because two verbatim Korean answers violated the
+  Task's English-first profile. The answers were summarized in English with
+  original reference IDs preserved; no validator or policy was weakened.
+- Repaired implementation `python3 scripts/qa.py staged`: all 14 selected
+  gates PASS over the final 15-path index. Pinned Commitizen PASS over the
+  actual `.git/COMMIT_EDITMSG`; normal `git commit -F .git/COMMIT_EDITMSG`
+  produced `cff8712c5e9aaa06f082e57b2d90e53bd260c7cc`. Validated index and
+  committed tree both equal `0c18c463bb1c1892dfff2570e82fce3dd9f27615`.
+- `python3 scripts/qa.py full`: exit 0, all 24 required gates PASS over the
+  clean working-tree implementation at that commit, 1,294 source paths and
+  baseline `f6501e46a0d35858c598c207e726a0e89c92d7d7`. Full ran once; unit
+  discovery and pinned manual all-files pre-commit each ran once in that mode.
+  Unit stdout/stderr SHA-256:
+  `963625a972a510be2c8bc6c17e938fb0ffd71ff0058d1badb921e34506f18357` /
+  `c4d958d6bd5eba0bd75bac2dd2bc4b1ed750c4913dc70b8570bd390ee90ae18d`.
+  Pre-commit stdout SHA-256:
+  `ed873238f5f28f072a6c188ccf9690cf67d65abe1554872445869f431282d5ae`.
+  All reported required children completed with rc 0, complete output and
+  cleanup. No formatter changed the checked snapshot.
+- Platform depth limits remain explicit: live-observation DEFER to operator;
+  external CRD schema-policy DEFER for unavailable schemas; syntax rows DEFER
+  to their separately passing required gate; sample-app product-semantic SKIP
+  as not applicable. Full PASS does not claim those deferred depths passed.
+- Subsequent changes are package lifecycle metadata and this evidence record
+  only. They receive fresh document/index validation at the closing commit
+  boundary. The full result belongs to the implementation commit above, not
+  the later document bytes. No implementation regression or full result is
+  reused as proof for changed inputs; no self-SHA write loop is required.
+  The preliminary closing-index run was interrupted (exit 130) to correct a
+  list-continuation indentation and clarify this completion boundary; it is
+  not PASS evidence. Closing Commitizen passed the actual candidate message.
+  This terminal candidate is committed only after fresh exact-index document
+  gates pass. Its own closing gate/commit result is recorded in the command
+  transcript and final handoff, rather than self-cited inside a moving input.
 
 ### Review and delivery
 
@@ -224,8 +260,9 @@ sources, structural callers, policy/template and Task evidence; `/root/guard_tra
 inspected guard/evaluator semantics and changed consumer guidance.
 `/root/secret_boundary_review` independently found the raw-output marker defect
 and reviewed the repaired security boundary; no unresolved HIGH/CRITICAL issue
-was reported. Final evaluator refinement passed scoped security review; Task
-acceptance and final gates remain pending. Authors `/root/doc_guard_fix` and `/root/eval_fix` owned disjoint checker
+was reported. Final evaluator refinement passed scoped guard and security
+review. Approval/Task evidence corrections passed scoped read-only review.
+Authors `/root/doc_guard_fix` and `/root/eval_fix` owned disjoint checker
 and evaluator files, respectively; neither supplies independent certification
 of its own changes. Review is not authorization.
 
@@ -244,6 +281,33 @@ disposition. Rollback uses reviewed forward reverts of this branch's logical
 commits; baseline/history and user configuration are preserved. The operator
 owns any later system-tool disposition.
 
+Primary integration target is `main`, one SPEC-0105 implementation PR when
+remote delivery is authorized. No PR or archive follow-up exists. A later
+strict-retention follow-up would reference this same Spec only after final
+source integration and separate disposition approval; it starts no new
+execution unit. This completed package stays intact in Stage 03.
+
+### Acceptance reconciliation
+
+| Criterion | Observed local acceptance |
+| --- | --- |
+| VAL-P01-001 | Original-revision rule/consumer comparison and existing owners above; copied redaction/enforcement/current-contract claims corrected |
+| VAL-P01-002 | Benign authoring and affirmative execution regressions, raw-output RED/GREEN, final evaluation corpus and required static gates PASS |
+| VAL-P01-003 | Operator-supplied binding and original-source observation reviewed; authentication is manual. Missing/mismatch/revocation grants no permission. Full unit discovery and archive-cutover integrity gate PASS; no fake authentication result |
+| VAL-P01-004 | Read-only registry/projections unchanged and governance gate PASS; distinct read-only reviewer identities supplied scoped quality findings, authors made repairs |
+| VAL-P01-005 | Quality/runner resources and safety authorization have distinct owners; actual required-tool approval/setup and unchanged envelope, no bypass or false SKIP |
+| VAL-P01-006 | Intake and implementation commits, actual quick/index/message/full outcomes, independent review, delivery limits and forward-revert rollback recorded |
+
+Final reviewed executable identities: evaluator
+`ec6e595f928b693fae9a24fb852f8bdfeaf2696af27afb0d8ba8a8d085ee7add`,
+repository quality
+`b1ac164ed331940f1f4d79ae0e6297d8de749765e2ebc801587a8252f5fcde59`.
+Current application anchors: role registry 70–93 / 213–216; reviewer role 31–62;
+`.agents/skills/risk-report/SKILL.md` 7–8; Claude settings 12–26 / 76–85; Codex hook registration
+4–13; shared guard 617–664 (shell advice 517–534); repository quality
+1965–2003 / 2036–2043 / 2125–2144; evaluator 50–64 / 278–281; quality resource
+owner 64–85; runner 1667–1682 / 1765–1829. Paths are the owners identified above.
+
 Residual limits: approval source authentication is manual, not a repository
 record result. The static command scanner does not cover every multiline form,
 pre-resource flag, Secret `.data` jsonpath or custom output template. The
@@ -258,5 +322,5 @@ or native enforcement. Policy continues to forbid actual unauthorized access.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-001](../plan.md#work-breakdown) | Completed | Source/consumer comparison and preserved owners |
-| [WORK-002](../plan.md#work-breakdown) | In progress | Scoped repairs, regressions and independent review |
-| [WORK-003](../plan.md#work-breakdown) | In progress | Actual commands above; final gates pending |
+| [WORK-002](../plan.md#work-breakdown) | Completed | Scoped repairs, regressions and independent review |
+| [WORK-003](../plan.md#work-breakdown) | Completed | Implementation commit and actual mandatory local checks above |

@@ -1,8 +1,8 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
-status: "active"
+status: "completed"
 owner: "platform"
 updated: "2026-10-04"
 layer: "specs"
