@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-04"
 ---
 
 # Quality and Evidence Policy
@@ -62,6 +62,14 @@ runs once per identical input snapshot, configuration, and validation mode.
 Different index and working-tree bytes require separate evidence.
 
 ### Validation runner envelope
+
+Before implementation, identify the required gates and resolve their tools,
+environment, expected cost/time/output envelope and any necessary native
+execution approval. This is resource preflight, not secret/live authorization;
+[approval and safety](approval-and-safety.md) owns the latter. If a required
+budget is unavailable, preserve completed safe work and report the required
+check as unexecuted with its next owner. Never change a command or wrapper to
+evade a resource guard, disable a required check or report a false SKIP.
 
 Every repository-static child selected by the validation-surface contract runs
 through the [validation runner](../../scripts/run-validation-lane.py), which

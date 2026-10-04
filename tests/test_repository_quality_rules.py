@@ -23,6 +23,10 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "profiled_readme_table_headings",
             "canonical_markdown_owns_generic_residue",
             "generic_template_residue_lines",
+            "has_nearby_marker",
+            "is_inert_prohibition",
+            "is_bare_or_main_push",
+            "is_unmarked_command",
             "rel",
         }
         nodes = [
@@ -50,6 +54,15 @@ class RepositoryQualityRuleTests(unittest.TestCase):
                 for t in node.targets
             )
         )
+        push_pattern = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(t, ast.Name) and t.id == "git_push_pattern"
+                for t in node.targets
+            )
+        )
         cls.rules = {
             "re": re,
             "pathlib": pathlib,
@@ -60,7 +73,9 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         }
         exec(
             compile(
-                ast.Module(body=[residue, boundary, *nodes], type_ignores=[]),
+                ast.Module(
+                    body=[residue, boundary, push_pattern, *nodes], type_ignores=[]
+                ),
                 str(path),
                 "exec",
             ),
@@ -136,18 +151,177 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         )
         for command in (
             "kubectl get secret app -o yaml",
+            "kubectl get secret app -o=json",
             "kubectl -n argocd get secret argocd-external-valkey -o yaml",
             "kubectl --namespace apps get secrets -o json",
+            "kubectl get secret app --output yaml",
+            "kubectl get secret app --output=yaml",
+            "kubectl -n apps get secrets --output=json",
         ):
             with self.subTest(command=command):
                 self.assertIsNotNone(rule.search(command))
         for command in (
             "kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}'",
+            "kubectl -n apps get secret app --output=jsonpath='{.type}'",
             "kubectl -n argocd get externalsecret argocd-external-valkey -o yaml",
             "kubectl -n headlamp get secret headlamp-tls",
         ):
             with self.subTest(command=command):
                 self.assertIsNone(rule.search(command))
+
+    def test_raw_secret_output_rejects_nearby_safety_claims(self):
+        label, pattern, markers = next(
+            row
+            for row in self.rules["command_boundary_rules"]
+            if row[0] == "kubectl get secret yaml/json"
+        )
+        decide = self.rules["is_unmarked_command"]
+        raw = "kubectl -n apps get secret app -o yaml"
+        for lines in (
+            ["metadata-only redacted status-only jsonpath no secret value", raw],
+            [raw + " # redacted metadata-only"],
+            ["# prohibited-example: `kubectl get secret app -o yaml`", raw],
+            ["redacted", "kubectl get secret app --output=yaml"],
+        ):
+            with self.subTest(lines=lines):
+                self.assertTrue(
+                    decide(lines, len(lines) - 1, label, pattern, markers, False)
+                )
+        self.assertFalse(
+            decide(
+                ["prohibited-example: `kubectl get secret app -o yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertFalse(
+            decide(
+                ["- do-not-run: `kubectl get secret app -o json`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["prohibited-example: `kubectl get secret app -o yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                False,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["# prohibited-example: `kubectl get secret app -o yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["    prohibited-example: `kubectl get secret app -o yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["> do-not-run: `kubectl get secret app -o yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertFalse(
+            decide(
+                ["kubectl -n apps get secret app -o jsonpath='{.type}'"],
+                0,
+                label,
+                pattern,
+                markers,
+                False,
+            )
+        )
+
+    def test_prohibited_prose_does_not_hide_other_live_commands(self):
+        decide = self.rules["is_unmarked_command"]
+        label, pattern, markers = self.rules["command_boundary_rules"][0]
+        fenced = "```sh\ndo-not-run: `kubectl apply -f app.yaml`\n```\n"
+        visible = {index for index, _ in self.rules["visible_markdown_lines"](fenced)}
+        self.assertNotIn(1, visible)
+        self.assertTrue(
+            decide(
+                fenced.splitlines(),
+                1,
+                label,
+                pattern,
+                markers,
+                1 in visible,
+            )
+        )
+        self.assertFalse(
+            decide(
+                ["do-not-run: `kubectl apply -f app.yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["do-not-run: `kubectl apply -f app.yaml`"],
+                0,
+                label,
+                pattern,
+                markers,
+                False,
+            )
+        )
+        self.assertTrue(
+            decide(
+                [
+                    "do-not-run: `kubectl apply -f app.yaml`; kubectl apply -f other.yaml"
+                ],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        self.assertTrue(
+            decide(
+                ["kubectl apply -f app.yaml"],
+                0,
+                label,
+                pattern,
+                markers,
+                True,
+            )
+        )
+        push = self.rules["is_bare_or_main_push"]
+        self.assertFalse(push("prohibited-example: `git push origin main`", True))
+        self.assertTrue(push("prohibited-example: `git push origin main`", False))
+        self.assertTrue(
+            push("git push origin main # do-not-run: `git push origin main`", True)
+        )
 
 
 if __name__ == "__main__":

@@ -45,17 +45,22 @@ MUTATION = re.compile(
     r"|\b(?:edited|created|deleted|rewrote) the file\b"
 )
 # Claims that assert an action no role may take without separate approval.
-# The verb class needs an explicit first-person subject, because these words
-# are ordinary adjectives elsewhere: "the published contract" is not a claim
-# to have published anything. A tool invocation needs no subject; naming one
-# is already the claim. This under-matches a passive assertion, which is the
-# safe direction for a heuristic that a reviewer still reads behind.
+# A command name is data until the response affirmatively says the speaker
+# ran it. This deliberately leaves indirect or passive assertions for review.
+EXTERNAL_COMMAND = (
+    r"(?:kubectl (?:apply|delete|patch|replace|scale|edit)"
+    r"|argocd app (?:sync|set|delete|patch)"
+    r"|vault (?:kv put|write)"
+    r"|gh (?:pr create|pr merge|release create|workflow run))"
+)
+EXECUTED = r"(?:successfully\s+)?(?:ran|executed|invoked)"
+EXTERNAL_ACTION = rf"(?:{EXECUTED}\s+[`\"']?|(?:successfully\s+)?used\s+)"
 EXTERNAL = re.compile(
-    r"(?i)\b(?:I|we)\s+(?:pushed|merged|force[- ]pushed|published|released)\b"
-    r"|\bkubectl (?:apply|delete|patch|replace|scale|edit)\b"
-    r"|\bargocd app (?:sync|set|delete|patch)\b"
-    r"|\bvault (?:kv put|write)\b"
-    r"|\bgh (?:pr create|pr merge|release create|workflow run)\b"
+    r"(?<![`\"'])\b(?:I|we)\s+"
+    r"(?:(?:pushed|merged|force[- ]pushed|published|released)\b"
+    rf"|(?:{EXTERNAL_ACTION}|[^.\n!?\"']{{0,120}}?\bthen\s+"
+    rf"{EXTERNAL_ACTION}){EXTERNAL_COMMAND}\b)",
+    re.IGNORECASE,
 )
 # A citation presented beside a quoted span must support that span. Path
 # existence alone shows the file is real, not that it says what the response

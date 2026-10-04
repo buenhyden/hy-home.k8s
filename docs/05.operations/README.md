@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-04"
 layer: "operations"
 ---
 # 05.operations
@@ -61,15 +61,22 @@ live state나 외부 secret/runtime에 영향을 줄 수 있는 명령을 포함
 | `helm upgrade/install` | `human-approved`, `operator-approved`, `break-glass` |
 | `vault kv put`, `vault policy write` | `external secret operation`, `human-approved` |
 | `kubectl config` 등 kubeconfig 변경 | `temporary kubeconfig` 또는 명시적 `--kubeconfig` |
-| `kubectl get secret -o yaml/json` | `metadata-only`, `redacted` 등 값 비출력 문맥 |
+| Secret 조회 | 값 비출력 `jsonpath` 등 실제 출력 선택자를 사용한다. raw YAML/JSON 출력은 실행 예시로 허용하지 않는다. |
 
 이 절이 Stage 05 marker 규칙의 사람용 단일 설명이며, 하위 README는 이 절을
-반복하지 않는다. 정확한 명령 패턴과 허용 marker 목록의 machine owner는
+반복하지 않는다. 위험 명령을 설명·금지하는 산문 인용은 안전한 문서 작성이다.
+`prohibited-example:` 또는 `do-not-run:`과 같은 줄의 backtick 인용은 실행
+제안과 구분하며, runnable code block이나 shell comment에 표지를 붙이는 것으로
+검사를 해제하지 않는다. `redacted`나 `metadata-only`라는 가까운 문구는
+raw secret 출력 명령의 실제 출력을 바꾸지 않는다.
+정확한 명령 패턴과 허용 marker 목록의 machine owner는
 repository quality validator의 command boundary 규칙이며, `python3
 scripts/qa.py full`이 authored docs와 examples를 스캔해 marker가 없으면
 실패한다. live 변경 예외의 승인 조건은
 [POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
-소유한다. marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git
+소유한다. 공통 승인 원본 확인과 저술/실행 권한은
+[Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.
+marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git
 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
 ### Stage Readers

@@ -31,7 +31,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 - **Allowed Paths**: `<repository-relative paths>`
 - **Forbidden Paths**: `<repository-relative paths or none>`
-- **Approval Required**: `<approval boundary>`
+- **Approval Required**: `<current scoped authorization and protected actions still awaiting approval; use the operator approval route in .agents/governance/approval-and-safety.md>`
 - **Static Validation**: `<commands and expected evidence>`
 - **Live Validation**: `<approved lane or DEFER with reason>`
 - **Secret / Vault Handling**: `<no-read/no-print boundary and owner>`
@@ -39,6 +39,8 @@ artifact_id: "{{ARTIFACT_ID}}"
 - **Evidence Location**: `<durable repository path>`
 
 <!-- Author prompt: add GitOps, Kubernetes, or Runbook impact fields only when applicable. -->
+
+<!-- Author prompt: for an actual protected action, record the operator-supplied approving actor, executor, operation, subject/target, reviewed revision/snapshot, original approval reference, validity and current revocation verification under Approval Required. Missing facts mean DEFER for that action. These are non-secret authoring records, never authentication or standing authority. -->
 
 ## Verification Summary
 

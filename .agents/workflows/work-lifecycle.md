@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-04"
 ---
 
 # Work Lifecycle
@@ -41,8 +41,10 @@ state on resume; historical progress and provider-local memory are auxiliary.
    delegated role and skills from the agent registry, and load the provider
    note only for native behavior.
 4. Resolve the Stage 99 profile and template before authored document changes.
-5. Define focused checks, expected evidence lanes, rollback, unavailable tools,
-   and the next owner before implementation.
+5. Resolve required-check tools, environment, cost/time/output resources and
+   native execution approval through [quality preflight](../governance/quality.md#validation-runner-envelope).
+   Define focused checks, expected lanes, rollback, unavailable tools and next
+   owner before implementation; protected authority remains separate.
 
 ### Resume
 
@@ -64,9 +66,11 @@ Bound the attempt. Stop and report instead of continuing when the same check
 fails twice with no new information, when two consecutive changes produce no
 observable progress, when a repair would require widening the approved scope,
 or when the obstacle is an unmet authority, an unavailable environment, or an
-external limit. Classify the stop as a repository defect, a missing approval,
-an unavailable tool or environment, or an authority conflict, and name the next
-owner. Never weaken a contract, a gate, or a test to end the loop.
+external limit. Classify the stop as a repository defect, a missing protected
+approval, an unavailable tool or environment, a resource limit, or an authority
+conflict, and name the next owner. Stop the dependent action and continue
+independent approved safe work. Never weaken a contract, a gate, or a test to
+end the loop.
 
 ### Completion
 

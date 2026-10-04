@@ -1959,6 +1959,50 @@ def is_pr_flow_push(lines: list[str], index: int) -> bool:
     )
 
 
+git_push_pattern = re.compile(r"\bgit\s+push\b")
+
+
+def is_inert_prohibition(line: str, pattern: re.Pattern, markdown_prose: bool) -> bool:
+    if not markdown_prose:
+        return False
+    label = re.match(r"^ {0,3}(?:[-*+]\s+)?(?:prohibited-example|do-not-run):", line)
+    if not label:
+        return False
+    quoted = list(re.finditer(r"(?<!`)`([^`\n]+)`(?!`)", line))
+    if not any(
+        match.start() >= label.end() and pattern.search(match.group(1))
+        for match in quoted
+    ):
+        return False
+    unquoted = re.sub(r"(?<!`)`[^`\n]+`(?!`)", "", line)
+    return not pattern.search(unquoted)
+
+
+def is_bare_or_main_push(line: str, markdown_prose: bool) -> bool:
+    stripped = line.strip()
+    return (
+        stripped == "git push" or "git push origin main" in stripped
+    ) and not is_inert_prohibition(line, git_push_pattern, markdown_prose)
+
+
+def is_unmarked_command(
+    lines: list[str],
+    index: int,
+    label: str,
+    pattern: re.Pattern,
+    markers: list[str],
+    markdown_prose: bool,
+) -> bool:
+    return bool(
+        pattern.search(lines[index])
+        and not is_inert_prohibition(lines[index], pattern, markdown_prose)
+        and (
+            label == "kubectl get secret yaml/json"
+            or not has_nearby_marker(lines, index, markers)
+        )
+    )
+
+
 allowed_push_branch = re.compile(
     r"\bgit\s+push\s+origin\s+(?:feat|fix|docs|refactor|chore|ci|release|hotfix|codex|dependabot)/\S+"
 )
@@ -1991,8 +2035,11 @@ command_boundary_rules = [
     ),
     (
         "kubectl get secret yaml/json",
-        re.compile(r"\bkubectl\b.*\bget\s+secrets?\b.*\s-o[=\s]*(?:yaml|json)\b"),
-        ["metadata-only", "status-only", "jsonpath", "no secret value", "redacted"],
+        re.compile(
+            r"\bkubectl\b.*\bget\s+secrets?\b.*"
+            r"\s(?:-o(?:=|\s*)|--output(?:=|\s+))(?:yaml|json)\b"
+        ),
+        [],
     ),
     (
         "argocd app sync",
@@ -2069,13 +2116,20 @@ for command_root in command_boundary_roots:
         }:
             continue
         lines = read_text(path).splitlines()
+        visible_indices = (
+            {index for index, _ in visible_markdown_lines("\n".join(lines))}
+            if path.suffix == ".md"
+            else set()
+        )
         for index, line in enumerate(lines):
-            stripped = line.strip()
-            if stripped == "git push" or "git push origin main" in stripped:
+            markdown_prose = index in visible_indices
+            if is_bare_or_main_push(line, markdown_prose):
                 fail(
                     f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
                 )
-            elif re.search(r"\bgit\s+push\b", line):
+            elif git_push_pattern.search(line) and not is_inert_prohibition(
+                line, git_push_pattern, markdown_prose
+            ):
                 if not allowed_push_branch.search(line) or not is_pr_flow_push(
                     lines, index
                 ):
@@ -2083,8 +2137,8 @@ for command_root in command_boundary_roots:
                         f"{rel(path)} contains push example without nearby PR-flow context: line {index + 1}"
                     )
             for label, pattern, markers in command_boundary_rules:
-                if pattern.search(line) and not has_nearby_marker(
-                    lines, index, markers
+                if is_unmarked_command(
+                    lines, index, label, pattern, markers, markdown_prose
                 ):
                     fail(
                         f"{rel(path)} has unmarked {label} example near line {index + 1}"
@@ -2107,9 +2161,11 @@ for scan_root in markdown_direct_push_roots:
             continue
         seen_markdown_direct_push_paths.add(path)
         lines = read_text(path).splitlines()
+        visible_indices = {
+            index for index, _ in visible_markdown_lines("\n".join(lines))
+        }
         for index, line in enumerate(lines):
-            stripped = line.strip()
-            if stripped == "git push" or "git push origin main" in stripped:
+            if is_bare_or_main_push(line, index in visible_indices):
                 fail(
                     f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
                 )

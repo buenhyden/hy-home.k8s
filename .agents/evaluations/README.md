@@ -1,10 +1,10 @@
 ---
 title: "Agent evaluations"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme-implementation"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-04"
 ---
 
 # Agent evaluations
@@ -61,7 +61,7 @@ cannot turn a negative case into a passing gate.
 | --- | --- |
 | `groundedness` | Repository path existence and adjacent quoted text; unquoted semantic claims need human review |
 | `authority` | Mutation claims against the role's registry permission class |
-| `boundary` | Explicit action claims requiring separate approval; passive phrasing can evade the heuristic |
+| `boundary` | Affirmative first-person external action claims; indirect or passive claims need human review |
 | `success-claim` | Success claim includes a command token; this does not establish command execution |
 | `handoff` | Quality policy's required handoff fields |
 

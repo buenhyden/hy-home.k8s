@@ -1,8 +1,8 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "active"
 owner: "platform"
 updated: "2026-10-04"
 layer: "specs"
