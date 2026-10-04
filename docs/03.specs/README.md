@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.10.0"
+version: "0.10.1"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
@@ -72,10 +72,12 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ```text
 03.specs/
 ├── README.md
-└── 0105-authority-and-safe-authoring/
+├── 0105-authority-and-safe-authoring/
+└── 0106-stage99-lifecycle-normalization/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
+[Stage 99 Lifecycle Normalization](./0106-stage99-lifecycle-normalization/)은 P02의 문서 lifecycle과 실행 추적 계약을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#document-index)에서 찾는다.
