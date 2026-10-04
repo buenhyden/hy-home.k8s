@@ -1,8 +1,8 @@
 ---
 title: "Quoted Secret Output Scanner Follow-up"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-04"
 layer: "specs"
@@ -39,7 +39,7 @@ completed [prior Task](tsk-0001-authority-and-authoring.md) remains intact.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-004 | VAL-P01-002 | Reproduce and repair quoted Secret output matching in the shared rule; retain inert prose grammar | quality-engineer | Completed | Focused checks and independent re-review accepted | Implementation and review evidence below |
-| WORK-005 | VAL-P01-006 | Validate, obtain independent read-only review and commit local handoff | platform | In progress | Intake committed; implementation delivery pending | Intake command and commit evidence below |
+| WORK-005 | VAL-P01-006 | Validate, obtain independent read-only review and commit local handoff | platform | Completed | Implementation committed and local full QA passed | Commands, review and delivery limits below |
 
 ## Approval and Safety Boundaries
 
@@ -156,9 +156,53 @@ raw matching, unchanged real caller and Spec/Plan/Task scope; the second
 confirmed the previously weakened Secret boundary was repaired and no
 role, native, policy or hook setting changed. Neither reviewer ran tests or
 wrote files, and neither claimed native/runtime authorization evidence.
-Affected, exact-index and full QA, implementation message check and further
-logical commits remain pending. Hosted CI, provider runtime and live behavior
-remain unobserved.
+
+`python3 scripts/qa.py quick` passed all 12 selected gates on the three
+working-tree implementation paths against base `c620f641`. The final
+implementation index used the same three paths and base; `python3
+scripts/qa.py staged --base-ref HEAD` passed all 12 required gates. The
+actual `.git/COMMIT_EDITMSG` text
+`fix(governance): recognize quoted Secret output safely` passed the explicit
+pinned Commitizen commit-msg check. Normal
+`git commit -F .git/COMMIT_EDITMSG` with the existing hooks produced logical
+implementation commit `6746750c29d711aaf1c81b19db75456f517b219a` and
+tree `839a3066655b2774df34f1763134e253c2804e8a`; the working tree was
+clean after commit. The exact validated index and committed tree matched.
+
+On that clean implementation snapshot, `rtk proxy python3 scripts/qa.py full
+--base-ref HEAD` returned 0: all 24 required gates PASS across 1,295
+all-files paths, with base resolved to `6746750c29d711aaf1c81b19db75456f517b219a`.
+Unit discovery and manual all-files pre-commit each ran once inside the full
+profile, not as separate repeated checks. Unit stdout/stderr byte counts and
+SHA-256 were 2,170 /
+`963625a972a510be2c8bc6c17e938fb0ffd71ff0058d1badb921e34506f18357`
+and 2,408 /
+`7985ed1f8af157c00acf0a1c9534d185144b77a8c7852c0a2984a2ee7da29fcb`.
+Manual pre-commit returned 0 with 1,680 stdout bytes, SHA-256
+`ed873238f5f28f072a6c188ccf9690cf67d65abe1554872445869f431282d5ae`.
+Kustomize 5.8.1 render and built-in jsonschema 4.10.3 / Kubernetes 1.35.0
+schema checks passed. External CRD schema-policy depth remains DEFER for
+unavailable schemas, live observation remains DEFER to the operator, syntax
+depth remains DEFER to its separately passing required gate, and sample-app
+product-semantic depth is SKIP as not applicable. These depths are not
+included in the required-gate PASS claim.
+
+Across this follow-up, Spec and Plan links were updated, this Task was added,
+the shared scanner regex was modified, and its existing regression tests were
+expanded. No file was deleted. Role, provider, hook and common policy bytes
+were unchanged. The remaining scanner ceiling is static line matching: it
+does not classify every shell form, Secret `.data` jsonpath or custom output
+template. Current approval-source authentication remains the documented
+manual operator path; structural evidence and review cannot authenticate it.
+No remote PR, push, merge, archive disposition, live action or worktree
+removal occurred. Rollback is a reviewed forward corrective code/test commit
+that preserves this Task and Git history.
+
+This is the Task-only closure candidate after the implementation full QA.
+Fresh exact-index document gates, the closing commit-message check and the
+third logical commit have not run on these closing Task bytes. Their actual
+outcomes belong in the final handoff rather than a self-referential commit
+claim. Hosted CI, provider runtime and live behavior remain unobserved.
 
 ## Traceability
 
@@ -167,4 +211,4 @@ remain unobserved.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [WORK-004](../plan.md#work-breakdown) | Completed | VAL-P01-002 / WP-002; final focused checks and independent re-review above |
-| [WORK-005](../plan.md#work-breakdown) | In progress | VAL-P01-006 / WP-003; intake staged QA, scoped hooks, message and commit above; implementation delivery pending |
+| [WORK-005](../plan.md#work-breakdown) | Completed | VAL-P01-006 / WP-003; intake and implementation commits, exact-index gates, full QA, independent review, limits and rollback above; closing Task index pending |
