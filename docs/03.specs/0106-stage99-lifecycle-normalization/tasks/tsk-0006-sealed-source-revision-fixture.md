@@ -2,7 +2,7 @@
 title: "Sealed Source Revision Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -38,7 +38,7 @@ fixture. Completed Tasks0003/0004/0005 and their evidence remain historical.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | Record the real frozen Registry, source and successor at the authenticated source revision | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Observed intake](#observed-intake) |
+| WORK-006 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | Record the real frozen Registry, source and successor at the authenticated source revision | repo-tooling-engineer | frontmatter | PASS | accepted | [Implementation observations](#implementation-observations) |
 
 ## Task Evidence
 
@@ -46,8 +46,8 @@ fixture. Completed Tasks0003/0004/0005 and their evidence remain historical.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-060 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Hosted failure and exact named reproduction | Unchanged additive recovery fixture at P01 `c4c0a5f2…` | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-061 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Changed-input recovery checks and scoped hooks | Reviewed corrected standalone recovery fixture | PASS | [Implementation observations](#implementation-observations) | accepted |
-| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Observed draft and ready indexes; current implementation index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
-| EVD-P02-063 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Prospective terminal completion and independent review | Pending isolated terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Observed draft, ready and implementation indexes; current closing index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-063 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Prospective terminal completion and independent review | Observed isolated terminal candidate, distinct from actual closing index | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -150,9 +150,39 @@ Its exact message SHA-256 is
 `75c73116b3b6108181d1456ac01161b727e3ba46d2d8b5740a70f4aa35312380`;
 message receipt SHA-256 is
 `a2fcf4c987d38bd2e2be67f8bee4bc8f3c1572799fa2749d07732c78c47b40ad`.
-The current implementation index and terminal observations remain NOT_RUN
-until performed. EVD-P02-062 acceptance applies only to observed draft and
-ready indexes. Quality and independent review are separate from the sole writer.
+The actual implementation index subsequently passed all seven fresh canonical
+staged gates, pinned Task Markdown, its exact configured message and separate
+final independent review. Staged receipt SHA-256 is
+`cfa75d6fcc5f0482b5beea9578b6c9151ccf4133ddd2bf10055a0b260fdac652`;
+raw stdout SHA-256 is
+`80328d0efdd7d92217def89cb41829ba546fa7973d753a266f09fe734036fb02`.
+The exact implementation message SHA-256 is
+`07512eb6a04d99731a59ef1f3a9f709822e51c470c5fb5dded1c6e3026faeef9`;
+its receipt SHA-256 is
+`acbd3c9b664d5ca9053c0f25a543a0ee827f7c15b14a5cc7ac0fb6e67b3a6dec`.
+The Task Markdown receipt SHA-256 is
+`4d56e66379df021f43a73ecaa0334cef646f14b3cfd66cae2f60dcb220df5da4`.
+All streams and cleanup completed with stable source/index/ref identities.
+EVD-P02-062 acceptance covers only these observed source indexes.
+
+The nonauthoritative isolated terminal proposal under ignored
+`.worktrees/proposal/p01-task6-c4-terminal` passed SPEC-0106-only completion
+and separate independent review. Actual completion snapshot SHA-256 is
+`eb063ea60cb4f0647e3d3e1ea8cbc7824f03510481fc0b9e8e9e8fefd7ca015b`;
+raw stdout SHA-256 is
+`b8a0952ef424b0a2f9111eba67c3866c1f020ecdbfda2b88965432024dc24c02`;
+structured receipt SHA-256 is
+`5365448842b6a2be0597a4bb1ce50ffc4517ac077dc01d5c6ccf109c12d48f64`.
+The clone and original input identities remained stable, streams and cleanup
+completed, and no proposal staged run was required or performed.
+
+The user's explicit conditional reflection permission allows this normal
+source closing candidate after prospective acceptance. Its fresh actual
+staged, SPEC-0106 completion, configured message and separate final review
+remain NOT_RUN until observed; every one must pass before the closing commit.
+EVD-P02-063 accepts the prospective lane only. Actual closing receipts and
+the closing commit identity stay external, avoiding a source self-OID loop.
+Quality and independent review are separate from the sole writer.
 The 21 recovery methods share this setup; their parity, source-edge, identity,
 cutover and no-rediscovery assertions remain unchanged. Each source state
 transition is a normal forward commit after required actual checks/review.
