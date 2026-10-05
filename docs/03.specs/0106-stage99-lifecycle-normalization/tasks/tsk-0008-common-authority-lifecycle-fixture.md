@@ -2,7 +2,7 @@
 title: "Common Authority Lifecycle Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -45,7 +45,7 @@ historical inputs.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-080 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Hosted failure and exact named RED | Clean final Task0007 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-081 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Changed-input controls and scoped hooks | Upcoming reviewed fixture | NOT_RUN | [Implementation observations](#implementation-observations) | pending |
-| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Upcoming logical indexes | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Observed draft index only | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-083 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Prospective terminal completion and independent review | Upcoming isolated candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -90,8 +90,30 @@ NOT_RUN — no fixture change or changed-input validation has occurred.
 
 ### Validation boundaries
 
-Draft authoring establishes scope only. Current draft staged/message checks,
-readiness, implementation and terminal acceptance remain NOT_RUN until observed.
+The actual draft index passed six fresh canonical staged gates, configured
+message validation and separate final independent review. Complete output and
+cleanup preserved source, index and reference identities. Staged receipt
+SHA-256 is
+`f9bb71af1b1fd2edb6515afbbc8c6c3271a11a274fc00983caee14bca02e7e52`;
+raw stdout SHA-256 is
+`fbd5408dc71c529fb2769c5230048848dc6abacdfcf9a34ff476b8b9cd5a644b`;
+configured message receipt SHA-256 is
+`03e959f024b352e0977425f60e554e47fa4caf01585b05cae4201d102b4ccdd3`.
+EVD-P02-082 accepts this observed draft index only.
+
+Readiness selects exactly the four allowed paths through the canonical
+selector: seven validators, no unmatched paths and no validator execution.
+Safe selection receipt SHA-256 is
+`17357461df525e6c1db23e36f6d3d4dbbc819976aa04928e5c18a02646df70f6`.
+The explicit four-method manifest selects the changed route/state case,
+unowned/retired route refusal, native invocation control and dangling retired
+governance-root refusal. Its SHA-256 is
+`7e13588a823153383e59ca5c5e625d3d1fa72c7ced5d72fb1e7f2051186db2e5`.
+Focused commands retain 60-second bounds; canonical staged retains its existing
+runner limits. Pinned hook/configuration prerequisites are unchanged from prior
+observed checks. These observations establish implementation readiness, not
+execution acceptance. Current ready-index checks, implementation and terminal
+acceptance remain NOT_RUN until observed.
 Quality and independent review are separate from the sole writer. The isolated
 terminal candidate needs SPEC-0106 completion/review only; normal source
 reflection must pass fresh actual staged/completion/message and final separate
