@@ -655,12 +655,14 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
 
     def test_lifecycle_free_navigation_creation_needs_no_migration_event(self):
         registry = load_registry(ROOT)
-        path = PurePosixPath(
-            "docs/90.references/research/9999-navigation-fixture/README.md"
-        )
+        path = PurePosixPath("docs/90.references/research/README.md")
         created = lifecycle.document_from_text(registry, path, "# Fixture\n")
 
-        self.assertEqual(created.profile_id, "common/readme-research-pack")
+        self.assertEqual(created.profile_id, "common/readme-collection-index")
+        self.assertIsNone(
+            document_contracts.classify_path(registry, path).lifecycle_domain
+        )
+        self.assertIsNone(created.status)
 
         actual = compare_lifecycle(
             registry,
