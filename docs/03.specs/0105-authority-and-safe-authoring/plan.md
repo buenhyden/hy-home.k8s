@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -78,11 +78,14 @@ local full QA. Select affected gates without running that lane; run the exact
 staged index for each logical commit, current lifecycle completion and actual
 message checks, then obtain independent read-only review. The original
 WORK-001–005 validation requirements and recorded full results are unchanged.
-The request owner clarified that this follow-up may use the four local commits
-required by the Task's legal `draft` → `ready` → `in-progress` → `completed`
-edges: scope draft, readiness, observed P02 re-verification, then reviewed
-P01 completion. A failed required check or unresolved finding holds the
-affected Task state and blocks its completion.
+The request owner clarified that this follow-up may use at least four local
+commits for the Task's legal `draft` → `ready` → `in-progress` → `completed`
+document edges. The lifecycle checker also compares each Task row across Git
+history. After the P02 recheck commit, WORK-007 remained `ready` in the
+committed source; a proposed direct row transition to `completed` failed.
+One additional local commit records its `in-progress` row before the terminal
+handoff. A failed required check or unresolved finding holds the affected
+Task state and blocks its completion.
 
 ## Risks & Mitigations
 

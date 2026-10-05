@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Task"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -17,11 +17,10 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 This Task owns the single P02 execution item and its observed results. Intake
 and source implementation are committed and reviewed. The required source
 checks and explicit local main integration/branch cleanup have observed PASS
-evidence. This completed acceptance candidate awaits its separate closing
-affected/index/message, completion-mode and read-only review checks; their
-original EVD-P02-013 outcomes remain `NOT_RUN/pending`. The current P01
-follow-up records a separate historical recheck in EVD-P02-014; its changed
-closing index and final review still need their own evidence.
+evidence. The original EVD-P02-013 closing candidate remains
+`NOT_RUN/pending`; the later P01 follow-up's EVD-P02-014 accepts observed
+historical and changed-index checks and independent review. A current remote,
+provider or live result is not inferred.
 The [Spec](../spec.md) owns behavior and acceptance; the
 [Plan](../plan.md) owns ordered work and dependencies.
 
@@ -63,7 +62,7 @@ The [Spec](../spec.md) owns behavior and acceptance; the
 | EVD-P02-011 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | First final full, interrupted after Archive failure | Index `bfa180e8740b8c4a3b7a7c8387b8d8a3ba51c5d9`; base HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751`; 1301 all-file inputs | FAIL | [First final full observation](#first-final-full-observation) | pending |
 | EVD-P02-012 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Further full QA excluded by latest explicit user scope | No further full or all-files/unit substitute executed | NOT_RUN | [Latest required validation and local finish scope](#latest-required-validation-and-local-finish-scope) | not-required |
 | EVD-P02-013 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Completed candidate closing affected/index/message, completion-mode and document review | Three-document candidate on main after source `9985d836a4af596e3143aae000b891f0c8862bf7` | NOT_RUN | Closing checks pending; no source acceptance result is reused for this candidate | pending |
-| EVD-P02-014 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Current re-verification of the historical closing candidate and changed-index closure | Historical `9985d836…` to `9067729b…` input observed; current changed-index completion/review pending | NOT_RUN | [P01 follow-up recheck](#p01-follow-up-recheck) | pending |
+| EVD-P02-014 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Current re-verification of the historical closing candidate and changed-index closure | Historical `9985d836…` to `9067729b…`; later P02 index tree `7aea4f72807765619de08f83efc9d8b459cd9702` | PASS | [P01 follow-up recheck](#p01-follow-up-recheck) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -891,7 +890,7 @@ candidate in isolated scratch material: named `main` HEAD
 Plan and Task path input SHA-256
 `e7d7d0cc434daec908b34736a6f02d810ca3488d71f3413aea97f4864562cd52`.
 The first detached-HEAD scratch setup returned FAIL on three of six staged
-gates because the source lacked a durable named ref; the failed result remains
+gates because no durable named ref matched that scratch HEAD; the failed result remains
 in `/tmp/hy-p02-recheck-6luxz6_7/staged.stdout`. The corrected scratch
 checkout used a named source ref and ran exactly one registered staged check:
 `python3 -B scripts/run-validation-lane.py --root <SCRATCH_REPO> --lane staged
@@ -912,7 +911,42 @@ returning PASS; the message file SHA-256 was
 This proves current grammar conformance, not delivery of a hook in the earlier
 commit. The affected selector chose the same six gates; affected execution is
 `NOT_RUN` under the current scoped request. EVD-P02-013 stays its historical
-`NOT_RUN/pending`. EVD-P02-014 remains pending until exact current closing
-index, lifecycle completion and independent review actually pass. The prior
-source acceptance and local main integration are unchanged. Current remote,
-provider runtime and live states remain `DEFER` to their respective owners.
+`NOT_RUN/pending`.
+
+On the later P02 change candidate, exact staged index tree
+`7aea4f72807765619de08f83efc9d8b459cd9702` against branch HEAD
+`1952642af8be9cc84353ea978d44cd897d11cba9` passed all six selected
+staged gates in 192.555 seconds, stdout SHA-256
+`39ee0d26f7791c151f4077e919f173003f9e2a64c934eb37a2d8b7bf97cbdc2f`.
+The read-only lifecycle completion command on the same index and SPEC-0106
+anchor returned PASS in 7.696 seconds with `INDEX-SNAPSHOT` SHA-256
+`188cf6dc00d91f223298efa38d6849be618ccf877b6359115b7cfaa88d2e2f31`;
+its stdout SHA-256 is
+`d34695bb31d71c0f0982e2ccd6ef0c5aa5d0e4f70fcb77b6486202fdf106f840`.
+The actual message `docs(governance): record P02 closing recheck evidence`
+passed the pinned Commitizen check. Independent read-only code-reviewer
+`/root/qa_release_survey` inspected the exact P02 Spec, Plan and Task hashes
+`aaaeccbcf549b83d951cff0f8806932fbe76ad789b2bdcd3cf8e1d1828ee6d24`,
+`a14c6c8e94a3f7c8f58d53d061d1cda9cb649ca5cb8088acb92c10b69ec7c295`,
+and `7bab0f731fba4262ac83a17cf9cd25a7cdf850cdd181c3181c6222475ba73223`.
+The reviewer reported PASS with no blocking finding; these checked bytes
+became commit `e85d6557b71e84adaefa9dfc4ac5ad0b553fec54`. EVD-P02-014
+accepts this current local static recheck. The prior source acceptance and
+local main integration are unchanged. Current remote, provider runtime and
+live states remain `DEFER` to their respective owners.
+
+The subsequent P02 acceptance-prose candidate on that branch used staged
+tree `6771b01e58fdf02b263c64c1481ec990ccf15374`. Canonical staged QA
+passed six of six gates in 196.226 seconds (stdout SHA-256
+`39ee0d26f7791c151f4077e919f173003f9e2a64c934eb37a2d8b7bf97cbdc2f`,
+`/tmp/hy-p01-prefinal-qa-_9ywv2f7/staged.stdout`). SPEC-0106-only
+completion on that same index returned PASS in 7.300 seconds with
+`INDEX-SNAPSHOT` SHA-256
+`e65c32e3d74cc875eab4895c51bb50c0299ee391502a1ac5951ac4f086bbf719`
+and stdout SHA-256
+`e8b60079f37df90828b6130ba272cc82cf4e84904a0148bb48c3532857a77df8`.
+The final intended message passed its separate pinned Commitizen check on
+the unchanged message bytes. These current local results support the
+EVD-P02-014 disposition; the subsequent Task-only handoff change has its own
+exact-index check before any final commit. No result for that later input is
+asserted here.

@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -33,9 +33,10 @@ Intake docs established the reviewable contract; the atomic implementation
 changed the form/schema/checker/current-consumer surface. A corrective local
 commit repaired an observed post-merge history-cache failure without changing
 the acceptance contract. The original closing candidate commit recorded the
-document state; it did not by itself establish that its separate closing
-checks ran. The current Task evidence owns that re-verification and its
-remaining limits. The Task alone owns execution observations.
+document state but did not itself establish that its separate closing checks
+ran. EVD-P02-014 records the later historical and current-index rechecks,
+with the original EVD-P02-013 result preserved. The Task alone owns execution
+observations.
 
 ## Context
 
@@ -89,9 +90,9 @@ route values and frozen fixtures. Inspect affected paths before selecting
 preceded each original P02 local commit. Its finish instruction excluded further
 full QA and all-files/unit substitutes from the required set. Preserve the
 interrupted full observations and record an unexecuted full as NOT_RUN with
-acceptance not-required. The current P01 follow-up selects affected gates
-without executing that lane; it rechecks the historical P02 candidate and
-the current changed index separately. The local main finish is already
+acceptance not-required. The current P01 follow-up selected affected gates
+without executing that lane; it rechecked the historical P02 candidate and
+the later changed index separately. The local main finish is already
 recorded in the Task. Record Task results as `NOT_RUN`, `PASS`, `FAIL`, `DEFER` or
 `NOT_APPLICABLE`, with separate criterion acceptance and quality-lane evidence;
 never promote an unexecuted check. The independent reviewer reports findings read-only.
@@ -112,8 +113,8 @@ while preserving the Task evidence, Git ledger and unrelated changes.
 review have observed evidence, and the Task records exact checked snapshots,
 commands, limits, residual risk and next owner. The Spec and Plan carried
 version 1.0.0 and completed candidate status at the original source acceptance
-and local finish recorded in the Task. That candidate awaits its separate
-current closing-index checks and review; the historical recheck alone does not
-settle them. It does not invent an approving actor, timestamp,
+and local finish recorded in the Task. The later EVD-P02-014 accepts the
+historical recheck and a current changed-index staged, completion and
+independent review result; it does not invent an approving actor, timestamp,
 authentication or revocation check. Remote/live lanes remain
 unobserved unless separately authorized and executed.

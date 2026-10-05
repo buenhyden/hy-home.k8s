@@ -1,6 +1,6 @@
 ---
 title: "Authority and Evidence Follow-up"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -53,14 +53,14 @@ revision `2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb` is not a reset target.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | in-progress | NOT_RUN | pending | Source comparison and EVD-P01-006 below |
-| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate the four authorized Task-lifecycle commits and obtain independent read-only review | platform | ready | NOT_RUN | pending | EVD-P01-007 and handoff below |
+| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | completed | PASS | accepted | [Historical P02 candidate recheck](#historical-p02-candidate-recheck) and EVD-P01-006 below |
+| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Verify local delivery inputs and record lifecycle handoff | platform | in-progress | NOT_RUN | pending | EVD-P01-007 and handoff below |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-P01-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | WORK-006 | Dated source, consumer and authority comparison | Clean main `9067729b`; historical SPEC-0103 and current P02 records | NOT_RUN | [Verification Summary](#verification-summary) | pending |
+| EVD-P01-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | WORK-006 | Dated source, consumer and authority comparison | Base `9067729b`; SPEC-0103 hosted record; SPEC-0106 EVD-P02-014 and phase3 tree `7aea4f72807765619de08f83efc9d8b459cd9702` | PASS | [Historical P02 candidate recheck](#historical-p02-candidate-recheck) | accepted |
 | EVD-P01-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-007 | Exact index, completion, message and independent review | Pending logical index snapshots | NOT_RUN | [Verification Summary](#verification-summary) | pending |
 
 ## Approval and Safety Boundaries
@@ -76,9 +76,11 @@ revision `2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb` is not a reset target.
   secrets and private runtime state.
 - **Approval Required**: the current user request authorizes these scoped
   reversible document changes, one local worktree, and read-only independent
-  review. The owner subsequently clarified that four local logical commits
-  may be used to traverse the new Task's legal `draft` → `ready` →
-  `in-progress` → `completed` lifecycle. It grants no current hosted-state lookup,
+  review. The owner subsequently clarified that at least four local logical
+  commits may be used to traverse the new Task's legal `draft` → `ready` →
+  `in-progress` → `completed` lifecycle. A fifth local commit is needed after
+  the observed row-edge refusal, because WORK-007 must also pass through a
+  committed `in-progress` row. It grants no current hosted-state lookup,
   remote push/PR/merge, archive disposition, live action, secret access,
   destructive cleanup or worktree removal. An actual protected action requires
   the separate operator route in `.agents/governance/approval-and-safety.md`;
@@ -186,4 +188,42 @@ affected selection belong to
 [SPEC-0106 EVD-P02-014](../../0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md#p01-follow-up-recheck).
 This P01 Task consumes that source evidence for WORK-006; it does not turn
 the prior EVD-P02-013 into a past PASS. Current changed-index completion and
-final read-only review remain pending.
+final read-only review were subsequently performed on the phase3 index above:
+six staged gates passed, SPEC-0106-only lifecycle completion passed, the
+actual message passed pinned Commitizen, and independent read-only reviewer
+`/root/qa_release_survey` reported no blocking finding on those exact bytes.
+Normal local commit `e85d6557b71e84adaefa9dfc4ac5ad0b553fec54`
+recorded the correction. The P02 Task owns the commands, hashes and limits.
+This accepts WORK-006 and EVD-P01-006 for the dated source and current local
+P02 evidence only. Current remote state, authenticated operator approval and
+native/runtime activation remain `DEFER` to their existing owners. WORK-007
+and EVD-P01-007 still await final local handoff checks and review.
+
+The subsequent P02 acceptance-prose index
+`6771b01e58fdf02b263c64c1481ec990ccf15374` passed six of six staged
+gates in 196.226 seconds. SPEC-0106-only completion returned PASS with
+`INDEX-SNAPSHOT` SHA-256
+`e65c32e3d74cc875eab4895c51bb50c0299ee391502a1ac5951ac4f086bbf719`.
+The final intended message
+`docs(governance): complete P01 evidence follow-up` passed pinned Commitizen;
+its file SHA-256 is
+`dd69367b7785b4fa37c0a4ba8a188af86693a61e9fe45b7fa4f0a0f784441dd1`.
+The independent reviewer identified the need to verify changed P02 prose on
+its own index, and the P02 Task owns that result. WORK-007 remains
+`in-progress/NOT_RUN/pending` until its terminal index and review are observed.
+
+An isolated prospective terminal index at branch HEAD
+`e85d6557b71e84adaefa9dfc4ac5ad0b553fec54` and tree
+`514d0e53b1311db6c0ba54012ab5c08338d7ea13` failed the registered
+staged lane after 198.296 seconds: five
+of six gates passed, while `document-lifecycle` rejected
+`TASK-ITEM-EDGE WORK-007: ready -> completed`. The source row in committed
+HEAD was `ready`; the later uncommitted `in-progress` row could not supply a
+historical transition. This is a real required-gate FAIL for that abandoned
+proposal, not a PASS for the current source. Its stdout SHA-256 is
+`97e08e0751812d52fcc00eb704c1245e4a2488330a686d1be25cbfec7d5d7107`
+at `/tmp/hy-p01-final-proposal-OIXvGSSq/staged.stdout`.
+The Task remains in-progress.
+The next local index records the intermediate WORK-007 row and preserves
+EVD-P01-007 as `NOT_RUN/pending`. No Registry edge, validator or history is
+changed to evade the result.

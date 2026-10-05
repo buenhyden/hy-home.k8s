@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -17,8 +17,10 @@ P02 makes the existing Stage 99 document contract describe lifecycle and
 execution traceability consistently across its registry, forms, validators,
 and current consumers. The request owner approved this local change plan;
 source implementation and local finish are accepted from the observed Task
-evidence. This completed document candidate still needs its separate closing
-checks and read-only review. This package follows the
+evidence. The later P01 follow-up rechecked the historical closing candidate
+and the current P02 index; EVD-P02-014 records staged, completion and
+independent review acceptance while preserving EVD-P02-013 as the original
+unrun result. This package follows the
 completed [P01 package](../0105-authority-and-safe-authoring/spec.md) and does
 not reopen the historical SPEC-0104 package.
 
@@ -178,9 +180,9 @@ original P02 logical commit. Its finish instruction removed full QA from the
 required acceptance set and prohibited another full run or an all-files/unit
 substitute. Preserve earlier interrupted full observations; an unexecuted full
 check is NOT_RUN with acceptance not-required, never PASS. The current P01
-follow-up selects affected gates without executing that lane; it rechecks the
-historical P02 candidate and the changed closing index separately. Refresh
-closing evidence on the actual changed index before claiming completion.
+follow-up selected affected gates without executing that lane; it rechecked
+the historical P02 candidate and a later changed closing index separately.
+EVD-P02-014 records the observed checks and their input revision.
 Independent read-only review checks the final meaning. At the intake snapshot,
 P02 implementation full, unit, fixture and completion-mode checks had not run;
 the Task owns all later execution observations.
