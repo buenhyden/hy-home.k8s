@@ -1,8 +1,8 @@
 ---
 title: "Registered Task Template Instantiation"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -49,8 +49,8 @@ source and original Task EVD-P02-013/014 are preserved.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-030 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Existing merge failure | Frozen P02 merge index `c5582dff…` | FAIL | [Observed intake](#observed-intake) | pending |
-| EVD-P02-031 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Registered Task template real-Git RED | Named fixture pending | NOT_RUN | Pending | pending |
-| EVD-P02-032 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Narrow GREEN and existing refusals | Implementation pending | NOT_RUN | Pending | pending |
+| EVD-P02-031 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Registered Task template real-Git RED | Ready base; unchanged validator `6c02261c…`, corrected test `db442023…` | FAIL | [Observed RED](#observed-red) | pending |
+| EVD-P02-032 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Narrow GREEN and existing refusals | Validator `1ec86e4d…`; final focused test `80816a8b…` and explicitly unchanged prior inputs | PASS | [Focused implementation](#focused-implementation) | accepted |
 | EVD-P02-033 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Actual-index staged/message and separate review | Four logical candidates pending | NOT_RUN | Pending | pending |
 | EVD-P02-034 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Terminal proposal and separate actual closing index | Closing candidates pending | NOT_RUN | Pending | pending |
 
@@ -94,8 +94,9 @@ The selected neutral role and both required procedures were explicitly read.
 This registered-member edit uses the explicit active-Task delegation, not a
 filename-based ownership inference. Quality and independent review are
 separate actors; tracked provider projections prove no native enforcement.
-At the draft intake, implementation, RED/GREEN and hosted repair outcomes
-were pending. They remain pending at this ready transition.
+At both the draft intake and ready transition, implementation, RED/GREEN
+and hosted repair outcomes remained pending. The observed implementation
+checks below do not promote hosted or current-index acceptance.
 
 ### Ready prerequisites
 
@@ -127,6 +128,88 @@ Named tests use a separate 60-second command bound. Canonical execution
 retains the runner's existing timeout, output and cleanup limits.
 
 The original hosted run completed with a unit-tests failure while its
-pre-commit and other complement gates passed. Its five named failures are
-being diagnosed separately; this ready transition claims no hosted repair
-or integration acceptance and does not retry that run.
+pre-commit and other complement gates passed. Five named cases were diagnosed
+as stale current Registry fixture expectations, separately from this copy
+guard. This Task claims no hosted repair or integration acceptance and does
+not retry that run.
+
+### Observed RED
+
+The first test-only attempt failed during fixture setup because the renderer
+used the raw Registry field instead of the typed `.template` accessor.
+That setup failure, receipt SHA-256
+`60f689a749485e1612cb9752d53a0116b7e556f7aab0e5a4d0647f4c0afa8e71`,
+is not the intended RED.
+After that correction, the named real-Git test reached its final assertion:
+actual C-copy provenance identified the registered Task form, and the parsed
+first draft was valid, but the original guard returned True (rejection).
+The test exited 1; stderr SHA-256 was
+`2a5502bdcebfbb4d4dbffa927e45b6946d0108ca9c8d89494c2d811c641cd449`.
+This historical failing input remains FAIL in EVD-P02-031.
+Independent inspection also observed actual C007 from the same form at this
+Task's own draft introduction; no source-template blob changed there.
+
+### Focused implementation
+
+The final focused validator bytes have SHA-256
+`1ec86e4ddd1c994bb18e11275d2c2fc52de1a0606337149c9daf6542eb0cc91c`;
+the test file has SHA-256
+`80816a8b9cfde307db5b97476d28b9e749cc0b3b41fe7f1179d5aaf11f024249`.
+
+The private C-copy exception verifies the current and exact parent/event
+Task template binding, unchanged regular Git source blobs, first valid draft,
+path-derived canonical ID absent from the base and unique in the proposed
+snapshot. First-appearance metadata is supplied in CI and explicit-ref as
+well as staged history. Ordinary canonical-document copy permission is
+forwarded separately with its existing staged/generation-admission scope.
+Later appearances, R signals, normal event comparisons and bounded evidence
+controls retain their existing paths.
+
+Six Task-specific named methods passed across separate 60-second bounded
+invocations: real registered-form copy; legal CI/explicit-ref history;
+real divergent staged merge; ten invalid source/binding/state/identity
+conditions, including proposed-only duplicate ID; ordinary canonical Task
+copy refusal in CI; and preserved later Task checks.
+The existing 22 explicitly enumerated cumulative methods also passed;
+the direct unittest receipt reports 32.706 seconds and SHA-256
+`dcc10da5cc6b2eb25a3266a63a654068f9973c18a0b841bf79f99913e850307b`.
+Their methods, global helpers, configuration and validator bytes remained
+unchanged during the final new-test refinements; AST comparison receipts
+under `.worktrees/proposal/` support that reuse.
+
+The first later-result assertion incorrectly required the private history
+proof to own final current Task evidence. Actual metadata proved that the
+mutation changed a WORK result from PASS/accepted to NOT_RUN/pending and
+that the committed Task binding existed. The private proof admits the legal
+edges, while normal CI rejects the completed result with
+`TASK-TERMINAL-EVIDENCE`; only `LIFECYCLE-CREATE` is removed by cumulative
+admission. Diagnostic receipt SHA-256
+`54909276d655438f942feb12daca25db6547deee2fcbf8e712856650b5c72532`
+withdraws the earlier ineffective-mutation hypothesis.
+The corrected test checks a valid normal CI control, illegal-edge private
+refusal, a nonempty result mutation and normal terminal-evidence rejection
+with no create diagnostic. Its PASS receipt has SHA-256
+`10d88e2f55c1d3354bb5b45155b39b1161a48cfcdf64f033ceffa00a296dc4be`;
+the ten-condition boundary receipt has SHA-256
+`e258d8e199b060fda1e8014601170360f13ae67440e046b40f5bb37a30676e74`.
+No production change beyond the approved template-copy boundary was needed.
+
+Pinned Ruff 0.16.5 check/format and detect-secrets 1.5.0 hooks passed on
+exact-byte disposable copies of the two changed Python files. Formatting
+preserved both source hashes; the hooks did not mutate the sole writer's
+worktree. Safe receipt hashes were
+`a0b89d57f9b6c3ceb980814836970c036d45058fc93ed1be57acf8b0381352f1`
+(Ruff check),
+`370442f018ade47bf8c4df3e9a82d9ee38eb53948d2e813c3609b4b23daa2752`
+(Ruff format) and
+`ee9b110ce682d490c31e03e9c058b478118d877f7ab42ae8bbad2e85e26d6757`
+(scanner); outer stderr was empty.
+
+At implementation candidate authoring, Task Markdown hooks, this index's
+staged/message checks and whole-index review awaited their own observation.
+External actual receipts determine whether that exact candidate may commit;
+they are recorded at the next logical transition without self-OID insertion.
+The work item remains pending here; focused EVD-P02-032 acceptance covers
+its named checks and the observed Python hooks only. Historical failures
+and required hosted/integrated-main delivery remain separate from local
+source acceptance.

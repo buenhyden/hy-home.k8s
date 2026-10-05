@@ -191,6 +191,314 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             end,
         )
 
+    def registered_task_document(self, status: str = "draft") -> bytes:
+        """Render the actual registered form, retaining its real Git provenance."""
+        template = next(
+            profile.template
+            for profile in self.registry.profiles
+            if profile.profile_id == "sdlc/task"
+        )
+        text = (self.root / template).read_text()
+        substitutions = {
+            "{{TITLE}}": "Registered template history",
+            "{{OWNER}}": "platform",
+            "{{UPDATED}}": "2026-10-05",
+            "{{ARTIFACT_ID}}": "SPEC-9999-TSK-0001",
+            "{{PARENT_ID}}": "SPEC-9999-PLAN-0001",
+            "{{SPEC_RELATIVE_PATH}}": "../spec.md",
+        }
+        for placeholder, value in substitutions.items():
+            text = text.replace(placeholder, value)
+        self.assertNotIn("{{", text)
+        text = text.replace("VAL-FEATURE-001", "VAL-P02-004")
+        text = text.replace("WORK-001", "WORK-004")
+        if status == "completed":
+            text = text.replace(
+                "| NOT_RUN | pending | Pending named repository evidence |",
+                "| PASS | accepted | [Synthetic fixture result](#verification-summary) |",
+            ).replace(
+                "| NOT_RUN | Pending | pending |",
+                "| PASS | [Synthetic fixture result](#verification-summary) | accepted |",
+            )
+        return text.replace('status: "draft"', f'status: "{status}"', 1).encode()
+
+    def registered_task_history(self) -> tuple[PurePosixPath, str]:
+        """Create actual owner documents and every legal Task transition."""
+        package = "docs/03.specs/9999-template-history"
+        for name in ("spec.md", "plan.md"):
+            source = ROOT / "docs/03.specs/0106-stage99-lifecycle-normalization" / name
+            self.git.commit(
+                f"{package}/{name}",
+                source.read_text().replace("SPEC-0106", "SPEC-9999").encode(),
+            )
+        self.base = self.oid("HEAD")
+        target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")
+        for status in ("draft", "ready", "in-progress", "completed"):
+            self.git.commit(target.as_posix(), self.registered_task_document(status))
+        return target, self.oid("HEAD")
+
+    def test_real_registered_task_template_first_draft_copy_is_admitted(self) -> None:
+        target = PurePosixPath(
+            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+        )
+        self.git.commit(target.as_posix(), self.registered_task_document())
+        created = self.oid("HEAD")
+        records = self.git.run(
+            "diff",
+            "--name-status",
+            "-z",
+            "--find-copies=1%",
+            "--find-copies-harder",
+            "-l0",
+            self.base,
+            created,
+            "--",
+        ).split(b"\0")
+        destination = records.index(target.as_posix().encode())
+        self.assertTrue(records[destination - 2].startswith(b"C"))
+        self.assertEqual(
+            records[destination - 1],
+            b"docs/99.templates/templates/specs/task.template.md",
+        )
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        document = cache._snapshot(created)[0][target]
+        self.assertIsNone(document.state_issue)
+        self.assertFalse(
+            VALIDATOR._history_rename_or_copy_into_path(
+                self.root,
+                self.base,
+                created,
+                target,
+                target_document=document,
+                cache=cache,
+            )
+        )
+
+    def test_registered_task_history_is_admitted_by_ci_and_explicit_ref(self) -> None:
+        target, completed = self.registered_task_history()
+        for mode in ("ci", "explicit-ref"):
+            with self.subTest(mode=mode):
+                result, output = (
+                    self.invoke(mode, base_ref=self.base, to_ref=completed)
+                    if mode == "ci"
+                    else self.explicit(self.base, completed)
+                )
+                self.assertEqual(result, 0, output)
+        self.assertTrue(
+            VALIDATOR._history_proves_cumulative_create(
+                self.root,
+                self.registry,
+                target,
+                self.base,
+                completed,
+            )
+        )
+
+    def test_registered_task_history_is_admitted_by_real_staged_merge(self) -> None:
+        self.git.run("checkout", "--quiet", "-b", "side", self.base)
+        _, completed = self.registered_task_history()
+        common = self.base
+        self.git.run("checkout", "--quiet", self.primary_branch)
+        self.git.run("merge", "--quiet", "--ff-only", common)
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
+        self.git.run("merge", "--no-commit", "--no-ff", completed)
+        result, output = self.invoke("staged")
+        self.assertEqual(result, 0, output)
+
+    def registered_task_boundary_parent(self, mutation, target, source, data):
+        if mutation == "state":
+            return self.registered_task_document("ready")
+        if mutation == "identity":
+            return data.replace(b"SPEC-9999-TSK-0001", b"SPEC-9999-TSK-0002")
+        if mutation == "reused":
+            self.git.commit(
+                "docs/03.specs/9999-template-history/tasks/tsk-0002-other.md",
+                data,
+            )
+        elif mutation == "existing-target":
+            self.git.commit(target.as_posix(), data)
+            return data + b"\nA later body maintenance event.\n"
+        elif mutation == "missing-source":
+            self.git.run("rm", "--", source.as_posix())
+            self.git.run("commit", "--quiet", "-m", "missing template")
+        elif mutation == "nonregular-source":
+            (self.root / source).unlink()
+            (self.root / source).symlink_to("plan.template.md")
+            self.git.run("add", "--", source.as_posix())
+            self.git.run("commit", "--quiet", "-m", "nonregular template")
+        return data
+
+    def registered_task_boundary_event(self, mutation, source, original, data):
+        if mutation == "changed-source":
+            (self.root / source).write_bytes(original + b"\nChanged form.\n")
+            self.git.run("add", "--", source.as_posix())
+        elif mutation == "binding":
+            path = self.root / "docs/99.templates/registry.json"
+            raw = json.loads(path.read_text())
+            next(p for p in raw["profiles"] if p["id"] == "sdlc/task")[
+                "template_source"
+            ] = "docs/99.templates/templates/specs/plan.template.md"
+            path.write_text(json.dumps(raw))
+            self.git.run("add", "--", "docs/99.templates/registry.json")
+        elif mutation == "proposed-duplicate":
+            relative = "docs/03.specs/9999-template-history/tasks/tsk-0002-other.md"
+            (self.root / relative).parent.mkdir(parents=True, exist_ok=True)
+            (self.root / relative).write_bytes(data)
+            self.git.run("add", "--", relative)
+
+    def test_registered_task_template_boundary_rejects_invalid_inputs(self) -> None:
+        target = PurePosixPath(
+            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+        )
+        source = PurePosixPath("docs/99.templates/templates/specs/task.template.md")
+        for mutation in (
+            "state",
+            "identity",
+            "reused",
+            "changed-source",
+            "other-form",
+            "binding",
+            "missing-source",
+            "nonregular-source",
+            "existing-target",
+            "proposed-duplicate",
+        ):
+            with self.subTest(mutation=mutation):
+                self.setUp()
+                registry = self.registry
+                data = self.registered_task_document()
+                original = (self.root / source).read_bytes()
+                data = self.registered_task_boundary_parent(
+                    mutation, target, source, data
+                )
+                self.base = self.oid("HEAD")
+                self.registered_task_boundary_event(mutation, source, original, data)
+                self.git.commit(target.as_posix(), data)
+                created = self.oid("HEAD")
+                cache = VALIDATOR._CumulativeHistoryCache(self.root, registry)
+                before = cache._snapshot(self.base)[0]
+                after = cache._snapshot(created)[0]
+                candidate_source = (
+                    PurePosixPath("docs/99.templates/templates/specs/plan.template.md")
+                    if mutation == "other-form"
+                    else source
+                )
+                arguments = (
+                    self.root,
+                    self.base,
+                    created,
+                    candidate_source,
+                    target,
+                    after[target],
+                    cache,
+                    before,
+                    after,
+                )
+                if mutation == "nonregular-source":
+                    with self.assertRaises(VALIDATOR.InvocationError):
+                        VALIDATOR._history_registered_task_template_copy(*arguments)
+                else:
+                    self.assertFalse(
+                        VALIDATOR._history_registered_task_template_copy(*arguments)
+                    )
+
+    def test_ordinary_canonical_task_copy_remains_rejected_by_ci(self) -> None:
+        source = PurePosixPath("docs/03.specs/9998-source/tasks/tsk-0001-source.md")
+        target = PurePosixPath(
+            "docs/03.specs/9999-template-history/tasks/tsk-0001-copy.md"
+        )
+        data = self.registered_task_document()
+        self.git.commit(source.as_posix(), data.replace(b"SPEC-9999", b"SPEC-9998"))
+        self.base = self.oid("HEAD")
+        self.git.commit(target.as_posix(), data)
+        created = self.oid("HEAD")
+        records = self.git.run(
+            "diff",
+            "--name-status",
+            "-z",
+            "--find-copies=1%",
+            "--find-copies-harder",
+            "-l0",
+            self.base,
+            created,
+            "--",
+        ).split(b"\0")
+        destination = records.index(target.as_posix().encode())
+        self.assertTrue(records[destination - 2].startswith(b"C"))
+        self.assertEqual(records[destination - 1], source.as_posix().encode())
+        self.git.commit(target.as_posix(), self.registered_task_document("ready"))
+        ready = self.oid("HEAD")
+        self.assertFalse(
+            VALIDATOR._history_proves_cumulative_create(
+                self.root,
+                self.registry,
+                target,
+                self.base,
+                ready,
+            )
+        )
+        result, output = self.invoke("ci", base_ref=self.base, to_ref=ready)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def assert_registered_task_later_refusal(self, target, invalid_tip, invalid):
+        if invalid == "edge":
+            self.assertFalse(
+                VALIDATOR._history_proves_cumulative_create(
+                    self.root,
+                    self.registry,
+                    target,
+                    self.base,
+                    invalid_tip,
+                )
+            )
+        else:
+            result, output = self.invoke("ci", base_ref=self.base, to_ref=invalid_tip)
+            self.assertNotEqual(result, 0, output)
+            self.assertIn("TASK-TERMINAL-EVIDENCE", output)
+            self.assertNotIn("LIFECYCLE-CREATE", output)
+
+    def test_registered_template_admission_preserves_later_task_checks(self) -> None:
+        for invalid in ("edge", "result"):
+            with self.subTest(invalid=invalid):
+                self.setUp()
+                target, valid_tip = self.registered_task_history()
+                valid_result, valid_output = self.invoke(
+                    "ci",
+                    base_ref=self.base,
+                    to_ref=valid_tip,
+                )
+                self.assertEqual(valid_result, 0, valid_output)
+                self.git.run("checkout", "--quiet", "-b", "illegal", self.base)
+                for status in ("draft", "ready"):
+                    self.git.commit(
+                        target.as_posix(), self.registered_task_document(status)
+                    )
+                ready = self.oid("HEAD")
+                self.assertTrue(
+                    VALIDATOR._history_proves_cumulative_create(
+                        self.root,
+                        self.registry,
+                        target,
+                        self.base,
+                        ready,
+                    )
+                )
+                completed = self.registered_task_document("completed")
+                if invalid == "result":
+                    self.git.commit(
+                        target.as_posix(),
+                        self.registered_task_document("in-progress"),
+                    )
+                    invalid_result = completed.replace(
+                        b"| PASS | accepted |", b"| NOT_RUN | pending |"
+                    )
+                    self.assertNotEqual(invalid_result, completed)
+                    completed = invalid_result
+                self.git.commit(target.as_posix(), completed)
+                invalid_tip = self.oid("HEAD")
+                self.assert_registered_task_later_refusal(target, invalid_tip, invalid)
+
     def test_explicit_ref_admits_absent_draft_active_chain(self) -> None:
         self.commit("draft")
         active = self.commit_reviewed_activation()
