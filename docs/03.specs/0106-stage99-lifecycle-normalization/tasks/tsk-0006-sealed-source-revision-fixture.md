@@ -2,7 +2,7 @@
 title: "Sealed Source Revision Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -46,7 +46,7 @@ fixture. Completed Tasks0003/0004/0005 and their evidence remain historical.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-060 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Hosted failure and exact named reproduction | Unchanged additive recovery fixture at P01 `c4c0a5f2…` | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-061 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Changed-input recovery checks and scoped hooks | Pending reviewed implementation | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
-| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Pending actual logical source indexes | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Observed draft index; current ready index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-063 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Prospective terminal completion and independent review | Pending isolated terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -70,8 +70,8 @@ The failure preview is capped at 1024 characters and is not an exhaustive
 failure count. It names
 `ArchiveDispositionRecoveryTest.test_additive_record_uses_its_own_sealed_disposition_not_work107_census`.
 The exact named method ran once under a 60-second bound and failed because
-`ARCHIVE-MIGRATION-PARITY` was unexpectedly present. Actual outer rc was1,
-elapsed0.902s; output and cleanup completed, source/index/refs stayed clean.
+`ARCHIVE-MIGRATION-PARITY` was unexpectedly present. Actual outer rc was 1,
+elapsed 0.902s; output and cleanup completed, source/index/refs stayed clean.
 Safe RED receipt SHA-256 is
 `b3e0260a8dda2d36358d401f14c3afd7d21dd370bcff38254dea6e85ab28b7cd`;
 raw stderr SHA-256 is
@@ -90,9 +90,28 @@ here; no production fallback or refusal is changed.
 
 ### Validation boundaries
 
-Draft records scope and actual intake only. Implementation, scoped hooks,
-current draft/ready indexes and terminal observations are NOT_RUN until
-performed. Quality and independent review are separate from the sole writer.
+The actual draft index passed all six selected canonical staged gates,
+the exact configured message check and separate independent review. Its
+staged raw stdout SHA-256 is
+`633757622d6c715f375839db60d4684bfaf1712090fcd45053d37519417f5b0f`;
+the structured receipt SHA-256 is
+`8d8a0ccfcbe8a7205b0600241a3c7c8a79b107858b93735cf6d97871725aca79`.
+The actual message SHA-256 is
+`59e1ab29bca9791458a4f3662fba1f42865fb0eb49f7c50b267adff75f47ddf6`;
+its receipt SHA-256 is
+`734855504b4c6a8ab0e4eb4c47a07786f52b3872d3339cb3b1cdc49fc87238cb`.
+All streams and cleanup completed, with unchanged input identities.
+
+Readiness inspected the finite four-path selector without running affected
+validation: seven validators selected, no unmatched path. The exact 21 named
+recovery methods are recorded in an external manifest. Existing pinned hooks
+and canonical runner prerequisites are available from the prior actual checks.
+An unsupported selection-only attempt through `qa.py affected` returned usage
+without executing a validator; the subsequent direct selector receipt is the
+observed readiness result. Implementation, scoped hooks, this ready index and
+terminal observations remain NOT_RUN until performed. EVD-P02-062 acceptance
+applies only to the observed draft index. Quality and independent review are
+separate from the sole writer.
 The 21 recovery methods share this setup; their parity, source-edge, identity,
 cutover and no-rediscovery assertions remain unchanged. Each source state
 transition is a normal forward commit after required actual checks/review.
