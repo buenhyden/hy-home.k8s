@@ -2,7 +2,7 @@
 title: "Current Owner Fixture Conformance"
 version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -39,7 +39,7 @@ and their accepted evidence remain historical inputs.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-007 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | Align current-owner fixture expectations and resolve measured archive process accounting | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Observed intake](#observed-intake) |
+| WORK-007 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | Align current-owner fixture expectations and resolve measured archive process accounting | repo-tooling-engineer | frontmatter | PASS | accepted | [Implementation observations](#implementation-observations) |
 
 ## Task Evidence
 
@@ -47,8 +47,8 @@ and their accepted evidence remain historical inputs.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-070 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Hosted failure and exact named reproductions | Clean final Task0006 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-071 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Causal accounting, changed-input controls and scoped hooks | Reviewed exact two-file fixture input | PASS | [Implementation observations](#implementation-observations) | accepted |
-| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Observed draft and ready indexes; current implementation index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
-| EVD-P02-073 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Prospective terminal completion and independent review | Not prepared | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Observed draft, ready and implementation indexes | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-073 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Prospective terminal completion and independent review | Observed isolated terminal candidate | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -146,9 +146,20 @@ raw stdout SHA-256 is
 `11ecbceebf55a34a1a172fdd53dd907ddd91d1f6caeebf524fe4e0a49d1a8244`;
 the configured message receipt SHA-256 is
 `3acf2df8eebdf8a05505c7f4651530935a6a3ccabd967c9abf708755b6a60736`.
-All output and cleanup completed with stable inputs. EVD-P02-072 accepts
-only these observed draft and ready indexes; current implementation-index
-staged/message and separate final review remain pending.
+The actual implementation index subsequently passed seven fresh canonical
+staged gates, pinned Task Markdown, its exact configured message and separate
+final independent review. Staged receipt SHA-256 is
+`b5d4e4d33e2c48021cb2f7645c31777f6f260cbbdb9e040e2b6515b292727c4d`;
+raw stdout SHA-256 is
+`00aa7638233080494af765cc53da1efbd7ee8c3a3cf1bb368bc5281eee1c1fd3`.
+The exact message SHA-256 is
+`3a19135b0a48332c99601b78547f53ec6cb3db8c7a8eb82f3343a0dd0ea20800`;
+its configured receipt SHA-256 is
+`4774332269844280e91e3b414b83bec8ca4b3429628a7406154f84035567251a`.
+The Task Markdown receipt SHA-256 is
+`fc17e6905a93328955d3254fdf2ec009bb337f1edadec798f4a3b92135293fc8`.
+All output and cleanup completed with stable source/index/reference inputs.
+EVD-P02-072 accepts only these observed draft, ready and implementation indexes.
 
 Readiness selects the finite five-path prospective scope through the canonical
 selector: seven validators and no unmatched paths, without affected execution.
@@ -160,9 +171,23 @@ pinned hooks and the canonical runner prerequisites come from prior actual
 checks with unchanged configurations. Focused commands retain a 60-second
 bound and canonical staged retains its existing runner limits.
 
-The focused acceptance does not accept the current implementation index or
-whole WORK-007. Each legal source index is separately reviewed and checked
-before its normal commit. Prospective terminal completion/review is distinct
-from the reflected source's fresh staged/completion/message and final review.
+The nonauthoritative isolated terminal proposal under ignored
+`.worktrees/proposal/p01-task7-c4-terminal` passed SPEC-0106-only completion
+and separate independent review. Its actual completion snapshot SHA-256 is
+`90c5340f00d20251cc6a7bb55a7c4903338dc0b87097ed12cc234a381909038f`;
+raw stdout SHA-256 is
+`e3408c0eb344ee7b80367b96ce4ee0a176ca5dc21b014361a4f2e18515662fcc`;
+structured receipt SHA-256 is
+`ec3e5b5b9fce67eb08e92320a3322e4babe2b1ac06ca6bf274a448c15da67dfa`.
+The clone and original identities remained stable, streams and cleanup
+completed, and no proposal staged run was required or performed.
+
+The user's explicit conditional reflection permission allows this normal
+source closing candidate after prospective acceptance. Fresh actual staged,
+SPEC-0106 completion, configured message and separate final review remain
+NOT_RUN until observed; every one must pass before the closing commit.
+EVD-P02-073 accepts the prospective lane only. Actual closing receipts and
+own commit identity stay external, avoiding a source self-OID loop.
+Quality and independent review remain separate from the sole writer.
 Hosted exact-head checks and integrated-main observations remain separate
 required delivery evidence; prior local acceptance is preserved.
