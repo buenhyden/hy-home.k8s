@@ -2,7 +2,7 @@
 title: "Stage 99 Lifecycle Normalization Plan"
 version: "1.0.0"
 type: "sdlc/plan"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -28,9 +28,11 @@ remain excluded, without an authenticated-actor claim.
 ## Overview
 
 Deliver the one acceptance set through [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md).
-Intake docs establish a reviewable contract; one atomic implementation commit
-changes the form/schema/checker/current-consumer surface; a closing acceptance
-commit records final evidence and state. The Task alone owns observed progress.
+Intake docs established the reviewable contract; the atomic implementation
+changed the form/schema/checker/current-consumer surface. A corrective local
+commit repaired an observed post-merge history-cache failure without changing
+the acceptance contract. The closing acceptance commit records final evidence
+and state after its own checks. The Task alone owns execution observations.
 
 ## Context
 
@@ -104,8 +106,8 @@ while preserving the Task evidence, Git ledger and unrelated changes.
 `VAL-P02-001` passes as one atomic set, all required local gates and read-only
 review have observed evidence, and the Task records exact checked snapshots,
 commands, limits, residual risk and next owner. The Spec and Plan carry version
-1.0.0 and in-progress status from the existing explicit P02 approval input; the
-record must not invent an approving actor,
-timestamp, authentication or revocation check. Completion status waits for
-actual implementation and acceptance evidence. Remote/live lanes remain
+1.0.0 and completed candidate status from the observed source acceptance and
+local finish recorded in the Task. The candidate awaits its separate closing
+checks and review; it does not invent an approving actor, timestamp,
+authentication or revocation check. Remote/live lanes remain
 unobserved unless separately authorized and executed.

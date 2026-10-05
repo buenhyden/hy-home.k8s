@@ -1,8 +1,8 @@
 ---
 title: "Stage 99 Lifecycle Normalization Task"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -15,8 +15,11 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 ## Overview
 
 This Task owns the single P02 execution item and its observed results. Intake
-is committed and reviewed; focused parser and route RED/GREEN cases are
-observed, while broader Git-row, completion and delivery checks remain pending.
+and source implementation are committed and reviewed. The required source
+checks and explicit local main integration/branch cleanup have observed PASS
+evidence. This completed acceptance candidate awaits its separate closing
+affected/index/message, completion-mode and read-only review checks; their
+results are not predicted here.
 The [Spec](../spec.md) owns behavior and acceptance; the
 [Plan](../plan.md) owns ordered work and dependencies.
 
@@ -39,7 +42,7 @@ The [Spec](../spec.md) owns behavior and acceptance; the
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | Implement and verify the atomic Stage 99 lifecycle acceptance set | platform | frontmatter | NOT_RUN | pending | Intake and focused RED/GREEN candidate recorded below; atomic acceptance pending |
+| WORK-001 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | Implement and verify the atomic Stage 99 lifecycle acceptance set | platform | frontmatter | PASS | accepted | [Accepted source and local finish](#accepted-source-and-local-finish); closing-document checks separately pending |
 
 ## Task Evidence
 
@@ -47,7 +50,7 @@ The [Spec](../spec.md) owns behavior and acceptance; the
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-001 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Intake exact-index quick and staged gates | Intake index `d6fe4407dfcbc322253b8c850e9fdb654b2a28b9` | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-002 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused Task parser and route RED/GREEN | Intake `7fc8829858bdcdf27e3ab93c23e62cb2a84df751` and intermediate shared tree | PASS | [Verification Summary](#verification-summary) | accepted |
-| EVD-P02-003 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Final required affected, staged, review, completion and local finish checks | Final implementation tree pending | NOT_RUN | Pending final validation and review | pending |
+| EVD-P02-003 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Accepted source functional checks, independent source review and observed local finish | Main `9985d836a4af596e3143aae000b891f0c8862bf7`; tree `68dfdd9a9fa566a0b217a77ab55a9f217dece5ed`; exact checks recorded below | PASS | [Accepted source and local finish](#accepted-source-and-local-finish) | accepted |
 | EVD-P02-004 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | First canonical implementation quick | Shared worktree at HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751`; 155 scoped paths | FAIL | [First canonical implementation quick](#first-canonical-implementation-quick) | pending |
 | EVD-P02-005 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Held focused implementation regression | 21-file quality subset SHA-256 `c677ac984ddd01d91751ab8cdb43fe076b70d6ef459271393183ebfb5cd6a82c`; HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751` | PASS | [Held implementation regression and review](#held-implementation-regression-and-review) | pending |
 | EVD-P02-006 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Held Archive contract suite | Same held quality subset; actual bounded historical Git fixtures | PASS | [Held implementation regression and review](#held-implementation-regression-and-review) | pending |
@@ -57,13 +60,14 @@ The [Spec](../spec.md) owns behavior and acceptance; the
 | EVD-P02-010 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Canonical quick and exact-index staged before fragment repair | Index `8381aaabf1cd51d7f8354604d03c29b51357e7cc`; 160 affected paths; base HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751` | FAIL | [Actual form fragment repair](#actual-form-fragment-repair) | pending |
 | EVD-P02-011 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | First final full, interrupted after Archive failure | Index `bfa180e8740b8c4a3b7a7c8387b8d8a3ba51c5d9`; base HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751`; 1301 all-file inputs | FAIL | [First final full observation](#first-final-full-observation) | pending |
 | EVD-P02-012 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Further full QA excluded by latest explicit user scope | No further full or all-files/unit substitute executed | NOT_RUN | [Latest required validation and local finish scope](#latest-required-validation-and-local-finish-scope) | not-required |
+| EVD-P02-013 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Completed candidate closing affected/index/message, completion-mode and document review | Three-document candidate on main after source `9985d836a4af596e3143aae000b891f0c8862bf7` | NOT_RUN | Closing checks pending; no source acceptance result is reused for this candidate | pending |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `docs/03.specs/0106-stage99-lifecycle-normalization/`; `docs/03.specs/README.md` (wiki-curator navigation owner); `docs/99.templates/registry.json` and both files in `docs/99.templates/contracts/`; selected forms in `docs/99.templates/templates/`; `scripts/document_contracts.py`, `scripts/validate-document-contract-registry.py`, `scripts/validate-markdown-profiles.py`, `scripts/validate-links-and-owners.py`, `scripts/document_lifecycle.py`, `scripts/validate-document-lifecycle.py`; their direct fixtures under `tests/`; and exact current documents or consumer guidance identified by `VAL-P02-001` inventory. Root delegated the document/form paths listed below to doc-writer and scripts/tests to quality-engineer; navigation remains with wiki-curator.
 - **Forbidden Paths**: frozen `docs/98.archive/` bodies, sealed records, historical contracts, private/global configuration, secrets, live cluster/cloud resources, and unrelated changes.
-- **Approval Required**: The P02 request approved scoped local implementation, review, validation and three logical local commits: intake, atomic implementation and acceptance. The latest explicit user instruction authorizes local P01/P02 integration into main and deletion of the two development branches and any linked development worktrees after verified integration; retain the primary workspace. Push, PR, remote merge/publication, archive mutation and live/secret actions remain outside scope. No authenticated approving actor, trusted reference, or revocation verification has been supplied or claimed.
-- **Static Validation**: Intake quick and exact-index staged checks and commit-message validation passed on the intake snapshot. Focused parser and route RED/GREEN cases are recorded below. Later focused and exact-snapshot observations are recorded below. Required remaining checks are the refreshed affected/index/message, completion and closing review/local finish evidence. The latest explicit user instruction excludes further full QA and all-files/unit substitutes; an unexecuted full is NOT_RUN/not-required, while earlier failed/interrupted observations remain historical facts.
+- **Approval Required**: The P02 request approved scoped local implementation, review, validation and the planned intake, atomic implementation and acceptance commits; the observed post-merge regression required one corrective local source commit before acceptance. The latest explicit user instruction authorizes local P01/P02 integration into main and deletion of the two development branches and any linked development worktrees after verified integration; retain the primary workspace. Push, PR, remote merge/publication, archive mutation and live/secret actions remain outside scope. No authenticated approving actor, trusted reference, or revocation verification has been supplied or claimed.
+- **Static Validation**: Intake quick and exact-index staged checks and commit-message validation passed on the intake snapshot. Focused parser and route RED/GREEN cases are recorded below. Later focused and exact-snapshot observations are recorded below. The observed source and local finish evidence is accepted below; remaining checks apply to the completed document candidate: affected/index/message, completion mode and closing review. The latest explicit user instruction excludes further full QA and all-files/unit substitutes; an unexecuted full is NOT_RUN/not-required, while earlier failed/interrupted observations remain historical facts.
 - **Live Validation**: DEFER — not requested or authorized; repository-static results do not prove runtime behavior.
 - **Secret / Vault Handling**: No read, print, or mutation of secret values. References and fixed public artifact identities only.
 - **Rollback Plan**: Review P02 commit boundaries and use forward reverts where authorized; preserve unrelated work, historical records and this evidence ledger.
@@ -77,6 +81,8 @@ commit `7fc8829858bdcdf27e3ab93c23e62cb2a84df751` on
 `d6fe4407dfcbc322253b8c850e9fdb654b2a28b9`. The reviewed intake index
 contained four paths: this Spec, Plan, Task and the separately owned Stage 03
 README, against initial HEAD `50890376ddef88de69f7df4204fc72dfc265c051`.
+The actual original intake frontmatter states were Spec draft, Plan draft and
+Task queued; later candidate states do not rewrite those Git facts.
 The independent read-only intake rereview reported PASS. Root-reported
 `python3 scripts/qa.py quick --base-ref HEAD` and
 `python3 scripts/qa.py staged --base-ref HEAD` both returned zero with six
@@ -779,9 +785,9 @@ read-only `rtk proxy python3 scripts/archive_cutover.py --root .` returned 0:
 records=25, historical_links=198, secret_clean=25. The earlier accepted leaf
 returned 1 with seven NONCURRENT replacements; its initially rejected
 invocation was unexecuted, then the same command was admitted after read-only
-main/callgraph proof. The applied shared judge requires the exact historical
-archive record at its actual generation-9 parent and actual 9-to-10 event,
-for both index and committed comparisons. Identical old source metadata on a
+main/callgraph proof. The archive caller combines authenticated historical records with the shared
+exact 9-to-10 owner-event judge; additions must match the regular record blob
+at the actual generation-9 parent in index and committed comparisons. Identical old source metadata on a
 new generation-10 record, changed identity/type, missing record and absent
 event fail; ordinary approved current-generation replacements remain admitted.
 Frozen bytes and current default preparation refusal are preserved.
@@ -803,3 +809,69 @@ excluded; no actor authentication or revocation check is invented. Spec, Plan
 and Task remain in-progress, and WORK-001 remains NOT_RUN/pending until actual
 implementation commit, required closing checks and local finish are recorded.
 All three document writes are held after this scoped amendment.
+### Accepted Source and Local Finish
+
+Root committed atomic implementation
+`2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb`, tree
+`2415c0a30f2a765e041ddab6fea0b9fdd03f6642`, after matching quick/staged
+--base-ref HEAD checks each returned 0 with 15 passing gates. The actual
+implementation message passed pinned Commitizen validation and normal commit
+returned 0. Clean local main fast-forwarded from
+`f6501e46a0d35858c598c207e726a0e89c92d7d7` to P01
+`50890376ddef88de69f7df4204fc72dfc265c051`, then to that implementation.
+
+The first actual post-merge lifecycle CI failed with three LIFECYCLE-CREATE
+diagnostics. The original intake draft/draft/queued states were valid; the
+history reader reparsed 896 paths / 10,146,061 bytes across Registry generations
+without seeding already-read text, exceeding the unchanged 4 MiB budget.
+The temporary exact-commit regression was RED, one test in 55.747s, then
+GREEN with the existing fixture, two tests in 198.346s. Its hardcoded one-off
+case was removed after durable real-Git coverage replaced it.
+
+The repair reuses only matching path/OID text and reprojects it under the
+actual own Registry/legacy contract. Full 4096-path and 4/16 MiB bounds remain;
+there is no budget increase or broader status/copy allowance. The durable
+fixture covers CI and explicit-ref reuse, unseeded budget refusal, current
+10 invalid creation and malformed/missing-history and aggregate-budget cases.
+Quality's final four cases passed in 89.872s; pinned Ruff check/format and
+scoped diff check passed. Independent read-only source/memory review returned
+PASS. Ordered scripts/validate-document-lifecycle.py and
+tests/test_task_execution_contract.py path / NUL / bytes / NUL SHA-256 is
+`ed2cd0bc0db5f6b75880e99e8ab781d38487080199e50ac01fca3c3092151f6c`;
+individual hashes are
+`6c02261c117d9d350def4de4eafcc40c0578611dc3d72c2f52dd152bc2708aa3`
+and `362da88c931752450baaf5f07eb4434c00db5e47e0be0d5f63c82961c63b520d`.
+
+Root's corrective quick/staged --base-ref HEAD checks each returned 0 with
+8/8 gates, two paths, base implementation above and exact tree
+`68dfdd9a9fa566a0b217a77ab55a9f217dece5ed`. The actual message
+`fix(governance): reuse exact history text across registry generations`
+passed Commitizen; normal commit returned 0 and created main correction
+`9985d836a4af596e3143aae000b891f0c8862bf7` with that tree.
+On that main source, root's
+`rtk proxy python3 scripts/validate-document-lifecycle.py --mode ci --base-ref 50890376ddef88de69f7df4204fc72dfc265c051 --to-ref HEAD --include-path docs/03.specs/0106-stage99-lifecycle-normalization/spec.md --include-path docs/03.specs/0106-stage99-lifecycle-normalization/plan.md --include-path docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md`
+returned 0 / PASS mode=ci. The read-only Archive command recorded above again
+returned 0 with records=25, historical_links=198, secret_clean=25 after current
+main/callgraph proof; its initial auto-review rejection was unexecuted.
+
+Both development-branch ancestor checks returned 0 before
+`rtk git branch -d codex/p01-authority-safety codex/p02-stage99-lifecycle`
+returned 0. Branch inventory now contains only main. Worktree inventory contains
+only the primary repository on main at the correction; git-dir and common-dir
+are both .git, so no linked tree existed to remove and the primary was retained.
+P01, intake and implementation OIDs remain reachable. Root observed local
+origin/main at the correction and reflog updates by push; the user confirmed
+a separate push. This is user-reported external action, not authenticated actor
+or hosted-CI evidence. The agent executed no push, PR or remote merge command;
+no live action or Archive mutation occurred. Ref inventory has only local main
+and origin/HEAD plus origin/main, with no remote development tracking refs.
+The closing acceptance commit remains local only.
+
+These observed source/finish results accept WORK-001 and EVD-P02-003 under the
+latest no-full scope. Earlier failures and interrupted runs remain historical
+evidence; EVD-P02-012 stays NOT_RUN/not-required. The three completed documents
+are a closing candidate, with EVD-P02-013 pending its own affected/index/message,
+completion and document review; no closing PASS or acceptance commit is yet
+claimed. Forward rollback must preserve the Task and reachable historical OIDs.
+Repository-static/local proof does not establish hosted/native/live behavior,
+authenticated approval, revocation validation or other repositories' conformance.

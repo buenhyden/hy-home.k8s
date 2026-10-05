@@ -2,7 +2,7 @@
 title: "Stage 99 Lifecycle Normalization"
 version: "1.0.0"
 type: "sdlc/spec"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -16,7 +16,9 @@ artifact_id: "SPEC-0106"
 P02 makes the existing Stage 99 document contract describe lifecycle and
 execution traceability consistently across its registry, forms, validators,
 and current consumers. The request owner approved this local change plan;
-implementation and check results belong to the Task. This package follows the
+source implementation and local finish are accepted from the observed Task
+evidence. This completed document candidate still needs its separate closing
+checks and read-only review. This package follows the
 completed [P01 package](../0105-authority-and-safe-authoring/spec.md) and does
 not reopen the historical SPEC-0104 package.
 
