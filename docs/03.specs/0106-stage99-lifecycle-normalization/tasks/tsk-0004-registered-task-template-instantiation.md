@@ -1,8 +1,8 @@
 ---
 title: "Registered Task Template Instantiation"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -42,7 +42,7 @@ source and original Task EVD-P02-013/014 are preserved.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-004 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | Correct the registered Task-template first-draft boundary without weakening other provenance controls | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Verification Summary](#verification-summary) |
+| WORK-004 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | Correct the registered Task-template first-draft boundary without weakening other provenance controls | repo-tooling-engineer | frontmatter | PASS | accepted | [Observed implementation acceptance](#observed-implementation-acceptance) |
 
 ## Task Evidence
 
@@ -51,8 +51,8 @@ source and original Task EVD-P02-013/014 are preserved.
 | EVD-P02-030 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Existing merge failure | Frozen P02 merge index `c5582dff…` | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-031 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Registered Task template real-Git RED | Ready base; unchanged validator `6c02261c…`, corrected test `db442023…` | FAIL | [Observed RED](#observed-red) | pending |
 | EVD-P02-032 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Narrow GREEN and existing refusals | Validator `1ec86e4d…`; final focused test `80816a8b…` and explicitly unchanged prior inputs | PASS | [Focused implementation](#focused-implementation) | accepted |
-| EVD-P02-033 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Actual-index staged/message and separate review | Four logical candidates pending | NOT_RUN | Pending | pending |
-| EVD-P02-034 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Terminal proposal and separate actual closing index | Closing candidates pending | NOT_RUN | Pending | pending |
+| EVD-P02-033 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Observed draft/ready/implementation actual-index staged/message and separate review | Three accepted prior logical candidates; implementation tree `c1f932c0…` | PASS | [Observed implementation acceptance](#observed-implementation-acceptance) | accepted |
+| EVD-P02-034 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Observed isolated terminal completion and semantic review | Prospective tree `9a29c034…` at accepted C3 base | PASS | [Observed terminal proposal](#observed-terminal-proposal) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -209,7 +209,51 @@ At implementation candidate authoring, Task Markdown hooks, this index's
 staged/message checks and whole-index review awaited their own observation.
 External actual receipts determine whether that exact candidate may commit;
 they are recorded at the next logical transition without self-OID insertion.
-The work item remains pending here; focused EVD-P02-032 acceptance covers
-its named checks and the observed Python hooks only. Historical failures
+At that authoring point the work item remained pending; focused EVD-P02-032
+acceptance covered its named checks and observed Python hooks only. Historical failures
 and required hosted/integrated-main delivery remain separate from local
 source acceptance.
+
+### Observed implementation acceptance
+
+At implementation candidate authoring the work item remained pending.
+The subsequent actual C3 index, tree
+`c1f932c03bf45785a86b37d9b89d8d4b212e3f5b` at the ready base, received all
+twelve selected canonical staged gates, the exact configured message check
+and separate full candidate/evidence review, all PASS. Safe staged stdout
+has SHA-256
+`ca8e673881ecbdfd8f4693b61605e2f9a8efcdbaa6a9b64e8b5f6b64e10dab3c`;
+outer stderr was empty and every child reported complete output and cleanup.
+The message fixture has SHA-256
+`37f5e7f526f08353008aa957917264bd309fb57a9d67cbd0e4b0e4e0d2345757`.
+The normally committed implementation is
+`fd331cabb5df430bbef57ed092d8ce8389fb5985`.
+The preceding draft and ready candidates also received their own six-gate
+staged/message and independent review PASS; ready stdout has SHA-256
+`40a668aa44f17176972fabc723f860e17e6a44550ee28bf6caaec16e46224383`.
+EVD-P02-033 accepts these observed prior candidates only.
+
+### Observed terminal proposal
+
+An isolated, uncommitted terminal proposal at the accepted implementation
+base, tree `9a29c034ff8d7836516f19a3a5b9722048f218ef`, received independent
+semantic review and SPEC-0106-only completion, both PASS. Completion stdout
+has SHA-256
+`70acc638fe89de8c3951f35f174873b279457a5a35781c7f3542653266da8196`;
+its exact index snapshot has SHA-256
+`26fba001b1b3047716e97e6f06bdd602197257f87cc664d0865d4e1ae70940dc`.
+Outer stderr was empty. This prospective lane performed no separate staged
+run; required actual-index checks are preserved below. EVD-P02-034 accepts
+only the observed prospective completion and semantic review.
+
+This source reflects a conditionally authorized completed candidate. At
+reflection, its own actual closing index checks remain unobserved; no final
+source acceptance or commit is asserted on that basis. A normal closing
+commit requires fresh actual-index canonical staged, SPEC-0106 completion,
+configured message and separate whole-candidate/evidence review, all PASS.
+The actual closing receipts remain external, avoiding self-OID insertion.
+Local full/affected execution remains NOT_RUN. Required PR checks, a guarded
+normal merge and automatic integrated-main checks remain pending. The old
+hosted unit failure and frozen P02 merge failure remain historical receipts;
+this local repair does not revoke Task0003 local acceptance or claim remote
+success. Current Registry fixture consumers require a separate follow-up.
