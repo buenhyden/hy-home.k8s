@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 
 # Document Authoring Policy
@@ -36,7 +36,8 @@ express ownership, not a one-way waterfall.
 3. Use the profile-owned initial status, metadata, sections, and relationships.
    Do not assume every profile starts at "draft". Router READMEs participate in
    the governed envelope with an "active" routing constant, but have neither
-   artifact identity nor lifecycle binding.
+   artifact identity nor lifecycle binding. Stable reference pack anchors keep
+   their reference identity and publication lifecycle even when named README.md.
 4. Take the frontmatter key set and its order from the selected profile, and
    each key's value grammar from the
    frontmatter schema (`docs/99.templates/contracts/frontmatter.schema.json`).
@@ -47,7 +48,8 @@ express ownership, not a one-way waterfall.
    declaring. `layer` names the numbered stage a document lives in, so common governance
    sits above that numbering and a Stage 99 form is not the document it
    produces; neither declares one. A profile that declares no `artifact_id`
-   describes something the repository does not give a stable identity.
+   describes something the repository does not give a stable identity. Preserve
+   an existing optional governance identity; do not mint one for normalization.
 6. Replace prompts with concrete content, use complete stable IDs for
    traceability, and calculate links from the final target path. A file outside
    `docs/` links to current owners and stage or collection README navigation,
@@ -76,7 +78,15 @@ express ownership, not a one-way waterfall.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
-   Plan and execution evidence in its Task records.
+   Plan and execution evidence in its Task records. Keep one Task Table with
+   criterion links, row state, result and evidence. Its frontmatter status is
+   the sole document status marker; a multi-row Task's marker must agree with
+   the Registry-bound row summary. A row's PASS alone is not completion:
+   required work needs completed state, PASS, accepted and concrete evidence.
+   Keep ordered work, dependencies, Task links and verification intent in the
+   Plan, without copied execution status. Attach factual checks in Task
+   Evidence with exact inputs, results, locations and acceptance; these do not
+   replace execution rows or authorization.
 8. Promote durable cross-change decisions to an Architecture Decision and
    current system views to an Architecture Description. Do not create parallel
    design, test, release, or progress authority. This repository uses external
@@ -103,21 +113,25 @@ express ownership, not a one-way waterfall.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
-All governed Markdown starts with the ordered common prefix "title", "version",
+Governed Markdown uses the ordered common prefix "title", "version",
 "type", "status", "owner", and "updated"; later keys appear only when the
 selected profile declares them. A new document starts at version "0.1.0" and
 the first stable approval raises it to "1.0.0". Patch means a correction
 without changed meaning, minor means compatible meaning or section growth, and
 major means an incompatible role or contract change. Status and version are
-independent.
+independent. Native Skill packages keep name and description at the top and
+place that six-key document envelope inside metadata. Preserve native
+invocation, tool and model controls; metadata does not grant execution authority.
 
 Markdown templates use the double-braced UPPER_SNAKE_CASE value grammar,
 native templates use double-underscore UPPER_SNAKE_CASE markers, and author
-guidance uses the registered HTML comment form. Authored documents contain none
+guidance uses the registered HTML comment form. The shared value markers are
+TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one
+direct structural owner rather than a duplicate spec_id. Authored documents contain none
 of those markers. Template history belongs to Registry contract version and
 Git, not to the created document's "version".
 The registry's `document_language` contract owns each document's language:
-README and operations profiles are Korean-first, files under `.agents/`,
+Navigation, reference-pack and operations profiles are Korean-first, files under `.agents/`,
 `.claude/`, and `.codex/` are English only, every other current document is
 English-first, agent requirement sections stay English, and a template writes
 its author prompts in its output's language. Never hand-edit generated current

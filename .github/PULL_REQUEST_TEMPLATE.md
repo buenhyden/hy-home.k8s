@@ -51,13 +51,15 @@ for the delivery route and evidence required for this PR. Record the focused
 checks and exact-index staged result for local commits, then link the required
 hosted `ci-summary` result with its exact SHA and run identity when available.
 Classify unavailable hosted or live evidence as `DEFER` with its owner.
+Link the owning Task for execution status, acceptance, and check evidence;
+do not copy its progress or outcomes into this PR description.
 
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow triggers and job ownership reviewed (if `.github` automation changed)
 - [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs are routed through `docs/98.archive/README.md` only.
 - [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve each provider README and adjacent executable assets as one boundary; they are not live provider-latest guidance unless an approved provider refresh spec exists.
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable; source-code test surfaces own coverage evidence, while Bash/YAML/Markdown infrastructure changes use validation-matrix evidence instead of application coverage claims
-- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
+- [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.
 - [ ] No live cluster mutation or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)
 

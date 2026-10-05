@@ -1,10 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.1.6"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-05"
 layer: "operations"
 ---
 # 05.operations/runbooks
@@ -53,11 +53,11 @@ layer: "operations"
 - 튜토리얼 중심 배경 설명
 - 사고 원인 분석 보고서
 
-## Item Index
+## Structure
 
 ### 문서 인덱스
 
-| 문서 | 설명 |
+| Path | Purpose |
 | --- | --- |
 | [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 부트스트랩과 외부 서비스 endpoint 복구의 단일 owner |
 | [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | OpenBao sealed·auth drift 분류, ESO 복구, CoreDNS·gateway CA 재적용의 단일 owner |
@@ -69,7 +69,7 @@ layer: "operations"
 | [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 |
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 |
 
-## Add and Find
+## Usage
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
 2. [runbook.template.md](../../99.templates/templates/operations/runbook.template.md)를 기반으로 작성한다.

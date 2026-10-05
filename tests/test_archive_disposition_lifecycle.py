@@ -30,7 +30,7 @@ sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
 import archive_dispositions as dispositions  # noqa: E402
-from document_contracts import load_registry  # noqa: E402
+from document_contracts import _typed_registry_from_mapping  # noqa: E402
 
 
 REGISTRY_PATH = "docs/99.templates/registry.json"
@@ -93,7 +93,19 @@ def operation_document(profile: str, status: str, artifact_id: str) -> bytes:
 
 
 class DispositionLifecycleTest(unittest.TestCase):
-    registry = load_registry(ROOT)
+    # ADR-0039 fixtures describe the actual generation 9 contract, including
+    # recorded scope routes and withdrawn packages; current authoring is tested
+    # independently. Preserve those historical facts from the immutable blob.
+    registry_bytes = subprocess.check_output(
+        [
+            "git",
+            "--no-replace-objects",
+            "show",
+            "7fc8829858bdcdf27e3ab93c23e62cb2a84df751:docs/99.templates/registry.json",
+        ],
+        cwd=ROOT,
+    )
+    registry = _typed_registry_from_mapping(json.loads(registry_bytes))
 
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="adr0039-lifecycle-")
@@ -102,8 +114,8 @@ class DispositionLifecycleTest(unittest.TestCase):
         self.git("init", "--quiet")
         self.git("config", "user.email", "fixture@example.invalid")
         self.git("config", "user.name", "Disposition Fixture")
-        for path in (REGISTRY_PATH, RUNBOOK):
-            self.write(path, (ROOT / path).read_bytes())
+        self.write(REGISTRY_PATH, self.registry_bytes)
+        self.write(RUNBOOK, (ROOT / RUNBOOK).read_bytes())
         for member in PACKAGE_MEMBERS:
             frozen = (ROOT / PACKAGE_SEED / member).read_bytes()
             assert frozen.count(b'status: "done"') == 1

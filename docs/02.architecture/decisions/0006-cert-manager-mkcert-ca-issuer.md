@@ -4,7 +4,7 @@ version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "architecture"
 artifact_id: "ADR-0006"
 ---
@@ -79,3 +79,9 @@ the mkcert `ClusterIssuer` boundary this decision chose.
 - **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |

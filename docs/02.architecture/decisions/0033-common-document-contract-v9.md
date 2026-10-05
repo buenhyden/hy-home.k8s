@@ -4,7 +4,7 @@ version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-10-05"
 layer: "architecture"
 artifact_id: "ADR-0033"
 ---
@@ -176,6 +176,16 @@ __Rewrite frozen Archive payloads to v9.__ Rejected because it would destroy
 the byte-level historical evidence the Archive contract exists to preserve.
 
 ## Traceability
+
+**Current-state clarification (2026-10-05).** The approved local
+[SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md)
+extends the existing Registry to generation 10 for the current lifecycle,
+parent, Task evidence, native Skill and navigation contract. The version-9
+reader/type clauses above describe this decision's adopted generation, not
+the current runtime contract. Current declarations remain at Stage 99;
+bounded history and frozen payloads retain their original generations. This
+clarification preserves the accepted single-authority and recovery decision
+and does not claim P02 implementation acceptance.
 
 __Current-state clarification (2026-09-14).__ Where this record says Stage 00
 owns meaning, approval, SDLC, lifecycle obligations and authoring procedure,

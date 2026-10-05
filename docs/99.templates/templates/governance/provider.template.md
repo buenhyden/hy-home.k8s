@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "governance/provider"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 ---
 
 # [Provider Name] Provider Notes

@@ -1,11 +1,11 @@
 ---
 title: "Archive Retention and Provenance Research Pack"
 version: "0.1.1"
-type: "common/readme-research-pack"
-status: "active"
+type: "reference/research-pack"
+status: "in-review"
 owner: "platform"
-updated: "2026-09-26"
-layer: "references"
+updated: "2026-10-05"
+artifact_id: "RES-0002"
 ---
 
 # Archive Retention and Provenance Research Pack
@@ -16,6 +16,11 @@ layer: "references"
 Git이 객체에 이름을 붙이고 보관하는 방식, 대체된 결정과 incident 기록을 보관하는
 방식, 공개 URL 이동을 알리는 방식, schema annotation이 검증과 어떻게 다른지가
 여기에 해당한다. 날짜가 붙은 서술 증거이며 정책이 아니다.
+
+## Scope
+
+이 pack은 아래 연구 계약과 보고서 색인에 명시한 주제와 출처를 포함한다.
+실행 승인, 현재 정책, hosted·provider·live 결과는 증거 범위에서 제외한다.
 
 ## Research Contract
 
@@ -28,11 +33,21 @@ Git이 객체에 이름을 붙이고 보관하는 방식, 대체된 결정과 in
   registry, 승인된 아키텍처 결정에 있다. 여기의 발견은 결정을 뒷받침하거나 그
   범위를 정할 뿐, 결정을 대신하지 않는다.
 
+## Structure
+
+직접 멤버와 그 연구 책임은 아래 보고서 색인에서 찾는다. 각 멤버의 날짜와
+판정은 멤버 본문이 소유하며 이 anchor는 별도 실행 상태를 기록하지 않는다.
+
 ## Report Index
 
 | Reference | Role |
 | --- | --- |
 | [Git provenance and superseded record citation](m0001-git-provenance-and-superseded-record-citation.md) | 객체 이름, 도달 가능성, 대체된 기록의 관행, URL 이동, schema annotation, link 파싱 |
+
+## Usage
+
+먼저 연구 계약과 증거 경계를 확인한 뒤 보고서 색인에서 필요한 멤버를 읽는다.
+갱신은 아래 승계 절차를 따르며 연구 근거를 현재 실행 승인으로 사용하지 않는다.
 
 ## Refresh and Succession
 

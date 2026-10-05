@@ -1,6 +1,13 @@
 ---
 name: "execution-plan"
 description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
+metadata:
+  title: "Execution Plan"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

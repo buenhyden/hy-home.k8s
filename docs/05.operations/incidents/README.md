@@ -1,10 +1,10 @@
 ---
 title: "05.operations/incidents"
-version: "0.1.0"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-10-05"
 layer: "operations"
 ---
 # 05.operations/incidents
@@ -58,7 +58,7 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 - 실행 절차 중심 런북
 - 기능 요구사항 또는 상세 설계
 
-## Item Index
+## Structure
 
 ```text
 05.operations/incidents/
@@ -69,7 +69,7 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 사고 기록은 `<year>/inc-####-<slug>/` 폴더에 두며, 그 안의 `incident.md`가
 사실 기록을, 분석이 필요할 때만 만드는 `postmortem.md`가 사후 분석을 소유한다.
 
-## Add and Find
+## Usage
 
 1. 대응 중에는 [incident.template.md](../../99.templates/templates/operations/incident.template.md)로 사실 기록을 시작한다.
 2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다.

@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.5.0"
-type: "common/readme-implementation"
+version: "0.6.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 ---
 # scripts
 
@@ -45,11 +45,32 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 - branch tip, 현재 문서, 현재 스크립트, 줄 번호, corpus 개수를 고정하는 pin
 - Stage 00, SDLC stage, Operations에서 옮겨 온 정책 문장
 
+## Scope
+
+- 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
+- Agent role, 권한, skill, handoff, projection은
+  `.agents/roles/registry.json`에서만 온다.
+- 검증 선택과 명령 인자는 `scripts/validation/registry.json`에서만 온다.
+- `.github/workflows/ci.yml`과 `.pre-commit-config.yaml`은 projection이며
+  선언되지 않은 validator나 중복된 규칙 owner를 들여오면 안 된다.
+- 구조화 쓰기 경로 검사는 `provider_write_guard.py`가 소유하고 각 provider
+  adapter가 native event를 등록한다. shell 관찰은 advisory이며, 실제 전달과
+  native 강제는 [승인 정책](../.agents/governance/approval-and-safety.md)과
+  provider note의 관측 경계를 따른다. 품질 검증은 명시적으로 실행하는 QA 작업이다.
+- 테스트와 제한된 합성 데이터는 `tests/`와 `tests/fixtures/`에 둔다.
+- 기본 복구 출처는 Git history다. digest는 외부에서 바뀌지 않는 의존성
+  identity나 봉인된 역사 복구 좌표가 있을 때만 쓴다.
+
+Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍스트
+입력은 명시적으로 UTF-8로 읽고 소유 계약이 요구하는 곳에서는 symlink나
+일반 파일이 아닌 경계를 닫힌 쪽으로 실패시킨다. 진단 메시지에는 secret 값을
+담지 않는다.
+
 ## Structure
 
 ### Routing and orchestration
 
-| 경로 | 책임 |
+| Path | Purpose |
 | --- | --- |
 | `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback, CI routing 계약 |
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
@@ -91,28 +112,27 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
 
-## Configuration Boundary
+## Usage
 
-- 문서 route·profile 값은 [Stage 99 계약](../docs/99.templates/README.md)에서만 온다.
-- Agent role, 권한, skill, handoff, projection은
-  `.agents/roles/registry.json`에서만 온다.
-- 검증 선택과 명령 인자는 `scripts/validation/registry.json`에서만 온다.
-- `.github/workflows/ci.yml`과 `.pre-commit-config.yaml`은 projection이며
-  선언되지 않은 validator나 중복된 규칙 owner를 들여오면 안 된다.
-- 구조화 쓰기 경로 검사는 `provider_write_guard.py`가 소유하고 각 provider
-  adapter가 native event를 등록한다. shell 관찰은 advisory이며, 실제 전달과
-  native 강제는 [승인 정책](../.agents/governance/approval-and-safety.md)과
-  provider note의 관측 경계를 따른다. 품질 검증은 명시적으로 실행하는 QA 작업이다.
-- 테스트와 제한된 합성 데이터는 `tests/`와 `tests/fixtures/`에 둔다.
-- 기본 복구 출처는 Git history다. digest는 외부에서 바뀌지 않는 의존성
-  identity나 봉인된 역사 복구 좌표가 있을 때만 쓴다.
+### Working Procedure
 
-Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍스트
-입력은 명시적으로 UTF-8로 읽고 소유 계약이 요구하는 곳에서는 symlink나
-일반 파일이 아닌 경계를 닫힌 쪽으로 실패시킨다. 진단 메시지에는 secret 값을
-담지 않는다.
+1. `validation/registry.json`에서 규칙과 그 전용 의미 owner를 찾는다.
+2. 동작을 바꾸기 전에 독립적인 top-level 테스트를 추가하거나 고친다.
+3. production 데이터는 production owner 옆에 두고 합성 데이터는 독립적인
+   테스트 소비자와 함께 `tests/fixtures/` 아래에 둔다.
+4. validator는 routing owner 한 곳에 추가하고 선언된 lane이 요구하는 곳에만
+   hook·CI로 projection한다.
+5. wrapper는 현재 소비자 0개와 고유 진단 0개를 증거로 확인한 뒤에만 없앤다.
+   복구는 redirect가 아니라 Git으로 한다.
+6. 커밋 전에 `git diff --check`, 관련 전용 테스트, affected·staged 선택,
+   전체 결과를 검토한다.
 
-## Validation
+없어진 구현 형태를 지키려는 목적만으로 호환 CLI, 중복 registry, 고정된 스크립트
+inventory, 내장 mutation suite를 만들지 않는다. 확인된 필수 외부 CI check
+이름은 `ci-summary`이며 로컬 workflow를 바꿀 때도 그 이름을 유지한다. 원격
+branch protection 설정은 바꾸지 않는다.
+
+## Verification
 
 가장 작은 owner부터 실행하고 이어서 현재 작업에 필요한 affected·staged lane을
 실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. PR 전달의
@@ -184,26 +204,6 @@ python3 scripts/run-validation-lane.py \
 
 저장소 정적 PASS는 검사한 저장소 상태만 증명한다. hosted 실행, provider native
 강제, credential, 원격 상태, 배포, live cluster 동작은 증명하지 않는다.
-
-## Operations
-
-### Working Procedure
-
-1. `validation/registry.json`에서 규칙과 그 전용 의미 owner를 찾는다.
-2. 동작을 바꾸기 전에 독립적인 top-level 테스트를 추가하거나 고친다.
-3. production 데이터는 production owner 옆에 두고 합성 데이터는 독립적인
-   테스트 소비자와 함께 `tests/fixtures/` 아래에 둔다.
-4. validator는 routing owner 한 곳에 추가하고 선언된 lane이 요구하는 곳에만
-   hook·CI로 projection한다.
-5. wrapper는 현재 소비자 0개와 고유 진단 0개를 증거로 확인한 뒤에만 없앤다.
-   복구는 redirect가 아니라 Git으로 한다.
-6. 커밋 전에 `git diff --check`, 관련 전용 테스트, affected·staged 선택,
-   전체 결과를 검토한다.
-
-없어진 구현 형태를 지키려는 목적만으로 호환 CLI, 중복 registry, 고정된 스크립트
-inventory, 내장 mutation suite를 만들지 않는다. 확인된 필수 외부 CI check
-이름은 `ci-summary`이며 로컬 workflow를 바꿀 때도 그 이름을 유지한다. 원격
-branch protection 설정은 바꾸지 않는다.
 
 ## Related Documents
 

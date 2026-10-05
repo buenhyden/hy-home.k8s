@@ -1,10 +1,10 @@
 ---
 title: "Common Prompt Contracts"
-version: "0.1.0"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-07"
+updated: "2026-10-05"
 ---
 # Common Prompt Contracts
 
@@ -29,7 +29,7 @@ It makes no model call and no network access, and it writes nothing to the
 repository or to Git state. A produced draft is transient output the user
 accepts, edits or discards.
 
-## Item Index
+## Structure
 
 - [handoff](handoff.md): assemble a work handoff from the fields the quality
   policy already owns.
@@ -40,7 +40,7 @@ accepts, edits or discards.
 - [doc-update](doc-update.md): locate the canonical owner for a change and
   request a proposed difference against it.
 
-## Add and Find
+## Usage
 
 1. Read [document authoring](../governance/document-authoring.md) and select
    the prompt profile from the Stage 99 registry before adding a contract.

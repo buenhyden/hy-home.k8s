@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.7.1"
+version: "1.8.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-05"
 ---
 
 # Document Lifecycle Policy
@@ -38,12 +38,31 @@ their owning migration work package moves them.
   Historical `done` remains valid in its frozen body or earlier Git generation;
   a current Spec, Plan, or Task uses `completed`. Completion still grants no
   disposition, removal, or new-execution authority.
+- Current document status aliases are normalized under the approved generation
+  10 contract. Correct only the actual present state and record the current
+  migration date; preserve the historical Git facts and frozen vocabulary.
+  Document approval, work execution, criterion acceptance, publication,
+  integration and archival disposition remain separate claims.
+- A current Task keeps execution state in its one Task Table and one
+  frontmatter status marker. The Registry owns allowed row states/results and
+  summary binding; the lifecycle checker compares the marker with the rows and
+  reads the Git index for completion handoff. Required Spec criteria need
+  assigned completed/PASS rows with concrete evidence. A completed Spec or
+  Plan can receive an authorized follow-up Task without reopening approval.
+  Nonrequired cancellation does not waive required work. A cancelled document
+  records reason, authorization_ref and criteria_disposition. The reference
+  leads to original approval evidence and does not authenticate it: verify the
+  actual actor, target, action, time and revocation through the trusted approval
+  route. Preserve all observed results, including failures, when cancelling.
+  A resolved Incident records its actual zoned resolved_at and body evidence;
+  a placeholder or date alone cannot establish resolution.
 - Meaningful supersession requires the old owner to link `superseded_by` to the
   successor and the successor to link `supersedes` back in the same change.
 - A mutable or current owner cannot disappear without replacement coverage,
   consumer disposition, and applicable Git-backed recovery evidence.
-- Router READMEs carry an "active" routing constant but have neither an
-  artifact ID nor a lifecycle binding.
+- Navigation READMEs and the current Archive catalog carry an "active" routing
+  constant without artifact identity or lifecycle binding. Stable reference
+  pack anchors named README retain their IDs and publication lifecycle.
 - Templates project their source profile, start no lifecycle of their own, and
   do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
@@ -66,7 +85,9 @@ their owning migration work package moves them.
   closure evidence and current corrective-work owner. A route disposition holds
   no body: `tombstones/` names a retired route, its successor or absence, and
   the reason, and `migrations/` names a moved scope and its current owner as
-  `MIG-####`. A disposition's directory is created by the change that first
+  `MIG-####`. Current tombstone and scope-migration routes share the
+  archive/route draft-to-sealed meaning while their existing profiles and paths
+  select the route-specific fields. A disposition's directory is created by the change that first
   uses it.
 - Citability is decided by the registry's ordered `archive_citation` table,
   and every citation check consumes that one decision. An active-stage document

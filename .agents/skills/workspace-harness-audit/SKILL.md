@@ -1,6 +1,13 @@
 ---
 name: "workspace-harness-audit"
 description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
+metadata:
+  title: "Workspace Harness Audit"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

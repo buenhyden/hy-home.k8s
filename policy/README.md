@@ -1,10 +1,10 @@
 ---
 title: "policy"
-version: "0.3.0"
-type: "common/readme-implementation"
+version: "0.4.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 ---
 # policy
 
@@ -37,9 +37,23 @@ updated: "2026-09-25"
 - 비밀값 탐지와 baseline — `scripts/check-secret-handling.sh` 소유
 - live 클러스터 admission 제어. 이 규칙은 저장소 정적 검사이며 런타임 admission을 대체하지 않는다
 
+## Scope
+
+- 규칙 본문은 이 폴더가 소유한다. 같은 판정을 다른 검증기에 중복 구현하지 않는다.
+- `scripts/validate-policy-gates.sh`는 Conftest 실행만 소유하고 규칙은 소유하지
+  않는다. Conftest를 찾지 못하면 fail closed 한다.
+- 규칙을 추가하면 `kubernetes_test.rego`에 발화 사례와 비발화 사례를 함께
+  추가한다. 규칙이 조용히 매칭을 멈추는 것은 커버리지 손실이다.
+- 정책 위반 예외는 규칙을 끄는 방식이 아니라 매니페스트를 고치는 방식으로 해소한다.
+- `infrastructure/vault/policies/`의 Vault 정책은 이 폴더와 다른 소유자다.
+  그것은 외부 Vault 서버가 평가하는 HCL 인가 정책이고, 여기의 규칙은
+  Conftest가 Kubernetes 매니페스트에 평가하는 Rego다. 시스템, 언어, 평가기,
+  변경 이유가 모두 달라 한 폴더로 합치지 않는다. Vault 정책 경로의 계약은
+  `scripts/validate-vault-eso-contracts.py`와 QA 실행 레지스트리가 소유한다.
+
 ## Structure
 
-| 경로 | 책임 |
+| Path | Purpose |
 | --- | --- |
 | [conftest/](./conftest/) | `package main`의 deny 규칙 본문(kubernetes.rego)과 각 규칙이 여전히 발화하는지 증명하는 Rego 테스트(kubernetes_test.rego) |
 
@@ -54,21 +68,18 @@ updated: "2026-09-25"
 | `AppProject` | `namespaceResourceWhitelist`의 group 또는 kind 와일드카드 |
 | 컨테이너 이미지 | `latest` 태그 사용 (init container 포함) |
 
-## Configuration Boundary
+## Usage
 
-- 규칙 본문은 이 폴더가 소유한다. 같은 판정을 다른 검증기에 중복 구현하지 않는다.
-- `scripts/validate-policy-gates.sh`는 Conftest 실행만 소유하고 규칙은 소유하지
-  않는다. Conftest를 찾지 못하면 fail closed 한다.
-- 규칙을 추가하면 `kubernetes_test.rego`에 발화 사례와 비발화 사례를 함께
-  추가한다. 규칙이 조용히 매칭을 멈추는 것은 커버리지 손실이다.
-- 정책 위반 예외는 규칙을 끄는 방식이 아니라 매니페스트를 고치는 방식으로 해소한다.
-- `infrastructure/vault/policies/`의 Vault 정책은 이 폴더와 다른 소유자다.
-  그것은 외부 Vault 서버가 평가하는 HCL 인가 정책이고, 여기의 규칙은
-  Conftest가 Kubernetes 매니페스트에 평가하는 Rego다. 시스템, 언어, 평가기,
-  변경 이유가 모두 달라 한 폴더로 합치지 않는다. Vault 정책 경로의 계약은
-  `scripts/validate-vault-eso-contracts.py`와 QA 실행 레지스트리가 소유한다.
+- 규칙을 추가할 때는 위반 사례로 실패를 먼저 재현하고, 규칙 추가 후 통과를
+  확인한다.
+- Conftest는 시스템 경로 또는 `~/.local/bin/conftest`에서 해석된다. 검증 러너가
+  경로를 확인해 전달한다.
+- binary가 없으면 CI와 같은 release(`v0.69.0`)의 공식 image를 digest로 고정해 Docker로
+  실행한다. network 없이, 저장소를 read-only로 mount한다. binary도 Docker daemon도
+  없으면 검사는 SKIP이 아니라 FAIL이다.
+- 규칙 변경은 GitOps 매니페스트 전체에 영향을 주므로 변경 전 영향 범위를 확인한다.
 
-## Validation
+## Verification
 
 | 검증기 | 확인 대상 |
 | --- | --- |
@@ -84,17 +95,6 @@ python3 scripts/qa.py full
 
 PASS는 저장소 정적 증적이다. 클러스터에 실제로 admission 정책이 적용되어 있는지는
 증명하지 않는다.
-
-## Operations
-
-- 규칙을 추가할 때는 위반 사례로 실패를 먼저 재현하고, 규칙 추가 후 통과를
-  확인한다.
-- Conftest는 시스템 경로 또는 `~/.local/bin/conftest`에서 해석된다. 검증 러너가
-  경로를 확인해 전달한다.
-- binary가 없으면 CI와 같은 release(`v0.69.0`)의 공식 image를 digest로 고정해 Docker로
-  실행한다. network 없이, 저장소를 read-only로 mount한다. binary도 Docker daemon도
-  없으면 검사는 SKIP이 아니라 FAIL이다.
-- 규칙 변경은 GitOps 매니페스트 전체에 영향을 주므로 변경 전 영향 범위를 확인한다.
 
 ## Related Documents
 

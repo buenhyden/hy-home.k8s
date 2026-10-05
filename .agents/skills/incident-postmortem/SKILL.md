@@ -1,6 +1,13 @@
 ---
 name: "incident-postmortem"
 description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
+metadata:
+  title: "Incident Postmortem"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

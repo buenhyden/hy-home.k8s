@@ -38,6 +38,10 @@ from document_contracts import (
     load_internal_payload,  # noqa: F401 - re-exported
     load_registry,
     read_repository_text,
+    task_execution_issues,
+    task_evidence_issues,
+    direct_parent,
+    MARKDOWN_TEMPLATE_PLACEHOLDER,
     validate_registry,  # noqa: F401 - re-exported
     _parse_ls_files_stage_z,
     _run_git,
@@ -80,7 +84,6 @@ GENERIC_RESIDUE = (
     "Replace every placeholder with researched, topic-specific content.",
 )
 STARTER_PLACEHOLDER = re.compile(r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}")
-MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 TOKEN_BEARING_DEBT_RULES = frozenset(
     {
         "BODY-H2-DUPLICATE",
@@ -687,6 +690,8 @@ def _body_contract_is_enforced(
         return True
     if profile.mode != "authored":
         return False
+    if profile.body_contract.task_execution is not None:
+        return True
     if body_contracts == "audit":
         in_scope = not path_prefixes or any(
             path == prefix or prefix in path.parents for prefix in path_prefixes
@@ -763,9 +768,11 @@ def _body_contract_diagnostics(
             )
         ]
     column_indexes = {column: index for index, column in enumerate(header)}
+    execution_rows: list[dict[str, str]] = []
     for row_index, row in enumerate(rows, start=1):
         normalized = row + [""] * max(0, len(header) - len(row))
         normalized = normalized[: len(header)]
+        execution_rows.append(dict(zip(header, normalized, strict=True)))
         for column_index, value in enumerate(normalized):
             if not value.strip():
                 diagnostics.append(
@@ -778,6 +785,11 @@ def _body_contract_diagnostics(
                     )
                 )
         for identifier in contract.identifier_columns:
+            if (
+                contract.task_execution is not None
+                and identifier.column == "Upstream criterion"
+            ):
+                continue  # The Task binding accepts a list of linked criteria.
             value = _identifier_text(normalized[column_indexes[identifier.column]])
             if value.startswith("N/A"):
                 if (
@@ -832,6 +844,16 @@ def _body_contract_diagnostics(
                             value,
                         )
                     )
+    if contract.task_execution is not None:
+        diagnostics.extend(
+            _diagnostic(rule, path, profile, "valid Task execution row", detail)
+            for rule, detail in task_execution_issues(
+                execution_rows,
+                status,
+                contract.task_execution,
+                template=profile.mode == "template",
+            )
+        )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -945,6 +967,12 @@ def _frontmatter_value_style_diagnostics(
         if match is None:
             continue
         key, raw_value = match.groups()
+        if (
+            key == "successor"
+            and raw_value == "null"
+            and _expected_type(profile) == "archive/route"
+        ):
+            continue
         try:
             value = json.loads(raw_value)
         except json.JSONDecodeError:
@@ -972,6 +1000,9 @@ def _frontmatter_value_style_diagnostics(
 
 
 def _expected_type(profile: DocumentProfile) -> str:
+    declared_type = dict(profile.constants).get("type")
+    if isinstance(declared_type, str):
+        return declared_type
     if profile.mode == "template" and profile.source_profile_ids:
         return profile.source_profile_ids[0]
     return profile.profile_id
@@ -1251,9 +1282,41 @@ def _frontmatter_schema_diagnostics(
     if (
         schema is None
         or profile.mode == "template"
-        or profile.profile_class == "exception"
+        or (
+            profile.profile_class == "exception"
+            and profile.profile_id != "common/native-skill-package"
+        )
     ):
         return []
+    if profile.mode == "native":
+        if profile.profile_id != "common/native-skill-package":
+            return []
+        nested = data.get("metadata")
+        if not isinstance(nested, dict):
+            return [
+                _diagnostic(
+                    "FM-SCHEMA",
+                    path,
+                    profile,
+                    "nested Skill document metadata",
+                    "missing metadata",
+                )
+            ]
+        if (
+            tuple(nested) != ("title", "version", "type", "status", "owner", "updated")
+            or nested.get("type") != "governance/skill"
+            or nested.get("status") not in profile.status_domain
+        ):
+            return [
+                _diagnostic(
+                    "FM-SCHEMA",
+                    path,
+                    profile,
+                    "ordered common Skill metadata with its own lifecycle type and status",
+                    "invalid native document metadata",
+                )
+            ]
+        data = nested
     payload = {key: _schema_scalar(value) for key, value in data.items()}
     try:
         errors = schema_errors(dict(schema), payload)
@@ -1362,6 +1425,75 @@ def _frontmatter_body(
             )
 
     diagnostics.extend(_value_contract_diagnostics(path, profile, data, today))
+    if profile.mode != "template":
+        parent = direct_parent(path, profile.profile_id)
+        if parent is not None and data.get("parent_ids") != [parent[1]]:
+            diagnostics.append(
+                _diagnostic(
+                    "PARENT-IDENTITY",
+                    path,
+                    profile,
+                    f"parent_ids equals {[parent[1]]!r}",
+                    repr(data.get("parent_ids")),
+                )
+            )
+        if data.get("status") == "cancelled" and "cancellation" in contract.allowed:
+            cancellation = data.get("cancellation")
+            fields = ("reason", "authorization_ref", "criteria_disposition")
+            if (
+                not isinstance(cancellation, dict)
+                or set(cancellation) != set(fields)
+                or any(
+                    not isinstance(cancellation.get(key), str)
+                    or not cancellation[key].strip()
+                    for key in fields
+                )
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "FM-CANCELLATION",
+                        path,
+                        profile,
+                        "reason, authorization_ref and criteria_disposition",
+                        "missing or invalid cancellation",
+                    )
+                )
+        if (
+            profile.profile_id == "operation/incident"
+            and data.get("status") == "resolved"
+        ):
+            try:
+                value = data.get("resolved_at")
+                resolved_at = (
+                    dt.datetime.fromisoformat(value) if isinstance(value, str) else None
+                )
+                if resolved_at is None or resolved_at.utcoffset() is None:
+                    raise ValueError("missing timezone")
+            except ValueError:
+                diagnostics.append(
+                    _diagnostic(
+                        "INCIDENT-RESOLVED-AT",
+                        path,
+                        profile,
+                        "real resolved_at calendar timestamp with timezone",
+                        repr(data.get("resolved_at")),
+                    )
+                )
+            closure = _exact_heading_section(body, "## Closure")
+            if (
+                not closure
+                or not closure.strip()
+                or re.fullmatch(r"(?is)\s*(?:TBD|Pending|N/A|<!--.*?-->)\s*", closure)
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "INCIDENT-RESOLUTION-EVIDENCE",
+                        path,
+                        profile,
+                        "concrete Closure resolution evidence",
+                        "missing resolution evidence",
+                    )
+                )
     diagnostics.extend(
         _frontmatter_schema_diagnostics(path, profile, data, frontmatter_schema)
     )
@@ -1637,6 +1769,37 @@ def validate_document_text(
         value = metadata.get("status")
         status = value if isinstance(value, str) else ""
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
+    binding = profile.body_contract.task_execution if profile.body_contract else None
+    if binding and binding.evidence_section:
+        section = _exact_heading_section(body, f"## {binding.evidence_section}")
+        table = _first_visible_table(section or "")
+        if table is None or tuple(table[0]) != binding.evidence_columns or not table[1]:
+            diagnostics.append(
+                _diagnostic(
+                    "TASK-EVIDENCE-COLUMNS",
+                    path,
+                    profile,
+                    repr(binding.evidence_columns),
+                    "missing or malformed evidence table",
+                )
+            )
+        elif profile.mode != "template":
+            if any(len(row) != len(table[0]) for row in table[1]):
+                diagnostics.append(
+                    _diagnostic(
+                        "TASK-EVIDENCE-COLUMNS",
+                        path,
+                        profile,
+                        "eight cells in every evidence row",
+                        "ragged evidence row",
+                    )
+                )
+                return sorted(diagnostics, key=diagnostic_sort_key)
+            evidence_rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
+            diagnostics.extend(
+                _diagnostic(rule, path, profile, "valid Task check evidence", detail)
+                for rule, detail in task_evidence_issues(evidence_rows, binding)
+            )
     diagnostics.extend(
         _body_contract_diagnostics(
             path,

@@ -1,10 +1,10 @@
 ---
 title: "verify"
-version: "0.1.0"
-type: "common/readme-implementation"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 ---
 # verify
 
@@ -14,6 +14,11 @@ updated: "2026-09-25"
 
 이 폴더의 스크립트는 모두 라이브 검증이며 저장소 정적 검사를 대신하지 않는다.
 실행 전제와 결과 의미는 아래 표가 소유한다.
+
+## Scope
+
+스크립트는 kubeconfig와 클러스터 상태를 읽기만 하며 secret 값을 출력하지 않는다.
+클러스터 변경은 [infrastructure](../README.md)의 bootstrap 절차가 소유한다.
 
 ## Structure
 
@@ -36,20 +41,15 @@ updated: "2026-09-25"
 | `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional k8s router check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
 
-## Configuration Boundary
-
-스크립트는 kubeconfig와 클러스터 상태를 읽기만 하며 secret 값을 출력하지 않는다.
-클러스터 변경은 [infrastructure](../README.md)의 bootstrap 절차가 소유한다.
-
-## Validation
-
-`bash -n`과 shellcheck 정적 검사는 `python3 scripts/qa.py staged`가 선택한다.
-라이브 실행은 승인된 운영 절차에서만 한다.
-
-## Operations
+## Usage
 
 전체 라이브 검증은 `run-all.sh`로 실행한다. 복구 절차는
 `docs/05.operations/runbooks/`가 소유한다.
+
+## Verification
+
+`bash -n`과 shellcheck 정적 검사는 `python3 scripts/qa.py staged`가 선택한다.
+라이브 실행은 승인된 운영 절차에서만 한다.
 
 ## Related Documents
 

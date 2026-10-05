@@ -1,10 +1,10 @@
 ---
 title: "secrets"
-version: "0.1.1"
-type: "common/readme-implementation"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-10-05"
 ---
 # secrets
 
@@ -36,14 +36,7 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 - 비밀값 탐지 규칙과 baseline — `scripts/check-secret-handling.sh`, `.secrets.baseline` 소유
 - 인증서 발급 절차의 canonical 설명 — `.env.example`와 부트스트랩 스크립트 소유
 
-## Structure
-
-| 경로 | 책임 | 추적 여부 |
-| --- | --- | --- |
-| `certs/.gitkeep` | 디렉터리 형태 유지 | 추적됨 |
-| `certs/*.pem`, `*.crt`, `*.srl`, `*.p12` | mkcert 등으로 로컬 발급한 인증서와 키 | `.gitignore`로 제외 |
-
-## Configuration Boundary
+## Scope
 
 - `.gitignore`가 `secrets/certs/*.pem`, `*.srl`, `*.crt`, `*.p12`를 제외한다.
   새 확장자를 쓰기 전에 제외 규칙을 먼저 추가한다.
@@ -53,7 +46,22 @@ Operator이며, 저장소에는 그 참조만 존재한다.
 - 이 폴더는 클러스터 비밀값을 정의하지 않는다. 워크로드가 쓰는 비밀값은 ESO를
   통해 Vault에서 온다.
 
-## Validation
+## Structure
+
+| 경로 | 책임 | 추적 여부 |
+| --- | --- | --- |
+| `certs/.gitkeep` | 디렉터리 형태 유지 | 추적됨 |
+| `certs/*.pem`, `*.crt`, `*.srl`, `*.p12` | mkcert 등으로 로컬 발급한 인증서와 키 | `.gitignore`로 제외 |
+
+## Usage
+
+- 로컬 인증서 발급 명령과 필요한 파일 목록은 `.env.example` 상단 주석을 따른다.
+- 인증서를 교체한 뒤에는 SAN이 `*.hy-k8s.home.arpa`를 포함하는지 확인한다.
+  bootstrap이 ArgoCD host 기준으로 같은 검사를 수행한다.
+- 키 파일 권한은 소유자 전용으로 유지한다. 이 경계는 운영자가 소유하며 저장소
+  검증이 대신 확인하지 않는다.
+
+## Verification
 
 | 검증기 | 확인 대상 |
 | --- | --- |
@@ -69,14 +77,6 @@ python3 scripts/qa.py full
 
 PASS는 추적된 바이트에 대한 증적이다. 로컬 워크트리에 놓인 추적되지 않는 키
 파일의 안전성은 증명하지 않는다.
-
-## Operations
-
-- 로컬 인증서 발급 명령과 필요한 파일 목록은 `.env.example` 상단 주석을 따른다.
-- 인증서를 교체한 뒤에는 SAN이 `*.hy-k8s.home.arpa`를 포함하는지 확인한다.
-  bootstrap이 ArgoCD host 기준으로 같은 검사를 수행한다.
-- 키 파일 권한은 소유자 전용으로 유지한다. 이 경계는 운영자가 소유하며 저장소
-  검증이 대신 확인하지 않는다.
 
 ## Related Documents
 

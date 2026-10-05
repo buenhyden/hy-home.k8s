@@ -4,9 +4,10 @@ version: "1.0.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 artifact_id: "SPEC-0105-TSK-0002"
+parent_ids: ["SPEC-0105-PLAN-0001"]
 ---
 
 # Task: Quoted Secret Output Scanner Follow-up
@@ -36,10 +37,19 @@ completed [prior Task](tsk-0001-authority-and-authoring.md) remains intact.
 
 ## Task Table
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| WORK-004 | VAL-P01-002 | Reproduce and repair quoted Secret output matching in the shared rule; retain inert prose grammar | quality-engineer | Completed | Focused checks and independent re-review accepted | Implementation and review evidence below |
-| WORK-005 | VAL-P01-006 | Validate, obtain independent read-only review and commit local handoff | platform | Completed | Implementation committed and local full QA passed | Commands, review and delivery limits below |
+### Lifecycle Traceability
+
+| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| WORK-004 | [VAL-P01-002](../spec.md#success-criteria--verification-plan) | Reproduce and repair quoted Secret output matching in the shared rule; retain inert prose grammar | quality-engineer | completed | PASS | accepted | Focused checks and independent re-review observations below |
+| WORK-005 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate, obtain independent read-only review and commit local handoff | platform | completed | PASS | accepted | Implementation commit, local full QA and delivery limits below |
+
+## Task Evidence
+
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-P01-004 | [VAL-P01-002](../spec.md#success-criteria--verification-plan) | WORK-004 | Quoted-output focused regression and re-review | Scanner change and focused synthetic cases recorded below | PASS | [Verification Summary](#verification-summary) | accepted |
+| EVD-P01-005 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-005 | Local validation and delivery | Exact-index, full QA and commit evidence recorded below | PASS | [Verification Summary](#verification-summary) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -203,12 +213,3 @@ Fresh exact-index document gates, the closing commit-message check and the
 third logical commit have not run on these closing Task bytes. Their actual
 outcomes belong in the final handoff rather than a self-referential commit
 claim. Hosted CI, provider runtime and live behavior remain unobserved.
-
-## Traceability
-
-### Lifecycle Traceability
-
-| Criterion / work item | Result | Evidence |
-| --- | --- | --- |
-| [WORK-004](../plan.md#work-breakdown) | Completed | VAL-P01-002 / WP-002; final focused checks and independent re-review above |
-| [WORK-005](../plan.md#work-breakdown) | Completed | VAL-P01-006 / WP-003; intake and implementation commits, exact-index gates, full QA, independent review, limits and rollback above; closing Task index pending |

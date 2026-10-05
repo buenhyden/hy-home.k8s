@@ -1,6 +1,13 @@
 ---
 name: "task-breakdown"
 description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
+metadata:
+  title: "Task Breakdown"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

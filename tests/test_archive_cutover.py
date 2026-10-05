@@ -54,6 +54,331 @@ def current_stable_rows() -> tuple[dict[str, object], ...]:
 
 
 class ArchiveCutoverTest(unittest.TestCase):
+    def test_replacement_bridge_uses_real_precommit_and_committed_generation_event(
+        self,
+    ) -> None:
+        registry = load_registry(ROOT)
+        target = registry.migration_admission["entries"][3]["path"]
+        refs = (
+            registry.migration_admission["spec_ref"],
+            registry.migration_admission["task_ref"],
+        )
+        source = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"
+        record = "docs/98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md"
+        new_record = "docs/98.archive/superseded/01.requirements/9999-new-edge.md"
+        with TemporaryDirectory(prefix="archive-replacement-generation-") as directory:
+            root = Path(directory).resolve()
+
+            def git(*args):
+                return (
+                    subprocess.check_output(
+                        [
+                            "git",
+                            "-c",
+                            "core.hooksPath=/dev/null",
+                            "-C",
+                            str(root),
+                            *args,
+                        ],
+                        stderr=subprocess.DEVNULL,
+                    )
+                    .decode()
+                    .strip()
+                )
+
+            def write(path, data):
+                file = root / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_bytes(data)
+
+            git("init", "--quiet", "--initial-branch=main")
+            git("config", "user.email", "fixture@example.invalid")
+            git("config", "user.name", "Generation Fixture")
+            for path in ("docs/99.templates/registry.json", target, record):
+                write(
+                    path,
+                    subprocess.check_output(
+                        [
+                            "git",
+                            "--no-replace-objects",
+                            "-C",
+                            str(ROOT),
+                            "cat-file",
+                            "blob",
+                            f"{source}:{path}",
+                        ]
+                    ),
+                )
+            git("add", "--all")
+            git("commit", "--quiet", "-m", "actual generation9 source bytes")
+            for path in ("docs/99.templates/registry.json", target, *refs):
+                write(path, (ROOT / path).read_bytes())
+            write(new_record, (ROOT / record).read_bytes())
+            git("add", "--all")
+            for committed in (False, True):
+                if committed:
+                    git("commit", "--quiet", "-m", "declared generation9 to10 event")
+                tracked = archive_cutover._tracked_regular_blobs(root)
+                admitted = archive_cutover._replacement_generation_admissions(
+                    root, registry, tracked, frozenset({PurePosixPath(target)})
+                )
+                self.assertEqual(admitted, frozenset({PurePosixPath(target)}))
+                self.assertEqual(
+                    archive_cutover._replacement_generation_admissions(
+                        root,
+                        registry,
+                        tracked,
+                        frozenset({PurePosixPath(target)}),
+                        historical_record=PurePosixPath(record),
+                    ),
+                    admitted,
+                )
+                self.assertEqual(
+                    archive_cutover._replacement_generation_admissions(
+                        root,
+                        registry,
+                        tracked,
+                        frozenset({PurePosixPath(target)}),
+                        historical_record=PurePosixPath(new_record),
+                    ),
+                    frozenset(),
+                )
+                self.assertEqual(
+                    archive_cutover._replacement_target_diagnostic(
+                        root, registry, target, tracked
+                    ),
+                    "ARCHIVE-REPLACEMENT-NONCURRENT",
+                )
+                self.assertIsNone(
+                    archive_cutover._replacement_target_diagnostic(
+                        root, registry, target, tracked, generation_admissions=admitted
+                    )
+                )
+            original_git = archive_cutover._git
+            with patch.object(
+                archive_cutover,
+                "_git",
+                side_effect=lambda root, *args: (
+                    b"" if args[0] == "log" else original_git(root, *args)
+                ),
+            ):
+                self.assertEqual(
+                    archive_cutover._replacement_generation_admissions(
+                        root, registry, tracked, frozenset({PurePosixPath(target)})
+                    ),
+                    frozenset(),
+                )
+            artifact = document_from_text(
+                registry, PurePosixPath(target), (ROOT / target).read_text()
+            ).artifact_id
+            write(
+                target,
+                (ROOT / target)
+                .read_bytes()
+                .replace(
+                    f'artifact_id: "{artifact}"'.encode(), b'artifact_id: "REQ-9999"'
+                ),
+            )
+            git("add", "--all")
+            self.assertEqual(
+                archive_cutover._replacement_generation_admissions(
+                    root,
+                    registry,
+                    archive_cutover._tracked_regular_blobs(root),
+                    frozenset({PurePosixPath(target)}),
+                ),
+                frozenset(),
+            )
+            write(
+                target,
+                (ROOT / target)
+                .read_bytes()
+                .replace(b'type: "sdlc/requirement"', b'type: "MYSTERY"'),
+            )
+            git("add", "--all")
+            self.assertEqual(
+                archive_cutover._replacement_target_diagnostic(
+                    root,
+                    registry,
+                    target,
+                    archive_cutover._tracked_regular_blobs(root),
+                    generation_admissions=admitted,
+                ),
+                "ARCHIVE-REPLACEMENT-NONCURRENT",
+            )
+            write(
+                target,
+                (ROOT / target)
+                .read_bytes()
+                .replace(b'status: "in-review"', b'status: "approved"'),
+            )
+            git("add", "--all")
+            self.assertIsNone(
+                archive_cutover._replacement_target_diagnostic(
+                    root, registry, target, archive_cutover._tracked_regular_blobs(root)
+                )
+            )
+
+    def test_historical_registry_requires_the_exact_regular_known_generation(
+        self,
+    ) -> None:
+        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"
+        registry = archive_validation.historical_generation_registry(ROOT, commit)
+        self.assertEqual(registry.schema_version, 9)
+        with patch.object(archive_validation, "_proposal_members", return_value={}):
+            with self.assertRaises(archive_recovery.ArchiveContractError):
+                archive_validation.historical_generation_registry(ROOT, commit)
+        for payload in (b'{"schema_version":9}', b'{"schema_version":99}'):
+            with (
+                self.subTest(payload=payload),
+                patch.object(
+                    archive_validation,
+                    "_batch_blob_bytes",
+                    return_value={
+                        archive_validation._proposal_members(
+                            ROOT, commit, ("docs/99.templates/registry.json",)
+                        )["docs/99.templates/registry.json"].object_id: payload
+                    },
+                ),
+            ):
+                with self.assertRaises(archive_recovery.ArchiveContractError):
+                    archive_validation.historical_generation_registry(ROOT, commit)
+        entry = archive_validation._proposal_members(
+            ROOT, commit, ("docs/99.templates/registry.json",)
+        )["docs/99.templates/registry.json"]
+        with patch.object(
+            archive_validation,
+            "_batch_blob_bytes",
+            return_value={
+                entry.object_id: (ROOT / "docs/99.templates/registry.json").read_bytes()
+            },
+        ):
+            self.assertIsNone(
+                archive_validation.historical_generation_registry(ROOT, commit)
+            )
+
+    def test_frozen_supersession_requires_historical_registry_and_immediate_replacement(
+        self,
+    ) -> None:
+        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"
+        original = archive_validation._proposal_members
+        for missing in (
+            "docs/99.templates/registry.json",
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md",
+        ):
+
+            def members(root, revision, paths):
+                return (
+                    {}
+                    if revision == commit and paths == (missing,)
+                    else original(root, revision, paths)
+                )
+
+            with (
+                self.subTest(missing=missing),
+                patch.object(
+                    archive_validation, "_proposal_members", side_effect=members
+                ),
+            ):
+                report = archive_validation.validate_repository_archive(ROOT, {})
+                self.assertIn(
+                    "ARCHIVE-MIGRATION-PARITY",
+                    {item.code for item in report.diagnostics},
+                )
+
+    def test_retained_generation_lookup_requires_matching_source_and_registry(
+        self,
+    ) -> None:
+        retained = "docs/98.archive/retired/03.specs/0047-current-surface-and-stash-reconciliation/spec.md"
+        origin = "888cab04cc44fe6672ec6a8d477e437c397ee75a:docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md"
+        original = archive_cutover.blob_text
+        raw_reader = archive_cutover.read_worktree_regular_bounded
+        for unavailable in ("source", "registry", "newline"):
+            guard = (
+                patch.object(
+                    archive_cutover,
+                    "blob_text",
+                    side_effect=lambda root, value: (
+                        "# Mismatched source\n"
+                        if value == origin
+                        else original(root, value)
+                    ),
+                )
+                if unavailable == "source"
+                else patch.object(
+                    archive_cutover,
+                    "historical_generation_registry",
+                    side_effect=archive_recovery.ArchiveContractError(
+                        "ARCHIVE-MIGRATION-PROFILE", "unavailable fixture"
+                    ),
+                )
+            )
+            if unavailable == "newline":
+                guard = patch.object(
+                    archive_cutover,
+                    "read_worktree_regular_bounded",
+                    side_effect=lambda root, path, **options: (
+                        raw_reader(root, path, **options).replace(b"\n", b"\r\n")
+                        if path == retained
+                        else raw_reader(root, path, **options)
+                    ),
+                )
+            with (
+                self.subTest(unavailable=unavailable),
+                guard,
+                patch.object(archive_cutover, "_git_paths", return_value=(retained,)),
+            ):
+                report = self._validate_without_repeating_secret_classification()
+                codes = {item.code for item in report.diagnostics}
+                self.assertIn("ARCHIVE-CURRENT-STATUS-INVALID", codes)
+                self.assertIn(
+                    "ARCHIVE-CATALOG-RETENTION"
+                    if unavailable != "registry"
+                    else "ARCHIVE-CATALOG-OBJECT",
+                    codes,
+                )
+
+    def test_current_generation_live_status_cannot_use_a_historical_view(self) -> None:
+        path = (
+            "docs/03.specs/0106-document-profile-form-and-lifecycle-contracts/spec.md"
+        )
+        report = archive_validation.validate_current_archive_authority(
+            (
+                archive_validation.CurrentMarkdownDocument(
+                    path, "# Current\n", "sdlc/spec", "retired"
+                ),
+            ),
+            individual_archive_paths=frozenset(),
+            registry=load_registry(ROOT),
+            historical_registries={
+                path: archive_validation.historical_generation_registry(
+                    ROOT, "89dc12df213849e3e591c3f52bde2b1d288f033b"
+                )
+            },
+        )
+        self.assertIn(
+            "ARCHIVE-CURRENT-STATUS-INVALID", {item.code for item in report.diagnostics}
+        )
+
+    def test_retained_retired_spec_and_plan_use_authenticated_source_generation(
+        self,
+    ) -> None:
+        retained = tuple(
+            "docs/98.archive/retired/03.specs/0047-current-surface-and-stash-reconciliation/"
+            + member
+            for member in ("spec.md", "plan.md")
+        )
+        with patch.object(archive_cutover, "_git_paths", return_value=retained):
+            report = self._validate_without_repeating_secret_classification()
+        self.assertEqual(
+            [
+                item
+                for item in report.diagnostics
+                if item.code == "ARCHIVE-CURRENT-STATUS-INVALID"
+            ],
+            [],
+        )
+
     def _validate_without_repeating_secret_classification(
         self,
     ) -> archive_cutover.CutoverReport:

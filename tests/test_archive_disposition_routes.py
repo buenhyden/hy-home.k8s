@@ -279,7 +279,7 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
                 {self.source: disposition.target},
                 {},
                 dispositions={self.source: disposition} if proof else {},
-                proposed_registry=load_registry(ROOT),
+                proposed_registry=legacy_registry(),
             )
         )
         with (
@@ -450,7 +450,7 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
         )
 
     def test_cutover_admits_registry_work_states_without_record_authority(self) -> None:
-        for status in ("queued", "blocked", "in-progress", "cancelled"):
+        for status in ("draft", "ready", "blocked", "in-progress", "cancelled"):
             with self.subTest(status=status):
                 report = self.cutover_report(
                     profile="sdlc/task", status=status, historical_link=False

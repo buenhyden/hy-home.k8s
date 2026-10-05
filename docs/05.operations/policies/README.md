@@ -1,10 +1,10 @@
 ---
 title: "05.operations/policies"
-version: "0.1.6"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-05"
 layer: "operations"
 ---
 # 05.operations/policies
@@ -55,11 +55,11 @@ layer: "operations"
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
 
-## Item Index
+## Structure
 
 ### 문서 인덱스
 
-| 문서 | 설명 |
+| Path | Purpose |
 | --- | --- |
 | [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/OpenBao/ingress·k8s router/최소권한 통합 정책과 공통 live 변경 예외 |
 | [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Istio/Kiali 운영 통제 정책 |
@@ -67,7 +67,7 @@ layer: "operations"
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 |
 | [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 |
 
-## Add and Find
+## Usage
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
 2. [policy.template.md](../../99.templates/templates/operations/policy.template.md)를 기준으로 섹션을 유지한다.

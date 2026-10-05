@@ -1,6 +1,13 @@
 ---
 name: "requirements-to-design"
 description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
+metadata:
+  title: "Requirements To Design"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "archive/migration"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "archive"
 artifact_id: "{{ARTIFACT_ID}}"
 ---

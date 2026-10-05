@@ -1,10 +1,10 @@
 ---
 title: "tests"
-version: "0.3.1"
-type: "common/readme-implementation"
+version: "0.4.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 
 # tests
@@ -26,7 +26,7 @@ updated: "2026-09-29"
 - Validator authors
 - AI agents
 
-### Scope
+## Scope
 
 #### In Scope
 
@@ -79,7 +79,9 @@ fixture는 범위가 제한된 예시이며 production registry가 아니다. fi
 독립적인 테스트가 사용하는 동안에만 남는다. 조합이 필요하면 보통 영구
 매트릭스를 늘리지 말고 임시 디렉터리에서 생성한다.
 
-## Configuration Boundary
+## Usage
+
+### Configuration Boundary
 
 - 테스트는 `scripts/`의 production module을 import할 수 있다. 반대 방향의
   의존은 금지한다.
@@ -96,7 +98,7 @@ fixture는 범위가 제한된 예시이며 production registry가 아니다. fi
   gate가 하지 않는 일을 할 때다. 의존성을 patch해 실패 경로에 도달하거나, 정확한
   진단 문자열을 고정하거나, validator가 routing되는지 자체를 증명하는 경우다.
 
-## Validation
+### Validation
 
 반복 작업 중에는 전용 suite를 실행하고 마지막에 full profile을 한 번 실행한다.
 
@@ -114,13 +116,13 @@ git diff --check
 바이트에 `unittest discover`를 따로 돌리면 증거가 늘지 않고 profile이 이미 한
 일을 반복할 뿐이다. discovery는 profile 밖에서 실패를 재현할 때만 직접 실행한다.
 
-완료 순서와 PASS/FAIL/SKIP/DEFER의 의미는
+완료 순서와 PASS/FAIL/DEFER/NOT_RUN/NOT_APPLICABLE의 의미는
 [Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
 테스트 진입점을 나열할 뿐 그 정책을 다시 정의하지 않는다.
 
-## Operations
+### Operations
 
-### Working Procedure
+#### Working Procedure
 
 1. 결함은 가장 좁은 독립 테스트에서 재현한다.
 2. 한 번 쓰는 mutation에는 임시 데이터를 쓴다. 영구 fixture는 여러 사례가

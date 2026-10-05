@@ -1,10 +1,10 @@
 ---
 title: "{{TITLE}}"
 version: "0.1.0"
-type: "common/readme-collection-index"
+type: "common/readme"
 status: "active"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "{{LAYER}}"
 ---
 # {{COLLECTION_NAME}}
@@ -17,11 +17,21 @@ layer: "{{LAYER}}"
 
 <!-- Author prompt: 포함하는 산출물, 제외 대상, 이 컬렉션을 관할하는 owner를 정한다. -->
 
-## Item Index
+## Structure
+
+### Item Index
 
 <!-- Author prompt: 직접 멤버를 표나 목록 하나에 한 번씩, 대상을 기준으로 한 상대 링크로 적는다. 멤버 폴더는 폴더로 링크하고 그 안의 파일은 링크하지 않는다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
-## Add and Find
+<!-- Author prompt: 표를 쓸 때는 Path | Purpose를 사용하고 책임 참조가 독자에게 필요할 때만 마지막에 Owner를 추가한다. Owner는 정본 책임 owner를 참조하며 목록이나 트리를 쓰는 컬렉션에 표를 강제하지 않는다. -->
+
+| Path | Purpose |
+| --- | --- |
+| [{{CHILD_NAME}}]({{CHILD_RELATIVE_PATH}}) | {{PURPOSE}} |
+
+## Usage
+
+### Add and Find
 
 <!-- Author prompt: 새 항목 하나를 추가할 때의 이름 규칙, 위치, 찾는 방법을 안내한다. -->
 

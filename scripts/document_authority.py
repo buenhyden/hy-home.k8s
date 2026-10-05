@@ -44,6 +44,7 @@ OPTIONAL_TOP_LEVEL_KEYS = frozenset(
         "readme_navigation",
         "document_language",
         "legacy_rebased_retained_paths",
+        "migration_admission",
     }
 )
 PROFILE_KEYS = frozenset(
@@ -309,7 +310,7 @@ def validate_template_profile_reference(
         raise AuthorityError("TEMPLATE_PROFILE: missing type/profile ID")
     profile_id = match.group(1)
     profile_ids = {
-        item.get("id")
+        item.get("frontmatter", {}).get("constants", {}).get("type", item.get("id"))
         for item in registry.get("profiles", [])
         if isinstance(item, Mapping)
     }

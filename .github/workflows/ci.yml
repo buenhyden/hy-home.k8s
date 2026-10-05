@@ -229,7 +229,7 @@ jobs:
               branch_verdict=PASS
               ;;
             push:skipped|workflow_dispatch:skipped)
-              branch_verdict=SKIP
+              branch_verdict=NOT_APPLICABLE
               ;;
             *)
               branch_verdict=FAIL
@@ -241,7 +241,7 @@ jobs:
               isolated_verdict=PASS
               ;;
             push:skipped|workflow_dispatch:skipped)
-              isolated_verdict=SKIP
+              isolated_verdict=NOT_APPLICABLE
               ;;
             *)
               isolated_verdict=FAIL

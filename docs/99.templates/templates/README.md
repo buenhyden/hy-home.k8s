@@ -1,10 +1,10 @@
 ---
 title: "99.templates/templates"
-version: "0.3.0"
-type: "common/readme-collection-index"
+version: "0.4.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 layer: "templates"
 ---
 # 99.templates/templates
@@ -32,9 +32,9 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 - 완성된 문서의 예시나 사본
 - form 디렉터리별 README (이 카탈로그 하나만 둔다)
 
-## Item Index
+## Structure
 
-| 폴더 | 포함 form |
+| Path | Purpose |
 | --- | --- |
 | [architecture/](./architecture/) | decision, description |
 | [archive/](./archive/) | migration, route-tombstone, scope-migration, tombstone |
@@ -46,7 +46,7 @@ profile의 form이다. Form은 계약을 정의하지 않는다. 계약은
 | [runtime/](./runtime/) | claude-agent (Markdown), claude-command (Markdown), codex-agent (TOML) |
 | [specs/](./specs/) | spec, plan, task |
 
-## Add and Find
+## Usage
 
 1. 만들려는 문서의 경로로 [registry](../registry.json)에서 profile을 하나만
    해석하고, 그 profile이 지정한 form을 읽는다.

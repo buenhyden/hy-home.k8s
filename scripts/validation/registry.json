@@ -320,7 +320,7 @@
         "reason": "Pinned local Kustomize render and built-in schema validation are required."
       },
       "evidenceLane": "repo-static",
-      "structuredResults": "platform-depth-v1"
+      "structuredResults": "platform-depth-v2"
     },
     {
       "id": "knowledge-surface",

@@ -28,6 +28,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "is_bare_or_main_push",
             "is_unmarked_command",
             "rel",
+            "readme_index_header_valid",
         }
         nodes = [
             node
@@ -81,6 +82,17 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             ),
             cls.rules,
         )
+
+    def test_current_collection_index_header_uses_shared_navigation_contract(self):
+        valid = self.rules["readme_index_header_valid"]
+        text = (ROOT / "docs/05.operations/guides/README.md").read_text()
+        header = next(line for line in text.splitlines() if line.startswith("| Path |"))
+        cells = [cell.strip() for cell in header.strip("|").split("|")]
+        self.assertTrue(valid(cells))
+        self.assertTrue(valid(cells + ["Owner"]))
+        self.assertFalse(valid(cells + ["Status"]))
+        self.assertFalse(valid(cells + ["Owner", "Owner"]))
+        self.assertFalse(valid(["문서", "설명"]))
 
     def test_readme_tables_retain_visible_headings_and_unique_diagnostics(self):
         titles = (

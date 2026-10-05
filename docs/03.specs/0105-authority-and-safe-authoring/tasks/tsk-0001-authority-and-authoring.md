@@ -4,9 +4,10 @@ version: "1.1.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 artifact_id: "SPEC-0105-TSK-0001"
+parent_ids: ["SPEC-0105-PLAN-0001"]
 ---
 
 # Task: Authority and Safe Authoring
@@ -27,11 +28,21 @@ and independent review supply evidence rather than authorization.
 
 ## Task Table
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-P01-001 | Trace source and actual consumers | platform | Completed | Direct baseline and independent traces reconciled | Source and consumer comparison below |
-| WORK-002 | VAL-P01-002, VAL-P01-003, VAL-P01-004, VAL-P01-005 | Repair authorized owners and consumers | platform | Completed | Repairs and scoped independent review accepted | Changed-path disposition below |
-| WORK-003 | VAL-P01-006 | Validate, review and commit | platform | Completed | Implementation commit, exact-index and full QA observed | Verification Summary |
+### Lifecycle Traceability
+
+| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | Trace source and actual consumers | platform | completed | PASS | accepted | Source and consumer comparison below; independent traces reconciled |
+| WORK-002 | [VAL-P01-002](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Repair authorized owners and consumers | platform | completed | PASS | accepted | Changed-path disposition and accepted scoped independent review below |
+| WORK-003 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate, review and commit | platform | completed | PASS | accepted | Implementation commit, exact-index and full QA observations in Verification Summary |
+
+## Task Evidence
+
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-P01-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Source and consumer comparison | Original source revision `f6501e46a0d35858c598c207e726a0e89c92d7d7` | PASS | [Verification Summary](#verification-summary) | accepted |
+| EVD-P01-002 | [VAL-P01-002](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Changed-path and independent review | Scoped implementation revision and reviewer observations recorded below | PASS | [Verification Summary](#verification-summary) | accepted |
+| EVD-P01-003 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-003 | Validation and local delivery | Exact index, full QA and commit observations recorded below | PASS | [Verification Summary](#verification-summary) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -314,13 +325,3 @@ pre-resource flag, Secret `.data` jsonpath or custom output template. The
 evaluator recognizes a bounded claim grammar; indirect/passive and ambiguous
 language, including quoted `used` commands, requires human review. Neither substitutes for actual authorization
 or native enforcement. Policy continues to forbid actual unauthorized access.
-
-## Traceability
-
-### Lifecycle Traceability
-
-| Criterion / work item | Result | Evidence |
-| --- | --- | --- |
-| [WORK-001](../plan.md#work-breakdown) | Completed | Source/consumer comparison and preserved owners |
-| [WORK-002](../plan.md#work-breakdown) | Completed | Scoped repairs, regressions and independent review |
-| [WORK-003](../plan.md#work-breakdown) | Completed | Implementation commit and actual mandatory local checks above |

@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "in-progress"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 artifact_id: "SPEC-0106"
 ---
@@ -16,7 +16,7 @@ artifact_id: "SPEC-0106"
 P02 makes the existing Stage 99 document contract describe lifecycle and
 execution traceability consistently across its registry, forms, validators,
 and current consumers. The request owner approved this local change plan;
-implementation and check results remain pending. This package follows the
+implementation and check results belong to the Task. This package follows the
 completed [P01 package](../0105-authority-and-safe-authoring/spec.md) and does
 not reopen the historical SPEC-0104 package.
 
@@ -25,16 +25,19 @@ not reopen the historical SPEC-0104 package.
 Use the existing six-key governed frontmatter prefix and only the extensions
 declared by each profile. Stage 99 remains the sole machine owner of profile,
 identity, relationship, lifecycle, and form shape; common governance owns
-meaning and authorization. Derive package parentage from the path and
-`artifact_id`; add no `spec_id` or `parent_ids` copy. Preserve current vocabulary:
-`active` is valid approval state, while `queued` means unexecuted work and
-never authorizes action.
+meaning and authorization. Stable documents retain `artifact_id`; Plans and
+Tasks declare one direct structural `parent_ids` value (Plan to Spec, Task to
+Plan) without a duplicate `spec_id`. Review, approval and implementation are
+distinct states; Task `ready` records readiness, not permission to act.
 
-No new requirement, AD, ADR, schema family, progress ledger, native-provider
+No new requirement, AD, ADR, progress ledger, native-provider
 claim, or permanent inventory count is needed. Do not modify frozen archive
 bodies, sealed records, historical contracts, private/global state, cluster,
-secrets, or remote Git. No push, PR, merge, archive cutover, live action, or
-worktree removal is authorized by this package.
+secrets, or remote Git. The latest explicit user instruction authorizes local
+P01/P02 integration into main and deletion of the two development branches and
+any linked development worktrees after verified integration. Retain the primary
+workspace. Push, PR, remote merge/publication, archive mutation and live action
+remain outside scope; this instruction does not authenticate an approving actor.
 
 ## Contracts
 
@@ -42,32 +45,41 @@ worktree removal is authorized by this package.
   express durable choices; Specs express behavior; Plans express order; Tasks
   own execution state and evidence. The existing six-key prefix remains in its
   declared order for each governed Markdown profile.
-- The [Task form](../../99.templates/templates/specs/task.template.md) has one
-  Task Table under `## Task Table`, a `### Lifecycle Traceability` heading,
-  and columns `ID | Upstream criterion | Work item | Owner | Status | Result |
-  Evidence`. The registry's optional `task_execution` body binding is its
-  machine owner. That binding uses
-  `single_status_marker: frontmatter`, `summary_rule: task-items-v1`, and
-  `result_states` keyed by the existing Task status domain: `queued` admits
-  `NOT-RUN`; `in-progress` admits `NOT-RUN`, `PASS`, `FAIL`, `DEFER`; `blocked`
-  admits `FAIL`, `DEFER`; `completed` admits `PASS`; and `cancelled` admits
-  `CANCELLED`. No duplicate progress table is introduced.
+- The [Plan form](../../99.templates/templates/specs/plan.template.md) has one
+  work mapping under `## Work Breakdown` with columns `Work Unit | Criteria |
+  Work | Dependencies | Task | Verification`. The [Task form](../../99.templates/templates/specs/task.template.md)
+  has one Work/Lifecycle table under `## Task Table`, a
+  `### Lifecycle Traceability` heading, and columns `ID | Upstream criterion |
+  Work item | Owner | Status | Result | Acceptance | Evidence`. Its separate
+  `## Task Evidence` attachment uses `Evidence | Criteria | Work Unit | Check |
+  Input | Result | Location | Acceptance`; check outcomes do not copy Task
+  execution state. The registry's optional `task_execution` binding owns the
+  Task row semantics with `single_status_marker: frontmatter`,
+  `summary_rule: task-items-v2`, `result_states`, and `acceptance_states`.
+  Its secondary `evidence_section`, `evidence_columns` and
+  `evidence_result_states` bind the existing attachment through the same
+  parser; the four acceptance states are shared. A malformed attachment,
+  invented result or accepted NOT_RUN fails without copying execution state.
 - A Task frontmatter `status` is the single status marker. For a one-row Task,
-  frontmatter is the status source and that row must agree with it. For a
+  the row Status cell is literal `frontmatter`; the actual state comes only
+  from the frontmatter marker. For a
   multi-row Task, the checker derives the expected frontmatter status from row
-  statuses, then compares without rewriting: any `blocked` row yields
-  `blocked`; any `in-progress` row or a `completed` plus `queued` combination
-  yields `in-progress`; remaining `queued` rows, including `queued` plus
-  `cancelled`, yield `queued`; all `completed` rows yield `completed`; all
-  terminal rows with any `cancelled` row yield `cancelled`. Invalid row values
-  or row/result combinations fail; valid mixtures follow this precedence.
-- Row results use `NOT-RUN`, `PASS`, `FAIL`, `DEFER`, and `CANCELLED` with
-  deterministic state/result compatibility. They do not replace QA lane
+  statuses, then compares without rewriting. `blocked` dominates; otherwise
+  any `in-progress` row or completed plus ready/draft work yields
+  `in-progress`; remaining draft/ready rows retain an unfinished summary;
+  all completed rows yield `completed`; all terminal rows with cancellation
+  yield `cancelled`. Invalid row values or state/result/acceptance combinations
+  fail. A cancelled row retains its actual observed result.
+- Work results use `NOT_RUN`, `PASS`, `FAIL`, `DEFER`, and `NOT_APPLICABLE`;
+  acceptance uses `pending`, `accepted`, `rejected`, and `not-required`.
+  Completed required work needs PASS, accepted and concrete evidence. A
+  completed explicitly nonrequired item may use NOT_APPLICABLE/not-required,
+  but never satisfies a required Spec criterion. These do not replace QA lane
   results from [quality policy](../../../.agents/governance/quality.md).
 - A read-only completion mode checks the Git index and requires one or more
   `--include-path` current Spec anchors. It follows each required Spec criterion
   through the Plan and Task to an assigned row with `Status: completed`,
-  `Result: PASS`, and concrete evidence. A row with `Status: in-progress` and
+  `Result: PASS`, `Acceptance: accepted`, and concrete evidence. A row with `Status: in-progress` and
   `Result: PASS` is still incomplete. Missing, failed, blocked, unexecuted, or
   required cancelled work cannot produce completion handoff.
   A completed Spec or Plan can receive follow-up Task evidence without
@@ -82,6 +94,26 @@ worktree removal is authorized by this package.
   null, `reason`, `moved_scope`, and `current_owner` as applicable. Existing
   scalar/unique-array supersession forms remain admitted. Frozen `change_id`
   stays historical evidence, not new capacity.
+- The Registry contains one bounded `migration_admission` for this approved
+  generation-9 to generation-10 cutover. It identifies this Spec and Task,
+  the actual 2026-10-05 migration date, and exact current path/profile/state
+  entries. The checker admits an entry only for an actual generation-9 base
+  and generation-10 proposal with both exact source and target observations.
+  Classless source pack/native/router states are null; their observed
+  frontmatter values stay historical facts. Missing references, unknown
+  generations, unlisted paths, mismatched observations and terminal reopening
+  fail. Ordinary generation-10 transitions and immutable history are unchanged.
+  Spec/Task references locate the scoped record and do not authenticate approval.
+- Current governed roles use the approved generation 10 state vocabulary.
+  A cancelled document carries `cancellation` with reason, authorization
+  reference and criterion disposition; the reference does not authenticate
+  approval. A resolved Incident carries actual `resolved_at` and resolution
+  evidence. Native Skills keep `name` and `description` while the common
+  envelope lives in `metadata`. Navigation README routes use
+  `common/readme` and the five shared core sections; research pack anchors
+  retain stable `RES-####` IDs as authored reference packs. The archive index
+  has its separate `archive/catalog` route and a current route record uses
+  `archive/route` draft/sealed.
 
 ## Core Design
 
@@ -139,16 +171,20 @@ next owner named.
 Demonstrate focused RED and GREEN cases for Task status aggregation and
 completion refusal, including historical fixtures. Run the affected quick
 profile, exact-index staged QA and actual commit-message validation for each
-logical commit. After final code, run one local full profile; after closing
+logical commit. The latest explicit user instruction removes full QA from the
+required acceptance set and prohibits another full run or an all-files/unit
+substitute. Preserve earlier interrupted full observations; an unexecuted full
+check is NOT_RUN with acceptance not-required, never PASS. After closing
 documentation, refresh affected/index/message and completion-mode evidence.
-Independent read-only review checks the final meaning. No P02 full, unit,
-fixture, or completion-mode test has run at intake.
+Independent read-only review checks the final meaning. At the intake snapshot,
+P02 implementation full, unit, fixture and completion-mode checks had not run;
+the Task owns all later execution observations.
 
 ## Success Criteria & Verification Plan
 
 | Criterion | Acceptance evidence |
 | --- | --- |
-| VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, final local full, closing-doc and independent review evidence in the Task. |
+| VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
 

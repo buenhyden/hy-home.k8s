@@ -1,10 +1,10 @@
 ---
 title: "90.references/research"
-version: "0.1.2"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-10-05"
 layer: "references"
 ---
 # 90.references/research
@@ -54,7 +54,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Item Index
+## Structure
 
 ```text
 research/
@@ -65,10 +65,10 @@ research/
 
 ### Research Pack Index
 
-| Pack | Role | Authority Boundary |
-| --- | --- | --- |
-| [0001-workspace-engineering/](./0001-workspace-engineering/) | 후속 workspace engineering research pack | 연구 routing과 관찰 날짜가 붙은 coverage만 담는다. 현재 권한은 정본 소유자에게 있다. |
-| [0002-archive-retention-and-provenance/](./0002-archive-retention-and-provenance/) | archive 보존과 출처 research pack | 연구 routing과 관찰 날짜가 붙은 증거만 담는다. 현재 권한은 정본 소유자에게 있다. |
+| Path | Purpose |
+| --- | --- |
+|   [0001-workspace-engineering/](./0001-workspace-engineering/) | 후속 workspace engineering research pack |
+|   [0002-archive-retention-and-provenance/](./0002-archive-retention-and-provenance/) | archive 보존과 출처 research pack |
 
 각 pack README는 보고서별 연구 책임을 안내하는 `## Report Index`를 소유한다.
 보고서의 lifecycle·관찰일은 각 보고서가, 출처·주장·요구사항 대응은 pack의
@@ -80,7 +80,7 @@ registry가 요구하는 `m####-` identity prefix 뒤에 의미 있는 주제 �
 이 prefix는 identity이지 정렬 키가 아니다. 현재 보고서 파일 이름에 `part-*.md`,
 날짜, 두 번째 정렬 prefix를 붙이지 않는다.
 
-## Add and Find
+## Usage
 
 1. research pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
 2. pack README는

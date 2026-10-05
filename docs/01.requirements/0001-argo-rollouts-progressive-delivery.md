@@ -2,9 +2,9 @@
 title: "Argo Rollouts Progressive Delivery Requirement Package"
 version: "1.0.2"
 type: "sdlc/requirement"
-status: "active"
+status: "in-review"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "requirements"
 artifact_id: "REQ-0001"
 ---

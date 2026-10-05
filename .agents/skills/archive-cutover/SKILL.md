@@ -1,6 +1,13 @@
 ---
 name: "archive-cutover"
 description: "Use when a governed document or whole Spec package that is no longer current leaves its active stage for a Stage 98 disposition, when a disposition fails the lifecycle, link, or archive cutover gates, or when a citation of a retained document needs repointing."
+metadata:
+  title: "Archive Cutover"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

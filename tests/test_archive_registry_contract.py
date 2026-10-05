@@ -100,10 +100,8 @@ class RetentionClassTests(unittest.TestCase):
             {
                 "completed": frozenset({"completed"}),
                 "superseded": frozenset({"superseded"}),
-                "retired": frozenset(
-                    {"withdrawn", "retired", "rejected", "invalidated"}
-                ),
-                "resolved": frozenset({"closed"}),
+                "retired": frozenset({"retired", "rejected"}),
+                "resolved": frozenset({"resolved"}),
             },
         )
 

@@ -1,12 +1,13 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "draft"
+status: "in-progress"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 artifact_id: "SPEC-0106-PLAN-0001"
+parent_ids: ["SPEC-0106"]
 ---
 
 # Stage 99 Lifecycle Normalization Implementation Plan
@@ -18,7 +19,11 @@ dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
 direct P02 request authorizes scoped local authoring, review, checks, and three
-logical local commits; it does not authorize remote or live actions.
+logical local commits. The latest explicit user instruction also authorizes
+local P01/P02 integration into main and deletion of the two development branches
+and any linked development worktrees after verified integration; retain the
+primary workspace. Remote/publication, live/secret and archive-mutation actions
+remain excluded, without an authenticated-actor claim.
 
 ## Overview
 
@@ -45,8 +50,8 @@ and the fixed Conftest digest
 `a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558`, consumed by
 `scripts/validate-policy-gates.sh:57`. Bounded shell calls have needed native
 escalation because `bwrap` fails at loopback setup; that approval is a tool
-execution boundary, not a change to repository policy. No P02 test or QA lane
-has been run yet.
+execution boundary, not a change to repository policy. The Task owns actual
+test and QA observations.
 
 ## Goals & In-Scope
 
@@ -57,18 +62,18 @@ Use the affected-path validation registry and record exact snapshots/results.
 
 ## Non-Goals & Out-of-Scope
 
-No new document family, stable ID copy, extra Task, progress ledger, inventory
+No new unrelated document family, duplicate stable ID copy, extra Task, progress ledger, inventory
 pin, permanent `change_id` capacity, frozen archive rewrite, provider trust
 change, global/private change, remote Git action, or live/secret operation.
 P01 completion and SPEC-0104 archive disposition stay intact.
 
 ## Work Breakdown
 
-| ID | Work package | Depends on | Entry gate | Exit evidence |
-| --- | --- | --- | --- | --- |
-| WP-001 | Intake and source inventory | Approved P02 scope | Clean baseline, selected profiles and forms | Draft Spec/Plan/queued Task and affected check plan |
-| WP-002 | Atomic registry, form, checker, fixture and current-consumer normalization | WP-001 | Intake reviewed; focused RED cases and exact consumer inventory | GREEN cases, affected gates, staged QA and implementation commit |
-| WP-003 | Acceptance and local handoff | WP-002 | Reviewable implementation bytes | Independent review, one local full run, completion mode, closing documentation, staged/message evidence and closing commit |
+### Lifecycle Traceability
+
+| Work Unit | Criteria | Work | Dependencies | Task | Verification |
+| --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Intake evidence, focused RED/GREEN, affected and staged gates, independent review, completion mode, local main integration, branch/worktree cleanup and closing commit in the Task; full QA is not required under the latest explicit user scope |
 
 ## Verification Plan
 
@@ -76,10 +81,13 @@ Focus RED/GREEN on status aggregation, duplicate/missing rows, criterion links,
 required versus nonrequired cancellation, Git transition/deletion/reopening,
 route values and frozen fixtures. Inspect affected paths before selecting
 `python3 scripts/qa.py quick`; exact-index `staged` and actual message checks
-precede each local commit. Run full once on the final implementation tree, then
-affected and completion mode after Task-only closure. Record `PASS`, `FAIL`,
-`SKIP`, or `DEFER` by the quality lane vocabulary without promoting an
-unexecuted check. The independent reviewer reports findings read-only.
+precede each local commit. The latest explicit user instruction excludes further
+full QA and all-files/unit substitutes from the required set. Preserve the
+interrupted full observations and record an unexecuted full as NOT_RUN with
+acceptance not-required. Refresh affected/index and completion mode on closing
+documents and observe the local main finish before its final evidence. Record Task results as `NOT_RUN`, `PASS`, `FAIL`, `DEFER` or
+`NOT_APPLICABLE`, with separate criterion acceptance and quality-lane evidence;
+never promote an unexecuted check. The independent reviewer reports findings read-only.
 
 ## Risks & Mitigations
 
@@ -95,17 +103,9 @@ while preserving the Task evidence, Git ledger and unrelated changes.
 
 `VAL-P02-001` passes as one atomic set, all required local gates and read-only
 review have observed evidence, and the Task records exact checked snapshots,
-commands, limits, residual risk and next owner. Stable approval of Spec and
-Plan may raise their versions to 1.0.0 and status to active using the existing
-explicit P02 approval input; the record must not invent an approving actor,
+commands, limits, residual risk and next owner. The Spec and Plan carry version
+1.0.0 and in-progress status from the existing explicit P02 approval input; the
+record must not invent an approving actor,
 timestamp, authentication or revocation check. Completion status waits for
 actual implementation and acceptance evidence. Remote/live lanes remain
 unobserved unless separately authorized and executed.
-
-## Traceability
-
-### Lifecycle Traceability
-
-| Spec criterion | Work package | Expected Task |
-| --- | --- | --- |
-| [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-003 | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) |

@@ -336,7 +336,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
                         f"{singular}-pack.template.md"
                     )
                     if (
-                        profile.profile_id != f"common/readme-{singular}-pack"
+                        profile.profile_id != f"reference/{singular}-pack"
                         or profile.template != expected_template
                     ):
                         errors.append(

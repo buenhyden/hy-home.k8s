@@ -4,7 +4,7 @@ version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "architecture"
 artifact_id: "ADR-0011"
 ---
@@ -77,3 +77,9 @@ is unchanged.
 - [Spec](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
 - [Plan](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
 - [Task](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [Architecture owner](../descriptions/0004-argo-rollouts-progressive-delivery.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |

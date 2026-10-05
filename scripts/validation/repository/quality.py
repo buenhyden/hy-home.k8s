@@ -1623,6 +1623,19 @@ if not tracked_incident_docs:
             + ", ".join(rel(path) for path in unexpected_incident_dirs)
         )
 
+
+def readme_index_header_valid(header: list[str]) -> bool:
+    contract = document_registry.readme_navigation
+    required = contract.index_columns
+    extra = header[len(required) :]
+    return (
+        bool(required)
+        and tuple(header[: len(required)]) == required
+        and len(extra) == len(set(extra))
+        and all(column in contract.optional_index_columns for column in extra)
+    )
+
+
 operations_index_roots = [
     root / "docs/05.operations/guides",
     root / "docs/05.operations/policies",
@@ -1640,20 +1653,20 @@ for operations_root in operations_index_roots:
         ("## 문서 인덱스", "### 문서 인덱스"),
     )
     # SPEC-0091: status and dates stay in each document's frontmatter.
-    expected_header = ["문서", "설명"]
+    expected_header = list(document_registry.readme_navigation.index_columns)
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
         continue
-    if rows[0] != expected_header:
+    if not readme_index_header_valid(rows[0]):
         fail(
             f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}"
         )
 
     indexed_rows: dict[str, list[str]] = {}
     for row_number, row in enumerate(rows[1:], start=1):
-        if len(row) != len(expected_header):
+        if len(row) != len(rows[0]):
             fail(
-                f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns"
+                f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(rows[0])} columns"
             )
             continue
         match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
@@ -2223,7 +2236,7 @@ pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
     "hosted `ci-summary` result",
-    "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
+    "- [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.",
 ]:
     if phrase not in pull_request_template_text:
         fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
@@ -2375,7 +2388,7 @@ if about_prefix_count >= len(branch_prefixes):
 
 workflow_responsibility_rows = markdown_table_after_heading(
     github_about_text,
-    "## Workflow Responsibility Matrix",
+    "### Workflow Responsibility Matrix",
 )
 expected_workflow_responsibility_header = [
     "Workflow",

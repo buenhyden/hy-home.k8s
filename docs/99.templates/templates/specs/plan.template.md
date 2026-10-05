@@ -4,9 +4,10 @@ version: "0.1.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "specs"
 artifact_id: "{{ARTIFACT_ID}}"
+parent_ids: ["{{PARENT_ID}}"]
 ---
 
 # [Feature Name] Implementation Plan
@@ -35,9 +36,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: order work packages by dependency and make each entry and exit gate observable. -->
 
-| ID | Work package | Depends on | Entry gate | Exit evidence |
-| --- | --- | --- | --- | --- |
-| WP-001 | One bounded implementation outcome | None | Approved specification criterion | Named test, review, or commit evidence |
+### Lifecycle Traceability
+
+| Work Unit | Criteria | Work | Dependencies | Task | Verification |
+| --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | One bounded implementation outcome | None | [Task]({{TASK_RELATIVE_PATH}}) | Named deterministic check and expected evidence |
 
 ## Verification Plan
 
@@ -50,13 +53,3 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Completion Criteria
 
 <!-- Author prompt: define the conditions that close work without claiming live evidence. -->
-
-## Traceability
-
-<!-- Author prompt: map specification criteria to work packages and expected Task evidence. -->
-
-### Lifecycle Traceability
-
-| Spec criterion | Work package | Expected Task |
-| --- | --- | --- |
-| VAL-FEATURE-001 | WP-001 | Task owner |

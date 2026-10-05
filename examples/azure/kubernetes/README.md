@@ -1,10 +1,10 @@
 ---
 title: "Azure Kubernetes (App Manifests)"
-version: "0.2.0"
-type: "common/readme-implementation"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 ---
 # Azure Kubernetes (App Manifests)
 
@@ -37,6 +37,13 @@ updated: "2026-09-25"
 - Azure 인프라 리소스 관리 (infrastructure/ 참조)
 - 애플리케이션 빌드 파이프라인 (CI)
 
+## Scope
+
+Workload Identity와 `secrets-store.csi.k8s.io` 참조를 사용하고 Azure
+credential이나 secret 값은 커밋하지 않는다. 승격하기 전에 resource request,
+limit, label, provider 식별자를 workload profile과 작성 시점이 고정된 migration
+명세에 비추어 검토한다.
+
 ## Structure
 
 ```text
@@ -46,19 +53,7 @@ kubernetes/
 └── README.md           # 본 문서
 ```
 
-## Configuration Boundary
-
-Workload Identity와 `secrets-store.csi.k8s.io` 참조를 사용하고 Azure
-credential이나 secret 값은 커밋하지 않는다. 승격하기 전에 resource request,
-limit, label, provider 식별자를 workload profile과 작성 시점이 고정된 migration
-명세에 비추어 검토한다.
-
-## Validation
-
-리뷰 전에 Kubernetes 문법과 저장소 계약을 검증한다. 이 정적 예시는 live AKS,
-Azure Key Vault, Workload Identity, CSI driver의 준비 상태를 증명하지 않는다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -85,6 +80,11 @@ Azure Key Vault, Workload Identity, CSI driver의 준비 상태를 증명하지 
 1. 매니페스트 생성 시 `azure.workload.identity/use: "true"` 라벨 누락 여부를 반드시 확인한다.
 2. 모든 시크릿은 `secrets-store.csi.k8s.io` 볼륨을 통해 파일로 마운트하여 사용하도록 설계한다.
 3. 리소스 태그 및 라벨링 규칙을 준수하여 관리 편의성을 높인다.
+
+## Verification
+
+리뷰 전에 Kubernetes 문법과 저장소 계약을 검증한다. 이 정적 예시는 live AKS,
+Azure Key Vault, Workload Identity, CSI driver의 준비 상태를 증명하지 않는다.
 
 ## Related Documents
 

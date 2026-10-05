@@ -1,10 +1,10 @@
 ---
 title: "Agent Responsibilities"
-version: "1.2.1"
-type: "common/readme-collection-index"
+version: "2.0.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-10-05"
 ---
 # Agent Responsibilities
 
@@ -142,7 +142,7 @@ projections own native configuration.
 - Reconcile each returned result with acceptance and current repository evidence
   before final handoff.
 
-## Item Index
+## Structure
 
 Canonical role bodies:
 
@@ -164,7 +164,7 @@ Canonical role bodies:
 - [docs-researcher](docs-researcher.md)
 - [quality-engineer](quality-engineer.md)
 
-## Add and Find
+## Usage
 
 Load only the relevant responsibility owners. Product intent belongs in the
 Requirement Package; backend and API behavior belong in the Spec and its

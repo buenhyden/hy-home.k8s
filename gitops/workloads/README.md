@@ -1,10 +1,10 @@
 ---
 title: "workloads"
-version: "0.1.1"
-type: "common/readme-implementation"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # workloads
 
@@ -41,6 +41,12 @@ updated: "2026-09-29"
 - cloud target 전용 Terraform/Bicep 코드
 - live cluster에 직접 적용하는 운영 절차
 
+## Scope
+
+각 하위 디렉터리는 저장소의 branch, 리뷰, ArgoCD reconciliation 흐름을 거쳐야만
+활성 desired state가 된다. 평문 secret과 credential은 manifest에 넣지 않고 상위
+GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경계를 사용한다.
+
 ## Structure
 
 ```text
@@ -60,20 +66,7 @@ handling 검증 명령을 명시하는지 확인한다.
 | --- | --- | --- | --- | --- |
 | `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |
 
-## Configuration Boundary
-
-각 하위 디렉터리는 저장소의 branch, 리뷰, ArgoCD reconciliation 흐름을 거쳐야만
-활성 desired state가 된다. 평문 secret과 credential은 manifest에 넣지 않고 상위
-GitOps 계약에 문서화된 승인된 ExternalSecret과 외부 저장소 경계를 사용한다.
-
-## Validation
-
-workload coverage 매트릭스와 상위
-[GitOps validation section](../README.md#validation)에 적힌 정적 명령을 그대로
-실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
-ESO의 준비 상태는 증명되지 않는다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -89,6 +82,13 @@ ESO의 준비 상태는 증명되지 않는다.
 - 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Verification
+
+workload coverage 매트릭스와 상위
+[GitOps validation section](../README.md#verification)에 적힌 정적 명령을 그대로
+실행한다. 저장소 정적 검사가 성공해도 live rollout, route, 데이터베이스, Vault,
+ESO의 준비 상태는 증명되지 않는다.
 
 ## Related Documents
 

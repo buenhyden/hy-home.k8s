@@ -96,9 +96,9 @@ class RegistryGenerationTests(unittest.TestCase):
     def test_route_dispositions_have_body_less_profiles(self) -> None:
         self.assertEqual(
             classify_path(
-                REGISTRY, PurePosixPath("docs/98.archive/tombstones/0001-old-route.md")
+                REGISTRY, PurePosixPath("docs/98.archive/migrations/0025-old-route.md")
             ).profile_id,
-            "archive/route-tombstone",
+            "archive/scope-migration",
         )
         self.assertEqual(
             classify_path(
@@ -112,8 +112,10 @@ class RegistryGenerationTests(unittest.TestCase):
         self.assertEqual(set(bound), {"completed", "superseded", "retired", "resolved"})
         self.assertEqual(bound["completed"].admitted_states, frozenset({"completed"}))
         self.assertEqual(bound["superseded"].admitted_states, frozenset({"superseded"}))
-        self.assertIn("withdrawn", bound["retired"].admitted_states)
-        self.assertEqual(bound["resolved"].admitted_states, frozenset({"closed"}))
+        self.assertEqual(
+            bound["retired"].admitted_states, frozenset({"retired", "rejected"})
+        )
+        self.assertEqual(bound["resolved"].admitted_states, frozenset({"resolved"}))
 
 
 class RetentionPathTests(unittest.TestCase):
@@ -369,8 +371,8 @@ class CatalogParityTests(unittest.TestCase):
         )
 
     def test_route_record_envelope_names_its_route(self) -> None:
-        tomb = PurePosixPath("docs/98.archive/tombstones/0001-old-route.md")
-        body = '---\nretired_route: "docs/05.operations/guides/0009-old.md"\n---\n'
+        tomb = PurePosixPath("docs/98.archive/migrations/0025-old-route.md")
+        body = '---\nmoved_scope: "docs/05.operations/guides/0009-old.md"\n---\n'
         good = catalog(
             row(tomb.as_posix(), f"{COMMIT}:docs/05.operations/guides/0009-old.md")
         )

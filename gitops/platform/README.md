@@ -1,10 +1,10 @@
 ---
 title: "platform"
-version: "0.1.1"
-type: "common/readme-implementation"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-05"
 ---
 # platform
 
@@ -14,6 +14,11 @@ updated: "2026-10-03"
 
 이 경로의 각 하위 디렉터리는 `apps/root`의 `platform-*` Application 하나가
 가리키는 공통 플랫폼 구성 단위다. 앱 워크로드는 `../workloads/`가 소유한다.
+
+## Scope
+
+각 디렉터리는 desired state만 선언한다. secret 값, 외부 서비스 런타임, live
+cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 경계를 따른다.
 
 ## Structure
 
@@ -38,20 +43,15 @@ updated: "2026-10-03"
 | `namespaces` | Namespace desired state owned by platform maintainers.                                          | Kustomize config for platform, apps, ingress, ESO, cert-manager, Istio, Headlamp, Rollouts, and monitoring namespaces. | Dependencies are cluster-scoped namespace resources; no secrets.                                                               | Validate Kustomize completeness and manifest syntax.                                                                                                                                  |
 | `network-policies` | Network egress policy owned by platform/security maintainers.                                   | Kustomize config for apps, monitoring, Kiali, ESO-to-Vault, and ArgoCD-to-Valkey egress.                               | Depends on namespace labels, external service addresses, Vault, Valkey, and observability endpoints.                           | Validate Kustomize completeness and manifests; live behavior requires `verify-network-policies.sh`.                                                                                   |
 
-## Configuration Boundary
-
-각 디렉터리는 desired state만 선언한다. secret 값, 외부 서비스 런타임, live
-cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 경계를 따른다.
-
-## Validation
-
-각 행의 Validation and operations 열이 해당 디렉터리의 정적 검증 명령을
-명시한다. 저장소 전체 검증은 `python3 scripts/qa.py staged`로 실행한다.
-
-## Operations
+## Usage
 
 변경은 reviewed pull request로 반영하고 ArgoCD가 동기화한다. 운영 절차는
 `docs/05.operations/`가 소유한다.
+
+## Verification
+
+각 행의 Validation and operations 열이 해당 디렉터리의 정적 검증 명령을
+명시한다. 저장소 전체 검증은 `python3 scripts/qa.py staged`로 실행한다.
 
 ## Related Documents
 

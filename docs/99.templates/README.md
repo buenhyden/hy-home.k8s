@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.4.0"
-type: "common/readme-stage-index"
+version: "0.6.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 layer: "templates"
 ---
 # 99.templates
@@ -22,7 +22,7 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-## Stage Contract
+## Scope
 
 ### Responsibility Boundary
 
@@ -45,15 +45,13 @@ profile family를 정의하지 않는다. 예를 들어 `templates/specs/plan.te
 그 경로를 유지하면서 `sdlc/plan` profile의 form으로 연결된다. 정확한 profile ID와
 form 경로의 대응은 Registry만 소유한다.
 
-- **Common forms** ("common/"): governed README entrypoints share the ordered
-  six-key envelope but receive no fake identity. "readme-repository" covers
-  the repository entrypoint, "readme-stage-index" covers documentation and
-  stage entrypoints, "readme-collection-index" covers package and collection
-  entrypoints, and the implementation, workspace-staging, and
-  runtime-governance forms cover their named surfaces. The implementation form
-  also covers the common `.agents/README.md` hub. Registry
-  profiles own each router's exact path, fixed "type"/"status", optional
-  "layer", and heading contract.
+- **Common forms** (`common/`): governed navigation READMEs share the ordered
+  six-key envelope, `type: "common/readme"`, `status: "active"`, and the
+  `Overview`/`Scope`/`Structure`/`Usage`/`Related Documents` core without a
+  separate artifact identity. Path-specific registry profiles still choose the
+  repository, stage, collection, implementation, and workspace forms and any
+  optional module. The current Archive catalog has its own `archive/catalog`
+  type and retains the catalog tables.
 - **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
   정책, 워크플로, 지식 지도, 프롬프트 계약에 `contract`, `provider`, `role`,
   `rule`, `skill`, `knowledge`, `prompt` form이 대응한다. 공통 소유자는
@@ -62,8 +60,9 @@ form 경로의 대응은 Registry만 소유한다.
   생명주기 있는 문서 타입이며 native skill package와 구별한다.
   `governance/knowledge`는 `.agents/knowledge/`의 포인터 문서를,
   `governance/prompt`는 `.agents/prompts/`의 요청 계약을 소유하며 두 surface의
-  README는 collection-index router profile로 해석한다.
-  `governance/*` profile은 `artifact_id`를 선언하지 않는다.
+  README는 공통 router profile로 해석한다.
+  `governance/*`는 기존 path/role identity를 유지한다. 기존 optional
+  `artifact_id`가 있으면 보존하며 표준화만을 위해 새 ID를 만들지 않는다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의
@@ -75,8 +74,8 @@ form 경로의 대응은 Registry만 소유한다.
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단
   구조를 갖는다. collection router `{audits,data,research}/README.md`는
-  `common/readme-collection-index` form을, pack router
-  `####-<slug>/README.md`는 `audit-pack`·`data-pack`·`research-pack` form을,
+  `common/readme` type으로, pack anchor
+  `####-<slug>/README.md`는 `reference/audit-pack`·`reference/data-pack`·`reference/research-pack` form을,
   pack member `####-<slug>/m####-<slug>.md`는 같은 family의
   `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
 - **Archive forms** (`archive/`): route disposition인 `route-tombstone`과
@@ -91,8 +90,10 @@ form 경로의 대응은 Registry만 소유한다.
   `common/provider-native-command`로 분류하며 `.agents/prompts/`의 계약을
   호출하는 진입점일 뿐 계약 자체를 소유하지 않는다.
   `.agents/skills/<id>/SKILL.md`는 `common/native-skill-package` native
-  profile로 분류하며 `name`/`description`과 boolean
-  `disable-model-invocation: true` metadata만 허용한다. 각 package의
+  profile로 분류하며 top-level `name`/`description`, 공통 여섯 key를 담는
+  `metadata`, boolean `disable-model-invocation: true`를 사용한다. 문서
+  봉투는 metadata 내부에만 두며 실제 native invocation/tool/model
+  controls를 형식 정규화를 위해 바꾸지 않는다. 각 package의
   `agents/openai.yaml`은 Codex의 `policy.allow_implicit_invocation: false`를
   소유한다. 이 native sidecar와 Claude skill adapter의 정확한 집합은
   [agent validator](../../scripts/validate-agent-governance.py)가 검증한다.
@@ -105,13 +106,13 @@ form 경로의 대응은 Registry만 소유한다.
 현재 record가 없는 것은 곧 사용하지 않는 capacity를 뜻하지 않는다.
 `operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
 기록할 수 있도록 유지한다. `reference/audit`, `reference/data`,
-`common/readme-audit-pack`, `common/readme-data-pack`은 현재 record가 0건이어도
+`reference/audit-pack`, `reference/data-pack`은 현재 record가 0건이어도
 Stage 90 collection contract가 요구하는 audit/data collection·pack 경로를
 구조적으로 보장하므로 유지한다. 이는 이미 retired한 미사용 capacity와 구별한다.
 
-## Document Index
+## Structure
 
-| 항목 | 설명 |
+| Path | Purpose |
 | --- | --- |
 | [contracts/](./contracts/) | 기계 계약과 그 schema |
 | [templates/](./templates/) | 복사해서 쓰는 form catalog |
@@ -120,7 +121,7 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
 [form catalog](./templates/README.md)가 소유한다.
 
-## Authoring Workflow
+## Usage
 
 1. **Classify**: repository-relative target path를 registry로 분류하고 정확히 하나의
    profile이 선택되는지 확인한다.
@@ -139,6 +140,17 @@ retention, Archive 의무는 `.agents/governance`가 설명하고 정확한 mach
 Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 "artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
+Spec은 수용 기준을, Plan은 실행 순서를, Task의 단일 Task Table은 실행
+상태·결과·증거를 기록한다. Task의 frontmatter `status`는 하나의 상태
+표시이며, 여러 행의 상태와 일치하는지는 lifecycle validator가 Registry의
+`task_execution` binding에 따라 읽기 전용으로 확인한다. 완료 인계는 필수
+Spec 기준에서 Plan의 배정과 Task의 완료·PASS·accepted·구체적 증거까지
+확인한다. Plan은 `Work Unit | Criteria | Work | Dependencies | Task | Verification`을,
+Task는 `ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence`를,
+Task Evidence는 `Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance`를
+사용한다. Result, Acceptance, 실제 승인, 통합과 보관은 서로의 대체값이 아니다.
+cancelled는 실제 이유·승인 원본 참조·필수 기준 처리 근거를 요구하고 관측 결과를
+보존한다. resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
 ### Shared Frontmatter Grammar
 
@@ -154,7 +166,7 @@ supersession, provenance key는 선택된 profile의 order에만 따라 나타�
 | "type" | 항상 | Registry profile ID인 "family/kind" | profile literal |
 | "status" | 항상 | profile lifecycle subset 또는 router constant | profile literal |
 | "owner" | 항상 | 책임 소유자 | "&#123;&#123;OWNER&#125;&#125;" |
-| "updated" | 항상 | ISO date | "&#123;&#123;YYYY_MM_DD&#125;&#125;" |
+| "updated" | 항상 | ISO date | "&#123;&#123;UPDATED&#125;&#125;" |
 | "layer" | profile이 stage/router layer를 소유할 때 | 숫자 접두어 없는 stage slug | profile literal |
 | "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
@@ -168,9 +180,12 @@ author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는 "layer"와
 "artifact_id" placeholder를 포함한다. Template 파일 자체의 revision과 destination
 identity는 Registry contract version과 Git history가 소유한다.
-"governance/*"와 README router는 stable "artifact_id"를 갖지 않는다.
+README router에는 stable "artifact_id"가 없으며 reference pack anchor는
+기존 AUD/RES/DATA identity와 게시 생명주기를 유지한다. governance에는 기존
+optional identity만 보존한다.
 "archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
-"archive/route-tombstone"과 "archive/scope-migration"은 본문 없이 route key만 가진다.
+현재 "archive/route"와 "archive/scope-migration" profile은 같은
+"archive/route" type과 draft/sealed를 투영하며 본문 없이 각 route key만 가진다.
 Registry의 "retention_classes"는 Stage 98 retention class마다 본문이 명명하는 대상과
 허용하는 anchor 종단 상태를 묶는다. "retention_units"는 spec package와 Incident bundle을
 보존 단위로, "retention_modes"는 profile마다 쓸 수 있는 보존 방식을, "archive_citation"은

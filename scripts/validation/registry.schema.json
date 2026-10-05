@@ -185,10 +185,14 @@
           "enum": [
             "FAIL",
             "DEFER",
-            "SKIP"
+            "NOT_APPLICABLE"
           ]
         },
         "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nextOwner": {
           "type": "string",
           "minLength": 1
         }
@@ -235,7 +239,7 @@
           "type": "string"
         },
         "structuredResults": {
-          "const": "platform-depth-v1"
+          "const": "platform-depth-v2"
         },
         "pathInput": {
           "const": "include-existing-markdown"

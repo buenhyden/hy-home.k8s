@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "1.3.0"
-type: "common/readme-implementation"
+version: "2.0.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 
 # Common Agent Governance
@@ -15,9 +15,23 @@ This is the single common policy, role and skill authority for this GitOps
 workspace. Its files are read through explicit gateways or native skill
 loaders; the entire directory is not an automatic instruction loader.
 
+## Scope
+
+Provider differences and native adapters live in [.claude/](../.claude/)
+and [.codex/](../.codex/). Edit common meaning here; retain native syntax
+there. No role copies or provider generator own a second policy.
+[Governance](governance/) and the prompt contracts
+own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
+affected-surface coverage and at least one named consumer, so a directory
+without a reader is not created. [Evaluations](evaluations/README.md) owns cases, response data and its dedicated
+runner. `scripts/validation/registry.json` still owns gate selection and
+`scripts/` owns shared validation helpers. A rule directory would duplicate
+`governance/`; no unused script or rule scaffold is adopted. MIG-0009's memory
+retirement remains effective.
+
 ## Structure
 
-| Path | Responsibility |
+| Path | Purpose |
 | --- | --- |
 | [governance/](governance/) | Normative lifecycle and terminology (sdlc.md); approval, safety, quality, Git, documents, context and model policy |
 | [roles/](roles/) | Responsibility selection and common handoff contracts; `roles/registry.json` holds role IDs, permissions, skill references and native paths |
@@ -47,28 +61,7 @@ a checker does not register it or grant execution authority. Dedicated assets
 may include `*.template.md` output forms. Stage 99 still owns shared document
 profiles and templates; a package asset cannot replace their authority.
 
-## Configuration Boundary
-
-Provider differences and native adapters live in [.claude/](../.claude/)
-and [.codex/](../.codex/). Edit common meaning here; retain native syntax
-there. No role copies or provider generator own a second policy.
-[Governance](governance/) and the prompt contracts
-own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
-affected-surface coverage and at least one named consumer, so a directory
-without a reader is not created. [Evaluations](evaluations/README.md) owns cases, response data and its dedicated
-runner. `scripts/validation/registry.json` still owns gate selection and
-`scripts/` owns shared validation helpers. A rule directory would duplicate
-`governance/`; no unused script or rule scaffold is adopted. MIG-0009's memory
-retirement remains effective.
-
-## Validation
-
-Run `python3 scripts/validate-agent-governance.py --root .` for role, skill,
-permission and routing contracts; run `python3 scripts/qa.py full` for final
-repository-static evidence. No generator is used. Native discovery, invocation,
-permissions and hook delivery require separate evidence from a fresh session.
-
-## Operations
+## Usage
 
 Read [work lifecycle](workflows/work-lifecycle.md),
 [agent execution](governance/agent-execution.md) and the approval and safety
@@ -78,6 +71,13 @@ skills. Both providers expose the same common skill packages for explicit
 invocation. A skill does not grant permission to write, send, deploy or read
 secrets. The quality policy in `governance/` owns evidence semantics, while the
 execution registry owns mutable gate commands and limits.
+
+## Verification
+
+Run `python3 scripts/validate-agent-governance.py --root .` for role, skill,
+permission and routing contracts; run `python3 scripts/qa.py full` for final
+repository-static evidence. No generator is used. Native discovery, invocation,
+permissions and hook delivery require separate evidence from a fresh session.
 
 ## Related Documents
 

@@ -44,6 +44,43 @@
     "artifact_id": {
       "$ref": "#/$defs/artifactId"
     },
+    "parent_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/terminalArtifactId"
+      }
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "cancellation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "authorization_ref",
+        "criteria_disposition"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "criteria_disposition": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "original_artifact_id": {
       "$ref": "#/$defs/artifactId"
     },
@@ -95,6 +132,38 @@
     },
     "superseded_by": {
       "$ref": "#/$defs/artifactIdReference"
+    },
+    "retired_route": {
+      "$ref": "#/$defs/repoRelativePath"
+    },
+    "successor": {
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/repoRelativePath"
+            },
+            {
+              "not": {
+                "const": "null"
+              }
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "moved_scope": {
+      "$ref": "#/$defs/repoRelativePath"
+    },
+    "current_owner": {
+      "$ref": "#/$defs/repoRelativePath"
     }
   },
   "$defs": {
@@ -116,7 +185,7 @@
     },
     "terminalArtifactId": {
       "type": "string",
-      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|MIG)-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?|tomb-(?:REQ|PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4})$"
+      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|MIG|TOMB|AUD|RES|DATA)-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?|tomb-(?:REQ|PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4})$"
     },
     "requirementMemberId": {
       "type": "string",

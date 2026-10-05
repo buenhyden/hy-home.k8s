@@ -48,6 +48,10 @@ from document_contracts import (
     enumerate_target_markdown,
     load_registry,
     read_repository_text,
+    task_criterion_ids,
+    task_execution_issues,
+    direct_parent,
+    _typed_registry_from_mapping,
 )
 from document_lifecycle import (
     ArtifactIdentityLineage,
@@ -61,8 +65,10 @@ from document_lifecycle import (
     artifact_identity_reuse_diagnostics,
     compare_lifecycle,
     document_from_text,
+    generation_admission_paths,
     lifecycle_diagnostic_sort_key,
     validate_snapshot_documents,
+    validate_current_task_evidence,
 )
 
 from archive_dispositions import (
@@ -108,11 +114,17 @@ from document_authority import (
     AuthorityError,
     REGISTRY_PATH as CURRENT_REGISTRY_PATH,
     assert_staged_authority_matches_worktree,
+    staged_authority_bytes,
 )
 from validation.repository.bounded_io import read_bytes as read_bounded_bytes
 
 
 RETIRED_REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
+COMPLETION_AUTHORITY_PATHS = (
+    CURRENT_REGISTRY_PATH,
+    PurePosixPath("docs/99.templates/contracts/document-profile.schema.json"),
+    PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json"),
+)
 OBJECT_ID = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 FIXED_GIT_ENVIRONMENT = {
     "GIT_AUTHOR_NAME": "Lifecycle Self Test",
@@ -3248,7 +3260,7 @@ def _classification_registry(
 
         raw_lifecycle = raw_profile.get("lifecycle")
         raw_mode = raw_profile.get("mode")
-        if schema_version == 9:
+        if schema_version in {9, 10}:
             path_pattern = raw_profile.get("path_pattern")
             raw_routes = (
                 [{"kind": "regex", "value": path_pattern}]
@@ -3427,6 +3439,19 @@ def _evidence_context(
     )
     adapter = _link_validator_module()
     views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
+    base_task_rows: dict[PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]] = {}
+    for path, document in base_documents.items():
+        profile = profile_map.get(document.profile_id)
+        if (
+            document.profile_id == "sdlc/task"
+            and profile is not None
+            and profile.body_contract is not None
+            and profile.body_contract.task_execution is not None
+            and path in proposed_documents
+        ):
+            rows = adapter.task_base_rows(base_texts[path], profile)
+            if rows:
+                base_task_rows[path] = rows
     for path, document in proposed_documents.items():
         profile = profile_map.get(document.profile_id)
         if profile is None or profile.body_contract is None:
@@ -3442,7 +3467,11 @@ def _evidence_context(
             )
             continue
         rendered = adapter.lifecycle_markdown_evidence(
-            path, proposed_texts[path], profile, snapshot_profiles
+            path,
+            proposed_texts[path],
+            profile,
+            snapshot_profiles,
+            registry_generation=registry.schema_version,
         )
         unresolved_links = _work105_predecessor_unresolved_links(
             path=path,
@@ -3463,6 +3492,7 @@ def _evidence_context(
             relationship_section_valid=rendered.relationship_section_valid,
             body_contract_valid=rendered.body_contract_valid,
             task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
+            body_rows=rendered.body_rows,
         )
 
     common = set(base_documents) & set(proposed_documents)
@@ -3489,6 +3519,7 @@ def _evidence_context(
         status_changed_paths=status_changed,
         body_changed_paths=body_changed | created,
         created_paths=created,
+        base_task_rows=MappingProxyType(base_task_rows),
     )
 
 
@@ -3883,6 +3914,19 @@ class _CumulativeHistoryCache:
         default_factory=OrderedDict
     )
 
+    def registry_at(self, commit: str) -> Registry:
+        """Preserve modern generations at each exact history event."""
+        if self.registry.migration_admission is None:
+            return self.registry
+        oid = _tree_blob_oid(self.root, commit, CURRENT_REGISTRY_PATH)
+        raw = _registry_blob(self.root, oid) if oid is not None else {}
+        if raw.get("schema_version") not in {9, 10}:
+            return self.registry
+        try:
+            return _typed_registry_from_mapping(raw)
+        except (KeyError, TypeError, ValueError, re.error) as exc:
+            raise InvocationError("history registry is malformed") from exc
+
     def _snapshot(
         self, commit: str
     ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
@@ -3891,6 +3935,7 @@ class _CumulativeHistoryCache:
             self.snapshots.move_to_end(commit)
             return cached
         blobs = _tree_blob_map(self.root, commit)
+        own_registry = self.registry_at(commit)
         has_seed = (
             self.seed_blobs is not None
             and self.seed_documents is not None
@@ -3900,7 +3945,11 @@ class _CumulativeHistoryCache:
         legacy_completion = (
             _legacy_completion_generation(self.root, commit) if has_seed else None
         )
-        reuse_seed = has_seed and self.seed_legacy_completion == legacy_completion
+        reuse_seed = (
+            has_seed
+            and self.seed_legacy_completion == legacy_completion
+            and own_registry.schema_version == self.registry.schema_version
+        )
         changed_blobs = (
             {
                 path: oid
@@ -3930,7 +3979,7 @@ class _CumulativeHistoryCache:
             legacy_completion = _legacy_completion_generation(self.root, commit)
         changed_documents, changed_texts = _snapshot_projection(
             self.root,
-            self.registry,
+            own_registry,
             changed_blobs,
             historical=True,
             legacy_completion=legacy_completion,
@@ -3973,7 +4022,7 @@ class _CumulativeHistoryCache:
             base_snapshot, base_texts = self._snapshot(parent)
             proposed_snapshot, proposed_texts = self._snapshot(commit)
             self.evidence[key] = _evidence_context(
-                self.registry,
+                self.registry_at(commit),
                 base_snapshot,
                 proposed_snapshot,
                 base_texts,
@@ -3986,7 +4035,7 @@ def _history_document(
     cache: _CumulativeHistoryCache, commit: str, path: PurePosixPath
 ) -> LifecycleDocument:
     document = cache._snapshot(commit)[0].get(path)
-    profile = classify_path(cache.registry, path)
+    profile = classify_path(cache.registry_at(commit), path)
     if (
         document is None
         or document.state_issue is not None
@@ -3995,6 +4044,30 @@ def _history_document(
     ):
         raise InvocationError("cumulative lifecycle path has no stable profile")
     return document
+
+
+def _committed_task_binding(root: Path, commit: str) -> bool:
+    """Recognize only commits whose own Stage 99 registry bound Task execution."""
+
+    oid = _tree_blob_oid(root, commit, CURRENT_REGISTRY_PATH)
+    if oid is None:
+        return False
+    text = _blob_text(root, oid, CURRENT_REGISTRY_PATH)
+    try:
+        raw = json.loads(text) if text is not None else None
+    except (TypeError, ValueError):
+        return False
+    if not isinstance(raw, dict) or not isinstance(raw.get("profiles"), list):
+        return False
+    return any(
+        isinstance(profile, dict)
+        and profile.get("id") == "sdlc/task"
+        and isinstance((profile.get("relationships") or {}).get("body_contract"), dict)
+        and isinstance(
+            profile["relationships"]["body_contract"].get("task_execution"), dict
+        )
+        for profile in raw["profiles"]
+    )
 
 
 def _history_event_diagnostics(
@@ -4010,6 +4083,21 @@ def _history_event_diagnostics(
     """Use the normal lifecycle comparison with exact parent/commit evidence."""
 
     base_documents = {} if before is None else {path: before}
+    event_registry = cache.registry_at(commit)
+    base_registry = cache.registry_at(parent)
+    admission = (
+        _generation_admission_paths(
+            event_registry,
+            base_registry,
+            cache._snapshot(parent)[0],
+            cache._snapshot(commit)[0],
+        )
+        if (base_registry.schema_version, event_registry.schema_version) == (9, 10)
+        else frozenset()
+    )
+    task_binding = after.profile_id == "sdlc/task" and _committed_task_binding(
+        root, commit
+    )
     if cache.seed_blobs is not None:
         # Ordinary initial/forward edges need no cross-document body evidence.
         # Terminal supersession and archive events retain the full-snapshot path.
@@ -4022,18 +4110,34 @@ def _history_event_diagnostics(
         )
         if any(item.path == path for item in identity_diagnostics):
             return tuple(item for item in identity_diagnostics if item.path == path)
+        if task_binding:
+            return compare_lifecycle(
+                event_registry,
+                base_documents,
+                {path: after},
+                base_mode="explicit-ref",
+                evidence_context=cache.evidence_context(parent, commit),
+                enforce_task_execution=True,
+                base_registry=base_registry,
+                generation_admissions=admission,
+            )
         return compare_lifecycle(
-            registry,
+            event_registry,
             base_documents,
             {path: after},
             base_mode="explicit-ref",
+            base_registry=base_registry,
+            generation_admissions=admission,
         )
     return compare_lifecycle(
-        registry,
+        event_registry,
         base_documents,
         {path: after},
         base_mode="explicit-ref",
         evidence_context=cache.evidence_context(parent, commit),
+        enforce_task_execution=task_binding,
+        base_registry=base_registry,
+        generation_admissions=admission,
     )
 
 
@@ -4141,7 +4245,7 @@ def _history_proves_cumulative_create(
                 if prior_blob is not None:
                     return False
                 current = _history_document(history_cache, commit, path)
-                profile = classify_path(registry, path)
+                profile = classify_path(history_cache.registry_at(commit), path)
                 domain = profile.lifecycle_domain
                 assert domain is not None
                 inbound = {target for _, target in domain.transitions}
@@ -4275,7 +4379,26 @@ def _admit_cumulative_create_diagnostics(
     remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
     admitted_indices: set[int] = set()
     proved_paths: set[PurePosixPath] = set()
+    generation_copy_paths: set[PurePosixPath] = set()
     try:
+        if mode != "staged" and registry.migration_admission is not None:
+            parent = history_base
+            for commit in history:
+                before_registry = cache.registry_at(parent)
+                after_registry = cache.registry_at(commit)
+                if (before_registry.schema_version, after_registry.schema_version) == (
+                    9,
+                    10,
+                ):
+                    generation_copy_paths.update(
+                        _generation_admission_paths(
+                            after_registry,
+                            before_registry,
+                            cache._snapshot(parent)[0],
+                            cache._snapshot(commit)[0],
+                        )
+                    )
+                parent = commit
         for index, diagnostic in candidates:
             if diagnostic.path in proved_paths:
                 continue
@@ -4289,7 +4412,8 @@ def _admit_cumulative_create_diagnostics(
                 commits=history,
                 cache=cache,
                 allow_merge_create=mode == "staged",
-                allow_distinct_artifact_copy=mode == "staged",
+                allow_distinct_artifact_copy=mode == "staged"
+                or diagnostic.path in generation_copy_paths,
                 remaining_events=remaining_events,
             ):
                 admitted_indices.add(index)
@@ -4301,6 +4425,19 @@ def _admit_cumulative_create_diagnostics(
         for index, diagnostic in enumerate(diagnostics)
         if index not in admitted_indices
     )
+
+
+def _generation_admission_paths(
+    registry: Registry,
+    base_registry: Registry,
+    before: Mapping[PurePosixPath, LifecycleDocument],
+    after: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[PurePosixPath]:
+    """Keep CLI error semantics around the shared finite admission judge."""
+    try:
+        return generation_admission_paths(registry, base_registry, before, after)
+    except ValueError as error:
+        raise InvocationError(str(error)) from error
 
 
 def _evaluate_comparison(
@@ -4340,11 +4477,50 @@ def _evaluate_comparison(
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
 
-    # Stage 99 is terminal: compare both snapshots with the current root
-    # profile authority. Historical route and flat-registry projections are
-    # intentionally not lifecycle inputs.
     base_classification_registry = registry
     proposed_classification_registry = registry
+    generation_migration = False
+    base_registry_oid = _tree_blob_oid(root, base_commit, CURRENT_REGISTRY_PATH)
+    raw_base = (
+        _registry_blob(root, base_registry_oid)
+        if registry.migration_admission is not None and base_registry_oid is not None
+        else {}
+    )
+    if (
+        registry.migration_admission is not None
+        and raw_base.get("schema_version") == 9
+        and registry.schema_version == 10
+    ):
+        proposed_registry_text = (
+            staged_authority_bytes(root, PurePosixPath(CURRENT_REGISTRY_PATH)).decode(
+                "utf-8"
+            )
+            if mode == "staged"
+            else _blob_text(
+                root,
+                _tree_blob_oid(root, proposed_commit, CURRENT_REGISTRY_PATH),
+                PurePosixPath(CURRENT_REGISTRY_PATH),
+            )
+        )
+        raw_proposed = json.loads(
+            proposed_registry_text or "null", object_pairs_hook=_unique_json_object
+        )
+        if (
+            not isinstance(raw_proposed, dict)
+            or raw_proposed.get("schema_version") != 10
+            or raw_proposed.get("migration_admission")
+            != dict(registry.migration_admission)
+        ):
+            raise InvocationError(
+                "generation migration declaration differs from the proposed registry"
+            )
+        try:
+            base_classification_registry = _typed_registry_from_mapping(raw_base)
+        except (KeyError, TypeError, ValueError, re.error) as exc:
+            raise InvocationError(
+                "generation migration base registry is malformed"
+            ) from exc
+        generation_migration = True
     migration_immutability = _migration_immutability_diagnostics(
         root,
         registry,
@@ -4415,6 +4591,13 @@ def _evaluate_comparison(
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
     )
+    generation_admissions = (
+        _generation_admission_paths(
+            registry, base_classification_registry, base_snapshot, proposed_snapshot
+        )
+        if generation_migration
+        else frozenset()
+    )
     migration_events, migration_diagnostics = _migration_lifecycle_events(
         root,
         registry,
@@ -4479,7 +4662,14 @@ def _evaluate_comparison(
             base_mode=mode,  # type: ignore[arg-type]
             evidence_context=evidence_context,
             migration_events=migration_events,
+            enforce_task_execution=True,
+            base_registry=base_classification_registry,
+            generation_admissions=generation_admissions,
         )
+    )
+    diagnostics += validate_current_task_evidence(
+        evidence_context,
+        base_mode=mode,  # type: ignore[arg-type]
     )
     return migration_diagnostics + _admit_cumulative_create_diagnostics(
         diagnostics,
@@ -4509,6 +4699,280 @@ def _evaluate_snapshot(
     return validate_snapshot_documents(registry, documents)
 
 
+def _evaluate_completion(
+    root: Path,
+    registry: Registry,
+    include_paths: Sequence[PurePosixPath],
+) -> tuple[tuple[LifecycleDiagnostic, ...], str]:
+    """Assess package completion using only one exact Git index snapshot."""
+
+    if not include_paths:
+        raise InvocationError("completion mode requires --include-path Spec anchors")
+    blobs = _index_blob_map(root)
+    snapshot_hash = hashlib.sha256()
+    for path, oid in sorted(blobs.items(), key=lambda item: item[0].as_posix()):
+        snapshot_hash.update(
+            path.as_posix().encode("utf-8") + b"\0" + oid.encode("ascii") + b"\0"
+        )
+    for path in COMPLETION_AUTHORITY_PATHS:
+        snapshot_hash.update(path.as_posix().encode("utf-8") + b"\0")
+        snapshot_hash.update(staged_authority_bytes(root, path) + b"\0")
+    digest = snapshot_hash.hexdigest()
+    documents, texts = _snapshot_projection(root, registry, blobs)
+    owner = _load_canonical_markdown_module()
+    schema_path = PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json")
+    schema_text = staged_authority_bytes(root, schema_path).decode("utf-8")
+    schema = json.loads(schema_text, object_pairs_hook=_unique_json_object)
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    adapter = _link_validator_module()
+    diagnostics: list[LifecycleDiagnostic] = []
+
+    def fail(path: PurePosixPath, rule: str, detail: str) -> None:
+        diagnostics.append(
+            LifecycleDiagnostic(
+                severity="FAIL",
+                rule_id=rule,
+                path=path,
+                profile=documents[path].profile_id if path in documents else "",
+                expected_transition="complete Spec criterion -> Plan assignment -> Task PASS evidence",
+                observed_transition=detail,
+                base_mode="completion",
+                evidence_gap="exact Git index package traceability",
+            )
+        )
+
+    def rows(path: PurePosixPath) -> list[dict[str, str]] | None:
+        document = documents.get(path)
+        profile = profiles.get(document.profile_id) if document else None
+        if profile is None:
+            return None
+        return adapter._body_contract_rows(texts[path], profile)
+
+    def linked_target(path: PurePosixPath, cell: str) -> PurePosixPath | None:
+        links = adapter._extract_links(cell, definitions_text=texts[path])
+        if len(links) != 1:
+            return None
+        kind, target = adapter._local_destination(path, links[0])
+        return target if kind in {"local", "anchor"} else None
+
+    for spec_path in include_paths:
+        if (
+            spec_path.parts[:2] != ("docs", "03.specs")
+            or spec_path.name != "spec.md"
+            or documents.get(spec_path, None) is None
+            or documents[spec_path].profile_id != "sdlc/spec"
+        ):
+            fail(spec_path, "COMPLETION-SPEC", "anchor must be an indexed current Spec")
+            continue
+        if documents[spec_path].status not in {"active", "approved", "completed"}:
+            fail(
+                spec_path,
+                "COMPLETION-SPEC",
+                "Spec approval state is not active/completed",
+            )
+        package = spec_path.parent
+        plan_path = package / "plan.md"
+        for path, document in documents.items():
+            if path in {spec_path, plan_path} or (
+                path.parent == package / "tasks" and document.profile_id == "sdlc/task"
+            ):
+                for finding in owner.validate_document_text(
+                    texts[path],
+                    path,
+                    profiles[document.profile_id],
+                    "strict",
+                    frontmatter_schema=schema,
+                ):
+                    fail(path, finding.rule_id, finding.actual)
+        if plan_path not in documents or documents[plan_path].profile_id != "sdlc/plan":
+            fail(plan_path, "COMPLETION-PLAN", "indexed same-package Plan missing")
+            continue
+        if documents[plan_path].status not in {
+            "active",
+            "approved",
+            "in-progress",
+            "completed",
+        }:
+            fail(
+                plan_path,
+                "COMPLETION-PLAN",
+                "Plan approval state is not active/completed",
+            )
+
+        success_section = adapter._exact_heading_section(
+            texts[spec_path], "## Success Criteria & Verification Plan"
+        )
+        success_table = adapter._first_visible_table(success_section or "")
+        if success_table is None or success_table[0] != [
+            "Criterion",
+            "Acceptance evidence",
+        ]:
+            fail(
+                spec_path, "COMPLETION-CRITERIA", "missing exact Success Criteria table"
+            )
+            continue
+        defined: list[str] = []
+        for entry in success_table[1]:
+            if len(entry) != 2 or not entry[1].strip():
+                fail(spec_path, "COMPLETION-CRITERIA", "malformed criterion definition")
+                continue
+            identifier = entry[0].strip()
+            if re.fullmatch(r"VAL-[A-Z0-9-]+-[0-9]{3}", identifier):
+                defined.append(identifier)
+            elif not re.fullmatch(r"N/A — \S(?:.*\S)?", identifier):
+                fail(
+                    spec_path,
+                    "COMPLETION-CRITERIA",
+                    f"invalid definition {identifier!r}",
+                )
+        if not defined or len(defined) != len(set(defined)):
+            fail(
+                spec_path,
+                "COMPLETION-CRITERIA",
+                "at least one unique concrete VAL definition required",
+            )
+            continue
+        spec_rows = rows(spec_path)
+        if spec_rows is None:
+            fail(
+                spec_path,
+                "COMPLETION-TRACE",
+                "Spec Lifecycle Traceability table missing",
+            )
+            continue
+        traced = [row["Spec criterion"].strip() for row in spec_rows]
+        concrete = [item for item in traced if not item.startswith("N/A — ")]
+        if len(concrete) != len(set(concrete)) or set(concrete) != set(defined):
+            fail(
+                spec_path,
+                "COMPLETION-TRACE",
+                "defined and traced VAL sets differ or duplicate",
+            )
+            continue
+
+        plan_rows = rows(plan_path)
+        if not plan_rows:
+            fail(plan_path, "COMPLETION-PLAN", "Plan allocations missing")
+            continue
+        assignments: set[tuple[str, PurePosixPath]] = set()
+        plan_contract = profiles["sdlc/plan"].body_contract
+        assert plan_contract is not None
+        for entry in plan_rows:
+            source = entry[plan_contract.source_link_column]
+            criteria = task_criterion_ids(source)
+            task_path = linked_target(
+                plan_path, entry[plan_contract.target_link_column]
+            )
+            source_links = adapter._extract_links(
+                source, definitions_text=texts[plan_path]
+            )
+            if (
+                not criteria
+                or any(criterion not in defined for criterion in criteria)
+                or len(source_links) != len(criteria)
+                or any(
+                    adapter._local_destination(plan_path, link)[1] != spec_path
+                    for link in source_links
+                )
+                or task_path is None
+                or task_path.parent != package / "tasks"
+                or task_path not in documents
+                or documents[task_path].profile_id != "sdlc/task"
+            ):
+                fail(
+                    plan_path,
+                    "COMPLETION-ALLOCATION",
+                    f"invalid Plan row for {criteria!r}",
+                )
+                continue
+            assignments.update((criterion, task_path) for criterion in criteria)
+        if {criterion for criterion, _ in assignments} != set(defined):
+            fail(
+                plan_path,
+                "COMPLETION-ALLOCATION",
+                "one or more required criteria lack a Task assignment",
+            )
+
+        task_pairs: dict[tuple[str, PurePosixPath], list[dict[str, str]]] = {}
+        task_paths = sorted(
+            (
+                path
+                for path, doc in documents.items()
+                if path.parent == package / "tasks" and doc.profile_id == "sdlc/task"
+            ),
+            key=PurePosixPath.as_posix,
+        )
+        if not task_paths:
+            fail(spec_path, "COMPLETION-TASK", "no indexed same-package Task")
+        for task_path in task_paths:
+            for path in (plan_path, task_path):
+                parent = direct_parent(path, documents[path].profile_id)
+                metadata = frontmatter_mapping(texts[path])
+                if parent is not None and (
+                    metadata.get("parent_ids") != [parent[1]]
+                    or parent[0] not in documents
+                    or documents[parent[0]].artifact_id != parent[1]
+                ):
+                    fail(
+                        path,
+                        "PARENT-IDENTITY",
+                        "direct indexed parent identity differs from the package path",
+                    )
+            entries = rows(task_path)
+            binding = profiles["sdlc/task"].body_contract.task_execution  # type: ignore[union-attr]
+            if not entries or binding is None:
+                fail(task_path, "COMPLETION-TASK", "bound Task rows missing")
+                continue
+            state = documents[task_path].status or ""
+            for rule, detail in task_execution_issues(entries, state, binding):
+                fail(task_path, rule, detail)
+            for entry in entries:
+                criterion_ids = task_criterion_ids(entry["Upstream criterion"])
+                if criterion_ids is None:
+                    continue
+                raw_links = adapter._extract_links(
+                    entry["Upstream criterion"], definitions_text=texts[task_path]
+                )
+                if len(raw_links) != len(criterion_ids) or any(
+                    adapter._local_destination(task_path, link)[1] != spec_path
+                    for link in raw_links
+                ):
+                    fail(
+                        task_path,
+                        "COMPLETION-UPSTREAM",
+                        "Task criterion link is not its Spec",
+                    )
+                for criterion in criterion_ids:
+                    if criterion not in defined:
+                        fail(
+                            task_path,
+                            "COMPLETION-UPSTREAM",
+                            f"unknown or foreign {criterion}",
+                        )
+                    else:
+                        task_pairs.setdefault((criterion, task_path), []).append(entry)
+        if set(task_pairs) != assignments:
+            fail(
+                spec_path,
+                "COMPLETION-TRACE",
+                "Plan and Task criterion assignments differ",
+            )
+        for criterion, task_path in assignments:
+            for entry in task_pairs.get((criterion, task_path), []):
+                effective = (
+                    documents[task_path].status
+                    if len(rows(task_path) or ()) == 1
+                    else entry["Status"].strip()
+                )
+                if effective != "completed" or entry["Result"].strip() != "PASS":
+                    fail(
+                        task_path,
+                        "COMPLETION-RESULT",
+                        f"{criterion} remains {effective}/{entry['Result']}",
+                    )
+    return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key)), digest
+
+
 def _exit_code(diagnostics: Sequence[LifecycleDiagnostic]) -> int:
     return 1 if any(item.severity == "FAIL" for item in diagnostics) else 0
 
@@ -4527,7 +4991,7 @@ def _format_diagnostic(diagnostic: LifecycleDiagnostic) -> str:
 
 def _validate_arguments(args: argparse.Namespace) -> None:
     refs = (args.from_ref, args.base_ref, args.to_ref)
-    if args.mode in {"strict", "staged", "snapshot"} and any(
+    if args.mode in {"strict", "staged", "snapshot", "completion"} and any(
         ref is not None for ref in refs
     ):
         raise InvocationError(f"{args.mode} mode forbids ref flags")
@@ -4546,7 +5010,7 @@ def _parser() -> ArgumentParser:
     parser.add_argument("--root", default=".")
     parser.add_argument(
         "--mode",
-        choices=("strict", "staged", "ci", "explicit-ref", "snapshot"),
+        choices=("strict", "staged", "ci", "explicit-ref", "snapshot", "completion"),
         default="strict",
     )
     parser.add_argument("--from-ref")
@@ -4558,11 +5022,17 @@ def _parser() -> ArgumentParser:
 
 def _execute(root: Path, args: argparse.Namespace) -> int:
     _verify_repository_root(root)
-    if args.mode == "staged":
+    if args.mode in {"staged", "completion"}:
         assert_staged_authority_matches_worktree(root, CURRENT_REGISTRY_PATH)
+    if args.mode == "completion":
+        for authority in COMPLETION_AUTHORITY_PATHS[1:]:
+            assert_staged_authority_matches_worktree(root, authority)
     registry = load_registry(root)
     include_paths = _normalize_include_paths(registry, args.include_path)
-    if args.mode == "snapshot":
+    if args.mode == "completion":
+        diagnostics, index_digest = _evaluate_completion(root, registry, include_paths)
+        print(f"INDEX-SNAPSHOT sha256={index_digest}")
+    elif args.mode == "snapshot":
         diagnostics = _evaluate_snapshot(root, registry, include_paths)
     else:
         comparison_mode = "staged" if args.mode == "strict" else args.mode
@@ -4587,7 +5057,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     error_mode = "unknown"
     try:
         args = _parser().parse_args(argv)
-        if args.mode in {"strict", "staged", "ci", "explicit-ref", "snapshot"}:
+        if args.mode in {
+            "strict",
+            "staged",
+            "ci",
+            "explicit-ref",
+            "snapshot",
+            "completion",
+        }:
             error_mode = args.mode
         _validate_arguments(args)
         root = Path(args.root).resolve()

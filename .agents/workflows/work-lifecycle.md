@@ -4,7 +4,7 @@ version: "1.4.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 ---
 
 # Work Lifecycle
@@ -41,6 +41,9 @@ state on resume; historical progress and provider-local memory are auxiliary.
    delegated role and skills from the agent registry, and load the provider
    note only for native behavior.
 4. Resolve the Stage 99 profile and template before authored document changes.
+   Record the current scoped request in the existing Task Inputs and Approval
+   and Safety Boundaries. Keep the Spec acceptance contract, Plan work mapping
+   and actual Task execution/evidence separate; no extra progress ledger.
 5. Resolve required-check tools, environment, cost/time/output resources and
    native execution approval through [quality preflight](../governance/quality.md#validation-runner-envelope).
    Define focused checks, expected lanes, rollback, unavailable tools and next

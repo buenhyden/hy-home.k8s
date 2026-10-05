@@ -7,6 +7,7 @@ import importlib.util
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
+from types import SimpleNamespace
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +40,141 @@ def _archive(source: PurePosixPath, target: str, *, profile: str = PROFILE):
 
 
 STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT))
+
+
+class RetainedReciprocalAndTemplateTests(unittest.TestCase):
+    def test_actual_plan_and_task_forms_accept_whole_placeholder_paths_with_fragments(
+        self,
+    ) -> None:
+        forms = (
+            PurePosixPath("docs/99.templates/templates/specs/plan.template.md"),
+            PurePosixPath("docs/99.templates/templates/specs/task.template.md"),
+        )
+        context = validator._build_context(ROOT, forms)
+        registry = validator.load_registry(ROOT)
+        expected = "{{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan"
+        self.assertEqual(
+            sum(
+                raw == expected
+                for path in forms
+                for raw in validator._extract_links(context.texts[path])
+            ),
+            3,
+        )
+        diagnostics = validator._raw_diagnostics(
+            context,
+            registry,
+            {profile.profile_id: profile for profile in registry.profiles},
+        )
+        self.assertEqual(
+            [
+                item
+                for item in diagnostics
+                if item.rule_id == "LINK-BROKEN" and item.path in forms
+            ],
+            [],
+        )
+        for malformed in (
+            "{{spec_relative_path}}#success-criteria",
+            "{{SPEC_RELATIVE_PATH}}/extra#success-criteria",
+            "{{SPEC_RELATIVE_PATH}}?query=value#success-criteria",
+        ):
+            context.texts[forms[0]] = (
+                (ROOT / forms[0]).read_text().replace(expected, malformed)
+            )
+            diagnostics = validator._raw_diagnostics(
+                context,
+                registry,
+                {profile.profile_id: profile for profile in registry.profiles},
+            )
+            self.assertTrue(
+                any(
+                    item.rule_id == "LINK-BROKEN" and item.path == forms[0]
+                    for item in diagnostics
+                ),
+                malformed,
+            )
+        authored = PurePosixPath(
+            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
+        )
+        self.assertEqual(validator._local_destination(authored, expected)[0], "local")
+
+    def test_retained_saved_backlink_uses_proved_original_coordinates(self) -> None:
+        owner = PurePosixPath(
+            "docs/98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md"
+        )
+        expected = PurePosixPath(
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        )
+        index = (ROOT / validator.ARCHIVE_INDEX_PATH).read_text()
+        text = (ROOT / owner).read_text()
+        context = validator._build_context(
+            ROOT, (owner, validator.ARCHIVE_INDEX_PATH, expected)
+        )
+        self.assertIsNone(context.document_registry)
+        self.assertTrue(validator._links_back_to(context, owner, expected))
+        self.assertFalse(
+            validator._links_back_to(
+                context, owner, expected.with_name("9999-missing.md")
+            )
+        )
+        rows, errors = validator.parse_catalog(index)
+        self.assertFalse(errors)
+        row = next(row for path, row in rows.items() if path in owner.parents)
+        context.texts[validator.ARCHIVE_INDEX_PATH] = index.replace(
+            row.envelope.commit, "0" * 40
+        )
+        self.assertFalse(validator._links_back_to(context, owner, expected))
+        context.texts[validator.ARCHIVE_INDEX_PATH] = index
+        context.texts[owner] = text + "\nChanged retained bytes.\n"
+        self.assertFalse(validator._links_back_to(context, owner, expected))
+
+    def test_current_backlink_is_still_required(self) -> None:
+        owner = PurePosixPath(
+            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
+        )
+        expected = PurePosixPath(
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        )
+        context = SimpleNamespace(
+            document_registry=validator.load_registry(ROOT),
+            texts={owner: "Current completed Spec without a backlink."},
+        )
+        self.assertFalse(validator._links_back_to(context, owner, expected))
+        context.texts[owner] = (
+            "[Requirement](../../01.requirements/0003-workspace-agent-governance-platform.md)"
+        )
+        self.assertTrue(validator._links_back_to(context, owner, expected))
+
+    def test_full_uppercase_placeholder_is_only_a_template_destination(self) -> None:
+        form = PurePosixPath("docs/99.templates/templates/specs/plan.template.md")
+        for variable in (
+            "CHILD_RELATIVE_PATH",
+            "SPEC_RELATIVE_PATH",
+            "TASK_RELATIVE_PATH",
+        ):
+            raw = "{{" + variable + "}}"
+            self.assertEqual(
+                validator._local_destination(form, raw, template=True),
+                ("template", None),
+            )
+            self.assertEqual(
+                validator._local_destination(
+                    PurePosixPath(
+                        "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
+                    ),
+                    raw,
+                )[0],
+                "local",
+            )
+        for malformed in (
+            "{{task_relative_path}}",
+            "{{TASK RELATIVE_PATH}}",
+            "{{TASK_RELATIVE_PATH}}/extra",
+        ):
+            self.assertEqual(
+                validator._local_destination(form, malformed, template=True)[0], "local"
+            )
 
 
 def _grammar(

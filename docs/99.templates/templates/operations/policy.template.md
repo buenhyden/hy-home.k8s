@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "operation/policy"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "operations"
 artifact_id: "{{ARTIFACT_ID}}"
 ---

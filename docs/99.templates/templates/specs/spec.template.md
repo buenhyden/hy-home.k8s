@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "specs"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
@@ -50,6 +50,10 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Success Criteria & Verification Plan
 
 <!-- Author prompt: assign stable criterion IDs and name evidence that proves each one. -->
+
+| Criterion | Acceptance evidence |
+| --- | --- |
+| VAL-FEATURE-001 | Named test, contract, integration, or review evidence |
 
 ## Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.7.11"
-type: "common/readme-stage-index"
+version: "0.8.0"
+type: "archive/catalog"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "archive"
 ---
 
@@ -54,7 +54,7 @@ Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내�
 소비자의 유한 집합을 기록한다. 일반 행마다 full-body snapshot이나 tombstone을
 추가하지 않으며, 후속 소유자 없는 삭제는 이 Archive 조회 경계로 해석한다.
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -75,7 +75,7 @@ Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내�
 
 동결 generation에서는 ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing delimiter는 없으며 validator는 Git blob identity, payload byte count, final newline, SHA-256, mirror path, replacement dependency를 함께 확인한다.
 
-## Document Index
+## Structure
 
 아래 manifest는 25개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다. 모든 record는 후속 소유자를 명명하며, 현재 closure owner와 archive navigation boundary는 migration-result ledger와 namespace registry가 별도로 기록한다.
 
@@ -210,7 +210,7 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 | Disposition Record | Assessment | Availability | Current Owner | Decision | Assessed | Hold |
 | --- | --- | --- | --- | --- | --- | --- |
 
-## Authoring Workflow
+## Usage
 
 ### ADR-0038 Disposition
 

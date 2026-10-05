@@ -617,12 +617,28 @@ def _frontmatter(text: str) -> tuple[dict[str, Any], str]:
         fail("AGENT-NATIVE-METADATA", "invalid native metadata")
     if not isinstance(metadata, dict):
         fail("AGENT-NATIVE-METADATA", "metadata must be an object")
-    # Native metadata is deliberately scalar and canonical: hidden comments,
-    # aliases, tags, or extra policy cannot ride along with provider keys.
-    if raw != "\n".join(
-        f"{key}: {json.dumps(value, ensure_ascii=False)}"
-        for key, value in metadata.items()
+    if "metadata" in metadata and (
+        not isinstance(metadata["metadata"], dict)
+        or tuple(metadata["metadata"])
+        != ("title", "version", "type", "status", "owner", "updated")
     ):
+        fail(
+            "AGENT-NATIVE-METADATA",
+            "Skill document metadata must contain the ordered common fields",
+        )
+    # Native metadata is canonical. Skills alone project document meaning in
+    # one nested mapping; provider permission/model fields remain top-level.
+    canonical: list[str] = []
+    for key, value in metadata.items():
+        if key == "metadata" and isinstance(value, dict):
+            canonical.append("metadata:")
+            canonical.extend(
+                f"  {nested_key}: {json.dumps(nested_value, ensure_ascii=False)}"
+                for nested_key, nested_value in value.items()
+            )
+        else:
+            canonical.append(f"{key}: {json.dumps(value, ensure_ascii=False)}")
+    if raw != "\n".join(canonical):
         fail("AGENT-NATIVE-METADATA", "noncanonical native metadata")
     return metadata, body
 
@@ -1051,12 +1067,37 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         if path != f".agents/skills/{skill_id}/SKILL.md":
             fail("AGENT-REGISTRY-SKILL", "skill identity differs from package path")
         metadata, body = _frontmatter(_read_text(root, path, "AGENT-REGISTRY-SKILL"))
+        document_metadata = metadata.get("metadata")
         if (
-            set(metadata) != {"name", "description", "disable-model-invocation"}
+            set(metadata)
+            != {"name", "description", "metadata", "disable-model-invocation"}
             or metadata.get("disable-model-invocation") is not True
             or metadata["name"] != skill_id
             or not isinstance(metadata["description"], str)
             or not metadata["description"].strip()
+            or not isinstance(document_metadata, dict)
+            or set(document_metadata)
+            != {"title", "version", "type", "status", "owner", "updated"}
+            or not isinstance(document_metadata.get("title"), str)
+            or not document_metadata["title"].strip()
+            or not isinstance(document_metadata.get("version"), str)
+            or re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", document_metadata["version"])
+            is None
+            or document_metadata.get("type") != "governance/skill"
+            or document_metadata.get("status")
+            not in {
+                "draft",
+                "in-review",
+                "active",
+                "deprecated",
+                "superseded",
+                "retired",
+            }
+            or not isinstance(document_metadata.get("owner"), str)
+            or not document_metadata["owner"].strip()
+            or not isinstance(document_metadata.get("updated"), str)
+            or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", document_metadata["updated"])
+            is None
             or not body.strip()
         ):
             fail("AGENT-REGISTRY-SKILL", "invalid skill identity or metadata")

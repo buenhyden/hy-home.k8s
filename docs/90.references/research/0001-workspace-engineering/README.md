@@ -1,11 +1,11 @@
 ---
 title: "Workspace Engineering Research Pack"
 version: "0.3.0"
-type: "common/readme-research-pack"
-status: "active"
+type: "reference/research-pack"
+status: "in-review"
 owner: "platform"
-updated: "2026-09-27"
-layer: "references"
+updated: "2026-10-05"
+artifact_id: "RES-0001"
 ---
 # Workspace Engineering Research Pack
 
@@ -15,6 +15,11 @@ layer: "references"
 upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 증거 계약을
 정리한다. 독자는 개발자, 운영자, 문서 작성자와 AI agent다. 현재 외부 지식을
 먼저 읽고 과거 로컬 관찰은 관찰 당시의 증거로 구분하여 읽는다.
+
+## Scope
+
+이 pack은 아래 연구 계약과 보고서 색인에 명시한 주제와 출처를 포함한다.
+실행 승인, 현재 정책, hosted·provider·live 결과는 증거 범위에서 제외한다.
 
 ## Research Contract
 
@@ -51,6 +56,11 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 남긴다. 문서에 없다는 이유만으로 미지원이라고 단정하지 않는다. 조건부 적용
 제안은 외부 사실 및 과거 로컬 관찰과 구분한다.
 
+## Structure
+
+직접 멤버와 그 연구 책임은 아래 보고서 색인에서 찾는다. 각 멤버의 날짜와
+판정은 멤버 본문이 소유하며 이 anchor는 별도 실행 상태를 기록하지 않는다.
+
 ## Report Index
 
 | 보고서 | 연구 책임 |
@@ -68,6 +78,11 @@ upstream 구현을 비교하고, 후속 workspace 조사에 필요한 질문과 
 | [Memory management](m0011-agent-memory-tiers-and-management.md) | 단기·장기·도메인 기억, 수명·승격·정정·삭제·복구 |
 | [Source coverage](m0012-source-coverage.md) | 원 요청·requirement·claim·source 대응, 갱신·이관 처분과 역사적 증거 |
 | [Scope application index](m0013-scope-application-index.md) | 외부 근거를 scope별 후속 조사 질문·selector·합격 기준·승인 경계에 연결 |
+
+## Usage
+
+먼저 연구 계약과 증거 경계를 확인한 뒤 보고서 색인에서 필요한 멤버를 읽는다.
+갱신은 아래 승계 절차를 따르며 연구 근거를 현재 실행 승인으로 사용하지 않는다.
 
 ## Refresh and Succession
 

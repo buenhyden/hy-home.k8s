@@ -20,7 +20,7 @@
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
     "schema_version": {
-      "const": 9
+      "const": 10
     },
     "profiles": {
       "type": "array",
@@ -229,6 +229,56 @@
                   "allow_explicit_exclusion"
                 ],
                 "properties": {
+                  "task_execution": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "single_status_marker",
+                      "result_states",
+                      "summary_rule",
+                      "acceptance_states"
+                    ],
+                    "properties": {
+                      "single_status_marker": {
+                        "const": "frontmatter"
+                      },
+                      "result_states": {
+                        "type": "object"
+                      },
+                      "acceptance_states": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "uniqueItems": true
+                      },
+                      "summary_rule": {
+                        "const": "task-items-v2"
+                      },
+                      "evidence_section": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "evidence_columns": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "evidence_result_states": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  },
                   "section": {
                     "type": "string",
                     "minLength": 1
@@ -879,6 +929,23 @@
             "type": "string",
             "pattern": "(^|/)README\\.md$"
           }
+        },
+        "index_columns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "optional_index_columns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -936,6 +1003,77 @@
           "items": {
             "type": "string",
             "pattern": "\\.md$"
+          }
+        }
+      }
+    },
+    "migration_admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_generation",
+        "to_generation",
+        "spec_ref",
+        "task_ref",
+        "updated",
+        "entries"
+      ],
+      "properties": {
+        "from_generation": {
+          "const": 9
+        },
+        "to_generation": {
+          "const": 10
+        },
+        "spec_ref": {
+          "const": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
+        },
+        "task_ref": {
+          "const": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md"
+        },
+        "updated": {
+          "const": "2026-10-05"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "source_profile",
+              "source_status",
+              "target_profile",
+              "target_status"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_profile": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "target_profile": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
           }
         }
       }

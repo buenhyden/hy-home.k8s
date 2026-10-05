@@ -4,9 +4,10 @@ version: "1.2.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 artifact_id: "SPEC-0105-PLAN-0001"
+parent_ids: ["SPEC-0105"]
 ---
 
 # Common Authority and Safe Authoring Implementation Plan
@@ -48,11 +49,15 @@ remote integration, runtime capability assertion or live operation.
 
 ## Work Breakdown
 
-| ID | Work package | Depends on | Entry gate | Exit evidence |
-| --- | --- | --- | --- | --- |
-| WP-001 | Trace current owners, approval callers and provider guards | None | Explicit P01 scope and observed clean baseline | Task comparison, exact source/consumer findings |
-| WP-002 | Repair existing policy and executable consumers | WP-001 | Reviewed bounded findings and approved local scope | Changed owners with focused behavior checks |
-| WP-003 | Independent review and local delivery | WP-002 | Reviewable final diff and available check envelope | Task lane, reviewer, logical commit and rollback evidence |
+### Lifecycle Traceability
+
+| Work Unit | Criteria | Work | Dependencies | Task | Verification |
+| --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-P01-001](spec.md#success-criteria--verification-plan) | WP-001: trace current owners, approval callers and provider guards | None; explicit P01 scope and clean baseline | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) | Source and consumer comparison in the Task |
+| WORK-002 | [VAL-P01-002](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-004](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan) | WP-002: repair authorized owners and consumers | WP-001; reviewed findings and approved scope | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) | Changed-owner review and focused checks in the Task |
+| WORK-003 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003: independent review and local delivery | WP-002; reviewable diff and check envelope | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) | Task lane, reviewer, commit and rollback evidence |
+| WORK-004 | [VAL-P01-002](spec.md#success-criteria--verification-plan) | WP-002 follow-up: repair quoted Secret output scanner | Completed original WP-002; new authorized follow-up scope | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Focused regression and independent re-review in the Task |
+| WORK-005 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 follow-up: validate and commit local handoff | WORK-004; reviewable follow-up diff | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Full QA, message and commit evidence in the Task |
 
 ## Verification Plan
 
@@ -79,18 +84,3 @@ checks pass over declared inputs; external evidence remains unobserved.
 Commit with effective hooks; preserve a failed hook as a blocker. Roll back
 only this branch's logical changes by reviewed forward reverts when authorized.
 Do not mark incomplete checks or protected actions as completed.
-
-## Traceability
-
-### Lifecycle Traceability
-
-| Spec criterion | Work package | Expected Task |
-| --- | --- | --- |
-| [VAL-P01-001](spec.md#success-criteria--verification-plan) | WP-001 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-003](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-004](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-005](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) |
-| [VAL-P01-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) |
-| [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) |

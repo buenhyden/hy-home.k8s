@@ -1,10 +1,10 @@
 ---
 title: "05.operations/guides"
-version: "0.1.7"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-05"
 layer: "operations"
 ---
 # 05.operations/guides
@@ -50,15 +50,15 @@ layer: "operations"
 - 실시간 장애 대응 절차
 - 사후 사고 분석 보고서
 
-## Item Index
+## Structure
 
 ### 문서 인덱스
 
-| 문서 | 설명 |
+| Path | Purpose |
 | --- | --- |
 | [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 |
 
-## Add and Find
+## Usage
 
 1. 현재 플랫폼 구조는 [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md), 운영 통제와 절차는 관련 Policy/Runbook에서 확인한다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/operations/guide.template.md)를 기반으로 작성한다.

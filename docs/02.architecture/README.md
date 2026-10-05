@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.5.0"
-type: "common/readme-stage-index"
+version: "0.6.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-05"
 layer: "architecture"
 ---
 # 02.architecture
@@ -44,7 +44,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - Architecture Reviewers
 - AI Agents
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -59,14 +59,14 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 - 실행 순서와 작업 증적
 - 반복 운영 절차
 
-## Document Index
+## Structure
 
-| 폴더 | 설명 |
+| Path | Purpose |
 | --- | --- |
 | [descriptions/](./descriptions/) | Architecture Description과 참조 모델 |
 | [decisions/](./decisions/) | 아키텍처 결정 기록(ADR) |
 
-## Authoring Workflow
+## Usage
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.

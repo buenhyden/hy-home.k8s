@@ -1,10 +1,10 @@
 ---
 title: "05.operations"
-version: "0.3.0"
-type: "common/readme-stage-index"
+version: "0.4.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "operations"
 ---
 # 05.operations
@@ -86,7 +86,7 @@ marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 G
 - Incident Responders
 - AI Agents
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -112,7 +112,7 @@ provider/runtime, live verification은 외부 evidence로 링크한다. 별도
 "operation/release" 문서는 현재 채택하지 않으며, audit consumer가 입증될 때 새
 ADR, profile, lifecycle, template을 함께 검토한다.
 
-## Document Index
+## Structure
 
 ```text
 05.operations/
@@ -123,14 +123,14 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 └── README.md
 ```
 
-| Collection | 목적 |
+| Path | Purpose |
 | --- | --- |
 | [guides/](./guides/) | 안정 상태의 사용자·개발자·운영자 가이드 |
 | [policies/](./policies/) | 공유 운영 정책과 표준 |
 | [runbooks/](./runbooks/) | 실행 가능한 운영 절차 |
 | [incidents/](./incidents/) | 사고 기록과 사후 분석 |
 
-## Authoring Workflow
+## Usage
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.

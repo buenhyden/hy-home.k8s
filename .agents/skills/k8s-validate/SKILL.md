@@ -1,6 +1,13 @@
 ---
 name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
+metadata:
+  title: "K8S Validate"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

@@ -3,18 +3,26 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 from typing import Literal, Mapping, Sequence
 
 import yaml
 
 from document_authority import AuthorityError, require_reciprocal_supersession
-from document_contracts import DocumentProfile, Registry, classify_path
+from document_contracts import (
+    DocumentProfile,
+    Registry,
+    classify_path,
+    task_criterion_ids,
+)
 
 
 LifecycleSeverity = Literal["FAIL", "DEFER"]
-LifecycleBaseMode = Literal["staged", "ci", "explicit-ref", "snapshot", "unknown"]
+LifecycleBaseMode = Literal[
+    "staged", "ci", "explicit-ref", "snapshot", "completion", "unknown"
+]
 
 
 @dataclass(frozen=True)
@@ -44,6 +52,85 @@ class LifecycleDocument:
     replacement: PurePosixPath | None = None
     artifact_id: str | None = None
     original_artifact_id: str | None = None
+
+
+def generation_admission_paths(
+    registry: Registry,
+    base_registry: Registry,
+    before: Mapping[PurePosixPath, LifecycleDocument],
+    after: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[PurePosixPath]:
+    """Admit only declared nonterminal events at the actual 9 -> 10 boundary."""
+    declaration = registry.migration_admission
+    if declaration is None or (
+        base_registry.schema_version,
+        registry.schema_version,
+    ) != (9, 10):
+        return frozenset()
+    if (declaration.get("from_generation"), declaration.get("to_generation")) != (
+        9,
+        10,
+    ):
+        raise ValueError("generation migration boundary is invalid")
+    spec = after.get(PurePosixPath(declaration["spec_ref"]))
+    task = after.get(PurePosixPath(declaration["task_ref"]))
+    if (
+        spec is None
+        or spec.profile_id != "sdlc/spec"
+        or task is None
+        or task.profile_id != "sdlc/task"
+        or task.path.parent.parent != spec.path.parent
+    ):
+        raise ValueError(
+            "generation migration requires current same-package Spec and Task references"
+        )
+    base_profiles = {profile.profile_id: profile for profile in base_registry.profiles}
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    admitted: set[PurePosixPath] = set()
+    seen: set[PurePosixPath] = set()
+    for entry in declaration["entries"]:
+        path = PurePosixPath(entry["path"])
+        if (
+            path in seen
+            or entry["source_profile"] not in base_profiles
+            or entry["target_profile"] not in profiles
+        ):
+            raise ValueError(
+                "generation migration path/profile is duplicate or unknown"
+            )
+        for profile, status in (
+            (base_profiles[entry["source_profile"]], entry["source_status"]),
+            (profiles[entry["target_profile"]], entry["target_status"]),
+        ):
+            if profile.lifecycle_domain is None:
+                valid = status is None
+            else:
+                valid = (
+                    profile.lifecycle_domain.validation_class(status or "") is not None
+                )
+            if not valid:
+                raise ValueError(
+                    "generation migration status is unknown to its own generation"
+                )
+        seen.add(path)
+        old, new = before.get(path), after.get(path)
+        if old is None or new is None:
+            continue  # A declaration cannot manufacture an absent source document.
+        if (old.profile_id, old.status, new.profile_id, new.status) != (
+            entry["source_profile"],
+            entry["source_status"],
+            entry["target_profile"],
+            entry["target_status"],
+        ):
+            continue
+        domain = base_profiles[old.profile_id].lifecycle_domain
+        if (
+            domain is not None
+            and domain.validation_class(old.status or "") == "terminal"
+        ):
+            raise ValueError("generation migration cannot reopen terminal evidence")
+        admitted.add(path)
+    return frozenset(admitted)
 
 
 @dataclass(frozen=True)
@@ -95,6 +182,7 @@ class LifecycleEvidenceDocument:
     relationship_section_valid: bool
     body_contract_valid: bool
     task_terminal_evidence_valid: bool
+    body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -107,6 +195,9 @@ class LifecycleEvidenceContext:
     status_changed_paths: frozenset[PurePosixPath]
     body_changed_paths: frozenset[PurePosixPath]
     created_paths: frozenset[PurePosixPath]
+    base_task_rows: Mapping[PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]] = (
+        field(default_factory=dict)
+    )
 
 
 class _UniqueKeyLoader(yaml.SafeLoader):
@@ -647,6 +738,119 @@ def artifact_identity_reuse_diagnostics(
     return tuple(diagnostics)
 
 
+def _task_item_edge_diagnostics(
+    profile: DocumentProfile,
+    path: PurePosixPath,
+    context: LifecycleEvidenceContext,
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Keep each Task work ID's assignment and forward state across Git blobs."""
+
+    if profile.profile_id != "sdlc/task" or profile.body_contract is None:
+        return ()
+    before_rows = context.base_task_rows.get(path)
+    after_view = context.proposed_documents.get(path)
+    if not before_rows or after_view is None:
+        return ()  # An older generation may have no recognizable Task table.
+    if not after_view.body_rows:
+        return (
+            _diagnostic(
+                "TASK-ITEM-HIDE",
+                path=path,
+                profile="sdlc/task",
+                expected="all base work IDs remain in the bound Task table",
+                observed="proposed Task table missing or malformed",
+                base_mode=base_mode,
+                evidence_gap="base and proposed bound Task rows",
+            ),
+        )
+    before = {dict(row)["ID"].strip().strip("`"): dict(row) for row in before_rows}
+    after = {
+        dict(row)["ID"].strip().strip("`"): dict(row) for row in after_view.body_rows
+    }
+
+    def criterion_ids(cell: str) -> tuple[str, ...] | None:
+        linked = task_criterion_ids(cell)
+        if linked is not None:
+            return linked
+        plain = tuple(part.strip() for part in cell.split(","))
+        return (
+            plain
+            if all(re.fullmatch(r"VAL-[A-Z0-9-]+-[0-9]{3}", part) for part in plain)
+            else None
+        )
+
+    def effective_status(
+        row: Mapping[str, str], header: str | None, *, legacy: bool = False
+    ) -> str:
+        value = row["Status"].strip()
+        if value == "frontmatter":
+            return header or ""
+        if legacy:
+            lowered = value.casefold().replace(" ", "-")
+            if (
+                lowered in {"done", "archived"}
+                and profile.lifecycle_domain.validation_class("completed") is not None
+            ):
+                return "completed"
+            if (
+                lowered == "queued"
+                and profile.lifecycle_domain.validation_class("ready") is not None
+            ):
+                return "ready"
+            if (
+                profile.lifecycle_domain is not None
+                and profile.lifecycle_domain.validation_class(lowered) is not None
+            ):
+                return lowered
+        return value
+
+    issues: list[LifecycleDiagnostic] = []
+    for work_id, old in before.items():
+        new = after.get(work_id)
+        rule = ""
+        observed = ""
+        if new is None:
+            rule, observed = "TASK-ITEM-DELETE", f"{work_id} removed"
+        elif criterion_ids(old["Upstream criterion"]) != criterion_ids(
+            new["Upstream criterion"]
+        ):
+            rule, observed = "TASK-ITEM-HIDE", f"{work_id} upstream criterion changed"
+        elif effective_status(
+            old, context.base_documents[path].status, legacy="Acceptance" not in old
+        ) != effective_status(new, after_view.document.status) and (
+            profile.lifecycle_domain is None
+            or not profile.lifecycle_domain.allows(
+                effective_status(
+                    old,
+                    context.base_documents[path].status,
+                    legacy="Acceptance" not in old,
+                ),
+                effective_status(new, after_view.document.status),
+            )
+        ):
+            rule, observed = (
+                "TASK-ITEM-EDGE",
+                f"{work_id}: {old['Status']} -> {new['Status']}",
+            )
+        elif old["Result"] not in {"NOT-RUN", "NOT_RUN"} and new["Result"] == "NOT_RUN":
+            rule, observed = "TASK-ITEM-RESET", f"{work_id} result reset to NOT_RUN"
+        if rule:
+            issues.append(
+                _diagnostic(
+                    rule,
+                    path=path,
+                    profile="sdlc/task",
+                    expected="preserved work ID, assignment, and forward item state",
+                    observed=observed,
+                    base_mode=base_mode,
+                    evidence_gap="base and proposed bound Task rows",
+                )
+            )
+    return tuple(issues)
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -656,6 +860,9 @@ def compare_lifecycle(
     base_mode: Literal["staged", "ci", "explicit-ref"],
     evidence_context: LifecycleEvidenceContext | None = None,
     migration_events: MigrationLifecycleEvents = MigrationLifecycleEvents(),
+    enforce_task_execution: bool = False,
+    base_registry: Registry | None = None,
+    generation_admissions: frozenset[PurePosixPath] = frozenset(),
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare independently classified snapshots with fixed event precedence.
 
@@ -739,7 +946,9 @@ def compare_lifecycle(
     for path in sorted(common_paths, key=PurePosixPath.as_posix):
         base = base_documents[path]
         proposed = proposed_documents[path]
-        base_profile = _optional_profile_by_id(registry, base.profile_id)
+        base_profile = _optional_profile_by_id(
+            base_registry or registry, base.profile_id
+        )
         proposed_profile = _optional_profile_by_id(registry, proposed.profile_id)
         if base_profile is None or proposed_profile is None:
             diagnostics.append(
@@ -757,6 +966,28 @@ def compare_lifecycle(
                 )
             )
             continue
+        if path in generation_admissions:
+            old_failure = _state_diagnostic(
+                base, base_profile, base_mode=base_mode, side="base"
+            )
+            new_failure = _state_diagnostic(
+                proposed, proposed_profile, base_mode=base_mode, side="proposed"
+            )
+            diagnostics.extend(
+                failure for failure in (old_failure, new_failure) if failure is not None
+            )
+            if (
+                not old_failure
+                and not new_failure
+                and enforce_task_execution
+                and evidence_context is not None
+            ):
+                diagnostics.extend(
+                    _task_item_edge_diagnostics(
+                        proposed_profile, path, evidence_context, base_mode=base_mode
+                    )
+                )
+            continue
         if base.profile_id != proposed.profile_id:
             diagnostics.append(
                 _diagnostic(
@@ -772,7 +1003,7 @@ def compare_lifecycle(
             continue
         profile = proposed_profile
         base_state_failure = _state_diagnostic(
-            base, profile, base_mode=base_mode, side="base"
+            base, base_profile, base_mode=base_mode, side="base"
         )
         proposed_state_failure = _state_diagnostic(
             proposed, profile, base_mode=base_mode, side="proposed"
@@ -783,6 +1014,12 @@ def compare_lifecycle(
             if proposed_state_failure is not None:
                 diagnostics.append(proposed_state_failure)
             continue
+        if enforce_task_execution and evidence_context is not None:
+            diagnostics.extend(
+                _task_item_edge_diagnostics(
+                    profile, path, evidence_context, base_mode=base_mode
+                )
+            )
         if base.status == proposed.status or not _stateful(profile):
             continue
         allowed_edges = (
@@ -836,6 +1073,31 @@ def compare_lifecycle(
     diagnostics.extend(archive_evidence_diagnostics)
 
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
+
+
+def validate_current_task_evidence(
+    context: LifecycleEvidenceContext,
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Reject invalid completed Tasks, including unchanged current documents."""
+
+    return tuple(
+        _diagnostic(
+            "TASK-TERMINAL-EVIDENCE",
+            path=path,
+            profile="sdlc/task",
+            expected="every completed Task row has PASS and concrete evidence",
+            observed="current completed Task table is missing or invalid",
+            base_mode=base_mode,
+            evidence_gap="parsed current Task Table evidence",
+        )
+        for path, view in sorted(context.proposed_documents.items())
+        if path.parts[:2] == ("docs", "03.specs")
+        and view.document.profile_id == "sdlc/task"
+        and view.document.status == "completed"
+        and not view.task_terminal_evidence_valid
+    )
 
 
 def validate_snapshot_documents(
@@ -951,8 +1213,16 @@ def document_from_text(
             status=None,
             state_issue="frontmatter is not a unique-key mapping",
         )
+    if selected_profile.profile_id == "common/native-skill-package":
+        nested = metadata.get("metadata")
+        metadata = nested if isinstance(nested, dict) else {}
     claimed_profile_id = metadata.get("type")
     known_profile_ids = {profile.profile_id for profile in registry.profiles}
+    expected_type = (
+        "governance/skill"
+        if selected_profile.profile_id == "common/native-skill-package"
+        else dict(selected_profile.constants).get("type", selected_profile.profile_id)
+    )
     if (
         retired_types is not None
         and isinstance(claimed_profile_id, str)
@@ -963,15 +1233,18 @@ def document_from_text(
     profile_issue: str | None = None
     if not isinstance(claimed_profile_id, str):
         profile_issue = "frontmatter type is missing or not a string"
-    elif claimed_profile_id not in known_profile_ids:
-        profile_issue = f"frontmatter type is unknown: {claimed_profile_id!r}"
-    else:
+    elif claimed_profile_id == expected_type or (
+        registry.schema_version < 10
+        and claimed_profile_id == selected_profile.profile_id
+    ):
+        pass
+    elif claimed_profile_id in known_profile_ids:
         profile_id = claimed_profile_id
-        if profile_id != selected_profile.profile_id:
-            profile_issue = (
-                f"frontmatter type {profile_id!r} differs from route profile "
-                f"{selected_profile.profile_id!r}"
-            )
+        profile_issue = (
+            f"frontmatter type {profile_id!r} differs from route type {expected_type!r}"
+        )
+    else:
+        profile_issue = f"frontmatter type is unknown: {claimed_profile_id!r}"
     status = metadata.get("status")
     if not isinstance(status, str):
         return LifecycleDocument(

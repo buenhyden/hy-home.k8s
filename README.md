@@ -1,10 +1,10 @@
 ---
 title: "hy-home.k8s"
-version: "0.1.4"
-type: "common/readme-repository"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # hy-home.k8s
 
@@ -16,7 +16,7 @@ updated: "2026-09-29"
 
 이 저장소는 Linux server + native Docker Engine 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + OpenBao(Vault API 호환) 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
 
-### Readers
+## Audience
 
 이 README의 주요 독자:
 
@@ -25,7 +25,7 @@ updated: "2026-09-29"
 - Documentation Writers
 - AI Agents
 
-### Scope
+## Scope
 
 ### In Scope
 
@@ -44,7 +44,7 @@ updated: "2026-09-29"
 - `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
-## Repository Map
+## Structure
 
 ```text
 hy-home.k8s/
@@ -78,52 +78,6 @@ hy-home.k8s/
 - `infrastructure/`는 클러스터 bootstrap과 repo-backed static checks를 위한 실행 자산이다. MetalLB 계약은 별도 디렉터리가 아니라 `ipaddresspool.yaml`, `l2advertisement.yaml` 루트 파일로 관리한다.
 - k8s UI와 앱은 k8s 전용 router(k3d serverlb, `192.168.0.14:443`)가 받는 `<name>.hy-k8s.home.arpa`로 노출한다. ArgoCD는 `argo.hy-k8s.home.arpa`이고 `hy-k8s.home.arpa/<name>`은 subdomain으로 redirect된다. `hy-home.docker` Traefik은 외부 서비스(`hy.home.arpa`)만 싣는다.
 - `examples/`는 앱 온보딩 템플릿과 AWS/Azure cloud target reference-only 자산이다. 실제 cloud 계정, live cluster, provider runtime 변경은 이 저장소의 일반 실행 경로가 아니다.
-
-### Repository Workflow
-
-1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md) -> 관련 stage 문서` 순서로 진입한다.
-2. 설계/구현/운영 판단은 가능한 한 `docs/` 단계 문서 체인 전체를 기준으로 추적한다.
-3. 새 README나 authored stage 문서는 Template Routing Contract (`docs/99.templates/README.md`)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
-4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
-5. `.agents/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. README와 authored 문서는 Stage 99 registry의 해당 profile에 정의된 frontmatter를 따른다. Governed README는 routing envelope를 사용하며 artifact ID나 문서 생명주기를 별도로 갖지 않는다. Claude Markdown·Codex TOML 같은 네이티브 설정에는 각 실행 환경의 형식을 적용한다.
-7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, Template Routing Contract (`docs/99.templates/README.md`), 생성 문서 적용 범위를 같은 변경에서 점검한다.
-8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`.agents/`](.agents/)가 라우팅하는 Git 정책을 따른다.
-9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
-10. `.github` 자동화나 QA gate를 바꿀 때는 `.github/repository-surface.md`와 PR template의 검증 체크리스트를 함께 확인한다.
-11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
-12. AWS/Azure 예시의 버전 핀과 지원 범위는 각 Terraform/Bicep/Kubernetes 소스에 직접 기록하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
-
-### Language Policy
-
-이 README와 stage README처럼 사람이 먼저 읽는 진입점은 한국어를 기본으로 한다.
-반대로 AI Agent가 실행 기준으로 삼는 governance, policy, prompt/tool contract,
-검증 계약은 영어를 우선한다.
-
-- `.agents/**`: Agent 실행 정책과 provider/runtime 계약이므로 영어를 유지한다.
-- Stage 03 spec: 구현 명세이므로 영어로 작성한다.
-- `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md`: 실행 계획, 개별 Task 레코드, 검증 증적, handoff 기록이므로 영어로 작성한다.
-- Stage 05 guides, policies, runbooks, incidents: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
-- Stage 90 references: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
-
-### Common Workflows
-
-| Workflow       | Start Here                                               | Expected Follow-up                                                              |
-| -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 요구사항 변경  | Stage 01 requirements | 관련 AD/ADR, Spec, Plan 링크를 갱신한다.                                       |
-| 아키텍처 결정  | Stage 02 architecture | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다.                              |
-| 기능 구현      | Stage 03 specs | Plan/Task를 만들고 검증 증적을 남긴다.                                          |
-| 운영 절차 변경 | Stage 05 operations | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다.         |
-| 참조값 갱신    | Stage 90 references | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다.                    |
-| 문서 체계 변경 | Stage 99 templates | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
-
-### Relative Link Rules
-
-이 README의 링크 기준 위치는 repository root다.
-
-- `docs/` 바깥의 파일은 번호가 붙은 stage 안의 문서로 직접 링크하지 않는다. stage 문서는 경로·ID·역할을 평문으로 지칭하고, 링크가 필요하면 문서 허브를 진입점으로 사용한다. 규칙 정본은 `.agents/governance/document-authoring.md`가 소유한다.
-- `gitops/`, `infrastructure/`, `examples/`, `scripts/`, `tests/` 링크는 root-level implementation/support 영역으로 연결한다.
-- nested README 예시는 이 파일의 root-relative 링크를 복사하지 않고, 최종 README 위치에서 상대 경로를 다시 계산한다.
 
 ### Canonical Owners
 
@@ -163,7 +117,9 @@ hy-home.k8s/
 | Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x                                | provider README와 인접 실행 자산이 함께 소유하는 bounded 참조 구현                              |
 | CI / Quality   | GitHub Actions, pre-commit, markdownlint, shellcheck, kube-linter, actionlint, zizmor | 정적 검증 및 정책 게이트                                                                        |
 
-## Prerequisites
+## Getting Started
+
+### Prerequisites
 
 - `git`
 - `k3d`
@@ -179,8 +135,6 @@ hy-home.k8s/
   - OpenBao, Vault API 호환 (`https://openbao.hy.home.arpa`)
   - PostgreSQL write/read 포트
   - Valkey 접근 경로
-
-## Getting Started
 
 ### 1. Clone and Setup
 
@@ -228,7 +182,38 @@ cd hy-home.k8s
 - [examples/README.md](./examples/README.md) - 앱 온보딩 및 cloud target 참조 예시
 - [tests/README.md](./tests/README.md) - 저장소 전역 테스트 원칙
 
-## Validation
+## Usage
+
+### Repository Workflow
+
+처음에는 [문서 허브](docs/README.md)에서 목적에 맞는 stage를 찾고,
+에이전트 작업은 [공통 거버넌스](.agents/README.md)에서 역할과 절차를 찾는다.
+문서 작성·링크·언어 기준과 에이전트 실행·승인·Git 절차는
+[공통 거버넌스](.agents/README.md)에서 각 정책 소유자를 찾는다.
+
+### Language Policy
+
+이 README는 사람이 읽는 진입점이다. 문서별 언어 경계는
+문서 저술 정책이 소유한다.
+
+### Common Workflows
+
+| Workflow       | Start Here                                               | Expected Follow-up                                                              |
+| -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 요구사항 변경  | Stage 01 requirements | 관련 AD/ADR, Spec, Plan 링크를 갱신한다.                                       |
+| 아키텍처 결정  | Stage 02 architecture | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다.                              |
+| 기능 구현      | Stage 03 specs | Plan/Task를 만들고 검증 증적을 남긴다.                                          |
+| 운영 절차 변경 | Stage 05 operations | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다.         |
+| 참조값 갱신    | Stage 90 references | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다.                    |
+| 문서 체계 변경 | Stage 99 templates | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
+
+### Relative Link Rules
+
+링크는 이 파일의 위치를 기준으로 계산한다. stage 문서로 가는 링크와
+outside-doc 참조 경계는 문서 저술 정책이
+소유한다.
+
+## Verification
 
 정적 품질 검증은 CI와 pre-commit 설정을 기준으로 한다.
 
@@ -252,7 +237,9 @@ Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각
 ## Related Documents
 
 - [문서 허브](./docs/README.md)
+- [문서 작성 양식과 가이드](./docs/99.templates/README.md)
 - [에이전트 실행 거버넌스](.agents/README.md)
+- [문서 저술 정책](.agents/governance/document-authoring.md)
 - 현재 로컬 GitOps 플랫폼 요구사항 (`docs/01.requirements/README.md`)
 - 현재 로컬 GitOps 플랫폼 Spec (`docs/03.specs/README.md`)
 - ArgoCD 플랫폼 부트스트랩 Runbook (`docs/05.operations/runbooks/README.md`)

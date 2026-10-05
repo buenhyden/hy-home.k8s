@@ -1,6 +1,13 @@
 ---
 name: "external-service-contract-audit"
 description: "Use when auditing selectorless external Service/EndpointSlice mappings or repository consumers of external HTTP, database and OTLP endpoints."
+metadata:
+  title: "External Service Contract Audit"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "examples"
-version: "0.2.1"
-type: "common/readme-implementation"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # examples
 
@@ -44,6 +44,12 @@ AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 
 - production-grade 비용 산정과 SLA 보장
 - secret material 또는 provider credential 저장
 
+## Scope
+
+`examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
+provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
+않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
+
 ## Structure
 
 ```text
@@ -54,20 +60,7 @@ examples/
 └── README.md        # This file
 ```
 
-## Configuration Boundary
-
-`examples/`는 자산을 정본 소유 경로로 복사해 검증하기 전까지 참조 전용이다.
-provider credential, secret material, live 계정이나 클러스터 변경은 여기에 두지
-않는다. 활성 로컬 desired state는 계속 [`gitops/`](../gitops/)가 소유한다.
-
-## Validation
-
-복사한 예시에 맞춰 `python3 scripts/qa.py full`,
-`bash scripts/validate-k8s-manifests.sh .`,
-`bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
-provider나 live cluster의 준비 상태를 증명하지 않는다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -119,6 +112,13 @@ cp -r examples/sample-app gitops/workloads/<appname>
 로컬 앱 패턴을 확인할 때는 활성 GitOps 구현과 예시 템플릿을 구분한다.
 
 - [`../gitops/workloads/adminer`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)
+
+## Verification
+
+복사한 예시에 맞춰 `python3 scripts/qa.py full`,
+`bash scripts/validate-k8s-manifests.sh .`,
+`bash scripts/check-secret-handling.sh .`를 실행한다. 이 저장소 정적 검사는
+provider나 live cluster의 준비 상태를 증명하지 않는다.
 
 ## Related Documents
 

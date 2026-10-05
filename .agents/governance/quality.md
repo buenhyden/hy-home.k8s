@@ -4,7 +4,7 @@ version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 ---
 
 # Quality and Evidence Policy
@@ -69,7 +69,7 @@ execution approval. This is resource preflight, not secret/live authorization;
 [approval and safety](approval-and-safety.md) owns the latter. If a required
 budget is unavailable, preserve completed safe work and report the required
 check as unexecuted with its next owner. Never change a command or wrapper to
-evade a resource guard, disable a required check or report a false SKIP.
+evade a resource guard, disable a required check or report a false result.
 
 Every repository-static child selected by the validation-surface contract runs
 through the [validation runner](../../scripts/run-validation-lane.py), which
@@ -85,13 +85,17 @@ leader exits is `FAIL`.
 
 - `PASS`: the named check ran over the stated scope and met its acceptance
   condition.
-- `SKIP`: no applicable files or an explicitly optional tool was unavailable.
-  State the reason and report any fallback separately.
+- `NOT_RUN`: the named check did not execute. A selected required gate with this
+  result blocks completion and cannot enter PASS cache or signed proof.
+- `NOT_APPLICABLE`: the named check has no applicable target for the stated
+  scope. It is not evidence that a selected required check ran.
 - `FAIL`: execution or input validation did not meet the acceptance condition.
   Missing required tools/modules, invalid registry, cancellation, timeout,
-  output overflow, and cleanup failure cannot become SKIP or PASS.
+  output overflow, and cleanup failure cannot become NOT_APPLICABLE or PASS.
 - `DEFER`: required authority, environment, provider, or external evidence is
-  unavailable. This is a visible limitation, never a pass.
+  unavailable. An applicable optional tool's absence needs a reason and next
+  owner, with its fallback classified separately. This is a visible limitation,
+  never a pass.
 
 ### Semantic review
 
@@ -166,7 +170,7 @@ a matching filename set alone never justifies evidence reuse.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve
-runner boundary failures and optional-tool skips rather than treating them as
+runner boundary failures and optional-tool deferrals rather than treating them as
 successful full coverage.
 
 ### Handoff evidence contract
@@ -203,7 +207,7 @@ inventory counts are not policy pins.
 
 Refresh this policy when evidence semantics change, not when a corpus count or
 implementation constant changes. Preserve the distinction between repository,
-provider-runtime, hosted CI, and live checks. Formatters or skipped tools
+provider-runtime, hosted CI, and live checks. Formatters or deferred tools
 cannot silently advance a task to completion.
 
 ## Related Documents

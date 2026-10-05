@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.10.1"
-type: "common/readme-stage-index"
+version: "0.11.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "specs"
 ---
 # 03.specs
@@ -38,7 +38,7 @@ Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포�
 - Documentation Writers
 - AI Agents
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -58,7 +58,7 @@ Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포�
 `05.operations/runbooks/`, 그리고 각 Stage 03 work-unit의
 `tasks/tsk-####-<slug>.md` records로 분리한다.
 
-## Document Index
+## Structure
 
 각 package 폴더는 자신의 탐색을 스스로 소유한다. `spec.md`는 변경 계약을,
 `plan.md`는 구현 순서와 위험을, `tasks/`는 package-local Task 기록을
@@ -80,9 +80,9 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Stage 99 Lifecycle Normalization](./0106-stage99-lifecycle-normalization/)은 P02의 문서 lifecycle과 실행 추적 계약을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
-[Archive Retention Catalog](../98.archive/README.md#document-index)에서 찾는다.
+[Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
 
-## Authoring Workflow
+## Usage
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.

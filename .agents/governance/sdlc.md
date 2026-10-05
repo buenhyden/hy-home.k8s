@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "1.1.3"
+version: "1.2.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-10-05"
 ---
 
 # Software Development Lifecycle
@@ -45,7 +45,9 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 2. Record structural views and durable decisions before implementation when
    the change affects system boundaries or important trade-offs.
 3. Implement through one Stage 03 Spec package with ordered Plan and Task
-   evidence, using RED then GREEN validation.
+   evidence, using RED then GREEN validation. The Spec states behavior and
+   criteria, the Plan states order and dependencies, and each Task records
+   execution rows, results and evidence in one table.
 4. Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.
 5. Supersede, retire, withdraw, or seal documents only through registry-owned

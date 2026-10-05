@@ -364,8 +364,9 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
         registry = json.loads(registry_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         reject_with_detail("HOOK-DOC-REGISTRY", str(exc))
-    if not isinstance(registry, dict) or registry.get("schema_version") != 9:
-        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 9")
+    generation = registry.get("schema_version") if isinstance(registry, dict) else None
+    if type(generation) is not int or generation not in {9, 10}:
+        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 9 or 10")
     profiles = registry.get("profiles") if isinstance(registry, dict) else None
     if not isinstance(profiles, list) or not profiles:
         reject_with_detail("HOOK-DOC-REGISTRY", "profiles must be a non-empty list")

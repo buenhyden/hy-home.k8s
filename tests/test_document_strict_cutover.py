@@ -77,8 +77,8 @@ DELIBERATELY_EMPTY_PROFILE_IDS = frozenset(
         "operation/postmortem",
         "reference/audit",
         "reference/data",
-        "common/readme-audit-pack",
-        "common/readme-data-pack",
+        "reference/audit-pack",
+        "reference/data-pack",
     }
 )
 RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
@@ -148,7 +148,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 
-    def test_v9_registry_uses_the_common_public_model(self) -> None:
+    def test_v10_registry_uses_the_common_public_model(self) -> None:
         self.assertEqual(
             set(self.registry),
             {
@@ -165,9 +165,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "legacy_rebased_retained_paths",
                 "readme_navigation",
                 "document_language",
+                "migration_admission",
             },
         )
-        self.assertEqual(self.registry["schema_version"], 9)
+        self.assertEqual(self.registry["schema_version"], 10)
         self.assertNotIn("programLineage", self.registry)
         self.assertNotIn("standaloneExecutions", self.registry)
         for profile in self.registry["profiles"]:
@@ -214,7 +215,16 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                     frontmatter["order"][: len(COMMON_FRONTMATTER_PREFIX)],
                     COMMON_FRONTMATTER_PREFIX,
                 )
-                self.assertEqual(frontmatter["constants"].get("type"), profile["id"])
+                expected_type = (
+                    "common/readme"
+                    if profile["id"].startswith("common/readme-")
+                    else (
+                        "archive/route"
+                        if profile["id"] == "archive/scope-migration"
+                        else profile["id"]
+                    )
+                )
+                self.assertEqual(frontmatter["constants"].get("type"), expected_type)
 
     def test_templates_use_only_current_placeholder_grammars(self) -> None:
         legacy_markdown = re.compile(
@@ -287,6 +297,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "legacy_rebased_retained_paths",
                 "readme_navigation",
                 "document_language",
+                "migration_admission",
                 "schema_version",
             },
         )
@@ -297,9 +308,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "reference/audit",
                 "reference/data",
                 "reference/research",
-                "common/readme-audit-pack",
-                "common/readme-data-pack",
-                "common/readme-research-pack",
+                "reference/audit-pack",
+                "reference/data-pack",
+                "reference/research-pack",
                 "operation/incident",
                 "operation/postmortem",
             }.issubset(profile_ids)
@@ -429,7 +440,13 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 )
                 match = re.search(r"(?m)^type:\s*[\"']?([^\"'\s]+)", contents)
                 if match is not None:
-                    self.assertIn(match.group(1), profiles)
+                    self.assertIn(
+                        match.group(1),
+                        {
+                            p["frontmatter"]["constants"].get("type", p["id"])
+                            for p in profiles.values()
+                        },
+                    )
 
     def test_retired_stage99_paths_are_not_profile_routes(self) -> None:
         source = (SCRIPTS_ROOT / "document_contracts.py").read_text(encoding="utf-8")
@@ -538,7 +555,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertEqual(requirement.frontmatter.required[-1], "artifact_id")
         self.assertEqual(requirement.artifact_id_pattern, "^REQ-[0-9]{4}$")
         self.assertIsNotNone(requirement.lifecycle_domain)
-        self.assertIn(("draft", "active"), requirement.lifecycle_domain.transitions)
+        self.assertIn(("draft", "in-review"), requirement.lifecycle_domain.transitions)
 
     def test_terminal_profile_relationships_reject_unknown_sources(self) -> None:
         contracts = load_document_contracts()
@@ -967,13 +984,11 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 ):
                     self.assertIn(section, contents)
 
-    def test_root_readme_routes_package_tasks_to_task_records(self) -> None:
+    def test_root_readme_routes_package_tasks_through_the_document_hub(self) -> None:
         contents = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertNotIn("docs/03.specs/<id>-<slug>/tasks.md", contents)
-        self.assertIn(
-            "docs/03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md",
-            contents,
-        )
+        self.assertIn("docs/README.md", contents)
+        self.assertIn("Plan/Task", contents)
 
     def test_mig0004_recovers_one_retired_spec0054_ledger(self) -> None:
         rows = [
@@ -1279,13 +1294,26 @@ class TerminalStrictValidatorTests(unittest.TestCase):
             ),
         )
         for name, *arguments in commands:
-            result = subprocess.run(
-                [sys.executable, str(VALIDATOR_PATHS[name]), *arguments],
-                cwd=REPOSITORY_ROOT,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
+            with tempfile.TemporaryDirectory(
+                prefix="strict-document-snapshot-"
+            ) as directory:
+                root = Path(directory)
+                shutil.copytree(REPOSITORY_ROOT / "docs", root / "docs")
+                subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+                subprocess.run(["git", "add", "--", "docs"], cwd=root, check=True)
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        str(VALIDATOR_PATHS[name]),
+                        "--root",
+                        str(root),
+                        *arguments,
+                    ],
+                    cwd=root,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
             with self.subTest(validator=name):
                 self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 

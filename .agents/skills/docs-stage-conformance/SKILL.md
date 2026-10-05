@@ -1,6 +1,13 @@
 ---
 name: "docs-stage-conformance"
 description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
+metadata:
+  title: "Docs Stage Conformance"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

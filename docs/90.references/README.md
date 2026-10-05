@@ -1,10 +1,10 @@
 ---
 title: "90.references"
-version: "0.1.3"
-type: "common/readme-stage-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-10-05"
 layer: "references"
 ---
 # 90.references
@@ -21,7 +21,7 @@ layer: "references"
 대체하지 않는다. 현재 실행 동작과 버전 값은 Stage 01/02 문서 및 실제
 매니페스트·설정·잠금 파일이 소유한다.
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -46,7 +46,7 @@ Stage 90 자료는 공통 거버넌스(`.agents/`)와 현재 Stage 01/02/03/05 o
 Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 삭제된 자료의
 전체 본문 복구는 Git history가 담당한다.
 
-## Document Index
+## Structure
 
 ```text
 docs/90.references/
@@ -56,7 +56,7 @@ docs/90.references/
 └── README.md
 ```
 
-| Collection | 목적 |
+| Path | Purpose |
 | --- | --- |
 | [audits/](./audits/) | 감사 pack collection |
 | [data/](./data/) | 데이터 pack collection |
@@ -70,7 +70,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 현재 pack을 보유한 collection이 Research뿐인 것은 현재 처분 결과일 뿐이며, 고유
 목적과 출처 경계를 갖춘 Audit 또는 Data pack의 추가를 금지하지 않는다.
 
-## Authoring Workflow
+## Usage
 
 1. 새 자료가 정책·요구·설계·절차·실행 증거를 정의하는지 확인하고, 그렇다면
    공통 거버넌스와 Stage 01/02/03/05의 canonical owner에 작성한다.

@@ -1,10 +1,10 @@
 ---
 title: "Claude Native Adapter"
-version: "1.1.1"
-type: "common/readme-implementation"
+version: "2.0.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-10-05"
 ---
 
 # Claude Native Adapter
@@ -13,6 +13,16 @@ updated: "2026-09-09"
 
 Common policy, role meaning and procedures live in [the common authority](../.agents/README.md).
 This directory owns only Claude syntax, support notes and native connections.
+
+## Scope
+
+Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
+canonical role for common contracts. Update native references in both adapters
+when paths change. The registry owns the capability tier to model binding and the
+permission class to `tools` binding; a projection restates those values
+and the validator rejects any that drift. Native files
+do not prove model access, role discovery or permission enforcement. No
+generator is used.
 
 ## Structure
 
@@ -31,30 +41,20 @@ This directory owns only Claude syntax, support notes and native connections.
   of its own; `.agents/prompts/` keeps the inputs, output and refusal
   conditions.
 
-## Configuration Boundary
+## Usage
 
-Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
-canonical role for common contracts. Update native references in both adapters
-when paths change. The registry owns the capability tier to model binding and the
-permission class to `tools` binding; a projection restates those values
-and the validator rejects any that drift. Native files
-do not prove model access, role discovery or permission enforcement. No
-generator is used.
+Read [the provider baseline](CLAUDE.md), then the selected common
+role and its required procedures. Common skill invocation is explicit-only;
+it cannot grant extra tools or approval. Edit procedures once under
+`.agents/skills/`. Personal local settings and memory are not common policy.
 
-## Validation
+## Verification
 
 `python3 scripts/validate-agent-governance.py --root .` checks registry, native
 syntax, exact role/skill references, link boundaries and permission parity.
 `python3 scripts/qa.py full` checks the final repository snapshot. Actual native
 loading, invocation and hook events are separate checks requiring a fresh
 session and applicable authorization.
-
-## Operations
-
-Read [the provider baseline](CLAUDE.md), then the selected common
-role and its required procedures. Common skill invocation is explicit-only;
-it cannot grant extra tools or approval. Edit procedures once under
-`.agents/skills/`. Personal local settings and memory are not common policy.
 
 ## Related Documents
 

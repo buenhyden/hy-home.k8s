@@ -1,10 +1,10 @@
 ---
 title: "Azure Infrastructure (Bicep)"
-version: "0.2.1"
-type: "common/readme-implementation"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # Azure Infrastructure (Bicep)
 
@@ -37,6 +37,12 @@ updated: "2026-09-29"
 - GitOps 설정 (gitops/ 참조)
 - 애플리케이션 소스 코드
 
+## Scope
+
+provider 상태, credential, secret 값을 하드코딩하지 말고 배포 매개변수로
+주입한다. 이 Bicep 예시는 작성 시점이 고정된 저장소 정적 참조 자료다. 배포나
+what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 runtime이 필요하다.
+
 ## Structure
 
 ```text
@@ -50,20 +56,7 @@ infrastructure/
 └── README.md       # 본 문서
 ```
 
-## Configuration Boundary
-
-provider 상태, credential, secret 값을 하드코딩하지 말고 배포 매개변수로
-주입한다. 이 Bicep 예시는 작성 시점이 고정된 저장소 정적 참조 자료다. 배포나
-what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 runtime이 필요하다.
-
-## Validation
-
-`az bicep lint`와 문서에 적힌
-`az deployment group what-if --resource-group <rg-name> --template-file main.bicep`는
-승인된 provider 환경에서만 실행한다. 정적 문서 검증은 Azure 배포 준비 상태를
-증명하지 않는다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -95,6 +88,13 @@ what-if 증거를 얻으려면 승인된 Azure 구독과 운영자가 소유한 
 1. 리소스 정의 변경 시 반드시 관련 ADR 및 Spec과 일치하는지 확인한다.
 2. 모듈화된 배포 구조를 선호하며, 상호 의존성을 명확히 관리한다.
 3. 배포 파라미터는 하드코딩하지 않고 변수나 파라미터를 통해 주입받도록 구성한다.
+
+## Verification
+
+`az bicep lint`와 문서에 적힌
+`az deployment group what-if --resource-group <rg-name> --template-file main.bicep`는
+승인된 provider 환경에서만 실행한다. 정적 문서 검증은 Azure 배포 준비 상태를
+증명하지 않는다.
 
 ## Related Documents
 

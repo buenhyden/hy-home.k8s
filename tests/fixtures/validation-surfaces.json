@@ -1158,7 +1158,7 @@
       "mutation": {
         "kind": "replace-surface-fallback-status",
         "surfaceId": "root-config",
-        "status": "SKIP"
+        "status": "NOT_APPLICABLE"
       },
       "paths": [
         "README.md"

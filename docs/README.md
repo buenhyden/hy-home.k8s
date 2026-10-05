@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.5.2"
-type: "common/readme-stage-index"
+version: "0.6.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-17"
+updated: "2026-10-05"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -14,7 +14,7 @@ updated: "2026-09-17"
 `hy-home.k8s` 문서 진입점이다. 각 문서는 한 가지 목적의 정본을 가지며
 README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는다.
 
-## Stage Contract
+## Scope
 
 - 공통 Agent 거버넌스는 문서 stage 밖의 `.agents/`가 소유한다.
   정책·역할·스킬·SDLC를 관리하며 제공자 차이는 네이티브 영역에 둔다.
@@ -34,11 +34,10 @@ README는 탐색을 돕고 별도의 정책·상태 목록을 만들지 않는�
 Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서를 요구하지는
 않지만, 필요한 요구·결정·수용 기준·실행 증거는 서로 추적 가능해야 한다.
 
-## Document Index
+## Structure
 
-| 영역 | 정본과 탐색 |
+| Path | Purpose |
 | --- | --- |
-| [공통 Agent 거버넌스](../.agents/README.md) | 정책·책임·공급자·절차와 SDLC 흐름 |
 | [01.requirements](01.requirements/README.md) | 하나의 Package에 기능·비기능·interface 요구와 acceptance 통합 |
 | [02.architecture](02.architecture/README.md) | descriptions와 decisions |
 | [03.specs](03.specs/README.md) | spec.md, plan.md, tasks/tsk-####-slug.md |
@@ -50,7 +49,7 @@ Stage 04는 사용하지 않는다. 모든 변경이 모든 stage의 새 문서�
 `.agents/roles/registry.json`은 문서 registry와 별개로 역할 ID, 권한, handoff,
 skill과 provider projection을 소유한다.
 
-## Authoring Workflow
+## Usage
 
 1. [SDLC 흐름](../.agents/governance/sdlc.md)으로 목적과 소유 stage를 정한다.
 2. [Stage 99 안내](99.templates/README.md)와 registry에서 최종 경로의

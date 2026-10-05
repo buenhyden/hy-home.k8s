@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge"
-version: "0.2.0"
-type: "common/readme-collection-index"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # Common Knowledge
 
@@ -27,14 +27,14 @@ Out of scope: approval boundaries, permissions, role rosters, gate commands,
 lifecycle states and evidence classes. Those keep their existing owners, and a
 row that would restate one is a defect rather than a convenience.
 
-## Item Index
+## Structure
 
 - [Project Map](project-map.md): which top-level tree owns what, with the entry
   document for each.
 - [Domain Index](domains.md): per operating domain, the canonical owner, the
   entry path, and the condition that keeps the row valid.
 
-## Add and Find
+## Usage
 
 1. Read [document authoring](../governance/document-authoring.md) and select
    the knowledge profile from the Stage 99 registry before adding a document.

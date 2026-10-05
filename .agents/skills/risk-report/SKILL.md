@@ -1,6 +1,13 @@
 ---
 name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register."
+metadata:
+  title: "Risk Report"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "Azure GitOps (Platform Manifests)"
-version: "0.2.1"
-type: "common/readme-implementation"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # Azure GitOps (Platform Manifests)
 
@@ -36,6 +36,12 @@ updated: "2026-09-29"
 - 클라우드 하드 인프라 프로비저닝 (infrastructure/ 참조)
 - 클러스터 외부의 수동 운영 작업
 
+## Scope
+
+Azure resource ID와 client ID는 검토된 infrastructure 출력으로만 들어오고
+secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret Store CSI
+설정을 사용하며 변경은 클러스터를 직접 바꾸지 않고 GitOps pull 모델로 적용한다.
+
 ## Structure
 
 ```text
@@ -44,19 +50,7 @@ gitops/
 └── README.md    # 본 문서
 ```
 
-## Configuration Boundary
-
-Azure resource ID와 client ID는 검토된 infrastructure 출력으로만 들어오고
-secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret Store CSI
-설정을 사용하며 변경은 클러스터를 직접 바꾸지 않고 GitOps pull 모델로 적용한다.
-
-## Validation
-
-리뷰 전에 manifest 문법과 저장소 계약을 검증한다. Azure 리소스, identity,
-구독, live AKS 준비 상태를 주장하려면 provider·runtime 증거가 따로 필요하며
-이 스냅샷으로는 성립하지 않는다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -83,6 +77,12 @@ secret 값은 이 manifest에 들어오지 않는다. Managed Identity와 Secret
 1. 매니페스트 수정 시 기존 연동된 Azure 리소스(ID, Resource ID 등)가 유효한지 확인한다.
 2. 보안 상 중요한 비밀 정보(Secret)는 매니페스트에 직접 커밋하지 않고 Secret Store CSI 드라이버 설정을 사용한다.
 3. 리소스 네이밍 및 라벨링 정책을 엄격히 준수한다.
+
+## Verification
+
+리뷰 전에 manifest 문법과 저장소 계약을 검증한다. Azure 리소스, identity,
+구독, live AKS 준비 상태를 주장하려면 provider·runtime 증거가 따로 필요하며
+이 스냅샷으로는 성립하지 않는다.
 
 ## Related Documents
 

@@ -2,11 +2,12 @@
 title: "{{TITLE}}"
 version: "0.1.0"
 type: "sdlc/task"
-status: "queued"
+status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "specs"
 artifact_id: "{{ARTIFACT_ID}}"
+parent_ids: ["{{PARENT_ID}}"]
 ---
 
 # Task: [Task Name]
@@ -21,11 +22,21 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Task Table
 
-<!-- Author prompt: keep one row per executable item and update result and evidence as work advances. -->
+<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states; the frontmatter status summarizes them. Result is observed execution outcome, Acceptance is the criterion disposition, and Evidence points to concrete records. -->
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
-| --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | VAL-FEATURE-001 | One bounded change | platform | Queued | Not executed | Named repository evidence |
+### Lifecycle Traceability
+
+| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | pending | Pending named repository evidence |
+
+## Task Evidence
+
+<!-- Author prompt: record attached check evidence separately from execution status. Each Evidence ID identifies a factual check with its exact input and location; an unrun check remains pending. -->
+
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | pending |
 
 ## Approval and Safety Boundaries
 
@@ -45,13 +56,3 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Verification Summary
 
 <!-- Author prompt: summarize per-lane outcomes, limitations, review disposition, and residual risk. -->
-
-## Traceability
-
-<!-- Author prompt: map each criterion or work item to its result and durable evidence. -->
-
-### Lifecycle Traceability
-
-| Criterion / work item | Result | Evidence |
-| --- | --- | --- |
-| WORK-001 | State the observed result. | Name the test, review, or commit evidence. |

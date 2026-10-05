@@ -90,6 +90,7 @@ try:
         parse_catalog,
         removed_records,
         retention_class_of,
+        retention_source_path,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_dispositions import (
@@ -99,6 +100,7 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         parse_catalog,
         removed_records,
         retention_class_of,
+        retention_source_path,
     )
 
 from document_contracts import (
@@ -114,6 +116,10 @@ from document_contracts import (
     enumerate_target_markdown,
     load_registry,
     read_repository_text,
+    task_execution_issues,
+    task_evidence_issues,
+    direct_parent,
+    MARKDOWN_TEMPLATE_PLACEHOLDER,
 )
 
 _UNSET = object()
@@ -2314,7 +2320,7 @@ def _extract_links(
 
 
 def _local_destination(
-    source: PurePosixPath, raw: str
+    source: PurePosixPath, raw: str, *, template: bool = False
 ) -> tuple[str, PurePosixPath | None]:
     value = raw
     lowered = value.casefold()
@@ -2326,7 +2332,13 @@ def _local_destination(
         return "LINK-ABSOLUTE", None
     if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", value):
         return "external", None
-    path_part = value.split("#", 1)[0].split("?", 1)[0]
+    path_part = value.split("#", 1)[0]
+    if (
+        template
+        and MARKDOWN_TEMPLATE_PLACEHOLDER.fullmatch(unquote(path_part)) is not None
+    ):
+        return "template", None
+    path_part = path_part.split("?", 1)[0]
     path_part = unquote(path_part)
     if not path_part:
         return "anchor", source
@@ -3489,8 +3501,10 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             )
         )
         for raw in _extract_links(context.texts[source]):
-            kind, target = _local_destination(source, raw)
-            if kind in {"external", "anchor"}:
+            kind, target = _local_destination(
+                source, raw, template=context.profiles[source].mode == "template"
+            )
+            if kind in {"external", "anchor", "template"}:
                 continue
             if kind.startswith("LINK-"):
                 diagnostics.append(
@@ -3792,11 +3806,47 @@ def _body_contract_rows(
     return [dict(zip(header, row, strict=True)) for row in rows]
 
 
+def task_base_rows(
+    text: str, profile: DocumentProfile
+) -> tuple[tuple[tuple[str, str], ...], ...]:
+    """Read current Task rows, or a recognizable pre-binding seven-column base."""
+
+    contract = profile.body_contract
+    if contract is None or contract.task_execution is None:
+        return ()
+    rows = _body_contract_rows(text, profile)
+    if rows is None:
+        section = _exact_heading_section(text, "## Task Table")
+        table = _first_visible_table(section or "")
+        legacy_columns = (
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
+            "Result",
+            "Evidence",
+        )
+        if table is None or tuple(table[0]) not in {
+            contract.required_columns,
+            legacy_columns,
+        }:
+            return ()
+        header, cells = table
+        rows = [
+            dict(zip(header, (row + [""] * len(header))[: len(header)], strict=True))
+            for row in cells
+        ]
+    return tuple(tuple(row.items()) for row in rows)
+
+
 def lifecycle_markdown_evidence(
     path: PurePosixPath,
     text: str,
     profile: DocumentProfile,
     snapshot_profiles: Mapping[PurePosixPath, str],
+    *,
+    registry_generation: int | None = None,
 ) -> LifecycleMarkdownEvidence:
     """Return lifecycle evidence without reading the filesystem.
 
@@ -3836,6 +3886,8 @@ def lifecycle_markdown_evidence(
     body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
     body_table_links: tuple[PurePosixPath, ...] = ()
     body_contract_valid = False
+    status_value = frontmatter_mapping(text).get("status")
+    document_status = status_value if isinstance(status_value, str) else ""
 
     if profile.body_contract is not None:
         contract = profile.body_contract
@@ -3884,6 +3936,11 @@ def lifecycle_markdown_evidence(
                 if any(not value.strip() for value in row.values()):
                     body_contract_valid = False
                 for identifier in contract.identifier_columns:
+                    if (
+                        contract.task_execution is not None
+                        and identifier.column == "Upstream criterion"
+                    ):
+                        continue
                     value = _body_identifier_text(row[identifier.column])
                     if value.startswith("N/A"):
                         if (
@@ -3895,6 +3952,32 @@ def lifecycle_markdown_evidence(
                         BODY_IDENTIFIER_PATTERNS[identifier.kind].fullmatch(value)
                         is None
                     ):
+                        body_contract_valid = False
+            if contract.task_execution is not None and task_execution_issues(
+                rows,
+                document_status,
+                contract.task_execution,
+                template=profile.mode == "template",
+            ):
+                body_contract_valid = False
+            binding = contract.task_execution
+            if binding is not None and binding.evidence_section:
+                evidence_section = _exact_heading_section(
+                    text, f"## {binding.evidence_section}"
+                )
+                evidence_table = _first_visible_table(evidence_section or "")
+                if (
+                    evidence_table is None
+                    or tuple(evidence_table[0]) != binding.evidence_columns
+                    or not evidence_table[1]
+                ):
+                    body_contract_valid = False
+                else:
+                    evidence_rows = [
+                        dict(zip(evidence_table[0], row, strict=True))
+                        for row in evidence_table[1]
+                    ]
+                    if task_evidence_issues(evidence_rows, binding):
                         body_contract_valid = False
             link_columns = (
                 (contract.source_link_column, contract.allowed_source_profile_ids),
@@ -3933,26 +4016,38 @@ def lifecycle_markdown_evidence(
 
     task_terminal_valid = True
     if profile.profile_id == "sdlc/task":
-        task_section = _exact_heading_section(text, "## Task Table")
-        task_table = _first_visible_table(task_section or "")
-        task_terminal_valid = False
-        if task_table is not None:
-            header, rows = task_table
-            required = {"Status", "Result", "Evidence"}
-            if required.issubset(header) and rows:
-                positions = {value: header.index(value) for value in required}
-                placeholder = re.compile(
-                    r"(?i)^(?:|pending|not executed|not recorded|named repository "
-                    r"evidence|tbd|todo|n/?a|[-—])$"
+        binding = (
+            profile.body_contract.task_execution if profile.body_contract else None
+        )
+        parsed_rows = [dict(row) for row in body_rows]
+        task_terminal_valid = bool(
+            binding
+            and parsed_rows
+            and not task_execution_issues(parsed_rows, document_status, binding)
+            and body_contract_valid
+            and document_status == "completed"
+            and (
+                (
+                    len(parsed_rows) == 1
+                    and parsed_rows[0]["Status"].strip() == "frontmatter"
                 )
-                task_terminal_valid = all(
-                    row[positions["Status"]].strip().casefold()
-                    in {"done", "completed", "archived"}
-                    and placeholder.fullmatch(row[positions["Result"]].strip()) is None
-                    and placeholder.fullmatch(row[positions["Evidence"]].strip())
-                    is None
-                    for row in rows
-                )
+                or all(row["Status"].strip() == "completed" for row in parsed_rows)
+            )
+        )
+        if (
+            registry_generation == 9
+            and binding is None
+            and profile.body_contract is not None
+            and profile.body_contract.section == "Traceability"
+            and profile.body_contract.table_heading == "Lifecycle Traceability"
+            and profile.body_contract.required_columns
+            == ("Criterion / work item", "Result", "Evidence")
+            and profile.body_contract.enforced_statuses
+            == ("queued", "in-progress", "blocked")
+        ):
+            # This exact historical contract did not bind terminal Task rows.
+            # Generation 10 still requires its execution and evidence tables.
+            task_terminal_valid = True
 
     return LifecycleMarkdownEvidence(
         path=path,
@@ -3968,10 +4063,41 @@ def lifecycle_markdown_evidence(
 
 
 def _links_back_to(
-    context: Context, owner: PurePosixPath, expected: PurePosixPath
+    context: Context,
+    owner: PurePosixPath,
+    expected: PurePosixPath,
+    *,
+    registry: Registry | None = None,
 ) -> bool:
+    origin = owner
+    registry = registry or context.document_registry or load_registry(context.root)
+    if registry is not None and retention_class_of(registry, owner) is not None:
+        rows, errors = parse_catalog(context.texts.get(ARCHIVE_INDEX_PATH, ""))
+        enclosing = [
+            row for path, row in rows.items() if path == owner or path in owner.parents
+        ]
+        if errors or len(enclosing) != 1:
+            return False
+        row = enclosing[0]
+        origin = row.envelope.original_path / owner.relative_to(row.record_path)
+        if origin != retention_source_path(owner):
+            return False
+        try:
+            original = _run_git(
+                context.root,
+                (
+                    "--no-replace-objects",
+                    "cat-file",
+                    "blob",
+                    f"{row.envelope.commit}:{origin.as_posix()}",
+                ),
+            )
+        except (OSError, ValueError, subprocess.SubprocessError):
+            return False
+        if original != context.texts[owner].encode("utf-8"):
+            return False
     for raw_link in _extract_links(context.texts[owner]):
-        kind, target = _local_destination(owner, raw_link)
+        kind, target = _local_destination(origin, raw_link)
         if kind in {"local", "anchor"} and target == expected:
             return True
     return False
@@ -4533,6 +4659,8 @@ def _body_contract_link_diagnostics(
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str,
     path_prefixes: tuple[PurePosixPath, ...] = (),
+    *,
+    registry: Registry | None = None,
 ) -> list[Diagnostic]:
     """Validate registry-owned relationship cells and reciprocal evidence."""
 
@@ -4643,7 +4771,7 @@ def _body_contract_link_diagnostics(
                     if (
                         contract.reciprocal_evidence
                         and reciprocal_in_scope
-                        and not _links_back_to(context, target, path)
+                        and not _links_back_to(context, target, path, registry=registry)
                     ):
                         diagnostics.append(
                             _diag(
@@ -5521,12 +5649,31 @@ def _raw_diagnostics(
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
 ) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
+    for path in context.paths:
+        parent = direct_parent(path, context.profiles[path].profile_id)
+        if parent is None:
+            continue
+        target, identifier = parent
+        if (
+            context.metadata[path].get("parent_ids") != [identifier]
+            or context.metadata.get(target, {}).get("artifact_id") != identifier
+        ):
+            diagnostics.append(
+                _diag(
+                    "PARENT-IDENTITY",
+                    path,
+                    context.profiles[path].profile_id,
+                    f"one direct parent {target.as_posix()} with identity {identifier}",
+                    "parent missing or inconsistent",
+                )
+            )
     diagnostics.extend(
         _body_contract_link_diagnostics(
             context,
             profiles_by_id,
             body_contracts,
             body_contract_path_prefixes,
+            registry=registry,
         )
     )
     diagnostics.extend(_readme_navigation_diagnostics(context))

@@ -1,7 +1,7 @@
 {
   "$schema": "./contracts/document-profile.schema.json",
   "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
-  "schema_version": 9,
+  "schema_version": 10,
   "profiles": [
     {
       "id": "sdlc/requirement",
@@ -63,10 +63,10 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "active",
+          "in-review",
+          "approved",
           "superseded",
-          "retired",
-          "withdrawn"
+          "retired"
         ]
       },
       "relationships": {
@@ -76,7 +76,8 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved"
           ],
           "required_columns": [
             "Requirement ID",
@@ -121,7 +122,10 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -131,7 +135,9 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/architecture-description",
@@ -154,10 +160,11 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
-          "retired",
-          "withdrawn"
+          "retired"
         ]
       },
       "relationships": {
@@ -167,7 +174,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Upstream requirement",
@@ -254,7 +263,8 @@
           "proposed",
           "accepted",
           "rejected",
-          "superseded"
+          "superseded",
+          "retired"
         ]
       },
       "relationships": {
@@ -306,7 +316,8 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "superseded_by",
+          "cancellation"
         ],
         "forbidden": [],
         "order": [
@@ -318,7 +329,8 @@
           "updated",
           "layer",
           "artifact_id",
-          "superseded_by"
+          "superseded_by",
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/spec",
@@ -345,10 +357,13 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "active",
+          "in-review",
+          "approved",
+          "in-progress",
+          "blocked",
           "completed",
-          "superseded",
-          "withdrawn"
+          "cancelled",
+          "superseded"
         ]
       },
       "relationships": {
@@ -358,7 +373,10 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved",
+            "in-progress",
+            "blocked"
           ],
           "required_columns": [
             "Requirement ID",
@@ -404,9 +422,13 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids"
         ],
-        "optional": [],
+        "optional": [
+          "cancellation",
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -416,7 +438,10 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids",
+          "cancellation",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/plan",
@@ -432,8 +457,7 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Completion Criteria",
-          "Traceability"
+          "Completion Criteria"
         ],
         "optional": [
           "Global Constraints"
@@ -443,34 +467,43 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "active",
+          "in-review",
+          "approved",
+          "in-progress",
+          "blocked",
           "completed",
-          "superseded",
-          "withdrawn"
+          "cancelled",
+          "superseded"
         ]
       },
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Work Breakdown",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved",
+            "in-progress",
+            "blocked"
           ],
           "required_columns": [
-            "Spec criterion",
-            "Work package",
-            "Expected Task"
+            "Work Unit",
+            "Criteria",
+            "Work",
+            "Dependencies",
+            "Task",
+            "Verification"
           ],
           "identifier_columns": [
             {
-              "column": "Spec criterion",
-              "kind": "criterion"
+              "column": "Work Unit",
+              "kind": "work-item"
             }
           ],
-          "source_link_column": "Spec criterion",
-          "target_link_column": "Expected Task",
+          "source_link_column": "Criteria",
+          "target_link_column": "Task",
           "allowed_source_profile_ids": [
             "sdlc/spec"
           ],
@@ -500,9 +533,12 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids"
         ],
-        "optional": [],
+        "optional": [
+          "cancellation"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -512,7 +548,9 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids",
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -524,16 +562,17 @@
           "Overview",
           "Inputs",
           "Task Table",
+          "Task Evidence",
           "Approval and Safety Boundaries",
-          "Verification Summary",
-          "Traceability"
+          "Verification Summary"
         ],
         "optional": [],
         "forbidden": []
       },
       "lifecycle": {
         "status_domain": [
-          "queued",
+          "draft",
+          "ready",
           "in-progress",
           "blocked",
           "completed",
@@ -543,33 +582,100 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Task Table",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
-            "queued",
+            "draft",
+            "ready",
             "in-progress",
             "blocked"
           ],
           "required_columns": [
-            "Criterion / work item",
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
             "Result",
+            "Acceptance",
             "Evidence"
           ],
           "identifier_columns": [
             {
-              "column": "Criterion / work item",
+              "column": "ID",
               "kind": "work-item"
+            },
+            {
+              "column": "Upstream criterion",
+              "kind": "criterion"
             }
           ],
-          "source_link_column": "Criterion / work item",
+          "source_link_column": "Upstream criterion",
           "target_link_column": null,
           "allowed_source_profile_ids": [
-            "sdlc/plan",
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
           "reciprocal_evidence": true,
-          "allow_explicit_exclusion": true
+          "allow_explicit_exclusion": true,
+          "task_execution": {
+            "single_status_marker": "frontmatter",
+            "result_states": {
+              "draft": [
+                "NOT_RUN"
+              ],
+              "ready": [
+                "NOT_RUN"
+              ],
+              "in-progress": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER"
+              ],
+              "blocked": [
+                "NOT_RUN",
+                "FAIL",
+                "DEFER"
+              ],
+              "completed": [
+                "PASS",
+                "NOT_APPLICABLE"
+              ],
+              "cancelled": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "acceptance_states": [
+              "pending",
+              "accepted",
+              "rejected",
+              "not-required"
+            ],
+            "summary_rule": "task-items-v2",
+            "evidence_section": "Task Evidence",
+            "evidence_columns": [
+              "Evidence",
+              "Criteria",
+              "Work Unit",
+              "Check",
+              "Input",
+              "Result",
+              "Location",
+              "Acceptance"
+            ],
+            "evidence_result_states": [
+              "NOT_RUN",
+              "PASS",
+              "FAIL",
+              "DEFER",
+              "NOT_APPLICABLE"
+            ]
+          }
         }
       },
       "placeholder_policy": "forbidden"
@@ -629,7 +735,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -641,7 +749,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -718,7 +828,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -730,7 +842,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -807,7 +921,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -819,7 +935,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -860,7 +978,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "resolved_at"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -870,7 +990,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "resolved_at"
         ],
         "constants": {
           "type": "operation/incident",
@@ -895,10 +1016,10 @@
       },
       "lifecycle": {
         "status_domain": [
-          "open",
+          "detected",
+          "investigating",
           "mitigated",
-          "resolved",
-          "closed"
+          "resolved"
         ]
       },
       "relationships": {
@@ -907,7 +1028,8 @@
           "section": "Traceability",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
-            "open",
+            "detected",
+            "investigating",
             "mitigated",
             "resolved"
           ],
@@ -986,8 +1108,8 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "published",
-          "superseded"
+          "in-review",
+          "published"
         ]
       },
       "relationships": {
@@ -997,6 +1119,7 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
+            "in-review",
             "published"
           ],
           "required_columns": [
@@ -1076,8 +1199,10 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "completed",
-          "invalidated"
+          "in-review",
+          "published",
+          "superseded",
+          "retired"
         ]
       },
       "relationships": {
@@ -1144,6 +1269,7 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "published",
           "superseded",
           "retired"
@@ -1213,8 +1339,8 @@
       "lifecycle": {
         "status_domain": [
           "draft",
-          "active",
-          "stale",
+          "in-review",
+          "published",
           "superseded",
           "retired"
         ]
@@ -1355,7 +1481,7 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "archive/route-tombstone",
+      "id": "archive/route",
       "family": "archive",
       "mode": "evidence",
       "path_pattern": "^docs/98\\.archive/tombstones/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
@@ -1392,7 +1518,7 @@
           "reason"
         ],
         "constants": {
-          "type": "archive/route-tombstone",
+          "type": "archive/route",
           "layer": "archive"
         }
       },
@@ -1403,7 +1529,8 @@
       },
       "lifecycle": {
         "status_domain": [
-          "recorded"
+          "draft",
+          "sealed"
         ]
       },
       "relationships": {
@@ -1448,7 +1575,7 @@
           "current_owner"
         ],
         "constants": {
-          "type": "archive/scope-migration",
+          "type": "archive/route",
           "layer": "archive"
         }
       },
@@ -1459,7 +1586,8 @@
       },
       "lifecycle": {
         "status_domain": [
-          "recorded"
+          "draft",
+          "sealed"
         ]
       },
       "relationships": {
@@ -1487,10 +1615,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1500,6 +1628,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1522,7 +1651,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1552,10 +1683,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1565,6 +1696,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1586,7 +1718,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1616,10 +1750,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1629,6 +1763,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1652,7 +1787,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1682,10 +1819,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1695,6 +1832,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1717,7 +1855,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1747,10 +1887,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1760,6 +1900,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1782,7 +1923,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1812,10 +1955,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1825,6 +1968,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1847,7 +1991,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1877,10 +2023,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -1890,6 +2036,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -1912,7 +2059,9 @@
       "lifecycle": {
         "status_domain": [
           "draft",
+          "in-review",
           "active",
+          "deprecated",
           "superseded",
           "retired"
         ]
@@ -1953,22 +2102,22 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-repository",
+          "type": "common/readme",
           "status": "active"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Repository Map",
-          "Getting Started",
-          "Validation",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
         "optional": [
-          "Prerequisites",
-          "Configuration",
-          "Security Boundary"
+          "Audience",
+          "Getting Started",
+          "Verification"
         ],
         "forbidden": []
       },
@@ -1983,7 +2132,7 @@
       "id": "common/readme-stage-index",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:docs/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$",
+      "path_pattern": "^(?:docs/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/99\\.templates/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "frontmatter": {
@@ -2012,21 +2161,19 @@
           "layer"
         ],
         "constants": {
-          "type": "common/readme-stage-index",
+          "type": "common/readme",
           "status": "active"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Stage Contract",
-          "Document Index",
-          "Authoring Workflow",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
-        "optional": [
-          "Lifecycle Handoff"
-        ],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -2069,7 +2216,7 @@
           "layer"
         ],
         "constants": {
-          "type": "common/readme-collection-index",
+          "type": "common/readme",
           "status": "active"
         }
       },
@@ -2077,15 +2224,11 @@
         "required": [
           "Overview",
           "Scope",
-          "Item Index",
-          "Add and Find",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
-        "optional": [
-          "Selection Rules",
-          "Common Execution Contract",
-          "Task Records"
-        ],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -2125,22 +2268,20 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-implementation",
+          "type": "common/readme",
           "status": "active"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Structure",
-          "Configuration Boundary",
-          "Validation",
-          "Operations",
+          "Usage",
           "Related Documents"
         ],
         "optional": [
-          "Prerequisites",
-          "Troubleshooting"
+          "Verification"
         ],
         "forbidden": []
       },
@@ -2152,11 +2293,11 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/readme-audit-pack",
-      "family": "common",
-      "mode": "router",
+      "id": "reference/audit-pack",
+      "family": "reference",
+      "mode": "authored",
       "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:retired)/90\\.references)/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
-      "artifact_id_pattern": null,
+      "artifact_id_pattern": "^AUD-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
       "frontmatter": {
         "mode": "required",
@@ -2166,14 +2307,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -2181,18 +2322,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-audit-pack",
-          "status": "active"
+          "type": "reference/audit-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Audit Contract",
+          "Structure",
           "Report Index",
+          "Usage",
           "Review and Closure",
           "Evidence Boundary",
           "Related Documents"
@@ -2202,7 +2347,15 @@
         ],
         "forbidden": []
       },
-      "lifecycle": null,
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "published",
+          "superseded",
+          "retired"
+        ]
+      },
       "relationships": {
         "source_profile_ids": [],
         "body_contract": null
@@ -2210,11 +2363,11 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/readme-data-pack",
-      "family": "common",
-      "mode": "router",
+      "id": "reference/data-pack",
+      "family": "reference",
+      "mode": "authored",
       "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
-      "artifact_id_pattern": null,
+      "artifact_id_pattern": "^DATA-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data-pack.template.md",
       "frontmatter": {
         "mode": "required",
@@ -2224,14 +2377,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -2239,18 +2392,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-data-pack",
-          "status": "active"
+          "type": "reference/data-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Data Contract",
+          "Structure",
           "Item Index",
+          "Usage",
           "Refresh and Retention",
           "Evidence Boundary",
           "Related Documents"
@@ -2260,7 +2417,15 @@
         ],
         "forbidden": []
       },
-      "lifecycle": null,
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "published",
+          "superseded",
+          "retired"
+        ]
+      },
       "relationships": {
         "source_profile_ids": [],
         "body_contract": null
@@ -2268,11 +2433,11 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/readme-research-pack",
-      "family": "common",
-      "mode": "router",
+      "id": "reference/research-pack",
+      "family": "reference",
+      "mode": "authored",
       "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
-      "artifact_id_pattern": null,
+      "artifact_id_pattern": "^RES-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research-pack.template.md",
       "frontmatter": {
         "mode": "required",
@@ -2282,14 +2447,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -2297,18 +2462,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-research-pack",
-          "status": "active"
+          "type": "reference/research-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Research Contract",
+          "Structure",
           "Report Index",
+          "Usage",
           "Refresh and Succession",
           "Evidence Boundary",
           "Related Documents"
@@ -2318,7 +2487,15 @@
         ],
         "forbidden": []
       },
-      "lifecycle": null,
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "published",
+          "superseded",
+          "retired"
+        ]
+      },
       "relationships": {
         "source_profile_ids": [],
         "body_contract": null
@@ -2355,17 +2532,16 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-workspace-staging",
+          "type": "common/readme",
           "status": "active"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Permitted Artifacts",
-          "Forbidden Local State",
-          "Promotion and Cleanup",
-          "Tracking Rules",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
         "optional": [],
@@ -2408,18 +2584,17 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-runtime-governance",
+          "type": "common/readme",
           "status": "active"
         }
       },
       "sections": {
         "required": [
-          "Content Mapping",
-          "Policy Routing",
-          "Workflow Roles",
-          "Source Basis",
-          "Workflow Responsibility Matrix",
-          "Boundaries"
+          "Overview",
+          "Scope",
+          "Structure",
+          "Usage",
+          "Related Documents"
         ],
         "optional": [],
         "forbidden": []
@@ -2470,6 +2645,7 @@
         "required": [
           "name",
           "description",
+          "metadata",
           "disable-model-invocation"
         ],
         "optional": [],
@@ -2477,6 +2653,7 @@
         "order": [
           "name",
           "description",
+          "metadata",
           "disable-model-invocation"
         ],
         "constants": {
@@ -2488,7 +2665,16 @@
         "optional": [],
         "forbidden": []
       },
-      "lifecycle": null,
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "active",
+          "deprecated",
+          "superseded",
+          "retired"
+        ]
+      },
       "relationships": {
         "source_profile_ids": [],
         "body_contract": null
@@ -2814,7 +3000,8 @@
         ],
         "constants": {
           "layer": "archive",
-          "type": "archive/tombstone"
+          "type": "archive/tombstone",
+          "status": "draft"
         }
       },
       "sections": {
@@ -2923,7 +3110,7 @@
           "reason"
         ],
         "constants": {
-          "type": "archive/route-tombstone",
+          "type": "archive/route",
           "layer": "archive"
         }
       },
@@ -2935,7 +3122,7 @@
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
-          "archive/route-tombstone"
+          "archive/route"
         ],
         "body_contract": null
       },
@@ -2977,7 +3164,7 @@
           "current_owner"
         ],
         "constants": {
-          "type": "archive/scope-migration",
+          "type": "archive/route",
           "layer": "archive"
         }
       },
@@ -3025,21 +3212,21 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-repository"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Repository Map",
-          "Getting Started",
-          "Validation",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
         "optional": [
-          "Prerequisites",
-          "Configuration",
-          "Security Boundary"
+          "Audience",
+          "Getting Started",
+          "Verification"
         ],
         "forbidden": []
       },
@@ -3085,20 +3272,18 @@
           "layer"
         ],
         "constants": {
-          "type": "common/readme-stage-index"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Stage Contract",
-          "Document Index",
-          "Authoring Workflow",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
-        "optional": [
-          "Lifecycle Handoff"
-        ],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3143,22 +3328,18 @@
           "layer"
         ],
         "constants": {
-          "type": "common/readme-collection-index"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
           "Overview",
           "Scope",
-          "Item Index",
-          "Add and Find",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
-        "optional": [
-          "Selection Rules",
-          "Common Execution Contract",
-          "Task Records"
-        ],
+        "optional": [],
         "forbidden": []
       },
       "lifecycle": null,
@@ -3200,21 +3381,19 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-implementation"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Structure",
-          "Configuration Boundary",
-          "Validation",
-          "Operations",
+          "Usage",
           "Related Documents"
         ],
         "optional": [
-          "Prerequisites",
-          "Troubleshooting"
+          "Verification"
         ],
         "forbidden": []
       },
@@ -3242,14 +3421,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -3257,17 +3436,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-audit-pack"
+          "type": "reference/audit-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Audit Contract",
+          "Structure",
           "Report Index",
+          "Usage",
           "Review and Closure",
           "Evidence Boundary",
           "Related Documents"
@@ -3280,7 +3464,7 @@
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
-          "common/readme-audit-pack"
+          "reference/audit-pack"
         ],
         "body_contract": null
       },
@@ -3301,14 +3485,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -3316,17 +3500,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-data-pack"
+          "type": "reference/data-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Data Contract",
+          "Structure",
           "Item Index",
+          "Usage",
           "Refresh and Retention",
           "Evidence Boundary",
           "Related Documents"
@@ -3339,7 +3528,7 @@
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
-          "common/readme-data-pack"
+          "reference/data-pack"
         ],
         "body_contract": null
       },
@@ -3360,14 +3549,14 @@
           "type",
           "status",
           "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
+          "updated",
           "artifact_id"
         ],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
+        "forbidden": [],
         "order": [
           "title",
           "version",
@@ -3375,17 +3564,22 @@
           "status",
           "owner",
           "updated",
-          "layer"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
-          "type": "common/readme-research-pack"
+          "type": "reference/research-pack"
         }
       },
       "sections": {
         "required": [
           "Overview",
+          "Scope",
           "Research Contract",
+          "Structure",
           "Report Index",
+          "Usage",
           "Refresh and Succession",
           "Evidence Boundary",
           "Related Documents"
@@ -3398,7 +3592,7 @@
       "lifecycle": null,
       "relationships": {
         "source_profile_ids": [
-          "common/readme-research-pack"
+          "reference/research-pack"
         ],
         "body_contract": null
       },
@@ -3434,16 +3628,15 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-workspace-staging"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
           "Overview",
-          "Permitted Artifacts",
-          "Forbidden Local State",
-          "Promotion and Cleanup",
-          "Tracking Rules",
+          "Scope",
+          "Structure",
+          "Usage",
           "Related Documents"
         ],
         "optional": [],
@@ -3488,17 +3681,16 @@
           "updated"
         ],
         "constants": {
-          "type": "common/readme-runtime-governance"
+          "type": "common/readme"
         }
       },
       "sections": {
         "required": [
-          "Content Mapping",
-          "Policy Routing",
-          "Workflow Roles",
-          "Source Basis",
-          "Workflow Responsibility Matrix",
-          "Boundaries"
+          "Overview",
+          "Scope",
+          "Structure",
+          "Usage",
+          "Related Documents"
         ],
         "optional": [],
         "forbidden": []
@@ -3809,7 +4001,10 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "supersedes",
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -3819,7 +4014,9 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/architecture-description",
@@ -3849,7 +4046,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Upstream requirement",
@@ -3894,9 +4093,13 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids"
         ],
-        "optional": [],
+        "optional": [
+          "cancellation",
+          "superseded_by"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -3906,7 +4109,10 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids",
+          "cancellation",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/plan",
@@ -3922,8 +4128,7 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Completion Criteria",
-          "Traceability"
+          "Completion Criteria"
         ],
         "optional": [
           "Global Constraints"
@@ -3936,25 +4141,31 @@
           "sdlc/plan"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Work Breakdown",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved",
+            "in-progress",
+            "blocked"
           ],
           "required_columns": [
-            "Spec criterion",
-            "Work package",
-            "Expected Task"
+            "Work Unit",
+            "Criteria",
+            "Work",
+            "Dependencies",
+            "Task",
+            "Verification"
           ],
           "identifier_columns": [
             {
-              "column": "Spec criterion",
-              "kind": "criterion"
+              "column": "Work Unit",
+              "kind": "work-item"
             }
           ],
-          "source_link_column": "Spec criterion",
-          "target_link_column": "Expected Task",
+          "source_link_column": "Criteria",
+          "target_link_column": "Task",
           "allowed_source_profile_ids": [
             "sdlc/spec"
           ],
@@ -3984,9 +4195,12 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids"
         ],
-        "optional": [],
+        "optional": [
+          "cancellation"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -3996,7 +4210,9 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "parent_ids",
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -4008,9 +4224,9 @@
           "Overview",
           "Inputs",
           "Task Table",
+          "Task Evidence",
           "Approval and Safety Boundaries",
-          "Verification Summary",
-          "Traceability"
+          "Verification Summary"
         ],
         "optional": [],
         "forbidden": []
@@ -4021,33 +4237,100 @@
           "sdlc/task"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Task Table",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
-            "queued",
+            "draft",
+            "ready",
             "in-progress",
             "blocked"
           ],
           "required_columns": [
-            "Criterion / work item",
+            "ID",
+            "Upstream criterion",
+            "Work item",
+            "Owner",
+            "Status",
             "Result",
+            "Acceptance",
             "Evidence"
           ],
           "identifier_columns": [
             {
-              "column": "Criterion / work item",
+              "column": "ID",
               "kind": "work-item"
+            },
+            {
+              "column": "Upstream criterion",
+              "kind": "criterion"
             }
           ],
-          "source_link_column": "Criterion / work item",
+          "source_link_column": "Upstream criterion",
           "target_link_column": null,
           "allowed_source_profile_ids": [
-            "sdlc/plan",
             "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
           "reciprocal_evidence": true,
-          "allow_explicit_exclusion": true
+          "allow_explicit_exclusion": true,
+          "task_execution": {
+            "single_status_marker": "frontmatter",
+            "result_states": {
+              "draft": [
+                "NOT_RUN"
+              ],
+              "ready": [
+                "NOT_RUN"
+              ],
+              "in-progress": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER"
+              ],
+              "blocked": [
+                "NOT_RUN",
+                "FAIL",
+                "DEFER"
+              ],
+              "completed": [
+                "PASS",
+                "NOT_APPLICABLE"
+              ],
+              "cancelled": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "acceptance_states": [
+              "pending",
+              "accepted",
+              "rejected",
+              "not-required"
+            ],
+            "summary_rule": "task-items-v2",
+            "evidence_section": "Task Evidence",
+            "evidence_columns": [
+              "Evidence",
+              "Criteria",
+              "Work Unit",
+              "Check",
+              "Input",
+              "Result",
+              "Location",
+              "Acceptance"
+            ],
+            "evidence_result_states": [
+              "NOT_RUN",
+              "PASS",
+              "FAIL",
+              "DEFER",
+              "NOT_APPLICABLE"
+            ]
+          }
         }
       },
       "placeholder_policy": "template-only"
@@ -4114,7 +4397,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -4154,7 +4439,9 @@
           "layer",
           "artifact_id"
         ],
-        "optional": [],
+        "optional": [
+          "resolved_at"
+        ],
         "forbidden": [],
         "order": [
           "title",
@@ -4164,7 +4451,8 @@
           "owner",
           "updated",
           "layer",
-          "artifact_id"
+          "artifact_id",
+          "resolved_at"
         ],
         "constants": {
           "type": "operation/incident",
@@ -4196,7 +4484,8 @@
           "section": "Traceability",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
-            "open",
+            "detected",
+            "investigating",
             "mitigated",
             "resolved"
           ],
@@ -4281,7 +4570,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -4366,6 +4657,7 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
+            "in-review",
             "published"
           ],
           "required_columns": [
@@ -4450,7 +4742,9 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "active",
+            "deprecated"
           ],
           "required_columns": [
             "Promoted owner",
@@ -4539,7 +4833,8 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved"
           ],
           "required_columns": [
             "Requirement ID",
@@ -4585,7 +4880,8 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by"
+          "superseded_by",
+          "cancellation"
         ],
         "forbidden": [],
         "order": [
@@ -4597,7 +4893,8 @@
           "updated",
           "layer",
           "artifact_id",
-          "superseded_by"
+          "superseded_by",
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/spec",
@@ -4631,7 +4928,10 @@
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
-            "active"
+            "in-review",
+            "approved",
+            "in-progress",
+            "blocked"
           ],
           "required_columns": [
             "Requirement ID",
@@ -4759,10 +5059,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -4772,6 +5072,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -4819,10 +5120,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -4832,6 +5133,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -4878,10 +5180,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -4891,6 +5193,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -4939,10 +5242,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -4952,6 +5255,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -4999,10 +5303,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -5012,6 +5316,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -5059,10 +5364,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -5072,6 +5377,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -5119,10 +5425,10 @@
         ],
         "optional": [
           "supersedes",
-          "superseded_by"
+          "superseded_by",
+          "artifact_id"
         ],
         "forbidden": [
-          "artifact_id",
           "layer"
         ],
         "order": [
@@ -5132,6 +5438,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "supersedes",
           "superseded_by"
         ],
@@ -5159,30 +5466,124 @@
         "body_contract": null
       },
       "placeholder_policy": "template-only"
+    },
+    {
+      "id": "archive/catalog",
+      "family": "archive",
+      "mode": "router",
+      "path_pattern": "^docs/98\\.archive/README\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [
+          "layer"
+        ],
+        "forbidden": [
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "layer"
+        ],
+        "constants": {
+          "type": "archive/catalog",
+          "status": "active"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Scope",
+          "Structure",
+          "Usage",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
     }
   ],
   "lifecycle_domains": [
     {
-      "family": "requirement-architecture",
+      "family": "requirement",
       "profile_ids": [
-        "sdlc/requirement",
-        "sdlc/architecture-description"
+        "sdlc/requirement"
       ],
       "states": {
         "draft": "mutable",
-        "active": "current",
+        "in-review": "mutable",
+        "approved": "current",
         "superseded": "terminal",
-        "retired": "terminal",
-        "withdrawn": "terminal"
+        "retired": "terminal"
       },
       "transitions": [
         [
           "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
+          "draft"
+        ],
+        [
+          "in-review",
+          "approved"
+        ],
+        [
+          "approved",
+          "superseded"
+        ],
+        [
+          "approved",
+          "retired"
+        ]
+      ]
+    },
+    {
+      "family": "architecture-description",
+      "profile_ids": [
+        "sdlc/architecture-description"
+      ],
+      "states": {
+        "draft": "mutable",
+        "in-review": "mutable",
+        "active": "current",
+        "deprecated": "current",
+        "superseded": "terminal",
+        "retired": "terminal"
+      },
+      "transitions": [
+        [
+          "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
           "active"
         ],
         [
-          "draft",
-          "withdrawn"
+          "active",
+          "deprecated"
         ],
         [
           "active",
@@ -5190,6 +5591,10 @@
         ],
         [
           "active",
+          "retired"
+        ],
+        [
+          "deprecated",
           "retired"
         ]
       ]
@@ -5203,7 +5608,8 @@
         "proposed": "mutable",
         "accepted": "current",
         "rejected": "terminal",
-        "superseded": "terminal"
+        "superseded": "terminal",
+        "retired": "terminal"
       },
       "transitions": [
         [
@@ -5217,6 +5623,10 @@
         [
           "accepted",
           "superseded"
+        ],
+        [
+          "accepted",
+          "retired"
         ]
       ]
     },
@@ -5228,31 +5638,58 @@
       ],
       "states": {
         "draft": "mutable",
-        "active": "current",
+        "in-review": "mutable",
+        "approved": "current",
+        "in-progress": "current",
+        "blocked": "current",
         "completed": "terminal",
-        "superseded": "terminal",
-        "withdrawn": "terminal"
+        "cancelled": "terminal",
+        "superseded": "terminal"
       },
       "transitions": [
         [
           "draft",
-          "active"
+          "in-review"
         ],
         [
-          "draft",
-          "withdrawn"
+          "in-review",
+          "approved"
         ],
         [
-          "active",
+          "approved",
+          "in-progress"
+        ],
+        [
+          "in-progress",
+          "blocked"
+        ],
+        [
+          "blocked",
+          "in-progress"
+        ],
+        [
+          "in-progress",
           "completed"
         ],
         [
-          "active",
+          "approved",
+          "cancelled"
+        ],
+        [
+          "in-progress",
+          "cancelled"
+        ],
+        [
+          "blocked",
+          "cancelled"
+        ],
+        [
+          "approved",
           "superseded"
         ],
         [
-          "active",
-          "withdrawn"
+          "completed",
+          "superseded"
         ]
       ]
     },
@@ -5262,7 +5699,8 @@
         "sdlc/task"
       ],
       "states": {
-        "queued": "mutable",
+        "draft": "mutable",
+        "ready": "current",
         "in-progress": "current",
         "blocked": "current",
         "completed": "terminal",
@@ -5270,16 +5708,12 @@
       },
       "transitions": [
         [
-          "queued",
+          "draft",
+          "ready"
+        ],
+        [
+          "ready",
           "in-progress"
-        ],
-        [
-          "in-progress",
-          "completed"
-        ],
-        [
-          "in-progress",
-          "cancelled"
         ],
         [
           "in-progress",
@@ -5288,11 +5722,31 @@
         [
           "blocked",
           "in-progress"
+        ],
+        [
+          "in-progress",
+          "completed"
+        ],
+        [
+          "blocked",
+          "completed"
+        ],
+        [
+          "ready",
+          "cancelled"
+        ],
+        [
+          "in-progress",
+          "cancelled"
+        ],
+        [
+          "blocked",
+          "cancelled"
         ]
       ]
     },
     {
-      "family": "governance-guide-policy-runbook",
+      "family": "governance-operations",
       "profile_ids": [
         "operation/guide",
         "operation/policy",
@@ -5303,18 +5757,29 @@
         "governance/provider",
         "governance/role",
         "governance/rule",
-        "governance/skill"
+        "governance/skill",
+        "common/native-skill-package"
       ],
       "states": {
         "draft": "mutable",
+        "in-review": "mutable",
         "active": "current",
+        "deprecated": "current",
         "superseded": "terminal",
         "retired": "terminal"
       },
       "transitions": [
         [
           "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
           "active"
+        ],
+        [
+          "active",
+          "deprecated"
         ],
         [
           "active",
@@ -5322,6 +5787,10 @@
         ],
         [
           "active",
+          "retired"
+        ],
+        [
+          "deprecated",
           "retired"
         ]
       ]
@@ -5332,23 +5801,23 @@
         "operation/incident"
       ],
       "states": {
-        "open": "current",
+        "detected": "current",
+        "investigating": "current",
         "mitigated": "current",
-        "resolved": "current",
-        "closed": "terminal"
+        "resolved": "terminal"
       },
       "transitions": [
         [
-          "open",
+          "detected",
+          "investigating"
+        ],
+        [
+          "investigating",
           "mitigated"
         ],
         [
           "mitigated",
           "resolved"
-        ],
-        [
-          "resolved",
-          "closed"
         ]
       ]
     },
@@ -5359,17 +5828,53 @@
       ],
       "states": {
         "draft": "mutable",
-        "published": "current",
-        "superseded": "terminal"
+        "in-review": "mutable",
+        "published": "terminal"
       },
       "transitions": [
         [
           "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
+          "published"
+        ]
+      ]
+    },
+    {
+      "family": "reference",
+      "profile_ids": [
+        "reference/audit",
+        "reference/research",
+        "reference/data",
+        "reference/audit-pack",
+        "reference/research-pack",
+        "reference/data-pack"
+      ],
+      "states": {
+        "draft": "mutable",
+        "in-review": "mutable",
+        "published": "current",
+        "superseded": "terminal",
+        "retired": "terminal"
+      },
+      "transitions": [
+        [
+          "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
           "published"
         ],
         [
           "published",
           "superseded"
+        ],
+        [
+          "published",
+          "retired"
         ]
       ]
     },
@@ -5411,89 +5916,32 @@
     {
       "family": "route-disposition",
       "profile_ids": [
-        "archive/route-tombstone",
+        "archive/route"
+      ],
+      "states": {
+        "draft": "mutable",
+        "sealed": "terminal"
+      },
+      "transitions": [
+        [
+          "draft",
+          "sealed"
+        ]
+      ]
+    },
+    {
+      "family": "scope-migration",
+      "profile_ids": [
         "archive/scope-migration"
       ],
       "states": {
-        "recorded": "terminal"
-      },
-      "transitions": []
-    },
-    {
-      "family": "audit",
-      "profile_ids": [
-        "reference/audit"
-      ],
-      "states": {
         "draft": "mutable",
-        "completed": "current",
-        "invalidated": "terminal"
+        "sealed": "terminal"
       },
       "transitions": [
         [
           "draft",
-          "completed"
-        ],
-        [
-          "completed",
-          "invalidated"
-        ]
-      ]
-    },
-    {
-      "family": "research",
-      "profile_ids": [
-        "reference/research"
-      ],
-      "states": {
-        "draft": "mutable",
-        "published": "current",
-        "superseded": "terminal",
-        "retired": "terminal"
-      },
-      "transitions": [
-        [
-          "draft",
-          "published"
-        ],
-        [
-          "published",
-          "superseded"
-        ],
-        [
-          "published",
-          "retired"
-        ]
-      ]
-    },
-    {
-      "family": "data",
-      "profile_ids": [
-        "reference/data"
-      ],
-      "states": {
-        "draft": "mutable",
-        "active": "current",
-        "stale": "current",
-        "superseded": "terminal",
-        "retired": "terminal"
-      },
-      "transitions": [
-        [
-          "draft",
-          "active"
-        ],
-        [
-          "active",
-          "stale"
-        ],
-        [
-          "stale",
-          "superseded"
-        ],
-        [
-          "stale",
-          "retired"
+          "sealed"
         ]
       ]
     }
@@ -5518,16 +5966,14 @@
       "names": "reason",
       "admitted_states": [
         "retired",
-        "withdrawn",
-        "rejected",
-        "invalidated"
+        "rejected"
       ]
     },
     {
       "class": "resolved",
       "names": "corrective-owner",
       "admitted_states": [
-        "closed"
+        "resolved"
       ]
     }
   ],
@@ -5731,37 +6177,37 @@
       "Status",
       "Updated",
       "Last Updated",
-      "\uc0c1\ud0dc",
-      "\ucd5c\uc885 \uc218\uc815",
-      "\ud604\uc7ac\uc131"
+      "상태",
+      "최종 수정",
+      "현재성"
     ],
     "max_deep_links_per_child": 1,
     "profiles": {
       "common/readme-repository": {
-        "section": "Repository Map",
+        "section": "Structure",
         "complete": false
       },
       "common/readme-stage-index": {
-        "section": "Document Index",
+        "section": "Structure",
         "complete": true
       },
       "common/readme-collection-index": {
-        "section": "Item Index",
+        "section": "Structure",
         "complete": true
       },
       "common/readme-implementation": {
         "section": "Structure",
         "complete": false
       },
-      "common/readme-audit-pack": {
+      "reference/audit-pack": {
         "section": "Report Index",
         "complete": true
       },
-      "common/readme-data-pack": {
+      "reference/data-pack": {
         "section": "Item Index",
         "complete": true
       },
-      "common/readme-research-pack": {
+      "reference/research-pack": {
         "section": "Report Index",
         "complete": true
       }
@@ -5769,6 +6215,13 @@
     "pending_paths": [],
     "exempt_paths": [
       "docs/98.archive/README.md"
+    ],
+    "index_columns": [
+      "Path",
+      "Purpose"
+    ],
+    "optional_index_columns": [
+      "Owner"
     ]
   },
   "document_language": {
@@ -5790,16 +6243,17 @@
       "common/readme-stage-index",
       "common/readme-collection-index",
       "common/readme-implementation",
-      "common/readme-audit-pack",
-      "common/readme-data-pack",
-      "common/readme-research-pack",
+      "reference/audit-pack",
+      "reference/data-pack",
+      "reference/research-pack",
       "common/readme-workspace-staging",
       "common/readme-runtime-governance",
       "operation/guide",
       "operation/policy",
       "operation/runbook",
       "operation/incident",
-      "operation/postmortem"
+      "operation/postmortem",
+      "archive/catalog"
     ],
     "english_sections": [
       "AI Agent Requirements",
@@ -5808,5 +6262,210 @@
     ],
     "min_latin_words": 8,
     "pending_paths": []
+  },
+  "migration_admission": {
+    "from_generation": 9,
+    "to_generation": 10,
+    "spec_ref": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md",
+    "task_ref": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md",
+    "updated": "2026-10-05",
+    "entries": [
+      {
+        "path": "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
+        "source_profile": "sdlc/requirement",
+        "source_status": "active",
+        "target_profile": "sdlc/requirement",
+        "target_status": "in-review"
+      },
+      {
+        "path": "docs/01.requirements/0002-argo-notifications-slack.md",
+        "source_profile": "sdlc/requirement",
+        "source_status": "active",
+        "target_profile": "sdlc/requirement",
+        "target_status": "in-review"
+      },
+      {
+        "path": "docs/01.requirements/0003-workspace-agent-governance-platform.md",
+        "source_profile": "sdlc/requirement",
+        "source_status": "active",
+        "target_profile": "sdlc/requirement",
+        "target_status": "in-review"
+      },
+      {
+        "path": "docs/01.requirements/0004-current-local-gitops-platform.md",
+        "source_profile": "sdlc/requirement",
+        "source_status": "active",
+        "target_profile": "sdlc/requirement",
+        "target_status": "in-review"
+      },
+      {
+        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md",
+        "source_profile": "sdlc/spec",
+        "source_status": "draft",
+        "target_profile": "sdlc/spec",
+        "target_status": "in-progress"
+      },
+      {
+        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/plan.md",
+        "source_profile": "sdlc/plan",
+        "source_status": "draft",
+        "target_profile": "sdlc/plan",
+        "target_status": "in-progress"
+      },
+      {
+        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md",
+        "source_profile": "sdlc/task",
+        "source_status": "queued",
+        "target_profile": "sdlc/task",
+        "target_status": "in-progress"
+      },
+      {
+        "path": "docs/90.references/research/0001-workspace-engineering/README.md",
+        "source_profile": "common/readme-research-pack",
+        "source_status": null,
+        "target_profile": "reference/research-pack",
+        "target_status": "in-review"
+      },
+      {
+        "path": "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
+        "source_profile": "common/readme-research-pack",
+        "source_status": null,
+        "target_profile": "reference/research-pack",
+        "target_status": "in-review"
+      },
+      {
+        "path": ".agents/skills/archive-cutover/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/deployment-strategies/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/docs-stage-conformance/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/docs-stage-routing/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/execution-plan/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/external-service-contract-audit/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/gitops-workflow/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/incident-postmortem/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/k8s-security-audit/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/k8s-validate/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/knowledge-map/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/ops-runbook/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/rca-methodology/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/requirements-to-design/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/risk-report/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/task-breakdown/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/vulnerability-patterns/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": ".agents/skills/workspace-harness-audit/SKILL.md",
+        "source_profile": "common/native-skill-package",
+        "source_status": null,
+        "target_profile": "common/native-skill-package",
+        "target_status": "active"
+      },
+      {
+        "path": "docs/98.archive/README.md",
+        "source_profile": "common/readme-stage-index",
+        "source_status": null,
+        "target_profile": "archive/catalog",
+        "target_status": null
+      }
+    ]
   }
 }

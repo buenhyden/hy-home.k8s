@@ -1,10 +1,10 @@
 ---
 title: "90.references/data"
-version: "0.1.0"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "references"
 ---
 # 90.references/data
@@ -53,7 +53,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - secret 값, credential, 가리지 않은 민감 기록
 - 운영 runbook, release gate, 배포 승인, incident 대응
 
-## Item Index
+## Structure
 
 ```text
 data/
@@ -63,7 +63,7 @@ data/
 이 collection은 현재 data pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
 고유한 목적과 출처 경계를 갖춘 data pack의 추가를 금지하지 않는다.
 
-## Add and Find
+## Usage
 
 1. data pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
 2. `data/####-<slug>/README.md`는

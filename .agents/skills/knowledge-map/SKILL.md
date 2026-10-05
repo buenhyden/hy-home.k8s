@@ -1,6 +1,13 @@
 ---
 name: "knowledge-map"
 description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
+metadata:
+  title: "Knowledge Map"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

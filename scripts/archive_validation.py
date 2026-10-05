@@ -1928,7 +1928,7 @@ def _proposed_migration_registry(
         if not isinstance(raw, dict) or not isinstance(raw.get("profiles"), list):
             raise ValueError
         template_key = (
-            "template_source" if raw.get("schema_version") == 9 else "template"
+            "template_source" if raw.get("schema_version") in {9, 10} else "template"
         )
         templates = tuple(
             sorted(
@@ -1984,6 +1984,39 @@ def _proposal_members(
         historical_paths=(),
         object_id_length=length,
     )
+
+
+def historical_generation_registry(root: Path, commit: str) -> Registry | None:
+    """Project frozen generation 9 only from a caller-authenticated revision.
+
+    Callers retain the disposition or catalog proof that authenticates `commit`.
+    Generation 10 keeps the existing current-generation validation path.
+    """
+
+    path = REGISTRY_PATH.as_posix()
+    entry = _proposal_members(root, commit, (path,)).get(path)
+    if entry is None or entry.kind != "blob" or entry.mode not in {"100644", "100755"}:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "source registry unavailable"
+        )
+    try:
+        raw = json.loads(
+            _batch_blob_bytes(root, (entry.object_id,))[entry.object_id].decode(
+                "utf-8", errors="strict"
+            ),
+            object_pairs_hook=_unique_json_object,
+        )
+        if not isinstance(raw, dict):
+            raise ValueError
+        if raw.get("schema_version") == 10:
+            return None
+        if raw.get("schema_version") != 9:
+            raise ValueError
+        return contracts_module()._typed_registry_from_mapping(raw)
+    except (KeyError, TypeError, ValueError, UnicodeError) as exc:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE", "source registry differs"
+        ) from exc
 
 
 def _require_proposal_recovery_ancestry(
@@ -3678,6 +3711,7 @@ def validate_repository_archive(
         # Reuse only this inventory's validated ledger/source proof. Repeating
         # discovery would validate the same sealed rows and Git objects twice.
         admitted: set[str] = set()
+        source_registries: dict[str, Registry | None] = {}
         for path in unproved_additions:
             try:
                 parsed = parse_archive_envelope(records[path])
@@ -3719,8 +3753,16 @@ def validate_repository_archive(
                 if proof is None or proof.proposed_registry is None:
                     continue
                 try:
+                    if disposition.source_commit not in source_registries:
+                        source_registries[disposition.source_commit] = (
+                            historical_generation_registry(
+                                root, disposition.source_commit
+                            )
+                        )
+                    source_registry = source_registries[disposition.source_commit]
+                    semantic_registry = source_registry or proof.proposed_registry
                     source = document_from_text(
-                        proof.proposed_registry,
+                        semantic_registry,
                         PurePosixPath(str(metadata["original_path"])),
                         parsed.payload.decode("utf-8", errors="strict"),
                     )
@@ -3729,14 +3771,33 @@ def validate_repository_archive(
                         if metadata["replacement"]
                         else None
                     )
+                    historical_successor = None
+                    if source_registry is not None and metadata["replacement"]:
+                        replacement = PurePosixPath(str(metadata["replacement"]))
+                        entry = _proposal_members(
+                            root, disposition.source_commit, (replacement.as_posix(),)
+                        ).get(replacement.as_posix())
+                        if (
+                            entry is None
+                            or entry.kind != "blob"
+                            or entry.mode not in {"100644", "100755"}
+                        ):
+                            continue
+                        historical_successor = _batch_blob_bytes(
+                            root, (entry.object_id,)
+                        )[entry.object_id]
                     successor = (
                         document_from_text(
-                            proof.proposed_registry,
+                            semantic_registry,
                             replacement,
-                            read_worktree_regular_bounded(
-                                root,
-                                replacement.as_posix(),
-                                max_bytes=CURRENT_MARKDOWN_MAX_BYTES,
+                            (
+                                historical_successor
+                                if historical_successor is not None
+                                else read_worktree_regular_bounded(
+                                    root,
+                                    replacement.as_posix(),
+                                    max_bytes=CURRENT_MARKDOWN_MAX_BYTES,
+                                )
                             ).decode("utf-8", errors="strict"),
                         )
                         if replacement is not None
@@ -3745,7 +3806,7 @@ def validate_repository_archive(
                 except (ArchiveContractError, UnicodeError):
                     continue
                 if archive_disposition_gaps(
-                    proof.proposed_registry,
+                    semantic_registry,
                     source,
                     str(metadata["archive_reason"]),
                     replacement,
@@ -4678,10 +4739,12 @@ def validate_current_archive_authority(
     individual_archive_paths: frozenset[str] | object = _MISSING_INVENTORY,
     registry: Registry | None = None,
     assessments: Mapping[PurePosixPath] | None = None,
+    historical_registries: Mapping[str, Registry] | None = None,
 ) -> ArchiveValidationReport:
     """Validate passed current Markdown/profile data without filesystem reads.
 
-    `assessments` is the parsed Retention Assessment table the caller read."""
+    `assessments` is the parsed Retention Assessment table the caller read.
+    Historical views require the caller's exact retained-member source proof."""
 
     materialized, contract_diagnostics = _exact_sequence(
         documents,
@@ -4725,11 +4788,25 @@ def validate_current_archive_authority(
             and document.profile in CURRENT_MARKDOWN_PROFILES
         )
         current = status_valid and document.status in {"active", "accepted"}
+        historical_registry = (
+            historical_registries.get(path)
+            if historical_registries is not None
+            and registry is not None
+            and is_retention_path(PurePosixPath(path), registry)
+            else None
+        )
+        own_profiles = (
+            {item.profile_id: item for item in historical_registry.profiles}
+            if historical_registry is not None
+            else profiles
+        )
         profile = (
-            profiles.get(document.profile)
+            own_profiles.get(document.profile)
             if isinstance(document.profile, str)
             else None
         )
+        if historical_registry is not None and profile is None:
+            profile_valid = status_valid = False
         if profile is not None:
             profile_valid = True
             checked_status = document.status

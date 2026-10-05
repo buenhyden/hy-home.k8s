@@ -1,10 +1,10 @@
 ---
 title: "01.requirements"
-version: "0.7.0"
-type: "common/readme-stage-index"
+version: "0.8.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 layer: "requirements"
 ---
 # 01.requirements
@@ -30,7 +30,7 @@ layer: "requirements"
 - Documentation Writers
 - AI Agents
 
-## Stage Contract
+## Scope
 
 ### In Scope
 
@@ -55,18 +55,18 @@ Requirement Package의 안정 ID는 `REQ-####`이고 경로 번호와 반드시
 일치한다. PRD, SRS, Interface Requirement를 별도 문서나 profile로 나누지
 않는다.
 
-## Document Index
+## Structure
 
 각 Requirement Package의 상태와 최종 수정일은 해당 문서 frontmatter가 소유한다. 이 표는 현재 요구의 역할과 후속 경로를 안내한다.
 
-| 문서 | 역할 | 추적성 / 후속 경로 |
-| --- | --- | --- |
-| [REQ-0001](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 요구 | AD·Spec·Plan·Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유한다. |
-| [REQ-0002](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 요구 | AD·Spec·Plan·Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유한다. |
-| [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)이 구조를 설명한다. [SPEC-0054 WP-013](../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)은 2026-09-16 완료되었고 잔여 Stage 03 처분은 [SPEC-0083](../98.archive/completed/03.specs/0083-finished-package-retention/spec.md)·[SPEC-0084](../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md)로 승계되었다. |
-| [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md)이 구조를 설명한다. [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md)는 FR-0008·FR-0010의 저장소 정적 검증을 완료했다. CRD 스키마와 생성 결과·실제 클러스터 관측은 소유자와 재시도 조건을 명시해 DEFER로 남긴다. SPEC-0047·0048·0050·0051의 철회 범위는 완료로 간주하지 않는다. |
+| Path | Purpose |
+| --- | --- |
+|   [REQ-0001](./0001-argo-rollouts-progressive-delivery.md) | Argo Rollouts 점진적 배포 요구 |
+|   [REQ-0002](./0002-argo-notifications-slack.md) | Argo Notifications Slack 알림 요구 |
+|   [REQ-0003](./0003-workspace-agent-governance-platform.md) | Agent·문서 거버넌스와 검증·승인 요구 |
+|   [REQ-0004](./0004-current-local-gitops-platform.md) | 로컬 플랫폼과 delivery assurance 요구 |
 
-## Authoring Workflow
+## Usage
 
 1. 같은 문제를 다루는 현재 Requirement Package를 먼저 확인하고 중복 package를 만들지 않는다.
 2. `../99.templates/templates/requirements/requirement-package.template.md`를 복사해 `####-<slug>.md`를 만든다. 템플릿은 재사용 가능하도록 `artifact_id`를 비워 두므로, 복사 직후 아직 발급되지 않은 다음 번호를 `REQ-####`로 할당하고 경로 번호와 일치시킨다.

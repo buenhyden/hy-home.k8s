@@ -362,7 +362,8 @@ def validate_contract(
             fail("SURFACE-REUSE", validator["id"])
         status = validator["fallback"]["status"]
         if (not validator["optional"] and status != "FAIL") or (
-            validator["optional"] and status not in {"DEFER", "SKIP"}
+            validator["optional"]
+            and (status != "DEFER" or not validator["fallback"].get("nextOwner"))
         ):
             fail("SURFACE-FALLBACK", validator["id"])
 

@@ -1,10 +1,10 @@
 ---
 title: "AWS Executable Examples"
-version: "0.2.1"
-type: "common/readme-implementation"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # AWS Executable Examples
 
@@ -22,6 +22,13 @@ AD-0006(`docs/02.architecture/descriptions/README.md`)이 소유한다. package 
 Kubernetes 파일은 참조 구현이다. 활성 로컬 desired state가 아니며 현재의 AWS
 지원, 계정 준비 상태, 비용, provider 최신 설정을 증명하지도 않는다.
 
+## Scope
+
+AWS credential, 공개 승인을 받지 않은 계정 식별자, Terraform state,
+kubeconfig, 토큰, 키, 인증서, secret 값은 커밋하지 않는다. 버전 제약은 각
+Terraform·Kubernetes 파일이 직접 소유한다. 승인된 용도로 쓰기 전에 AWS와
+provider의 공식 지원 범위를 다시 확인한다.
+
 ## Structure
 
 | 경로 | 역할 | 권한 경계 |
@@ -29,14 +36,13 @@ Kubernetes 파일은 참조 구현이다. 활성 로컬 desired state가 아니�
 | [`terraform/`](terraform/) | VPC, EKS, 데이터, 캐시, secret 서비스 Terraform 예시 | 실행 가능한 참조 자산. 사용 전에 provider 지원 범위와 계정 입력값을 검토한다. |
 | [`kubernetes/`](kubernetes/) | Karpenter, External Secrets, 외부 서비스 Kubernetes 예시 | 실행 가능한 참조 자산. 이 저장소의 로컬 ArgoCD 트리가 reconcile하지 않는다. |
 
-## Configuration Boundary
+## Usage
 
-AWS credential, 공개 승인을 받지 않은 계정 식별자, Terraform state,
-kubeconfig, 토큰, 키, 인증서, secret 값은 커밋하지 않는다. 버전 제약은 각
-Terraform·Kubernetes 파일이 직접 소유한다. 승인된 용도로 쓰기 전에 AWS와
-provider의 공식 지원 범위를 다시 확인한다.
+이 자산은 provider 운영 절차를 정의하지 않는다. provider나 live cluster에
+손대기 전에 정확한 소스 diff, 현재 AWS·provider 공식 지원 범위, credential
+경계, 비용, 롤백을 검토하고 사람의 승인을 받는다.
 
-## Validation
+## Verification
 
 먼저 저장소 정적 검사를 실행한다.
 
@@ -52,12 +58,6 @@ python3 scripts/qa.py full
 
 위 명령은 AWS에 인증하지 않으며 live EKS, IAM, 네트워크, 비용, secret,
 provider 준비 상태를 증명하지 않는다.
-
-## Operations
-
-이 자산은 provider 운영 절차를 정의하지 않는다. provider나 live cluster에
-손대기 전에 정확한 소스 diff, 현재 AWS·provider 공식 지원 범위, credential
-경계, 비용, 롤백을 검토하고 사람의 승인을 받는다.
 
 ## Related Documents
 

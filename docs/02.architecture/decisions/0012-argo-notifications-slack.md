@@ -4,7 +4,7 @@ version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "architecture"
 artifact_id: "ADR-0012"
 ---
@@ -67,3 +67,9 @@ Slack token bootstrap is performed only as a human-approved external OpenBao tas
 - [Spec](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
 - [Plan](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
 - [Task](../../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [Architecture owner](../descriptions/0005-argo-notifications-slack.md) | N/A — first decision; no whole-document supersession | [Completed implementation evidence](../../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |

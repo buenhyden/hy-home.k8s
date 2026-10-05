@@ -33,7 +33,7 @@ SUPERSEDED = (
 RETIRED = "docs/98.archive/retired/05.operations/runbooks/0009-x.md"
 SEALED = "docs/98.archive/superseded/01.requirements/0001-wsl-k3d-argocd-platform.md"
 LEDGER = "docs/98.archive/migrations/0004-document-authority-convergence.md"
-TOMBSTONE = "docs/98.archive/tombstones/0001-old-route.md"
+TOMBSTONE = "docs/98.archive/migrations/0025-old-route.md"
 SCOPE_MIGRATION = "docs/98.archive/migrations/0024-scope-move.md"
 UNCLASSIFIED = "docs/98.archive/unknown/x.md"
 OUTSIDE = "docs/02.architecture/README.md"
@@ -184,20 +184,22 @@ class CurrentArchiveAuthorityConsumerTests(unittest.TestCase):
         incident = "docs/05.operations/incidents/2026/inc-0002-y/incident.md"
         self.assertFalse(
             self.direct_link_reported(
-                incident, "operation/incident", "open", SUPERSEDED
+                incident, "operation/incident", "investigating", SUPERSEDED
             )
         )
         self.assertTrue(
-            self.direct_link_reported(incident, "operation/incident", "open", LEDGER)
+            self.direct_link_reported(
+                incident, "operation/incident", "investigating", LEDGER
+            )
         )
 
-    def test_an_active_spec_cites_only_completed_and_resolved_bodies(self) -> None:
+    def test_an_approved_spec_cites_only_completed_and_resolved_bodies(self) -> None:
         spec = "docs/03.specs/0001-x/spec.md"
         self.assertTrue(
-            self.direct_link_reported(spec, "sdlc/spec", "active", SUPERSEDED)
+            self.direct_link_reported(spec, "sdlc/spec", "approved", SUPERSEDED)
         )
         self.assertFalse(
-            self.direct_link_reported(spec, "sdlc/spec", "active", RESOLVED)
+            self.direct_link_reported(spec, "sdlc/spec", "approved", RESOLVED)
         )
 
 

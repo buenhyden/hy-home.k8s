@@ -1,10 +1,10 @@
 ---
 title: "workspace"
-version: "0.1.1"
-type: "common/readme-workspace-staging"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # _workspace
 
@@ -19,7 +19,9 @@ updated: "2026-09-29"
 이 README만 추적한다. scratch 하위 항목은 ignore 상태로 남고 Git에 강제로
 추가하면 안 된다.
 
-## Permitted Artifacts
+## Scope
+
+### Permitted Artifacts
 
 - 임시 감사 scratch
 - 가리고 정리한, 비밀이 아닌 dry-run 요약
@@ -30,7 +32,7 @@ updated: "2026-09-29"
 모든 산출물은 저장소 지원 범위 안에 있어야 하고 지워도 안전해야 하며
 credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아야 한다.
 
-## Forbidden Local State
+### Forbidden Local State
 
 다음 항목은 `_workspace/`에 두지 않는다.
 
@@ -43,7 +45,15 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 진단 정보, 로컬 로그, 인증 material, 토큰, shell history는 저장소와 이 staging
 경계 밖에 둔다.
 
-## Promotion and Cleanup
+## Structure
+
+| Path | Purpose |
+| --- | --- |
+| `repo-support/` | 추적하지 않는 임시 산출물 경로 |
+
+## Usage
+
+### Promotion and Cleanup
 
 오래 남길 결과는 정본 소유 경로로 옮긴다.
 
@@ -56,7 +66,7 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 template, 리뷰, secret 처리 계약을 지켜야 한다. 가공하지 않은 scratch를
 force-add로 옮기지 않는다.
 
-## Tracking Rules
+### Tracking Rules
 
 추적되는 형태는 다음과 같다.
 

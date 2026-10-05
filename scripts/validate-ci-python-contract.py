@@ -1783,7 +1783,7 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         'case "$QA_RESULT" in',
         'case "$EVENT_NAME:$ISOLATED_RESULT" in',
         "isolated_verdict=PASS",
-        "isolated_verdict=SKIP",
+        "isolated_verdict=NOT_APPLICABLE",
         "isolated_verdict=FAIL",
         "qa_verdict=PASS",
         "qa_verdict=FAIL",

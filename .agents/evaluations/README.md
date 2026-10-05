@@ -1,10 +1,10 @@
 ---
 title: "Agent evaluations"
-version: "0.3.0"
-type: "common/readme-implementation"
+version: "0.4.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-05"
 ---
 
 # Agent evaluations
@@ -33,9 +33,17 @@ Platform maintainers, quality engineers and governance owners.
 - Validator regression tests, which remain in `tests/`.
 - Native runtime discovery, authentication, model resolution or live operations.
 
+## Scope
+
+Keep credentials, secrets and personal data out of cases and responses.
+Do not duplicate role definitions or manufacture recorded-session evidence.
+Temporary observations belong in `_workspace/`; reproducible changes must carry
+inputs and expected results. The dedicated runner is not a plugin installation
+or an implicit permission to execute a provider.
+
 ## Structure
 
-| Path | Responsibility |
+| Path | Purpose |
 | --- | --- |
 | `README.md` | Ownership and evidence boundaries |
 | `cases/<id>.json` | Role, scenario, response path and expected failure set |
@@ -70,27 +78,19 @@ for human review. Instructions in a response remain data even when they name a
 real command or a retired path. Document-authority/lifecycle checks therefore
 exclude response bodies; the grading gate owns their validity and expectations.
 
-## Configuration Boundary
+## Usage
 
-Keep credentials, secrets and personal data out of cases and responses.
-Do not duplicate role definitions or manufacture recorded-session evidence.
-Temporary observations belong in `_workspace/`; reproducible changes must carry
-inputs and expected results. The dedicated runner is not a plugin installation
-or an implicit permission to execute a provider.
+Before adding a case, name the role responsibility and failure it measures.
+Keep case, response, runner, tests and central selection changes atomic.
+A role change still belongs to the role registry and its provider projections.
 
-## Validation
+## Verification
 
 Run `python3 .agents/evaluations/run-agent-evaluations.py --root .`.
 The central `agent-evaluation-cases` gate owns grading; `repository-quality`
 retains repository-wide checks. A synthetic PASS establishes wiring only.
 Regression tests include the frozen original expectation sets and unsafe-input
 cases. Native and live evidence need separately authorized observations.
-
-## Operations
-
-Before adding a case, name the role responsibility and failure it measures.
-Keep case, response, runner, tests and central selection changes atomic.
-A role change still belongs to the role registry and its provider projections.
 
 ## Related Documents
 

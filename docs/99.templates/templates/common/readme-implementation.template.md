@@ -1,10 +1,10 @@
 ---
 title: "{{TITLE}}"
 version: "0.1.0"
-type: "common/readme-implementation"
+type: "common/readme"
 status: "active"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 ---
 # {{COMPONENT_NAME}}
 
@@ -12,19 +12,27 @@ updated: "{{YYYY_MM_DD}}"
 
 <!-- Author prompt: 구성 요소의 목적, 지원하는 사용 방식, 권한 경계를 설명한다. -->
 
+<!-- Author prompt: 실제 독자가 필요할 때만 Usage 다음에 Verification H2를 두고 정본 검사 owner로 안내한다. -->
+
+## Scope
+
+<!-- Author prompt: 이 경로의 포함 범위, 제외 대상과 권한 owner를 설명한다. -->
+
 ## Structure
 
 <!-- Author prompt: 직접 하위 폴더나 파일과 그 진입점을 링크한다. 하위 항목마다 내부 경로는 하나까지만 적고, 트리에는 직접 하위 항목만 보인다. 상태, 날짜, 개수는 각 문서가 직접 가지므로 옮겨 적지 않는다. 경로 매트릭스는 그 멤버를 나열하는 폴더의 README에 둔다. -->
 
-## Configuration Boundary
+## Usage
+
+### Configuration Boundary
 
 <!-- Author prompt: 설정 owner, 입력값, 보호해야 할 외부 상태를 밝힌다. -->
 
-## Validation
+### Validation
 
 <!-- Author prompt: 결정론적 검사를 나열하고, live 또는 원격 증거의 한계를 표시한다. -->
 
-## Operations
+### Operations
 
 <!-- Author prompt: 설치, 배포, 복구, 문제 해결은 해당 owner 문서로 안내한다. -->
 

@@ -583,7 +583,12 @@ def run(root: Path, binary: Path) -> list[dict[str, str]]:
         elif target.startswith("examples/"):
             rows.append(
                 _row(
-                    target, "product-semantic", "none", "none", "not-applicable", "SKIP"
+                    target,
+                    "product-semantic",
+                    "none",
+                    "none",
+                    "not-applicable",
+                    "NOT_APPLICABLE",
                 )
             )
         else:
@@ -616,7 +621,7 @@ def main() -> int:
         print("platform assurance internal failure", file=sys.stderr)
         return 1
     sys.stdout.write(
-        json.dumps({"version": 1, "results": rows}, separators=(",", ":")) + "\n"
+        json.dumps({"version": 2, "results": rows}, separators=(",", ":")) + "\n"
     )
     return 0
 

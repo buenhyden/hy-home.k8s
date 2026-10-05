@@ -200,7 +200,7 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
         type(report) is not dict
         or set(report) != {"version", "results"}
         or type(report["version"]) is not int
-        or report["version"] != 1
+        or report["version"] != 2
         or type(report["results"]) is not list
         or not 1 <= len(report["results"]) <= PLATFORM_REPORT_MAX_ROWS
     ):
@@ -242,7 +242,7 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
             or not re.fullmatch(r"[A-Za-z][A-Za-z0-9._-]{0,63}", row["tool"])
             or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.+_-]{0,63}", row["toolVersion"])
             or row["fallback"] not in PLATFORM_FALLBACKS
-            or row["result"] not in {"PASS", "FAIL", "SKIP", "DEFER"}
+            or row["result"] not in {"PASS", "FAIL", "DEFER", "NOT_APPLICABLE"}
             or (separator and row["depth"] != "schema-policy")
             or (not separator and row["depth"] == "schema-policy")
             or (
@@ -267,7 +267,18 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
             )
             or (row["result"] == "PASS" and row["fallback"] != "none")
             or (row["result"] == "PASS" and "none" in (row["tool"], row["toolVersion"]))
-            or (row["result"] in {"DEFER", "SKIP"} and row["fallback"] == "none")
+            or (row["result"] == "DEFER" and row["fallback"] == "none")
+            or (
+                row["result"] == "NOT_APPLICABLE"
+                and (
+                    base != "examples/sample-app"
+                    or separator
+                    or row["depth"] != "product-semantic"
+                    or row["tool"] != "none"
+                    or row["toolVersion"] != "none"
+                    or row["fallback"] != "not-applicable"
+                )
+            )
             or (target, row["depth"]) in seen
         ):
             raise ValueError("platform report row violates the closed contract")
@@ -1627,7 +1638,7 @@ def run_selected(
     if not paths and validator_ids is None:
         print(
             result_line(
-                "SKIP",
+                "NOT_APPLICABLE",
                 "validation-lane",
                 command=(),
                 tool="none",
@@ -1651,7 +1662,7 @@ def run_selected(
     if not selected["validators"]:
         print(
             result_line(
-                "SKIP",
+                "NOT_APPLICABLE",
                 "validation-lane",
                 command=(),
                 tool="none",
@@ -1691,12 +1702,17 @@ def run_selected(
             if validator["optional"]:
                 print(
                     result_line(
-                        "SKIP",
+                        "DEFER",
                         identifier,
                         command=argv,
                         tool=tool_token,
                         scope=scope,
-                        limitation="optional tool unavailable",
+                        limitation=(
+                            "optional tool unavailable;reason="
+                            + fallback["reason"]
+                            + ";next_owner="
+                            + fallback["nextOwner"]
+                        ),
                         evidence=evidence,
                     )
                 )
@@ -1774,7 +1790,7 @@ def run_selected(
                 validator.get("timeoutSeconds", VALIDATOR_TIMEOUT_SECONDS)
             ),
         )
-        structured = validator.get("structuredResults") == "platform-depth-v1"
+        structured = validator.get("structuredResults") == "platform-depth-v2"
         platform_rows: list[dict[str, str]] = []
         report_error = False
         if structured:

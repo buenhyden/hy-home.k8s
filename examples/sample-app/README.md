@@ -1,10 +1,10 @@
 ---
 title: "sample-app"
-version: "0.1.2"
-type: "common/readme-implementation"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-05"
 ---
 # sample-app
 
@@ -43,6 +43,12 @@ updated: "2026-09-29"
 - production secret 값 또는 credential 예시
 - AWS/Azure cloud target 구현
 
+## Scope
+
+`gitops/workloads/<appname>/`로 올리기 전에 `<appname>`, `<owner>`, `<tag>`,
+`<port>` placeholder를 모두 바꾼다. secret 값, 토큰, 개인 키는 예시 밖에 두고
+아래에 설명한 Vault mount-prefix 경계를 지킨다.
+
 ## Structure
 
 ```text
@@ -55,19 +61,7 @@ examples/sample-app/
 └── external-secret.yaml      # ExternalSecret (OpenBao 연동, 선택 사항)
 ```
 
-## Configuration Boundary
-
-`gitops/workloads/<appname>/`로 올리기 전에 `<appname>`, `<owner>`, `<tag>`,
-`<port>` placeholder를 모두 바꾼다. secret 값, 토큰, 개인 키는 예시 밖에 두고
-아래에 설명한 Vault mount-prefix 경계를 지킨다.
-
-## Validation
-
-복사본을 desired state로 다루기 전에 placeholder가 남지 않았는지 확인하고
-상위 [examples contract](../README.md#validation)에 나열된 저장소 품질,
-Kubernetes manifest, secret 처리 검사를 실행한다.
-
-## Operations
+## Usage
 
 ### Working Procedure
 
@@ -127,6 +121,12 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 - 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
 - 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
 - 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Verification
+
+복사본을 desired state로 다루기 전에 placeholder가 남지 않았는지 확인하고
+상위 [examples contract](../README.md#verification)에 나열된 저장소 품질,
+Kubernetes manifest, secret 처리 검사를 실행한다.
 
 ## Related Documents
 

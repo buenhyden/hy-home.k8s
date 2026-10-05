@@ -1,12 +1,14 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.2.1"
-type: "common/readme-runtime-governance"
+version: "0.3.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-02"
+updated: "2026-10-05"
 ---
 # GitHub Configuration Hub
+
+## Overview
 
 이 문서는 `hy-home.k8s`의 main branch PR 흐름에 쓰이는 저장소 고유 GitHub
 자동화 surface를 안내한다. 정책의 정본이 아니라 routing surface다. 이름이
@@ -14,7 +16,12 @@ updated: "2026-10-02"
 디렉터리 자체의 내용이 아니라 저장소의 자동화 surface를 설명하기 때문이고
 GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 때문이다.
 
-## Content Mapping
+## Scope
+
+이 디렉터리의 자동화는 QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다. live
+클러스터나 외부 Vault 변경, container publish, commit push는 범위 밖이다.
+
+## Structure
 
 - `workflows/` - CI, release 증거, 저장소 유지보수 자동화
 - `ISSUE_TEMPLATE/` - 구조화된 버그·기능 접수 양식
@@ -23,7 +30,9 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 - `dependabot.yml`과 `labeler.yml` - GitHub 기본 기능을 쓰는 의존성·label 설정
 - `SECURITY.md` - 취약점 신고 안내
 
-## Policy Routing
+## Usage
+
+### Policy Routing
 
 - branch 전략 정책은 `.agents/governance/git.md`에 있다.
 - CI 강제는 `workflows/ci.yml`과 `scripts/qa.py`가 맡고 로컬 QA와 공유하는
@@ -54,7 +63,7 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
   있다.
 - 전체 SHA로 Action을 고정하는 규칙은 저장소 품질 gate가 강제한다. zizmor 억제 파일은 필요 없다.
 
-## Workflow Roles
+### Workflow Roles
 
 - `ci.yml`은 저장소의 정본 통합 branch를 대상으로 하는 push와 pull request에 필요한 QA gate이며 `workflow_dispatch`로 수동 재실행할 수 있다. `qa`와 `qa-isolated`가 registry full gate를 분할하며 `qa-source`가 main 재사용 후보를 읽고 `ci-summary`가 해당 경로를 종합한다. 기본 main·수동 경로는 full을 실행한다. 추적되는 workflow 파일은 hosted run 증거가 아니다.
 - `qa-verifier.yml`은 별도 verifier App의 `qa-provenance`와
@@ -64,13 +73,7 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 - `labeler.yml`, `greetings.yml`, `stale.yml`은 저장소 유지보수 자동화이며 QA gate가 아니다.
 - 관심사는 분명히 나뉜다. 로컬 pre-commit은 빠른 lint와 formatting을 맡고 로컬 저장소 정적 스크립트는 필요할 때 CI·디버그 증거를 재현하며 GitHub CI는 필수 원격 gate 판정을 내린다. Helm chart rendering은 플랫폼 AppProject 허용 목록 변경을 리뷰할 때 쓰는 수동 보조 도구로 남는다.
 
-## Source Basis
-
-- 현재 workflow 계약은 `.github/workflows/*.yml`과 공통 [Quality policy](../.agents/governance/quality.md)가 소유한다.
-- 과거 조사 기록은 [archive 탐색](../docs/98.archive/README.md)을 통해 찾는다. 완료 Spec을 실행 권위나 선행 읽기 조건으로 사용하지 않는다.
-- 외부 도구 계약이 바뀌면 공식 출처를 확인하고 해당 현재 workflow·정책·참조 소유자를 함께 갱신한다.
-
-## Workflow Responsibility Matrix
+### Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
@@ -127,6 +130,14 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
   `v*.*.*` filter는 `main-*`와 일치하지 않는다. 이 경계는
   `GITHUB_TOKEN`의 재귀 억제 동작에 의존하지 않는다.
 
+## Related Documents
+
+### Source Basis
+
+- 현재 workflow 계약은 `.github/workflows/*.yml`과 공통 [Quality policy](../.agents/governance/quality.md)가 소유한다.
+- 과거 조사 기록은 [archive 탐색](../docs/98.archive/README.md)을 통해 찾는다. 완료 Spec을 실행 권위나 선행 읽기 조건으로 사용하지 않는다.
+- 외부 도구 계약이 바뀌면 공식 출처를 확인하고 해당 현재 workflow·정책·참조 소유자를 함께 갱신한다.
+
 공식 계약: [workflow_run identity](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run),
 [Git ref creation](https://docs.github.com/en/rest/git/refs#create-a-reference),
 [App token restriction](https://docs.github.com/en/rest/apps/apps#create-an-installation-access-token-for-an-app),
@@ -134,8 +145,3 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 [ruleset bypass read-back](https://docs.github.com/en/rest/repos/rules#get-a-repository-ruleset),
 [environment variable timing](https://docs.github.com/en/actions/reference/workflows-and-actions/variables#configuration-variable-precedence),
 [App-triggered events](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
-
-## Boundaries
-
-- `.github` 자동화는 QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다.
-- 이 디렉터리의 workflow는 live 클러스터에 배포하거나, Kubernetes를 직접 변경하거나, 외부 Vault 리소스를 바꾸거나, container를 publish하거나, 커밋을 push하면 안 된다.

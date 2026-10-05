@@ -109,7 +109,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
                 "evidenceLane": "repo-static",
                 "optional": False,
                 "fallback": {"status": "FAIL", "reason": "required"},
-                "structuredResults": "platform-depth-v1",
+                "structuredResults": "platform-depth-v2",
             }
         ]
     }
@@ -154,8 +154,16 @@ class StructuredPlatformResultTest(unittest.TestCase):
                         depth="product-semantic",
                         tool="none",
                         toolVersion="none",
-                        fallback="separate-required-gate",
-                        result="DEFER",
+                        fallback=(
+                            "not-applicable"
+                            if target == "examples/sample-app"
+                            else "separate-required-gate"
+                        ),
+                        result=(
+                            "NOT_APPLICABLE"
+                            if target == "examples/sample-app"
+                            else "DEFER"
+                        ),
                     ),
                     self.row(
                         target=target,
@@ -167,7 +175,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
                     ),
                 )
             )
-        return {"version": 1, "results": rows}
+        return {"version": 2, "results": rows}
 
     def run_report(self, payload: str, *, returncode: int = 0, complete: bool = True):
         completed = bounded_result(payload, returncode=returncode)
@@ -213,11 +221,31 @@ class StructuredPlatformResultTest(unittest.TestCase):
         self.assertIn('toolVersion="v1.35.0"', output)
         self.assertIn('fallback="operator-live-check"', output)
         self.assertIn('lane="all-files"', output)
+        self.assertIn("[NOT_APPLICABLE] platform-assurance-depth ", output)
+
+    def test_closed_report_rejects_unrun_depth_and_old_version(self):
+        valid = self.complete_report()
+        for report in (
+            valid | {"version": 1},
+            valid
+            | {
+                "results": [
+                    row | {"result": "NOT_RUN"}
+                    if row["target"] == "gitops/apps/root" and row["depth"] == "render"
+                    else row
+                    for row in valid["results"]
+                ]
+            },
+        ):
+            with self.subTest(version=report["version"]):
+                status, output = self.run_report(json.dumps(report))
+                self.assertEqual(status, 1)
+                self.assertIn("structured_report=invalid", output)
 
     def test_only_deferred_depths_do_not_pass_static_gate(self):
         payload = json.dumps(
             {
-                "version": 1,
+                "version": 2,
                 "results": [
                     self.row(
                         depth="live-observation",
@@ -288,7 +316,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
                 self.assertNotIn("SENTINEL_SECRET_VALUE", output)
 
     def test_incomplete_report_fails_closed(self):
-        payload = json.dumps({"version": 1, "results": [self.row()]})
+        payload = json.dumps({"version": 2, "results": [self.row()]})
         status, output = self.run_report(payload, complete=False)
         self.assertEqual(status, 1)
         self.assertIn("[FAIL] platform-assurance ", output)
@@ -377,6 +405,57 @@ class StructuredPlatformResultTest(unittest.TestCase):
                 status, output = self.run_report(json.dumps(report))
                 self.assertEqual(status, 1)
                 self.assertIn("[FAIL] platform-assurance ", output)
+
+
+class ResultVocabularyTest(unittest.TestCase):
+    def test_no_paths_and_no_selected_gate_are_not_applicable(self):
+        with redirect_stdout(StringIO()) as output:
+            self.assertEqual(
+                RUNNER.run_selected(ROOT, "affected", [], CONTRACT, _ContractModule), 0
+            )
+        self.assertIn("[NOT_APPLICABLE] validation-lane ", output.getvalue())
+
+        with redirect_stdout(StringIO()) as output:
+            self.assertEqual(
+                RUNNER.run_selected(
+                    ROOT,
+                    "affected",
+                    ["README.md"],
+                    CONTRACT,
+                    _ContractModule,
+                    validator_ids=[],
+                ),
+                0,
+            )
+        self.assertIn("[NOT_APPLICABLE] validation-lane ", output.getvalue())
+
+    def test_missing_optional_tool_defers_with_reason_owner_and_fallback(self):
+        row = dict(
+            CONTRACT["validators"][0],
+            id="optional-check",
+            optional=True,
+            fallback={
+                "status": "DEFER",
+                "reason": "local tool absent",
+                "nextOwner": "operator",
+            },
+        )
+        with (
+            patch.object(RUNNER, "resolve_tool", return_value=None),
+            redirect_stdout(StringIO()) as output,
+        ):
+            result = RUNNER.run_selected(
+                ROOT,
+                "affected",
+                ["README.md"],
+                {"validators": [row]},
+                _ContractModule,
+                validator_ids=["optional-check"],
+            )
+        self.assertEqual(result, 0)
+        self.assertIn("[DEFER] optional-check ", output.getvalue())
+        self.assertIn("next_owner=operator", output.getvalue())
+        self.assertIn("[DEFER] optional-check-fallback ", output.getvalue())
 
 
 class ProductionRunnerIsolationTest(unittest.TestCase):
@@ -830,7 +909,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertEqual(result, 0)
         invoked.assert_called_once()
         self.assertIn("[PASS] repository-quality ", output)
-        self.assertNotIn("[SKIP] repository-quality ", output)
+        self.assertNotIn("[NOT_APPLICABLE] repository-quality ", output)
 
     def test_staged_lane_executes_contract_selected_validators(self):
         self.assertEqual(
@@ -853,7 +932,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertEqual(result, 0)
         invoked.assert_called_once()
         self.assertIn("[PASS] repository-quality ", output)
-        self.assertNotIn("[SKIP] repository-quality ", output)
+        self.assertNotIn("[NOT_APPLICABLE] repository-quality ", output)
 
     def test_affected_forged_bounded_context_still_executes_repository_quality(self):
         result, output, invoked = self._run(
@@ -864,7 +943,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertEqual(result, 0)
         invoked.assert_called_once()
         self.assertIn("[PASS] repository-quality ", output)
-        self.assertNotIn("[SKIP] repository-quality ", output)
+        self.assertNotIn("[NOT_APPLICABLE] repository-quality ", output)
 
     def test_production_qa_and_runner_have_no_selftest_bypass(self):
         runner_text = MODULE_PATH.read_text(encoding="utf-8")
@@ -2162,7 +2241,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         statuses = {
             identifier: status
             for status, identifier in re.findall(
-                r"^\[(PASS|SKIP|FAIL|DEFER)\] ([^ ]+) ",
+                r"^\[(PASS|FAIL|DEFER|NOT_RUN|NOT_APPLICABLE)\] ([^ ]+) ",
                 output.getvalue(),
                 re.MULTILINE,
             )

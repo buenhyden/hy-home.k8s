@@ -1,6 +1,13 @@
 ---
 name: "gitops-workflow"
 description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
+metadata:
+  title: "Gitops Workflow"
+  version: "1.0.0"
+  type: "governance/skill"
+  status: "active"
+  owner: "platform"
+  updated: "2026-10-05"
 disable-model-invocation: true
 ---
 

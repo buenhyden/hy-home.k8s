@@ -1,10 +1,10 @@
 ---
 title: "90.references/audits"
-version: "0.1.0"
-type: "common/readme-collection-index"
+version: "0.2.0"
+type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-05"
 layer: "references"
 ---
 # 90.references/audits
@@ -53,7 +53,7 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - 운영 runbook, release gate, 배포 승인, incident 대응
 - 생성되었거나 병행 관리되는 `docs/superpowers/**` 내용
 
-## Item Index
+## Structure
 
 ```text
 audits/
@@ -63,7 +63,7 @@ audits/
 이 collection은 현재 audit pack을 보유하지 않는다. 이는 현재 처분 결과일 뿐이며,
 고유한 목적과 출처 경계를 갖춘 audit pack의 추가를 금지하지 않는다.
 
-## Add and Find
+## Usage
 
 1. audit pack 자료를 추가하거나 바꾸기 전에 상위 spec, plan, task를 읽는다.
 2. `audits/####-<slug>/README.md`는

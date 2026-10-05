@@ -9,6 +9,7 @@ printed or retained in the report.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import posixpath
 import re
@@ -37,6 +38,7 @@ if __package__:
         retention_source_path,
     )
     from scripts.archive_objects import (
+        _git,
         blob_text,
         commit_entries,
         index_entries,
@@ -54,6 +56,7 @@ if __package__:
     )
     from scripts.archive_recovery import (
         ArchiveContractError,
+        MAX_GIT_BATCH_OBJECTS,
         WORK107_MIGRATION_PATH,
         build_work107_migration_rows,
         parse_archive_envelope,
@@ -62,12 +65,16 @@ if __package__:
         REGISTRY_PATH,
         DocumentContractError,
         Registry,
+        _typed_registry_from_mapping,
         classify_path,
         load_internal_payload,
         load_registry,
     )
     from scripts.document_authority import RETIRED_UNUSED_CAPACITY_FORM_PATHS
-    from scripts.document_lifecycle import document_from_text
+    from scripts.document_lifecycle import (
+        document_from_text,
+        generation_admission_paths,
+    )
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
@@ -83,6 +90,8 @@ if __package__:
         retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
+        historical_generation_registry,
+        _unique_json_object,
     )
 else:
     from archive_dispositions import (  # type: ignore[no-redef]
@@ -98,6 +107,7 @@ else:
         retention_source_path,
     )
     from archive_objects import (  # type: ignore[no-redef]
+        _git,
         blob_text,
         commit_entries,
         index_entries,
@@ -115,6 +125,7 @@ else:
     )
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
+        MAX_GIT_BATCH_OBJECTS,
         WORK107_MIGRATION_PATH,
         build_work107_migration_rows,
         parse_archive_envelope,
@@ -123,6 +134,7 @@ else:
         REGISTRY_PATH,
         DocumentContractError,
         Registry,
+        _typed_registry_from_mapping,
         classify_path,
         load_internal_payload,
         load_registry,
@@ -130,7 +142,7 @@ else:
     from document_authority import (  # type: ignore[no-redef]
         RETIRED_UNUSED_CAPACITY_FORM_PATHS,
     )
-    from document_lifecycle import document_from_text  # type: ignore[no-redef]
+    from document_lifecycle import document_from_text, generation_admission_paths  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
@@ -146,6 +158,8 @@ else:
         retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
+        historical_generation_registry,
+        _unique_json_object,
     )
 
 
@@ -888,11 +902,141 @@ def _replacement_target(label: str, target: str) -> str | None:
     return normalized
 
 
+def _replacement_generation_admissions(
+    root: Path,
+    registry: Registry,
+    tracked_regular_blobs: Mapping[str, str],
+    targets: frozenset[PurePosixPath],
+    *,
+    historical_record: PurePosixPath | None = None,
+) -> frozenset[PurePosixPath]:
+    """Reuse the finite lifecycle judge at the actual indexed or committed event."""
+    declaration = registry.migration_admission
+    if registry.schema_version != 10 or declaration is None or not targets:
+        return frozenset()
+    paths = targets | {
+        PurePosixPath(declaration["spec_ref"]),
+        PurePosixPath(declaration["task_ref"]),
+    }
+    try:
+        current = {
+            path: document_from_text(
+                registry,
+                path,
+                _index_blob_bytes(root, tracked_regular_blobs[path.as_posix()]).decode(
+                    "utf-8", errors="strict"
+                ),
+            )
+            for path in paths
+        }
+        if any(document.state_issue for document in current.values()):
+            return frozenset()
+        head_bytes = _git(root, "rev-parse", "HEAD")
+        if head_bytes is None:
+            return frozenset()
+        base = head_bytes.decode("ascii").strip()
+        base_registry = historical_generation_registry(root, base)
+        event = None
+        event_registry = registry
+        if base_registry is None:
+            history = _git(
+                root,
+                "log",
+                "--first-parent",
+                f"--max-count={MAX_GIT_BATCH_OBJECTS}",
+                "--format=%H",
+                "HEAD",
+                "--",
+                REGISTRY_PATH.as_posix(),
+            )
+            if history is None:
+                return frozenset()
+            for revision in history.decode("ascii").splitlines():
+                raw = json.loads(
+                    blob_text(root, f"{revision}:{REGISTRY_PATH}") or "null",
+                    object_pairs_hook=_unique_json_object,
+                )
+                if not isinstance(raw, dict) or raw.get("schema_version") != 10:
+                    break
+                parent = _git(root, "rev-parse", f"{revision}^1")
+                if parent is None:
+                    return frozenset()
+                candidate = parent.decode("ascii").strip()
+                own_base = historical_generation_registry(root, candidate)
+                if own_base is not None:
+                    if raw.get("migration_admission") != declaration:
+                        return frozenset()
+                    base, base_registry, event = candidate, own_base, revision
+                    event_registry = _typed_registry_from_mapping(raw)
+                    break
+            if event is None or base_registry is None:
+                return frozenset()
+
+        if historical_record is not None:
+            entries = commit_entries(root, base, historical_record)
+            if (
+                entries is None
+                or len(entries) != 1
+                or entries[0].path != ""
+                or entries[0].mode not in {"100644", "100755"}
+                or entries[0].object_id
+                != tracked_regular_blobs.get(historical_record.as_posix())
+            ):
+                return frozenset()
+
+        def snapshot(own_registry, revision, selected):
+            documents = {}
+            for path in selected:
+                entries = commit_entries(root, revision, path)
+                if (
+                    entries is None
+                    or len(entries) != 1
+                    or entries[0].path != ""
+                    or entries[0].mode not in {"100644", "100755"}
+                ):
+                    continue
+                text = blob_text(root, f"{revision}:{path}")
+                if text is not None:
+                    document = document_from_text(own_registry, path, text)
+                    if document.state_issue is None:
+                        documents[path] = document
+            return documents
+
+        before = snapshot(base_registry, base, targets)
+        after = snapshot(event_registry, event, paths) if event is not None else current
+        admitted = generation_admission_paths(
+            event_registry, base_registry, before, after
+        )
+        return frozenset(
+            path
+            for path in targets & admitted
+            if (
+                current[path].profile_id,
+                current[path].status,
+                current[path].artifact_id,
+            )
+            == (after[path].profile_id, after[path].status, after[path].artifact_id)
+            and before[path].artifact_id == current[path].artifact_id
+        )
+    except (
+        ArchiveContractError,
+        DocumentContractError,
+        KeyError,
+        TypeError,
+        ValueError,
+        RuntimeError,
+        UnicodeError,
+    ):
+        return frozenset()
+
+
 def _replacement_target_diagnostic(
     root: Path,
     registry: Registry,
     target: str,
     tracked_regular_blobs: Mapping[str, str],
+    *,
+    generation_admissions: frozenset[PurePosixPath] = frozenset(),
 ) -> str | None:
     """Validate one index-owned current replacement without trusting neighbors."""
 
@@ -922,10 +1066,17 @@ def _replacement_target_diagnostic(
         document = document_from_text(registry, path, text)
     except (DocumentContractError, RuntimeError, UnicodeDecodeError, ValueError):
         return "ARCHIVE-REPLACEMENT-NONCURRENT"
+    domain = profile.lifecycle_domain
+    current_status = document.status in CURRENT_REPLACEMENT_STATUSES
+    if registry.schema_version == 10 and domain is not None:
+        current_status = (
+            domain.validation_class(document.status or "") == "current"
+            or document.status == "completed"
+        )
     if (
         document.state_issue is not None
         or document.profile_id != profile.profile_id
-        or document.status not in CURRENT_REPLACEMENT_STATUSES
+        or (not current_status and path not in generation_admissions)
         or document.status not in profile.status_domain
     ):
         return "ARCHIVE-REPLACEMENT-NONCURRENT"
@@ -1369,7 +1520,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 or migration is None
                 or not _regular_file(root, current_closure_owner)
                 or migration.get("_archiveNavigationBoundary")
-                != f"{ARCHIVE_INDEX}#document-index"
+                != f"{ARCHIVE_INDEX}#structure"
             ):
                 diagnostics.append(
                     _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
@@ -1383,7 +1534,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         profile.get("id") for profile in profiles if isinstance(profile, dict)
     ]
     if (
-        registry.get("schema_version") != 9
+        registry.get("schema_version") not in {9, 10}
         or profile_ids.count(ARCHIVE_PROFILE) != 1
         or profile_ids.count(ARCHIVE_TEMPLATE_PROFILE) != 1
         or any(
@@ -1418,10 +1569,13 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
-    if typed_registry is not None:
-        diagnostics.extend(
-            catalog_envelope_diagnostics(root, typed_registry, index_text)
-        )
+    catalog_diagnostics = (
+        catalog_envelope_diagnostics(root, typed_registry, index_text)
+        if typed_registry is not None
+        else ()
+    )
+    diagnostics.extend(catalog_diagnostics)
+    catalog_rows, catalog_errors = parse_catalog(index_text)
     index_rows, index_structure_failure = _parse_archive_index(
         index_text, typed_registry
     )
@@ -1442,6 +1596,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         archive_path: metadata for archive_path, metadata, _link_count in metadata_rows
     }
     if typed_registry is not None:
+        replacement_targets: dict[str, str] = {}
         for archive_path, index_row in index_rows.items():
             if index_row.replacement is None:
                 continue
@@ -1467,11 +1622,48 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 replacement_target,
                 replacement_target,
             )
+            replacement_targets[archive_path] = replacement_target
+        declared_paths = {
+            PurePosixPath(entry["path"])
+            for entry in (typed_registry.migration_admission or {}).get("entries", ())
+        }
+        generation_admissions = (
+            _replacement_generation_admissions(
+                root,
+                typed_registry,
+                tracked_regular_blobs,
+                frozenset(
+                    PurePosixPath(target) for target in replacement_targets.values()
+                )
+                & declared_paths,
+            )
+            if generic_report.valid
+            else frozenset()
+        )
+        for archive_path, replacement_target in replacement_targets.items():
+            frozen_edge = archive_path in base_paths
+            if (
+                not frozen_edge
+                and archive_path in additive_sources
+                and PurePosixPath(replacement_target) in generation_admissions
+            ):
+                frozen_edge = PurePosixPath(replacement_target) in (
+                    _replacement_generation_admissions(
+                        root,
+                        typed_registry,
+                        tracked_regular_blobs,
+                        frozenset({PurePosixPath(replacement_target)}),
+                        historical_record=PurePosixPath(archive_path),
+                    )
+                )
             replacement_failure = _replacement_target_diagnostic(
                 root,
                 typed_registry,
                 replacement_target,
                 tracked_regular_blobs,
+                generation_admissions=generation_admissions
+                if frozen_edge
+                else frozenset(),
             )
             if replacement_failure is not None:
                 diagnostics.append(_diagnostic(replacement_failure, archive_path))
@@ -1502,6 +1694,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             diagnostics.append(_diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path))
 
     current_documents: list[CurrentMarkdownDocument] = []
+    historical_registries: dict[str, Registry] = {}
+    source_registries: dict[str, Registry | None] = {}
     try:
         current_paths = _git_paths(root)
     except RuntimeError:
@@ -1523,6 +1717,61 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             diagnostics.append(_diagnostic("ARCHIVE-CURRENT-READ", raw_path))
             continue
         profile, status = _frontmatter_identity(markdown, raw_path)
+        retained_path = PurePosixPath(raw_path)
+        if (
+            typed_registry is not None
+            and retention_class_of(typed_registry, retained_path) is not None
+            and retained_path not in typed_registry.legacy_rebased_retained_paths
+        ):
+            rows = [
+                row
+                for record, row in catalog_rows.items()
+                if record == retained_path or record in retained_path.parents
+            ]
+            if (
+                not catalog_errors
+                and len(rows) == 1
+                and not any(
+                    item.path in {ARCHIVE_INDEX, rows[0].record_path.as_posix()}
+                    for item in catalog_diagnostics
+                )
+            ):
+                row = rows[0]
+                origin = row.envelope.original_path / retained_path.relative_to(
+                    row.record_path
+                )
+                source = blob_text(root, f"{row.envelope.commit}:{origin.as_posix()}")
+                try:
+                    current_bytes = read_worktree_regular_bounded(root, raw_path)
+                except ArchiveContractError:
+                    current_bytes = None
+                if (
+                    origin == retention_source_path(retained_path)
+                    and source is not None
+                    and source.encode("utf-8") == current_bytes
+                ):
+                    try:
+                        if row.envelope.commit not in source_registries:
+                            source_registries[row.envelope.commit] = (
+                                historical_generation_registry(
+                                    root, row.envelope.commit
+                                )
+                            )
+                        own_registry = source_registries[row.envelope.commit]
+                        if own_registry is not None:
+                            historical_registries[raw_path] = own_registry
+                    except ArchiveContractError:
+                        diagnostics.append(
+                            _diagnostic(
+                                "ARCHIVE-CATALOG-OBJECT", row.record_path.as_posix()
+                            )
+                        )
+                else:
+                    diagnostics.append(
+                        _diagnostic(
+                            "ARCHIVE-CATALOG-RETENTION", row.record_path.as_posix()
+                        )
+                    )
         current_documents.append(
             CurrentMarkdownDocument(
                 path=raw_path,
@@ -1535,6 +1784,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         tuple(current_documents),
         individual_archive_paths=expected_paths,
         registry=typed_registry,
+        historical_registries=historical_registries,
         assessments=(
             parse_assessment(typed_registry, index_text)[0]
             if typed_registry is not None and typed_registry.archive_assessment

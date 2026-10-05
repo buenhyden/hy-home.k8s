@@ -2,9 +2,9 @@
 title: "{{TITLE}}"
 version: "0.1.0"
 type: "operation/incident"
-status: "open"
+status: "detected"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "operations"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
@@ -52,7 +52,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Closure
 
-<!-- Author prompt: 해결 또는 종료 시각, 종료 owner, 남은 위험, 현재 상태를 뒷받침하는 증거를 기록한다. -->
+<!-- Author prompt: resolved 상태일 때만 frontmatter resolved_at에 실제 시간대 포함 시각을 기록하고 해결 증거를 본문에 적는다. 해결 전에는 시각을 미리 채우지 않는다. 종료 owner와 남은 위험을 함께 기록한다. -->
 
 ## Traceability
 

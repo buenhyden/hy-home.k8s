@@ -26,6 +26,7 @@ from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
 GIT_TIMEOUT_SECONDS = 10
+MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
 ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
@@ -91,6 +92,255 @@ class IdentifierColumn:
 
 
 @dataclass(frozen=True)
+class TaskExecution:
+    single_status_marker: Literal["frontmatter"]
+    result_states: Mapping[str, tuple[str, ...]]
+    summary_rule: Literal["task-items-v1", "task-items-v2"]
+    acceptance_states: tuple[str, ...] = ()
+    evidence_section: str | None = None
+    evidence_columns: tuple[str, ...] = ()
+    evidence_result_states: tuple[str, ...] = ()
+
+
+def direct_parent(
+    path: PurePosixPath, profile_id: str
+) -> tuple[PurePosixPath, str] | None:
+    if path.parts[:2] != ("docs", "03.specs") or profile_id not in {
+        "sdlc/plan",
+        "sdlc/task",
+    }:
+        return None
+    package = path.parent if profile_id == "sdlc/plan" else path.parent.parent
+    spec_id = f"SPEC-{package.name[:4]}"
+    return (
+        (package / "spec.md", spec_id)
+        if profile_id == "sdlc/plan"
+        else (package / "plan.md", f"{spec_id}-PLAN-0001")
+    )
+
+
+def task_evidence_issues(
+    rows: Sequence[Mapping[str, str]], binding: TaskExecution
+) -> tuple[tuple[str, str], ...]:
+    issues: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for number, row in enumerate(rows, 1):
+        identifier = row["Evidence"].strip()
+        if (
+            re.fullmatch(r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}", identifier) is None
+            or identifier in seen
+        ):
+            issues.append(
+                (
+                    "TASK-EVIDENCE-ID",
+                    f"row {number}: invalid or duplicate {identifier!r}",
+                )
+            )
+        seen.add(identifier)
+        if task_criterion_ids(row["Criteria"]) is None:
+            issues.append(
+                ("TASK-EVIDENCE-CRITERION", f"row {number}: invalid criterion")
+            )
+        if re.fullmatch(r"WORK-[0-9]{3}", row["Work Unit"].strip()) is None:
+            issues.append(("TASK-EVIDENCE-WORK", f"row {number}: invalid work unit"))
+        result, acceptance = row["Result"].strip(), row["Acceptance"].strip()
+        if result not in binding.evidence_result_states:
+            issues.append(
+                ("TASK-EVIDENCE-RESULT", f"row {number}: invalid result {result!r}")
+            )
+        if acceptance not in binding.acceptance_states or (
+            acceptance == "accepted" and result != "PASS"
+        ):
+            issues.append(
+                (
+                    "TASK-EVIDENCE-ACCEPTANCE",
+                    f"row {number}: invalid acceptance {acceptance!r}/{result} ",
+                )
+            )
+        if any(not cell.strip() for cell in row.values()) or (
+            acceptance == "accepted"
+            and _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row["Location"].strip())
+        ):
+            issues.append(
+                (
+                    "TASK-EVIDENCE-LOCATION",
+                    f"row {number}: concrete check input and location required",
+                )
+            )
+    return tuple(issues)
+
+
+_TASK_CRITERION_LINK = re.compile(r"\[(VAL-[A-Z0-9-]+-[0-9]{3})\]\(([^()\s]+)\)")
+_TASK_EVIDENCE_PLACEHOLDER = re.compile(
+    r"(?i)^(?:tbd|todo|n/?a|pending|waiting|not recorded|not executed|"
+    r"execution pending|named repository evidence|[-—])$"
+)
+
+
+def task_criterion_ids(cell: str) -> tuple[str, ...] | None:
+    """Read one Task cell's individually linked Spec criteria; empty means N/A."""
+
+    value = cell.strip()
+    if re.fullmatch(r"N/A — \S(?:.*\S)?", value):
+        return ()
+    parts = value.split(", ")
+    matches = [_TASK_CRITERION_LINK.fullmatch(part) for part in parts]
+    if not matches or any(match is None for match in matches):
+        return None
+    identifiers = tuple(match.group(1) for match in matches if match is not None)
+    return identifiers if len(identifiers) == len(set(identifiers)) else None
+
+
+def task_execution_issues(
+    rows: Sequence[Mapping[str, str]],
+    status: str,
+    binding: TaskExecution,
+    *,
+    template: bool = False,
+) -> tuple[tuple[str, str], ...]:
+    """Check parsed Task rows without parsing Markdown or changing their status."""
+
+    issues: list[tuple[str, str]] = []
+    seen_ids: set[str] = set()
+    states: list[str] = []
+    for number, row in enumerate(rows, start=1):
+        work_id = row["ID"].strip().strip("`")
+        if work_id in seen_ids:
+            issues.append(("TASK-EXECUTION-ID", f"row {number}: duplicate {work_id}"))
+        seen_ids.add(work_id)
+        criterion_ids = task_criterion_ids(row["Upstream criterion"])
+        if criterion_ids is None:
+            issues.append(
+                ("TASK-EXECUTION-CRITERION", f"row {number}: invalid linked criterion")
+            )
+        row_status = row["Status"].strip()
+        result = row["Result"].strip()
+        acceptance = row.get("Acceptance", "").strip()
+        evidence = row["Evidence"].strip()
+        if len(rows) == 1 and row_status != binding.single_status_marker:
+            issues.append(
+                ("TASK-EXECUTION-STATUS", f"row {number}: expected frontmatter marker")
+            )
+        effective_status = status if len(rows) == 1 else row_status
+        states.append(effective_status)
+        allowed = binding.result_states.get(effective_status)
+        if allowed is None:
+            issues.append(
+                ("TASK-EXECUTION-STATUS", f"row {number}: {effective_status!r}")
+            )
+            continue
+        if result not in allowed:
+            issues.append(
+                ("TASK-EXECUTION-RESULT", f"row {number}: {effective_status}/{result}")
+            )
+        if binding.summary_rule == "task-items-v2":
+            if acceptance not in binding.acceptance_states:
+                issues.append(
+                    (
+                        "TASK-EXECUTION-ACCEPTANCE",
+                        f"row {number}: invalid acceptance {acceptance!r}",
+                    )
+                )
+            elif criterion_ids:
+                if acceptance == "not-required" or (
+                    effective_status == "completed" and result == "NOT_APPLICABLE"
+                ):
+                    issues.append(
+                        (
+                            "TASK-EXECUTION-ACCEPTANCE",
+                            f"row {number}: linked criterion cannot be excluded by Task",
+                        )
+                    )
+                elif effective_status == "completed" and (result, acceptance) != (
+                    "PASS",
+                    "accepted",
+                ):
+                    issues.append(
+                        (
+                            "TASK-EXECUTION-ACCEPTANCE",
+                            f"row {number}: completed criterion requires PASS/accepted",
+                        )
+                    )
+            elif (
+                criterion_ids == ()
+                and effective_status == "completed"
+                and (
+                    result not in {"PASS", "NOT_APPLICABLE"}
+                    or acceptance != "not-required"
+                )
+            ):
+                issues.append(
+                    (
+                        "TASK-EXECUTION-ACCEPTANCE",
+                        f"row {number}: nonrequired completed row requires PASS or NOT_APPLICABLE/not-required",
+                    )
+                )
+            if acceptance == "accepted" and result != "PASS":
+                issues.append(
+                    (
+                        "TASK-EXECUTION-ACCEPTANCE",
+                        f"row {number}: accepted result must be PASS",
+                    )
+                )
+        if effective_status == "completed" and (
+            not evidence or _TASK_EVIDENCE_PLACEHOLDER.fullmatch(evidence)
+        ):
+            issues.append(
+                (
+                    "TASK-EXECUTION-EVIDENCE",
+                    f"row {number}: completed evidence placeholder",
+                )
+            )
+        if effective_status == "blocked" and not (
+            re.search(r"(?i)\breason:\s*\S", evidence)
+            and re.search(r"(?i)\bnext owner:\s*\S", evidence)
+        ):
+            issues.append(
+                (
+                    "TASK-EXECUTION-EVIDENCE",
+                    f"row {number}: blocked reason and next owner required",
+                )
+            )
+        if effective_status == "cancelled" and not re.search(
+            r"(?i)\breason:\s*\S", evidence
+        ):
+            issues.append(
+                (
+                    "TASK-EXECUTION-EVIDENCE",
+                    f"row {number}: cancellation reason required",
+                )
+            )
+    if (
+        template
+        or not states
+        or any(state not in binding.result_states for state in states)
+    ):
+        return tuple(issues)
+    if len(states) == 1:
+        expected = states[0]
+    elif "blocked" in states:
+        expected = "blocked"
+    elif "in-progress" in states or (
+        "completed" in states
+        and any(state in states for state in ("queued", "draft", "ready"))
+    ):
+        expected = "in-progress"
+    elif "ready" in states or "queued" in states:
+        expected = "ready" if binding.summary_rule == "task-items-v2" else "queued"
+    elif "draft" in states:
+        expected = "draft"
+    elif all(state == "completed" for state in states):
+        expected = "completed"
+    else:
+        expected = "cancelled"
+    if status != expected:
+        issues.append(
+            ("TASK-EXECUTION-SUMMARY", f"frontmatter {status!r}, rows {expected!r}")
+        )
+    return tuple(issues)
+
+
+@dataclass(frozen=True)
 class BodyContract:
     section: str
     table_heading: str
@@ -103,6 +353,7 @@ class BodyContract:
     allowed_target_profile_ids: tuple[str, ...]
     reciprocal_evidence: bool
     allow_explicit_exclusion: bool
+    task_execution: TaskExecution | None = None
 
 
 @dataclass(frozen=True)
@@ -240,6 +491,8 @@ class ReadmeNavigation:
     # READMEs the contract never checks: the Stage 98 index carries the machine
     # tables that sealed and frozen proofs read.
     exempt_paths: frozenset[PurePosixPath] = frozenset()
+    index_columns: tuple[str, ...] = ()
+    optional_index_columns: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -304,6 +557,7 @@ class Registry:
     legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
     readme_navigation: ReadmeNavigation | None = None
     document_language: DocumentLanguage | None = None
+    migration_admission: Mapping[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -704,6 +958,7 @@ def _schema_rule_id(error: Any) -> str:
 def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     if raw is None:
         return None
+    execution = raw.get("task_execution")
     return BodyContract(
         section=raw["section"],
         table_heading=raw["table_heading"],
@@ -719,6 +974,26 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
         allowed_target_profile_ids=tuple(raw["allowed_target_profile_ids"]),
         reciprocal_evidence=raw["reciprocal_evidence"],
         allow_explicit_exclusion=raw["allow_explicit_exclusion"],
+        task_execution=(
+            None
+            if execution is None
+            else TaskExecution(
+                single_status_marker=execution["single_status_marker"],
+                result_states=MappingProxyType(
+                    {
+                        state: tuple(results)
+                        for state, results in execution["result_states"].items()
+                    }
+                ),
+                summary_rule=execution["summary_rule"],
+                acceptance_states=tuple(execution.get("acceptance_states", ())),
+                evidence_section=execution.get("evidence_section"),
+                evidence_columns=tuple(execution.get("evidence_columns", ())),
+                evidence_result_states=tuple(
+                    execution.get("evidence_result_states", ())
+                ),
+            )
+        ),
     )
 
 
@@ -1288,7 +1563,11 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     profiles = tuple(
         replace(
             profile,
-            status_domain=profiles_by_id[profile.source_profile_ids[0]].status_domain,
+            status_domain=(
+                (dict(profile.constants)["status"],)
+                if "status" in dict(profile.constants)
+                else profiles_by_id[profile.source_profile_ids[0]].status_domain
+            ),
         )
         if profile.mode == "template" and profile.source_profile_ids
         else profile
@@ -1296,6 +1575,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     )
     return Registry(
         schema_version=raw["schema_version"],
+        migration_admission=raw.get("migration_admission"),
         profiles=profiles,
         lifecycle_domains=domains,
         retention_classes=tuple(
@@ -1384,6 +1664,8 @@ def _readme_navigation_from_mapping(
         ),
         pending_paths=frozenset(PurePosixPath(value) for value in raw["pending_paths"]),
         exempt_paths=frozenset(PurePosixPath(value) for value in raw["exempt_paths"]),
+        index_columns=tuple(raw.get("index_columns", ())),
+        optional_index_columns=tuple(raw.get("optional_index_columns", ())),
     )
 
 
@@ -1391,7 +1673,7 @@ def _readme_navigation_registry_diagnostics(
     raw_registry: Mapping[str, Any],
     profiles_by_id: Mapping[str, Mapping[str, Any]],
 ) -> list[Diagnostic]:
-    """Require navigation entries to name router profiles and their own H2s."""
+    """Require navigation entries to name README roles and their own H2s."""
 
     contract = raw_registry.get("readme_navigation")
     if contract is None:
@@ -1402,8 +1684,17 @@ def _readme_navigation_registry_diagnostics(
         if profile is None:
             faults.append(f"unknown profile {profile_id}")
             continue
-        if profile.get("mode") != "router":
-            faults.append(f"{profile_id} is not a router profile")
+        pack_anchor = (
+            profile_id
+            in {
+                "reference/audit-pack",
+                "reference/research-pack",
+                "reference/data-pack",
+            }
+            and profile.get("mode") == "authored"
+        )
+        if profile.get("mode") != "router" and not pack_anchor:
+            faults.append(f"{profile_id} is not a README navigation profile")
         if entry["section"] not in profile.get("sections", {}).get("required", ()):
             faults.append(f"{profile_id} section {entry['section']!r} is not required")
     if contract["max_deep_links_per_child"] < 1:
@@ -1417,7 +1708,7 @@ def _readme_navigation_registry_diagnostics(
     return [
         _diagnostic(
             "REGISTRY_README_NAVIGATION",
-            expected="router profiles, their required H2 sections, and README paths",
+            expected="README roles, their required H2 sections, and README paths",
             actual=fault,
         )
         for fault in faults
@@ -1631,10 +1922,10 @@ def _load_published_contract(
             actual=type(payload).__name__,
         )
     expected_id = f"https://hy-home.k8s/{path.as_posix()}"
-    if payload.get("schema_version") != 9 or payload.get("$id") != expected_id:
+    if payload.get("schema_version") != 10 or payload.get("$id") != expected_id:
         _fail(
             "REGISTRY_SCHEMA",
-            expected=f"schema_version=9 $id={expected_id!r}",
+            expected=f"schema_version=10 $id={expected_id!r}",
             actual=(
                 f"schema_version={payload.get('schema_version')!r} "
                 f"$id={payload.get('$id')!r}"

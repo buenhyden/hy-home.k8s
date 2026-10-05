@@ -155,6 +155,23 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     )
                 self.assertEqual(raised.exception.code, case["expectedError"])
 
+    def test_optional_tool_requires_defer_and_next_owner(self) -> None:
+        contract = copy.deepcopy(self.contract)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "ci-python-contract"
+        )
+        validator["optional"] = True
+        validator["fallback"] = {
+            "status": "DEFER",
+            "reason": "tool unavailable",
+            "nextOwner": "quality-engineer",
+        }
+        self.validator.validate_contract(ROOT, contract)
+        del validator["fallback"]["nextOwner"]
+        with self.assertRaises(self.validator.ContractError) as raised:
+            self.validator.validate_contract(ROOT, contract)
+        self.assertEqual(raised.exception.code, "SURFACE-FALLBACK")
+
     def test_ci_rename_range(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="affected-surface-ci-rename-"

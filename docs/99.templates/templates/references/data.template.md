@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "reference/data"
 status: "draft"
 owner: "{{OWNER}}"
-updated: "{{YYYY_MM_DD}}"
+updated: "{{UPDATED}}"
 layer: "references"
 artifact_id: "{{ARTIFACT_ID}}"
 ---
