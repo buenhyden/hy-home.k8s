@@ -1,8 +1,8 @@
 ---
 title: "Current Registry Fixture Consumers"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -43,7 +43,7 @@ the forward restoration of the explicitly approved Task-only boundary.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-005 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | Align current Registry fixture consumers while preserving identity, lifecycle and provenance refusals | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Observed intake](#observed-intake) |
+| WORK-005 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | Align current Registry fixture consumers while preserving identity, lifecycle and provenance refusals | repo-tooling-engineer | frontmatter | PASS | accepted | [Terminal candidate and handoff](#terminal-candidate-and-handoff) |
 
 ## Task Evidence
 
@@ -52,13 +52,14 @@ the forward restoration of the explicitly approved Task-only boundary.
 | EVD-P02-040 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Existing hosted failure and bounded named reproduction | Unchanged published Registry and three test consumers | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-041 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed-input named GREEN and scoped hooks | Final identity/authority fixtures; migration `8bace413…` with guard `a9c4991d…` | PASS | [Fixture acceptance preparation](#fixture-acceptance-preparation) | accepted |
 | EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed draft/ready actual-index staged/message and independent review | Draft `2c433586…`; ready `dc2c3469…` | PASS | [Ready prerequisites](#ready-prerequisites) | accepted |
-| EVD-P02-043 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Terminal completion and separate review | Pending terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-043 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed prospective completion and separate review | Isolated proposal tree `3fcef2db…`; fresh actual-index acceptance remains separately required before commit | PASS | [Terminal candidate and handoff](#terminal-candidate-and-handoff) | accepted |
 | EVD-P02-044 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Initial changed-input identity check | First identity four-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
 | EVD-P02-045 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | First migration prerequisite check | First five changed-input methods | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
 | EVD-P02-046 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Post-Schema migration group and causal diagnosis | Schema-valid fixture; first five-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
 | EVD-P02-047 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Same-pattern parent/current causal RED | Identical malicious proposed route; previous and Task0004 validator | FAIL | [Narrow history-order restoration](#narrow-history-order-restoration) | pending |
 | EVD-P02-048 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed Task-only guard and related controls | Guard `a9c4991d…`; control test `80816a8…`; migration first-five input `8bace413…` | PASS | [Narrow history-order restoration](#narrow-history-order-restoration) | accepted |
 | EVD-P02-049 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed guard-index staged/message and independent review | Guard commit `3b94d367…`; index `bdc1c146…` | PASS | [Fixture acceptance preparation](#fixture-acceptance-preparation) | accepted |
+| EVD-P02-050 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed fixture-index staged/message and independent review | Fixture commit `cff2cf32…`; index `097af6cd…` | PASS | [Terminal candidate and handoff](#terminal-candidate-and-handoff) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -337,11 +338,45 @@ The previous quality actor's model-capacity dispatch produced no observed
 canonical outcome; a fresh neutral quality actor reconciled no active run
 before executing these actual checks. No previous focused result was rerun
 to recover that dispatch. These facts accept the prior guard index, whose
-snapshot excluded the then-unstaged fixtures. The current fixture/Task index
-requires its own staged/message and independent review before commit; whole
-Work acceptance and terminal checks remain pending.
+snapshot excluded the then-unstaged fixtures. At fixture-slice authoring,
+that index still required its own staged/message and independent review;
+whole Work acceptance and terminal checks remained pending at that transition.
 
 Normal required exact-head hosted checks precede merge, and automatic
 integrated-main checks precede integration acceptance. Remote push waits for
 both local follow-ups to finish. The later known-path real-Git cumulative
 probe is a private history-proof lane, not full CI or explicit-ref acceptance.
+
+### Terminal candidate and handoff
+
+The user's explicit conditional permission authorizes this source closing
+candidate after observed implementation and prospective completion/review.
+The prior fixture commit `cff2cf32a2d09d5443341db930d098fea1ffb9f9` has reviewed
+index `097af6cdc3d3f5e8361eb0c9c2fe8bb3b8b95533`. Its actual7 canonical staged
+gates, fresh Task Markdown, configured message and separate final review
+passed, with complete output/cleanup and empty outer stderr. Staged stdout
+SHA-256 is `b5f312b454ef438571def668ccb858401a318f70a10de96a05cdd9922f48a3b9`;
+actual message SHA-256 is
+`4a8adf2a2d888b0e95b52c2c8a8f3b85f640fe12fd25b16959e762f24fc73e70`.
+
+The nonauthoritative isolated proposal at that clean implementation base,
+under `.worktrees/proposal/p01-task5-c5-terminal`, retained the same tracked
+configuration and durable branch reference. Exact proposal tree
+`3fcef2dbe9a5069c8666c652941f0a45403c6dc8` passed SPEC0106-only completion and
+separate semantic/evidence review. Actual INDEX-SNAPSHOT is
+`b730088569ae73e1cf26f05abb8b27e632a50485cd31a6f8905cf52945f54966`;
+completion stdout SHA-256 is
+`6a3c97817ecf3e92f5565f5394a9abb908631ddc11389f17ac41d34cd8dba5f7`.
+The original source remained clean/in-progress during that observation.
+No proposal staged run was required by the current owner policy.
+
+EVD-P02-043 accepts only those observed prospective results. This reflected
+actual index is a new input: fresh canonical staged, SPEC0106 completion,
+actual configured message and separate final evidence review must all pass
+before its normal commit. Those actual closing receipts stay external;
+no self-OID or unobserved actual result is written here. Local full/affected,
+the later known-path private history probe, hosted exact-head checks and
+integrated-main acceptance remain separate pending lanes. Rollback uses a
+reviewed forward correction or revert under the existing normal delivery
+authority; all branches, worktrees and completed historical evidence remain
+preserved. No native/runtime or remote success is inferred.
