@@ -18,7 +18,6 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts import archive_recovery as recovery, archive_validation as archive  # noqa: E402
-from tests.archive_generation_fixture import legacy_registry_payload  # noqa: E402
 from tests.git_fixture import GitFixture  # noqa: E402
 
 
@@ -29,35 +28,19 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.git = GitFixture(self.root)
         registry_path = Path("docs/99.templates/registry.json")
-        # These regressions create synthetic path ledgers, which ADR-0038 no
-        # longer routes; they exercise the frozen generation's own registry.
-        registry = legacy_registry_payload()
-        selected = {
-            "sdlc/architecture-description",
-            "sdlc/spec",
-            "sdlc/plan",
-            "archive/tombstone",
-        }
-        for domain in registry["lifecycle_domains"]:
-            profile_id = (
-                "archive/migration"
-                if "archive/migration" in domain["profile_ids"]
-                else domain["profile_ids"][0]
-            )
-            selected.add(profile_id)
-        for domain in registry["lifecycle_domains"]:
-            domain["profile_ids"] = [
-                profile_id
-                for profile_id in domain["profile_ids"]
-                if profile_id in selected
-            ]
-        # README navigation names profiles this selection drops.
-        registry.pop("readme_navigation", None)
-        # The language contract names profiles this selection drops.
-        registry.pop("document_language", None)
-        registry["profiles"] = [
-            profile for profile in registry["profiles"] if profile["id"] in selected
-        ]
+        # The public proof compiles the current published control plane. Its
+        # synthetic records need declared fixture routes outside the real
+        # repository's closed inventory, while normal proof checks still run.
+        registry = json.loads((ROOT / registry_path).read_text())
+        # Keep the complete declaration graph, including retained-path,
+        # navigation and language references to profiles outside these tests.
+        for profile in registry["profiles"]:
+            if profile["id"] == "archive/migration":
+                profile["path_pattern"] = (
+                    f"^(?:{profile['path_pattern']}|"
+                    r"docs/98\.archive/migrations/00(?:0[1-9]|1[0-9]|2[0-3])-"
+                    r"[a-z0-9]+(?:-[a-z0-9]+)*\.md)$"
+                )
         (self.root / registry_path).parent.mkdir(parents=True)
         (self.root / registry_path).write_text(json.dumps(registry))
         templates = {
@@ -67,6 +50,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         }
         for relative in {
             "docs/99.templates/contracts/document-profile.schema.json",
+            "docs/99.templates/contracts/frontmatter.schema.json",
             *templates,
         }:
             target = self.root / relative

@@ -141,11 +141,12 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         return (
             "---\n"
-            "title: 'Cumulative history'\n"
-            "type: governance/contract\n"
-            f"status: {status}\n"
-            "owner: platform\n"
-            "updated: 2026-08-31\n"
+            'title: "Cumulative history"\n'
+            'version: "0.1.0"\n'
+            'type: "governance/contract"\n'
+            f'status: "{status}"\n'
+            'owner: "platform"\n'
+            'updated: "2026-08-31"\n'
             "---\n\n# Cumulative history\n\n"
             f"{sections}"
         ).encode()
@@ -172,6 +173,12 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             result = VALIDATOR.main(arguments)
         return result, output.getvalue()
 
+    def commit_reviewed_activation(self, path: str | None = None) -> str:
+        """Record the real current review edge for an intended legal activation."""
+        target = self.path if path is None else path
+        self.commit_path(target, "in-review")
+        return self.commit_path(target, "active")
+
     def explicit(self, start: str, end: str) -> tuple[int, str]:
         return self.invoke("explicit-ref", from_ref=start, to_ref=end)
 
@@ -186,7 +193,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_explicit_ref_admits_absent_draft_active_chain(self) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
 
         result, output = self.explicit(self.base, active)
 
@@ -194,7 +201,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_ci_admits_same_chain_from_merge_base(self) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
 
         result, output = self.invoke("ci", base_ref=self.base, to_ref=active)
 
@@ -203,7 +210,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_same_status_body_change_is_a_valid_intermediate_event(self) -> None:
         self.commit("draft")
         self.commit("draft", "Reviewed policy with an intermediate revision.")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
 
         result, output = self.explicit(self.base, active)
 
@@ -211,7 +218,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_committed_ref_blobs_ignore_dirty_checkout_and_index(self) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
         target = self.root / self.path
         target.write_bytes(self.document("retired"))
         self.git.run("add", "--", self.path)
@@ -222,7 +229,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_only_create_diagnostic_is_removed_for_a_proved_path(self) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
         path = PurePosixPath(self.path)
         create = LifecycleDiagnostic(
             "FAIL",
@@ -285,9 +292,18 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", draft)
-        self.commit("active")
+        self.commit_reviewed_activation()
         draft_again = self.commit("draft")
         self.assertFalse(self.proved(self.base, draft_again))
+
+    def test_draft_to_active_without_review_remains_rejected(self) -> None:
+        self.commit("draft")
+        active = self.commit("active")
+
+        result, output = self.explicit(self.base, active)
+
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
 
     def test_deletion_recreation_and_exact_rename_are_not_admitted(self) -> None:
         self.commit("draft")
@@ -326,7 +342,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     def test_malformed_missing_and_bounded_history_evidence_fails_closed(self) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
         with mock.patch.object(
             VALIDATOR, "_first_parent_history", return_value=("bad",)
         ):
@@ -346,7 +362,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_staged_merge_admits_only_exact_legal_side_parent_create(self) -> None:
         self.git.run("checkout", "--quiet", "-b", "side", self.base)
         self.commit("draft")
-        self.commit("active")
+        self.commit_reviewed_activation()
         self.git.run("checkout", "--quiet", self.primary_branch)
         self.git.commit(".agents/governance/other.md", self.document("draft"))
         self.git.run("merge", "--no-commit", "--no-ff", "side")
@@ -363,7 +379,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_staged_merge_admits_one_committed_merge_boundary(self) -> None:
         self.git.run("checkout", "--quiet", "-b", "side", self.base)
         self.commit("draft")
-        self.commit("active")
+        self.commit_reviewed_activation()
         self.git.run("checkout", "--quiet", self.primary_branch)
         self.git.commit("notes/main.txt", b"unrelated main history")
         self.git.run("merge", "--no-ff", "--no-edit", "side")
@@ -383,7 +399,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.base = self.oid("HEAD")
         self.git.run("checkout", "--quiet", "-b", "side", self.base)
         self.commit("draft")
-        self.commit("active")
+        self.commit_reviewed_activation()
         self.git.run("checkout", "--quiet", self.primary_branch)
         self.git.commit("notes/feature.txt", b"unrelated feature history")
         self.git.run("merge", "--no-commit", "--no-ff", "side")
@@ -398,7 +414,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         fake = self.commit("active")
         self.git.run("checkout", "--quiet", "-b", "side", self.base)
         self.commit("draft")
-        self.commit("active")
+        self.commit_reviewed_activation()
         self.git.run("checkout", "--quiet", self.primary_branch)
         self.git.commit(".agents/governance/other.md", self.document("draft"))
         self.git.run("merge", "--no-commit", "--no-ff", "side")
@@ -577,7 +593,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 cache._snapshot(draft)[0][PurePosixPath(self.path)].status, "draft"
             )
             self.assertEqual(len(project.call_args.args[2]), 0)
-            active = self.commit("active")
+            active = self.commit_reviewed_activation()
             self.assertEqual(
                 cache._snapshot(active)[0][PurePosixPath(self.path)].status, "active"
             )
@@ -599,7 +615,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         (self.root / self.path).parent.mkdir(parents=True, exist_ok=True)
         self.git.run("mv", source, self.path)
         self.git.commit(self.path, self.document("draft", "y" * 300))
-        renamed = self.commit("active")
+        renamed = self.commit_reviewed_activation()
         result, output = self.explicit(self.base, renamed)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
@@ -634,7 +650,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 self.root, source_commit, copy_commit, PurePosixPath(self.path)
             )
         )
-        copied = self.commit("active")
+        copied = self.commit_reviewed_activation()
         self.assertFalse(self.proved(self.base, copied))
         result, output = self.explicit(self.base, copied)
         self.assertNotEqual(result, 0, output)
@@ -643,7 +659,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("reset", "--hard", self.base)
         self.git.commit("notes/unchanged-source.bin", b"\0" * 20_000)
         self.commit("draft")
-        independent = self.commit("active")
+        independent = self.commit_reviewed_activation()
         result, output = self.explicit(self.base, independent)
         self.assertEqual(result, 0, output)
 
@@ -651,7 +667,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self,
     ) -> None:
         self.commit("draft")
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
         missing = LifecycleDiagnostic(
             "FAIL",
             "LIFECYCLE-EVIDENCE",
@@ -685,10 +701,11 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("reset", "--hard", self.base)
         self.commit("draft")
         mismatched = self.document("draft").replace(
-            b"type: governance/contract", b"type: sdlc/architecture-description"
+            b'type: "governance/contract"',
+            b'type: "sdlc/architecture-description"',
         )
         self.git.commit(self.path, mismatched)
-        active = self.commit("active")
+        active = self.commit_reviewed_activation()
         result, output = self.explicit(self.base, active)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
@@ -697,8 +714,8 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         second = ".agents/governance/cumulative-history-second.md"
         self.commit_path(self.path, "draft")
         self.commit_path(second, "draft")
-        self.commit_path(self.path, "active")
-        active = self.commit_path(second, "active")
+        self.commit_reviewed_activation(self.path)
+        active = self.commit_reviewed_activation(second)
         candidates = (
             LifecycleDiagnostic(
                 "FAIL",

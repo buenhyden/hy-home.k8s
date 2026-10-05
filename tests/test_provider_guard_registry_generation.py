@@ -44,7 +44,9 @@ class RegistryGenerationAdmissionTests(unittest.TestCase):
                     if type(generation) is int and generation in (9, 10):
                         routes = GUARD.load_document_routes(str(root))
                         self.assertEqual(routes[0]["id"], "common/readme")
-                        self.assertTrue(routes[0]["pattern"].fullmatch("docs/README.md"))
+                        self.assertTrue(
+                            routes[0]["pattern"].fullmatch("docs/README.md")
+                        )
                     else:
                         with self.assertRaises(SystemExit) as rejected:
                             GUARD.load_document_routes(str(root))

@@ -642,8 +642,8 @@ retained backlink was not recognized, form destinations were unsupported,
 completed Task execution checks were skipped with the narrowed generic scope,
 and one declaration assertion conflated execution with reciprocal-link scope.
 The repair threaded the compiled Registry through the normal
-_raw_diagnostics / _body_contract_link_diagnostics / _links_back_to caller.
-Its normal _build_context fixture starts with document_registry unset; this
+`_raw_diagnostics` / `_body_contract_link_diagnostics` / `_links_back_to` caller.
+Its normal `_build_context` fixture starts with `document_registry` unset; this
 proof does not inject a held reader tuple to bypass normal compilation.
 
 A retained backlink is recognized only with a unique Catalog envelope,

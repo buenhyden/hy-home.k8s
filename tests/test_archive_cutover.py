@@ -63,7 +63,8 @@ class ArchiveCutoverTest(unittest.TestCase):
             registry.migration_admission["spec_ref"],
             registry.migration_admission["task_ref"],
         )
-        source = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"
+        # Verified historical Git commit fixture; this identity is not a credential.
+        source = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"  # pragma: allowlist secret
         record = "docs/98.archive/superseded/01.requirements/0005-workspace-document-assurance-modernization.md"
         new_record = "docs/98.archive/superseded/01.requirements/9999-new-edge.md"
         with TemporaryDirectory(prefix="archive-replacement-generation-") as directory:
@@ -222,7 +223,8 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_historical_registry_requires_the_exact_regular_known_generation(
         self,
     ) -> None:
-        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"
+        # Verified historical Git commit fixture; this identity is not a credential.
+        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"  # pragma: allowlist secret
         registry = archive_validation.historical_generation_registry(ROOT, commit)
         self.assertEqual(registry.schema_version, 9)
         with patch.object(archive_validation, "_proposal_members", return_value={}):
@@ -260,7 +262,8 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_frozen_supersession_requires_historical_registry_and_immediate_replacement(
         self,
     ) -> None:
-        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"
+        # Verified historical Git commit fixture; this identity is not a credential.
+        commit = "89dc12df213849e3e591c3f52bde2b1d288f033b"  # pragma: allowlist secret
         original = archive_validation._proposal_members
         for missing in (
             "docs/99.templates/registry.json",
@@ -352,7 +355,8 @@ class ArchiveCutoverTest(unittest.TestCase):
             registry=load_registry(ROOT),
             historical_registries={
                 path: archive_validation.historical_generation_registry(
-                    ROOT, "89dc12df213849e3e591c3f52bde2b1d288f033b"
+                    ROOT,
+                    "89dc12df213849e3e591c3f52bde2b1d288f033b",  # pragma: allowlist secret
                 )
             },
         )

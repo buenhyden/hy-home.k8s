@@ -52,9 +52,12 @@ neither instruction authenticates an approving actor.
 The request owner's later work-unit push and merge instruction also authorizes
 the bounded VAL-P02-003 compatibility repair needed by the observed PR gates.
 It preserves the current production Registry, schemas, validator semantics,
-frozen archive bytes and historical Task evidence. Historical fixture assets
-must come from the same immutable Git generation as their Registry; missing
-objects fail rather than substituting current schema bytes. Required hosted
+frozen archive bytes and historical Task evidence. Current public migration
+proof fixtures compile the actual published generation-10 Registry and its
+current schema/templates, with bounded synthetic migration routes declared only
+inside their temporary fixture Registry. Independent historical asset tests
+use the same immutable generation as the frozen Registry; missing objects fail
+rather than substituting current bytes. Required hosted
 checks gate the exact PR head before normal merge; integrated main is checked
 after merge before integration acceptance. Local full and affected execution
 remain excluded for this follow-up. No live, credential, native trust,
@@ -205,7 +208,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
-| VAL-P02-003 | Matching immutable historical fixture Registry/schema, missing-object refusal, scoped formatting and verified Git-identity annotations; focused RED/GREEN, staged/message, completion and independent review in the new Task. Required hosted PR and integrated-main checks remain separate from local acceptance. |
+| VAL-P02-003 | Current migration-proof fixtures use the complete actual generation-10 Registry/schema/template graph and test-only synthetic routes without bypassing compilation or proof checks. Cumulative-history fixtures use required current headers and explicit review transitions while retaining illegal-transition and provenance refusals. Independent historical asset tests prove exact immutable bytes and missing-object refusal. Scoped formatting and verified Git-identity annotations, focused RED/GREEN, staged/message, completion and independent review are recorded in the new Task. Hosted PR and integrated-main checks remain separate from local acceptance. |
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
