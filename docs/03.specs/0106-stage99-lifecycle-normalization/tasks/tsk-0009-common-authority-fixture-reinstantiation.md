@@ -2,7 +2,7 @@
 title: "Common Authority Fixture Reinstantiation"
 version: "0.1.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -36,8 +36,8 @@ new unique draft and retaining current authority fixture refusals.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-090 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Retained first-appearance source mismatch | Task8 creation metadata | FAIL | [Intake](#verification-summary) | rejected |
-| EVD-P02-091 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Named deterministic checks | Upcoming fixture input | NOT_RUN | Pending | pending |
-| EVD-P02-092 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Actual draft index and configured message | Draft tree `127a63a6` | PASS | [Draft acceptance](#draft-acceptance) | accepted |
+| EVD-P02-091 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Retained exact-input named controls and pinned hooks | Fixture `e4d0017c` with unchanged public dependencies/configs | PASS | [Fixture acceptance](#fixture-acceptance) | accepted |
+| EVD-P02-092 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Prior actual draft and corrected ready indices/messages | Trees `127a63a6` and `5ce73430` | PASS | [Prior indices](#prior-index-acceptance) | accepted |
 | EVD-P02-093 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Prospective terminal completion and review | Upcoming terminal candidate | NOT_RUN | Pending | pending |
 | EVD-P02-094 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Actual committed registered-form creation | Parent `342a105e` to draft `8fe19c20` | PASS | [Creation proof](#creation-proof) | accepted |
 
@@ -58,9 +58,9 @@ Task8's real first-appearance metadata is `C014` from completed Task0007,
 not its registered form. CI refusal is a static owner prediction; hosted
 jobs were cancelled without runner assignment or code execution, with cause
 unconfirmed. Its original four commits, source bytes and local PASS receipts
-remain historical evidence. This ready Task has no implementation or terminal acceptance. Its actual
-registered-form creation and draft checks are recorded below; the ready
-index and every later source index still require their own actual checks.
+remain historical evidence. This in-progress Task accepts only the observed exact-input fixture lane
+and prior draft/ready indices below. Its current implementation index,
+whole Work and terminal checks remain pending.
 
 ### Creation proof
 
@@ -72,7 +72,7 @@ The committed receipt `hy-p01-task9-c1-committed-creation.json` has SHA-256
 `034ef72d05294f76bf8fa6e50ad05c33d8752ac0c780ed5c32e5998fa2e0f9c3`.
 It records selected tool-stdout metadata; the full raw diff was not persisted.
 
-### Draft acceptance
+### Prior index acceptance
 
 Actual draft tree `127a63a62ae45181531d342fe0953407a45e2300` passed six fresh
 canonical staged gates and the pinned configured draft message; separate
@@ -81,8 +81,14 @@ receipt SHA-256 is
 `767e42c0bafd939416df0a12d4bd71c736899a18faec966ed016374a2dc05d98`
 and message receipt SHA-256 is
 `9380f2ae170c1f95bdfcaa874e63f3e773a40c5002243193f315081ed566f9ba`.
-These observed results belong to the prior draft input; the current ready
-index has not yet been accepted.
+These results belong to the prior draft input. The corrected ready tree
+`5ce7343042c63b42e630060c00c86ab5428d5fdc` subsequently passed six fresh
+staged gates and its configured message; independent final review preceded
+the normal ready commit. Its staged receipt SHA-256 is
+`cf1c0dca072c1120e0e00b7feea751c89c6879126e5c672cabc794f2180553b3`
+and message receipt SHA-256 is
+`452c71d0498a9f4cb34aa0b692592e0da431047f7e1887e8406ab44443fd5504`.
+The current implementation-index checks have not run.
 
 ### Readiness
 
@@ -95,7 +101,8 @@ receipt SHA-256 is
 `74c8c044ce6132055d59bb375f1b80ec2e4a0b0a56184e89c3214846acc78a39`.
 The owner requires `accepted` results to be `PASS`; this correction retains
 the failed observation with `rejected`. The message was not checked, and
-the corrected ready index still requires fresh actual checks and review.
+at correction time the ready checks and review remained pending. Their
+later observed acceptance is recorded above.
 The four-method manifest retains governance routing, unowned/retired route,
 native invocation-control and dangling-root refusals; its SHA-256 is
 `7e13588a823153383e59ca5c5e625d3d1fa72c7ced5d72fb1e7f2051186db2e5`.
@@ -105,3 +112,27 @@ prerequisites remain unchanged. Prior pure fixture observations can support
 the upcoming implementation only after exact source, configuration and
 public-dependency identity proof with independent attribution. No fixture
 check, full/affected execution or hosted acceptance is claimed here.
+
+### Fixture acceptance
+
+The restored fixture SHA-256 is
+`e4d0017c2a456290034adb2960880fb55a150ca1245a0f5e909ba45b7fe0bae3`,
+exactly the previously tested final input. All ten route mappings and
+existing refusal assertions remain intact. It expects the published six-state
+governance domain and gives the native positive its required metadata.
+Independent review accepted finite proof
+`hy-p01-task9-fixture-reuse-proof.json`, SHA-256
+`c462667a840f70ffba0c69bbce6077da768a58ff91da85244d2b496321715d2a`.
+It binds exact bytes/AST, four methods, imports/setup, public owner assets,
+behavioral dependencies/configs and original raw streams. These four
+controls do not consume Task/Spec/Plan corpus or Git history.
+
+The earlier first two PASS results and corrected native/fourth PASS results
+remain attributed to their original invocations; the native prerequisite
+FAIL is retained separately. The exact-byte pinned Ruff/check-format/scanner
+observations are also attributed to their original receipts. No test or
+hook was rerun for this lane, and no historical binary digest is invented.
+This accepts only the deterministic fixture input; it grants no new Task
+index, lifecycle-history, hosted or integrated-main acceptance. Fresh Task
+Markdown, actual selected staged/message and separate final review remain
+required before the implementation commit. Full/affected stays NOT_RUN.
