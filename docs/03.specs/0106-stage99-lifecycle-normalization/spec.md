@@ -236,7 +236,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
-| VAL-P02-008 | Common authority routing fixtures retain all ten exact semantic profile bindings and verify the published six-state governance-operations lifecycle. Unowned and retired route refusals and native invocation controls remain required. Named RED/GREEN, scoped hooks, each actual-index staged/message, terminal completion and independent review are recorded in Task0008. Production contracts and completed evidence remain unchanged; hosted and integrated-main acceptance remain separate. |
+| VAL-P02-009 | A new unique Task draft originates from the unchanged registered Task form, with actual first-appearance metadata observed before commit. The common authority fixture follows its published six-state governance domain and native metadata envelope while preserving every routing and invocation-control refusal. Retained Task8 observations are historical after the separate reviewed forward rollback. Named fixture evidence, scoped hooks, each actual-index staged/message, completion and independent review remain required; production contracts and hosted acceptance stay separate. |
 | VAL-P02-007 | Governance and Spec navigation fixtures follow the actual published current-state and section declarations while preserving owner membership and malformed navigation refusals. The archive Git-process budget retains its measured fixed-cost corpus meaning; any correction requires immutable causal accounting and preserves batching and the sixty-second bound. Named failures, changed-input controls, scoped hooks, each actual-index staged/message, completion and independent review are recorded in Task0007. Production contracts and completed evidence remain unchanged; hosted acceptance remains separate. |
 | VAL-P02-006 | The additive sealed-disposition recovery fixture records the exact frozen generation-9 Registry, original source and immediate successor together at the authenticated source revision. Existing missing-proof, wrong-disposition, source-identity, terminal-edge and cutover refusals remain required. Observed named RED, all 21 shared recovery-fixture methods, scoped hooks, each actual-index staged/message, terminal completion and independent review are recorded in Task0006. Production validators, published Registry/schema, frozen Archive and completed evidence remain unchanged; hosted and integrated-main acceptance are separate. |
 | VAL-P02-005 | Current artifact identity, authority lifecycle and migration fixtures consume the actual published generation-10 profile/domain declarations. Restore Task0004's new all-mode first-appearance metadata eligibility to trusted sdlc/task targets only, preserving prior ordinary-copy eligibility and refusal order for other profiles. Existing wrong-ID, illegal-edge, trusted-policy-before-pattern, default/schema-null and migration provenance refusals remain required. Observed failures, changed-input named GREEN and related controls, scoped hooks, each actual-index staged/message, terminal completion and independent code/security review are recorded in Task0005. Other production behavior, schemas, Registry and completed evidence remain unchanged; hosted PR and integrated-main results are separate. |
@@ -247,13 +247,10 @@ the Task owns all later execution observations.
 
 ## Traceability
 
-The common-authority lifecycle fixture follow-up maps VAL-P02-008 to
-WORK-008 in the [Plan](plan.md) and
-[Task0008](tasks/tsk-0008-common-authority-lifecycle-fixture.md).
-It repairs one observed test consumer without changing its published owner.
-The native invocation positive fixture must also carry its required ordered
-six-key metadata envelope so existing invalid-value refusals test their intended
-inputs.
+VAL-P02-009 maps to WORK-009 in the [Plan](plan.md) and
+[Task0009](tasks/tsk-0009-common-authority-fixture-reinstantiation.md).
+It follows the separate reviewed Task8 rollback, retaining all original
+commits and external observations without reusing its withdrawn identity.
 
 The current-owner fixture follow-up maps VAL-P02-007 to WORK-007 in the
 [Plan](plan.md) and
@@ -298,7 +295,7 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-008 | Exact named RED; changed authority route/state binding and preserved unowned/retired/native controls; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded fixture reinstantiation under the explicit normal unit-commit/push/merge instruction and reviewed rollback plan | VAL-P02-009 | Registered-form first-appearance metadata; named routing/native controls with exact-input evidence attribution; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded current-contract fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-007 | Named failure evidence; declaration-based governance and navigation controls; immutable archive call accounting before any corpus-budget correction; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal commit/push/merge instruction | VAL-P02-006 | Exact named RED; 21 explicit shared recovery-fixture methods and preserved refusal assertions; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted and integrated-main observations separate |
 | N/A — direct approved fixture repair and restoration of the narrow Task-template boundary for normal delivery | VAL-P02-005 | Observed named failures and same-pattern causal RED; bounded Task-template and migration refusal controls plus identity/authority fixtures; scoped hooks, actual-index staged/message, terminal completion and independent code/security review; hosted and integrated-main observations separate |
