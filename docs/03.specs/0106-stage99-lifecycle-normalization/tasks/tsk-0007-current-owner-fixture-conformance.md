@@ -2,7 +2,7 @@
 title: "Current Owner Fixture Conformance"
 version: "1.0.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -47,7 +47,7 @@ and their accepted evidence remain historical inputs.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-070 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Hosted failure and exact named reproductions | Clean final Task0006 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-071 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Causal accounting, changed-input controls and scoped hooks | Prospective fixture correction | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
-| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Current draft candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Observed draft index; current ready index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-073 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Prospective terminal completion and independent review | Not prepared | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -87,16 +87,48 @@ A separate accounting invocation reports a valid archive, zero retired-form
 fallback batches and 11.869 seconds, with safe receipt SHA-256
 `70bbe512cd6c021415439e8d7d60ab0e23a9c66a3e812def8d2b9d09218993ce`.
 This is diagnostic evidence, not authority to raise the process cap.
-Causal attribution using immutable budget-owner and pre-P01 main inputs
-remains pending; an implementation regression must be routed separately.
+Causal comparison and independent review subsequently established the precise
+cost. The immutable budget-owner input used 260 calls, while pre-P01 main used
+287, matching the final P01 input. One memoized historical Registry sequence
+costs three calls; eight authenticated historical successor sequences cost
+24. All remaining owner/verb counts exactly match the earlier 260. Both
+inputs remain valid with zero fallback batches and complete in under 60
+seconds. Baseline composite receipt SHA-256 is
+`a806345dd311e410979451fcd4d98b4cea2831f831b36c5c1dd3ac6cdbb1f5a7`;
+the final owner-chain receipt SHA-256 is
+`9a51ef4baf7edea505caa82b8ea0dfa4e6f9fc65653acb315e5c487cba931ab2`.
+Independent review accepts a fixture-only finite budget correction to 287,
+preserving report validity, fallback batching, detached adjustment and the
+sixty-second limit. This neither makes the bound dynamic nor asserts constant
+cost as the historical corpus grows. Production behavior is unchanged.
 
 ### Validation boundaries
 
-No fixture correction, changed-input GREEN, scoped hook, current draft-index
-QA or message result is observed yet. Four legal forward source transitions
-remain planned. Required tools, exact selected gates and named controls must
-be inspected before readiness. Each actual index is separately reviewed and
-checked before its normal commit. Prospective terminal completion/review is
-distinct from the reflected source's fresh staged/completion/message and final
-review. Hosted exact-head checks and integrated-main observations remain
-separate required delivery evidence; prior local acceptance is preserved.
+The actual draft index passed six fresh canonical staged gates, configured
+message validation and separate final independent review. All output and
+cleanup completed with stable source/index/reference identities. Staged
+receipt SHA-256 is
+`331e369ad567bd730d72782a5973b0f7554d01388f5743ff4cb05ec9518d0f01`;
+raw stdout SHA-256 is
+`1b83e3645fb29bd825307ecf4efd3bd555c9b3422fec5e4cfbcec15da7b3530b`;
+the exact configured message receipt SHA-256 is
+`7c6e575e2422b67d9c94f54d7b2e248ba3384e45113a179cefdd4250c2b96212`.
+EVD-P02-072 accepts only that observed draft input. Current readiness-index
+checks remain pending until observed.
+
+Readiness selects the finite five-path prospective scope through the canonical
+selector: seven validators and no unmatched paths, without affected execution.
+Its safe receipt SHA-256 is
+`6b9d01844b52f3fc3fec4b770208a27b27734242b0cf13c70d26a8cc9afeebbf`.
+The four explicitly named intake methods are the changed-input GREEN set;
+the navigation rejection and valid-folder case are retained controls. Existing
+pinned hooks and the canonical runner prerequisites come from prior actual
+checks with unchanged configurations. Focused commands retain a 60-second
+bound and canonical staged retains its existing runner limits.
+
+No fixture correction, changed-input GREEN or scoped hook result is observed
+yet. Each legal source index is separately reviewed and checked before its
+normal commit. Prospective terminal completion/review is distinct from the
+reflected source's fresh staged/completion/message and final review. Hosted
+exact-head checks and integrated-main observations remain separate required
+delivery evidence; prior local acceptance is preserved.
