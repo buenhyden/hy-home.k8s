@@ -1,8 +1,8 @@
 ---
 title: "Explicit Multi-row Task Summary Writer"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -58,7 +58,7 @@ main SHA results require separate observed evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | Extract shared summary, implement opt-in writer, verify and hand off | repo-tooling-engineer | frontmatter | PASS | pending | Focused writer and historical summary checks PASS; final handoff pending |
+| WORK-002 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | Extract shared summary, implement opt-in writer, verify and hand off | repo-tooling-engineer | frontmatter | PASS | accepted | [Observed local source acceptance](#verification-summary); closing check receipts attached separately |
 
 ## Task Evidence
 
@@ -66,11 +66,12 @@ main SHA results require separate observed evidence.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-015 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Focused RED/GREEN and historical summary regression | Helper `e3d55034…`, CLI `9dbda55e…`, tests `d77b3d97…`; original and review-fix RED snapshots preserved | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-016 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Initial draft exact-index staged check | Tree `2b63fc32e90b4126397c37348a7137bc602e159b` at base `df3281d0…` | FAIL | [Verification Summary](#verification-summary) | pending |
-| EVD-P02-017 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Completion anchor and independent semantic review | Final candidate pending | NOT_RUN | Pending | pending |
+| EVD-P02-017 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observed local source acceptance and independent semantic review | C3 `e848f21f7f6d47d083065bf5aa437732d6cab743`, final focused inputs and whole implementation/guidance review | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-018 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Repaired draft exact-index staged/message checks and semantic review | Tree `d3a0bcbb7191d017ef467f086c80f6554c73d054` at base `df3281d0…` | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-019 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Current C1 exact-index staged/message checks and semantic review | Tree `2871e25d7da8e92c4317cd42ef493556ed17a157`, committed as `46b99f86…` | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-020 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | C2 readiness exact-index staged/message and independent review | Tree `ad29287dad0b0b542ff0bad439e3fad85f5d757e`, committed as `a5693af2…` | PASS | [Verification Summary](#verification-summary) | accepted |
 | EVD-P02-021 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Malformed YAML/schema boundary RED/GREEN and review repair | Unchanged original CLI `bafa2ed3…` RED; repaired CLI `9dbda55e…` and tests `d77b3d97…` GREEN | PASS | [Verification Summary](#verification-summary) | accepted |
+| EVD-P02-022 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | C3 exact-index staged/message and whole-candidate semantic review | Tree `68f9c3281a314bb84cfae4f1af56c6158fca97fb`, committed as `e848f21f…` | PASS | [Verification Summary](#verification-summary) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -186,13 +187,47 @@ A temporary off-scope test draft at `/tmp` was rejected with
 Tests were authored at their approved worktree path after C2. This isolated
 tool rejection establishes no wider native discovery or enforcement claim.
 
-The Task is now in-progress with observed focused PASS and criterion acceptance
-pending. Completion mode, C3/C4 exact-index and message evidence, and final
-independent review remain pending. The closing proposal will be checked as
-non-authority input before identical bytes reach the current Task. Selected
-affected gates are recorded without executing that lane. Local full and
-affected execution remain `NOT_RUN/not-required` for this follow-up only;
-hosted full checks remain pending on delivered revisions. Residual risk and
-next owner are repo-tooling-engineer until final local source acceptance;
-remote push/merge are authorized but unobserved, and operator-owned native/live
-observations remain `DEFER`.
+C3 tree `68f9c3281a314bb84cfae4f1af56c6158fca97fb` passed all 12 selected
+canonical staged gates and was normally committed as
+`e848f21f7f6d47d083065bf5aa437732d6cab743`. The raw stdout
+`/tmp/hy-p02-c3-staged.stdout` has SHA-256
+`0f1431ff763e32d74a7f43c7712454d738e9dd0c8c320a5be01a5ec754b7eeb7`,
+with empty stderr. The exact C3 message passed pinned Commitizen.
+`/root/p02_independent_review` inspected the complete seven-path candidate,
+trusted parser dependencies, Task/guidance, raw RED/GREEN and staged outputs;
+it reported no unresolved material finding and confirmed the committed tree
+matched its reviewed input. EVD-P02-017 accepts these observed local source
+results rather than attributing future closing or hosted checks to C3.
+
+Affected routing was selected with
+`python3 -B scripts/select-affected-surfaces.py --root . --lane affected --paths-file /tmp/hy-p02-c3-paths.nul --delimiter nul --format json`.
+It returned 12 validators, `ciJobs=[qa]`, `protectedLevel=protected`, and no
+unmatched path; the JSON is `/tmp/hy-p02-c3-affected-selection.json`.
+Selection is not execution. Local affected and full execution remain
+`NOT_RUN/not-required` under this follow-up's explicit scope; no all-files or
+unit-discovery substitute ran.
+
+Local source acceptance closes WORK-002 and VAL-P02-002: shared current and
+historical aggregation, the opt-in safe writer, refusal and preservation
+regression, and scoped author guidance have observed checks and independent
+review. This terminal Task is first authored as an ignored non-authority
+candidate under `.worktrees/proposal/terminal-task-candidate.md`, on the same
+C3 base and configuration. Prospective staged/completion/message checks and
+independent review gate applying identical bytes to the current Task;
+separate actual-index staged and completion/message/review checks gate the
+normal closing commit. Exact closing results are attached in ignored
+`.worktrees/proposal/terminal-validation.json`, with prospective and actual
+inputs/results kept separate. That raw receipt records only observed results;
+it carries no authority and avoids rewriting this Task with its own final SHA.
+
+The Spec completion anchor is
+`docs/03.specs/0106-stage99-lifecycle-normalization/spec.md`. Source acceptance
+is local; authorized remote delivery remains pending until required exact-PR
+checks permit merge and the integrated main SHA's hosted result is observed.
+Native/live evidence remains `DEFER` to the operator. Residual risk is that
+static fixtures and local checks prove only the checked source behavior;
+hosted integration and provider runtime have their own evidence boundaries.
+Next owner is the delivery executor for normal push/PR/merge and hosted results;
+the user/operator retains native/live authority. Rollback is a scoped forward
+corrective commit or reviewed forward revert, preserving historical records,
+current unrelated work and both earlier worktrees.
