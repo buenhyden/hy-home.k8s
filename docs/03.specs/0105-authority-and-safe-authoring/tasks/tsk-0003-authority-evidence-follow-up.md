@@ -1,8 +1,8 @@
 ---
 title: "Authority and Evidence Follow-up"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -53,8 +53,8 @@ revision `2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb` is not a reset target.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | draft | NOT_RUN | pending | Source comparison and EVD-P01-006 below |
-| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate the four authorized Task-lifecycle commits and obtain independent read-only review | platform | draft | NOT_RUN | pending | EVD-P01-007 and handoff below |
+| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | ready | NOT_RUN | pending | Source comparison and EVD-P01-006 below |
+| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate the four authorized Task-lifecycle commits and obtain independent read-only review | platform | ready | NOT_RUN | pending | EVD-P01-007 and handoff below |
 
 ## Task Evidence
 
@@ -118,4 +118,52 @@ appended only after observation. At intake the historical recheck, current
 staged/completion/message checks and independent review are `NOT_RUN/pending`.
 Affected execution and local full QA are `NOT_RUN` by the current scoped
 request; they are not PASS evidence. Current remote and live state are `DEFER`
-to the relevant operator. No delivery or acceptance is claimed by this draft.
+to the relevant operator. The initial draft claimed no delivery or acceptance.
+
+### Readiness after the draft commit
+
+The first authorized logical commit
+`0625dfbeab0d751d347ca9e6e162740774c94410` has tree
+`ad6d5170d129081174ec2e38a2f29da1811dcb6f` and four paths: this Task,
+its Spec and Plan, and `.github/repository-surface.md`. The reviewed file
+SHA-256 values in that order are
+`6e9d43445000d5c9b02d1b6a15bfdba8d91ab214832c8afac186248916f6ec3c`,
+`2ca18743f7a43dea01ed8193113dacae762940567c0a1add8824192b410bc558`,
+`a887a468e6f997f99c71c302d6a4e62377000a55eb75e714bf2e0f036acb3354`,
+and `c26f44bd31171dfb4dc6bb516c84d7137a7e972fb3901adde5f033f0c96f6aee`.
+The independent read-only code-reviewer `/root/qa_release_survey` inspected
+those exact files and the source contracts, reported PASS with no remaining
+finding for the intake diff. This is intake review, not final acceptance.
+The bounded runner invoked `/usr/bin/python3 -B scripts/qa.py staged
+--base-ref HEAD --root <P01_WORKTREE>` on that exact index, where
+`<P01_WORKTREE>` denotes the isolated P01 worktree in this tracked summary;
+the scratch result retains the resolved command. It returned zero with six
+of six selected gates PASS
+(193.708 seconds, raw result in
+`/tmp/hy-p01-phase1-qa-qlu1f8n_/staged.json`).
+`git diff --cached --check` returned zero. The actual first message
+`docs(governance): clarify authority evidence follow-up scope` passed pinned
+Commitizen validation; normal `git commit -F` returned zero. These claims
+describe only the draft index and first commit.
+
+Readiness tool preflight at the new branch HEAD observed Python 3.12.3,
+pre-commit 4.6.1 and Git 2.43.0. Repository `core.hooksPath` points to
+`scripts/githooks`; its executable pre-commit/commit-msg entries delegate to
+global and workspace hooks. Neither delegated workspace hook exists in the
+common `.git/hooks`, and the global commit-msg hook is absent, so the first
+commit's normal hook invocation is not evidence that the workspace
+pre-commit or Commitizen hook executed. Explicit pinned message validation
+and exact-index QA supply the corresponding local evidence. No hook,
+trust or user configuration was changed. Resource and tool limits remain
+those of the registered validation runner; no broad discovery or full QA is
+scheduled. The separately observed P02 historical recheck awaits its current
+Task evidence disposition; current completion and final review remain pending.
+
+The first ready-only index `9af794945da425bd8f8aa5304ce87dd44ea880a4`
+failed canonical staged QA after 196.005 seconds: five of six selected gates
+passed, while `repository-quality` rejected an absolute local checkout path
+written into this Task's command evidence. The result is FAIL for that
+superseded index, not a reason to weaken the path rule. This revision writes
+the command with a worktree placeholder and requires fresh exact-index QA
+before a ready-state commit. The unchanged commit message already passed the
+separate pinned Commitizen check, which does not validate document content.
