@@ -1,8 +1,8 @@
 ---
 title: "Registered Task Template Instantiation"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -59,7 +59,7 @@ source and original Task EVD-P02-013/014 are preserved.
 - **Allowed Paths**: This Spec/Plan/Task, `scripts/validate-document-lifecycle.py` private copy guard and `tests/test_document_lifecycle_cumulative_history.py` focused regression fixtures. One writer owns these five paths; preserve the separate P02 worktree.
 - **Forbidden Paths**: Public schemas, Registry generation/bindings, validation-lane membership, hosted configuration, frozen Archive, completed Task0003, original Task evidence, provider/native state, secrets and unrelated code.
 - **Approval Required**: The explicit narrow user authorization delegates this registered lifecycle validator to the repo-tooling-engineer. The existing user commit/push/normal-merge authority persists. The explicit conditional closing authorization permits applying a tested completed candidate before actual-index checks; no commit occurs until actual checks and separate review pass. No actor authentication or runtime enforcement is claimed.
-- **Static Validation**: Real-Git named RED then minimal GREEN; source/binding/identity/state/provenance refusal regressions; exact-index canonical staged and actual message for draft, ready, implementation and closing commits; terminal proposal staged/completion/review followed by actual-index checks and separate review. Local full and affected execution NOT_RUN under scope exclusion; required hosted checks precede normal merge and automatic main checks precede integration acceptance.
+- **Static Validation**: Real-Git named RED then minimal GREEN; source/binding/identity/state/provenance refusal regressions; exact-index canonical staged and actual message for draft, ready, implementation and closing commits. A same-base/config isolated terminal proposal receives Spec completion and separate semantic review; its uncommitted status does not replace the closing source's fresh actual-index staged, completion, message and separate review. Local full and affected execution NOT_RUN under scope exclusion; required hosted checks precede normal merge and automatic main checks precede integration acceptance.
 - **Live Validation**: DEFER — not requested; no cluster or runtime acceptance.
 - **Secret / Vault Handling**: No private values or raw sensitive logs; Git metadata and safe check receipts only.
 - **Rollback Plan**: Normal forward correction or reviewed forward revert; no force, rebase, cleanup, branch deletion or local main updates.
@@ -94,5 +94,39 @@ The selected neutral role and both required procedures were explicitly read.
 This registered-member edit uses the explicit active-Task delegation, not a
 filename-based ownership inference. Quality and independent review are
 separate actors; tracked provider projections prove no native enforcement.
-No implementation, RED/GREEN, new index acceptance or hosted repair outcome
-is asserted at this draft intake.
+At the draft intake, implementation, RED/GREEN and hosted repair outcomes
+were pending. They remain pending at this ready transition.
+
+### Ready prerequisites
+
+The draft's actual three-document index received six canonical staged gates,
+the exact configured commit-message check and independent review, all PASS.
+Observed staged stdout has SHA-256
+`0a81eb3003a5639bfc8809beb93f6c3c9f5e6589e7e3afe64a0c31af20b2744e`.
+The normal draft commit is `e149ffeb6c279f72acb040d966d8a4469c3ac918`.
+This records the draft's acceptance only; the ready candidate receives its
+own index and message checks before a normal commit.
+
+Selection-only preflight of the five authorized paths selected twelve
+canonical implementation gates: agent-governance, archive-contract-tests,
+document-contract-registry, document-lifecycle, gitops-structure,
+infrastructure-contracts, k8s-manifests, links-and-owners, markdown-profiles,
+policy-gates, repository-quality and secret-handling. All selected gates
+remain required; no affected execution occurred.
+
+The secure resolver initially found no Conftest candidate. The official
+Conftest 0.69.0 release asset matched both its official checksum and the
+existing CI pin, SHA-256
+`96fc2fbf11f0afde51256647127e6f00a64ce839a4d9a0a1aef2426c0e6f4b3f`.
+An absent-only account-owned installation passed the unchanged secure
+resolver; observed version was Conftest 0.69.0 with OPA 1.19.0.
+Verification and installation receipts are ignored under
+`.worktrees/proposal/task4-conftest/`; absolute executable and operational
+paths remain there. No existing file, configuration or credential changed.
+Named tests use a separate 60-second command bound. Canonical execution
+retains the runner's existing timeout, output and cleanup limits.
+
+The original hosted run completed with a unit-tests failure while its
+pre-commit and other complement gates passed. Its five named failures are
+being diagnosed separately; this ready transition claims no hosted repair
+or integration acceptance and does not retry that run.
