@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
@@ -97,6 +97,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-007 | [VAL-P02-007](spec.md#success-criteria--verification-plan) | Align governance and Spec navigation fixtures with current declarations; resolve the archive process-budget failure through measured causal accounting | Observed final-head failures; independent cause/scope review; immutable accounting before any budget correction; completed Tasks preserved | [SPEC-0106-TSK-0007](tasks/tsk-0007-current-owner-fixture-conformance.md) | Changed named cases and relevant controls; unchanged batching/time bounds; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-006 | [VAL-P02-006](spec.md#success-criteria--verification-plan) | Bind the additive recovery fixture's frozen Registry, source and immediate successor to one actual Git revision | Observed final-head hosted failure and exact named RED; independent cause/scope review; preserve completed Tasks and all production refusals | [SPEC-0106-TSK-0006](tasks/tsk-0006-sealed-source-revision-fixture.md) | 21 explicit shared recovery-fixture methods, scoped hooks, each actual-index staged/message and separate review; prospective terminal completion/review then fresh actual closing checks; hosted exact-head/main results separate |
 | WORK-005 | [VAL-P02-005](spec.md#success-criteria--verification-plan) | Restore Task-only new history metadata eligibility and align three current Registry test consumers while retaining their negative contracts | Completed Task0004; observed hosted unit failures and same-pattern causal comparison; independent code/security review and actual-index checks before each normal commit | [SPEC-0106-TSK-0005](tasks/tsk-0005-current-registry-fixture-consumers.md) | Observed RED; changed-input Task-template, ordinary-copy and bounded malicious-pattern controls; identity/authority and all25 shared migration-fixture methods; scoped hooks; actual-index staged/message; prospective completion/review then fresh actual closing checks; required hosted and integrated-main observations separate |
 | WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
@@ -105,6 +106,21 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
+
+WORK-007 owns only `tests/test_archive_validation.py`,
+`tests/test_common_agents_archive_routes.py`, this Spec, Plan and its new
+Task. Derive governance expectations from current authored owner declarations
+and retain profile, mode and state-membership checks. Both navigation payloads
+use the registered section without changing their rejection assertions.
+Immutable archive accounting must distinguish fixed corpus growth from an
+implementation regression before any budget proposal. Preserve fallback
+batching, the sixty-second bound and all production behavior. Four forward
+commits record draft, readiness, implementation and completion. Explicit
+named changed-input checks and scoped hooks precede each reviewed actual
+index's canonical staged/message checks. The terminal proposal needs only
+completion/review; reflected source needs fresh actual staged/completion,
+message and separate final review before commit. Local full/affected remain
+NOT_RUN; no remote run is retried or protected gate bypassed.
 
 WORK-006 owns only `tests/test_archive_disposition_routes.py`, this Spec,
 Plan and its new Task. Existing `GitFixture.commit_many` records exact
