@@ -100,7 +100,9 @@ WORK-008 owns only `tests/test_common_agents_document_routes.py`, this Spec,
 Plan and its new Task. Preserve all ten route/profile mappings and the
 non-null lifecycle assertion; verify the explicit current six-state vocabulary
 and governance-operations binding. Preserve unowned/retired route refusals
-and native invocation controls. Four forward commits record draft, readiness,
+and native invocation controls. The observed native positive fixture prerequisite
+requires its published ordered six-key metadata; preserve every invalid flag,
+missing flag, extra key and duplicate flag refusal. Four forward commits record draft, readiness,
 implementation and completion. Explicit named changed-input controls and scoped
 pinned hooks precede reviewed actual-index staged/message checks. The isolated
 terminal proposal needs completion/review only; reflected source requires fresh

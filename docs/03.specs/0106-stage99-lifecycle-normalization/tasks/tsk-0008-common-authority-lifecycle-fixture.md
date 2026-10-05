@@ -2,7 +2,7 @@
 title: "Common Authority Lifecycle Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -17,7 +17,8 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 This necessary bounded delivery follow-up owns
 [VAL-P02-008](../spec.md#success-criteria--verification-plan) and
 [WORK-008](../plan.md#work-breakdown). One test consumer still expects the
-old governance state vocabulary. Completed Tasks and accepted evidence remain
+old governance state vocabulary; its native positive control also omitted
+required metadata. Completed Tasks and accepted evidence remain
 historical inputs.
 
 ## Inputs
@@ -44,8 +45,8 @@ historical inputs.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-080 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Hosted failure and exact named RED | Clean final Task0007 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
-| EVD-P02-081 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Changed-input controls and scoped hooks | Upcoming reviewed fixture | NOT_RUN | [Implementation observations](#implementation-observations) | pending |
-| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Observed draft index only | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-081 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Changed-input controls and scoped hooks | Observed reviewed fixture and unchanged control dependencies | PASS | [Implementation observations](#implementation-observations) | accepted |
+| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Observed draft and ready indexes only | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-083 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Prospective terminal completion and independent review | Upcoming isolated candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -86,7 +87,31 @@ fixture-only cause and four-path scope; no production correction is justified.
 
 ### Implementation observations
 
-NOT_RUN — no fixture change or changed-input validation has occurred.
+The first changed-input execution passed the route/state and unowned/retired
+methods, then failed the native positive control with `FM-KEYSET`: its synthetic
+valid input omitted required metadata. The fourth method and hooks were held.
+Actual partial receipt SHA-256 is
+`6144dfda0d2c4eda390f22dadbdc606d76600623e473328ba5df494726ec08c8`.
+Independent owner review confirmed the required ordered nested title, version,
+type, status, owner and updated metadata. No production correction is needed.
+
+The corrected fixture SHA-256 is
+`e4d0017c2a456290034adb2960880fb55a150ca1245a0f5e909ba45b7fe0bae3`.
+It retains all ten exact mappings and non-null lifecycle checks, verifies the
+explicit six-state vocabulary and governance-operations family, and adds only
+the required native positive metadata. Every invalid boolean, omitted flag,
+unknown key and duplicate flag refusal remains unchanged.
+The changed native method and previously held fourth method passed under
+60-second bounds. The first two actual PASS results are reused only after
+reconstructing their prior exact source and verifying unchanged method AST,
+setup, imports and public dependencies. Focused receipt SHA-256 is
+`b4a4fb529f89f33cbc89f0dcf643450b706756de03922c16839184a6d9d03bb6`.
+Pinned Ruff check/format and detect-secrets passed on an exact-byte disposable
+copy with unchanged configurations, no formatting delta and complete cleanup.
+Hook receipt SHA-256 is
+`f2e4ff8bcf4c963fdb4967e5c1021a8003dfe5a338ca916ee026e95268a76359`.
+Separate independent review directly audited the receipts and raw outputs;
+EVD-P02-081 accepts this focused lane only. Prior failure evidence is preserved.
 
 ### Validation boundaries
 
@@ -99,7 +124,15 @@ raw stdout SHA-256 is
 `fbd5408dc71c529fb2769c5230048848dc6abacdfcf9a34ff476b8b9cd5a644b`;
 configured message receipt SHA-256 is
 `03e959f024b352e0977425f60e554e47fa4caf01585b05cae4201d102b4ccdd3`.
-EVD-P02-082 accepts this observed draft index only.
+The actual ready index subsequently passed six fresh canonical staged gates,
+configured message validation and separate final independent review. Its staged
+receipt SHA-256 is
+`6f6cee2617e414c701e04467e4c5157f226cc5026c5d13abad418f9a2c1041ed`;
+raw stdout SHA-256 is
+`478ce8f3b27e17b57ccaea5654e68b60fc0168bcb6ae961a3abb7426b08321db`;
+configured message receipt SHA-256 is
+`c89ffef0dbbe10768dabeb41176aed5354d00c5f7e51831ee9b51b9d63eedc37`.
+EVD-P02-082 accepts these observed draft and ready indexes only.
 
 Readiness selects exactly the four allowed paths through the canonical
 selector: seven validators, no unmatched paths and no validator execution.
@@ -112,7 +145,8 @@ governance-root refusal. Its SHA-256 is
 Focused commands retain 60-second bounds; canonical staged retains its existing
 runner limits. Pinned hook/configuration prerequisites are unchanged from prior
 observed checks. These observations establish implementation readiness, not
-execution acceptance. Current ready-index checks, implementation and terminal
+execution acceptance. At the ready transition, implementation remained pending.
+Current implementation-index checks, whole Work and terminal
 acceptance remain NOT_RUN until observed.
 Quality and independent review are separate from the sole writer. The isolated
 terminal candidate needs SPEC-0106 completion/review only; normal source

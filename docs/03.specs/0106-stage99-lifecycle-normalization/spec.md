@@ -222,6 +222,9 @@ The common-authority lifecycle fixture follow-up maps VAL-P02-008 to
 WORK-008 in the [Plan](plan.md) and
 [Task0008](tasks/tsk-0008-common-authority-lifecycle-fixture.md).
 It repairs one observed test consumer without changing its published owner.
+The native invocation positive fixture must also carry its required ordered
+six-key metadata envelope so existing invalid-value refusals test their intended
+inputs.
 
 The current-owner fixture follow-up maps VAL-P02-007 to WORK-007 in the
 [Plan](plan.md) and
