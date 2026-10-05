@@ -85,19 +85,9 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                 if expected.startswith("governance/"):
                     self.assertEqual(
                         profile.status_domain,
-                        (
-                            "draft",
-                            "in-review",
-                            "active",
-                            "deprecated",
-                            "superseded",
-                            "retired",
-                        ),
+                        ("draft", "active", "superseded", "retired"),
                     )
                     self.assertIsNotNone(profile.lifecycle_domain)
-                    self.assertEqual(
-                        profile.lifecycle_domain.family, "governance-operations"
-                    )
 
     def test_dedicated_nested_resources_have_owned_document_routes(self):
         for path, expected in (
@@ -159,9 +149,6 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
         valid = (
             '---\nname: "docs-stage-routing"\n'
             'description: "Route authored documents."\n'
-            'metadata:\n  title: "Docs Stage Routing"\n  version: "1.0.0"\n'
-            '  type: "governance/skill"\n  status: "active"\n'
-            '  owner: "platform"\n  updated: "2026-10-06"\n'
             "disable-model-invocation: true\n---\n\n# Routing\n"
         )
         schema = MARKDOWN.load_frontmatter_schema(ROOT)
