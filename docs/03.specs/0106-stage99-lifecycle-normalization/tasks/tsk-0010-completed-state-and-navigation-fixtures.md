@@ -1,8 +1,8 @@
 ---
 title: "Completed-State and Navigation Fixtures"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -15,8 +15,8 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 ## Overview
 
 Repair two test consumers exposed by the executed hosted complement, preserving
-their current and historical refusal contracts. This draft records intake only;
-implementation and acceptance remain pending.
+their current and historical refusal contracts. Readiness accepts observed draft
+checks and registered creation; implementation and its acceptance remain pending.
 
 ## Inputs
 
@@ -47,9 +47,9 @@ implementation and acceptance remain pending.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-100 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Three explicit named RED checks; independent cause/scope review | Unchanged accepted Task9 checkout; sixty-second bounds | FAIL | External safe named receipt `hy-p01-751623-attempt2-named.receipt.json`; cause receipt `hy-p01-751623-attempt2-named-causes.json` | rejected |
 | EVD-P02-101 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Named changed-input GREEN, related refusal controls and scoped hooks | Pending corrected fixture bytes | NOT_RUN | Pending focused receipts | pending |
-| EVD-P02-102 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Readiness, each actual-index staged/message and independent review | Pending logical indices and exact messages | NOT_RUN | Pending actual-index receipts | pending |
+| EVD-P02-102 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Draft actual-index staged/message and independent review | Frozen three-document draft; unchanged configs and exact message | PASS | External `hy-p01-task10-c1-staged.receipt.json`, separate `staged-qualification.json` and `message.receipt.json`; independent reviewer `/root/p02_independent_review` | accepted |
 | EVD-P02-103 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Prospective completion/review and fresh actual closing checks | Pending terminal candidates | NOT_RUN | Pending separate prospective and actual receipts | pending |
-| EVD-P02-104 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Registered-form first-appearance metadata | Genuine new draft and unchanged declared Task form | NOT_RUN | Pending cached and committed Git metadata observations | pending |
+| EVD-P02-104 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Registered-form first-appearance metadata | Actual cached and committed C007 from unchanged declared regular Task form; target absent before creation | PASS | Ignored `p01-task10-c1-creation-preflight.json` and `p01-task10-c1-postcommit.json`; selected metadata observations, full raw diff not persisted | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -68,8 +68,9 @@ implementation and acceptance remain pending.
   review required before commit. Protected merges still require exact-head hosted
   checks; no admin, force, history rewrite or live operation is authorized.
 - **Static Validation**: Three observed named REDs; faithful current/historical
-  fixture construction; named GREEN and related controls within sixty-second
-  focused bounds; pinned scoped hooks; fresh canonical staged/message per actual
+  fixture construction; seven explicit named GREEN/refusal controls in
+  `p01-task10-focused-manifest.json` within sixty-second focused bounds; pinned
+  scoped hooks; fresh canonical staged/message per actual
   index and independent review. The runner's existing envelope remains unchanged.
   Prospective completion/review precedes fresh actual closing staged/completion,
   message and review. Full/affected execution remains NOT_RUN.
@@ -91,8 +92,27 @@ Intake is observed: all three named checks failed on unchanged inputs, and the
 independent reviewer confirmed the five-path fixture scope. Spec/Plan must use
 the current in-progress predecessor; lifecycle-free creation must target the
 domainless collection index, not a stateful research pack. Historical replay
-must prove each commit's real declared graph, including current-invalid done
-after cutover; changing only the legal prefix is not acceptance evidence.
-No implementation, draft-index check, registered creation, completion or hosted
-acceptance is claimed here. Next owners are the writer, separate quality actor
-and independent reviewer; the final hosted checkout remains the delivery owner.
+must prove each commit's real declared graph. The independently reviewed design
+uses two isolated Git fixtures: real frozen generation9 draft/active/done history
+must be admitted using the current Registry argument; its unsupported terminal
+cutover must be refused. A separate current-generation legal review/approval
+prefix must reach completed, while a later same-path done must be refused. This
+avoids unrelated copied-path provenance and does not claim which cutover
+condition rejects first. The construction is not implemented or tested yet.
+
+The observed draft index ran six fresh canonical gates and the exact configured
+message hook, with complete streams/cleanup and no input drift. An initial QA
+receipt parser incorrectly aggregated quoted semicolon fields; its original
+false wrapper is preserved, with a separately audited parsing qualification and
+no execution retry. Configured message validation observed equal disposable
+stage entries and copied configs; raw disposable index bytes changed without a
+known cause and were not an acceptance prerequisite. Independent final review
+accepted the actual leaves before the normal draft commit.
+
+Readiness selection over the five paths lists seven validators, unmatched zero,
+without executing affected validation. The explicit seven-method manifest keeps
+all six completed-state tests plus the domainless-navigation case. No production
+or fixture input has changed. This ready index's staged/message, implementation,
+whole WORK and terminal checks remain NOT_RUN until observed. Next owners are
+the writer, separate quality actor and independent reviewer; hosted admission
+remains required for the final checkout, beyond the capped failure excerpt.
