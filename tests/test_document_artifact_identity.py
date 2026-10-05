@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import importlib.util
 import io
+import re
 import shutil
 import subprocess
 import sys
@@ -96,32 +97,55 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 "docs/90.references/audits/0072-example/m0002-example.md",
                 "AUD-0072-m0002",
             ),
+            "reference/audit-pack": (
+                "docs/90.references/audits/0072-example/README.md",
+                "AUD-0072",
+            ),
             "reference/research": (
                 "docs/90.references/research/0072-example/m0002-example.md",
                 "RES-0072-m0002",
+            ),
+            "reference/research-pack": (
+                "docs/90.references/research/0072-example/README.md",
+                "RES-0072",
             ),
             "reference/data": (
                 "docs/90.references/data/0072-example/m0002-example.md",
                 "DATA-0072-m0002",
             ),
+            "reference/data-pack": (
+                "docs/90.references/data/0072-example/README.md",
+                "DATA-0072",
+            ),
             "archive/scope-migration": (
                 "docs/98.archive/migrations/0072-example.md",
                 "MIG-0072",
             ),
-            "archive/route-tombstone": (
+            "archive/route": (
                 "docs/98.archive/tombstones/0072-example.md",
                 "TOMB-0072",
             ),
         }
 
-    def test_every_registered_numbered_authored_profile_is_path_bound(self) -> None:
+        cls.pattern_owned = frozenset(
+            {
+                "reference/audit-pack",
+                "reference/research-pack",
+                "reference/data-pack",
+                "archive/route",
+            }
+        )
+
+    def test_registered_numbered_profiles_have_declared_identity_contracts(
+        self,
+    ) -> None:
         authored = {
             profile.profile_id
             for profile in self.registry.profiles
             if profile.mode == "authored" and profile.artifact_id_pattern is not None
         }
         self.assertEqual(
-            set(self.cases) - {"archive/scope-migration", "archive/route-tombstone"},
+            set(self.cases) - {"archive/scope-migration", "archive/route"},
             authored,
         )
         for profile_id, (raw_path, expected) in self.cases.items():
@@ -129,7 +153,28 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 profile = self.profiles[profile_id]
                 path = PurePosixPath(raw_path)
                 self.assertEqual(MARKDOWN.classify_path(self.registry, path), profile)
-                self.assertEqual(MARKDOWN.expected_artifact_id(path, profile), expected)
+                derived = None if profile_id in self.pattern_owned else expected
+                self.assertEqual(MARKDOWN.expected_artifact_id(path, profile), derived)
+                self.assertRegex(expected, profile.artifact_id_pattern)
+
+    @staticmethod
+    def _pattern_diagnostics(path, profile, artifact_id):
+        text = (ROOT / profile.template).read_text(encoding="utf-8")
+        for placeholder, value in {
+            "ARTIFACT_ID": artifact_id,
+            "OWNER": "platform",
+            "UPDATED": "2026-10-05",
+            "RETIRED_ROUTE": "docs/legacy.md",
+        }.items():
+            text = text.replace("{{" + placeholder + "}}", value)
+        text = re.sub(r"\{\{[A-Z_]+\}\}", "Fixture", text)
+        return [
+            diagnostic
+            for diagnostic in MARKDOWN.validate_document_text(
+                text, path, profile, "strict"
+            )
+            if diagnostic.expected.startswith("artifact_id matches ")
+        ]
 
     def test_wrong_but_pattern_valid_ids_fail_for_each_numbered_profile(self) -> None:
         for profile_id, (raw_path, expected) in self.cases.items():
@@ -139,6 +184,23 @@ class PathArtifactIdentityTest(unittest.TestCase):
                 diagnostics = MARKDOWN.artifact_identity_diagnostics(
                     PurePosixPath(raw_path), profile, {"artifact_id": wrong}
                 )
+                if profile_id in self.pattern_owned:
+                    # These owners declare an identity pattern, without a
+                    # path-derived identity. Exercise the normal value guard.
+                    self.assertEqual(diagnostics, [])
+                    self.assertEqual(
+                        self._pattern_diagnostics(
+                            PurePosixPath(raw_path), profile, wrong
+                        ),
+                        [],
+                    )
+                    malformed = self._pattern_diagnostics(
+                        PurePosixPath(raw_path), profile, "INVALID"
+                    )
+                    self.assertEqual(
+                        [item.rule_id for item in malformed], ["FM-VALUE-PATTERN"]
+                    )
+                    continue
                 expected_rule = (
                     "REQUIREMENT-PACKAGE-IDENTITY"
                     if profile_id == "sdlc/requirement"

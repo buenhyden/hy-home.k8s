@@ -1,6 +1,6 @@
 ---
 title: "Current Registry Fixture Consumers"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -50,7 +50,7 @@ the forward restoration of the explicitly approved Task-only boundary.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-040 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Existing hosted failure and bounded named reproduction | Unchanged published Registry and three test consumers | FAIL | [Observed intake](#observed-intake) | pending |
-| EVD-P02-041 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed-input named GREEN and related controls | Pending implementation bytes | NOT_RUN | [Planned repair](#planned-repair) | pending |
+| EVD-P02-041 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed-input named GREEN and scoped hooks | Final identity/authority fixtures; migration `8bace413…` with guard `a9c4991d…` | PASS | [Fixture acceptance preparation](#fixture-acceptance-preparation) | accepted |
 | EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed draft/ready actual-index staged/message and independent review | Draft `2c433586…`; ready `dc2c3469…` | PASS | [Ready prerequisites](#ready-prerequisites) | accepted |
 | EVD-P02-043 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Terminal completion and separate review | Pending terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 | EVD-P02-044 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Initial changed-input identity check | First identity four-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
@@ -58,6 +58,7 @@ the forward restoration of the explicitly approved Task-only boundary.
 | EVD-P02-046 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Post-Schema migration group and causal diagnosis | Schema-valid fixture; first five-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
 | EVD-P02-047 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Same-pattern parent/current causal RED | Identical malicious proposed route; previous and Task0004 validator | FAIL | [Narrow history-order restoration](#narrow-history-order-restoration) | pending |
 | EVD-P02-048 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed Task-only guard and related controls | Guard `a9c4991d…`; control test `80816a8…`; migration first-five input `8bace413…` | PASS | [Narrow history-order restoration](#narrow-history-order-restoration) | accepted |
+| EVD-P02-049 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed guard-index staged/message and independent review | Guard commit `3b94d367…`; index `bdc1c146…` | PASS | [Fixture acceptance preparation](#fixture-acceptance-preparation) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -299,6 +300,46 @@ non-Task rejection order and unchanged Task-template/copy checks; it does
 not claim general combined hostile Task/Registry safety, actual staged/full
 or hosted acceptance. The C3 index, configured message and scoped hooks still
 receive their own required checks before its normal commit.
+
+### Fixture acceptance preparation
+
+The final named migration selection passed all25 methods, with each exact
+five-method selection persisted alongside its raw unittest summary. Group
+stderr SHA-256 values are
+`27070641465228167c4ef11121052f0d9096da2dcbd2a7476733a2b3d4ddbe85`,
+`36b131143d2c62939a9ee3d8b4cd246e3c9269bb129e71381e4278cc26d5730b`,
+`7a3b7055c3ca07fbc5f69a926a103466ac2b2c4cbc987286799b6cf97fd28bbc`,
+`736fac945c04b5ad71d39fa4c8b2bd12be94cb07b6c102ae42a135a9e38c9fc1`,
+and `ac21ade787cde4d5d9fcb7d8951e80135faa9f9651eeb0b7dda782ffa8d7994f`.
+This includes the retained-record control that previously found overlapping
+routes. The unchanged pure-contract identity4 and authority2 results remain
+PASS; their test, Registry and public contract dependencies are unchanged by
+the isolated private history-condition repair. Their raw stderr SHA-256
+values are `aee96418849d49e0f7081794b33d0578dbd6313d4ba672762229f414348f3091`
+and `cb836db6d9201aa851c9e43fb920a1a4b82ae7ea8b917e0272186e2f3b890d9b`.
+Independent review directly audited the final selections and receipts.
+
+Pinned Ruff check/format, detect-secrets and markdownlint passed on exact
+disposable copies of the four changed Python files and three scope documents,
+with identical source/copy bytes after formatting. Safe structured hook
+receipt SHA-256 is
+`9a9a19404d0b24d3de21e6c6cd144891376e46e29725c690373a84b60a623631`.
+The current Task-only evidence update needs fresh document/input checks.
+
+Normal guard commit `3b94d3673f3db3ad88925fb8671c85d0c5b3405d` has reviewed
+index tree `bdc1c146749d7992b5fff9c30e7854e856b27e2e`. Its actual12 canonical
+staged gates and configured message passed, with complete output/cleanup,
+unchanged source/index/refs and separate final review. Staged stdout SHA-256
+is `8713424e3799cdd06d4388eca78a849064188f8ff2efdc4a0fac82c26801d6d1`;
+outer stderr was empty. Actual message SHA-256 is
+`976d911fbc2a291260be4894f5d576d67c6170ee61dc7226ef7f7738ac76baa5`.
+The previous quality actor's model-capacity dispatch produced no observed
+canonical outcome; a fresh neutral quality actor reconciled no active run
+before executing these actual checks. No previous focused result was rerun
+to recover that dispatch. These facts accept the prior guard index, whose
+snapshot excluded the then-unstaged fixtures. The current fixture/Task index
+requires its own staged/message and independent review before commit; whole
+Work acceptance and terminal checks remain pending.
 
 Normal required exact-head hosted checks precede merge, and automatic
 integrated-main checks precede integration acceptance. Remote push waits for
