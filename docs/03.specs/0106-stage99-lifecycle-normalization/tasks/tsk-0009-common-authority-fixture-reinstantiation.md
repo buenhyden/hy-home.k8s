@@ -2,7 +2,7 @@
 title: "Common Authority Fixture Reinstantiation"
 version: "0.1.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -29,7 +29,7 @@ new unique draft and retaining current authority fixture refusals.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-009 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | One bounded authority fixture repair | repo-tooling-engineer | frontmatter | NOT_RUN | pending | Pending named repository evidence |
+| WORK-009 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | One bounded authority fixture repair | repo-tooling-engineer | frontmatter | PASS | accepted | [Fixture](#fixture-acceptance), [indices](#prior-index-acceptance) and [creation](#creation-proof) |
 
 ## Task Evidence
 
@@ -37,8 +37,8 @@ new unique draft and retaining current authority fixture refusals.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-090 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Retained first-appearance source mismatch | Task8 creation metadata | FAIL | [Intake](#verification-summary) | rejected |
 | EVD-P02-091 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Retained exact-input named controls and pinned hooks | Fixture `e4d0017c` with unchanged public dependencies/configs | PASS | [Fixture acceptance](#fixture-acceptance) | accepted |
-| EVD-P02-092 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Prior actual draft and corrected ready indices/messages | Trees `127a63a6` and `5ce73430` | PASS | [Prior indices](#prior-index-acceptance) | accepted |
-| EVD-P02-093 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Prospective terminal completion and review | Upcoming terminal candidate | NOT_RUN | Pending | pending |
+| EVD-P02-092 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Prior actual draft, corrected ready and implementation indices/messages | Trees `127a63a6`, `5ce73430` and `350d3216` | PASS | [Prior indices](#prior-index-acceptance) | accepted |
+| EVD-P02-093 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Observed prospective terminal completion and review | Isolated tree `7a6dbd45` at accepted implementation | PASS | [Terminal acceptance](#terminal-acceptance) | accepted |
 | EVD-P02-094 | [VAL-P02-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Actual committed registered-form creation | Parent `342a105e` to draft `8fe19c20` | PASS | [Creation proof](#creation-proof) | accepted |
 
 ## Approval and Safety Boundaries
@@ -58,9 +58,11 @@ Task8's real first-appearance metadata is `C014` from completed Task0007,
 not its registered form. CI refusal is a static owner prediction; hosted
 jobs were cancelled without runner assignment or code execution, with cause
 unconfirmed. Its original four commits, source bytes and local PASS receipts
-remain historical evidence. This in-progress Task accepts only the observed exact-input fixture lane
-and prior draft/ready indices below. Its current implementation index,
-whole Work and terminal checks remain pending.
+remain historical evidence. This source closing candidate accepts the observed prior implementation
+and prospective completion/review only. Its completed Work records prior
+implementation acceptance. Fresh actual closing-index staged, completion,
+message and independent final review remain NOT_RUN pending; all must PASS
+before a normal closing commit under the explicit conditional permission.
 
 ### Creation proof
 
@@ -88,7 +90,14 @@ the normal ready commit. Its staged receipt SHA-256 is
 `cf1c0dca072c1120e0e00b7feea751c89c6879126e5c672cabc794f2180553b3`
 and message receipt SHA-256 is
 `452c71d0498a9f4cb34aa0b692592e0da431047f7e1887e8406ab44443fd5504`.
-The current implementation-index checks have not run.
+Implementation tree `350d32167b71420ac3f28b6f16ee1a5eaee7c9e8` subsequently
+passed seven fresh actual staged gates, changed Task Markdown and its exact
+configured message. Separate final receipt review accepted that input before
+the normal implementation commit. Receipt SHA-256 values are respectively
+`3a4a38ed9af9de694f8798f591bda5ae7f073a1072f318c02864f1d5e403b0f0`,
+`29cabb1e0168b8ac6ac491df1a88a15b9d91073b49be0efe7fbc4d40b44a4147`
+and `e0afa99e75ade5b0bd09df3fc2a8209b8d6cf82f0866c96b00cbbd0719b400c3`.
+These observations accept the prior implementation, not this terminal input.
 
 ### Readiness
 
@@ -133,6 +142,25 @@ FAIL is retained separately. The exact-byte pinned Ruff/check-format/scanner
 observations are also attributed to their original receipts. No test or
 hook was rerun for this lane, and no historical binary digest is invented.
 This accepts only the deterministic fixture input; it grants no new Task
-index, lifecycle-history, hosted or integrated-main acceptance. Fresh Task
-Markdown, actual selected staged/message and separate final review remain
-required before the implementation commit. Full/affected stays NOT_RUN.
+index, lifecycle-history, hosted or integrated-main acceptance. Its later fresh Task Markdown, actual selected staged/message and final
+review are recorded above. Full/affected stays NOT_RUN.
+
+### Terminal acceptance
+
+The ignored same-base/config prospective input
+`7a6dbd451d7c073587c55dc01c90ab22c85ed352` passed independent semantic
+review and SPEC0106-only completion. Its observed snapshot is
+`f937cb6e0d126378654652150aa3f626d1ab3ea9031da355551fd95999f6e3f9`;
+receipt SHA-256 is
+`6b9ee1e29ef55b5da8813786dada729450247ce939b6e62f7303671e35887c72`.
+Independent raw/structured evidence review accepted that prospective lane.
+No proposal staged repeat was executed.
+
+The user explicitly permitted normal completed-candidate reflection followed
+by actual-index verification. These source bytes are a different input:
+fresh canonical staged, SPEC0106 completion, configured closing message and
+separate final actual-evidence review remain NOT_RUN pending. Every required
+actual result must PASS before the normal closing commit; no prospective
+result substitutes for that condition. Final actual index/commit receipts
+remain external to avoid a self-OID loop. Hosted and integrated-main
+acceptance remain pending separate observations.
