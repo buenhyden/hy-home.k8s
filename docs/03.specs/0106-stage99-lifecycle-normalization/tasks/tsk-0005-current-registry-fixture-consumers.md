@@ -1,8 +1,8 @@
 ---
 title: "Current Registry Fixture Consumers"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -18,13 +18,17 @@ This bounded follow-up owns [VAL-P02-005](../spec.md#success-criteria--verificat
 and [WORK-005](../plan.md#work-breakdown). The existing hosted complement
 failed unit tests because three current fixtures still expect retired
 profile/domain declarations. This work follows completed Task0004 and
-preserves its narrow validator correction and all completed evidence.
+preserves all completed evidence. A later same-pattern comparison proved
+that new metadata eligibility also reached non-Task targets; this Task owns
+the forward restoration of the explicitly approved Task-only boundary.
 
 ## Inputs
 
 - The user's normal unit-commit, push and merge instruction authorizes the
-  necessary scoped fixture repair. The root explicitly assigned these six
-  paths to one repo-tooling-engineer writer; quality and review are separate.
+  necessary scoped fixture repair. The explicit narrow Task-template approval
+  also authorizes restoring that change to Task targets only. Root assigned
+  seven paths to one repo-tooling-engineer writer; quality, code review and
+  security review are separate.
 - [Plan](../plan.md), [registered Task form](../../../99.templates/templates/specs/task.template.md)
   and [quality policy](../../../../.agents/governance/quality.md).
 - Clean Task0004 closing commit `961e6b21277b86f4c9238728e8ca3663d27b0ae1`.
@@ -47,13 +51,18 @@ preserves its narrow validator correction and all completed evidence.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-040 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Existing hosted failure and bounded named reproduction | Unchanged published Registry and three test consumers | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-041 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed-input named GREEN and related controls | Pending implementation bytes | NOT_RUN | [Planned repair](#planned-repair) | pending |
-| EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed draft actual-index staged/message and independent review | Draft tree `2c433586…` | PASS | [Ready prerequisites](#ready-prerequisites) | accepted |
+| EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed draft/ready actual-index staged/message and independent review | Draft `2c433586…`; ready `dc2c3469…` | PASS | [Ready prerequisites](#ready-prerequisites) | accepted |
 | EVD-P02-043 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Terminal completion and separate review | Pending terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-044 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Initial changed-input identity check | First identity four-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
+| EVD-P02-045 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | First migration prerequisite check | First five changed-input methods | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
+| EVD-P02-046 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Post-Schema migration group and causal diagnosis | Schema-valid fixture; first five-method group | FAIL | [Observed implementation preparation](#observed-implementation-preparation) | pending |
+| EVD-P02-047 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Same-pattern parent/current causal RED | Identical malicious proposed route; previous and Task0004 validator | FAIL | [Narrow history-order restoration](#narrow-history-order-restoration) | pending |
+| EVD-P02-048 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed Task-only guard and related controls | Guard `a9c4991d…`; control test `80816a8…`; migration first-five input `8bace413…` | PASS | [Narrow history-order restoration](#narrow-history-order-restoration) | accepted |
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: This Spec, Plan and Task; `tests/test_document_artifact_identity.py`, `tests/test_document_lifecycle_archive_cutover.py` and `tests/test_document_lifecycle_migration.py`. One writer owns these six paths.
-- **Forbidden Paths**: Production validators, schemas, Registry, published profiles/domains, validation lanes, hosted configuration, frozen Archive, completed Tasks/evidence, provider/native state, private values and unrelated files.
+- **Allowed Paths**: This Spec, Plan and Task; `tests/test_document_artifact_identity.py`, `tests/test_document_lifecycle_archive_cutover.py`, `tests/test_document_lifecycle_migration.py` and only the private first-appearance metadata eligibility condition in `scripts/validate-document-lifecycle.py`. One writer owns these seven paths. The registered validation member is explicitly delegated for this narrow restoration.
+- **Forbidden Paths**: Other production validator behavior, schemas, Registry, published profiles/domains, validation lanes, hosted configuration, frozen Archive, completed Tasks/evidence, the generic migration fixture, provider/native state, private values and unrelated files.
 - **Approval Required**: The existing explicit user commit/push/normal-merge authority and root's bounded necessary fixture delegation apply. The user's conditional terminal-candidate reflection authorization persists: fresh actual checks and separate review must pass before commit. No authentication or native runtime enforcement is claimed.
 - **Static Validation**: Existing observed RED is preserved without identical retries. Changed-input named GREEN and meaningful related negatives, scoped pinned hooks, every actual index's canonical staged/message and independent review are required. Prospective completion/review precedes reflected source's fresh staged/completion/message/review. Local full and affected execution remain NOT_RUN under the current exclusion.
 - **Live Validation**: DEFER — no cluster or runtime operation requested.
@@ -98,8 +107,10 @@ follow current `requirement` review-to-approved and separate
 refused. Migration setup already inherits the complete current graph and
 declared assets. Adjust its existing governance route for the finite test
 paths; retain current membership and remove duplicate declaration additions.
-Two pattern/route matrices must look up current `archive/scope-migration`,
-while document type mutations retain `archive/migration`. The existing
+The two migration pattern/route matrices retain `archive/migration`, which
+is still a published retained evidence profile. The ready transition's
+contrary lookup inference is withdrawn; document type mutations also retain
+`archive/migration`. The existing
 unmapped-state negative must render its quoted header's actual requested
 active or retired state; otherwise its retired case does not mutate bytes.
 Preserve policy-before-pattern, default/null, source Git/digest, disposition,
@@ -139,6 +150,155 @@ methods. These changed-input checks retain the five observed failure cases
 and directly affected positive/negative contracts; they are not discovery.
 Each named invocation is separately bounded. At this ready transition,
 implementation, focused GREEN and required hosted outcomes remain pending.
+
+Ready commit `6db05bc0c89a4975631a3c178fe5573cd824611d` has tree
+`dc2c346964cf622967d76d8cb735f0815c2bbdc3`. Its six actual staged gates,
+configured message and separate review passed; staged stdout SHA-256 is
+`cec57cf1c8e0094bc57d19ab536f3027592e66ed3e5e48efadc1581a5a479497`,
+with empty stderr and complete output/cleanup. The message fixture SHA-256 is
+`390299e83e7fde73c63a8741b96ceea6d18f01bf68944259ff9c3087229dcc88`.
+This accepts only that prior ready index, not implementation acceptance.
+
+### Observed implementation preparation
+
+The first changed identity group ran four methods: two passed and two failed.
+The authored case inventory omitted three current reference pack profiles;
+`archive/route` also has a declared identity pattern rather than an identity
+derived by the existing path helper. Safe stderr SHA-256 is
+`4df7008ae3c932fa942be4a4b990cf9e8be8b77c40178e67340fe1e080975ef3`.
+The queued authority and migration methods had not run at that observation.
+The corrected identity inventory includes all three packs. A renamed method
+tests current declared identity contracts; normal text validation checks
+pattern-valid controls and malformed-ID refusal for pack/route owners.
+Every owner that derives an ID retains pattern-valid wrong-path-ID refusal.
+This is pattern-focused validation, not a full document acceptance claim.
+
+Independent review corrected the ready-stage inference about migration
+profile lookup IDs: the published `archive/migration` profile still owns
+the retained numbered records and the inherited fixture's bounded extension.
+Its two original negative controls are restored. Current schemas and Registry
+are unchanged; the later narrow order restoration is described below. New focused outcomes and this
+implementation index's required checks remain pending until observed.
+
+The corrected identity four-method group and both authority methods passed.
+The first five migration methods then failed before their intended checks;
+the remaining twenty were held. Exact schema diagnosis identified
+`profiles[18].path_pattern`, keyword `pattern`: the test-only route union
+did not have the required outer `^` and `$` anchors. Failure stderr SHA-256
+is `67d0ab7053a0f1d7dde7afc89f1c4bd55f4c8c0178b999962c8a6efc4b97762c`;
+the schema-path receipt has SHA-256
+`f8948858419020072a923e27ba85553ee0b246ad03b7b6a0b40cf6b78f29a1ce`.
+The minimal fixture correction wraps the unchanged published route body
+and finite synthetic alternatives in that anchored envelope. Schema and
+production behavior remain unchanged; new migration results are pending.
+
+The anchored fixture passed Schema preflight, but the next five-method group
+still failed, with eight subtest failures and one error; twenty methods
+remained held. Safe stderr SHA-256 is
+`2f8757af8bf868c5b97f14cc8f5db13918bc90379373a6a071ac945199fe2e0b`.
+The default-API positive had removed the required Stage98 Spec alternative,
+causing `REGISTRY_RETENTION_MODE`. Its finite added route now preserves the
+entire published alternative. The intentionally aliased proposed graph
+returns exact `LIFECYCLE-BASE` / `history registry is malformed` with both
+the pre-Task0004 and current validator on identical inputs. Comparative
+receipt SHA-256 `967ee6e1c53e1e864b7bbc16f8299d1326074ed9402d10b96bd48e2ffb0c7958`
+disconfirms the suspected Task0004 causal regression for that case.
+The identity-negative test proves its initial trusted model compiles, then
+expects that precise malformed proposed-history refusal, nonzero outcome,
+no traceback and no evaluated-pattern marker. Direct trusted policy checks
+still assert that pattern compilation is never called. Executable-pattern
+timeouts retain their existing bound. These alias observations do not
+authorize production or deadline changes.
+
+The revised malformed-proposal and default-API methods both passed on
+migration source SHA-256
+`17e2606f93c03febb33a57c324109cef34d7810a888dba5f67b3dcd745191394`;
+safe stderr SHA-256 is
+`b4b534024d1432d6e0cb95c551f173da137e9afb69a9a4ad7d2e4e3c6db6a26e`.
+A separate unchanged-policy explicit-ref control returned zero in 1.349
+seconds, below the existing five-second executable-pattern bound; safe
+receipt SHA-256 is
+`0aa8c485270706228619af35a193046452740182a5a54e5937e5625a30d6d2b6`.
+This excludes baseline startup as the timeout explanation, without proving
+its evaluation cause. Remaining named methods and a separate read-only
+security diagnosis were pending at this observation; no complete GREEN
+acceptance is claimed.
+
+### Narrow history-order restoration
+
+The separate same-malicious-pattern comparison used identical explicit-ref
+fixture inputs: pre-Task0004 validator returned `ARCHIVE-MIGRATION-PROFILE`
+in 1.421 seconds; the current validator exceeded the unchanged five-second
+bound at 5.008 seconds. Its stack reached untrusted route matching through
+the newly eager first-appearance `_history_document` call. Safe comparison
+receipt SHA-256 is
+`742a5c9bda6759b270ce42803581ff497554f6efa1f1fa1309d7a0aea3d77a6b`.
+This proves the non-Task metadata regression for this pattern, separately
+from the alias comparison that disproved that hypothesis for its own input.
+
+The authorized correction preserves prior `allow_distinct_artifact_copy`
+eligibility and adds all-mode metadata only when the already trusted Registry
+classifies the target as `sdlc/task`. Ordinary-copy permission, all later
+Task checks, history bounds and non-Task refusal order remain unchanged.
+Fresh bounded Task-template controls and the existing malicious-pattern
+method provide regression evidence; no mirrored cumulative test is added.
+Independent code and security reviewers must accept the correction and
+actual receipts before the separate guard commit. The earlier completed
+Task0004 evidence is historical and remains untouched.
+
+Five forward commits now separate draft and ready (already observed), guard
+restoration, three fixture repairs while this Task remains in-progress, and
+terminal completion. The guard index includes only this Spec/Plan/Task and
+validator; the controlled fixture edits remain unstaged. Named focused
+checks use their recorded working-tree bytes; actual staged checks consume
+the distinct Git index. Fresh staged/message and review are pending until
+observed. The fixture slice receives its own actual-index checks, and the
+closing candidate retains the user's fresh actual-check/review condition.
+
+The previously held twenty migration methods ran next: nineteen passed and
+the final retained-record control raised `REGISTRY_ROUTE_AMBIGUOUS`.
+Safe stderr SHA-256 is
+`445d692e9e76228737875e5eed61cb3e05635a1232934624271c9fe74d0d6ee8`.
+Typed route metadata shows each published retained migration 0001–0003
+matching two regex routes in the same profile; the inherited broad synthetic
+extension overlaps the published branch. This subclass now retains the
+published route and adds only its actual synthetic `self.path` record.
+The shared generic helper and its separate 0006/future-profile tests remain
+unchanged. Final fixture and restored-validator bytes require fresh explicit
+selection of all25 migration methods; earlier partial outputs are history.
+
+The restored guard's focused controls passed on validator SHA-256
+`a9c4991dcea16d695a11ce212022f653355cb77d5361115e45397e8cc0d149c4`
+and unchanged cumulative test SHA-256
+`80816a8b9cfde307db5b97476d28b9e749cc0b3b41fe7f1179d5aaf11f024249`.
+The three registered-template positives cover real first draft, CI/explicit
+refs and staged merge; safe stderr SHA-256 is
+`6870f3f004e729b84d322c5144511755d45e03e658ba5fd0d1b2e2ba134212a5`.
+The ten-condition boundary, ordinary canonical-copy CI refusal and later
+Task checks passed; stderr SHA-256 is
+`59b848828dd01de50d332ce04957c5a7c57d9dd69768fc0185b1886f10effe6c`.
+The explicitly selected existing22 cumulative methods also passed, stderr
+SHA-256 `cff91f6d72c39d3501b9f8b99d2f4d3456376882a7662c3781b58ae483c7c228`.
+These named groups used separate 60-second bounded unittest invocations;
+the six exact names are corroborated by actual tool-call provenance, not
+claimed as a separately persisted argv file.
+
+The final migration first-five group, including all four existing malicious
+pattern variants, passed on fixture SHA-256
+`8bace4130b766a3a38b5821a4b17eb4116f899b98a2490ac9bb6330889097a40`.
+Safe stderr SHA-256 is
+`27070641465228167c4ef11121052f0d9096da2dcbd2a7476733a2b3d4ddbe85`.
+The internal five-second rejection bound and marker/refusal assertions are
+unchanged. Final migration twenty methods, scoped hooks and guard index's
+required staged/message and independent evidence disposition remain pending
+at this observation; focused PASS is not complete implementation acceptance.
+
+Separate independent code and security readers accepted this focused input
+and its actual receipts. The security disposition covers the restored
+non-Task rejection order and unchanged Task-template/copy checks; it does
+not claim general combined hostile Task/Registry safety, actual staged/full
+or hosted acceptance. The C3 index, configured message and scoped hooks still
+receive their own required checks before its normal commit.
 
 Normal required exact-head hosted checks precede merge, and automatic
 integrated-main checks precede integration acceptance. Remote push waits for

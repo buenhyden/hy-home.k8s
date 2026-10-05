@@ -4269,7 +4269,13 @@ def _history_proves_cumulative_create(
                 parent = commit
                 continue
             target_document = (
-                _history_document(history_cache, commit, path) if not appeared else None
+                _history_document(history_cache, commit, path)
+                if not appeared
+                and (
+                    allow_distinct_artifact_copy
+                    or classify_path(registry, path).profile_id == "sdlc/task"
+                )
+                else None
             )
             if _history_rename_or_copy_into_path(
                 root,
