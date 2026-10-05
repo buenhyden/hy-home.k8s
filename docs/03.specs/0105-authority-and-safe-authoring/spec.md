@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -57,6 +57,12 @@ values after `-o` or `--output` remain raw Secret output. The same existing
 decision and prose prohibition grammar apply. VAL-P01-006 covers its local
 verification and handoff; the original Task's evidence remains intact.
 
+The separately authorized [authority evidence follow-up](tasks/tsk-0003-authority-evidence-follow-up.md)
+rechecks current facts and the SPEC-0106 closing evidence under VAL-P01-001,
+VAL-P01-003, VAL-P01-004, VAL-P01-005 and VAL-P01-006. It preserves both
+completed Tasks and the existing approval, runtime and historical evidence
+boundaries. Its current Task alone records execution and acceptance.
+
 ## Data Modeling & Storage Strategy
 
 Stage 99 continues to own document shape and lifecycle. Spec owns this contract,
@@ -93,6 +99,14 @@ Run focused positive/negative tests for changed executable semantics, then
 actual Commitizen message validation, and one final local `full` because no
 remote delivery is authorized. Record tool resolution and actual outcomes in
 the Task. Independent read-only review checks meaning beyond automation.
+
+For the separately authorized SPEC-0105-TSK-0003 documentation follow-up,
+the current request instead limits local validation to affected selection,
+exact-index staged checks, current lifecycle completion and commit-message
+checks, plus independent read-only review. Its affected execution and local
+full QA are excluded for this follow-up only; record them as `NOT_RUN`, not
+as prior or current PASS. The original Tasks' requirements and observations
+above remain historical facts.
 
 ## Success Criteria & Verification Plan
 

@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -26,6 +26,8 @@ The original [Task](tasks/tsk-0001-authority-and-authoring.md) implemented
 [SPEC-0105](spec.md). The authorized bounded
 [follow-up Task](tasks/tsk-0002-quoted-secret-output.md) repairs one missed
 scanner form under WP-002 and records review and local delivery under WP-003.
+The later [authority evidence follow-up](tasks/tsk-0003-authority-evidence-follow-up.md)
+owns current P01 facts and the linked SPEC-0106 closing re-verification.
 
 ## Context
 
@@ -58,6 +60,8 @@ remote integration, runtime capability assertion or live operation.
 | WORK-003 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003: independent review and local delivery | WP-002; reviewable diff and check envelope | [SPEC-0105-TSK-0001](tasks/tsk-0001-authority-and-authoring.md) | Task lane, reviewer, commit and rollback evidence |
 | WORK-004 | [VAL-P01-002](spec.md#success-criteria--verification-plan) | WP-002 follow-up: repair quoted Secret output scanner | Completed original WP-002; new authorized follow-up scope | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Focused regression and independent re-review in the Task |
 | WORK-005 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 follow-up: validate and commit local handoff | WORK-004; reviewable follow-up diff | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Full QA, message and commit evidence in the Task |
+| WORK-006 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-004](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guidance and authority boundaries; recheck SPEC-0106 closing evidence | Completed original work; clean `9067729b` base and current scoped request | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Source/consumer classification, exact revisions and P02 Task evidence |
+| WORK-007 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | Review, verify and commit the bounded local documentation handoff | WORK-006; reviewed logical index and check readiness | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Exact-index, completion, message, reviewer and commit evidence in the Task |
 
 ## Verification Plan
 
@@ -68,6 +72,17 @@ forms replace external docs/plans defaults. Run focused checks for executable
 changes, affected and exact-index gates, and one local full delivery gate.
 Refresh changed inputs only; do not rerun identical full/unit leaves through
 multiple routes. No artificial RED/GREEN is required for prose.
+
+For WORK-006/007 only, the current request excludes affected execution and
+local full QA. Select affected gates without running that lane; run the exact
+staged index for each logical commit, current lifecycle completion and actual
+message checks, then obtain independent read-only review. The original
+WORK-001–005 validation requirements and recorded full results are unchanged.
+The request owner clarified that this follow-up may use the four local commits
+required by the Task's legal `draft` → `ready` → `in-progress` → `completed`
+edges: scope draft, readiness, observed P02 re-verification, then reviewed
+P01 completion. A failed required check or unresolved finding holds the
+affected Task state and blocks its completion.
 
 ## Risks & Mitigations
 
