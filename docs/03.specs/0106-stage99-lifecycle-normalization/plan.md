@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -86,6 +86,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-007 | [VAL-P02-007](spec.md#success-criteria--verification-plan) | Align governance and Spec navigation fixtures with current declarations; resolve the archive process-budget failure through measured causal accounting | Observed final-head failures; independent cause/scope review; immutable accounting before any budget correction; completed Tasks preserved | [SPEC-0106-TSK-0007](tasks/tsk-0007-current-owner-fixture-conformance.md) | Changed named cases and relevant controls; unchanged batching/time bounds; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-006 | [VAL-P02-006](spec.md#success-criteria--verification-plan) | Bind the additive recovery fixture's frozen Registry, source and immediate successor to one actual Git revision | Observed final-head hosted failure and exact named RED; independent cause/scope review; preserve completed Tasks and all production refusals | [SPEC-0106-TSK-0006](tasks/tsk-0006-sealed-source-revision-fixture.md) | 21 explicit shared recovery-fixture methods, scoped hooks, each actual-index staged/message and separate review; prospective terminal completion/review then fresh actual closing checks; hosted exact-head/main results separate |
 | WORK-005 | [VAL-P02-005](spec.md#success-criteria--verification-plan) | Restore Task-only new history metadata eligibility and align three current Registry test consumers while retaining their negative contracts | Completed Task0004; observed hosted unit failures and same-pattern causal comparison; independent code/security review and actual-index checks before each normal commit | [SPEC-0106-TSK-0005](tasks/tsk-0005-current-registry-fixture-consumers.md) | Observed RED; changed-input Task-template, ordinary-copy and bounded malicious-pattern controls; identity/authority and all25 shared migration-fixture methods; scoped hooks; actual-index staged/message; prospective completion/review then fresh actual closing checks; required hosted and integrated-main observations separate |
 | WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
@@ -93,6 +94,21 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-007 owns only `tests/test_archive_validation.py`,
+`tests/test_common_agents_archive_routes.py`, this Spec, Plan and its new
+Task. Derive governance expectations from current authored owner declarations
+and retain profile, mode and state-membership checks. Both navigation payloads
+use the registered section without changing their rejection assertions.
+Immutable archive accounting must distinguish fixed corpus growth from an
+implementation regression before any budget proposal. Preserve fallback
+batching, the sixty-second bound and all production behavior. Four forward
+commits record draft, readiness, implementation and completion. Explicit
+named changed-input checks and scoped hooks precede each reviewed actual
+index's canonical staged/message checks. The terminal proposal needs only
+completion/review; reflected source needs fresh actual staged/completion,
+message and separate final review before commit. Local full/affected remain
+NOT_RUN; no remote run is retried or protected gate bypassed.
 
 WORK-006 owns only `tests/test_archive_disposition_routes.py`, this Spec,
 Plan and its new Task. Existing `GitFixture.commit_many` records exact
