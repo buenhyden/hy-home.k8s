@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.5.0"
+version: "1.6.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/008`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
@@ -97,6 +97,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-008 | [VAL-P02-008](spec.md#success-criteria--verification-plan) | Align the common-authority routing fixture with its published governance lifecycle while retaining exact profiles and refusal controls | Observed hosted failure and exact named RED; independent cause/scope review; completed Tasks preserved | [SPEC-0106-TSK-0008](tasks/tsk-0008-common-authority-lifecycle-fixture.md) | Changed named case plus unowned/retired/native controls; scoped hooks, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-007 | [VAL-P02-007](spec.md#success-criteria--verification-plan) | Align governance and Spec navigation fixtures with current declarations; resolve the archive process-budget failure through measured causal accounting | Observed final-head failures; independent cause/scope review; immutable accounting before any budget correction; completed Tasks preserved | [SPEC-0106-TSK-0007](tasks/tsk-0007-current-owner-fixture-conformance.md) | Changed named cases and relevant controls; unchanged batching/time bounds; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-006 | [VAL-P02-006](spec.md#success-criteria--verification-plan) | Bind the additive recovery fixture's frozen Registry, source and immediate successor to one actual Git revision | Observed final-head hosted failure and exact named RED; independent cause/scope review; preserve completed Tasks and all production refusals | [SPEC-0106-TSK-0006](tasks/tsk-0006-sealed-source-revision-fixture.md) | 21 explicit shared recovery-fixture methods, scoped hooks, each actual-index staged/message and separate review; prospective terminal completion/review then fresh actual closing checks; hosted exact-head/main results separate |
 | WORK-005 | [VAL-P02-005](spec.md#success-criteria--verification-plan) | Restore Task-only new history metadata eligibility and align three current Registry test consumers while retaining their negative contracts | Completed Task0004; observed hosted unit failures and same-pattern causal comparison; independent code/security review and actual-index checks before each normal commit | [SPEC-0106-TSK-0005](tasks/tsk-0005-current-registry-fixture-consumers.md) | Observed RED; changed-input Task-template, ordinary-copy and bounded malicious-pattern controls; identity/authority and all25 shared migration-fixture methods; scoped hooks; actual-index staged/message; prospective completion/review then fresh actual closing checks; required hosted and integrated-main observations separate |
@@ -106,6 +107,19 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
+
+WORK-008 owns only `tests/test_common_agents_document_routes.py`, this Spec,
+Plan and its new Task. Preserve all ten route/profile mappings and the
+non-null lifecycle assertion; verify the explicit current six-state vocabulary
+and governance-operations binding. Preserve unowned/retired route refusals
+and native invocation controls. The observed native positive fixture prerequisite
+requires its published ordered six-key metadata; preserve every invalid flag,
+missing flag, extra key and duplicate flag refusal. Four forward commits record draft, readiness,
+implementation and completion. Explicit named changed-input controls and scoped
+pinned hooks precede reviewed actual-index staged/message checks. The isolated
+terminal proposal needs completion/review only; reflected source requires fresh
+actual staged/completion, message and separate final review before commit.
+Local full/affected remain NOT_RUN; hosted exact-head/main checks remain separate.
 
 WORK-007 owns only `tests/test_archive_validation.py`,
 `tests/test_common_agents_archive_routes.py`, this Spec, Plan and its new
