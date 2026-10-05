@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -37,12 +37,16 @@ distinct states; Task `ready` records readiness, not permission to act.
 No new requirement, AD, ADR, progress ledger, native-provider
 claim, or permanent inventory count is needed. Do not modify frozen archive
 bodies, sealed records, historical contracts, private/global state, cluster,
-secrets, or remote Git. The earlier P02 finish instruction authorized local
+or secrets. The original WORK-001 did not change remote Git. The earlier P02
+finish instruction authorized local
 P01/P02 integration into main and removal of their development branches after
-verified integration; the Task records that observed finish. The current P01
-follow-up retains its own feature branch and worktree. Push, PR, remote
-merge/publication, archive mutation and live action remain outside scope;
-neither instruction authenticates an approving actor.
+verified integration; the original Task records that observed finish. The
+current `VAL-P02-002` follow-up retains the P01 worktree and its own feature
+worktree during implementation. The request owner's later instruction
+authorizes work-unit commits, push and merge after required review and hosted
+checks. Worktree removal, archive mutation and live action remain outside this
+scope. This authorization does not claim current remote state or an
+authenticated operator action.
 
 ## Contracts
 
@@ -131,6 +135,29 @@ this package, are normalized to the new contract in the implementation commit;
 historical fixtures prove old frozen generations remain readable without
 format rewrites.
 
+### Follow-up: explicit multi-row Task summary
+
+`VAL-P02-002` closes the manual copy of a multi-row Task's derived status.
+Extract the existing `task-items-v1`/`task-items-v2` aggregation into one pure
+helper shared by the read-only checker and a separate authoring command.
+The planned command's `--root <repository> --path <task>` invocation previews
+the current and derived status; `--write` opts in to changing only the top-level
+frontmatter `status` scalar. A one-row Task continues to use literal
+`frontmatter` in its Status cell and is never rewritten by this command.
+
+The command accepts only current, regular repository files classified exactly
+as `sdlc/task`. It reuses the Registry loader and the existing comment/fence-aware
+Task parser, validates the candidate with the current strict contract, and
+rejects malformed rows, results, acceptance, evidence, or an illegal current
+to candidate lifecycle edge before writing. It preserves all other bytes and
+file permissions, detects a changed source before replacement, and preserves
+the original on a failed replacement. Invalid inputs and writes have stable
+diagnostic IDs and exit 2; successful preview, change, and no-op exit 0.
+Neither validator nor Git hook invokes this opt-in writer.
+The follow-up Task's `completed` state denotes observed local source acceptance;
+PR and merged-SHA integration remain separate until their hosted results are
+observed.
+
 ## Data Modeling & Storage Strategy
 
 `artifact_id` remains the stable identity for Spec, Plan, and Task, with
@@ -192,6 +219,7 @@ the Task owns all later execution observations.
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
+| VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
 
@@ -204,9 +232,12 @@ Existing architecture is [AD-0006](../../02.architecture/descriptions/0006-works
 and [ADR-0040](../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md).
 No new structural decision is required. [Plan](plan.md) owns order and
 [Task](tasks/tsk-0001-lifecycle-normalization.md) owns execution evidence.
+The follow-up [Task](tasks/tsk-0002-task-summary-writer.md) owns `VAL-P02-002`
+execution evidence without changing the first Task's historical observations.
 
 ### Lifecycle Traceability
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — direct approved P02 package-local change; existing REQ-0003 meaning is unchanged | VAL-P02-001 | Registry/form/consumer, Task completion, route, historical and Git-edge checks |
+| N/A — direct approved P02 follow-up; existing REQ-0003 meaning is unchanged | VAL-P02-002 | Shared summary and explicit writer focused checks, staged QA, completion and independent review |
