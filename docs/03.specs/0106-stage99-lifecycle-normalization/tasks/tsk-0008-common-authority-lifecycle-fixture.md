@@ -2,7 +2,7 @@
 title: "Common Authority Lifecycle Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -38,7 +38,7 @@ historical inputs.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | Align the common-authority lifecycle fixture while retaining exact routing and refusals | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Observed intake](#observed-intake) |
+| WORK-008 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | Align the common-authority lifecycle fixture while retaining exact routing and refusals | repo-tooling-engineer | frontmatter | PASS | accepted | [Implementation observations](#implementation-observations) |
 
 ## Task Evidence
 
@@ -46,8 +46,8 @@ historical inputs.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-080 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Hosted failure and exact named RED | Clean final Task0007 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-081 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Changed-input controls and scoped hooks | Observed reviewed fixture and unchanged control dependencies | PASS | [Implementation observations](#implementation-observations) | accepted |
-| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Observed draft and ready indexes only | PASS | [Validation boundaries](#validation-boundaries) | accepted |
-| EVD-P02-083 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Prospective terminal completion and independent review | Upcoming isolated candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-082 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Actual-index staged/message and independent review | Observed draft, ready and implementation indexes | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-083 | [VAL-P02-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Prospective terminal completion and independent review | Observed isolated terminal candidate | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -132,7 +132,20 @@ raw stdout SHA-256 is
 `478ce8f3b27e17b57ccaea5654e68b60fc0168bcb6ae961a3abb7426b08321db`;
 configured message receipt SHA-256 is
 `c89ffef0dbbe10768dabeb41176aed5354d00c5f7e51831ee9b51b9d63eedc37`.
-EVD-P02-082 accepts these observed draft and ready indexes only.
+The actual implementation index subsequently passed seven fresh canonical
+staged gates, pinned Markdown on all three changed documents, its configured
+message and separate final independent review. Staged receipt SHA-256 is
+`c35e6367d480bd01f948082833e206961f2c76ca6a4b396833e75acde45d41e2`;
+raw stdout SHA-256 is
+`053f85acb54ac01d35c1c3cbb828bebfa2bf0e0af8e81f17581bb5be54f84cf3`.
+The configured message SHA-256 is
+`318a9395a8189caa1a72ffbe3c4275811810e3f08334e749e9175a4905dcfa07`;
+its receipt SHA-256 is
+`93a78621d65c54fc88ca41dc12c0330af9b3c9c063fa0f697c23e714f325c535`.
+The Markdown receipt SHA-256 is
+`500107bbcffb1637239d52e9e3d6edcf3c1d545395389ab0f5a2c50f482fdb92`.
+Streams and cleanup completed with stable source/index/reference identities.
+EVD-P02-082 accepts these observed draft, ready and implementation indexes.
 
 Readiness selects exactly the four allowed paths through the canonical
 selector: seven validators, no unmatched paths and no validator execution.
@@ -146,8 +159,24 @@ Focused commands retain 60-second bounds; canonical staged retains its existing
 runner limits. Pinned hook/configuration prerequisites are unchanged from prior
 observed checks. These observations establish implementation readiness, not
 execution acceptance. At the ready transition, implementation remained pending.
-Current implementation-index checks, whole Work and terminal
-acceptance remain NOT_RUN until observed.
+The nonauthoritative isolated terminal proposal under ignored
+`.worktrees/proposal/p01-task8-c4-terminal` passed SPEC-0106-only completion
+and separate independent review. Its completion snapshot SHA-256 is
+`4bd8d7d66dd0180a1811cd5b4018450951baba2955176f15f13a5b64944b2c89`;
+raw stdout SHA-256 is
+`7d53846569429d45a92133a8ec324d603d7ea7a67cfa5c34ce21e2ce24634a8a`;
+structured receipt SHA-256 is
+`29e170dff1e25b5f8dc610664cf12761a62bfa0507280abc663ada082fbcd3bc`.
+Clone and original identities remained stable, streams and cleanup completed,
+and no proposal staged run was required or performed.
+
+The user's explicit conditional reflection permission allows this normal
+source closing candidate after prospective acceptance. Fresh actual staged,
+SPEC-0106 completion, configured message and separate final review remain
+NOT_RUN until observed; every one must pass before the closing commit.
+EVD-P02-083 accepts the prospective lane only. Work result cites observed
+implementation acceptance. Actual closing receipts and own commit identity
+remain external, avoiding a source self-OID loop.
 Quality and independent review are separate from the sole writer. The isolated
 terminal candidate needs SPEC-0106 completion/review only; normal source
 reflection must pass fresh actual staged/completion/message and final separate
