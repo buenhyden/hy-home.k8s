@@ -3714,6 +3714,49 @@ def _first_parent_history(
     return commits
 
 
+def _history_registered_task_template_copy(
+    root: Path,
+    parent: str,
+    commit: str,
+    source: PurePosixPath,
+    path: PurePosixPath,
+    target: LifecycleDocument,
+    cache: _CumulativeHistoryCache,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> bool:
+    """Recognize only an unchanged registered form's unique first Task draft."""
+    if (
+        target.profile_id != "sdlc/task"
+        or target.status != "draft"
+        or target.state_issue is not None
+        or target.artifact_id is None
+        or _tree_blob_oid(root, parent, path) is not None
+    ):
+        return False
+    profile = classify_path(cache.registry, path)
+    if profile.profile_id != "sdlc/task" or source != profile.template:
+        return False
+    for revision in (parent, commit):
+        historical = classify_path(cache.registry_at(revision), path)
+        if historical.profile_id != "sdlc/task" or historical.template != source:
+            return False
+    source_blob = _tree_blob_oid(root, parent, source)
+    owner = _load_canonical_markdown_module()
+    return (
+        source_blob is not None
+        and source_blob == _tree_blob_oid(root, commit, source)
+        and target.artifact_id == owner.expected_artifact_id(path, profile)
+        and all(
+            doc.artifact_id != target.artifact_id for doc in base_documents.values()
+        )
+        and sum(
+            doc.artifact_id == target.artifact_id for doc in proposed_documents.values()
+        )
+        == 1
+    )
+
+
 def _history_rename_or_copy_into_path(
     root: Path,
     parent: str,
@@ -3722,6 +3765,7 @@ def _history_rename_or_copy_into_path(
     *,
     target_document: LifecycleDocument | None = None,
     cache: _CumulativeHistoryCache | None = None,
+    allow_distinct_artifact_copy: bool = True,
 ) -> bool:
     """Reject bounded Git evidence of a rename or copy into the target path."""
 
@@ -3775,8 +3819,21 @@ def _history_rename_or_copy_into_path(
                     target_id = target_document.artifact_id
                     source_blob = _tree_blob_oid(root, parent, source)
                     owner = _load_canonical_markdown_module()
+                    if _history_registered_task_template_copy(
+                        root,
+                        parent,
+                        commit,
+                        source,
+                        path,
+                        target_document,
+                        cache,
+                        base_documents,
+                        proposed_documents,
+                    ):
+                        continue
                     if (
-                        source_document is not None
+                        allow_distinct_artifact_copy
+                        and source_document is not None
                         and source_document.state_issue is None
                         and source_document.artifact_id is not None
                         and target_id is not None
@@ -4213,7 +4270,11 @@ def _history_proves_cumulative_create(
                 continue
             target_document = (
                 _history_document(history_cache, commit, path)
-                if allow_distinct_artifact_copy and not appeared
+                if not appeared
+                and (
+                    allow_distinct_artifact_copy
+                    or classify_path(registry, path).profile_id == "sdlc/task"
+                )
                 else None
             )
             if _history_rename_or_copy_into_path(
@@ -4223,6 +4284,7 @@ def _history_proves_cumulative_create(
                 path,
                 target_document=target_document,
                 cache=history_cache if target_document is not None else None,
+                allow_distinct_artifact_copy=allow_distinct_artifact_copy,
             ) or (
                 not appeared
                 and _history_first_appearance_has_deletion(root, parent, commit)

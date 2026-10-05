@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.1.0"
+version: "1.3.1"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,12 +14,12 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001/002`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
-original P02 request authorized scoped local authoring, review, checks, and three
-logical local commits. The later P02 finish instruction also authorized
+original WORK-001 request authorized scoped local authoring, review, checks, and three
+logical local commits. The earlier P02 finish instruction also authorized
 local P01/P02 integration into main and removal of their development branches
 after verified integration; the original Task records that observed finish.
 The current `VAL-P02-002` follow-up authorizes four normal work-unit commits
@@ -27,6 +27,13 @@ in its own feature worktree and retains the P01 worktree. The request owner's
 later instruction authorizes push and merge after required review and hosted
 checks. Worktree removal, live/secret and archive mutation remain excluded;
 no authenticated-actor claim or remote outcome is inferred.
+
+WORK-003 applies the later instruction authorizing work-unit push and normal
+merge after required hosted checks. Its repair stays on the preserved P01
+feature branch; four local commits record draft, ready, in-progress and
+completed Task states. No intermediate push is planned. Keep local full and
+affected execution NOT_RUN under the scoped exclusion; hosted full remains
+required. Preserve both worktrees and history.
 
 ## Overview
 
@@ -79,7 +86,7 @@ Use the affected-path validation registry and record exact snapshots/results.
 
 ## Non-Goals & Out-of-Scope
 
-No new unrelated document family, duplicate stable ID copy, progress ledger, inventory
+For original WORK-001, no new unrelated document family, duplicate stable ID copy, extra Task, progress ledger, inventory
 pin, permanent `change_id` capacity, frozen archive rewrite, provider trust
 change, global/private change, or live/secret operation.
 P01 completion and SPEC-0104 archive disposition stay intact.
@@ -90,10 +97,47 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-005 | [VAL-P02-005](spec.md#success-criteria--verification-plan) | Restore Task-only new history metadata eligibility and align three current Registry test consumers while retaining their negative contracts | Completed Task0004; observed hosted unit failures and same-pattern causal comparison; independent code/security review and actual-index checks before each normal commit | [SPEC-0106-TSK-0005](tasks/tsk-0005-current-registry-fixture-consumers.md) | Observed RED; changed-input Task-template, ordinary-copy and bounded malicious-pattern controls; identity/authority and all25 shared migration-fixture methods; scoped hooks; actual-index staged/message; prospective completion/review then fresh actual closing checks; required hosted and integrated-main observations separate |
+| WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
+| WORK-003 | [VAL-P02-003](spec.md#success-criteria--verification-plan) | Align current proof fixtures with complete published assets and cumulative headers/review transitions; independently prove frozen asset reads; repair scoped formatting/scanner acceptance | Hosted failure and security disposition; review before each index commit; local acceptance before final push | [SPEC-0106-TSK-0003](tasks/tsk-0003-ci-fixture-and-format-follow-up.md) | Focused RED/GREEN, proof and illegal-transition negatives and missing-object refusal; staged/message; completion and independent review; hosted PR checks before merge and main checks after merge |
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 | WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
+
+WORK-005 owns three current test consumers, its Spec/Plan/Task and the private
+first-appearance metadata condition in `scripts/validate-document-lifecycle.py`.
+The new all-mode eligibility is limited to trusted `sdlc/task` classification;
+the existing ordinary-copy condition and every other refusal remain intact.
+No new mirrored test or completed Task0004 edit is required. Five forward
+logical commits separate draft, readiness, guard restoration, fixture repairs
+and completion. The guard slice leaves fixture edits unstaged during its
+actual-index checks; focused working-tree evidence names that separate input.
+The artifact cases follow the published archive route identity; authority
+cases follow current requirement and architecture lifecycle domains; the
+migration fixture adjusts an existing bounded route in the complete current
+graph instead of appending duplicate declarations or retired domains.
+Preserve every related rejection and proof check. Quality executes explicit
+named cases, including the 25 shared migration setup consumers, without
+discovery or a full/all-files substitute. Each logical source index receives
+canonical staged, configured message and independent review. A terminal
+proposal receives completion and semantic review; the reflected source then
+receives fresh actual staged/completion/message and separate review before
+commit. Local full and affected execution remain NOT_RUN.
+
+WORK-004 uses real Git copy evidence and exact current/historical template
+bindings. Only the private copy guard and its focused regression fixture may
+change. A first draft retains normal initial-event comparison and every later
+state, identity, deletion, merge and budget check. Quality owns bounded named
+tests and canonical staged/message/completion checks; an independent reader
+reviews each exact index. Local full and affected execution remain NOT_RUN.
+The existing automatic hosted run is preserved; the final corrected head
+must receive normal required hosted checks before merge.
+
+WORK-003 requires focused historical fixture RED/GREEN and missing-object
+refusal; exact-index staged/message checks for each local commit; final
+completion and independent review. Required hosted PR checks precede merge;
+integrated-main hosted checks follow merge before integration acceptance.
 
 Focus RED/GREEN on status aggregation, duplicate/missing rows, criterion links,
 required versus nonrequired cancellation, Git transition/deletion/reopening,

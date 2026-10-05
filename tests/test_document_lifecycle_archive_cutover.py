@@ -564,10 +564,18 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         lifecycle = next(
             domain
             for domain in registry["lifecycle_domains"]
-            if domain["family"] == "requirement-architecture"
+            if domain["family"] == "requirement"
         )
         self.assertTrue(
-            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "active")
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "in-review")
+        )
+        self.assertTrue(
+            authority.is_lifecycle_transition_allowed(
+                lifecycle, "in-review", "approved"
+            )
+        )
+        self.assertFalse(
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "approved")
         )
         self.assertFalse(
             authority.is_lifecycle_transition_allowed(lifecycle, "draft", "accepted")
@@ -580,20 +588,27 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self,
     ):
         registry = load_registry(ROOT)
-        # 12 before the content/audit, content/research and content/data
-        # families retired with their unroutable profiles, 9 while the three
-        # reference roles carried a domain no graph governed, and 12 again now
-        # that each role declares the lifecycle Spec 0054 names for it. ADR-0038
-        # adds one family for the body-less route dispositions.
+        # The published graph includes separate requirement and architecture
+        # domains plus the body-less archive route dispositions.
         self.assertEqual(len(registry.lifecycle_domains), 13)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
-            if domain.family == "requirement-architecture"
+            if domain.family == "requirement"
         )
-        self.assertEqual(requirement.validation_class("active"), "current")
-        self.assertTrue(requirement.allows("draft", "active"))
+        self.assertEqual(requirement.validation_class("approved"), "current")
+        self.assertTrue(requirement.allows("draft", "in-review"))
+        self.assertTrue(requirement.allows("in-review", "approved"))
+        self.assertFalse(requirement.allows("draft", "approved"))
         self.assertFalse(requirement.allows("draft", "retired"))
+        architecture = next(
+            domain
+            for domain in registry.lifecycle_domains
+            if domain.family == "architecture-description"
+        )
+        self.assertEqual(architecture.validation_class("active"), "current")
+        self.assertTrue(architecture.allows("in-review", "active"))
+        self.assertFalse(architecture.allows("draft", "active"))
         raw = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
