@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -86,10 +86,20 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
 | WORK-003 | [VAL-P02-003](spec.md#success-criteria--verification-plan) | Align current proof fixtures with complete published assets and cumulative headers/review transitions; independently prove frozen asset reads; repair scoped formatting/scanner acceptance | Hosted failure and security disposition; review before each index commit; local acceptance before final push | [SPEC-0106-TSK-0003](tasks/tsk-0003-ci-fixture-and-format-follow-up.md) | Focused RED/GREEN, proof and illegal-transition negatives and missing-object refusal; staged/message; completion and independent review; hosted PR checks before merge and main checks after merge |
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-004 uses real Git copy evidence and exact current/historical template
+bindings. Only the private copy guard and its focused regression fixture may
+change. A first draft retains normal initial-event comparison and every later
+state, identity, deletion, merge and budget check. Quality owns bounded named
+tests and canonical staged/message/completion checks; an independent reader
+reviews each exact index. Local full and affected execution remain NOT_RUN.
+The existing automatic hosted run is preserved; the final corrected head
+must receive normal required hosted checks before merge.
 
 WORK-003 requires focused historical fixture RED/GREEN and missing-object
 refusal; exact-index staged/message checks for each local commit; final

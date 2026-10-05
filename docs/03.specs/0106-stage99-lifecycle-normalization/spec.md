@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -208,10 +208,16 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-004 | A copied first draft of a new canonical, unique `sdlc/task` may originate only from its current and historically registered Task template, present as the same regular source blob before and after creation. Template binding changes, nonregular or changed sources, ID reuse, wrong initial state, ordinary copy/rename and invalid later edges remain refused. Focused real-Git RED/GREEN and negative regressions, exact-index staged/message, terminal completion and independent review are recorded in Task0004. Public schema, Registry generation, other provenance guards and hosted requirements are unchanged. |
 | VAL-P02-003 | Current migration-proof fixtures use the complete actual generation-10 Registry/schema/template graph and test-only synthetic routes without bypassing compilation or proof checks. Cumulative-history fixtures use required current headers and explicit review transitions while retaining illegal-transition and provenance refusals. Independent historical asset tests prove exact immutable bytes and missing-object refusal. Scoped formatting and verified Git-identity annotations, focused RED/GREEN, staged/message, completion and independent review are recorded in the new Task. Hosted PR and integrated-main checks remain separate from local acceptance. |
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
+
+The separately approved Task-template creation boundary maps VAL-P02-004 to
+WORK-004 in the [Plan](plan.md) and
+[Task0004](tasks/tsk-0004-registered-task-template-instantiation.md).
+The completed Task0003 and original Task evidence remain historical.
 
 The current compatibility follow-up maps VAL-P02-003 to WORK-003 in the
 [Plan](plan.md) and its new
@@ -231,5 +237,6 @@ No new structural decision is required. [Plan](plan.md) owns order and
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — direct approved narrow registered Task-template instantiation correction; other provenance controls remain required | VAL-P02-004 | Real-Git registered-template creation RED/GREEN and boundary negatives, all later lifecycle edges, exact-index staged/message, terminal completion and independent review |
 | N/A — direct approved hosted compatibility follow-up; existing requirement meanings are unchanged | VAL-P02-003 | Focused current proof/header and negative regressions, frozen asset refusal, scoped hooks, staged/message, completion and independent review; required hosted and integrated-main observations remain separate |
 | N/A — direct approved P02 package-local change; existing REQ-0003 meaning is unchanged | VAL-P02-001 | Registry/form/consumer, Task completion, route, historical and Git-edge checks |
