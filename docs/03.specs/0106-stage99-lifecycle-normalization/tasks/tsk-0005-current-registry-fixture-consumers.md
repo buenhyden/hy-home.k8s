@@ -1,8 +1,8 @@
 ---
 title: "Current Registry Fixture Consumers"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -47,7 +47,7 @@ preserves its narrow validator correction and all completed evidence.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-040 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Existing hosted failure and bounded named reproduction | Unchanged published Registry and three test consumers | FAIL | [Observed intake](#observed-intake) | pending |
 | EVD-P02-041 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Changed-input named GREEN and related controls | Pending implementation bytes | NOT_RUN | [Planned repair](#planned-repair) | pending |
-| EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Actual-index staged/message and independent review | Pending logical source candidates | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
+| EVD-P02-042 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Observed draft actual-index staged/message and independent review | Draft tree `2c433586…` | PASS | [Ready prerequisites](#ready-prerequisites) | accepted |
 | EVD-P02-043 | [VAL-P02-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Terminal completion and separate review | Pending terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -98,6 +98,10 @@ follow current `requirement` review-to-approved and separate
 refused. Migration setup already inherits the complete current graph and
 declared assets. Adjust its existing governance route for the finite test
 paths; retain current membership and remove duplicate declaration additions.
+Two pattern/route matrices must look up current `archive/scope-migration`,
+while document type mutations retain `archive/migration`. The existing
+unmapped-state negative must render its quoted header's actual requested
+active or retired state; otherwise its retired case does not mutate bytes.
 Preserve policy-before-pattern, default/null, source Git/digest, disposition,
 consumer, recovery and negative proof checks. No retired declaration returns.
 
@@ -110,6 +114,31 @@ review reads each full candidate and actual receipts. Canonical staged runs
 retain the existing runner limits and every actually selected gate; manual
 named tests use separate bounded invocations. Existing Conftest preparation
 and pinned tools are reused without configuration changes.
+
+### Ready prerequisites
+
+Draft commit `9d6fc142227bcc4659c7aae878edc866bdff178c` has tree
+`2c4335864b7ae7e67f399bc21bd53419910b99ce`. Its six actual canonical staged
+gates, configured message and separate candidate/evidence review passed.
+Safe staged stdout SHA-256 is
+`9e6d1541834095bbf0cd260709e759d1e92a2a21f0a23706a415337e881891bb`;
+outer stderr was empty and all children reported complete output/cleanup.
+The actual message fixture SHA-256 is
+`032ff0e200d39e52b5b5975cde3c9e9e4c818b7f8eaf5bfd5acfe692ec2c99b2`.
+This accepts only that prior draft; the ready index receives fresh checks.
+
+Selection-only canonical preflight of the exact six allowed paths reported
+no unmatched path and seven validators: agent-governance,
+archive-contract-tests, document-contract-registry, document-lifecycle,
+links-and-owners, markdown-profiles and repository-quality. No affected
+execution occurred. Existing tools/configuration and runner limits are
+unchanged; the selected gates retain their existing prerequisites.
+The explicit focused manifest under `.worktrees/proposal/` names four
+identity methods, two authority methods and all 25 shared migration setup
+methods. These changed-input checks retain the five observed failure cases
+and directly affected positive/negative contracts; they are not discovery.
+Each named invocation is separately bounded. At this ready transition,
+implementation, focused GREEN and required hosted outcomes remain pending.
 
 Normal required exact-head hosted checks precede merge, and automatic
 integrated-main checks precede integration acceptance. Remote push waits for
