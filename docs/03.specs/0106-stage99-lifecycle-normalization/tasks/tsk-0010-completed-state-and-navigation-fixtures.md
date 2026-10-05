@@ -1,8 +1,8 @@
 ---
 title: "Completed-State and Navigation Fixtures"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -16,7 +16,8 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 
 Repair two test consumers exposed by the executed hosted complement, preserving
 their current and historical refusal contracts. The two fixture corrections and
-focused checks are observed; this implementation index's acceptance remains pending.
+focused and actual implementation-index checks are accepted. Prospective terminal
+completion is observed; this closing candidate still requires its own actual checks.
 
 ## Inputs
 
@@ -39,7 +40,7 @@ focused checks are observed; this implementation index's acceptance remains pend
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-010 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | Correct completed-state and navigation fixture prerequisites while preserving refusal controls | platform | frontmatter | NOT_RUN | pending | EVD-P02-101 focused accepted; current-index and terminal acceptance pending |
+| WORK-010 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | Correct completed-state and navigation fixture prerequisites while preserving refusal controls | platform | frontmatter | PASS | accepted | EVD-P02-101 final focused/hooks and EVD-P02-102 actual implementation-index checks, independently accepted |
 
 ## Task Evidence
 
@@ -47,8 +48,8 @@ focused checks are observed; this implementation index's acceptance remains pend
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-100 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Three explicit named RED checks; independent cause/scope review | Unchanged accepted Task9 checkout; sixty-second bounds | FAIL | External safe named receipt `hy-p01-751623-attempt2-named.receipt.json`; cause receipt `hy-p01-751623-attempt2-named-causes.json` | rejected |
 | EVD-P02-101 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Seven named final-input GREEN controls and three pinned scoped hooks | Final formatted two-file input; complete declared dependencies and unchanged configs | PASS | External `hy-p01-task10-focused2.receipt.json` and `hy-p01-task10-hooks2.receipt.json`; direct independent audit `/root/p02_independent_review` | accepted |
-| EVD-P02-102 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Draft and ready actual-index staged/message and independent review | Separate frozen draft and ready indices; current implementation checks pending | PASS | External `hy-p01-task10-c1-staged.receipt.json`, separate parsing qualification and message receipt; `hy-p01-task10-c2-staged.receipt.json` and message receipt; independent final audits | accepted |
-| EVD-P02-103 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Prospective completion/review and fresh actual closing checks | Pending terminal candidates | NOT_RUN | Pending separate prospective and actual receipts | pending |
+| EVD-P02-102 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Draft, ready and implementation actual-index checks and independent review | Separate frozen logical indices and exact messages | PASS | External C1/C2 staged/message receipts, preserved C1 parsing qualification, and `hy-p01-task10-c3-markdown.receipt.json`, staged and message receipts; independent final audits | accepted |
+| EVD-P02-103 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Prospective completion and independent review only | Isolated same-base/config terminal proposal; actual closing checks still pending | PASS | External `hy-p01-task10-c4-proposal-completion.receipt.json`; direct independent audit `/root/p02_independent_review` | accepted |
 | EVD-P02-104 | [VAL-P02-010](../spec.md#success-criteria--verification-plan) | WORK-010 | Registered-form first-appearance metadata | Actual cached and committed C007 from unchanged declared regular Task form; target absent before creation | PASS | Ignored `p01-task10-c1-creation-preflight.json` and `p01-task10-c1-postcommit.json`; selected metadata observations, full raw diff not persisted | accepted |
 
 ## Approval and Safety Boundaries
@@ -126,7 +127,21 @@ and secret checks passed with complete streams/cleanup and unchanged source,
 configs and dependencies. The independent reviewer directly audited the final
 receipts before accepting this focused lane.
 
-No production owner changed. This implementation index's staged/message,
-whole WORK and terminal checks remain NOT_RUN until observed. Next owners are
-the writer, separate quality actor and independent reviewer. Hosted admission
-remains required for the complete final checkout beyond the capped failure excerpt.
+No production owner changed. The actual implementation index separately passed
+its changed Task Markdown, all seven fresh canonical gates and exact configured
+message, with independent final raw audit before the normal implementation commit.
+WORK-010 accepts those observed implementation facts only.
+
+The isolated same-base/config terminal proposal separately passed SPEC0106-only
+completion and independent review. Its external receipt SHA256 is
+`7236c22d5f59f0caaba322ffc81ce87b515e840b5161b47527f736c0e3fcf76c`;
+the observed completion snapshot is
+`69245a35e10e847686072fa085f8f51c3f417ed83b8277a736a14cb7ee7be4c6`.
+Streams and cleanup completed with unchanged clone and original inputs; no
+proposal staged run occurred. EVD-P02-103 accepts this prospective lane only.
+
+This reflected actual closing candidate's staged, SPEC0106 completion, exact
+message and independent final review remain NOT_RUN until observed. They must all
+pass over the frozen actual index before commit; final actual receipts remain
+external to avoid a source self-OID loop. Hosted PR and integrated-main admission
+remain separate pending lanes beyond the capped failure preview.
