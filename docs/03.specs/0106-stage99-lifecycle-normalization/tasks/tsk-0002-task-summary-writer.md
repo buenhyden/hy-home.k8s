@@ -2,7 +2,7 @@
 title: "Explicit Multi-row Task Summary Writer"
 version: "0.1.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -36,6 +36,14 @@ main SHA results require separate observed evidence.
   clean preserved P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`,
   new clean `codex/p02-task-summary` worktree at the P01 tip. Neither prior
   worktree is the writer of this Task.
+- Resume snapshot: `codex/p02-task-summary` at C1
+  `46b99f862da8d89997f437866349aaea201f2d42`, with both earlier worktrees
+  preserved. `/root/p02_single_writer` is the sole authorized source/staging/commit
+  writer. The previous writer could not execute because its selected model
+  was at capacity and was explicitly interrupted; the replacement uses the
+  running parent model. Registry/projection model metadata is static context,
+  not evidence of native role/model enforcement. No unrelated changes were
+  observed at handoff; current user push/merge authorization remains in force.
 - Current [Stage 99 contract](../../../99.templates/registry.json),
   [Task form](../../../99.templates/templates/specs/task.template.md), and
   [quality policy](../../../../.agents/governance/quality.md). Python 3.12.3,
@@ -60,7 +68,7 @@ main SHA results require separate observed evidence.
 | EVD-P02-016 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Initial draft exact-index staged check | Tree `2b63fc32e90b4126397c37348a7137bc602e159b` at base `df3281d0…` | FAIL | [Verification Summary](#verification-summary) | pending |
 | EVD-P02-017 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Completion anchor and independent semantic review | Final candidate pending | NOT_RUN | Pending | pending |
 | EVD-P02-018 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Repaired draft exact-index staged/message checks and semantic review | Tree `d3a0bcbb7191d017ef467f086c80f6554c73d054` at base `df3281d0…` | PASS | [Verification Summary](#verification-summary) | accepted |
-| EVD-P02-019 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Current and subsequent exact-index staged/message checks | Changed authorization and future logical indexes pending | NOT_RUN | Pending | pending |
+| EVD-P02-019 | [VAL-P02-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Current C1 exact-index staged/message checks and semantic review | Tree `2871e25d7da8e92c4317cd42ef493556ed17a157`, committed as `46b99f86…` | PASS | [Verification Summary](#verification-summary) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -105,11 +113,28 @@ not committed. The Task now assigns PR hosted checks before merge and
 integrated main SHA checks after merge; this revised index awaits review and
 staged validation.
 
-At draft intake the implementation, focused regression, current staged/message,
-completion, and independent review checks are `NOT_RUN/pending`. Selected
+C1 finally froze tree `2871e25d7da8e92c4317cd42ef493556ed17a157` and
+committed it normally as `46b99f862da8d89997f437866349aaea201f2d42` after
+`python3 scripts/qa.py staged` passed 6/6 gates (exit 0). Raw stdout is
+`/tmp/hy-p02-c1-approved-staged.stdout` (SHA-256
+`1e07ba4bff6ca568f2ac89204b7b8bdb99686d7adab19ea4dc883c13ac08dce5`);
+stderr is empty. The exact message file
+`/tmp/hy-p02-c1-commit-message.txt` (SHA-256
+`c28299e585d0e8634220fcaf3fbbafafc250310561213426af8e6b00f5bcd77a`)
+passed `cz check --commit-msg-file` in the existing pinned Commitizen 4.15.1
+environment. `/root/p02_independent_review`, a distinct read-only reviewer,
+read the whole Spec/Plan/Task candidate and raw diff and found no blocking
+finding. The source-acceptance/remote-integration distinction and ordered
+PR-before-merge/main-after-merge checks passed review. Normal Git hooks were
+kept active; this supplies no native provider hook-delivery claim.
+
+Readiness means the approved scope and write/validation boundaries are clear.
+Implementation, focused RED/GREEN, subsequent exact-index checks and final
+completion/review are still `NOT_RUN/pending`. This ready Task change is a
+separate input requiring its own staged/message/review evidence. Selected
 affected gates will be recorded without executing the affected lane. Full QA
 is `NOT_RUN/not-required` locally for this follow-up; hosted full checks remain
-pending on delivered revisions. Residual risk and next
-owner are repo-tooling-engineer until source checks and independent review
-establish acceptance; remote push/merge are authorized but unobserved, and
-operator-owned native/live observations remain `DEFER`.
+pending on delivered revisions. Residual risk and next owner are
+repo-tooling-engineer until source checks and independent review establish
+acceptance; remote push/merge are authorized but unobserved, and operator-owned
+native/live observations remain `DEFER`.
