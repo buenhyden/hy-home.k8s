@@ -1,8 +1,8 @@
 ---
 title: "Hosted Fixture and Formatting Compatibility"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -53,6 +53,7 @@ observed evidence.
 | EVD-P02-022 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Corrected fixture, missing-object refusal and focused hooks | Implementation pending | NOT_RUN | Pending | pending |
 | EVD-P02-023 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Exact-index staged/message and semantic checks | Logical indexes pending | NOT_RUN | Pending | pending |
 | EVD-P02-024 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Final local completion and remote disposition | Terminal candidate and corrected hosted input pending | NOT_RUN | Pending | pending |
+| EVD-P02-025 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Draft exact-index staged/message and independent review | Tree `ad1d97439ff3a183c7bfa2215f1873fa0fccab82` at intake head | PASS | [Draft readiness](#draft-readiness) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -66,6 +67,23 @@ observed evidence.
 - **Evidence Location**: This Task; safe structured receipts may remain in temporary scratch without becoming another progress authority.
 
 ## Verification Summary
+
+### Draft readiness
+
+The draft index `ad1d97439ff3a183c7bfa2215f1873fa0fccab82`
+passed all six selected staged gates via
+`python3 -B scripts/qa.py staged --base-ref HEAD --root <P01_WORKTREE>`:
+agent governance, document Registry, lifecycle, links/owners, Markdown
+profiles and repository quality. The bounded runner returned zero with
+complete cleanup. `git diff --cached --check` passed. The actual message
+`docs(specs): scope hosted fixture compatibility repair` passed cached pinned
+Commitizen using `/tmp/hy-p01-c1-msg.txt`. Independent read-only reviewer
+`/root/p02_independent_review` verified that tree's three-document diff,
+source contracts and safe diagnosis receipts and reported no material finding.
+Normal commit `baeb20cb5c809c004e122b72ee7cfc08f71e09b2` recorded that draft
+tree. This ready-only Task records
+readiness for implementation; EVD-P02-022/023/024 remain pending and no hosted
+repair result or final acceptance is asserted.
 
 ### Observed failure
 
