@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -35,11 +35,12 @@ distinct states; Task `ready` records readiness, not permission to act.
 No new requirement, AD, ADR, progress ledger, native-provider
 claim, or permanent inventory count is needed. Do not modify frozen archive
 bodies, sealed records, historical contracts, private/global state, cluster,
-secrets, or remote Git. The latest explicit user instruction authorizes local
-P01/P02 integration into main and deletion of the two development branches and
-any linked development worktrees after verified integration. Retain the primary
-workspace. Push, PR, remote merge/publication, archive mutation and live action
-remain outside scope; this instruction does not authenticate an approving actor.
+secrets, or remote Git. The earlier P02 finish instruction authorized local
+P01/P02 integration into main and removal of their development branches after
+verified integration; the Task records that observed finish. The current P01
+follow-up retains its own feature branch and worktree. Push, PR, remote
+merge/publication, archive mutation and live action remain outside scope;
+neither instruction authenticates an approving actor.
 
 ## Contracts
 
@@ -173,11 +174,13 @@ next owner named.
 Demonstrate focused RED and GREEN cases for Task status aggregation and
 completion refusal, including historical fixtures. Run the affected quick
 profile, exact-index staged QA and actual commit-message validation for each
-logical commit. The latest explicit user instruction removes full QA from the
-required acceptance set and prohibits another full run or an all-files/unit
+original P02 logical commit. Its finish instruction removed full QA from the
+required acceptance set and prohibited another full run or an all-files/unit
 substitute. Preserve earlier interrupted full observations; an unexecuted full
-check is NOT_RUN with acceptance not-required, never PASS. After closing
-documentation, refresh affected/index/message and completion-mode evidence.
+check is NOT_RUN with acceptance not-required, never PASS. The current P01
+follow-up selects affected gates without executing that lane; it rechecks the
+historical P02 candidate and the changed closing index separately. Refresh
+closing evidence on the actual changed index before claiming completion.
 Independent read-only review checks the final meaning. At the intake snapshot,
 P02 implementation full, unit, fixture and completion-mode checks had not run;
 the Task owns all later execution observations.

@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Task"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -19,7 +19,9 @@ and source implementation are committed and reviewed. The required source
 checks and explicit local main integration/branch cleanup have observed PASS
 evidence. This completed acceptance candidate awaits its separate closing
 affected/index/message, completion-mode and read-only review checks; their
-results are not predicted here.
+original EVD-P02-013 outcomes remain `NOT_RUN/pending`. The current P01
+follow-up records a separate historical recheck in EVD-P02-014; its changed
+closing index and final review still need their own evidence.
 The [Spec](../spec.md) owns behavior and acceptance; the
 [Plan](../plan.md) owns ordered work and dependencies.
 
@@ -61,13 +63,14 @@ The [Spec](../spec.md) owns behavior and acceptance; the
 | EVD-P02-011 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | First final full, interrupted after Archive failure | Index `bfa180e8740b8c4a3b7a7c8387b8d8a3ba51c5d9`; base HEAD `7fc8829858bdcdf27e3ab93c23e62cb2a84df751`; 1301 all-file inputs | FAIL | [First final full observation](#first-final-full-observation) | pending |
 | EVD-P02-012 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Further full QA excluded by latest explicit user scope | No further full or all-files/unit substitute executed | NOT_RUN | [Latest required validation and local finish scope](#latest-required-validation-and-local-finish-scope) | not-required |
 | EVD-P02-013 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Completed candidate closing affected/index/message, completion-mode and document review | Three-document candidate on main after source `9985d836a4af596e3143aae000b891f0c8862bf7` | NOT_RUN | Closing checks pending; no source acceptance result is reused for this candidate | pending |
+| EVD-P02-014 | [VAL-P02-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Current re-verification of the historical closing candidate and changed-index closure | Historical `9985d836…` to `9067729b…` input observed; current changed-index completion/review pending | NOT_RUN | [P01 follow-up recheck](#p01-follow-up-recheck) | pending |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: `docs/03.specs/0106-stage99-lifecycle-normalization/`; `docs/03.specs/README.md` (wiki-curator navigation owner); `docs/99.templates/registry.json` and both files in `docs/99.templates/contracts/`; selected forms in `docs/99.templates/templates/`; `scripts/document_contracts.py`, `scripts/validate-document-contract-registry.py`, `scripts/validate-markdown-profiles.py`, `scripts/validate-links-and-owners.py`, `scripts/document_lifecycle.py`, `scripts/validate-document-lifecycle.py`; their direct fixtures under `tests/`; and exact current documents or consumer guidance identified by `VAL-P02-001` inventory. Root delegated the document/form paths listed below to doc-writer and scripts/tests to quality-engineer; navigation remains with wiki-curator.
 - **Forbidden Paths**: frozen `docs/98.archive/` bodies, sealed records, historical contracts, private/global configuration, secrets, live cluster/cloud resources, and unrelated changes.
-- **Approval Required**: The P02 request approved scoped local implementation, review, validation and the planned intake, atomic implementation and acceptance commits; the observed post-merge regression required one corrective local source commit before acceptance. The latest explicit user instruction authorizes local P01/P02 integration into main and deletion of the two development branches and any linked development worktrees after verified integration; retain the primary workspace. Push, PR, remote merge/publication, archive mutation and live/secret actions remain outside scope. No authenticated approving actor, trusted reference, or revocation verification has been supplied or claimed.
-- **Static Validation**: Intake quick and exact-index staged checks and commit-message validation passed on the intake snapshot. Focused parser and route RED/GREEN cases are recorded below. Later focused and exact-snapshot observations are recorded below. The observed source and local finish evidence is accepted below; remaining checks apply to the completed document candidate: affected/index/message, completion mode and closing review. The latest explicit user instruction excludes further full QA and all-files/unit substitutes; an unexecuted full is NOT_RUN/not-required, while earlier failed/interrupted observations remain historical facts.
+- **Approval Required**: The P02 request approved scoped local implementation, review, validation and the planned intake, atomic implementation and acceptance commits; the observed post-merge regression required one corrective local source commit before acceptance. Its later finish instruction authorized local P01/P02 integration into main and removal of those development branches after verified integration; the observed finish is recorded below. The current P01 follow-up authorizes this Task's bounded evidence clarification on a retained local feature branch and worktree. Push, PR, remote merge/publication, archive mutation and live/secret actions remain outside scope. No authenticated approving actor, trusted reference, or revocation verification has been supplied or claimed.
+- **Static Validation**: Intake quick and exact-index staged checks and commit-message validation passed on the intake snapshot. Focused parser and route RED/GREEN cases are recorded below. Later focused and exact-snapshot observations are recorded below. The observed source and local finish evidence is accepted below. The earlier P02 finish scope excluded further full QA and all-files/unit substitutes; an unexecuted full is NOT_RUN/not-required, while earlier failed/interrupted observations remain historical facts. The current P01 follow-up rechecks the historical candidate, selects affected gates without executing that lane, and requires a fresh exact-index, completion, message and closing review of changed documents before EVD-P02-014 acceptance.
 - **Live Validation**: DEFER — not requested or authorized; repository-static results do not prove runtime behavior.
 - **Secret / Vault Handling**: No read, print, or mutation of secret values. References and fixed public artifact identities only.
 - **Rollback Plan**: Review P02 commit boundaries and use forward reverts where authorized; preserve unrelated work, historical records and this evidence ledger.
@@ -865,13 +868,51 @@ a separate push. This is user-reported external action, not authenticated actor
 or hosted-CI evidence. The agent executed no push, PR or remote merge command;
 no live action or Archive mutation occurred. Ref inventory has only local main
 and origin/HEAD plus origin/main, with no remote development tracking refs.
-The closing acceptance commit remains local only.
+At this earlier handoff snapshot, the closing acceptance commit remained local.
 
 These observed source/finish results accept WORK-001 and EVD-P02-003 under the
 latest no-full scope. Earlier failures and interrupted runs remain historical
 evidence; EVD-P02-012 stays NOT_RUN/not-required. The three completed documents
-are a closing candidate, with EVD-P02-013 pending its own affected/index/message,
-completion and document review; no closing PASS or acceptance commit is yet
-claimed. Forward rollback must preserve the Task and reachable historical OIDs.
+were a closing candidate, with EVD-P02-013 pending its own affected/index/message,
+completion and document review; this earlier snapshot claimed no closing PASS
+or acceptance commit. Commit `9067729bf6679a0cd536362113be261056c32dd6`
+later recorded the candidate but did not itself prove those checks ran.
+Forward rollback must preserve the Task and reachable historical OIDs.
 Repository-static/local proof does not establish hosted/native/live behavior,
 authenticated approval, revocation validation or other repositories' conformance.
+
+### P01 follow-up recheck
+
+The current P01 follow-up reconstructed the original three-document closing
+candidate in isolated scratch material: named `main` HEAD
+`9985d836a4af596e3143aae000b891f0c8862bf7`, exact index/worktree tree
+`eadd833ed7bd74cc79ba4bf71425bfb8845398e8` matching commit
+`9067729bf6679a0cd536362113be261056c32dd6`, and NUL-delimited Spec,
+Plan and Task path input SHA-256
+`e7d7d0cc434daec908b34736a6f02d810ca3488d71f3413aea97f4864562cd52`.
+The first detached-HEAD scratch setup returned FAIL on three of six staged
+gates because the source lacked a durable named ref; the failed result remains
+in `/tmp/hy-p02-recheck-6luxz6_7/staged.stdout`. The corrected scratch
+checkout used a named source ref and ran exactly one registered staged check:
+`python3 -B scripts/run-validation-lane.py --root <SCRATCH_REPO> --lane staged
+--paths-file <PATHS_NUL> --delimiter nul`. It returned PASS, six of six gates,
+in 187.018 seconds; stdout SHA-256
+`5387af9ddcb04a6ffbb8da856834f35503b44cf79fef7184b8d3dcb046b6079c`
+at `/tmp/hy-p02-recheck-6luxz6_7/staged_named_ref.stdout`.
+`python3 -B scripts/validate-document-lifecycle.py --root <SCRATCH_REPO>
+--mode explicit-ref --from-ref 9985d836… --to-ref 9067729b…` with exactly
+the same three `--include-path` values returned PASS in 53.146 seconds,
+stdout SHA-256
+`eb79150bc6ff85ef485732dbe3bec7eefbf8be9422b630ff0dbe291b2cdcd49b`
+at `/tmp/hy-p02-recheck-6luxz6_7/explicit_ref.stdout`.
+The actual `9067729b` message was checked retrospectively with cached pinned
+Commitizen 4.15.1 (`<PINNED_CZ> check --commit-msg-file <MESSAGE_FILE>`),
+returning PASS; the message file SHA-256 was
+`ebcedda74795b38e5b927f89edacf6a462fff37e7b76bbec07bfeb92e368ce0d`.
+This proves current grammar conformance, not delivery of a hook in the earlier
+commit. The affected selector chose the same six gates; affected execution is
+`NOT_RUN` under the current scoped request. EVD-P02-013 stays its historical
+`NOT_RUN/pending`. EVD-P02-014 remains pending until exact current closing
+index, lifecycle completion and independent review actually pass. The prior
+source acceptance and local main integration are unchanged. Current remote,
+provider runtime and live states remain `DEFER` to their respective owners.

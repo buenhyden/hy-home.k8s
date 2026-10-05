@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -19,11 +19,12 @@ dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
 direct P02 request authorizes scoped local authoring, review, checks, and three
-logical local commits. The latest explicit user instruction also authorizes
-local P01/P02 integration into main and deletion of the two development branches
-and any linked development worktrees after verified integration; retain the
-primary workspace. Remote/publication, live/secret and archive-mutation actions
-remain excluded, without an authenticated-actor claim.
+logical local commits. The earlier P02 finish instruction also authorized
+local P01/P02 integration into main and removal of their development branches
+after verified integration; the Task records that observed finish. The current
+P01 follow-up keeps its own feature branch/worktree and excludes further
+integration or cleanup. Remote/publication, live/secret and archive-mutation
+actions remain excluded, without an authenticated-actor claim.
 
 ## Overview
 
@@ -31,8 +32,10 @@ Deliver the one acceptance set through [SPEC-0106-TSK-0001](tasks/tsk-0001-lifec
 Intake docs established the reviewable contract; the atomic implementation
 changed the form/schema/checker/current-consumer surface. A corrective local
 commit repaired an observed post-merge history-cache failure without changing
-the acceptance contract. The closing acceptance commit records final evidence
-and state after its own checks. The Task alone owns execution observations.
+the acceptance contract. The original closing candidate commit recorded the
+document state; it did not by itself establish that its separate closing
+checks ran. The current Task evidence owns that re-verification and its
+remaining limits. The Task alone owns execution observations.
 
 ## Context
 
@@ -75,7 +78,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Intake evidence, focused RED/GREEN, affected and staged gates, independent review, completion mode, local main integration, branch/worktree cleanup and closing commit in the Task; full QA is not required under the latest explicit user scope |
+| WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
 
@@ -83,11 +86,13 @@ Focus RED/GREEN on status aggregation, duplicate/missing rows, criterion links,
 required versus nonrequired cancellation, Git transition/deletion/reopening,
 route values and frozen fixtures. Inspect affected paths before selecting
 `python3 scripts/qa.py quick`; exact-index `staged` and actual message checks
-precede each local commit. The latest explicit user instruction excludes further
+preceded each original P02 local commit. Its finish instruction excluded further
 full QA and all-files/unit substitutes from the required set. Preserve the
 interrupted full observations and record an unexecuted full as NOT_RUN with
-acceptance not-required. Refresh affected/index and completion mode on closing
-documents and observe the local main finish before its final evidence. Record Task results as `NOT_RUN`, `PASS`, `FAIL`, `DEFER` or
+acceptance not-required. The current P01 follow-up selects affected gates
+without executing that lane; it rechecks the historical P02 candidate and
+the current changed index separately. The local main finish is already
+recorded in the Task. Record Task results as `NOT_RUN`, `PASS`, `FAIL`, `DEFER` or
 `NOT_APPLICABLE`, with separate criterion acceptance and quality-lane evidence;
 never promote an unexecuted check. The independent reviewer reports findings read-only.
 
@@ -105,9 +110,10 @@ while preserving the Task evidence, Git ledger and unrelated changes.
 
 `VAL-P02-001` passes as one atomic set, all required local gates and read-only
 review have observed evidence, and the Task records exact checked snapshots,
-commands, limits, residual risk and next owner. The Spec and Plan carry version
-1.0.0 and completed candidate status from the observed source acceptance and
-local finish recorded in the Task. The candidate awaits its separate closing
-checks and review; it does not invent an approving actor, timestamp,
+commands, limits, residual risk and next owner. The Spec and Plan carried
+version 1.0.0 and completed candidate status at the original source acceptance
+and local finish recorded in the Task. That candidate awaits its separate
+current closing-index checks and review; the historical recheck alone does not
+settle them. It does not invent an approving actor, timestamp,
 authentication or revocation check. Remote/live lanes remain
 unobserved unless separately authorized and executed.

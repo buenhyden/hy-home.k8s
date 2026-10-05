@@ -1,8 +1,8 @@
 ---
 title: "Authority and Evidence Follow-up"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -53,7 +53,7 @@ revision `2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb` is not a reset target.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | ready | NOT_RUN | pending | Source comparison and EVD-P01-006 below |
+| WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | in-progress | NOT_RUN | pending | Source comparison and EVD-P01-006 below |
 | WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Validate the four authorized Task-lifecycle commits and obtain independent read-only review | platform | ready | NOT_RUN | pending | EVD-P01-007 and handoff below |
 
 ## Task Evidence
@@ -167,3 +167,23 @@ superseded index, not a reason to weaken the path rule. This revision writes
 the command with a worktree placeholder and requires fresh exact-index QA
 before a ready-state commit. The unchanged commit message already passed the
 separate pinned Commitizen check, which does not validate document content.
+
+The repaired Task-only ready index `60ef913901dfa9addb85e373ef18e006ae034546`
+passed all six canonical staged gates in 194.290 seconds; its unchanged
+Commitizen message remained valid. Independent read-only reviewer
+`/root/qa_release_survey` inspected the repaired Task SHA-256
+`945ccae3201195b68eebf9df229eb39c822c94da541c95cd0a30dabbf67ffc46`
+and reported no remaining finding. Normal Git commit created
+`1952642af8be9cc84353ea978d44cd897d11cba9` from that exact tree.
+This ready-only result establishes neither final P01 acceptance nor current
+P02 closing validation.
+
+### Historical P02 candidate recheck
+
+The historical three-document recheck, its initial scratch setup failure,
+the repaired staged PASS, explicit-ref PASS, retrospective message PASS and
+affected selection belong to
+[SPEC-0106 EVD-P02-014](../../0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md#p01-follow-up-recheck).
+This P01 Task consumes that source evidence for WORK-006; it does not turn
+the prior EVD-P02-013 into a past PASS. Current changed-index completion and
+final read-only review remain pending.
