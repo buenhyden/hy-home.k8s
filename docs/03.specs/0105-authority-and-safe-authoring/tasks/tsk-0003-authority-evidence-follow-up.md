@@ -1,8 +1,8 @@
 ---
 title: "Authority and Evidence Follow-up"
-version: "0.4.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -54,14 +54,14 @@ revision `2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb` is not a reset target.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WORK-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guide and P02 closing claims without changing approval or runtime authority | platform | completed | PASS | accepted | [Historical P02 candidate recheck](#historical-p02-candidate-recheck) and EVD-P01-006 below |
-| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Verify local delivery inputs and record lifecycle handoff | platform | in-progress | NOT_RUN | pending | EVD-P01-007 and handoff below |
+| WORK-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Verify local delivery inputs and record lifecycle handoff | platform | completed | PASS | accepted | [Local handoff evidence](#local-handoff-evidence) and EVD-P01-007 below |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P01-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-004](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan) | WORK-006 | Dated source, consumer and authority comparison | Base `9067729b`; SPEC-0103 hosted record; SPEC-0106 EVD-P02-014 and phase3 tree `7aea4f72807765619de08f83efc9d8b459cd9702` | PASS | [Historical P02 candidate recheck](#historical-p02-candidate-recheck) | accepted |
-| EVD-P01-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-007 | Exact index, completion, message and independent review | Pending logical index snapshots | NOT_RUN | [Verification Summary](#verification-summary) | pending |
+| EVD-P01-007 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-007 | Local exact-index, completion, message and independent review | Draft tree `ad6d5170…`, ready tree `60ef9139…`, phase3 tree `7aea4f72…`, P02 prose tree `6771b01e…`, intermediate tree `1cabc737…` | PASS | [Local handoff evidence](#local-handoff-evidence) | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -227,3 +227,46 @@ The Task remains in-progress.
 The next local index records the intermediate WORK-007 row and preserves
 EVD-P01-007 as `NOT_RUN/pending`. No Registry edge, validator or history is
 changed to evade the result.
+
+The intermediate legal row-state index
+`1cabc737e5e0e43cf00a8654a3815b3118650c80` passed all six canonical
+staged gates in 201.874 seconds, stdout SHA-256
+`5c4a7192d6dd0a22348eb80301baa854040813939aa2cb4bd4c34bcdf3264fec`.
+SPEC-0106-only completion on that same input returned PASS with
+`INDEX-SNAPSHOT` SHA-256
+`acef3cb95b7de576669849c830fde7d774d193f2578d5bbc39d46b275ea1bf2c`.
+The actual message `docs(governance): advance P01 handoff verification`
+passed pinned Commitizen; independent read-only reviewer
+`/root/qa_release_survey` reported PASS with no blocking finding. Normal
+local commit `eb2de6c666f543e844eda13ddf4c713a9c196fbd` preserved the
+WORK-007 `in-progress` row. The terminal Task source bytes require their own
+exact-index checks and independent review before local commit; no later
+result or commit OID is asserted in this Task.
+
+### Local handoff evidence
+
+The authorized Task states followed direct Registry edges: draft in
+`0625dfbeab0d751d347ca9e6e162740774c94410`, ready in
+`1952642af8be9cc84353ea978d44cd897d11cba9`, and in-progress in
+`e85d6557b71e84adaefa9dfc4ac5ad0b553fec54` and
+`eb2de6c666f543e844eda13ddf4c713a9c196fbd`. This terminal Task state
+records acceptance of the observed local source and handoff inputs. The
+first ready-only index FAIL and repaired PASS, initial scratch setup FAIL and
+corrected P02 PASS, and prospective illegal row-edge FAIL remain documented
+above and in the P02 Task. The phase3, P02 acceptance-prose and intermediate
+index checks passed as individually recorded. The intended terminal message
+`docs(governance): complete P01 evidence follow-up` passed its separate
+pinned Commitizen check on unchanged bytes.
+
+Affected execution and local full QA remain `NOT_RUN` by the scoped request;
+the selected affected gates were recorded without executing that lane.
+No remote settings or hosted runs were re-read, so current hosted activation
+is `DEFER` to the repository operator. Native provider delivery, actual
+approval authentication, cluster, cloud, Vault and external runtime remain
+unobserved; their existing owners retain those actions. No archive
+disposition, push, PR, main integration or worktree cleanup is claimed.
+The configured `scripts/githooks` chain was preserved, but the delegated
+workspace pre-commit and commit-msg hooks were absent; their execution is
+not claimed. Rollback is a reviewed forward corrective commit on this
+retained feature branch, preserving historical Task results and the
+five-commit lifecycle.
