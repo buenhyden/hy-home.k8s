@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -86,11 +86,25 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-005 | [VAL-P02-005](spec.md#success-criteria--verification-plan) | Align three stale current Registry test consumers with published profile/domain declarations while retaining their negative contracts | Completed Task0004; observed hosted unit failures and bounded local diagnosis; separate review and actual-index checks before each normal commit | [SPEC-0106-TSK-0005](tasks/tsk-0005-current-registry-fixture-consumers.md) | Five observed named RED inputs; changed-input named GREEN and explicitly selected shared-fixture controls; scoped hooks; actual-index staged/message; prospective completion/review then fresh actual closing checks; required hosted and integrated-main observations separate |
 | WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
 | WORK-003 | [VAL-P02-003](spec.md#success-criteria--verification-plan) | Align current proof fixtures with complete published assets and cumulative headers/review transitions; independently prove frozen asset reads; repair scoped formatting/scanner acceptance | Hosted failure and security disposition; review before each index commit; local acceptance before final push | [SPEC-0106-TSK-0003](tasks/tsk-0003-ci-fixture-and-format-follow-up.md) | Focused RED/GREEN, proof and illegal-transition negatives and missing-object refusal; staged/message; completion and independent review; hosted PR checks before merge and main checks after merge |
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-005 changes only three current test consumers and its Spec/Plan/Task.
+The artifact cases follow the published archive route identity; authority
+cases follow current requirement and architecture lifecycle domains; the
+migration fixture adjusts an existing bounded route in the complete current
+graph instead of appending duplicate declarations or retired domains.
+Preserve every related rejection and proof check. Quality executes explicit
+named cases, including the 25 shared migration setup consumers, without
+discovery or a full/all-files substitute. Each logical source index receives
+canonical staged, configured message and independent review. A terminal
+proposal receives completion and semantic review; the reflected source then
+receives fresh actual staged/completion/message and separate review before
+commit. Local full and affected execution remain NOT_RUN.
 
 WORK-004 uses real Git copy evidence and exact current/historical template
 bindings. Only the private copy guard and its focused regression fixture may
