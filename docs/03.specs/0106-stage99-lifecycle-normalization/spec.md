@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.6.0"
+version: "1.7.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -236,6 +236,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-010 | Completed-state and navigation fixtures follow the current published predecessor and domainless collection route. Historical replay uses a faithful declared generation and preserves current-invalid done, terminal, no-reopen and direct-create refusals. Named RED/GREEN and related controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0010. Production contracts and completed evidence remain unchanged; hosted acceptance is separate. |
 | VAL-P02-009 | A new unique Task draft originates from the unchanged registered Task form, with actual first-appearance metadata observed before commit. The common authority fixture follows its published six-state governance domain and native metadata envelope while preserving every routing and invocation-control refusal. Retained Task8 observations are historical after the separate reviewed forward rollback. Named fixture evidence, scoped hooks, each actual-index staged/message, completion and independent review remain required; production contracts and hosted acceptance stay separate. |
 | VAL-P02-007 | Governance and Spec navigation fixtures follow the actual published current-state and section declarations while preserving owner membership and malformed navigation refusals. The archive Git-process budget retains its measured fixed-cost corpus meaning; any correction requires immutable causal accounting and preserves batching and the sixty-second bound. Named failures, changed-input controls, scoped hooks, each actual-index staged/message, completion and independent review are recorded in Task0007. Production contracts and completed evidence remain unchanged; hosted acceptance remains separate. |
 | VAL-P02-006 | The additive sealed-disposition recovery fixture records the exact frozen generation-9 Registry, original source and immediate successor together at the authenticated source revision. Existing missing-proof, wrong-disposition, source-identity, terminal-edge and cutover refusals remain required. Observed named RED, all 21 shared recovery-fixture methods, scoped hooks, each actual-index staged/message, terminal completion and independent review are recorded in Task0006. Production validators, published Registry/schema, frozen Archive and completed evidence remain unchanged; hosted and integrated-main acceptance are separate. |
@@ -246,6 +247,11 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P02-010 maps to WORK-010 in the [Plan](plan.md) and
+[Task0010](tasks/tsk-0010-completed-state-and-navigation-fixtures.md).
+It addresses named failures from the executed hosted complement; its sanitized
+failure excerpt is not an exhaustive unit-test inventory.
 
 VAL-P02-009 maps to WORK-009 in the [Plan](plan.md) and
 [Task0009](tasks/tsk-0009-common-authority-fixture-reinstantiation.md).
@@ -295,6 +301,7 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-010 | Registered-form creation metadata; named completed-state, own-generation replay and domainless-navigation controls with preserved refusals; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture reinstantiation under the explicit normal unit-commit/push/merge instruction and reviewed rollback plan | VAL-P02-009 | Registered-form first-appearance metadata; named routing/native controls with exact-input evidence attribution; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded current-contract fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-007 | Named failure evidence; declaration-based governance and navigation controls; immutable archive call accounting before any corpus-budget correction; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal commit/push/merge instruction | VAL-P02-006 | Exact named RED; 21 explicit shared recovery-fixture methods and preserved refusal assertions; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted and integrated-main observations separate |
