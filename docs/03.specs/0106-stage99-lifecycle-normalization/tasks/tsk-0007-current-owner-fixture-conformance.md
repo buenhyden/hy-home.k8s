@@ -2,7 +2,7 @@
 title: "Current Owner Fixture Conformance"
 version: "1.0.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -46,8 +46,8 @@ and their accepted evidence remain historical inputs.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-070 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Hosted failure and exact named reproductions | Clean final Task0006 P01 input | FAIL | [Observed intake](#observed-intake) | pending |
-| EVD-P02-071 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Causal accounting, changed-input controls and scoped hooks | Prospective fixture correction | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
-| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Observed draft index; current ready index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-071 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Causal accounting, changed-input controls and scoped hooks | Reviewed exact two-file fixture input | PASS | [Implementation observations](#implementation-observations) | accepted |
+| EVD-P02-072 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Actual-index staged/message and independent review | Observed draft and ready indexes; current implementation index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-073 | [VAL-P02-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Prospective terminal completion and independent review | Not prepared | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -102,6 +102,31 @@ preserving report validity, fallback batching, detached adjustment and the
 sixty-second limit. This neither makes the bound dynamic nor asserts constant
 cost as the historical corpus grows. Production behavior is unchanged.
 
+### Implementation observations
+
+The archive test input SHA-256 is
+`fbac7bcd78848358b1030d3e5e67a9df5063deb92badf69cdd33e44de9a75e37`;
+the navigation test input SHA-256 is
+`7b681b7c6d2e12139b3d92943cd858be16f045203b82bff80b705b5e19e8dd16`.
+The four explicit changed-input methods passed separately under 60-second
+bounds. Their actual qualified argv, complete outputs and stable source,
+index and reference identities are bound by focused receipt SHA-256
+`066db789657283f79f7f918e8c642661ef8f16e3faaf752ffc3c9e3ffd9057c3`.
+Pinned Ruff check/format and detect-secrets passed on an exact-byte disposable
+copy with unchanged configurations and no formatting delta; hook receipt
+SHA-256 is
+`41946c74d17f5e28aac514e4e3f046444e509d167e26e8faa55edc8e70031b1f`.
+Separate independent read-only review verified the raw results and source
+hashes. EVD-P02-071 accepts this focused input only.
+
+Governance expectations now load real published declarations and retain
+nonempty owner, exact current-state, profile, authored mode, owner identity
+and state membership assertions. Both navigation payloads use Structure;
+the copied-status/tree/depth refusals and valid-folder control are unchanged.
+The finite budget is 287 with the measured accounting documented beside it;
+validity, fallback batching, detached adjustment and time assertions remain
+unchanged. No production owner or completed evidence is modified.
+
 ### Validation boundaries
 
 The actual draft index passed six fresh canonical staged gates, configured
@@ -113,22 +138,31 @@ raw stdout SHA-256 is
 `1b83e3645fb29bd825307ecf4efd3bd555c9b3422fec5e4cfbcec15da7b3530b`;
 the exact configured message receipt SHA-256 is
 `7c6e575e2422b67d9c94f54d7b2e248ba3384e45113a179cefdd4250c2b96212`.
-EVD-P02-072 accepts only that observed draft input. Current readiness-index
-checks remain pending until observed.
+The actual ready index subsequently passed six fresh canonical staged gates,
+its exact configured message and separate final independent review. Its
+staged receipt SHA-256 is
+`b1b4538b094d1e30440a7889ad348184a5dac5b2ad0ba6fb48f3c713105369a4`;
+raw stdout SHA-256 is
+`11ecbceebf55a34a1a172fdd53dd907ddd91d1f6caeebf524fe4e0a49d1a8244`;
+the configured message receipt SHA-256 is
+`3acf2df8eebdf8a05505c7f4651530935a6a3ccabd967c9abf708755b6a60736`.
+All output and cleanup completed with stable inputs. EVD-P02-072 accepts
+only these observed draft and ready indexes; current implementation-index
+staged/message and separate final review remain pending.
 
 Readiness selects the finite five-path prospective scope through the canonical
 selector: seven validators and no unmatched paths, without affected execution.
 Its safe receipt SHA-256 is
 `6b9d01844b52f3fc3fec4b770208a27b27734242b0cf13c70d26a8cc9afeebbf`.
-The four explicitly named intake methods are the changed-input GREEN set;
+The four explicitly named intake methods form the observed GREEN set;
 the navigation rejection and valid-folder case are retained controls. Existing
 pinned hooks and the canonical runner prerequisites come from prior actual
 checks with unchanged configurations. Focused commands retain a 60-second
 bound and canonical staged retains its existing runner limits.
 
-No fixture correction, changed-input GREEN or scoped hook result is observed
-yet. Each legal source index is separately reviewed and checked before its
-normal commit. Prospective terminal completion/review is distinct from the
-reflected source's fresh staged/completion/message and final review. Hosted
-exact-head checks and integrated-main observations remain separate required
-delivery evidence; prior local acceptance is preserved.
+The focused acceptance does not accept the current implementation index or
+whole WORK-007. Each legal source index is separately reviewed and checked
+before its normal commit. Prospective terminal completion/review is distinct
+from the reflected source's fresh staged/completion/message and final review.
+Hosted exact-head checks and integrated-main observations remain separate
+required delivery evidence; prior local acceptance is preserved.

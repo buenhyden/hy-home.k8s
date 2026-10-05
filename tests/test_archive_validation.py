@@ -1977,7 +1977,15 @@ class ArchiveValidationTest(unittest.TestCase):
         # reachability call. Measured 259 on a branch checkout of `438e69aa`.
         # Retaining SPEC-0008 adds one historical tree lookup for its vacated
         # current path; the lookup is batched across the package's records.
-        budget = 260
+        # The generation-10 proof reader adds authenticated generation-9
+        # context. Measured at the immutable budget owner `c47f5422`: 260;
+        # measured on pre-P01 main `9067729b`: 287. One memoized historical
+        # Registry read and eight historical successor reads each use an exact
+        # tree entry, blob-header check and blob batch: 3 + 24 calls. All other
+        # owner/verb counts remain the earlier 260. This finite corpus bound
+        # requires fresh attribution when proof inputs grow; it is never
+        # derived dynamically from the measured calls in this test.
+        budget = 287
         # A detached checkout -- an immutable checkout of one exact commit --
         # has no symbolic HEAD, so each durable-ref resolution answers from the
         # ref table with one added `--points-at HEAD` batch. Nine such calls
@@ -2337,14 +2345,31 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
     def test_terminal_governance_owners_are_derived_from_stage_owners(self) -> None:
         governance = self.context.governance_current_paths
+        registry = self.validator.load_registry(ROOT)
+        owner_profiles = tuple(
+            profile
+            for profile in registry.profiles
+            if profile.profile_class == "governance" and profile.mode == "authored"
+        )
+        self.assertTrue(owner_profiles)
+        owner_ids = {profile.profile_id for profile in owner_profiles}
+        domains = {profile.lifecycle_domain for profile in owner_profiles}
+        self.assertEqual(len(domains), 1)
+        expected_states = tuple(
+            state
+            for state, validation_class in next(iter(domains)).states
+            if validation_class == "current"
+        )
 
         self.assertTrue(governance)
-        self.assertEqual(self.context.governance_current_states, ("active",))
+        self.assertTrue(expected_states)
+        self.assertEqual(self.context.governance_current_states, expected_states)
         self.assertTrue(
             all(
-                self.context.profiles[path].profile_class == "governance"
+                self.context.profiles[path].profile_id in owner_ids
+                and self.context.profiles[path].profile_class == "governance"
                 and self.context.profiles[path].mode == "authored"
-                and self.context.metadata[path].get("status") == "active"
+                and self.context.metadata[path].get("status") in expected_states
                 for path in governance
             )
         )
