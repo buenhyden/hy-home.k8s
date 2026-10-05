@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path, PurePosixPath
 
 
@@ -1146,22 +1147,86 @@ class GenerationAdmissionTests(unittest.TestCase):
                     root, self.registry, task_path, absent, completed
                 )
             )
+            package_paths = {SPEC, SPEC.parent / "plan.md", task_path}
+            seed_blobs = LIFECYCLE_CLI._tree_blob_map(root, absent)
+            snapshot_blobs = {
+                revision: LIFECYCLE_CLI._tree_blob_map(root, revision)
+                for revision in (intake, migration, completed)
+            }
+            newly_read_sizes = {
+                revision: LIFECYCLE_CLI._snapshot_blob_size(
+                    root,
+                    {
+                        path: oid
+                        for path, oid in blobs.items()
+                        if seed_blobs.get(path) != oid
+                    },
+                )
+                for revision, blobs in snapshot_blobs.items()
+            }
+            snapshot_limit = max(newly_read_sizes.values())
+            self.assertGreater(
+                LIFECYCLE_CLI._snapshot_blob_size(root, snapshot_blobs[completed]),
+                snapshot_limit,
+            )
+            self.assertLess(
+                snapshot_limit, LIFECYCLE_CLI.CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
+            )
+            for mode in ("ci", "explicit-ref"):
+                with mock.patch.object(
+                    LIFECYCLE_CLI,
+                    "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES",
+                    snapshot_limit,
+                ):
+                    with self.assertRaises(
+                        LIFECYCLE_CLI._CumulativeHistoryBudgetExceeded
+                    ):
+                        LIFECYCLE_CLI._CumulativeHistoryCache(
+                            root, self.registry
+                        )._snapshot(completed)
+                    findings = LIFECYCLE_CLI._evaluate_comparison(
+                        root,
+                        self.registry,
+                        mode=mode,
+                        **(
+                            {"base_ref": absent}
+                            if mode == "ci"
+                            else {"from_ref": absent}
+                        ),
+                        to_ref=completed,
+                        include_paths=tuple(package_paths),
+                    )
+                package_findings = tuple(
+                    item for item in findings if item.path in package_paths
+                )
+                self.assertEqual(
+                    package_findings,
+                    (),
+                    [
+                        LIFECYCLE_CLI._format_diagnostic(item)
+                        for item in package_findings
+                    ],
+                )
+            new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
+            (root / new_path).parent.mkdir(parents=True)
+            (root / new_path).write_text(
+                (ROOT / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
+            )
+            invalid_create = commit()
             findings = LIFECYCLE_CLI._evaluate_comparison(
                 root,
                 self.registry,
-                mode="explicit-ref",
-                from_ref=absent,
-                to_ref=completed,
-                include_paths=(SPEC, SPEC.parent / "plan.md", task_path),
+                mode="ci",
+                base_ref=completed,
+                to_ref=invalid_create,
+                include_paths=(new_path,),
             )
-            package_paths = {SPEC, SPEC.parent / "plan.md", task_path}
-            package_findings = tuple(
-                item for item in findings if item.path in package_paths
-            )
-            self.assertEqual(
-                package_findings,
-                (),
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in package_findings],
+            self.assertTrue(
+                any(
+                    item.path == new_path and item.rule_id == "LIFECYCLE-CREATE"
+                    for item in findings
+                ),
+                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
             )
 
     def test_terminal_reopen_is_never_a_generation_admission(self) -> None:

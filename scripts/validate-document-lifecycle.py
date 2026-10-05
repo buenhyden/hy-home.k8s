@@ -3362,11 +3362,14 @@ def _snapshot_projection(
     *,
     historical: bool = False,
     legacy_completion: bool = False,
+    reused_texts: Mapping[PurePosixPath, str] | None = None,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
     for path in sorted(blobs, key=PurePosixPath.as_posix):
-        text = _blob_text(root, blobs[path], path)
+        text = reused_texts.get(path) if reused_texts is not None else None
+        if text is None:
+            text = _blob_text(root, blobs[path], path)
         assert text is not None
         texts[path] = text
         try:
@@ -3903,6 +3906,7 @@ class _CumulativeHistoryCache:
     seed_documents: Mapping[PurePosixPath, LifecycleDocument] | None = None
     seed_texts: Mapping[PurePosixPath, str] | None = None
     seed_legacy_completion: bool | None = None
+    seed_registry: Registry | None = None
     snapshots: OrderedDict[
         str,
         tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]],
@@ -3935,6 +3939,11 @@ class _CumulativeHistoryCache:
             self.snapshots.move_to_end(commit)
             return cached
         blobs = _tree_blob_map(self.root, commit)
+        if (
+            len(blobs) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS
+            or len(set(blobs.values())) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS
+        ):
+            raise _CumulativeHistoryBudgetExceeded
         own_registry = self.registry_at(commit)
         has_seed = (
             self.seed_blobs is not None
@@ -3945,7 +3954,8 @@ class _CumulativeHistoryCache:
         legacy_completion = (
             _legacy_completion_generation(self.root, commit) if has_seed else None
         )
-        reuse_seed = (
+        reproject_seed = has_seed and self.seed_registry is not None
+        reuse_seed = reproject_seed or (
             has_seed
             and self.seed_legacy_completion == legacy_completion
             and own_registry.schema_version == self.registry.schema_version
@@ -3980,11 +3990,22 @@ class _CumulativeHistoryCache:
         changed_documents, changed_texts = _snapshot_projection(
             self.root,
             own_registry,
-            changed_blobs,
+            blobs if reproject_seed else changed_blobs,
             historical=True,
             legacy_completion=legacy_completion,
+            **(
+                {
+                    "reused_texts": {
+                        path: self.seed_texts[path]
+                        for path, oid in blobs.items()
+                        if self.seed_blobs.get(path) == oid
+                    }
+                }
+                if reproject_seed
+                else {}
+            ),
         )
-        if reuse_seed:
+        if reuse_seed and not reproject_seed:
             assert self.seed_documents is not None and self.seed_texts is not None
             snapshot = (
                 MappingProxyType(
@@ -4098,7 +4119,7 @@ def _history_event_diagnostics(
     task_binding = after.profile_id == "sdlc/task" and _committed_task_binding(
         root, commit
     )
-    if cache.seed_blobs is not None:
+    if cache.seed_blobs is not None and cache.seed_registry is None:
         # Ordinary initial/forward edges need no cross-document body evidence.
         # Terminal supersession and archive events retain the full-snapshot path.
         if after.status == "superseded" or after.profile_id.startswith("archive/"):
@@ -4325,6 +4346,7 @@ def _admit_cumulative_create_diagnostics(
     proposed_blobs: Mapping[PurePosixPath, str],
     base_snapshot: Mapping[PurePosixPath, LifecycleDocument] | None = None,
     base_texts: Mapping[PurePosixPath, str] | None = None,
+    base_registry: Registry | None = None,
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Remove only history-proved create diagnostics in committed comparisons."""
 
@@ -4365,16 +4387,15 @@ def _admit_cumulative_create_diagnostics(
     cache = _CumulativeHistoryCache(
         root,
         registry,
-        seed_blobs=base_blobs
-        if mode == "staged" and base_snapshot is not None
-        else None,
-        seed_documents=base_snapshot if mode == "staged" else None,
-        seed_texts=base_texts if mode == "staged" else None,
+        seed_blobs=base_blobs if base_snapshot is not None else None,
+        seed_documents=base_snapshot,
+        seed_texts=base_texts,
         seed_legacy_completion=(
             _legacy_completion_generation(root, base_commit)
-            if mode == "staged" and base_snapshot is not None
+            if base_snapshot is not None
             else None
         ),
+        seed_registry=base_registry if mode != "staged" else None,
     )
     remaining_events = [CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS]
     admitted_indices: set[int] = set()
@@ -4680,8 +4701,9 @@ def _evaluate_comparison(
         proposed_commit=proposed_commit,
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
-        base_snapshot=base_snapshot if mode == "staged" else None,
-        base_texts=base_texts if mode == "staged" else None,
+        base_snapshot=base_snapshot,
+        base_texts=base_texts,
+        base_registry=base_classification_registry,
     )
 
 
