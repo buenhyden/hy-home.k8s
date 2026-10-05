@@ -231,4 +231,5 @@ No new structural decision is required. [Plan](plan.md) owns order and
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — direct approved hosted compatibility follow-up; existing requirement meanings are unchanged | VAL-P02-003 | Focused current proof/header and negative regressions, frozen asset refusal, scoped hooks, staged/message, completion and independent review; required hosted and integrated-main observations remain separate |
 | N/A — direct approved P02 package-local change; existing REQ-0003 meaning is unchanged | VAL-P02-001 | Registry/form/consumer, Task completion, route, historical and Git-edge checks |

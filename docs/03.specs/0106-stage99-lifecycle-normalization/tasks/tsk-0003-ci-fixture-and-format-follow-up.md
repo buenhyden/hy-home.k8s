@@ -2,7 +2,7 @@
 title: "Hosted Fixture and Formatting Compatibility"
 version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-05"
 layer: "specs"
@@ -19,7 +19,9 @@ and [WORK-003](../plan.md#work-breakdown). PR 133 exposed historical fixture,
 formatting and scanner failures after local P01 acceptance. Completed parent
 and original Task evidence retain their historical meaning. Completion here
 records local acceptance; remote and integrated-main outcomes need separate
-observed evidence.
+observed evidence. The isolated closing proposal passed staged, completion
+and independent review. This source records that observed proposal scope;
+its final actual index and commit require separate external receipts.
 
 ## Inputs
 
@@ -42,7 +44,7 @@ observed evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-003 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | Restore historical fixture and scoped formatting/scanner compatibility | repo-tooling-engineer | frontmatter | NOT_RUN | pending | [Verification Summary](#verification-summary) |
+| WORK-003 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | Restore current proof and cumulative fixture compatibility, separate frozen asset reads and scoped formatting/scanner acceptance | repo-tooling-engineer | frontmatter | PASS | accepted | [Observed implementation acceptance](#observed-implementation-acceptance) |
 
 ## Task Evidence
 
@@ -51,8 +53,8 @@ observed evidence.
 | EVD-P02-020 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Hosted required failure | Head `df3281d0…`; checked merge `e972e787…`; run `37278597507` | FAIL | [Observed failure](#observed-failure) | pending |
 | EVD-P02-021 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Historical fixture RED and schema diagnosis | Intake head; one named test and synthetic schema comparison | FAIL | [Focused diagnosis](#focused-diagnosis) | pending |
 | EVD-P02-022 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Corrected fixture, missing-object refusal and focused hooks | Corrected current proof and cumulative fixtures; unchanged frozen helper tests; final scoped hooks | PASS | [Implementation readiness](#implementation-readiness) | accepted |
-| EVD-P02-023 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Exact-index staged/message and semantic checks | Logical indexes pending | NOT_RUN | Pending | pending |
-| EVD-P02-024 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Final local completion and remote disposition | Terminal candidate and corrected hosted input pending | NOT_RUN | Pending | pending |
+| EVD-P02-023 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Implementation exact-index staged/message and semantic checks | Tree `d24f38c2e3377a51f57d8e87291451a987655207` at `82b4918f…` | PASS | [Observed implementation acceptance](#observed-implementation-acceptance) | accepted |
+| EVD-P02-024 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Observed isolated terminal proposal and separate delivery disposition | Proposal tree `3fc572f55ec83935bb9e02e22704ccd7bd329b18` at actual C3 base | PASS | [Observed terminal proposal](#observed-terminal-proposal) | accepted |
 | EVD-P02-025 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Draft exact-index staged/message and independent review | Tree `ad1d97439ff3a183c7bfa2215f1873fa0fccab82` at intake head | PASS | [Draft readiness](#draft-readiness) | accepted |
 | EVD-P02-026 | [VAL-P02-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Ready exact-index staged/message and independent review | Tree `54e517917dbb694cf446a471b5efa6d5a35a136a` at `baeb20cb…` | PASS | [Implementation readiness](#implementation-readiness) | accepted |
 
@@ -68,6 +70,69 @@ observed evidence.
 - **Evidence Location**: This Task; safe structured receipts may remain in temporary scratch without becoming another progress authority.
 
 ## Verification Summary
+
+### Observed implementation acceptance
+
+The actual implementation index `d24f38c2e3377a51f57d8e87291451a987655207`
+passed seven canonical staged gates, including archive-contract-tests, at
+HEAD `82b4918f17dcdda1b12a0594539f9556eb7d7484`. Safe stdout
+`/tmp/hy-p01-c3-staged.stdout` has SHA-256
+`0d99416b6035d2728d75bfe84ff581fc14c4e2b58744b30d9594f2000c3f348b`;
+stderr was empty and runner cleanup complete. The actual message file
+`.worktrees/proposal/hy-p01-c3-msg.txt`
+passed pinned Commitizen and has SHA-256
+`d7b606291198fd19fbc3f847baf4c74d4a62ed1d16073da0c32151b1499decc1`.
+Independent reviewer `/root/p02_independent_review` approved that exact tree
+and directly verified the resulting normal commit
+`87e2e342c844abfc994feaaf632968b1eee23c02` and matching tree/message.
+
+### Observed terminal proposal
+
+The isolated proposal shared actual C3 base
+`87e2e342c844abfc994feaaf632968b1eee23c02` and unchanged tracked
+configuration. Its first index `d4d728365b40ef0a02b7a27735f1e04402c7a428`
+failed staged 5/6: repository-quality rejected a literal absolute checkout
+path in this Task. Safe stdout has SHA-256
+`aa78fc52d76fa21a2c22861f8076d958b4d9602fe07225c86eb7a5ea4320f47f`
+at `/tmp/hy-p01-c4-proposal-staged.stdout`. The message artifact reference
+was corrected to its repository-relative ignored path; real argv/cwd remain
+only in external operational receipts.
+
+The corrected index `af1841ef91816b7e28af6bec2d8296d90cecca41`
+passed staged 6/6 but failed SPEC-0106-only completion: the parsed Spec
+Lifecycle Traceability table lacked VAL-P02-003 although Success Criteria
+and the Plan defined it. Staged stdout SHA-256 is
+`4241c51848ed469094c6474e31f3601812d660a233f658d1ced6f1b37c2a9ea7`;
+failed completion stdout `/tmp/hy-p01-c4-proposal-completion.stdout`
+has SHA-256
+`c70a594f3448442d902f012d684d880e8f2c8f3b69ce7b61d87bc76fbe26ab5d`.
+Only the missing current Spec trace row was added; existing criterion and
+historical Task facts, validators and production contracts remain unchanged.
+
+Third proposal tree `3fc572f55ec83935bb9e02e22704ccd7bd329b18`
+passed six canonical staged gates and SPEC-0106-only completion. Staged
+stdout `/tmp/hy-p01-c4-proposal-staged3.stdout` has SHA-256
+`04625dc0e585c06e809101f7a40ca3f81d803a35cbcedc4140549c9c0007ca6f`;
+completion stdout `/tmp/hy-p01-c4-proposal-completion2.stdout` has SHA-256
+`7e0623edd15e0fc1457e5d078e124f9e0ac68715a557014172d638077aced29f`.
+Completion reported `PASS lifecycle` and INDEX-SNAPSHOT SHA-256
+`6e73cee50dcd5175898af718c8926dca4864222a1fe4a2600049c6e5141185cd`.
+Outer stderr was empty and runner cleanup complete. Independent reviewer
+`/root/p02_independent_review` approved that exact proposal tree.
+
+This Task accepts those observed proposal inputs and records the prior
+failures without converting them to past PASS. The actual source index is a
+new input after this evidence prose is recorded; it requires fresh staged,
+SPEC-0106-only completion, actual message and independent review before
+normal commit. Those actual index/commit receipts stay outside their own
+source bytes; no source self-OID is inserted. Proposal PASS alone is not a
+PASS for the actual closing index.
+
+Local full and affected execution remain NOT_RUN under the scoped exclusion.
+The original hosted failure remains FAIL/pending; no corrected input was
+pushed or retried during authoring. Required exact-head PR checks precede
+normal merge; automatic integrated-main CI precedes integration acceptance.
+Local Task completion grants no hosted, integrated-main or live acceptance.
 
 ### Implementation readiness
 
@@ -184,8 +249,9 @@ Pinned Markdown passed all six changed documents; safe stdout
 `a915eea79094503d6ac44258824a67aa9c92e037860bf304b763fd25cfb45416`.
 The preservation receipt confirms original Task EVD-P02-013/014 rows are
 byte-identical and production/native/schema/Archive paths have zero diff.
-Current staged, completion and final index review remain pending until
-observed; the staged profile will cover this final evidence text.
+At implementation authoring, current staged, completion and final index review
+remained pending. The implementation staged result is now observed above;
+the closing proposal and actual source each retain their own input boundary.
 
 ### Draft readiness
 
