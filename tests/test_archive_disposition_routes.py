@@ -41,7 +41,11 @@ from document_lifecycle import (  # noqa: E402
     _archive_creation_evidence,
     document_from_text,
 )
-from tests.archive_generation_fixture import legacy_registry  # noqa: E402
+from tests.archive_generation_fixture import (  # noqa: E402
+    REGISTRY_PATH,
+    legacy_registry,
+    legacy_registry_bytes,
+)
 from tests.git_fixture import GitFixture  # noqa: E402
 
 
@@ -141,12 +145,19 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.source = "docs/01.requirements/9000-fixture.md"
         self.payload = b"---\ntype: sdlc/requirement\nstatus: active\n---\n# Exact source fixture\n"
-        commit, blob = GitFixture(self.root).commit(self.source, self.payload)
-        self.recovered = recover_git_blob(self.root, self.source, commit)
-        GitFixture(self.root).commit(
-            "docs/01.requirements/9001-successor.md",
-            b"---\ntype: sdlc/requirement\nstatus: active\n---\n# Successor\n",
+        commit, blobs = GitFixture(self.root).commit_many(
+            {
+                REGISTRY_PATH: legacy_registry_bytes(),
+                self.source: self.payload,
+                "docs/01.requirements/9001-successor.md": (
+                    b"---\ntype: sdlc/requirement\nstatus: active\n---\n# Successor\n"
+                ),
+            }
         )
+        # Keep historical Git evidence separate from this standalone current tree.
+        (self.root / REGISTRY_PATH).unlink()
+        blob = blobs[self.source]
+        self.recovered = recover_git_blob(self.root, self.source, commit)
         self.metadata = {
             "title": "Archive fixture",
             "version": "1.0.0",

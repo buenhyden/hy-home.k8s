@@ -2,7 +2,7 @@
 title: "Sealed Source Revision Fixture"
 version: "1.0.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -45,8 +45,8 @@ fixture. Completed Tasks0003/0004/0005 and their evidence remain historical.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-060 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Hosted failure and exact named reproduction | Unchanged additive recovery fixture at P01 `c4c0a5f2…` | FAIL | [Observed intake](#observed-intake) | pending |
-| EVD-P02-061 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Changed-input recovery checks and scoped hooks | Pending reviewed implementation | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
-| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Observed draft index; current ready index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
+| EVD-P02-061 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Changed-input recovery checks and scoped hooks | Reviewed corrected standalone recovery fixture | PASS | [Implementation observations](#implementation-observations) | accepted |
+| EVD-P02-062 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Actual-index staged/message and separate review | Observed draft and ready indexes; current implementation index pending | PASS | [Validation boundaries](#validation-boundaries) | accepted |
 | EVD-P02-063 | [VAL-P02-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Prospective terminal completion and independent review | Pending isolated terminal candidate | NOT_RUN | [Validation boundaries](#validation-boundaries) | pending |
 
 ## Approval and Safety Boundaries
@@ -77,8 +77,8 @@ Safe RED receipt SHA-256 is
 raw stderr SHA-256 is
 `b744bf30b35081271b3ca97acf201236a61b3d6545b610429747a43b6bdf1871`.
 
-The authenticated source commit currently contains only source bytes;
-Registry is absent and successor is committed afterward. The existing
+The observed failing source commit contained only source bytes;
+Registry was absent and successor was committed afterward. The existing
 `historical_generation_registry` refuses the missing regular Registry blob
 with `ARCHIVE-MIGRATION-PROFILE`, before disposition lifecycle checks.
 The generation-9 path also requires the immediate replacement blob in that
@@ -86,7 +86,39 @@ same revision. Independent review confirmed both prerequisites. The minimum
 repair uses existing `GitFixture.commit_many` with exact frozen Registry,
 unchanged source and successor bytes, and binds recovery metadata to its
 actual source blob. Historical projection needs no schema/template assets
-here; no production fallback or refusal is changed.
+here; no production fallback or refusal is changed. After sealing those
+objects, only the temporary current Registry file is removed to preserve
+the original standalone fixture's documented no-current-Registry context.
+
+### Implementation observations
+
+The first shared-setup candidate passed seven of ten executed methods;
+three additive methods raised `REGISTRY_SCHEMA`, and the remaining eleven
+methods and hooks were held. Materializing historical generation 9 in the
+current fixture tree made the existing published loader correctly reject
+that context. Its receipt SHA-256 is
+`fdbdc209dceb1c337ef73461a231543fdc12bc441b75b774a2782cfd1c9a6177`;
+the failing group stderr SHA-256 is
+`dd5ddd301fa534b08c181da56138f5ce23c22cfd4c3711deaeb4a919428f8fd5`.
+Independent review confirmed the current fixture's absent-Registry branch
+and the historical reader's committed-Registry prerequisite are distinct.
+
+The corrected fixture SHA-256 is
+`4585a688f865f1b26cc671ccb2c39c97aa5e5b4c941612c455effb92b43f2f5c`.
+All twenty-one explicitly named recovery methods passed in five groups,
+each under a 60-second bound, with complete streams and cleanup. The exact
+manifest SHA-256 is
+`b9e46a7940be7a47cae8132794e5712a6613124942d91633a8fc441e247d5ead`;
+the completed focused receipt SHA-256 is
+`3bb7d4088f8b00cd2748c719734a29253b022aedf77d3da4d2952c85430d6f29`.
+Pinned Ruff check/format and detect-secrets passed on an exact-byte
+disposable copy; its bytes/configs stayed unchanged and cleanup completed.
+The hook receipt SHA-256 is
+`242457efbb982c09ecffa5726701ae1e35fea6e7345ecf017f419e96b04c5d22`.
+All source/index/ref identities stayed stable during these checks. Existing
+test assertions, source/successor literals, helpers and production owners
+remain unchanged. This focused acceptance does not accept the still-pending
+actual implementation index or whole WORK-006.
 
 ### Validation boundaries
 
@@ -108,10 +140,19 @@ recovery methods are recorded in an external manifest. Existing pinned hooks
 and canonical runner prerequisites are available from the prior actual checks.
 An unsupported selection-only attempt through `qa.py affected` returned usage
 without executing a validator; the subsequent direct selector receipt is the
-observed readiness result. Implementation, scoped hooks, this ready index and
-terminal observations remain NOT_RUN until performed. EVD-P02-062 acceptance
-applies only to the observed draft index. Quality and independent review are
-separate from the sole writer.
+observed readiness result. The ready index subsequently passed six fresh
+canonical staged gates, its configured message and separate independent review.
+Ready staged receipt SHA-256 is
+`bbedcf2b46dd863484268d7b11e655d4dbfef6c05bd5df26e2fe7533c3c0d7f6`;
+raw stdout SHA-256 is
+`afd7284433c8c73eaa64acfbb0fd138ecc8813f313e74d5a6bee3d9e3c2625ac`.
+Its exact message SHA-256 is
+`75c73116b3b6108181d1456ac01161b727e3ba46d2d8b5740a70f4aa35312380`;
+message receipt SHA-256 is
+`a2fcf4c987d38bd2e2be67f8bee4bc8f3c1572799fa2749d07732c78c47b40ad`.
+The current implementation index and terminal observations remain NOT_RUN
+until performed. EVD-P02-062 acceptance applies only to observed draft and
+ready indexes. Quality and independent review are separate from the sole writer.
 The 21 recovery methods share this setup; their parity, source-edge, identity,
 cutover and no-rediscovery assertions remain unchanged. Each source state
 transition is a normal forward commit after required actual checks/review.
