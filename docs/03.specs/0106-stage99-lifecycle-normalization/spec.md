@@ -140,7 +140,8 @@ format rewrites.
 `VAL-P02-002` closes the manual copy of a multi-row Task's derived status.
 Extract the existing `task-items-v1`/`task-items-v2` aggregation into one pure
 helper shared by the read-only checker and a separate authoring command.
-The planned command's `--root <repository> --path <task>` invocation previews
+The command `python3 scripts/sync-task-status.py --root <repository>
+--path <task>` previews
 the current and derived status; `--write` opts in to changing only the top-level
 frontmatter `status` scalar. A one-row Task continues to use literal
 `frontmatter` in its Status cell and is never rewritten by this command.

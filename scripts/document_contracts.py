@@ -191,6 +191,31 @@ def task_criterion_ids(cell: str) -> tuple[str, ...] | None:
     return identifiers if len(identifiers) == len(set(identifiers)) else None
 
 
+def derive_task_summary(states: Sequence[str], binding: TaskExecution) -> str:
+    """Derive a validated Task row summary without changing the input states."""
+
+    if not states or any(state not in binding.result_states for state in states):
+        raise ValueError("Task summary requires nonempty registry-valid states")
+    if len(states) == 1:
+        expected = states[0]
+    elif "blocked" in states:
+        expected = "blocked"
+    elif "in-progress" in states or (
+        "completed" in states
+        and any(state in states for state in ("queued", "draft", "ready"))
+    ):
+        expected = "in-progress"
+    elif "ready" in states or "queued" in states:
+        expected = "ready" if binding.summary_rule == "task-items-v2" else "queued"
+    elif "draft" in states:
+        expected = "draft"
+    elif all(state == "completed" for state in states):
+        expected = "completed"
+    else:
+        expected = "cancelled"
+    return expected
+
+
 def task_execution_issues(
     rows: Sequence[Mapping[str, str]],
     status: str,
@@ -316,23 +341,7 @@ def task_execution_issues(
         or any(state not in binding.result_states for state in states)
     ):
         return tuple(issues)
-    if len(states) == 1:
-        expected = states[0]
-    elif "blocked" in states:
-        expected = "blocked"
-    elif "in-progress" in states or (
-        "completed" in states
-        and any(state in states for state in ("queued", "draft", "ready"))
-    ):
-        expected = "in-progress"
-    elif "ready" in states or "queued" in states:
-        expected = "ready" if binding.summary_rule == "task-items-v2" else "queued"
-    elif "draft" in states:
-        expected = "draft"
-    elif all(state == "completed" for state in states):
-        expected = "completed"
-    else:
-        expected = "cancelled"
+    expected = derive_task_summary(states, binding)
     if status != expected:
         issues.append(
             ("TASK-EXECUTION-SUMMARY", f"frontmatter {status!r}, rows {expected!r}")

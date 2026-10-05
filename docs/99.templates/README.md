@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.6.0"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -151,6 +151,30 @@ Task Evidence는 `Evidence | Criteria | Work Unit | Check | Input | Result | Loc
 사용한다. Result, Acceptance, 실제 승인, 통합과 보관은 서로의 대체값이 아니다.
 cancelled는 실제 이유·승인 원본 참조·필수 기준 처리 근거를 요구하고 관측 결과를
 보존한다. resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
+
+### Explicit Task Summary Authoring
+
+다중 행 Task의 Status를 먼저 실제 관측에 맞게 작성한 뒤
+[`sync-task-status.py`](../../scripts/sync-task-status.py)로 frontmatter 요약을
+미리 확인할 수 있다. `TASK_PATH`에는 현재 저장소의 실제 `sdlc/task` 경로 하나를
+설정한다.
+
+```bash
+python3 scripts/sync-task-status.py --root . --path "$TASK_PATH"
+python3 scripts/sync-task-status.py --root . --path "$TASK_PATH" --write
+```
+
+첫 명령은 현재 값과 파생 값을 표시하는 읽기 전용 preview다. 두 번째 명령은
+명시적으로 top-level `status` scalar만 동기화한다. 한 행 Task의 literal
+`frontmatter` 표시는 그대로 두며 값이 이미 맞으면 파일을 다시 쓰지 않는다.
+나머지 metadata, 본문, 행, 인용·주석·줄바꿈과 파일 mode는 보존한다.
+
+현재 일반 파일과 안전한 부모 경로만 받고, Registry 분류·strict 문서 계약·
+현재 상태에서 파생 상태로의 lifecycle edge를 확인한다. 잘못된 내용이나
+불법 전이는 오류 ID와 대상 경로, exit 2로 거부한다. 쓰기 전 원본이 바뀌거나
+원자적 교체가 실패하면 해당 원본을 보존한다. Result, Acceptance, Evidence와
+실제 승인 사실은 관측에 따라 별도로 작성해야 한다. validator와 Git hook은
+이 writer를 자동 호출하지 않는다.
 
 ### Shared Frontmatter Grammar
 
