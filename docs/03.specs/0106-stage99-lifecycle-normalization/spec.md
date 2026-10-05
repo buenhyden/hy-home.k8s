@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -34,6 +34,7 @@ Tasks declare one direct structural `parent_ids` value (Plan to Spec, Task to
 Plan) without a duplicate `spec_id`. Review, approval and implementation are
 distinct states; Task `ready` records readiness, not permission to act.
 
+The following exclusions describe original WORK-001 and its local finish.
 No new requirement, AD, ADR, progress ledger, native-provider
 claim, or permanent inventory count is needed. Do not modify frozen archive
 bodies, sealed records, historical contracts, private/global state, cluster,
@@ -45,6 +46,19 @@ merge/publication, archive mutation and live action remain outside scope;
 neither instruction authenticates an approving actor.
 
 ## Contracts
+
+### Hosted compatibility follow-up
+
+The request owner's later work-unit push and merge instruction also authorizes
+the bounded VAL-P02-003 compatibility repair needed by the observed PR gates.
+It preserves the current production Registry, schemas, validator semantics,
+frozen archive bytes and historical Task evidence. Historical fixture assets
+must come from the same immutable Git generation as their Registry; missing
+objects fail rather than substituting current schema bytes. Required hosted
+checks gate the exact PR head before normal merge; integrated main is checked
+after merge before integration acceptance. Local full and affected execution
+remain excluded for this follow-up. No live, credential, native trust,
+cleanup, force push or history rewrite is authorized.
 
 - Requirements express durable needs; ADs express current structure; ADRs
   express durable choices; Specs express behavior; Plans express order; Tasks
@@ -191,9 +205,14 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-003 | Matching immutable historical fixture Registry/schema, missing-object refusal, scoped formatting and verified Git-identity annotations; focused RED/GREEN, staged/message, completion and independent review in the new Task. Required hosted PR and integrated-main checks remain separate from local acceptance. |
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
+
+The current compatibility follow-up maps VAL-P02-003 to WORK-003 in the
+[Plan](plan.md) and its new
+[Task](tasks/tsk-0003-ci-fixture-and-format-follow-up.md).
 
 The direct P02 request and approved implementation plan are the scoped input.
 Relevant existing requirements are REQ-0003-FR-0005, FR-0006, FR-0012,

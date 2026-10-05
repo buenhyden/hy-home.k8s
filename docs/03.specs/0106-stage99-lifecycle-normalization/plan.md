@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.0.2"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -18,13 +18,20 @@ The [Spec](spec.md) owns behavior and `VAL-P02-001`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
-direct P02 request authorizes scoped local authoring, review, checks, and three
+original WORK-001 request authorizes scoped local authoring, review, checks, and three
 logical local commits. The earlier P02 finish instruction also authorized
 local P01/P02 integration into main and removal of their development branches
 after verified integration; the Task records that observed finish. The current
 P01 follow-up keeps its own feature branch/worktree and excludes further
-integration or cleanup. Remote/publication, live/secret and archive-mutation
+integration or cleanup. For that historical scope, remote/publication, live/secret and archive-mutation
 actions remain excluded, without an authenticated-actor claim.
+
+WORK-003 applies the later instruction authorizing work-unit push and normal
+merge after required hosted checks. Its repair stays on the preserved P01
+feature branch; four local commits record draft, ready, in-progress and
+completed Task states. No intermediate push is planned. Keep local full and
+affected execution NOT_RUN under the scoped exclusion; hosted full remains
+required. Preserve both worktrees and history.
 
 ## Overview
 
@@ -68,7 +75,7 @@ Use the affected-path validation registry and record exact snapshots/results.
 
 ## Non-Goals & Out-of-Scope
 
-No new unrelated document family, duplicate stable ID copy, extra Task, progress ledger, inventory
+For original WORK-001, no new unrelated document family, duplicate stable ID copy, extra Task, progress ledger, inventory
 pin, permanent `change_id` capacity, frozen archive rewrite, provider trust
 change, global/private change, remote Git action, or live/secret operation.
 P01 completion and SPEC-0104 archive disposition stay intact.
@@ -79,9 +86,15 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-003 | [VAL-P02-003](spec.md#success-criteria--verification-plan) | Bind matching frozen fixture assets and repair scoped formatting/scanner acceptance | Hosted failure and security disposition; review before each index commit; local acceptance before final push | [SPEC-0106-TSK-0003](tasks/tsk-0003-ci-fixture-and-format-follow-up.md) | Focused RED/GREEN and missing-object refusal; staged/message; completion and independent review; hosted PR checks before merge and main checks after merge |
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-003 requires focused historical fixture RED/GREEN and missing-object
+refusal; exact-index staged/message checks for each local commit; final
+completion and independent review. Required hosted PR checks precede merge;
+integrated-main hosted checks follow merge before integration acceptance.
 
 Focus RED/GREEN on status aggregation, duplicate/missing rows, criterion links,
 required versus nonrequired cancellation, Git transition/deletion/reopening,
