@@ -1,8 +1,8 @@
 ---
 title: "Generation Boundary and Retention Fixtures"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -42,6 +42,7 @@ with their existing owners.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-140 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | Three named REDs and permitted independent cause review | Unchanged PR135 head with original declared public inventories | FAIL | External named-red receipt `f12a1f14` and corrected causes `3581c1db`; private raw direct audit NOT_OBSERVED/DEFER | rejected |
+| EVD-P02-141 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | Observed draft creation, actual checks and permitted independent review | Draft index4c60f800 and committed ed5b7c2a; unchanged registered Task form | PASS | Ignored `p02-task14-c1-preflight.json` and `-postcommit.json`; external C1 Markdown/staged/message structured receipts | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -65,13 +66,32 @@ with their existing owners.
 
 ## Verification Summary
 
-Draft scope only. No implementation or GREEN is claimed. The independent
+At initial draft intake, only scope was authored; implementation and GREEN
+were not observed. The independent
 reviewer accepted the minimum fixture causes using permitted structured
 results and public source; private raw direct audit was automatically rejected
 and remains NOT_OBSERVED/DEFER. Original RED branches not reached stay
 unobserved; thirty local subcase failures do not establish all hosted failures.
 All four shared generation methods and the whitespace method are planned,
 with the original conservative declarations and closed inventories preserved.
-Registered-form provenance, own index/message checks and implementation
-results remain pending. Local full and affected execution are excluded;
+At that intake, registered-form provenance, own index/message checks and
+implementation results remained pending. Local full and affected execution are excluded;
 affected selection metadata may be observed without execution.
+
+Readiness follows the observed C1 draft acceptance. Actual draft Markdown,
+six fresh canonical gates and the exact configured message completed with
+collector stream/cleanup metadata, unchanged public inputs/index/refs, and
+separate permitted structured/public-source review. Committed C012 source
+metadata matches the cached creation observation; source remains the unchanged
+registered regular form. Private raw independent direct audit remains
+NOT_OBSERVED/DEFER. Captured disposable message semantic entries and configs
+matched; the raw temporary index byte cause is UNKNOWN and nonrequired.
+
+The ignored `p02-task14-focused-manifest.json` names all four existing
+GenerationAdmissionTests and the whitespace method, each with a sixty-second
+bound. It binds the original conservative RED declaration and closed public
+archive/form inventories without narrowing and adds the immutable authentic
+after-boundary assets. Fixed budgets and every refusal/control assertion stay
+required. Affected selection may identify applicable validators without
+executing that lane. Hook-first final-byte checks, five GREENs, implementation,
+own readiness checks and hosted admission have not yet been observed.
