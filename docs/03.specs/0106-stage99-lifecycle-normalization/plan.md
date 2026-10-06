@@ -102,8 +102,10 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 WORK-012 owns only `tests/test_qa_runner.py`, `tests/test_readme_navigation.py`,
 this Spec, Plan and its new registered-form Task. Repair the synthetic report
 version and the current reference pack/collection bindings, including the
-knowledge collection's shared section prerequisite. Preserve intercepted
-non-Git execution, complete gate counts, deliberate failure and no-reuse checks;
+knowledge collection's shared section prerequisite. Use public typed synthetic
+results for intercepted non-Git gates; preserve all four orchestration scenarios,
+bounded actual temporary Git, complete gate counts, platform parsing, deliberate
+failure and no-reuse checks. Separate real-process runner controls are unchanged;
 retain depth rejection and meaningful missing-member/valid navigation controls.
 Four forward commits record draft, readiness, implementation and completion.
 Use four explicit methods after scoped hooks establish final bytes, fresh

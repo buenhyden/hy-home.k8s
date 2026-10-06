@@ -321,7 +321,7 @@ class RepositoryContractTests(unittest.TestCase):
         )
         text = "# X\n\n## Report Index\n\n- [a](m0001-a.md)\n"
         self.assertEqual(
-            self.diagnostics(path, "common/readme-research-pack", text, files),
+            self.diagnostics(path, "reference/research-pack", text, files),
             {"README-NAV-COMPLETE"},
         )
 
@@ -332,7 +332,7 @@ class RepositoryContractTests(unittest.TestCase):
             "docs/90.references/research/0009-x/m0001-a.md",
         )
         text = (
-            "# R\n\n## Item Index\n\n- [0009-x/](./0009-x/)\n"
+            "# R\n\n## Structure\n\n- [0009-x/](./0009-x/)\n"
             "- [a](./0009-x/m0001-a.md)\n"
         )
         self.assertIn(
@@ -343,10 +343,19 @@ class RepositoryContractTests(unittest.TestCase):
     def test_knowledge_collection_must_reach_every_document(self):
         path = ".agents/knowledge/README.md"
         files = (".agents/knowledge/map.md", ".agents/knowledge/other.md")
-        text = "# K\n\n## Item Index\n\n- [map](map.md)\n"
+        text = "# K\n\n## Structure\n\n- [map](map.md)\n"
         self.assertEqual(
             self.diagnostics(path, "common/readme-collection-index", text, files),
             {"README-NAV-COMPLETE"},
+        )
+        self.assertEqual(
+            self.diagnostics(
+                path,
+                "common/readme-collection-index",
+                text + "- [other](other.md)\n",
+                files,
+            ),
+            set(),
         )
 
 

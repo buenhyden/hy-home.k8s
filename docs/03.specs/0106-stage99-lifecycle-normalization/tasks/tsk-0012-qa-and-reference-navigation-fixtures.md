@@ -1,8 +1,8 @@
 ---
 title: "QA and Reference Navigation Fixtures"
-version: "0.1.1"
+version: "1.0.1"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -15,7 +15,8 @@ parent_ids: ["SPEC-0106-PLAN-0001"]
 ## Overview
 
 Repair the synthetic platform report and reference navigation prerequisites
-without changing their execution, reuse or navigation refusals.
+and use typed synthetic observations for intercepted non-Git gates without
+changing orchestration, reuse or navigation refusals.
 
 ## Inputs
 
@@ -42,7 +43,8 @@ without changing their execution, reuse or navigation refusals.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-120 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Three bounded REDs and independent cause audit | Unchanged accepted Task0011 endpoint | FAIL | External `hy-p01-cc3e3633-named-red.receipt.json` and `.causes.json`; `/root/p02_independent_review` | rejected |
-| EVD-P02-122 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Observed draft index and exact message checks with final independent audit | Accepted draft index only; own ready checks pending | PASS | External `hy-p01-task12-c1-staged.receipt.json` and `hy-p01-task12-c1-message.receipt.json` | accepted |
+| EVD-P02-121 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Four final-byte focused controls, pinned hooks and independent raw audit | Final typed QA and navigation fixtures; synthetic non-Git observations only | PASS | External `hy-p01-task12-focused2.receipt.json` and `hy-p01-task12-hooks3.receipt.json` | accepted |
+| EVD-P02-122 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Observed draft/ready indices and exact message checks with final independent audits | Accepted draft and ready indices only; own implementation checks pending | PASS | External `hy-p01-task12-c1-staged.receipt.json`, `hy-p01-task12-c2-staged.receipt.json` and corresponding message receipts | accepted |
 | EVD-P02-124 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Cached and committed registered-form first appearance | C012 from unchanged declared regular template; target absent before creation | PASS | Ignored `p01-task12-c1-preflight.json`, full NUL metadata and `p01-task12-c1-postcommit.json` | accepted |
 
 ## Approval and Safety Boundaries
@@ -92,7 +94,44 @@ an originally redirected raw file; no selection or validator rerun is claimed.
 Selected gates use their existing commands/budgets. Python hooks are separate
 because the staged profile does not include the pre-commit gate.
 
-Own ready, focused implementation and terminal checks are NOT_RUN/pending.
+The ready index separately passed six fresh gates and its exact configured
+message, with complete streams/cleanup and stable source/index/refs. Final
+independent raw audit preceded the normal ready commit. EVD-P02-122 accepts
+these observed draft/ready checks only.
+
+The first corrected-input focused invocation timed out at the unchanged
+sixty-second named-method limit, with no internal phase verdict captured.
+Its receipt `hy-p01-task12-focused-01.receipt.json` records FAIL, incomplete
+streams and completed cleanup; the other three leaves were NOT_RUN.
+The original scoped hook PASS applies only to those earlier input bytes.
+
+The finite method has four scenarios over the published full/CI profiles.
+Its intercepted non-Git callback now constructs the public typed result shape,
+as the existing runner test helper does, retaining every argv/count, deliberate
+failure, platform-parser, no-REUSED and LocalEvidenceStore refusal assertion.
+Temporary Git still uses the actual bounded runner. Separate subprocess timeout,
+overflow and descendant controls are unchanged; no phase or runtime cause is
+inferred from the timeout. Non-Git observations are explicit synthetic fixtures,
+not evidence that a validator subprocess ran.
+
+The typed-input formatter then required one blank line. Its partial hook receipt
+`hy-p01-task12-hooks2.receipt.json` preserves Ruff check PASS, format FAIL and
+secrets NOT_RUN; no focused leaf ran on that intermediate input. The sole writer
+applied only that delta. Final QA SHA256
+`0ed2ceb4e577f3d89d77f225743c1ffe3d0532234bc8271698f5bd5fab15cd2a`
+and navigation SHA256
+`a4a46cd62b692169573e010b005abec99b99cf45475405a96412e4c521fdaf97`
+then passed all three pinned hooks without further delta. Four fresh named
+methods passed within their sixty-second bounds, including every retained
+synthetic scenario and the knowledge missing-member/complete-link control.
+Independent direct audit accepted focused receipt SHA256
+`c94bedc13b4b6e16067f4bd2dd4c197ce1b7098c20d6351cede36d605599fb08`
+and hook receipt SHA256
+`0552856190345107a369ceefb8e44e7e44e08497298fdfc6b3a5e105dd2b9797`.
+No earlier-byte hook or focused result is reused for this final input.
+
+Own implementation-index checks, whole Work and terminal acceptance remain
+NOT_RUN/pending; EVD-P02-121 accepts the focused fixture lane only.
 An isolated terminal proposal requires completion and review; its reflected
 actual index requires fresh staged/completion/message and final review before
 commit. Local outcomes do not establish hosted or integrated-main acceptance.
