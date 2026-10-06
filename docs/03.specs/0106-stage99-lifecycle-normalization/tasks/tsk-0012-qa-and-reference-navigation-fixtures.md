@@ -1,8 +1,8 @@
 ---
 title: "QA and Reference Navigation Fixtures"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -42,6 +42,8 @@ without changing their execution, reuse or navigation refusals.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-120 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Three bounded REDs and independent cause audit | Unchanged accepted Task0011 endpoint | FAIL | External `hy-p01-cc3e3633-named-red.receipt.json` and `.causes.json`; `/root/p02_independent_review` | rejected |
+| EVD-P02-122 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Observed draft index and exact message checks with final independent audit | Accepted draft index only; own ready checks pending | PASS | External `hy-p01-task12-c1-staged.receipt.json` and `hy-p01-task12-c1-message.receipt.json` | accepted |
+| EVD-P02-124 | [VAL-P02-012](../spec.md#success-criteria--verification-plan) | WORK-012 | Cached and committed registered-form first appearance | C012 from unchanged declared regular template; target absent before creation | PASS | Ignored `p01-task12-c1-preflight.json`, full NUL metadata and `p01-task12-c1-postcommit.json` | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -74,7 +76,23 @@ their stale heading/profile. GREEN must observe the existing synthetic full/CI
 gate counts, deliberate failure, interception and no-reuse assertions. Navigation
 must preserve depth refusal and meaningful missing-member/valid controls.
 
-Draft, ready, focused implementation and terminal checks are NOT_RUN/pending.
+The draft index passed six fresh canonical gates and its exact configured
+message. Independent final raw audit preceded the normal draft commit; streams
+and cleanup completed with stable source/index/refs. Copied message configs and
+captured disposable semantic entries matched; changed raw disposable index
+bytes have an unknown cause and were not an acceptance prerequisite.
+
+Cached and committed full Git metadata identify C012 from the registered Task
+form, with equal declared bindings and unchanged regular source before/after
+creation. The prior target was absent. Readiness uses ignored
+`p01-task12-focused-manifest.json` for four existing methods and
+`p01-task12-selection.json` for five paths: seven validators, unmatched zero,
+selection only. Its observation records copied tool stdout and the absence of
+an originally redirected raw file; no selection or validator rerun is claimed.
+Selected gates use their existing commands/budgets. Python hooks are separate
+because the staged profile does not include the pre-commit gate.
+
+Own ready, focused implementation and terminal checks are NOT_RUN/pending.
 An isolated terminal proposal requires completion and review; its reflected
 actual index requires fresh staged/completion/message and final review before
 commit. Local outcomes do not establish hosted or integrated-main acceptance.
