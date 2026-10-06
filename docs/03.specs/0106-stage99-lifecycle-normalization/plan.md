@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.9.0"
+version: "1.10.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -86,6 +86,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-013 | [VAL-P02-013](spec.md#success-criteria--verification-plan) | Correct obsolete reference pack identities in route fixtures | Two observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0013](tasks/tsk-0013-reference-pack-route-fixtures.md) | Two named changed-input pack/template and material methods; hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-012 | [VAL-P02-012](spec.md#success-criteria--verification-plan) | Align synthetic QA and reference navigation prerequisites with current owners | Three observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0012](tasks/tsk-0012-qa-and-reference-navigation-fixtures.md) | Four named controls, hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-011 | [VAL-P02-011](spec.md#success-criteria--verification-plan) | Align three authority lifecycle fixture prerequisites with current role vocabularies and reciprocal evidence | Observed three named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0011](tasks/tsk-0011-authority-lifecycle-state-fixtures.md) | Three named changed-input methods and their state/evidence boundaries; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-010 | [VAL-P02-010](spec.md#success-criteria--verification-plan) | Align completed-state and navigation test fixtures with their current and historical owners | Observed named RED; faithful historical replay construction; registered-form first draft and independent review | [SPEC-0106-TSK-0010](tasks/tsk-0010-completed-state-and-navigation-fixtures.md) | Named changed-input cases and related refusal controls; scoped hooks, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
@@ -98,6 +99,17 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-013 owns only `tests/test_reference_pack_routes.py`, this Spec, Plan and
+its new registered-form Task. Replace the obsolete expected pack identities
+with current authored reference profiles, retaining exact template selection,
+numbered member routes and uncovered loose/date path refusal. Topology and
+index/content drift assertions remain unchanged. Four forward commits record
+draft, readiness, implementation and completion. Scoped hooks establish final
+bytes before two explicit methods; each actual index and message receives
+fresh checks and separate review. Prospective completion/review precedes fresh
+actual closing checks. Production, Registry, templates, reference corpus and
+local full/affected execution are excluded; hosted admission remains required.
 
 WORK-012 owns only `tests/test_qa_runner.py`, `tests/test_readme_navigation.py`,
 this Spec, Plan and its new registered-form Task. Repair the synthetic report

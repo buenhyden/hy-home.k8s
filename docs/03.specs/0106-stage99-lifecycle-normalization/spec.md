@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.9.0"
+version: "1.10.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -208,6 +208,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-013 | Reference pack route fixtures expect the current authored reference pack identities and their unchanged registered templates. Existing numbered member routes, uncovered loose/date paths and topology/drift refusals remain required. Two named REDs, final-byte focused controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0013. Published Registry, templates, reference corpus and production contracts remain unchanged; hosted acceptance is separate. |
 | VAL-P02-012 | Synthetic QA and reference navigation fixtures use the current report envelope, pack profile and collection section. Typed synthetic non-Git results preserve all four full/CI orchestration scenarios, complete gate counts, deliberate failure, platform parsing and no local evidence reuse; actual temporary Git remains bounded. Collection depth and missing-member/valid controls remain required. Named RED/GREEN, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0012; production contracts and hosted acceptance remain separate. |
 | VAL-P02-011 | Authority lifecycle fixtures use the current Spec maintenance/supersession states and the audit's own publication vocabulary. Draft/current/terminal body maintenance, invalid reference states, noninitial publication creation and missing/exact reciprocal evidence remain discriminating controls. Three named RED/GREEN methods, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0011. Production contracts and completed evidence remain unchanged; hosted acceptance is separate. |
 | VAL-P02-010 | Completed-state and navigation fixtures follow the current published predecessor and domainless collection route. Historical replay uses a faithful declared generation and preserves current-invalid done, terminal, no-reopen and direct-create refusals. Named RED/GREEN and related controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0010. Production contracts and completed evidence remain unchanged; hosted acceptance is separate. |
@@ -220,6 +221,11 @@ the Task owns all later execution observations.
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
+
+VAL-P02-013 maps to WORK-013 in the [Plan](plan.md) and
+[Task0013](tasks/tsk-0013-reference-pack-route-fixtures.md).
+The capped hosted preview and two bounded REDs identify obsolete expected pack
+profiles; unreached template and corpus checks remain unobserved in that RED.
 
 VAL-P02-012 maps to WORK-012 in the [Plan](plan.md) and
 [Task0012](tasks/tsk-0012-qa-and-reference-navigation-fixtures.md).
@@ -282,6 +288,7 @@ No new structural decision is required. [Plan](plan.md) owns order and
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-013 | Registered-form creation metadata; current pack/template and numbered-member/uncovered-path controls; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-012 | Registered-form creation metadata; synthetic QA and reference collection/pack controls plus knowledge missing-member/valid control; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-011 | Registered-form creation metadata; three named maintenance, reference-publication and reciprocal-supersession methods with preserved refusal boundaries; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-010 | Registered-form creation metadata; named completed-state, own-generation replay and domainless-navigation controls with preserved refusals; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
