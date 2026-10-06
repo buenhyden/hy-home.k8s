@@ -50,6 +50,7 @@ UPSTREAM = "[VAL-P02-001](../spec.md#success-criteria--verification-plan)"
 HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |"
 SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- |"
 PRE_MIGRATION_COMMIT = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"
+MIGRATION_COMMIT = "2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb"
 
 
 def task_text(status: str, rows: list[str]) -> str:
@@ -943,6 +944,12 @@ class GenerationAdmissionTests(unittest.TestCase):
                 )
             )
         )
+        self.after_bytes = {
+            PurePosixPath(entry["path"]): subprocess.check_output(
+                ["git", "show", f"{MIGRATION_COMMIT}:{entry['path']}"], cwd=ROOT
+            )
+            for entry in self.registry.migration_admission["entries"]
+        }
         self.before, self.after = {}, {}
         for entry in self.registry.migration_admission["entries"]:
             path = PurePosixPath(entry["path"])
@@ -951,7 +958,7 @@ class GenerationAdmissionTests(unittest.TestCase):
             ).decode()
             self.before[path] = document_from_text(self.base, path, old)
             self.after[path] = document_from_text(
-                self.registry, path, (ROOT / path).read_text()
+                self.registry, path, self.after_bytes[path].decode()
             )
 
     def test_actual_nine_to_ten_boundary_and_absent_source(self) -> None:
@@ -994,7 +1001,8 @@ class GenerationAdmissionTests(unittest.TestCase):
                     self.after,
                 )
 
-    def test_exact_git_boundary_replay_and_later_completion(self) -> None:
+    @contextlib.contextmanager
+    def _authentic_generation_replay(self):
         with tempfile.TemporaryDirectory(prefix="generation-history-") as directory:
             root = Path(directory)
             shutil.copytree(ROOT / "docs/99.templates", root / "docs/99.templates")
@@ -1071,8 +1079,12 @@ class GenerationAdmissionTests(unittest.TestCase):
                 (ROOT / "docs/99.templates/registry.json").read_bytes()
             )
             for path in self.after:
-                (root / path).write_bytes((ROOT / path).read_bytes())
+                (root / path).write_bytes(self.after_bytes[path])
             subprocess.run(["git", "add", "--all"], cwd=root, check=True)
+            yield root, commit, absent, intake
+
+    def test_exact_git_boundary_replay_and_later_completion(self) -> None:
+        with self._authentic_generation_replay() as (root, commit, absent, intake):
             findings = LIFECYCLE_CLI._evaluate_comparison(
                 root,
                 self.registry,
@@ -1147,6 +1159,40 @@ class GenerationAdmissionTests(unittest.TestCase):
                     root, self.registry, task_path, absent, completed
                 )
             )
+            new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
+            (root / new_path).parent.mkdir(parents=True)
+            (root / new_path).write_text(
+                (ROOT / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
+            )
+            invalid_create = commit()
+            findings = LIFECYCLE_CLI._evaluate_comparison(
+                root,
+                self.registry,
+                mode="ci",
+                base_ref=completed,
+                to_ref=invalid_create,
+                include_paths=(new_path,),
+            )
+            self.assertTrue(
+                any(
+                    item.path == new_path and item.rule_id == "LIFECYCLE-CREATE"
+                    for item in findings
+                ),
+                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
+            )
+
+    def _assert_seeded_snapshot_budget(self, mode: str) -> None:
+        with self._authentic_generation_replay() as (root, commit, absent, intake):
+            migration = commit()
+            _cache = LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)
+            text = (
+                (root / SPEC)
+                .read_text()
+                .replace('status: "in-progress"', 'status: "completed"', 1)
+            )
+            (root / SPEC).write_text(text)
+            completed = commit()
+            task_path = PurePosixPath(self.registry.migration_admission["task_ref"])
             package_paths = {SPEC, SPEC.parent / "plan.md", task_path}
             seed_blobs = LIFECYCLE_CLI._tree_blob_map(root, absent)
             snapshot_blobs = {
@@ -1172,62 +1218,39 @@ class GenerationAdmissionTests(unittest.TestCase):
             self.assertLess(
                 snapshot_limit, LIFECYCLE_CLI.CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
             )
-            for mode in ("ci", "explicit-ref"):
-                with mock.patch.object(
-                    LIFECYCLE_CLI,
-                    "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES",
-                    snapshot_limit,
-                ):
-                    with self.assertRaises(
-                        LIFECYCLE_CLI._CumulativeHistoryBudgetExceeded
-                    ):
-                        LIFECYCLE_CLI._CumulativeHistoryCache(
-                            root, self.registry
-                        )._snapshot(completed)
-                    findings = LIFECYCLE_CLI._evaluate_comparison(
-                        root,
-                        self.registry,
-                        mode=mode,
-                        **(
-                            {"base_ref": absent}
-                            if mode == "ci"
-                            else {"from_ref": absent}
-                        ),
-                        to_ref=completed,
-                        include_paths=tuple(package_paths),
-                    )
-                package_findings = tuple(
-                    item for item in findings if item.path in package_paths
+            with mock.patch.object(
+                LIFECYCLE_CLI,
+                "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES",
+                snapshot_limit,
+            ):
+                with self.assertRaises(LIFECYCLE_CLI._CumulativeHistoryBudgetExceeded):
+                    LIFECYCLE_CLI._CumulativeHistoryCache(
+                        root, self.registry
+                    )._snapshot(completed)
+                findings = LIFECYCLE_CLI._evaluate_comparison(
+                    root,
+                    self.registry,
+                    mode=mode,
+                    **({"base_ref": absent} if mode == "ci" else {"from_ref": absent}),
+                    to_ref=completed,
+                    include_paths=tuple(package_paths),
                 )
-                self.assertEqual(
-                    package_findings,
-                    (),
-                    [
-                        LIFECYCLE_CLI._format_diagnostic(item)
-                        for item in package_findings
-                    ],
-                )
-            new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
-            (root / new_path).parent.mkdir(parents=True)
-            (root / new_path).write_text(
-                (ROOT / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
+            package_findings = tuple(
+                item for item in findings if item.path in package_paths
             )
-            invalid_create = commit()
-            findings = LIFECYCLE_CLI._evaluate_comparison(
-                root,
-                self.registry,
-                mode="ci",
-                base_ref=completed,
-                to_ref=invalid_create,
-                include_paths=(new_path,),
+            self.assertEqual(
+                package_findings,
+                (),
+                [LIFECYCLE_CLI._format_diagnostic(item) for item in package_findings],
             )
-            self.assertTrue(
-                any(
-                    item.path == new_path and item.rule_id == "LIFECYCLE-CREATE"
-                    for item in findings
-                ),
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-            )
+
+    def test_ci_seeded_snapshot_budget_preserves_package_history(self) -> None:
+        self._assert_seeded_snapshot_budget("ci")
+
+    def test_explicit_ref_seeded_snapshot_budget_preserves_package_history(
+        self,
+    ) -> None:
+        self._assert_seeded_snapshot_budget("explicit-ref")
 
     def test_terminal_reopen_is_never_a_generation_admission(self) -> None:
         path = SPEC

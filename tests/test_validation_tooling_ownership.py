@@ -141,6 +141,7 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         from pathlib import PurePosixPath
 
         sys.path.insert(0, str(ROOT / "scripts"))
+        from archive_dispositions import retention_class_of
         from document_contracts import classify_path, load_registry
         from document_lifecycle import document_from_text
 
@@ -162,10 +163,14 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             )
             self.assertIsNone(document.state_issue, relative)
             profile = classify_path(registry, PurePosixPath(relative))
-            frozen = document.status == "archived" or bool(
-                profile.lifecycle_domain
-                and profile.lifecycle_domain.validation_class(document.status)
-                == "terminal"
+            frozen = (
+                retention_class_of(registry, PurePosixPath(relative)) is not None
+                or document.status == "archived"
+                or bool(
+                    profile.lifecycle_domain
+                    and profile.lifecycle_domain.validation_class(document.status)
+                    == "terminal"
+                )
             )
             for pattern in patterns:
                 with self.subTest(path=relative, selector=pattern.pattern):
