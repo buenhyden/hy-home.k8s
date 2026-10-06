@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import tempfile
 import unittest
@@ -17,6 +16,7 @@ from archive_validation import (  # noqa: E402
     validate_current_archive_authority,
 )
 from document_contracts import load_registry  # noqa: E402
+from tests.archive_generation_fixture import legacy_registry_bytes  # noqa: E402
 from tests.git_fixture import GitFixture  # noqa: E402
 from tests.test_document_lifecycle_archive_cutover import VALIDATOR  # noqa: E402
 from document_lifecycle import compare_lifecycle, document_from_text  # noqa: E402
@@ -55,7 +55,7 @@ class CompletedStateMigrationTests(unittest.TestCase):
                             completed.path: self.document(
                                 path,
                                 profile,
-                                "active" if profile != "sdlc/task" else "in-progress",
+                                "in-progress",
                             )
                         },
                         {completed.path: completed},
@@ -151,43 +151,56 @@ class CompletedStateMigrationTests(unittest.TestCase):
     def test_cumulative_replay_uses_each_commits_registry_generation(self) -> None:
         registry_path = "docs/99.templates/registry.json"
         current_bytes = (ROOT / registry_path).read_bytes()
-        old = json.loads(current_bytes)
-        for profile in old["profiles"]:
-            if profile["id"] in {"sdlc/spec", "sdlc/plan", "sdlc/task"}:
-                states = profile["lifecycle"]["status_domain"]
-                states[states.index("completed")] = "done"
-        for domain in old["lifecycle_domains"]:
-            if domain["family"] in {"spec-plan", "task"}:
-                domain["states"]["done"] = domain["states"].pop("completed")
-                domain["transitions"] = [
-                    ["done" if state == "completed" else state for state in edge]
-                    for edge in domain["transitions"]
-                ]
+        path = "docs/03.specs/9999-example/spec.md"
+
+        def body(status: str) -> bytes:
+            return (
+                f"---\ntype: sdlc/spec\nstatus: {status}\n---\n\n# Fixture\n".encode()
+            )
+
         with tempfile.TemporaryDirectory(prefix="completed-generation-") as raw:
             root = Path(raw)
             git = GitFixture(root)
-            base, _ = git.commit(registry_path, json.dumps(old).encode())
-            path = "docs/03.specs/9999-example/spec.md"
-
-            def body(status: str) -> bytes:
-                return f"---\ntype: sdlc/spec\nstatus: {status}\n---\n\n# Fixture\n".encode()
-
+            base, _ = git.commit(registry_path, legacy_registry_bytes())
             for status in ("draft", "active", "done"):
-                git.commit(path, body(status))
+                historical, _ = git.commit(path, body(status))
+            self.assertTrue(
+                VALIDATOR._history_proves_cumulative_create(
+                    root, self.registry, PurePosixPath(path), base, historical
+                )
+            )
+            # A bare terminal spelling change supplies no declared 9 -> 10
+            # admission. Historical readability does not authorize this event.
             migrated, _ = git.commit_many(
                 {registry_path: current_bytes, path: body("completed")}
             )
-            self.assertTrue(
+            self.assertFalse(
                 VALIDATOR._history_proves_cumulative_create(
                     root, self.registry, PurePosixPath(path), base, migrated
                 )
             )
-            future = "docs/03.specs/9998-future/spec.md"
-            for status in ("draft", "active", "done"):
-                illegal, _ = git.commit(future, body(status))
+
+        with tempfile.TemporaryDirectory(prefix="completed-current-") as raw:
+            root = Path(raw)
+            git = GitFixture(root)
+            base, _ = git.commit(registry_path, current_bytes)
+            for status in (
+                "draft",
+                "in-review",
+                "approved",
+                "in-progress",
+                "completed",
+            ):
+                current, _ = git.commit(path, body(status))
+            self.assertTrue(
+                VALIDATOR._history_proves_cumulative_create(
+                    root, self.registry, PurePosixPath(path), base, current
+                )
+            )
+            illegal, _ = git.commit(path, body("done"))
             self.assertFalse(
                 VALIDATOR._history_proves_cumulative_create(
-                    root, self.registry, PurePosixPath(future), migrated, illegal
+                    root, self.registry, PurePosixPath(path), base, illegal
                 )
             )
 
