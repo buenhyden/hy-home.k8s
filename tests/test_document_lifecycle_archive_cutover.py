@@ -649,7 +649,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                 ),
             )
 
-        for status in ("draft", "active", "completed"):
+        for status in ("draft", "in-progress", "completed"):
             with self.subTest(status=status):
                 self.assertEqual(compare_body_change(status), ())
 
@@ -674,10 +674,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self.assertEqual(actual, ())
 
     def test_reference_creation_answers_to_its_own_role_vocabulary(self):
-        # This fixture used to create an audit at `active` and assert silence,
-        # which is what the old five-value domain and absent graph allowed.
-        # Audit findings are completed or invalidated; `active` was borrowed
-        # vocabulary that meant nothing for the role.
+        # Audit references use their published lifecycle vocabulary. Borrowed
+        # role states are invalid, and a published document is not an initial
+        # draft creation.
         registry = load_registry(ROOT)
         path = PurePosixPath(
             "docs/90.references/audits/0001-example-audit/m0001-findings.md"
@@ -711,7 +710,8 @@ artifact_id: "AUD-0001-m0001"
         )
         for status, rule in (
             ("active", "LIFECYCLE-STATE"),
-            ("completed", "LIFECYCLE-CREATE"),
+            ("completed", "LIFECYCLE-STATE"),
+            ("published", "LIFECYCLE-CREATE"),
         ):
             with self.subTest(status=status):
                 self.assertEqual(
@@ -798,8 +798,8 @@ artifact_id: "AUD-0001-m0001"
         source = PurePosixPath("docs/03.specs/9998-source/spec.md")
         successor = PurePosixPath("docs/03.specs/9999-successor/spec.md")
         base = {
-            source: LifecycleDocument(source, "sdlc/spec", "active"),
-            successor: LifecycleDocument(successor, "sdlc/spec", "active"),
+            source: LifecycleDocument(source, "sdlc/spec", "approved"),
+            successor: LifecycleDocument(successor, "sdlc/spec", "approved"),
         }
         proposed = {
             source: LifecycleDocument(source, "sdlc/spec", "superseded"),
