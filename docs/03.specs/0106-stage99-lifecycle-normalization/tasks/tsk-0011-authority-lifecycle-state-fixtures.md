@@ -1,8 +1,8 @@
 ---
 title: "Authority Lifecycle State Fixtures"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -35,7 +35,7 @@ body-maintenance and reciprocal-evidence behavior is unchanged.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-011 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | Align authority state fixtures with their published roles | platform | frontmatter | NOT_RUN | pending | Focused checks accepted; own implementation-index checks pending |
+| WORK-011 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | Align authority state fixtures with their published roles | platform | frontmatter | PASS | accepted | Observed focused checks, implementation-index checks and independent audits in EVD-P02-111/112 |
 
 ## Task Evidence
 
@@ -43,7 +43,8 @@ body-maintenance and reciprocal-evidence behavior is unchanged.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-110 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Three named REDs and independent diagnosis | Unchanged Task0010 endpoint; bounded individual invocations | FAIL | External `hy-p01-7959d52f-named-red.receipt.json` and causes receipt; `/root/p02_independent_review` | rejected |
 | EVD-P02-111 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Three final-byte focused methods, pinned hooks and independent raw audit | Fixture SHA256 `63178dfe02fb27cd214e4ed452fea6e5139632002775b283e3b2307d9dc94d97` | PASS | External `hy-p01-task11-focused.receipt.json` and `hy-p01-task11-hooks.receipt.json` | accepted |
-| EVD-P02-112 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Observed draft and ready actual-index checks and final independent audits | Accepted draft/ready indices and exact messages; own implementation checks pending | PASS | External `hy-p01-task11-c1-staged.receipt.json`, `hy-p01-task11-c2-staged.receipt.json` and message receipts | accepted |
+| EVD-P02-112 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Observed draft, ready and implementation actual-index checks and final independent audits | Accepted three logical indices, changed Task Markdown and exact messages | PASS | External `hy-p01-task11-c1-staged.receipt.json`, `hy-p01-task11-c2-staged.receipt.json`, `hy-p01-task11-c3-staged.receipt.json` and corresponding Markdown/message receipts | accepted |
+| EVD-P02-113 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Observed prospective scoped completion and independent raw audit | Isolated same-base/config closing proposal only; own actual closing checks pending | PASS | External `hy-p01-task11-c4-proposal-completion.receipt.json` | accepted |
 | EVD-P02-114 | [VAL-P02-011](../spec.md#success-criteria--verification-plan) | WORK-011 | Registered-form cached and committed source metadata | C010 from unchanged declared regular form; target absent before draft | PASS | Ignored `p01-task11-c1-template-rewrite-preflight.json`, full metadata and `p01-task11-c1-postcommit.json` | accepted |
 
 ## Approval and Safety Boundaries
@@ -105,11 +106,22 @@ Independent raw audits accepted focused receipt SHA256
 `8c6822e517a77bf9508421cb2396527373474a1c36b451f05e5fb879d34d7de5`
 and hook receipt SHA256
 `4ededcf10cb0e425f85df1fb387c96bfde16a432ce58ac35f039bce4aff0d088`.
-This accepts the focused fixture lane only; current implementation-index checks
-and whole Work acceptance remain pending.
+The implementation index then passed its changed Task Markdown, seven fresh
+canonical gates and exact configured message. Independent final raw audit
+preceded the normal implementation commit; all streams and cleanup completed
+with stable source/index/refs. EVD-P02-112 records those observed checks.
 
-Own implementation-index and terminal results remain unobserved. An isolated
-completion proposal and its review precede any closing reflection; that reflected
-index needs fresh staged, completion, exact message and final independent review
-before its normal commit. Final hosted PR and integrated-main results remain
-separate from every local observation.
+The isolated nonauthoritative same-base/config proposal separately passed
+SPEC0106-only completion and independent semantic/raw review. Receipt SHA256
+`a0960bef428b11215d3f323570289a7ea5ff34182be850765bf9719739daa97c`
+records snapshot
+`681cf552f3f17ab2d9a4b790bb29df813e86aaeb69677fb28d147480c6ca0b73`,
+complete streams/cleanup and unchanged clone/original identities. No proposal
+staged run occurred; EVD-P02-113 accepts that prospective lane only.
+
+This conditional actual closing candidate accepts the observed implementation
+and prospective results. Its own actual staged, scoped completion, exact message
+and final independent review are NOT_RUN/pending and must all pass before the
+normal closing commit. Their eventual raw receipts remain external rather than
+being inserted into this same input. Final hosted PR and integrated-main results
+remain separate from every local observation.
