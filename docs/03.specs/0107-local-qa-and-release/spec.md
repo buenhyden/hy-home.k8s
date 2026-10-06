@@ -2,7 +2,7 @@
 title: "Local Quality and Release Lifecycle"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
