@@ -14,17 +14,19 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
-original WORK-001 request authorizes scoped local authoring, review, checks, and three
+original WORK-001 request authorized scoped local authoring, review, checks, and three
 logical local commits. The earlier P02 finish instruction also authorized
 local P01/P02 integration into main and removal of their development branches
-after verified integration; the Task records that observed finish. The current
-P01 follow-up keeps its own feature branch/worktree and excludes further
-integration or cleanup. For that historical scope, remote/publication, live/secret and archive-mutation
-actions remain excluded, without an authenticated-actor claim.
+after verified integration; the original Task records that observed finish.
+The current `VAL-P02-002` follow-up authorizes four normal work-unit commits
+in its own feature worktree and retains the P01 worktree. The request owner's
+later instruction authorizes push and merge after required review and hosted
+checks. Worktree removal, live/secret and archive mutation remain excluded;
+no authenticated-actor claim or remote outcome is inferred.
 
 WORK-003 applies the later instruction authorizing work-unit push and normal
 merge after required hosted checks. Its repair stays on the preserved P01
@@ -35,7 +37,7 @@ required. Preserve both worktrees and history.
 
 ## Overview
 
-Deliver the one acceptance set through [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md).
+The original acceptance set was delivered through [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md).
 Intake docs established the reviewable contract; the atomic implementation
 changed the form/schema/checker/current-consumer surface. A corrective local
 commit repaired an observed post-merge history-cache failure without changing
@@ -46,6 +48,15 @@ with the original EVD-P02-013 result preserved. The Task alone owns execution
 observations.
 
 ## Context
+
+The `VAL-P02-002` follow-up reuses this completed package. WORK-002 adds an
+explicit multi-row Task status writer while retaining the Registry generation,
+Schema and existing validation behavior. Its scoped local handoff has four
+normal commits (draft, ready, implementation in-progress, completion) on a
+feature worktree based on `df3281d06a931bff6784bcc462800fab23bbb1c9`,
+then proceeds through the authorized push, PR, hosted checks and merge route.
+Only [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) records this
+follow-up's actual execution results.
 
 Preflight observed clean `codex/p02-stage99-lifecycle` at
 `50890376ddef88de69f7df4204fc72dfc265c051`, diverged from local `main`
@@ -77,7 +88,7 @@ Use the affected-path validation registry and record exact snapshots/results.
 
 For original WORK-001, no new unrelated document family, duplicate stable ID copy, extra Task, progress ledger, inventory
 pin, permanent `change_id` capacity, frozen archive rewrite, provider trust
-change, global/private change, remote Git action, or live/secret operation.
+change, global/private change, or live/secret operation.
 P01 completion and SPEC-0104 archive disposition stay intact.
 
 ## Work Breakdown
@@ -96,6 +107,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-004 | [VAL-P02-004](spec.md#success-criteria--verification-plan) | Admit only registered unchanged regular Task-template copies for a new canonical unique first draft; preserve all other history guards | Explicit narrow validator delegation; real-Git RED before implementation; separate review and exact-index checks before each normal commit | [SPEC-0106-TSK-0004](tasks/tsk-0004-registered-task-template-instantiation.md) | Named bounded RED/GREEN and source/binding/identity/state/provenance negatives; actual-index staged/message; isolated terminal proposal then actual completion/review; hosted PR and integrated-main results remain separate |
 | WORK-003 | [VAL-P02-003](spec.md#success-criteria--verification-plan) | Align current proof fixtures with complete published assets and cumulative headers/review transitions; independently prove frozen asset reads; repair scoped formatting/scanner acceptance | Hosted failure and security disposition; review before each index commit; local acceptance before final push | [SPEC-0106-TSK-0003](tasks/tsk-0003-ci-fixture-and-format-follow-up.md) | Focused RED/GREEN, proof and illegal-transition negatives and missing-object refusal; staged/message; completion and independent review; hosted PR checks before merge and main checks after merge |
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
+| WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
 

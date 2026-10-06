@@ -22,7 +22,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ## Task Table
 
-<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states; the frontmatter status summarizes them. Result is observed execution outcome, Acceptance is the criterion disposition, and Evidence points to concrete records. -->
+<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states; the frontmatter status summarizes them. Preview the summary with scripts/sync-task-status.py using an explicit --root and one current --path; add --write only to synchronize that scalar after the rows are valid and the lifecycle edge is legal. This never generates Result, Acceptance, Evidence, or approval. See the Stage 99 author guide for usage. Result is observed execution outcome, Acceptance is the criterion disposition, and Evidence points to concrete records. -->
 
 ### Lifecycle Traceability
 
