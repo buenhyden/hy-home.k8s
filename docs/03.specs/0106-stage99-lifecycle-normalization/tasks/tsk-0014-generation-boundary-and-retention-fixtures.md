@@ -1,8 +1,8 @@
 ---
 title: "Generation Boundary and Retention Fixtures"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -35,7 +35,7 @@ with their existing owners.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-014 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | Correct immutable boundary inputs and typed retention oracle | platform | frontmatter | NOT_RUN | pending | Local implementation checks observed; terminal acceptance pending; see EVD-P02-143 |
+| WORK-014 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | Correct immutable boundary inputs and typed retention oracle | platform | frontmatter | PASS | accepted | Observed local fixture implementation only; see EVD-P02-143 and EVD-P02-144 |
 
 ## Task Evidence
 
@@ -45,6 +45,7 @@ with their existing owners.
 | EVD-P02-141 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | Observed draft creation, actual checks and permitted independent review | Draft index4c60f800 and committed ed5b7c2a; unchanged registered Task form | PASS | Ignored `p02-task14-c1-preflight.json` and `-postcommit.json`; external C1 Markdown/staged/message structured receipts | accepted |
 | EVD-P02-142 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | Superseded five-method implementation attempt | Original implementation candidate81136fd1 and full declared inputs | FAIL | External focused `df625019` with qualification `378368cf`; replay timed out, remaining two NOT_RUN | rejected |
 | EVD-P02-143 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | New-byte hook-first and seven fresh named controls with permitted independent review | Split implementation candidate b7892660; original full749 and closed857/53 scope plus authentic history assets | PASS | External dependencies2 `c6c03760`, hooks2 `2657adc9` and focused2 `ff734557`; collector metadata and public-source audit | accepted |
+| EVD-P02-144 | [VAL-P02-014](../spec.md#success-criteria--verification-plan) | WORK-014 | Observed implementation index/message checks and permitted independent acceptance | C3 index54662d3f committed b6b86a6a; exact unchanged fixture inputs | PASS | External C3 final manifest `cdaa3616`, attribution `5594e947` and ignored `p02-task14-c3-postcommit.json` | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -138,7 +139,32 @@ NOT_OBSERVED/DEFER; this acceptance does not claim direct raw inspection.
 The original timeout, incomplete streams, unobserved phase, old two historical
 PASS results and then-unrun controls remain preserved in EVD-P02-142 and its
 original receipts. The new seven executed fresh after whole-file changes;
-none reused earlier AST scopes. C3 Markdown, actual staged QA and exact message
-checks remain pending for this updated candidate. Work and terminal acceptance,
-exact hosted checks and integrated-main results remain pending. Local full and
+none reused earlier AST scopes. At that updated implementation-candidate intake, C3 Markdown, actual staged QA
+and exact message checks remained pending, as did Work/terminal acceptance and
+exact hosted/integrated-main results. Local full and
 affected execution remain NOT_RUN. Production is unchanged.
+
+C3 then completed changed Task Markdown, seven fresh actual canonical gates
+and the exact configured message. Its complete original focused/hook scope,
+configurations, pins, modes and trust boundary matched the accepted new-byte
+results, so those scoped results were attributed without rerunning or narrowing.
+Separate permitted structured/public-source review accepted that index, followed
+by the normal implementation commit. Temporary message semantic entries and
+configs matched; raw temporary index byte-change cause remains UNKNOWN and
+nonrequired. Private raw independent direct audit remains NOT_OBSERVED/DEFER.
+
+At prospective intake, this isolated completed input asserted neither the actual
+tracked Task status nor a C4 verdict. Work PASS denotes observed local fixture
+implementation only. Prospective completion, actual reflection and closing
+checks were NOT_RUN at that intake; the actual tracked Task was in-progress.
+Source reflection requires observed scoped prospective completion and separate
+review. Any actual reflected closing candidate requires fresh staged QA, scoped
+completion, the exact configured message and independent final review to PASS
+before a normal completion commit. The user's explicit approval covers this
+ignored proposal and conditional reflection/check/review/commit sequence; it
+does not turn pending checks into observed results. Immutable observed outputs
+and closing identity belong in the ignored `p02-task14-terminal-validation.json`
+attachment without a Task self-SHA rewrite. Private raw independent direct audit
+remains NOT_OBSERVED/DEFER. Hosted protected admission and integrated-main results
+remain pending with the sole delivery owner. Full and affected local execution
+remain NOT_RUN; no live/native acceptance is claimed.
