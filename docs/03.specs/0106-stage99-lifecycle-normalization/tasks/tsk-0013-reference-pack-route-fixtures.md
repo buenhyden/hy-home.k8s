@@ -1,8 +1,8 @@
 ---
 title: "Reference Pack Route Fixtures"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -41,7 +41,8 @@ selection, numbered member ownership and route/topology refusals.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-130 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Two named REDs and independent cause audit | Unchanged Task0012 endpoint and declared Stage90 material | FAIL | External `hy-p01-task13-reference-pack-red.receipt.json` and `-red-causes.json`; `/root/p02_independent_review` | rejected |
 | EVD-P02-131 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Cached and committed registered-form creation | C012 from unchanged declared regular Task template; target absent before creation | PASS | Ignored `p01-task13-c1-preflight.json`, full metadata and `p01-task13-c1-postcommit.json` | accepted |
-| EVD-P02-132 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Observed draft index and exact message with independent raw audit | Draft logical index only; own ready and later checks pending | PASS | External `hy-p01-task13-c1-staged.receipt.json` and `hy-p01-task13-c1-message.receipt.json` | accepted |
+| EVD-P02-132 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Observed draft/ready indices and exact messages with independent raw audits | Two accepted logical indices only; own implementation and terminal checks pending | PASS | External `hy-p01-task13-c1-staged.receipt.json`, `hy-p01-task13-c2-staged.receipt.json` and corresponding message receipts | accepted |
+| EVD-P02-133 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Two final-byte focused methods, pinned hooks and independent raw audits | Tested pack-route fixture and complete declared public inputs/reference inventory | PASS | External `hy-p01-task13-focused.receipt.json` and `hy-p01-task13-hooks.receipt.json` | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -76,10 +77,10 @@ an exhaustive hosted failure count or PASS for cases absent from that preview.
 Independent review read the entire implicated class and current owners. The
 other eight methods retain member, uncovered-route, category-directory,
 duplicate/missing/nonregular, index/content drift and historical wiki controls.
-Implementation will change only the two expected pack identities and may check
-their authored reference lifecycle binding. Two final-byte focused methods,
-hooks, own ready/implementation index evidence and terminal checks are
-NOT_RUN/pending. No production or reference corpus change is planned.
+Implementation changes only the two expected pack identities and checks their
+authored reference lifecycle binding. Own implementation-index, whole Work
+and terminal acceptance remain NOT_RUN/pending. Production and reference
+corpus bytes are unchanged.
 
 The draft index passed six fresh canonical gates and its exact configured
 message before independent final raw audit and the normal commit. Streams and
@@ -92,5 +93,25 @@ with unchanged regular source and both bindings, and an absent prior target.
 Readiness uses `p01-task13-focused-manifest.json` for the two changed methods
 and the actual selector stdout in `p01-task13-selection-observation.json`:
 four declared paths, seven validators, unmatched zero, selection only.
-No affected validator ran. Own ready staged/message, focused/hooks,
-implementation and terminal outcomes remain NOT_RUN/pending.
+No affected validator ran. The ready index then separately passed six fresh
+canonical gates and its exact configured message with independent final raw
+audit, complete streams/cleanup and stable source/index/refs. EVD-P02-132
+accepts these observed draft/ready results only.
+
+Final fixture SHA256
+`b7870c447fe3711ae58e7f510b2f21a101ef844af9596a0eb96cef31839acd0d`
+passed the three pinned scoped hooks without formatter delta before two fresh
+named methods passed within their sixty-second bounds. Independent direct
+audits accepted hook receipt SHA256
+`b8bb84a7d85f03b9c3b2f0783ad0bd023a283b0d1e1a3c43158b816a8ca4361e`
+and focused receipt SHA256
+`5c8aecef2e362fbe2e36f3d86944fc8767700a41e6acd1e1f4aaf2bc53d6656b`.
+The complete declared input maps, reference inventory and template facts
+matched in both lanes. Template selection, authored reference publication
+binding and the actual material iteration now passed; earlier RED's unreached
+checks remain historical. The other eight unchanged methods were not rerun.
+
+This in-progress candidate accepts only focused/hooks and prior draft/ready
+observations. Its own implementation Markdown, staged/message checks and
+independent final review remain NOT_RUN/pending before the normal commit.
+Work completion, scoped terminal checks and hosted admission remain separate.
