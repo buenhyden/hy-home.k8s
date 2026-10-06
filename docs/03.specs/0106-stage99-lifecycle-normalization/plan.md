@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.10.0"
+version: "1.11.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013/014`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
@@ -97,6 +97,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-014 | [VAL-P02-014](spec.md#success-criteria--verification-plan) | Repair immutable generation-boundary and typed retention fixture inputs | Three named REDs; structured/public-source independent cause review; private raw direct audit deferred; genuine registered-form first draft | [SPEC-0106-TSK-0014](tasks/tsk-0014-generation-boundary-and-retention-fixtures.md) | Four existing shared generation methods and one whitespace method after hook-first final bytes; complete original declared maps/inventories, each actual-index staged/message and separate review; prospective completion then fresh actual closing checks; hosted admission separate |
 | WORK-013 | [VAL-P02-013](spec.md#success-criteria--verification-plan) | Correct obsolete reference pack identities in route fixtures | Two observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0013](tasks/tsk-0013-reference-pack-route-fixtures.md) | Two named changed-input pack/template and material methods; hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-012 | [VAL-P02-012](spec.md#success-criteria--verification-plan) | Align synthetic QA and reference navigation prerequisites with current owners | Three observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0012](tasks/tsk-0012-qa-and-reference-navigation-fixtures.md) | Four named controls, hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-011 | [VAL-P02-011](spec.md#success-criteria--verification-plan) | Align three authority lifecycle fixture prerequisites with current role vocabularies and reciprocal evidence | Observed three named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0011](tasks/tsk-0011-authority-lifecycle-state-fixtures.md) | Three named changed-input methods and their state/evidence boundaries; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
@@ -111,6 +112,24 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
+
+WORK-014 owns only `tests/test_task_execution_contract.py`,
+`tests/test_validation_tooling_ownership.py`, this Spec, Plan and its new
+registered-form Task. Bind migration after-documents to immutable commit
+`2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb`, whose parent is the existing
+generation-9 source. Preserve all four GenerationAdmissionTests and every
+negative, later completion, cumulative replay and budget assertion. Project
+frozen retained bodies through the existing typed `retention_class_of` owner,
+retaining status/domain checks and current-record/nonarchive negatives.
+Four normal commits record draft, ready, implementation and completion.
+Complete original declared inputs and closed archive/form inventories stay
+with their receipts without retrospective scope narrowing. Scoped hooks
+establish final bytes before five named sixty-second methods. Each actual
+index/message receives fresh checks and separate review; prospective scoped
+completion precedes fresh actual closing checks. Production, Registry, schemas,
+hooks, gate limits and old evidence are excluded. Private raw direct audit
+remains deferred; permitted structured/public-source review supports local
+work only. Full/affected execution and hosted acceptance remain separate.
 
 WORK-013 owns only `tests/test_reference_pack_routes.py`, this Spec, Plan and
 its new registered-form Task. Replace the obsolete expected pack identities
