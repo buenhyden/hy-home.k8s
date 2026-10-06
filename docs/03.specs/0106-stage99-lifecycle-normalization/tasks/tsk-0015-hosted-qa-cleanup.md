@@ -1,8 +1,8 @@
 ---
 title: "Hosted QA Cleanup"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -46,7 +46,7 @@ it does not discard passing regressions or earlier evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-015 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | Retire hosted full-QA execution and update direct consumers | platform | frontmatter | NOT_RUN | pending | Pending named repository evidence |
+| WORK-015 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | Retire hosted full-QA execution and update direct consumers | platform | frontmatter | PASS | accepted | EVD-P02-157, EVD-P02-158, EVD-P02-161; observed local implementation only |
 
 ## Task Evidence
 
@@ -63,6 +63,8 @@ it does not discard passing regressions or earlier evidence.
 | EVD-P02-158 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Explicit direct consumer GREEN | Manifest e8273449, full fourteen inputs with PR72991f93, frozen index455a2c02 | PASS | External quality-focused receipt614085cc and proof3e62d326: actual79/79, total59.039s, max2.726s, each60s | accepted |
 | EVD-P02-159 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Earlier formatter findings | Initial owned hook inputs before explicit writer correction | FAIL | Original owned-hooks receipt48ab149a and hooks3 receipt2701fc32 retained; initial secrets NOT_RUN, no final-input reuse | rejected |
 | EVD-P02-160 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | First actual implementation-index canonical result | Index73b2fda0, actual thirteen selected gates | FAIL | Original staged receipt8aa74e7f and cause012b34e8: twelve PASS, repository-quality FAIL, actual243.528s; message and selection NOT_RUN | rejected |
+| EVD-P02-161 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Observed corrected C3 actual-index/message checks, review and normal commit | Repaired indexfacfc6fd committedfe8ced85; unchanged implementation sources | PASS | External corrected final manifest97d14dee and ignored C3 postreceipt d8045ba5: thirteen fresh gates237.483s, exact message1.071s, selection metadata and separate permitted review | accepted |
+| EVD-P02-162 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Original isolated prospective SPEC0106 completion | Same-base fe8ced85, sole Task candidate2a99f389, clone index67dd2d2b; parsed Spec trace omitted VAL015 | FAIL | Original receipt9fb61f82: rc1, 6.522s, COMPLETION-TRACE; full collector cleanup, no actual Task reflection or same-input retry | rejected |
 
 ## Approval and Safety Boundaries
 
@@ -133,7 +135,8 @@ Execution records observed ready-index six fresh gates, exact configured message
 selection-only metadata and separate permitted structured/public-source review.
 The normal ready commit and public postidentity completed with clean state;
 root then released disjoint source owners for the approved fifteen paths.
-WORK-015 work-unit acceptance and own C3/terminal checks remain pending.
+At early execution intake, WORK-015 work-unit acceptance and own C3/terminal
+checks remained pending.
 Private raw direct audit stays NOT_OBSERVED/DEFER; local full/affected execution
 and hosted full QA remain NOT_RUN.
 
@@ -173,8 +176,9 @@ unexecuted secrets where recorded. Corrections were explicit writer edits;
 source-changing attempts required fresh hooks and final-input GREEN, not AST
 reuse or a repetition of an unchanged failed input. The obsolete PR sentence
 mismatch was corrected before GREEN; no test ran on that blocked candidate.
-Own current C3 canonical/message acceptance, normal implementation commit,
-terminal completion, local/origin-main reflection and cleanup remain pending.
+At the initial implementation-candidate intake, own C3 canonical/message
+acceptance, normal implementation commit, terminal completion, local/origin-main
+reflection and cleanup were pending.
 Private raw direct audit remains NOT_OBSERVED/DEFER; the recorded results are
 collector structured evidence with separate public-source review.
 
@@ -191,6 +195,36 @@ explicitly delegated this sole hub sentence to the document writer; no refusal
 or unobserved execution is inferred. All other CI files are preserved.
 The hub and this Task are outside the original focused fourteen and hook eight
 input maps; only complete unchanged scope/config/tool/mode/trust proof permits
-scoped attribution. The repaired current index still requires all thirteen
-fresh canonical gates, exact configured message and separate final review.
-Own corrected C3 acceptance and terminal/integration/cleanup remain pending.
+scoped attribution. At repaired C3 intake, the candidate required all thirteen fresh canonical
+gates, exact configured message and separate final review; those observed
+results are now EVD-P02-161. Corrected C3 acceptance and terminal/integration/
+cleanup were pending at that intake.
+
+
+Local fixture/contract implementation acceptance now rests on observed final
+source checks, corrected C3 actual-index/message acceptance, independent
+permitted structured/public-source review and the normal implementation commit.
+It does not certify hosted execution, package audit, origin/main reflection or
+cleanup. Those outcomes remain separately observed delivery responsibilities.
+
+At prospective intake, this isolated completed input asserted neither the actual
+tracked Task status nor a C4 verdict. WORK-015 PASS denotes observed local
+implementation only. Prospective completion, actual reflection and closing
+checks were NOT_RUN at that intake; the actual tracked Task was in-progress.
+Source reflection requires observed scoped prospective completion and separate
+review. Any actual reflected closing candidate requires fresh staged QA,
+SPEC0106 scoped completion, exact configured message and independent final
+review to PASS before a normal completion commit. Actual outputs, closing OID,
+local-main reflection and retained structured-evidence hashes belong in the
+ignored terminal attachment, with no self-SHA rewrite. Origin delivery and
+conditional cleanup belong to the separately assigned delivery owner. Original
+failures, metadata qualifications, private raw direct NOT_OBSERVED/DEFER and
+local full/affected NOT_RUN remain unchanged; no hosted PASS is asserted.
+
+The first isolated prospective completion failed with COMPLETION-TRACE because
+VAL-P02-015 was defined but absent from the parsed Spec trace table. EVD-P02-162
+preserves that failed input and result. This revised nonauthoritative proposal
+adds only the missing VAL015 trace row and a consistent Spec patch version;
+the Spec remains completed and earlier trace rows remain unchanged. Revised
+prospective completion and all actual closing checks remain pending until
+separately observed. No original failure is promoted to PASS.

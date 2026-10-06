@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.12.1"
+version: "1.12.2"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -361,6 +361,7 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — explicit user instruction to retire failing or observed >=600-second hosted QA execution, integrate local/origin main and preserve owned cleanup evidence | VAL-P02-015 | WORK-015 and Task0015 in the Plan; registered-form provenance, scoped contract controls and hooks, actual-index staged/message checks, prospective and actual scoped completion plus independent review; full QA NOT_RUN, provenance inactive/fail-closed and cleanup outcomes observed separately |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-014 | Genuine registered-form provenance; authentic immutable boundary and typed retention controls; original full declared inputs and inventories; scoped hooks, five named methods, each actual-index staged/message, prospective completion/review and fresh actual closing checks; private raw direct audit deferred and hosted admission separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-013 | Registered-form creation metadata; current pack/template and numbered-member/uncovered-path controls; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-012 | Registered-form creation metadata; synthetic QA and reference collection/pack controls plus knowledge missing-member/valid control; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
