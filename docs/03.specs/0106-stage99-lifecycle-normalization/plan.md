@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.7.0"
+version: "1.8.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -86,6 +86,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-011 | [VAL-P02-011](spec.md#success-criteria--verification-plan) | Align three authority lifecycle fixture prerequisites with current role vocabularies and reciprocal evidence | Observed three named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0011](tasks/tsk-0011-authority-lifecycle-state-fixtures.md) | Three named changed-input methods and their state/evidence boundaries; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-010 | [VAL-P02-010](spec.md#success-criteria--verification-plan) | Align completed-state and navigation test fixtures with their current and historical owners | Observed named RED; faithful historical replay construction; registered-form first draft and independent review | [SPEC-0106-TSK-0010](tasks/tsk-0010-completed-state-and-navigation-fixtures.md) | Named changed-input cases and related refusal controls; scoped hooks, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-009 | [VAL-P02-009](spec.md#success-criteria--verification-plan) | Instantiate a new unique Task from its registered form and repair the common authority fixture | Separate reviewed Task8 rollback; observed registered-form creation metadata; retained named fixture failures and observations | [SPEC-0106-TSK-0009](tasks/tsk-0009-common-authority-fixture-reinstantiation.md) | Named routing/native controls; exact-input reuse only when independently justified; scoped hooks, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-007 | [VAL-P02-007](spec.md#success-criteria--verification-plan) | Align governance and Spec navigation fixtures with current declarations; resolve the archive process-budget failure through measured causal accounting | Observed final-head failures; independent cause/scope review; immutable accounting before any budget correction; completed Tasks preserved | [SPEC-0106-TSK-0007](tasks/tsk-0007-current-owner-fixture-conformance.md) | Changed named cases and relevant controls; unchanged batching/time bounds; scoped hooks, each actual-index staged/message and independent review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
@@ -96,6 +97,18 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | WP-001 intake and source inventory; WP-002 atomic registry, form, checker, fixture and current-consumer normalization; WP-003 acceptance and local handoff | Approved P02 scope; intake review before implementation; reviewable implementation bytes before closing acceptance | [SPEC-0106-TSK-0001](tasks/tsk-0001-lifecycle-normalization.md) | Original intake, focused, affected, staged, review and local main finish evidence; candidate closing commit and current recheck in the Task; original full QA excluded by its finish scope |
 
 ## Verification Plan
+
+WORK-011 owns only `tests/test_document_lifecycle_archive_cutover.py`, this Spec,
+Plan and its new registered-form Task. Use in-progress for current Spec body
+maintenance and approved for the reciprocal supersession source/current successor.
+Keep audit draft creation accepted, active/completed states refused and published
+creation refused as noninitial. Preserve missing reciprocal evidence rejection
+and exact reciprocal acceptance. Four forward commits record draft, readiness,
+implementation and completion. The three explicit methods and scoped hooks
+precede each actual-index staged/message and separate review. Prospective
+completion/review precedes fresh actual closing checks. No local full/affected
+execution or production change is in scope; hosted full-checkout admission remains
+required beyond the capped failure preview.
 
 WORK-010 owns only `tests/test_completed_state_migration.py`,
 `tests/test_document_lifecycle_archive_cutover.py`, this Spec, Plan and its new
