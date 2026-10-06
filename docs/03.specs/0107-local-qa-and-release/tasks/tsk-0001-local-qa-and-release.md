@@ -2,7 +2,7 @@
 title: "Local Quality and Release Lifecycle"
 version: "0.1.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -38,7 +38,9 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   main `CHANGELOG.md`, and Issue/Spec/Task/Project responsibilities.
 - Intake snapshot: clean main `2c9c5546bc10502284fc3c67150e33f090371223`;
   isolated `codex/qa-local-lifecycle` at `.worktrees/qa-local-lifecycle`.
-  The draft records source inspection only; no current validation ran.
+  Draft admission was committed normally at `21009bf2`; actual check attempts
+  are recorded below. This ready edit changes the index and requires its own
+  staged and message checks.
 
 ## Task Table
 
@@ -59,6 +61,9 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
 | EVD-LOCAL-QA-005 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | First draft staged document admission | Initial three-file draft index; exact index and receipt held by root for attachment | FAIL | Root's retained staged receipt: four selected gates PASS; links-and-owners BODY-LINK-RECIPROCAL and markdown-profiles BODY-CONTRACT-IDENTIFIER FAIL | rejected |
 | EVD-LOCAL-QA-006 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Corrected draft staged document admission | Five-file corrected draft index; exact index and receipt held by root for attachment | FAIL | Root's retained staged receipt: five selected gates PASS; markdown-profiles BODY-HEADING-UNSUPPORTED for Spec Related Documents | rejected |
 | EVD-LOCAL-QA-007 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Draft snapshot guard | Third draft staged attempt; source index or HEAD changed during snapshot, exact identity held by root | FAIL | Snapshot guard failed before child gates; selected local gates NOT_RUN for this attempt | rejected |
+| EVD-LOCAL-QA-008 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Fourth draft staged admission | Corrected Spec without its reciprocal Plan link; exact index retained by root | FAIL | Root's staged receipt: five gates PASS, links-and-owners FAIL for missing Spec to Plan link | rejected |
+| EVD-LOCAL-QA-009 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | C1 draft admission and normal commit | Final five-document C1 index at commit `21009bf2`; Python 3.12.3; staged log `/tmp/hy-qa-0107-draft-admission-staged.log` | PASS | Focused links PASS; `python3 -u scripts/qa.py staged` six gates PASS, rc0; pinned Commitizen message PASS; normal commit succeeded. This result covers C1 input only; no workspace hook output observed. | accepted |
+| EVD-LOCAL-QA-010 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Initial C2 ready-index staged admission | Ready Spec/Plan/Task index before acceptance-cell repair; root retains exact index/log | FAIL | Five selected gates PASS; markdown-profiles TASK-EVIDENCE-ACCEPTANCE FAIL because EVD-LOCAL-QA-009 used an unregistered acceptance literal. Current repaired input not rechecked. | rejected |
 
 ## Approval and Safety Boundaries
 
@@ -85,8 +90,12 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   publisher consumers are in scope only after the caller and active recovery
   map identifies them. Agent-evaluation cases remain only where the current
   governance safety/evaluation contract has a distinct consumer; they do not
-  become a blanket exception to the retirement audit. File ownership stays
-  disjoint during writes.
+  become a blanket exception to the retirement audit. The repo-tooling owner
+  receives explicit registered Archive cutover gate/caller handoff after
+  ongoing Archive integrity coverage is transferred. The shared
+  `.agents/skills/archive-cutover/SKILL.md` Step 6 and current `.agents/roles/`
+  definitions may change for this demonstrated succession only; no role
+  permission is widened. File ownership stays disjoint during writes.
 - **Forbidden Paths**: Frozen or completed Spec/Task bodies and evidence,
   sealed Archive content, private/global configuration, real secret values,
   unrelated user changes, live cluster/cloud/Vault, and other repositories.
@@ -96,11 +105,18 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   a remote setting or authorize a specific Release publication, Project
   mutation, credential/native trust change or live operation. Recheck actual
   external authority under approval-and-safety before any dependent action.
-- **Static Validation**: Preflight selected tools/hooks and runner time/output
-  envelope before implementation; changed-behavior focused RED/GREEN, affected
-  quick, actual-index staged and configured message per logical commit, final
-  local full once, completion and independent read-only semantic review when
-  applicable. Current command inputs/results are pending, not PASS.
+- **Static Validation**: Intake found Python 3.12.3, PyYAML 6.0.1,
+  jsonschema 4.10.3, pre-commit 4.6.2, pinned kustomize v5.8.1,
+  gitleaks 8.30, git-cliff 2.14.2 and `gh`; Commitizen 4.15.1 is available
+  in the pinned check environment, not proven as a global hook. Mandatory
+  child limits are 1200 seconds, stdout 4 MiB, stderr 1 MiB and cleanup
+  2 seconds; unit and pre-commit entries allow 2400 seconds. Focused named
+  checks start with a 60-second budget; extend only for a measured changed
+  input via the normal runner, not guard evasion. Run focused RED/GREEN,
+  affected quick, actual-index staged and configured message per logical
+  commit, final local full once for this global-QA change, completion and
+  independent read-only semantic review. Tool and budget readiness is not
+  result evidence for the ready or implementation index.
 - **Live Validation**: DEFER, no live environment or authority in this scope.
 - **Secret / Vault Handling**: Reference metadata only; no value read or
   transcript/credential capture. Operator owns any later protected action.
@@ -118,10 +134,11 @@ hosted `qa` job, Git policy claiming hosted final full QA, inactive verifier
 and SHA-tag publication logic, and prior full QA marked `NOT_RUN`. These
 are findings to resolve against exact current consumers, not executed-check
 results. At initial authoring no QA, hook, completion, release or remote
-operation had run for this package. Selected tool versions, time/output limits, runner approval,
-independent reviewer, exact final snapshot and next owner are pending the
-ready/implementation transitions. Current required check results stay
-`NOT_RUN`; remote settings and publication stay `DEFER` until observed.
+operation had run for this package. Selected tool versions and limits are now
+recorded in the ready preflight above. Runner approval, independent reviewer,
+final snapshot and next owner remain tied to the actual implementation.
+Current implementation checks stay `NOT_RUN`; remote settings and publication
+stay `DEFER` until observed.
 
 The first staged admission of the draft ran six selected gates: four passed,
 and links-and-owners plus markdown-profiles failed. The new Spec lacked its
@@ -133,5 +150,14 @@ was the second staged attempt: five gates passed, while the unsupported Spec
 heading failed. The heading was removed. A third staged attempt then failed
 the snapshot guard before any selected child gate ran because index or HEAD
 changed during snapshot preparation; its gates remain `NOT_RUN` for that
-attempt. The failed receipts remain factual evidence and are not treated as
-a final pass. Another stabilized-input staged result remains `NOT_RUN`.
+attempt. A fourth staged run passed five gates and failed links-and-owners
+because the Spec lacked its Plan backlink. The inline Plan link repaired that
+input. The fifth C1 run then passed all six staged gates, the focused links
+check and the pinned Commitizen message check, followed by normal commit
+`21009bf2`. No workspace hook output was observed. Those results apply only
+to C1 input; this changed ready index and later implementation indexes need
+their own checks. The first C2 ready-index attempt passed five gates and
+failed markdown-profiles because EVD-LOCAL-QA-009's Acceptance cell contained
+an unregistered qualifier; its registered value is now `accepted`, with the
+C1-only limit kept in Location. The repaired C2 index remains `NOT_RUN` until
+checked. Failed receipts remain factual evidence, not final passes.
