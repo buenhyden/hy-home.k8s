@@ -1,8 +1,8 @@
 ---
 title: "Reference Pack Route Fixtures"
-version: "1.0.0"
+version: "1.0.2"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -33,7 +33,7 @@ selection, numbered member ownership and route/topology refusals.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-013 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | Align pack route fixture expectations with current owners | platform | frontmatter | NOT_RUN | pending | Pending final-byte and actual-index evidence |
+| WORK-013 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | Align pack route fixture expectations with current owners | platform | frontmatter | PASS | accepted | Observed implementation evidence in EVD-P02-132/133 |
 
 ## Task Evidence
 
@@ -41,8 +41,9 @@ selection, numbered member ownership and route/topology refusals.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-P02-130 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Two named REDs and independent cause audit | Unchanged Task0012 endpoint and declared Stage90 material | FAIL | External `hy-p01-task13-reference-pack-red.receipt.json` and `-red-causes.json`; `/root/p02_independent_review` | rejected |
 | EVD-P02-131 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Cached and committed registered-form creation | C012 from unchanged declared regular Task template; target absent before creation | PASS | Ignored `p01-task13-c1-preflight.json`, full metadata and `p01-task13-c1-postcommit.json` | accepted |
-| EVD-P02-132 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Observed draft/ready indices and exact messages with independent raw audits | Two accepted logical indices only; own implementation and terminal checks pending | PASS | External `hy-p01-task13-c1-staged.receipt.json`, `hy-p01-task13-c2-staged.receipt.json` and corresponding message receipts | accepted |
+| EVD-P02-132 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Observed draft/ready/implementation indices and exact messages with independent raw audits | Three accepted logical indices and implementation Markdown; own closing checks pending | PASS | External `hy-p01-task13-c1-staged.receipt.json`, `hy-p01-task13-c2-staged.receipt.json`, `hy-p01-task13-c3-staged.receipt.json` and corresponding Markdown/message receipts | accepted |
 | EVD-P02-133 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Two final-byte focused methods, pinned hooks and independent raw audits | Tested pack-route fixture and complete declared public inputs/reference inventory | PASS | External `hy-p01-task13-focused.receipt.json` and `hy-p01-task13-hooks.receipt.json` | accepted |
+| EVD-P02-134 | [VAL-P02-013](../spec.md#success-criteria--verification-plan) | WORK-013 | Observed prospective scoped completion and independent raw audit | Isolated same-base/config proposal only; own actual closing checks pending | PASS | External `hy-p01-task13-c4-proposal-completion.receipt.json` | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -78,8 +79,8 @@ Independent review read the entire implicated class and current owners. The
 other eight methods retain member, uncovered-route, category-directory,
 duplicate/missing/nonregular, index/content drift and historical wiki controls.
 Implementation changes only the two expected pack identities and checks their
-authored reference lifecycle binding. Own implementation-index, whole Work
-and terminal acceptance remain NOT_RUN/pending. Production and reference
+authored reference lifecycle binding. Work accepts the observed implementation
+only; own actual closing checks remain pending. Production and reference
 corpus bytes are unchanged.
 
 The draft index passed six fresh canonical gates and its exact configured
@@ -111,7 +112,24 @@ matched in both lanes. Template selection, authored reference publication
 binding and the actual material iteration now passed; earlier RED's unreached
 checks remain historical. The other eight unchanged methods were not rerun.
 
-This in-progress candidate accepts only focused/hooks and prior draft/ready
-observations. Its own implementation Markdown, staged/message checks and
-independent final review remain NOT_RUN/pending before the normal commit.
-Work completion, scoped terminal checks and hosted admission remain separate.
+The implementation index separately passed changed Task Markdown, seven fresh
+canonical gates and its exact configured message with independent final raw
+audit before the normal commit. Streams and cleanup completed with stable
+inputs/index/refs; copied configuration and captured disposable semantic entries
+matched, with the raw disposable index byte cause still unknown. EVD-P02-132
+and Work accept these observed implementation results only.
+
+The isolated nonauthoritative same-base/config proposal passed SPEC0106-only
+completion and independent semantic/raw review. Receipt SHA256
+`0e28f16c4631ad04ce95e71a05f03a472cf3a2c415e0704cd2f6eb9f43fe4d85`
+records snapshot
+`2c0b4cdc0c05c959193c30b54fecb9faee648404c984fdd969c3510501567ca7`,
+complete streams/cleanup and unchanged clone/original identities. No proposal
+staged or message check ran. EVD-P02-134 accepts only that prospective lane.
+
+This conditional actual closing candidate accepts observed implementation and
+prospective results. Its own fresh actual staged, SPEC0106 completion, exact
+message and final independent review remain NOT_RUN/pending and must all pass
+before the normal closing commit. Eventual raw receipts stay external without
+being inserted into this same input. Hosted and integrated-main admission
+remain separate.
