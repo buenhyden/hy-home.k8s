@@ -1,10 +1,10 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-06"
 ---
 # GitHub Configuration Hub
 
@@ -18,7 +18,7 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 
 ## Scope
 
-이 디렉터리의 자동화는 QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다. live
+이 디렉터리의 자동화는 PR branch·격리 검사의 QA gate와 release 증거 자동화를 제공하며, 배포 CD가 아니다. live
 클러스터나 외부 Vault 변경, container publish, commit push는 범위 밖이다.
 
 ## Structure
@@ -35,22 +35,20 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 ### Policy Routing
 
 - branch 전략 정책은 `.agents/governance/git.md`에 있다.
-- CI 강제는 `workflows/ci.yml`과 `scripts/qa.py`가 맡고 로컬 QA와 공유하는
-  논리 gate는 validation registry가 소유한다.
-- 일반 `qa` job이 Python 3.12를 고르고
-  `requirements/ci-validation.txt`의 완전 해시·binary 전용 lock을 설치한다.
-  기록된 Gitleaks와 Conftest asset은 고정된 checksum과 대조하고 전체 이력을
-  가진 immutable event checkout을 검증한다. pre-commit과 unit discovery는
-  full/ci profile 안에서 한 번씩 실행된다. 이들의 설정은 계속 lock,
-  pre-commit 설정, execution registry가 소유한다.
+- `workflows/ci.yml`은 PR branch policy와 격리된 저장소 검사 결과만
+  `ci-summary`로 판정한다. full QA와 unit discovery는 이 workflow에서 실행하지
+  않으며 결과는 `NOT_RUN`이다. 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와
+  validation registry가 소유한다.
+- `.github/requirements/ci-validation.txt`는 보존된 Python 의존성 identity다.
+  현재 `ci.yml`은 이 lock이나 Gitleaks·Conftest를 설치하지 않는다.
 - Dependabot은 고정된 Actions만 다룬다. 해시된 Python lock은 사람이 직접
   갱신한다. `scripts/validate-ci-python-contract.py`가 해석된 pin을 정확히
   단언하므로, lock 변경과 그 단언은 리뷰를 거친 한 변경에서 함께 바뀌어야 한다.
   자동 bump는 자기 gate를 통과할 수 없는 pull request를 열게 된다.
 - 로컬 커밋, PR, main, 로컬 전용 인계의 delivery owner와 증거 순서는
   [`quality.md`](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
-  PR의 최종 full QA는 hosted CI가 담당한다. 이 hub와 PR template은
-  GitHub 고유 소비자를 그곳으로 안내한다.
+  현재 hosted CI는 최종 full QA를 제공하지 않는다. PR과 main 통합의 full QA
+  증거 공백은 `NOT_RUN`으로 기록하고 다음 owner에게 인계한다.
 - 현재 검증기 명령과 fixture inventory는
   [`scripts/README.md`](../scripts/README.md)와
   [`tests/README.md`](../tests/README.md)에 있다. 이 hub는 그 개수를 옮겨
@@ -65,29 +63,36 @@ GitHub가 `.github/README.md`를 저장소 프로필 페이지로 해석하기 �
 
 ### Workflow Roles
 
-- `ci.yml`은 저장소의 정본 통합 branch를 대상으로 하는 push와 pull request에 필요한 QA gate이며 `workflow_dispatch`로 수동 재실행할 수 있다. `qa`와 `qa-isolated`가 registry full gate를 분할하며 `qa-source`가 main 재사용 후보를 읽고 `ci-summary`가 해당 경로를 종합한다. 기본 main·수동 경로는 full을 실행한다. 추적되는 workflow 파일은 hosted run 증거가 아니다.
-- `qa-verifier.yml`은 별도 verifier App의 `qa-provenance`와
-  `qa-main-verdict`를 발행한다. 성공한 main push에는 격리된 publisher job이
-  연결된다. 2026-10-02에는 App·환경·required-check·ruleset과 hosted 실행
-  성공이 [SPEC-0103 보존 기록](../docs/98.archive/README.md)에 기록되었다.
-  현재 원격 설정과 실행 상태는 재조회하지 않았다.
+- `ci.yml`은 `main` 대상 push·pull request·`workflow_dispatch`에서 PR branch
+  policy와 PR 전용 격리 검사만 실행한다. `ci-summary`는 적용 가능한 두 결과를
+  검사하고 full QA `NOT_RUN`을 출력한다. 이는 full QA 증명이 아니다.
+- `qa-verifier.yml`의 verifier와 종속 publisher는 full QA 생산자가 없으므로
+  명시적으로 비활성화되어 있다. 새 `qa-provenance`·`qa-main-verdict` 또는 main
+  tag 발행을 주장할 수 없다. 2026-10-02의 App·환경·required-check·ruleset과
+  hosted 실행 성공은 [SPEC-0103 보존 기록](../docs/98.archive/README.md)의
+  당시 사실이다. 현재 원격 설정과 실행 상태는 재조회하지 않았다.
 - `generate-changelog.yml`은 version tag에 대해 7일 동안 유지되는 일시적인 release 증거 artifact를 만든다. 커밋, push, publish는 하지 않는다.
 - `labeler.yml`, `greetings.yml`, `stale.yml`은 저장소 유지보수 자동화이며 QA gate가 아니다.
-- 관심사는 분명히 나뉜다. 로컬 pre-commit은 빠른 lint와 formatting을 맡고 로컬 저장소 정적 스크립트는 필요할 때 CI·디버그 증거를 재현하며 GitHub CI는 필수 원격 gate 판정을 내린다. Helm chart rendering은 플랫폼 AppProject 허용 목록 변경을 리뷰할 때 쓰는 수동 보조 도구로 남는다.
+- 로컬 pre-commit과 정적 스크립트는 선택한 로컬 입력의 검증에 쓰인다.
+  GitHub CI는 현재 branch policy와 격리 검사의 hosted 결과만 낸다. Helm chart
+  rendering은 플랫폼 AppProject 허용 목록 변경을 리뷰할 때 쓰는 수동 보조 도구다.
 
 ### Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` requires successful applicable `branch-policy`, `qa` and `qa-isolated` results; `qa-source` is an ordering dependency whose absent proof selects full QA; PR uses the registry complement plus isolated gate, main uses full or independently proven reuse, and manual dispatch uses full. Ordinary QA prepares locked dependencies once on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Branch policy and isolated repository check; full QA is `NOT_RUN`. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` checks applicable `branch-policy` and `qa-isolated` results only. It reports full QA `NOT_RUN`; no full profile, unit discovery, complement, or main reuse runs. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs on pushed release tags matching `v*.*.*`. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
-| `qa-verifier.yml` | Protected PR/main verdict and separately gated immutable main-tag publisher. | Default-branch `workflow_run` after completed CI; publisher requires authenticated successful `push` on `main` and successful verifier job. | Expected-verifier-App `qa-main-verdict` v2 full or v4 full-or-reused, exact source run/attempt/checkout, current main tip, publisher App/environment and ruleset observations. SPEC-0103 records successful hosted activation on 2026-10-02; current remote state was not rechecked. | Main-only `qa-control` and `qa-tag-publish` keep App keys separate; no PR code/cache/artifact execution. `QA_TAG_ENABLED` defaults off; only exact tag creation is permitted by the publisher. |
+| `qa-verifier.yml` | Inactive full-QA verifier and dependent main-tag publisher. | `workflow_run` remains registered, but `verify-qa` is explicitly skipped and `publish-main-tag` requires its success. | No current App verdict or tag publication evidence; SPEC-0103 records historical hosted activation on 2026-10-02. Current remote settings were not rechecked. | Main-only `qa-control` and `qa-tag-publish` keep App keys separate; no PR code/cache/artifact execution. `QA_TAG_ENABLED` defaults off. |
 | `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |
 
 ### Protected Main Tags
 
+- `verify-qa`가 명시적으로 비활성화되어 있으므로 아래 게시 절차는 현재 실행되지
+  않는다. full QA 생산자를 복구하고 검증·승인 경계를 다시 확인할 때만 별도 변경으로
+  재활성화한다. 기존 태그와 당시 증거는 보존한다.
 - `publish-main-tag` job은 `verify-qa` 성공 뒤에만 실행되며 main push의
   source event·branch·repository·conclusion을 환경 접근 전에 제한한다.
   `workflow_run`의 `GITHUB_SHA`와 `GITHUB_REF`는 기본 branch의 제어 코드

@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-06"
 ---
 
 # Quality and Evidence Policy
@@ -48,10 +48,11 @@ metadata; static parity never proves discovery, model resolution, or execution.
   repeat either command on unchanged bytes outside that profile.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
-- **ci**: the hosted QA job executes the same static gates and configuration as
-  full on its immutable checkout. Branch/event policy and required summary
-  are CI-specific. A hosted result needs its exact SHA and run identity;
-  locally executing the ci profile is still local evidence.
+- **ci**: the CLI `ci` profile remains an alias of `full` in the execution
+  registry. The current hosted workflow runs PR branch policy and the isolated
+  repository gate with a required summary; it does not execute the full profile.
+  Record hosted full QA as `NOT_RUN`. Bind each hosted result to its exact SHA
+  and run identity; locally executing the `ci` profile is local full evidence.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -135,9 +136,9 @@ confirmation for the same scope and evidence snapshot.
 | Routine editing | Focused checks and affected `quick` evidence for changed bytes; full QA is not an editing prerequisite. |
 | Local commit | Review the logical index, run exact-index `staged` QA and commit-message validation, then commit with active hooks. |
 | Feature push | Preserve the commit evidence; pushing requires the selected Git finish authorization. A feature push does not add a local full QA obligation. |
-| Pull request | Hosted CI owns final full QA on its immutable checkout. Record the required `ci-summary` SHA/run and applicable branch policy; a local full run is optional diagnostic evidence. |
-| Main integration | Required hosted branch/protected checks own the verdict for the exact integrated SHA. Until protected reuse is implemented and observed, main CI runs its full QA profile; local evidence does not replace it. |
-| Local-only handoff | Run full QA once on the final working tree because no PR hosted full result will follow. |
+| Pull request | Record the required `ci-summary` SHA/run and actual PR branch-policy and isolated-gate results. Hosted full QA is `NOT_RUN`; any local full result retains its own snapshot and does not certify hosted execution. |
+| Main integration | Record `ci-summary` and actual required protected-check results for the exact integrated SHA. The PR-only checks are `NOT_APPLICABLE` on main, hosted full QA is `NOT_RUN`, and protected QA provenance remains `DEFER` until its contract is repaired and execution observed. Local evidence does not certify hosted checks. |
+| Local-only handoff | Run full QA once on the final working tree. |
 
 The registry selects gates within a profile. Reuse only a successful result for
 identical declared input bytes, configuration, tool identity, scope, and mode;
@@ -152,10 +153,12 @@ hosted execution or remote branch protection.
    reviewed logical set, inspect the cached diff, run `git diff --check` and
    `git diff --cached --check`, then exact-index staged QA. Validate the actual
    message under Git policy and commit through normal active hooks.
-4. **delivery validation**: for a PR, rely on hosted full CI at the exact PR
-   SHA; for a local-only handoff, run full QA once on the final working tree.
-   Full/ci equality is checked by contract tests. Unit discovery and the
-   all-files pre-commit gate run once per identical input and mode.
+4. **delivery validation**: for a PR, record the hosted baseline checks at the
+   exact PR SHA and hosted full QA as `NOT_RUN`; for a local-only handoff, run
+   full QA once on the final working tree. Contract tests check that the CLI
+   `ci` profile equals `full`; this does not describe current hosted coverage.
+   Unit discovery and the all-files pre-commit gate run once per identical input
+   and mode.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself
    never fixes source files. A failed required delivery check keeps the work incomplete.

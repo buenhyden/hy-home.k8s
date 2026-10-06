@@ -126,16 +126,16 @@ workflow roles.
 
 - `ci-summary`
 
-`ci-summary` runs with `if: always()` after `branch-policy`, `qa`, `qa-isolated`
-and `qa-source`. It checks the first three results: ordinary QA must succeed,
-and the PR-specific branch/isolated jobs must succeed on PRs or be skipped on
-main push/manual dispatch. `qa-source` is an ordering dependency; missing proof
-selects full QA. A skipped required QA result cannot satisfy the summary.
-Requiring `branch-policy` or `qa-isolated` directly would leave an inapplicable
-check on main push/manual dispatch.
+`ci-summary` runs with `if: always()` after `branch-policy` and `qa-isolated`.
+It checks those results for pull requests and accepts their skips only on main
+push/manual dispatch. It reports full QA as `NOT_RUN`; its success establishes
+only the retained branch and isolated checks. Requiring either PR-only job
+directly would leave an inapplicable check on main push/manual dispatch.
 
 The dated observed configuration above requires only `ci-summary`; it does not
-establish protected proof activation. Before enabling hosted reuse, the operator
+establish current protected proof activation. Full QA is `NOT_RUN` and new
+provenance evidence is `DEFER` while the verifier is inactive. Before restoring
+full QA and its verifier, the operator
 must authenticate the verifier App installation and main-only environment, observe
 its PR check, pin `qa-provenance` to that exact App ID as an additional required
 source, and prove hostile/control-change rejection. Independent `qa-main-verdict`

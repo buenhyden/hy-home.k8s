@@ -48,9 +48,11 @@ Describe the manual verification or automated tests conducted.
 
 Follow the [Quality Policy](../.agents/governance/quality.md#canonical-completion-sequence)
 for the delivery route and evidence required for this PR. Record the focused
-checks and exact-index staged result for local commits, then link the required
-hosted `ci-summary` result with its exact SHA and run identity when available.
-Classify unavailable hosted or live evidence as `DEFER` with its owner.
+checks and exact-index staged result for local commits, then link the
+hosted `ci-summary` result for applicable branch policy and isolated checks
+with its exact SHA and run identity when available. Full QA is `NOT_RUN` in
+this workflow; provenance and live
+evidence remain `DEFER` without direct observation and a named next owner.
 Link the owning Task for execution status, acceptance, and check evidence;
 do not copy its progress or outcomes into this PR description.
 

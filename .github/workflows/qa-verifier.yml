@@ -7,10 +7,11 @@ on: # zizmor: ignore[dangerous-triggers]
     workflows: [CI]
     types: [completed]
 
-# Inert until the operator installs the verifier-only App and configures the
-# qa-control environment (deployment branches: refs/heads/main only).
+# Full QA is no longer executed by CI. Keep this verifier and its publisher
+# inactive until a reviewed full-QA producer and authenticated proof return.
+# The qa-control environment remains restricted to refs/heads/main.
 # Pin qa-provenance to that App ID in branch protection after observing it.
-# Source reuse has a separate default-off QA_REUSE_ENABLED guard.
+# Historical source reuse has a separate default-off QA_REUSE_ENABLED guard.
 permissions:
   contents: read
   actions: read
@@ -20,6 +21,7 @@ permissions:
 jobs:
   verify-qa:
     if: >-
+      false &&
       vars.QA_PROVENANCE_ENABLED == 'true' &&
       github.ref == 'refs/heads/main' &&
       (github.event.workflow_run.event == 'pull_request' ||

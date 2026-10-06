@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-06"
 ---
 
 # Work Lifecycle
@@ -82,7 +82,8 @@ end the loop.
    applicable automated checks plus an independent read-only reviewer.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). PR delivery
-   uses hosted full CI; local-only handoff uses local full QA.
+   records hosted baseline checks and full QA as `NOT_RUN`; local-only handoff
+   uses local full QA.
 3. Review final diff scope and remove task-owned scratch/debug residue.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,

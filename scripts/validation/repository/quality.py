@@ -2236,6 +2236,7 @@ pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
     "hosted `ci-summary` result",
+    "NOT_RUN",
     "- [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.",
 ]:
     if phrase not in pull_request_template_text:
@@ -2444,15 +2445,15 @@ else:
                 )
         if workflow_name == "ci.yml":
             for phrase, value in [
-                ("Required QA gate", role),
-                ("repo-quality", role),
-                ("manifest", role),
-                ("secret", role),
+                ("branch", role.lower()),
+                ("isolated", role),
                 ("push", trigger_scope),
                 ("pull_request", trigger_scope),
                 ("workflow_dispatch", trigger_scope),
                 ("ci-summary", required_evidence),
-                ("qa", required_evidence),
+                ("branch-policy", required_evidence),
+                ("qa-isolated", required_evidence),
+                ("NOT_RUN", required_evidence),
                 ("No deploy CD", boundary),
                 ("direct Kubernetes mutation", boundary),
                 ("external Vault mutation", boundary),

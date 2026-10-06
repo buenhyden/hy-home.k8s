@@ -151,19 +151,6 @@ def make_pre_commit_config() -> str:
     return "\n".join(lines) + "\n"
 
 
-GITLEAKS_SHA256 = "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
-
-
-GITLEAKS_INSTALL = f"""\
-set -euo pipefail
-curl --fail --location --silent --show-error \\
-  https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \\
-  --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
-gitleaks_sha256='{GITLEAKS_SHA256}' # pragma: allowlist secret
-printf '%s  %s\\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
-tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
-sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks"""
-
 GOVERNED_TEXT_OWNERS = (
     (
         "direct input",
@@ -190,26 +177,13 @@ GOVERNED_TEXT_OWNERS = (
 CANDIDATE_BRANCH_REF = "${{ github.sha }}"
 CANDIDATE_SHA_REF = "${{ github.head_ref || github.ref }}"
 
-WORKFLOW = f"""\
+WORKFLOW = """\
 name: CI
 jobs:
-  qa:
+  branch-policy:
     steps:
-      - uses: actions/checkout@0000000000000000000000000000000000000000
-        with:
-          ref: {CANDIDATE_BRANCH_REF}
-          persist-credentials: false
-          fetch-depth: 0
-      - uses: actions/setup-python@0000000000000000000000000000000000000000
-        with:
-          python-version: '3.12'
-      - name: Install repository validation dependencies
-        run: |
-          python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
-      - name: Install Gitleaks
-        run: |
-{chr(10).join("          " + line for line in GITLEAKS_INSTALL.splitlines())}
-      - run: python3 scripts/qa.py ci --base-ref "$BASE_SHA"
+      - name: Inspect contract
+        run: echo contract
 """
 
 PIP_INSTALL_BYPASS_COMMANDS = (
@@ -461,7 +435,7 @@ class CiPythonContractTests(unittest.TestCase):
     def test_reference_inventory_is_not_a_ci_contract_input(self) -> None:
         root = self.make_valid_root()
 
-        self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def assert_value_free_rule(
         self,
@@ -477,7 +451,7 @@ class CiPythonContractTests(unittest.TestCase):
     def inject_validation_step(self, root: Path, command: str) -> None:
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        marker = "      - name: Install Gitleaks\n"
+        marker = "      - name: Inspect contract\n"
         indented = command.replace("\n", "\n          ")
         workflow.write_text(
             text.replace(
@@ -510,11 +484,32 @@ class CiPythonContractTests(unittest.TestCase):
         self.inject_non_validation_job(root, command)
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
 
+    def test_surviving_jobs_reject_python_setup_and_gitleaks_install(self):
+        for step, rule in (
+            (
+                "      - uses: actions/setup-python@0000000000000000000000000000000000000000\n",
+                "CI-PYTHON-WORKFLOW",
+            ),
+            (
+                "      - run: sudo install gitleaks /usr/local/bin/gitleaks\n",
+                "CI-GITLEAKS-TOOL",
+            ),
+        ):
+            root = self.make_valid_root()
+            workflow = root / ".github/workflows/ci.yml"
+            workflow.write_text(workflow.read_text() + step)
+            self.assert_rule(root, rule)
+
+    def test_surviving_jobs_reject_hosted_full_qa(self):
+        root = self.make_valid_root()
+        self.inject_validation_step(root, VALIDATOR.QA_COMMAND)
+        self.assert_rule(root, "CI-QA-EXECUTION")
+
     def test_checked_in_lock_uses_patched_virtualenv(self) -> None:
         self.assertIn("virtualenv==21.7.13", make_lock())
 
     def test_valid_temporary_repository_passes(self) -> None:
-        self.assertEqual(VALIDATOR.validate_dependencies(self.make_valid_root()), 1)
+        self.assertEqual(VALIDATOR.validate_dependencies(self.make_valid_root()), 0)
 
     def test_cli_accepts_valid_temporary_repository(self) -> None:
         root = self.make_valid_root()
@@ -530,6 +525,7 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("[PASS] CI Python contract validation passed", result.stdout)
+        self.assertIn("hosted-python-install-jobs=0", result.stdout)
 
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
@@ -765,65 +761,11 @@ class CiPythonContractTests(unittest.TestCase):
         )
         VALIDATOR.validate_dependencies(root)
 
-    def test_validation_job_must_pin_python_312(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                "python-version: '3.12'",
-                "python-version: '3.x'",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-VERSION")
-
-    def test_validation_job_must_use_shared_install(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                "python -m pip install --disable-pip-version-check "
-                "--only-binary :all: --require-hashes --requirement "
-                ".github/requirements/ci-validation.txt",
-                "python -m pip install --disable-pip-version-check pyyaml jsonschema",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-WORKFLOW")
-
-    def test_validation_job_install_requires_hash_mode(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                " --require-hashes",
-                "",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-WORKFLOW")
-
-    def test_validation_job_install_disallows_source_distributions(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                " --only-binary :all:",
-                "",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-WORKFLOW")
-
     def test_validation_job_rejects_absolute_python_path_pip_install(self) -> None:
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        marker = "      - name: Install Gitleaks\n"
+        marker = "      - name: Inspect contract\n"
         workflow.write_text(
             text.replace(
                 marker,
@@ -838,7 +780,7 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        marker = "      - name: Install Gitleaks\n"
+        marker = "      - name: Inspect contract\n"
         workflow.write_text(
             text.replace(
                 marker,
@@ -853,7 +795,7 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        marker = "      - name: Install Gitleaks\n"
+        marker = "      - name: Inspect contract\n"
         workflow.write_text(
             text.replace(
                 marker,
@@ -868,7 +810,7 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        marker = "      - name: Install Gitleaks\n"
+        marker = "      - name: Inspect contract\n"
         workflow.write_text(
             text.replace(
                 marker,
@@ -878,43 +820,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
-
-    def test_qa_checkout_must_be_credential_free(
-        self,
-    ) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        text = workflow.read_text(encoding="utf-8")
-        start = text.index("  qa:")
-        persist_credentials = text.index(
-            "          persist-credentials: false\n", start
-        )
-        workflow.write_text(
-            text[:persist_credentials]
-            + text[
-                persist_credentials + len("          persist-credentials: false\n") :
-            ],
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-REPOSITORY-HISTORY")
-
-    def test_qa_job_must_not_install_gitleaks_twice(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        text = workflow.read_text(encoding="utf-8")
-        start = text.index("  qa:")
-        harness_step = text.index(
-            '      - run: python3 scripts/qa.py ci --base-ref "$BASE_SHA"\n',
-            start,
-        )
-        injected = "      - name: Install Gitleaks\n        run: |\n" + "".join(
-            f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()
-        )
-        workflow.write_text(
-            text[:harness_step] + injected + text[harness_step:],
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-GITLEAKS-TOOL")
 
     def test_unexpected_job_must_not_own_python_validation_setup(self) -> None:
         root = self.make_valid_root()
@@ -970,14 +875,14 @@ class CiPythonContractTests(unittest.TestCase):
             with self.subTest(command=command):
                 root = self.make_valid_root()
                 self.inject_validation_step(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_non_validation_jobs_accept_safe_shell_controls(self) -> None:
         for command in PIP_INSTALL_SAFE_COMMANDS:
             with self.subTest(command=command):
                 root = self.make_valid_root()
                 self.inject_non_validation_job(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_valued_pip_globals_with_separate_values_reject_install(self) -> None:
         for launcher in PIP_LAUNCHERS:
@@ -1013,10 +918,10 @@ class CiPythonContractTests(unittest.TestCase):
                     safe = f"{launcher} {spelling} show install"
                     root = self.make_valid_root()
                     self.inject_validation_step(root, safe)
-                    self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                    self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
                     root = self.make_valid_root()
                     self.inject_non_validation_job(root, safe)
-                    self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                    self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_valued_pip_global_inventory_is_exact(self) -> None:
         self.assertEqual(
@@ -1044,10 +949,10 @@ class CiPythonContractTests(unittest.TestCase):
                     with self.subTest(launcher=launcher, spelling=spelling):
                         root = self.make_valid_root()
                         self.inject_validation_step(root, command)
-                        self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
                         root = self.make_valid_root()
                         self.inject_non_validation_job(root, command)
-                        self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_dynamic_pip_global_values_fail_closed(self) -> None:
         for launcher in PIP_LAUNCHERS:
@@ -1139,10 +1044,10 @@ class CiPythonContractTests(unittest.TestCase):
             with self.subTest(command=command):
                 root = self.make_valid_root()
                 self.inject_validation_step(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
                 root = self.make_valid_root()
                 self.inject_non_validation_job(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_git_execution_options_resist_normalized_obfuscation(self) -> None:
         commands = [
@@ -1169,10 +1074,10 @@ class CiPythonContractTests(unittest.TestCase):
             with self.subTest(safe_command=command):
                 root = self.make_valid_root()
                 self.inject_validation_step(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
                 root = self.make_valid_root()
                 self.inject_non_validation_job(root, command)
-                self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
+                self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
     def test_rejects_step_job_and_workflow_shell_overrides(self) -> None:
         mutations = (
@@ -1190,12 +1095,14 @@ class CiPythonContractTests(unittest.TestCase):
                 text = workflow.read_text(encoding="utf-8")
                 if label == "step":
                     text = text.replace(
-                        "      - name: Install Gitleaks\n",
-                        mutation + "      - name: Install Gitleaks\n",
+                        "      - name: Inspect contract\n",
+                        mutation + "      - name: Inspect contract\n",
                         1,
                     )
                 elif label == "job":
-                    text = text.replace("  qa:\n", "  qa:\n" + mutation, 1)
+                    text = text.replace(
+                        "  branch-policy:\n", "  branch-policy:\n" + mutation, 1
+                    )
                 else:
                     text = mutation + text
                 workflow.write_text(text, encoding="utf-8")
@@ -1332,59 +1239,6 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PRECOMMIT-REV")
 
-    def test_qa_command_must_be_exact(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                'python3 scripts/qa.py ci --base-ref "$BASE_SHA"',
-                "python3 scripts/qa.py quick",
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-QA-EXECUTION")
-
-    def test_qa_checkout_must_have_full_history(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        workflow.write_text(
-            workflow.read_text(encoding="utf-8").replace(
-                "          fetch-depth: 0\n",
-                "",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-REPOSITORY-HISTORY")
-
-    def test_qa_requires_exact_verified_gitleaks(self) -> None:
-        root = self.make_valid_root()
-        workflow = root / ".github/workflows/ci.yml"
-        text = workflow.read_text(encoding="utf-8")
-        workflow.write_text(
-            text.replace(
-                GITLEAKS_SHA256,
-                "0" * 64,
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-GITLEAKS-TOOL")
-
-        workflow.write_text(
-            text.replace(
-                "      - name: Install Gitleaks\n"
-                "        run: |\n"
-                + "".join(
-                    f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()
-                ),
-                "",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-GITLEAKS-TOOL")
-
     def test_python_direct_input_remains_exactly_three_lines(self) -> None:
         root = self.make_valid_root()
         direct_input = root / ".github/requirements/ci-validation.in"
@@ -1437,51 +1291,84 @@ class CiPythonShellGitSubcommandTests(unittest.TestCase):
                 self.assertFalse(self._allowed(command))
 
 
-if __name__ == "__main__":
-    unittest.main()
+class HostedCleanupContractTests(unittest.TestCase):
+    def workflow(self):
+        import copy
 
-
-class QaPartitionContractTests(unittest.TestCase):
-    def test_exact_partitions_and_full_only_legacy_contract(self):
-        import yaml
-
-        workflow = yaml.safe_load((REPO_ROOT / ".github/workflows/ci.yml").read_text())
-        VALIDATOR._validate_qa_execution(
-            workflow, {"qa": workflow["jobs"]["qa"]["steps"]}
+        return copy.deepcopy(
+            VALIDATOR._load_yaml(
+                (REPO_ROOT / ".github/workflows/ci.yml").read_text(),
+                "CI-PYTHON-WORKFLOW",
+                VALIDATOR.WORKFLOW_PATH,
+            )
         )
 
-    def test_missing_duplicate_overlapping_and_unconditional_partitions_reject(self):
-        import copy
-        import yaml
+    def test_surviving_jobs_and_honest_summary_are_admitted(self):
+        VALIDATOR.validate_workflow(self.workflow())
 
-        original = yaml.safe_load((REPO_ROOT / ".github/workflows/ci.yml").read_text())
-        for change in (
-            "missing",
-            "duplicate",
-            "overlap",
-            "unguarded",
-            "environment",
-            "other-job",
-        ):
-            with self.subTest(change=change):
-                workflow = copy.deepcopy(original)
-                steps = workflow["jobs"]["qa"]["steps"]
-                selected = [
-                    step for step in steps if "scripts/qa.py" in step.get("run", "")
-                ]
-                if change == "missing":
-                    steps.remove(selected[-1])
-                elif change == "duplicate":
-                    steps.append(copy.deepcopy(selected[-1]))
-                elif change == "overlap":
-                    selected[-1]["if"] = selected[0]["if"]
-                elif change == "unguarded":
-                    selected[-1].pop("if")
-                elif change == "environment":
-                    selected[-1]["run"] = (
-                        'python3 scripts/qa.py ci --base-ref "$BASE_SHA" $PARTITION'
-                    )
-                else:
-                    workflow["jobs"]["qa-source"]["steps"].append(selected.pop())
-                with self.assertRaises(VALIDATOR.ContractError):
-                    VALIDATOR._validate_qa_execution(workflow, {"qa": steps})
+    def test_retired_jobs_and_full_execution_are_rejected(self):
+        for name in ("qa", "qa-source"):
+            workflow = self.workflow()
+            workflow["jobs"][name] = {"steps": [{"run": VALIDATOR.QA_COMMAND}]}
+            with self.subTest(job=name), self.assertRaises(VALIDATOR.ContractError):
+                VALIDATOR.validate_workflow(workflow)
+
+    def test_isolated_identity_and_failure_boundaries_reject_drift(self):
+        import copy
+
+        baseline = self.workflow()
+        variants = []
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["qa-isolated"]["steps"][0]["with"]["persist-credentials"] = (
+            True
+        )
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["qa-isolated"]["steps"][1]["run"] += "\necho bypass"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["branch-policy"]["permissions"] = {"contents": "write"}
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][0]["continue-on-error"] = True
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][0]["if"] = "success()"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["branch-policy"]["steps"].append({"run": VALIDATOR.QA_COMMAND})
+        variants.append(workflow)
+        for workflow in variants:
+            with (
+                self.subTest(workflow=workflow),
+                self.assertRaises(VALIDATOR.ContractError),
+            ):
+                VALIDATOR.validate_workflow(workflow)
+
+    def test_summary_requires_both_actual_results_and_not_run(self):
+        import copy
+
+        baseline = self.workflow()
+        variants = []
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["needs"] = ["branch-policy"]
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][0]["env"].pop("ISOLATED_RESULT")
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        step = workflow["jobs"]["ci-summary"]["steps"][0]
+        step["run"] = step["run"].replace(
+            "result=NOT_RUN verdict=NOT_RUN", "result=PASS verdict=PASS"
+        )
+        variants.append(workflow)
+        for workflow in variants:
+            with (
+                self.subTest(workflow=workflow),
+                self.assertRaises(VALIDATOR.ContractError),
+            ):
+                VALIDATOR.validate_workflow(workflow)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -81,28 +81,24 @@ class CiQaWorkflowTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout.strip(), "isolated-bootstrap-ok")
 
-    def test_one_qa_job_owns_setup_and_execution(self):
+    def test_surviving_jobs_do_not_execute_full_qa(self):
         jobs = self.workflow["jobs"]
-        self.assertEqual(
-            set(jobs), {"branch-policy", "qa", "ci-summary", "qa-isolated", "qa-source"}
-        )
+        self.assertEqual(set(jobs), {"branch-policy", "qa-isolated", "ci-summary"})
         runs = [step.get("run", "") for job in jobs.values() for step in job["steps"]]
-        self.assertEqual(sum("python3 scripts/qa.py ci" in run for run in runs), 3)
+        for retired in ("scripts/qa.py", "pre-commit run", "unittest discover"):
+            self.assertFalse(any(retired in run for run in runs))
         self.assertFalse(
-            any("pre-commit run" in run or "unittest discover" in run for run in runs)
-        )
-        self.assertEqual(
-            sum(
+            any(
                 "actions/setup-python@" in step.get("uses", "")
                 for job in jobs.values()
                 for step in job["steps"]
-            ),
-            1,
+            )
         )
+        self.assertEqual(self.workflow["permissions"], {"contents": "read"})
         checkout = [
-            s
-            for s in jobs["qa"]["steps"]
-            if s.get("uses", "").startswith("actions/checkout@")
+            step
+            for step in jobs["qa-isolated"]["steps"]
+            if step.get("uses", "").startswith("actions/checkout@")
         ]
         self.assertEqual(len(checkout), 1)
         self.assertEqual(
@@ -110,11 +106,9 @@ class CiQaWorkflowTests(unittest.TestCase):
             {
                 "ref": "${{ github.sha }}",
                 "persist-credentials": False,
-                "fetch-depth": 0,
+                "fetch-depth": 1,
             },
         )
-        self.assertEqual(jobs["qa"]["if"], "${{ !cancelled() }}")
-        self.assertEqual(self.workflow["permissions"], {"contents": "read"})
 
     def test_verifier_has_no_pr_execution_or_publisher_credentials(self):
         workflow = yaml.safe_load(
@@ -136,6 +130,7 @@ class CiQaWorkflowTests(unittest.TestCase):
         )
         job = workflow["jobs"]["verify-qa"]
         self.assertEqual(job["environment"], "qa-control")
+        self.assertTrue(job["if"].strip().startswith("false &&"))
         for condition in (
             "vars.QA_PROVENANCE_ENABLED == 'true'",
             "github.ref == 'refs/heads/main'",
@@ -159,19 +154,14 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertNotIn("actions/cache", str(job))
         self.assertNotIn("download-artifact", str(job))
         self.assertNotIn("workflow_run.head_sha", str(steps))
-        self.assertIn("QA_REUSE_ENABLED", self.workflow["jobs"]["qa-source"]["if"])
-        checkout = next(
-            step
-            for step in self._qa_steps()
-            if step.get("uses", "").startswith("actions/checkout@")
-        )
-        self.assertEqual(checkout["name"], "Checkout QA commit ${{ github.sha }}")
+        self.assertNotIn("qa-source", self.workflow["jobs"])
 
     def test_main_verifier_is_default_off_and_accepts_only_main_push_or_pr(self):
         workflow = yaml.safe_load(
             (ROOT / ".github/workflows/qa-verifier.yml").read_text()
         )
         job = workflow["jobs"]["verify-qa"]
+        self.assertTrue(job["if"].strip().startswith("false &&"))
         self.assertIn("vars.QA_PROVENANCE_ENABLED == 'true'", job["if"])
         self.assertIn("github.event.workflow_run.event == 'push'", job["if"])
         self.assertIn("github.event.workflow_run.head_branch == 'main'", job["if"])
@@ -261,93 +251,66 @@ class CiQaWorkflowTests(unittest.TestCase):
             any(fnmatch.fnmatchcase("v1.2.3", pattern) for pattern in patterns)
         )
 
-    def test_ci_uses_push_before_for_the_entire_multi_commit_update(self):
-        step = next(
-            step
-            for step in self._qa_steps()
-            if step.get("name") == "Validate repository checkout"
-        )
-        self.assertEqual(
-            step["env"]["BASE_SHA"],
-            "${{ github.event.pull_request.base.sha || github.event.before || '' }}",
-        )
-        self.assertEqual(step["run"], 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"')
-        self.assertEqual(
-            step["if"],
-            "github.event_name != 'pull_request' && needs.qa-source.outputs.source == ''",
-        )
-        self.assertNotIn("--reuse", step["run"])
-
-    def test_summary_fails_closed_for_required_results(self):
+    def test_summary_fails_closed_for_surviving_required_results(self):
         job = self.workflow["jobs"]["ci-summary"]
         self.assertEqual(job["if"], "always()")
+        self.assertEqual(job["needs"], ["branch-policy", "qa-isolated"])
+        step = job["steps"][0]
         self.assertEqual(
-            set(job["needs"]), {"branch-policy", "qa", "qa-isolated", "qa-source"}
+            step["env"],
+            {
+                "EVENT_NAME": "${{ github.event_name }}",
+                "BRANCH_POLICY_RESULT": "${{ needs.branch-policy.result }}",
+                "ISOLATED_RESULT": "${{ needs.qa-isolated.result }}",
+            },
         )
-        script = job["steps"][0]["run"]
-        for event, branch in [
-            ("pull_request", "success"),
-            ("push", "skipped"),
-            ("workflow_dispatch", "skipped"),
-        ]:
-            for qa in ("success", "failure", "cancelled", "skipped", ""):
-                with self.subTest(event=event, qa=qa):
-                    result = subprocess.run(
-                        ["/bin/bash", "-c", script],
-                        env={
-                            "EVENT_NAME": event,
-                            "BRANCH_POLICY_RESULT": branch,
-                            "QA_RESULT": qa,
-                            "ISOLATED_RESULT": "success"
-                            if event == "pull_request"
-                            else "skipped",
-                        },
-                        capture_output=True,
-                        timeout=5,
-                    )
-                    self.assertEqual(result.returncode, 0 if qa == "success" else 1)
-                    expected = "PASS" if event == "pull_request" else "NOT_APPLICABLE"
-                    self.assertIn(
-                        ("verdict=" + expected).encode(),
-                        result.stdout.split(b"qa-isolated result=")[-1],
-                    )
-        for branch in ("failure", "cancelled", "skipped", ""):
-            result = subprocess.run(
-                ["/bin/bash", "-c", script],
-                env={
-                    "EVENT_NAME": "pull_request",
-                    "BRANCH_POLICY_RESULT": branch,
-                    "QA_RESULT": "success",
-                    "ISOLATED_RESULT": "success",
-                },
-                capture_output=True,
-                timeout=5,
-            )
-            self.assertEqual(result.returncode, 1)
+        for event in ("pull_request", "push", "workflow_dispatch", "unknown"):
+            for branch in ("success", "failure", "cancelled", "skipped", ""):
+                for isolated in ("success", "failure", "cancelled", "skipped", ""):
+                    with self.subTest(event=event, branch=branch, isolated=isolated):
+                        result = subprocess.run(
+                            ["/bin/bash", "-c", step["run"]],
+                            env={
+                                "EVENT_NAME": event,
+                                "BRANCH_POLICY_RESULT": branch,
+                                "ISOLATED_RESULT": isolated,
+                            },
+                            capture_output=True,
+                            timeout=5,
+                        )
+                        allowed = (
+                            event == "pull_request"
+                            and branch == isolated == "success"
+                            or event in ("push", "workflow_dispatch")
+                            and branch == isolated == "skipped"
+                        )
+                        self.assertEqual(result.returncode, 0 if allowed else 1)
+                        self.assertIn(
+                            b"full-qa result=NOT_RUN verdict=NOT_RUN", result.stdout
+                        )
+                        self.assertNotIn(b"\nqa result=", b"\n" + result.stdout)
 
-    def test_summary_rejects_failed_missing_or_inapplicable_isolated_job(self):
+    def test_summary_missing_result_environment_fails_closed(self):
         script = self.workflow["jobs"]["ci-summary"]["steps"][0]["run"]
-        for event, branch, isolated in (
-            ("pull_request", "success", "skipped"),
-            ("pull_request", "success", "failure"),
-            ("pull_request", "success", "cancelled"),
-            ("pull_request", "success", ""),
-            ("push", "skipped", "success"),
-            ("workflow_dispatch", "skipped", "success"),
-        ):
-            with self.subTest(event=event, isolated=isolated):
-                result = subprocess.run(
-                    ["/bin/bash", "-c", script],
-                    env={
-                        "EVENT_NAME": event,
-                        "BRANCH_POLICY_RESULT": branch,
-                        "QA_RESULT": "success",
-                        "ISOLATED_RESULT": isolated,
-                    },
-                    capture_output=True,
-                    timeout=5,
-                )
-                self.assertNotEqual(result.returncode, 0)
+        for missing in ("EVENT_NAME", "BRANCH_POLICY_RESULT", "ISOLATED_RESULT"):
+            env = {
+                "EVENT_NAME": "pull_request",
+                "BRANCH_POLICY_RESULT": "success",
+                "ISOLATED_RESULT": "success",
+            }
+            del env[missing]
+            result = subprocess.run(
+                ["/bin/bash", "-c", script], env=env, capture_output=True, timeout=5
+            )
+            self.assertNotEqual(result.returncode, 0)
+
+    def test_local_full_unit_test_registry_is_retained(self):
+        registry = json.loads((ROOT / "scripts/validation/registry.json").read_text())
+        unit = next(row for row in registry["validators"] if row["id"] == "unit-tests")
+        self.assertIn("ci", unit["lanes"])
+        self.assertIn("all-files", unit["lanes"])
+        self.assertIn("unittest", str(unit))
+        self.assertFalse(unit["optional"])
 
     def test_pr_template_routes_delivery_evidence_to_quality_policy(self):
         template = (ROOT / ".github/PULL_REQUEST_TEMPLATE.md").read_text()
@@ -390,6 +353,7 @@ class CiQaWorkflowTests(unittest.TestCase):
             any('"- [ ] `full` result' in line for line in owner.splitlines())
         )
         self.assertIn('"hosted `ci-summary` result', owner)
+        self.assertIn('"NOT_RUN"', owner)
 
     def test_manifest_validator_rejects_missing_and_empty_roots(self):
         script = ROOT / "scripts/validate-k8s-manifests.sh"
@@ -413,220 +377,6 @@ class CiQaWorkflowTests(unittest.TestCase):
             )
             self.assertNotEqual(empty.returncode, 0)
             self.assertIn("no YAML manifests matched", empty.stderr)
-
-    def _qa_steps(self):
-        return self.workflow["jobs"]["qa"]["steps"]
-
-    def test_checkout_is_bound_to_a_named_durable_ref(self):
-        """An exact-SHA checkout detaches HEAD; archive retention needs a name.
-
-        The step is executed here rather than pattern-matched, so the contract
-        under test is the observable outcome: HEAD becomes symbolic and the
-        branch tip is still exactly the commit the event selected.
-        """
-
-        steps = self._qa_steps()
-        checkout = next(
-            index
-            for index, step in enumerate(steps)
-            if step.get("uses", "").startswith("actions/checkout@")
-        )
-        binding = [
-            step
-            for step in steps[checkout + 1 :]
-            if "git switch" in step.get("run", "")
-        ]
-        self.assertEqual(len(binding), 1)
-
-        with tempfile.TemporaryDirectory(prefix="ci-binding-") as temporary:
-
-            def git(*args):
-                return subprocess.run(
-                    ["git", *args], cwd=temporary, capture_output=True, check=True
-                ).stdout.decode()
-
-            git("init", "--quiet")
-            git("config", "user.email", "ci-fixture@example.invalid")
-            git("config", "user.name", "CI Fixture")
-            Path(temporary, "seed.txt").write_text("seed\n", encoding="utf-8")
-            git("add", "seed.txt")
-            git("commit", "--quiet", "-m", "seed")
-            selected = git("rev-parse", "HEAD").strip()
-            git("checkout", "--quiet", "--detach", selected)
-            self.assertNotEqual(
-                subprocess.run(
-                    ["git", "symbolic-ref", "-q", "HEAD"],
-                    cwd=temporary,
-                    capture_output=True,
-                ).returncode,
-                0,
-                "fixture must start detached for this to test anything",
-            )
-
-            result = subprocess.run(
-                ["/bin/bash", "-c", binding[0]["run"]],
-                cwd=temporary,
-                capture_output=True,
-                timeout=30,
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr.decode())
-            self.assertTrue(
-                git("symbolic-ref", "HEAD").strip().startswith("refs/heads/")
-            )
-            self.assertEqual(git("rev-parse", "HEAD").strip(), selected)
-
-    def test_pre_commit_is_published_to_the_validator_search_path(self):
-        """Validators use a fixed system path, not the interpreter's bin dir."""
-
-        installs = [
-            step.get("run", "")
-            for step in self._qa_steps()
-            if "/usr/local/bin/pre-commit" in step.get("run", "")
-        ]
-        self.assertEqual(len(installs), 1)
-        self.assertIn("sudo install", installs[0])
-
-    def test_kustomize_is_pinned_verified_and_published_before_qa(self):
-        steps = self._qa_steps()
-        installs = [
-            (index, step)
-            for index, step in enumerate(steps)
-            if step.get("name") == "Install Kustomize"
-        ]
-        self.assertEqual(len(installs), 1)
-        index, step = installs[0]
-        run = step["run"]
-        self.assertIn(
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/"
-            "kustomize/v5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz",
-            run,
-        )
-        self.assertEqual(
-            step["env"]["KUSTOMIZE_SHA256"],
-            "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d",  # pragma: allowlist secret
-        )
-        self.assertIn('"$KUSTOMIZE_SHA256"', run)
-        self.assertIn("sha256sum --check --strict", run)
-        self.assertIn("sudo install -o root -g root -m 0755", run)
-        self.assertIn("/usr/local/bin/kustomize", run)
-        self.assertLess(run.index("sha256sum --check --strict"), run.index("tar -xzf"))
-        self.assertLess(run.index("tar -xzf"), run.index("/usr/local/bin/kustomize"))
-        self.assertLess(
-            index,
-            next(
-                i
-                for i, step in enumerate(steps)
-                if step.get("name") == "Validate repository checkout"
-            ),
-        )
-
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            bin_dir = root / "bin"
-            bin_dir.mkdir()
-            for tool, script in {
-                "curl": '#!/bin/sh\nwhile [ "$#" -gt 0 ]; do\n'
-                '  if [ "$1" = "--output" ]; then printf corrupt > "$2"; exit 0; fi\n'
-                "  shift\ndone\nexit 2\n",
-                "tar": '#!/bin/sh\nprintf tar >> "$MARKER"\n',
-                "sudo": '#!/bin/sh\nprintf sudo >> "$MARKER"\n',
-            }.items():
-                path = bin_dir / tool
-                path.write_text(script)
-                path.chmod(0o755)
-            marker = root / "executed"
-            result = subprocess.run(
-                ["/bin/bash", "-e", "-c", run],
-                env={
-                    "PATH": f"{bin_dir}:/usr/bin:/bin",
-                    "RUNNER_TEMP": str(root),
-                    "MARKER": str(marker),
-                    "KUSTOMIZE_SHA256": step["env"]["KUSTOMIZE_SHA256"],
-                },
-                capture_output=True,
-                timeout=10,
-            )
-            self.assertNotEqual(result.returncode, 0)
-            self.assertFalse(marker.exists(), "unverified bytes reached tar or sudo")
-
-    def test_tool_publication_directory_satisfies_the_strict_resolver(self):
-        """Publishing a root-owned file into a writable directory is not enough.
-
-        `secure_tool_executable` rejects a candidate whose containing directory
-        is group- or other-writable, because anyone holding that write bit can
-        swap the executable the validator is about to trust.  A runner image is
-        free to ship `/usr/local/bin` writable, so the workflow has to state the
-        ownership it needs instead of inheriting whatever the image provides.
-        """
-
-        steps = self._qa_steps()
-        published = [
-            index
-            for index, step in enumerate(steps)
-            if re.search(r"sudo install\s+[^\n]*/usr/local/bin/\S", step.get("run", ""))
-        ]
-        self.assertTrue(published, "no tool is published to the search path")
-
-        prepared = [
-            (index, step.get("run", ""))
-            for index, step in enumerate(steps)
-            if re.search(
-                r"sudo install\s+-d\b[^\n]*/usr/local/bin\b", step.get("run", "")
-            )
-        ]
-        self.assertEqual(len(prepared), 1, "the directory contract is stated once")
-        index, run = prepared[0]
-        self.assertLess(
-            index,
-            min(published),
-            "the directory is hardened before anything is published into it",
-        )
-        self.assertIn("-o root", run)
-        self.assertIn("-g root", run)
-        mode = re.search(r"-m\s*(\d+)", run)
-        self.assertIsNotNone(mode, "the directory mode is stated explicitly")
-        self.assertFalse(
-            int(mode.group(1), 8) & 0o022,
-            "a group- or other-writable directory is rejected by the resolver",
-        )
-
-    def test_hook_environments_are_cached_between_runs(self):
-        """A cold cache builds every hook toolchain from source."""
-
-        cache = [
-            step
-            for step in self._qa_steps()
-            if step.get("uses", "").startswith("actions/cache@")
-        ]
-        self.assertEqual(len(cache), 1)
-        pinned = cache[0]["uses"].split("@", 1)[1]
-        self.assertRegex(pinned, r"^[0-9a-f]{40}$")
-
-        with_ = cache[0]["with"]
-        self.assertIn("pre-commit", with_["path"])
-        # A key that ignores the hook configuration would restore environments
-        # that no longer match the hooks being run.
-        self.assertIn(".pre-commit-config.yaml", with_["key"])
-        self.assertIn("runner.arch", with_["key"])
-        self.assertIn("steps.validation-python.outputs.python-version", with_["key"])
-        self.assertIn(".github/requirements/ci-validation.txt", with_["key"])
-
-    def test_job_wall_clock_exceeds_the_slowest_declared_gate_budget(self):
-        """A gate budget larger than its job's wall clock can never be reached."""
-
-        registry = json.loads(
-            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
-        )
-        declared = [
-            row["timeoutSeconds"]
-            for row in registry["validators"]
-            if "timeoutSeconds" in row
-        ]
-        self.assertTrue(declared)
-
-        job_seconds = self.workflow["jobs"]["qa"]["timeout-minutes"] * 60
-        self.assertGreater(job_seconds, max(declared))
 
 
 if __name__ == "__main__":

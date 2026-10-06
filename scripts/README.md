@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.6.0"
+version: "0.6.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-06"
 ---
 # scripts
 
@@ -135,9 +135,10 @@ branch protection 설정은 바꾸지 않는다.
 ## Verification
 
 가장 작은 owner부터 실행하고 이어서 현재 작업에 필요한 affected·staged lane을
-실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. PR 전달의
-최종 full은 hosted CI가 맡고, 로컬에서만 인계할 때는 local full을 한 번 실행한다.
-자세한 delivery 경계는 [Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
+실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 현재 GitHub
+Actions CI는 branch-policy와 qa-isolated를 실행하고 ci-summary가 실제 결과를
+모은다. Hosted full QA는 NOT_RUN이며 baseline 성공은 full QA PASS가 아니다.
+최종 full 실행과 인계의 경계는 [Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
 
 ```bash
 python3 -m unittest tests.test_validation_tooling_ownership
@@ -145,8 +146,8 @@ python3 scripts/qa.py quick
 git diff --check
 ```
 
-로컬 전용 인계에서는 마지막 작업 트리에 대해 `python3 scripts/qa.py full`을
-한 번 실행한다. PR 전달의 최종 full은 hosted CI가 담당한다.
+Full QA를 실행하지 않은 인계는 NOT_RUN과 검증 공백을 기록한다. Full report가
+없을 때 비활성 provenance workflow나 baseline 결과로 signed QA PASS를 만들지 않는다.
 
 QA는 추적 경로와, 해당하는 ignore되지 않은 미추적 경로를 직접 고른다. 숨김
 경로, 삭제, 이름 변경도 포함한다. 작업 트리 변경에는 `qa.py quick`을, 정확한
