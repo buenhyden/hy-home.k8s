@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.11.0"
+version: "1.12.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,7 +14,7 @@ parent_ids: ["SPEC-0106"]
 
 ## Global Constraints
 
-The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013/014`; this Plan owns order,
+The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013/014/015`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
 common governance owns meaning and approval. Preserve frozen history and
 separate repository-static, provider-runtime, hosted and live evidence. The
@@ -27,6 +27,13 @@ in its own feature worktree and retains the P01 worktree. The request owner's
 later instruction authorizes push and merge after required review and hosted
 checks. Worktree removal, live/secret and archive mutation remain excluded;
 no authenticated-actor claim or remote outcome is inferred.
+
+WORK-015 applies the latest explicit hosted-QA removal and local/origin-main
+integration request. Preserve earlier work-unit history; current delivery does
+not wait for remote QA. Keep the registered local validators and strict proof
+refusals, record unexecuted full/affected lanes as NOT_RUN and retain all original
+branches, worktrees and evidence. Normal push may report remote refusal; no force,
+admin bypass, history rewrite, runtime or secret action is inferred.
 
 WORK-003 applies the later instruction authorizing work-unit push and normal
 merge after required hosted checks. Its repair stays on the preserved P01
@@ -97,6 +104,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-015 | [VAL-P02-015](spec.md#success-criteria--verification-plan) | Remove hosted full-QA execution and repair its direct topology and guidance consumers | Explicit user CI/local/origin-main scope; separate workflow, quality and governance source owners; genuine registered-form draft | [SPEC-0106-TSK-0015](tasks/tsk-0015-hosted-qa-cleanup.md) | Narrow changed-input RED/GREEN and retained refusals; exact-index staged/message and independent review; prospective completion then fresh actual closing checks; full/affected execution NOT_RUN and no fabricated provenance |
 | WORK-014 | [VAL-P02-014](spec.md#success-criteria--verification-plan) | Repair immutable generation-boundary and typed retention fixture inputs | Three named REDs; structured/public-source independent cause review; private raw direct audit deferred; genuine registered-form first draft | [SPEC-0106-TSK-0014](tasks/tsk-0014-generation-boundary-and-retention-fixtures.md) | Four existing shared generation methods and one whitespace method after hook-first final bytes; complete original declared maps/inventories, each actual-index staged/message and separate review; prospective completion then fresh actual closing checks; hosted admission separate |
 | WORK-013 | [VAL-P02-013](spec.md#success-criteria--verification-plan) | Correct obsolete reference pack identities in route fixtures | Two observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0013](tasks/tsk-0013-reference-pack-route-fixtures.md) | Two named changed-input pack/template and material methods; hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
 | WORK-012 | [VAL-P02-012](spec.md#success-criteria--verification-plan) | Align synthetic QA and reference navigation prerequisites with current owners | Three observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0012](tasks/tsk-0012-qa-and-reference-navigation-fixtures.md) | Four named controls, hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
@@ -112,6 +120,21 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 | WORK-002 | [VAL-P02-002](spec.md#success-criteria--verification-plan) | WP-004 inspect current Task mutation path and create scoped Task; WP-005 extract summary helper, build opt-in CLI, focused RED/GREEN and author guidance; WP-006 exact-index verification, independent review and local source handoff; authorized push/merge follows separately | P01 tip `df3281d06a931bff6784bcc462800fab23bbb1c9`; WORK-001 completed contract; no Registry/Schema migration | [SPEC-0106-TSK-0002](tasks/tsk-0002-task-summary-writer.md) | Existing Task aggregate regression; writer preview/write/refusal regression; staged, actual message, completion and review on the exact follow-up inputs; required PR hosted result before merge and integrated main result afterward |
 
 ## Verification Plan
+
+WORK-015 separates source ownership: the CI writer changes the two workflows
+and three current .github guides; the quality writer changes the CI validator,
+its repository-quality phrase consumer and two direct tests; the governance
+writer changes only current quality/work-lifecycle delivery guidance. The document
+writer owns this Spec, Plan, new Task and the scoped scripts README guidance,
+and alone controls the index and four normal commits. All implementation writers
+hold until the ready endpoint and freeze during each actual-index check.
+Use only bounded named topology/summary RED/GREEN and applicable retained
+isolated/pin/permission/bootstrap/shell/provenance controls selected by their
+owner. Keep local registry membership and passing production regressions.
+Fresh exact-index staged/message and separate review are required per commit;
+prospective scoped completion/review precedes identical-byte reflection and
+fresh actual closing checks. Full/affected/discovery execution and private raw
+direct audit are excluded; removed hosted execution stays NOT_RUN.
 
 WORK-014 owns only `tests/test_task_execution_contract.py`,
 `tests/test_validation_tooling_ownership.py`, this Spec, Plan and its new

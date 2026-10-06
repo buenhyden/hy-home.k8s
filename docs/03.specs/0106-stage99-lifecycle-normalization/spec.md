@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.11.0"
+version: "1.12.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -50,6 +50,26 @@ scope. This authorization does not claim current remote state or an
 authenticated operator action.
 
 ## Contracts
+
+### User-directed hosted QA removal
+
+VAL-P02-015 applies the latest explicit request to remove failing GitHub QA
+execution, integrate the local result and reflect it to origin/main without
+waiting for remote QA. Earlier work-unit hosted requirements describe their
+historical delivery contracts; this follow-up records the changed CI contract.
+Keep only branch-policy, qa-isolated and ci-summary in the CI workflow. Its
+summary inspects only the surviving event-appropriate results and explicitly
+reports full QA NOT_RUN. Remove qa/qa-source and their full QA invocations;
+make provenance verification explicitly inactive while retaining its strict
+Python proof validation and dependent publisher gating. No absent full report
+may become signed provenance or a QA PASS.
+
+Repair only directly obsolete topology consumers and current delivery guidance.
+Preserve remaining pin, permission, bootstrap, isolated validation, shell and
+provenance refusal controls, the local validation registry and passing production
+regressions. Four normal Task states and actual-index checks precede local
+integration. Local full/affected execution remains NOT_RUN; any remote rejection
+is an observed delivery limitation, not authority to force or rewrite history.
 
 ### Hosted compatibility follow-up
 
@@ -236,6 +256,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-015 | The hosted CI topology contains only branch-policy, qa-isolated and ci-summary; full QA is explicitly NOT_RUN, removed execution is not QA PASS, and missing full proof cannot create provenance. Direct topology/guide consumers match the new contract while isolated validation, pin/permission/bootstrap/shell and provenance refusal controls remain. Registered-form creation, scoped RED/GREEN, exact-index staged/message, completion and independent review are recorded in Task0015. Preserve local validation registration, production regressions, original evidence and normal local/main delivery history. |
 | VAL-P02-014 | Generation-admission fixtures read authentic immutable generation-9 and generation-10 boundary documents together, preserving absent-source, same-generation, invalid declaration, terminal reopening, later completion, cumulative replay and fixed budget refusals. Whitespace fixture expectations use the existing typed Registry-bound retention classification alongside frozen lifecycle states, retaining current-record and nonarchive negatives. Three observed named REDs, all four shared generation methods and one whitespace method, registered-form provenance, hook-first final bytes, each actual-index staged/message, scoped completion and independent review are recorded in Task0014. Production contracts, schemas, Registry, hooks, limits and retained archive bytes remain unchanged; hosted and integrated-main admission are separate. |
 | VAL-P02-013 | Reference pack route fixtures expect the current authored reference pack identities and their unchanged registered templates. Existing numbered member routes, uncovered loose/date paths and topology/drift refusals remain required. Two named REDs, final-byte focused controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0013. Published Registry, templates, reference corpus and production contracts remain unchanged; hosted acceptance is separate. |
 | VAL-P02-012 | Synthetic QA and reference navigation fixtures use the current report envelope, pack profile and collection section. Typed synthetic non-Git results preserve all four full/CI orchestration scenarios, complete gate counts, deliberate failure, platform parsing and no local evidence reuse; actual temporary Git remains bounded. Collection depth and missing-member/valid controls remain required. Named RED/GREEN, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0012; production contracts and hosted acceptance remain separate. |
@@ -251,6 +272,11 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P02-015 maps to WORK-015 in the [Plan](plan.md) and
+[Task0015](tasks/tsk-0015-hosted-qa-cleanup.md). The explicit latest user request
+changes hosted execution and its direct consumers; it does not falsify previous
+observations or authorize a provenance PASS without full proof.
 
 VAL-P02-014 maps to WORK-014 in the [Plan](plan.md) and
 [Task0014](tasks/tsk-0014-generation-boundary-and-retention-fixtures.md).
