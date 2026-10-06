@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.12.0"
+version: "1.12.1"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -59,8 +59,9 @@ waiting for remote QA. Earlier work-unit hosted requirements describe their
 historical delivery contracts; this follow-up records the changed CI contract.
 Keep only branch-policy, qa-isolated and ci-summary in the CI workflow. Its
 summary inspects only the surviving event-appropriate results and explicitly
-reports full QA NOT_RUN. Remove qa/qa-source and their full QA invocations;
-make provenance verification explicitly inactive while retaining its strict
+reports full QA NOT_RUN. Remove qa/qa-source and their full QA invocations; the observed historical
+qa step took 25m08s and also satisfies the later actual-duration removal criterion.
+A configured timeout is not an observed duration. Make provenance verification explicitly inactive while retaining its strict
 Python proof validation and dependent publisher gating. No absent full report
 may become signed provenance or a QA PASS.
 
@@ -70,6 +71,11 @@ provenance refusal controls, the local validation registry and passing productio
 regressions. Four normal Task states and actual-index checks precede local
 integration. Local full/affected execution remains NOT_RUN; any remote rejection
 is an observed delivery limitation, not authority to force or rewrite history.
+The latest explicit finish instruction permits removal of the four named owned
+development refs and three development worktrees only after local/origin-main
+integration is observed, commits are main-reachable, clean state is checked and
+known structured evidence has been preserved with hash audit. Exact targets and
+owners belong in Task0015; unrelated or private data is not deletion scope.
 
 ### Hosted compatibility follow-up
 

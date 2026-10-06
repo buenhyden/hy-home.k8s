@@ -1,8 +1,8 @@
 ---
 title: "Hosted QA Cleanup"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-06"
 layer: "specs"
@@ -26,7 +26,17 @@ it does not discard passing regressions or earlier evidence.
   integrate locally independently of remote results, and reflect origin/main.
 - Accepted local main `3ff0ab627f887d7d75aa545560a051477731d285`.
 - CI/quality/governance owners' read-only bounded consumer plans; source writes
-  remain held until ready. No new RED/GREEN or remote outcome is observed yet.
+  remain held until the ready endpoint. New functional RED/GREEN is NOT_RUN.
+- Latest finish permission covers only the four named development refs and
+  three development worktrees after verified local/origin integration and
+  structured-evidence preservation; no cleanup has executed.
+- Later actual-duration criterion also removes jobs with an observed duration
+  of at least ten minutes (600 seconds).
+  Root's public metadata records PR135 run `37412890658`, job `112105040334`,
+  qa step13 from 04:16:22 to 04:41:30, 25m08s at old head `179a88c9`.
+  This is the historical failing QA job already targeted for removal; configured
+  timeout values are not duration proof. Other jobs need actual observations,
+  not invented timings or an additional broad workflow rewrite.
 
 ## Task Table
 
@@ -40,7 +50,9 @@ it does not discard passing regressions or earlier evidence.
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-P02-150 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Scope and registered-form creation preflight | Local accepted main 3ff0ab62; original registered Task form | NOT_RUN | Pending | pending |
+| EVD-P02-150 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Scope and registered-form creation preflight | Local accepted main 3ff0ab62; original registered Task form | PASS | Ignored C1 preflight26741069 and commit4c1eab5e | accepted |
+| EVD-P02-151 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Observed C1 actual-index/message checks and permitted independent review | Draft indexfea596b6 committed4c1eab5e; unchanged initial source inputs | PASS | External C1 final manifest108ae019 and ignored C1 postreceipt5a1d1ce4 | accepted |
+| EVD-P02-152 | [VAL-P02-015](../spec.md#success-criteria--verification-plan) | WORK-015 | Historical failing hosted QA and actual duration input | Old PR135 head179a88c9, run37412890658/job112105040334/step13 | FAIL | Root public job metadata 04:16:22 to 04:41:30, 25m08s; historical only, not current source verdict | rejected |
 
 ## Approval and Safety Boundaries
 
@@ -57,7 +69,14 @@ it does not discard passing regressions or earlier evidence.
 - **Approval Required**: Latest explicit user scope authorizes these normal
   commits, local integration and origin/main reflection without remote-QA
   dependence. Remote writes belong to the separately assigned delivery owner;
-  authentication and observed remote outcomes are not inferred.
+  authentication and observed remote outcomes are not inferred. The later explicit
+  cleanup grant applies only to refs `codex/p01-authority-evidence`,
+  `codex/p02-task-summary`, `codex/reference-pack-fixtures`, `codex/p02-ci-cleanup`
+  and worktrees `.worktrees/p01-authority-evidence`, `.worktrees/p02-task-summary`,
+  `.worktrees/p02-ci-cleanup` after observed local/origin-main integration,
+  main-reachable commits, clean state and known structured-evidence preservation
+  with hash audit. Final cleanup results go in the ignored terminal attachment;
+  no recursive unrelated/private deletion, reset or force is authorized.
 - **Static Validation**: Actual registered-form creation metadata; bounded named
   RED/GREEN, scoped final-byte tools, each actual-index staged/message and
   separate review; prospective scoped completion then fresh actual closing
@@ -65,14 +84,15 @@ it does not discard passing regressions or earlier evidence.
 - **Live Validation**: DEFER; no cluster, runtime or native trust operation.
 - **Secret / Vault Handling**: No secret reads; private raw direct audit remains
   NOT_OBSERVED/DEFER and is not granted by this CI instruction.
-- **Rollback Plan**: Reviewed normal forward correction with all history,
-  branches, worktrees and original evidence preserved.
+- **Rollback Plan**: Reviewed normal forward correction with reachable commit
+  history and original evidence preserved. Owned branch/worktree cleanup is
+  conditional on the explicit final integration and preservation checks.
 - **Evidence Location**: This Task and exact structured check receipts; ignored
   proposal/closing attachments capture actual identities without self-SHA edits.
 
 ## Verification Summary
 
-Draft scope only. The target hosted topology is branch-policy, qa-isolated and
+At initial draft intake, only scope was authored. The target hosted topology is branch-policy, qa-isolated and
 ci-summary; the summary reports full QA NOT_RUN and never fabricates proof.
 Provenance verification is explicitly inactive while its Python refusals and
 dependent publisher gating remain. Direct stale consumer changes are bounded;
@@ -80,9 +100,19 @@ passing production tests and local validation registry entries are retained.
 
 Four normal commits will record draft, ready, implementation and completion.
 Workflow, registered-validator/tests and governance writers own disjoint paths;
-this document writer alone stages and commits. Initial creation metadata,
-source RED/GREEN, own index/message checks and closing acceptance are pending.
+this document writer alone stages and commits. At initial intake, creation,
+source RED/GREEN, own index/message checks and closing acceptance were pending.
 No current-source or hosted PASS is inferred from the removal request. Removed
 GitHub QA and excluded local full/affected execution remain NOT_RUN; remote
 outcomes and integrated-main results are recorded only if observed.
 
+
+Readiness now records observed C1 registered-form C010 provenance, unchanged
+regular template and absent prior target, six fresh canonical gates, exact
+configured message and selection-only metadata. Permitted independent
+structured/public-source review and the normal draft commit completed with
+clean source; private raw direct audit remains NOT_OBSERVED/DEFER. Disposable
+message semantic entries and configs matched; raw index-change cause is UNKNOWN.
+Own ready-index/message checks, functional RED/GREEN, implementation, completion,
+origin/main reflection and conditional cleanup remain pending. The historical
+25m08s failing QA observation is input to removal, not a current PASS or proof.

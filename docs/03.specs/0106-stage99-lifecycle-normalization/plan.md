@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.12.0"
+version: "1.12.1"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -31,8 +31,11 @@ no authenticated-actor claim or remote outcome is inferred.
 WORK-015 applies the latest explicit hosted-QA removal and local/origin-main
 integration request. Preserve earlier work-unit history; current delivery does
 not wait for remote QA. Keep the registered local validators and strict proof
-refusals, record unexecuted full/affected lanes as NOT_RUN and retain all original
-branches, worktrees and evidence. Normal push may report remote refusal; no force,
+refusals and record unexecuted full/affected lanes as NOT_RUN. Preserve commits
+and evidence; retain owned branches/worktrees during execution, then apply the
+latest explicitly authorized conditional cleanup only after observed local and
+origin/main integration, main-reachability, clean state and evidence hash audit.
+Normal push may report remote refusal; no force,
 admin bypass, history rewrite, runtime or secret action is inferred.
 
 WORK-003 applies the later instruction authorizing work-unit push and normal
