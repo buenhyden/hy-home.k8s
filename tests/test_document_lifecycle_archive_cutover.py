@@ -564,10 +564,18 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         lifecycle = next(
             domain
             for domain in registry["lifecycle_domains"]
-            if domain["family"] == "requirement-architecture"
+            if domain["family"] == "requirement"
         )
         self.assertTrue(
-            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "active")
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "in-review")
+        )
+        self.assertTrue(
+            authority.is_lifecycle_transition_allowed(
+                lifecycle, "in-review", "approved"
+            )
+        )
+        self.assertFalse(
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "approved")
         )
         self.assertFalse(
             authority.is_lifecycle_transition_allowed(lifecycle, "draft", "accepted")
@@ -580,20 +588,27 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self,
     ):
         registry = load_registry(ROOT)
-        # 12 before the content/audit, content/research and content/data
-        # families retired with their unroutable profiles, 9 while the three
-        # reference roles carried a domain no graph governed, and 12 again now
-        # that each role declares the lifecycle Spec 0054 names for it. ADR-0038
-        # adds one family for the body-less route dispositions.
+        # The published graph includes separate requirement and architecture
+        # domains plus the body-less archive route dispositions.
         self.assertEqual(len(registry.lifecycle_domains), 13)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
-            if domain.family == "requirement-architecture"
+            if domain.family == "requirement"
         )
-        self.assertEqual(requirement.validation_class("active"), "current")
-        self.assertTrue(requirement.allows("draft", "active"))
+        self.assertEqual(requirement.validation_class("approved"), "current")
+        self.assertTrue(requirement.allows("draft", "in-review"))
+        self.assertTrue(requirement.allows("in-review", "approved"))
+        self.assertFalse(requirement.allows("draft", "approved"))
         self.assertFalse(requirement.allows("draft", "retired"))
+        architecture = next(
+            domain
+            for domain in registry.lifecycle_domains
+            if domain.family == "architecture-description"
+        )
+        self.assertEqual(architecture.validation_class("active"), "current")
+        self.assertTrue(architecture.allows("in-review", "active"))
+        self.assertFalse(architecture.allows("draft", "active"))
         raw = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
@@ -634,18 +649,20 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                 ),
             )
 
-        for status in ("draft", "active", "completed"):
+        for status in ("draft", "in-progress", "completed"):
             with self.subTest(status=status):
                 self.assertEqual(compare_body_change(status), ())
 
     def test_lifecycle_free_navigation_creation_needs_no_migration_event(self):
         registry = load_registry(ROOT)
-        path = PurePosixPath(
-            "docs/90.references/research/9999-navigation-fixture/README.md"
-        )
+        path = PurePosixPath("docs/90.references/research/README.md")
         created = lifecycle.document_from_text(registry, path, "# Fixture\n")
 
-        self.assertEqual(created.profile_id, "common/readme-research-pack")
+        self.assertEqual(created.profile_id, "common/readme-collection-index")
+        self.assertIsNone(
+            document_contracts.classify_path(registry, path).lifecycle_domain
+        )
+        self.assertIsNone(created.status)
 
         actual = compare_lifecycle(
             registry,
@@ -657,10 +674,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self.assertEqual(actual, ())
 
     def test_reference_creation_answers_to_its_own_role_vocabulary(self):
-        # This fixture used to create an audit at `active` and assert silence,
-        # which is what the old five-value domain and absent graph allowed.
-        # Audit findings are completed or invalidated; `active` was borrowed
-        # vocabulary that meant nothing for the role.
+        # Audit references use their published lifecycle vocabulary. Borrowed
+        # role states are invalid, and a published document is not an initial
+        # draft creation.
         registry = load_registry(ROOT)
         path = PurePosixPath(
             "docs/90.references/audits/0001-example-audit/m0001-findings.md"
@@ -694,7 +710,8 @@ artifact_id: "AUD-0001-m0001"
         )
         for status, rule in (
             ("active", "LIFECYCLE-STATE"),
-            ("completed", "LIFECYCLE-CREATE"),
+            ("completed", "LIFECYCLE-STATE"),
+            ("published", "LIFECYCLE-CREATE"),
         ):
             with self.subTest(status=status):
                 self.assertEqual(
@@ -781,8 +798,8 @@ artifact_id: "AUD-0001-m0001"
         source = PurePosixPath("docs/03.specs/9998-source/spec.md")
         successor = PurePosixPath("docs/03.specs/9999-successor/spec.md")
         base = {
-            source: LifecycleDocument(source, "sdlc/spec", "active"),
-            successor: LifecycleDocument(successor, "sdlc/spec", "active"),
+            source: LifecycleDocument(source, "sdlc/spec", "approved"),
+            successor: LifecycleDocument(successor, "sdlc/spec", "approved"),
         }
         proposed = {
             source: LifecycleDocument(source, "sdlc/spec", "superseded"),

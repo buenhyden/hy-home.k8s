@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.0.0"
+version: "1.9.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-06"
 layer: "specs"
 artifact_id: "SPEC-0106"
 ---
@@ -17,8 +17,10 @@ P02 makes the existing Stage 99 document contract describe lifecycle and
 execution traceability consistently across its registry, forms, validators,
 and current consumers. The request owner approved this local change plan;
 source implementation and local finish are accepted from the observed Task
-evidence. This completed document candidate still needs its separate closing
-checks and read-only review. This package follows the
+evidence. The later P01 follow-up rechecked the historical closing candidate
+and the current P02 index; EVD-P02-014 records staged, completion and
+independent review acceptance while preserving EVD-P02-013 as the original
+unrun result. This package follows the
 completed [P01 package](../0105-authority-and-safe-authoring/spec.md) and does
 not reopen the historical SPEC-0104 package.
 
@@ -32,16 +34,34 @@ Tasks declare one direct structural `parent_ids` value (Plan to Spec, Task to
 Plan) without a duplicate `spec_id`. Review, approval and implementation are
 distinct states; Task `ready` records readiness, not permission to act.
 
+The following exclusions describe original WORK-001 and its local finish.
 No new requirement, AD, ADR, progress ledger, native-provider
 claim, or permanent inventory count is needed. Do not modify frozen archive
 bodies, sealed records, historical contracts, private/global state, cluster,
-secrets, or remote Git. The latest explicit user instruction authorizes local
-P01/P02 integration into main and deletion of the two development branches and
-any linked development worktrees after verified integration. Retain the primary
-workspace. Push, PR, remote merge/publication, archive mutation and live action
-remain outside scope; this instruction does not authenticate an approving actor.
+secrets, or remote Git. The earlier P02 finish instruction authorized local
+P01/P02 integration into main and removal of their development branches after
+verified integration; the Task records that observed finish. The current P01
+follow-up retains its own feature branch and worktree. Push, PR, remote
+merge/publication, archive mutation and live action remain outside scope;
+neither instruction authenticates an approving actor.
 
 ## Contracts
+
+### Hosted compatibility follow-up
+
+The request owner's later work-unit push and merge instruction also authorizes
+the bounded VAL-P02-003 compatibility repair needed by the observed PR gates.
+It preserves the current production Registry, schemas, validator semantics,
+frozen archive bytes and historical Task evidence. Current public migration
+proof fixtures compile the actual published generation-10 Registry and its
+current schema/templates, with bounded synthetic migration routes declared only
+inside their temporary fixture Registry. Independent historical asset tests
+use the same immutable generation as the frozen Registry; missing objects fail
+rather than substituting current bytes. Required hosted
+checks gate the exact PR head before normal merge; integrated main is checked
+after merge before integration acceptance. Local full and affected execution
+remain excluded for this follow-up. No live, credential, native trust,
+cleanup, force push or history rewrite is authorized.
 
 - Requirements express durable needs; ADs express current structure; ADRs
   express durable choices; Specs express behavior; Plans express order; Tasks
@@ -173,11 +193,13 @@ next owner named.
 Demonstrate focused RED and GREEN cases for Task status aggregation and
 completion refusal, including historical fixtures. Run the affected quick
 profile, exact-index staged QA and actual commit-message validation for each
-logical commit. The latest explicit user instruction removes full QA from the
-required acceptance set and prohibits another full run or an all-files/unit
+original P02 logical commit. Its finish instruction removed full QA from the
+required acceptance set and prohibited another full run or an all-files/unit
 substitute. Preserve earlier interrupted full observations; an unexecuted full
-check is NOT_RUN with acceptance not-required, never PASS. After closing
-documentation, refresh affected/index/message and completion-mode evidence.
+check is NOT_RUN with acceptance not-required, never PASS. The current P01
+follow-up selected affected gates without executing that lane; it rechecked
+the historical P02 candidate and a later changed closing index separately.
+EVD-P02-014 records the observed checks and their input revision.
 Independent read-only review checks the final meaning. At the intake snapshot,
 P02 implementation full, unit, fixture and completion-mode checks had not run;
 the Task owns all later execution observations.
@@ -186,9 +208,65 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-012 | Synthetic QA and reference navigation fixtures use the current report envelope, pack profile and collection section. Typed synthetic non-Git results preserve all four full/CI orchestration scenarios, complete gate counts, deliberate failure, platform parsing and no local evidence reuse; actual temporary Git remains bounded. Collection depth and missing-member/valid controls remain required. Named RED/GREEN, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0012; production contracts and hosted acceptance remain separate. |
+| VAL-P02-011 | Authority lifecycle fixtures use the current Spec maintenance/supersession states and the audit's own publication vocabulary. Draft/current/terminal body maintenance, invalid reference states, noninitial publication creation and missing/exact reciprocal evidence remain discriminating controls. Three named RED/GREEN methods, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0011. Production contracts and completed evidence remain unchanged; hosted acceptance is separate. |
+| VAL-P02-010 | Completed-state and navigation fixtures follow the current published predecessor and domainless collection route. Historical replay uses a faithful declared generation and preserves current-invalid done, terminal, no-reopen and direct-create refusals. Named RED/GREEN and related controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0010. Production contracts and completed evidence remain unchanged; hosted acceptance is separate. |
+| VAL-P02-009 | A new unique Task draft originates from the unchanged registered Task form, with actual first-appearance metadata observed before commit. The common authority fixture follows its published six-state governance domain and native metadata envelope while preserving every routing and invocation-control refusal. Retained Task8 observations are historical after the separate reviewed forward rollback. Named fixture evidence, scoped hooks, each actual-index staged/message, completion and independent review remain required; production contracts and hosted acceptance stay separate. |
+| VAL-P02-007 | Governance and Spec navigation fixtures follow the actual published current-state and section declarations while preserving owner membership and malformed navigation refusals. The archive Git-process budget retains its measured fixed-cost corpus meaning; any correction requires immutable causal accounting and preserves batching and the sixty-second bound. Named failures, changed-input controls, scoped hooks, each actual-index staged/message, completion and independent review are recorded in Task0007. Production contracts and completed evidence remain unchanged; hosted acceptance remains separate. |
+| VAL-P02-006 | The additive sealed-disposition recovery fixture records the exact frozen generation-9 Registry, original source and immediate successor together at the authenticated source revision. Existing missing-proof, wrong-disposition, source-identity, terminal-edge and cutover refusals remain required. Observed named RED, all 21 shared recovery-fixture methods, scoped hooks, each actual-index staged/message, terminal completion and independent review are recorded in Task0006. Production validators, published Registry/schema, frozen Archive and completed evidence remain unchanged; hosted and integrated-main acceptance are separate. |
+| VAL-P02-005 | Current artifact identity, authority lifecycle and migration fixtures consume the actual published generation-10 profile/domain declarations. Restore Task0004's new all-mode first-appearance metadata eligibility to trusted sdlc/task targets only, preserving prior ordinary-copy eligibility and refusal order for other profiles. Existing wrong-ID, illegal-edge, trusted-policy-before-pattern, default/schema-null and migration provenance refusals remain required. Observed failures, changed-input named GREEN and related controls, scoped hooks, each actual-index staged/message, terminal completion and independent code/security review are recorded in Task0005. Other production behavior, schemas, Registry and completed evidence remain unchanged; hosted PR and integrated-main results are separate. |
+| VAL-P02-004 | A copied first draft of a new canonical, unique `sdlc/task` may originate only from its current and historically registered Task template, present as the same regular source blob before and after creation. Template binding changes, nonregular or changed sources, ID reuse, wrong initial state, ordinary copy/rename and invalid later edges remain refused. Focused real-Git RED/GREEN and negative regressions, exact-index staged/message, terminal completion and independent review are recorded in Task0004. Public schema, Registry generation, other provenance guards and hosted requirements are unchanged. |
+| VAL-P02-003 | Current migration-proof fixtures use the complete actual generation-10 Registry/schema/template graph and test-only synthetic routes without bypassing compilation or proof checks. Cumulative-history fixtures use required current headers and explicit review transitions while retaining illegal-transition and provenance refusals. Independent historical asset tests prove exact immutable bytes and missing-object refusal. Scoped formatting and verified Git-identity annotations, focused RED/GREEN, staged/message, completion and independent review are recorded in the new Task. Hosted PR and integrated-main checks remain separate from local acceptance. |
 | VAL-P02-001 | One atomic acceptance set: all six frontmatter/profile extensions and parent identity derivation; Task Table binding, exact heading/columns and status/result calculation; read-only index-target completion trace and refusal cases; shared Markdown/link/lifecycle Git-snapshot edges; route/supersession compatibility; current corpus normalization with frozen history intact; focused RED/GREEN negative and historical fixtures; affected, staged, message, closing-doc, completion and independent review evidence in the Task; local main integration and development-branch/worktree cleanup after observed checks. Full QA is excluded by the latest explicit user scope, with unexecuted checks NOT_RUN/not-required and prior observations preserved. |
 
 ## Traceability
+
+VAL-P02-012 maps to WORK-012 in the [Plan](plan.md) and
+[Task0012](tasks/tsk-0012-qa-and-reference-navigation-fixtures.md).
+The capped hosted preview and three bounded REDs establish fixture prerequisites;
+the synthetic RED did not capture internal output or reach later CI subcases.
+
+VAL-P02-011 maps to WORK-011 in the [Plan](plan.md) and
+[Task0011](tasks/tsk-0011-authority-lifecycle-state-fixtures.md).
+The executed hosted preview exposed three new fixture prerequisites; the entire
+implicated class was reviewed without treating that preview as an exhaustive inventory.
+
+VAL-P02-010 maps to WORK-010 in the [Plan](plan.md) and
+[Task0010](tasks/tsk-0010-completed-state-and-navigation-fixtures.md).
+It addresses named failures from the executed hosted complement; its sanitized
+failure excerpt is not an exhaustive unit-test inventory.
+
+VAL-P02-009 maps to WORK-009 in the [Plan](plan.md) and
+[Task0009](tasks/tsk-0009-common-authority-fixture-reinstantiation.md).
+It follows the separate reviewed Task8 rollback, retaining all original
+commits and external observations without reusing its withdrawn identity.
+
+The current-owner fixture follow-up maps VAL-P02-007 to WORK-007 in the
+[Plan](plan.md) and
+[Task0007](tasks/tsk-0007-current-owner-fixture-conformance.md).
+Its process-budget diagnosis is distinct from any proposed correction;
+no measured regression may be relabeled a fixture mismatch.
+
+The bounded sealed-source fixture follow-up maps VAL-P02-006 to WORK-006 in
+the [Plan](plan.md) and
+[Task0006](tasks/tsk-0006-sealed-source-revision-fixture.md). It supplies the
+existing historical reader's real source-revision prerequisites; it changes
+no production rule or completed Task evidence.
+
+The separately bounded current-fixture consumer follow-up maps VAL-P02-005
+to WORK-005 in the [Plan](plan.md) and
+[Task0005](tasks/tsk-0005-current-registry-fixture-consumers.md).
+It follows the completed narrow Task-template correction and preserves its
+source and evidence. The existing failed hosted run is historical input.
+
+The separately approved Task-template creation boundary maps VAL-P02-004 to
+WORK-004 in the [Plan](plan.md) and
+[Task0004](tasks/tsk-0004-registered-task-template-instantiation.md).
+The completed Task0003 and original Task evidence remain historical.
+
+The current compatibility follow-up maps VAL-P02-003 to WORK-003 in the
+[Plan](plan.md) and its new
+[Task](tasks/tsk-0003-ci-fixture-and-format-follow-up.md).
 
 The direct P02 request and approved implementation plan are the scoped input.
 Relevant existing requirements are REQ-0003-FR-0005, FR-0006, FR-0012,
@@ -204,4 +282,13 @@ No new structural decision is required. [Plan](plan.md) owns order and
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-012 | Registered-form creation metadata; synthetic QA and reference collection/pack controls plus knowledge missing-member/valid control; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-011 | Registered-form creation metadata; three named maintenance, reference-publication and reciprocal-supersession methods with preserved refusal boundaries; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-010 | Registered-form creation metadata; named completed-state, own-generation replay and domainless-navigation controls with preserved refusals; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded fixture reinstantiation under the explicit normal unit-commit/push/merge instruction and reviewed rollback plan | VAL-P02-009 | Registered-form first-appearance metadata; named routing/native controls with exact-input evidence attribution; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded current-contract fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-007 | Named failure evidence; declaration-based governance and navigation controls; immutable archive call accounting before any corpus-budget correction; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |
+| N/A — necessary bounded fixture repair under the explicit normal commit/push/merge instruction | VAL-P02-006 | Exact named RED; 21 explicit shared recovery-fixture methods and preserved refusal assertions; scoped hooks, actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted and integrated-main observations separate |
+| N/A — direct approved fixture repair and restoration of the narrow Task-template boundary for normal delivery | VAL-P02-005 | Observed named failures and same-pattern causal RED; bounded Task-template and migration refusal controls plus identity/authority fixtures; scoped hooks, actual-index staged/message, terminal completion and independent code/security review; hosted and integrated-main observations separate |
+| N/A — direct approved narrow registered Task-template instantiation correction; other provenance controls remain required | VAL-P02-004 | Real-Git registered-template creation RED/GREEN and boundary negatives, all later lifecycle edges, exact-index staged/message, terminal completion and independent review |
+| N/A — direct approved hosted compatibility follow-up; existing requirement meanings are unchanged | VAL-P02-003 | Focused current proof/header and negative regressions, frozen asset refusal, scoped hooks, staged/message, completion and independent review; required hosted and integrated-main observations remain separate |
 | N/A — direct approved P02 package-local change; existing REQ-0003 meaning is unchanged | VAL-P02-001 | Registry/form/consumer, Task completion, route, historical and Git-edge checks |

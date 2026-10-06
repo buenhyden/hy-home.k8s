@@ -1238,6 +1238,7 @@ class LocalEvidenceTests(unittest.TestCase):
             )
 
     def test_full_and_ci_execute_registry_completely_without_local_evidence(self):
+        import hashlib
         import io
         from contextlib import redirect_stdout
 
@@ -1257,7 +1258,7 @@ class LocalEvidenceTests(unittest.TestCase):
         }
         platform_report = json.dumps(
             {
-                "version": 1,
+                "version": 2,
                 "results": [
                     row
                     | {
@@ -1314,18 +1315,24 @@ class LocalEvidenceTests(unittest.TestCase):
                     if "scripts/validation/platform/assurance.py" in argv
                     else "[PASS] repository quality gates passed"
                 )
-                return real_run(
-                    [
-                        sys.executable,
-                        "-c",
-                        "print("
-                        + repr(output)
-                        + "); raise SystemExit("
-                        + ("1" if failed else "0")
-                        + ")",
-                    ],
-                    cwd=cwd,
-                    env=env,
+
+                # Gate orchestration uses typed observations; actual process
+                # timeout and containment controls remain in the runner tests.
+                def stream(value):
+                    payload = value.encode("utf-8")
+                    return self.qa.runner.StreamObservation(
+                        observed_bytes=len(payload),
+                        sha256=hashlib.sha256(payload).hexdigest(),
+                        retained=payload,
+                        complete=True,
+                    )
+
+                return self.qa.runner.BoundedCommandResult(
+                    status="completed",
+                    returncode=1 if failed else 0,
+                    stdout=stream(output + "\n"),
+                    stderr=stream(""),
+                    cleanup_complete=True,
                 )
 
             with (

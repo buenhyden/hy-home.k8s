@@ -151,7 +151,7 @@ class SpecIndexNavigationTest(unittest.TestCase):
     def test_member_listing_with_copied_status_is_rejected(self):
         fence = "`" * 3
         text = (
-            f"## Document Index\n\n{fence}text\n03.specs/\n"
+            f"## Structure\n\n{fence}text\n03.specs/\n"
             f"└── 0999-status-fixture/\n    └── spec.md\n{fence}\n\n"
             "| Spec | Purpose | Status |\n| --- | --- | --- |\n"
             "| [Fixture](./0999-status-fixture/spec.md) | Fixture | `done` |\n"
@@ -163,7 +163,7 @@ class SpecIndexNavigationTest(unittest.TestCase):
 
     def test_package_folder_rows_pass(self):
         text = (
-            "## Document Index\n\n| Package | Purpose |\n| --- | --- |\n"
+            "## Structure\n\n| Package | Purpose |\n| --- | --- |\n"
             "| [0999-status-fixture/](./0999-status-fixture/) | Fixture |\n"
         )
         self.assertEqual(self.diagnostics(text), set())

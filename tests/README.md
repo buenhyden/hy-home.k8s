@@ -28,7 +28,7 @@ updated: "2026-10-05"
 
 ## Scope
 
-#### In Scope
+### In Scope
 
 - production module의 공개 함수·CLI·진단 동작 회귀
 - 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
@@ -36,7 +36,7 @@ updated: "2026-10-05"
 - fixture 소비자 소유권과 고아 fixture 방지
 - hook, routing, 문서, archive, Agent, CI, GitOps 정적 계약
 
-#### Out of Scope
+### Out of Scope
 
 - production runtime 데이터 API
 - 고정된 test case 수나 fixture 수 정책

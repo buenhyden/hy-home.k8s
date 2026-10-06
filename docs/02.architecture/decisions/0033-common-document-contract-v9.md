@@ -177,7 +177,7 @@ the byte-level historical evidence the Archive contract exists to preserve.
 
 ## Traceability
 
-**Current-state clarification (2026-10-05).** The approved local
+__Current-state clarification (2026-10-05).__ The approved local
 [SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md)
 extends the existing Registry to generation 10 for the current lifecycle,
 parent, Task evidence, native Skill and navigation contract. The version-9

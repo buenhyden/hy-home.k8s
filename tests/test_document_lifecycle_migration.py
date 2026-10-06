@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -23,46 +24,29 @@ class MigrationLifecycleTest(unittest.TestCase):
         generic.GenericMigrationRecoveryTest.setUp(self)
         registry_path = "docs/99.templates/registry.json"
         registry = json.loads((self.root / registry_path).read_text())
-        canonical = json.loads((ROOT / registry_path).read_text())
+        published = json.loads((ROOT / registry_path).read_text())
+        published_migration = next(
+            p for p in published["profiles"] if p["id"] == "archive/migration"
+        )
+        migration = next(
+            p for p in registry["profiles"] if p["id"] == "archive/migration"
+        )
+        # This class uses one synthetic record; published records must match
+        # exactly one retained route rather than the inherited broad extension.
+        migration["path_pattern"] = (
+            rf"^(?:{published_migration['path_pattern'][1:-1]}|"
+            rf"{re.escape(self.path)})$"
+        )
         profile = next(
-            p for p in canonical["profiles"] if p["id"] == "governance/contract"
+            p for p in registry["profiles"] if p["id"] == "governance/contract"
         )
         # These finite synthetic owners exercise historical migration events;
-        # production governance routing remains limited to its current SDLC owner.
+        # retain the complete current graph and its published governance route.
         profile["path_pattern"] = (
-            r"^(?:docs/00\.agent-governance/old|"
-            r"\.agents/governance/(?:sdlc|unmapped))\.md$"
+            rf"^(?:{profile['path_pattern'][1:-1]}|"
+            r"(?:docs/00\.agent-governance/old|\.agents/governance/unmapped)\.md)$"
         )
-        registry["profiles"].append(profile)
-        provider = next(
-            p for p in canonical["profiles"] if p["id"] == "governance/provider"
-        )
-        registry["profiles"].append(provider)
-        navigation = next(
-            p
-            for p in canonical["profiles"]
-            if p["id"] == "common/readme-collection-index"
-        )
-        registry["profiles"].append(navigation)
-        domain = next(
-            d
-            for d in registry["lifecycle_domains"]
-            if d["family"] == "governance-guide-policy-runbook"
-        )
-        domain["profile_ids"].extend((profile["id"], provider["id"]))
         self.stage(registry_path, json.dumps(registry).encode())
-        self.stage(
-            profile["template_source"],
-            (ROOT / profile["template_source"]).read_bytes(),
-        )
-        self.stage(
-            provider["template_source"],
-            (ROOT / provider["template_source"]).read_bytes(),
-        )
-        self.stage(
-            navigation["template_source"],
-            (ROOT / navigation["template_source"]).read_bytes(),
-        )
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
         self.target = ".agents/governance/sdlc.md"
         self.row["replacement"] = self.target
@@ -117,7 +101,9 @@ class MigrationLifecycleTest(unittest.TestCase):
         (self.root / path).write_bytes(content)
         self.git.run("add", "--", path)
 
-    def assert_bounded_proposal_failure(self, raw, original):
+    def assert_bounded_proposal_failure(
+        self, raw, original, *, expected_rule="ARCHIVE-MIGRATION-PROFILE"
+    ):
         path = "docs/99.templates/registry.json"
         self.stage(path, json.dumps(raw).encode())
         self.git.run("commit", "--quiet", "-m", "untrusted proposed policy")
@@ -148,7 +134,9 @@ class MigrationLifecycleTest(unittest.TestCase):
             self.fail("proposed executable policy exceeded the bounded probe")
         output = result.stdout + result.stderr
         self.assertNotEqual(result.returncode, 0, output)
-        self.assertIn("ARCHIVE-MIGRATION-PROFILE", output)
+        self.assertIn(expected_rule, output)
+        if expected_rule == "LIFECYCLE-BASE":
+            self.assertIn("history registry is malformed", output)
         self.assertNotIn("UNREACHABLE", output)
         self.assertNotIn("Traceback", output)
 
@@ -169,6 +157,11 @@ class MigrationLifecycleTest(unittest.TestCase):
 
     def test_proposed_profile_identities_are_bound_to_trusted_policy(self):
         original = (self.root / "docs/99.templates/registry.json").read_bytes()
+        trusted = VALIDATOR.load_registry(self.root)
+        self.assertEqual(
+            {profile.profile_id for profile in trusted.profiles},
+            {profile["id"] for profile in json.loads(original)["profiles"]},
+        )
         for change in ("alias", "duplicate", "missing", "extra"):
             with self.subTest(change=change):
                 raw = json.loads(original)
@@ -181,7 +174,9 @@ class MigrationLifecycleTest(unittest.TestCase):
                     raw["profiles"].remove(profile)
                 else:
                     raw["profiles"].append(dict(profile, id="common/proposal-only"))
-                self.assert_bounded_proposal_failure(raw, original)
+                self.assert_bounded_proposal_failure(
+                    raw, original, expected_rule="LIFECYCLE-BASE"
+                )
 
     def test_canonical_policy_guard_precedes_pattern_compilation(self):
         contracts = sys.modules[VALIDATOR.load_registry.__module__]
@@ -230,7 +225,9 @@ class MigrationLifecycleTest(unittest.TestCase):
         original = (self.root / contracts.REGISTRY_PATH).read_bytes()
         raw = json.loads(original)
         profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/spec")
-        profile["path_pattern"] = "^docs/no-policy-owner\\.md$"
+        profile["path_pattern"] = (
+            rf"^(?:{profile['path_pattern'][1:-1]}|docs/no-policy-owner\.md)$"
+        )
         changed = contracts.validate_registry(self.root, raw)
         self.assertEqual(
             next(
@@ -503,13 +500,20 @@ class MigrationLifecycleTest(unittest.TestCase):
 
     def test_unmapped_active_and_terminal_creation_remain_denied(self):
         extra = ".agents/governance/unmapped.md"
+        registry = VALIDATOR.load_registry(self.root)
         for state in (b"active", b"retired"):
             with self.subTest(state=state):
-                self.stage(
-                    extra,
-                    self.payload.replace(b"status: active", b"status: " + state)
-                    + b"Unmapped owner.\n",
+                content = (
+                    self.payload.replace(
+                        b'status: "active"', b'status: "' + state + b'"'
+                    )
+                    + b"Unmapped owner.\n"
                 )
+                document = VALIDATOR.document_from_text(
+                    registry, PurePosixPath(extra), content.decode()
+                )
+                self.assertEqual(document.status, state.decode())
+                self.stage(extra, content)
                 self.assert_fail("LIFECYCLE-CREATE")
 
     def test_record_profile_status_and_unproved_seal_fail(self):
