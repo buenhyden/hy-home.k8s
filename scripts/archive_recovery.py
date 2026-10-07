@@ -1310,14 +1310,14 @@ def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
             "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive registry is malformed"
         ) from exc
     if (
-        len(paths) != 93
-        or len(set(paths)) != 93
+        not paths
         or any(
             not isinstance(path, str)
             or not path.startswith("docs/98.archive/")
             or path == WORK107_MIGRATION_PATH
             for path in paths
         )
+        or len(set(paths)) != len(paths)
     ):
         raise _error("ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive census differs")
     return tuple(sorted(paths))
@@ -1419,8 +1419,6 @@ def build_work107_migration_rows(
             slug = match.group("slug")
             execution[legacy_path] = (slug, leaf)
             slugs.add(slug)
-    if len(execution) != 76 or len(slugs) != 41:
-        raise _error("ARCHIVE-MIGRATION-CENSUS", "execution grouping differs")
     change_numbers = {slug: index for index, slug in enumerate(sorted(slugs), start=1)}
 
     rows: list[dict[str, object]] = []
@@ -1472,14 +1470,14 @@ def build_work107_migration_rows(
     return tuple(sorted(rows, key=lambda row: str(row["stable_path"])))
 
 
-def _work107_validate_closed_census(rows: tuple[Mapping[str, object], ...]) -> None:
-    if len(rows) != 93:
-        raise _error("ARCHIVE-MIGRATION-CENSUS", "ledger row count differs")
+def _work107_validate_row_shape(rows: tuple[Mapping[str, object], ...]) -> None:
+    """Check ledger syntax; the Git-derived comparison owns closed coverage."""
+
+    if not rows:
+        raise _error("ARCHIVE-MIGRATION-CENSUS", "ledger is empty")
     legacy_paths: set[object] = set()
     stable_paths: set[object] = set()
     artifact_ids: set[object] = set()
-    change_leaves: dict[str, set[str]] = {}
-    tombstones: dict[str, int] = {}
     for row in rows:
         if tuple(row) != WORK107_LEDGER_FIELDS:
             raise _error("ARCHIVE-MIGRATION-FIELDS", "ledger field set differs")
@@ -1514,6 +1512,17 @@ def _work107_validate_closed_census(rows: tuple[Mapping[str, object], ...]) -> N
                 raise _error("ARCHIVE-MIGRATION-PROVENANCE", "Git object differs")
         if _SHA256.fullmatch(str(row["content_sha256"])) is None:
             raise _error("ARCHIVE-MIGRATION-PROVENANCE", "payload digest differs")
+        for key in ("legacy_path", "stable_path"):
+            value = str(row[key])
+            path = PurePosixPath(value)
+            if (
+                path.parts[:2] != ("docs", "98.archive")
+                or path.as_posix() != value
+                or ".." in path.parts
+            ):
+                raise _error("ARCHIVE-MIGRATION-IDENTITY", "ledger path differs")
+        if not row["artifact_id"]:
+            raise _error("ARCHIVE-MIGRATION-IDENTITY", "artifact identity is empty")
         legacy_paths.add(row["legacy_path"])
         stable_paths.add(row["stable_path"])
         artifact_ids.add(row["artifact_id"])
@@ -1521,33 +1530,23 @@ def _work107_validate_closed_census(rows: tuple[Mapping[str, object], ...]) -> N
         kind = str(row["record_kind"])
         if kind in {"change-plan", "change-task"}:
             leaf = "plan.md" if kind == "change-plan" else "task.md"
-            if stable.name != leaf:
+            if (
+                stable.parts[:3] != ("docs", "98.archive", "changes")
+                or len(stable.parts) != 5
+                or stable.name != leaf
+            ):
                 raise _error("ARCHIVE-MIGRATION-IDENTITY", "change leaf differs")
-            change_leaves.setdefault(stable.parent.as_posix(), set()).add(leaf)
-        elif kind == "tombstone" and len(stable.parts) == 5:
-            stage = stable.parts[3]
-            tombstones[stage] = tombstones.get(stage, 0) + 1
-        else:
+        elif (
+            kind != "tombstone"
+            or stable.parts[:3] != ("docs", "98.archive", "tombstones")
+            or len(stable.parts) != 5
+        ):
             raise _error("ARCHIVE-MIGRATION-IDENTITY", "record kind differs")
     if not all(
-        len(values) == 93 for values in (legacy_paths, stable_paths, artifact_ids)
+        len(values) == len(rows)
+        for values in (legacy_paths, stable_paths, artifact_ids)
     ):
         raise _error("ARCHIVE-MIGRATION-BIJECTION", "ledger identity is not unique")
-    shapes = tuple(frozenset(leaves) for leaves in change_leaves.values())
-    if (
-        len(change_leaves) != 41
-        or shapes.count(frozenset({"plan.md", "task.md"})) != 35
-        or shapes.count(frozenset({"plan.md"})) != 2
-        or shapes.count(frozenset({"task.md"})) != 4
-    ):
-        raise _error("ARCHIVE-MIGRATION-CENSUS", "change grouping differs")
-    if tombstones != {
-        "01.requirements": 3,
-        "02.architecture": 8,
-        "03.specs": 4,
-        "05.operations": 2,
-    }:
-        raise _error("ARCHIVE-MIGRATION-CENSUS", "tombstone grouping differs")
 
 
 def validate_work107_migration_rows(
@@ -1559,7 +1558,7 @@ def validate_work107_migration_rows(
     if not isinstance(rows, (list, tuple)):
         raise _error("ARCHIVE-MIGRATION-ROW", "ledger must be one ordered sequence")
     materialized = tuple(dict(row) for row in rows)
-    _work107_validate_closed_census(materialized)
+    _work107_validate_row_shape(materialized)
     expected = build_work107_migration_rows(repository_root)
     if materialized != expected:
         raise _error(
@@ -1593,7 +1592,7 @@ def render_work107_migration_document(
     rows: list[Mapping[str, object]] | tuple[Mapping[str, object], ...],
 ) -> bytes:
     materialized = tuple(dict(row) for row in rows)
-    _work107_validate_closed_census(materialized)
+    _work107_validate_row_shape(materialized)
     ledger = json.dumps(materialized, ensure_ascii=False, indent=2) + "\n"
     return (
         _work107_migration_metadata_bytes()
@@ -1628,7 +1627,7 @@ def parse_work107_migration_document(content: bytes) -> tuple[dict[str, object],
     if not isinstance(loaded, list) or any(not isinstance(row, dict) for row in loaded):
         raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration ledger shape differs")
     rows = tuple(dict(row) for row in loaded)
-    _work107_validate_closed_census(rows)
+    _work107_validate_row_shape(rows)
     if render_work107_migration_document(rows) != content:
         raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration document is noncanonical")
     return rows

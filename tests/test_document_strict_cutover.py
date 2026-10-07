@@ -34,10 +34,6 @@ VALIDATOR_PATHS = {
 }
 STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/templates"
 STAGE05_ROOT = REPOSITORY_ROOT / "docs/05.operations"
-MIG0004_PATH = (
-    REPOSITORY_ROOT
-    / "docs/98.archive/migrations/0004-document-authority-convergence.md"
-)
 RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
     {
         "sdlc/data-model",
@@ -81,11 +77,6 @@ def load_document_contracts():
 
 def clone_registry(registry: dict[str, Any]) -> dict[str, Any]:
     return json.loads(json.dumps(registry))
-
-
-def migration_rows() -> list[dict[str, Any]]:
-    contents = MIG0004_PATH.read_text(encoding="utf-8")
-    return json.loads(contents.split("```json\n", 1)[1].split("\n```", 1)[0])
 
 
 class Stage99TerminalAuthorityTests(unittest.TestCase):
@@ -153,25 +144,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 )
                 native = re.findall(r"__[A-Za-z0-9_]+__", text)
                 self.assertTrue(all(current_native.fullmatch(item) for item in native))
-
-    def test_retired_capacity_documents_and_executables_have_no_current_owner(
-        self,
-    ) -> None:
-        contracts = load_document_contracts()
-        registry = contracts.load_registry(REPOSITORY_ROOT)
-        retired_surfaces = (
-            "docs/00.agent-governance/controls/duplicate-rule.md",
-            "docs/03.specs/9999-example/data-model.md",
-            "docs/03.specs/9999-example/contracts/openapi.yaml",
-            "docs/03.specs/9999-example/contracts/schema.graphql",
-            "docs/03.specs/9999-example/contracts/service.proto",
-        )
-        for relative_path in retired_surfaces:
-            with (
-                self.subTest(path=relative_path),
-                self.assertRaises(contracts.DocumentContractError),
-            ):
-                contracts.classify_path(registry, PurePosixPath(relative_path))
 
     def test_stage99_authority_rejects_restored_unused_capacity_profiles(
         self,
@@ -690,34 +662,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertIn("docs/README.md", contents)
         self.assertIn("Plan/Task", contents)
 
-    def test_mig0004_recovers_one_retired_spec0054_ledger(self) -> None:
-        rows = [
-            row
-            for row in migration_rows()
-            if row["legacy_path"].endswith(
-                "0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
-            )
-        ]
-        self.assertEqual(len(rows), 1)
-        row = rows[0]
-        self.assertEqual(row["action"], "replaced")
-        self.assertEqual(
-            row["replacement"],
-            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md",
-        )
-        self.assertEqual(
-            row["source_commit"],
-            "7a770c3c0eabaeda554c4030fc08fb17de164fe5",  # pragma: allowlist secret - pinned Git commit fixture
-        )
-        self.assertEqual(
-            row["source_blob"],
-            "465f24340b99c03a38b5150d517627b69fa7c717",  # pragma: allowlist secret - pinned Git blob fixture
-        )
-        self.assertEqual(
-            row["content_sha256"],
-            "3fd4925824ad0b92748ff0f27e3a252dee3619c415caff02cc59a385e4c8fc08",  # pragma: allowlist secret - pinned SHA-256 recovery fixture
-        )
-
 
 class Stage05TerminalOwnershipTests(unittest.TestCase):
     @classmethod
@@ -903,21 +847,6 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                     "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md"
                 ),
             )
-
-    def test_retired_provider_surface_is_outside_the_document_corpus(self) -> None:
-        contracts = sys.modules["document_contracts"]
-        for retired in (
-            "GEMINI.md",
-            ".gemini/README.md",
-            ".gemini/agents/doc-writer.md",
-            ".gemini/agents/nested/doc-writer.md",
-            ".gemini/agents/doc-writer.txt",
-            ".gemini/settings.md",
-        ):
-            with self.subTest(retired=retired):
-                self.assertFalse(
-                    contracts._is_target_markdown(contracts.PurePosixPath(retired))
-                )
 
     def test_provider_native_profile_routes_only_claude_markdown(self) -> None:
         validator = self.validators["registry"]

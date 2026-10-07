@@ -1162,37 +1162,31 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(), rows
                 )
 
-    def test_mig0004_rejects_non_terminal_row_growth(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="mig0004-growth-") as temporary:
-            root = Path(temporary)
-            fixture, rows = self._mig0004_current_fixture(root)
-            target = "docs/03.specs/9999-semantic-growth/README.md"
-            destination = root / target
-            destination.parent.mkdir(parents=True)
-            destination.write_text("# Semantic growth\n", encoding="utf-8")
-            fixture.run("add", "--", target)
-            added = {
-                "legacy_path": "docs/03.specs/9999-semantic-growth/tasks.md",
-                "stable_path": None,
-                "artifact_id": None,
-                "action": "replaced",
-                "replacement": target,
-                "source_commit": "a" * 40,
-                "source_blob": "b" * 40,
-                "content_sha256": "c" * 64,
-                "reason": "Canonical future task-ledger convergence.",
-            }
-            grown = tuple(
-                sorted((*rows, added), key=lambda row: str(row["legacy_path"]))
-            )
+    def test_mig0004_pinned_control_rejects_unsealed_row_growth(self) -> None:
+        path = "docs/98.archive/migrations/0004-document-authority-convergence.md"
+        content = (ROOT / path).read_bytes()
+        prefix, marker, payload = content.partition(
+            archive_validation._MIGRATION_LEDGER_PREFIX  # noqa: SLF001
+        )
+        raw, fence, suffix = payload.partition(b"\n```\n")
+        self.assertTrue(marker and fence)
+        rows = json.loads(raw)
+        added = dict(rows[-1])
+        added["legacy_path"] = "docs/03.specs/9999-semantic-growth/tasks.md"
+        grown = sorted((*rows, added), key=lambda row: str(row["legacy_path"]))
+        candidate = (
+            prefix
+            + marker
+            + (json.dumps(grown, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+            + fence
+            + suffix
+        )
 
-            with self.assertRaisesRegex(
-                archive_validation.ArchiveContractError,
-                "RECOVERY-MIGRATION-ROW",
-            ):
-                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
-                    root.resolve(), grown
-                )
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError,
+            "ARCHIVE-MIGRATION-PROFILE",
+        ):
+            archive_validation.parse_pinned_migration_control(path, candidate)
 
     def test_mig0004_requires_exact_stage99_and_sole_spec0054_rows(self) -> None:
         with tempfile.TemporaryDirectory(prefix="mig0004-required-") as temporary:
@@ -2244,7 +2238,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.context,
             tracked_regular_paths=self.context.tracked_regular_paths - {target},
         )
-        # The 141-row coverage assertion still has to pass inside this call.
+        # Sealed row coverage still has to pass inside this call.
         reduced, vacated = self.validator._work109_four_digit_aliases(context)
 
         self.assertNotIn(legacy, reduced)

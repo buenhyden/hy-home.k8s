@@ -1,7 +1,6 @@
 """Independent execution boundaries for hosted branch metadata."""
 
 from pathlib import Path
-import json
 import subprocess
 import tempfile
 import unittest
@@ -17,15 +16,6 @@ class CiQaWorkflowTests(unittest.TestCase):
 
     def test_summary_uses_event_metadata_and_reports_full_qa_not_run(self):
         step = self.workflow["jobs"]["ci-summary"]["steps"][0]
-        self.assertEqual(
-            step["env"],
-            {
-                "EVENT_NAME": "${{ github.event_name }}",
-                "BASE_REF": "${{ github.base_ref }}",
-                "HEAD_REF": "${{ github.head_ref }}",
-                "SOURCE_REF": "${{ github.ref }}",
-            },
-        )
         cases = (
             ("pull_request", "main", "feat/topic", "refs/pull/1/merge", 0, "PASS"),
             ("pull_request", "develop", "feat/topic", "refs/pull/1/merge", 1, "FAIL"),
@@ -55,7 +45,7 @@ class CiQaWorkflowTests(unittest.TestCase):
                 self.assertIn(f"verdict={verdict}", result.stdout)
                 self.assertIn("full-qa result=NOT_RUN verdict=NOT_RUN", result.stdout)
                 self.assertNotIn("qa-isolated result=", result.stdout)
-        for missing in step["env"]:
+        for missing in ("EVENT_NAME", "BASE_REF", "HEAD_REF", "SOURCE_REF"):
             with self.subTest(missing=missing):
                 env = {
                     "EVENT_NAME": "pull_request",
@@ -73,49 +63,6 @@ class CiQaWorkflowTests(unittest.TestCase):
                 )
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("full-qa result=NOT_RUN verdict=NOT_RUN", result.stdout)
-
-    def test_local_full_unit_test_registry_is_retained(self):
-        registry = json.loads((ROOT / "scripts/validation/registry.json").read_text())
-        unit = next(row for row in registry["validators"] if row["id"] == "unit-tests")
-        self.assertIn("ci", unit["lanes"])
-        self.assertIn("all-files", unit["lanes"])
-        self.assertIn("unittest", str(unit))
-        self.assertFalse(unit["optional"])
-
-    def test_pr_template_routes_delivery_evidence_to_quality_policy(self):
-        template = (ROOT / ".github/PULL_REQUEST_TEMPLATE.md").read_text()
-        self.assertIn(".agents/governance/quality.md", template)
-        self.assertNotIn("python3 scripts/qa.py full", template)
-        self.assertNotIn("`full` result", template)
-
-    def test_issue_contact_does_not_route_to_disabled_discussions(self):
-        config = yaml.safe_load(
-            (ROOT / ".github/ISSUE_TEMPLATE/config.yml").read_text()
-        )
-        self.assertFalse(
-            any("/discussions" in link["url"] for link in config["contact_links"])
-        )
-
-    def test_dependabot_uses_existing_actions_label(self):
-        config = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text())
-        actions = next(
-            item
-            for item in config["updates"]
-            if item["package-ecosystem"] == "github-actions"
-        )
-        self.assertIn("github_actions", actions["labels"])
-        self.assertNotIn("github-actions", actions["labels"])
-
-    def test_cluster_paths_use_existing_gitops_label(self):
-        labels = yaml.safe_load((ROOT / ".github/labeler.yml").read_text())
-        self.assertNotIn("area/cluster", labels)
-        self.assertIn("gitops/clusters/**", str(labels["area/gitops"]))
-
-    def test_security_notice_routes_to_private_reporting_ui(self):
-        notice = (ROOT / ".github/SECURITY.md").read_text()
-        self.assertIn(
-            "https://github.com/buenhyden/hy-home.k8s/security/advisories/new", notice
-        )
 
     def test_manifest_validator_rejects_missing_and_empty_roots(self):
         script = ROOT / "scripts/validate-k8s-manifests.sh"

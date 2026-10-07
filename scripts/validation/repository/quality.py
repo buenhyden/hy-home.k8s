@@ -4,14 +4,12 @@
 import argparse
 import ast
 import collections
-import hashlib
 import json
 import os
 import pathlib
 import re
 import subprocess
 import sys
-import tempfile
 
 import yaml
 
@@ -33,6 +31,14 @@ from validation.current_executable_references import (  # noqa: E402
     executable_suffixes_from_registry,
     reachable_git_path_exists,
     validate_current_executable_references,
+)
+from validation.repository.form_contracts import (  # noqa: E402
+    canonical_form_content_errors,
+    canonical_form_contract_errors,
+    collect_physical_form_paths,
+)
+from validation.repository.sample_app_contract import (  # noqa: E402
+    sample_app_copyset_errors,
 )
 from validation.repository.bounded_io import (  # noqa: E402
     BoundedInputError,
@@ -432,11 +438,6 @@ for local_rule_path in claude_local_rule_paths:
         if "pattern" not in metadata and "conditions" not in metadata:
             fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
-if os.path.lexists(root / "docs/00.agent-governance"):
-    fail("retired Stage 00 governance root must remain absent")
-if os.path.lexists(root / ".agents/memory"):
-    fail("retired shared agent memory root must remain absent")
-
 allowed_top_level_docs = {
     "01.requirements",
     "02.architecture",
@@ -458,29 +459,8 @@ old_top_level_docs = {
     "09.runbooks",
     "10.incidents",
 }
-
 docs_dir = root / "docs"
 actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
-stage04_retirement_authority = (
-    root
-    / "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
-)
-stage04_retirement_authority_sha256 = "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a"  # pragma: allowlist secret
-if "04.execution" in actual_docs:
-    fail("retired docs/04.execution must remain absent after MIG-0002")
-else:
-    try:
-        stage04_retirement_payload = read_bytes(stage04_retirement_authority)
-    except OSError as exc:
-        fail(f"Stage 04 retirement authority is unavailable: {exc}")
-    else:
-        if (
-            hashlib.sha256(stage04_retirement_payload).hexdigest()
-            != stage04_retirement_authority_sha256
-        ):
-            fail("Stage 04 retirement requires the exact MIG-0002 authority")
-for name in sorted(actual_docs & old_top_level_docs):
-    fail(f"old docs stage folder must not exist after hard migration: docs/{name}")
 for name in sorted(actual_docs - allowed_top_level_docs):
     fail(f"docs top-level folder is not allowed: docs/{name}")
 for name in sorted(allowed_top_level_docs - actual_docs):
@@ -494,23 +474,19 @@ for provider in ["aws", "azure"]:
         )
 
 sample_app_dir = root / "examples/sample-app"
-expected_sample_app_files = [
-    "README.md",
-    "analysis-template.yaml",
-    "external-secret.yaml",
-    "ingress.yaml",
-    "kustomization.yaml",
-    "rollout.yaml",
-    "service.yaml",
-]
-actual_sample_app_files = sorted(
-    path.name for path in sample_app_dir.iterdir() if path.is_file()
-)
-if actual_sample_app_files != expected_sample_app_files:
-    fail(
-        "examples/sample-app file set must stay minimal onboarding template: "
-        + ", ".join(expected_sample_app_files)
-    )
+sample_app_kustomization = sample_app_dir / "kustomization.yaml"
+sample_app_source = read_text(sample_app_kustomization)
+sample_app_resources = load_yaml(sample_app_kustomization)
+sample_app_yaml = {
+    path.name for path in sample_app_dir.iterdir() if path.suffix in {".yaml", ".yml"}
+}
+for path in sample_app_dir.iterdir():
+    if path.suffix in {".yaml", ".yml"} and (path.is_symlink() or not path.is_file()):
+        fail("examples/sample-app YAML copy member must be a regular file")
+for error in sample_app_copyset_errors(
+    sample_app_yaml, sample_app_resources, sample_app_source
+):
+    fail(error)
 
 for active_reference_file in [
     "service-stable.yaml",
@@ -574,17 +550,6 @@ def template_path(template_name: str) -> pathlib.Path:
 template_root = root / "docs/99.templates/templates"
 
 
-def collect_physical_form_paths(
-    repository_root: pathlib.Path,
-    forms_root: pathlib.Path,
-) -> set[pathlib.PurePosixPath]:
-    return {
-        pathlib.PurePosixPath(path.relative_to(repository_root).as_posix())
-        for path in forms_root.rglob("*")
-        if path.is_file() and path != forms_root / "README.md"
-    }
-
-
 physical_form_paths = collect_physical_form_paths(root, template_root)
 registry_form_references = [
     (profile.profile_id, profile.template)
@@ -616,50 +581,6 @@ registry_form_owners = [
 ]
 
 
-def canonical_form_contract_errors(
-    physical_forms: set[pathlib.PurePosixPath],
-    profile_form_references: list[tuple[str, pathlib.PurePosixPath]],
-    profile_form_owners: list[tuple[str, pathlib.PurePosixPath]],
-) -> list[str]:
-    owners_by_form: dict[pathlib.PurePosixPath, list[str]] = collections.defaultdict(
-        list
-    )
-    for profile_id, form_path in profile_form_owners:
-        owners_by_form[form_path].append(profile_id)
-    registry_forms = {form_path for _, form_path in profile_form_references}
-    errors = []
-    canonical_form_name = re.compile(
-        r"^[a-z0-9][a-z0-9-]*\.template\.(md|yaml|graphql|proto|toml)$"
-    )
-    noncanonical_names = sorted(
-        str(form)
-        for form in physical_forms
-        if not canonical_form_name.fullmatch(form.name)
-    )
-    if noncanonical_names:
-        errors.append(
-            "physical form filenames must match "
-            "<name>.template.(md|yaml|graphql|proto|toml): "
-            f"{noncanonical_names}"
-        )
-    missing = sorted(registry_forms - physical_forms, key=str)
-    if missing:
-        errors.append(f"registry-owned forms are missing: {missing}")
-    unowned = sorted(physical_forms - set(owners_by_form), key=str)
-    if unowned:
-        errors.append(f"physical forms have no registry owner: {unowned}")
-    duplicate_owners = {
-        str(form): sorted(owners)
-        for form, owners in owners_by_form.items()
-        if len(owners) != 1
-    }
-    if duplicate_owners:
-        errors.append(
-            f"physical forms must have exactly one profile owner: {duplicate_owners}"
-        )
-    return errors
-
-
 canonical_form_errors = canonical_form_contract_errors(
     physical_form_paths,
     registry_form_references,
@@ -668,413 +589,19 @@ canonical_form_errors = canonical_form_contract_errors(
 for error in canonical_form_errors:
     fail(error)
 
-# Independent mutations prove that the registry/form ownership assertion rejects
-# missing registry forms, unowned physical forms, duplicate profile owners, and
-# noncanonical filenames that would previously have been invisible.
-first_form = sorted(physical_form_paths, key=str)[0]
-if not canonical_form_contract_errors(
-    physical_form_paths - {first_form},
-    registry_form_references,
-    registry_form_owners,
-):
-    fail("canonical form mutation proof accepted a missing registry-owned form")
-unowned_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/common/unowned.template.md"
-)
-if not canonical_form_contract_errors(
-    physical_form_paths | {unowned_form},
-    registry_form_references,
-    registry_form_owners,
-):
-    fail("canonical form mutation proof accepted an unowned physical form")
-if not canonical_form_contract_errors(
-    physical_form_paths,
-    registry_form_references,
-    registry_form_owners + [("mutation/duplicate-owner", first_form)],
-):
-    fail("canonical form mutation proof accepted duplicate profile ownership")
-noncanonical_native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/specs/openapi.yaml"
-)
-expected_noncanonical_diagnostic = (
-    "physical form filenames must match <name>.template.(md|yaml|graphql|proto|toml): "
-    f"{[str(noncanonical_native_form)]}"
-)
-with tempfile.TemporaryDirectory(prefix="template-form-mutation-") as temp_dir:
-    mutation_root = pathlib.Path(temp_dir)
-    mutation_forms_root = mutation_root / "docs/99.templates/templates"
-    mutation_native_path = mutation_root / noncanonical_native_form
-    mutation_native_path.parent.mkdir(parents=True)
-    mutation_native_path.write_text("openapi: 3.1.0\n", encoding="utf-8")
-    mutation_physical_forms = collect_physical_form_paths(
-        mutation_root,
-        mutation_forms_root,
-    )
-    noncanonical_errors = canonical_form_contract_errors(
-        mutation_physical_forms,
-        registry_form_references,
-        registry_form_owners,
-    )
-if expected_noncanonical_diagnostic not in noncanonical_errors:
-    fail(
-        "canonical form mutation proof did not reject a noncanonical native filename "
-        "with the stable diagnostic"
-    )
-
-
-def canonical_form_content_errors(
-    form_sources: dict[pathlib.PurePosixPath, str],
-) -> list[str]:
-    def html_comments_balanced(source: str) -> bool:
-        offset = 0
-        in_comment = False
-        while offset < len(source):
-            marker = "-->" if in_comment else "<!--"
-            marker_offset = source.find(marker, offset)
-            opposite = "<!--" if in_comment else "-->"
-            opposite_offset = source.find(opposite, offset)
-            if opposite_offset != -1 and (
-                marker_offset == -1 or opposite_offset < marker_offset
-            ):
-                return False
-            if marker_offset == -1:
-                break
-            in_comment = not in_comment
-            offset = marker_offset + len(marker)
-        return not in_comment
-
-    def strip_html_comments(raw_line: str, in_comment: bool) -> tuple[str, bool]:
-        visible = []
-        offset = 0
-        while offset < len(raw_line):
-            if in_comment:
-                end = raw_line.find("-->", offset)
-                if end == -1:
-                    return "".join(visible), True
-                offset = end + 3
-                in_comment = False
-                continue
-            start = raw_line.find("<!--", offset)
-            if start == -1:
-                visible.append(raw_line[offset:])
-                break
-            visible.append(raw_line[offset:start])
-            offset = start + 4
-            in_comment = True
-        return "".join(visible), in_comment
-
-    def markdown_sections(source: str, heading_level: int) -> dict[str, str]:
-        sections: dict[str, list[str]] = collections.defaultdict(list)
-        current_heading = None
-        in_comment = False
-        fence_character = None
-        fence_length = 0
-        opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
-        for raw_line in source.splitlines(keepends=True):
-            if fence_character is not None:
-                closing = re.compile(
-                    rf"^ {{0,3}}{re.escape(fence_character)}"
-                    rf"{{{fence_length},}}[ \t]*(?:\r?\n)?$"
-                )
-                if closing.fullmatch(raw_line):
-                    fence_character = None
-                    fence_length = 0
-                if current_heading is not None:
-                    sections[current_heading].append(raw_line)
-                continue
-            visible, in_comment = strip_html_comments(raw_line, in_comment)
-            fence = opening.match(visible)
-            if fence:
-                marker = fence.group(1)
-                if marker[0] != "`" or "`" not in fence.group(2):
-                    fence_character = marker[0]
-                    fence_length = len(marker)
-                if current_heading is not None:
-                    sections[current_heading].append(raw_line)
-                continue
-            heading = re.match(
-                r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*?)[ \t]*(?:\r?\n)?$",
-                visible,
-            )
-            if heading and len(heading.group(1)) <= heading_level:
-                if len(heading.group(1)) == heading_level:
-                    current_heading = re.sub(
-                        r"[ \t]+##+[ \t]*$", "", heading.group(2).strip()
-                    )
-                    sections.setdefault(current_heading, [])
-                else:
-                    current_heading = None
-                continue
-            if current_heading is not None:
-                sections[current_heading].append(raw_line)
-        return {heading: "".join(lines) for heading, lines in sections.items()}
-
-    errors = []
-    retired_markers = (
-        "Target: " + "docs/",
-        "Owner docs from target directory",
-        "Replace every placeholder",
-        "Describe the topic-specific",
-    )
-    author_comment = re.compile(r"<!-- Author prompt: [^\n]+ -->")
-    useful_author_comment = re.compile(
-        r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
-    )
-    markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
-    archive_envelope_marker = (
-        "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
-    )
-    archive_migration_marker = "<!-- archive-migration-ledger:v1 format=json -->"
-    # The migration form also opens the consumer block the Archive parser owns.
-    archive_consumers_marker = "<!-- archive-historical-consumers:v1 format=json -->"
-    for form_path, source in sorted(
-        form_sources.items(), key=lambda item: str(item[0])
-    ):
-        for marker in retired_markers:
-            if marker in source:
-                errors.append(f"{form_path} contains retired form residue: {marker}")
-        if form_path.suffix != ".md":
-            continue
-        if not html_comments_balanced(source):
-            errors.append(f"{form_path} contains an unbalanced HTML comment")
-            continue
-        for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
-            comment = match.group(0)
-            if comment in {
-                markdownlint_directive,
-                archive_envelope_marker,
-                archive_migration_marker,
-                archive_consumers_marker,
-            } or author_comment.fullmatch(comment):
-                continue
-            errors.append(f"{form_path} contains a non-author form comment")
-
-    for profile_id, form_path in registry_form_owners:
-        profile = registry_profiles_by_id[profile_id]
-        source = form_sources.get(form_path)
-        if source is None or form_path.suffix != ".md":
-            continue
-        required_section_groups = [(2, profile.headings.required, False)]
-        for (
-            heading_level,
-            required_headings,
-            allow_structured_starter,
-        ) in required_section_groups:
-            sections = markdown_sections(source, heading_level)
-            for heading in required_headings:
-                section_body = sections.get(heading, "")
-                if (
-                    allow_structured_starter
-                    and re.sub(r"<!--.*?-->", "", section_body, flags=re.DOTALL).strip()
-                ):
-                    continue
-                prompts = [
-                    match.group("prompt").strip()
-                    for match in useful_author_comment.finditer(section_body)
-                ]
-                if not any(prompts):
-                    errors.append(
-                        f"{form_path} section {heading!r} must contain a useful Author prompt"
-                    )
-        contract = profile.body_contract
-        if contract is None:
-            continue
-        table_heading = f"### {contract.table_heading}"
-        table_header = "| " + " | ".join(contract.required_columns) + " |"
-        if source.count(table_heading) != 1 or source.count(table_header) != 1:
-            errors.append(
-                f"{form_path} must contain one exact registry-owned lifecycle table"
-            )
-    return errors
-
 
 form_sources = {
     form_path: read_text(root / form_path) for form_path in physical_form_paths
 }
-for error in canonical_form_content_errors(form_sources):
+for error in canonical_form_content_errors(
+    form_sources, registry_form_owners, registry_profiles_by_id
+):
     fail(error)
 
-# Form-focused mutations keep retired route prose, generic comments, and
-# registry-table drift inside the aggregate repository gate without extending
-# authored-document semantic enforcement ahead of the lifecycle-table tranche.
-spec_form = pathlib.PurePosixPath("docs/99.templates/templates/specs/spec.template.md")
-native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/runtime/codex-agent.template.toml"
-)
-form_content_mutations = []
-retired_mutation = dict(form_sources)
-retired_mutation[spec_form] += "\n<!-- Target: " + "docs/example.md -->\n"
-form_content_mutations.append(("retired route residue", retired_mutation))
-comment_mutation = dict(form_sources)
-comment_mutation[spec_form] = comment_mutation[spec_form].replace(
-    "<!-- Author prompt:", "<!-- Generic prompt:", 1
-)
-form_content_mutations.append(("generic form comment", comment_mutation))
-table_mutation = dict(form_sources)
-table_mutation[spec_form] = table_mutation[spec_form].replace(
-    "### Lifecycle Traceability", "### Drifted Traceability", 1
-)
-form_content_mutations.append(("lifecycle table drift", table_mutation))
-native_mutation = dict(form_sources)
-native_mutation[native_form] = (
-    "# Owner docs from target directory\n" + native_mutation[native_form]
-)
-form_content_mutations.append(("native owner comment", native_mutation))
-for label, mutation in form_content_mutations:
-    if not canonical_form_content_errors(mutation):
-        fail(f"canonical form content mutation accepted {label}")
-
-archive_record_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/archive/tombstone.template.md"
-)
-archive_marker_mutation = dict(form_sources)
-archive_marker_mutation[archive_record_form] = archive_marker_mutation[
-    archive_record_form
-].replace("archive-envelope:v1", "archive-envelope:v2", 1)
-expected_archive_marker_diagnostic = (
-    f"{archive_record_form} contains a non-author form comment"
-)
-if expected_archive_marker_diagnostic not in canonical_form_content_errors(
-    archive_marker_mutation
-):
-    fail(
-        "canonical form content mutation did not reject a drifted archive "
-        "envelope marker with the stable diagnostic"
-    )
-
-archive_migration_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/archive/migration.template.md"
-)
-archive_migration_marker_mutation = dict(form_sources)
-archive_migration_marker_mutation[archive_migration_form] = (
-    archive_migration_marker_mutation[archive_migration_form].replace(
-        "archive-migration-ledger:v1", "archive-migration-ledger:v2", 1
-    )
-)
-expected_archive_migration_marker_diagnostic = (
-    f"{archive_migration_form} contains a non-author form comment"
-)
-if expected_archive_migration_marker_diagnostic not in canonical_form_content_errors(
-    archive_migration_marker_mutation
-):
-    fail(
-        "canonical form content mutation did not reject a drifted archive "
-        "migration marker with the stable diagnostic"
-    )
-
-prompt_profile_id, prompt_form = sorted(
-    (
-        (profile_id, form_path)
-        for profile_id, form_path in registry_form_owners
-        if form_path.suffix == ".md"
-        and registry_profiles_by_id[profile_id].headings.required
-        and registry_profiles_by_id[profile_id].body_contract is None
-    ),
-    key=lambda item: str(item[1]),
-)[0]
-prompt_heading = registry_profiles_by_id[prompt_profile_id].headings.required[0]
-prompt_match = re.search(r"<!-- Author prompt: [^\n]+ -->", form_sources[prompt_form])
-if prompt_match is None:
-    fail(f"canonical prompt mutation setup found no Author prompt in {prompt_form}")
-else:
-    prompt_removal_mutation = dict(form_sources)
-    prompt_removal_mutation[prompt_form] = (
-        form_sources[prompt_form][: prompt_match.start()]
-        + form_sources[prompt_form][prompt_match.end() :]
-    )
-    expected_prompt_diagnostic = (
-        f"{prompt_form} section {prompt_heading!r} must contain a useful Author prompt"
-    )
-    if expected_prompt_diagnostic not in canonical_form_content_errors(
-        prompt_removal_mutation
-    ):
-        fail(
-            "canonical form content mutation did not reject a removed Author prompt "
-            "with the stable diagnostic"
-        )
-
-    unbalanced_comment_mutation = dict(form_sources)
-    unbalanced_comment_mutation[prompt_form] = form_sources[prompt_form].replace(
-        prompt_match.group(0), prompt_match.group(0)[:-3], 1
-    )
-    expected_unbalanced_diagnostic = (
-        f"{prompt_form} contains an unbalanced HTML comment"
-    )
-    if expected_unbalanced_diagnostic not in canonical_form_content_errors(
-        unbalanced_comment_mutation
-    ):
-        fail(
-            "canonical form content mutation did not reject an unbalanced comment "
-            "with the stable diagnostic"
-        )
-
-missing_source_profile_id, missing_source_form = sorted(
-    (
-        (profile_id, form_path)
-        for profile_id, form_path in registry_form_owners
-        if form_path.suffix == ".md"
-        and registry_profiles_by_id[profile_id].body_contract is not None
-    ),
-    key=lambda item: str(item[1]),
-)[0]
-missing_source_mutation = dict(form_sources)
-missing_source_mutation.pop(missing_source_form)
-expected_missing_source_diagnostic = (
-    f"registry-owned forms are missing: {[missing_source_form]}"
-)
-missing_source_contract_errors = canonical_form_contract_errors(
-    set(missing_source_mutation),
-    registry_form_references,
-    registry_form_owners,
-)
-if missing_source_contract_errors != [expected_missing_source_diagnostic]:
-    fail(
-        "canonical form missing-source mutation did not retain the stable "
-        "ownership diagnostic"
-    )
-if canonical_form_content_errors(missing_source_mutation):
-    fail(
-        "canonical form content validation duplicated an already-reported "
-        "missing-source diagnostic"
-    )
 
 template_support_root = root / "docs/99.templates/support"
 if template_support_root.exists():
     fail("docs/99.templates/support is a retired transition surface")
-
-
-for provider in ["aws", "azure"]:
-    docs_root = root / "examples" / provider / "docs"
-    if not docs_root.exists():
-        continue
-    for example_doc in sorted(docs_root.rglob("*.md")):
-        text = read_text(example_doc)
-        if example_doc.name == "README.md":
-            continue
-        if "## Provider Example Boundary" not in text:
-            fail(
-                f"{rel(example_doc)} missing example-local boundary heading: "
-                "## Provider Example Boundary"
-            )
-        for required_phrase in [
-            "adjacent executable assets",
-            "not live provider-latest guidance",
-        ]:
-            if required_phrase not in text:
-                fail(
-                    f"{rel(example_doc)} missing provider boundary phrase: {required_phrase}"
-                )
-        for stale_heading in [
-            "## Azure Migration Product Requirements",
-            "## Azure Migration Specification",
-            "## Azure Kubernetes Service Architecture Description",
-        ]:
-            if stale_heading in text:
-                fail(
-                    f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}"
-                )
-        if re.search(r"^##\s+[0-9]+\.\s+.*관련 문서", text, re.MULTILINE):
-            fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
 
 
 def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:

@@ -98,7 +98,6 @@ EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/rhysd/actionlint": "v1.7.12",
     "https://github.com/stackrox/kube-linter": "v0.8.3",
 }
-QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
 PIN_PATTERN = re.compile(
     r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)"
     r"==(?P<version>[A-Za-z0-9][A-Za-z0-9.+_-]*)$"

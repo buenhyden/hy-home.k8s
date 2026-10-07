@@ -313,7 +313,13 @@ def _work107_stable_archive_aliases(
         PurePosixPath(str(row["legacy_path"])): PurePosixPath(str(row["stable_path"]))
         for row in rows
     }
-    return aliases if len(aliases) == 93 and len(set(aliases.values())) == 93 else {}
+    return (
+        aliases
+        if rows
+        and len(aliases) == len(rows)
+        and len(set(aliases.values())) == len(rows)
+        else {}
+    )
 
 
 def _work107_stable_archive_index_source(
@@ -325,7 +331,7 @@ def _work107_stable_archive_index_source(
     if source != ARCHIVE_INDEX_PATH or source not in context.texts:
         return False
     rows = _work107_stable_archive_rows(context)
-    if len(rows) != 93:
+    if not rows:
         return False
     try:
         legacy = read_commit_path_blob(
@@ -2720,11 +2726,9 @@ def _work109_migration_projection(
         else:
             merges[legacy] = current_replacement
 
-    if (
-        len(pre_cutover_stable_paths) != 141
-        or sealed_rows.get("replaced", set()) != set(WORK109_REPLACEMENTS)
-        or sealed_rows.get("merged", set()) != set(WORK109_MERGES)
-    ):
+    if sealed_rows.get("replaced", set()) != set(
+        WORK109_REPLACEMENTS
+    ) or sealed_rows.get("merged", set()) != set(WORK109_MERGES):
         raise ConfigurationError("WORK-109 migration ledger coverage differs")
     return aliases, replacements, merges, frozenset(vacated_moves)
 

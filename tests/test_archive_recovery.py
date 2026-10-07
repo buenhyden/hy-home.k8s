@@ -944,6 +944,20 @@ class Work107StableArchiveContractTest(unittest.TestCase):
                 with self.assertRaises(ArchiveContractError):
                     archive_recovery.validate_work107_migration_rows(ROOT, mutation)
 
+    def test_work107_document_syntax_accepts_subset_but_reviewed_consumer_rejects_it(
+        self,
+    ) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)[:1]
+        rendered = archive_recovery.render_work107_migration_document(rows)
+
+        self.assertEqual(
+            archive_recovery.parse_work107_migration_document(rendered), rows
+        )
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^ARCHIVE-MIGRATION-REVIEWED:"
+        ):
+            archive_recovery.validate_work107_migration_rows(ROOT, rows)
+
     def test_work107_stable_wrapper_preserves_payload_and_dual_recovery(self) -> None:
         rows = archive_recovery.build_work107_migration_rows(ROOT)
         change = next(row for row in rows if row["record_kind"] == "change-plan")

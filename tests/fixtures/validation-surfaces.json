@@ -93,22 +93,22 @@
     },
     {
       "name": "traefik",
-      "path": "traefik/traefik.yaml",
+      "path": "traefik/route-probe.yaml",
       "expectedSurface": "traefik"
     },
     {
       "name": "examples",
-      "path": "examples/sample-app/deployment.yaml",
+      "path": "examples/route-probe/manifest.yaml",
       "expectedSurface": "examples"
     },
     {
       "name": "authored-doc",
-      "path": "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
+      "path": "docs/98.archive/completed/03.specs/9999-route-probe/spec.md",
       "expectedSurface": "authored-documents"
     },
     {
       "name": "current-research-report",
-      "path": "docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md",
+      "path": "docs/90.references/research/9999-route-probe/report.md",
       "expectedSurface": "authored-documents"
     },
     {
@@ -275,27 +275,6 @@
       }
     },
     {
-      "name": "agent-governance-authored-lineage",
-      "lane": "ci",
-      "paths": [
-        "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/plan.md"
-      ],
-      "expected": {
-        "validators": [
-          "document-contract-registry",
-          "document-lifecycle",
-          "links-and-owners",
-          "markdown-profiles"
-        ],
-        "protectedLevel": "review",
-        "unmatchedPaths": []
-      }
-    },
-    {
       "name": "agent-governance-scripts",
       "lane": "ci",
       "paths": [
@@ -371,7 +350,7 @@
         "scripts/qa.py",
         "secrets/README.md",
         "tests/README.md",
-        "traefik/traefik.yaml"
+        "traefik/route-probe.yaml"
       ],
       "expected": {
         "validators": [
@@ -507,8 +486,8 @@
       "lane": "ci",
       "paths": [
         "docs/99.templates/registry.json",
-        "docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md",
-        "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md"
+        "docs/90.references/research/9999-route-probe/report.md",
+        "docs/98.archive/03.specs/9999-route-probe/spec.md"
       ],
       "expected": {
         "validators": [

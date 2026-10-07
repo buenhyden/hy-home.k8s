@@ -417,7 +417,6 @@ MIG0004_SPEC0054_LEDGER = (
 MIG0004_TERMINAL_SOURCE_COMMIT = (
     "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
 )
-MIG0004_ROW_COUNT = 101
 MIG0004_STAGE99_ACTION_TARGETS = {
     "docs/99.templates/contracts/registry-form.schema.json": (
         "replaced",
@@ -2994,10 +2993,6 @@ def _validate_mig0004_rows_and_targets(
 ) -> None:
     """Validate MIG-0004's finite disposition and current target inventory."""
 
-    if len(rows) != MIG0004_ROW_COUNT:
-        raise ArchiveContractError(
-            "RECOVERY-MIGRATION-ROW", "MIG-0004 row census differs"
-        )
     fields = (
         "legacy_path",
         "stable_path",

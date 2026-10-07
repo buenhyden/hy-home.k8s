@@ -98,15 +98,6 @@ RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
         "common/native-contract-protobuf",
     }
 )
-RETIRED_UNUSED_CAPACITY_FORM_PATHS = frozenset(
-    {
-        "docs/99.templates/templates/governance/control.template.md",
-        "docs/99.templates/templates/specs/contracts/data-model.template.md",
-        "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
-        "docs/99.templates/templates/specs/contracts/schema.template.graphql",
-        "docs/99.templates/templates/specs/contracts/service.template.proto",
-    }
-)
 
 
 class AuthorityError(ValueError):
