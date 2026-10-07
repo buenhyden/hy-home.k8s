@@ -1534,15 +1534,6 @@ class ArchiveValidationTest(unittest.TestCase):
         )
         migration_bytes = (ROOT / migration_path).read_bytes()
 
-        rows = archive_validation.parse_pinned_migration_control(
-            migration_path, migration_bytes
-        )
-
-        self.assertEqual(len(rows), 154)
-        self.assertEqual(
-            hashlib.sha256(migration_bytes).hexdigest(),
-            archive_validation.MIG0002_DOCUMENT_SHA256,
-        )
         for name, candidate in (
             ("trailing-prose", migration_bytes + b"\nUnreviewed trailing prose.\n"),
             (

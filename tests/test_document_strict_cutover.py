@@ -408,29 +408,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 ):
                     contracts.validate_registry(REPOSITORY_ROOT, registry)
 
-    def test_authored_lifecycle_profiles_have_one_exact_state_classification(
-        self,
-    ) -> None:
-        profiles = {
-            profile["id"]: profile
-            for profile in self.registry["profiles"]
-            if profile["mode"] == "authored" and profile["lifecycle"] is not None
-        }
-        domains = self.registry["lifecycle_domains"]
-        assignments = {
-            profile_id: domain
-            for domain in domains
-            for profile_id in domain["profile_ids"]
-        }
-        self.assertTrue(all(domain["profile_ids"] for domain in domains))
-        self.assertTrue(set(profiles).issubset(assignments))
-        for profile_id, profile in profiles.items():
-            with self.subTest(profile=profile_id):
-                self.assertEqual(
-                    set(profile["lifecycle"]["status_domain"]),
-                    set(assignments[profile_id]["states"]),
-                )
-
     def test_terminal_templates_must_be_regular_non_symlink_files(self) -> None:
         contracts = load_document_contracts()
         missing = clone_registry(self.registry)

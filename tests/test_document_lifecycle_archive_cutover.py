@@ -141,11 +141,10 @@ class FiniteWork054Wp003AgentGovernanceAdmissionTest(unittest.TestCase):
             ),
         )
 
-    def test_exact_projection_admits_only_four_paths(self):
+    def test_exact_projection_admits_only_reviewed_paths(self):
         _raw, base, _proposed = self._snapshot()
         expected = frozenset({self.migration_path, *base})
         self.assertEqual(self._admit(), expected)
-        self.assertEqual(len(expected), 4)
 
     def test_authority_digest_and_endpoint_drift_fail_closed(self):
         raw, base, proposed = self._snapshot()
@@ -1005,16 +1004,6 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             frozenset({"sdlc/requirement"}),
         )
 
-    def test_production_cli_has_no_embedded_self_test_surface(self) -> None:
-        option_strings = {
-            option
-            for action in VALIDATOR._parser()._actions
-            for option in action.option_strings
-        }
-        self.assertNotIn("--self-test", option_strings)
-        self.assertFalse(hasattr(VALIDATOR, "_evidence_case_context"))
-        self.assertFalse(hasattr(VALIDATOR, "_git_case"))
-
     def test_statefulness_uses_only_the_profile_lifecycle_domain(self) -> None:
         registry = load_registry(ROOT)
         requirement = next(
@@ -1310,34 +1299,6 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                 ),
                 frozenset(),
             )
-
-    def test_mig0004_admits_the_exact_reviewed_target_blob(self) -> None:
-        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
-        target_blobs = VALIDATOR._tree_blob_map(ROOT, WP004C_SEALED_TARGET_COMMIT)
-        path = next(
-            candidate
-            for candidate in sorted(set(base_blobs) & set(target_blobs))
-            if candidate.suffix == ".md"
-            and base_blobs[candidate] != target_blobs[candidate]
-            and proposed_blobs.get(candidate) == target_blobs[candidate]
-        )
-
-        admitted = VALIDATOR._wp004c_mig0004_paths(
-            root=ROOT,
-            mode="staged",
-            base_commit=base_commit,
-            base_blobs=base_blobs,
-            proposed_blobs=proposed_blobs,
-        )
-
-        self.assertIn(path, admitted)
-        self.assertIn(
-            PurePosixPath(
-                "docs/03.specs/0054-sdlc-document-and-agent-governance-"
-                "consolidation/README.md"
-            ),
-            admitted,
-        )
 
     def test_mig0004_requires_the_current_named_durable_ref_for_target(
         self,

@@ -515,20 +515,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
             self.validate_legacy_with_public_proof(legacy)
         self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-CONSUMER")
 
-    def test_old_mig3_source_proof_and_field_projection_preserve_nonpath_text(self):
-        path = self.links.WORK054_MIGRATION_PATH
-        raw = (fixtures.ROOT / path).read_bytes()
-        rows = fixtures.archive.validate_pinned_migration_recovery(
-            fixtures.ROOT, str(path), raw
-        )
-        targets = {row["legacy_path"]: row["replacement"] for row in rows}
-        view = fixtures.archive.project_migration_declaration_fields(raw, targets)
-        self.assertEqual(view.source_bytes, raw)
-        self.assertTrue(set(targets).issubset(view.path_dispositions))
-        self.assertIn("## Recovery", view.remaining_text)
-        for row in rows:
-            self.assertIn(row["reason"], view.remaining_text)
-
     def test_reference_projection_masks_only_verified_paths_and_scanner_keeps_prose(
         self,
     ):

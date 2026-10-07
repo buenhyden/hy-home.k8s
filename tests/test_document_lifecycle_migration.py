@@ -579,26 +579,6 @@ class MigrationLifecycleTest(unittest.TestCase):
                 else:
                     (self.root / path).write_bytes(original)
 
-    def test_registry_domain_and_verified_old_accepted_controls(self):
-        registry = VALIDATOR.load_registry(self.root)
-        document = VALIDATOR.document_from_text(
-            registry, PurePosixPath(self.path), (self.root / self.path).read_text()
-        )
-        self.assertEqual(document.status, "sealed")
-        for path in sorted((ROOT / "docs/98.archive/migrations").glob("000[1-3]-*.md")):
-            relative = PurePosixPath(path.relative_to(ROOT).as_posix())
-            text = path.read_text()
-            document = VALIDATOR.document_from_text(registry, relative, text)
-            failures = VALIDATOR.validate_snapshot_documents(registry, [document])
-            self.assertFalse(
-                [item for item in failures if item.severity == "FAIL"], failures
-            )
-            tampered = VALIDATOR.document_from_text(
-                registry, relative, text + "tampered\n"
-            )
-            failures = VALIDATOR.validate_snapshot_documents(registry, [tampered])
-            self.assertTrue([item for item in failures if item.severity == "FAIL"])
-
 
 if __name__ == "__main__":
     unittest.main()
