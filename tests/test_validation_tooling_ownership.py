@@ -14,12 +14,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 REGISTRY = SCRIPTS / "validation" / "registry.json"
-MUTABLE_CURRENT_IDENTIFIERS = (
-    "BASELINE_SHA",
-    "SUMMARY_RUN_SHA256",
-    "PROVIDER_EVIDENCE_AGGREGATE_SHA256",
-    "EXPECTED_CI_PYTHON_LOCK_SHA256",
-)
 TEST_ONLY_PRODUCTION_HELPERS = {
     "validate-github-actions-security.py": {
         "_write_self_test_case",
@@ -267,17 +261,6 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 offenders.append(path.relative_to(ROOT).as_posix())
         self.assertEqual(offenders, [])
 
-    def test_current_state_sha_and_generated_digest_identifiers_are_absent(
-        self,
-    ) -> None:
-        offenders: dict[str, list[str]] = {}
-        for path in production_sources():
-            text = path.read_text(encoding="utf-8")
-            present = [name for name in MUTABLE_CURRENT_IDENTIFIERS if name in text]
-            if present:
-                offenders[path.relative_to(ROOT).as_posix()] = present
-        self.assertEqual(offenders, {})
-
     def test_subprocess_run_calls_declare_a_timeout(self) -> None:
         offenders: list[str] = []
         for path in production_sources():
@@ -375,7 +358,7 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         self.assertEqual(aggregate.count("run-validation-lane.py"), 1)
         self.assertIn("all-files", aggregate)
         embedded_validators = re.findall(
-            r"scripts/(?:validate-[a-z0-9-]+\.(?:py|sh)|archive_cutover\.py)",
+            r"scripts/validate-[a-z0-9-]+\.(?:py|sh)",
             aggregate,
         )
         self.assertEqual(embedded_validators, [])

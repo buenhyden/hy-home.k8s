@@ -98,8 +98,7 @@ class ArchiveGenerationFixtureTest(unittest.TestCase):
         )
         if completed.returncode != 0:
             self.skipTest(
-                "frozen generation commit is absent from this clone's history; "
-                "hosted CI fetches full history and runs this proof"
+                "frozen generation commit is absent from this checkout's history"
             )
         self.assertEqual(legacy_registry_bytes(), completed.stdout)
 

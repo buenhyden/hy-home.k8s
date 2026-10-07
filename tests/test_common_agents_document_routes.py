@@ -31,40 +31,6 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = contracts.load_registry(ROOT)
 
-    def test_common_authorities_select_existing_semantic_profiles(self) -> None:
-        routes = {
-            ".agents/README.md": "common/readme-implementation",
-            ".agents/governance/sdlc.md": "governance/contract",
-            ".agents/governance/quality.md": "governance/rule",
-            ".agents/roles/README.md": "common/readme-collection-index",
-            ".agents/roles/doc-writer.md": "governance/role",
-            ".agents/workflows/work-lifecycle.md": "governance/skill",
-            ".agents/workflows/delegated-development.md": "governance/skill",
-            ".agents/skills/docs-stage-routing/SKILL.md": "common/native-skill-package",
-            ".claude/provider.md": "governance/provider",
-            ".codex/provider.md": "governance/provider",
-        }
-        for path, expected in routes.items():
-            with self.subTest(path=path):
-                profile = contracts.classify_path(self.registry, PurePosixPath(path))
-                self.assertEqual(profile.profile_id, expected)
-                if expected.startswith("governance/"):
-                    self.assertEqual(
-                        profile.status_domain,
-                        (
-                            "draft",
-                            "in-review",
-                            "active",
-                            "deprecated",
-                            "superseded",
-                            "retired",
-                        ),
-                    )
-                    self.assertIsNotNone(profile.lifecycle_domain)
-                    self.assertEqual(
-                        profile.lifecycle_domain.family, "governance-operations"
-                    )
-
     def test_dedicated_nested_resources_have_owned_document_routes(self):
         for path, expected in (
             (

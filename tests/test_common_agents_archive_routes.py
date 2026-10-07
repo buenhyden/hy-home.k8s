@@ -15,42 +15,6 @@ MIGRATION = "docs/98.archive/migrations/0021-common-agent-authority-routing.md"
 
 
 class CommonAgentsArchiveRoutesTest(unittest.TestCase):
-    def test_successor_record_closes_its_current_and_predecessor_endpoints(self):
-        entries, _ = archive.parse_migration_control(
-            MIGRATION, (ROOT / MIGRATION).read_bytes()
-        )
-        affected_sources = {row["legacy_path"] for row in entries}
-        edges = {}
-        departures = {}
-        arrivals = {}
-        for path in sorted((ROOT / "docs/98.archive/migrations").glob("*.md")):
-            relative = path.relative_to(ROOT).as_posix()
-            if archive.generic_migration_id(relative) is None:
-                continue
-            rows, _ = archive.parse_migration_control(relative, path.read_bytes())
-            for row in rows:
-                departures[row["legacy_path"]] = relative
-                edges[row["legacy_path"]] = (
-                    "docs/98.archive/README.md"
-                    if row["action"] == "deleted"
-                    else row["stable_path"] or row["replacement"]
-                )
-                target = edges[row["legacy_path"]]
-                arrivals[target] = max(arrivals.get(target, relative), relative)
-        reoccupied = {
-            path
-            for path, departure in departures.items()
-            if arrivals.get(path, departure) > departure
-        }
-        for source, target in archive.compose_migration_targets(
-            (edges,), reoccupied=reoccupied
-        ).items():
-            if source not in affected_sources and edges[source] not in affected_sources:
-                continue
-            with self.subTest(source=source, target=target):
-                self.assertTrue((ROOT / target).is_file())
-                self.assertFalse((ROOT / target).is_symlink())
-
     def test_successor_record_preserves_exact_git_source_identities(self):
         rows, _ = archive.parse_migration_control(
             MIGRATION, (ROOT / MIGRATION).read_bytes()

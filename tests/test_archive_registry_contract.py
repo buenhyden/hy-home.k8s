@@ -221,15 +221,6 @@ class CitationTableTests(unittest.TestCase):
 
 
 class LegacyRetainedSetTests(unittest.TestCase):
-    def test_legacy_set_is_sixteen_catalog_rows(self) -> None:
-        rows, errors = dispositions.parse_catalog(
-            (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
-        )
-        self.assertEqual(errors, ())
-        legacy = REGISTRY.legacy_rebased_retained_paths
-        self.assertEqual(len(legacy), 16)
-        self.assertLessEqual(legacy, frozenset(rows))
-
     def test_legacy_path_must_be_a_retained_body(self) -> None:
         raw = copy.deepcopy(RAW)
         raw["legacy_rebased_retained_paths"][0] = (

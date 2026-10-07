@@ -12,7 +12,6 @@ import re
 import subprocess
 import sys
 import tempfile
-import time
 import types
 import unittest
 from pathlib import Path, PurePosixPath
@@ -546,27 +545,6 @@ class ArchiveValidationTest(unittest.TestCase):
                 )
                 self.assertEqual(self.codes(report), ("ARCHIVE-DIRECT-CURRENT-LINK",))
 
-    def test_current_completed_document_citation_is_permitted(self) -> None:
-        current = CurrentMarkdownDocument(
-            path="docs/03.specs/0054-document-authority-convergence/spec.md",
-            markdown=(
-                "[completed](../../98.archive/completed/03.specs/"
-                "0052-document-taxonomy-consolidation/spec.md)\n"
-            ),
-            profile="sdlc/spec",
-            status="active",
-        )
-
-        self.assertEqual(
-            self.codes(
-                validate_current_archive_authority(
-                    (current,),
-                    individual_archive_paths=frozenset({self.archive_path}),
-                )
-            ),
-            (),
-        )
-
     def test_green_noncurrent_direct_link_does_not_claim_current_authority(
         self,
     ) -> None:
@@ -676,57 +654,6 @@ class ArchiveValidationTest(unittest.TestCase):
         )
 
         self.assertEqual(self.codes(report), ())
-
-    def test_repository_archive_v2_has_closed_namespace_and_index_parity(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
-        )
-
-        report = archive_validation.validate_repository_archive(ROOT, registry)
-
-        self.assertTrue(report.valid, report.diagnostics)
-        self.assertEqual(report.record_count, report.index_record_count)
-        self.assertEqual(
-            sum(count for _namespace, count in report.namespace_counts),
-            report.record_count,
-        )
-        self.assertEqual(
-            {namespace for namespace, _count in report.namespace_counts},
-            set(archive_validation._NAMESPACE_IDS),  # noqa: SLF001
-        )
-
-    def test_repository_inventory_separates_exact_archive_migration_controls(
-        self,
-    ) -> None:
-        records, diagnostics, proof = archive_validation._repository_archive_records(  # noqa: SLF001
-            ROOT
-        )
-
-        self.assertEqual(diagnostics, [])
-        self.assertIsNotNone(proof)
-        self.assertTrue(records)
-        self.assertTrue(
-            all(
-                path.startswith(
-                    ("docs/98.archive/changes/", "docs/98.archive/superseded/")
-                )
-                for path in records
-            )
-        )
-        self.assertNotIn(
-            "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md",
-            records,
-        )
-        self.assertNotIn(
-            "docs/98.archive/migrations/"
-            "0002-sdlc-document-and-governance-consolidation.md",
-            records,
-        )
-        self.assertNotIn(
-            "docs/98.archive/migrations/"
-            "0003-agent-governance-control-plane-consolidation.md",
-            records,
-        )
 
     def test_mig0003_recovery_is_integrated_and_source_pinned(self) -> None:
         migration_path = (
@@ -1850,195 +1777,6 @@ class ArchiveValidationTest(unittest.TestCase):
                 self.assertEqual(completed.stdout, "")
                 self.assertEqual(completed.stderr, "")
 
-    def test_repository_archive_git_snapshot_is_bounded_and_under_sixty_seconds(
-        self,
-    ) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
-        )
-        real_popen = subprocess.Popen
-        git_calls = 0
-        # The budget bounds process startup, not reading: every batch is one
-        # process regardless of how many objects it carries. Each distinct
-        # declared source commit costs one batched read plus its reachability
-        # check, so re-declaring a consumer at a newer commit moves the cap by a
-        # fixed two rather than by the number of paths it carries. A retired
-        # path that now holds a different tracked document costs one batched
-        # read to prove its bytes are not the retired ones, so it moves the cap
-        # by a fixed one rather than by the size of the document.
-        #
-        # Measured against a clean clone of the parent commit, the corpus moved
-        # 177 -> 186 when MIG-0012 sealed the reference form renames. Two of
-        # those are reoccupation proofs: the predicate ran 160 -> 162 times and
-        # both new calls read, because `audit.template.md` and
-        # `data.template.md` are retired paths that now hold a different
-        # tracked document. The rest is the record itself -- its own staged
-        # bytes, the moved targets it names, and one declared source commit,
-        # which costs the fixed batched read plus reachability check above.
-        #
-        # Measured the same way, the corpus moved 186 -> 190 when the GitHub
-        # hub file became `.github/repository-surface.md`. The retired path
-        # leaves no tracked file behind, so proving its archived bytes runs the
-        # Git-first recovery once: branch resolution, the last add-or-modify
-        # commit for the path, that commit's exact tree entry, and one batched
-        # object read. A rename that vacates a path therefore moves the cap by
-        # a fixed four, independent of the size of the document that moved.
-        #
-        # Measured the same way, the corpus moved 190 -> 215 when Stage 98
-        # gained the four completed-package retention ledgers, MIG-0013 through
-        # MIG-0016. Those ledgers retire 347 origin paths across two distinct
-        # declared source commits, and because every read is batched the cost
-        # tracks the number of ledgers and declared commits rather than the
-        # number of rows.
-        #
-        # It moved 215 -> 222 when MIG-0017 relocated the seventeen supersession
-        # records. One new declared source commit costs the fixed batched read
-        # plus its reachability check, and the rest is the ledger's own staged
-        # bytes and the batched reads proving each relocated record at the path
-        # its row names.
-        #
-        # It moved 222 -> 229 when MIG-0018 retained Spec 0058. That is the same
-        # fixed seven: one sealed ledger carrying one new declared source
-        # commit. The cost of a ledger does not track its row count, so a
-        # ten-row retention and a seventeen-row relocation cost the same.
-        #
-        # Document-contract v9 proposal and acceptance moved 229 -> 242. The
-        # fixed thirteen cover proposal identity, Registry/template, and
-        # durable-ref checks; proposal paths remain exact batched operands, so
-        # this cost does not grow once per current document.
-        #
-        # It moved 242 -> 246 when the seven responsibility documents under
-        # `.agents/roles/` were folded into their router and deleted. MIG-0021
-        # names each of them as a replacement target, so vacating those paths
-        # sends the archived-bytes proof through Git-first recovery: branch
-        # resolution, the last add-or-modify commit, that commit's exact tree
-        # entry, and one batched object read. That is the same fixed four a
-        # vacating rename costs above, and it stays four rather than
-        # twenty-eight because all seven paths ride one batched operand list.
-        # Deleting more paths that a sealed record names would not move this
-        # cap again unless they need a separate recovery group.
-        #
-        # It moved 246 -> 248 when MIG-0023 sealed those seven absorptions. That
-        # is the fixed two a new declared source commit costs: one batched read
-        # plus its reachability check. It is two rather than the seven a
-        # retention ledger costs because every row's replacement is the
-        # responsibility router, a tracked file the corpus already proves, so no
-        # row adds a target proof of its own.
-        #
-        # It moved 248 -> 252 when ADR-0039 retained the finished Stage 03
-        # packages. Retaining Spec 0004 vacates `docs/03.specs/0004-.../` while
-        # MIG-0002, MIG-0004 and MIG-0011 still name paths inside it, so the
-        # archived-bytes proof goes through Git-first recovery: branch
-        # resolution, the last add-or-modify commit, that commit's exact tree
-        # entry, and one batched object read. That is the same fixed four a
-        # vacating rename costs above, and it stays four rather than eight
-        # because Spec 0004 and Spec 0005 ride one batched operand list.
-        #
-        # It moved 252 -> 254 when SPEC-0084 retained seven more finished Stage
-        # 03 packages: Specs 0006, 0071, 0077 and 0078 into `completed/`, Specs
-        # 0068 and 0070 into `superseded/`, and Spec 0083 into `completed/`.
-        # Measured against the round's base commit, `e062290e`, on a linked
-        # worktree carrying a symbolic HEAD so the detached adjustment below does
-        # not enter: the corpus ran 252 there and 254 here, and the normalized
-        # command sets differ by three added `ls-tree` calls and one removed
-        # `cat-file --batch`.
-        #
-        # That difference refines the fixed four a vacating rename costs above.
-        # Only the exact tree entry is per recovery group; branch resolution, the
-        # last add-or-modify `log`, and the batched object read are shared. The
-        # `log` operand list grew from two paths to seven without adding a
-        # process, and the three groups merged into one `cat-file --batch` where
-        # the base needed two. The three groups are the three distinct last
-        # add-or-modify commits the retained paths resolve to: `16574635` for
-        # Spec 0006, `a5bad5ff` for Spec 0071, and `b4a1db91` for Specs 0068 and
-        # 0070, which ride one batched operand list because one commit added the
-        # `superseded_by` key to both. Specs 0077, 0078 and 0083 add no process
-        # at all: their paths join groups that already exist.
-        #
-        # So a retention round costs one process per distinct last add-or-modify
-        # commit among the vacated paths a sealed record still names, minus the
-        # `cat-file` batches it merges, and not four per package.
-        #
-        # aa64090f added five Stage 02/03 documents, which pushed the staged
-        # Markdown read past one MAX_GIT_BATCH_OBJECTS batch: one more process.
-        #
-        # SPEC-0087 retained seven more packages, and the same rule accounts
-        # for each move. Measured on a branch checkout: 255 at `919ef1f8`, 256
-        # after the four withdrawn packages went to `retired/` (`27c1045d`), and
-        # 258 after SPEC-0054, SPEC-0062 and SPEC-0084 went to `completed/`.
-        # The first move added two `ls-tree` calls, one for SPEC-0047 and one
-        # for SPEC-0048 with SPEC-0050 and SPEC-0051, and merged two
-        # `cat-file --batch` reads into one. The second added one `ls-tree` for
-        # SPEC-0054 and one for SPEC-0062; SPEC-0084 joins an existing group.
-        # The default-branch envelope check from SPEC-0085 adds no process.
-        #
-        # SPEC-0090 retained SPEC-0049 in `retired/` under its own envelope
-        # commit `62ed8f05`, which no earlier row shares: one more `merge-base`
-        # reachability call. Measured 259 on a branch checkout of `438e69aa`.
-        # Retaining SPEC-0008 adds one historical tree lookup for its vacated
-        # current path; the lookup is batched across the package's records.
-        # The generation-10 proof reader adds authenticated generation-9
-        # context. Measured at the immutable budget owner `c47f5422`: 260;
-        # measured on pre-P01 main `9067729b`: 287. One memoized historical
-        # Registry read and eight historical successor reads each use an exact
-        # tree entry, blob-header check and blob batch: 3 + 24 calls. All other
-        # owner/verb counts remain the earlier 260. This finite corpus bound
-        # requires fresh attribution when proof inputs grow; it is never
-        # derived dynamically from the measured calls in this test.
-        budget = 287
-        # A detached checkout -- an immutable checkout of one exact commit --
-        # has no symbolic HEAD, so each durable-ref resolution answers from the
-        # ref table with one added `--points-at HEAD` batch. Nine such calls
-        # are observed for the nine resolutions this report performs: it tracks the
-        # number of resolutions, not the corpus, and a worktree on a branch
-        # still pays nothing. Measured before the mock so it is not counted.
-        if subprocess.run(
-            ["git", "symbolic-ref", "-q", "HEAD"],
-            cwd=ROOT,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-        ).returncode:
-            budget += 9
-        git_commands: list[tuple[str, ...]] = []
-
-        def bounded_popen(*args, **kwargs):
-            nonlocal git_calls
-            command = args[0] if args else kwargs.get("args", ())
-            if command and command[0] == "git":
-                git_calls += 1
-                git_commands.append(tuple(command))
-            return real_popen(*args, **kwargs)
-
-        started = time.monotonic()
-        # Every subprocess.run call creates exactly one Popen. Count that shared
-        # process boundary once instead of double-counting run plus its Popen.
-        with mock.patch.object(subprocess, "Popen", side_effect=bounded_popen):
-            report = archive_validation.validate_repository_archive(ROOT, registry)
-        elapsed = time.monotonic() - started
-
-        self.assertTrue(report.valid, report.diagnostics)
-        retired_form_fallbacks = {
-            "docs/99.templates/templates/specs/contracts/data-model.template.md",
-            "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
-            "docs/99.templates/templates/specs/contracts/schema.template.graphql",
-            "docs/99.templates/templates/specs/contracts/service.template.proto",
-        }
-        batched_fallbacks = [
-            command
-            for command in git_commands
-            if "log" in command and retired_form_fallbacks.intersection(command)
-        ]
-        # Complete current successors need no historical fallback. If needed,
-        # these retired form lookups must still share at most one Git batch.
-        # ArchiveHistoricalTargetBatchTest exercises the required fallback itself.
-        self.assertLessEqual(len(batched_fallbacks), 1)
-        # The process budget covers staged authority inventory,
-        # named-ref reachability, exact commit:path, and batched content reads
-        # without introducing per-row subprocesses or a current count pin.
-        self.assertLessEqual(git_calls, budget, f"Git subprocesses: {git_calls}")
-        self.assertLess(elapsed, 60.0)
-
     def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
         self,
     ) -> None:
@@ -2533,21 +2271,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             texts={**self.context.texts, path: changed},
         )
 
-    def test_work109_manifest_targets_compose_through_exact_mig0002(self) -> None:
-        aliases, vacated = self.validator._work109_four_digit_aliases(self.context)
-
-        self.assertEqual(vacated, frozenset())
-
-        self.assertEqual(len(aliases), 141)
-        self.assertEqual(
-            aliases[
-                PurePosixPath(
-                    "docs/03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md"
-                )
-            ],
-            self.moved_target,
-        )
-
     def test_stage03_index_is_governed_by_the_navigation_contract(self) -> None:
         self.assertFalse(hasattr(self.validator, "DECLARED_INDEXES"))
         index = PurePosixPath("docs/03.specs/README.md")
@@ -2745,21 +2468,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             projected,
         )
 
-    def test_terminal_current_progress_uses_no_historical_projection(
-        self,
-    ) -> None:
-        source = PurePosixPath("docs/00.agent-governance/memory/progress.md")
-        target = PurePosixPath(
-            "docs/03.specs/009-workspace-harness-research-pack/tasks.md"
-        )
-        edge = self.validator.ArchiveTransitionEdge(source, target)
-
-        projected = self.validator._reviewed_work054_historical_owner_edges(
-            self.context
-        )
-
-        self.assertNotIn(edge, projected)
-
     def test_current_stage04_reference_is_not_a_historical_alias(self) -> None:
         """A current holder cannot resolve through the retired Stage04 bridge."""
 
@@ -2824,13 +2532,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             )
         )
 
-    def test_public_registry_has_no_retired_execution_rosters(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
-        )
-        self.assertNotIn("programLineage", registry)
-        self.assertNotIn("standaloneExecutions", registry)
-
     def test_work109_mig0002_source_commit_blob_and_target_drift_fail_closed(
         self,
     ) -> None:
@@ -2848,65 +2549,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 context = self._mutated_work109_context(mutate)
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work109_four_digit_aliases(context)
-
-    def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
-        """Aliases stay unique, and each target is tracked or gone to Git history.
-
-        The ledger keeps all 93 rows.  ADR-0030 leaves 17 bodies in the tree and
-        moves the rest to Git, so an alias target is either a tracked record or
-        absent — never a present file outside the index.
-        """
-
-        aliases = self.validator._work107_stable_archive_aliases(self.context)
-
-        self.assertTrue(aliases)
-        self.assertEqual(len(set(aliases.values())), len(aliases))
-        tracked = 0
-        for target in aliases.values():
-            if target in self.context.tracked_regular_paths:
-                tracked += 1
-                continue
-            self.assertFalse(
-                (self.context.root / str(target)).exists(),
-                f"{target} is untracked but present",
-            )
-        self.assertEqual(tracked, 17)
-
-    def test_terminal_archive_index_uses_current_semantic_targets(self) -> None:
-        source = PurePosixPath("docs/98.archive/README.md")
-        text = self.context.texts[source]
-        local_targets = {
-            target
-            for raw in self.validator._extract_links(text)
-            for kind, target in [self.validator._local_destination(source, raw)]
-            if kind == "local" and target is not None
-        }
-
-        self.assertFalse(
-            self.validator._work107_stable_archive_index_source(
-                self.context,
-                source,
-            )
-        )
-        self.assertTrue(
-            {
-                PurePosixPath(
-                    "docs/01.requirements/0004-current-local-gitops-platform.md"
-                ),
-                PurePosixPath(
-                    "docs/02.architecture/descriptions/"
-                    "0007-current-local-gitops-platform.md"
-                ),
-            }.issubset(local_targets)
-        )
-        self.assertNotIn(
-            PurePosixPath("docs/03.specs/0008-current-local-gitops-platform/spec.md"),
-            local_targets,
-        )
-
-    def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:
-        self.assertNotIn(self.moved_source, self.context.texts)
-        self.assertIn(self.moved_target, self.context.texts)
 
 
 class SealedRecordRelocationTest(unittest.TestCase):

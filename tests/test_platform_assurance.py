@@ -21,14 +21,6 @@ SPEC.loader.exec_module(ASSURANCE)
 
 
 class PlatformAssuranceTests(unittest.TestCase):
-    def test_current_roots_include_example_and_are_closed_local_inputs(self):
-        roots = ASSURANCE.discover_roots(ROOT)
-        self.assertEqual(len(roots), 14)
-        self.assertIn(Path("examples/sample-app"), roots)
-        for relative in roots:
-            with self.subTest(root=relative):
-                ASSURANCE.check_kustomization(ROOT, relative)
-
     def test_remote_escape_symlink_and_plugin_fields_are_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

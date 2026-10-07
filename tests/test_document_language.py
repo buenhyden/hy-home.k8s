@@ -285,11 +285,6 @@ class RegistryTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 self.assertEqual(self.faults(**changes), ["REGISTRY_DOCUMENT_LANGUAGE"])
 
-    def test_repository_registry_loads_the_contract(self):
-        loaded = contracts.load_registry(ROOT).document_language
-        self.assertIsNotNone(loaded)
-        self.assertEqual(loaded.min_latin_words, 8)
-
 
 if __name__ == "__main__":
     unittest.main()

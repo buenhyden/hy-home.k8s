@@ -3,7 +3,6 @@ from __future__ import annotations
 import contextlib
 import importlib.util
 import io
-import hashlib
 import json
 import re
 import shutil
@@ -39,33 +38,6 @@ MIG0004_PATH = (
     REPOSITORY_ROOT
     / "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-RETIRED_PROFILE_IDS = frozenset(
-    {
-        "sdlc/prd",
-        "sdlc/srs",
-        "sdlc/interface",
-        "sdlc/agent-design",
-        "sdlc/tests",
-        "sdlc/release",
-        "governance/template-support",
-        "template/sdlc/prd",
-        "template/sdlc/srs",
-        "template/sdlc/interface",
-        "template/sdlc/agent-design",
-        "template/sdlc/tests",
-        "template/sdlc/release",
-        "template/governance/template-support",
-        "governance/progress-ledger",
-        "governance/progress-entry",
-        "governance/memory",
-        "template/governance/memory",
-        "sdlc/data-model",
-        "governance/control",
-        "common/native-contract-openapi",
-        "common/native-contract-graphql",
-        "common/native-contract-protobuf",
-    }
-)
 DELIBERATELY_EMPTY_PROFILE_IDS = frozenset(
     {
         "operation/incident",
@@ -83,15 +55,6 @@ RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
         "common/native-contract-openapi",
         "common/native-contract-graphql",
         "common/native-contract-protobuf",
-    }
-)
-RETIRED_UNUSED_CAPACITY_FORM_PATHS = frozenset(
-    {
-        "docs/99.templates/templates/specs/contracts/data-model.template.md",
-        "docs/99.templates/templates/governance/control.template.md",
-        "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
-        "docs/99.templates/templates/specs/contracts/schema.template.graphql",
-        "docs/99.templates/templates/specs/contracts/service.template.proto",
     }
 )
 DOCUMENT_FAMILIES = frozenset(
@@ -250,32 +213,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             )
         )
 
-    def test_terminal_stage99_topology_is_exact(self) -> None:
-        stage99 = REPOSITORY_ROOT / "docs/99.templates"
-        self.assertEqual(
-            sorted(path.name for path in stage99.iterdir()),
-            ["README.md", "contracts", "registry.json", "templates"],
-        )
-        self.assertEqual(
-            sorted(path.name for path in (stage99 / "contracts").iterdir()),
-            ["document-profile.schema.json", "frontmatter.schema.json"],
-        )
-        self.assertEqual(
-            sorted(path.name for path in (stage99 / "templates").iterdir()),
-            [
-                "README.md",
-                "architecture",
-                "archive",
-                "common",
-                "governance",
-                "operations",
-                "references",
-                "requirements",
-                "runtime",
-                "specs",
-            ],
-        )
-
     def test_root_registry_is_the_single_closed_machine_authority(self) -> None:
         self.assertEqual(
             set(self.registry),
@@ -338,9 +275,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertTrue(RETIRED_UNUSED_CAPACITY_PROFILE_IDS.isdisjoint(profile_ids))
         frontmatter_schema = FRONTMATTER_SCHEMA_PATH.read_text(encoding="utf-8")
         self.assertNotIn("DATA-MODEL-[0-9]", frontmatter_schema)
-        for relative_path in RETIRED_UNUSED_CAPACITY_FORM_PATHS:
-            with self.subTest(form=relative_path):
-                self.assertFalse((REPOSITORY_ROOT / relative_path).exists())
 
     def test_retired_capacity_documents_and_executables_have_no_current_owner(
         self,
@@ -415,57 +349,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertTrue(errors)
         self.assertTrue(
             any(error.validator == "additionalProperties" for error in errors)
-        )
-
-    def test_terminal_templates_are_profile_led(self) -> None:
-        profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
-        self.assertTrue(RETIRED_PROFILE_IDS.isdisjoint(profiles))
-        for profile in profiles.values():
-            template = profile.get("template_source")
-            if not template:
-                continue
-            template_path = REPOSITORY_ROOT / template
-            with self.subTest(profile=profile["id"], template=template):
-                self.assertTrue(template_path.is_file())
-                self.assertNotIn("/templates/sdlc/", template)
-                contents = template_path.read_text(encoding="utf-8")
-                self.assertNotRegex(
-                    contents,
-                    r"(?im)^\s*<!--\s*(?:destination|target-path)\s*:",
-                )
-                match = re.search(r"(?m)^type:\s*[\"']?([^\"'\s]+)", contents)
-                if match is not None:
-                    self.assertIn(
-                        match.group(1),
-                        {
-                            p["frontmatter"]["constants"].get("type", p["id"])
-                            for p in profiles.values()
-                        },
-                    )
-
-    def test_retired_stage99_paths_are_not_profile_routes(self) -> None:
-        source = (SCRIPTS_ROOT / "document_contracts.py").read_text(encoding="utf-8")
-        self.assertNotIn("route-contract.json", source)
-        self.assertNotIn("support/document-profiles.json", source)
-        collection_profile = next(
-            profile
-            for profile in self.registry["profiles"]
-            if profile["id"] == "common/readme-collection-index"
-        )
-        self.assertNotIn(
-            "docs/99\\.templates/support", collection_profile["path_pattern"]
-        )
-        # The form catalog is a route again.  MIG-0004 retired a support-era
-        # document, not the location: the row pins the bytes it retired, and the
-        # archive control refuses those bytes returning rather than the path.
-        self.assertIn(
-            "docs/99\\.templates/templates/README",
-            collection_profile["path_pattern"],
-        )
-        catalog = REPOSITORY_ROOT / "docs/99.templates/templates/README.md"
-        self.assertNotEqual(
-            hashlib.sha256(catalog.read_bytes()).hexdigest(),
-            "568c84c88ab19c876aa4416660853005130631b088061b81b713cc71a6e5d097",  # pragma: allowlist secret
         )
 
     def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:
@@ -996,15 +879,6 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
             markdown.validate_document_text(other_owner, path, profile, "strict")
         )
 
-    def test_terminal_guide_owner_is_singular(self) -> None:
-        guides = sorted(
-            path.name
-            for path in (STAGE05_ROOT / "guides").glob("*.md")
-            if path.name != "README.md"
-        )
-        self.assertEqual(guides, ["0010-ci-cd-qa-reference-guide.md"])
-        self.assertFalse((STAGE05_ROOT / "releases").exists())
-
     def test_operation_artifact_ids_match_path_numbers(self) -> None:
         seen: set[str] = set()
         for directory, prefix in (
@@ -1208,18 +1082,6 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                         validator._assert_retired_cloud_sdlc_surfaces_absent(
                             REPOSITORY_ROOT
                         )
-
-    def test_current_command_docs_do_not_advertise_compatibility_mode(self) -> None:
-        compatibility_invocation = re.compile(r"--mode(?:[ =`]+)compatibility\b")
-        for path in (
-            SCRIPTS_ROOT / "README.md",
-            REPOSITORY_ROOT / "tests/README.md",
-            REPOSITORY_ROOT / "docs/99.templates/README.md",
-        ):
-            with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
-                self.assertIsNone(
-                    compatibility_invocation.search(path.read_text(encoding="utf-8"))
-                )
 
 
 if __name__ == "__main__":

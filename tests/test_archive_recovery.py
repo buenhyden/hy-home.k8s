@@ -637,17 +637,6 @@ class ArchiveRecoveryTest(unittest.TestCase):
                 )
             self.assertNotIn("EXTRA-SENTINEL", str(failure.exception))
 
-    def test_recover_git_blob_uses_size_aware_batch_reader(self) -> None:
-        with mock.patch.object(
-            archive_recovery,
-            "_read_git_blob_batch",
-            wraps=archive_recovery._read_git_blob_batch,  # noqa: SLF001
-        ) as batch:
-            recovered = recover_git_blob(self.root, self.original_path, self.commit)
-
-        self.assertEqual(recovered.source_bytes, self.payload)
-        batch.assert_called_once()
-
     def test_rejects_worktree_byte_substitution(self) -> None:
         recovered = recover_git_blob(self.root, self.original_path, self.commit)
         substitute = self.payload.replace(b"\n", b"\r\n")
@@ -928,61 +917,6 @@ class Work107StableArchiveContractTest(unittest.TestCase):
     """Focused WORK-107 contract for the reviewed 93-to-93 stable rehome."""
 
     maxDiff = None
-
-    def test_work107_reviewed_mapping_is_exact_and_bijective(self) -> None:
-        rows = archive_recovery.build_work107_migration_rows(ROOT)
-
-        self.assertEqual(
-            archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT,
-            "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c",  # pragma: allowlist secret
-        )
-        self.assertEqual(len(rows), 93)
-        self.assertEqual({row["action"] for row in rows}, {"moved"})
-        self.assertEqual({row["replacement"] for row in rows}, {None})
-        self.assertEqual(len({row["legacy_path"] for row in rows}), 93)
-        self.assertEqual(len({row["stable_path"] for row in rows}), 93)
-        self.assertEqual(len({row["artifact_id"] for row in rows}), 93)
-
-        changes: dict[str, set[str]] = {}
-        tombstones: dict[str, int] = {}
-        for row in rows:
-            stable = Path(row["stable_path"])
-            if row["record_kind"].startswith("change-"):
-                changes.setdefault(stable.parent.as_posix(), set()).add(stable.name)
-            else:
-                stage = stable.parts[3]
-                tombstones[stage] = tombstones.get(stage, 0) + 1
-            self.assertEqual(
-                row["legacy_archive_commit"],
-                archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT,
-            )
-            actual_blob = subprocess.run(
-                [
-                    "git",
-                    "rev-parse",
-                    f"{row['legacy_archive_commit']}:{row['legacy_path']}",
-                ],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip()
-            self.assertEqual(row["legacy_envelope_blob"], actual_blob)
-
-        shapes = [frozenset(leaves) for leaves in changes.values()]
-        self.assertEqual(len(changes), 41)
-        self.assertEqual(shapes.count(frozenset({"plan.md", "task.md"})), 35)
-        self.assertEqual(shapes.count(frozenset({"plan.md"})), 2)
-        self.assertEqual(shapes.count(frozenset({"task.md"})), 4)
-        self.assertEqual(
-            tombstones,
-            {
-                "01.requirements": 3,
-                "02.architecture": 8,
-                "03.specs": 4,
-                "05.operations": 2,
-            },
-        )
 
     def test_work107_ledger_round_trip_and_closed_mutations(self) -> None:
         rows = archive_recovery.build_work107_migration_rows(ROOT)

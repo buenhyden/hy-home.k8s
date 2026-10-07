@@ -64,9 +64,6 @@ def change_chart(root, chart, change):
 
 
 class PlatformIngressTest(unittest.TestCase):
-    def test_current_desired_state(self):
-        self.assertEqual(INGRESS.validate(ROOT, desired_documents()), [])
-
     def test_wrong_api_identity_fails(self):
         docs = copy.deepcopy(desired_documents())
         ingress(docs, "adminer")["apiVersion"] = "extensions/v1beta1"

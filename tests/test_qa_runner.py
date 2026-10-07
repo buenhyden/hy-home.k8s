@@ -765,60 +765,6 @@ class QaTests(unittest.TestCase):
         self.assertEqual((self.root / ".git/index").read_bytes(), source_index_before)
 
 
-class FailureSnippetTests(unittest.TestCase):
-    def setUp(self):
-        self.runner = load_qa().runner
-
-    def snippet(self, *, stdout=b"", stderr=b""):
-        result = SimpleNamespace(
-            stdout=SimpleNamespace(retained=stdout),
-            stderr=SimpleNamespace(retained=stderr),
-        )
-        return self.runner.failure_snippet(result)
-
-    def test_unittest_error_headers_survive_progress_noise(self):
-        result = self.snippet(
-            stderr=b"." * 4096
-            + b"\nERROR: test_import (tests.Example.test_import)\nprivate traceback body\nFAIL: test_value (tests.Example.test_value)\nFAILED (failures=1, errors=1)\n"
-        )
-        self.assertIn("ERROR: test_import", result)
-        self.assertIn("FAIL: test_value", result)
-        self.assertIn("FAILED (failures=1, errors=1)", result)
-        self.assertNotIn("private traceback body", result)
-
-    def test_pre_commit_failed_hook_and_exit_survive_passes_and_stderr_warning(self):
-        result = self.snippet(
-            stdout=b"passing hook........................Passed\n" * 80
-            + b"ruff-check........................Failed\n- hook id: ruff-check\n- exit code: 1\nprivate child body\n",
-            stderr=b"harmless warning\n",
-        )
-        self.assertIn("ruff-check", result)
-        self.assertIn("- hook id: ruff-check", result)
-        self.assertIn("- exit code: 1", result)
-        self.assertNotIn("passing hook", result)
-        self.assertNotIn("private child body", result)
-
-    def test_prioritized_diagnostics_remain_redacted_escaped_and_bounded(self):
-        # Construct a synthetic PEM envelope; no encoded key material is used.
-        key_label = b"PRIVATE KEY"
-        envelope = b"-----BEGIN %s-----\nERROR: hidden-key-body\n-----END %s-----\n"
-        payload = (
-            envelope % (key_label, key_label)
-            + b"ERROR: test_sample token=do-not-expose \x1b[31m\n" * 200
-        )
-        result = self.snippet(stderr=payload)
-        self.assertNotIn("hidden-key-body", result)
-        self.assertNotIn("do-not-expose", result)
-        self.assertNotIn("\x1b", result)
-        self.assertLessEqual(len(json.loads(result)), 1024)
-
-    def test_generic_failure_keeps_the_existing_bounded_fallback(self):
-        result = self.snippet(stderr=b"validation failed token=hidden\n" + b"x" * 2048)
-        self.assertIn("validation failed", result)
-        self.assertNotIn("hidden", result)
-        self.assertLessEqual(len(json.loads(result)), 1024)
-
-
 class PreCommitResolutionTests(unittest.TestCase):
     def setUp(self):
         self.runner = load_qa().runner

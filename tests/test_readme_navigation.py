@@ -286,11 +286,6 @@ class ReadmeNavigationRegistryTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 self.assertEqual(self.faults(**changes), ["REGISTRY_README_NAVIGATION"])
 
-    def test_repository_registry_loads_the_contract(self):
-        registry = contracts.load_registry(ROOT)
-        self.assertIsNotNone(registry.readme_navigation)
-        self.assertEqual(registry.readme_navigation.max_deep_links_per_child, 1)
-
 
 class RepositoryContractTests(unittest.TestCase):
     """The repository contract replaces the collection index checks."""

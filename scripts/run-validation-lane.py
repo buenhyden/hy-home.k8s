@@ -609,7 +609,17 @@ _UNITTEST_CASE = re.compile(
     r"^(?:FAIL|ERROR): "
     r"(?P<method>test_[A-Za-z0-9_]{1,95}) "
     r"\((?P<target>tests(?:\.[A-Za-z_][A-Za-z0-9_]{0,63})+\."
-    r"[A-Za-z_][A-Za-z0-9_]{0,63})\)(?: .*)?$",
+    r"[A-Za-z_][A-Za-z0-9_]{0,63})\.(?P=method)\)(?: .*)?$",
+    re.ASCII,
+)
+_UNITTEST_FIXTURE = re.compile(
+    r"^ERROR: (?P<fixture>setUpClass|tearDownClass|setUpModule|tearDownModule) "
+    r"\((?P<target>tests(?:\.[A-Za-z_][A-Za-z0-9_]{0,63}){1,8})\)$",
+    re.ASCII,
+)
+_UNITTEST_IMPORT = re.compile(
+    r"^ERROR: (?P<name>[A-Za-z_][A-Za-z0-9_]{0,63}) "
+    r"\(unittest\.loader\._FailedTest\.(?P=name)\)$",
     re.ASCII,
 )
 _UNITTEST_TERMINAL = re.compile(r"^FAILED \((?P<counts>[^)]{1,160})\)$", re.ASCII)
@@ -617,6 +627,28 @@ _UNITTEST_COUNT = re.compile(
     r"(?:failures|errors|skipped|expected failures|unexpected successes)=[0-9]{1,7}\Z",
     re.ASCII,
 )
+
+
+def _unittest_failure_identity(line: str) -> tuple[str, str] | None:
+    case = _UNITTEST_CASE.fullmatch(line)
+    if case is not None:
+        module, class_name = case["target"].rsplit(".", 1)
+        return module, f"{module}.{class_name}.{case['method']}"
+    fixture = _UNITTEST_FIXTURE.fullmatch(line)
+    if fixture is not None:
+        target = fixture["target"]
+        name = fixture["fixture"]
+        if name.endswith("Class"):
+            if target.count(".") < 2:
+                return None
+            module, _ = target.rsplit(".", 1)
+        else:
+            module = target
+        return module, f"{target}.{name}"
+    failed_import = _UNITTEST_IMPORT.fullmatch(line)
+    if failed_import is not None:
+        return "unittest.loader", f"unittest.loader._FailedTest.{failed_import['name']}"
+    return None
 
 
 def _unittest_failure_summary(payload: str) -> str | None:
@@ -634,12 +666,12 @@ def _unittest_failure_summary(payload: str) -> str | None:
             if parts and all(_UNITTEST_COUNT.fullmatch(part) for part in parts):
                 terminal = ",".join(parts)
             continue
-        match = _UNITTEST_CASE.fullmatch(line)
-        if match is None:
+        identity = _unittest_failure_identity(line)
+        if identity is None:
             continue
-        module, class_name = match["target"].rsplit(".", 1)
+        module, identifier = identity
         groups[module] = groups.get(module, 0) + 1
-        identifiers.append(f"{module}.{class_name}.{match['method']}")
+        identifiers.append(identifier)
     if not identifiers:
         return None
     if not terminal:

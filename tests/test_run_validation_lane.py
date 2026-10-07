@@ -2498,7 +2498,8 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
     UNITTEST_STDERR = (
         "======================================================================\n"
         "FAIL: test_repository_snapshot_is_complete_and_atomic "
-        "(tests.test_archive_integrity.ArchivePayloadSecretScanTest)\n"
+        "(tests.test_archive_integrity.ArchivePayloadSecretScanTest."
+        "test_repository_snapshot_is_complete_and_atomic)\n"
         "----------------------------------------------------------------------\n"
         "Traceback (most recent call last):\n"
         '  File "/repo/tests/test_archive_integrity.py", line 131, in test_x\n'
@@ -2522,13 +2523,14 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
 
     def test_unittest_summary_groups_modules_before_bounded_case_ids(self):
         stderr = (
-            "FAIL: test_alpha (tests.test_archive_integrity.ArchivePayloadSecretScanTest)\n"
+            "FAIL: test_alpha (tests.test_archive_integrity."
+            "ArchivePayloadSecretScanTest.test_alpha)\n"
             "AssertionError: token=synthetic-value\n"
-            "ERROR: test_beta (tests.test_qa_runner.SnapshotBoundaryTest)\n"
+            "ERROR: test_beta (tests.test_qa_runner.SnapshotBoundaryTest.test_beta)\n"
             "Traceback (most recent call last):\n"
             "FAILED (failures=1, errors=1)\n"
         )
-        snippet = self._snippet(stderr)
+        snippet = self._snippet("." * 4096 + "\n" + stderr)
         self.assertIn("tests.test_archive_integrity:1", snippet)
         self.assertIn("tests.test_qa_runner:1", snippet)
         self.assertIn("failures=1", snippet)
@@ -2536,6 +2538,48 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
         self.assertLess(snippet.index("tests.test_qa_runner:1"), snippet.index("ids="))
         self.assertNotIn("synthetic-value", snippet)
         self.assertNotIn("Traceback", snippet)
+        self.assertNotIn("." * 4096, snippet)
+
+    def test_unittest_setup_and_import_errors_have_safe_case_ids(self):
+        snippet = self._snippet(
+            "ERROR: setUpClass (tests.test_alpha.AlphaTest)\n"
+            "Traceback (most recent call last):\n"
+            "AssertionError: token=synthetic-private-value\n"
+            "ERROR: tearDownClass (tests.test_beta.BetaTest)\n"
+            "ERROR: setUpModule (tests.test_gamma)\n"
+            "ERROR: tearDownModule (tests.test_delta)\n"
+            "ERROR: module_missing (unittest.loader._FailedTest.module_missing)\n"
+            "FAILED (errors=5)\n"
+        )
+        for case_id in (
+            "tests.test_alpha.AlphaTest.setUpClass",
+            "tests.test_beta.BetaTest.tearDownClass",
+            "tests.test_gamma.setUpModule",
+            "tests.test_delta.tearDownModule",
+            "unittest.loader._FailedTest.module_missing",
+        ):
+            self.assertIn(case_id, snippet)
+        self.assertIn("errors=5", snippet)
+        self.assertNotIn("synthetic-private-value", snippet)
+        self.assertNotIn("Traceback", snippet)
+
+    def test_malformed_setup_header_does_not_release_error_payload(self):
+        snippet = self._snippet(
+            "ERROR: setUpClass (tests.test_alpha.AlphaTest) Authorization: Bearer synthetic private tail\n"
+            "AssertionError: synthetic-private-value\n"
+        )
+        self.assertIn("details withheld", snippet)
+        self.assertNotIn("synthetic", snippet)
+        self.assertNotIn("Authorization", snippet)
+
+    def test_mismatched_unittest_method_header_is_not_attributed(self):
+        snippet = self._snippet(
+            "ERROR: test_good (tests.test_alpha.AlphaTest.test_other)\n"
+            "AssertionError: synthetic-private-value\n"
+        )
+        self.assertIn("details withheld", snippet)
+        self.assertNotIn("test_good", snippet)
+        self.assertNotIn("synthetic-private-value", snippet)
 
     def test_snippet_stays_bounded_and_redacted(self):
         def noisy(count: int) -> str:
@@ -2552,9 +2596,21 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
         self.assertNotIn("abcdef0000", snippet)
         self.assertIn("details withheld", snippet)
 
+        key_label = "PRIVATE KEY"
+        sensitive = self._snippet(
+            f"-----BEGIN {key_label}-----\nERROR: hidden-key-body\n"
+            f"-----END {key_label}-----\n"
+            + "ERROR: test_sample token=do-not-expose \x1b[31m\n"
+            * 200
+        )
+        self.assertNotIn("hidden-key-body", sensitive)
+        self.assertNotIn("do-not-expose", sensitive)
+        self.assertNotIn("\x1b", sensitive)
+        self.assertLessEqual(len(json.loads(sensitive)), 1024)
+
     def test_partial_unittest_and_arbitrary_errors_withhold_values(self):
         snippet = self._snippet(
-            "FAIL: test_case (tests.test_example.ExampleTest)\n"
+            "FAIL: test_case (tests.test_example.ExampleTest.test_case)\n"
             "AssertionError: Authorization: Bearer synthetic multi word tail\n"
             "ERROR: credentials synthetic-value\n"
         )
@@ -2568,15 +2624,26 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
         self.assertIn("details withheld", arbitrary)
         self.assertNotIn("synthetic", arbitrary)
         self.assertNotIn("Authorization", arbitrary)
+        generic = self._snippet("validation failed token=hidden\n" + "x" * 2048)
+        self.assertIn("details withheld", generic)
+        self.assertNotIn("hidden", generic)
+        self.assertLessEqual(len(json.loads(generic)), 1024)
 
     def test_hook_failure_lines_are_still_prioritized(self):
         snippet = self._snippet(
-            "", "Detect secrets...Failed\n- hook id: detect-secrets\n- exit code: 3\n"
+            "harmless warning\n",
+            "passing hook........................Passed\n"
+            * 80
+            + "Detect secrets...Failed\n- hook id: detect-secrets\n"
+            "- exit code: 3\nprivate child body\n",
         )
 
         self.assertIn("- hook id: detect-secrets", snippet)
         self.assertIn("- exit code: 3", snippet)
         self.assertNotIn("Detect secrets", snippet)
+        self.assertNotIn("passing hook", snippet)
+        self.assertNotIn("private child body", snippet)
+        self.assertNotIn("harmless warning", snippet)
 
 
 if __name__ == "__main__":
