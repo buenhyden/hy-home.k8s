@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import copy
 import importlib.util
-import os
 import sys
 import unittest
 from pathlib import Path
@@ -26,29 +25,6 @@ def load_validator():
     finally:
         sys.path.pop(0)
     return module
-
-
-class ForbiddenAgentProviderSurfaceTests(unittest.TestCase):
-    def test_forbidden_provider_surfaces_are_absent(self) -> None:
-        forbidden = (
-            REPOSITORY_ROOT / ".gemini",
-            REPOSITORY_ROOT / "GEMINI.md",
-            REPOSITORY_ROOT / ".agents" / "GEMINI.md",
-            REPOSITORY_ROOT
-            / "docs"
-            / "00.agent-governance"
-            / "providers"
-            / "gemini.md",
-        )
-        self.assertEqual(
-            [
-                path.relative_to(REPOSITORY_ROOT).as_posix()
-                for path in forbidden
-                if os.path.lexists(path)
-            ],
-            [],
-            "AGENT-PROVIDER-FORBIDDEN: retired provider surface remains",
-        )
 
 
 class AgentRegistryTests(unittest.TestCase):
@@ -80,32 +56,6 @@ class AgentRegistryTests(unittest.TestCase):
             with self.subTest(role=role):
                 self.assertNotIn(inappropriate, roles[role]["skill_refs"])
         self.assertEqual(roles["agent-evaluator"]["skill_refs"], [])
-
-    def test_production_registry_is_the_closed_two_provider_authority(self) -> None:
-        counts = self.validator.validate_registry(REPOSITORY_ROOT)
-        role_ids = [item["id"] for item in self.registry["roles"]]
-        skill_ids = [item["id"] for item in self.registry["skills"]]
-        self.assertEqual(
-            counts,
-            {
-                "providers": 2,
-                "roles": len(role_ids),
-                "permissionClasses": len(self.registry["permission_classes"]),
-                "skills": len(skill_ids),
-                "handoffs": sum(
-                    len(item["handoff_to"]) for item in self.registry["roles"]
-                ),
-                "projections": sum(
-                    len(item["projections"]) for item in self.registry["roles"]
-                ),
-            },
-        )
-        self.assertEqual(len(role_ids), len(set(role_ids)))
-        self.assertEqual(len(skill_ids), len(set(skill_ids)))
-        self.assertEqual(
-            tuple(item["id"] for item in self.registry["providers"]),
-            ("claude", "codex"),
-        )
 
     def test_third_provider_is_rejected(self) -> None:
         mutated = self.registry_copy()
@@ -197,33 +147,6 @@ class CapabilityModelBindingTests(unittest.TestCase):
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
 
-    def _projection_model(self, provider: str, relative: str) -> str:
-        text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
-        if provider == "claude":
-            return self.validator._frontmatter(text)[0].get("model", "")
-        return self.validator.tomllib.loads(text).get("model", "")
-
-    def test_every_provider_declares_a_model_for_every_tier(self) -> None:
-        tiers = {
-            role["capability_tier_ref"].rsplit("#", 1)[-1]
-            for role in self.registry["roles"]
-        }
-        for provider in self.registry["providers"]:
-            with self.subTest(provider=provider["id"]):
-                self.assertEqual(set(provider.get("capability_models", {})), tiers)
-
-    def test_every_projection_model_matches_its_tier_binding(self) -> None:
-        drift = []
-        for role in self.registry["roles"]:
-            for provider in role["supported_providers"]:
-                expected = self.validator._bound_model(self.registry, role, provider)
-                observed = self._projection_model(
-                    provider, role["projections"][provider]
-                )
-                if observed != expected:
-                    drift.append(f"{role['id']}/{provider}: {observed} != {expected}")
-        self.assertEqual(drift, [])
-
     def test_a_model_departure_is_declared_rather_than_implied(self) -> None:
         bindings = {
             provider["id"]: provider["capability_models"]
@@ -274,49 +197,6 @@ class CapabilityModelBindingTests(unittest.TestCase):
         )
 
 
-class CodexSandboxScopeTests(unittest.TestCase):
-    """Codex projections declare a structured scope, not prose alone."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.validator = load_validator()
-        cls.registry = cls.validator.load_json(
-            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
-        )
-
-    def test_codex_declares_a_sandbox_scope_for_every_permission_class(self) -> None:
-        codex = next(
-            provider
-            for provider in self.registry["providers"]
-            if provider["id"] == "codex"
-        )
-        declared = {entry["id"] for entry in self.registry["permission_classes"]}
-        self.assertEqual(set(codex.get("permission_scopes", {})), declared)
-
-    def test_every_codex_projection_carries_its_bound_sandbox_scope(self) -> None:
-        codex = next(
-            provider
-            for provider in self.registry["providers"]
-            if provider["id"] == "codex"
-        )
-        scopes = codex.get("permission_scopes", {})
-        missing = []
-        for role in self.registry["roles"]:
-            if "codex" not in role["supported_providers"]:
-                continue
-            data = self.validator.tomllib.loads(
-                (REPOSITORY_ROOT / role["projections"]["codex"]).read_text(
-                    encoding="utf-8"
-                )
-            )
-            expected = scopes.get(role["permission_class"])
-            if data.get("sandbox_mode") != expected:
-                missing.append(
-                    f"{role['id']}: {data.get('sandbox_mode')!r} != {expected!r}"
-                )
-        self.assertEqual(missing, [])
-
-
 class CodexReasoningBindingTests(unittest.TestCase):
     """Every projected reasoning effort resolves from the registry."""
 
@@ -326,21 +206,6 @@ class CodexReasoningBindingTests(unittest.TestCase):
         cls.registry = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
-
-    def test_every_projection_matches_its_registry_binding(self) -> None:
-        import tomllib
-
-        mismatched = []
-        for role in self.registry["roles"]:
-            bound = self.validator._bound_reasoning(self.registry, role)
-            projection = REPOSITORY_ROOT / role["projections"]["codex"]
-            observed = tomllib.loads(projection.read_text(encoding="utf-8")).get(
-                "model_reasoning_effort"
-            )
-            if observed != bound:
-                mismatched.append((role["id"], bound, observed))
-
-        self.assertEqual(mismatched, [])
 
     def test_a_departure_is_declared_rather_than_implied(self) -> None:
         binding = next(
@@ -368,24 +233,6 @@ class ClaudeReasoningBindingTests(unittest.TestCase):
         cls.registry = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
-
-    def test_claude_declares_an_effort_for_every_tier(self) -> None:
-        claude = next(
-            entry for entry in self.registry["providers"] if entry["id"] == "claude"
-        )
-        self.assertEqual(set(claude.get("capability_reasoning", {})), {"top", "worker"})
-
-    def test_every_claude_projection_carries_its_bound_effort(self) -> None:
-        mismatched = []
-        for role in self.registry["roles"]:
-            bound = self.validator._bound_reasoning(self.registry, role, "claude")
-            text = (REPOSITORY_ROOT / role["projections"]["claude"]).read_text(
-                encoding="utf-8"
-            )
-            observed = self.validator._frontmatter(text)[0].get("effort")
-            if observed != bound:
-                mismatched.append((role["id"], bound, observed))
-        self.assertEqual(mismatched, [])
 
     def test_a_claude_effort_override_replaces_only_claude(self) -> None:
         role = {

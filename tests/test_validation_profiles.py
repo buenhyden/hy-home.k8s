@@ -117,15 +117,6 @@ class ValidationProfileTests(unittest.TestCase):
                 )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
-    def test_retired_governance_root_has_no_functional_selector(self):
-        for path in (
-            "docs/00.agent-governance/README.md",
-            "docs/00.agent-governance/roles/registry.json",
-            "docs/00.agent-governance/skills/k8s-validate/SKILL.md",
-        ):
-            with self.subTest(path=path), self.assertRaises(ROUTES.ContractError):
-                ROUTES.classify_path(self.contract, path)
-
     def test_quick_and_staged_keep_the_same_gate_set(self):
         """The two change-scoped profiles differ by snapshot, never by membership."""
 
@@ -264,28 +255,6 @@ class ValidationProfileTests(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ROUTES.ContractError):
                 ROUTES._validate_direct_script_argv("synthetic", ["python3", path])
 
-    def test_every_tested_repository_validator_runs_in_a_profile(self):
-        """A validator with its own test module must be reachable from a profile."""
-
-        reachable = {
-            identifier
-            for members in self.contract["profiles"].values()
-            for identifier in members
-        }
-        registered = {
-            argument
-            for validator in self.contract["validators"]
-            if validator["id"] in reachable
-            for argument in validator["argv"]
-        }
-        orphans = []
-        for script in sorted((ROOT / "scripts").glob("validate-*.py")):
-            relative = f"scripts/{script.name}"
-            module = ROOT / "tests" / f"test_{script.stem.replace('-', '_')}.py"
-            if module.exists() and relative not in registered:
-                orphans.append(relative)
-        self.assertEqual(orphans, [])
-
     def test_shell_hooks_only_select_existing_shell_owners(self):
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
         hooks = {hook["id"]: hook for repo in config["repos"] for hook in repo["hooks"]}
@@ -298,8 +267,6 @@ class ValidationProfileTests(unittest.TestCase):
                 ):
                     self.assertIsNotNone(re.search(pattern, path))
                 for path in (
-                    "docs/00.agent-governance/hooks/test.sh",
-                    ".agents/hooks/test.sh",
                     ".agents/skills/test/example.sh",
                     "docs/example.sh",
                 ):

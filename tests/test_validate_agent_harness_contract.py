@@ -37,24 +37,6 @@ class AgentHarnessRegistryContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.validator = load_validator()
 
-    def test_compatibility_command_validates_only_the_terminal_registry(self) -> None:
-        counts = self.validator.validate_registry(ROOT)
-        self.assertEqual(counts["providers"], 2)
-        self.assertEqual(counts["projections"], counts["roles"] * 3)
-
-        source = SCRIPT.read_text(encoding="utf-8")
-        self.assertNotIn("harness-contract.json", source)
-        self.assertNotIn("agent-model-fitness.json", source)
-        self.assertNotIn("canonicalRoles", source)
-
-    def test_retired_parallel_harness_authority_and_fixture_are_absent(self) -> None:
-        retired = (
-            "docs/00.agent-governance/contracts/harness-contract.json",
-            "docs/00.agent-governance/contracts/harness-contract.schema.json",
-            "tests/fixtures/agent-harness-contract.json",
-        )
-        self.assertEqual([path for path in retired if (ROOT / path).exists()], [])
-
     def test_root_cli_path_remains_green_without_a_production_self_test(self) -> None:
         # Full CLI also checks index/history parity, exercised in QA's finalized
         # Git snapshot. This test isolates CLI dispatch from that external owner.

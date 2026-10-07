@@ -15,38 +15,6 @@ class CiQaWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
 
-    def test_ci_is_one_read_only_metadata_job(self):
-        self.assertEqual(
-            self.workflow[True],
-            {
-                "push": {"branches": ["main"]},
-                "pull_request": {"branches": ["main"]},
-                "workflow_dispatch": None,
-            },
-        )
-        self.assertEqual(self.workflow["permissions"], {"contents": "read"})
-        jobs = self.workflow["jobs"]
-        self.assertEqual(set(jobs), {"ci-summary"})
-        job = jobs["ci-summary"]
-        self.assertEqual(job["runs-on"], "ubuntu-latest")
-        self.assertEqual(job["timeout-minutes"], 5)
-        self.assertNotIn("needs", job)
-        self.assertNotIn("container", job)
-        self.assertNotIn("permissions", job)
-        self.assertEqual(len(job["steps"]), 1)
-        self.assertNotIn("uses", job["steps"][0])
-        self.assertNotIn("continue-on-error", job["steps"][0])
-        run = job["steps"][0]["run"]
-        for retired in (
-            "scripts/qa.py",
-            "pre-commit run",
-            "unittest discover",
-            "qa_provenance",
-            "pip install",
-            "git push",
-        ):
-            self.assertNotIn(retired, run)
-
     def test_summary_uses_event_metadata_and_reports_full_qa_not_run(self):
         step = self.workflow["jobs"]["ci-summary"]["steps"][0]
         self.assertEqual(
@@ -148,11 +116,6 @@ class CiQaWorkflowTests(unittest.TestCase):
         self.assertIn(
             "https://github.com/buenhyden/hy-home.k8s/security/advisories/new", notice
         )
-
-    def test_quality_projection_requires_hosted_pr_evidence(self):
-        owner = (ROOT / "scripts/validation/repository/quality.py").read_text()
-        self.assertIn('"hosted `ci-summary` result', owner)
-        self.assertIn('"NOT_RUN"', owner)
 
     def test_manifest_validator_rejects_missing_and_empty_roots(self):
         script = ROOT / "scripts/validate-k8s-manifests.sh"

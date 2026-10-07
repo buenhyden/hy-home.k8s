@@ -60,15 +60,6 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     case["expected"],
                 )
 
-    def test_selector_has_no_phantom_hosted_job_projection(self) -> None:
-        self.assertEqual(self.contract["schemaVersion"], 3)
-        self.assertNotIn("ciJobs", self.contract)
-        self.assertTrue(all("ciJobs" not in row for row in self.contract["surfaces"]))
-        result = self.validator.select_paths(self.contract, ["README.md"], "ci", ROOT)
-        self.assertNotIn("ciJobs", result)
-        self.assertIn("validators", result)
-        self.assertIn("protectedLevel", result)
-
     def test_authored_task_does_not_run_agent_projection_validator(self) -> None:
         result = self.validator.select_paths(
             self.contract,

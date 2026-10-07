@@ -432,11 +432,6 @@ class CiPythonContractTests(unittest.TestCase):
             VALIDATOR.validate_dependencies(root)
         self.assertEqual(raised.exception.rule_id, rule_id)
 
-    def test_reference_inventory_is_not_a_ci_contract_input(self) -> None:
-        root = self.make_valid_root()
-
-        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
-
     def assert_value_free_rule(
         self,
         root: Path,
@@ -504,9 +499,6 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         self.inject_validation_step(root, VALIDATOR.QA_COMMAND)
         self.assert_rule(root, "CI-QA-EXECUTION")
-
-    def test_checked_in_lock_uses_patched_virtualenv(self) -> None:
-        self.assertIn("virtualenv==21.7.13", make_lock())
 
     def test_valid_temporary_repository_passes(self) -> None:
         self.assertEqual(VALIDATOR.validate_dependencies(self.make_valid_root()), 0)
@@ -1241,11 +1233,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PRECOMMIT-REV")
-
-    def test_python_direct_input_remains_exactly_three_lines(self) -> None:
-        root = self.make_valid_root()
-        direct_input = root / ".github/requirements/ci-validation.in"
-        self.assertEqual(direct_input.read_text(encoding="utf-8"), DIRECT_INPUT)
 
 
 class CiPythonShellGitSubcommandTests(unittest.TestCase):

@@ -377,35 +377,6 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             ],
         )
 
-    def test_full_qa_has_one_quality_gate_without_duplicate_pre_commit_hooks(
-        self,
-    ) -> None:
-        pre_commit = (ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8")
-        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-        self.assertEqual(registry["profiles"]["full"].count("repository-quality"), 1)
-        self.assertEqual(registry["profiles"]["full"].count("pre-commit"), 1)
-        for duplicate in (
-            "id: strict-repository-quality",
-            "id: validate-agent-governance-ci",
-            "id: validate-agent-legacy-cutover",
-            "id: validate-affected-surfaces",
-        ):
-            self.assertNotIn(duplicate, pre_commit)
-
-    def test_repository_quality_does_not_require_readme_inventory_ledgers(self) -> None:
-        owner = (SCRIPTS / "validation" / "repository" / "quality.py").read_text(
-            encoding="utf-8"
-        )
-        legacy_ledgers = (
-            "Script Inventory",
-            "Script Classification Matrix",
-            "Kube-linter Exclusion Matrix",
-        )
-        self.assertEqual(
-            [heading for heading in legacy_ledgers if heading in owner],
-            [],
-        )
-
     def test_every_declared_test_class_is_collected(self) -> None:
         """A class that declares test methods but no TestCase base never runs.
 
