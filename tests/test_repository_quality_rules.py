@@ -1,14 +1,18 @@
 """Independent synthetic cases for production repository-quality rules."""
 
 import ast
+import importlib.util
 import pathlib
 import re
 import sys
+import tempfile
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import document_contracts as contracts  # noqa: E402
+from validation import document_content as content  # noqa: E402
 
 
 class RepositoryQualityRuleTests(unittest.TestCase):
@@ -19,8 +23,6 @@ class RepositoryQualityRuleTests(unittest.TestCase):
         names = {
             "strip_multiline_html_comments",
             "visible_markdown_lines",
-            "parse_markdown_table_after_heading",
-            "profiled_readme_table_headings",
             "canonical_markdown_owns_generic_residue",
             "generic_template_residue_lines",
             "has_nearby_marker",
@@ -28,7 +30,6 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "is_bare_or_main_push",
             "is_unmarked_command",
             "rel",
-            "readme_index_header_valid",
         }
         nodes = [
             node
@@ -82,65 +83,198 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             ),
             cls.rules,
         )
+        source = ROOT / "scripts/validate-markdown-profiles.py"
+        spec = importlib.util.spec_from_file_location("selected_document_rules", source)
+        cls.document_validator = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = cls.document_validator
+        spec.loader.exec_module(cls.document_validator)
+        cls.document_registry = cls.document_validator.load_registry(ROOT)
 
     def test_current_collection_index_header_uses_shared_navigation_contract(self):
-        valid = self.rules["readme_index_header_valid"]
-        text = (ROOT / "docs/05.operations/guides/README.md").read_text()
-        header = next(line for line in text.splitlines() if line.startswith("| Path |"))
-        cells = [cell.strip() for cell in header.strip("|").split("|")]
-        self.assertTrue(valid(cells))
-        self.assertTrue(valid(cells + ["Owner"]))
-        self.assertFalse(valid(cells + ["Status"]))
-        self.assertFalse(valid(cells + ["Owner", "Owner"]))
-        self.assertFalse(valid(["문서", "설명"]))
+        validator = self.document_validator
+        path = pathlib.PurePosixPath("docs/05.operations/guides/README.md")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = validator.classify_path(self.document_registry, path)
+        self.assertEqual(
+            validator.document_content_diagnostics(ROOT, path, profile, text), []
+        )
+        changed = text.replace("| Path |", "| 문서 |", 1)
+        self.assertNotEqual(text, changed)
+        issues = validator.document_content_diagnostics(ROOT, path, profile, changed)
+        self.assertIn("DOC-INDEX-HEADER", {issue.rule_id for issue in issues})
+
+    def test_selected_document_gate_keeps_live_matrix_relationships(self):
+        validator = self.document_validator
+        registry = self.document_registry
+
+        def findings(relative, mutate=None):
+            path = pathlib.PurePosixPath(relative)
+            text = (ROOT / path).read_text(encoding="utf-8")
+            if mutate is not None:
+                changed = mutate(text)
+                self.assertNotEqual(text, changed)
+                text = changed
+            profile = validator.classify_path(registry, path)
+            return validator.document_content_diagnostics(ROOT, path, profile, text)
+
+        for path in (
+            "examples/README.md",
+            ".github/repository-surface.md",
+            "infrastructure/verify/README.md",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(findings(path), [])
+
+        mutations = (
+            (
+                "examples/README.md",
+                lambda text: re.sub(
+                    r"(?m)^#{2,3} Example Role Matrix$",
+                    "## Missing Example Role Matrix",
+                    text,
+                    count=1,
+                ),
+            ),
+            (
+                "examples/README.md",
+                lambda text: text.replace("| `sample-app/` |", "| `missing-app/` |", 1),
+            ),
+            (
+                ".github/repository-surface.md",
+                lambda text: text.replace("No deploy CD", "Deploy CD", 1),
+            ),
+            (
+                "infrastructure/verify/README.md",
+                lambda text: re.sub(
+                    r"(?m)^\| .*`verify-gitops\.sh`.*\n", "", text, count=1
+                ),
+            ),
+        )
+        for path, mutate in mutations:
+            with self.subTest(path=path, mutation=mutate):
+                self.assertTrue(findings(path, mutate))
+
+    def test_incident_state_tracks_each_record_kind_independently(self):
+        validator = self.document_validator
+        path = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        profile = validator.classify_path(self.document_registry, path)
+        self.assertEqual(
+            validator.document_content_diagnostics(ROOT, path, profile, text), []
+        )
+        for filename in ("incident.md", "postmortem.md"):
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as temp:
+                sample = (
+                    pathlib.Path(temp)
+                    / "docs/05.operations/incidents/2026/inc-0001-example"
+                    / filename
+                )
+                sample.parent.mkdir(parents=True)
+                sample.write_text("record", encoding="utf-8")
+                findings = validator.document_content_diagnostics(
+                    pathlib.Path(temp),
+                    path,
+                    profile,
+                    text,
+                    registry=self.document_registry,
+                )
+                self.assertIn("DOC-INCIDENT-STATE", {item.rule_id for item in findings})
+
+    def test_document_inventory_rejects_unsafe_or_incomplete_scans(self):
+        validator = self.document_validator
+        registry = self.document_registry
+        guide = pathlib.PurePosixPath("docs/05.operations/guides/README.md")
+        guide_profile = validator.classify_path(registry, guide)
+        empty_index = "### 문서 인덱스\n\n| Path | Purpose |\n| --- | --- |\n"
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            tempfile.TemporaryDirectory() as outside,
+        ):
+            root = pathlib.Path(temp)
+            guide_parent = root / "docs/05.operations"
+            guide_parent.mkdir(parents=True)
+            (guide_parent / "guides").symlink_to(outside, target_is_directory=True)
+            issues = validator.document_content_diagnostics(
+                root, guide, guide_profile, empty_index, registry=registry
+            )
+            self.assertIn("DOC-INDEX-INPUT", {item.rule_id for item in issues})
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = pathlib.Path(temp)
+            guides = root / "docs/05.operations/guides"
+            guides.mkdir(parents=True)
+            (guides / "linked.md").symlink_to(ROOT / guide)
+            with self.assertRaises(content.BoundedInputError):
+                content._children(root, "docs/05.operations/guides", "file")
+            with mock.patch.object(content.os, "scandir", side_effect=PermissionError):
+                with self.assertRaises(content.BoundedInputError):
+                    content._children(root, "docs/05.operations/guides", "file")
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = pathlib.Path(temp)
+            examples = root / "examples"
+            examples.mkdir()
+            for index in range(content.MAX_DIRECTORY_ENTRIES + 1):
+                (examples / f"example-{index}").mkdir()
+            with self.assertRaises(content.BoundedInputError):
+                content._children(root, "examples", "dir")
+
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            tempfile.TemporaryDirectory() as outside,
+        ):
+            root = pathlib.Path(temp)
+            incident = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+            incident_profile = validator.classify_path(registry, incident)
+            incident_parent = root / "docs/05.operations"
+            incident_parent.mkdir(parents=True)
+            (incident_parent / "incidents").symlink_to(
+                outside, target_is_directory=True
+            )
+            text = (ROOT / incident).read_text(encoding="utf-8")
+            issues = validator.document_content_diagnostics(
+                root, incident, incident_profile, text, registry=registry
+            )
+            self.assertIn("DOC-INCIDENT-INPUT", {item.rule_id for item in issues})
+
+    def test_incident_inventory_reports_noncanonical_depth(self):
+        validator = self.document_validator
+        registry = self.document_registry
+        path = pathlib.PurePosixPath("docs/05.operations/incidents/README.md")
+        profile = validator.classify_path(registry, path)
+        text = (ROOT / path).read_text(encoding="utf-8")
+        for parts in (
+            ("2026", "incident.md"),
+            ("2026", "inc-0001-example", "deeper", "incident.md"),
+        ):
+            with self.subTest(parts=parts), tempfile.TemporaryDirectory() as temp:
+                root = pathlib.Path(temp)
+                misplaced = root / "docs/05.operations/incidents" / pathlib.Path(*parts)
+                misplaced.parent.mkdir(parents=True)
+                misplaced.write_text("record", encoding="utf-8")
+                issues = validator.document_content_diagnostics(
+                    root, path, profile, text, registry=registry
+                )
+                self.assertIn("DOC-INCIDENT-PATH", {item.rule_id for item in issues})
 
     def test_readme_tables_retain_visible_headings_and_unique_diagnostics(self):
-        titles = (
-            "Probe Index",
-            "Example Role Matrix",
-            "Service Coverage Matrix",
-            "Platform Coverage Matrix",
-            "External Service Contract Matrix",
-            "Secret Management Responsibility Matrix",
-            "Workload Coverage Matrix",
-            "AppProject Allow-list Rationale Matrix",
-            "Workload Image and Kind Policy Matrix",
-            "Namespace Ownership Matrix",
-            "Infrastructure Coverage Matrix",
-            "Host Runtime Prerequisite Matrix",
-            "Bootstrap Boundary Matrix",
-            "Infrastructure Test Inventory",
-        )
+        title = "Probe Index"
         table = "\n| Name | Value |\n| --- | --- |\n| alpha | one |\n"
-        parse = self.rules["parse_markdown_table_after_heading"]
-        for title in titles:
-            headings = self.rules["profiled_readme_table_headings"](title)
-            hidden_table = table.replace("alpha | one", "hidden | ignored")
-            backtick = f"```markdown\n## {title}{hidden_table}```\n"
-            tilde = f"~~~markdown\n### {title}{hidden_table}~~~\n"
-            comment = f"<!--\n## {title}{hidden_table}-->\n"
-            for heading in headings:
-                for hidden in (
-                    "",
-                    backtick,
-                    tilde,
-                    comment,
-                    backtick + tilde,
-                    backtick + comment,
-                ):
-                    with self.subTest(title=title, heading=heading, hidden=hidden):
-                        self.assertEqual(
-                            parse(hidden + heading + table, headings),
-                            ([["Name", "Value"], ["alpha", "one"]], None),
-                        )
-            self.assertEqual(
-                parse("\n".join(headings) + table, headings),
-                ([], f"ambiguous visible markdown table headings: {list(headings)!r}"),
-            )
-            self.assertEqual(
-                parse(f"```markdown\n## {title}{table}```\n", headings),
-                ([], f"missing visible markdown heading: one of {headings!r}"),
-            )
+        parse = self.document_validator._document_content_table
+        hidden_table = table.replace("alpha | one", "hidden | ignored")
+        for hidden in (
+            "",
+            f"```markdown\n## {title}{hidden_table}```\n",
+            f"~~~markdown\n### {title}{hidden_table}~~~\n",
+            f"<!--\n## {title}{hidden_table}-->\n",
+        ):
+            with self.subTest(hidden=hidden):
+                self.assertEqual(
+                    parse(hidden + f"### {title}" + table, title),
+                    (["Name", "Value"], [["alpha", "one"]]),
+                )
+        self.assertIsNone(parse(f"## {title}\n### {title}" + table, title))
+        self.assertIsNone(parse(f"```markdown\n## {title}{table}```\n", title))
 
     def test_generic_residue_retains_lines_and_delegates_structural_markdown(self):
         residue = self.rules["generic_template_residue_lines"]

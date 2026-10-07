@@ -38,19 +38,6 @@
     {"name": "labeler-missing-permissions", "workflow": "labeler.yml", "job": "label", "mutation": "missing-permissions", "expected": ["required job permissions must be a mapping"]},
     {"name": "labeler-all-read", "workflow": "labeler.yml", "job": "label", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
     {"name": "labeler-missing-write", "workflow": "labeler.yml", "job": "label", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
-    {"name": "labeler-extra-write", "workflow": "labeler.yml", "job": "label", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]},
-    {"name": "stale-exact-writes", "workflow": "stale.yml", "job": "stale", "mutation": "exact-writes", "expected": []},
-    {"name": "stale-extra-read", "workflow": "stale.yml", "job": "stale", "mutation": "extra-read", "expected": []},
-    {"name": "stale-missing-job", "workflow": "stale.yml", "job": "stale", "mutation": "missing-job", "expected": ["required allowlisted job is missing"]},
-    {"name": "stale-missing-permissions", "workflow": "stale.yml", "job": "stale", "mutation": "missing-permissions", "expected": ["required job permissions must be a mapping"]},
-    {"name": "stale-all-read", "workflow": "stale.yml", "job": "stale", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
-    {"name": "stale-missing-write", "workflow": "stale.yml", "job": "stale", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
-    {"name": "stale-extra-write", "workflow": "stale.yml", "job": "stale", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]}
-  ],
-  "artifactRetentionCases": [
-    {"name": "exact-seven", "retention": 7, "expected": []},
-    {"name": "missing", "retention": null, "expected": ["upload-artifact retention-days must equal 7"]},
-    {"name": "quoted-seven", "retention": "7", "expected": ["upload-artifact retention-days must equal 7"]},
-    {"name": "wrong-number", "retention": 90, "expected": ["upload-artifact retention-days must equal 7"]}
+    {"name": "labeler-extra-write", "workflow": "labeler.yml", "job": "label", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]}
   ]
 }

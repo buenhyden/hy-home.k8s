@@ -605,6 +605,68 @@ def resolve_tool(token: str, root: Path) -> str | None:
     return account_pre_commit_executable(root, account)
 
 
+_UNITTEST_CASE = re.compile(
+    r"^(?:FAIL|ERROR): "
+    r"(?P<method>test_[A-Za-z0-9_]{1,95}) "
+    r"\((?P<target>tests(?:\.[A-Za-z_][A-Za-z0-9_]{0,63})+\."
+    r"[A-Za-z_][A-Za-z0-9_]{0,63})\)(?: .*)?$",
+    re.ASCII,
+)
+_UNITTEST_TERMINAL = re.compile(r"^FAILED \((?P<counts>[^)]{1,160})\)$", re.ASCII)
+_UNITTEST_COUNT = re.compile(
+    r"(?:failures|errors|skipped|expected failures|unexpected successes)=[0-9]{1,7}\Z",
+    re.ASCII,
+)
+
+
+def _unittest_failure_summary(payload: str) -> str | None:
+    """Show bounded test identities and terminal counts, never assertion text."""
+
+    groups: dict[str, int] = {}
+    identifiers: list[str] = []
+    terminal = ""
+    for line in payload.splitlines():
+        if len(line) > 256:
+            continue
+        finished = _UNITTEST_TERMINAL.fullmatch(line)
+        if finished:
+            parts = finished["counts"].split(", ")
+            if parts and all(_UNITTEST_COUNT.fullmatch(part) for part in parts):
+                terminal = ",".join(parts)
+            continue
+        match = _UNITTEST_CASE.fullmatch(line)
+        if match is None:
+            continue
+        module, class_name = match["target"].rsplit(".", 1)
+        groups[module] = groups.get(module, 0) + 1
+        identifiers.append(f"{module}.{class_name}.{match['method']}")
+    if not identifiers:
+        return None
+    if not terminal:
+        terminal = "terminal-counts-unavailable"
+    module_rows = [f"{name}:{count}" for name, count in groups.items()]
+    prefix = f"unittest FAILED ({terminal}); modules="
+    kept_modules: list[str] = []
+    for row in module_rows[:12]:
+        if len(prefix) + len(",".join((*kept_modules, row))) + 24 > 1022:
+            break
+        kept_modules.append(row)
+    summary = prefix + ",".join(kept_modules)
+    if len(kept_modules) < len(module_rows):
+        summary += f"; other_modules={len(module_rows) - len(kept_modules)}"
+    summary += "; ids="
+    kept_ids: list[str] = []
+    for identifier in identifiers[:32]:
+        candidate = ",".join((*kept_ids, identifier))
+        if len(summary) + len(candidate) + 24 > 1022:
+            break
+        kept_ids.append(identifier)
+    summary += ",".join(kept_ids)
+    if len(kept_ids) < len(identifiers):
+        summary += f"; omitted_ids={len(identifiers) - len(kept_ids)}"
+    return summary[:1022]
+
+
 def failure_snippet(completed: BoundedCommandResult) -> str:
     """Escape bounded diagnostics and redact common secret-bearing fields."""
     payload = "\n".join(
@@ -627,26 +689,27 @@ def failure_snippet(completed: BoundedCommandResult) -> str:
         "[REDACTED]",
         payload,
     )
-    prioritized = ""
+    unittest_summary = _unittest_failure_summary(payload)
+    if unittest_summary is not None:
+        return encoded(unittest_summary)
+    hook_ids: list[str] = []
+    exit_codes: list[str] = []
+    modified = False
     for line in payload.splitlines():
-        if line.startswith(
-            (
-                "ERROR: ",
-                "FAIL: ",
-                "FAILED (",
-                "- hook id: ",
-                "- exit code: ",
-                "- files were modified by this hook",
-                # Without the assertion itself a failing case names only which
-                # test failed, so a hosted failure can be read but not
-                # diagnosed. Redaction and the byte bound still apply.
-                "AssertionError",
-            )
-        ) or (line.endswith("Failed") and "...Failed" in line):
-            prioritized += ("\n" if prioritized else "") + line[:256]
-            if len(prioritized) >= 1024:
-                break
-    return encoded((prioritized or payload)[:1024])
+        hook = re.fullmatch(r"- hook id: ([a-z][a-z0-9-]{0,63})", line, re.ASCII)
+        if hook and hook[1] not in hook_ids and len(hook_ids) < 8:
+            hook_ids.append(hook[1])
+        exit_code = re.fullmatch(r"- exit code: ([0-9]{1,3})", line, re.ASCII)
+        if exit_code and exit_code[1] not in exit_codes and len(exit_codes) < 8:
+            exit_codes.append(exit_code[1])
+        modified |= line == "- files were modified by this hook"
+    if hook_ids or exit_codes or modified:
+        fields = [*(f"- hook id: {value}" for value in hook_ids)]
+        fields.extend(f"- exit code: {value}" for value in exit_codes)
+        if modified:
+            fields.append("modified=true")
+        return encoded(("pre-commit failed; " + "; ".join(fields))[:1022])
+    return encoded("validation failed; details withheld")
 
 
 def exact_success_marker_count(stdout: str | bytes, marker: str) -> int:

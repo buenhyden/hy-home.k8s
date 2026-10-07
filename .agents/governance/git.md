@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "1.4.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-10"
+updated: "2026-10-07"
 ---
 
 # Git Policy
@@ -18,8 +18,9 @@ approved Plan specifies another base.
 ## Authority Boundary
 
 The user owns push, publication, merge, discard, and history recovery decisions.
-Remote branch protection owns required hosted checks; local evidence cannot
-waive them. [Approval and safety](approval-and-safety.md) governs exceptions.
+Remote branch protection owns any required hosted metadata checks and cannot
+be inferred from local evidence. [Approval and safety](approval-and-safety.md)
+governs protected actions and exceptions.
 
 ## Governance Context
 
@@ -33,11 +34,19 @@ branch convention; Codex-created branches normally use `codex/`.
   the logical change and inspect `git diff --cached`.
 - Use Conventional Commits with an imperative, specific summary; include the
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
-- Validate the exact index with the staged profile before each logical commit.
-  For PR delivery, hosted CI owns final full QA at the PR SHA; for a local-only
-  handoff, run local full once. Follow the
+- Validate the exact index with the selected staged profile before each logical
+  commit. Local QA owns repository-static quality evidence. A feature push, PR
+  or main merge does not itself select full QA. Follow the
   [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
-  unchanged inputs. Never use `--no-verify`.
+  identical leaves across hook, command or delivery phases. Never use
+  `--no-verify`.
+- For a prose-only authored document or README router commit, keep the common
+  diff, applicable style and Commitizen message checks and the selected
+  document-content checks. Follow
+  [ordinary document selection](quality.md#ordinary-document-selection); a
+  governance, provider, native, schema, registry or executable change needs
+  the focused contract checks its actual consumer selects. Preserve active
+  hooks, and do not replay their identical result on push.
 - Do not reset, restore away edits, clean, amend, rebase, force-push, delete
   branches, or remove worktrees without explicit approval for that operation.
   Prefer a forward corrective commit to rewriting shared history.
@@ -50,10 +59,44 @@ branch convention; Codex-created branches normally use `codex/`.
   obtain exact confirmation. Clean only workflow-owned worktrees, never the
   user's main or host-managed workspace.
 
+### Branch and integration routing
+
+Develop each independently reviewable Spec package on an owned feature branch
+and linked worktree when needed. Run changed-behavior and affected checks while
+editing, exact-index and message checks at logical commits, then any explicitly
+selected local full profile at the bounded final branch snapshot. Push and PR
+creation carry that evidence without re-executing the same leaf. Compare the
+integrated main tree and history with what was checked; a changed merge input
+gets only its invalidated checks, and an identical fast-forward does not replay
+them. The hosted `ci-summary` job owns the PR branch-metadata verdict directly;
+its observed result has its own SHA and trust boundary and never stands in for
+local QA. Observe actual ruleset requirements before calling an integration
+accepted.
+
+### Release ownership
+
+Use one producer for a `v`-prefixed strict SemVer tag and its matching GitHub
+Release, bound to an exact reviewed main commit. A development push or merge
+does not create a release or move an existing tag. The producer verifies the
+version, tag collision, main ancestry and canonical changelog before any
+publication; an invalid or mismatched input fails closed. The current
+release-preparation PR targeting `main` updates the tracked `CHANGELOG.md`
+from integrated changes. The committed main file is the release history; a
+temporary generated artifact is only review input and is never its owner.
+If immutable Releases are enabled, attach every required asset to the draft
+before publication. Actual tag/Release publication, remote immutable-release
+settings and rulesets require direct observation and their operator approval
+route; a local script or workflow declaration is not such evidence. Keep
+release procedure with the Stage 05 operations owner and execution evidence
+with the Task and Git.
+
 ### Commit-message validation
 
-[`.cz.toml`](../../.cz.toml) owns supported types, optional scope, subject and
-body/footer syntax for ordinary authored messages. Its explicit generated-message
+[`.cz.toml`](../../.cz.toml) is the single Commitizen grammar owner for
+supported types, optional scope, subject and body/footer syntax of ordinary
+authored messages. [`.gitmessage`](../../.gitmessage) explains that grammar to
+authors; a second commitlint grammar must not duplicate it. The configured
+commit-msg hook is the local enforcement point. Explicit generated-message
 prefix exceptions retain Git/tool compatibility and grant no merge or history
 rewrite authority. Git-cliff filters non-conventional history, including a
 native `Revert` prefix; use `revert(scope): subject` when changelog inclusion is
@@ -64,9 +107,11 @@ imperative, specific subject, preferably under 72 characters. Length, case and
 body wrapping are guidance, not extra validator rules. Historical parsers may
 retain prior punctuation without permitting it in new messages.
 
-Full QA checks files through the manual stage and does not validate a commit
-message. Inspect the effective `core.hooksPath` source and hook connection, and
-preserve active hooks and private settings.
+Selected local full QA checks files through the manual stage and does not
+validate a commit message. Inspect the effective `core.hooksPath` source and
+hook connection, and preserve active hooks and private settings. If an active
+hook has already run an identical leaf on the checked index, record that result
+without manually replaying it; a different mode, tool or input is separate.
 
 Git honours one hook directory, so a user-global `core.hooksPath` makes this
 repository's own hooks unreachable and silently drops the commit-message check

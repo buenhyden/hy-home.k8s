@@ -38,10 +38,7 @@ INTERNAL_USES_SHAPE_CASES = (
     ("mapping", "{}", ["uses entries must be plain same-line scalar values"]),
     ("list", "[]", ["uses entries must be plain same-line scalar values"]),
 )
-INTERNAL_ARTIFACT_RETENTION_CASES = (
-    ("bool-true", True, ["upload-artifact retention-days must equal 7"]),
-)
-INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES = (
+INTERNAL_WORKFLOW_SHAPE_CASES = (
     ("jobs-list", "jobs: [build]\n", ["workflow jobs must be a mapping"]),
     (
         "job-scalar",
@@ -49,13 +46,13 @@ INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES = (
         ["workflow job must be a mapping"],
     ),
     (
-        "steps-mapping-upload",
+        "steps-mapping",
         "jobs:\n"
         "  build:\n"
         "    runs-on: ubuntu-latest\n"
         "    steps:\n"
-        "      upload:\n"
-        "        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7\n",
+        "      task:\n"
+        "        run: 'true'\n",
         ["job steps must be a list"],
     ),
     (
@@ -106,39 +103,11 @@ def _write_self_test_case(root: Path, case: dict) -> None:
         )
 
 
-def _write_artifact_retention_case(
-    root: Path,
-    retention: object,
-    *,
-    uses: str = "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
-) -> None:
-    path = root / ".github" / "workflows" / "ci.yml"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    lines = [
-        "name: Artifact retention fixture",
-        "'on': workflow_dispatch",
-        "permissions:",
-        "  contents: read",
-        "jobs:",
-        "  build:",
-        "    runs-on: ubuntu-latest",
-        "    steps:",
-        f"      - uses: {uses} # v7",
-        "        with:",
-        "          name: artifact",
-        "          path: artifact.txt",
-    ]
-    if retention is not None:
-        rendered_retention = yaml.safe_dump(retention, default_flow_style=True).strip()
-        lines.append(f"          retention-days: {rendered_retention}")
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-
-def _write_artifact_retention_shape_case(root: Path, body: str) -> None:
+def _write_workflow_shape_case(root: Path, body: str) -> None:
     path = root / ".github" / "workflows" / "ci.yml"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        "name: Artifact retention shape fixture\n"
+        "name: Workflow shape fixture\n"
         "'on': workflow_dispatch\n"
         "permissions:\n"
         "  contents: read\n" + body,
@@ -324,28 +293,22 @@ class GitHubActionsSecurityFixtureTests(unittest.TestCase):
                 _write_required_write_case(self.validator, root, case)
                 self.assertEqual(self.observed(root), case["expected"])
 
-    def test_artifact_retention_cases(self) -> None:
-        for case in self.fixture["artifactRetentionCases"]:
-            with (
-                self.subTest(case=case["name"]),
-                tempfile.TemporaryDirectory(
-                    prefix="actions-security-retention-"
-                ) as directory,
-            ):
-                root = Path(directory)
-                _write_artifact_retention_case(root, case["retention"])
-                self.assertEqual(self.observed(root), case["expected"])
+    def test_permission_checker_owns_workflow_job_and_step_shapes(self) -> None:
+        cases = (
+            (["build"], "workflow jobs must be a mapping"),
+            ({"build": "scalar"}, "workflow job must be a mapping"),
+            ({"build": {"steps": {"run": "true"}}}, "job steps must be a list"),
+            ({"build": {"steps": ["scalar"]}}, "job step must be a mapping"),
+        )
+        for jobs, expected in cases:
+            with self.subTest(expected=expected):
+                data = {"permissions": {"contents": "read"}, "jobs": jobs}
+                findings = self.validator._validate_permissions(Path("ci.yml"), data)
+                self.assertIn(expected, [item.rsplit(": ", 1)[-1] for item in findings])
 
     def test_internal_shape_cases(self) -> None:
         groups = (
-            (
-                INTERNAL_ARTIFACT_RETENTION_CASES,
-                _write_artifact_retention_case,
-            ),
-            (
-                INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES,
-                _write_artifact_retention_shape_case,
-            ),
+            (INTERNAL_WORKFLOW_SHAPE_CASES, _write_workflow_shape_case),
             (
                 INTERNAL_USES_SHAPE_CASES,
                 _write_uses_shape_case,

@@ -51,7 +51,6 @@ MAX_PATH_INPUT_BYTES = 4 * 1024 * 1024
 MAX_GIT_STDOUT_BYTES = 16 * 1024 * 1024
 MAX_GIT_STDERR_BYTES = 256 * 1024
 MAX_JSON_INPUT_BYTES = 8 * 1024 * 1024
-EXPECTED_CI_JOBS = {"qa": "qa"}
 
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
@@ -170,6 +169,7 @@ def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | 
             "tests",
             "-t",
             ".",
+            "-f",
         ],
         "pre-commit": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
     }
@@ -326,9 +326,7 @@ def validate_contract(
         fail("SURFACE-EVIDENCE-LANE", "evidence lane order differs")
 
     validators = _unique_ids(contract["validators"], "VALIDATOR")
-    ci_jobs = _unique_ids(contract["ciJobs"], "CI-JOB")
     surfaces = _unique_ids(contract["surfaces"], "SURFACE")
-    outputs: set[str] = set()
 
     path_input_validators = {
         identifier
@@ -367,26 +365,10 @@ def validate_contract(
         ):
             fail("SURFACE-FALLBACK", validator["id"])
 
-    for job in ci_jobs.values():
-        if job["output"] in outputs:
-            fail("SURFACE-CI-OUTPUT", f"duplicate output {job['output']!r}")
-        outputs.add(job["output"])
-        if job["evidenceLane"] != "ci":
-            fail("SURFACE-EVIDENCE-LANE", job["id"])
-    if {
-        identifier: job["output"] for identifier, job in ci_jobs.items()
-    } != EXPECTED_CI_JOBS:
-        fail(
-            "SURFACE-CI-JOB",
-            "CI job IDs and selector outputs differ from the exact contract",
-        )
-
     route_keys: set[tuple[str, str, str]] = set()
     for surface in surfaces.values():
         if any(item not in validators for item in surface["validators"]):
             fail("SURFACE-VALIDATOR-REFERENCE", surface["id"])
-        if any(item not in ci_jobs for item in surface["ciJobs"]):
-            fail("SURFACE-CI-JOB-REFERENCE", surface["id"])
         if surface["protectedLevel"] not in PROTECTED_LEVELS:
             fail("SURFACE-PROTECTED-LEVEL", surface["id"])
         if surface["evidenceLane"] not in EVIDENCE_LANES:
@@ -630,7 +612,6 @@ def select_paths(
         fail("SURFACE-LANE", lane)
     validators_by_id = {row["id"]: row for row in contract["validators"]}
     validator_ids: set[str] = set()
-    ci_job_ids: set[str] = set()
     unmatched_paths: set[str] = set()
     maximum = 0
     migration_proof = None
@@ -685,11 +666,9 @@ def select_paths(
         for identifier in surface["validators"]:
             if lane in validators_by_id[identifier]["lanes"]:
                 validator_ids.add(identifier)
-        ci_job_ids.update(surface["ciJobs"])
         maximum = max(maximum, PROTECTED_LEVELS.index(surface["protectedLevel"]))
     return {
         "validators": sorted(validator_ids),
-        "ciJobs": sorted(ci_job_ids),
         "protectedLevel": PROTECTED_LEVELS[maximum],
         "unmatchedPaths": sorted(unmatched_paths),
     }
@@ -777,7 +756,7 @@ def main() -> int:
             "[PASS] affected surface validation passed: "
             f"paths={len(paths)} surfaces={len(observed_surfaces)}/"
             f"{len(contract['surfaces'])} validators={len(contract['validators'])} "
-            f"ci_jobs={len(contract['ciJobs'])} uncovered=0 ambiguous=0"
+            "uncovered=0 ambiguous=0"
         )
         return 0
     except ContractError as exc:

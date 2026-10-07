@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "1.2.0"
+version: "2.0.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-07"
 ---
 
 # Software Development Lifecycle
@@ -45,17 +45,19 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 2. Record structural views and durable decisions before implementation when
    the change affects system boundaries or important trade-offs.
 3. Implement through one Stage 03 Spec package with ordered Plan and Task
-   evidence, using RED then GREEN validation. The Spec states behavior and
-   criteria, the Plan states order and dependencies, and each Task records
-   execution rows, results and evidence in one table.
+   evidence. Changed executable behavior uses a focused failing case followed
+   by a passing case; narrative changes use selected document checks. The Spec
+   states behavior and criteria, the Plan states order and dependencies, and
+   each Task records execution rows, results and evidence in one table.
 4. Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.
 5. Supersede, retire, withdraw, or seal documents only through registry-owned
    lifecycle edges and the applicable reciprocal or recovery evidence.
 6. Keep release procedure in a Runbook when one is needed, local execution
-   evidence in Tasks and Git, and tag, hosted CI, provider, or live release
-   evidence external. Do not create a Release Record without a successor ADR,
-   profile, lifecycle, template, and demonstrated audit consumer.
+   evidence in Tasks and Git, the committed main `CHANGELOG.md` as release
+   history, and tag, GitHub Release, hosted, provider or live evidence in its
+   actually observed lane. Do not create a Release Record without a successor
+   ADR, profile, lifecycle, template, and demonstrated audit consumer.
 
 The terminal Stage 04 slot remains unused. This workspace carries no user
 interface, so it has no design-system authority and no root design document; if
@@ -69,11 +71,12 @@ technical-design artifact.
 | Requirement | Durable need and acceptance boundary; Stage 01. |
 | Architecture Description / Architecture Decision Record | Current structural view / durable choice and rationale; Stage 02. |
 | Spec / Plan / Task | Change contract / execution order and risk / work, verification, and handoff evidence; one Stage 03 package. |
+| GitHub Issue / Project | Request and priority / a view of work state. Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
 | Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
 | Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
 | Skill | Reusable procedure under `.agents/skills/`; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
 | Hook / Gate / validator / Fixture | Native event callback / blocking quality decision / executable check implementing that decision / independent bounded test input. A hook need not run QA, and a test fixture is never production policy input. |
-| QA / CI / CD | Quality checks / hosted validation of a checkout / delivery and reconciliation. Local and CI static QA share one execution contract; Argo CD reconciles the declared GitOps state under the operating boundary. |
+| QA / CI / CD | Quality checks / integration orchestration and applicable branch metadata / delivery and reconciliation. This public repository runs repository-static QA locally; GitHub branch checks do not replay that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
 | Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
 | Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
 | Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Stage 98 owns retained bodies and route dispositions; Git owns source recovery. |
@@ -89,6 +92,8 @@ technical-design artifact.
 
 A small correction reuses its current work owner and proportional checks. It
 need not create a Requirement, ADR, or a new Spec package merely to edit a file.
+An Issue can initiate work and a Project can display its progress without
+becoming a second execution record; the active Task alone records actual work.
 
 ## Validation and Refresh
 

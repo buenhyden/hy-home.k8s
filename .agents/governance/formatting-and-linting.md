@@ -1,10 +1,10 @@
 ---
 title: "Formatting and Linting Policy"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-09"
+updated: "2026-10-07"
 ---
 
 # Formatting and Linting Policy
@@ -29,8 +29,9 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 
 `.gitattributes` owns Git text and line-ending normalization.
 `.pre-commit-config.yaml` owns hook integration, including pinned revisions,
-stages, arguments and exclusions; the shared QA full profile and hosted QA job
-run the same pre-commit gate. `.editorconfig` reaches editors only and proves
+stages, arguments and exclusions. Its local staged and selected manual QA
+invocations share the same rule owner; a hosted branch-policy job is not a
+formatter or QA execution lane. `.editorconfig` reaches editors only and proves
 nothing about committed bytes.
 
 ## Current Contract
@@ -40,6 +41,12 @@ nothing about committed bytes.
   editor hints, and hook or tool configuration for validation and rewriting.
   Mirrored values across those layers are not separate rules; document their
   purpose and validate that the committed result agrees.
+- For an ordinary authored document or README router edit, select only the
+  applicable document-facing style rules on changed files. Keep the common
+  diff and commit-message checks and the active hook chain; do not add shell,
+  Python, infrastructure or whole-tree formatting merely because the file is
+  Markdown. A change to a formatting rule or hook configuration needs its own
+  focused contract regression under [quality](quality.md#ordinary-document-selection).
 - Keep no configuration for a file type the repository does not contain.
   When the last target of a tool disappears, remove the tool and its
   configuration in the same change rather than leaving an unread file.

@@ -12,7 +12,6 @@
     "protectedLevels",
     "evidenceLanes",
     "validators",
-    "ciJobs",
     "surfaces",
     "profiles",
     "profileAliases"
@@ -22,7 +21,7 @@
       "const": "./registry.schema.json"
     },
     "schemaVersion": {
-      "const": 2
+      "const": 3
     },
     "pathSemantics": {
       "type": "object",
@@ -83,13 +82,6 @@
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/validator"
-      }
-    },
-    "ciJobs": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/$defs/ciJob"
       }
     },
     "surfaces": {
@@ -261,66 +253,12 @@
                 "same-lane",
                 "change-scoped"
               ]
-            },
-            "hosted": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "image",
-                "platform",
-                "python",
-                "version",
-                "inputs"
-              ],
-              "properties": {
-                "image": {
-                  "type": "string",
-                  "const": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d"
-                },
-                "platform": {
-                  "type": "string",
-                  "const": "linux/amd64"
-                },
-                "python": {
-                  "type": "string",
-                  "const": "/usr/local/bin/python3"
-                },
-                "version": {
-                  "type": "string",
-                  "const": "3.12.14"
-                },
-                "inputs": {
-                  "type": "string",
-                  "const": "committed-tree-v1"
-                }
-              }
             }
           }
         },
         "coveredBy": {
           "type": "string",
           "minLength": 1
-        }
-      }
-    },
-    "ciJob": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "output",
-        "evidenceLane"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/identifier"
-        },
-        "output": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*$"
-        },
-        "evidenceLane": {
-          "type": "string"
         }
       }
     },
@@ -331,7 +269,6 @@
         "id",
         "routes",
         "validators",
-        "ciJobs",
         "protectedLevel",
         "fallback",
         "evidenceLane"
@@ -348,14 +285,6 @@
           }
         },
         "validators": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
-        },
-        "ciJobs": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,

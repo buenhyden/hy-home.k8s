@@ -685,10 +685,6 @@ def validate_current_sources(root: Path) -> None:
     governance = root / ".agents"
     if governance.is_dir():
         for parent, directories, files in os.walk(governance, followlinks=False):
-            # The grader owns response data, including deliberately false claims.
-            if Path(parent) == governance / "evaluations" / "responses":
-                directories[:] = []
-                continue
             for name in directories:
                 if (Path(parent) / name).is_symlink():
                     fail(
@@ -1046,8 +1042,8 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         ".agents",
         {
             "README.md": stat.S_IFREG,
-            "governance": stat.S_IFDIR,
             "evaluations": stat.S_IFDIR,
+            "governance": stat.S_IFDIR,
             "knowledge": stat.S_IFDIR,
             "prompts": stat.S_IFDIR,
             "roles": stat.S_IFDIR,
@@ -1062,6 +1058,48 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         {"work-lifecycle.md": stat.S_IFREG, "delegated-development.md": stat.S_IFREG},
         code="AGENT-GOVERNANCE-OWNER",
     )
+    _validate_directory_entries(
+        root,
+        ".agents/evaluations",
+        {
+            "README.md": stat.S_IFREG,
+            "harnesses": stat.S_IFDIR,
+            "results.md": stat.S_IFREG,
+            "templates": stat.S_IFDIR,
+        },
+        code="AGENT-EVALUATION-OWNER",
+    )
+    _validate_directory_entries(
+        root,
+        ".agents/evaluations/templates",
+        {"README.md": stat.S_IFREG},
+        code="AGENT-EVALUATION-OWNER",
+    )
+    harnesses = root / ".agents/evaluations/harnesses"
+    names = {
+        entry.name: stat.S_IFMT(entry.stat(follow_symlinks=False).st_mode)
+        for entry in os.scandir(harnesses)
+    }
+    if names.get("README.md") != stat.S_IFREG:
+        fail("AGENT-EVALUATION-OWNER", "evaluation harness router is missing")
+    for name, mode in names.items():
+        if name == "README.md":
+            continue
+        if (
+            not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", name)
+            or mode != stat.S_IFDIR
+        ):
+            fail("AGENT-EVALUATION-OWNER", "evaluation cycle directory differs")
+        _validate_directory_entries(
+            root,
+            f".agents/evaluations/harnesses/{name}",
+            {
+                filename: stat.S_IFREG
+                for filename in ("task.md", "baseline.md", "with-skill.md", "score.md")
+            },
+            optional=frozenset({"baseline.md", "with-skill.md", "score.md"}),
+            code="AGENT-EVALUATION-OWNER",
+        )
     _validate_skill_packages(root, skills)
     for skill_id, path in skills.items():
         if path != f".agents/skills/{skill_id}/SKILL.md":

@@ -524,8 +524,11 @@ class CiPythonContractTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("[PASS] CI Python contract validation passed", result.stdout)
-        self.assertIn("hosted-python-install-jobs=0", result.stdout)
+        self.assertIn(
+            "[PASS] local Python dependency and CI metadata contract passed",
+            result.stdout,
+        )
+        self.assertIn("local-python-pins=3 hosted-installs=0", result.stdout)
 
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
@@ -1291,7 +1294,7 @@ class CiPythonShellGitSubcommandTests(unittest.TestCase):
                 self.assertFalse(self._allowed(command))
 
 
-class HostedCleanupContractTests(unittest.TestCase):
+class MetadataOnlyCiContractTests(unittest.TestCase):
     def workflow(self):
         import copy
 
@@ -1303,31 +1306,23 @@ class HostedCleanupContractTests(unittest.TestCase):
             )
         )
 
-    def test_surviving_jobs_and_honest_summary_are_admitted(self):
+    def test_one_metadata_job_and_honest_summary_are_admitted(self):
         VALIDATOR.validate_workflow(self.workflow())
 
-    def test_retired_jobs_and_full_execution_are_rejected(self):
-        for name in ("qa", "qa-source"):
+    def test_extra_hosted_jobs_and_qa_execution_are_rejected(self):
+        for name in ("qa", "qa-source", "qa-isolated", "branch-policy"):
             workflow = self.workflow()
             workflow["jobs"][name] = {"steps": [{"run": VALIDATOR.QA_COMMAND}]}
             with self.subTest(job=name), self.assertRaises(VALIDATOR.ContractError):
                 VALIDATOR.validate_workflow(workflow)
 
-    def test_isolated_identity_and_failure_boundaries_reject_drift(self):
+    def test_summary_rejects_permission_and_execution_drift(self):
         import copy
 
         baseline = self.workflow()
         variants = []
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["qa-isolated"]["steps"][0]["with"]["persist-credentials"] = (
-            True
-        )
-        variants.append(workflow)
-        workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["qa-isolated"]["steps"][1]["run"] += "\necho bypass"
-        variants.append(workflow)
-        workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["branch-policy"]["permissions"] = {"contents": "write"}
+        workflow["jobs"]["ci-summary"]["permissions"] = {"contents": "write"}
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"][0]["continue-on-error"] = True
@@ -1336,7 +1331,13 @@ class HostedCleanupContractTests(unittest.TestCase):
         workflow["jobs"]["ci-summary"]["steps"][0]["if"] = "success()"
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["branch-policy"]["steps"].append({"run": VALIDATOR.QA_COMMAND})
+        workflow["jobs"]["ci-summary"]["steps"].append({"run": VALIDATOR.QA_COMMAND})
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"].append({"uses": "actions/checkout@abc"})
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["needs"] = ["qa"]
         variants.append(workflow)
         for workflow in variants:
             with (
@@ -1345,22 +1346,25 @@ class HostedCleanupContractTests(unittest.TestCase):
             ):
                 VALIDATOR.validate_workflow(workflow)
 
-    def test_summary_requires_both_actual_results_and_not_run(self):
+    def test_summary_requires_event_metadata_and_not_run(self):
         import copy
 
         baseline = self.workflow()
         variants = []
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["needs"] = ["branch-policy"]
+        workflow["jobs"]["ci-summary"]["steps"][0]["env"].pop("HEAD_REF")
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"][0]["env"].pop("ISOLATED_RESULT")
-        variants.append(workflow)
-        workflow = copy.deepcopy(baseline)
-        step = workflow["jobs"]["ci-summary"]["steps"][0]
-        step["run"] = step["run"].replace(
+        workflow["jobs"]["ci-summary"]["steps"][0]["run"] = workflow["jobs"][
+            "ci-summary"
+        ]["steps"][0]["run"].replace(
             "result=NOT_RUN verdict=NOT_RUN", "result=PASS verdict=PASS"
         )
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][0]["run"] = workflow["jobs"][
+            "ci-summary"
+        ]["steps"][0]["run"].replace("branch_verdict=FAIL", "branch_verdict=PASS")
         variants.append(workflow)
         for workflow in variants:
             with (

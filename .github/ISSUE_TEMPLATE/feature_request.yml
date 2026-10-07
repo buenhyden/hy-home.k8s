@@ -1,22 +1,23 @@
 name: Feature Request
-description: Propose a new feature using the spec-driven approach
+description: Describe a feature request for triage
 title: "[FEATURE] "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to suggest a feature!
-        **Remember**: All features must go through the spec-driven development process.
+        Describe the need and expected outcome. A maintainer assigns one
+        `priority:*` Issue label during triage. The accepted contract belongs
+        in a Spec; execution evidence belongs in its Task.
   - type: input
     id: prd_link
     attributes:
       label: Requirement Package / AD Link
       description:
-        Provide a link to the requirement package (`docs/01.requirements/`) or AD (`docs/02.architecture/descriptions/`) for this feature.
+        Link an existing requirement package or architecture description if one exists.
       placeholder: https://github.com/<org>/<repo>/blob/main/docs/01.requirements/<file>.md
     validations:
-      required: true
+      required: false
   - type: textarea
     id: problem
     attributes:
@@ -33,25 +34,16 @@ body:
     validations:
       required: true
   - type: textarea
-    id: description
-    attributes:
-      label: Description
-      description:
-        A clear and concise description of what the feature is and what it aims
-        to solve.
-    validations:
-      required: true
-  - type: textarea
     id: acceptance_criteria
     attributes:
-      label: Acceptance Criteria (Given-When-Then)
-      description: Provide testable acceptance criteria.
+      label: Proposed Acceptance Ideas (optional)
+      description: Suggest testable behavior if known; the accepted criteria are defined in a Spec.
       placeholder: |
         Given ...
         When ...
         Then ...
     validations:
-      required: true
+      required: false
   - type: textarea
     id: out_of_scope
     attributes:

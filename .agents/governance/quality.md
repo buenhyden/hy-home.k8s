@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "1.5.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-06"
+updated: "2026-10-07"
 ---
 
 # Quality and Evidence Policy
@@ -42,25 +42,35 @@ metadata; static parity never proves discovery, model resolution, or execution.
   Unstaged repairs cannot hide invalid staged content. Working-tree full QA
   does not replace this byte-specific evidence; commit-message hooks remain
   separate.
-- **full / all-files**: the full QA profile validates the final working tree,
-  including one unit discovery and one all-files pre-commit invocation at the
-  explicit manual stage. Commit-msg remains separate. Do not
-  repeat either command on unchanged bytes outside that profile.
+- **full / all-files**: select the local full QA profile for a change to shared
+  QA routing or execution, or for an explicitly bounded audit that requires
+  whole-repository evidence. It validates the final working tree, including
+  one unit discovery and one all-files pre-commit invocation at the explicit
+  manual stage. Commit-msg remains separate. Do not repeat either command on
+  unchanged bytes outside that profile. A push, PR or main merge alone does not
+  select full QA.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
-- **ci**: the CLI `ci` profile remains an alias of `full` in the execution
-  registry. The current hosted workflow runs PR branch policy and the isolated
-  repository gate with a required summary; it does not execute the full profile.
-  Record hosted full QA as `NOT_RUN`. Bind each hosted result to its exact SHA
-  and run identity; locally executing the `ci` profile is local full evidence.
+- **ci**: the CLI `ci` profile is a compatibility alias of local `full` while
+  registered. It does not imply GitHub Actions execution. Hosted automation is
+  limited to nonduplicate branch or repository metadata checks; a hosted summary
+  reports only what its jobs actually observed. An unexecuted hosted full QA is
+  `NOT_RUN`, never inferred from a successful local run or summary.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
 
 A QA profile selects gate IDs; a lane describes routing or an evidence boundary.
-The execution registry owns commands and profile membership. A logical gate
-runs once per identical input snapshot, configuration, and validation mode.
-Different index and working-tree bytes require separate evidence.
+The execution registry owns commands and profile membership. Execute one logical
+leaf once for identical input bytes and history, configuration, tool identity,
+scope, mode and trust. Distinct index, working-tree, integrated-main and remote
+observations require their own evidence where those inputs differ. A phase name
+or a second caller does not justify replaying an already proven leaf.
+
+Document link and owner checks execute only through selected local QA. Hosted
+metadata jobs neither run nor certify them. A local repository link-target
+result does not establish external URL availability; record that as a separate
+unobserved external condition unless directly authorized and checked.
 
 ### Validation runner envelope
 
@@ -87,7 +97,9 @@ leader exits is `FAIL`.
 - `PASS`: the named check ran over the stated scope and met its acceptance
   condition.
 - `NOT_RUN`: the named check did not execute. A selected required gate with this
-  result blocks completion and cannot enter PASS cache or signed proof.
+  result blocks completion and cannot enter PASS cache or signed proof. A check
+  outside the selected scope stays factual `NOT_RUN` without becoming a new
+  requirement merely because a previous workflow once ran it.
 - `NOT_APPLICABLE`: the named check has no applicable target for the stated
   scope. It is not evidence that a selected required check ran.
 - `FAIL`: execution or input validation did not meet the acceptance condition.
@@ -129,36 +141,104 @@ confirmation for the same scope and evidence snapshot.
   reviews remain governed by their existing owners. Native and live claims
   still require the corresponding observed evidence.
 
+### Agent evaluation evidence
+
+The [agent evaluator](../roles/agent-evaluator.md) may compare actual
+`noSkill` and `withSkill` trials of the same task as bounded measurement
+evidence. The evaluation router holds raw observations, task context,
+criteria, scores and one aggregate results owner; Stage 99 owns their form.
+Declare trial count, signals, criterion IDs and human calibration before
+scoring. Preserve partial trials as incomplete and enter an aggregate only
+after every declared pair has actual evidence. A synthetic example or an
+unobserved condition is not an actual cycle.
+
+Evaluation scores and calibration are distinct from repository QA
+`PASS`/`FAIL`/`NOT_RUN`/`DEFER`, approval, and provider-runtime evidence. A
+recorded response does not prove that a native skill loaded, a command ran,
+its result succeeded, or a permission boundary enforced; those claims need
+direct session evidence. Keeping evaluation evidence does not register a
+grader as a recurring QA gate. Admission requires a durable consumer, an
+owned failure rule and the validation registry's separate review.
+
+### QA admission and retirement
+
+Admit a recurring check only for a current document contract or actual
+repository-purpose surface: document profiles, forms, frontmatter, relations,
+links and status; GitOps, Kubernetes, Docker, reference project templates, web
+content, Vault configuration and external-service interfaces where present.
+Shared selection, commit, release, secret and runner controls that enforce
+those contracts also need bounded regression coverage. Keep separate rules
+when their input, threat model or failure meaning differs.
+An old name, a slow run or a failure alone does not prove a test is obsolete.
+
+For a one-use, legacy or deprecated check, first transfer any ongoing
+protection to its durable owner, including normal Archive catalog, lifecycle,
+link and content integrity apart from historical cutover completion proof.
+Then remove the old caller and registration, remove its dedicated helper,
+fixture and test when no consumer remains, and preserve necessary past results
+in the existing Task, Archive or Git recovery owner. Do not add a new Spec or
+progress ledger solely to retire old QA. Ordinary document changes select
+profile, relationship, link and state checks; executable behavior changes get
+focused negative and boundary regressions. A one-time Spec or Task migration
+test is not a permanent gate after its outcome is retained.
+
+Optimize in this order: remove duplicate leaves, separate content validation
+from implementation regression, share parsing and Git reads inside one run,
+select by changed impact, then reuse only a narrowly proven result. Measure
+before claiming a cost or speed improvement. The selected registry contract,
+not a policy sentence, owns the exact gate list and per-check limits.
+
+### Ordinary document selection
+
+An ordinary authored document or README router change that alters only prose
+or navigation selects the common diff, style and commit-message checks plus
+document content checks for profile, relationships, links and lifecycle state.
+Do not select repository-wide quality, agent, infrastructure, unit or full QA
+gates solely because the changed path is Markdown. A change to a governance,
+provider or native contract, a Stage 99 form, schema or registry, or executable
+implementation is a contract or behavior change: select its necessary focused
+regressions and affected gates under the owning validation registry. Keep
+document authoring or status-sync commands explicit; no validator or hook
+automatically invokes a writer. Document link checks remain local as specified
+above.
+
 ### Delivery ownership
 
 | Route | Required owner and evidence |
 | --- | --- |
-| Routine editing | Focused checks and affected `quick` evidence for changed bytes; full QA is not an editing prerequisite. |
-| Local commit | Review the logical index, run exact-index `staged` QA and commit-message validation, then commit with active hooks. |
-| Feature push | Preserve the commit evidence; pushing requires the selected Git finish authorization. A feature push does not add a local full QA obligation. |
-| Pull request | Record the required `ci-summary` SHA/run and actual PR branch-policy and isolated-gate results. Hosted full QA is `NOT_RUN`; any local full result retains its own snapshot and does not certify hosted execution. |
-| Main integration | Record `ci-summary` and actual required protected-check results for the exact integrated SHA. The PR-only checks are `NOT_APPLICABLE` on main, hosted full QA is `NOT_RUN`, and protected QA provenance remains `DEFER` until its contract is repaired and execution observed. Local evidence does not certify hosted checks. |
-| Local-only handoff | Run full QA once on the final working tree. |
+| Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes; full QA is not an editing prerequisite. |
+| Local commit | Review the logical index, run selected exact-index `staged` QA and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
+| Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
+| Pull request | Observe required hosted branch or repository metadata checks at the exact PR SHA and run identity. They do not certify local QA; remote protection remains `DEFER` when unobserved. |
+| Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
+| Selected local full handoff | After tool, time, output and native approval preflight, run full once on the final working tree when shared QA machinery changes or an explicit bounded audit requires it. |
 
 The registry selects gates within a profile. Reuse only a successful result for
-identical declared input bytes, configuration, tool identity, scope, and mode;
-changed inputs require a fresh result. A static workflow file cannot establish
-hosted execution or remote branch protection.
+identical declared input bytes and history, configuration, tool identity, scope,
+mode and trust; changed inputs require a fresh result. A static workflow file
+cannot establish hosted execution or remote branch protection.
 
 ### Canonical completion sequence
 
 1. **targeted**: reproduce changed behavior and run focused checks while implementing.
-2. **quick**: validate the affected working-tree snapshot during work.
+2. **quick**: during iterations, run selected affected checks when the
+   working-tree input differs or independent working-tree evidence is needed.
+   Record the selection. If the required staged run demonstrably covers the
+   same leaf with equivalent bytes, configuration, tool, scope, mode and trust,
+   record `quick` as `NOT_RUN` and unrequired for completion; matching paths
+   alone do not establish that equivalence.
 3. **each logical commit**: inspect status and the unstaged diff, stage only the
    reviewed logical set, inspect the cached diff, run `git diff --check` and
-   `git diff --cached --check`, then exact-index staged QA. Validate the actual
-   message under Git policy and commit through normal active hooks.
-4. **delivery validation**: for a PR, record the hosted baseline checks at the
-   exact PR SHA and hosted full QA as `NOT_RUN`; for a local-only handoff, run
-   full QA once on the final working tree. Contract tests check that the CLI
-   `ci` profile equals `full`; this does not describe current hosted coverage.
-   Unit discovery and the all-files pre-commit gate run once per identical input
-   and mode.
+   `git diff --cached --check`, then selected exact-index staged QA. Validate
+   the actual message under Git policy and commit through normal active hooks;
+   record the leaf actually run and do not duplicate it merely because the
+   hook and manual command share a caller boundary.
+4. **delivery validation**: perform selected local full once when the delivery
+   table requires it. Record hosted branch metadata at its own SHA/run when
+   observed; an unrun hosted QA remains `NOT_RUN`. Unit discovery and the
+   all-files pre-commit gate run once per identical input and mode. Recheck an
+   integrated-main input only to the extent changed bytes or history invalidate
+   prior evidence.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself
    never fixes source files. A failed required delivery check keeps the work incomplete.

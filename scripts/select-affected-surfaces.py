@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select validators and CI jobs from NUL-delimited repository paths."""
+"""Select local validators from NUL-delimited repository paths."""
 
 from __future__ import annotations
 

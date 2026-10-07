@@ -30,6 +30,23 @@ def load_qa():
 
 
 class PublicEntryTests(unittest.TestCase):
+    def test_retired_hosted_partition_is_not_a_public_entry(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts/qa.py"),
+                "ci",
+                "--list",
+                "--partition",
+                "complement",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("unrecognized arguments: --partition complement", result.stderr)
+
     def test_list_is_a_working_public_entry(self):
         result = subprocess.run(
             [sys.executable, str(ROOT / "scripts/qa.py"), "--list"],
@@ -906,7 +923,7 @@ class LocalEvidenceTests(unittest.TestCase):
 
     def test_exact_input_identity_changes_for_bytes_mode_paths_base_and_argv(self):
         gate = {
-            "id": "agent-evaluation-cases",
+            "id": "fixture-change-scoped",
             "argv": ["python3", "check.py"],
             "reuse": {"mode": "change-scoped"},
         }
@@ -943,7 +960,7 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = {
             "validators": [
                 {
-                    "id": "agent-evaluation-cases",
+                    "id": "fixture-change-scoped",
                     "argv": ["python3", "check.py"],
                     "lanes": ["affected", "staged"],
                     "optional": False,
@@ -960,12 +977,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["agent-evaluation-cases"]},
+                return_value={"validators": ["fixture-change-scoped"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["agent-evaluation-cases"],
+                return_value=["fixture-change-scoped"],
             ),
             mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
             mock.patch.object(
@@ -995,8 +1012,8 @@ class LocalEvidenceTests(unittest.TestCase):
             ]
         self.assertEqual([result for result, _ in results], [0, 0, 0])
         self.assertEqual(len(gate_calls), 1)
-        self.assertIn("[REUSED] agent-evaluation-cases", results[1][1])
-        self.assertIn("[REUSED] agent-evaluation-cases", results[2][1])
+        self.assertIn("[REUSED] fixture-change-scoped", results[1][1])
+        self.assertIn("[REUSED] fixture-change-scoped", results[2][1])
 
         # The same selected path must execute again when its staged bytes change.
         (self.root / "check.py").write_text("print('changed gate')\n")
@@ -1008,12 +1025,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["agent-evaluation-cases"]},
+                return_value={"validators": ["fixture-change-scoped"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["agent-evaluation-cases"],
+                return_value=["fixture-change-scoped"],
             ),
             mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
             mock.patch.object(
@@ -1041,7 +1058,7 @@ class LocalEvidenceTests(unittest.TestCase):
                 if call.args and "check.py" in call.args[0]
             ]
         self.assertEqual(len(gate_calls), 3)
-        self.assertIn("[PASS] agent-evaluation-cases", changed_output.getvalue())
+        self.assertIn("[PASS] fixture-change-scoped", changed_output.getvalue())
 
     def test_changed_tool_config_and_argv_execute_again(self):
         (self.root / "check.py").write_text("print('gate passed')\n")
@@ -1050,7 +1067,7 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = {
             "validators": [
                 {
-                    "id": "agent-evaluation-cases",
+                    "id": "fixture-change-scoped",
                     "argv": ["python3", "check.py"],
                     "lanes": ["affected", "staged"],
                     "optional": False,
@@ -1071,12 +1088,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["agent-evaluation-cases"]},
+                return_value={"validators": ["fixture-change-scoped"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["agent-evaluation-cases"],
+                return_value=["fixture-change-scoped"],
             ),
             mock.patch.object(
                 self.qa, "base_revision", side_effect=lambda *_: baseline[0]
@@ -1128,7 +1145,7 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = {
             "validators": [
                 {
-                    "id": "agent-evaluation-cases",
+                    "id": "fixture-change-scoped",
                     "argv": ["python3", "check.py"],
                     "lanes": ["affected", "staged"],
                     "optional": False,
@@ -1140,7 +1157,7 @@ class LocalEvidenceTests(unittest.TestCase):
         }
 
         def mutating_run(snapshot, *_args, **kwargs):
-            kwargs["completed_passes"]["agent-evaluation-cases"] = "PASS"
+            kwargs["completed_passes"]["fixture-change-scoped"] = "PASS"
             (snapshot / "check.py").write_text("formatter rewrite\n")
             return 0
 
@@ -1151,12 +1168,12 @@ class LocalEvidenceTests(unittest.TestCase):
             mock.patch.object(
                 self.qa.contract_module,
                 "select_paths",
-                return_value={"validators": ["agent-evaluation-cases"]},
+                return_value={"validators": ["fixture-change-scoped"]},
             ),
             mock.patch.object(
                 self.qa.contract_module,
                 "profile_gate_ids",
-                return_value=["agent-evaluation-cases"],
+                return_value=["fixture-change-scoped"],
             ),
             mock.patch.object(self.qa, "base_revision", return_value="fixed-base"),
             mock.patch.object(self.qa.runner, "run_selected", side_effect=mutating_run),
@@ -1173,7 +1190,7 @@ class LocalEvidenceTests(unittest.TestCase):
 
     def test_pr_merge_identity_never_replaces_main_history_or_named_refs(self):
         gate = {
-            "id": "agent-evaluation-cases",
+            "id": "fixture-change-scoped",
             "argv": ["python3", "check.py"],
             "reuse": {"mode": "change-scoped"},
         }
@@ -1286,30 +1303,20 @@ class LocalEvidenceTests(unittest.TestCase):
         contract = self.qa.contract_module.validate_contract(ROOT)
         identifiers = contract["profiles"]["full"]
         real_run = self.qa.runner.run_bounded_command
-        for profile, partition, failed_gate in (
-            ("full", None, None),
-            ("ci", None, None),
-            ("ci", None, "agent-evaluation-cases"),
-            ("ci", "complement", None),
+        for profile, failed_gate in (
+            ("full", None),
+            ("ci", None),
+            ("ci", "secret-handling"),
         ):
-            expected_ids = (
-                self.qa.hosted.partition(contract, partition)
-                if partition
-                else identifiers
-            )
+            expected_ids = identifiers
             arguments = ["qa.py", profile, "--root", str(self.root)]
-            if partition:
-                arguments += ["--partition", partition]
             observed = []
 
             def child(argv, *, cwd, env, **kwargs):
                 if argv[0] == "/usr/bin/git":
                     return real_run(argv, cwd=cwd, env=env, **kwargs)
                 observed.append(argv)
-                failed = (
-                    failed_gate
-                    and ".agents/evaluations/run-agent-evaluations.py" in argv
-                )
+                failed = failed_gate and "scripts/check-secret-handling.sh" in argv
                 output = (
                     platform_report
                     if "scripts/validation/platform/assurance.py" in argv

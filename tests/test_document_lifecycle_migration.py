@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import io
 import json
 import re
@@ -10,11 +11,25 @@ import subprocess
 import sys
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from unittest import mock
 
 from tests import test_generic_migration_recovery as generic
-from tests.test_document_lifecycle_agent_roster_cutover import VALIDATOR, ROOT
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+SPEC = importlib.util.spec_from_file_location(
+    "validate_document_lifecycle_migration_tested",
+    SCRIPTS / "validate-document-lifecycle.py",
+)
+if SPEC is None or SPEC.loader is None:  # pragma: no cover - import boundary
+    raise RuntimeError("cannot load document lifecycle validator")
+VALIDATOR = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = VALIDATOR
+SPEC.loader.exec_module(VALIDATOR)
 
 
 class MigrationLifecycleTest(unittest.TestCase):

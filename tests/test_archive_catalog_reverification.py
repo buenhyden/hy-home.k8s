@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "scripts") not in sys.path:
     sys.path.insert(0, str(ROOT / "scripts"))
 
-import archive_cutover as cutover  # noqa: E402
+import archive_validation as current_archive  # noqa: E402
 import archive_dispositions as dispositions  # noqa: E402
 from document_contracts import load_registry  # noqa: E402
 
@@ -85,7 +85,7 @@ class CatalogReverificationTest(unittest.TestCase):
     def codes(self, index_text: str, root: Path | None = None) -> set[tuple[str, str]]:
         return {
             (item.code, item.path)
-            for item in cutover.catalog_envelope_diagnostics(
+            for item in current_archive.catalog_envelope_diagnostics(
                 root or self.root, REGISTRY, index_text
             )
         }
@@ -177,24 +177,12 @@ class CatalogReverificationTest(unittest.TestCase):
         self.retain()
         text = catalog((PACKAGE_RECORD, f"{self.source}:{PACKAGE}"))
         with (
-            mock.patch.object(cutover, "index_entries", return_value=None),
-            mock.patch.object(cutover, "commit_entries", return_value=None),
+            mock.patch.object(current_archive, "index_entries", return_value=None),
+            mock.patch.object(current_archive, "commit_entries", return_value=None),
         ):
             self.assertIn(
                 ("ARCHIVE-CATALOG-RETENTION", PACKAGE_RECORD), self.codes(text)
             )
-
-    def test_repository_catalog_reverifies_against_its_history(self) -> None:
-        """Every row re-verifies, and each disposition adds one more of them."""
-
-        index = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
-        rows, errors = dispositions.parse_catalog(index)
-        self.assertEqual(errors, ())
-        legacy = REGISTRY.legacy_rebased_retained_paths
-        self.assertEqual(len(legacy), 16)
-        self.assertLessEqual(legacy, frozenset(rows))
-        self.assertGreaterEqual(len(rows), len(legacy))
-        self.assertEqual(self.codes(index, ROOT), set())
 
     def test_a_commit_off_the_default_branch_fails_even_from_current_head(
         self,
@@ -224,7 +212,7 @@ class CatalogReverificationTest(unittest.TestCase):
         )
         codes = {
             (item.code, item.path)
-            for item in cutover.catalog_envelope_diagnostics(
+            for item in current_archive.catalog_envelope_diagnostics(
                 self.root, ghost_registry, text
             )
         }

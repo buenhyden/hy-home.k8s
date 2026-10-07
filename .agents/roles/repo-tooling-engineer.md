@@ -1,10 +1,10 @@
 ---
 title: "Repository Tooling Engineer Responsibility"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-07"
 ---
 
 # repo-tooling-engineer Responsibility
@@ -36,11 +36,11 @@ helpers, and the policy rules under `policy/conftest/`. The split is decided by
 registry membership rather than by reading a filename — a script that
 `scripts/validation/registry.json` registers is `quality-engineer.md`'s
 assigned scope and reaches this role only by explicit delegation in the active
-Task. One registered member is carved out by name: `.agents/evaluations/run-agent-evaluations.py`
-and its regression test are `agent-evaluator.md`'s, because a scoring criterion
-and the code that fires it are one contract. What a lane result means is
-`quality-engineer.md`'s; the hosted job that invokes it is
-`ci-workflow-engineer.md`'s.
+Task. A fixed synthetic agent-grading corpus is no longer a registered
+validation-lane member; scoped observed behavior review remains
+`agent-evaluator.md`'s responsibility. What a lane result means is
+`quality-engineer.md`'s; any hosted metadata job is
+`ci-workflow-engineer.md`'s and does not prove local QA.
 
 Place a resource with its single skill consumer when it is dedicated to that
 procedure; retain shared helpers for independent consumers. Directory placement

@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "1.8.5"
+version: "2.0.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-07"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -18,6 +18,14 @@ This Architecture describes the current owner boundaries of agent, document, val
 the common governance design, [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
 the cutover and its acceptance conditions, and [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) owns
 the completed convergence record; its remaining Stage 03 dispositions transferred to SPEC-0083 and SPEC-0084.
+
+The selected local delivery design is recorded in
+[ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) and
+[SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md). Their change replaces
+recurring hosted QA and per-main-push tagging with local validation and explicit
+SemVer releases. This view describes that target ownership; the Spec's Task
+records which implementation and validation have actually completed. Earlier
+cutover evidence does not establish completion of this change.
 
 ### Convergence boundaries
 
@@ -47,8 +55,9 @@ No separate governance registry, per-provider policy fork, Release family, or sh
 | Agent role/skill machine truth | [Common governance role registry](../../../.agents/roles/registry.json) and adjacent schema | Current Claude/Codex projections; native discovery and runtime enforcement are separate evidence |
 | Human execution policy | [Common governance](../../../.agents/README.md) | Root/provider gateways, role responsibilities, approval, quality, and document authoring; copying the machine schema is forbidden |
 | Document machine contract and forms | [Stage 99 Registry](../../99.templates/registry.json) and [forms](../../99.templates/README.md) | Profile, route, metadata, identity, lifecycle, and template consumers |
-| Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local/CI affected-path, lane, and argv; each validator keeps its own failure meaning |
+| Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local affected-path, lane, and argv; each validator keeps its own failure meaning |
 | Execution | [Stage 03](../../03.specs/README.md) | Package-local Spec/Plan/Tasks; state, order, and validation evidence are not copied into a central roster |
+| Skill evaluation evidence | [Evaluation router](../../../.agents/evaluations/README.md) | Same-task noSkill/withSkill observations and their scoring; evidence form belongs to Stage 99, Skill membership and runtime contracts remain with their existing owners |
 | Operations and reference | [Stage 05](../../05.operations/README.md), [Stage 90](../../90.references/README.md) | Operating procedures kept apart from observed evidence; a Reference does not substitute for approval or current policy |
 | Historical recovery | [Stage 98](../../98.archive/README.md) and reachable Git | Sealed records, completed packages, retained superseded bodies; not current execution authority or a reactivation path |
 
@@ -60,14 +69,18 @@ not evidence of an observed authenticated discovery or run.
 ### Consumer and validation flow
 
 1. A task sets its scope, role, skill, and approval boundaries in common governance and links to a package-local Plan/Task.
-2. The current domain owner and the Registry select the change's profile, affected paths, and required lanes.
+2. The current domain owner and the Registry select the change's profile, affected paths, and required local lanes; tools, budget and execution authority are resolved before implementation.
 3. Each validator checks its independent contract and records its result, fallback, and limits under the matching evidence class.
 4. The reviewer confirms consumer succession and negative fixtures and validates a stable staged snapshot.
 5. The Task records commands, results, and unfinished owners. No external execution happens without separate approval and observation.
 
-The aggregate is a router that calls the Registry's all-files runner, not a second owner of argv or policy.
-The document Registry, Markdown/profile, link/owner, lifecycle, security, CI, and Archive checks have different failure meanings,
-so they are not merged or weakened for the sake of orchestration.
+The aggregate selects the Registry's applicable local checks rather than owning
+another copy of argv or policy. Ordinary document content selects profile,
+relationship, link and state checks. Implementation regressions follow changes
+to their responsible implementation or declared inputs. A global QA-contract
+change or explicit bounded audit selects full validation; full is not a
+prerequisite for every small edit. Distinct document, platform, security and
+Archive rules retain their failure meanings when their orchestration is shared.
 
 ### Convergence data architecture
 
@@ -121,13 +134,16 @@ Exact commands and tool versions are read from their execution owners and not co
 
 Spec 0054 closed as `done` through WP-013/TSK-0013 and is kept in
 [98.archive/completed](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
-No unfinished common governance item remains in this document. The current owner of platform implementation and validation
+The local QA and release ownership transition belongs to
+[SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md); its Task owns actual
+results and remaining work. The current owner of platform implementation and validation
 is the active Spec that [AD-0007](./0007-current-local-gitops-platform.md) points to;
 this document provides the common routing, approval, and QA boundaries.
 This document describes the responsibility boundaries of common governance, the Claude/Codex adapters, common QA, and
 GitOps operations. [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) owns
-the design, and [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) owns
-the cutover and its acceptance conditions. The existence of a file does not prove the installed runtime's discovery or
+the common governance design, and [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) preserves
+the original cutover and its acceptance conditions. ADR-0048 records the local
+delivery change. The existence of a file does not prove the installed runtime's discovery or
 permission enforcement, nor hosted CI success. Actual validation state is confirmed in the relevant Task.
 
 ## Boundaries & Non-goals
@@ -146,7 +162,8 @@ permission enforcement, nor hosted CI success. Actual validation state is confir
 | Security | Native permissions do not exceed registered scope; external mutation needs approval | Independent permission/path rejection tests and native evidence when authorized |
 | Reliability | Commands have finite time/output limits and descendant cleanup | Bounded-runner timeout, overflow, cancellation, and pipe regressions |
 | Recoverability | Work evidence preserves inputs, failures, ownership, and next action | Task/Git trace; isolated archive recovery checks |
-| Reproducibility | Local full and CI share logical gates and configuration | Profile parity, single execution, interpreter and dependency checks |
+| Reproducibility | A local result names its input bytes, configuration, tool, scope, mode, trust and relevant history | Exact-index isolation, dependency identity and refusal of reuse after a relevant input changes |
+| Proportional cost | Each selected leaf runs once for identical inputs; ordinary document edits do not invoke implementation regression discovery | Registry selection and actual invocation evidence in the owning Task |
 | Legibility | Gateways point to common owners without copied policy bodies | Native syntax parse and canonical-reference tests |
 
 ## System Overview & Context
@@ -160,7 +177,9 @@ permission enforcement, nor hosted CI success. Actual validation state is confir
 | Provider contract | `.claude/provider.md` and `.codex/provider.md` | Supported native syntax, loading route, and evidence limits |
 | Native adapters | `.claude/` and `.codex/` | Native metadata and explicit common references |
 | QA execution | `scripts/qa.py`, validation registry and bounded runner | Profile selection, one execution per gate/input, fail-closed results |
+| Release production | `scripts/release.py`, `.cz.toml`, `cliff.toml` and main `CHANGELOG.md` | Local preparation and one SemVer tag/Release producer; publication remains an authorized external operation |
 | Change evidence | Stage 03 Task and Git | Actual commands, scope, failures, limitations and handoff |
+| Skill comparison evidence | `.agents/evaluations/` | Actual task, paired raw outputs, scoped score and one aggregate results owner; no recurring grader or runtime authority |
 
 Claude exposes common `SKILL.md` packages through one relative link per skill.
 Codex discovers the packages under `.agents/skills/`; both providers require
@@ -180,21 +199,103 @@ metadata validation cannot prove account availability or authenticated execution
 QA profiles contain gate IDs. The execution registry alone owns commands and
 selection configuration; the runner owns bounded process handling. Quick checks
 working-tree changes, full checks the final working tree, and staged validation
-checks the real index in an isolated snapshot. CI checks its immutable checkout.
+checks the real index in an isolated snapshot. A retained `ci` CLI alias remains
+a local profile invocation and does not imply a hosted execution.
 Snapshot preparation preserves Git history for recovery while keeping the user's
 index and working files unchanged.
+
+Evidence reuse requires identical declared bytes, configuration, tool identity,
+scope, mode, trust and relevant base/history. An index, working tree and merged
+tree are not interchangeable merely because their path lists match. A changed
+input invalidates its dependent result. Within a run, parsing and Git reads may
+be shared without merging independent failure meanings or persisting a second
+source of document state.
+
+Recurring Archive validation owns safe paths, retained-body integrity and
+recoverable source objects. A past cutover's fixed census and completion proof
+remain historical evidence. Retirement transfers any unique ongoing protection
+before removing its caller, registration and dedicated helper, fixture or test.
+Frozen bodies and original observed results are preserved.
 
 Historical facts remain in Git or isolated retained records. Active policy,
 provider loading, and command selection do not consume a retired proposal as
 current authority. Test fixtures are bounded synthetic inputs, never production
 configuration or runtime admission evidence.
 
+### Skill comparison records
+
+The [evaluation router](../../../.agents/evaluations/README.md) leads to
+representative harness evidence. Each evaluation's `task.md` owns the workload,
+comparison conditions and criteria; `baseline.md` and `with-skill.md` retain
+the actual noSkill and withSkill outputs. `score.md` owns the evidence
+granularity, trial count, result signals, grader and criterion IDs, reasons for
+partial scores and human-calibration state. The root `results.md` owns the
+representative scores, status, reviewer and date without a second README score
+table. Actual evaluation cycles alone update those records; an aggregate entry
+requires the corresponding task, complete output pair and score.
+
+Stage 99 owns the bounded task, score, results and opaque-output profiles and
+canonical forms. The local templates router links to those forms rather than
+copying them. Existing document checks cover authored evidence structure;
+they neither rescore an evaluation nor certify its accuracy. Raw outputs retain
+their observed bytes instead of acquiring frontmatter, formatter edits or
+executable instructions through document normalization. Secret and safe-path
+controls still apply, and new cycles use distinct evidence so that earlier
+observations are not overwritten.
+
+The common Skill index owns active membership, while common governance owns
+evaluation authority and stop conditions. Imported Skill descriptions or
+synthetic responses establish neither local Skill admission nor native
+selection, actual command execution or permission enforcement. Missing paired
+outputs stay unobserved; retired historical grading criteria are not silently
+reapplied to a changed contract. Retiring a fixed recurring grader leaves this
+evidence capacity available without adding a new QA gate.
+
 ## Infrastructure & Deployment
 
-GitHub Actions validates repository bytes through the common QA entrypoint.
-`ci-summary` retains its externally observed check name and propagates failure,
-cancellation, missing results, and unexpected skips. Static QA uses pinned tools
-and minimal permissions; it does not need provider credentials or a cluster.
+### Local delivery stages
+
+| Stage | Execution owner and boundary |
+| --- | --- |
+| Editing | Focused behavior regressions and affected content checks selected from the current local registry |
+| Logical commit | Exact-index staged validation and the actual Commitizen message check; an active hook's identical leaf is not repeated manually |
+| Feature push | Git transport preserves commit evidence and adds no repeated QA requirement |
+| PR and main integration | Review local evidence and check inputs changed by integration; refresh only invalidated results |
+| After merge | Verify delivered identity and state; a merge resolution that changes validated inputs selects the affected checks |
+| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval before the selected full local run |
+| Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
+
+GitHub Actions retains one `ci-summary` job, which validates branch metadata
+and reports the branch-policy verdict itself. Missing metadata, an invalid
+PR base or source branch, or an unexpected event/ref fails that job;
+PR branch policy is not applicable on main. Hosted QA remains
+`NOT_RUN`, and a successful metadata job does not certify local QA. This design
+gives up an independent hosted QA execution and its per-push attestation.
+Actual remote protections, settings and execution remain separately observed.
+
+### Release and work-tracking boundaries
+
+One local release producer prepares the committed main release history in
+`CHANGELOG.md` through a release-preparation PR, then binds a SemVer tag and
+GitHub Release to an exact reviewed main commit. Development pushes do not
+generate release notes or publish versions. Required assets are attached to a
+draft before publication; repository configuration cannot prove GitHub's
+immutable-release setting. Existing `main-<full SHA>` tags remain historical
+refs and are neither moved nor republished.
+
+Version compatibility covers supported CLI commands and options, machine JSON
+schemas, governed document profiles and frontmatter, GitOps desired state and
+external-service interfaces. For released 1.0-or-later contracts, incompatible
+changes raise major, compatible additions raise minor and compatible fixes
+raise patch. The operator selects the initial 0.y version and compatibility
+promise from the reviewed release scope. A release version certifies neither
+deployment nor provider or live runtime acceptance.
+
+Issues own requests and priorities, Specs own contracts, Tasks own execution
+and evidence, and Projects display work. Links and one-way metadata connect
+them without copying complete Spec/Task bodies or overwriting their state in
+both directions. Project activation is remote state, not a consequence of this
+architecture description.
 
 Argo CD reconciles `gitops/` desired state within the existing operating boundary.
 `infrastructure/` supplies bootstrap support and `examples/` contains
@@ -227,9 +328,9 @@ verification require their own actual evidence and applicable authorization.
 | [REQ-0003-FR-0013](../../01.requirements/0003-workspace-agent-governance-platform.md) | One form route per document profile with schema/template parity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0014](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stage-specific purpose boundaries and no parallel Release family | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0015](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer transfer before source disposition with Git recovery evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Validation Registry dispatch and independent validator failure meanings | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Independent CI evidence lanes and remote-observation boundary | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-diff review and rollback-ready logical delivery units | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local Registry dispatch, proportional selection and independent failure meanings | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | Local QA and hosted delivery metadata with separate evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
+| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-index logical delivery and no repeated identical leaf at later stages | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
 | [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0040 unit retention, reappraisal, and ordered citation table | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
@@ -240,8 +341,9 @@ verification require their own actual evidence and applicable authorization.
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | Separate repository-static, provider-runtime, hosted-CI and live evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | Lifecycle edges separated from ordinary body edits and sealed integrity | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | Direct negative fixtures with explicit tool-failure and fallback diagnostics | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) | Paired Skill observations and one aggregate owner, with Stage 99 form and separate runtime authority | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
 | [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admission rather than a frozen role/provider census | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Stable target-path snapshots across focused and aggregate validation lanes | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Exact-input local validation, budget preflight and bounded reuse | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md), [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
 | [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | Primary-source traceability with repository conventions labeled separately | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-NFR-0004](../../01.requirements/0003-workspace-agent-governance-platform.md) | Explicit baseline-failure and environment-limit reporting | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Atomic owner/consumer migration and reciprocal-link validation | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
@@ -258,8 +360,9 @@ verification require their own actual evidence and applicable authorization.
 
 The replacement record and this responsibility table express semantic succession, not a new claim that historical
 ADRs originally served this AD. Superseded ADR bodies keep their reciprocal supersession and are retained under `98.archive/superseded/`.
-The existing requirement IDs retain their identity. ADR-0036 and SPEC-0072
-own the current governance and QA implementation; predecessor decisions remain
+The existing requirement IDs retain their identity. ADR-0036 retains the common
+governance design and SPEC-0072 its implementation history. ADR-0048 and SPEC-0107
+own the selected local QA and release transition; predecessor decisions remain
 historical evidence rather than parallel operating instructions.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
@@ -276,7 +379,7 @@ historical evidence rather than parallel operating instructions.
 | [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Machine harness contract/schema | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Bounded loop/checkpoint/compaction | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived parity and eval/admission | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
-| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | CI/QA/all-files evidence | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Proportionate local QA and exact-input evidence | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
 | [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Legacy cutover/current-owner integrity | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Evidence-only external role admission | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | N/A — [Acceptance criterion 01](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Owner graph consistency | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
@@ -289,12 +392,14 @@ historical evidence rather than parallel operating instructions.
 | N/A — [Acceptance criterion 08](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Contract/schema/provider parity | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | N/A — [Acceptance criterion 09](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Recovery fixture and safe resume | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 | N/A — [Acceptance criterion 10](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Eval/model-fitness evidence | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
-| N/A — [Acceptance criterion 11](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | CI and all-files gate | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
+| N/A — [Acceptance criterion 11](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Selected local validation with separate remote observations | [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md) |
 | N/A — [Acceptance criterion 12](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Zero stale legacy/orphan reference | [ADR 0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md) |
 
 - **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
-- **Current implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
+- **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
+- **Local QA and release implementation**: [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md)
+- **Original governance implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical decisions**: ADR-0019, [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), ADR-0034, ADR-0035
 

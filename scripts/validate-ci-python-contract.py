@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the exact network-free CI Python and pre-commit contract."""
+"""Validate local Python pins, pre-commit revisions, and metadata-only CI."""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
-CANDIDATE_SHA_REF = "${{ github.sha }}"
 EXPECTED_REQUIREMENT_LINES = (
     "jsonschema==4.26.0",
     "pre-commit==4.6.1",
@@ -100,27 +99,6 @@ EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/stackrox/kube-linter": "v0.8.3",
 }
 QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
-# Only this complete audited bootstrap may bypass the install shell grammar.
-ISOLATED_BOOTSTRAP = """\
-# Bootstrap raw Git bytes, before importing any checkout module.
-/usr/local/bin/python3 -I -B - <<'PYTHON'
-import os, subprocess, sys
-from pathlib import Path
-commit = os.environ["EXPECTED_COMMIT"]
-root = Path.cwd().resolve(strict=True)
-env = {
-    "HOME": "/nonexistent", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
-    "PATH": "/usr/local/bin:/usr/bin:/bin", "TZ": "UTC",
-    "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
-    "GIT_OPTIONAL_LOCKS": "0",
-}
-code = subprocess.check_output(
-    ["/usr/bin/git", "-c", f"safe.directory={root}", "show", commit + ":scripts/qa_provenance_hosted.py"],
-    cwd=root, env=env, timeout=30,
-)
-sys.argv = ["qa_provenance_hosted.py", "isolated", "--commit", commit]
-exec(compile(code, "qa_provenance_hosted.py", "exec"), {"__name__": "__main__"})
-PYTHON"""
 PIN_PATTERN = re.compile(
     r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)"
     r"==(?P<version>[A-Za-z0-9][A-Za-z0-9.+_-]*)$"
@@ -927,8 +905,6 @@ def shell_contains_pip_install(text: str) -> bool:
 
 
 def _guarded_pip_install(command: str) -> bool:
-    if command == ISOLATED_BOOTSTRAP:
-        return False
     try:
         return shell_contains_pip_install(command)
     except ShellGuardError:
@@ -1553,7 +1529,7 @@ def validate_dependencies(root: Path) -> int:
 
 
 def validate_workflow(workflow: dict[str, Any]) -> None:
-    """Own CI topology; dependency grammar and QA gate selection have other owners."""
+    """Own the single required hosted metadata check, without hosted QA."""
     events = workflow.get("on", workflow.get(True))
     if not isinstance(events, dict) or set(events) != {
         "push",
@@ -1566,98 +1542,61 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
             fail("CI-TOPOLOGY", "required CI must target main without path filters")
     if workflow.get("permissions") != {"contents": "read"}:
         fail("CI-TOPOLOGY", "CI permissions must remain contents: read")
-    jobs = workflow.get("jobs", {})
-    if not isinstance(jobs, dict) or set(jobs) != {
-        "branch-policy",
-        "qa-isolated",
-        "ci-summary",
-    }:
-        fail("CI-TOPOLOGY", "CI requires only branch policy, isolated gate and summary")
-    branch, isolated, summary = (
-        jobs[key] for key in ("branch-policy", "qa-isolated", "ci-summary")
-    )
-    if not all(isinstance(job, dict) for job in jobs.values()):
-        fail("CI-TOPOLOGY", "CI jobs must be mappings")
-    if branch.get("if") != "github.event_name == 'pull_request'":
-        fail("CI-TOPOLOGY", "branch policy applies only to pull requests")
-    if summary.get("if") != "always()" or summary.get("needs") != [
-        "branch-policy",
-        "qa-isolated",
-    ]:
-        fail("CI-TOPOLOGY", "ci-summary must always inspect both surviving results")
-    if (
-        isolated.get("if") != "github.event_name == 'pull_request'"
-        or isolated.get("container")
-        != {
-            "image": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d",
-            "options": "--platform linux/amd64",
-        }
-        or [_run_text(step) for step in isolated.get("steps", []) if "run" in step]
-        != [ISOLATED_BOOTSTRAP]
+    jobs = workflow.get("jobs")
+    if not isinstance(jobs, dict) or set(jobs) != {"ci-summary"}:
+        fail("CI-TOPOLOGY", "CI requires only the metadata ci-summary job")
+    summary = jobs["ci-summary"]
+    if not isinstance(summary, dict):
+        fail("CI-TOPOLOGY", "ci-summary must be a mapping")
+    if summary.get("runs-on") != "ubuntu-latest" or summary.get("timeout-minutes") != 5:
+        fail("CI-TOPOLOGY", "ci-summary requires the bounded reviewed runner")
+    for forbidden in (
+        "if",
+        "needs",
+        "container",
+        "permissions",
+        "continue-on-error",
+        "strategy",
+        "services",
+        "defaults",
     ):
-        fail(
-            "CI-TOPOLOGY",
-            "isolated gate requires the exact immutable runtime and bootstrap",
-        )
-    checkout = [
-        step
-        for step in isolated.get("steps", [])
-        if str(step.get("uses", "")).startswith("actions/checkout@")
-    ]
-    if len(checkout) != 1 or checkout[0].get("with") != {
-        "ref": CANDIDATE_SHA_REF,
-        "persist-credentials": False,
-        "fetch-depth": 1,
-    }:
-        fail(
-            "CI-REPOSITORY-HISTORY",
-            "isolated checkout must bind immutable event SHA without credentials",
-        )
-    for name, job in jobs.items():
-        if job.get("permissions") is not None or job.get("continue-on-error"):
-            fail("CI-TOPOLOGY", "jobs cannot widen permissions or suppress failures")
-        for step in job.get("steps", []):
-            if step.get("continue-on-error"):
-                fail("CI-TOPOLOGY", "steps cannot suppress required failures")
-            if "SKIP" in step.get("env", {}):
-                fail("CI-TOPOLOGY", "CI cannot bypass registered QA checks")
-    _validate_qa_execution(workflow)
-    steps = summary.get("steps", [])
-    if len(steps) != 1 or steps[0].get("env") != {
+        if forbidden in summary:
+            fail("CI-TOPOLOGY", f"ci-summary must not declare {forbidden}")
+    steps = summary.get("steps")
+    if not isinstance(steps, list) or len(steps) != 1 or not isinstance(steps[0], dict):
+        fail("CI-TOPOLOGY", "ci-summary requires one metadata step")
+    step = steps[0]
+    for forbidden in ("uses", "if", "continue-on-error", "shell"):
+        if forbidden in step:
+            fail("CI-TOPOLOGY", f"ci-summary step must not declare {forbidden}")
+    if step.get("env") != {
         "EVENT_NAME": "${{ github.event_name }}",
-        "BRANCH_POLICY_RESULT": "${{ needs.branch-policy.result }}",
-        "ISOLATED_RESULT": "${{ needs.qa-isolated.result }}",
+        "BASE_REF": "${{ github.base_ref }}",
+        "HEAD_REF": "${{ github.head_ref }}",
+        "SOURCE_REF": "${{ github.ref }}",
     }:
-        fail("CI-TOPOLOGY", "summary must consume actual event and predecessor results")
-    summary_text = _run_text(steps[0])
-    if not re.search(r"full-qa\s+result=NOT_RUN\s+verdict=NOT_RUN", summary_text):
-        fail(
-            "CI-TOPOLOGY",
-            "summary must explicitly report full QA result and verdict NOT_RUN",
-        )
-    if steps[0].get("if") is not None or any(
-        fragment in summary_text
-        for fragment in ("QA_RESULT", "qa_verdict", "qa-source", "needs.qa.")
-    ):
-        fail("CI-TOPOLOGY", "summary cannot skip checks or report retired QA results")
-    for fragment in (
-        'case "$EVENT_NAME:$BRANCH_POLICY_RESULT" in',
-        "pull_request:success)",
-        "push:skipped|workflow_dispatch:skipped)",
+        fail("CI-TOPOLOGY", "summary must consume the actual event and branch refs")
+    summary_text = _run_text(step)
+    required = (
+        "allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'",
+        'case "$event" in',
+        'if [ "$base" != main ]; then',
+        '[[ "$head" =~ $allowed_branch_regex ]]',
+        'if [ "$source" = refs/heads/main ]; then',
+        "branch_result=missing_metadata",
         "branch_verdict=FAIL",
-        'case "$EVENT_NAME:$ISOLATED_RESULT" in',
-        "isolated_verdict=PASS",
-        "isolated_verdict=NOT_APPLICABLE",
-        "isolated_verdict=FAIL",
-        'if [ "$failed" -ne 0 ]; then',
+        "branch_verdict=PASS",
+        "branch_verdict=NOT_APPLICABLE",
+        "full-qa result=NOT_RUN verdict=NOT_RUN",
+        'if [ "$branch_verdict" = FAIL ]; then',
         "exit 1",
         "exit 0",
-    ):
-        if fragment not in summary_text:
-            fail(
-                "CI-TOPOLOGY",
-                "summary must fail closed for both applicable checks and report full QA NOT_RUN",
-            )
+    )
+    if not all(fragment in summary_text for fragment in required):
+        fail(
+            "CI-TOPOLOGY", "summary must fail closed on metadata and report QA NOT_RUN"
+        )
+    _validate_qa_execution(workflow)
 
 
 def validate_repository(root: Path) -> int:
@@ -1674,8 +1613,8 @@ def main() -> int:
     try:
         job_count = validate_repository(args.root)
         print(
-            "[PASS] CI Python contract validation passed: "
-            f"hosted-python-install-jobs={job_count} pins={len(EXPECTED_PINS)}"
+            "[PASS] local Python dependency and CI metadata contract passed: "
+            f"local-python-pins={len(EXPECTED_PINS)} hosted-installs={job_count}"
         )
         return 0
     except ContractError as exc:

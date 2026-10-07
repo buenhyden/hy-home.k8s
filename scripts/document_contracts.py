@@ -23,13 +23,17 @@ from document_authority import (
     validate_registry_authority,
 )
 from json_schema_validation import SchemaEvaluationError, schema_errors
+from validation.repository.bounded_io import (
+    BoundedInputError,
+    read_bytes as read_bounded_bytes,
+)
 
 
 GIT_TIMEOUT_SECONDS = 10
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
-ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
+ROOT_FILES = ("AGENTS.md", "CHANGELOG.md", "CLAUDE.md", "README.md")
 TARGET_ROOTS = (
     "_workspace",
     ".agents",
@@ -525,6 +529,7 @@ class DocumentProfile:
         "reference",
         "archive",
         "governance",
+        "evaluation",
         "readme",
         "exception",
     ]
@@ -750,9 +755,6 @@ def _run_git(
 
 
 def _within_target_scope(path: PurePosixPath) -> bool:
-    # Graded response bodies are untrusted evaluation data, not authored policy.
-    if path.parts[:3] == (".agents", "evaluations", "responses"):
-        return False
     if path.as_posix() == "RTK.md":
         return False
     if not path.parts:
@@ -826,6 +828,20 @@ def read_repository_text(root: Path, path: PurePosixPath) -> str:
         )
     except AuthorityError as exc:
         raise ValueError(str(exc)) from exc
+
+
+def verify_opaque_evaluation_output(root: Path, path: PurePosixPath) -> None:
+    """Check raw data's regular-file, symlink and size boundary without decoding it."""
+
+    normalized = _normalize_relative_path(path)
+    try:
+        read_bounded_bytes(
+            root.absolute() / normalized, max_bytes=DOCUMENT_TEXT_MAX_BYTES
+        )
+    except BoundedInputError as exc:
+        raise ValueError(
+            f"unsafe or oversized raw evaluation output: {normalized}"
+        ) from exc
 
 
 def is_ignored_repository_path(root: Path, path: PurePosixPath) -> bool:
@@ -2052,7 +2068,14 @@ def _typed_profile_class(profile: Mapping[str, Any]) -> str:
     source_ids = profile["relationships"]["source_profile_ids"]
     if profile["mode"] == "template" and source_ids:
         source_family = source_ids[0].split("/", 1)[0]
-        if source_family in {"governance", "sdlc", "operation", "reference", "archive"}:
+        if source_family in {
+            "governance",
+            "sdlc",
+            "operation",
+            "reference",
+            "archive",
+            "evaluation",
+        }:
             return source_family
         if source_ids[0].startswith("common/readme-"):
             return "readme"
@@ -2185,6 +2208,19 @@ def classify_path(registry: Registry, path: PurePosixPath) -> DocumentProfile:
             )
         )
     return matches[0][0]
+
+
+def is_opaque_evaluation_output(registry: Registry, path: PurePosixPath) -> bool:
+    """Select raw trial data by the current exact Stage 99 profile, not by suffix."""
+
+    if path.suffix != ".md" or path.parts[:3] != (
+        ".agents",
+        "evaluations",
+        "harnesses",
+    ):
+        return False
+    profile = classify_path(registry, path)
+    return profile.profile_id == "evaluation/raw-output" and profile.mode == "native"
 
 
 def classify_paths(

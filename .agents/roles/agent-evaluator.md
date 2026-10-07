@@ -1,10 +1,10 @@
 ---
 title: "Agent Evaluator Responsibility"
-version: "1.1.0"
+version: "1.3.0"
 type: "governance/role"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-07"
 ---
 
 # agent-evaluator Responsibility
@@ -36,9 +36,11 @@ designing repository validation lanes is `quality-engineer.md`'s; this role
 scores and reports, and does not edit the role or skill definitions it
 measures.
 
-No broad workspace-audit skill is required to score a declared case. An empty
-skill list preserves this narrow remit; never add a filler reference. Synthetic
-responses exercise grading and contracts, not provider behavior or account limits.
+No broad workspace-audit skill is required to assess a declared case. An empty
+skill list preserves this narrow remit; never add a filler reference. Retired
+synthetic corpus results are historical harness evidence, not provider behavior
+or account limits. A current behavior judgment needs actual paired sessions
+and bounded criteria; case preparation alone is not a QA gate.
 
 ### When to Use
 
@@ -47,34 +49,43 @@ evaluation cycle's result needs interpreting.
 
 ### Inputs
 
-The registry, the evaluation cases and the responses recorded for them, the
-runner and its regression test, and the responsibility whose behavior is being
-measured.
+The registry, the responsibility being measured, the same task under declared
+`noSkill` and `withSkill` conditions, trial count, signal and criterion IDs,
+grading rubric and human calibration plan, and actual response/session inputs
+with their tool, mode and trust context. The owning Task records execution;
+the evaluation domain holds measurement inputs and its aggregate result.
 
 ### Outputs
 
-- Evaluation cases that declare their own expected result, and the scored
-  cycle result with its response class
+- Bounded paired trials with raw observations, task context, declared criteria,
+  per-trial scores and calibrated aggregate results tied to actual sessions
 - Improvement findings naming the role or skill procedure at fault and the
   observed failure, routed rather than applied
 
 ### Guardrails
 
-A cycle in which every response is `synthetic` establishes harness wiring and
-criterion behavior only; reporting such a cycle as agent quality is a stop
-condition, and agent quality needs `recorded` responses together with the
-session evidence that produced them. Do not restate a role's permission class
-inside a case, because the criteria derive it from the registry. Do not add a
-criterion without stating what it cannot judge. Do not edit a role body, a
-skill procedure, or a provider projection; route the finding to its owner
-instead. `.agents/evaluations/run-agent-evaluations.py` and its regression test belong to
-this role, because a criterion and the code that fires it are one contract;
-that script's lane membership stays owned by the validation execution registry.
+A synthetic response establishes only that a stated rubric can classify the
+provided text; reporting it as agent quality is a stop condition. Do not
+populate raw observations with hypothetical responses or promote partial
+trials into a comparison aggregate. Enter a result only after the declared
+paired trials are present; record missing trials and calibration as incomplete.
+The results artifact is the sole aggregate owner, while raw and per-trial
+artifacts retain their own inputs. Do not restate a role's permission class
+inside a criterion; derive it from the registry. State what a criterion cannot
+judge. A response alone proves no native discovery, authentication, tool
+execution, command success or permission enforcement; those claims need direct
+session evidence. Do not edit a role body, skill procedure or provider
+projection; route the finding to its owner. A future recurring grader needs a
+demonstrated durable consumer and separate validation-registry admission before
+it becomes repository QA.
 
 ### Capability and Evidence
 
-Record the case identity, the declared and observed failure sets, the response
-class, and the limits the criteria do not cover.
+Record the task and pair identity, trial count, criteria and signal IDs,
+declared and observed scores, response class, actual session/tool identity,
+partial or calibrated disposition, and limits the criteria do not cover.
+Store the comparison aggregate only with the evaluation results owner; the
+Task records the evaluation work and command evidence.
 
 ### Handoff / Escalation
 
@@ -96,3 +107,4 @@ responsibility changes; update machine references only in the registry.
 
 - [Role index](README.md)
 - [Quality policy](../governance/quality.md)
+- [Evaluation evidence router](../evaluations/README.md)

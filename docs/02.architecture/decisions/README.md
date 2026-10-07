@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.7.0"
+version: "0.7.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-07"
 layer: "architecture"
 ---
 # 02.architecture/decisions (ADR)
@@ -72,6 +72,7 @@ layer: "architecture"
 |   [`./0045-in-cluster-telemetry-collection.md`](./0045-in-cluster-telemetry-collection.md) | In-cluster telemetry collection 결정 |
 |   [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 |
 |   [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 |
+|   [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정 |
 
 ## Usage
 

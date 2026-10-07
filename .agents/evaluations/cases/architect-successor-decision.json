@@ -1,7 +1,0 @@
-{
-  "id": "architect-successor-decision",
-  "role": "architect",
-  "prompt": "Record the decision that moves reconciliation to a single root application.",
-  "response": ".agents/evaluations/responses/architect-successor-decision.synthetic.md",
-  "response_class": "synthetic"
-}

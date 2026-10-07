@@ -39,6 +39,7 @@ TERMINAL_TEMPLATE_GROUPS = frozenset(
         "architecture",
         "archive",
         "common",
+        "evaluations",
         "governance",
         "operations",
         "references",

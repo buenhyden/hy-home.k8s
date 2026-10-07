@@ -34,6 +34,8 @@ from document_contracts import (
     diagnostic_sort_key,
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
+    is_opaque_evaluation_output,
+    verify_opaque_evaluation_output,
     is_ignored_repository_path,
     load_internal_payload,  # noqa: F401 - re-exported
     load_registry,
@@ -47,6 +49,7 @@ from document_contracts import (
     _run_git,
 )
 import document_language
+from validation.document_content import validate_document_content
 
 
 SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
@@ -1711,6 +1714,9 @@ def validate_document(
 ) -> list[Diagnostic]:
     """Validate one source using only its registry-selected profile contract."""
 
+    if profile.profile_id == "evaluation/raw-output" and profile.mode == "native":
+        verify_opaque_evaluation_output(root, path)
+        return []
     return validate_document_text(
         read_repository_text(root, path),
         path,
@@ -1721,6 +1727,43 @@ def validate_document(
         body_contract_path_prefixes=body_contract_path_prefixes,
         frontmatter_schema=frontmatter_schema,
     )
+
+
+def _document_content_table(
+    text: str, title: str
+) -> tuple[list[str], list[list[str]]] | None:
+    sections = [
+        section
+        for heading in (f"## {title}", f"### {title}")
+        if (section := _exact_heading_section(text, heading)) is not None
+    ]
+    return _first_visible_table(sections[0]) if len(sections) == 1 else None
+
+
+def document_content_diagnostics(
+    root: Path,
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    text: str,
+    *,
+    registry: Any | None = None,
+) -> list[Diagnostic]:
+    """Check one current router's live rows using the selected document gate."""
+
+    source = registry or load_registry(root)
+    navigation = source.readme_navigation
+    found = validate_document_content(
+        root,
+        path,
+        text,
+        _document_content_table,
+        index_columns=navigation.index_columns,
+        optional_index_columns=navigation.optional_index_columns,
+    )
+    return [
+        Diagnostic(rule, path, profile.profile_id, expected, actual, OWNER)
+        for rule, expected, actual in found
+    ]
 
 
 def validate_document_text(
@@ -1738,6 +1781,8 @@ def validate_document_text(
 
     if mode not in {"compatibility", "strict"}:
         raise ValueError("mode must be compatibility or strict")
+    if profile.profile_id == "evaluation/raw-output" and profile.mode == "native":
+        return []
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
     # A retained payload under the Archive stage keeps the profile it had when
@@ -2033,6 +2078,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         identity_documents: list[tuple[PurePosixPath, DocumentProfile, str]] = []
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
+            if is_opaque_evaluation_output(registry, path):
+                verify_opaque_evaluation_output(root, path)
+                continue
             text = read_repository_text(root, path)
             identity_documents.append((path, profile, text))
             diagnostics.extend(
@@ -2044,6 +2092,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
                     frontmatter_schema=frontmatter_schema,
+                )
+            )
+            diagnostics.extend(
+                document_content_diagnostics(
+                    root, path, profile, text, registry=registry
                 )
             )
         diagnostics.extend(artifact_identity_uniqueness_diagnostics(identity_documents))
@@ -2059,6 +2112,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     and entry.mode.startswith("100")
                     and entry.path.as_posix().startswith(language.english_only_roots)
                     and entry.path.suffix in language.english_only_suffixes
+                    and not is_opaque_evaluation_output(registry, entry.path)
                 ):
                     english_only_texts[entry.path] = read_repository_text(
                         root, entry.path

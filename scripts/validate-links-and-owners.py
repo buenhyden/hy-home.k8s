@@ -114,6 +114,8 @@ from document_contracts import (
     classify_path,
     diagnostic_sort_key,
     enumerate_target_markdown,
+    is_opaque_evaluation_output,
+    verify_opaque_evaluation_output,
     load_registry,
     read_repository_text,
     task_execution_issues,
@@ -814,6 +816,15 @@ def _build_context(
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         profiles[path] = _profile_view(profile)
+        if is_opaque_evaluation_output(registry, path):
+            if held:
+                assert read_current_bytes is not None
+                _held_context_bytes(read_current_bytes, path, DOCUMENT_TEXT_MAX_BYTES)
+            else:
+                verify_opaque_evaluation_output(root, path)
+            texts[path] = ""
+            metadata[path] = {}
+            continue
         if held:
             assert read_current_bytes is not None
             try:

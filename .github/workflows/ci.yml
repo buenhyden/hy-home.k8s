@@ -15,110 +15,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  branch-policy:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Validate pull request branch policy
-        env:
-          BASE_REF: ${{ github.base_ref }}
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          set -euo pipefail
-          allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'
-          if [ "$BASE_REF" != "main" ]; then
-            echo "PR base branch must be main, got: $BASE_REF"
-            exit 1
-          fi
-          if ! [[ "$HEAD_REF" =~ $allowed_branch_regex ]]; then
-            echo "PR source branch must start with one of: feat/, fix/, docs/, refactor/, test/, chore/, ci/, release/, hotfix/, codex/, dependabot/"
-            echo "got: $HEAD_REF"
-            exit 1
-          fi
-          printf 'branch-policy=ok base=%s head=%s\n' "$BASE_REF" "$HEAD_REF"
-
-  qa-isolated:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    container:
-      image: docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d
-      options: --platform linux/amd64
-    steps:
-      - name: Checkout QA commit ${{ github.sha }}
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.sha }}
-          persist-credentials: false
-          fetch-depth: 1
-      - name: Validate isolated repository gate
-        env:
-          EXPECTED_COMMIT: ${{ github.sha }}
-        run: |
-          # Bootstrap raw Git bytes, before importing any checkout module.
-          /usr/local/bin/python3 -I -B - <<'PYTHON'
-          import os, subprocess, sys
-          from pathlib import Path
-          commit = os.environ["EXPECTED_COMMIT"]
-          root = Path.cwd().resolve(strict=True)
-          env = {
-              "HOME": "/nonexistent", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
-              "PATH": "/usr/local/bin:/usr/bin:/bin", "TZ": "UTC",
-              "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
-              "GIT_OPTIONAL_LOCKS": "0",
-          }
-          code = subprocess.check_output(
-              ["/usr/bin/git", "-c", f"safe.directory={root}", "show", commit + ":scripts/qa_provenance_hosted.py"],
-              cwd=root, env=env, timeout=30,
-          )
-          sys.argv = ["qa_provenance_hosted.py", "isolated", "--commit", commit]
-          exec(compile(code, "qa_provenance_hosted.py", "exec"), {"__name__": "__main__"})
-          PYTHON
-
   ci-summary:
-    if: always()
-    needs: [branch-policy, qa-isolated]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require successful applicable checks
+      - name: Validate branch metadata and report QA scope
         env:
           EVENT_NAME: ${{ github.event_name }}
-          BRANCH_POLICY_RESULT: ${{ needs.branch-policy.result }}
-          ISOLATED_RESULT: ${{ needs.qa-isolated.result }}
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          SOURCE_REF: ${{ github.ref }}
         run: |
           set -euo pipefail
-          failed=0
-          case "$EVENT_NAME:$BRANCH_POLICY_RESULT" in
-            pull_request:success)
-              branch_verdict=PASS
+          event=${EVENT_NAME-}
+          base=${BASE_REF-}
+          head=${HEAD_REF-}
+          source=${SOURCE_REF-}
+          missing=0
+          if [ "${EVENT_NAME+x}" != x ] || [ "${BASE_REF+x}" != x ] || [ "${HEAD_REF+x}" != x ] || [ "${SOURCE_REF+x}" != x ]; then
+            missing=1
+          fi
+          allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'
+          branch_result=unknown_event
+          branch_verdict=FAIL
+          case "$event" in
+            pull_request)
+              if [ "$base" != main ]; then
+                branch_result=invalid_base
+                echo 'PR base branch must be main'
+              elif ! [[ "$head" =~ $allowed_branch_regex ]]; then
+                branch_result=invalid_head
+                echo 'PR source branch must start with one of: feat/, fix/, docs/, refactor/, test/, chore/, ci/, release/, hotfix/, codex/, dependabot/'
+              else
+                branch_result=validated
+                branch_verdict=PASS
+              fi
               ;;
-            push:skipped|workflow_dispatch:skipped)
-              branch_verdict=NOT_APPLICABLE
-              ;;
-            *)
-              branch_verdict=FAIL
-              failed=1
+            push|workflow_dispatch)
+              if [ "$source" = refs/heads/main ]; then
+                branch_result=NOT_APPLICABLE
+                branch_verdict=NOT_APPLICABLE
+              else
+                branch_result=invalid_ref
+              fi
               ;;
           esac
-          case "$EVENT_NAME:$ISOLATED_RESULT" in
-            pull_request:success)
-              isolated_verdict=PASS
-              ;;
-            push:skipped|workflow_dispatch:skipped)
-              isolated_verdict=NOT_APPLICABLE
-              ;;
-            *)
-              isolated_verdict=FAIL
-              failed=1
-              ;;
-          esac
-          printf 'branch-policy result=%s verdict=%s\n' "$BRANCH_POLICY_RESULT" "$branch_verdict"
-          printf 'qa-isolated result=%s verdict=%s\n' "$ISOLATED_RESULT" "$isolated_verdict"
+          if [ "$missing" -ne 0 ]; then
+            branch_result=missing_metadata
+            branch_verdict=FAIL
+          fi
+          printf 'branch-policy result=%s verdict=%s\n' "$branch_result" "$branch_verdict"
           printf 'full-qa result=NOT_RUN verdict=NOT_RUN\n'
-          if [ "$failed" -ne 0 ]; then
-            echo 'one or more retained CI checks failed closed'
+          if [ "$branch_verdict" = FAIL ]; then
             exit 1
           fi
           exit 0

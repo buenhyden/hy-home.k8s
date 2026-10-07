@@ -60,13 +60,82 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     case["expected"],
                 )
 
-    def test_ci_range_cases(self) -> None:
-        for case in self.fixture["ciRangeCases"]:
-            with self.subTest(case=case["name"]):
-                actual = self.validator.select_paths(
-                    self.contract, case["paths"], "ci", ROOT
+    def test_selector_has_no_phantom_hosted_job_projection(self) -> None:
+        self.assertEqual(self.contract["schemaVersion"], 3)
+        self.assertNotIn("ciJobs", self.contract)
+        self.assertTrue(all("ciJobs" not in row for row in self.contract["surfaces"]))
+        result = self.validator.select_paths(self.contract, ["README.md"], "ci", ROOT)
+        self.assertNotIn("ciJobs", result)
+        self.assertIn("validators", result)
+        self.assertIn("protectedLevel", result)
+
+    def test_authored_task_does_not_run_agent_projection_validator(self) -> None:
+        result = self.validator.select_paths(
+            self.contract,
+            ["docs/03.specs/route-probe/tasks/task.md"],
+            "ci",
+            ROOT,
+        )
+        self.assertNotIn("agent-governance", result["validators"])
+        self.assertIn("document-lifecycle", result["validators"])
+        self.assertNotIn("repository-quality", result["validators"])
+
+    def test_ordinary_documents_route_only_to_document_content_checks(self) -> None:
+        expected = [
+            "document-contract-registry",
+            "document-lifecycle",
+            "links-and-owners",
+            "markdown-profiles",
+        ]
+        for path in (
+            "docs/03.specs/route-probe/spec.md",
+            "README.md",
+            "infrastructure/README.md",
+            "gitops/workloads/README.md",
+            "docs/99.templates/README.md",
+            ".github/repository-surface.md",
+            ".agents/evaluations/README.md",
+            ".agents/evaluations/results.md",
+            ".agents/evaluations/harnesses/route-probe/task.md",
+            ".agents/evaluations/harnesses/route-probe/score.md",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
                 )
-                self.assertEqual(actual["ciJobs"], case["expectedJobs"])
+                self.assertEqual(selected["validators"], expected)
+
+    def test_contract_paths_keep_their_focused_gate_selection(self) -> None:
+        for path, required in (
+            ("docs/99.templates/registry.json", "agent-governance"),
+            (
+                "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+                "archive-contract-tests",
+            ),
+            (".agents/governance/quality.md", "agent-governance"),
+            (".codex/provider.md", "agent-governance"),
+            ("gitops/clusters/local/root-application.yaml", "k8s-manifests"),
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertIn(required, selected["validators"])
+
+        mixed = self.validator.select_paths(
+            self.contract,
+            ["README.md", "gitops/clusters/local/root-application.yaml"],
+            "staged",
+            ROOT,
+        )
+        self.assertIn("document-contract-registry", mixed["validators"])
+        self.assertIn("k8s-manifests", mixed["validators"])
+
+    def test_root_changelog_uses_document_surface(self) -> None:
+        self.assertEqual(
+            self.validator.classify_path(self.contract, "CHANGELOG.md")["id"],
+            "authored-documents",
+        )
 
     def test_rejection_cases(self) -> None:
         for case in self.fixture["rejectionCases"]:

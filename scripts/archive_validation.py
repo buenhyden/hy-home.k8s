@@ -44,7 +44,22 @@ if __package__:
         catalog_parity_diagnostics,
         citation_decision,
         contracts_module,
+        historical_catalog_diagnostics,
+        link_resolved_text,
+        parse_catalog,
+        removed_records,
         retention_class_of,
+        retained_unit_of,
+        retention_source_path,
+    )
+    from scripts.archive_objects import (
+        blob_text,
+        commit_entries,
+        index_entries,
+        is_ancestor,
+        is_shallow_repository,
+        object_type,
+        resolve_default_branch,
     )
     from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
     from scripts.document_authority import REGISTRY_PATH
@@ -75,7 +90,22 @@ else:  # Direct import-only execution from scripts/.
         catalog_parity_diagnostics,
         citation_decision,
         contracts_module,
+        historical_catalog_diagnostics,
+        link_resolved_text,
+        parse_catalog,
+        removed_records,
         retention_class_of,
+        retained_unit_of,
+        retention_source_path,
+    )
+    from archive_objects import (  # type: ignore[no-redef]
+        blob_text,
+        commit_entries,
+        index_entries,
+        is_ancestor,
+        is_shallow_repository,
+        object_type,
+        resolve_default_branch,
     )
     from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from document_authority import REGISTRY_PATH
@@ -362,6 +392,10 @@ _INDEX_MARKER = re.compile(
 )
 _FULL_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 _ARCHIVE_RECORD_LIMIT = 8 * 1024 * 1024
+_ARCHIVE_SECRET_INPUT_LIMIT = 32 * 1024 * 1024
+_ARCHIVE_SECRET_TIMEOUT_SECONDS = 10
+_ARCHIVE_SECRET_DETECTED_EXIT = 17
+_GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 _ARCHIVE_INDEX_LIMIT = 2 * 1024 * 1024
 _GIT_TREE_OUTPUT_LIMIT = 2 * 1024 * 1024
 _GIT_TREE_ENTRY_LIMIT = 4096
@@ -3677,9 +3711,169 @@ def _current_generation_texts(
     return texts
 
 
+@lru_cache(maxsize=1)
+def _trusted_runner() -> ModuleType:
+    """Load the canonical lane runner's trusted-tool policy once."""
+
+    path = Path(__file__).with_name("run-validation-lane.py")
+    spec = importlib.util.spec_from_file_location("archive_validation_runner", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("trusted tool policy unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _trusted_gitleaks(root: Path) -> str | None:
+    try:
+        return _trusted_runner().secure_gitleaks_executable(root)
+    except (OSError, ImportError, RuntimeError):
+        return None
+
+
+def _scan_archive_payloads(
+    root: Path,
+    records: Sequence[ArchiveRecord],
+) -> tuple[ArchiveDiagnostic, ...]:
+    """Scan current archived payloads once without exposing their contents."""
+
+    index = ARCHIVE_INDEX.as_posix()
+    payloads: list[bytes] = []
+    total = 0
+    for record in records:
+        try:
+            payload = parse_archive_envelope(record.content).payload
+        except ArchiveContractError:
+            # The ordinary archive validator reports malformed envelopes.
+            continue
+        total += len(payload) + (2 if payloads else 0)
+        if total > _ARCHIVE_SECRET_INPUT_LIMIT:
+            return (_diagnostic("ARCHIVE-SECRET-RESOURCE-LIMIT", index),)
+        payloads.append(payload)
+    if not payloads:
+        return ()
+
+    config = root / ".gitleaks.toml"
+    try:
+        config_info = config.lstat()
+    except OSError:
+        config_info = None
+    if (
+        config_info is None
+        or not stat.S_ISREG(config_info.st_mode)
+        or config_info.st_size > 1024 * 1024
+    ):
+        return (_diagnostic("ARCHIVE-SECRET-CLASSIFIER-ERROR", index),)
+
+    executable = _trusted_gitleaks(root)
+    hint = os.environ.get(_GITLEAKS_EXECUTABLE_ENV)
+    if hint is not None and hint != executable:
+        executable = None
+    if executable is None:
+        return (_diagnostic("ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE", index),)
+    try:
+        completed = subprocess.run(
+            [
+                executable,
+                "stdin",
+                "--config",
+                str(config),
+                "--redact=100",
+                "--no-banner",
+                "--no-color",
+                "--log-level",
+                "error",
+                "--timeout",
+                str(_ARCHIVE_SECRET_TIMEOUT_SECONDS),
+                "--exit-code",
+                str(_ARCHIVE_SECRET_DETECTED_EXIT),
+            ],
+            input=b"\n\n".join(payloads),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=_trusted_runner().closed_subprocess_environment(),
+            check=False,
+            timeout=_ARCHIVE_SECRET_TIMEOUT_SECONDS * 2,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return (_diagnostic("ARCHIVE-SECRET-CLASSIFIER-ERROR", index),)
+    if completed.returncode == _ARCHIVE_SECRET_DETECTED_EXIT:
+        return (_diagnostic("ARCHIVE-SECRET-DETECTED", index),)
+    if completed.returncode != 0:
+        return (_diagnostic("ARCHIVE-SECRET-CLASSIFIER-ERROR", index),)
+    return ()
+
+
+def catalog_envelope_diagnostics(
+    root: Path, registry: "Registry", index_text: str
+) -> tuple[ArchiveDiagnostic, ...]:
+    """Reverify current catalog history, source object, and retained bytes."""
+
+    rows, _errors = parse_catalog(index_text)
+    removed = removed_records(
+        registry, index_text, exists=lambda path: (root / path).is_file()
+    )
+    moves = {
+        retention_source_path(record): record
+        for record in registry.legacy_rebased_retained_paths
+    }
+    default_ref = (
+        resolve_default_branch(root, registry.archive_assessment.default_branch)
+        if registry.archive_assessment is not None
+        else None
+    )
+    shallow = is_shallow_repository(root)
+    diagnostics = [
+        _diagnostic(code, path)
+        for code, path in historical_catalog_diagnostics(
+            root, registry, index_text, "HEAD"
+        )
+    ]
+    for record, row in sorted(rows.items(), key=lambda item: item[0].as_posix()):
+        envelope = row.envelope
+        unit = retained_unit_of(registry, record)
+        retained = unit is not None or retention_class_of(registry, record) is not None
+        kind = object_type(root, envelope.commit, envelope.original_path)
+        if (
+            kind is None
+            or default_ref is None
+            or shallow
+            or not is_ancestor(root, envelope.commit, default_ref)
+            or (retained and kind != ("tree" if unit is not None else "blob"))
+        ):
+            diagnostics.append(_diagnostic("ARCHIVE-CATALOG-OBJECT", record.as_posix()))
+            continue
+        if not retained or record in removed:
+            continue
+        if record in registry.legacy_rebased_retained_paths:
+            source = blob_text(
+                root, f"{envelope.commit}:{envelope.original_path.as_posix()}"
+            )
+            retained_text = blob_text(root, f":{record.as_posix()}")
+            same = (
+                source is not None
+                and retained_text is not None
+                and link_resolved_text(source, envelope.original_path, moves)
+                == link_resolved_text(retained_text, record)
+            )
+        else:
+            retained_entries = index_entries(root, record)
+            same = retained_entries is not None and retained_entries == commit_entries(
+                root, envelope.commit, envelope.original_path
+            )
+        if not same:
+            diagnostics.append(
+                _diagnostic("ARCHIVE-CATALOG-RETENTION", record.as_posix())
+            )
+    return tuple(diagnostics)
+
+
 def validate_repository_archive(
     repository_root: str | Path,
     registry: object,
+    *,
+    scan_secrets: bool = False,
 ) -> ArchiveValidationReport:
     """Validate the repository archive from Stage 98 recovery owners."""
 
@@ -3831,6 +4025,8 @@ def validate_repository_archive(
         ArchiveRecord(path=path, content=content)
         for path, content in sorted(records.items())
     )
+    if scan_secrets:
+        diagnostics.extend(_scan_archive_payloads(root, typed_records))
     record_report = validate_archive_records(
         root,
         typed_records,
@@ -3867,12 +4063,22 @@ def validate_repository_archive(
     except ArchiveContractError as exc:
         index_text = ""
         diagnostics.append(_diagnostic(exc.code, ARCHIVE_INDEX.as_posix()))
-    current_registry = repository_registry(root)
+    try:
+        current_registry = repository_registry(root)
+    except (OSError, ValueError, RuntimeError, TypeError):
+        current_registry = None
+    if current_registry is None and (
+        records or catalog_line_span(index_text.splitlines()) is not None
+    ):
+        diagnostics.append(_diagnostic("ARCHIVE-REGISTRY-UNAVAILABLE", REGISTRY_PATH))
     index_rows, index_links, index_diagnostics = _parse_repository_index(
         index_text, current_registry
     )
     diagnostics.extend(index_diagnostics)
     if current_registry is not None:
+        diagnostics.extend(
+            catalog_envelope_diagnostics(root, current_registry, index_text)
+        )
         frozen_retained = frozenset(
             PurePosixPath(target)
             for target in (proof.targets.values() if proof is not None else ())

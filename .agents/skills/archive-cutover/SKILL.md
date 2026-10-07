@@ -1,13 +1,13 @@
 ---
 name: "archive-cutover"
-description: "Use when a governed document or whole Spec package that is no longer current leaves its active stage for a Stage 98 disposition, when a disposition fails the lifecycle, link, or archive cutover gates, or when a citation of a retained document needs repointing."
+description: "Use when a governed document or whole Spec package leaves its active stage for a Stage 98 disposition, when retention fails current lifecycle, link, or Archive integrity checks, or when a citation of a retained document needs repointing."
 metadata:
   title: "Archive Cutover"
-  version: "1.0.0"
+  version: "1.1.0"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-07"
 disable-model-invocation: true
 ---
 
@@ -55,10 +55,13 @@ Catalog row is the only machine evidence of where it came from.
    unit, a package or bundle directory or one document, and
    `<commit>:<original path>`, where the commit is the comparison base. Add no
    blob, digest, branch SHA, or redirect.
-6. Validate the exact index with the staged QA profile. The lifecycle gate
-   proves the envelope object, the anchor and member states, and entry-for-entry
-   equality; the links-and-owners gate proves the citation decision; the archive
-   cutover gate proves catalog parity and re-verifies every catalog row.
+6. Validate the exact index with the selected local staged QA profile. The
+   lifecycle check covers the envelope object, anchor and member states, and
+   entry-for-entry equality; the links-and-owners check covers citation
+   decisions. The current Archive integrity check covers catalog routes and
+   retained-content invariants over its declared input. The historical
+   cutover completion proof remains in its original evidence owner and is
+   not recreated by a new placement check.
 
 ## Boundaries
 

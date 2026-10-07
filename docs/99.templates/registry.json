@@ -2187,7 +2187,7 @@
       "id": "common/readme-collection-index",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/knowledge/README\\.md|\\.agents/prompts/README\\.md|\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md|\\.agents/evaluations/(?:harnesses|templates)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "frontmatter": {
@@ -2870,6 +2870,33 @@
       "family": "common",
       "mode": "native",
       "path_pattern": "^\\.github/(?:PULL_REQUEST_TEMPLATE|SECURITY)\\.md$|^\\.github/rulesets/[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "common/native-changelog",
+      "family": "common",
+      "mode": "native",
+      "path_pattern": "^CHANGELOG\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
@@ -5521,6 +5548,378 @@
         "body_contract": null
       },
       "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "evaluation/task",
+      "family": "evaluation",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/task\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/task"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Declared Trials",
+          "Signals and Criteria",
+          "Human Calibration",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "active",
+          "deprecated",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "evaluation/score",
+      "family": "evaluation",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/score\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/score"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Trial Evidence",
+          "Criterion Scores",
+          "Human Calibration",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "active",
+          "deprecated",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "evaluation/results",
+      "family": "evaluation",
+      "mode": "authored",
+      "path_pattern": "^\\.agents/evaluations/results\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/results"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Pair Coverage",
+          "Aggregate",
+          "Limitations",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": {
+        "status_domain": [
+          "draft",
+          "in-review",
+          "active",
+          "deprecated",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "evaluation/raw-output",
+      "family": "evaluation",
+      "mode": "native",
+      "path_pattern": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:baseline|with-skill)\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "common/template-evaluation-task",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-task\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-task.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/task"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Declared Trials",
+          "Signals and Criteria",
+          "Human Calibration",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "evaluation/task"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
+      "id": "common/template-evaluation-score",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-score\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-score.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/score"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Trial Evidence",
+          "Criterion Scores",
+          "Human Calibration",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "evaluation/score"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
+    },
+    {
+      "id": "common/template-evaluation-results",
+      "family": "common",
+      "mode": "template",
+      "path_pattern": "^docs/99\\.templates/templates/evaluations/evaluation\\-results\\.template\\.md$",
+      "artifact_id_pattern": null,
+      "template_source": "docs/99.templates/templates/evaluations/evaluation-results.template.md",
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "optional": [],
+        "forbidden": [
+          "artifact_id",
+          "layer"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "constants": {
+          "type": "evaluation/results"
+        }
+      },
+      "sections": {
+        "required": [
+          "Overview",
+          "Pair Coverage",
+          "Aggregate",
+          "Limitations",
+          "Related Documents"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [
+          "evaluation/results"
+        ],
+        "body_contract": null
+      },
+      "placeholder_policy": "template-only"
     }
   ],
   "lifecycle_domains": [
@@ -5942,6 +6341,48 @@
         [
           "draft",
           "sealed"
+        ]
+      ]
+    },
+    {
+      "family": "evaluation",
+      "profile_ids": [
+        "evaluation/task",
+        "evaluation/score",
+        "evaluation/results"
+      ],
+      "states": {
+        "draft": "mutable",
+        "in-review": "mutable",
+        "active": "current",
+        "deprecated": "current",
+        "superseded": "terminal",
+        "retired": "terminal"
+      },
+      "transitions": [
+        [
+          "draft",
+          "in-review"
+        ],
+        [
+          "in-review",
+          "active"
+        ],
+        [
+          "active",
+          "deprecated"
+        ],
+        [
+          "active",
+          "superseded"
+        ],
+        [
+          "active",
+          "retired"
+        ],
+        [
+          "deprecated",
+          "retired"
         ]
       ]
     }

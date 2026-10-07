@@ -21,19 +21,9 @@ from typing import Callable, Mapping, Sequence
 
 from archive_cutover_manifest import (
     ARCHIVE_PROFILE,
-    ARCHIVE_TEMPLATE,
     ARCHIVE_TEMPLATE_PROFILE,
-    BASE_REGISTRY_BLOB_OID,
-    BASE_REGISTRY_ID,
-    BASE_REGISTRY_VERSION,
-    CUTOVER_BASE_COMMIT,
-    EXPECTED_ARCHIVE_PATHS,
     LEGACY_ARCHIVE_PROFILE,
-    LEGACY_ARCHIVE_TEMPLATE,
     LEGACY_ARCHIVE_TEMPLATE_PROFILE,
-    PROPOSED_REGISTRY_ID,
-    PROPOSED_REGISTRY_BLOB_OID,
-    PROPOSED_REGISTRY_VERSION,
 )
 from document_contracts import (
     ROOT_FILES,
@@ -46,6 +36,8 @@ from document_contracts import (
     Route,
     classify_path,
     enumerate_target_markdown,
+    is_opaque_evaluation_output,
+    verify_opaque_evaluation_output,
     load_registry,
     read_repository_text,
     task_criterion_ids,
@@ -299,17 +291,6 @@ class _Work054Wp004bAdmission:
 
 
 _EMPTY_WORK054_WP004B_ADMISSION = _Work054Wp004bAdmission(frozenset(), frozenset())
-
-
-def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
-    profiles = raw_registry.get("profiles")
-    if not isinstance(profiles, list):
-        return frozenset()
-    return frozenset(
-        profile["id"]
-        for profile in profiles
-        if isinstance(profile, dict) and isinstance(profile.get("id"), str)
-    )
 
 
 def _work054_wp004b_document(
@@ -1416,121 +1397,6 @@ def finite_work054_wp003_agent_governance_paths(
     return frozenset(consumed) if len(consumed) == 4 else frozenset()
 
 
-def finite_archive_cutover_paths(
-    *,
-    mode: str,
-    base_commit: str,
-    base_registry_oid: str,
-    proposed_registry_oid: str,
-    base_registry: Mapping[str, object],
-    proposed_registry: Mapping[str, object],
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-) -> frozenset[PurePosixPath]:
-    """Return only the exact finite ARWB-003 events admitted for consumption."""
-
-    if (
-        mode not in {"staged", "ci"}
-        or base_commit != CUTOVER_BASE_COMMIT
-        or base_registry_oid != BASE_REGISTRY_BLOB_OID
-        or proposed_registry_oid != PROPOSED_REGISTRY_BLOB_OID
-    ):
-        return frozenset()
-    if (
-        base_registry.get("schemaVersion") != BASE_REGISTRY_VERSION
-        or base_registry.get("$id") != BASE_REGISTRY_ID
-        or proposed_registry.get("schemaVersion") != PROPOSED_REGISTRY_VERSION
-        or proposed_registry.get("$id") != PROPOSED_REGISTRY_ID
-    ):
-        return frozenset()
-
-    base_profile_ids = _registry_profile_ids(base_registry)
-    proposed_profile_ids = _registry_profile_ids(proposed_registry)
-    if (
-        not {LEGACY_ARCHIVE_PROFILE, LEGACY_ARCHIVE_TEMPLATE_PROFILE}
-        <= base_profile_ids
-        or {ARCHIVE_PROFILE, ARCHIVE_TEMPLATE_PROFILE} & base_profile_ids
-        or not {ARCHIVE_PROFILE, ARCHIVE_TEMPLATE_PROFILE} <= proposed_profile_ids
-        or {
-            LEGACY_ARCHIVE_PROFILE,
-            LEGACY_ARCHIVE_TEMPLATE_PROFILE,
-        }
-        & proposed_profile_ids
-    ):
-        return frozenset()
-
-    expected_records = frozenset(PurePosixPath(path) for path in EXPECTED_ARCHIVE_PATHS)
-    common_paths = set(base_documents) & set(proposed_documents)
-    profile_changes = frozenset(
-        path
-        for path in common_paths
-        if base_documents[path].profile_id != proposed_documents[path].profile_id
-    )
-    if profile_changes != expected_records:
-        return frozenset()
-    for path in expected_records:
-        base = base_documents[path]
-        proposed = proposed_documents[path]
-        if (
-            base.profile_id != LEGACY_ARCHIVE_PROFILE
-            or base.status != "archived"
-            or base.state_issue is not None
-            or proposed.profile_id != ARCHIVE_PROFILE
-            or proposed.status != "archived"
-            or proposed.state_issue is not None
-        ):
-            return frozenset()
-
-    legacy_template = PurePosixPath(LEGACY_ARCHIVE_TEMPLATE)
-    archive_template = PurePosixPath(ARCHIVE_TEMPLATE)
-    if (
-        base_documents.get(legacy_template)
-        != LifecycleDocument(
-            legacy_template,
-            LEGACY_ARCHIVE_TEMPLATE_PROFILE,
-            None,
-        )
-        or legacy_template in proposed_documents
-        or proposed_documents.get(archive_template)
-        != LifecycleDocument(
-            archive_template,
-            ARCHIVE_TEMPLATE_PROFILE,
-            None,
-        )
-        or archive_template in base_documents
-    ):
-        return frozenset()
-
-    if (
-        frozenset(
-            path
-            for path, document in base_documents.items()
-            if document.profile_id == LEGACY_ARCHIVE_PROFILE
-        )
-        != expected_records
-        or frozenset(
-            path
-            for path, document in proposed_documents.items()
-            if document.profile_id == ARCHIVE_PROFILE
-        )
-        != expected_records
-        or frozenset(
-            path
-            for path, document in base_documents.items()
-            if document.profile_id == LEGACY_ARCHIVE_TEMPLATE_PROFILE
-        )
-        != {legacy_template}
-        or frozenset(
-            path
-            for path, document in proposed_documents.items()
-            if document.profile_id == ARCHIVE_TEMPLATE_PROFILE
-        )
-        != {archive_template}
-    ):
-        return frozenset()
-    return expected_records | {legacy_template, archive_template}
-
-
 class InvocationError(ValueError):
     """Invalid CLI, ref, base, Git object, or include-path provenance."""
 
@@ -1672,8 +1538,6 @@ def _normalize_path(value: str) -> PurePosixPath:
 
 def _approved_markdown(path: PurePosixPath) -> bool:
     if path.suffix != ".md" or not path.parts:
-        return False
-    if path.parts[:3] == (".agents", "evaluations", "responses"):
         return False
     if path.as_posix() == "RTK.md" or path.parts[0] == ".worktrees":
         return False
@@ -3367,7 +3231,19 @@ def _snapshot_projection(
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
     for path in sorted(blobs, key=PurePosixPath.as_posix):
-        text = reused_texts.get(path) if reused_texts is not None else None
+        try:
+            opaque = is_opaque_evaluation_output(registry, path)
+        except DocumentContractError:
+            opaque = False
+        if opaque:
+            _blob_bytes(root, blobs[path])
+        text = (
+            ""
+            if opaque
+            else reused_texts.get(path)
+            if reused_texts is not None
+            else None
+        )
         if text is None:
             text = _blob_text(root, blobs[path], path)
         assert text is not None
@@ -3587,7 +3463,13 @@ def _comparison_documents(
         *,
         historical: bool = False,
     ) -> LifecycleDocument | None:
-        text = _blob_text(root, oid, path)
+        try:
+            opaque = is_opaque_evaluation_output(registry, path)
+        except DocumentContractError:
+            opaque = False
+        if opaque and oid is not None:
+            _blob_bytes(root, oid)
+        text = "" if opaque and oid is not None else _blob_text(root, oid, path)
         if text is None:
             return None
         try:
@@ -4769,6 +4651,11 @@ def _evaluate_comparison(
     )
 
 
+def _verified_opaque_snapshot_text(root: Path, path: PurePosixPath) -> str:
+    verify_opaque_evaluation_output(root, path)
+    return ""
+
+
 def _evaluate_snapshot(
     root: Path,
     registry: Registry,
@@ -4777,7 +4664,15 @@ def _evaluate_snapshot(
     _verify_repository_root(root)
     inventory = enumerate_target_markdown(root, include_paths=tuple(include_paths))
     documents = [
-        document_from_text(registry, path, read_repository_text(root, path))
+        document_from_text(
+            registry,
+            path,
+            (
+                _verified_opaque_snapshot_text(root, path)
+                if is_opaque_evaluation_output(registry, path)
+                else read_repository_text(root, path)
+            ),
+        )
         for path in inventory.current_paths
     ]
     return validate_snapshot_documents(registry, documents)

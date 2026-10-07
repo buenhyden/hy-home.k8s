@@ -1,10 +1,10 @@
 ---
 title: "tests"
-version: "0.4.0"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-07"
 ---
 
 # tests
@@ -34,7 +34,8 @@ updated: "2026-10-05"
 - 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
 - staged index와 작업 트리 권한의 구분
 - fixture 소비자 소유권과 고아 fixture 방지
-- hook, routing, 문서, archive, Agent, CI, GitOps 정적 계약
+- hook, routing, 문서, Archive 무결성, Agent governance, GitOps·Kubernetes,
+  Docker·project-template·web·Vault의 실제 저장소 표면에 적용되는 정적 계약
 
 ### Out of Scope
 
@@ -47,14 +48,14 @@ updated: "2026-10-05"
 
 ### Test families
 
-| Family                           | Representative modules                                                                                                                                                                                                                                                                              |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Validation ownership and routing | `test_validation_tooling_ownership.py`, `test_affected_surface_migration.py`, `test_validate_affected_surfaces.py`, `test_run_validation_lane.py`, `test_current_executable_references.py`                                                                                                          |
-| Document contracts and lifecycle | `test_document_strict_cutover.py`, `test_document_lifecycle_migration.py`, `test_document_lifecycle_cumulative_history.py`, `test_document_lifecycle_archive_cutover.py`, `test_document_lifecycle_agent_roster_cutover.py`, `test_reference_pack_routes.py`, `test_documentation_link_boundary.py` |
-| Archive and recovery             | `test_archive_recovery.py`, `test_archive_validation.py`, `test_archive_cutover.py`, `test_archive_historical_proof.py`, `test_generic_migration_recovery.py`                                                                                                                                       |
-| Agent governance                 | `test_agent_governance.py`, `test_agent_governance_consumers.py`, `test_validate_agent_registry.py`, `test_validate_agent_core_cutover.py`, `test_agent_evaluations.py`                                                                                    |
-| CI, GitOps, Vault, and workspace | `test_validate_ci_python_contract.py`, `test_validate_github_actions_security.py`, `test_validate_gitops_change_set.py`, `test_validate_vault_eso_contracts.py`, `test_workspace_boundary.py`                                                                                                       |
-| Hook boundaries                  | `test_k8s_pre_edit_hook.py`                                                                                                                                                                                                                                                                         |
+| Family | Distinct behavior |
+| --- | --- |
+| Validation routing | Affected-path selection, exact index, bounded runner and failure propagation |
+| Document contracts | Profile, form, frontmatter, relationship, link, lifecycle and current owner |
+| Archive integrity | Sealed source recovery, retention envelopes and current catalog parity; historical cutover completion stays with its original Task evidence |
+| Agent governance | Role/permission/skill consumers and evaluations with a proven ongoing governance contract |
+| Repository purpose | GitOps, Kubernetes, Docker, project-template, web and Vault/ESO interfaces actually present in this repository |
+| Supply chain and hooks | GitHub workflow identity/permissions, secret handling, local hook and commit-message boundaries |
 
 ### Shared helper modules
 
@@ -100,21 +101,20 @@ fixture는 범위가 제한된 예시이며 production registry가 아니다. fi
 
 ### Validation
 
-반복 작업 중에는 전용 suite를 실행하고 마지막에 full profile을 한 번 실행한다.
+반복 작업 중에는 바뀐 계약의 전용 suite와 affected 경로를 먼저 선택한다.
+global QA 계약을 변경하거나 명시적 한정 감사를 수행할 때만 사전 도구·예산
+확인 후 마지막 트리에서 full profile을 한 번 실행한다.
 
 ```bash
-python3 -m unittest tests.test_reference_pack_routes
-python3 -m unittest tests.test_validation_tooling_ownership
 python3 -m unittest tests.test_validate_affected_surfaces tests.test_run_validation_lane
-python3 -m unittest tests.test_agent_governance tests.test_ci_qa_workflow
-python3 -m unittest tests.test_document_strict_cutover
-python3 scripts/qa.py full
+python3 scripts/qa.py quick
 git diff --check
 ```
 
-전체 suite에 대한 discovery 실행은 `full` profile이 한 번 소유한다. 같은
-바이트에 `unittest discover`를 따로 돌리면 증거가 늘지 않고 profile이 이미 한
-일을 반복할 뿐이다. discovery는 profile 밖에서 실패를 재현할 때만 직접 실행한다.
+위 suite는 routing/runner 동작을 수정한 경우의 예시다. 일반 문서 수정에는
+profile·관계·링크·상태 검사를 선택한다. 전체 suite discovery가 필요한
+경우에는 full profile이 한 번 소유하며, 동일 입력에 별도 discovery를
+반복하지 않는다.
 
 완료 순서와 PASS/FAIL/DEFER/NOT_RUN/NOT_APPLICABLE의 의미는
 [Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
@@ -128,8 +128,8 @@ git diff --check
 2. 한 번 쓰는 mutation에는 임시 데이터를 쓴다. 영구 fixture는 여러 사례가
    오래 유지되는 같은 의미의 입력을 공유할 때만 추가한다.
 3. production 변경은 이 트리를 import하거나 읽지 않고 한다.
-4. 전용 suite, 소유권 검사, affected·staged 검증, 바뀐 surface가 요구하는 넓은
-   검증을 실행한다.
+4. 전용 suite, affected·staged 검증을 변경 입력에 맞춰 선택하고 global QA
+   변경 또는 명시적 감사에서만 full을 선택한다.
 5. 마지막 독립 소비자가 없어지면 그 fixture도 삭제한다.
 6. 실행할 수 없는 hosted·provider·live 검사는 `DEFER`로 보고하며 로컬 PASS로
    보고하지 않는다.

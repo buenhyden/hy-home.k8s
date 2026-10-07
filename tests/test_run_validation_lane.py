@@ -957,21 +957,21 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, runner_text)
             self.assertNotIn(variable, qa_text)
 
-    def test_registry_dispatches_exact_archive_cutover(self):
+    def test_registry_dispatches_current_archive_integrity(self):
         aggregate = (ROOT / "scripts/qa.py").read_text(encoding="utf-8")
         registry = json.loads(
             (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
         )
         archive = next(
-            row for row in registry["validators"] if row["id"] == "archive-cutover"
+            row for row in registry["validators"] if row["id"] == "archive-integrity"
         )
 
         self.assertEqual(
             archive["argv"],
-            ["python3", "scripts/archive_cutover.py", "--root", "."],
+            ["python3", "scripts/validate-archive-integrity.py", "--root", "."],
         )
         self.assertIn("all-files", archive["lanes"])
-        self.assertNotIn("scripts/archive_cutover.py", aggregate)
+        self.assertNotIn("scripts/validate-archive-integrity.py", aggregate)
 
     def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
         contract = {
@@ -2488,13 +2488,7 @@ class ValidatorTimeoutBudgetTest(unittest.TestCase):
 
 
 class FailureSnippetDiagnosabilityTest(unittest.TestCase):
-    """A failing gate has to say why, not only which case failed.
-
-    The snippet keeps its byte bound and its redaction; what changes is that a
-    unittest failure now carries the assertion that produced it. Without that,
-    a hosted failure names a test and nothing else, and the only way to learn
-    the cause is to reproduce it somewhere the fault may not occur.
-    """
+    """A failing gate identifies cases without exposing assertion values."""
 
     def _snippet(self, stderr: str, stdout: str = "") -> str:
         return RUNNER.failure_snippet(
@@ -2504,22 +2498,44 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
     UNITTEST_STDERR = (
         "======================================================================\n"
         "FAIL: test_repository_snapshot_is_complete_and_atomic "
-        "(tests.test_archive_cutover.ArchiveCutoverTest)\n"
+        "(tests.test_archive_integrity.ArchivePayloadSecretScanTest)\n"
         "----------------------------------------------------------------------\n"
         "Traceback (most recent call last):\n"
-        '  File "/repo/tests/test_archive_cutover.py", line 131, in test_x\n'
+        '  File "/repo/tests/test_archive_integrity.py", line 131, in test_x\n'
         '    self.assertIsNotNone(executable, "required secure Gitleaks")\n'
         "AssertionError: unexpectedly None : required secure Gitleaks\n"
         "\n"
         "FAILED (failures=1, skipped=4)\n"
     )
 
-    def test_assertion_detail_survives_into_the_snippet(self):
+    def test_unittest_summary_names_module_and_case_without_assertion_values(self):
         snippet = self._snippet(self.UNITTEST_STDERR)
 
-        self.assertIn("FAIL: test_repository_snapshot_is_complete_and_atomic", snippet)
-        self.assertIn("AssertionError", snippet)
-        self.assertIn("required secure Gitleaks", snippet)
+        self.assertIn("tests.test_archive_integrity:1", snippet)
+        self.assertIn(
+            "ArchivePayloadSecretScanTest.test_repository_snapshot_is_complete_and_atomic",
+            snippet,
+        )
+        self.assertIn("failures=1", snippet)
+        self.assertNotIn("AssertionError", snippet)
+        self.assertNotIn("required secure Gitleaks", snippet)
+
+    def test_unittest_summary_groups_modules_before_bounded_case_ids(self):
+        stderr = (
+            "FAIL: test_alpha (tests.test_archive_integrity.ArchivePayloadSecretScanTest)\n"
+            "AssertionError: token=synthetic-value\n"
+            "ERROR: test_beta (tests.test_qa_runner.SnapshotBoundaryTest)\n"
+            "Traceback (most recent call last):\n"
+            "FAILED (failures=1, errors=1)\n"
+        )
+        snippet = self._snippet(stderr)
+        self.assertIn("tests.test_archive_integrity:1", snippet)
+        self.assertIn("tests.test_qa_runner:1", snippet)
+        self.assertIn("failures=1", snippet)
+        self.assertIn("errors=1", snippet)
+        self.assertLess(snippet.index("tests.test_qa_runner:1"), snippet.index("ids="))
+        self.assertNotIn("synthetic-value", snippet)
+        self.assertNotIn("Traceback", snippet)
 
     def test_snippet_stays_bounded_and_redacted(self):
         def noisy(count: int) -> str:
@@ -2534,7 +2550,24 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
         # particular length: the cap applies before escaping expands it.
         self.assertEqual(len(snippet), len(self._snippet(noisy(2000))))
         self.assertNotIn("abcdef0000", snippet)
-        self.assertIn("[REDACTED]", snippet)
+        self.assertIn("details withheld", snippet)
+
+    def test_partial_unittest_and_arbitrary_errors_withhold_values(self):
+        snippet = self._snippet(
+            "FAIL: test_case (tests.test_example.ExampleTest)\n"
+            "AssertionError: Authorization: Bearer synthetic multi word tail\n"
+            "ERROR: credentials synthetic-value\n"
+        )
+        self.assertIn("tests.test_example:1", snippet)
+        self.assertIn("terminal-counts-unavailable", snippet)
+        self.assertNotIn("synthetic", snippet)
+        self.assertNotIn("Authorization", snippet)
+        arbitrary = self._snippet(
+            "ERROR: Authorization: Bearer synthetic multi word tail\n"
+        )
+        self.assertIn("details withheld", arbitrary)
+        self.assertNotIn("synthetic", arbitrary)
+        self.assertNotIn("Authorization", arbitrary)
 
     def test_hook_failure_lines_are_still_prioritized(self):
         snippet = self._snippet(
@@ -2543,6 +2576,7 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
 
         self.assertIn("- hook id: detect-secrets", snippet)
         self.assertIn("- exit code: 3", snippet)
+        self.assertNotIn("Detect secrets", snippet)
 
 
 if __name__ == "__main__":
@@ -2553,7 +2587,7 @@ class ReuseCandidateTest(unittest.TestCase):
     def test_unverified_hosted_candidate_executes_and_failure_is_preserved(self):
         row = dict(
             CONTRACT["validators"][0],
-            id="agent-evaluation-cases",
+            id="fixture-change-scoped",
             reuse={"mode": "change-scoped"},
         )
         for lane in ("affected", "staged", "all-files"):

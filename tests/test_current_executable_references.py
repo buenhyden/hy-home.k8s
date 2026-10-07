@@ -71,15 +71,15 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         findings = self.validate(source, f"Run `python3 {target}`")
         self.assertEqual([finding.code for finding in findings], ["EXECUTABLE-CURRENT"])
 
-    def test_evaluation_response_is_data_but_its_readme_is_current(self):
+    def test_retired_evaluation_response_is_not_exempt_if_reintroduced(self):
         text = "I ran `python3 scripts/retired.py`."
         self.assertEqual(
-            self.validate(".agents/evaluations/responses/a.synthetic.md", text), ()
+            len(self.validate(".agents/evaluations/responses/a.synthetic.md", text)), 1
         )
         self.assertEqual(len(self.validate(".agents/evaluations/README.md", text)), 1)
 
-    def test_evaluation_owner_command_must_exist(self):
-        target = ".agents/evaluations/run-agent-evaluations.py"
+    def test_current_owner_command_must_exist(self):
+        target = "scripts/qa.py"
         findings = self.validate(".agents/README.md", f"Run `python3 {target}`")
         self.assertEqual([finding.code for finding in findings], ["EXECUTABLE-CURRENT"])
         self.write(target)

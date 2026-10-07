@@ -9,7 +9,6 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
-from types import SimpleNamespace
 from unittest import mock
 
 from jsonschema import Draft202012Validator
@@ -28,12 +27,10 @@ from archive_validation import (  # noqa: E402
     CurrentMarkdownDocument,
     MigrationDisposition,
     MigrationProof,
-    ReviewedManifestRecord,
     validate_archive_records,
     validate_current_archive_authority,
 )
 import archive_validation  # noqa: E402
-import archive_cutover  # noqa: E402
 from document_contracts import load_registry  # noqa: E402
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
@@ -356,144 +353,74 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
         report = self.additive_report()
         self.assertIn("ARCHIVE-MIGRATION-PARITY", {d.code for d in report.diagnostics})
 
-    def cutover_report(
+    def authority_report(
         self,
         *,
-        identity=True,
-        blob=None,
-        status="superseded",
-        valid=True,
-        profile="sdlc/architecture-decision",
-        historical_link=True,
+        status: str,
+        profile: str = "sdlc/architecture-decision",
+        historical_link: bool = True,
     ):
-        path = "docs/98.archive/superseded/01.requirements/9000-fixture.md"
-        adr = "docs/02.architecture/decisions/9000-fixture.md"
-        content = render_fixture_archive_envelope(
-            self.metadata, self.recovered, self.payload
-        )
-        row = ReviewedManifestRecord(
-            path,
-            self.source,
-            self.metadata["source_commit"],
-            blob or self.metadata["source_blob"],
-        )
-        report = SimpleNamespace(
-            diagnostics=(),
-            valid=valid,
-            record_link_counts=((path, 0),),
-            record_count=1,
-            historical_link_count=0,
-            additive_record_sources=(row,) if identity else (),
-        )
-        text = f"---\ntype: {profile}\nstatus: {status}\n---\n" + (
+        archive = "docs/98.archive/superseded/01.requirements/9000-fixture.md"
+        markdown = (
             "[Historical requirement](../../98.archive/superseded/01.requirements/9000-fixture.md)\n"
             if historical_link
             else "# Current work\n"
         )
-        read_bytes = Path.read_bytes
-        read_text = Path.read_text
-        with (
-            mock.patch.object(
-                archive_cutover, "_finite_cutover_base_diagnostics", return_value=()
-            ),
-            mock.patch.object(
-                archive_cutover, "load_registry", return_value=load_registry(ROOT)
-            ),
-            mock.patch.object(
-                archive_cutover, "validate_repository_archive", return_value=report
-            ),
-            mock.patch.object(
-                archive_cutover, "_tracked_regular_blobs", return_value={}
-            ),
-            mock.patch.object(
-                archive_cutover, "build_work107_migration_rows", return_value=()
-            ),
-            mock.patch.object(
-                archive_cutover, "_sealed_staged_ledgers", return_value=()
-            ),
-            mock.patch.object(archive_cutover, "_git_paths", return_value=(adr,)),
-            mock.patch.object(
-                archive_cutover,
-                "_regular_file",
-                side_effect=lambda root, value: value in {path, adr},
-            ),
-            mock.patch.object(archive_cutover, "_secret_classifier", return_value=None),
-            mock.patch.object(
-                Path,
-                "read_bytes",
-                lambda current: (
-                    content if current == self.root / path else read_bytes(current)
-                ),
-            ),
-            mock.patch.object(
-                Path,
-                "read_text",
-                lambda current, *args, **kwargs: (
-                    text
-                    if current == self.root / adr
-                    else read_text(current, *args, **kwargs)
-                ),
-            ),
-        ):
-            return archive_cutover.validate_repository_cutover(self.root)
-
-    def test_cutover_consumes_only_validated_additive_source_identity(self) -> None:
-        report = self.cutover_report()
-        self.assertNotIn(
-            "ARCHIVE-SOURCE-OWNERSHIP", {d.code for d in report.diagnostics}
+        document = CurrentMarkdownDocument(
+            "docs/02.architecture/decisions/9000-fixture.md",
+            markdown,
+            profile,
+            status,
+        )
+        return validate_current_archive_authority(
+            [document],
+            individual_archive_paths=frozenset({archive}),
+            registry=load_registry(ROOT),
         )
 
-    def test_cutover_rejects_unvalidated_or_mismatched_additive_source(self) -> None:
-        for options in ({"identity": False}, {"blob": "0" * 40}, {"valid": False}):
-            with self.subTest(options=options):
-                report = self.cutover_report(**options)
-                self.assertIn(
-                    "ARCHIVE-SOURCE-OWNERSHIP", {d.code for d in report.diagnostics}
-                )
+    def test_terminal_historical_link_is_not_current_authority(self) -> None:
+        report = self.authority_report(status="superseded")
+        codes = {item.code for item in report.diagnostics}
+        self.assertNotIn("ARCHIVE-DIRECT-CURRENT-LINK", codes)
+        self.assertNotIn("ARCHIVE-CURRENT-STATUS-INVALID", codes)
 
-    def test_cutover_preserves_terminal_historical_link_status(self) -> None:
-        report = self.cutover_report(status="superseded")
-        self.assertNotIn(
-            "ARCHIVE-DIRECT-CURRENT-LINK", {d.code for d in report.diagnostics}
-        )
-        self.assertNotIn(
-            "ARCHIVE-CURRENT-STATUS-INVALID", {d.code for d in report.diagnostics}
-        )
-
-    def test_cutover_admits_registry_work_states_without_record_authority(self) -> None:
+    def test_registry_task_states_are_admitted_without_record_authority(self) -> None:
         for status in ("draft", "ready", "blocked", "in-progress", "cancelled"):
             with self.subTest(status=status):
-                report = self.cutover_report(
-                    profile="sdlc/task", status=status, historical_link=False
+                report = self.authority_report(
+                    status=status,
+                    profile="sdlc/task",
+                    historical_link=False,
                 )
                 self.assertNotIn(
                     "ARCHIVE-CURRENT-STATUS-INVALID",
-                    {d.code for d in report.diagnostics},
+                    {item.code for item in report.diagnostics},
                 )
 
-    def test_cutover_uses_registry_current_class_for_work_record_links(self) -> None:
+    def test_current_task_states_cannot_cite_record_as_authority(self) -> None:
         for status in ("blocked", "in-progress"):
             with self.subTest(status=status):
-                report = self.cutover_report(profile="sdlc/task", status=status)
+                report = self.authority_report(status=status, profile="sdlc/task")
                 self.assertIn(
-                    "ARCHIVE-DIRECT-CURRENT-LINK", {d.code for d in report.diagnostics}
+                    "ARCHIVE-DIRECT-CURRENT-LINK",
+                    {item.code for item in report.diagnostics},
                 )
 
-    def test_cutover_rejects_unknown_and_wrong_family_status(self) -> None:
+    def test_invalid_task_states_and_accepted_adr_boundary(self) -> None:
         for status in ("invented", "active"):
             with self.subTest(status=status):
-                report = self.cutover_report(
-                    profile="sdlc/task", status=status, historical_link=False
+                report = self.authority_report(
+                    status=status,
+                    profile="sdlc/task",
+                    historical_link=False,
                 )
                 self.assertIn(
                     "ARCHIVE-CURRENT-STATUS-INVALID",
-                    {d.code for d in report.diagnostics},
+                    {item.code for item in report.diagnostics},
                 )
-
-    def test_cutover_still_rejects_accepted_adr_record_authority(self) -> None:
-        report = self.cutover_report(status="accepted")
+        report = self.authority_report(status="accepted")
         self.assertIn(
-            "ARCHIVE-DIRECT-CURRENT-LINK", {d.code for d in report.diagnostics}
+            "ARCHIVE-DIRECT-CURRENT-LINK", {item.code for item in report.diagnostics}
         )
 
     def test_active_owner_cannot_use_a_superseded_record_as_authority(self) -> None:

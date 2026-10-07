@@ -27,6 +27,16 @@
       "expectedSurface": "governance-documents"
     },
     {
+      "name": "evaluation-raw-output",
+      "path": ".agents/evaluations/harnesses/example-pair/baseline.md",
+      "expectedSurface": "evaluation-evidence"
+    },
+    {
+      "name": "evaluation-results",
+      "path": ".agents/evaluations/results.md",
+      "expectedSurface": "evaluation-authored-documents"
+    },
+    {
       "name": "templates",
       "path": "docs/99.templates/registry.json",
       "expectedSurface": "template-documents"
@@ -74,12 +84,12 @@
     {
       "name": "secrets",
       "path": "secrets/README.md",
-      "expectedSurface": "secrets-contract"
+      "expectedSurface": "readme-router-protected"
     },
     {
       "name": "tests",
       "path": "tests/README.md",
-      "expectedSurface": "tests"
+      "expectedSurface": "readme-router-review"
     },
     {
       "name": "traefik",
@@ -104,7 +114,7 @@
     {
       "name": "numbered-audit-pack",
       "path": "docs/90.references/audits/0001-example-audit/README.md",
-      "expectedSurface": "authored-documents"
+      "expectedSurface": "readme-router-review"
     },
     {
       "name": "generated-record",
@@ -115,6 +125,11 @@
       "name": "root-config",
       "path": ".pre-commit-config.yaml",
       "expectedSurface": "root-config"
+    },
+    {
+      "name": "root-changelog",
+      "path": "CHANGELOG.md",
+      "expectedSurface": "authored-documents"
     }
   ],
   "selectionCases": [
@@ -134,9 +149,6 @@
           "links-and-owners",
           "markdown-profiles",
           "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -160,9 +172,6 @@
           "markdown-profiles",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -183,9 +192,6 @@
           "links-and-owners",
           "markdown-profiles",
           "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -215,9 +221,6 @@
           "repository-quality",
           "secret-handling"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -233,9 +236,6 @@
           "agent-governance",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -250,9 +250,6 @@
         "validators": [
           "agent-governance",
           "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -273,9 +270,6 @@
           "markdown-profiles",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -292,15 +286,10 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
-          "markdown-profiles",
-          "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
+          "markdown-profiles"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -322,9 +311,6 @@
           "repository-quality",
           "secret-handling"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -339,9 +325,6 @@
         "validators": [
           "agent-governance",
           "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -363,9 +346,6 @@
           "policy-gates",
           "repository-quality",
           "secret-handling"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -411,9 +391,6 @@
           "repository-quality",
           "secret-handling"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -443,9 +420,6 @@
           "repository-quality",
           "secret-handling"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -461,11 +435,7 @@
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
-          "markdown-profiles",
-          "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
+          "markdown-profiles"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -482,9 +452,6 @@
           "agent-governance",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "review",
         "unmatchedPaths": []
       }
@@ -499,9 +466,6 @@
         "validators": [
           "policy-gates",
           "repository-quality"
-        ],
-        "ciJobs": [
-          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -524,9 +488,6 @@
           "markdown-profiles",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
@@ -537,7 +498,6 @@
       "paths": [],
       "expected": {
         "validators": [],
-        "ciJobs": [],
         "protectedLevel": "none",
         "unmatchedPaths": []
       }
@@ -559,110 +519,9 @@
           "markdown-profiles",
           "repository-quality"
         ],
-        "ciJobs": [
-          "qa"
-        ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
-    }
-  ],
-  "ciRangeCases": [
-    {
-      "name": "push-before-head-document-surfaces",
-      "event": "push",
-      "rangeKind": "before-head",
-      "paths": [
-        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
-        "_workspace/README.md",
-        ".agents/roles/supervisor.md",
-        "docs/99.templates/registry.json",
-        ".github/workflows/ci.yml"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
-    },
-    {
-      "name": "pull-request-base-head-document-surfaces",
-      "event": "pull_request",
-      "rangeKind": "base-head",
-      "paths": [
-        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
-        "_workspace/README.md",
-        ".agents/roles/supervisor.md",
-        "docs/99.templates/registry.json",
-        ".github/workflows/ci.yml"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
-    },
-    {
-      "name": "push-initial-head-tree-all-surfaces",
-      "event": "push",
-      "rangeKind": "initial-head-tree",
-      "paths": [
-        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
-        "_workspace/README.md",
-        "policy/conftest/kubernetes.rego",
-        "gitops/clusters/local/root-application.yaml",
-        "scripts/validate-infrastructure-contracts.sh",
-        "secrets/README.md",
-        "traefik/traefik.yaml",
-        ".agents/roles/supervisor.md",
-        "docs/99.templates/registry.json",
-        ".github/workflows/ci.yml"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
-    },
-    {
-      "name": "pull-request-base-head-protected-surfaces",
-      "event": "pull_request",
-      "rangeKind": "base-head",
-      "paths": [
-        "policy/conftest/kubernetes.rego",
-        "gitops/clusters/local/root-application.yaml",
-        "scripts/validate-infrastructure-contracts.sh",
-        "secrets/README.md",
-        "traefik/traefik.yaml"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
-    },
-    {
-      "name": "pull-request-rename-protected-to-document",
-      "event": "pull_request",
-      "rangeKind": "base-head-no-renames",
-      "paths": [
-        "gitops/rename-probe.yaml",
-        "docs/03.specs/999-rename-probe/spec.md"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
-    },
-    {
-      "name": "pull-request-agent-governance-broad-surfaces",
-      "event": "pull_request",
-      "rangeKind": "base-head",
-      "paths": [
-        ".pre-commit-config.yaml",
-        "docs/99.templates/registry.json",
-        "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-        "scripts/validate-agent-governance.py",
-        "tests/test_validate_agent_governance_ci.py"
-      ],
-      "expectedJobs": [
-        "qa"
-      ]
     }
   ],
   "rejectionCases": [
@@ -1118,18 +977,6 @@
       "expectedError": "SURFACE-VALIDATOR-PATH-INPUT"
     },
     {
-      "name": "unknown-ci-job-reference",
-      "mutation": {
-        "kind": "append-ci-job-reference",
-        "surfaceId": "root-config",
-        "ciJobId": "missing-job"
-      },
-      "paths": [
-        "README.md"
-      ],
-      "expectedError": "SURFACE-CI-JOB-REFERENCE"
-    },
-    {
       "name": "invalid-protected-level",
       "mutation": {
         "kind": "replace-protected-level",
@@ -1176,93 +1023,6 @@
         "README.md"
       ],
       "expectedError": "SURFACE-EVIDENCE-LANE"
-    },
-    {
-      "name": "duplicate-ci-output",
-      "mutation": {
-        "kind": "append-ci-job",
-        "job": {
-          "id": "duplicate-output",
-          "output": "qa",
-          "evidenceLane": "ci"
-        }
-      },
-      "paths": [
-        "README.md"
-      ],
-      "expectedError": "SURFACE-CI-OUTPUT"
-    },
-    {
-      "name": "qa-output-drift",
-      "mutation": {
-        "kind": "replace-ci-output",
-        "ciJobId": "qa",
-        "output": "qa_drift"
-      },
-      "paths": [
-        "README.md"
-      ],
-      "expectedError": "SURFACE-CI-JOB"
-    },
-    {
-      "name": "remove-qa-root-config",
-      "mutation": {
-        "kind": "remove-ci-job-reference",
-        "surfaceId": "root-config",
-        "ciJobId": "qa"
-      },
-      "paths": [
-        ".pre-commit-config.yaml"
-      ],
-      "expectedError": "SURFACE-SCHEMA"
-    },
-    {
-      "name": "remove-qa-template-documents",
-      "mutation": {
-        "kind": "remove-ci-job-reference",
-        "surfaceId": "template-documents",
-        "ciJobId": "qa"
-      },
-      "paths": [
-        "docs/99.templates/registry.json"
-      ],
-      "expectedError": "SURFACE-SCHEMA"
-    },
-    {
-      "name": "remove-qa-authored-documents",
-      "mutation": {
-        "kind": "remove-ci-job-reference",
-        "surfaceId": "authored-documents",
-        "ciJobId": "qa"
-      },
-      "paths": [
-        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
-      ],
-      "expectedError": "SURFACE-SCHEMA"
-    },
-    {
-      "name": "remove-qa-scripts",
-      "mutation": {
-        "kind": "remove-ci-job-reference",
-        "surfaceId": "scripts",
-        "ciJobId": "qa"
-      },
-      "paths": [
-        "scripts/validate-affected-surfaces.py"
-      ],
-      "expectedError": "SURFACE-SCHEMA"
-    },
-    {
-      "name": "remove-qa-tests",
-      "mutation": {
-        "kind": "remove-ci-job-reference",
-        "surfaceId": "tests",
-        "ciJobId": "qa"
-      },
-      "paths": [
-        "tests/test_validate_ci_python_contract.py"
-      ],
-      "expectedError": "SURFACE-SCHEMA"
     }
   ]
 }

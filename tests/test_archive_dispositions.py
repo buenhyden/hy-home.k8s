@@ -386,38 +386,5 @@ class CatalogParityTests(unittest.TestCase):
         )
 
 
-class FrozenIndexParserTests(unittest.TestCase):
-    def test_both_frozen_index_parsers_skip_the_catalog_table(self) -> None:
-        import archive_cutover
-        import archive_validation
-
-        index = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
-        if dispositions.CATALOG_HEADER not in index:
-            index += "\n" + catalog(
-                row(
-                    "docs/98.archive/superseded/02.architecture/decisions/0032-x.md",
-                    f"{COMMIT}:docs/02.architecture/decisions/0032-x.md",
-                )
-            )
-        catalog_rows, catalog_errors = dispositions.parse_catalog(index)
-        self.assertTrue(catalog_rows)
-        self.assertEqual(catalog_errors, ())
-        registry = load_registry(ROOT)
-        # ADR-0040's assessment table is skipped the same way as the catalog.
-        self.assertIsNotNone(
-            dispositions.assessment_line_span(registry, index.splitlines())
-        )
-        rows, _links, diagnostics = archive_validation._parse_repository_index(
-            index, registry
-        )
-        self.assertEqual(len(rows), 25)
-        self.assertEqual(diagnostics, [])
-        cutover_rows, structure_failure = archive_cutover._parse_archive_index(
-            index, registry
-        )
-        self.assertEqual(len(cutover_rows), 25)
-        self.assertFalse(structure_failure)
-
-
 if __name__ == "__main__":  # pragma: no cover - module entry guard
     unittest.main()

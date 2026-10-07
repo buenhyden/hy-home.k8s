@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "2.0.0"
+version: "2.2.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-07"
 ---
 
 # Common Agent Governance
@@ -23,9 +23,13 @@ there. No role copies or provider generator own a second policy.
 [Governance](governance/) and the prompt contracts
 own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
-without a reader is not created. [Evaluations](evaluations/README.md) owns cases, response data and its dedicated
-runner. `scripts/validation/registry.json` still owns gate selection and
-`scripts/` owns shared validation helpers. A rule directory would duplicate
+without a reader is not created. [Evaluations](evaluations/README.md) routes
+evidence from actual, paired no-skill and with-skill runs of the same task:
+raw observations, task context, criteria, scores and aggregate results. The
+agent evaluator owns the assessment; Stage 99 owns document forms. This is an
+evidence domain, not a standing synthetic grader or repository QA gate.
+`scripts/validation/registry.json` still owns gate selection and `scripts/`
+owns shared validation helpers. A rule directory would duplicate
 `governance/`; no unused script or rule scaffold is adopted. MIG-0009's memory
 retirement remains effective.
 
@@ -39,6 +43,7 @@ retirement remains effective.
 | `workflows/` | Ordinary lifecycle/delegation procedures, explicitly read |
 | `knowledge/` | Hand-maintained pointers to canonical owners; states no policy of its own |
 | `prompts/` | Input and output contracts for repeatable authoring requests |
+| [evaluations/](evaluations/) | Router for observed paired agent-evaluation evidence; no role, skill or QA-gate authority |
 
 ### Skill package
 
@@ -74,10 +79,13 @@ execution registry owns mutable gate commands and limits.
 
 ## Verification
 
-Run `python3 scripts/validate-agent-governance.py --root .` for role, skill,
-permission and routing contracts; run `python3 scripts/qa.py full` for final
-repository-static evidence. No generator is used. Native discovery, invocation,
-permissions and hook delivery require separate evidence from a fresh session.
+Run `python3 scripts/validate-agent-governance.py --root .` when role, skill,
+permission or routing contracts are selected. Use the local affected and
+exact-index profiles for their actual changed scope; select `python3 scripts/qa.py full`
+only for shared QA machinery changes or an explicitly bounded audit after
+resource preflight. No role-projection generator is used. Native discovery,
+invocation, permissions and hook delivery require separate evidence from a
+fresh session.
 
 ## Related Documents
 

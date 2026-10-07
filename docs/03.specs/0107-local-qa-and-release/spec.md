@@ -2,7 +2,7 @@
 title: "Local Quality and Release Lifecycle"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "approved"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -20,6 +20,8 @@ or its historical `NOT_RUN` evidence. The current requirement owner is
 [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md),
 and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 owns the architectural separation of validation, execution, and evidence.
+[ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)
+records the durable local QA and SemVer release ownership decision.
 Implementation and actual results belong to this package's [Task](tasks/tsk-0001-local-qa-and-release.md).
 
 ## Strategic Boundaries & Non-goals
@@ -59,14 +61,40 @@ link and state validation and repository-purpose GitOps, Kubernetes, Docker,
 project-template, web and Vault contract tests where those surfaces actually
 exist. Do not delete a valid regression solely because it failed or ran slowly.
 
-The current validation registry advertises a `qa` CI job through `ciJobs`,
-while the hosted CI has no job of that name. Resolve the machine projection
+At intake base `2c9c5546`, the validation registry advertised a `qa` CI job
+through `ciJobs`, while the hosted CI had no job of that name. Resolve the machine projection
 and all of its schema, selector, output and test consumers in one contract
 slice; do not rename the advertised job to a different test that proves less.
 The `ci` CLI alias is a local profile contract and is assessed separately.
 General Archive integrity remains an ongoing validation rule; past cutover
 completion proof is a historical record, not a recurring gate unless a distinct
 current consumer demonstrates its necessity.
+
+### Actual agent evaluation evidence
+
+Keep agent evaluation evidence as an authored evidence domain, separate from
+recurring repository QA. A comparable cycle fixes one task and baseline for
+both `noSkill` and `withSkill` conditions, then preserves their actual raw
+outputs and session provenance. One cycle is one paired trial: its single
+`baseline.md` and `with-skill.md` each hold one condition's raw output. The
+task and both outputs must exist before a score is entered. Declare that
+one-trial granularity, observable signals, criterion and scorer IDs,
+partial-trial treatment and human calibration before aggregation. Additional
+or repeated trials use distinct cycle identities; previous observed outputs
+and scores are not overwritten. The aggregate reports only the actually
+completed cycle count and its declared scope, without a blanket performance
+threshold.
+
+The [evaluation router](../../../.agents/evaluations/README.md) points to
+Stage 99 task, score and results forms. One results owner holds only aggregates
+supported by complete declared pairs. Empty capacity is not an observed run
+or a zero score. The agent evaluator owns assessment; original Task, provider
+and runtime owners retain their authorization and direct observation. Historical
+synthetic fixtures and absent expected outputs are not paired run evidence.
+User-provided skill definitions that are absent from this workspace can guide
+criteria but are not installed, invoked or made native by this contract.
+This domain has no registered grader gate without a separately demonstrated
+ongoing consumer and admission under quality policy.
 
 ### Delivery boundary and cost
 
@@ -133,7 +161,9 @@ and Git stage routing, release and commit consumers, and final evidence/review.
 Each source owner updates its current contract and direct consumers together.
 Maintain distinct static, local runner, hosted, provider-native, and live
 evidence lanes. The [Task](tasks/tsk-0001-local-qa-and-release.md) is the
-only execution state and check-result record.
+only execution state and check-result record. The current
+[main release Runbook](../../05.operations/runbooks/0012-main-release-preparation-runbook.md)
+applies this Spec's SemVer and operator boundary to a reviewed main release.
 
 ## Data Modeling & Storage Strategy
 
@@ -190,7 +220,7 @@ Spec anchor and actual index. No test result is asserted by this draft.
 | VAL-LOCAL-QA-001 | Consumer graph and focused regression show ongoing coverage before obsolete callers, dedicated helpers and tests are retired; Archive integrity and past cutover proof remain distinct. Official primary sources are dated and traced from claim to local decision in Task evidence. |
 | VAL-LOCAL-QA-002 | Local stage matrix, exact-index checks, full preflight/result and independent review show bounded selection without duplicate same-input leaves or a hosted QA claim. Official primary sources are dated and traced from claim to local decision in Task evidence. |
 | VAL-LOCAL-QA-003 | Commitizen, SemVer release producer and main `CHANGELOG.md` contracts have focused positive and refusal evidence; actual remote publication is recorded separately. |
-| VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
+| VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; the evaluation route and empty aggregate capacity preserve separate evidence authority without fabricating a run; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
 
 ## Traceability
 
@@ -212,3 +242,4 @@ Spec anchor and actual index. No test result is asserted by this draft.
 | [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Unique work-tracking owner review. |
 | [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Task-only command/result and handoff evidence. |
 | [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Current owner links and retired-consumer succession. |
+| [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Actual paired evaluation route, form ownership and empty aggregate boundary. |

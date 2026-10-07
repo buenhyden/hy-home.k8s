@@ -1,101 +1,79 @@
 ---
-title: "Agent evaluations"
-version: "0.4.0"
+title: "Agent Evaluation Evidence"
+version: "0.1.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-07"
 ---
 
-# Agent evaluations
+# Agent Evaluation Evidence
 
 ## Overview
 
-This package owns evaluation cases, response data and the dedicated grader.
-The [role registry](../roles/registry.json) owns role and permission facts.
-The grader reads recorded text; it never invokes a provider or executes a
-response as instructions. No authentication, billing or network is required.
-
-### Audience
-
-Platform maintainers, quality engineers and governance owners.
-
-### Scope
-
-#### In Scope
-
-- Fixed cases, synthetic or recorded response inputs, and their expected findings.
-- The dedicated grading runner and reproducible comparison of expectation sets.
-
-#### Out of Scope
-
-- Role/skill definitions, shared validation helpers and central gate selection.
-- Validator regression tests, which remain in `tests/`.
-- Native runtime discovery, authentication, model resolution or live operations.
+This directory routes evidence from actual paired trials of the same task:
+one `noSkill` baseline and one `withSkill` run. The [agent evaluator](../roles/agent-evaluator.md)
+owns the assessment, [quality policy](../governance/quality.md#agent-evaluation-evidence)
+owns evidence meaning, and [Stage 99](../../docs/99.templates/README.md)
+owns document forms. A stored response alone does not prove native skill
+loading, command execution, permission enforcement or a passing repository QA
+gate.
 
 ## Scope
 
-Keep credentials, secrets and personal data out of cases and responses.
-Do not duplicate role definitions or manufacture recorded-session evidence.
-Temporary observations belong in `_workspace/`; reproducible changes must carry
-inputs and expected results. The dedicated runner is not a plugin installation
-or an implicit permission to execute a provider.
+Admit a cycle only when its task, two actual outputs, and scoring basis can be
+linked to their observed sessions. Each cycle has one paired trial; additional
+trials use separate cycle directories. Record signals, scorer and criterion
+IDs, one-pair score granularity, partial results and human calibration before
+any aggregate is claimed. A missing observation stays `NOT_OBSERVED`; an
+unexecuted paired comparison stays `NOT_RUN`. The original Task owns work
+authorization and execution status, while provider/native and runtime claims
+remain with their original evidence owners.
+
+Earlier synthetic cases and responses are historical Git and Task evidence,
+not actual paired trials in this directory. An absent expectation in a
+synthetic fixture does not become a no-skill response. Neither a fixture
+count nor this router registers a standing grader or QA gate. User-supplied
+skill definitions that are not present in the workspace are reference
+criteria only; this route does not install or create them.
 
 ## Structure
 
 | Path | Purpose |
 | --- | --- |
-| `README.md` | Ownership and evidence boundaries |
-| `cases/<id>.json` | Role, scenario, response path and expected failure set |
-| `responses/<id>.<class>.md` | Untrusted text data, never current policy or commands |
-| `run-agent-evaluations.py` | Dedicated grader using shared bounded input helpers |
-
-The runner derives permission classes from the role registry. Case files do not
-create another authority. Shared helpers remain in `scripts/`; only the central
-validation registry selects this package's QA gate.
-
-### Response classes and expectations
-
-`synthetic` proves harness wiring and criterion behavior, never model quality.
-`recorded` describes only the observed session that supplied that response.
-The current corpus has 19 synthetic cases, including 12 negative cases.
-A missing `expect` or `"pass"` requires no findings; `{"failed": [...]}` requires
-exactly that set. A missing or extra finding fails the case, so silent criteria
-cannot turn a negative case into a passing gate.
-
-### Criteria and limits
-
-| Criterion | Check and limit |
-| --- | --- |
-| `groundedness` | Repository path existence and adjacent quoted text; unquoted semantic claims need human review |
-| `authority` | Mutation claims against the role's registry permission class |
-| `boundary` | Affirmative first-person external action claims; indirect or passive claims need human review |
-| `success-claim` | Success claim includes a command token; this does not establish command execution |
-| `handoff` | Quality policy's required handoff fields |
-
-These bounded text heuristics are not semantic understanding or a replacement
-for human review. Instructions in a response remain data even when they name a
-real command or a retired path. Document-authority/lifecycle checks therefore
-exclude response bodies; the grading gate owns their validity and expectations.
+| [harnesses/](harnesses/) | Route task-matched trial inputs and raw observed outputs. |
+| [templates/](templates/) | Route the Stage 99 task, score and result forms without copying their authority. |
+| [results.md](results.md) | Sole aggregate owner when a complete actual cycle is admitted; its empty state carries no score. |
 
 ## Usage
 
-Before adding a case, name the role responsibility and failure it measures.
-Keep case, response, runner, tests and central selection changes atomic.
-A role change still belongs to the role registry and its provider projections.
+### Configuration Boundary
 
-## Verification
+Declare the same task and baseline for both conditions before execution.
+Keep actual prompt, skill version, provider/session identity, the one-pair
+trial declaration, scorer and criterion IDs with the cycle. A task or rubric change makes a new
+comparison input; it does not silently revise an earlier score.
 
-Run `python3 .agents/evaluations/run-agent-evaluations.py --root .`.
-The central `agent-evaluation-cases` gate owns grading; `repository-quality`
-retains repository-wide checks. A synthetic PASS establishes wiring only.
-Regression tests include the frozen original expectation sets and unsafe-input
-cases. Native and live evidence need separately authorized observations.
+### Validation
+
+Check the current Stage 99 profile, links, declared pair completeness and
+score calculation on actual inputs. Results are entered only after every
+included cycle has a complete actual pair; partial pairs remain incomplete.
+The aggregate reports its actual cycle count without a fixed quality threshold. Repository
+QA, independent semantic review and provider-runtime observation are separate
+lanes.
+
+### Operations
+
+Keep raw output and session provenance with the observed trial, record scoring
+against the declared rubric, then aggregate once at `results.md`. Report an
+unavailable provider/session, missing skill, or missing response to the
+original Task owner. Do not synthesize an output to complete a row.
 
 ## Related Documents
 
-- [Agent owner](../README.md)
-- [Roles](../roles/README.md)
-- [Quality](../governance/quality.md)
-- [Model selection](../governance/model-selection.md)
-- [Tests](../../tests/README.md)
+- [Common agent governance](../README.md)
+- [Agent evaluator responsibility](../roles/agent-evaluator.md)
+- [Quality policy](../governance/quality.md#agent-evaluation-evidence)
+- [Stage 99 profiles and templates](../../docs/99.templates/README.md)
+- [Stage 03 Spec navigation](../../docs/03.specs/README.md)

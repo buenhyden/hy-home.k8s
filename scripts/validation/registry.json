@@ -1,6 +1,6 @@
 {
   "$schema": "./registry.schema.json",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "pathSemantics": {
     "separator": "posix",
     "matching": "exact-or-anchored-regex",
@@ -47,37 +47,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-evaluation-cases",
-      "reuse": {
-        "mode": "change-scoped",
-        "hosted": {
-          "image": "docker.io/library/python@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d",
-          "platform": "linux/amd64",
-          "python": "/usr/local/bin/python3",
-          "version": "3.12.14",
-          "inputs": "committed-tree-v1"
-        }
-      },
-      "argv": [
-        "python3",
-        ".agents/evaluations/run-agent-evaluations.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent evaluation cases are required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "agent-governance",
       "argv": [
         "python3",
@@ -119,10 +88,10 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "archive-cutover",
+      "id": "archive-integrity",
       "argv": [
         "python3",
-        "scripts/archive_cutover.py",
+        "scripts/validate-archive-integrity.py",
         "--root",
         "."
       ],
@@ -133,7 +102,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Archive cutover validation is required."
+        "reason": "Current Stage 98 archive integrity and secret validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -158,6 +127,9 @@
     },
     {
       "id": "document-contract-registry",
+      "reuse": {
+        "mode": "change-scoped"
+      },
       "argv": [
         "python3",
         "scripts/validate-document-contract-registry.py",
@@ -218,7 +190,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "GitHub Actions identity, permission, and artifact retention validation is required."
+        "reason": "GitHub Actions pinned identity, least-privilege permissions, and workflow structure validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -482,7 +454,8 @@
         "-s",
         "tests",
         "-t",
-        "."
+        ".",
+        "-f"
       ],
       "lanes": [
         "all-files",
@@ -558,13 +531,6 @@
       "evidenceLane": "repo-static"
     }
   ],
-  "ciJobs": [
-    {
-      "id": "qa",
-      "output": "qa",
-      "evidenceLane": "ci"
-    }
-  ],
   "surfaces": [
     {
       "id": "root-config",
@@ -627,10 +593,6 @@
         },
         {
           "kind": "exact",
-          "value": "README.md"
-        },
-        {
-          "kind": "exact",
           "value": "RTK.md"
         },
         {
@@ -641,9 +603,6 @@
       "validators": [
         "agent-governance",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -672,9 +631,6 @@
         "markdown-profiles",
         "repository-quality"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -694,11 +650,7 @@
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
-        "markdown-profiles",
-        "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
+        "markdown-profiles"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -712,7 +664,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/(roles|skills)/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)\\.agents/(roles|skills)/.*$"
         }
       ],
       "validators": [
@@ -724,9 +676,6 @@
         "markdown-profiles",
         "repository-quality",
         "external-service-contracts"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -740,7 +689,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.claude/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)\\.claude/.*$"
         }
       ],
       "validators": [
@@ -751,9 +700,6 @@
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -767,7 +713,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.codex/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)\\.codex/.*$"
         }
       ],
       "validators": [
@@ -778,9 +724,6 @@
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -794,15 +737,12 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.github/.*$"
+          "value": "^(?!\\.github/repository-surface\\.md$)(?!.*(?:^|/)README\\.md$)\\.github/.*$"
         }
       ],
       "validators": [
         "agent-governance",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -816,7 +756,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/(?:README\\.md|evaluations/README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
+          "value": "^(?!.*(?:^|/)README\\.md$)\\.agents/(?:README\\.md|governance/.*|workflows/.*|knowledge/.*|prompts/.*)$"
         }
       ],
       "validators": [
@@ -827,9 +767,6 @@
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -843,7 +780,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/99\\.templates/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)docs/99\\.templates/.*$"
         }
       ],
       "validators": [
@@ -855,9 +792,6 @@
         "markdown-profiles",
         "repository-quality"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -866,23 +800,68 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "readme-router-review",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^(?:README\\.md|(?:docs/(?!99\\.templates/)|examples/|tests/).*README\\.md)$"
+        }
+      ],
+      "validators": [
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Ordinary README routers require document profile, relationship, link, and lifecycle checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "readme-router-protected",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^(?:\\.(?:agents|claude|codex|github)/|docs/99\\.templates/|gitops/|infrastructure/|policy/|scripts/|secrets/).*README\\.md$"
+        },
+        {
+          "kind": "exact",
+          "value": ".github/repository-surface.md"
+        }
+      ],
+      "validators": [
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Protected README and repository router documents require document checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "authored-documents",
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*|98\\.archive/.*)$"
+          "value": "^(?!.*(?:^|/)README\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*|98\\.archive/.*)$"
+        },
+        {
+          "kind": "exact",
+          "value": "CHANGELOG.md"
         }
       ],
       "validators": [
-        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
-        "markdown-profiles",
-        "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
+        "markdown-profiles"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -892,33 +871,11 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "evals",
-      "routes": [
-        {
-          "kind": "regex",
-          "value": "^(?:evals/.*|\\.agents/evaluations/(?!README\\.md$).*)$"
-        }
-      ],
-      "validators": [
-        "agent-evaluation-cases",
-        "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
-      ],
-      "protectedLevel": "review",
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Evaluation harness assets require repository-quality validation."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "examples",
       "routes": [
         {
           "kind": "regex",
-          "value": "^examples/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)examples/.*$"
         }
       ],
       "validators": [
@@ -928,9 +885,6 @@
         "policy-gates",
         "repository-quality",
         "secret-handling"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -944,7 +898,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^gitops/(?!(?:platform/eso/vault-secret-store\\.yaml|platform/eso/vault-token-reviewer-binding\\.yaml|platform/external-services/vault-external\\.yaml)$).*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)gitops/(?!(?:platform/eso/vault-secret-store\\.yaml|platform/eso/vault-token-reviewer-binding\\.yaml|platform/external-services/vault-external\\.yaml)$).*$"
         }
       ],
       "validators": [
@@ -958,9 +912,6 @@
         "secret-handling",
         "external-service-contracts"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -973,7 +924,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^infrastructure/(?!(?:bootstrap-local\\.sh|vault/policies/eso-read\\.hcl)$).*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)infrastructure/(?!(?:bootstrap-local\\.sh|vault/policies/eso-read\\.hcl)$).*$"
         }
       ],
       "validators": [
@@ -983,9 +934,6 @@
         "policy-gates",
         "repository-quality",
         "secret-handling"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1022,9 +970,6 @@
         "vault-eso-contracts",
         "external-service-contracts"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -1053,9 +998,6 @@
         "secret-handling",
         "vault-eso-contracts"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -1068,15 +1010,12 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^policy/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)policy/.*$"
         }
       ],
       "validators": [
         "policy-gates",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1090,7 +1029,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1102,9 +1041,6 @@
         "policy-gates",
         "repository-quality",
         "secret-handling"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1118,15 +1054,12 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^secrets/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)secrets/.*$"
         }
       ],
       "validators": [
         "repository-quality",
         "secret-handling"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1140,16 +1073,13 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)tests/.*$"
         }
       ],
       "validators": [
         "agent-governance",
         "archive-contract-tests",
         "repository-quality"
-      ],
-      "ciJobs": [
-        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -1172,9 +1102,6 @@
         "repository-quality",
         "secret-handling"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
@@ -1193,13 +1120,58 @@
       "validators": [
         "repository-quality"
       ],
-      "ciJobs": [
-        "qa"
-      ],
       "protectedLevel": "none",
       "fallback": {
         "status": "FAIL",
         "reason": "Tracked generated/tooling records require deterministic QA."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "evaluation-authored-documents",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": ".agents/evaluations/results.md"
+        },
+        {
+          "kind": "regex",
+          "value": "^\\.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:task|score)\\.md$"
+        }
+      ],
+      "validators": [
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Authored evaluation records require document profile, relationship, link, and lifecycle checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "evaluation-evidence",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!\\.agents/evaluations/(?:results\\.md|harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:task|score)\\.md)$)\\.agents/evaluations/.*$"
+        }
+      ],
+      "validators": [
+        "agent-governance",
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Evaluation evidence paths require exact document classification, safety and relationship checks."
       },
       "evidenceLane": "repo-static"
     }
@@ -1221,7 +1193,6 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluation-cases",
       "external-service-contracts"
     ],
     "staged": [
@@ -1240,12 +1211,11 @@
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "agent-evaluation-cases",
       "external-service-contracts"
     ],
     "full": [
       "affected-surface-contract",
-      "archive-cutover",
+      "archive-integrity",
       "agent-governance",
       "ci-python-contract",
       "github-actions-security",
@@ -1266,7 +1236,6 @@
       "vault-eso-contracts",
       "unit-tests",
       "pre-commit",
-      "agent-evaluation-cases",
       "external-service-contracts"
     ]
   },

@@ -33,8 +33,10 @@ repos:
         # Refresh with lifecycle transitions; the ownership test compares actual
         # lifecycle meaning, including historical accepted controls. New draft
         # migration paths remain formatter inputs. This is hook-local only.
+        # Raw paired-trial outputs are opaque evidence bytes. Scope the same
+        # mutation exclusion to their exact current Stage 99 filename grammar.
         exclude: &frozen_archive |
-          (?x)^docs/98\.archive/(?:
+          (?x)^(?:docs/98\.archive/(?:
             completed/(?!.*(?:/)?README\.md$).*\.md
             | (?!migrations/)(?!completed/)(?!.*(?:/)?README\.md$).+\.md
             | migrations/(?:
@@ -62,6 +64,8 @@ repos:
               | 0022-document-taxonomy-package-retention
               | 0023-responsibility-document-router-absorption
             )\.md
+          )
+          | \.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:baseline|with-skill)\.md
           )$
       - id: mixed-line-ending
         exclude: *frozen_archive

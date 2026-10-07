@@ -63,6 +63,14 @@ form 경로의 대응은 Registry만 소유한다.
   README는 공통 router profile로 해석한다.
   `governance/*`는 기존 path/role identity를 유지한다. 기존 optional
   `artifact_id`가 있으면 보존하며 표준화만을 위해 새 ID를 만들지 않는다.
+- **Evaluation evidence forms** (`evaluations/`): `task`, `score`, `results`
+  form은 `.agents/evaluations/`의 선언, 한 쌍의 실제 관측에 대한 점수,
+  집계 문서에 각각 대응한다. 각 harness directory는 하나의 paired trial이며
+  재평가는 새 cycle ID와 directory를 사용한다. `baseline.md`와
+  `with-skill.md`는 frontmatter나 Markdown wrapper를 요구하지 않는 원시
+  출력이다. Registry는 경로와 작성 형식을 검사하며 점수의 진실성이나
+  provider 실행을 인증하지 않는다. 원시 출력은 format hook과 lint의
+  정확한 출력 경로에서만 제외하고 비밀·크기·파일 안전 검사는 유지한다.
 - **Core SDLC forms**: physical `requirements/`, `architecture/`, `specs/`
   grouping은 `sdlc/requirement`, `sdlc/architecture-description`,
   `sdlc/architecture-decision`, `sdlc/spec`, `sdlc/plan`, `sdlc/task` profile의

@@ -1162,7 +1162,7 @@ class GenerationAdmissionTests(unittest.TestCase):
             new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
             (root / new_path).parent.mkdir(parents=True)
             (root / new_path).write_text(
-                (ROOT / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
+                (root / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
             )
             invalid_create = commit()
             findings = LIFECYCLE_CLI._evaluate_comparison(

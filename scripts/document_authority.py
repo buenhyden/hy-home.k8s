@@ -63,7 +63,7 @@ PROFILE_KEYS = frozenset(
     }
 )
 DOCUMENT_FAMILIES = frozenset(
-    {"common", "governance", "sdlc", "operation", "reference", "archive"}
+    {"common", "governance", "sdlc", "operation", "reference", "archive", "evaluation"}
 )
 PROFILE_MODES = frozenset(
     {"authored", "router", "template", "evidence", "native", "non-target"}

@@ -24,11 +24,6 @@ runner = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = runner
 _spec.loader.exec_module(runner)
 contract_module = runner.load_contract_module()
-_hosted_spec = importlib.util.spec_from_file_location(
-    "qa_provenance_hosted", Path(__file__).with_name("qa_provenance_hosted.py")
-)
-hosted = importlib.util.module_from_spec(_hosted_spec)
-_hosted_spec.loader.exec_module(hosted)
 from validation.repository.bounded_io import (  # noqa: E402
     open_parent,
     read_bytes as read_bounded_bytes,
@@ -544,15 +539,12 @@ def main() -> int:
     parser.add_argument("profile", nargs="?", choices=PROFILES)
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--base-ref")
-    parser.add_argument("--partition", choices=("complement",))
     parser.add_argument(
         "--root", type=Path, default=Path(__file__).resolve().parents[1]
     )
     args = parser.parse_args()
     if not args.profile and not args.list:
         parser.error("a profile or --list is required")
-    if args.partition and args.profile != "ci":
-        parser.error("hosted partitions require ci")
     root = args.root.resolve()
     try:
         if args.list:
@@ -578,11 +570,7 @@ def main() -> int:
             if paths is None:
                 paths = source_paths(snapshot)
             selected = contract_module.select_paths(contract, paths, lane, snapshot)
-            ids = (
-                hosted.partition(contract, args.partition)
-                if args.partition
-                else contract_module.profile_gate_ids(contract, args.profile)
-            )
+            ids = contract_module.profile_gate_ids(contract, args.profile)
             if args.profile in ("quick", "staged"):
                 ids = [
                     identifier

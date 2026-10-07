@@ -7,7 +7,6 @@ import hashlib
 import json
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -36,10 +35,6 @@ VALIDATOR_PATHS = {
 }
 STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/templates"
 STAGE05_ROOT = REPOSITORY_ROOT / "docs/05.operations"
-SPEC0054_PACKAGE = (
-    REPOSITORY_ROOT
-    / "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
-)
 MIG0004_PATH = (
     REPOSITORY_ROOT
     / "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -765,36 +760,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             ):
                 contracts.load_registry(root)
 
-    def test_spec0054_common_execution_contract_lives_in_its_plan(self) -> None:
-        """The shared execution contract has an authorized owner, not a router.
-
-        It used to sit under an ``H2`` the package router profile had to allow
-        by name.  The router retired, so the Plan that already owns the
-        package's execution boundary carries it under ``Global Constraints``
-        and the Plan profile authorizes it without a form-specific exception.
-        """
-
-        markdown = load_validator(
-            "common_execution_contract", VALIDATOR_PATHS["markdown"]
-        )
-        registry = markdown.load_registry(REPOSITORY_ROOT)
-        path = PurePosixPath(
-            "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
-            "/plan.md"
-        )
-        contents = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
-        self.assertIn("\n## Global Constraints\n", contents)
-        self.assertIn("\n### Common Execution Contract\n", contents)
-        self.assertNotIn("\n## Common Execution Contract\n", contents)
-
-        profile = markdown.classify_path(registry, path)
-        self.assertEqual(profile.profile_id, "sdlc/plan")
-        self.assertNotIn("Common Execution Contract", profile.headings.allowed)
-        self.assertEqual(
-            markdown.validate_document(REPOSITORY_ROOT, path, profile, "strict"),
-            [],
-        )
-
     def test_current_frontmatter_requires_double_quoted_values(self) -> None:
         markdown = load_validator("frontmatter_quote", VALIDATOR_PATHS["markdown"])
         registry = markdown.load_registry(REPOSITORY_ROOT)
@@ -965,24 +930,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             source = path.read_text(encoding="utf-8")
             with self.subTest(validator=name):
                 self.assertNotIn('add_argument("--self-test"', source)
-
-    def test_spec0054_has_exact_append_only_task_records(self) -> None:
-        self.assertFalse((SPEC0054_PACKAGE / "tasks.md").exists())
-        records = sorted((SPEC0054_PACKAGE / "tasks").glob("tsk-*.md"))
-        self.assertEqual(len(records), 14)
-        for index, record in enumerate(records, 1):
-            contents = record.read_text(encoding="utf-8")
-            with self.subTest(record=record.name):
-                self.assertEqual(record.name[4:8], f"{index:04d}")
-                self.assertIn(f'artifact_id: "SPEC-0054-TSK-{index:04d}"', contents)
-                self.assertIn("../plan.md#common-execution-contract", contents)
-                for section in (
-                    "## Task Table",
-                    "## Approval and Safety Boundaries",
-                    "## Verification Summary",
-                    "## Traceability",
-                ):
-                    self.assertIn(section, contents)
 
     def test_root_readme_routes_package_tasks_through_the_document_hub(self) -> None:
         contents = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
@@ -1273,49 +1220,6 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 self.assertIsNone(
                     compatibility_invocation.search(path.read_text(encoding="utf-8"))
                 )
-
-    def test_registry_and_markdown_strict_include_paths_pass(self) -> None:
-        commands = (
-            (
-                "registry",
-                "--mode",
-                "strict",
-                "--route-state",
-                "transition",
-                "--include-path",
-                "docs/99.templates/README.md",
-            ),
-            (
-                "markdown",
-                "--mode",
-                "strict",
-                "--include-path",
-                "docs/98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
-            ),
-        )
-        for name, *arguments in commands:
-            with tempfile.TemporaryDirectory(
-                prefix="strict-document-snapshot-"
-            ) as directory:
-                root = Path(directory)
-                shutil.copytree(REPOSITORY_ROOT / "docs", root / "docs")
-                subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
-                subprocess.run(["git", "add", "--", "docs"], cwd=root, check=True)
-                result = subprocess.run(
-                    [
-                        sys.executable,
-                        str(VALIDATOR_PATHS[name]),
-                        "--root",
-                        str(root),
-                        *arguments,
-                    ],
-                    cwd=root,
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-            with self.subTest(validator=name):
-                self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
 
 if __name__ == "__main__":

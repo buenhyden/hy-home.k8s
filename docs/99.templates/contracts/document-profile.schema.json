@@ -44,7 +44,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^(?:common|governance|sdlc|operation|reference|archive)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+            "pattern": "^(?:common|governance|sdlc|operation|reference|archive|evaluation)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
           "family": {
             "enum": [
@@ -53,7 +53,8 @@
               "sdlc",
               "operation",
               "reference",
-              "archive"
+              "archive",
+              "evaluation"
             ]
           },
           "mode": {

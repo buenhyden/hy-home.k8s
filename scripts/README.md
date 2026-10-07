@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.6.1"
+version: "0.7.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-06"
+updated: "2026-10-07"
 ---
 # scripts
 
@@ -72,7 +72,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 
 | Path | Purpose |
 | --- | --- |
-| `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback, CI routing 계약 |
+| `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback 계약 |
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
@@ -87,7 +87,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증 |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증 |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
-| `archive_recovery.py`, `archive_validation.py`, `archive_cutover.py`, `archive_cutover_manifest.py` | 제한된 역사 복구와 봉인된 Archive 검사 |
+| `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py`, `archive_cutover_manifest.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `run-archive-contract-tests.py` | Stage 98 archive 계약 회귀 테스트를 quick·staged gate 하나로 실행한다. full에서는 `unit-tests`가 이를 포함한다(`coveredBy`). |
 
@@ -98,7 +98,6 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `agent_registry_loader.py` | governance 검증이 함께 쓰는 제한된 common role registry 로딩 |
 | `validate-agent-governance.py` | role·schema, native metadata, 권한, skill, 소비자 무결성 |
 | `agent_governance_consumers.py` | 제한된 현재 소비자 검사와 Git 기반 역사 복구 검사 |
-| `.agents/evaluations/run-agent-evaluations.py` | Agent 평가 전용 소유 경로; 공통 도우미와 게이트 선택만 `scripts/` 소유 |
 
 ### Platform and supply-chain owners
 
@@ -122,32 +121,40 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
    테스트 소비자와 함께 `tests/fixtures/` 아래에 둔다.
 4. validator는 routing owner 한 곳에 추가하고 선언된 lane이 요구하는 곳에만
    hook·CI로 projection한다.
-5. wrapper는 현재 소비자 0개와 고유 진단 0개를 증거로 확인한 뒤에만 없앤다.
-   복구는 redirect가 아니라 Git으로 한다.
+5. 일회성 또는 오래된 검사는 지속 보장을 현재 owner로 이전하고 caller와
+   등록을 제거한 뒤 전용 wrapper·fixture·test의 소비자 0개를 확인한다.
+   필요한 과거 결과는 기존 Task/Archive 위치에 보존하고 복구는 Git으로 한다.
 6. 커밋 전에 `git diff --check`, 관련 전용 테스트, affected·staged 선택,
    전체 결과를 검토한다.
 
 없어진 구현 형태를 지키려는 목적만으로 호환 CLI, 중복 registry, 고정된 스크립트
-inventory, 내장 mutation suite를 만들지 않는다. 확인된 필수 외부 CI check
-이름은 `ci-summary`이며 로컬 workflow를 바꿀 때도 그 이름을 유지한다. 원격
-branch protection 설정은 바꾸지 않는다.
+inventory, 내장 mutation suite를 만들지 않는다. 호스팅 check 이름과 원격
+branch protection의 활성 상태는 실제 원격에서 확인해야 하며, 저장소 파일만으로
+required-check 성공이나 설정을 주장하지 않는다.
 
 ## Verification
 
-가장 작은 owner부터 실행하고 이어서 현재 작업에 필요한 affected·staged lane을
-실행한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 현재 GitHub
-Actions CI는 branch-policy와 qa-isolated를 실행하고 ci-summary가 실제 결과를
-모은다. Hosted full QA는 NOT_RUN이며 baseline 성공은 full QA PASS가 아니다.
-최종 full 실행과 인계의 경계는 [Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
+가장 작은 owner부터 실행하고 현재 작업에 필요한 affected·staged lane을
+선택한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 이 public
+저장소의 QA는 로컬에서 실행한다. GitHub Actions의 branch metadata 결과는
+로컬 QA의 대체 증거가 아니며 호스팅 QA는 `NOT_RUN`으로 기록한다. 변경이
+global QA 계약을 바꾸거나 명시적인 한정 감사이면 마지막 트리에서 full을
+한 번 실행한다. 나머지 선택과 인계는
+[Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
 
 ```bash
-python3 -m unittest tests.test_validation_tooling_ownership
-python3 scripts/qa.py quick
 git diff --check
 ```
 
-Full QA를 실행하지 않은 인계는 NOT_RUN과 검증 공백을 기록한다. Full report가
-없을 때 비활성 provenance workflow나 baseline 결과로 signed QA PASS를 만들지 않는다.
+나머지 검사는 변경 경로와 입력에 맞춰 현재 Registry와 Quality policy가
+선택한 gate만 실행한다. 구현·validator 계약을 바꾼 경우에는 해당 동작의
+focused 회귀를 추가로 선택한다.
+
+Full QA가 선택되지 않은 일반 변경에는 실행 결과 `NOT_RUN`과
+"이번 변경의 필수 검사 아님"이라는 선택 근거를 기록한다. 선택된 required
+full을 실행하지 못했다면 `NOT_RUN` 또는 권한·환경 공백의 `DEFER`와 다음
+owner를 기록한다. `NOT_APPLICABLE`는 검사 대상이 없는 경우에만 사용한다.
+호스팅 branch 결과를 full QA PASS로 승격하지 않는다.
 
 QA는 추적 경로와, 해당하는 ignore되지 않은 미추적 경로를 직접 고른다. 숨김
 경로, 삭제, 이름 변경도 포함한다. 작업 트리 변경에는 `qa.py quick`을, 정확한
@@ -155,12 +162,12 @@ index에는 `qa.py staged`를 쓴다. 하위 runner는 진단용 인터페이스
 스냅샷 격리를 대신하지 않는다. runner에 넘기는 명시적 경로 파일은 크기가
 제한되고 NUL로 구분되어야 한다.
 
-### Reproducing the hosted dependency identity
+### Reproducing the local dependency identity
 
-validator는 자신을 호출한 interpreter에서 실행된다. 그래서 CI와 다른 library
-버전을 가진 머신에서는 CI가 실패하는 gate가 통과할 수 있고 그 차이는 hosted
-실행이 보고하기 전까지 보이지 않는다. hosted identity는 여기에 버전 목록을
-적어 두는 방식이 아니라, CI가 설치하는 것과 같은 lock을 설치해서 재현한다.
+validator는 자신을 호출한 interpreter에서 실행된다. 다른 로컬 머신의
+library 차이를 통제하려면 검토된 lock으로 task-owned 환경을 구성하고
+실제로 선택된 interpreter와 도구 identity를 Task에 기록한다. lock의
+존재만으로 검증 실행이나 hosted identity를 주장하지 않는다.
 
 ```bash
 # Choose a task-owned environment outside the checkout being validated,
@@ -181,15 +188,15 @@ Python이 그대로 쓰인다. 다른 도구는 고정된 시스템 경로를 �
 identity도 따로 관찰해야 한다. HOME은 닫힌 상태로 두고 리뷰를 거친
 pre-commit·Go·Rust·Node cache는 계정 소유의 cache 디렉터리 아래에 둔다.
 
-gate가 로컬에서는 통과하고 hosted에서 실패할 때, 또는 잠긴 의존성이 소유하는
-module을 바꾸기 전에 이 방법을 쓴다. 일반 로컬 실행보다 가까운 증거지만 여전히
-로컬 증거이며 hosted runner에 대해서는 아무것도 증명하지 않는다.
+잠긴 의존성이 소유하는 module을 바꾸기 전이나 로컬 도구 재현성이 필요한
+경우에 이 방법을 쓴다. 실제 실행 결과도 검증한 입력과 로컬 환경에만
+적용된다.
 
 formatter는 직접 호출하지 말고 `pre-commit`으로 실행한다. hook 설정은 일부러
 `ruff-format`을 Python으로만 좁혀 둔다. 그냥 명령을 실행하면 Markdown까지
 대상으로 삼아, 작성된 문서와 보관된 문서 안의 fenced snippet을 다시 쓴다.
 shfmt와 공백 수정도 리뷰를 거친 소스 경로에 대해 명시적으로 `--files`로 실행하는
-작업이다. full·ci는 manual stage를 격리된 스냅샷에서 한 번 실행하며 formatter가
+작업이다. 선택된 full profile은 manual stage를 격리된 스냅샷에서 한 번 실행하며 formatter가
 무언가를 바꾸면 검증이 실패한다. commit-msg는 별도이며 실제 후보 메시지에는
 공통 Git 정책을 따른다.
 

@@ -223,13 +223,32 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         return text.replace('status: "draft"', f'status: "{status}"', 1).encode()
 
     def registered_task_history(self) -> tuple[PurePosixPath, str]:
-        """Create actual owner documents and every legal Task transition."""
+        """Create template-derived owner documents and every legal Task transition."""
         package = "docs/03.specs/9999-template-history"
-        for name in ("spec.md", "plan.md"):
-            source = ROOT / "docs/03.specs/0106-stage99-lifecycle-normalization" / name
+        for name, profile_id, artifact_id in (
+            ("spec.md", "sdlc/spec", "SPEC-9999"),
+            ("plan.md", "sdlc/plan", "SPEC-9999-PLAN-0001"),
+        ):
+            template = next(
+                profile.template
+                for profile in self.registry.profiles
+                if profile.profile_id == profile_id
+            )
+            text = (self.root / template).read_text()
+            for placeholder, value in {
+                "{{TITLE}}": "Registered template history",
+                "{{OWNER}}": "platform",
+                "{{UPDATED}}": "2026-10-05",
+                "{{ARTIFACT_ID}}": artifact_id,
+                "{{PARENT_ID}}": "SPEC-9999",
+                "{{SPEC_RELATIVE_PATH}}": "spec.md",
+                "{{TASK_RELATIVE_PATH}}": "tasks/tsk-0001-copy.md",
+            }.items():
+                text = text.replace(placeholder, value)
+            self.assertNotIn("{{", text)
             self.git.commit(
                 f"{package}/{name}",
-                source.read_text().replace("SPEC-0106", "SPEC-9999").encode(),
+                text.encode(),
             )
         self.base = self.oid("HEAD")
         target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")

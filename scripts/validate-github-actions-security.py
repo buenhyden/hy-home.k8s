@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate GitHub Actions identity, permissions, and artifact retention."""
+"""Validate GitHub Actions identities, permissions, and workflow shapes."""
 
 from __future__ import annotations
 
@@ -18,12 +18,9 @@ REMOTE_REF = re.compile(r"^[^\s/@]+/[^\s@]+(?:/[^\s@]+)*@([0-9a-f]{40})$")
 DOCKER_REF = re.compile(r"^docker://[^\s@]+@sha256:([0-9a-f]{64})$")
 VERSION_COMMENT = re.compile(r"#\s*(v?[0-9]+(?:\.[0-9]+){0,2})\s*$")
 USES_LINE = re.compile(r"^\s*(?:-\s*)?uses\s*:\s*(?P<value>.+?)\s*$")
-ARTIFACT_RETENTION_DAYS = 7
-UPLOAD_ARTIFACT_PREFIX = "actions/upload-artifact@"
 ALLOWED_JOB_WRITES = {
     ("greetings.yml", "greeting"): {"issues", "pull-requests"},
     ("labeler.yml", "label"): {"pull-requests"},
-    ("stale.yml", "stale"): {"issues", "pull-requests"},
 }
 
 
@@ -194,6 +191,7 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
 
     jobs = data.get("jobs", {})
     if not isinstance(jobs, dict):
+        errors.append(_diagnostic(path, "workflow jobs must be a mapping"))
         jobs = {}
 
     required = [
@@ -212,10 +210,24 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
             )
 
     for job_id, job in jobs.items():
-        if not isinstance(job, dict) or "permissions" not in job:
+        job_path = Path(f"{path.as_posix()}[job={job_id}]")
+        if not isinstance(job, dict):
+            errors.append(_diagnostic(job_path, "workflow job must be a mapping"))
+            continue
+        if "steps" in job:
+            steps = job["steps"]
+            if not isinstance(steps, list):
+                errors.append(_diagnostic(job_path, "job steps must be a list"))
+            else:
+                for step_index, step in enumerate(steps, start=1):
+                    if not isinstance(step, dict):
+                        step_path = Path(f"{job_path.as_posix()}[step={step_index}]")
+                        errors.append(
+                            _diagnostic(step_path, "job step must be a mapping")
+                        )
+        if "permissions" not in job:
             continue
         job_permissions = job["permissions"]
-        job_path = Path(f"{path.as_posix()}[job={job_id}]")
         if job_permissions == "write-all":
             errors.append(_diagnostic(job_path, "write-all is forbidden"))
             continue
@@ -238,61 +250,12 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
     return errors
 
 
-def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
-    errors: list[str] = []
-    jobs = data.get("jobs", {})
-    if not isinstance(jobs, dict):
-        return [_diagnostic(path, "workflow jobs must be a mapping")]
-
-    for job_id, job in jobs.items():
-        job_path = Path(f"{path.as_posix()}[job={job_id}]")
-        if not isinstance(job, dict):
-            errors.append(_diagnostic(job_path, "workflow job must be a mapping"))
-            continue
-        if "steps" not in job:
-            continue
-        steps = job["steps"]
-        if not isinstance(steps, list):
-            errors.append(_diagnostic(job_path, "job steps must be a list"))
-            continue
-        for step_index, step in enumerate(steps, start=1):
-            step_path = Path(f"{job_path.as_posix()}[step={step_index}]")
-            if not isinstance(step, dict):
-                errors.append(_diagnostic(step_path, "job step must be a mapping"))
-                continue
-            uses = step.get("uses")
-            if not isinstance(uses, str) or not uses.casefold().startswith(
-                UPLOAD_ARTIFACT_PREFIX
-            ):
-                continue
-            options = step.get("with")
-            retention = (
-                options.get("retention-days") if isinstance(options, dict) else None
-            )
-            if (
-                isinstance(retention, bool)
-                or not isinstance(retention, int)
-                or retention != ARTIFACT_RETENTION_DAYS
-            ):
-                errors.append(
-                    _diagnostic(
-                        step_path,
-                        "upload-artifact retention-days must equal 7",
-                    )
-                )
-    return errors
-
-
 def validate_workflow(path: Path, data: dict, lines: list[str]) -> list[str]:
     """Validate one parsed workflow or the repository zizmor configuration."""
 
     if path.name in {"zizmor.yml", "zizmor.yaml"}:
         return _validate_zizmor(path, data)
-    return (
-        _validate_permissions(path, data)
-        + _validate_uses(path, data, lines)
-        + _validate_artifact_retention(path, data)
-    )
+    return _validate_permissions(path, data) + _validate_uses(path, data, lines)
 
 
 def _load_yaml(path: Path) -> tuple[dict | None, list[str], str | None]:

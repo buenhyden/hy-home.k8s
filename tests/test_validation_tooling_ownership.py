@@ -14,21 +14,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 REGISTRY = SCRIPTS / "validation" / "registry.json"
-TRANSITION_WRAPPERS = (
-    "agent_registry_compat.py",
-    "validate-agent-evaluations.py",
-    "validate-agent-governance-closure.py",
-    "validate-agent-model-fitness.py",
-    "validate-agent-roster-admission.py",
-    "validate-agent-roster-currentness.py",
-)
-TRANSITION_VALIDATORS = {
-    "agent-evaluations",
-    "agent-governance-closure",
-    "agent-model-fitness",
-    "agent-roster-admission",
-    "agent-roster-currentness",
-}
 MUTABLE_CURRENT_IDENTIFIERS = (
     "BASELINE_SHA",
     "SUMMARY_RUN_SHA256",
@@ -38,8 +23,6 @@ MUTABLE_CURRENT_IDENTIFIERS = (
 TEST_ONLY_PRODUCTION_HELPERS = {
     "validate-github-actions-security.py": {
         "_write_self_test_case",
-        "_write_artifact_retention_case",
-        "_write_artifact_retention_shape_case",
         "_run_repository_boundary_case",
         "_write_required_write_case",
         "_write_uses_shape_case",
@@ -284,13 +267,6 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 offenders.append(path.relative_to(ROOT).as_posix())
         self.assertEqual(offenders, [])
 
-    def test_transition_wrappers_and_registry_aliases_are_absent(self) -> None:
-        wrappers = [name for name in TRANSITION_WRAPPERS if (SCRIPTS / name).exists()]
-        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-        validators = {row["id"] for row in registry["validators"]}
-        self.assertEqual(wrappers, [])
-        self.assertEqual(sorted(validators & TRANSITION_VALIDATORS), [])
-
     def test_current_state_sha_and_generated_digest_identifiers_are_absent(
         self,
     ) -> None:
@@ -444,20 +420,6 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         )
         self.assertEqual(
             [heading for heading in legacy_ledgers if heading in owner],
-            [],
-        )
-
-    def test_repository_quality_delegates_agent_summary_semantics(self) -> None:
-        owner = (SCRIPTS / "validation" / "repository" / "quality.py").read_text(
-            encoding="utf-8"
-        )
-        delegated_markers = (
-            "AGENT_GOVERNANCE_STATIC_SELECTED",
-            'case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in',
-            "one or more required CI gates failed closed",
-        )
-        self.assertEqual(
-            [marker for marker in delegated_markers if marker in owner],
             [],
         )
 

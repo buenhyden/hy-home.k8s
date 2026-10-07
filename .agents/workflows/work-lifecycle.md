@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "1.5.0"
+version: "2.0.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-10-06"
+updated: "2026-10-07"
 ---
 
 # Work Lifecycle
@@ -44,8 +44,9 @@ state on resume; historical progress and provider-local memory are auxiliary.
    Record the current scoped request in the existing Task Inputs and Approval
    and Safety Boundaries. Keep the Spec acceptance contract, Plan work mapping
    and actual Task execution/evidence separate; no extra progress ledger.
-5. Resolve required-check tools, environment, cost/time/output resources and
-   native execution approval through [quality preflight](../governance/quality.md#validation-runner-envelope).
+5. Resolve selected required-check tools, environment, cost/time/output
+   resources and native execution approval through
+   [quality preflight](../governance/quality.md#validation-runner-envelope).
    Define focused checks, expected lanes, rollback, unavailable tools and next
    owner before implementation; protected authority remains separate.
 
@@ -61,9 +62,22 @@ next owner; refresh the affected evidence before resuming.
 ### Implementation
 
 Make the smallest testable change. Demonstrate a focused failing case for a
-changed behavior, then its passing result. Keep active Task evidence current
-and remove touched duplication only after consumer and recovery disposition.
-Use [delegated development](delegated-development.md) for authorized subagents.
+changed executable behavior, then its passing result; use selected profile,
+relationship, link and state checks for narrative documents. Keep active Task
+evidence current. Before retiring a one-use check, transfer its ongoing
+protection, remove its caller and registration, then its dedicated helper,
+fixture and test when consumer-zero and Git recovery are established. Preserve
+the past result in its existing Task or Archive owner. Use
+[delegated development](delegated-development.md) for authorized subagents.
+
+For an ordinary authored document or README router edit, select common diff,
+applicable style and commit-message checks plus document content only, as
+[quality](../governance/quality.md#ordinary-document-selection) defines. Do
+not add a one-use test just to mirror prose. Treat changes to governance,
+provider or native contracts, Stage 99 forms, schema or registry, and
+implementation as their own contract or behavior changes with necessary
+focused regressions. Document writer commands remain explicit, never an
+automatic QA side effect.
 
 Bound the attempt. Stop and report instead of continuing when the same check
 fails twice with no new information, when two consecutive changes produce no
@@ -81,9 +95,12 @@ end the loop.
    through the [semantic review contract](../governance/quality.md#semantic-review):
    applicable automated checks plus an independent read-only reviewer.
 2. Follow the delivery route and ordered sequence in
-   [quality policy](../governance/quality.md#delivery-ownership). PR delivery
-   records hosted baseline checks and full QA as `NOT_RUN`; local-only handoff
-   uses local full QA.
+   [quality policy](../governance/quality.md#delivery-ownership). Record local
+   selected QA over its actual snapshot. PR branch metadata has a distinct
+   hosted SHA/run, and any unexecuted hosted full QA is `NOT_RUN`; local full
+   runs only when shared QA machinery changes or an explicit bounded audit
+   selects it after resource preflight. Push and merge do not replay an
+   identical leaf.
 3. Review final diff scope and remove task-owned scratch/debug residue.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,

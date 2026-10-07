@@ -8,6 +8,9 @@ body:
       value: |
         Thanks for reporting a bug.
         Please provide enough detail to reproduce and validate the fix.
+        Severity below estimates impact; a maintainer assigns one
+        `priority:*` Issue label during triage. A Spec owns accepted criteria
+        and a Task owns fix execution evidence.
   - type: input
     id: spec_link
     attributes:
@@ -58,7 +61,7 @@ body:
     id: severity
     attributes:
       label: Severity
-      description: Initial impact estimate
+      description: Initial impact estimate; triage priority is a separate Issue label
       options:
         - low
         - medium

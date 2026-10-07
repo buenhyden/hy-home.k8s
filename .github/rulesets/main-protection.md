@@ -126,28 +126,22 @@ workflow roles.
 
 - `ci-summary`
 
-`ci-summary` runs with `if: always()` after `branch-policy` and `qa-isolated`.
-It checks those results for pull requests and accepts their skips only on main
-push/manual dispatch. It reports full QA as `NOT_RUN`; its success establishes
-only the retained branch and isolated checks. Requiring either PR-only job
-directly would leave an inapplicable check on main push/manual dispatch.
+`ci-summary` is the sole CI job. It checks pull-request base and source-prefix
+metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
+push/manual dispatch. It reports full QA as `NOT_RUN` on every event. Success
+establishes only this metadata policy; local QA has its own input and evidence.
 
 The dated observed configuration above requires only `ci-summary`; it does not
-establish current protected proof activation. Full QA is `NOT_RUN` and new
-provenance evidence is `DEFER` while the verifier is inactive. Before restoring
-full QA and its verifier, the operator
-must authenticate the verifier App installation and main-only environment, observe
-its PR check, pin `qa-provenance` to that exact App ID as an additional required
-source, and prove hostile/control-change rejection. Independent `qa-main-verdict`
-authentication and separately observed publisher/tag protections govern main
-tagging. The [GitHub hub](../repository-surface.md#protected-main-tags) routes
-that default-off activation boundary. No setting is changed by this guidance.
+establish the current remote settings. Former hosted full-QA proof and
+`main-<SHA>` publication were retired from the current workflows. Their
+historical authenticated results remain reachable through the
+[Archive index](../../docs/98.archive/README.md). A future protected publication
+path requires a new current contract, its own identity and an authenticated
+remote read-back. No setting is changed by this guidance.
 
-GitHub treats a job skipped by a job-level condition as successful for required
-checks, and a whole workflow skipped by a path or branch filter can leave its
-expected checks pending. No workflow in this repository declares a `paths`
-filter, so that failure mode does not currently apply; it would apply again if
-one were added. See the
+GitHub treats a whole workflow skipped by a path or branch filter as an
+expected check that may remain pending. No CI workflow here declares a `paths`
+filter. The single `ci-summary` job runs on each configured event. See the
 [official required-check troubleshooting guide](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
 A past merge blockage cannot be attributed to a skipped job without the actual

@@ -78,8 +78,11 @@ class NativeBoundaryTests(unittest.TestCase):
             # directions, so an adopted directory must be present in the
             # fixture; an empty one would not survive a Git-based snapshot.
             ".agents/knowledge/README.md",
-            ".agents/evaluations/README.md",
             ".agents/prompts/README.md",
+            ".agents/evaluations/README.md",
+            ".agents/evaluations/harnesses/README.md",
+            ".agents/evaluations/templates/README.md",
+            ".agents/evaluations/results.md",
             *role["projections"].values(),
             *(skill["path"] for skill in self.registry["skills"]),
         ]
@@ -488,6 +491,17 @@ class NativeBoundaryTests(unittest.TestCase):
 
         self.place_bundle("extras/payload.md", reachable=True)
         self.assert_rejected("AGENT-REGISTRY-SKILL")
+
+    def test_evaluation_evidence_directory_rejects_unknown_scope_files(self):
+        unknown_root = self.root / ".agents/evaluations/unknown.md"
+        unknown_root.write_text("# unknown root\n")
+        self.assert_rejected("AGENT-EVALUATION-OWNER")
+        unknown_root.unlink()
+        cycle = self.root / ".agents/evaluations/harnesses/example-pair"
+        cycle.mkdir()
+        (cycle / "task.md").write_text("# task\n")
+        (cycle / "unknown.md").write_text("# unknown\n")
+        self.assert_rejected("AGENT-EVALUATION-OWNER")
 
     def test_skill_source_parents_and_sidecars_cannot_be_links(self):
         import tempfile

@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.1.4"
+version: "1.2.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-07"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -13,7 +13,7 @@ artifact_id: "GDE-0010"
 
 ## Overview
 
-이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions 호스팅 검증,
+이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions branch metadata,
 승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
 복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다.
 
@@ -47,27 +47,30 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 
 | 변경 상태 | 권장 진입점 | 증적 의미 |
 | --- | --- | --- |
-| 작업 트리 변경 | `python3 scripts/qa.py quick` 및 focused test | 해당 변경의 빠른 정적 확인 |
-| staged 변경 | `python3 scripts/qa.py staged` | 정확한 Git index snapshot의 확인 |
-| 전체 저장소 | `python3 scripts/qa.py full` | 현재 checkout의 정적 계약 확인 |
-| hosted CI | `python3 scripts/qa.py ci --base-ref "$BASE_SHA"` | `full`과 같은 gate 집합을 CI 기준 commit에 대해 실행; 로컬 실행은 hosted 결과가 아니다 |
+| 일반 문서 변경 | 공통 diff·style 검사와 선택된 문서 profile·관계·링크·상태 검사 | 문서 내용·형식과 현재 owner만 로컬에서 확인; 동작 회귀 suite를 추가하지 않음 |
+| 구현·validator·QA 계약 변경 | 바뀐 규칙의 focused 회귀와, 작업 트리 입력에 별도 증거가 필요할 때 `python3 scripts/qa.py quick` | 새 동작의 실패·경계 사례를 해당 입력에서 확인 |
+| staged 변경 | `git diff --cached --check`, 실제 메시지 검사 및 선택된 `python3 scripts/qa.py staged` | 정확한 Git index snapshot과 commit 문법을 서로 다른 입력으로 확인 |
+| global QA 계약 변경 또는 명시적 한정 감사 | `python3 scripts/qa.py full` | 사전 도구·예산 확인 후 마지막 checkout의 정적 계약을 한 번 확인 |
+| hosted CI | GitHub Actions의 branch result와 `ci-summary` | PR branch metadata 확인; hosted QA는 `NOT_RUN` |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지
-않는다.
+않는다. 문서 링크·owner 검사는 로컬 QA에만 속하며, 로컬 target 통과가
+외부 URL 가용성을 증명하지 않는다.
 
 ### 3. 호스팅 CI의 소유 경계를 확인한다
 
 `.github/workflows/ci.yml`이 job 이름, 의존 관계, 실행 조건의 canonical
 source이며, job과 required check의 현재 구성은
 [GitHub Configuration Hub](../../../.github/repository-surface.md)가 설명한다.
+호스팅 workflow는 로컬 QA를 다시 실행하거나 PASS로 대리하지 않는다.
 이 문서는 job 목록을 복제하지 않는다. 로컬 성공은 호스팅 환경의
 권한·event·required-check 상태까지 증명하지 않는다.
 
 ### 4. 증적 등급을 구분해 handoff한다
 
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
-- 호스팅 CI: GitHub event와 workflow 환경에서 동일 변경을 확인한다.
+- 호스팅 CI: event와 branch metadata의 적용 가능한 결과만 확인한다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 
 handoff 기록 항목은
@@ -79,7 +82,7 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 
 | 규칙 | 실행 소유자 | 유지되는 경계 |
 | --- | --- | --- |
-| 파일 형식·lint | native 도구 설정과 full/ci의 pre-commit gate | 두 Provider shell adapter에 같은 기준을 적용하고, formatter의 snapshot 변경은 실패로 기록한다 |
+| 파일 형식·lint | native 도구 설정과 선택된 local full의 pre-commit gate | 입력과 mode가 같을 때 한 번 실행하고, formatter의 snapshot 변경은 실패로 기록한다 |
 | GitHub Actions 보안 | zizmor와 repository Actions validator | 서로 다른 규칙을 유지한다. validator는 `unpinned-uses` 억제를 금지한다 |
 | secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
 | 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | full 파일 검사는 메시지 검증을 대신하지 않는다 |
@@ -94,6 +97,8 @@ hook 연결과 커밋 메시지 검증 절차는
 - 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
 - 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
 - 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
+- 선택되지 않아 실행하지 않은 full은 `NOT_RUN`과 "이번 변경의 필수 검사
+  아님"을 함께 기록한다. `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
 - live cluster, Vault, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.
@@ -103,6 +108,7 @@ hook 연결과 커밋 메시지 검증 절차는
 - [Quality Policy](../../../.agents/governance/quality.md)
 - [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
 - [Scripts Router](../../../scripts/README.md)
+- [Release Preparation Runbook](../runbooks/0012-main-release-preparation-runbook.md)
 - [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
 
 ### Lifecycle Traceability

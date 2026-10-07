@@ -87,8 +87,6 @@ def _frontmatter_status(text: str) -> str:
 
 
 def _source_kind(path: PurePosixPath, text: str) -> str:
-    if path.parts[:3] == (".agents", "evaluations", "responses"):
-        return "data"
     if (
         path == PurePosixPath("docs/98.archive")
         or PurePosixPath("docs/98.archive") in path.parents

@@ -61,10 +61,9 @@ class ValidationProfileTests(unittest.TestCase):
 
     def test_common_and_provider_authority_select_all_document_gates(self):
         cases = {
-            ".agents/README.md": "governance-documents",
-            ".agents/evaluations/README.md": "governance-documents",
             ".agents/governance/quality.md": "governance-documents",
             ".agents/workflows/work-lifecycle.md": "governance-documents",
+            ".agents/evaluations/harnesses/example-pair/baseline.md": "evaluation-evidence",
             ".agents/roles/registry.json": "agent-shared",
             ".agents/skills/k8s-validate/SKILL.md": "agent-shared",
             ".agents/skills/k8s-validate/agents/openai.yaml": "agent-shared",
@@ -86,12 +85,35 @@ class ValidationProfileTests(unittest.TestCase):
                 self.assertEqual(surface["id"], owner)
                 self.assertEqual(
                     set(surface["validators"]),
-                    expected
+                    (
+                        expected - {"knowledge-surface"}
+                        if owner == "evaluation-evidence"
+                        else expected
+                    )
                     | (
                         {"external-service-contracts"}
                         if owner == "agent-shared"
                         else set()
                     ),
+                )
+                self.assertEqual(surface["protectedLevel"], "protected")
+
+        for path in (
+            ".agents/evaluations/results.md",
+            ".agents/evaluations/harnesses/example-pair/task.md",
+            ".agents/evaluations/harnesses/example-pair/score.md",
+        ):
+            with self.subTest(path=path):
+                surface = ROUTES.classify_path(self.contract, path)
+                self.assertEqual(surface["id"], "evaluation-authored-documents")
+                self.assertEqual(
+                    surface["validators"],
+                    [
+                        "document-contract-registry",
+                        "document-lifecycle",
+                        "links-and-owners",
+                        "markdown-profiles",
+                    ],
                 )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
@@ -145,12 +167,11 @@ class ValidationProfileTests(unittest.TestCase):
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")
 
-    def test_opted_in_validator_has_only_stdlib_and_snapshot_imports(self):
+    def test_bounded_io_has_only_stdlib_imports(self):
         import ast
         import sys
 
         for path, expected_local in (
-            (ROOT / ".agents/evaluations/run-agent-evaluations.py", {"validation"}),
             (ROOT / "scripts/validation/repository/bounded_io.py", set()),
         ):
             source = path.read_text()
@@ -165,32 +186,69 @@ class ValidationProfileTests(unittest.TestCase):
                 if isinstance(node, ast.ImportFrom) and node.module
             }
             self.assertEqual(imports - sys.stdlib_module_names, expected_local)
-        registry = {row["id"]: row for row in self.contract["validators"]}
-        self.assertNotIn("reuse", registry["external-service-contracts"])
-        self.assertEqual(
-            registry["agent-evaluation-cases"]["reuse"]["mode"], "change-scoped"
-        )
 
     def test_reuse_declaration_is_opt_in_and_invalid_forms_fail(self):
         reusable = [row for row in self.contract["validators"] if "reuse" in row]
-        self.assertEqual([row["id"] for row in reusable], ["agent-evaluation-cases"])
-        for change in ({"mode": "unknown"}, {"mode": "change-scoped", "extra": True}):
+        self.assertEqual(
+            [row["id"] for row in reusable], ["document-contract-registry"]
+        )
+        self.assertEqual(reusable[0]["reuse"], {"mode": "change-scoped"})
+
+        def synthetic_contract(reuse):
             contract = copy.deepcopy(self.contract)
-            next(
-                row
-                for row in contract["validators"]
-                if row["id"] == "agent-evaluation-cases"
-            )["reuse"] = change
+            row = copy.deepcopy(
+                next(
+                    entry
+                    for entry in contract["validators"]
+                    if entry["id"] == "repository-quality"
+                )
+            )
+            row["id"] = "synthetic-reuse"
+            row["reuse"] = reuse
+            contract["validators"].append(row)
+            for gates in contract["profiles"].values():
+                gates.append(row["id"])
+            return contract, row
+
+        valid, _ = synthetic_contract({"mode": "change-scoped"})
+        ROUTES.validate_contract(ROOT, valid)
+        for change in (
+            {"mode": "unknown"},
+            {"mode": "change-scoped", "extra": True},
+            {"mode": "change-scoped", "hosted": {}},
+        ):
+            contract, _ = synthetic_contract(change)
             with self.assertRaises(ROUTES.ContractError):
                 ROUTES.validate_contract(ROOT, contract)
-        contract = copy.deepcopy(self.contract)
-        next(
-            row
-            for row in contract["validators"]
-            if row["id"] == "agent-evaluation-cases"
-        )["optional"] = True
+        contract, row = synthetic_contract({"mode": "change-scoped"})
+        row["optional"] = True
         with self.assertRaises(ROUTES.ContractError):
             ROUTES.validate_contract(ROOT, contract)
+
+    def test_document_gate_uses_identical_effective_argv_for_change_lanes(self):
+        specification = importlib.util.spec_from_file_location(
+            "validation_argv_tested", ROOT / "scripts/run-validation-lane.py"
+        )
+        assert specification is not None and specification.loader is not None
+        runner = importlib.util.module_from_spec(specification)
+        sys.modules[specification.name] = runner
+        specification.loader.exec_module(runner)
+        gate = next(
+            row
+            for row in self.contract["validators"]
+            if row["id"] == "document-contract-registry"
+        )
+        paths = ["docs/99.templates/README.md"]
+        affected = runner.validator_argv(
+            ROOT, "affected", paths, gate, self.contract, ROUTES, "HEAD"
+        )
+        staged = runner.validator_argv(
+            ROOT, "staged", paths, gate, self.contract, ROUTES, "HEAD"
+        )
+        self.assertEqual(affected, staged)
+        self.assertEqual(affected[: len(gate["argv"])], gate["argv"])
+        self.assertIn("docs/99.templates/README.md", affected)
+        self.assertEqual(affected.count("--include-path"), 2)
 
     def test_central_registry_may_select_a_skill_owned_checker(self):
         self.assertEqual(

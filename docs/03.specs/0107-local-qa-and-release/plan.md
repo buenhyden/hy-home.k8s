@@ -2,7 +2,7 @@
 title: "Local Quality and Release Lifecycle Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "approved"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -37,9 +37,9 @@ with isolated branch `codex/qa-local-lifecycle` and worktree
 `.worktrees/qa-local-lifecycle`. Source inspection found a validation-registry
 `ciJobs` entry for a nonexistent hosted `qa` job, old hosted-final-full prose,
 an inactive QA verifier/tag producer, and historic `NOT_RUN` evidence. These
-are source-audit findings, not results of current checks. Current upstream
-REQ-0003-FR-0029 still requires SHA tags and must be revised in the owned
-requirement slice before the SemVer acceptance contract can be validated.
+are source-audit findings, not results of current checks. At intake,
+REQ-0003-FR-0029 required SHA tags; the owned current Requirement slice
+revises that contract for SemVer acceptance and its direct consumers.
 
 ## Goals & In-Scope
 
@@ -50,6 +50,8 @@ requirement slice before the SemVer acceptance contract can be validated.
 - Make Commitizen, SemVer Release/tag production and main changelog ownership
   coherent across policy, workflow, scripts and tests.
 - Connect Issue/Spec/Task/Project by distinct responsibility and direct links.
+- Preserve a profile-routed, actual paired agent-evaluation evidence capacity
+  without turning synthetic fixtures into a standing QA gate or measured result.
 
 ## Non-Goals & Out-of-Scope
 
@@ -65,25 +67,34 @@ Prepare a bounded consumer and coverage map; transfer any ongoing rule before
 removing its old caller and dedicated fixtures. Update policy and machine
 contracts with their direct consumers, then run focused regressions. Perform
 local selection and exact-index/message checks, resolve full-run preflight,
-review independently, record actual evidence and integrate only accepted work.
+route the empty evaluation evidence domain through Stage 99, review
+independently, record actual evidence and integrate only accepted work.
 
 ### Lifecycle Traceability
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, then hand off observed evidence | Current REQ-0003/AD-0006 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, quick selection, exact-index staged and message, final local full if preflight resolved, current anchor completion, semantic review |
+| WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, final local full if preflight resolved, current anchor completion, semantic review |
 
 ## Verification Plan
 
 Before behavior edits, read active validation registry, selected gate commands,
 tool identities, hooks and limits. Execute focused failing and passing cases
-for changed rules. Use `python3 scripts/qa.py quick` on affected current bytes;
-each logical commit gets a reviewed actual index, staged QA and actual message
-check. Run local `full` once on the final tree if the selected prerequisite
+for changed rules. Select `python3 scripts/qa.py quick` during iterations only
+when changed working-tree bytes need separate evidence. If the final actual-index
+`staged` check covers an identical leaf with equivalent bytes, configuration,
+tool, scope, mode and trust, record quick as `NOT_RUN` (not required for this
+change); do not repeat that leaf. Each logical commit gets a reviewed actual
+index, staged QA and actual message check. Run local `full` once on the final
+tree for this global-QA change if the selected prerequisite
 and budget envelope is available. Record a required unresolved check as FAIL,
 NOT_RUN or DEFER with its next owner, never PASS. The separate read-only
 reviewer inspects final diff, contract and results. Do not replay an identical
 leaf simply because delivery moved from commit to push.
+For the evaluation route, validate its Stage 99 profile, reciprocal links and
+empty aggregate shape. No actual paired output or scored criterion is supplied
+in this change, so trial execution, score truth and native skill loading are
+`NOT_RUN` or `NOT_OBSERVED` as applicable, never inferred from form validity.
 
 ## Risks & Mitigations
 
