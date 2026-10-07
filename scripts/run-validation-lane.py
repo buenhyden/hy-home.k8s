@@ -46,6 +46,7 @@ PLATFORM_FALLBACKS = frozenset(
         "none",
         "external-crd-schema-unavailable",
         "operator-live-check",
+        "pre-commit-check-yaml",
         "separate-required-gate",
         "not-applicable",
     )
@@ -242,6 +243,7 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
             or not re.fullmatch(r"[A-Za-z][A-Za-z0-9._-]{0,63}", row["tool"])
             or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.+_-]{0,63}", row["toolVersion"])
             or row["fallback"] not in PLATFORM_FALLBACKS
+            or (row["fallback"] == "pre-commit-check-yaml" and row["depth"] != "syntax")
             or row["result"] not in {"PASS", "FAIL", "DEFER", "NOT_APPLICABLE"}
             or (separator and row["depth"] != "schema-policy")
             or (not separator and row["depth"] == "schema-policy")
@@ -259,7 +261,7 @@ def parse_platform_report(payload: bytes, root: Path) -> list[dict[str, str]]:
                     or row["toolVersion"] != "none"
                     or row["fallback"]
                     != (
-                        "separate-required-gate"
+                        "pre-commit-check-yaml"
                         if row["depth"] == "syntax"
                         else "operator-live-check"
                     )

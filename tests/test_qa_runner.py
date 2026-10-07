@@ -1228,7 +1228,7 @@ class LocalEvidenceTests(unittest.TestCase):
                         "depth": "syntax",
                         "tool": "none",
                         "toolVersion": "none",
-                        "fallback": "separate-required-gate",
+                        "fallback": "pre-commit-check-yaml",
                         "result": "DEFER",
                     },
                     row,

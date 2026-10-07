@@ -139,7 +139,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
                         depth="syntax",
                         tool="none",
                         toolVersion="none",
-                        fallback="separate-required-gate",
+                        fallback="pre-commit-check-yaml",
                         result="DEFER",
                     ),
                     self.row(target=target),
@@ -222,6 +222,31 @@ class StructuredPlatformResultTest(unittest.TestCase):
         self.assertIn('fallback="operator-live-check"', output)
         self.assertIn('lane="all-files"', output)
         self.assertIn("[NOT_APPLICABLE] platform-assurance-depth ", output)
+
+    def test_old_syntax_fallback_cannot_impersonate_current_hook_owner(self):
+        report = self.complete_report()
+        report["results"] = [
+            row | {"fallback": "separate-required-gate"}
+            if row["target"] == "gitops/apps/root" and row["depth"] == "syntax"
+            else row
+            for row in report["results"]
+        ]
+        status, output = self.run_report(json.dumps(report))
+        self.assertEqual(status, 1)
+        self.assertIn("structured_report=invalid", output)
+
+    def test_syntax_hook_fallback_cannot_claim_product_semantic_depth(self):
+        report = self.complete_report()
+        report["results"] = [
+            row | {"fallback": "pre-commit-check-yaml"}
+            if row["target"] == "gitops/apps/root"
+            and row["depth"] == "product-semantic"
+            else row
+            for row in report["results"]
+        ]
+        status, output = self.run_report(json.dumps(report))
+        self.assertEqual(status, 1)
+        self.assertIn("structured_report=invalid", output)
 
     def test_closed_report_rejects_unrun_depth_and_old_version(self):
         valid = self.complete_report()
