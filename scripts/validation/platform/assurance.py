@@ -7,10 +7,12 @@ import argparse
 import hashlib
 from importlib.metadata import version
 import json
+import os
 from pathlib import Path, PurePosixPath
 import platform
 import re
 import shutil
+import stat
 import subprocess
 import sys
 from typing import Any
@@ -49,6 +51,7 @@ CLUSTER_KINDS = {
 GVK_PATTERN = re.compile(
     r"^[a-z0-9.-]+(?:/v[0-9]+(?:alpha|beta)?[0-9]*)?:[A-Z][A-Za-z0-9]*$"
 )
+MAX_MANIFEST_WALK_ENTRIES = 100_000
 
 
 class AssuranceError(ValueError):
@@ -70,6 +73,88 @@ def _read_regular(path: Path, limit: int) -> bytes:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > limit:
         raise AssuranceError("missing, linked, or oversized local input")
     return path.read_bytes()
+
+
+def _walk_no_follow(directory: Path):
+    """Yield tree entries without following linked directories or hiding read errors."""
+    stack = [directory]
+    visited = 0
+    while stack:
+        current = stack.pop()
+        try:
+            with os.scandir(current) as entries:
+                for entry in entries:
+                    visited += 1
+                    if visited > MAX_MANIFEST_WALK_ENTRIES:
+                        raise AssuranceError("manifest candidate walk limit exceeded")
+                    try:
+                        mode = entry.stat(follow_symlinks=False).st_mode
+                    except OSError as exc:
+                        raise AssuranceError(
+                            "manifest candidate node unavailable"
+                        ) from exc
+                    path = Path(entry.path)
+                    yield path, mode
+                    if stat.S_ISDIR(mode):
+                        stack.append(path)
+        except OSError as exc:
+            raise AssuranceError("manifest candidate directory unavailable") from exc
+
+
+def validate_manifest_candidates(root: Path) -> None:
+    """Keep the former all-files manifest node boundary without reparsing YAML."""
+    required = []
+    for name in ("gitops", "infrastructure"):
+        directory = root / name
+        try:
+            mode = directory.lstat().st_mode
+        except OSError as exc:
+            raise AssuranceError("required manifest root unavailable") from exc
+        if not stat.S_ISDIR(mode):
+            raise AssuranceError("required manifest root is not a directory")
+        required.append(directory)
+
+    inspected = 0
+    yaml_seen = False
+    for directory in required:
+        for path, mode in _walk_no_follow(directory):
+            inspected += 1
+            if inspected > MAX_MANIFEST_WALK_ENTRIES:
+                raise AssuranceError("manifest candidate walk limit exceeded")
+            if path.suffix not in {".yaml", ".yml"}:
+                continue
+            if not stat.S_ISREG(mode):
+                raise AssuranceError("manifest candidate must be a regular file")
+            yaml_seen = True
+
+    examples = root / "examples"
+    try:
+        examples_mode = examples.lstat().st_mode
+    except FileNotFoundError:
+        examples_mode = None
+    except OSError as exc:
+        raise AssuranceError("examples manifest root unavailable") from exc
+    if examples_mode is not None:
+        if not stat.S_ISDIR(examples_mode):
+            raise AssuranceError("examples manifest root is not a regular directory")
+        eligible_dirs: set[Path] = set()
+        for path, mode in _walk_no_follow(examples):
+            inspected += 1
+            if inspected > MAX_MANIFEST_WALK_ENTRIES:
+                raise AssuranceError("manifest candidate walk limit exceeded")
+            eligible = path.parent in eligible_dirs
+            if stat.S_ISDIR(mode) and (
+                eligible
+                or path == examples / "sample-app"
+                or path.name in {"gitops", "kubernetes"}
+            ):
+                eligible_dirs.add(path)
+            if eligible and path.suffix in {".yaml", ".yml"}:
+                if not stat.S_ISREG(mode):
+                    raise AssuranceError("manifest candidate must be a regular file")
+                yaml_seen = True
+    if not yaml_seen:
+        raise AssuranceError("no manifest YAML candidate")
 
 
 def discover_roots(root: Path) -> list[Path]:
@@ -453,6 +538,7 @@ def validate_project_scope(rendered: dict[str, list[dict[str, Any]]]) -> set[str
 
 
 def run(root: Path, binary: Path) -> list[dict[str, str]]:
+    validate_manifest_candidates(root)
     roots = discover_roots(root)
     rows: list[dict[str, str]] = []
     tool_ready = _tool_is_pinned(binary)
@@ -463,7 +549,7 @@ def run(root: Path, binary: Path) -> list[dict[str, str]]:
     for relative in roots:
         target = relative.as_posix()
         rows.append(
-            _row(target, "syntax", "none", "none", "separate-required-gate", "DEFER")
+            _row(target, "syntax", "none", "none", "pre-commit-check-yaml", "DEFER")
         )
         rows.append(
             _row(

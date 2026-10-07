@@ -21,6 +21,86 @@ SPEC.loader.exec_module(ASSURANCE)
 
 
 class PlatformAssuranceTests(unittest.TestCase):
+    def test_manifest_walk_stops_consuming_at_entry_limit(self):
+        consumed = 0
+
+        class Entries:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return False
+
+            def __iter__(self):
+                nonlocal consumed
+                for index in range(5):
+                    consumed += 1
+                    entry = mock.Mock(path=f"/tmp/manifest-{index}.txt")
+                    entry.stat.return_value.st_mode = 0
+                    yield entry
+
+        with (
+            mock.patch.object(ASSURANCE.os, "scandir", return_value=Entries()),
+            mock.patch.object(ASSURANCE, "MAX_MANIFEST_WALK_ENTRIES", 2),
+        ):
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                list(ASSURANCE._walk_no_follow(Path("/unused")))
+        self.assertEqual(consumed, 3)
+
+    def test_unreferenced_manifest_symlink_is_rejected_in_each_candidate_area(self):
+        for relative in (
+            "gitops/unused.yaml",
+            "infrastructure/unused.yml",
+            "examples/sample-app/unused.yaml",
+            "examples/provider/kubernetes/unused.yaml",
+            "examples/provider/gitops/unused.yaml",
+        ):
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                (root / "gitops").mkdir()
+                (root / "infrastructure").mkdir()
+                (root / "examples").mkdir()
+                target = root / "malformed.txt"
+                target.write_text("kind: [invalid\n")
+                link = root / relative
+                link.parent.mkdir(parents=True, exist_ok=True)
+                link.symlink_to(target)
+                with self.assertRaises(ASSURANCE.AssuranceError):
+                    ASSURANCE.validate_manifest_candidates(root)
+
+    def test_manifest_candidate_roots_and_nonempty_set_fail_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "gitops").mkdir()
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.validate_manifest_candidates(root)
+            (root / "infrastructure").mkdir()
+            with self.assertRaises(ASSURANCE.AssuranceError):
+                ASSURANCE.validate_manifest_candidates(root)
+
+    def test_nested_example_candidates_are_walked_once(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "gitops").mkdir()
+            (root / "infrastructure").mkdir()
+            (root / "gitops/base.yaml").write_text("kind: ConfigMap\n")
+            nested = root / "examples/provider/gitops/nested/kubernetes/sample.yaml"
+            nested.parent.mkdir(parents=True)
+            nested.write_text("kind: ConfigMap\n")
+            original = ASSURANCE._walk_no_follow
+            seen = 0
+
+            def counted(directory):
+                nonlocal seen
+                for path, mode in original(directory):
+                    if path == nested:
+                        seen += 1
+                    yield path, mode
+
+            with mock.patch.object(ASSURANCE, "_walk_no_follow", side_effect=counted):
+                ASSURANCE.validate_manifest_candidates(root)
+            self.assertEqual(seen, 1)
+
     def test_remote_escape_symlink_and_plugin_fields_are_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

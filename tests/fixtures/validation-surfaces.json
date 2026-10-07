@@ -285,7 +285,6 @@
           "agent-governance",
           "gitops-structure",
           "infrastructure-contracts",
-          "k8s-manifests",
           "policy-gates",
           "repository-quality",
           "secret-handling"
@@ -320,7 +319,6 @@
           "external-service-contracts",
           "gitops-structure",
           "infrastructure-contracts",
-          "k8s-manifests",
           "platform-assurance",
           "policy-gates",
           "repository-quality",
@@ -361,7 +359,6 @@
           "gitops-change-set",
           "gitops-structure",
           "infrastructure-contracts",
-          "k8s-manifests",
           "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",

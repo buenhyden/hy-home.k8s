@@ -263,10 +263,9 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
+      "coveredBy": "pre-commit",
       "optional": false,
       "fallback": {
         "status": "FAIL",
@@ -1224,7 +1223,6 @@
       "gitops-change-set",
       "gitops-structure",
       "infrastructure-contracts",
-      "k8s-manifests",
       "platform-assurance",
       "knowledge-surface",
       "links-and-owners",
