@@ -39,8 +39,9 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
   검사한다. main push와 manual dispatch에는 branch 검사를
   `NOT_APPLICABLE`로 보고한다. 별도 `style-pr` job은 main 대상 PR에서만
-  선택된 style을 검사한다. 모든 이벤트에서 hosted full QA는 `NOT_RUN`이다.
-  어느 job의 성공도 로컬 full·unit·문서 내용 QA 통과를 뜻하지 않는다.
+  선택된 style을 검사한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
+  남고 현재 `ci-summary`의 완료 gate가 아니다. 어느 job의 성공도 로컬
+  목적·단위·문서 내용 검사의 통과를 뜻하지 않는다.
 - 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와 validation registry가
   소유한다. 로컬 커밋, PR, main 통합과 인계의 증거 순서는
   [Quality policy](../.agents/governance/quality.md#delivery-ownership)가
@@ -50,7 +51,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - `.github/requirements/ci-validation.txt`와
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
   보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
-  설치하며 로컬 full이나 unit은 실행하지 않는다.
+  설치하며 로컬 목적·단위 검사는 실행하지 않는다.
   `scripts/validate-ci-python-contract.py`가 고정 pin과 workflow 경계를
   검사하므로 lock과 소비자 단언은 함께 리뷰한다.
 - Issue는 요청과 triage priority를 소유한다. 승인된 수용 계약은 Spec,
@@ -68,7 +69,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 ### Workflow Roles
 
 - `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
-  에서 branch metadata를 검사하고 full QA `NOT_RUN`을 출력한다. 별도
+  에서 branch metadata를 검사한다. 별도
   `style-pr`은 main 대상 PR merge 입력의 NUL 구분 변경 경로를 검증된 base
   SHA와 대조한 뒤, 신뢰된 base의 공유 style helper와 기존 여덟 pinned
   pre-commit hook 규칙으로 선택된 lint·format만 검사한다. `style-pr`의
@@ -87,7 +88,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Branch metadata and selected PR style; full QA is `NOT_RUN`. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` validates PR base/source prefix and reports branch policy `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No full, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Branch metadata and selected PR style. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` validates PR base/source prefix and reports branch policy `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No local purpose, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 

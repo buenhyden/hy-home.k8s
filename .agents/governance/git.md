@@ -36,8 +36,8 @@ branch convention; Codex-created branches normally use `codex/`.
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
 - Validate the exact index with the selected staged profile before each logical
   commit, including required lint and format checks immediately before the
-  commit. Local QA owns repository-static quality evidence. A feature push, PR
-  or main merge does not itself select full QA. Follow the
+  commit. Local QA owns selected repository-static quality evidence. A feature
+  push, PR or main merge does not itself select a retired full/ci sweep. Follow the
   [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
   identical leaves across hook, command or delivery phases. Never use
   `--no-verify`.
@@ -64,15 +64,15 @@ branch convention; Codex-created branches normally use `codex/`.
 
 Develop each independently reviewable Spec package on an owned feature branch
 and linked worktree when needed. Run changed-behavior and affected checks while
-editing, exact-index and message checks at logical commits, then any explicitly
-selected local full profile at the bounded final branch snapshot. Push and PR
+editing, exact-index and message checks at logical commits, then applicable
+named purpose and unit checks on the bounded final branch snapshot. Push and PR
 creation carry that evidence without re-executing the same leaf. Compare the
 integrated main tree and history with what was checked; a changed merge input
 gets only its invalidated checks, and an identical fast-forward does not replay
 them. The hosted `ci-summary` job owns the PR branch-metadata verdict directly;
 the hosted PR style job owns only its selected style verdict. Each observed
-result has its own SHA and trust boundary and never stands in for local full,
-unit or document-content QA. A deployment style result requires an actual
+result has its own SHA and trust boundary and never stands in for local purpose,
+unit or document-content checks. A deployment style result requires an actual
 deployment workflow and run; absent that input, keep it unobserved. Observe
 actual ruleset requirements before calling an integration accepted.
 
@@ -110,8 +110,8 @@ imperative, specific subject, preferably under 72 characters. Length, case and
 body wrapping are guidance, not extra validator rules. Historical parsers may
 retain prior punctuation without permitting it in new messages.
 
-Selected local full QA checks files through the manual stage and does not
-validate a commit message. Inspect the effective `core.hooksPath` source and
+Selected local file checks do not validate a commit message. Inspect the
+effective `core.hooksPath` source and
 hook connection, and preserve active hooks and private settings. If an active
 hook has already run an identical leaf on the checked index, record that result
 without manually replaying it; a different mode, tool or input is separate.

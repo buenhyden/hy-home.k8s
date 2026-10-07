@@ -78,13 +78,6 @@ repos:
       - id: gitleaks
         stages: [pre-commit]
         args: ['--config=.gitleaks.toml']
-      - id: gitleaks
-        alias: gitleaks-snapshot
-        name: detect secrets in the QA snapshot
-        stages: [manual]
-        entry: gitleaks dir --redact --verbose
-        pass_filenames: false
-        args: ['--config=.gitleaks.toml', '.']
 
   - repo: https://github.com/Yelp/detect-secrets
     rev: 01886c8a910c64595c47f186ca1ffc0b77fa5458 # frozen: v1.5.0

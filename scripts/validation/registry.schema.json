@@ -13,15 +13,14 @@
     "evidenceLanes",
     "validators",
     "surfaces",
-    "profiles",
-    "profileAliases"
+    "profiles"
   ],
   "properties": {
     "$schema": {
       "const": "./registry.schema.json"
     },
     "schemaVersion": {
-      "const": 3
+      "const": 4
     },
     "pathSemantics": {
       "type": "object",
@@ -49,15 +48,13 @@
     },
     "lanes": {
       "type": "array",
-      "minItems": 7,
+      "minItems": 5,
       "uniqueItems": true,
       "items": {
         "enum": [
           "affected",
           "staged",
-          "all-files",
           "message/manual",
-          "ci",
           "remote/live",
           "inventory"
         ]
@@ -96,8 +93,7 @@
       "additionalProperties": false,
       "required": [
         "quick",
-        "staged",
-        "full"
+        "staged"
       ],
       "properties": {
         "quick": {
@@ -115,27 +111,6 @@
           "items": {
             "$ref": "#/$defs/identifier"
           }
-        },
-        "full": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
-        }
-      }
-    },
-    "profileAliases": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ci"
-      ],
-      "properties": {
-        "ci": {
-          "type": "string",
-          "minLength": 1
         }
       }
     }
@@ -234,7 +209,10 @@
           "const": "platform-depth-v2"
         },
         "pathInput": {
-          "enum": ["include-existing-markdown", "include-existing-files"]
+          "enum": [
+            "include-existing-markdown",
+            "include-existing-files"
+          ]
         },
         "globalSelection": {
           "const": "staged-changed"
@@ -258,10 +236,6 @@
               ]
             }
           }
-        },
-        "coveredBy": {
-          "type": "string",
-          "minLength": 1
         }
       }
     },

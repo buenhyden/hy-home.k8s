@@ -122,39 +122,10 @@ class ValidationProfileTests(unittest.TestCase):
 
         quick = set(self.contract["profiles"]["quick"])
         staged = set(self.contract["profiles"]["staged"])
-        self.assertEqual(staged - quick, {"selected-style"})
+        self.assertEqual(staged - quick, {"selected-style", "selected-nonstyle"})
         self.assertEqual(quick - staged, set())
 
-    def test_the_hosted_profile_resolves_rather_than_repeats_the_gate_list(self):
-        """One profile owns the hosted gate set; the other resolves from it.
-
-        Membership itself is checked once, by the QA runner suite. What belongs
-        here is that the second name reaches that one owner instead of carrying
-        a copy a test would then have to hold in agreement."""
-
-        self.assertNotIn("ci", self.contract["profiles"])
-        self.assertEqual(
-            ROUTES.profile_gate_ids(self.contract, "ci"),
-            ROUTES.profile_gate_ids(self.contract, "full"),
-        )
-
-    def test_a_repeated_gate_array_cannot_return_under_an_alias_name(self):
-        """The contract, not a test, is what keeps the second copy out."""
-
-        restored = copy.deepcopy(self.contract)
-        restored["profiles"]["ci"] = restored["profiles"]["full"]
-        with self.assertRaises(ROUTES.ContractError) as raised:
-            ROUTES.validate_contract(ROOT, restored)
-        self.assertEqual(raised.exception.code, "SURFACE-SCHEMA")
-
-    def test_an_alias_that_resolves_to_nothing_is_a_named_failure(self):
-        """A dangling alias must diagnose itself, never raise a bare KeyError."""
-
-        dangling = copy.deepcopy(self.contract)
-        dangling["profileAliases"]["ci"] = "no-such-profile"
-        with self.assertRaises(ROUTES.ContractError) as raised:
-            ROUTES.validate_contract(ROOT, dangling)
-        self.assertEqual(raised.exception.code, "SURFACE-PROFILE-ALIAS")
+    def test_unknown_profile_fails_with_named_error(self):
         with self.assertRaises(ROUTES.ContractError) as unknown:
             ROUTES.profile_gate_ids(self.contract, "no-such-profile")
         self.assertEqual(unknown.exception.code, "SURFACE-PROFILE-ALIAS")

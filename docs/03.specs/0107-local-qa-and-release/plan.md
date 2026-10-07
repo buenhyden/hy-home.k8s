@@ -66,7 +66,7 @@ specific GitHub Release.
 Prepare a bounded consumer and coverage map; transfer any ongoing rule before
 removing its old caller and dedicated fixtures. Update policy and machine
 contracts with their direct consumers, then run focused regressions. Perform
-local selection and exact-index/message checks, resolve full-run preflight,
+local selection and exact-index/message checks, resolve selected-gate preflight,
 route the empty evaluation evidence domain through Stage 99, review
 independently, record actual evidence and integrate only accepted work.
 
@@ -74,7 +74,7 @@ independently, record actual evidence and integrate only accepted work.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, final local full if preflight resolved, current anchor completion, semantic review |
+| WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, named purpose/unit gates after retirement, current anchor completion, semantic review |
 
 ## Verification Plan
 
@@ -85,14 +85,16 @@ when changed working-tree bytes need separate evidence. If the final actual-inde
 `staged` check covers an identical leaf with equivalent bytes, configuration,
 tool, scope, mode and trust, record quick as `NOT_RUN` (not required for this
 change); do not repeat that leaf. Each logical commit gets a reviewed actual
-index, staged QA and actual message check. Run local `full` once on the final
-tree for this global-QA change if the selected prerequisite
-and budget envelope is available. Record a required unresolved check as FAIL,
+index, staged QA and actual message check. Select final named behavior,
+Archive and security regressions and purpose gates actually affected by this
+global-QA change; do not use retired `full`/`ci` sweeps or blanket unit
+discovery as a completion shortcut. Resolve their prerequisite and budget
+envelope. Record a required unresolved check as FAIL,
 NOT_RUN or DEFER with its next owner, never PASS. The separate read-only
 reviewer inspects final diff, contract and results. Do not replay an identical
 leaf simply because delivery moved from commit to push.
 The final local index also receives required lint and format checks immediately
-before each commit; reuse an identical successful style leaf inside local full.
+before each commit; do not repeat an identical successful local style leaf.
 Verify the selected hosted PR style route separately against its actual merge
 SHA/run. A deployment style result depends on a real deployment workflow and
 execution, which are not established by this Plan; do not infer it from a PR

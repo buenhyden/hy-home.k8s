@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-import copy
 import builtins
 import importlib.util
 import json
 import os
 from pathlib import Path
-import pwd
 import stat
 import subprocess
 import sys
 import tempfile
-from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -30,24 +27,7 @@ def load_qa():
 
 
 class PublicEntryTests(unittest.TestCase):
-    def test_retired_hosted_partition_is_not_a_public_entry(self):
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(ROOT / "scripts/qa.py"),
-                "ci",
-                "--list",
-                "--partition",
-                "complement",
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 2, result.stderr)
-        self.assertIn("unrecognized arguments: --partition complement", result.stderr)
-
-    def test_list_is_a_working_public_entry(self):
+    def test_public_profiles_are_only_selected_working_tree_and_index(self):
         result = subprocess.run(
             [sys.executable, str(ROOT / "scripts/qa.py"), "--list"],
             cwd=ROOT,
@@ -55,8 +35,20 @@ class PublicEntryTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("full", result.stdout)
-        self.assertIn("staged", result.stdout)
+        self.assertEqual(
+            [line.split(":", 1)[0] for line in result.stdout.splitlines()],
+            ["quick", "staged"],
+        )
+        for retired in ("full", "ci"):
+            with self.subTest(retired=retired):
+                denied = subprocess.run(
+                    [sys.executable, str(ROOT / "scripts/qa.py"), retired],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(denied.returncode, 2)
+                self.assertIn("invalid choice", denied.stderr)
 
 
 class QaTests(unittest.TestCase):
@@ -79,6 +71,20 @@ class QaTests(unittest.TestCase):
         return subprocess.run(
             ["git", *args], cwd=self.root, check=True, capture_output=True
         ).stdout
+
+    def test_git_diff_reads_without_refreshing_the_private_index(self):
+        target = self.root / "file.txt"
+        metadata = target.stat()
+        os.utime(
+            target,
+            ns=(metadata.st_atime_ns, metadata.st_mtime_ns + 2_000_000_000),
+        )
+        baseline = (self.root / ".git/index").read_bytes()
+        self.assertEqual(self.qa.git(self.root, "diff", "--name-only", "-z"), b"")
+        self.assertEqual((self.root / ".git/index").read_bytes(), baseline)
+        target.write_text("changed\n")
+        self.assertIn(b"file.txt", self.qa.git(self.root, "diff", "--name-only", "-z"))
+        self.assertEqual((self.root / ".git/index").read_bytes(), baseline)
 
     def test_final_tree_and_index_are_distinct_and_source_is_unchanged(self):
         (self.root / "file.txt").write_text("staged invalid\n")
@@ -107,6 +113,90 @@ class QaTests(unittest.TestCase):
                 self.assertEqual(self.qa.git(snapshot, "diff", "--name-only"), b"")
         self.assertEqual((self.root / ".git/index").read_bytes(), before)
         self.assertEqual((self.root / "file.txt").read_text(), "unstaged repaired\n")
+
+    def test_staged_source_index_mutation_cannot_enter_pass_cache(self):
+        (self.root / "file.txt").write_text("candidate\n")
+        self.git("add", "file.txt")
+        contract = {
+            "profiles": {"staged": ["document-lifecycle"]},
+            "validators": [{"id": "document-lifecycle"}],
+        }
+
+        def alter_source(*_args, **kwargs):
+            kwargs["completed_passes"]["document-lifecycle"] = "PASS"
+            (self.root / "file.txt").write_text("raced candidate\n")
+            self.git("add", "file.txt")
+            return 0
+
+        with (
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "select_paths",
+                return_value={"validators": ["document-lifecycle"]},
+            ),
+            mock.patch.object(self.qa.runner, "run_selected", side_effect=alter_source),
+            mock.patch.object(self.qa.LocalEvidenceStore, "record_pass") as record,
+        ):
+            self.assertEqual(self.qa.main(), 1)
+        record.assert_not_called()
+
+    def test_private_skip_worktree_mutation_is_not_a_pass(self):
+        with self.qa.repository_snapshot(self.root, staged=True) as snapshot:
+            self.qa.git(snapshot, "update-index", "--skip-worktree", "file.txt")
+            head_before = self.qa.git(snapshot, "rev-parse", "HEAD")
+            raw_index_before = self.qa.read_bounded_bytes(
+                self.qa.index_file(snapshot), max_bytes=self.qa.GIT_INDEX_LIMIT_BYTES
+            )
+            tree_before = self.qa.tree_identity(snapshot)
+            (snapshot / "file.txt").write_text("hidden mutation\n")
+            self.assertEqual(self.qa.git(snapshot, "diff", "--name-only", "-z"), b"")
+            with self.assertRaisesRegex(
+                ValueError, "private snapshot changed: raw-index,file-bytes"
+            ):
+                self.qa.require_unchanged_private_snapshot(
+                    snapshot,
+                    head_before=head_before,
+                    raw_index_before=raw_index_before,
+                    tree_before=tree_before,
+                )
+
+    def test_private_index_only_mutation_reports_index_without_file_data(self):
+        with self.qa.repository_snapshot(self.root, staged=True) as snapshot:
+            head_before = self.qa.git(snapshot, "rev-parse", "HEAD")
+            raw_index_before = self.qa.read_bounded_bytes(
+                self.qa.index_file(snapshot), max_bytes=self.qa.GIT_INDEX_LIMIT_BYTES
+            )
+            tree_before = self.qa.tree_identity(snapshot)
+            self.qa.git(snapshot, "update-index", "--assume-unchanged", "file.txt")
+            with self.assertRaisesRegex(ValueError, "changed: raw-index$"):
+                self.qa.require_unchanged_private_snapshot(
+                    snapshot,
+                    head_before=head_before,
+                    raw_index_before=raw_index_before,
+                    tree_before=tree_before,
+                )
+
+    def test_private_untracked_file_creation_is_not_a_pass(self):
+        with self.qa.repository_snapshot(self.root, staged=True) as snapshot:
+            head_before = self.qa.git(snapshot, "rev-parse", "HEAD")
+            raw_index_before = self.qa.read_bounded_bytes(
+                self.qa.index_file(snapshot), max_bytes=self.qa.GIT_INDEX_LIMIT_BYTES
+            )
+            tree_before = self.qa.tree_identity(snapshot)
+            (snapshot / "new.txt").write_text("formatter output\n")
+            with self.assertRaisesRegex(ValueError, "changed: file-bytes$"):
+                self.qa.require_unchanged_private_snapshot(
+                    snapshot,
+                    head_before=head_before,
+                    raw_index_before=raw_index_before,
+                    tree_before=tree_before,
+                )
 
     def test_snapshot_keeps_a_default_branch_that_exists_only_as_remote_tracking(self):
         # CI checks out a named branch that is not `main`; `main` exists only as
@@ -337,125 +427,6 @@ class QaTests(unittest.TestCase):
             with self.qa.repository_snapshot(self.root):
                 pass
 
-    def test_full_pre_commit_receives_untracked_hidden_skill_in_temporary_index(self):
-        self.git("mv", "file.txt", "README.md")
-        self.git("rm", "gone.txt")
-        hidden = ".agents/skills/example/SKILL.md"
-        target = self.root / hidden
-        target.parent.mkdir(parents=True)
-        target.write_text("# New skill\n")
-        index_before = (self.root / ".git/index").read_bytes()
-        head_before = self.git("rev-parse", "HEAD")
-        contract = self.qa.contract_module.load_json(
-            ROOT / "scripts/validation/registry.json"
-        )
-        contract["profiles"]["full"] = ["pre-commit"]
-        real_run = self.qa.runner.run_bounded_command
-        observed = []
-
-        def run_command(argv, *, cwd, env, **kwargs):
-            if argv[0] != "/trusted/pre-commit":
-                return real_run(argv, cwd=cwd, env=env, **kwargs)
-            self.assertNotEqual(cwd, self.root)
-            self.assertEqual(
-                argv,
-                ["/trusted/pre-commit", "run", "--all-files", "--hook-stage", "manual"],
-            )
-            self.assertEqual((cwd / hidden).read_text(), "# New skill\n")
-            self.assertIn(
-                hidden, self.qa.paths_from(self.qa.git(cwd, "ls-files", "-z"))
-            )
-            self.assertEqual((self.root / ".git/index").read_bytes(), index_before)
-            observed.append(hidden)
-            return real_run([sys.executable, "-c", "pass"], cwd=cwd, env=env)
-
-        with (
-            mock.patch.object(sys, "argv", ["qa.py", "full", "--root", str(self.root)]),
-            mock.patch.object(
-                self.qa.contract_module, "validate_contract", return_value=contract
-            ),
-            mock.patch.object(
-                self.qa.runner, "resolve_tool", return_value="/trusted/pre-commit"
-            ),
-            mock.patch.object(
-                self.qa.runner, "run_bounded_command", side_effect=run_command
-            ),
-        ):
-            self.assertEqual(self.qa.main(), 0)
-        self.assertEqual(observed, [hidden])
-        self.assertEqual((self.root / ".git/index").read_bytes(), index_before)
-        self.assertEqual(self.git("rev-parse", "HEAD"), head_before)
-        self.assertNotIn(hidden, self.qa.paths_from(self.git("ls-files", "-z")))
-
-    def test_snapshot_secret_scan_covers_clean_history_and_hidden_files(self):
-        import json
-        import shlex
-        import yaml
-
-        executable = self.qa.runner.secure_gitleaks_executable(ROOT)
-        self.assertIsNotNone(executable, "Gitleaks is a required validation tool")
-        native = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
-        hook = next(
-            h
-            for r in native["repos"]
-            for h in r["hooks"]
-            if h.get("alias") == "gitleaks-snapshot"
-        )
-        # Retain the real path allowlists with a harmless synthetic detection rule.
-        config = (ROOT / ".gitleaks.toml").read_text().split("[[rules]]", 1)[0]
-        config = config.replace("useDefault = true", "useDefault = false")
-        config += "[[rules]]\nid = 'qa-canary'\ndescription = 'synthetic canary'\nregex = 'AGQ_SYNTHETIC_[C]ANARY'\n"
-        (self.root / ".gitleaks.toml").write_text(config)
-        (self.root / "file.txt").write_text("AGQ_SYNTHETIC_CANARY\n")
-        self.git("add", "--", ".gitleaks.toml", "file.txt")
-        self.git("commit", "-qm", "fixture canary")
-        with self.qa.repository_snapshot(self.root) as snapshot:
-            staged = subprocess.run(
-                [
-                    executable,
-                    "git",
-                    "--pre-commit",
-                    "--staged",
-                    "--redact",
-                    "--config=.gitleaks.toml",
-                ],
-                cwd=snapshot,
-                env=self.qa.runner.closed_subprocess_environment(),
-                capture_output=True,
-                timeout=20,
-            )
-            self.assertEqual(staged.returncode, 0)
-
-        (self.root / ".hidden.txt").write_text("AGQ_SYNTHETIC_CANARY\n")
-        (self.root / "ignored-secret").write_text("AGQ_SYNTHETIC_CANARY\n")
-        before = (self.root / ".git/index").read_bytes()
-        with self.qa.repository_snapshot(self.root) as snapshot:
-            index_tree_before = self.qa.index_tree_identity(snapshot)
-            (snapshot / ".git/private-canary").write_text("AGQ_SYNTHETIC_CANARY\n")
-            with tempfile.TemporaryDirectory(prefix="qa-canary-report-") as report_dir:
-                report = Path(report_dir) / "findings.json"
-                result = subprocess.run(
-                    [
-                        executable,
-                        *shlex.split(hook["entry"])[1:],
-                        *hook["args"],
-                        "--report-format=json",
-                        "--report-path=" + str(report),
-                    ],
-                    cwd=snapshot,
-                    env=self.qa.runner.closed_subprocess_environment(),
-                    capture_output=True,
-                    timeout=20,
-                )
-                self.assertEqual(result.returncode, 1, result.stderr.decode())
-                paths = {row["File"] for row in json.loads(report.read_text())}
-                self.assertEqual(paths, {"file.txt", ".hidden.txt"})
-            self.qa.require_unchanged_snapshot(snapshot, index_tree_before)
-        self.assertEqual((self.root / ".git/index").read_bytes(), before)
-        self.assertEqual(
-            (self.root / "ignored-secret").read_text(), "AGQ_SYNTHETIC_CANARY\n"
-        )
-
     def test_public_document_terms_do_not_exempt_other_secret_matches(self):
         import json
 
@@ -624,33 +595,14 @@ class QaTests(unittest.TestCase):
                     pass
         self.assertEqual((self.root / ".git/index").read_bytes(), before)
 
-    def test_ci_baseline_is_parent_or_empty_never_self(self):
-        self.assertEqual(self.qa.base_revision(self.root, "ci", ""), "EMPTY")
-        self.assertEqual(self.qa.base_revision(self.root, "ci", "0" * 40), "EMPTY")
-        parent = self.git("rev-parse", "HEAD").decode().strip()
+    def test_quick_baseline_uses_head_without_main_and_explicit_empty(self):
+        initial = self.git("rev-parse", "HEAD").decode().strip()
+        self.assertEqual(self.qa.base_revision(self.root, "quick", ""), initial)
+        self.assertEqual(self.qa.base_revision(self.root, "quick", "0" * 40), "EMPTY")
         (self.root / "file.txt").write_text("next\n")
         self.git("commit", "-qam", "next")
-        self.assertEqual(self.qa.base_revision(self.root, "ci", ""), parent)
-
-    def test_profiles_are_complete_and_deduplicated(self):
-        contract = self.qa.contract_module.validate_contract(ROOT)
-        ids = contract["profiles"]["full"]
-        self.assertEqual(len(ids), len(set(ids)))
-        covered = {r["id"] for r in contract["validators"] if "coveredBy" in r}
-        self.assertFalse(covered & set(ids))
-        self.assertEqual(set(ids) | covered, {r["id"] for r in contract["validators"]})
-        self.assertEqual(ids.count("unit-tests"), 1)
-        self.assertEqual(ids.count("pre-commit"), 1)
-        for mutation in ("duplicate", "unknown", "missing"):
-            bad = copy.deepcopy(contract)
-            if mutation == "duplicate":
-                bad["profiles"]["full"].append(ids[0])
-            elif mutation == "unknown":
-                bad["profiles"]["full"][0] = "no-such-gate"
-            else:
-                bad["profiles"]["full"].pop()
-            with self.assertRaises(self.qa.contract_module.ContractError):
-                self.qa.contract_module.validate_contract(ROOT, bad)
+        next_head = self.git("rev-parse", "HEAD").decode().strip()
+        self.assertEqual(self.qa.base_revision(self.root, "quick", ""), next_head)
 
     def test_gate_failure_diagnostics_are_bounded_and_redacted(self):
         row = {
@@ -670,7 +622,7 @@ class QaTests(unittest.TestCase):
         with redirect_stdout(output):
             rc = self.qa.runner.run_selected(
                 self.root,
-                "all-files",
+                "affected",
                 ["file.txt"],
                 {"validators": [row]},
                 mock.Mock(),
@@ -698,6 +650,12 @@ class QaTests(unittest.TestCase):
                 self.assertNotIn(
                     "PYTHONPATH", self.qa.runner.closed_subprocess_environment()
                 )
+                self.assertEqual(
+                    self.qa.runner.closed_subprocess_environment()[
+                        "GIT_OPTIONAL_LOCKS"
+                    ],
+                    "0",
+                )
 
     def test_required_missing_tool_fails(self):
         import io
@@ -705,7 +663,7 @@ class QaTests(unittest.TestCase):
 
         row = {
             "id": "missing",
-            "argv": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
+            "argv": ["python3", "check.py"],
             "optional": False,
             "fallback": {"reason": "required"},
             "evidenceLane": "repo-static",
@@ -717,7 +675,7 @@ class QaTests(unittest.TestCase):
             self.assertEqual(
                 self.qa.runner.run_selected(
                     self.root,
-                    "all-files",
+                    "affected",
                     ["file.txt"],
                     {"validators": [row]},
                     mock.Mock(),
@@ -728,10 +686,21 @@ class QaTests(unittest.TestCase):
 
     def test_formatter_mutation_fails_without_changing_source(self):
         with self.qa.repository_snapshot(self.root) as snapshot:
-            index_tree_before = self.qa.index_tree_identity(snapshot)
+            head_before = self.qa.git(snapshot, "rev-parse", "HEAD")
+            raw_index_before = self.qa.read_bounded_bytes(
+                self.qa.index_file(snapshot), max_bytes=self.qa.GIT_INDEX_LIMIT_BYTES
+            )
+            tree_before = self.qa.tree_identity(snapshot)
             (snapshot / "file.txt").write_text("formatted\n")
-            with self.assertRaisesRegex(ValueError, "modified"):
-                self.qa.require_unchanged_snapshot(snapshot, index_tree_before)
+            with self.assertRaisesRegex(
+                ValueError, "private snapshot changed: file-bytes"
+            ):
+                self.qa.require_unchanged_private_snapshot(
+                    snapshot,
+                    head_before=head_before,
+                    raw_index_before=raw_index_before,
+                    tree_before=tree_before,
+                )
         self.assertEqual((self.root / "file.txt").read_text(), "original\n")
 
     def test_gate_staged_mutation_fails_without_changing_source_or_index(self):
@@ -765,100 +734,6 @@ class QaTests(unittest.TestCase):
         self.assertEqual((self.root / ".git/index").read_bytes(), source_index_before)
 
 
-class PreCommitResolutionTests(unittest.TestCase):
-    def setUp(self):
-        self.runner = load_qa().runner
-        self.home = Path("/home/qa-fixture")
-        self.candidate = self.home / ".local/bin/pre-commit"
-        self.target = self.home / ".local/share/uv/tools/pre-commit/bin/pre-commit"
-        self.metadata = {
-            path: SimpleNamespace(st_mode=stat.S_IFDIR | 0o755, st_uid=1000)
-            for path in (*self.candidate.parents, *self.target.parents)
-        }
-        # Namespace-mapped platform ancestors are outside the passwd-home anchor.
-        for path in self.home.parents:
-            self.metadata[path].st_uid = 65534
-        self.metadata[self.candidate] = SimpleNamespace(
-            st_mode=stat.S_IFLNK | 0o777, st_uid=1000
-        )
-        self.metadata[self.target] = SimpleNamespace(
-            st_mode=stat.S_IFREG | 0o755, st_uid=1000
-        )
-        account = pwd.struct_passwd(
-            ("qa-fixture", "x", 1000, 1000, "", str(self.home), "/bin/sh")
-        )
-        for patcher in (
-            mock.patch.object(self.runner.pwd, "getpwuid", return_value=account),
-            mock.patch.object(self.runner.sys, "executable", "/usr/bin/python3"),
-            mock.patch.object(self.runner.shutil, "which", return_value=None),
-            mock.patch.object(Path, "lstat", autospec=True, side_effect=self.lstat),
-            mock.patch.object(
-                self.runner.os, "readlink", return_value=str(self.target)
-            ),
-            mock.patch.object(self.runner.os, "access", return_value=True),
-        ):
-            patcher.start()
-            self.addCleanup(patcher.stop)
-
-    def lstat(self, path):
-        try:
-            return self.metadata[Path(path)]
-        except KeyError as exc:
-            raise FileNotFoundError(path) from exc
-
-    def test_exact_account_owned_uv_entrypoint_resolves_without_ambient_path(self):
-        with mock.patch.dict(
-            os.environ, {"PATH": "/tmp/shadow", "HOME": "/tmp/hostile"}
-        ):
-            self.assertEqual(
-                self.runner.resolve_tool("pre-commit", ROOT), str(self.target)
-            )
-        self.assertNotIn(
-            "/tmp/shadow", self.runner.shutil.which.call_args.kwargs["path"]
-        )
-
-    def test_regular_account_entrypoint_remains_supported(self):
-        self.metadata[self.candidate].st_mode = stat.S_IFREG | 0o755
-        self.assertEqual(
-            self.runner.resolve_tool("pre-commit", ROOT), str(self.candidate)
-        )
-
-    def test_entrypoint_rejects_untrusted_ownership_modes_and_symlink_parents(self):
-        mutations = (
-            (self.candidate, "st_uid", 1001),
-            (self.target, "st_uid", 1001),
-            (self.target, "st_mode", stat.S_IFREG | 0o775),
-            (self.target, "st_mode", stat.S_IFLNK | 0o777),
-            (self.target.parent, "st_mode", stat.S_IFDIR | 0o777),
-            (self.target.parent, "st_mode", stat.S_IFLNK | 0o777),
-            (self.home, "st_mode", stat.S_IFLNK | 0o777),
-            (self.home / ".local", "st_uid", 65534),
-        )
-        for path, field, value in mutations:
-            with self.subTest(path=path, field=field, value=value):
-                old = getattr(self.metadata[path], field)
-                setattr(self.metadata[path], field, value)
-                self.assertIsNone(self.runner.resolve_tool("pre-commit", ROOT))
-                setattr(self.metadata[path], field, old)
-
-    def test_entrypoint_rejects_escape_and_arbitrary_install_targets(self):
-        for target in (
-            "/tmp/pre-commit",
-            str(ROOT / "pre-commit"),
-            str(self.home / "other/pre-commit"),
-        ):
-            with (
-                self.subTest(target=target),
-                mock.patch.object(self.runner.os, "readlink", return_value=target),
-            ):
-                self.assertIsNone(self.runner.resolve_tool("pre-commit", ROOT))
-        self.assertIsNone(self.runner.resolve_tool("pre-commit", self.home))
-
-    def test_entrypoint_must_be_executable(self):
-        with mock.patch.object(self.runner.os, "access", return_value=False):
-            self.assertIsNone(self.runner.resolve_tool("pre-commit", ROOT))
-
-
 if __name__ == "__main__":
     unittest.main()
 
@@ -888,7 +763,8 @@ class LocalEvidenceTests(unittest.TestCase):
         env["LANG"] = "C.UTF-8"
         self.assertNotEqual(initial, identity(paths=("gone.txt",)))
         self.assertNotEqual(initial, identity(base="base-b"))
-        self.assertNotEqual(initial, identity(lane="all-files"))
+        with self.assertRaisesRegex(ValueError, "lane"):
+            identity(lane="all-files")
         gate["argv"] = ["python3", "changed.py"]
         self.assertNotEqual(initial, identity())
         gate["argv"] = ["python3", "check.py"]
@@ -1165,7 +1041,7 @@ class LocalEvidenceTests(unittest.TestCase):
             return self.qa.gate_input_identity(
                 self.root,
                 gate,
-                lane="all-files",
+                lane="affected",
                 paths=("file.txt",),
                 base_ref=base,
                 environment={"LANG": "C.UTF-8"},
@@ -1193,138 +1069,9 @@ class LocalEvidenceTests(unittest.TestCase):
             self.git("update-ref", "refs/remotes/origin/main", advanced)
             self.assertNotEqual(original, identity(), "named ref changed")
             self.git("checkout", "--detach", head)
-            self.assertEqual(self.qa.base_revision(self.root, "ci", base), base)
-            self.assertEqual(self.qa.base_revision(self.root, "ci", None), first)
-            self.assertNotEqual(
-                self.qa.base_revision(self.root, "ci", base),
-                self.qa.base_revision(self.root, "ci", None),
-            )
-
-    def test_full_and_ci_execute_registry_completely_without_local_evidence(self):
-        import hashlib
-        import io
-        from contextlib import redirect_stdout
-
-        kustomization = self.root / "gitops/apps/root/kustomization.yaml"
-        kustomization.parent.mkdir(parents=True)
-        kustomization.write_text("fixture\n")
-        self.git("add", "gitops/apps/root/kustomization.yaml")
-        self.git("commit", "-qm", "add platform report fixture")
-        target = "gitops/apps/root"
-        row = {
-            "target": target,
-            "depth": "render",
-            "tool": "kustomize",
-            "toolVersion": "v5.8.1",
-            "fallback": "none",
-            "result": "PASS",
-        }
-        platform_report = json.dumps(
-            {
-                "version": 2,
-                "results": [
-                    row
-                    | {
-                        "depth": "syntax",
-                        "tool": "none",
-                        "toolVersion": "none",
-                        "fallback": "pre-commit-check-yaml",
-                        "result": "DEFER",
-                    },
-                    row,
-                    row
-                    | {"target": f"{target}#v1:ConfigMap", "depth": "schema-policy"},
-                    row | {"depth": "product-semantic"},
-                    row
-                    | {
-                        "depth": "live-observation",
-                        "tool": "none",
-                        "toolVersion": "none",
-                        "fallback": "operator-live-check",
-                        "result": "DEFER",
-                    },
-                ],
-            }
-        )
-        contract = self.qa.contract_module.validate_contract(ROOT)
-        identifiers = contract["profiles"]["full"]
-        real_run = self.qa.runner.run_bounded_command
-        for profile, failed_gate in (
-            ("full", None),
-            ("ci", None),
-            ("ci", "secret-handling"),
-        ):
-            expected_ids = identifiers
-            arguments = ["qa.py", profile, "--root", str(self.root)]
-            observed = []
-
-            def child(argv, *, cwd, env, **kwargs):
-                if argv[0] == "/usr/bin/git":
-                    return real_run(argv, cwd=cwd, env=env, **kwargs)
-                observed.append(argv)
-                failed = failed_gate and "scripts/check-secret-handling.sh" in argv
-                output = (
-                    platform_report
-                    if "scripts/validation/platform/assurance.py" in argv
-                    else "[PASS] repository quality gates passed"
-                )
-
-                # Gate orchestration uses typed observations; actual process
-                # timeout and containment controls remain in the runner tests.
-                def stream(value):
-                    payload = value.encode("utf-8")
-                    return self.qa.runner.StreamObservation(
-                        observed_bytes=len(payload),
-                        sha256=hashlib.sha256(payload).hexdigest(),
-                        retained=payload,
-                        complete=True,
-                    )
-
-                return self.qa.runner.BoundedCommandResult(
-                    status="completed",
-                    returncode=1 if failed else 0,
-                    stdout=stream(output + "\n"),
-                    stderr=stream(""),
-                    cleanup_complete=True,
-                )
-
-            with (
-                self.subTest(profile=profile, failed_gate=failed_gate),
-                mock.patch.object(sys, "argv", arguments),
-                mock.patch.object(
-                    self.qa.contract_module, "validate_contract", return_value=contract
-                ),
-                mock.patch.object(
-                    self.qa.contract_module,
-                    "select_paths",
-                    return_value={"validators": identifiers},
-                ),
-                mock.patch.object(
-                    self.qa.runner,
-                    "resolve_tool",
-                    side_effect=lambda tool, root: "/trusted/" + tool,
-                ),
-                mock.patch.object(
-                    self.qa.runner, "run_bounded_command", side_effect=child
-                ),
-                mock.patch.object(
-                    self.qa,
-                    "LocalEvidenceStore",
-                    side_effect=AssertionError("full/ci must not read local evidence"),
-                ),
-                redirect_stdout(io.StringIO()) as output,
-            ):
-                self.assertEqual(self.qa.main(), 1 if failed_gate else 0)
-            self.assertEqual(len(observed), len(expected_ids))
-            for identifier in expected_ids:
-                expected = "FAIL" if identifier == failed_gate else "PASS"
-                self.assertEqual(
-                    output.getvalue().count(
-                        "[" + expected + "] " + identifier + " command="
-                    ),
-                    1,
-                )
-            self.assertNotIn("[REUSED]", output.getvalue())
+            self.assertEqual(self.qa.base_revision(self.root, "quick", base), base)
+            expected = self.git("merge-base", "HEAD", "origin/main").decode().strip()
+            self.assertEqual(self.qa.base_revision(self.root, "quick", None), expected)
 
     def test_record_is_private_and_rejects_forged_or_unreadable_data(self):
         store = self.qa.LocalEvidenceStore(self.root)

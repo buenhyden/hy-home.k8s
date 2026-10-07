@@ -39,26 +39,25 @@ metadata; static parity never proves discovery, model resolution, or execution.
   including applicable new files and deletion/rename paths. Record selection
   and the snapshot actually checked.
 - **staged**: validate the exact logical Git index in an isolated snapshot.
-  Unstaged repairs cannot hide invalid staged content. Working-tree full QA
-  does not replace this byte-specific evidence; commit-message hooks remain
-  separate.
-- **full / all-files**: select the local full QA profile for a change to shared
-  QA routing or execution, or for an explicitly bounded audit that requires
-  whole-repository evidence. It validates the final working tree, including
-  one unit discovery and one all-files pre-commit invocation at the explicit
-  manual stage. Commit-msg remains separate. Do not repeat either command on
-  unchanged bytes outside that profile. A push, PR or main merge alone does not
-  select full QA.
+  Unstaged repairs cannot hide invalid staged content; commit-message hooks
+  remain separate.
+- **retired full / ci sweep**: historical local `full` and `ci` all-files
+  profiles and blanket unit discovery are retained as past evidence, not
+  selected for current completion. Even a shared QA-contract change selects
+  its actual affected gates and named behavior, Archive and security unit
+  regressions; it does not revive a repository-wide sweep. An explicit audit
+  identifies its purpose, inputs and bounded named checks under the active
+  registry before execution.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
-- **ci**: the CLI `ci` profile is a compatibility alias of local `full` while
-  registered. It does not imply GitHub Actions execution. Hosted automation
+- **hosted**: a former local `ci` alias never established GitHub Actions
+  execution. Hosted automation
   runs branch or repository metadata checks and the separately selected shared
   style check on PR inputs. A deployment style route applies only if a real
   deployment workflow exists. Hosted automation does not run local full, unit or
-  document-content QA. A hosted summary reports only what its jobs actually
-  observed; unexecuted hosted full QA is `NOT_RUN`, never inferred from a
-  successful local run, style job or summary.
+  document-content QA. A hosted result reports only what its jobs actually
+  observed; old full-QA `NOT_RUN` records remain historical, never a current
+  required gate or a proxy for a successful local run or style job.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -69,6 +68,10 @@ leaf once for identical input bytes and history, configuration, tool identity,
 scope, mode and trust. Distinct index, working-tree, integrated-main and remote
 observations require their own evidence where those inputs differ. A phase name
 or a second caller does not justify replaying an already proven leaf.
+Treat local candidate-code QA as validation in the authorized workspace, not
+as an isolation boundary for adversarial PR code. The hosted PR style route
+has a separate trusted-base source, merge input and run identity; neither
+route certifies the other's trust conditions.
 
 Document link and owner checks execute only through selected local QA. Hosted
 metadata jobs neither run nor certify them. A local repository link-target
@@ -196,7 +199,7 @@ not a policy sentence, owns the exact gate list and per-check limits.
 An ordinary authored document or README router change that alters only prose
 or navigation selects the common diff, style and commit-message checks plus
 document content checks for profile, relationships, links and lifecycle state.
-Do not select repository-wide quality, agent, infrastructure, unit or full QA
+Do not select repository-wide quality, agent, infrastructure or unit sweeps
 gates solely because the changed path is Markdown. A change to a governance,
 provider or native contract, a Stage 99 form, schema or registry, or executable
 implementation is a contract or behavior change: select its necessary focused
@@ -209,13 +212,13 @@ above.
 
 | Route | Required owner and evidence |
 | --- | --- |
-| Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes; full QA is not an editing prerequisite. |
+| Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local full, unit or document-content QA; remote protection remains `DEFER` when unobserved. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
-| Selected local full handoff | After tool, time, output and native approval preflight, run full once on the final working tree when shared QA machinery changes or an explicit bounded audit requires it. Reuse a successful identical local style leaf rather than replaying it in full. |
+| Local handoff | Resolve tool, time, output and native approval preflight for applicable selected gates and named unit regressions, including continuing Archive and security guarantees. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
 
 The registry selects gates within a profile. Reuse only a successful result for
 identical declared input bytes and history, configuration, tool identity, scope,
@@ -238,13 +241,11 @@ cannot establish hosted execution or remote branch protection.
    message under Git policy and commit through normal active hooks;
    record the leaf actually run and do not duplicate it merely because the
    hook and manual command share a caller boundary.
-4. **delivery validation**: perform selected local full once when the delivery
-   table requires it. Record hosted branch metadata and selected style at their
-   own PR or deployment SHA/run when observed; an unrun hosted full QA remains
-   `NOT_RUN`. Unit discovery and the
-   all-files pre-commit gate run once per identical input and mode. Recheck an
-   integrated-main input only to the extent changed bytes or history invalidate
-   prior evidence.
+4. **delivery validation**: review the selected focused units and purpose gates
+   against the final branch input. Record hosted branch metadata and selected
+   style at their own PR or deployment SHA/run when observed. Retired full/ci
+   and blanket unit discovery add no completion gate. Recheck an integrated-main
+   input only to the extent changed bytes or history invalidate prior evidence.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself
    never fixes source files. A failed required delivery check keeps the work incomplete.
@@ -259,8 +260,8 @@ a matching filename set alone never justifies evidence reuse.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve
-runner boundary failures and optional-tool deferrals rather than treating them as
-successful full coverage.
+runner boundary failures and optional-tool deferrals rather than treating them
+as successful selected coverage.
 
 ### Handoff evidence contract
 

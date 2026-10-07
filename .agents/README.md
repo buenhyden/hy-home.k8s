@@ -81,9 +81,11 @@ execution registry owns mutable gate commands and limits.
 
 Run `python3 scripts/validate-agent-governance.py --root .` when role, skill,
 permission or routing contracts are selected. Use the local affected and
-exact-index profiles for their actual changed scope; select `python3 scripts/qa.py full`
-only for shared QA machinery changes or an explicitly bounded audit after
-resource preflight. No role-projection generator is used. Native discovery,
+exact-index profiles for their actual changed scope. For shared QA machinery
+changes or an explicitly bounded audit, select the registered purpose gates
+and named behavior, Archive and security regressions after resource preflight;
+the retired full/ci sweep is not a completion command. No role-projection
+generator is used. Native discovery,
 invocation, permissions and hook delivery require separate evidence from a
 fresh session.
 

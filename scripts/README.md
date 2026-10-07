@@ -34,7 +34,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 - 문서 profile, lifecycle, link, owner, archive 검증
 - Agent registry, provider projection, loop, CI 계약 검증
-- affected·staged·all-files routing과 제한된 subprocess 실행
+- 선택된 affected·staged routing과 목적별 제한된 subprocess 실행
 - GitOps, Kubernetes, Vault/ESO, GitHub Actions, CI Python 검사
 - 아직 더 좁은 전용 owner가 없는 저장소 전체 계약
 
@@ -76,7 +76,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
-| `run-validation-lane.py` | affected, staged, all-files lane의 제한된 실행과 결과 정규화 |
+| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 최종 트리나 정확한 index 스냅샷에서 실행한다. validator argv나 규칙 구현은 담지 않는다. |
 | `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
@@ -89,7 +89,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
 | `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py`, `archive_cutover_manifest.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
-| `run-archive-contract-tests.py` | Stage 98 archive 계약 회귀 테스트를 quick·staged gate 하나로 실행한다. full에서는 `unit-tests`가 이를 포함한다(`coveredBy`). |
+| `run-archive-contract-tests.py` | Stage 98 Archive 계약 회귀를 해당 입력의 quick·staged 또는 명시적으로 선택된 목적 gate에서 실행한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 
 ### Agent governance owners
 
@@ -136,10 +136,11 @@ required-check 성공이나 설정을 주장하지 않는다.
 
 가장 작은 owner부터 실행하고 현재 작업에 필요한 affected·staged lane을
 선택한다. 로컬 커밋마다 정확한 index 기준의 staged QA가 필요하다. 이 public
-저장소의 QA는 로컬에서 실행한다. GitHub Actions의 branch metadata 결과는
-로컬 QA의 대체 증거가 아니며 호스팅 QA는 `NOT_RUN`으로 기록한다. 변경이
-global QA 계약을 바꾸거나 명시적인 한정 감사이면 마지막 트리에서 full을
-한 번 실행한다. 나머지 선택과 인계는
+저장소의 목적·단위 QA는 로컬에서 실행한다. GitHub Actions의 branch
+metadata와 PR style 결과는 로컬 QA의 대체 증거가 아니다. global QA 계약을
+바꾸거나 한정 감사를 수행해도 해당 목적 gate와 명명된 단위 회귀만 선택한다.
+긴 full/ci 일괄 검사와 blanket unit discovery는 현재 완료 조건이 아니다.
+나머지 선택과 인계는
 [Quality policy](../.agents/governance/quality.md#delivery-ownership)가 소유한다.
 
 ```bash
@@ -150,11 +151,11 @@ git diff --check
 선택한 gate만 실행한다. 구현·validator 계약을 바꾼 경우에는 해당 동작의
 focused 회귀를 추가로 선택한다.
 
-Full QA가 선택되지 않은 일반 변경에는 실행 결과 `NOT_RUN`과
-"이번 변경의 필수 검사 아님"이라는 선택 근거를 기록한다. 선택된 required
-full을 실행하지 못했다면 `NOT_RUN` 또는 권한·환경 공백의 `DEFER`와 다음
-owner를 기록한다. `NOT_APPLICABLE`는 검사 대상이 없는 경우에만 사용한다.
-호스팅 branch 결과를 full QA PASS로 승격하지 않는다.
+현재 선택된 필수 목적 gate나 명명된 회귀를 실행하지 못했다면 `NOT_RUN`
+또는 권한·환경 공백의 `DEFER`와 다음 owner를 기록한다. 퇴역한 full/ci와
+blanket discovery의 과거 `NOT_RUN`·FAIL·PASS는 당시 입력의 역사로 보존한다.
+`NOT_APPLICABLE`는 검사 대상이 없는 경우에만 사용한다. 호스팅 branch나
+style 결과를 로컬 목적 QA PASS로 승격하지 않는다.
 
 QA는 추적 경로와, 해당하는 ignore되지 않은 미추적 경로를 직접 고른다. 숨김
 경로, 삭제, 이름 변경도 포함한다. 작업 트리 변경에는 `qa.py quick`을, 정확한
@@ -176,7 +177,8 @@ python3 -m venv "$VALIDATION_VENV"
 "$VALIDATION_VENV/bin/python" -m pip install --disable-pip-version-check \
   --only-binary :all: --require-hashes \
   --requirement .github/requirements/ci-validation.txt
-"$VALIDATION_VENV/bin/python" scripts/qa.py full
+# After staging the reviewed logical input:
+"$VALIDATION_VENV/bin/python" scripts/qa.py staged
 ```
 
 먼저 `VALIDATION_VENV`를 승인된 환경 경로로 설정한다. Python gate에는 호출한
@@ -196,7 +198,7 @@ formatter는 직접 호출하지 말고 `pre-commit`으로 실행한다. hook �
 `ruff-format`을 Python으로만 좁혀 둔다. 그냥 명령을 실행하면 Markdown까지
 대상으로 삼아, 작성된 문서와 보관된 문서 안의 fenced snippet을 다시 쓴다.
 shfmt와 공백 수정도 리뷰를 거친 소스 경로에 대해 명시적으로 `--files`로 실행하는
-작업이다. 선택된 full profile은 manual stage를 격리된 스냅샷에서 한 번 실행하며 formatter가
+작업이다. 선택된 staged style은 격리된 정확한 index에서 실행하며 formatter가
 무언가를 바꾸면 검증이 실패한다. commit-msg는 별도이며 실제 후보 메시지에는
 공통 Git 정책을 따른다.
 

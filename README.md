@@ -220,15 +220,23 @@ outside-doc 참조 경계는 문서 저술 정책이
 - [`./.pre-commit-config.yaml`](./.pre-commit-config.yaml)
 - [`./.github/repository-surface.md`](./.github/repository-surface.md)
 
-로컬 검증은 공통 QA 진입점을 사용한다. `quick`은 변경 범위, `full`은 인계 전 전체 저장소의 정적 검증을 수행한다. CI는 같은 차단 게이트를 `ci` 프로필로 실행한다.
+로컬 검증은 공통 QA 진입점을 사용한다. `quick`은 변경 범위, `staged`는
+정확한 Git index를 검사한다. 필요한 동작·Archive·보안 단위 검사와 목적
+gate를 현재 Registry에서 선택한다. 긴 `full`/`ci` 일괄 검사와 blanket unit
+discovery는 현재 완료 조건이 아니다. GitHub Actions는 PR branch metadata와
+선택된 style만 별도 입력에서 검사한다.
 
 ```bash
 python3 scripts/qa.py --list
 python3 scripts/qa.py quick
-python3 scripts/qa.py full
+python3 scripts/qa.py staged
 ```
 
-`full`은 독립 스냅샷에서 pre-commit과 전체 테스트를 포함한다. 동일 바이트에 대해 하위 검사 전체를 다시 실행하지 않는다. 필수 도구가 없으면 실패로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내 (`docs/05.operations/guides/README.md`)를 따른다. 검증기의 bounded timeout·출력·프로세스 정리 보장은 유지된다.
+로컬 커밋 직전 선택된 lint·format과 실제 메시지를 확인한다. 동일 입력의
+검사를 다른 단계라는 이유로 다시 실행하지 않는다. 필수 도구가 없으면
+실패나 환경 공백으로 기록하며, 설치 절차와 준비 조건은 QA 운영 안내
+(`docs/05.operations/guides/README.md`)를 따른다. 검증기의 bounded
+timeout·출력·프로세스 정리 보장은 유지된다.
 
 표면별 승인 경계와 역할·스킬 정본은 [에이전트 거버넌스](.agents/README.md)가 라우팅한다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
 

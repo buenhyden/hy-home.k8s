@@ -32,8 +32,8 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 stages, arguments and exclusions. Its local staged and selected manual QA
 invocations share the same rule owner; a hosted branch-policy job is not a
 formatter. A separate hosted PR style job may invoke the same selected style
-rule against its own merge input; it does not certify local full, unit or
-document-content QA. `.editorconfig` reaches editors only and proves nothing
+rule against its own merge input; it does not certify local purpose or
+document-content checks. `.editorconfig` reaches editors only and proves nothing
 about committed bytes.
 
 ## Current Contract
@@ -50,8 +50,9 @@ about committed bytes.
   Markdown. A change to a formatting rule or hook configuration needs its own
   focused contract regression under [quality](quality.md#ordinary-document-selection).
 - Run the selected lint and format rules on the final logical index immediately
-  before a local commit. The local full profile may reuse a successful identical
-  style leaf under [quality](quality.md#validation-lane-contract). A hosted PR
+  before a local commit. Reuse a successful identical style leaf under
+  [quality](quality.md#validation-lane-contract) instead of running it again in
+  another local caller. A hosted PR
   style check uses the same declared rules on its distinct PR merge input and
   records its own SHA/run; a successful local result cannot stand in for it.
   A deployment style check requires an actual deployment workflow and observed

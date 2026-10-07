@@ -70,9 +70,9 @@ live state나 외부 secret/runtime에 영향을 줄 수 있는 명령을 포함
 검사를 해제하지 않는다. `redacted`나 `metadata-only`라는 가까운 문구는
 raw secret 출력 명령의 실제 출력을 바꾸지 않는다.
 정확한 명령 패턴과 허용 marker 목록의 machine owner는
-repository quality validator의 command boundary 규칙이며, `python3
-scripts/qa.py full`이 authored docs와 examples를 스캔해 marker가 없으면
-실패한다. live 변경 예외의 승인 조건은
+repository quality validator의 command boundary 규칙이며, 해당 변경에
+선택된 문서 내용·repository quality gate가 authored docs와 examples를
+스캔해 marker가 없으면 실패한다. live 변경 예외의 승인 조건은
 [POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
 소유한다. 공통 승인 원본 확인과 저술/실행 권한은
 [Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.

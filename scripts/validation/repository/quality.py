@@ -1246,7 +1246,6 @@ for phrase in [
     "allowed_branch_regex",
     "PR base branch must be main",
     "branch-policy result=",
-    "full-qa result=NOT_RUN verdict=NOT_RUN",
 ]:
     if phrase not in branch_policy_text:
         fail(f"{rel(ci_path)} ci-summary missing validation phrase: {phrase}")

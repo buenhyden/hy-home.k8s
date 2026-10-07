@@ -136,7 +136,8 @@ their owning migration work package moves them.
   and binds each retention class to the anchor states it admits. Frozen records
   and ledgers route by exact path, so no new sealed record or path ledger can be
   created. The lifecycle gate admits a retained unit through its catalog row,
-  and full validation re-verifies every row against the object it names.
+  and the current Archive integrity gate re-verifies every row against the
+  object it names when that contract is selected.
 - A document that moves between active stages in one change, keeping its
   `artifact_id`, family, and state, is tracked by identity lineage and needs no
   Stage 98 record. A scope migration is recorded only when a consumer outside

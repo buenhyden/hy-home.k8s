@@ -35,13 +35,11 @@ schema_errors = _schema_owner.schema_errors
 
 CONTRACT_PATH = PurePosixPath("scripts/validation/registry.json")
 SCHEMA_PATH = PurePosixPath("scripts/validation/registry.schema.json")
-SELECTOR_LANES = ("affected", "staged", "all-files", "ci")
+SELECTOR_LANES = ("affected", "staged")
 LANES = (
     "affected",
     "staged",
-    "all-files",
     "message/manual",
-    "ci",
     "remote/live",
     "inventory",
 )
@@ -159,22 +157,6 @@ SKILL_PACKAGE_ROOT = ".agents/skills/"
 
 
 def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | None:
-    approved_commands = {
-        "unit-tests": [
-            "python3",
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            "tests",
-            "-t",
-            ".",
-            "-f",
-        ],
-        "pre-commit": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
-    }
-    if identifier in approved_commands and list(argv) == approved_commands[identifier]:
-        return None
     if any(SAFE_ARG.fullmatch(argument) is None for argument in argv):
         fail(
             "SURFACE-VALIDATOR-ARGV",
@@ -278,19 +260,11 @@ def validator_script_paths(
 
 
 def profile_gate_ids(contract: Mapping[str, Any], profile: str) -> list[str]:
-    """Return one profile's gate list, resolving an alias to the profile it names.
-
-    A profile that runs exactly the gates of another one records that in
-    `profileAliases` instead of repeating the array, so the two cannot drift
-    apart and no test is needed to hold them in agreement. Callers name a
-    profile and never have to know which of the two forms carries it."""
+    """Return only an explicitly registered selected local profile."""
     profiles = contract["profiles"]
     if profile in profiles:
         return list(profiles[profile])
-    target = contract.get("profileAliases", {}).get(profile)
-    if target not in profiles:
-        fail("SURFACE-PROFILE-ALIAS", f"{profile} names no profile")
-    return list(profiles[target])
+    fail("SURFACE-PROFILE-ALIAS", f"{profile} names no profile")
 
 
 def validate_contract(
@@ -339,6 +313,7 @@ def validate_contract(
             "include-existing-markdown ownership differs from the exact document validator set",
         )
     selected_style = validators.get("selected-style")
+    selected_nonstyle = validators.get("selected-nonstyle")
     if (
         selected_style is None
         or selected_style.get("pathInput") != "include-existing-files"
@@ -350,16 +325,21 @@ def validate_contract(
             if validator.get("pathInput") == "include-existing-files"
             or validator.get("globalSelection") == "staged-changed"
         }
-        != {"selected-style"}
+        != {"selected-style", "selected-nonstyle"}
+        or selected_nonstyle is None
+        or selected_nonstyle.get("pathInput") != "include-existing-files"
+        or selected_nonstyle.get("globalSelection") != "staged-changed"
+        or selected_nonstyle["lanes"] != ["staged"]
     ):
         fail(
             "SURFACE-VALIDATOR-PATH-INPUT",
             "the staged selected-file style input has one registered owner",
         )
     if (
-        "selected-style" not in contract["profiles"]["staged"]
+        not {"selected-style", "selected-nonstyle"}
+        <= set(contract["profiles"]["staged"])
         or "selected-style" in contract["profiles"]["quick"]
-        or "selected-style" in contract["profiles"]["full"]
+        or "selected-nonstyle" in contract["profiles"]["quick"]
     ):
         fail(
             "SURFACE-VALIDATOR-PATH-INPUT",
@@ -424,36 +404,16 @@ def validate_contract(
     for profile, identifiers in profiles.items():
         if any(identifier not in validators for identifier in identifiers):
             fail("SURFACE-PROFILE-REFERENCE", profile)
-    # The schema owns which names may be an alias and forbids a profile of the
-    # same name, so only the target needs checking here.
-    for alias, target in contract.get("profileAliases", {}).items():
-        if target not in profiles:
-            fail("SURFACE-PROFILE-ALIAS", f"{alias} resolves to no profile: {target}")
-    full = set(profile_gate_ids(contract, "full"))
-    # A fast-lane gate may declare the full-profile gate that already runs its
-    # checks, so the pre-handoff profile runs them once, never twice.
-    covered = set()
-    for identifier, validator in validators.items():
-        coverer = validator.get("coveredBy")
-        if coverer is None:
-            continue
-        if (
-            coverer not in validators
-            or coverer not in full
-            or "coveredBy" in validators[coverer]
-            or identifier in full
-            or set(validator["lanes"]) & set(validators[coverer]["lanes"])
-        ):
-            fail(
-                "SURFACE-COVERED-BY",
-                f"{identifier} must be absent from full and share no lane "
-                f"with the full-profile gate that covers it: {coverer}",
-            )
-        covered.add(identifier)
-    if full | covered != set(validators):
+    selected = set(profiles["quick"]) | set(profiles["staged"])
+    static = {
+        identifier
+        for identifier, row in validators.items()
+        if row["evidenceLane"] == "repo-static"
+    }
+    if selected != static:
         fail(
             "SURFACE-PROFILE-COVERAGE",
-            "the pre-handoff profile must cover every registered gate",
+            "selected local profiles must cover every registered static gate",
         )
     return contract
 
@@ -719,11 +679,11 @@ def json_output(result: dict[str, Any]) -> str:
 def validate_required_validators_have_a_runner(
     contract: Mapping[str, Any], root: Path
 ) -> None:
-    """Required static checks belong to the shared full/ci profiles."""
+    """Required static checks belong to a selected local profile."""
+    selected = set(contract["profiles"]["quick"]) | set(contract["profiles"]["staged"])
     for validator in contract["validators"]:
         if not validator["optional"] and validator["evidenceLane"] == "repo-static":
-            runner = validator.get("coveredBy", validator["id"])
-            if runner not in contract["profiles"]["full"]:
+            if validator["id"] not in selected:
                 fail("SURFACE-VALIDATOR-RUNNER", validator["id"])
     if not (root / "scripts/qa.py").is_file():
         fail("SURFACE-VALIDATOR-RUNNER", "shared QA entrypoint is missing")

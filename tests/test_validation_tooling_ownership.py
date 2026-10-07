@@ -356,7 +356,7 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         self.assertNotIn("<<'PY'", aggregate)
         self.assertNotIn("<<PY", aggregate)
         self.assertEqual(aggregate.count("run-validation-lane.py"), 1)
-        self.assertIn("all-files", aggregate)
+        self.assertIn("staged", aggregate)
         embedded_validators = re.findall(
             r"scripts/validate-[a-z0-9-]+\.(?:py|sh)",
             aggregate,

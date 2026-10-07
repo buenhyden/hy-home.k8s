@@ -58,10 +58,13 @@ Spec or Task identities and past inventory counts are not recurring success
 criteria.
 
 Ordinary document edits select content conformance. A validator or shared
-implementation change selects its meaningful behavioral regressions. Full QA
-is selected for global QA-contract changes or an explicit bounded audit, not
-each small change. Required tools, execution time, output limits and native
-execution approval are resolved before implementation.
+implementation change selects its meaningful named behavioral, Archive and
+security regressions and affected purpose gates. The later user-directed
+retirement removes the long local full/ci sweep and blanket unit discovery
+from completion, including global QA-contract changes. An explicit audit
+selects bounded named checks for its actual purpose and input rather than
+reinstating the sweep. Required tools, execution time, output limits and
+native execution approval are resolved before implementation.
 
 Editing uses focused and affected checks. Logical commits validate the exact
 index, required lint and format on that final index immediately before commit,
@@ -77,8 +80,9 @@ branch-policy verdict. Missing metadata, an invalid PR base or source branch,
 or an unexpected event/ref fails closed; PR branch policy is not applicable
 on main. A separate hosted PR style check may run the same declared style
 rules against its distinct merge SHA/run; it does not inherit local PASS.
-Hosted full, unit and document-content QA stay `NOT_RUN` when unexecuted,
-including when the metadata summary or style check succeeds. Deployment style
+Historical hosted full, unit and document-content QA stay `NOT_RUN` when
+unexecuted and do not become current completion gates when the metadata
+summary or style check succeeds. Deployment style
 evidence requires an actual deployment workflow and run. Actual remote
 required checks remain an observed external boundary.
 
@@ -194,8 +198,8 @@ and per-push hosted attestation; hosted PR style remains a distinct final
 defense for its own input.
 Maintainers must provide local tools and retain meaningful local evidence.
 Affected selection and reuse require accurate dependencies; a mistake can
-omit a necessary check, so changes to that graph need focused refusal cases
-and the bounded full validation selected by the change contract. Release
+omit a necessary check, so changes to that graph need focused refusal cases,
+named unit regressions and the affected purpose gates. Release
 publication still depends on authenticated remote state, and any existing
 server-required checks need an explicitly observed transition.
 

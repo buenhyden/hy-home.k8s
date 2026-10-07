@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Run shared repository QA over an isolated final-tree or exact-index snapshot."""
+"""Run selected repository QA over an isolated working-tree or exact-index snapshot."""
 
 from __future__ import annotations
 
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import hashlib
 import importlib.util
 import importlib.metadata
@@ -33,9 +33,7 @@ from validation.repository.bounded_io import (  # noqa: E402
 
 # Match the existing governance candidate reader's per-file bound. Git indexes
 # contain the whole path table and receive a separate finite metadata allowance.
-# Every profile a caller may name, including one the contract carries as an
-# alias rather than as its own gate array.
-PROFILES = ("quick", "staged", "full", "ci")
+PROFILES = ("quick", "staged")
 SNAPSHOT_FILE_LIMIT_BYTES = 8 * 1024 * 1024
 GIT_INDEX_LIMIT_BYTES = 16 * 1024 * 1024
 
@@ -45,18 +43,24 @@ def git(root: Path, *args: str, optional: bool = False) -> bytes | None:
     environment.update(
         GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL="/dev/null", GIT_OPTIONAL_LOCKS="0"
     )
-    result = runner.run_bounded_command(
-        [
-            "/usr/bin/git",
-            "-c",
-            "core.hooksPath=/dev/null",
-            "-c",
-            "core.fsmonitor=false",
-            *args,
-        ],
-        cwd=root,
-        env=environment,
+    index_context = (
+        _disposable_git_index(root) if args and args[0] == "diff" else nullcontext(None)
     )
+    with index_context as disposable_index:
+        if disposable_index is not None:
+            environment["GIT_INDEX_FILE"] = str(disposable_index)
+        result = runner.run_bounded_command(
+            [
+                "/usr/bin/git",
+                "-c",
+                "core.hooksPath=/dev/null",
+                "-c",
+                "core.fsmonitor=false",
+                *args,
+            ],
+            cwd=root,
+            env=environment,
+        )
     if result.status != "completed" or not result.cleanup_complete:
         raise ValueError("Git snapshot command failed: " + runner.observation(result))
     if result.returncode:
@@ -64,6 +68,26 @@ def git(root: Path, *args: str, optional: bool = False) -> bytes | None:
             return None
         raise ValueError("Git snapshot command failed: " + runner.observation(result))
     return result.stdout.retained
+
+
+@contextmanager
+def _disposable_git_index(root: Path):
+    """Let read-only diffs refresh a copy, never the source or private index."""
+    canonical = index_file(root)
+    before = read_bounded_bytes(canonical, max_bytes=GIT_INDEX_LIMIT_BYTES)
+    temporary = tempfile.NamedTemporaryFile(
+        mode="w+b", prefix="qa-read-index-", dir=canonical.parent, delete=False
+    )
+    disposable = Path(temporary.name)
+    try:
+        with temporary:
+            temporary.write(before)
+            temporary.flush()
+        yield disposable
+        if read_bounded_bytes(canonical, max_bytes=GIT_INDEX_LIMIT_BYTES) != before:
+            raise ValueError("Git source index changed during read")
+    finally:
+        disposable.unlink(missing_ok=True)
 
 
 def paths_from(payload: bytes) -> list[str]:
@@ -287,20 +311,26 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         yield snapshot
 
 
-def index_tree_identity(root: Path) -> bytes:
-    """Return the logical index entries without index file metadata."""
-    return git(root, "ls-files", "--stage", "-z")
-
-
-def require_unchanged_snapshot(root: Path, index_tree_before: bytes) -> None:
+def require_unchanged_private_snapshot(
+    root: Path,
+    *,
+    head_before: bytes,
+    raw_index_before: bytes,
+    tree_before: dict[str, tuple[int, bytes] | None],
+) -> None:
+    """Catch HEAD, index, and file changes without refreshing the private index."""
+    changed: list[str] = []
+    if git(root, "rev-parse", "HEAD") != head_before:
+        changed.append("HEAD")
     if (
-        index_tree_identity(root) != index_tree_before
-        or git(root, "diff", "--name-only", "-z")
-        or git(root, "ls-files", "--others", "--exclude-standard", "-z")
+        read_bounded_bytes(index_file(root), max_bytes=GIT_INDEX_LIMIT_BYTES)
+        != raw_index_before
     ):
-        raise ValueError(
-            "QA modified snapshot files; review formatter changes before rerunning"
-        )
+        changed.append("raw-index")
+    if tree_identity(root) != tree_before:
+        changed.append("file-bytes")
+    if changed:
+        raise ValueError("QA private snapshot changed: " + ",".join(changed))
 
 
 def base_revision(root: Path, profile: str, value: str | None) -> str:
@@ -314,9 +344,6 @@ def base_revision(root: Path, profile: str, value: str | None) -> str:
         ):
             raise ValueError("unsafe base reference")
         return git(root, "rev-parse", "--verify", value + "^{commit}").decode().strip()
-    if profile == "ci":
-        parent = git(root, "rev-parse", "--verify", "HEAD^", optional=True)
-        return parent.decode().strip() if parent else "EMPTY"
     baseline = git(root, "merge-base", "HEAD", "origin/main", optional=True)
     return (
         baseline.decode().strip()
@@ -381,7 +408,7 @@ def gate_input_identity(
     environment: Mapping[str, str],
 ) -> str:
     """Hash a versioned, bounded canonical description of an audited gate input."""
-    if lane not in ("affected", "staged", "all-files"):
+    if lane not in ("affected", "staged"):
         raise ValueError("unsupported reuse lane")
     mode = gate.get("reuse", {}).get("mode")
     if mode not in ("same-lane", "change-scoped"):
@@ -554,44 +581,36 @@ def main() -> int:
                 print(profile + ": " + ", ".join(identifiers))
             return 0
         baseline = base_revision(root, args.profile, args.base_ref)
-        paths = (
-            changed_paths(root, staged=args.profile == "staged")
-            if args.profile in ("quick", "staged")
-            else None
+        paths = changed_paths(root, staged=args.profile == "staged")
+        source_head_before = git(root, "rev-parse", "HEAD")
+        source_index_path = index_file(root)
+        source_index_before = read_bounded_bytes(
+            source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
         )
+        source_tree_before = tree_identity(root)
         with repository_snapshot(root, staged=args.profile == "staged") as snapshot:
             contract = contract_module.validate_contract(snapshot)
-            lane = {
-                "quick": "affected",
-                "staged": "staged",
-                "full": "all-files",
-                "ci": "all-files",
-            }[args.profile]
-            if paths is None:
-                paths = source_paths(snapshot)
+            lane = "staged" if args.profile == "staged" else "affected"
             selected = contract_module.select_paths(contract, paths, lane, snapshot)
             ids = contract_module.profile_gate_ids(contract, args.profile)
-            if args.profile in ("quick", "staged"):
-                ids = [
-                    identifier
-                    for identifier in ids
-                    if identifier in selected["validators"]
-                ]
+            ids = [
+                identifier for identifier in ids if identifier in selected["validators"]
+            ]
             print(
                 f"[INFO] qa profile={args.profile} snapshot={'index' if args.profile == 'staged' else 'working-tree'} gates={len(ids)}"
             )
-            index_tree_before = index_tree_identity(snapshot)
-            store = (
-                LocalEvidenceStore(root)
-                if args.profile in ("quick", "staged")
-                else None
+            private_head_before = git(snapshot, "rev-parse", "HEAD")
+            private_index_before = read_bounded_bytes(
+                index_file(snapshot), max_bytes=GIT_INDEX_LIMIT_BYTES
             )
+            private_tree_before = tree_identity(snapshot)
+            store = LocalEvidenceStore(root)
             validators = {row["id"]: row for row in contract["validators"]}
             identities = {}
             candidates = {}
             for identifier in ids:
                 gate = validators[identifier]
-                if store is None or not gate.get("reuse"):
+                if not gate.get("reuse"):
                     continue
                 effective = dict(gate)
                 effective["argv"] = runner.validator_argv(
@@ -624,11 +643,26 @@ def main() -> int:
                 reuse_candidates=candidates,
                 completed_passes=completed_passes,
             )
-            require_unchanged_snapshot(snapshot, index_tree_before)
-            if store is not None:
-                for identifier in completed_passes:
-                    if identifier in identities:
-                        store.record_pass(identifier, identities[identifier])
+            require_unchanged_private_snapshot(
+                snapshot,
+                head_before=private_head_before,
+                raw_index_before=private_index_before,
+                tree_before=private_tree_before,
+            )
+            if (
+                git(root, "rev-parse", "HEAD") != source_head_before
+                or read_bounded_bytes(
+                    source_index_path, max_bytes=GIT_INDEX_LIMIT_BYTES
+                )
+                != source_index_before
+                or tree_identity(root) != source_tree_before
+            ):
+                raise ValueError(
+                    "source HEAD, index, or selected files changed during QA"
+                )
+            for identifier in completed_passes:
+                if identifier in identities:
+                    store.record_pass(identifier, identities[identifier])
             return result
     except (OSError, ValueError) as exc:
         print("[FAIL] qa: " + runner.encoded(str(exc)[:1024]), file=sys.stderr)

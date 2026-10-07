@@ -47,13 +47,6 @@ class _ContractModule:
         return {"validators": ["repository-quality"]}
 
 
-class _PreCommitContractModule:
-    @staticmethod
-    def select_paths(contract, paths, lane, root):
-        del contract, paths, lane, root
-        return {"validators": ["pre-commit"]}
-
-
 class _RemoteLiveContractModule:
     @staticmethod
     def select_paths(contract, paths, lane, root):
@@ -71,7 +64,7 @@ CONTRACT = {
                 "--root",
                 ".",
             ],
-            "lanes": ["affected", "staged", "all-files"],
+            "lanes": ["affected", "staged"],
             "evidenceLane": "repo-static",
             "optional": False,
             "fallback": {"status": "FAIL", "reason": "required"},
@@ -105,7 +98,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
             {
                 "id": "platform-assurance",
                 "argv": ["python3", "scripts/validate-platform-assurance.py"],
-                "lanes": ["all-files", "ci"],
+                "lanes": ["affected", "staged"],
                 "evidenceLane": "repo-static",
                 "optional": False,
                 "fallback": {"status": "FAIL", "reason": "required"},
@@ -191,7 +184,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
         ):
             status = RUNNER.run_selected(
                 ROOT,
-                "all-files",
+                "staged",
                 ["gitops/apps/root/kustomization.yaml"],
                 self.CONTRACT,
                 _ContractModule,
@@ -220,7 +213,7 @@ class StructuredPlatformResultTest(unittest.TestCase):
         self.assertIn('depth="render"', output)
         self.assertIn('toolVersion="v1.35.0"', output)
         self.assertIn('fallback="operator-live-check"', output)
-        self.assertIn('lane="all-files"', output)
+        self.assertIn('lane="staged"', output)
         self.assertIn("[NOT_APPLICABLE] platform-assurance-depth ", output)
 
     def test_old_syntax_fallback_cannot_impersonate_current_hook_owner(self):
@@ -910,21 +903,10 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertFalse(fake_marker.exists())
             self.assertFalse(startup_marker.exists())
 
-    def test_all_files_executes_repository_quality_with_same_bounded_environment(self):
-        result, output, invoked = self._run(
-            "all-files",
-            {SELFTEST_ENV: "1", CONTEXT_ENV: POST_VALIDATE_CONTEXT},
-        )
-
-        self.assertEqual(result, 0)
-        invoked.assert_called_once()
-        self.assertIn("[PASS] repository-quality ", output)
-        self.assertNotIn("[NOT_APPLICABLE] repository-quality ", output)
-
     def test_staged_lane_executes_contract_selected_validators(self):
         self.assertEqual(
             RUNNER.LOCAL_LANES,
-            ("affected", "staged", "all-files"),
+            ("affected", "staged"),
         )
         result, output, invoked = self._run("staged", {})
 
@@ -980,7 +962,8 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             archive["argv"],
             ["python3", "scripts/validate-archive-integrity.py", "--root", "."],
         )
-        self.assertIn("all-files", archive["lanes"])
+        self.assertIn("affected", archive["lanes"])
+        self.assertIn("staged", archive["lanes"])
         self.assertNotIn("scripts/validate-archive-integrity.py", aggregate)
 
     def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
@@ -2187,55 +2170,6 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 contract_module,
             )
 
-    def test_all_files_executes_each_registry_owner_with_declared_argv(self):
-        contract_module = RUNNER.load_contract_module()
-        contract = contract_module.validate_contract(ROOT)
-        expected = sorted(
-            (row for row in contract["validators"] if "all-files" in row["lanes"]),
-            key=lambda row: row["id"],
-        )
-        completed = bounded_result(QUALITY_MARKER + "\n")
-        platform_completed = bounded_result(
-            json.dumps(StructuredPlatformResultTest().complete_report())
-        )
-
-        def gate_result(argv, **_kwargs):
-            return (
-                platform_completed
-                if "scripts/validation/platform/assurance.py" in argv
-                else completed
-            )
-
-        output = StringIO()
-        with (
-            patch.object(
-                contract_module,
-                "select_paths",
-                return_value={"validators": []},
-            ),
-            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
-            patch.object(RUNNER, "secure_gitleaks_executable", return_value=None),
-            patch.object(
-                RUNNER,
-                "run_bounded_command",
-                side_effect=gate_result,
-            ) as invoked,
-            redirect_stdout(output),
-        ):
-            result = RUNNER.run_selected(
-                ROOT,
-                "all-files",
-                ["README.md"],
-                contract,
-                contract_module,
-            )
-
-        self.assertEqual(result, 0)
-        self.assertEqual(invoked.call_count, len(expected))
-        for call, validator in zip(invoked.call_args_list, expected, strict=True):
-            actual = call.args[0]
-            self.assertEqual(actual[1 : len(validator["argv"])], validator["argv"][1:])
-
     def test_deleted_markdown_is_not_classified_for_current_include_arguments(self):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
@@ -2369,104 +2303,6 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             self.assertIn("--include-path", argv)
 
 
-class PreCommitChildEnvironmentTest(unittest.TestCase):
-    """A closed environment must still let a cold hook install build.
-
-    `HOME` is deliberately unreachable so no ambient startup state is read.
-    Hook environments that build from source ask their toolchain for a cache
-    under `HOME`, so each cache is named explicitly under the account-owned
-    pre-commit directory. Without that, a cold cache fails the whole gate at
-    `mkdir /nonexistent`, which is invisible to any run whose cache is warm.
-    """
-
-    CONTRACT = {
-        "validators": [
-            {
-                "id": "pre-commit",
-                "argv": ["pre-commit", "run", "--all-files", "--hook-stage", "manual"],
-                "lanes": ["all-files"],
-                "evidenceLane": "repo-static",
-                "optional": False,
-                "fallback": {"status": "FAIL", "reason": "required"},
-            }
-        ]
-    }
-
-    def _child_environment(self) -> dict[str, str]:
-        with (
-            patch.object(
-                RUNNER.shutil, "which", return_value="/usr/local/bin/pre-commit"
-            ),
-            patch.object(
-                RUNNER, "run_bounded_command", return_value=bounded_result("")
-            ) as invoked,
-            redirect_stdout(StringIO()),
-        ):
-            RUNNER.run_selected(
-                ROOT,
-                "all-files",
-                ["scripts/run-validation-lane.py"],
-                self.CONTRACT,
-                _PreCommitContractModule,
-            )
-        return invoked.call_args.kwargs["env"]
-
-    def test_pre_commit_home_stays_account_owned(self):
-        environment = self._child_environment()
-        account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
-
-        self.assertEqual(
-            environment["PRE_COMMIT_HOME"],
-            str(account_home / ".cache/pre-commit"),
-        )
-
-    def test_toolchain_caches_resolve_without_a_reachable_home(self):
-        environment = self._child_environment()
-        unreachable_home = Path(environment["HOME"])
-        cache_root = Path(environment["PRE_COMMIT_HOME"])
-
-        # Go is the toolchain a cold install actually fails on: it initializes
-        # a build cache before it compiles anything.
-        for variable in (
-            "GOCACHE",
-            "GOPATH",
-            "CARGO_HOME",
-            "XDG_CACHE_HOME",
-            "npm_config_cache",
-        ):
-            with self.subTest(variable=variable):
-                self.assertIn(variable, environment)
-                location = Path(environment[variable])
-                self.assertTrue(location.is_absolute())
-                self.assertTrue(location.is_relative_to(cache_root))
-                self.assertFalse(location.is_relative_to(unreachable_home))
-
-    def test_other_validators_receive_no_toolchain_caches(self):
-        """Only the hook installer needs them; the closed default stays closed."""
-
-        with (
-            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
-            patch.object(
-                RUNNER,
-                "run_bounded_command",
-                return_value=bounded_result(QUALITY_MARKER + "\n"),
-            ) as invoked,
-            redirect_stdout(StringIO()),
-        ):
-            RUNNER.run_selected(
-                ROOT,
-                "affected",
-                ["scripts/run-validation-lane.py"],
-                CONTRACT,
-                _ContractModule,
-            )
-
-        environment = invoked.call_args.kwargs["env"]
-        for variable in ("GOCACHE", "GOPATH", "CARGO_HOME", "npm_config_cache"):
-            with self.subTest(variable=variable):
-                self.assertNotIn(variable, environment)
-
-
 class ValidatorTimeoutBudgetTest(unittest.TestCase):
     """A gate may declare a larger budget than the shared default.
 
@@ -2485,7 +2321,7 @@ class ValidatorTimeoutBudgetTest(unittest.TestCase):
                 "--root",
                 ".",
             ],
-            "lanes": ["affected", "staged", "all-files"],
+            "lanes": ["affected", "staged"],
             "evidenceLane": "repo-static",
             "optional": False,
             "fallback": {"status": "FAIL", "reason": "required"},
@@ -2520,23 +2356,6 @@ class ValidatorTimeoutBudgetTest(unittest.TestCase):
             self._timeout_for(self._contract()),
             RUNNER.VALIDATOR_TIMEOUT_SECONDS,
         )
-
-    def test_registry_declares_a_budget_only_where_the_default_is_too_small(self):
-        """The override is an exception, not a way around the shared bound."""
-
-        registry = json.loads(
-            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
-        )
-        declared = {
-            row["id"]: row["timeoutSeconds"]
-            for row in registry["validators"]
-            if "timeoutSeconds" in row
-        }
-
-        self.assertEqual(set(declared), {"unit-tests"})
-        for identifier, budget in declared.items():
-            with self.subTest(validator=identifier):
-                self.assertGreater(budget, RUNNER.VALIDATOR_TIMEOUT_SECONDS)
 
 
 class FailureSnippetDiagnosabilityTest(unittest.TestCase):
@@ -2709,7 +2528,7 @@ class ReuseCandidateTest(unittest.TestCase):
             id="fixture-change-scoped",
             reuse={"mode": "change-scoped"},
         )
-        for lane in ("affected", "staged", "all-files"):
+        for lane in ("affected", "staged"):
             for source in ("github:30:2:41", "qa-provenance/30/2/41", "REUSED-main"):
                 with (
                     self.subTest(lane=lane, source=source),
@@ -2798,6 +2617,21 @@ class ReuseCandidateTest(unittest.TestCase):
         row = dict(CONTRACT["validators"][0], reuse={"mode": "same-lane"})
         contract = {"validators": [row]}
         candidate = {"repository-quality": {"identity": "a" * 64, "source": "local"}}
+        with self.assertRaisesRegex(ValueError, "lane"):
+            RUNNER.run_selected(
+                ROOT,
+                "all-files",
+                ["file.txt"],
+                contract,
+                _ContractModule,
+                reuse_candidates=candidate,
+            )
+        candidate = {
+            "repository-quality": {
+                "identity": "a" * 64,
+                "source": "github:30:2:41",
+            }
+        }
         with (
             patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
             patch.object(
@@ -2810,7 +2644,7 @@ class ReuseCandidateTest(unittest.TestCase):
             self.assertEqual(
                 RUNNER.run_selected(
                     ROOT,
-                    "all-files",
+                    "affected",
                     ["file.txt"],
                     contract,
                     _ContractModule,

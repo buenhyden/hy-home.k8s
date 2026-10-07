@@ -148,6 +148,9 @@ def _style_repositories(
         raise StyleError("STYLE-CONFIG: reviewed hook config is invalid") from exc
     if not isinstance(parsed, dict) or not isinstance(parsed.get("repos"), list):
         raise StyleError("STYLE-CONFIG: reviewed hook repositories are unavailable")
+    default_stages = parsed.get("default_stages", ["pre-commit"])
+    if not isinstance(default_stages, list) or "manual" not in default_stages:
+        raise StyleError("STYLE-CONFIG: manual stage is required")
     whitespace: list[dict[str, object]] = []
     language: list[dict[str, object]] = []
     markdown: list[dict[str, object]] = []
@@ -164,6 +167,9 @@ def _style_repositories(
             identifier = hook.get("id")
             if identifier not in STYLE_IDS:
                 continue
+            stages = hook.get("stages", default_stages)
+            if not isinstance(stages, list) or "manual" not in stages:
+                raise StyleError("STYLE-CONFIG: manual stage is required")
             if identifier in seen:
                 raise StyleError("STYLE-CONFIG: style hook is duplicated")
             seen.add(identifier)

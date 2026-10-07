@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Validate branch metadata and report QA scope
+      - name: Validate branch metadata
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
@@ -65,7 +65,6 @@ jobs:
             branch_verdict=FAIL
           fi
           printf 'branch-policy result=%s verdict=%s\n' "$branch_result" "$branch_verdict"
-          printf 'full-qa result=NOT_RUN verdict=NOT_RUN\n'
           if [ "$branch_verdict" = FAIL ]; then
             exit 1
           fi

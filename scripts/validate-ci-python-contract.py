@@ -142,7 +142,6 @@ SHELL_EXPLICIT_SAFE_COMMANDS = frozenset(
         "install",
         "mypython",
         "pipx",
-        "pre-commit",
         "printf",
         "set",
         "sha256sum",
@@ -757,12 +756,6 @@ def _simple_command_is_allowed(executable: str, arguments: list[str]) -> bool:
     ):
         _shell_guard_error()
     if executable == "set" and arguments != ["-euo", "pipefail"]:
-        _shell_guard_error()
-    if executable == "pre-commit" and arguments != [
-        "run",
-        "--all-files",
-        "--show-diff-on-failure",
-    ]:
         _shell_guard_error()
     if executable == "exit" and (len(arguments) != 1 or not arguments[0].isdecimal()):
         _shell_guard_error()
@@ -1653,6 +1646,8 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     }:
         fail("CI-TOPOLOGY", "summary must consume the actual event and branch refs")
     summary_text = _run_text(step)
+    if "full-qa result=" in summary_text:
+        fail("CI-TOPOLOGY", "metadata summary must not report retired full QA")
     required = (
         "allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'",
         'case "$event" in',
@@ -1663,15 +1658,12 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         "branch_verdict=FAIL",
         "branch_verdict=PASS",
         "branch_verdict=NOT_APPLICABLE",
-        "full-qa result=NOT_RUN verdict=NOT_RUN",
         'if [ "$branch_verdict" = FAIL ]; then',
         "exit 1",
         "exit 0",
     )
     if not all(fragment in summary_text for fragment in required):
-        fail(
-            "CI-TOPOLOGY", "summary must fail closed on metadata and report QA NOT_RUN"
-        )
+        fail("CI-TOPOLOGY", "summary must fail closed on event and branch metadata")
     _validate_qa_execution(workflow)
 
 

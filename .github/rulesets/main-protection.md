@@ -128,7 +128,8 @@ The dated remote observation above required one aggregate check.
 
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
-push/manual dispatch. It reports full QA as `NOT_RUN` on every event. Success
+push/manual dispatch. Its earlier full-QA `NOT_RUN` field is historical
+evidence, not a current required check. Success
 establishes only this metadata policy; local QA has its own input and evidence.
 The tracked workflow also defines PR-only `style-pr` for selected style at its
 own merge SHA/run. Its presence does not establish a successful run or make it
@@ -189,8 +190,7 @@ templates. That profile carries no frontmatter and requires no section
 list, which is why this file reads as GitHub's own documentation rather
 than an authored Stage document.
 
-The route and this file were added in one change. An untracked ruleset note
-would not have escaped validation: `scripts/qa.py full` snapshots
-`git ls-files --cached --others --exclude-standard`, so a file that is neither
-tracked nor ignored still enters the snapshot and must resolve to exactly one
-profile.
+The route and this file were added in one change. The current selected local
+document contract check classifies an applicable changed ruleset note against
+the Stage 99 registry and requires exactly one profile. Historical full-QA
+results belong to their original inputs and are not a current admission gate.

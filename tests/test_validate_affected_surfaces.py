@@ -64,7 +64,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         result = self.validator.select_paths(
             self.contract,
             ["docs/03.specs/route-probe/tasks/task.md"],
-            "ci",
+            "affected",
             ROOT,
         )
         self.assertNotIn("agent-governance", result["validators"])
@@ -77,6 +77,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "document-lifecycle",
             "links-and-owners",
             "markdown-profiles",
+            "selected-nonstyle",
             "selected-style",
         ]
         for path in (
@@ -133,14 +134,13 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     self.contract, [path], "affected", ROOT
                 )
                 self.assertIn("selected-style", staged["validators"])
+                self.assertIn("selected-nonstyle", staged["validators"])
                 self.assertNotIn("selected-style", affected["validators"])
+                self.assertNotIn("selected-nonstyle", affected["validators"])
         self.assertIn("selected-style", self.contract["profiles"]["staged"])
+        self.assertIn("selected-nonstyle", self.contract["profiles"]["staged"])
         self.assertNotIn("selected-style", self.contract["profiles"]["quick"])
-        self.assertNotIn("selected-style", self.contract["profiles"]["full"])
-        selected_style = next(
-            row for row in self.contract["validators"] if row["id"] == "selected-style"
-        )
-        self.assertEqual(selected_style["coveredBy"], "pre-commit")
+        self.assertNotIn("selected-nonstyle", self.contract["profiles"]["quick"])
 
     def test_stage99_machine_contract_keeps_archive_gate_without_form_replay(
         self,
@@ -162,6 +162,38 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         )
         self.assertNotIn("archive-contract-tests", form["validators"])
         self.assertIn("document-contract-registry", form["validators"])
+
+    def test_purpose_checks_follow_their_changed_surfaces_without_full_sweep(self):
+        cases = (
+            (
+                ".github/workflows/ci.yml",
+                {"ci-python-contract", "github-actions-security"},
+            ),
+            (".github/requirements/ci-validation.in", {"ci-python-contract"}),
+            (
+                "docs/98.archive/completed/03.specs/route-probe/spec.md",
+                {"archive-integrity"},
+            ),
+            ("docs/99.templates/registry.json", {"affected-surface-contract"}),
+            ("gitops/apps/root/kustomization.yaml", {"platform-assurance"}),
+            ("_workspace/README.md", {"workspace-boundary"}),
+        )
+        for lane in ("affected", "staged"):
+            for path, required in cases:
+                with self.subTest(lane=lane, path=path):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertTrue(required <= set(selected["validators"]))
+
+    def test_only_selected_profiles_and_no_blanket_discovery_gate(self) -> None:
+        self.assertEqual(set(self.contract["profiles"]), {"quick", "staged"})
+        self.assertNotIn("profileAliases", self.contract)
+        self.assertFalse(
+            {"unit-tests", "pre-commit"}
+            & {row["id"] for row in self.contract["validators"]}
+        )
+        self.assertFalse(any("coveredBy" in row for row in self.contract["validators"]))
 
     def test_root_changelog_uses_document_surface(self) -> None:
         self.assertEqual(
@@ -206,43 +238,6 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     },
                 )
                 self.validator.validate_contract(ROOT, mutated)
-
-    def test_covered_gate_runs_once_per_profile_and_lane(self) -> None:
-        def validators(contract):
-            return {row["id"]: row for row in contract["validators"]}
-
-        covered = [row for row in self.contract["validators"] if "coveredBy" in row]
-        self.assertTrue(covered)
-        full = self.contract["profiles"]["full"]
-        for row in covered:
-            with self.subTest(gate=row["id"]):
-                self.assertNotIn(row["id"], full)
-                self.assertIn(row["coveredBy"], full)
-
-        def rejected(mutate, code):
-            mutated = copy.deepcopy(self.contract)
-            mutate(mutated)
-            with self.assertRaises(self.validator.ContractError) as raised:
-                self.validator.validate_contract(ROOT, mutated)
-            self.assertEqual(raised.exception.code, code)
-
-        gate = covered[0]["id"]
-        rejected(
-            lambda c: validators(c)[gate].pop("coveredBy"),
-            "SURFACE-PROFILE-COVERAGE",
-        )
-        rejected(
-            lambda c: c["profiles"]["full"].append(gate),
-            "SURFACE-COVERED-BY",
-        )
-        rejected(
-            lambda c: validators(c)[gate].update(coveredBy="policy-gates-missing"),
-            "SURFACE-COVERED-BY",
-        )
-        rejected(
-            lambda c: validators(c)[gate]["lanes"].append("all-files"),
-            "SURFACE-COVERED-BY",
-        )
 
     def test_mutation_cases(self) -> None:
         for case in self.fixture["mutationCases"]:

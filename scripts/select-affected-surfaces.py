@@ -25,9 +25,7 @@ def load_contract_module():
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument(
-        "--lane", choices=("affected", "staged", "all-files", "ci"), required=True
-    )
+    parser.add_argument("--lane", choices=("affected", "staged"), required=True)
     parser.add_argument("--paths-file", type=Path, required=True)
     parser.add_argument("--delimiter", choices=("nul",), required=True)
     parser.add_argument("--format", choices=("json",), required=True)

@@ -45,8 +45,9 @@ staged difference does not show.
 ## Validation
 
 The draft is judged by Commitizen using [`.cz.toml`](../../.cz.toml).
-Generation is not validation. File QA's all-files/manual stage does not run
-the separate commit-msg stage. Follow the [Git policy](../governance/git.md)
+Generation is not validation. Selected staged file QA checks the exact index;
+the separate commit-msg check validates the actual candidate message. Follow
+the [Git policy](../governance/git.md)
 for validating the actual candidate message and observing active hooks;
 workstation configuration is Task evidence, never a shared policy assumption.
 

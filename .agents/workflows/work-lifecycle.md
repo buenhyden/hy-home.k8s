@@ -97,11 +97,11 @@ end the loop.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). Record local
    selected QA and pre-commit lint/format over their actual snapshots. PR branch
-   metadata and selected hosted style have distinct SHA/run evidence, and any
-   unexecuted hosted full QA is `NOT_RUN`; local full
-   runs only when shared QA machinery changes or an explicit bounded audit
-   selects it after resource preflight. Push and merge do not replay an
-   identical leaf.
+   metadata and selected hosted style have distinct SHA/run evidence. Prior
+   unexecuted hosted full QA remains historical `NOT_RUN`; current local
+   completion selects named behavior, Archive and security checks under the
+   registry after resource preflight, without a blanket unit discovery or
+   full/ci sweep. Push and merge do not replay an identical leaf.
 3. Review final diff scope and remove task-owned scratch/debug residue.
 4. Record the canonical handoff fields in the active Task; include failures,
    skipped optional tools, unavailable runtime checks, review disposition,

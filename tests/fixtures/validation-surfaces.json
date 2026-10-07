@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "surfaceCases": [
     {
       "name": "workspace-readme",
@@ -104,7 +104,7 @@
     {
       "name": "authored-doc",
       "path": "docs/98.archive/completed/03.specs/9999-route-probe/spec.md",
-      "expectedSurface": "authored-documents"
+      "expectedSurface": "archive-documents"
     },
     {
       "name": "current-research-report",
@@ -144,11 +144,13 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "ci-python-contract",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
           "markdown-profiles",
-          "repository-quality"
+          "repository-quality",
+          "workspace-boundary"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -206,6 +208,7 @@
       ],
       "expected": {
         "validators": [
+          "affected-surface-contract",
           "agent-governance",
           "archive-contract-tests",
           "document-contract-registry",
@@ -226,152 +229,6 @@
       }
     },
     {
-      "name": "agent-governance-ci-topology",
-      "lane": "ci",
-      "paths": [
-        ".github/workflows/ci.yml"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "repository-quality"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "agent-governance-root-config",
-      "lane": "ci",
-      "paths": [
-        ".pre-commit-config.yaml"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "repository-quality"
-        ],
-        "protectedLevel": "review",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "agent-governance-template-documents",
-      "lane": "ci",
-      "paths": [
-        "docs/99.templates/registry.json"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "document-contract-registry",
-          "document-lifecycle",
-          "links-and-owners",
-          "markdown-profiles",
-          "repository-quality"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "agent-governance-scripts",
-      "lane": "ci",
-      "paths": [
-        "scripts/validate-agent-governance.py"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "gitops-structure",
-          "infrastructure-contracts",
-          "policy-gates",
-          "repository-quality",
-          "secret-handling"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "agent-governance-tests",
-      "lane": "ci",
-      "paths": [
-        "tests/test_validate_agent_governance_ci.py"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "repository-quality"
-        ],
-        "protectedLevel": "review",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "manifest-domain",
-      "lane": "ci",
-      "paths": [
-        "gitops/clusters/local/root-application.yaml"
-      ],
-      "expected": {
-        "validators": [
-          "external-service-contracts",
-          "gitops-structure",
-          "infrastructure-contracts",
-          "platform-assurance",
-          "policy-gates",
-          "repository-quality",
-          "secret-handling"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "all-requested-roots",
-      "lane": "all-files",
-      "paths": [
-        "_workspace/README.md",
-        ".gitignore",
-        ".env.example",
-        "AGENTS.md",
-        ".agents/governance/agent-execution.md",
-        "docs/99.templates/registry.json",
-        ".agents/roles/supervisor.md",
-        ".claude/agents/supervisor.md",
-        ".codex/agents/supervisor.toml",
-        ".github/workflows/ci.yml",
-        "gitops/clusters/local/root-application.yaml",
-        "scripts/validate-infrastructure-contracts.sh",
-        "policy/conftest/kubernetes.rego",
-        "scripts/qa.py",
-        "secrets/README.md",
-        "tests/README.md",
-        "traefik/route-probe.yaml"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "document-contract-registry",
-          "document-lifecycle",
-          "external-service-contracts",
-          "gitops-change-set",
-          "gitops-structure",
-          "infrastructure-contracts",
-          "knowledge-surface",
-          "links-and-owners",
-          "markdown-profiles",
-          "platform-assurance",
-          "policy-gates",
-          "repository-quality",
-          "secret-handling"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
       "name": "collection-index-guard",
       "lane": "affected",
       "paths": [
@@ -383,6 +240,7 @@
       ],
       "expected": {
         "validators": [
+          "affected-surface-contract",
           "agent-governance",
           "archive-contract-tests",
           "document-contract-registry",
@@ -411,7 +269,8 @@
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
-          "markdown-profiles"
+          "markdown-profiles",
+          "workspace-boundary"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -426,6 +285,7 @@
       "expected": {
         "validators": [
           "agent-governance",
+          "ci-python-contract",
           "repository-quality"
         ],
         "protectedLevel": "review",
@@ -475,27 +335,6 @@
       "expected": {
         "validators": [],
         "protectedLevel": "none",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "contract-bulk-document-escalation",
-      "lane": "ci",
-      "paths": [
-        "docs/99.templates/registry.json",
-        "docs/90.references/research/9999-route-probe/report.md",
-        "docs/98.archive/03.specs/9999-route-probe/spec.md"
-      ],
-      "expected": {
-        "validators": [
-          "agent-governance",
-          "document-contract-registry",
-          "document-lifecycle",
-          "links-and-owners",
-          "markdown-profiles",
-          "repository-quality"
-        ],
-        "protectedLevel": "protected",
         "unmatchedPaths": []
       }
     }

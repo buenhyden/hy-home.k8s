@@ -57,7 +57,9 @@ it cannot grant extra tools or approval. Edit procedures once under
 
 `python3 scripts/validate-agent-governance.py --root .` checks registry, native
 syntax, exact role/skill references, link boundaries and permission parity.
-`python3 scripts/qa.py full` checks the final repository snapshot. Actual native
+Selected affected, staged and named purpose checks cover their declared inputs.
+The retired `full`/`ci` sweep and blanket unit discovery are not a local
+completion requirement. Actual native
 loading, invocation and hook events are separate checks requiring a fresh
 session and applicable authorization.
 

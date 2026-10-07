@@ -1349,7 +1349,7 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
             ):
                 VALIDATOR.validate_workflow(workflow)
 
-    def test_summary_requires_event_metadata_and_not_run(self):
+    def test_summary_requires_event_metadata_without_retired_qa_claims(self):
         import copy
 
         baseline = self.workflow()
@@ -1357,13 +1357,16 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"][0]["env"].pop("HEAD_REF")
         variants.append(workflow)
-        workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"][0]["run"] = workflow["jobs"][
-            "ci-summary"
-        ]["steps"][0]["run"].replace(
-            "result=NOT_RUN verdict=NOT_RUN", "result=PASS verdict=PASS"
-        )
-        variants.append(workflow)
+        for result in ("NOT_RUN", "PASS"):
+            workflow = copy.deepcopy(baseline)
+            step = workflow["jobs"]["ci-summary"]["steps"][0]
+            step["run"] = step["run"].replace(
+                'if [ "$branch_verdict" = FAIL ]; then',
+                f"printf 'full-qa result={result} verdict={result}\\n'\n"
+                'if [ "$branch_verdict" = FAIL ]; then',
+                1,
+            )
+            variants.append(workflow)
         workflow = copy.deepcopy(baseline)
         workflow["jobs"]["ci-summary"]["steps"][0]["run"] = workflow["jobs"][
             "ci-summary"

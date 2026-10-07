@@ -26,7 +26,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any, BinaryIO, MutableMapping, Mapping, Sequence
 
 
-LOCAL_LANES = ("affected", "staged", "all-files")
+LOCAL_LANES = ("affected", "staged")
 TRUSTED_SEARCH_DIRECTORIES = (
     "/usr/local/sbin",
     "/usr/local/bin",
@@ -506,6 +506,7 @@ def closed_subprocess_environment() -> dict[str, str]:
     """Return the complete validator environment; ambient startup state is absent."""
 
     return {
+        "GIT_OPTIONAL_LOCKS": "0",
         "GIT_TERMINAL_PROMPT": "0",
         "HOME": "/nonexistent",
         "LANG": "C.UTF-8",
@@ -517,94 +518,15 @@ def closed_subprocess_environment() -> dict[str, str]:
     }
 
 
-def account_pre_commit_executable(root: Path, account) -> str | None:
-    """Validate the exact passwd-home entrypoint and its supported uv leaf link."""
-    home = Path(account.pw_dir)
-    if (
-        not home.is_absolute()
-        or ".." in home.parts
-        or home.is_relative_to(root)
-        or home.is_relative_to(Path("/tmp"))
-    ):
-        return None
-    candidate = home / ".local/bin/pre-commit"
-    uv_target = home / ".local/share/uv/tools/pre-commit/bin/pre-commit"
-
-    def trusted_directories(path: Path) -> bool:
-        # The passwd home is the account-owned trust anchor, as for Gitleaks.
-        # Platform ancestors can be namespace-mapped; never trust that UID for
-        # an executable or any directory within the account installation.
-        for directory in path.parents:
-            metadata = directory.lstat()
-            if not stat.S_ISDIR(metadata.st_mode) or metadata.st_mode & 0o022:
-                return False
-            if directory.is_relative_to(home) and metadata.st_uid != account.pw_uid:
-                return False
-        return True
-
-    try:
-        if not trusted_directories(candidate):
-            return None
-        metadata = candidate.lstat()
-        if metadata.st_uid != account.pw_uid:
-            return None
-        if stat.S_ISLNK(metadata.st_mode):
-            if os.readlink(candidate) != str(uv_target) or not trusted_directories(
-                uv_target
-            ):
-                return None
-            candidate = uv_target
-            metadata = candidate.lstat()
-        if (
-            stat.S_ISREG(metadata.st_mode)
-            and metadata.st_uid == account.pw_uid
-            and not metadata.st_mode & 0o022
-            and os.access(candidate, os.X_OK)
-        ):
-            return str(candidate)
-    except OSError:
-        pass
-    return None
-
-
 def resolve_tool(token: str, root: Path) -> str | None:
     """Preserve the invoking Python and ignore ambient PATH for other tools."""
+    del root
     if token == "python3":
         return os.path.abspath(sys.executable)
     found = shutil.which(token, path=trusted_search_path())
     if found is not None:
         return os.path.abspath(found)
-    if token != "pre-commit":
-        return None
-    try:
-        account = pwd.getpwuid(os.geteuid())
-    except (KeyError, OSError):
-        return None
-    candidates = (Path(sys.executable).parent / token,)
-    for candidate in candidates:
-        if not candidate.is_absolute() or candidate.is_relative_to(root):
-            continue
-        # An exact account-owned executable is permitted; no caller PATH search.
-        try:
-            chain = (candidate.parent, *candidate.parent.parents)
-            if any(
-                not stat.S_ISDIR(d.lstat().st_mode)
-                or (d.lstat().st_mode & 0o022)
-                or d.lstat().st_uid not in (0, account.pw_uid)
-                for d in chain
-            ):
-                continue
-            metadata = candidate.lstat()
-            if (
-                stat.S_ISREG(metadata.st_mode)
-                and metadata.st_uid in (0, account.pw_uid)
-                and not metadata.st_mode & 0o022
-                and os.access(candidate, os.X_OK)
-            ):
-                return str(candidate)
-        except OSError:
-            continue
-    return account_pre_commit_executable(root, account)
+    return None
 
 
 _UNITTEST_CASE = re.compile(
@@ -1683,7 +1605,7 @@ def validator_argv(
         argv[argv.index("--base-ref") + 1] = base_ref
     if validator.get("pathInput") == "include-existing-files":
         if lane != "staged":
-            raise ValueError("selected file style input requires staged lane")
+            raise ValueError("selected file input requires staged lane")
         for raw_path in paths:
             target = root.joinpath(*PurePosixPath(raw_path).parts)
             try:
@@ -1694,12 +1616,7 @@ def validator_argv(
         return argv
     if validator.get("pathInput") != "include-existing-markdown":
         return argv
-    if lane == "all-files":
-        include_candidates: list[str] = []
-    elif lane in ("affected", "staged"):
-        include_candidates = list(paths)
-    else:
-        return argv
+    include_candidates = list(paths)
 
     archive_form = "docs/99.templates/templates/archive/tombstone.template.md"
     if (root / archive_form).is_file() and archive_form not in include_candidates:
@@ -1742,6 +1659,8 @@ def run_selected(
     reuse_candidates: Mapping[str, dict[str, str]] | None = None,
     completed_passes: MutableMapping[str, str] | None = None,
 ) -> int:
+    if lane not in LOCAL_LANES:
+        raise ValueError("unsupported local validation lane")
     scope = f"{lane}:paths={len(paths)}"
     if not paths and validator_ids is None:
         print(
@@ -1762,10 +1681,6 @@ def run_selected(
         if validator_ids is not None
         else contract_module.select_paths(contract, paths, lane, root)
     )
-    if lane == "all-files" and validator_ids is None:
-        selected["validators"] = sorted(
-            row["id"] for row in contract["validators"] if lane in row["lanes"]
-        )
     validators = {row["id"]: row for row in contract["validators"]}
     if not selected["validators"]:
         print(
@@ -1882,7 +1797,7 @@ def run_selected(
         argv[0] = tool
 
         child_environment = dict(subprocess_environment)
-        if identifier in ("pre-commit", "selected-style"):
+        if identifier in ("selected-style", "selected-nonstyle"):
             # Use the account cache location, never ambient HOME or startup state.
             account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
             pre_commit_home = account_home / ".cache/pre-commit"
@@ -1935,11 +1850,14 @@ def run_selected(
             and (marker_count == 1 if marker is not None else True)
         )
         style_not_applicable = (
-            identifier == "selected-style"
+            identifier in ("selected-style", "selected-nonstyle")
             and passed
             and completed.stdout.complete
             and completed.stdout.retained.strip()
-            == b"STYLE-NOT_APPLICABLE: no selected regular files"
+            in (
+                b"STYLE-NOT_APPLICABLE: no selected regular files",
+                b"NONSTYLE-NOT_APPLICABLE: no selected index files",
+            )
         )
         status = (
             "NOT_APPLICABLE" if style_not_applicable else ("PASS" if passed else "FAIL")
@@ -1988,21 +1906,14 @@ def main() -> int:
     args = parser.parse_args()
 
     root = args.root.resolve()
-    if args.lane == "all-files":
-        if args.paths_file is not None or args.delimiter is not None:
-            parser.error("all-files discovers tracked paths and rejects path input")
-    elif args.paths_file is None or args.delimiter is None:
+    if args.paths_file is None or args.delimiter is None:
         parser.error("affected and staged lanes require --paths-file and --delimiter")
 
     contract_module = load_contract_module()
     scope = f"{args.lane}:paths=unknown"
     try:
         contract = contract_module.validate_contract(root)
-        paths = (
-            contract_module.tracked_paths(root)
-            if args.lane == "all-files"
-            else contract_module.read_nul_paths(args.paths_file)
-        )
+        paths = contract_module.read_nul_paths(args.paths_file)
         return run_selected(root, args.lane, paths, contract, contract_module)
     except contract_module.ContractError as exc:
         detail_metadata = bounded_metadata("detail", exc.detail)

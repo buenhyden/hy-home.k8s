@@ -101,9 +101,10 @@ fixture는 범위가 제한된 예시이며 production registry가 아니다. fi
 
 ### Validation
 
-반복 작업 중에는 바뀐 계약의 전용 suite와 affected 경로를 먼저 선택한다.
-global QA 계약을 변경하거나 명시적 한정 감사를 수행할 때만 사전 도구·예산
-확인 후 마지막 트리에서 full profile을 한 번 실행한다.
+반복 작업 중에는 바뀐 계약의 전용 named suite와 affected 경로를 먼저
+선택한다. global QA 계약 변경이나 명시적 한정 감사도 사전 도구·예산
+확인 후 목적에 해당하는 named 동작·Archive·보안 회귀만 실행한다.
+긴 full/ci 일괄 검사와 blanket discovery는 현재 완료 조건이 아니다.
 
 ```bash
 python3 -m unittest tests.test_validate_affected_surfaces tests.test_run_validation_lane
@@ -111,10 +112,10 @@ python3 scripts/qa.py quick
 git diff --check
 ```
 
-위 suite는 routing/runner 동작을 수정한 경우의 예시다. 일반 문서 수정에는
-profile·관계·링크·상태 검사를 선택한다. 전체 suite discovery가 필요한
-경우에는 full profile이 한 번 소유하며, 동일 입력에 별도 discovery를
-반복하지 않는다.
+위 suite는 routing/runner 동작을 수정한 경우의 예시이며 무조건 실행하는
+목록은 아니다. 일반 문서 수정에는 profile·관계·링크·상태 검사를 선택한다.
+이름만으로 전체 suite를 자동 탐색하지 않고 현재 소비자의 명명된 negative와
+경계 사례를 선택한다.
 
 완료 순서와 PASS/FAIL/DEFER/NOT_RUN/NOT_APPLICABLE의 의미는
 [Quality policy](../.agents/governance/quality.md)가 소유한다. 이 README는 현재
@@ -128,8 +129,8 @@ profile·관계·링크·상태 검사를 선택한다. 전체 suite discovery�
 2. 한 번 쓰는 mutation에는 임시 데이터를 쓴다. 영구 fixture는 여러 사례가
    오래 유지되는 같은 의미의 입력을 공유할 때만 추가한다.
 3. production 변경은 이 트리를 import하거나 읽지 않고 한다.
-4. 전용 suite, affected·staged 검증을 변경 입력에 맞춰 선택하고 global QA
-   변경 또는 명시적 감사에서만 full을 선택한다.
+4. 전용 named suite와 affected·staged 검증을 변경 입력에 맞춰 선택한다.
+   global QA 변경이나 명시적 감사도 목적별 필수 gate로 한정한다.
 5. 마지막 독립 소비자가 없어지면 그 fixture도 삭제한다.
 6. 실행할 수 없는 hosted·provider·live 검사는 `DEFER`로 보고하며 로컬 PASS로
    보고하지 않는다.

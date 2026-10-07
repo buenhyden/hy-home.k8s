@@ -71,7 +71,6 @@ artifact_id: "RUN-0011"
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/qa.py full
 git diff --check
 ```
 

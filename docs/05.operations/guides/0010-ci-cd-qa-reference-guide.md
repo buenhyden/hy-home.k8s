@@ -50,8 +50,8 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 | 일반 문서 변경 | 공통 diff·style 검사와 선택된 문서 profile·관계·링크·상태 검사 | 문서 내용·형식과 현재 owner만 로컬에서 확인; 동작 회귀 suite를 추가하지 않음 |
 | 구현·validator·QA 계약 변경 | 바뀐 규칙의 focused 회귀와, 작업 트리 입력에 별도 증거가 필요할 때 `python3 scripts/qa.py quick` | 새 동작의 실패·경계 사례를 해당 입력에서 확인 |
 | staged 변경 | `git diff --cached --check`, 실제 메시지 검사 및 선택된 `python3 scripts/qa.py staged` | 정확한 Git index snapshot과 commit 문법을 서로 다른 입력으로 확인 |
-| global QA 계약 변경 또는 명시적 한정 감사 | `python3 scripts/qa.py full` | 사전 도구·예산 확인 후 마지막 checkout의 정적 계약을 한 번 확인 |
-| hosted CI | GitHub Actions의 branch result와 `ci-summary` | PR branch metadata 확인; hosted QA는 `NOT_RUN` |
+| global QA 계약 변경 또는 명시적 한정 감사 | 변경 목적에 해당하는 named 동작·Archive·보안 회귀와 선택된 affected/staged gate | 사전 도구·예산 확인 후 필요한 보호만 확인; full/ci sweep·blanket unit discovery는 선택하지 않음 |
+| hosted CI | GitHub Actions의 branch result·`ci-summary`와 별도 PR `style-pr` | 각각의 PR SHA/run에서 branch metadata와 선택된 style만 확인; 목적·문서 내용 QA를 대리하지 않음 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지
@@ -70,7 +70,8 @@ source이며, job과 required check의 현재 구성은
 ### 4. 증적 등급을 구분해 handoff한다
 
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
-- 호스팅 CI: event와 branch metadata의 적용 가능한 결과만 확인한다.
+- 호스팅 CI: event와 branch metadata, 선택된 PR style의 적용 가능한 결과를
+  각자의 SHA/run에서만 확인한다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 
 handoff 기록 항목은
@@ -82,10 +83,10 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 
 | 규칙 | 실행 소유자 | 유지되는 경계 |
 | --- | --- | --- |
-| 파일 형식·lint | native 도구 설정과 선택된 local full의 pre-commit gate | 입력과 mode가 같을 때 한 번 실행하고, formatter의 snapshot 변경은 실패로 기록한다 |
+| 파일 형식·lint | native 도구 설정과 최종 local index의 선택된 pre-commit style gate; 별도 PR style job은 다른 merge 입력 | 로컬 커밋 직전에 확인하고 동일 local leaf는 한 번만 실행한다. formatter의 snapshot 변경은 실패로 기록한다 |
 | GitHub Actions 보안 | zizmor와 repository Actions validator | 서로 다른 규칙을 유지한다. validator는 `unpinned-uses` 억제를 금지한다 |
 | secret 검사 | snapshot Gitleaks, native staged Gitleaks, detect-secrets와 domain/history validator | 입력과 위협 모델이 다르므로 이름만으로 합치지 않는다 |
-| 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | full 파일 검사는 메시지 검증을 대신하지 않는다 |
+| 커밋 메시지 | `.cz.toml`과 Commitizen commit-msg stage | 선택된 파일 검사는 메시지 검증을 대신하지 않는다 |
 
 도구별 규칙 소유와 suppression 기준은
 [Formatting and Linting Policy](../../../.agents/governance/formatting-and-linting.md),
@@ -97,8 +98,9 @@ hook 연결과 커밋 메시지 검증 절차는
 - 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
 - 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
 - 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
-- 선택되지 않아 실행하지 않은 full은 `NOT_RUN`과 "이번 변경의 필수 검사
-  아님"을 함께 기록한다. `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
+- 퇴역한 full/ci의 과거 `NOT_RUN`은 해당 입력의 역사로 보존한다. 현재 선택된
+  필수 검사가 미실행이면 그 검사에 `NOT_RUN`과 다음 owner를 기록한다.
+  `NOT_APPLICABLE`는 검사 대상이 없을 때만 사용한다.
 - live cluster, Vault, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.

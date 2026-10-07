@@ -14,7 +14,7 @@ class CiQaWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
 
-    def test_summary_uses_event_metadata_and_reports_full_qa_not_run(self):
+    def test_summary_uses_event_metadata_and_enforces_branch_policy(self):
         step = self.workflow["jobs"]["ci-summary"]["steps"][0]
         cases = (
             ("pull_request", "main", "feat/topic", "refs/pull/1/merge", 0, "PASS"),
@@ -43,8 +43,6 @@ class CiQaWorkflowTests(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, expected_code, result.stderr)
                 self.assertIn(f"verdict={verdict}", result.stdout)
-                self.assertIn("full-qa result=NOT_RUN verdict=NOT_RUN", result.stdout)
-                self.assertNotIn("qa-isolated result=", result.stdout)
         for missing in ("EVENT_NAME", "BASE_REF", "HEAD_REF", "SOURCE_REF"):
             with self.subTest(missing=missing):
                 env = {
@@ -62,7 +60,6 @@ class CiQaWorkflowTests(unittest.TestCase):
                     timeout=5,
                 )
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("full-qa result=NOT_RUN verdict=NOT_RUN", result.stdout)
 
     def test_manifest_validator_rejects_missing_and_empty_roots(self):
         script = ROOT / "scripts/validate-k8s-manifests.sh"

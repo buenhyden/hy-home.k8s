@@ -508,7 +508,8 @@ class WorkspaceBoundaryCliTests(unittest.TestCase):
             record["argv"],
             ["python3", "scripts/validate-workspace-boundary.py", "--root", "."],
         )
-        self.assertIn("all-files", record["lanes"])
+        self.assertIn("affected", record["lanes"])
+        self.assertIn("staged", record["lanes"])
         self.assertNotIn("--self-test", record["argv"])
 
     def test_aggregate_delegates_without_embedding_the_rule(self) -> None:

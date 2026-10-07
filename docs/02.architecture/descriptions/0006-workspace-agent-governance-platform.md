@@ -44,7 +44,7 @@ No separate governance registry, per-provider policy fork, Release family, or sh
 | Reliability | Bounded retry, a no-progress stop, and safe resume | The loop contract and positive/negative recovery fixtures |
 | Security | Least privilege and approval boundaries; secrets, auth, and full transcripts excluded | Static guardrails and independent review; execution permission needs separate approval |
 | Recoverability | Git recovery of ordinary changes kept apart from sealed evidence integrity | Consumer succession, sealed records' source commit/blob/digest, the Retention Envelope of retained bodies, and legal lifecycle edges |
-| Maintainability | The actual consumer graph instead of a fixed census or duplicate wrappers | Targeted/affected/staged/all-files lanes and direct negative fixtures |
+| Maintainability | The actual consumer graph instead of a fixed census or duplicate wrappers | The v4 source routes targeted/affected/staged selection, purpose-specific gates and direct negative fixtures; acceptance of the aggregate all-files retirement stays with the owning Task |
 
 ### Convergence authority context
 
@@ -78,8 +78,9 @@ The aggregate selects the Registry's applicable local checks rather than owning
 another copy of argv or policy. Ordinary document content selects profile,
 relationship, link and state checks. Implementation regressions follow changes
 to their responsible implementation or declared inputs. A global QA-contract
-change or explicit bounded audit selects full validation; full is not a
-prerequisite for every small edit. Distinct document, platform, security and
+change or explicit bounded audit selects named affected purpose and unit checks;
+the long full/ci sweep and blanket unit discovery are retired from completion.
+Distinct document, platform, security and
 Archive rules retain their failure meanings when their orchestration is shared.
 
 ### Convergence data architecture
@@ -198,9 +199,10 @@ metadata validation cannot prove account availability or authenticated execution
 
 QA profiles contain gate IDs. The execution registry alone owns commands and
 selection configuration; the runner owns bounded process handling. Quick checks
-working-tree changes, full checks the final working tree, and staged validation
-checks the real index in an isolated snapshot. A retained `ci` CLI alias remains
-a local profile invocation and does not imply a hosted execution.
+working-tree changes and staged validation checks the real index in an isolated
+snapshot. Named purpose gates and focused units check only their declared
+scope. The retired local full/ci sweep is not a completion profile or proof of
+hosted execution.
 Snapshot preparation preserves Git history for recovery while keeping the user's
 index and working files unchanged.
 
@@ -262,15 +264,17 @@ evidence capacity available without adding a new QA gate.
 | Feature push | Git transport preserves commit evidence and adds no repeated QA requirement |
 | PR and main integration | Review local evidence and check inputs changed by integration; refresh only invalidated results |
 | After merge | Verify delivered identity and state; a merge resolution that changes validated inputs selects the affected checks |
-| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval before the selected full local run |
+| Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior, Archive and security units; do not run a blanket sweep |
 | Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
 
-GitHub Actions retains one `ci-summary` job, which validates branch metadata
-and reports the branch-policy verdict itself. Missing metadata, an invalid
+GitHub Actions retains `ci-summary`, which validates branch metadata, and a
+separate PR-only selected style job. `ci-summary` reports the branch-policy
+verdict itself. Missing metadata, an invalid
 PR base or source branch, or an unexpected event/ref fails that job;
-PR branch policy is not applicable on main. Hosted QA remains
-`NOT_RUN`, and a successful metadata job does not certify local QA. This design
-gives up an independent hosted QA execution and its per-push attestation.
+PR branch policy is not applicable on main. Historical hosted full QA
+`NOT_RUN` records remain evidence, not a current check. A successful metadata
+or style job does not certify local purpose QA. This design gives up an
+independent hosted full/unit QA execution and its per-push attestation.
 Actual remote protections, settings and execution remain separately observed.
 
 ### Release and work-tracking boundaries

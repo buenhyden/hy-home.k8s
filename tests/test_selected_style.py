@@ -26,6 +26,22 @@ SPEC.loader.exec_module(STYLE)
 
 
 class SelectedStyleBoundaryTest(unittest.TestCase):
+    def test_manual_stage_cannot_be_removed_from_style_projection(self) -> None:
+        source = STYLE.yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        source["default_stages"] = ["pre-commit"]
+        with self.assertRaisesRegex(STYLE.StyleError, "manual stage"):
+            STYLE._style_repositories(STYLE.yaml.safe_dump(source).encode())
+        source = STYLE.yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        first_style = next(
+            hook
+            for repository in source["repos"]
+            for hook in repository["hooks"]
+            if hook["id"] == STYLE.STYLE_IDS[0]
+        )
+        first_style["stages"] = ["pre-commit"]
+        with self.assertRaisesRegex(STYLE.StyleError, "manual stage"):
+            STYLE._style_repositories(STYLE.yaml.safe_dump(source).encode())
+
     def test_nul_path_transport_rejects_traversal_before_reading(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             listing = Path(temporary) / "paths.z"

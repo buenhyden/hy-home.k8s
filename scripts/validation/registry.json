@@ -1,6 +1,6 @@
 {
   "$schema": "./registry.schema.json",
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "pathSemantics": {
     "separator": "posix",
     "matching": "exact-or-anchored-regex",
@@ -10,9 +10,7 @@
   "lanes": [
     "affected",
     "staged",
-    "all-files",
     "message/manual",
-    "ci",
     "remote/live",
     "inventory"
   ],
@@ -36,8 +34,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -56,9 +54,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -79,7 +75,6 @@
         "affected",
         "staged"
       ],
-      "coveredBy": "unit-tests",
       "optional": false,
       "fallback": {
         "status": "FAIL",
@@ -96,8 +91,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -115,8 +110,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -141,9 +136,7 @@
       "pathInput": "include-existing-markdown",
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -164,9 +157,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -184,8 +175,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -206,8 +197,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -224,9 +214,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -243,9 +231,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -265,7 +251,6 @@
         "affected",
         "staged"
       ],
-      "coveredBy": "pre-commit",
       "optional": false,
       "fallback": {
         "status": "FAIL",
@@ -282,8 +267,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -303,9 +288,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -327,9 +310,7 @@
       "pathInput": "include-existing-markdown",
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -351,9 +332,7 @@
       "pathInput": "include-existing-markdown",
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -371,34 +350,12 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
         "status": "FAIL",
         "reason": "Conftest policy evaluation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "pre-commit",
-      "argv": [
-        "pre-commit",
-        "run",
-        "--all-files",
-        "--hook-stage",
-        "manual"
-      ],
-      "lanes": [
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "pre-commit is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -412,9 +369,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -440,7 +395,6 @@
       "lanes": [
         "staged"
       ],
-      "coveredBy": "pre-commit",
       "pathInput": "include-existing-files",
       "globalSelection": "staged-changed",
       "timeoutSeconds": 600,
@@ -448,6 +402,29 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Selected staged file style validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "selected-nonstyle",
+      "argv": [
+        "python3",
+        "scripts/validate-selected-nonstyle.py",
+        "--root",
+        ".",
+        "--config",
+        ".pre-commit-config.yaml"
+      ],
+      "lanes": [
+        "staged"
+      ],
+      "pathInput": "include-existing-files",
+      "globalSelection": "staged-changed",
+      "timeoutSeconds": 900,
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected staged non-style security and syntax hooks are required."
       },
       "evidenceLane": "repo-static"
     },
@@ -460,9 +437,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -470,31 +445,6 @@
         "reason": "Redacted plaintext-secret scanning is required."
       },
       "evidenceLane": "repo-static"
-    },
-    {
-      "id": "unit-tests",
-      "argv": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests",
-        "-t",
-        ".",
-        "-f"
-      ],
-      "lanes": [
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "unit-tests is required."
-      },
-      "evidenceLane": "repo-static",
-      "timeoutSeconds": 2400
     },
     {
       "id": "vault-eso-contracts",
@@ -506,9 +456,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -526,8 +474,8 @@
         "."
       ],
       "lanes": [
-        "all-files",
-        "ci"
+        "affected",
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -546,9 +494,7 @@
       ],
       "lanes": [
         "affected",
-        "staged",
-        "all-files",
-        "ci"
+        "staged"
       ],
       "optional": false,
       "fallback": {
@@ -629,6 +575,7 @@
       ],
       "validators": [
         "agent-governance",
+        "ci-python-contract",
         "repository-quality"
       ],
       "protectedLevel": "review",
@@ -677,7 +624,8 @@
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
-        "markdown-profiles"
+        "markdown-profiles",
+        "workspace-boundary"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -769,6 +717,8 @@
       ],
       "validators": [
         "agent-governance",
+        "ci-python-contract",
+        "github-actions-security",
         "repository-quality"
       ],
       "protectedLevel": "protected",
@@ -815,8 +765,10 @@
         }
       ],
       "validators": [
+        "affected-surface-contract",
         "agent-governance",
         "archive-contract-tests",
+        "archive-integrity",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -858,7 +810,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?:README\\.md|(?:docs/(?!99\\.templates/)|examples/|tests/).*README\\.md)$"
+          "value": "^(?:README\\.md|(?:docs/(?!99\\.templates/|98\\.archive/)|examples/|tests/).*README\\.md)$"
         }
       ],
       "validators": [
@@ -900,11 +852,33 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "archive-documents",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/98\\.archive/.*$"
+        }
+      ],
+      "validators": [
+        "archive-integrity",
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Archive changes require current integrity and document checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "authored-documents",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*|98\\.archive/.*)$"
+          "value": "^(?!.*(?:^|/)README\\.md$)docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*)$"
         },
         {
           "kind": "exact",
@@ -1087,6 +1061,7 @@
         }
       ],
       "validators": [
+        "affected-surface-contract",
         "agent-governance",
         "archive-contract-tests",
         "gitops-structure",
@@ -1131,6 +1106,7 @@
         }
       ],
       "validators": [
+        "affected-surface-contract",
         "agent-governance",
         "archive-contract-tests",
         "repository-quality"
@@ -1232,10 +1208,15 @@
   ],
   "profiles": {
     "quick": [
+      "affected-surface-contract",
       "agent-governance",
       "archive-contract-tests",
+      "archive-integrity",
+      "ci-python-contract",
       "document-contract-registry",
       "document-lifecycle",
+      "external-service-contracts",
+      "github-actions-security",
       "gitops-change-set",
       "gitops-structure",
       "infrastructure-contracts",
@@ -1243,17 +1224,23 @@
       "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
+      "platform-assurance",
       "policy-gates",
       "repository-quality",
       "secret-handling",
       "vault-eso-contracts",
-      "external-service-contracts"
+      "workspace-boundary"
     ],
     "staged": [
+      "affected-surface-contract",
       "agent-governance",
       "archive-contract-tests",
+      "archive-integrity",
+      "ci-python-contract",
       "document-contract-registry",
       "document-lifecycle",
+      "external-service-contracts",
+      "github-actions-security",
       "gitops-change-set",
       "gitops-structure",
       "infrastructure-contracts",
@@ -1261,39 +1248,14 @@
       "knowledge-surface",
       "links-and-owners",
       "markdown-profiles",
-      "policy-gates",
-      "repository-quality",
-      "selected-style",
-      "secret-handling",
-      "vault-eso-contracts",
-      "external-service-contracts"
-    ],
-    "full": [
-      "affected-surface-contract",
-      "archive-integrity",
-      "agent-governance",
-      "ci-python-contract",
-      "github-actions-security",
-      "document-contract-registry",
-      "document-lifecycle",
-      "gitops-change-set",
-      "gitops-structure",
-      "infrastructure-contracts",
       "platform-assurance",
-      "knowledge-surface",
-      "links-and-owners",
-      "markdown-profiles",
       "policy-gates",
       "repository-quality",
-      "workspace-boundary",
       "secret-handling",
+      "selected-nonstyle",
+      "selected-style",
       "vault-eso-contracts",
-      "unit-tests",
-      "pre-commit",
-      "external-service-contracts"
+      "workspace-boundary"
     ]
-  },
-  "profileAliases": {
-    "ci": "full"
   }
 }
