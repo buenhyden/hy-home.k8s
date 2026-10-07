@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate local Python pins, pre-commit revisions, and metadata-only CI."""
+"""Validate local Python pins, pre-commit revisions, and scoped hosted CI."""
 
 from __future__ import annotations
 
@@ -18,6 +18,8 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
+CHECKOUT_ACTION = "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+SETUP_PYTHON_ACTION = "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
 EXPECTED_PINS = {
     "jsonschema": "4.26.0",
     "pre-commit": "4.6.1",
@@ -1370,12 +1372,93 @@ def _run_text(step: dict[str, Any]) -> str:
     return value.strip() if isinstance(value, str) else ""
 
 
+def _validate_style_pr_job(job: dict[str, Any]) -> None:
+    """Bind hosted style to read-only PR bytes and reviewed base tooling."""
+
+    required = {
+        "if": "github.event_name == 'pull_request'",
+        "runs-on": "ubuntu-latest",
+        "timeout-minutes": 5,
+        "permissions": {"contents": "read"},
+    }
+    if set(job) != {*required, "steps"} or any(
+        job.get(key) != value for key, value in required.items()
+    ):
+        fail("CI-STYLE-TOPOLOGY", "PR style job has an unreviewed execution boundary")
+    steps = job.get("steps")
+    if (
+        not isinstance(steps, list)
+        or len(steps) != 6
+        or any(not isinstance(step, dict) for step in steps)
+    ):
+        fail("CI-STYLE-TOPOLOGY", "PR style job must have the reviewed steps")
+    expected = (
+        {
+            "uses": CHECKOUT_ACTION,
+            "with": {
+                "ref": "${{ github.event.pull_request.base.sha }}",
+                "path": "trusted-base",
+                "persist-credentials": False,
+            },
+        },
+        {
+            "uses": CHECKOUT_ACTION,
+            "with": {
+                "path": "candidate",
+                "fetch-depth": 2,
+                "persist-credentials": False,
+            },
+        },
+        {"uses": SETUP_PYTHON_ACTION, "with": {"python-version": "3.12"}},
+        {
+            "working-directory": "candidate",
+            "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
+            "run": (
+                "set -euo pipefail\n"
+                "umask 077\n"
+                'test "$(git rev-parse HEAD^1)" = "$BASE_SHA"\n'
+                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR "
+                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"'
+            ),
+        },
+        {
+            "run": (
+                "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
+                "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt"
+            )
+        },
+        {
+            "working-directory": "candidate",
+            "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
+            "run": (
+                "python -I ../trusted-base/scripts/validate-selected-style.py --root . "
+                "--config ../trusted-base/.pre-commit-config.yaml "
+                "--markdown-config ../trusted-base/.markdownlint-cli2.yaml "
+                "--ruff-config ../trusted-base/.ruff.toml "
+                '--paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul '
+                '--expected-base-sha "$BASE_SHA"'
+            ),
+        },
+    )
+    for index, (step, reviewed) in enumerate(zip(steps, expected, strict=True)):
+        actual = {
+            key: (_run_text(step) if key == "run" else value)
+            for key, value in step.items()
+            if key != "name"
+        }
+        if actual != reviewed:
+            fail("CI-STYLE-TOPOLOGY", f"PR style step {index + 1} changed")
+
+
 def _validate_no_outside_python_validation(workflow: dict[str, Any]) -> None:
     jobs = workflow.get("jobs")
     if not isinstance(jobs, dict):
         fail("CI-PYTHON-WORKFLOW", "workflow jobs must be a mapping")
     for job_id, job in jobs.items():
         if not isinstance(job, dict):
+            continue
+        if job_id == "style-pr":
+            _validate_style_pr_job(job)
             continue
         steps = job.get("steps")
         if not isinstance(steps, list):
@@ -1387,12 +1470,12 @@ def _validate_no_outside_python_validation(workflow: dict[str, Any]) -> None:
             if isinstance(uses, str) and uses.startswith("actions/setup-python@"):
                 fail(
                     "CI-PYTHON-WORKFLOW",
-                    f"non-validation job must not own setup-python: {job_id}",
+                    f"non-style job must not own setup-python: {job_id}",
                 )
             if _guarded_pip_install(_run_text(step)):
                 fail(
                     "CI-PYTHON-WORKFLOW",
-                    f"non-validation job must not own a pip install: {job_id}",
+                    f"non-style job must not own a pip install: {job_id}",
                 )
 
 
@@ -1512,11 +1595,13 @@ def validate_dependencies(root: Path) -> int:
     _validate_qa_execution(workflow)
     _validate_gitleaks_tool(workflow)
     _validate_no_outside_python_validation(workflow)
-    return 0  # Hosted Python installer jobs are intentionally absent.
+    return int("style-pr" in jobs)
 
 
 def validate_workflow(workflow: dict[str, Any]) -> None:
-    """Own the single required hosted metadata check, without hosted QA."""
+    """Own branch metadata and the bounded PR-only style defense."""
+    if "env" in workflow:
+        fail("CI-TOPOLOGY", "workflow-level env can alter reviewed job execution")
     events = workflow.get("on", workflow.get(True))
     if not isinstance(events, dict) or set(events) != {
         "push",
@@ -1530,8 +1615,12 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     if workflow.get("permissions") != {"contents": "read"}:
         fail("CI-TOPOLOGY", "CI permissions must remain contents: read")
     jobs = workflow.get("jobs")
-    if not isinstance(jobs, dict) or set(jobs) != {"ci-summary"}:
-        fail("CI-TOPOLOGY", "CI requires only the metadata ci-summary job")
+    if not isinstance(jobs, dict) or set(jobs) != {"ci-summary", "style-pr"}:
+        fail("CI-TOPOLOGY", "CI requires metadata and PR style jobs")
+    style = jobs["style-pr"]
+    if not isinstance(style, dict):
+        fail("CI-STYLE-TOPOLOGY", "PR style job must be a mapping")
+    _validate_style_pr_job(style)
     summary = jobs["ci-summary"]
     if not isinstance(summary, dict):
         fail("CI-TOPOLOGY", "ci-summary must be a mapping")
@@ -1600,7 +1689,7 @@ def main() -> int:
     try:
         job_count = validate_repository(args.root)
         print(
-            "[PASS] local Python dependency and CI metadata contract passed: "
+            "[PASS] local Python dependency and scoped CI contract passed: "
             f"local-python-pins={len(EXPECTED_PINS)} hosted-installs={job_count}"
         )
         return 0

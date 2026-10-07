@@ -91,6 +91,12 @@ and budget envelope is available. Record a required unresolved check as FAIL,
 NOT_RUN or DEFER with its next owner, never PASS. The separate read-only
 reviewer inspects final diff, contract and results. Do not replay an identical
 leaf simply because delivery moved from commit to push.
+The final local index also receives required lint and format checks immediately
+before each commit; reuse an identical successful style leaf inside local full.
+Verify the selected hosted PR style route separately against its actual merge
+SHA/run. A deployment style result depends on a real deployment workflow and
+execution, which are not established by this Plan; do not infer it from a PR
+style configuration or local PASS.
 For the evaluation route, validate its Stage 99 profile, reciprocal links and
 empty aggregate shape. No actual paired output or scored criterion is supplied
 in this change, so trial execution, score truth and native skill loading are

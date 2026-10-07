@@ -16,13 +16,15 @@ updated: "2026-10-07"
 
 ## Scope
 
-이 디렉터리는 PR branch metadata와 저장소 유지보수 자동화를 제공한다.
+이 디렉터리는 PR branch metadata, 선택된 PR style 검사와 저장소 유지보수
+자동화를 제공한다.
 로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
-QA gate, 배포 CD, live 클러스터·외부 Vault 변경 또는 release 게시자가 아니다.
+full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
+게시자가 아니다.
 
 ## Structure
 
-- `workflows/` - branch metadata와 유지보수 자동화
+- `workflows/` - branch metadata, 선택된 PR style과 유지보수 자동화
 - `ISSUE_TEMPLATE/` - 버그·기능 요청 접수 양식
 - `PULL_REQUEST_TEMPLATE.md` - PR 검토와 로컬 증거 연결 안내
 - `CODEOWNERS` - 경로별 리뷰 소유권
@@ -34,17 +36,21 @@ QA gate, 배포 CD, live 클러스터·외부 Vault 변경 또는 release 게시
 ### Policy Routing
 
 - branch 전략은 `.agents/governance/git.md`가 소유한다.
-  `workflows/ci.yml`의 유일한 `ci-summary` job은 PR의 base와 source prefix를
+  `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
   검사한다. main push와 manual dispatch에는 branch 검사를
-  `NOT_APPLICABLE`로 보고한다. 모든 이벤트에서 full QA는 `NOT_RUN`이다.
-  job의 성공은 로컬 QA 통과를 뜻하지 않는다.
+  `NOT_APPLICABLE`로 보고한다. 별도 `style-pr` job은 main 대상 PR에서만
+  선택된 style을 검사한다. 모든 이벤트에서 hosted full QA는 `NOT_RUN`이다.
+  어느 job의 성공도 로컬 full·unit·문서 내용 QA 통과를 뜻하지 않는다.
 - 로컬 QA 명령과 gate 구성은 `scripts/qa.py`와 validation registry가
   소유한다. 로컬 커밋, PR, main 통합과 인계의 증거 순서는
   [Quality policy](../.agents/governance/quality.md#delivery-ownership)가
-  소유한다. hosted `ci-summary` 결과는 별도의 SHA·run identity를 가진다.
+  소유한다. hosted `ci-summary`와 `style-pr` 결과는 각각 별도의 SHA·run
+  identity를 가진다. workflow 설정만으로 실제 원격 실행이나 required-check
+  활성화를 인증하지 않는다.
 - `.github/requirements/ci-validation.txt`와
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
-  보존한다. 현재 CI는 lock이나 Python 도구를 설치하지 않는다.
+  보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
+  설치하며 로컬 full이나 unit은 실행하지 않는다.
   `scripts/validate-ci-python-contract.py`가 고정 pin과 workflow 경계를
   검사하므로 lock과 소비자 단언은 함께 리뷰한다.
 - Issue는 요청과 triage priority를 소유한다. 승인된 수용 계약은 Spec,
@@ -61,8 +67,12 @@ QA gate, 배포 CD, live 클러스터·외부 Vault 변경 또는 release 게시
 
 ### Workflow Roles
 
-- `ci.yml`은 main 대상 push·pull request·`workflow_dispatch`에서
-  branch metadata만 검사하고 full QA `NOT_RUN`을 출력한다.
+- `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
+  에서 branch metadata를 검사하고 full QA `NOT_RUN`을 출력한다. 별도
+  `style-pr`은 main 대상 PR merge 입력의 NUL 구분 변경 경로를 검증된 base
+  SHA와 대조한 뒤, 신뢰된 base의 공유 style helper와 기존 여덟 pinned
+  pre-commit hook 규칙으로 선택된 lint·format만 검사한다. `style-pr`의
+  정적 등록은 GitHub 실행이나 성공 증거가 아니다. 배포 workflow는 없다.
 - `labeler.yml`과 `greetings.yml`은 저장소 유지보수 자동화다.
   QA 통과나 사람의 리뷰 승인을 대체하지 않는다.
 - 과거 hosted verifier, SHA main tag publisher, 임시 changelog artifact와
@@ -77,7 +87,7 @@ QA gate, 배포 CD, live 클러스터·외부 Vault 변경 또는 release 게시
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Branch metadata policy; full QA is `NOT_RUN`. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` validates PR base and source prefix, reports branch policy `NOT_APPLICABLE` on main push/manual, and reports full QA `NOT_RUN`. | No QA execution; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Branch metadata and selected PR style; full QA is `NOT_RUN`. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` validates PR base/source prefix and reports branch policy `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No full, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 

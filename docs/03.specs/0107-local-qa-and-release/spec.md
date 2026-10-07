@@ -111,12 +111,22 @@ is duplicate leaf removal, then content versus implementation regression,
 shared parsing and Git reads within a run, affected selection, and finally
 narrow proven reuse. No speed claim is accepted without measurement.
 
+Required lint and format checks run against the final logical index immediately
+before each local commit. They share one declared style-rule owner with the
+selected hosted PR style check, but the PR merge SHA and run are a distinct
+input and trust boundary. An identical successful local style leaf is not
+replayed inside local full. A deployment style check is conditional on an
+actual deployment workflow; no deployment workflow or hosted run is inferred
+from this contract.
+
 Retire hosted `qa-isolated` execution together with its direct callers and
 dedicated regressions. Keep the PR branch-policy check and `ci-summary` as
-branch and delivery metadata only. An unknown, failed or missing applicable
-branch result fails the summary; the PR-only branch check is
-`NOT_APPLICABLE` on main. The hosted QA field remains `NOT_RUN`, never a
-local-result proxy. Remove or repair stale hosted proof and tag publication
+branch and delivery metadata only. Add only the selected style check as a
+separate PR final defense on its actual merge input. An unknown, failed or
+missing applicable branch result fails the summary; the PR-only branch check
+is `NOT_APPLICABLE` on main. Hosted full, unit and document-content QA remain
+`NOT_RUN` when unexecuted, never a local-result or style proxy. Remove or
+repair stale hosted proof and tag publication
 paths coherently, preserving limited permissions, immutable Action identities
 and distinct provenance when a current consumer still exists.
 `PASS`, `FAIL`, `NOT_RUN`, `NOT_APPLICABLE` and `DEFER` remain separate from
@@ -218,7 +228,7 @@ Spec anchor and actual index. No test result is asserted by this draft.
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-LOCAL-QA-001 | Consumer graph and focused regression show ongoing coverage before obsolete callers, dedicated helpers and tests are retired; Archive integrity and past cutover proof remain distinct. Official primary sources are dated and traced from claim to local decision in Task evidence. |
-| VAL-LOCAL-QA-002 | Local stage matrix, exact-index checks, full preflight/result and independent review show bounded selection without duplicate same-input leaves or a hosted QA claim. Official primary sources are dated and traced from claim to local decision in Task evidence. |
+| VAL-LOCAL-QA-002 | Local stage matrix, exact-index pre-commit style checks, full preflight/result and independent review show bounded selection without duplicate same-input leaves or an unobserved hosted result claim. The selected hosted style check is evaluated at its own PR SHA/run; absent deployment routing stays unobserved. Official primary sources are dated and traced from claim to local decision in Task evidence. |
 | VAL-LOCAL-QA-003 | Commitizen, SemVer release producer and main `CHANGELOG.md` contracts have focused positive and refusal evidence; actual remote publication is recorded separately. |
 | VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; the evaluation route and empty aggregate capacity preserve separate evidence authority without fabricating a run; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
 

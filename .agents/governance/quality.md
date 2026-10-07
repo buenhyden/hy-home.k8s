@@ -52,10 +52,13 @@ metadata; static parity never proves discovery, model resolution, or execution.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
 - **ci**: the CLI `ci` profile is a compatibility alias of local `full` while
-  registered. It does not imply GitHub Actions execution. Hosted automation is
-  limited to nonduplicate branch or repository metadata checks; a hosted summary
-  reports only what its jobs actually observed. An unexecuted hosted full QA is
-  `NOT_RUN`, never inferred from a successful local run or summary.
+  registered. It does not imply GitHub Actions execution. Hosted automation
+  runs branch or repository metadata checks and the separately selected shared
+  style check on PR inputs. A deployment style route applies only if a real
+  deployment workflow exists. Hosted automation does not run local full, unit or
+  document-content QA. A hosted summary reports only what its jobs actually
+  observed; unexecuted hosted full QA is `NOT_RUN`, never inferred from a
+  successful local run, style job or summary.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -207,11 +210,12 @@ above.
 | Route | Required owner and evidence |
 | --- | --- |
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes; full QA is not an editing prerequisite. |
-| Local commit | Review the logical index, run selected exact-index `staged` QA and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
+| Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata checks at the exact PR SHA and run identity. They do not certify local QA; remote protection remains `DEFER` when unobserved. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local full, unit or document-content QA; remote protection remains `DEFER` when unobserved. |
+| Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
-| Selected local full handoff | After tool, time, output and native approval preflight, run full once on the final working tree when shared QA machinery changes or an explicit bounded audit requires it. |
+| Selected local full handoff | After tool, time, output and native approval preflight, run full once on the final working tree when shared QA machinery changes or an explicit bounded audit requires it. Reuse a successful identical local style leaf rather than replaying it in full. |
 
 The registry selects gates within a profile. Reuse only a successful result for
 identical declared input bytes and history, configuration, tool identity, scope,
@@ -229,13 +233,15 @@ cannot establish hosted execution or remote branch protection.
    alone do not establish that equivalence.
 3. **each logical commit**: inspect status and the unstaged diff, stage only the
    reviewed logical set, inspect the cached diff, run `git diff --check` and
-   `git diff --cached --check`, then selected exact-index staged QA. Validate
-   the actual message under Git policy and commit through normal active hooks;
+   `git diff --cached --check`, then selected exact-index staged QA and required
+   lint/format checks immediately before the commit. Validate the actual
+   message under Git policy and commit through normal active hooks;
    record the leaf actually run and do not duplicate it merely because the
    hook and manual command share a caller boundary.
 4. **delivery validation**: perform selected local full once when the delivery
-   table requires it. Record hosted branch metadata at its own SHA/run when
-   observed; an unrun hosted QA remains `NOT_RUN`. Unit discovery and the
+   table requires it. Record hosted branch metadata and selected style at their
+   own PR or deployment SHA/run when observed; an unrun hosted full QA remains
+   `NOT_RUN`. Unit discovery and the
    all-files pre-commit gate run once per identical input and mode. Recheck an
    integrated-main input only to the extent changed bytes or history invalidate
    prior evidence.

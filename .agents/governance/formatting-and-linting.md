@@ -31,8 +31,10 @@ inside a tool's own configuration. Terminal-document immutability belongs to
 `.pre-commit-config.yaml` owns hook integration, including pinned revisions,
 stages, arguments and exclusions. Its local staged and selected manual QA
 invocations share the same rule owner; a hosted branch-policy job is not a
-formatter or QA execution lane. `.editorconfig` reaches editors only and proves
-nothing about committed bytes.
+formatter. A separate hosted PR style job may invoke the same selected style
+rule against its own merge input; it does not certify local full, unit or
+document-content QA. `.editorconfig` reaches editors only and proves nothing
+about committed bytes.
 
 ## Current Contract
 
@@ -47,6 +49,13 @@ nothing about committed bytes.
   Python, infrastructure or whole-tree formatting merely because the file is
   Markdown. A change to a formatting rule or hook configuration needs its own
   focused contract regression under [quality](quality.md#ordinary-document-selection).
+- Run the selected lint and format rules on the final logical index immediately
+  before a local commit. The local full profile may reuse a successful identical
+  style leaf under [quality](quality.md#validation-lane-contract). A hosted PR
+  style check uses the same declared rules on its distinct PR merge input and
+  records its own SHA/run; a successful local result cannot stand in for it.
+  A deployment style check requires an actual deployment workflow and observed
+  run; no such result follows from a tracked rule alone.
 - Keep no configuration for a file type the repository does not contain.
   When the last target of a tool disappears, remove the tool and its
   configuration in the same change rather than leaving an unread file.

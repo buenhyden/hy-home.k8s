@@ -70,3 +70,51 @@ jobs:
             exit 1
           fi
           exit 0
+
+  style-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout reviewed base
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted-base
+          persist-credentials: false
+      - name: Checkout pull request merge
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: candidate
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Bind base and select changed files
+        working-directory: candidate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          umask 077
+          test "$(git rev-parse HEAD^1)" = "$BASE_SHA"
+          git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"
+      - name: Install pinned style runner
+        run: >-
+          python -I -m pip install --disable-pip-version-check --only-binary=:all:
+          --require-hashes -r trusted-base/.github/requirements/ci-validation.txt
+      - name: Lint and format changed files
+        working-directory: candidate
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: >-
+          python -I ../trusted-base/scripts/validate-selected-style.py --root .
+          --config ../trusted-base/.pre-commit-config.yaml
+          --markdown-config ../trusted-base/.markdownlint-cli2.yaml
+          --ruff-config ../trusted-base/.ruff.toml
+          --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
+          --expected-base-sha "$BASE_SHA"

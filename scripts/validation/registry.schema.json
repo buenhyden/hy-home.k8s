@@ -234,7 +234,10 @@
           "const": "platform-depth-v2"
         },
         "pathInput": {
-          "const": "include-existing-markdown"
+          "enum": ["include-existing-markdown", "include-existing-files"]
+        },
+        "globalSelection": {
+          "const": "staged-changed"
         },
         "timeoutSeconds": {
           "type": "integer",

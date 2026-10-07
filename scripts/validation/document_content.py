@@ -450,7 +450,6 @@ def _matrix_findings(
             if not all(
                 marker in row[4]
                 for marker in (
-                    "No QA execution",
                     "No deploy CD",
                     "direct Kubernetes mutation",
                     "external Vault mutation",

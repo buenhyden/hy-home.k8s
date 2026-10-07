@@ -2095,6 +2095,73 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
+    def test_symlink_only_style_input_is_not_applicable_without_pass_evidence(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        output = StringIO()
+        completed_passes = {}
+        with (
+            tempfile.TemporaryDirectory(
+                prefix="selected-style-only-link-"
+            ) as temporary,
+            patch.object(RUNNER, "validation_environment", return_value={}),
+            patch.object(RUNNER, "resolve_tool", return_value="/usr/bin/python3"),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(
+                    "STYLE-NOT_APPLICABLE: no selected regular files\n"
+                ),
+            ),
+            redirect_stdout(output),
+        ):
+            root = Path(temporary)
+            (root / "alias.md").symlink_to("missing.md")
+            result = RUNNER.run_selected(
+                root,
+                "staged",
+                ["alias.md"],
+                contract,
+                contract_module,
+                validator_ids=["selected-style"],
+                completed_passes=completed_passes,
+            )
+        self.assertEqual(result, 0)
+        self.assertIn("[NOT_APPLICABLE] selected-style", output.getvalue())
+        self.assertEqual(completed_passes, {})
+
+    def test_staged_style_forwards_regular_and_symlink_paths_but_not_deletions(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "selected-style"
+        )
+        with tempfile.TemporaryDirectory(prefix="selected-style-runner-") as temporary:
+            root = Path(temporary)
+            (root / "current.md").write_text("current\n", encoding="utf-8")
+            (root / "alias.md").symlink_to("current.md")
+            actual = RUNNER.validator_argv(
+                root,
+                "staged",
+                ["current.md", "alias.md", "deleted.md"],
+                validator,
+                contract,
+                contract_module,
+            )
+        self.assertEqual(
+            actual[len(validator["argv"]) :],
+            ["--include-path=current.md", "--include-path=alias.md"],
+        )
+        with self.assertRaisesRegex(ValueError, "staged lane"):
+            RUNNER.validator_argv(
+                ROOT,
+                "affected",
+                ["README.md"],
+                validator,
+                contract,
+                contract_module,
+            )
+
     def test_all_files_executes_each_registry_owner_with_declared_argv(self):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)

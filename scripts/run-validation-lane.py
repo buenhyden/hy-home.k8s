@@ -1679,6 +1679,17 @@ def validator_argv(
     argv = list(validator["argv"])
     if validator["id"] == "gitops-change-set" and base_ref is not None:
         argv[argv.index("--base-ref") + 1] = base_ref
+    if validator.get("pathInput") == "include-existing-files":
+        if lane != "staged":
+            raise ValueError("selected file style input requires staged lane")
+        for raw_path in paths:
+            target = root.joinpath(*PurePosixPath(raw_path).parts)
+            try:
+                target.lstat()
+            except FileNotFoundError:
+                continue
+            argv.append("--include-path=" + raw_path)
+        return argv
     if validator.get("pathInput") != "include-existing-markdown":
         return argv
     if lane == "all-files":
@@ -1869,7 +1880,7 @@ def run_selected(
         argv[0] = tool
 
         child_environment = dict(subprocess_environment)
-        if identifier == "pre-commit":
+        if identifier in ("pre-commit", "selected-style"):
             # Use the account cache location, never ambient HOME or startup state.
             account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
             pre_commit_home = account_home / ".cache/pre-commit"
@@ -1921,7 +1932,16 @@ def run_selected(
             )
             and (marker_count == 1 if marker is not None else True)
         )
-        status = "PASS" if passed else "FAIL"
+        style_not_applicable = (
+            identifier == "selected-style"
+            and passed
+            and completed.stdout.complete
+            and completed.stdout.retained.strip()
+            == b"STYLE-NOT_APPLICABLE: no selected regular files"
+        )
+        status = (
+            "NOT_APPLICABLE" if style_not_applicable else ("PASS" if passed else "FAIL")
+        )
         limitation = observation(completed)
         if structured:
             if report_error:
@@ -1950,7 +1970,7 @@ def run_selected(
         )
         for row in platform_rows:
             print(platform_result_line(row, identifier, lane, scope, evidence))
-        if passed and completed_passes is not None:
+        if passed and not style_not_applicable and completed_passes is not None:
             # The caller persists these only after checking snapshot integrity.
             completed_passes[identifier] = "PASS"
         failed = failed or not passed

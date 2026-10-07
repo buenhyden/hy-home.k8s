@@ -266,9 +266,10 @@ class FastGateTests(unittest.TestCase):
         self.assertIn("unit-tests", registry["profiles"]["full"])
         self.assertNotIn("archive-contract-tests", registry["profiles"]["full"])
         surfaces = {item["id"]: item["validators"] for item in registry["surfaces"]}
-        for surface in ("scripts", "tests", "template-documents"):
+        for surface in ("scripts", "tests", "stage99-machine-contracts"):
             with self.subTest(surface=surface):
                 self.assertIn("archive-contract-tests", surfaces[surface])
+        self.assertNotIn("archive-contract-tests", surfaces["template-documents"])
 
     def test_the_gate_runs_one_script_that_names_every_regression(self) -> None:
         """The contract identifies a gate by its script, never by a `-m` module."""

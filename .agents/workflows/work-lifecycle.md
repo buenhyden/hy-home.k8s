@@ -96,8 +96,9 @@ end the loop.
    applicable automated checks plus an independent read-only reviewer.
 2. Follow the delivery route and ordered sequence in
    [quality policy](../governance/quality.md#delivery-ownership). Record local
-   selected QA over its actual snapshot. PR branch metadata has a distinct
-   hosted SHA/run, and any unexecuted hosted full QA is `NOT_RUN`; local full
+   selected QA and pre-commit lint/format over their actual snapshots. PR branch
+   metadata and selected hosted style have distinct SHA/run evidence, and any
+   unexecuted hosted full QA is `NOT_RUN`; local full
    runs only when shared QA machinery changes or an explicit bounded audit
    selects it after resource preflight. Push and merge do not replay an
    identical leaf.

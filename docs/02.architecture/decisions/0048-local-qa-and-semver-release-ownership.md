@@ -64,7 +64,8 @@ each small change. Required tools, execution time, output limits and native
 execution approval are resolved before implementation.
 
 Editing uses focused and affected checks. Logical commits validate the exact
-index and actual Commitizen message. Push is transport, and integration or
+index, required lint and format on that final index immediately before commit,
+and the actual Commitizen message. Push is transport, and integration or
 postmerge checks refresh only evidence whose input changed. A successful leaf
 is reused only for identical declared bytes, configuration, tool identity,
 scope, mode, trust and relevant base/history. Path equality alone is
@@ -74,9 +75,12 @@ creating another state owner or weakening failure diagnostics.
 The hosted `ci-summary` job owns branch metadata validation and its
 branch-policy verdict. Missing metadata, an invalid PR base or source branch,
 or an unexpected event/ref fails closed; PR branch policy is not applicable
-on main. Hosted QA stays `NOT_RUN`, including
-when the metadata summary succeeds. No local receipt is relabelled as hosted
-QA. Actual remote required checks remain an observed external boundary.
+on main. A separate hosted PR style check may run the same declared style
+rules against its distinct merge SHA/run; it does not inherit local PASS.
+Hosted full, unit and document-content QA stay `NOT_RUN` when unexecuted,
+including when the metadata summary or style check succeeds. Deployment style
+evidence requires an actual deployment workflow and run. Actual remote
+required checks remain an observed external boundary.
 
 ### Coverage transfer before retirement
 
@@ -185,7 +189,9 @@ run a synthetic grader. Maintainers must arrange actual paired trials and
 scoring when an evaluation is needed; document conformance alone cannot show
 that a Skill improves results or replace human calibration.
 
-The repository gives up independent hosted QA and per-push hosted attestation.
+The repository gives up independent hosted full, unit and document-content QA
+and per-push hosted attestation; hosted PR style remains a distinct final
+defense for its own input.
 Maintainers must provide local tools and retain meaningful local evidence.
 Affected selection and reuse require accurate dependencies; a mistake can
 omit a necessary check, so changes to that graph need focused refusal cases

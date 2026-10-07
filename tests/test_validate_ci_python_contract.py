@@ -481,7 +481,7 @@ class CiPythonContractTests(unittest.TestCase):
         self.inject_non_validation_job(root, command)
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
 
-    def test_surviving_jobs_reject_python_setup_and_gitleaks_install(self):
+    def test_non_style_jobs_reject_python_setup_and_gitleaks_install(self):
         for step, rule in (
             (
                 "      - uses: actions/setup-python@0000000000000000000000000000000000000000\n",
@@ -497,7 +497,7 @@ class CiPythonContractTests(unittest.TestCase):
             workflow.write_text(workflow.read_text() + step)
             self.assert_rule(root, rule)
 
-    def test_surviving_jobs_reject_hosted_full_qa(self):
+    def test_hosted_jobs_reject_full_qa(self):
         root = self.make_valid_root()
         self.inject_validation_step(root, RETIRED_HOSTED_QA_COMMAND)
         self.assert_rule(root, "CI-QA-EXECUTION")
@@ -519,10 +519,10 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn(
-            "[PASS] local Python dependency and CI metadata contract passed",
+            "[PASS] local Python dependency and scoped CI contract passed",
             result.stdout,
         )
-        self.assertIn("local-python-pins=3 hosted-installs=0", result.stdout)
+        self.assertIn("local-python-pins=3 hosted-installs=1", result.stdout)
 
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
@@ -1292,7 +1292,7 @@ class CiPythonShellGitSubcommandTests(unittest.TestCase):
                 self.assertFalse(self._allowed(command))
 
 
-class MetadataOnlyCiContractTests(unittest.TestCase):
+class MetadataAndStyleCiContractTests(unittest.TestCase):
     def workflow(self):
         import copy
 
@@ -1304,8 +1304,11 @@ class MetadataOnlyCiContractTests(unittest.TestCase):
             )
         )
 
-    def test_one_metadata_job_and_honest_summary_are_admitted(self):
-        VALIDATOR.validate_workflow(self.workflow())
+    def test_workflow_rejects_inherited_execution_environment(self):
+        workflow = self.workflow()
+        workflow["env"] = {"NODE_OPTIONS": "--require ./candidate/payload.cjs"}
+        with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+            VALIDATOR.validate_workflow(workflow)
 
     def test_extra_hosted_jobs_and_qa_execution_are_rejected(self):
         for name in ("qa", "qa-source", "qa-isolated", "branch-policy"):
@@ -1372,6 +1375,119 @@ class MetadataOnlyCiContractTests(unittest.TestCase):
                 self.assertRaises(VALIDATOR.ContractError),
             ):
                 VALIDATOR.validate_workflow(workflow)
+
+
+class HostedStyleJobBoundaryTests(unittest.TestCase):
+    def style_job(self):
+        return {
+            "if": "github.event_name == 'pull_request'",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "permissions": {"contents": "read"},
+            "steps": [
+                {
+                    "uses": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+                    "with": {
+                        "ref": "${{ github.event.pull_request.base.sha }}",
+                        "path": "trusted-base",
+                        "persist-credentials": False,
+                    },
+                },
+                {
+                    "uses": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+                    "with": {
+                        "path": "candidate",
+                        "fetch-depth": 2,
+                        "persist-credentials": False,
+                    },
+                },
+                {
+                    "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+                    "with": {"python-version": "3.12"},
+                },
+                {
+                    "working-directory": "candidate",
+                    "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
+                    "run": (
+                        "set -euo pipefail\n"
+                        "umask 077\n"
+                        'test "$(git rev-parse HEAD^1)" = "$BASE_SHA"\n'
+                        "git diff --no-ext-diff --no-textconv --no-renames --name-only -z --diff-filter=ACMR "
+                        'HEAD^1 HEAD > "$RUNNER_TEMP/pr-style-paths.z"'
+                    ),
+                },
+                {
+                    "run": (
+                        "python -I -m pip install --disable-pip-version-check --only-binary=:all: "
+                        "--require-hashes -r trusted-base/.github/requirements/ci-validation.txt"
+                    )
+                },
+                {
+                    "working-directory": "candidate",
+                    "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
+                    "run": (
+                        "python -I ../trusted-base/scripts/validate-selected-style.py --root . "
+                        "--config ../trusted-base/.pre-commit-config.yaml "
+                        "--markdown-config ../trusted-base/.markdownlint-cli2.yaml "
+                        "--ruff-config ../trusted-base/.ruff.toml "
+                        '--paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul '
+                        '--expected-base-sha "$BASE_SHA"'
+                    ),
+                },
+            ],
+        }
+
+    def test_style_job_rejects_untrusted_or_mutable_inputs(self):
+        import copy
+
+        VALIDATOR._validate_style_pr_job(self.style_job())
+        cases = (
+            (0, "uses", "actions/checkout@v7"),
+            (
+                0,
+                "with",
+                {
+                    "ref": "${{ github.head_ref }}",
+                    "path": "trusted-base",
+                    "persist-credentials": False,
+                },
+            ),
+            (
+                1,
+                "with",
+                {"path": "candidate", "fetch-depth": 2, "persist-credentials": True},
+            ),
+            (4, "run", "python -m pip install pre-commit"),
+            (5, "run", "python scripts/validate-selected-style.py --root . || true"),
+            (
+                4,
+                "run",
+                self.style_job()["steps"][4]["run"].replace("python -I", "python", 1),
+            ),
+            (
+                5,
+                "run",
+                self.style_job()["steps"][5]["run"].replace("python -I", "python", 1),
+            ),
+        )
+        for index, key, value in cases:
+            with self.subTest(index=index, key=key, value=value):
+                job = copy.deepcopy(self.style_job())
+                job["steps"][index][key] = value
+                with self.assertRaises(VALIDATOR.ContractError):
+                    VALIDATOR._validate_style_pr_job(job)
+
+    def test_style_job_rejects_permission_and_event_drift(self):
+        for key, value in (
+            ("if", "always()"),
+            ("permissions", {"contents": "write"}),
+            ("timeout-minutes", 11),
+        ):
+            with self.subTest(key=key):
+                job = self.style_job()
+                job[key] = value
+                with self.assertRaises(VALIDATOR.ContractError):
+                    VALIDATOR._validate_style_pr_job(job)
 
 
 if __name__ == "__main__":

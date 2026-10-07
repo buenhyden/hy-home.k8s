@@ -120,19 +120,23 @@ support them.
 
 ## Required Status Checks
 
-This repository publishes one aggregate check. `.github/workflows/ci.yml` owns
-its exact machine identity and `.github/repository-surface.md` explains the
-workflow roles.
+The dated remote observation above required one aggregate check.
+`.github/workflows/ci.yml` owns the current tracked job identities and
+`.github/repository-surface.md` explains their roles.
 
 - `ci-summary`
 
-`ci-summary` is the sole CI job. It checks pull-request base and source-prefix
+`ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
 push/manual dispatch. It reports full QA as `NOT_RUN` on every event. Success
 establishes only this metadata policy; local QA has its own input and evidence.
+The tracked workflow also defines PR-only `style-pr` for selected style at its
+own merge SHA/run. Its presence does not establish a successful run or make it
+a remotely required check; actual protection settings need an authenticated
+read-back before that claim.
 
 The dated observed configuration above requires only `ci-summary`; it does not
-establish the current remote settings. Former hosted full-QA proof and
+establish the current remote settings or a `style-pr` requirement. Former hosted full-QA proof and
 `main-<SHA>` publication were retired from the current workflows. Their
 historical authenticated results remain reachable through the
 [Archive index](../../docs/98.archive/README.md). A future protected publication
@@ -141,7 +145,8 @@ remote read-back. No setting is changed by this guidance.
 
 GitHub treats a whole workflow skipped by a path or branch filter as an
 expected check that may remain pending. No CI workflow here declares a `paths`
-filter. The single `ci-summary` job runs on each configured event. See the
+filter. `ci-summary` runs on each configured event; `style-pr` is conditional
+on a main-targeting pull request. See the
 [official required-check troubleshooting guide](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
 A past merge blockage cannot be attributed to a skipped job without the actual

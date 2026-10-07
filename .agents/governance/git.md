@@ -35,6 +35,7 @@ branch convention; Codex-created branches normally use `codex/`.
 - Use Conventional Commits with an imperative, specific summary; include the
   reason when it is not obvious. Keep commits aligned to Plan/Task units.
 - Validate the exact index with the selected staged profile before each logical
+  commit, including required lint and format checks immediately before the
   commit. Local QA owns repository-static quality evidence. A feature push, PR
   or main merge does not itself select full QA. Follow the
   [quality sequence](quality.md#canonical-completion-sequence) and do not repeat
@@ -69,9 +70,11 @@ creation carry that evidence without re-executing the same leaf. Compare the
 integrated main tree and history with what was checked; a changed merge input
 gets only its invalidated checks, and an identical fast-forward does not replay
 them. The hosted `ci-summary` job owns the PR branch-metadata verdict directly;
-its observed result has its own SHA and trust boundary and never stands in for
-local QA. Observe actual ruleset requirements before calling an integration
-accepted.
+the hosted PR style job owns only its selected style verdict. Each observed
+result has its own SHA and trust boundary and never stands in for local full,
+unit or document-content QA. A deployment style result requires an actual
+deployment workflow and run; absent that input, keep it unobserved. Observe
+actual ruleset requirements before calling an integration accepted.
 
 ### Release ownership
 

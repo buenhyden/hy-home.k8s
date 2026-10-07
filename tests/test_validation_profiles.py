@@ -117,12 +117,13 @@ class ValidationProfileTests(unittest.TestCase):
                 )
                 self.assertEqual(surface["protectedLevel"], "protected")
 
-    def test_quick_and_staged_keep_the_same_gate_set(self):
-        """The two change-scoped profiles differ by snapshot, never by membership."""
+    def test_staged_adds_only_commit_boundary_style_to_quick(self):
+        """Iteration gates stay focused; the staged commit boundary adds style."""
 
-        self.assertEqual(
-            self.contract["profiles"]["quick"], self.contract["profiles"]["staged"]
-        )
+        quick = set(self.contract["profiles"]["quick"])
+        staged = set(self.contract["profiles"]["staged"])
+        self.assertEqual(staged - quick, {"selected-style"})
+        self.assertEqual(quick - staged, set())
 
     def test_the_hosted_profile_resolves_rather_than_repeats_the_gate_list(self):
         """One profile owns the hosted gate set; the other resolves from it.

@@ -424,6 +424,34 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "selected-style",
+      "argv": [
+        "python3",
+        "scripts/validate-selected-style.py",
+        "--root",
+        ".",
+        "--config",
+        ".pre-commit-config.yaml",
+        "--markdown-config",
+        ".markdownlint-cli2.yaml",
+        "--ruff-config",
+        ".ruff.toml"
+      ],
+      "lanes": [
+        "staged"
+      ],
+      "coveredBy": "pre-commit",
+      "pathInput": "include-existing-files",
+      "globalSelection": "staged-changed",
+      "timeoutSeconds": 600,
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Selected staged file style validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "secret-handling",
       "argv": [
         "bash",
@@ -775,16 +803,43 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "template-documents",
+      "id": "stage99-machine-contracts",
       "routes": [
         {
+          "kind": "exact",
+          "value": "docs/99.templates/registry.json"
+        },
+        {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)docs/99\\.templates/.*$"
+          "value": "^docs/99\\.templates/contracts/.*\\.json$"
         }
       ],
       "validators": [
         "agent-governance",
         "archive-contract-tests",
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Stage 99 machine contracts require document and Archive regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "template-documents",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!docs/99\\.templates/(?:registry\\.json$|contracts/.*\\.json$))docs/99\\.templates/.*$"
+        }
+      ],
+      "validators": [
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -1208,6 +1263,7 @@
       "markdown-profiles",
       "policy-gates",
       "repository-quality",
+      "selected-style",
       "secret-handling",
       "vault-eso-contracts",
       "external-service-contracts"

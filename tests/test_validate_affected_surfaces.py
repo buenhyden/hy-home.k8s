@@ -77,6 +77,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "document-lifecycle",
             "links-and-owners",
             "markdown-profiles",
+            "selected-style",
         ]
         for path in (
             "docs/03.specs/route-probe/spec.md",
@@ -101,7 +102,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             ("docs/99.templates/registry.json", "agent-governance"),
             (
                 "docs/99.templates/templates/evaluations/evaluation-task.template.md",
-                "archive-contract-tests",
+                "document-contract-registry",
             ),
             (".agents/governance/quality.md", "agent-governance"),
             (".codex/provider.md", "agent-governance"),
@@ -121,6 +122,46 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         )
         self.assertIn("document-contract-registry", mixed["validators"])
         self.assertIn("k8s-manifests", mixed["validators"])
+
+    def test_selected_style_is_global_only_at_the_staged_boundary(self) -> None:
+        for path in ("README.md", "gitops/clusters/local/root-application.yaml"):
+            with self.subTest(path=path):
+                staged = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                affected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertIn("selected-style", staged["validators"])
+                self.assertNotIn("selected-style", affected["validators"])
+        self.assertIn("selected-style", self.contract["profiles"]["staged"])
+        self.assertNotIn("selected-style", self.contract["profiles"]["quick"])
+        self.assertNotIn("selected-style", self.contract["profiles"]["full"])
+        selected_style = next(
+            row for row in self.contract["validators"] if row["id"] == "selected-style"
+        )
+        self.assertEqual(selected_style["coveredBy"], "pre-commit")
+
+    def test_stage99_machine_contract_keeps_archive_gate_without_form_replay(
+        self,
+    ) -> None:
+        for path in (
+            "docs/99.templates/registry.json",
+            "docs/99.templates/contracts/document-profile.schema.json",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertIn("archive-contract-tests", selected["validators"])
+        form = self.validator.select_paths(
+            self.contract,
+            ["docs/99.templates/templates/evaluations/evaluation-task.template.md"],
+            "staged",
+            ROOT,
+        )
+        self.assertNotIn("archive-contract-tests", form["validators"])
+        self.assertIn("document-contract-registry", form["validators"])
 
     def test_root_changelog_uses_document_surface(self) -> None:
         self.assertEqual(

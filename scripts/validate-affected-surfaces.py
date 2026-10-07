@@ -338,6 +338,33 @@ def validate_contract(
             "SURFACE-VALIDATOR-PATH-INPUT",
             "include-existing-markdown ownership differs from the exact document validator set",
         )
+    selected_style = validators.get("selected-style")
+    if (
+        selected_style is None
+        or selected_style.get("pathInput") != "include-existing-files"
+        or selected_style.get("globalSelection") != "staged-changed"
+        or selected_style["lanes"] != ["staged"]
+        or {
+            identifier
+            for identifier, validator in validators.items()
+            if validator.get("pathInput") == "include-existing-files"
+            or validator.get("globalSelection") == "staged-changed"
+        }
+        != {"selected-style"}
+    ):
+        fail(
+            "SURFACE-VALIDATOR-PATH-INPUT",
+            "the staged selected-file style input has one registered owner",
+        )
+    if (
+        "selected-style" not in contract["profiles"]["staged"]
+        or "selected-style" in contract["profiles"]["quick"]
+        or "selected-style" in contract["profiles"]["full"]
+    ):
+        fail(
+            "SURFACE-VALIDATOR-PATH-INPUT",
+            "selected-file style runs only at the staged commit boundary",
+        )
 
     for validator in validators.values():
         if any(lane not in LANES for lane in validator["lanes"]):
@@ -667,6 +694,12 @@ def select_paths(
             if lane in validators_by_id[identifier]["lanes"]:
                 validator_ids.add(identifier)
         maximum = max(maximum, PROTECTED_LEVELS.index(surface["protectedLevel"]))
+    if lane == "staged" and paths:
+        validator_ids.update(
+            identifier
+            for identifier, validator in validators_by_id.items()
+            if validator.get("globalSelection") == "staged-changed"
+        )
     return {
         "validators": sorted(validator_ids),
         "protectedLevel": PROTECTED_LEVELS[maximum],

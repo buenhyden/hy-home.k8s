@@ -39,7 +39,7 @@
     {
       "name": "templates",
       "path": "docs/99.templates/registry.json",
-      "expectedSurface": "template-documents"
+      "expectedSurface": "stage99-machine-contracts"
     },
     {
       "name": "shared-agent",
