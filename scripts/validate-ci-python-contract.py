@@ -18,11 +18,6 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
-EXPECTED_REQUIREMENT_LINES = (
-    "jsonschema==4.26.0",
-    "pre-commit==4.6.1",
-    "PyYAML==6.0.3",
-)
 EXPECTED_PINS = {
     "jsonschema": "4.26.0",
     "pre-commit": "4.6.1",
@@ -1173,13 +1168,6 @@ def _load_yaml(text: str, rule_id: str, source: Path) -> dict[str, Any]:
 
 
 def _validate_direct_requirements(text: str) -> None:
-    expected_text = "\n".join(EXPECTED_REQUIREMENT_LINES) + "\n"
-    if text != expected_text:
-        fail(
-            "CI-PYTHON-PIN",
-            f"{DIRECT_REQUIREMENTS_PATH.as_posix()} must contain exactly the three ordered pins",
-        )
-
     observed: dict[str, str] = {}
     for line in text.splitlines():
         match = PIN_PATTERN.fullmatch(line)

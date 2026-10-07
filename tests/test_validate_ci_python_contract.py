@@ -660,6 +660,15 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PYTHON-PIN")
 
+    def test_direct_pin_order_does_not_duplicate_package_authority(self) -> None:
+        root = self.make_valid_root()
+        direct_input = root / ".github/requirements/ci-validation.in"
+        direct_input.write_text(
+            "\n".join(reversed(DIRECT_INPUT.splitlines())) + "\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
+
     def test_direct_input_rejects_a_dropped_direct_dependency(self) -> None:
         root = self.make_valid_root()
         direct_input = root / ".github/requirements/ci-validation.in"
