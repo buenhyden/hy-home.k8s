@@ -1,8 +1,8 @@
 ---
 title: "Local Quality and Release Lifecycle"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/spec"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -174,7 +174,9 @@ and Git stage routing, release and commit consumers, and final evidence/review.
 Each source owner updates its current contract and direct consumers together.
 Maintain distinct static, local runner, hosted, provider-native, and live
 evidence lanes. The [Task](tasks/tsk-0001-local-qa-and-release.md) is the
-only execution state and check-result record. The current
+sole work-state and implementation-acceptance owner and records C16 source
+checks. Only terminal C17 closing-index, commit and post-commit facts use the
+non-authoritative handoff receipt described below. The current
 [main release Runbook](../../05.operations/runbooks/0012-main-release-preparation-runbook.md)
 applies this Spec's SemVer and operator boundary to a reviewed main release.
 
@@ -220,18 +222,25 @@ operations to their operator with the exact target and reviewed revision.
 Read selected prerequisites and runner limits from the active registry and
 quality policy before invoking checks. The current selected entry points are
 `python3 scripts/qa.py quick` and `python3 scripts/qa.py staged` plus named
-purpose/unit commands; the changed-input selection and exact command
-result are recorded only in the Task. Use named focused regressions for changed
+purpose/unit commands; implementation changed-input selection and exact
+results are recorded in the Task. Use named focused regressions for changed
 behavior, the configured actual commit-message validation and an independent
 read-only semantic review. A `completion` check, if selected, uses the current
-Spec anchor and actual index. No test result is asserted by this draft.
+Spec anchor and actual index. The [Task](tasks/tsk-0001-local-qa-and-release.md)
+owns implementation execution and acceptance through the substantive C16
+input; this Spec does not promote evidence from another input or lane. For
+this SPEC-0107 closing delivery only, the controller records terminal
+closing-index checks and the closing commit and post-commit delivery facts
+after observation in an ignored handoff receipt referenced by the Task and
+final response. That receipt supports delivery verification; it is not a
+second work-state owner, approval source or substitute for Task acceptance.
 
 ## Success Criteria & Verification Plan
 
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-LOCAL-QA-001 | Consumer graph and focused regression show ongoing coverage before obsolete callers, dedicated helpers and tests are retired; Archive integrity and past cutover proof remain distinct. Official primary sources are dated and traced from claim to local decision in Task evidence. |
-| VAL-LOCAL-QA-002 | Local stage matrix, exact-index pre-commit style checks, selected affected and named behavior/Archive/security results, and independent review show bounded selection without a retired full/ci sweep, blanket unit discovery, duplicate same-input leaves or an unobserved hosted result claim. The selected hosted style check is evaluated at its own PR SHA/run; absent deployment routing stays unobserved. Official primary sources are dated and traced from claim to local decision in Task evidence. |
+| VAL-LOCAL-QA-002 | Local stage matrix, exact-index pre-commit style checks, selected affected and named behavior/Archive/security results, and independent review show bounded selection without a retired full/ci sweep, blanket unit discovery, duplicate same-input leaves or an unobserved hosted result claim. The selected hosted PR style check remains a required PR defense: when an actual PR run is observed, evaluate it at its own merge SHA/run; otherwise record `DEFER` for that hosted lane. Local implementation may be accepted from its distinct source and trusted-base checks. Absent deployment routing stays unobserved. Official primary sources are dated and traced from claim to local decision in Task evidence. |
 | VAL-LOCAL-QA-003 | Commitizen, SemVer release producer and main `CHANGELOG.md` contracts have focused positive and refusal evidence; actual remote publication is recorded separately. |
 | VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; the evaluation route and empty aggregate capacity preserve separate evidence authority without fabricating a run; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
 
@@ -241,18 +250,7 @@ Spec anchor and actual index. No test result is asserted by this draft.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Registry owner, caller/coverage map and focused regression. |
-| [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Consumer-zero and compatibility retirement review. |
-| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Archive integrity and past cutover evidence remain distinct. |
-| [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Active script, test and workflow consumer inventory. |
-| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Local and hosted lane boundary review. |
-| [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Proportionate selected checks and independent review. |
-| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Distinct local, hosted and live evidence labels. |
-| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Focused, staged and final local input evidence. |
-| [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Dated primary source, claim, scope and local decision in Task evidence. |
-| [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-003 | SemVer producer and existing-tag refusal. |
-| [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-003 | Commit/release consumer inventory. |
-| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Unique work-tracking owner review. |
-| [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Task-only command/result and handoff evidence. |
-| [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Current owner links and retired-consumer succession. |
-| [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Actual paired evaluation route, form ownership and empty aggregate boundary. |
+| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-001 | Registry owner, caller/coverage map and focused regression; [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) consumer-zero and compatibility retirement; [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) continuing Archive integrity distinct from past cutover proof; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) active script, test and workflow inventory; [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) dated source, claim, scope and local decision in Task evidence. |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Local and hosted lane boundary review; [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) proportionate selected checks and independent review; [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) distinct local, hosted and live evidence labels; [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) focused, staged and final local input evidence. |
+| [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-003 | SemVer producer and existing-tag refusal; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) commit and release consumer inventory. |
+| [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Unique work-tracking owner review; [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) Task-owned implementation result and acceptance, with only terminal SPEC-0107 delivery facts in its referenced non-authoritative handoff receipt; [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) current owner links and retired-consumer succession; [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) paired evaluation route, form ownership and empty aggregate boundary. |

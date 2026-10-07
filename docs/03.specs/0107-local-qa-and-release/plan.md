@@ -1,8 +1,8 @@
 ---
 title: "Local Quality and Release Lifecycle Plan"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/plan"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -26,9 +26,12 @@ operator route. Update one current owner and its direct consumers per rule.
 ## Overview
 
 Execute SPEC-0107 in one Task with one execution row. Work packages describe
-dependency order only; current status, commands, checks and acceptance are
-recorded in that Task. The proposed delivery uses draft, ready, in-progress
-and completed Task transitions in distinct normal commits.
+dependency order only; work status, implementation commands, checks and
+acceptance are recorded in that Task. Only actual terminal SPEC-0107 closing
+checks, commit and delivery facts go to its referenced non-authoritative
+handoff receipt. Its draft, ready, in-progress and completed transitions
+use distinct normal commits; the Task links the actual evidence and delivery
+boundary.
 
 ## Context
 
@@ -95,8 +98,10 @@ reviewer inspects final diff, contract and results. Do not replay an identical
 leaf simply because delivery moved from commit to push.
 The final local index also receives required lint and format checks immediately
 before each commit; do not repeat an identical successful local style leaf.
-Verify the selected hosted PR style route separately against its actual merge
-SHA/run. A deployment style result depends on a real deployment workflow and
+The selected hosted style job remains a required PR defense. Verify its own
+merge SHA/run when an actual PR run is observed; otherwise record that hosted
+lane as `DEFER` without blocking acceptance of distinct local implementation
+and trusted-base source checks. A deployment style result depends on a real deployment workflow and
 execution, which are not established by this Plan; do not infer it from a PR
 style configuration or local PASS.
 For the evaluation route, validate its Stage 99 profile, reciprocal links and
@@ -122,4 +127,8 @@ acceptance and remaining owner. Required local checks and independent review
 pass on their actual snapshots, no material finding remains, and normal
 logical commits are recorded. External Release/Project and live states are
 asserted only if independently observed and authorized. Main integration and
-owned-worktree cleanup are separately recorded as actual Git outcomes.
+owned-worktree cleanup are separately recorded as actual Git outcomes. For
+this package's closing-document commit, the controller records exact changed
+index checks, review and post-commit delivery only after observation in the
+Task-referenced handoff receipt, avoiding a self-referential evidence/OID edit.
+This does not replace Task ownership of implementation acceptance.

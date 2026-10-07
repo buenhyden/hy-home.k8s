@@ -1,8 +1,8 @@
 ---
 title: "Local Quality and Release Lifecycle"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-07"
 layer: "specs"
@@ -16,7 +16,14 @@ parent_ids: ["SPEC-0107-PLAN-0001"]
 
 Record actual execution for the local QA retirement and delivery contract,
 Commitizen and SemVer release path, and Issue/Project responsibility update.
-This Task alone owns commands, results, acceptance, integration and handoff.
+This Task alone owns work state and implementation commands, results and
+acceptance through the
+observed C16 substantive input. For this SPEC-0107 closing delivery only,
+the controller writes terminal closing-index checks and the closing commit,
+main, origin and cleanup facts to the Task-referenced handoff receipt after
+actual observation, then reports them in the final response. That supporting
+receipt grants no approval, owns no parallel work state and cannot turn C16
+source PASS into C17 closing PASS.
 The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
 
 ## Inputs
@@ -71,7 +78,7 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-LOCAL-QA-001](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | Retire proven obsolete QA with coverage transfer; route local validation, commit and release, and work tracking to current owners | platform | frontmatter | NOT_RUN | pending | EVD-LOCAL-QA-001, EVD-LOCAL-QA-002, EVD-LOCAL-QA-003, EVD-LOCAL-QA-004 pending |
+| WORK-001 | [VAL-LOCAL-QA-001](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | Retire proven obsolete QA with coverage transfer; route local validation, commit and release, and work tracking to current owners | platform | frontmatter | PASS | accepted | EVD-LOCAL-QA-135, EVD-LOCAL-QA-136, EVD-LOCAL-QA-137 |
 
 ## Task Evidence
 
@@ -215,6 +222,14 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
 | EVD-LOCAL-QA-131 | [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Third C16 exact-index staged attempt: private raw-index guard failed | Forty-seven-path changed index; `/tmp/hy-qa-0107-c16-guard-fixed-final-index.log`, 19387 bytes, SHA-256 `09e72be0660cf0c5b3556e5e1b5a47edbb547d2ac6ee2abdfc410caa1fd4b029` | FAIL | All eighteen selected leaves again recorded PASS, but the aggregate still failed the final private guard, now specifically on raw-index bytes. A subsequent local probe found a selected non-style Git name-only diff returning no changed paths while the private raw index changed at the byte level; staged entries and HEAD did not change. The non-style owner is moving that diff read to a disposable private-index copy while retaining the canonical raw-index and source guards. EVD-LOCAL-QA-130's intermediate focused PASS does not clear this new exact-index failure; changed-input regression, actual staged admission and review remain pending. | rejected |
 
 | EVD-LOCAL-QA-132 | [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Scoped private-index isolation repair before fourth staged admission | Changed `scripts/validate-selected-nonstyle.py` and its direct test; isolated forty-seven-path helper CLI; trusted Python named real-hook, diff and mutation cases; two-file Ruff check/format-check | PASS | The earlier whole-helper probe returned rc0 and 47-byte stdout with SHA-256 `cbb0916327908e3406571650b426fe7973630021735856d4c09517687b0a9a7d`, stderr empty, but private raw-index bytes changed while private HEAD, tree and source raw bytes did not. After repair, the same forty-seven-path helper returned rc0 with the same bounded stdout digest and empty stderr while private HEAD, raw index, tree and source raw bytes all remained unchanged. The helper now supplies a bounded, regular, exclusive mode-0600 disposable index under the same Git directory to both diff reads and thirteen pre-commit children, compares stage entries and flags before/after, keeps canonical raw-byte guards, and removes the temporary index in `finally`. A real-hook raw-drift regression first failed one named case in 1.125 s and then passed the real-hook and child `assume-unchanged` negative in one named case in 2.036 s; the clean/changed worktree diff named case passed in 0.100 s. An earlier wrong two-diff helper fixture produced `AttributeError` in 0.080 s and passed after correction in 0.100 s. Ruff check and format-check passed for the two changed files after a test formatting repair. These are focused changed-input receipts, not the new actual-index staged aggregate; acceptance and integration remain pending. | pending |
+| EVD-LOCAL-QA-133 | [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Fourth C16 exact-index attempt before central Git-read repair | Forty-seven-path index; `/tmp/hy-qa-0107-c16-disposable-index-final-qa.log`, 19387 bytes, SHA-256 `8e9d2f71538c64da0bab69926b606a783f6bedf599e930062de0fdfb76cab1da` | FAIL | All eighteen selected leaves passed, but the private raw-index guard failed and the aggregate did not pass. The later central `qa.py` Git diff read was found to refresh its own private raw index. This failure remains attached to its original input. | rejected |
+| EVD-LOCAL-QA-134 | [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan) | WORK-001 | Central disposable-index repair and focused regression | `scripts/qa.py` and its direct tests after EVD-LOCAL-QA-133; named Git diff, quick/staged, child-index and isolated agent-governance checks | PASS | The Git diff named case was RED, one FAIL in 0.649 s, then GREEN, one PASS in 1.899 s after a bounded mode-0600 disposable-index read with cleanup. Two existing quick/staged selector cases passed in 10.796 s, and two child-copy secret-HEAD and broken-index-symlink cases passed in 1.801 s. Scoped Ruff check and format-check passed. The isolated staged-snapshot agent-governance command returned rc0 with 142-byte stdout, SHA-256 `24f9fe5ed9fe817d5245a1a0534632b0ef0005e2f7c9ba916e9a137dc2c6b1bc`, empty stderr and unchanged private HEAD, raw index and tree. These are focused and single-gate receipts, not the final aggregate. | accepted |
+| EVD-LOCAL-QA-135 | [VAL-LOCAL-QA-001](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Final C16 exact-index local admission and message | Forty-seven-path staged index at substantive commit `47410d282ca5b4cbddca20a13c7fc2dd8f538974`; `/tmp/hy-qa-0107-c16-central-git-final-qa.log`, 19335 bytes, SHA-256 `db9085b2f4162c724063d31655027e9c62317911f156e5565bd1424c8b1233c4`; `/tmp/hy-qa-0107-c16-message.log` | PASS | Actual staged aggregate returned rc0: all eighteen selected gates and final private source/index guards passed. The pinned Commitizen check on the actual `refactor(qa): retire blanket validation sweeps` message returned rc0, then the normal local commit succeeded. This receipt covers that C16 input. It does not claim that the later three-document closing candidate or a hosted PR run has passed. | accepted |
+| EVD-LOCAL-QA-136 | [VAL-LOCAL-QA-001](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Final source, evidence and ownership review | Final C16 47-file diff and selected receipts in EVD-LOCAL-QA-024, EVD-LOCAL-QA-032, EVD-LOCAL-QA-098, EVD-LOCAL-QA-123..125, EVD-LOCAL-QA-134..135; independent read-only code and security reviewers | PASS | The code reviewer found no commit-blocking issue in the final version-4 registry, pin/stage routing, guards, secrets and symlink scope. The separate security reviewer found no important unresolved finding in the central Git reader and child disposable-index scope. Registered Archive integrity and past cutover proof remain distinct; release CLI refusal and main CHANGELOG contract are source/focused evidence rather than publication; Issue/Spec/Task/Project and empty evaluation evidence keep their separate owners. Neither reviewer executed QA or observed hosted style, a native provider, Project writes, a Release or live infrastructure. The still-proposed ADR-0048 needs its architecture owner for any later promotion. | accepted |
+| EVD-LOCAL-QA-137 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Normal local substantive commit and main integration | Feature commit `47410d282ca5b4cbddca20a13c7fc2dd8f538974`; clean local `main` at `2c9c5546bc10502284fc3c67150e33f090371223` fast-forwarded to that commit | PASS | The normal feature commit and local fast-forward each returned rc0, establishing local integration of the reviewed substantive input. At this record, `origin/main` has not yet been pushed and the owned branch/worktree has not yet been removed. Delivery of the later closing-document commit, remote synchronization and cleanup must be reported from their own actual Git outcomes outside this Task's self-referential commit loop. | accepted |
+| EVD-LOCAL-QA-138 | [VAL-LOCAL-QA-003](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | External and later-owner boundary | Release Runbook remains draft; ADR-0048 remains proposed; REQ-0003 remains in-review; hosted PR style and remote protection, SemVer publication, Project mutation, native runtime and live operations have no direct execution receipt | DEFER | Release operator owns trusted git-cliff availability and any approved publication with an exact main SHA; remote repository operator owns required checks and Project configuration; architecture owner owns ADR promotion; native and live operators own their direct observations. The earlier trusted-path release preview failure remains EVD-LOCAL-QA-020. These deferred external states are separate from acceptance of this local implementation. | pending |
+| EVD-LOCAL-QA-139 | [VAL-LOCAL-QA-002](../spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | First isolated three-document closing candidate | Candidate Spec, Plan and Task at substantive HEAD `47410d282ca5b4cbddca20a13c7fc2dd8f538974`; `/tmp/hy-qa-0107-c17-candidate-staged.log`; independent document review | FAIL | Six selected document gates returned rc0 on that first candidate input, but independent review found VAL-LOCAL-QA-002 phrased hosted PR style evaluation as unconditional despite no observed PR run. The changed candidate now requires fresh validation and review. This is not a passing closing-document receipt and does not alter the accepted C16 substantive input. | rejected |
+| EVD-LOCAL-QA-140 | [VAL-LOCAL-QA-004](../spec.md#success-criteria--verification-plan) | WORK-001 | Second isolated closing candidate completion trace | Six selected document gates on the second candidate returned rc0; `completion` on that candidate index SHA-256 `e690d7a3b8cb32c1dc0e9c1ab399170d23e982c1264089e688c2b93170ea45b4`; `/tmp/hy-qa-0107-c17-candidate-completion.log` | FAIL | `COMPLETION-TRACE` rejected duplicate Spec VAL trace rows even though the four VAL definitions are unique. Stage 99 also requires one complete Requirement ID in each identifier cell, so the revised candidate has four VAL rows with one representative Requirement ID per row and preserves every other Requirement ID link and verification purpose in its method cell. No changed-input completion or document-gate PASS is claimed by this row. | rejected |
 
 ## Approval and Safety Boundaries
 
@@ -351,8 +366,8 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   actually used and run on their own inputs. Earlier full-run receipts remain
   historical. Version-4 Registry and runner source is now applied to the
   working tree; scoped focused and security-review evidence is in
-  EVD-LOCAL-QA-123..125, while changed-input actual-index admission and final
-  code review remain pending. The earlier version-3 observation in
+  EVD-LOCAL-QA-123..125. Changed-input actual-index admission and final code
+  review are recorded separately in EVD-LOCAL-QA-135..136. The earlier version-3 observation in
   EVD-LOCAL-QA-119 belongs to its original rejected attempt.
 - **Live Validation**: DEFER, no live environment or authority in this scope.
 - **Secret / Vault Handling**: Reference metadata only; no value read or
@@ -361,8 +376,20 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   original SPEC-0106 evidence and Archive recovery identity intact. Remove
   an owned branch/worktree only after actual main reachability, clean state
   and retained evidence are verified.
-- **Evidence Location**: This Task's evidence table and verification summary;
-  bounded check receipts may be cited by exact location, not copied as raw logs.
+- **Evidence Location**: This Task's evidence table and verification summary
+  own execution and acceptance through the observed C16 substantive input.
+  Bounded check receipts may be cited by exact location, not copied as raw
+  logs. The delivery controller records later actual closing-document checks,
+  review, commit, local main, `origin/main` and owned-ref cleanup in ignored
+  `/home/hyunyoun/data/hy-home.k8s/.qa-evidence/handoff/SPEC-0107.json` in
+  the persistent main workspace and the final chat handoff after each event
+  is observed. The controller may commit only after required actual closing
+  checks and independent review pass. It records actual result codes, input
+  revision, log digests, commit OIDs, main/origin and cleanup outcomes in the
+  receipt as they become observable, and hosted/native `DEFER` where
+  unobserved. The receipt
+  is supporting delivery evidence, not a second progress-state owner, an
+  approval grant or a prediction of a passing check or commit.
 
 ## Verification Summary
 
@@ -382,8 +409,9 @@ and C6 full failed the observed selector unit case in EVD-LOCAL-QA-081,
 and C7 full failed the observed retired-root selector unit case in EVD-LOCAL-QA-084;
 the clean C8 committed input then passed all 23 full gates in EVD-LOCAL-QA-087.
 Focused subchecks have their separate observed rows. Additional requested
-retirement work in EVD-LOCAL-QA-089 remains pending and requires changed-input
-evidence. Remote settings and publication stay `DEFER` until observed.
+retirement work was pending at the EVD-LOCAL-QA-089 input; its later
+changed-input checks and disposition appear in the subsequent evidence rows.
+Remote settings and publication stay `DEFER` until observed.
 
 The first staged admission of the draft ran six selected gates: four passed,
 and links-and-owners plus markdown-profiles failed. The new Spec lacked its
@@ -426,7 +454,8 @@ are limited to the named writer inputs. The 60-second local reuse timeout
 and raw Archive diagnostics remain historical failures; their corrected
 source and focused checks have different inputs. The independent security
 reviewer's initial material findings in EVD-LOCAL-QA-019 were repaired and
-rechecked on source, while final exact-index review remains pending. The
+rechecked on source. The then-pending exact-index review was resolved for the
+later substantive C16 input in EVD-LOCAL-QA-135..136. The
 release preview actually failed rc2 because the installed git-cliff path is
 an NVM symlink outside the trusted resolver. An operator must provide a
 trusted system or account-owned tool path; no installer, private config or
@@ -436,17 +465,42 @@ QA gate. The new Archive integrity gate has an actual aligned-index PASS on
 its earlier input. The Archive owner subsequently transferred cutover envelope
 diagnostics and removed only the dedicated helper/test after focused catalog,
 disposition and Ruff checks passed; `archive_cutover_manifest` retains current
-consumers. This changed input still needs a registered aligned gate and
-consumer-zero proof. Exact assembled index, selected purpose/profile results,
-reuse on the changed final index, independent final review and integration have not been accepted;
-EVD-LOCAL-QA-001..004 and WORK-001 remain pending with the root quality owner
-and respective source writers.
+consumers. At that earlier input, the changed Archive source still needed a
+registered aligned gate and consumer-zero proof. Its later selected results,
+independent review and local substantive integration appear in
+EVD-LOCAL-QA-135..137. EVD-LOCAL-QA-001..004 retain their original
+`NOT_RUN/pending` values as historical intake records; they are not rewritten
+as passing checks.
+
+For the accepted local implementation, VAL-LOCAL-QA-001 follows WORK-001 to
+the registered Archive and retirement coverage in EVD-LOCAL-QA-024,
+EVD-LOCAL-QA-098 and aggregate EVD-LOCAL-QA-135..136.
+VAL-LOCAL-QA-002 follows selected stage and named security/behavior checks in
+EVD-LOCAL-QA-123..125 and EVD-LOCAL-QA-134..136. VAL-LOCAL-QA-003 follows
+focused release and commit checks in EVD-LOCAL-QA-020..022 and the actual
+message admission in EVD-LOCAL-QA-135..136; publication remains deferred in
+EVD-LOCAL-QA-138. VAL-LOCAL-QA-004 follows owner and empty-evaluation
+evidence in EVD-LOCAL-QA-031..032 and final review/local integration in
+EVD-LOCAL-QA-135..137. The WORK row references these current aggregate
+receipts. Earlier failed and interrupted inputs retain their own results.
+The later three-document closing input still requires separate validation.
+Its first isolated candidate passed six document gates but failed independent
+review as EVD-LOCAL-QA-139 records. The second candidate's six selected
+document gates passed, but its completion trace failed as EVD-LOCAL-QA-140
+records; neither input is a closing PASS. The
+delivery controller must retain the final changed-input staged, actual
+message, completion and independent review receipts before its normal commit,
+then record actual local-main and remote delivery outcomes in the separate
+handoff receipt named above. No C16 source check is reused as a C17 document
+check, and no future check, push or cleanup outcome is asserted here.
 
 The earlier real reuse proof in EVD-LOCAL-QA-030 covers one gate and its exact
 118-path index only. The first assembled C4 staged attempt in EVD-LOCAL-QA-029
 failed profile selection for the evaluation router before child gates ran.
 The added evaluation route has no actual paired output or score: old synthetic
 fixtures remain historical, and the two user-provided Skill definitions are
-absent from this workspace. Its Stage 99 form, links and empty aggregate need
-validation on the changed index; actual comparison and native behavior remain
-`NOT_RUN` or `NOT_OBSERVED`, respectively.
+absent from this workspace. At that C4 input its Stage 99 form, links and
+empty aggregate still needed validation; the later C16 selected checks in
+EVD-LOCAL-QA-135 cover their source and exact-index shape only. Actual paired
+comparison and native behavior remain `NOT_RUN` or `NOT_OBSERVED`,
+respectively.
