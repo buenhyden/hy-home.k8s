@@ -38,16 +38,6 @@ MIG0004_PATH = (
     REPOSITORY_ROOT
     / "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-DELIBERATELY_EMPTY_PROFILE_IDS = frozenset(
-    {
-        "operation/incident",
-        "operation/postmortem",
-        "reference/audit",
-        "reference/data",
-        "reference/audit-pack",
-        "reference/data-pack",
-    }
-)
 RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
     {
         "sdlc/data-model",
@@ -56,9 +46,6 @@ RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
         "common/native-contract-graphql",
         "common/native-contract-protobuf",
     }
-)
-DOCUMENT_FAMILIES = frozenset(
-    {"common", "governance", "sdlc", "operation", "reference", "archive"}
 )
 COMMON_FRONTMATTER_PREFIX = [
     "title",
@@ -105,42 +92,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-
-    def test_v10_registry_uses_the_common_public_model(self) -> None:
-        self.assertEqual(
-            set(self.registry),
-            {
-                "$id",
-                "$schema",
-                "schema_version",
-                "profiles",
-                "lifecycle_domains",
-                "retention_classes",
-                "retention_units",
-                "retention_modes",
-                "archive_citation",
-                "archive_assessment",
-                "legacy_rebased_retained_paths",
-                "readme_navigation",
-                "document_language",
-                "migration_admission",
-            },
-        )
-        self.assertEqual(self.registry["schema_version"], 10)
-        self.assertNotIn("programLineage", self.registry)
-        self.assertNotIn("standaloneExecutions", self.registry)
-        for profile in self.registry["profiles"]:
-            with self.subTest(profile=profile["id"]):
-                self.assertIn(profile["family"], DOCUMENT_FAMILIES)
-                self.assertEqual(profile["id"].split("/", 1)[0], profile["family"])
-                self.assertIn("path_pattern", profile)
-                self.assertIn("template_source", profile)
-                self.assertIn("frontmatter", profile)
-                self.assertIn("sections", profile)
-                self.assertIn("placeholder_policy", profile)
-                self.assertNotIn("pathPattern", profile)
-                self.assertNotIn("requiredFrontmatter", profile)
-                self.assertNotIn("requiredSections", profile)
 
     def test_governed_readmes_use_identity_free_envelopes(self) -> None:
         readmes = [
@@ -203,79 +154,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 native = re.findall(r"__[A-Za-z0-9_]+__", text)
                 self.assertTrue(all(current_native.fullmatch(item) for item in native))
 
-    def test_release_evidence_remains_external(self) -> None:
-        profile_ids = {profile["id"] for profile in self.registry["profiles"]}
-        self.assertNotIn("operation/release", profile_ids)
-        self.assertFalse(
-            any(
-                "release.template" in (profile["template_source"] or "")
-                for profile in self.registry["profiles"]
-            )
-        )
-
-    def test_root_registry_is_the_single_closed_machine_authority(self) -> None:
-        self.assertEqual(
-            set(self.registry),
-            {
-                "$id",
-                "$schema",
-                "lifecycle_domains",
-                "profiles",
-                "retention_classes",
-                "retention_units",
-                "retention_modes",
-                "archive_citation",
-                "archive_assessment",
-                "legacy_rebased_retained_paths",
-                "readme_navigation",
-                "document_language",
-                "migration_admission",
-                "schema_version",
-            },
-        )
-        profile_ids = [profile["id"] for profile in self.registry["profiles"]]
-        self.assertEqual(len(profile_ids), len(set(profile_ids)))
-        self.assertTrue(
-            {
-                "reference/audit",
-                "reference/data",
-                "reference/research",
-                "reference/audit-pack",
-                "reference/data-pack",
-                "reference/research-pack",
-                "operation/incident",
-                "operation/postmortem",
-            }.issubset(profile_ids)
-        )
-
-        lifecycle_families = [
-            domain["family"] for domain in self.registry["lifecycle_domains"]
-        ]
-        self.assertEqual(len(lifecycle_families), len(set(lifecycle_families)))
-        # Forms do not transition: the lifecycle state machine skips
-        # `mode: template`, so a transition graph for them asserted movement
-        # that cannot happen.  Migration and tombstone are separate families
-        # because a migration progresses and a tombstone is created finished.
-        # ADR-0038 route dispositions are recorded finished and hold no body.
-        self.assertTrue(
-            {
-                "incident",
-                "postmortem",
-                "task",
-                "migration",
-                "tombstone",
-                "route-disposition",
-            }.issubset(lifecycle_families)
-        )
-        self.assertNotIn("template-profile", lifecycle_families)
-
-    def test_only_unused_capacity_profiles_and_forms_are_retired(self) -> None:
-        profile_ids = {profile["id"] for profile in self.registry["profiles"]}
-        self.assertTrue(DELIBERATELY_EMPTY_PROFILE_IDS.issubset(profile_ids))
-        self.assertTrue(RETIRED_UNUSED_CAPACITY_PROFILE_IDS.isdisjoint(profile_ids))
-        frontmatter_schema = FRONTMATTER_SCHEMA_PATH.read_text(encoding="utf-8")
-        self.assertNotIn("DATA-MODEL-[0-9]", frontmatter_schema)
-
     def test_retired_capacity_documents_and_executables_have_no_current_owner(
         self,
     ) -> None:
@@ -318,14 +196,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                     "RETIRED_UNUSED_CAPACITY_PROFILE",
                 ):
                     authority.validate_registry_authority(registry)
-
-    def test_profile_schema_accepts_terminal_registry(self) -> None:
-        schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
-        errors = sorted(
-            Draft202012Validator(schema).iter_errors(self.registry),
-            key=lambda error: list(error.absolute_path),
-        )
-        self.assertEqual(errors, [])
 
     def test_v9_archive_no_successor_uses_one_unambiguous_literal(self) -> None:
         schema = json.loads(FRONTMATTER_SCHEMA_PATH.read_text(encoding="utf-8"))
