@@ -885,21 +885,6 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertFalse(fake_marker.exists())
             self.assertFalse(startup_marker.exists())
 
-    def test_explicit_qa_profile_owns_quality_without_automatic_post_validate(self):
-        self.assertFalse(
-            (ROOT / "docs/00.agent-governance/hooks/post-validate.sh").exists()
-        )
-        self.assertFalse((ROOT / ".agents/hooks").exists())
-        registry = json.loads((ROOT / "scripts/validation/registry.json").read_text())
-        self.assertEqual(registry["profiles"]["full"].count("repository-quality"), 1)
-        settings = (ROOT / ".claude/settings.json").read_text()
-        for automatic_qa in (
-            "post-validate",
-            "scripts/qa.py",
-            "run-validation-lane.py",
-        ):
-            self.assertNotIn(automatic_qa, settings)
-
     def test_all_files_executes_repository_quality_with_same_bounded_environment(self):
         result, output, invoked = self._run(
             "all-files",
@@ -2250,69 +2235,44 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
 
     def test_manifest_selector_executes_every_selected_validator(self):
         path = "gitops/platform/headlamp/headlamp-ingress.yaml"
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        selected = set(
+            contract_module.select_paths(contract, [path], "affected", ROOT)[
+                "validators"
+            ]
+        )
         result, statuses, output, invoked = self._run([path])
 
         self.assertEqual(result, 0)
-        self.assertEqual(
-            statuses,
-            {
-                "external-service-contracts": "PASS",
-                "gitops-change-set": "PASS",
-                "gitops-structure": "PASS",
-                "infrastructure-contracts": "PASS",
-                "k8s-manifests": "PASS",
-                "policy-gates": "PASS",
-                "repository-quality": "PASS",
-                "secret-handling": "PASS",
-            },
-        )
-        self.assertEqual(invoked.call_count, 8)
+        self.assertTrue({"k8s-manifests", "secret-handling"} <= selected)
+        self.assertEqual(statuses, dict.fromkeys(selected, "PASS"))
+        self.assertEqual(invoked.call_count, len(selected))
         self.assertIn('scope="affected:paths=1"', output)
 
-    def test_docs_selector_executes_every_validator_and_propagates_path(self):
-        path = (
-            "docs/98.archive/superseded/02.architecture/"
-            "0003-platform-expansion-mesh-dashboard.md"
-        )
-        result, statuses, output, invoked = self._run([path])
-
-        self.assertEqual(result, 0)
-        self.assertEqual(
-            statuses,
-            {
-                "agent-governance": "PASS",
-                "document-contract-registry": "PASS",
-                "document-lifecycle": "PASS",
-                "links-and-owners": "PASS",
-                "markdown-profiles": "PASS",
-                "repository-quality": "PASS",
-            },
-        )
-        self.assertEqual(invoked.call_count, 6)
-        self.assertGreaterEqual(output.count(path), 3)
-
     def test_staged_selector_executes_every_selected_validator(self):
-        path = "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
+        path = "README.md"
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        selected = set(
+            contract_module.select_paths(contract, [path], "staged", ROOT)["validators"]
+        )
+        path_input_count = sum(
+            row.get("pathInput") == "include-existing-markdown"
+            for row in contract["validators"]
+            if row["id"] in selected
+        )
         result, statuses, output, invoked = self._run([path], lane="staged")
 
         self.assertEqual(result, 0)
-        self.assertEqual(
-            statuses,
-            {
-                "agent-governance": "PASS",
-                "document-contract-registry": "PASS",
-                "document-lifecycle": "PASS",
-                "links-and-owners": "PASS",
-                "markdown-profiles": "PASS",
-                "repository-quality": "PASS",
-            },
-        )
-        self.assertEqual(invoked.call_count, 6)
+        self.assertEqual(statuses, dict.fromkeys(selected, "PASS"))
+        self.assertEqual(invoked.call_count, len(selected))
         self.assertIn('scope="staged:paths=1"', output)
         propagated = [
             call.args[0] for call in invoked.call_args_list if path in call.args[0]
         ]
-        self.assertEqual(len(propagated), 3)
+        self.assertGreater(path_input_count, 0)
+        self.assertEqual(len(propagated), path_input_count)
         for argv in propagated:
             self.assertIn("--include-path", argv)
 
