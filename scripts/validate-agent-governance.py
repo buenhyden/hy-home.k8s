@@ -1034,6 +1034,15 @@ def _bound_scope(registry: dict[str, Any], role: dict[str, Any], provider: str) 
     return scope
 
 
+def _gateway_loader_refs(provider_id: str) -> set[str]:
+    return {
+        ".agents/workflows/work-lifecycle.md",
+        f".{provider_id}/provider.md",
+        f".{provider_id}/{provider_id.upper()}.md",
+        "RTK.md",
+    }
+
+
 def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     """Validate direct canonical reads and native configuration, never discovery."""
     skills = {skill["id"]: skill["path"] for skill in registry["skills"]}
@@ -1279,6 +1288,10 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             ".agents/governance/quality.md",
             "RTK.md",
         }
+        if provider != "codex":
+            # The Claude gateway @-imports these into context, so a baseline
+            # read of them would only load the same text a second time.
+            expected -= _gateway_loader_refs(provider)
         lines = baseline.strip().splitlines()
         refs = [
             match.group(1)
@@ -1348,12 +1361,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             )
         if "docs/00.agent-governance/" in gateway:
             fail("AGENT-GOVERNANCE-CONSUMER", "gateway depends on retired root")
-        loader_refs = {
-            ".agents/workflows/work-lifecycle.md",
-            f".{provider['id']}/provider.md",
-            f".{provider['id']}/{provider['id'].upper()}.md",
-            "RTK.md",
-        }
+        loader_refs = _gateway_loader_refs(provider["id"])
         if provider["id"] == "codex":
             loads = re.findall(r"(?m)^Read `([^`]+)` before acting\.$", gateway)
             if re.search(r"(?m)^@", gateway):
