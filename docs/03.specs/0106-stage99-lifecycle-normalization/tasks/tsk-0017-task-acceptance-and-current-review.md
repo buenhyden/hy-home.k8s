@@ -1,8 +1,8 @@
 ---
 title: "Task Acceptance and Current Spec Review"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -107,13 +107,13 @@ write occurred; actual P03 hosted style is NOT_RUN without an authorized PR.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-017 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | Couple current Task acceptance and lifecycle readers, review actual pending obligations and hand off protected decisions | platform | frontmatter | NOT_RUN | EVD-P03-017-001/002/003 establish intake, design and scope readiness; coupled implementation and final checks pending |
+| WORK-017 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | Couple current Task acceptance and lifecycle readers, review actual pending obligations and hand off protected decisions | platform | frontmatter | PASS | EVD-P03-017-021/022/023 establish repaired readers, current regressions and exact-index acceptance; evidence/completion state checks and authorized local finish follow |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-P03-017](../spec.md#success-criteria--verification-plan) | pending | EVD-P03-017-001, EVD-P03-017-002, EVD-P03-017-003 | Implement coupled consumers, migrate selected pending records, verify failures and handoff boundaries, then accept the bounded local criterion from actual results | platform; ongoing lifecycle owners in .agents/governance/document-lifecycle.md and docs/99.templates/registry.json |
+| [VAL-P03-017](../spec.md#success-criteria--verification-plan) | accepted | EVD-P03-017-015, EVD-P03-017-016, EVD-P03-017-017, EVD-P03-017-021, EVD-P03-017-022, EVD-P03-017-023 | Accept the bounded local contract and current-record review from actual regressions, independent review and exact-index PASS; protected common/PR/live inputs remain with their named owners | platform; ongoing lifecycle owners in .agents/governance/document-lifecycle.md and docs/99.templates/registry.json |
 
 ## Task Evidence
 
@@ -141,6 +141,7 @@ write occurred; actual P03 hosted style is NOT_RUN without an authorized PR.
 | EVD-P03-017-020 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Coupled implementation index QA | First frozen 23-path index tree086b5ec087d642e4a3534a18798fa72da8ad3c3b | FAIL | _workspace/p03-implementation-qa.log; aggregate rc1, 10/12 gates PASS; archive-contract-tests failed with 45 old-generation errors and selected-nonstyle rc2; index was not committed | yes | none |
 | EVD-P03-017-021 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Repaired history adapter, public identity and focused checks | Source hashes document_contracts 6a288963, lifecycle validator cb35ca41 and contract tests c57e173f SHA-256 prefixes | PASS | Modern-binding-only criterion maps preserve actual generation 9 readers; affected Archive module 46/46 and P03 four-target 45/45 PASS, renamed identity targeted 3/3 PASS, Ruff PASS and independent security source PASS; aggregate index QA remains pending | yes | none |
 | EVD-P03-017-022 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Final scoped changed-function coverage measurement | Repaired security-reviewed five-source/four-target trace against da51f933; exact hashes in final-v2 artifact | PASS | _workspace/p03-coverage-final-v2.json and .tests.log; 45/45 tests PASS in 325.631 seconds, 673/806 changed executable function lines observed, 83.5 percent; earlier artifacts preserved, current interpreter only | yes | none |
+| EVD-P03-017-023 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Coupled implementation index QA | Repaired frozen 23-path index treefff1efcad28be61faddbb6c5db5f7589325e1974 | PASS | _workspace/p03-implementation-qa-final.log; all 12 selected gates rc0, diff checks PASS, unchanged exact implementation message's pinned Commitizen proof reused; normal commit 6327c3d395a105fe9ba11aaee48f7e52c1f5c120 has that exact tree | yes | EVD-P03-017-020 |
 
 ## Approval and Safety Boundaries
 
@@ -244,8 +245,9 @@ resolved by EVD-P03-017-015 after source and hash review.
 
 ### Tool and Check Boundaries
 
-Intake, design, scope and focused implementation checks are observed; final
-index lint/format and acceptance are still pending.
+Intake, design, scope, focused implementation and coupled exact-index checks
+are observed and locally accepted. This evidence-state input and the following
+completion state each receive their own changed-input index check.
 Python3.12.3 task-owned qa-venv installs the existing hash-pinned QA lock with
 --only-binary=:all: and --require-hashes; no tool/config/technical limit is
 changed. Exact index and message checks precede each normal logical commit.
@@ -376,3 +378,24 @@ validator cb35ca41afa18df2251071dddb2df92e4e9f81dc0653574c36caeffdf949444a.
 The earlier implementation message already passed pinned Commitizen; its exact
 file, grammar, pin, mode and trust inputs remain unchanged, so that leaf is
 reused. Diff and final index checks use the repaired input.
+
+### Local Acceptance and Finish
+
+Repaired frozen tree fff1efcad28be61faddbb6c5db5f7589325e1974 passed all 12
+selected gates, aggregate rc0: affected-surface-contract, agent-governance,
+archive-contract-tests, archive-integrity, document-contract-registry,
+document-lifecycle, knowledge-surface, links-and-owners, markdown-profiles,
+repository-quality, selected-nonstyle and selected-style. Normal implementation
+commit 6327c3d395a105fe9ba11aaee48f7e52c1f5c120 retains that exact tree. Active
+hooks were preserved; no skip or trust/configuration bypass occurred. Earlier
+required failures remain intact with explicit later PASS resolution.
+
+VAL-P03-017 has one accepted criterion row and continuing owners above. This
+state update makes ready-to-in-progress explicit; completion follows its own
+validated edge. The requested local main fast-forward and owned branch/worktree
+cleanup remain authorized, with exact checked-tree comparison before integration.
+Actual remote PR style stays NOT_RUN, common approval/joint adoption and live
+Release stay DEFER. No completed Task is reopened and no Archive unit is moved.
+Task-owned scratch logs/messages/coverage will be copied byte-identically to
+main's `_workspace/p03-task-acceptance/` before owned worktree removal; recorded
+commands and original scratch locations remain historical invocation facts.
