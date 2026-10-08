@@ -1,8 +1,8 @@
 ---
 title: "Shared Profile and Operations Form Migration"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -121,7 +121,7 @@ this local document migration.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | Migrate the shared profile adapter and current operating forms with truthful handoffs | platform | frontmatter | NOT_RUN | pending | Inspection and implementation underway; final checks and review not yet observed |
+| WORK-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | Migrate the shared profile adapter and current operating forms with truthful handoffs | platform | frontmatter | PASS | pending | EVD-016 independent implementation review and EVD-018 final exact-index QA PASS; closing acceptance and local integration remain pending |
 
 ## Task Evidence
 
@@ -144,6 +144,7 @@ this local document migration.
 | EVD-P02-016-015 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Restore shared-helper historical guards | Exact shared-document-history-readers route and standalone/narrow/mixed/near-name synthetic inputs | PASS | quality-engineer RED both helper subcases, then six focused tests GREEN; shared helpers select Archive plus document gates, other readers remain narrow, product and mixed routes retained; Ruff and JSON parse PASS | pending |
 | EVD-P02-016-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent final implementation review | Actual repaired working diff; p01_review code-reviewer did not author any changed file | PASS | Placeholder content, recovery placement, compatibility anchor, candidate null proof, identities/states and helper historical guards re-reviewed; no unresolved required finding. Reviewer ran six standalone scope-selection methods PASS; final index and closing disposition still require observation | pending |
 | EVD-P02-016-017 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Changed-index integrated QA snapshot guard | 36-path tree e5c39c46a9f4a3223f0e1087cb1894b5958a828f | FAIL | All 12 leaves PASS but aggregate rc1: source HEAD/index/files changed during QA. Root ran git write-tree during execution, which can update raw-index cache metadata; no unstaged content difference observed. This is not final QA PASS. Identify input before the next run and invoke no Git/index/writer command while it runs | pending |
+| EVD-P02-016-018 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Final frozen implementation index and message | 36-path tree 8c00fa96b8cf45069621b3d5c2dc573607220670; unchanged pinned tools/config/trust; no Git/index/writer during QA | PASS | qa.py staged aggregate rc0, all 12 selected gates PASS including final lint/format and both snapshot guards; actual implementation message previously PASS and used unchanged; normal commit d67bc63ee446fbb2b9c8ab5a69a0ec3a6944746d preserves the checked tree | pending |
 
 ### Executed Commands and Input Identity
 
@@ -163,7 +164,7 @@ _workspace/qa-venv/bin/python -m pre_commit run commitizen --hook-stage commit-m
 
 The actual UTF-8 messages were checked with the pinned Commitizen grammar:
 `docs: record shared profile migration scope` (committed 30f52bf) and
-`feat: migrate shared operations profiles and consumers` (PASS, commit pending).
+`feat: migrate shared operations profiles and consumers` (PASS, committed d67bc63).
 Focused GREEN observations precede the final changed-index checks; they do not
 stand in for them. Required lint/format is the selected-style leaf in staged QA,
 not a separate repeated hook leaf. Normal Git hooks remain connected; no
@@ -195,10 +196,11 @@ skip, trust override or hook change is used.
 
 ## Verification Summary
 
-The initial scope is committed and the coupled implementation is ready for
-final changed-index checks. EVD-017 preserves the raw-index snapshot-guard FAIL
-separately from its 12 passing leaves; input identification now precedes QA,
-with no Git/index/writer operations during execution. Independent parser, recovery-placement and
+The coupled implementation is committed at d67bc63 with the exact EVD-018
+index, all 12 selected gates and both snapshot guards PASS. EVD-017 retains the
+prior aggregate FAIL separately from its passing leaves; the corrected run
+identified input before QA and invoked no Git/index/writer during execution.
+Independent parser, recovery-placement and
 shared-helper selection FAILs and their subsequent repairs are all retained.
 The style repair preserves the old fragment with a documented single-line
 MD033 exception; five current links use the canonical new fragment. The
@@ -211,3 +213,22 @@ payloads. Broader selector cleanup belongs to P07, not an added omnibus gate.
 Completed parents stay completed. Shared authority/state and
 language decisions go to P03, operating truth and live verification to P08.
 No remote/live PASS, common-edition approval or joint adoption is inferred.
+
+### Local Acceptance and Finish Preparation
+
+This evidence commit follows the actual ready implementation commit with the
+legal in-progress transition. The single Task row keeps its frontmatter marker;
+there is no second authored status field. Closing acceptance will assess
+VAL-P02-016 against the actual implementation, independent review and checks,
+then record the legal completed transition. This local scope does not require
+fabricated joint approval or live evidence. P01's common-decision/HIGH Task is
+not closed by this work.
+
+The selected finish is clean-main fast-forward integration, followed by only
+the owned P02 branch/worktree removal. Root main was clean at c9faa9f before
+finish preparation. Unique acceptance/review/failure evidence is in this Task
+and Git; the original shared candidate remains in the main checkout's P01
+scratch with its recorded digest. Owned tool environments and temporary message
+files are disposable; preserve any otherwise unique public receipt before
+worktree removal. Actual final closing-index checks, integration and cleanup
+will be reported only after they occur; no remote push/PR/release is included.
