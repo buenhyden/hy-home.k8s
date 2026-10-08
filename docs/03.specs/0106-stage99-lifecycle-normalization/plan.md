@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.13.0"
+version: "1.14.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -13,6 +13,23 @@ parent_ids: ["SPEC-0106"]
 # Stage 99 Lifecycle Normalization Implementation Plan
 
 ## Global Constraints
+
+WORK-017 follows the current P03 request at clean main ae93644e. Root owns
+this Spec/Plan/new Task and the selected blocked P01 Task rewrite; one assigned
+quality writer owns coupled Registry/schema/forms/reader behavior after design,
+and one document writer owns current lifecycle guidance. Read-only research,
+architectural design and independent review supply evidence without competing
+writers. Reconfirm exact paths before dispatching implementation.
+
+Order current-tree/AC inspection and shared design, then couple contracts and
+consumers, then migrate current pending documents and handoffs, then selected
+verification and local acceptance. P02 results are present; unreceived P05/P07/
+P08/joint/live results remain separate obligations. Keep completed parents and
+Tasks, frozen bytes, actual approvals and failure observations intact. Earlier
+work-unit push/hosted/full requirements below are historical scope, not present
+P03 execution authority. Use selected local checks and normal commits; honor
+the existing explicit clean-main fast-forward and owned branch/worktree cleanup
+finish without expanding remote, server, secret, live or Archive disposition.
 
 WORK-016 follows the current P02 request and P01's corrected common-candidate
 route. Its local authoring/validation/commit scope supersedes historical finish
@@ -122,6 +139,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-017 | [VAL-P03-017](spec.md#success-criteria--verification-plan) | Review actual current AC obligations, separate role authority/execution, couple criterion acceptance and failure resolution, and migrate pending Task consumers | Same shared candidate and P02 local result; architect design before single-owner contract changes; P05/P07/P08 external handoffs separate | [SPEC-0106-TSK-0017](tasks/tsk-0017-task-acceptance-and-current-review.md) | Recursive intake/AC disposition, synthetic failing/boundary cases, retained history/status-writer controls, changed-index document/state/link/style/message and independent review; no unobserved hosted/live approval |
 | WORK-016 | [VAL-P02-016](spec.md#success-criteria--verification-plan) | Identify the common candidate, couple role contracts and consumers, migrate every current operating instance, and clarify sole status authoring | Same P01 candidate; root owns Registry/guidance/Task; quality-engineer owns schema/reader/content regressions; doc-writer owns three forms and current operations; independent research/design/review | [SPEC-0106-TSK-0016](tasks/tsk-0016-shared-profile-migration.md) | Ordered inventory and design, synthetic RED/GREEN, changed-input document/relationship/state/style checks, exact-index staged and message checks, independent review; P03 shared state and P08 live/product handoffs remain distinct |
 | WORK-015 | [VAL-P02-015](spec.md#success-criteria--verification-plan) | Remove hosted full-QA execution and repair its direct topology and guidance consumers | Explicit user CI/local/origin-main scope; separate workflow, quality and governance source owners; genuine registered-form draft | [SPEC-0106-TSK-0015](tasks/tsk-0015-hosted-qa-cleanup.md) | Narrow changed-input RED/GREEN and retained refusals; exact-index staged/message and independent review; prospective completion then fresh actual closing checks; full/affected execution NOT_RUN and no fabricated provenance |
 | WORK-014 | [VAL-P02-014](spec.md#success-criteria--verification-plan) | Repair immutable generation-boundary and typed retention fixture inputs | Three named REDs; structured/public-source independent cause review; private raw direct audit deferred; genuine registered-form first draft | [SPEC-0106-TSK-0014](tasks/tsk-0014-generation-boundary-and-retention-fixtures.md) | Four existing shared generation methods and one whitespace method after hook-first final bytes; complete original declared maps/inventories, each actual-index staged/message and separate review; prospective completion then fresh actual closing checks; hosted admission separate |

@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.13.0"
+version: "1.14.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -50,6 +50,43 @@ scope. This authorization does not claim current remote state or an
 authenticated operator action.
 
 ## Contracts
+
+### Current Task acceptance and Spec review follow-up
+
+VAL-P03-017 applies the current P03 request at actual clean main ae93644e,
+using the same WGOV-CORE/3.0.0-draft.3 candidate for C05/C10/C11/C12.
+Existing joint approval remains unavailable; candidate identity is not approval.
+Keep the completed Spec/Plan and historical Tasks intact. The new WORK-017
+Task owns current execution, evidence and handoff; older delivery instructions
+describe their dated scopes and grant no new remote or live authority.
+
+Separate Spec/Plan authorization and validity from Task execution without
+backdating approval or resetting existing completed records. Couple current
+Registry/schema/forms, typed readers, lifecycle/completion/link consumers and
+explicit status-writer validation. Give each criterion one authored acceptance
+decision and make factual check evidence refer to that decision. Bind evidence
+to actual work/criteria, preserve failures and their explicit resolution, and
+reject completion that hides unresolved required failures. Cancellation and
+supersession must preserve remaining criteria through a verified successor or
+actual authorized scope change; a terminal spelling alone is not a waiver.
+
+Recursively select actual current Specs and Task execution. At intake all
+three parent Specs and Plans are completed, with only SPEC-0105-TSK-0004
+blocked; this is a dated observation, not a fixed inventory requirement.
+Review its actual AC/Plan/evidence/owner and rewrite only current pending work
+after the coupled consumer contract is ready. RUN-0012 is already active,
+POL-0003 retains its justified reciprocal-source exclusion, and actual Release
+and hosted PR outcomes remain separate. P02 local results are available;
+unreceived P05/P07/P08 and joint decisions remain named handoffs, not invented
+PASS or circular prerequisites to independent regional work.
+
+Select meaningful synthetic boundary regressions and changed-input document,
+state, relationship, style and message checks. Preserve continuing historical
+guards for shared history readers and product checks for mixed changes; no
+unrelated Kubernetes sweep or retired full/CI discovery is added. Normal local
+commits and the user's existing local main/owned-cleanup finish remain selected;
+remote writes, protected settings, credentials, live actions and whole Archive
+disposition require their own actual scope.
 
 ### Current shared-profile migration
 
@@ -305,6 +342,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P03-017 | Actual recursive Spec/Task selection and AC disposition; one criterion acceptance origin with bound factual evidence and explicit failure resolution; role-specific approval/execution separation, cancellation/supersession ownership and historical read compatibility; coupled Registry/schema/forms/consumers, focused RED/GREEN, exact-index style/message and independent review. Preserve completed parents/Tasks, operating adoption versus actual Release, the same common candidate and unexecuted P05/P07/P08/joint/hosted/live handoffs in Task0017. |
 | VAL-P02-016 | One identified common candidate and truthful adoption tuple; Registry/schema/forms/readers agree on the three six-section operating roles, with substantive-content refusals and preserved relationships. All current Guide/Policy/Runbook instances are migrated and individually reviewed while state, identity, native boundaries and frozen bytes are preserved. Single Task status and generated multi-row summary have one authoring source; existing README router/anchor and native/language contracts retain their current consumers. Task0016 records focused RED/GREEN, exact-index lint/format/message, independent review, P03/P08 handoffs and actual unexecuted boundaries; final common approval and four-repository adoption are reported separately. |
 | VAL-P02-015 | The hosted CI topology contains only branch-policy, qa-isolated and ci-summary; full QA is explicitly NOT_RUN, removed execution is not QA PASS, and missing full proof cannot create provenance. Direct topology/guide consumers match the new contract while isolated validation, pin/permission/bootstrap/shell and provenance refusal controls remain. Registered-form creation, scoped RED/GREEN, exact-index staged/message, completion and independent review are recorded in Task0015. Preserve local validation registration, production regressions, original evidence and normal local/main delivery history. |
 | VAL-P02-014 | Generation-admission fixtures read authentic immutable generation-9 and generation-10 boundary documents together, preserving absent-source, same-generation, invalid declaration, terminal reopening, later completion, cumulative replay and fixed budget refusals. Whitespace fixture expectations use the existing typed Registry-bound retention classification alongside frozen lifecycle states, retaining current-record and nonarchive negatives. Three observed named REDs, all four shared generation methods and one whitespace method, registered-form provenance, hook-first final bytes, each actual-index staged/message, scoped completion and independent review are recorded in Task0014. Production contracts, schemas, Registry, hooks, limits and retained archive bytes remain unchanged; hosted and integrated-main admission are separate. |
@@ -322,6 +360,10 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P03-017 maps to WORK-017 and
+[Task0017](tasks/tsk-0017-task-acceptance-and-current-review.md). This scoped
+follow-up changes no historical acceptance or completed execution.
 
 VAL-P02-016 maps to WORK-016 and
 [Task0016](tasks/tsk-0016-shared-profile-migration.md) in the current Plan.
@@ -409,6 +451,7 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — current explicit P03 execution/acceptance/review request reuses existing Requirement and lifecycle architecture scope | VAL-P03-017 | WORK-017 / Task0017; current AC disposition, criterion evidence graph, role-specific transition and successor boundaries, selected input checks and independent review; protected/joint/external decisions separate |
 | N/A — current explicit P02 profile/template/consumer migration request reuses existing Requirement and architecture scope | VAL-P02-016 | WORK-016 / Task0016; same candidate identity, coupled operating forms/readers/current instances, synthetic boundaries, exact index/message and independent review; P03/P08 and common approval separated |
 | N/A — explicit user instruction to retire failing or observed >=600-second hosted QA execution, integrate local/origin main and preserve owned cleanup evidence | VAL-P02-015 | WORK-015 and Task0015 in the Plan; registered-form provenance, scoped contract controls and hooks, actual-index staged/message checks, prospective and actual scoped completion plus independent review; full QA NOT_RUN, provenance inactive/fail-closed and cleanup outcomes observed separately |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-014 | Genuine registered-form provenance; authentic immutable boundary and typed retention controls; original full declared inputs and inventories; scoped hooks, five named methods, each actual-index staged/message, prospective completion/review and fresh actual closing checks; private raw direct audit deferred and hosted admission separate |
