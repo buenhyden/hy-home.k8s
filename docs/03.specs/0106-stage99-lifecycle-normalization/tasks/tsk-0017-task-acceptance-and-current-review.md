@@ -1,8 +1,8 @@
 ---
 title: "Task Acceptance and Current Spec Review"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -107,7 +107,7 @@ write occurred; actual P03 hosted style is NOT_RUN without an authorized PR.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-017 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | Couple current Task acceptance and lifecycle readers, review actual pending obligations and hand off protected decisions | platform | frontmatter | PASS | EVD-P03-017-021/022/023 establish repaired readers, current regressions and exact-index acceptance; evidence/completion state checks and authorized local finish follow |
+| WORK-017 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | Couple current Task acceptance and lifecycle readers, review actual pending obligations and hand off protected decisions | platform | frontmatter | PASS | EVD-P03-017-021/022/023/024 establish repaired readers, current regressions, exact-index acceptance and evidence-state checks; local obligation complete with continuing owners above and below |
 
 ## Criterion Acceptance
 
@@ -142,6 +142,7 @@ write occurred; actual P03 hosted style is NOT_RUN without an authorized PR.
 | EVD-P03-017-021 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Repaired history adapter, public identity and focused checks | Source hashes document_contracts 6a288963, lifecycle validator cb35ca41 and contract tests c57e173f SHA-256 prefixes | PASS | Modern-binding-only criterion maps preserve actual generation 9 readers; affected Archive module 46/46 and P03 four-target 45/45 PASS, renamed identity targeted 3/3 PASS, Ruff PASS and independent security source PASS; aggregate index QA remains pending | yes | none |
 | EVD-P03-017-022 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Final scoped changed-function coverage measurement | Repaired security-reviewed five-source/four-target trace against da51f933; exact hashes in final-v2 artifact | PASS | _workspace/p03-coverage-final-v2.json and .tests.log; 45/45 tests PASS in 325.631 seconds, 673/806 changed executable function lines observed, 83.5 percent; earlier artifacts preserved, current interpreter only | yes | none |
 | EVD-P03-017-023 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Coupled implementation index QA | Repaired frozen 23-path index treefff1efcad28be61faddbb6c5db5f7589325e1974 | PASS | _workspace/p03-implementation-qa-final.log; all 12 selected gates rc0, diff checks PASS, unchanged exact implementation message's pinned Commitizen proof reused; normal commit 6327c3d395a105fe9ba11aaee48f7e52c1f5c120 has that exact tree | yes | EVD-P03-017-020 |
+| EVD-P03-017-024 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Evidence-state exact index and actual message | One-path index tree25dd696a273522daea31b0ec65567d1d2a899041; _workspace/p03-evidence-message.txt | PASS | _workspace/p03-evidence-qa.log; all six selected document/style/nonstyle gates rc0, diff and pinned Commitizen PASS; normal evidence commit 0352f777bc5468affb36e0dc4621a642e8ae7fe1 retains that tree | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -396,6 +397,16 @@ validated edge. The requested local main fast-forward and owned branch/worktree
 cleanup remain authorized, with exact checked-tree comparison before integration.
 Actual remote PR style stays NOT_RUN, common approval/joint adoption and live
 Release stay DEFER. No completed Task is reopened and no Archive unit is moved.
-Task-owned scratch logs/messages/coverage will be copied byte-identically to
-main's `_workspace/p03-task-acceptance/` before owned worktree removal; recorded
-commands and original scratch locations remain historical invocation facts.
+EVD-P03-017-024 establishes the accepted evidence-state input before the
+in-progress-to-completed edge. Local WORK-017 is complete; the completion
+candidate itself receives final one-path index and actual-message checks before
+the normal closing commit and exact-tree local fast-forward. No unexecuted
+closing check or future merge is recorded as an already observed PASS here.
+
+Eighteen task-owned scratch logs/messages/coverage files have been copied
+byte-identically to main's `_workspace/p03-task-acceptance/`, verified by
+`artifact-sha256.json`. The final completion log will be preserved there before
+owned worktree removal as well. Recorded commands and original scratch locations
+remain historical invocation facts; their surviving artifact files use that
+persistent directory. Original failures, interrupted outputs, actual source
+hashes and comparison limits remain available beside the final results.
