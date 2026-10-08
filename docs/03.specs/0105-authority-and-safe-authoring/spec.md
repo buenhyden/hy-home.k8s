@@ -1,10 +1,10 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-08"
 layer: "specs"
 artifact_id: "SPEC-0105"
 ---
@@ -63,6 +63,13 @@ VAL-P01-003, VAL-P01-004, VAL-P01-005 and VAL-P01-006. It preserves both
 completed Tasks and the existing approval, runtime and historical evidence
 boundaries. Its current Task alone records execution and acceptance.
 
+The 2026-10-08 [current-contract follow-up](tasks/tsk-0004-current-contract-review.md)
+uses VAL-P01-001, VAL-P01-003, VAL-P01-005 and VAL-P01-006 for the new
+P01 source/consumer comparison, local policy clarification, RUN-0012 review,
+and bounded delivery. It records unresolved shared-edition authority and
+server-setting approval separately. This completed parent and its earlier
+Tasks retain their existing acceptance; they do not certify the new scope.
+
 ## Data Modeling & Storage Strategy
 
 Stage 99 continues to own document shape and lifecycle. Spec owns this contract,
@@ -109,6 +116,11 @@ as prior or current PASS. The original Tasks' requirements and observations
 above remain historical facts.
 
 ## Success Criteria & Verification Plan
+
+For the current-contract follow-up, select affected contract/document checks,
+exact-index style and non-style checks, and actual message validation under
+the current quality policy. Retired full/ci sweeps and blanket unit discovery
+are outside this follow-up. No new prose-mirroring test is required.
 
 | Criterion | Acceptance evidence |
 | --- | --- |

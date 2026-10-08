@@ -1,10 +1,10 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-08"
 layer: "specs"
 artifact_id: "SPEC-0105-PLAN-0001"
 parent_ids: ["SPEC-0105"]
@@ -28,6 +28,10 @@ The original [Task](tasks/tsk-0001-authority-and-authoring.md) implemented
 scanner form under WP-002 and records review and local delivery under WP-003.
 The later [authority evidence follow-up](tasks/tsk-0003-authority-evidence-follow-up.md)
 owns current P01 facts and the linked SPEC-0106 closing re-verification.
+
+The 2026-10-08 [current-contract follow-up](tasks/tsk-0004-current-contract-review.md)
+owns the latest P01 comparison and local repairs. The completed Plan remains
+the approved routing owner; new execution state belongs only to that Task.
 
 ## Context
 
@@ -62,8 +66,16 @@ remote integration, runtime capability assertion or live operation.
 | WORK-005 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 follow-up: validate and commit local handoff | WORK-004; reviewable follow-up diff | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Full QA, message and commit evidence in the Task |
 | WORK-006 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-004](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guidance and authority boundaries; recheck SPEC-0106 closing evidence | Completed original work; clean `9067729b` base and current scoped request | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Source/consumer classification, exact revisions and P02 Task evidence |
 | WORK-007 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | Review, verify and commit the bounded local documentation handoff | WORK-006; reviewed logical index and check readiness | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Exact-index, completion, message, reviewer and commit evidence in the Task |
+| WORK-008 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan), [VAL-P01-006](spec.md#success-criteria--verification-plan) | Compare authority, shared-edition evidence, language, resource gates, RUN-0012 and server producers; repair local owners and record protected follow-up | Current P01 request; current tree and server read-back; one writer per file | [SPEC-0105-TSK-0004](tasks/tsk-0004-current-contract-review.md) | Selected contract/document and exact-index checks, actual message, independent review; shared adoption and server mutation need actual authority |
 
 ## Verification Plan
+
+WORK-008 follows current affected selection and exact-index style/non-style
+checks with independent review. It creates no business deadline, session
+timebox or reserve approval. Existing technical command and cleanup limits
+remain reviewed process-safety controls. Preserve all earlier execution
+records; do not revive their retired full sweep for this follow-up. Missing
+common-source authority or server-write approval stops only its dependent step.
 
 Use subagent-driven-development for disjoint implementation and read-only
 review, with explicit paths and existing role procedures. Repository Task
