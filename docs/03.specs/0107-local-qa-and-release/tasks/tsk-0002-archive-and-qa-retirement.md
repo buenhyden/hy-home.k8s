@@ -1,8 +1,8 @@
 ---
 title: "Current Archive and QA Retirement Reappraisal"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -20,8 +20,11 @@ Inventory actual validation and Archive consumers before any keep, transfer,
 retire or protected disposition decision. This Task records the applied
 safe-source slice and focused checks. The user approved the two bounded
 guard-removal proposals; both were applied, reviewed and admitted on an
-exact-index source commit. The local criterion is accepted from that input;
-the Task's own final delivery and integration receipt remain open.
+exact-index source commit. The local criterion is accepted from that input.
+The in-progress execution receipt passed its exact-index checks and reached
+main by fast-forward. This completed Task records that observed local scope;
+the final 0.4.0 metadata commit, same-tree main delivery and owned worktree
+cleanup require their separate actual controller receipt.
 [Task 0001](tsk-0001-local-qa-and-release.md) retains
 its completed original delivery facts, including its historical failures and
 unexecuted checks. The parent Spec and Plan remain completed historical
@@ -121,7 +124,7 @@ authority records with this explicitly linked follow-up; no old state is reset.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | Map current QA and Archive consumers, transfer unique guarantees, retire only proven obsolete surfaces, and record protected disposition separately | platform | frontmatter | PASS | EVD-P04-031/032 admit the local source contract on tree 4eb1991f and normal commit b6124bda; final Task receipt and local main integration remain open |
+| WORK-002 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | Map current QA and Archive consumers, transfer unique guarantees, retire only proven obsolete surfaces, and record protected disposition separately | platform | frontmatter | PASS | EVD-P04-031/032 admit the source, EVD-P04-034/035 admit the Task execution receipt, and EVD-P04-036 records local main fast-forward; final 0.4.0 metadata delivery is controller handoff |
 
 ## Task Evidence
 
@@ -160,12 +163,15 @@ authority records with this explicitly linked follow-up; no old state is reset.
 | EVD-P04-031 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Canonical staged source admission | Frozen 15-path index tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`; `_workspace/p04-final-source-index-qa.log` SHA-256 `c1bd666a3902975607fd88ebcf9ca5bf2c7cba562f1847dd1fba30b56d260626` | PASS | All 18 selected gates returned PASS, including links-and-owners, markdown-profiles, repository-quality, selected nonstyle and selected style. This admits that source index only; the later Task receipt has different bytes | yes | none |
 | EVD-P04-032 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Normal source commit and actual message | Reviewed tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`; pinned actual message `_workspace/p04-implementation-message.txt` SHA-256 `09b991c6a86739d69054d4ddb0a32b4ab8b3e3ab9cb2c0649defe13afd658b8f`; commit `b6124bda8ea7014208c6783a411cccc8078174a6` | PASS | Root verified the normal hook-backed commit without skip and prior actual Commitizen message PASS; committed tree matches the 18-gate source index. This is local source delivery, not main integration or remote publication | yes | none |
 | EVD-P04-033 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent final source and document review | Reviewed 15-path source tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`, same input as EVD-P04-031; current P04 local contract and handoff boundaries | PASS | Independent `p01_review` reported actual source and document PASS on this input; security source review is EVD-P04-022 on unchanged ten code/test hashes. This review does not authenticate later Task receipt bytes, common joint adoption, remote or live outcomes | yes | none |
+| EVD-P04-034 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | In-progress Task execution receipt index admission | One-Task index tree `ee1c869e5a251032f53beb13383ff9e1322a8179`; `_workspace/p04-execution-index-qa.log` SHA-256 `97bc291d945a6910e4fd9c14a20d81ce0f353093af18c59605495285bef6f2b4` | PASS | All six selected document/style gates returned PASS on the 0.3.0 Task input; no source code changed. This does not validate the later 0.4.0 Task bytes | yes | none |
+| EVD-P04-035 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Normal execution receipt commit and actual message | Same Task tree `ee1c869e5a251032f53beb13383ff9e1322a8179`; `_workspace/p04-execution-message.txt` SHA-256 `6a01bb72f3f2dde28b405993001737a0b6279ddd9365025b0df9b3fb9920c305`; commit `f3ac46f8b7c4069273718af143a5877f28a750aa` | PASS | Pinned actual Commitizen message passed and normal hook-backed commit retained that tree without skip. This is the 0.3.0 execution receipt, not the future completed-metadata commit | yes | none |
+| EVD-P04-036 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Local main fast-forward integration | `git merge --ff-only codex/p04-archive-retirement` from main `2a27d98f520c6f0b5f261cc59355aae57184cf75` to `f3ac46f8b7c4069273718af143a5877f28a750aa`; resulting main tree `ee1c869e5a251032f53beb13383ff9e1322a8179` | PASS | Root observed rc0, main HEAD/tree equality and a clean main worktree. Same code input was already checked at EVD-P04-031; this does not claim remote push, PR or final 0.4.0 metadata integration | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-P04-015, EVD-P04-016, EVD-P04-017, EVD-P04-018, EVD-P04-019, EVD-P04-020, EVD-P04-021, EVD-P04-022, EVD-P04-028, EVD-P04-029, EVD-P04-030, EVD-P04-031, EVD-P04-032, EVD-P04-033 | Accept the bounded local QA and Archive consumer/reader/retirement contract from exact-index source PASS, actual commit and independent review; original adverse attempts remain in evidence and are explicitly resolved. Whole-unit Archive disposition, common edition/joint adoption and remote/live outcomes are separate current-owner work | platform for current QA and Archive contracts; security/CI operator for SEC-P01-001; buenhyden and Archive owners for any later whole-unit decision |
+| [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-P04-015, EVD-P04-016, EVD-P04-017, EVD-P04-018, EVD-P04-019, EVD-P04-020, EVD-P04-021, EVD-P04-022, EVD-P04-028, EVD-P04-029, EVD-P04-030, EVD-P04-031, EVD-P04-032, EVD-P04-033, EVD-P04-034, EVD-P04-035, EVD-P04-036 | Accept the bounded local QA and Archive consumer/reader/retirement contract from exact-index source and Task PASS, actual commits, local main fast-forward and independent review; original adverse attempts remain in evidence and are explicitly resolved. Whole-unit Archive disposition, common edition/joint adoption and remote/live outcomes are separate current-owner work | platform for current QA and Archive contracts; security/CI operator for SEC-P01-001; buenhyden and Archive owners for any later whole-unit decision |
 
 ## Approval and Safety Boundaries
 
@@ -250,7 +256,10 @@ check/format plus diff check. Independent code and security source reviews
 passed for the applied input; final source document review and exact-index
 admission then passed on tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`
 and normal commit `b6124bda8ea7014208c6783a411cccc8078174a6`.
-The later Task receipt and main integration remain open. An internal
+The 0.3.0 Task execution receipt passed six selected gates and reached main
+at `f3ac46f8b7c4069273718af143a5877f28a750aa` by fast-forward;
+the 0.4.0 metadata commit and final delivery handoff are still separate.
+An internal
 `scripts/` and `tests/` scan
 found zero remaining references to the removed names. External
 `namespace_counts` consumers are unverified. The current MIG-0001 digest
@@ -284,7 +293,10 @@ the checkout retention location
 After owned worktree cleanup, use that checkout location for these existing
 receipts. The final source-index QA log and actual source-message file have
 also been created and copied there under the same filenames; their exact
-hashes and source commit are EVD-P04-031/032. The later Task receipt still
-needs its own exact-input QA and message evidence before completion.
+hashes and source commit are EVD-P04-031/032. The 0.3.0 Task execution
+receipt has its own exact-input QA, message and commit at EVD-P04-034/035.
+The controller must verify this 0.4.0 metadata input, its normal commit,
+last main fast-forward and owned-worktree cleanup before reporting final
+delivery; those future events are not asserted as Task evidence here.
 No Archive unit was moved or removed, and no remote or live action was run
 by this Task.
