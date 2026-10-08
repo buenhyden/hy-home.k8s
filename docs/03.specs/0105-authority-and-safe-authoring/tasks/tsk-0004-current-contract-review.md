@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -38,6 +38,12 @@ alone owns the new WORK-008 execution and its remaining obligations.
   This authorizes only the required_status_checks resource after verifying
   App 5156553's purpose and current settings. It grants no common-edition
   approval, push, PR creation, merge, Release or credential operation.
+- Subsequent current requests authorize review of the HIGH residual and
+  workflow-changing PR merge conditions, then integration of this work into
+  main and cleanup of its development branch/worktree. The actual nine-file
+  branch diff changes no workflow, style implementation/configuration or lock.
+  No open main PR exists. This finish executes a local fast-forward and owned
+  local cleanup; no push, hosted PR creation/merge or release is inferred.
 - Current agent-execution, approval-and-safety, quality, document-authoring and
   document-lifecycle policies; Stage 99 registry and registered Task form.
 - Intake: clean `main...origin/main`, empty index/unstaged diff, actual HEAD
@@ -109,8 +115,8 @@ commit/digest does not stop first establishment or safe local repairs. Final
 edition approval, local adoption and joint four-repository adoption each need
 their own actual evidence and a scoped source-owner implementation handoff.
 
-The actual portable review file is the ignored worktree artifact
-`_workspace/WGOV-CORE.3.0.0-draft.3.ko.md`, preserving C01-C12 and revising
+The actual portable review file is now the ignored persistent-main artifact
+`_workspace/p01-current-contract/WGOV-CORE.3.0.0-draft.3.ko.md`, preserving C01-C12 and revising
 C02 from the user's correction. Its SHA-256 is
 `3f46c63daae094649edccec33682ecba99844b184c4b78b558281c7c05ff3271`.
 This identifies review bytes, not approval or a yet-uncreated Project-Template
@@ -178,6 +184,8 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-007 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | App consumer and current producer comparison | Actual historical check 110709969682; bounded SPEC-0103 Plan consumer; current main and workflow API | PASS | App 5156553 is k8s-qa-verifier/k8s QA Verifier, formerly an isolated full-QA proof producer. Current workflow list and main CI have no verifier producer | accepted |
 | EVD-008 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current hosted PR style result | Open pulls API for base main returned an empty list | DEFER | Next owner: operator on the next authorized actual PR; no PR or workflow dispatch is created merely for this observation | pending |
 | EVD-009 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Security review of verifier retirement and prospective check trust | Exact before/after settings, current ci.yml and bounded historical verifier contract | FAIL | Independent server_security_review found SEC-P01-001 HIGH: PR can alter both job definitions; read-only/pinned/helper trust does not authenticate workflow content. Conditional review permits describing the setting transition only; guard remediation remains unaccepted | pending |
+| EVD-010 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Renewed HIGH and workflow PR merge review | Current main protection, CI/control source, CODEOWNERS, open PR API and primary GitHub behavior docs | FAIL | Renewed server_security_review confirms HIGH for workflow/control-changing PRs. No observed exploit or actual open PR. Required jobs may be skipped; App binding does not fix PR-editable job definitions; native review guard is not enabled | pending |
+| EVD-011 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current branch scope and preserved owned evidence | main...HEAD nine-file diff; clean local main; 13 ignored artifact files | PASS | No workflow/control-implementation changes; unique review candidate and server/message evidence copied to persistent main with byte equality. Integration and cleanup results follow observation in final handoff | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -191,8 +199,8 @@ correction to its retained pre-change values, never by inventing a green check.
 - **Approval Required**: current pasted P01 request authorizes scoped local
   repair, ordinary logical commits and isolated worktree/branch creation.
   The exact server resource operation is now approved as bound below.
-  Common edition decision remains with buenhyden; push, PR, merge,
-  tag/Release publication, worktree removal and live execution lack current
+  Common edition decision remains with buenhyden; push, PR, hosted merge,
+  tag/Release publication and live execution lack current
   scoped approval. Quoted historical approvals grant none.
 - **Approved Server Operation**: the current trusted user reply supersedes
   the earlier missing approval for one `PATCH` to
@@ -200,7 +208,14 @@ correction to its retained pre-change values, never by inventing a green check.
   with the exact JSON above. Root executes it on the user's behalf after
   matching current main/settings and App purpose. This is not delegated to
   a subagent. Verify the original chat approval and absence of revocation
-  immediately before invoking; all other protected actions remain unapproved.
+  immediately before invoking; other protected actions remain unapproved
+  except the subsequently approved local Git finish below.
+- **Approved Git Finish**: the latest user request authorizes local main
+  fast-forward of codex/p01-current-contract and removal of that owned branch
+  and `.worktrees/p01-current-contract` only. Preserve the unique candidate and
+  supporting metadata in persistent main; verify clean index/worktree, checked
+  tree identity and main reachability before normal worktree removal and
+  merged-branch deletion. No force, history rewrite or unrelated cleanup.
 - **Static Validation**: selected staged QA (including final-index style and
   non-style), actual pinned Commitizen message, independent read-only review;
   CLI help and focused existing regressions only where an affected contract
@@ -321,11 +336,12 @@ existing syntax. No checker or state/result meaning changed. The failed C4
 input remains a separate historical attempt; the corrected final index needs
 its own selected checks.
 
-Current Task/0.5.0 is a closing-document input. Its own final selected QA,
+Current Task/0.6.0 is a closing-document input. Its own final selected QA,
 message, review and commit are reported after observation in the final chat
 handoff; earlier PASS rows identify only their actual checked indexes. The
-worktree and unique portable candidate remain available for the next owner.
-There is no push, PR, merge, publication or owned-ref cleanup claim.
+unique portable candidate remains in persistent main for the next owner.
+The latest approved local integration/cleanup is recorded after observation
+in the final handoff; no push, hosted PR merge or publication is claimed.
 
 ### Approved Server Follow-up
 
@@ -377,8 +393,9 @@ returned rc0 with strict=true and checks ci-summary/App15368,
 style-pr/App15368. The immediate complete protection GET confirmed this exact
 resource. Structural comparisons passed for every other protection field,
 the empty applied branch rules list, and both tag ruleset metadata objects.
-Before/after JSON remains in the ignored `_workspace/p01-server-before-*.json`
-and `p01-server-after-*.json` snapshots as supporting public metadata, not a
+Before/after JSON was retained in the ignored `_workspace/p01-server-before-*.json`
+and `p01-server-after-*.json` snapshots, then preserved under persistent main's
+`_workspace/p01-current-contract/` for cleanup. It is supporting public metadata, not a
 second progress owner. No App, credential, workflow, tag, rule, review policy,
 push, PR, merge or dispatch was changed. No rollback was needed. The retained
 before resource identifies a forward rollback if the operator later requests it.
@@ -388,3 +405,57 @@ unresolved HIGH's waiver or a new workflow guard. SEC-P01-001 remains open
 with its next owner and prerequisite above. Current PR style cannot be observed
 without an actual authorized PR; no fabricated success check is produced.
 Common edition approval/local or joint adoption remains EVD-003 DEFER.
+
+### Renewed HIGH review and approved local finish
+
+The server follow-up's actual final one-path index passed all six selected
+gates, actual Commitizen and independent document review; normal commit was
+`76f7d20d869fc27a4dc510e1aa74a5471150dfde`. This acceptance covers the
+recorded setting operation, not the unaccepted security finding.
+
+Renewed independent security review confirms SEC-P01-001 HIGH for a PR that
+changes the workflow/control trust closure. GitHub runs the PR merge workflow;
+an altered condition or steps can yield a skipped or non-proving green job
+from Actions/App15368. [Skipped required jobs permit merge](https://docs.github.com/en/pull-requests/reference/status-checks).
+This is a source-backed inference, not an executed attack PR. No duplicate-name
+collision bypass is claimed. No current secret exposure or privilege elevation
+was found. HIGH blocks acceptance of the next workflow/control-changing PR
+and release relying on these checks until independent control is verified or
+an exact operator-reviewed transition is authorized; next owner buenhyden with
+security/CI responsibilities.
+
+Existing CODEOWNERS includes `/.github/ @buenhyden`, but current protection
+requires zero approvals, no code-owner review and no admin enforcement.
+It assigns ownership without enforcing merge review. Native required-owner
+review is a concrete option, but the current global owner also owns all paths,
+and [PR authors cannot approve themselves](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews).
+Do not enable it without a viable independent reviewer/transition. Changing to
+pull_request_target alone does not establish an independently authenticated
+verdict and introduces a protected execution context. A narrow independent
+control verdict could cover the exact merge SHA without restoring full QA,
+but App installation/readiness and that new implementation remain unverified.
+These options are review findings, not applied server changes.
+
+The user's subsequent finish request targets this actual branch: its nine-file
+diff consists of four governance/workflow-policy documents, Spec/Plan/current
+Task, one completed Task's portable receipt pointer and RUN-0012. CI workflows,
+style helper/config/lock and machine contracts are unchanged, so this local
+documentation integration does not introduce the identified workflow bypass.
+No open main PR exists; a hosted workflow PR cannot be accepted from an absent
+diff/run. The latest request authorizes local integration and owned cleanup.
+
+Before cleanup, copied the unique draft.3, six before/after server snapshots,
+approved payload and five actual message files to persistent main under
+`_workspace/p01-current-contract/`. The first aggregate comparison returned
+rc1 because it mistakenly included the tracked `_workspace/README.md` in the
+ignored artifact set. The corrected 13-owned-file comparison returned rc0 with
+no mismatches; candidate digest remains the review digest above. The tracked
+README is retained in Git. All prior worktree-relative commands remain
+historical evidence, not commands claimed to exist after cleanup.
+
+The final Task-only index still needs its own selected checks, message and
+independent review. After they pass, normal commit, fast-forward main and
+compare its tree/OID with the checked branch. Preserve the candidate and
+metadata before removing the clean owned worktree and merged local branch.
+The final chat reports those observed delivery events without a second
+progress ledger or a premature Task completion claim.
