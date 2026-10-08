@@ -1,8 +1,8 @@
 ---
 title: "Current Archive and QA Retirement Reappraisal"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -17,10 +17,11 @@ parent_ids: ["SPEC-0107-PLAN-0001"]
 Own the bounded current execution for [WORK-002](../plan.md#work-breakdown)
 and [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan).
 Inventory actual validation and Archive consumers before any keep, transfer,
-retire or protected disposition decision. This ready Task records the applied
-safe-source slice and focused checks. The user has approved the two bounded
-guard-removal proposals; both were applied and their focused source checks
-passed. Exact-index admission and acceptance remain pending.
+retire or protected disposition decision. This Task records the applied
+safe-source slice and focused checks. The user approved the two bounded
+guard-removal proposals; both were applied, reviewed and admitted on an
+exact-index source commit. The local criterion is accepted from that input;
+the Task's own final delivery and integration receipt remain open.
 [Task 0001](tsk-0001-local-qa-and-release.md) retains
 its completed original delivery facts, including its historical failures and
 unexecuted checks. The parent Spec and Plan remain completed historical
@@ -81,8 +82,7 @@ authority records with this explicitly linked follow-up; no old state is reset.
   The safe initial implementation retained that guard and
   `archive_cutover_manifest.py`. The later user approval supplied the missing
   authority; the protected removal was then applied as a separate source
-  change; postapproval source checks passed, while exact-index admission
-  remains pending.
+  change; postapproval source and exact-index checks later passed.
 - Two concrete retirement patches were reviewed separately:
   namespace census and manifest-consumer cleanup, and original 93-row
   builder/guard plus two dedicated tests. Their original review artifacts,
@@ -97,7 +97,7 @@ authority records with this explicitly linked follow-up; no old state is reset.
   on-demand generation-9 recovery remain. Previously recorded focused checks
   and independent reviews cover the safe slice only. The expanded source's
   changed-input checks and code/security reviews passed as EVD-P04-017–022;
-  exact-index admission remains pending.
+  exact-index admission later passed on its reviewed source snapshot.
 - On 2026-10-09 the user explicitly approved removal of the Git-derived
   reconstruction guard and Namespace check in this conversation. This authorizes the two identified reviewable
   guard/namespace retirement patches under this P04 scope. It does not
@@ -121,7 +121,7 @@ authority records with this explicitly linked follow-up; no old state is reset.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-002 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | Map current QA and Archive consumers, transfer unique guarantees, retire only proven obsolete surfaces, and record protected disposition separately | platform | frontmatter | NOT_RUN | Overall WORK-002 completion has not run; EVD-P04-030 resolves prior links leaf FAIL on synchronized changed input; passing full index and final acceptance remain pending |
+| WORK-002 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | Map current QA and Archive consumers, transfer unique guarantees, retire only proven obsolete surfaces, and record protected disposition separately | platform | frontmatter | PASS | EVD-P04-031/032 admit the local source contract on tree 4eb1991f and normal commit b6124bda; final Task receipt and local main integration remain open |
 
 ## Task Evidence
 
@@ -157,12 +157,15 @@ authority records with this explicitly linked follow-up; no old state is reset.
 | EVD-P04-028 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | markdown-profiles | Same corrected tree `8c4f95d1a48bbd4177756fa67f0fc70599757408` and log as EVD-P04-027 | PASS | The English-first approval reference and ready-row result were corrected; gate returned rc0 on exact corrected input and closes EVD-P04-025 only | yes | EVD-P04-025 |
 | EVD-P04-029 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | repository-quality | Same corrected tree `8c4f95d1a48bbd4177756fa67f0fc70599757408` and log as EVD-P04-027 | PASS | Checkout-local absolute path was removed from the Task handoff; gate returned rc0 on exact corrected input and closes EVD-P04-026 only | yes | EVD-P04-026 |
 | EVD-P04-030 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | links-and-owners | Five-path strict leaf on synchronized Task/README stage-zero and worktree bytes at coordinator-reported tree `595f1ff62a3ad3355a269f6224b438b3309ec44a`; `_workspace/p04-links-leaf-postfix.json` SHA-256 `9b2a24038665328790b42893df90e547e7b7e44ecd02f3b91c17c2edf6624e00` | PASS | Direct validator returned rc0, `PASS CROSS-DOCUMENT`, stdout SHA-256 `e1925925356b1114747b93a6b41bd8f5dc96cfb361d25378f699431a90e5d053`. The receipt holds exact command and five input hashes. This resolves the earlier same-Check EVD-P04-024/027 failure on changed bytes; full 18-gate index QA has not passed | yes | EVD-P04-024, EVD-P04-027 |
+| EVD-P04-031 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Canonical staged source admission | Frozen 15-path index tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`; `_workspace/p04-final-source-index-qa.log` SHA-256 `c1bd666a3902975607fd88ebcf9ca5bf2c7cba562f1847dd1fba30b56d260626` | PASS | All 18 selected gates returned PASS, including links-and-owners, markdown-profiles, repository-quality, selected nonstyle and selected style. This admits that source index only; the later Task receipt has different bytes | yes | none |
+| EVD-P04-032 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Normal source commit and actual message | Reviewed tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`; pinned actual message `_workspace/p04-implementation-message.txt` SHA-256 `09b991c6a86739d69054d4ddb0a32b4ab8b3e3ab9cb2c0649defe13afd658b8f`; commit `b6124bda8ea7014208c6783a411cccc8078174a6` | PASS | Root verified the normal hook-backed commit without skip and prior actual Commitizen message PASS; committed tree matches the 18-gate source index. This is local source delivery, not main integration or remote publication | yes | none |
+| EVD-P04-033 | [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent final source and document review | Reviewed 15-path source tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`, same input as EVD-P04-031; current P04 local contract and handoff boundaries | PASS | Independent `p01_review` reported actual source and document PASS on this input; security source review is EVD-P04-022 on unchanged ten code/test hashes. This review does not authenticate later Task receipt bytes, common joint adoption, remote or live outcomes | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | pending | EVD-P04-015, EVD-P04-016, EVD-P04-017, EVD-P04-018, EVD-P04-019, EVD-P04-020, EVD-P04-021, EVD-P04-022, EVD-P04-023, EVD-P04-024, EVD-P04-025, EVD-P04-026, EVD-P04-027, EVD-P04-028, EVD-P04-029, EVD-P04-030 | Run final full selected index and decide local acceptance; matching leaf PASS resolves all three historical gate failures without approving whole-unit Archive disposition | platform; security/CI operator for SEC-P01-001; Archive owner for any protected whole-unit decision |
+| [VAL-LOCAL-QA-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-P04-015, EVD-P04-016, EVD-P04-017, EVD-P04-018, EVD-P04-019, EVD-P04-020, EVD-P04-021, EVD-P04-022, EVD-P04-028, EVD-P04-029, EVD-P04-030, EVD-P04-031, EVD-P04-032, EVD-P04-033 | Accept the bounded local QA and Archive consumer/reader/retirement contract from exact-index source PASS, actual commit and independent review; original adverse attempts remain in evidence and are explicitly resolved. Whole-unit Archive disposition, common edition/joint adoption and remote/live outcomes are separate current-owner work | platform for current QA and Archive contracts; security/CI operator for SEC-P01-001; buenhyden and Archive owners for any later whole-unit decision |
 
 ## Approval and Safety Boundaries
 
@@ -229,8 +232,8 @@ reported that initial Python virtual-environment creation failed because
 also failed. A new `_workspace/p04-qa-venv` was then created successfully
 with `uv 0.12.18`, seeded `pip 26.2.1` and Python 3.12.3, without an apt or
 trust-setting change. Focused and registered source checks ran as recorded
-above; a passing corrected exact-index QA rerun for the coupled implementation
-remains pending.
+above; the later corrected source index passed all 18 selected gates and was
+committed normally as EVD-P04-031/032.
 `SEC-P01-001` HIGH stays open with the security/CI operator.
 Automatic approval review initially rejected namespace-guard removal and
 required user approval. The user's later explicit approval resolves that
@@ -244,8 +247,11 @@ files, patch identity/application and deleted-manifest receipt. On that
 postapproval input the named selection passed 14/14, isolated imports 2/2,
 generic refusal 3/3, registered Archive contracts 141/141 and ten-path Ruff
 check/format plus diff check. Independent code and security source reviews
-passed for the applied input; final document review, exact-index admission
-and main integration remain pending. An internal `scripts/` and `tests/` scan
+passed for the applied input; final source document review and exact-index
+admission then passed on tree `4eb1991fea4109f865144f4d1a92a5310c207fa8`
+and normal commit `b6124bda8ea7014208c6783a411cccc8078174a6`.
+The later Task receipt and main integration remain open. An internal
+`scripts/` and `tests/` scan
 found zero remaining references to the removed names. External
 `namespace_counts` consumers are unverified. The current MIG-0001 digest
 pin does not prove every historical Git object remains available; on-demand
@@ -265,8 +271,8 @@ collection README. A synchronized five-path strict links leaf then returned
 PASS on tree `595f1ff62a3ad3355a269f6224b438b3309ec44a`; the exact
 command, five input hashes and stdout hash are in
 `_workspace/p04-links-leaf-postfix.json`. EVD-P04-030 resolves both earlier
-links failures on the changed leaf input, while the full selected index still
-requires a passing rerun. The two failed aggregate logs remain at
+links failures on the changed leaf input. The full selected source index
+subsequently passed 18/18 as EVD-P04-031. The two failed aggregate logs remain at
 `_workspace/p04-implementation-index-qa.log` and
 `_workspace/p04-corrected-index-qa.log`; the failed pre-repair Task bytes
 were copied to checkout `_workspace/p04-archive-retirement/p04-failed-index-task.md`
@@ -276,7 +282,9 @@ matching bytes at their original worktree locations `_workspace/p04-*` and
 the checkout retention location
 `_workspace/p04-archive-retirement/<same filename>` at the checkout root.
 After owned worktree cleanup, use that checkout location for these existing
-receipts. Any later final QA or message receipt needs an actual created file
-and separate verification before adding it to this handoff.
+receipts. The final source-index QA log and actual source-message file have
+also been created and copied there under the same filenames; their exact
+hashes and source commit are EVD-P04-031/032. The later Task receipt still
+needs its own exact-input QA and message evidence before completion.
 No Archive unit was moved or removed, and no remote or live action was run
 by this Task.
