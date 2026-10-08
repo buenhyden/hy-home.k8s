@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "0.1.0"
+version: "0.2.0"
 type: "operation/runbook"
-status: "draft"
+status: "in-review"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0012"
 ---
@@ -35,6 +35,13 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 필수 로컬 검사가 실패했거나 미실행이고, operator 승인이나 원격 대상이
 불확실하면 게시 단계에서 멈춘다.
 
+Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
+도구를 사전에 확인한다. 일반 PATH에서 명령이 보이는 것만으로 이 조건이
+충족되지는 않는다. 특히 `git-cliff`의 사용자별 NVM 경로가 거부된 과거
+관측은 SPEC-0107 Task에 남아 있다. 운영자는 실제 도구 설치와 신뢰 경로를
+준비하고 해당 릴리스 Task에 관측 결과를 기록한다. 환경 미확보는 그 실행의
+`DEFER`이며 업무 기한이나 검증 reserve 승인으로 바꾸지 않는다.
+
 ## Procedure or Checklist
 
 | Step | Action | Expected result | Stop / escalate when |
@@ -49,8 +56,9 @@ main에 통합된 공개 계약 변경을 릴리스하려는 경우 사용한다
 ## Verification Steps
 
 준비 PR의 문서·링크·상태와 실제 index는 해당 Task의 local QA 증거로
-검증한다. 아래는 `scripts/release.py`의 계획된 인터페이스이며, 실제
-구현·도움말·검사로 확인하기 전에는 실행 결과나 게시 능력을 주장하지 않는다.
+검증한다. 아래는 구현된 `scripts/release.py`의 CLI이며, 현재 소스와
+`--help`, `prepare --help`, `publish --help`에서 확인했다. 도움말 확인은
+prepare 실행이나 원격 게시 성공을 증명하지 않는다.
 `prepare`와 `publish`의 기본형은 읽기 전용 preview다.
 
 ```bash

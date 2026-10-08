@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 ---
 
 # Quality and Evidence Policy
@@ -81,12 +81,20 @@ unobserved external condition unless directly authorized and checked.
 ### Validation runner envelope
 
 Before implementation, identify the required gates and resolve their tools,
-environment, expected cost/time/output envelope and any necessary native
-execution approval. This is resource preflight, not secret/live authorization;
-[approval and safety](approval-and-safety.md) owns the latter. If a required
-budget is unavailable, preserve completed safe work and report the required
+environment, actual cost/output needs, technical command limits and necessary
+native execution approval. This is resource preflight, not secret/live authorization;
+[approval and safety](approval-and-safety.md) owns the latter. If an actual
+required resource or native permission is unavailable, preserve safe work and report the required
 check as unexecuted with its next owner. Never change a command or wrapper to
 evade a resource guard, disable a required check or report a false result.
+
+Business deadlines, session timeboxes and final-validation reserve approvals
+are not prerequisites to scoped work or local validation. Do not invent them,
+rename them as resource gates, or restore obsolete requirements from historical
+Task/Plan wording. Explicit cancellation, lack of progress, real cost/token or
+platform limits, and protected-action authority govern their own steps.
+Per-command timeout, output bounds and descendant cleanup protect execution;
+they do not expire the user's authoring authorization or stop independent work.
 
 Every repository-static child selected by the validation-surface contract runs
 through the [validation runner](../../scripts/run-validation-lane.py), which
@@ -218,7 +226,7 @@ above.
 | Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
-| Local handoff | Resolve tool, time, output and native approval preflight for applicable selected gates and named unit regressions, including continuing Archive and security guarantees. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
+| Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing Archive and security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
 
 The registry selects gates within a profile. Reuse only a successful result for
 identical declared input bytes and history, configuration, tool identity, scope,

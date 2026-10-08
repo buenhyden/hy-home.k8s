@@ -70,6 +70,8 @@ remote integration, runtime capability assertion or live operation.
 
 ## Verification Plan
 
+### Current WORK-008 follow-up
+
 WORK-008 follows current affected selection and exact-index style/non-style
 checks with independent review. It creates no business deadline, session
 timebox or reserve approval. Existing technical command and cleanup limits
@@ -77,6 +79,9 @@ remain reviewed process-safety controls. Preserve all earlier execution
 records; do not revive their retired full sweep for this follow-up. Missing
 common-source authority or server-write approval stops only its dependent step.
 
+### Historical WORK-001 through WORK-007 plans
+
+These paragraphs retain the earlier execution plan, not a current full-QA gate.
 Use subagent-driven-development for disjoint implementation and read-only
 review, with explicit paths and existing role procedures. Repository Task
 replaces any external skill's separate progress ledger; canonical Stage 03

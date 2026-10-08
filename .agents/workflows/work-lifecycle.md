@@ -1,10 +1,10 @@
 ---
 title: "Work Lifecycle"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/skill"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 ---
 
 # Work Lifecycle
@@ -44,11 +44,13 @@ state on resume; historical progress and provider-local memory are auxiliary.
    Record the current scoped request in the existing Task Inputs and Approval
    and Safety Boundaries. Keep the Spec acceptance contract, Plan work mapping
    and actual Task execution/evidence separate; no extra progress ledger.
-5. Resolve selected required-check tools, environment, cost/time/output
-   resources and native execution approval through
+5. Resolve selected required-check tools, environment, actual resource/output
+   needs, technical command limits and necessary native execution approval through
    [quality preflight](../governance/quality.md#validation-runner-envelope).
    Define focused checks, expected lanes, rollback, unavailable tools and next
    owner before implementation; protected authority remains separate.
+   Quality preflight creates no business deadline, session timebox or
+   final-validation reserve approval.
 
 ### Resume
 

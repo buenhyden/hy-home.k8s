@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-08"
 ---
 
 # Approval and Safety Policy
@@ -128,7 +128,7 @@ operations to a subagent.
   belong to [quality](quality.md#validation-runner-envelope) and the validation
   runner; a resource limit is not secret/live approval. Resolve required-check
   tools, environment, resources and authority during work-lifecycle preflight.
-  Preserve failures and obtain any required native budget approval without
+  Preserve failures and obtain necessary native permission for actual resources without
   bypassing a guard or misreporting an unexecuted check.
 
 ## Validation and Refresh

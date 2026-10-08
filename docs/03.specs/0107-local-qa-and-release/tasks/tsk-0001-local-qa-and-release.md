@@ -381,7 +381,7 @@ The original SPEC-0106 Tasks and their `NOT_RUN` results remain historical.
   Bounded check receipts may be cited by exact location, not copied as raw
   logs. The delivery controller records later actual closing-document checks,
   review, commit, local main, `origin/main` and owned-ref cleanup in ignored
-  `/home/hyunyoun/data/hy-home.k8s/.qa-evidence/handoff/SPEC-0107.json` in
+  `.qa-evidence/handoff/SPEC-0107.json` in
   the persistent main workspace and the final chat handoff after each event
   is observed. The controller may commit only after required actual closing
   checks and independent review pass. It records actual result codes, input
