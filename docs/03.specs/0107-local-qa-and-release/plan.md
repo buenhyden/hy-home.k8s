@@ -1,6 +1,6 @@
 ---
 title: "Local Quality and Release Lifecycle Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -14,9 +14,11 @@ parent_ids: ["SPEC-0107"]
 
 ## Global Constraints
 
-Use the [Spec](spec.md) contract, completed [Task 0001](tasks/tsk-0001-local-qa-and-release.md)
-as history and current [Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md)
-for the bounded follow-up. Preserve frozen Archive and completed Task evidence, unique
+Use the [Spec](spec.md) contract, completed
+[Task 0001](tasks/tsk-0001-local-qa-and-release.md) and
+[Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md) as history, and current
+[Task 0003](tasks/tsk-0003-purpose-qa-and-ci.md) for the P05 follow-up.
+Preserve frozen Archive and completed Task evidence, unique
 negative contracts, secret and live boundaries. No check, authorization,
 independent review or external publication is presumed from file presence.
 The original WORK-001 instruction authorized local repair, normal logical commits, push/main integration
@@ -28,12 +30,17 @@ The persisted user instruction authorizes local P04 work, normal commits,
 local main integration and owned branch/worktree cleanup after preserving
 evidence. No current push, PR, server-setting, tag or live authority is
 inferred from the original WORK-001 wording.
+The current P05 instruction authorizes investigation, planning, local source
+and consumer repair, selected local validation, normal logical commits, local
+main integration and cleanup of its owned branch and worktree. It does not
+grant remote write or dispatch, deployment, secret access, settings changes or
+an expanded live authority.
 
 ## Overview
 
 The original SPEC-0107 delivery used one completed Task and WORK-001. The
-current reappraisal uses WORK-002 and its own Task; work status, implementation
-commands, checks and acceptance are recorded there. Only actual terminal original SPEC-0107 closing
+completed reappraisal used WORK-002 and its own Task. Current P05 execution,
+checks and acceptance belong only to WORK-003 and Task 0003. Only actual terminal original SPEC-0107 closing
 checks, commit and delivery facts go to its referenced non-authoritative
 handoff receipt. Its draft, ready, in-progress and completed transitions
 use distinct normal commits; the Task links the actual evidence and delivery
@@ -85,6 +92,7 @@ independently, record actual evidence and integrate only accepted work.
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, named purpose/unit gates after retirement, current anchor completion, semantic review |
 | WORK-002 | [VAL-LOCAL-QA-005](spec.md#success-criteria--verification-plan) | Inventory current QA leaf/caller/import/discovery/fixture/consumer graph and Archive policy/catalog/route consumers; decide keep, transfer or retire by current purpose; implement only supported, authorized local changes | Existing quality and Archive owners; immutable historical Task and Archive payloads; specific disposition approval, hold and recovery proof before any whole-unit removal | [SPEC-0107-TSK-0002](tasks/tsk-0002-archive-and-qa-retirement.md) | Intake and consumer map, focused changed-rule regression, selected actual-index document/style and purpose checks, independent review, bounded disposition and remaining-owner evidence recorded in the Task |
+| WORK-003 | [VAL-LOCAL-QA-006](spec.md#success-criteria--verification-plan) | Map current purpose QA, scripts/tests/hooks and hosted producer/consumer inputs; remove proven duplicate or completed-only work with unique protection retained; select affected checks and exact-index style; measure representative executions and route local versus hosted outcomes | Completed WORK-001/002 records; existing quality/validation/CI owners; source and trust boundary proof before reuse; separate authority for remote settings, dispatch or live execution | [SPEC-0107-TSK-0003](tasks/tsk-0003-purpose-qa-and-ci.md) | Exact caller and input map, focused changed-rule failure/boundary regression, selected final-index document/purpose/style and actual-message checks, measured comparison, independent review and Task-owned acceptance |
 
 WORK-002 follows this dependency order: trace active producer and reader
 surfaces; classify continuing and obsolete guarantees; transfer any unique
@@ -97,7 +105,32 @@ without the exact approval, hold and recovery evidence. The joint
 `WGOV-CORE / 3.0.0-draft.3` C06/C09/C11 comparison is a candidate review,
 not a final edition or four-repository adoption.
 
+WORK-003 follows the actual source map: inspect leaves, callers, discovery,
+fixtures, hooks, workflow jobs, inputs and result consumers; classify continuing
+purpose guarantees; transfer unique protection before removing duplicate
+callers or dedicated support; repair impact closure and shared parsing/Git
+reads where measurement supports it; then run named changed-rule regressions,
+selected local checks and independent review. Keep the already observed
+`ci-summary` and `style-pr` route unless a current input exposes a real defect.
+Read back any required-check producer or ruleset decision on its own remote
+input. An earlier PR run is historical evidence, not WORK-003 execution.
+The `WGOV-CORE / 3.0.0-draft.3` C01/C06/C07/C12 comparison remains a common
+candidate without source revision, approval or joint adoption evidence.
+
 ## Verification Plan
+
+For WORK-003, derive the exact affected gate and named unit set from the
+current validation registry and measured caller map. Use focused RED/GREEN for
+changed executable behavior, then selected profile/relationship/link/state
+checks for authored documents. Run read-only lint and format over the final
+index before each normal commit and validate the actual message. Record any
+different local working tree, index, hosted PR candidate and main tree as
+separate inputs. Reuse a leaf only when bytes/history, config, tool, scope,
+mode and trust agree. Measure representative before/after leaf, parsing and
+Git-query counts before claiming a reduction. A failure or unavailable tool
+retains its actual result, location and next owner. The Task owns the single
+criterion acceptance decision and independent review result. No full/ci sweep
+or blanket discovery is selected merely because the QA contract changed.
 
 For WORK-002, use current Registry and quality policy to select affected
 document, Archive, security and purpose checks after the actual consumer map
@@ -149,6 +182,15 @@ DEFER until directly observed. Rollback uses forward correction while retaining
 Task, Git and Archive evidence.
 
 ## Completion Criteria
+
+WORK-003 reaches local acceptance only when its Task links actual source and
+consumer changes, selected named regressions, final-index QA/style and actual
+message results, measured comparison, independent review, normal commits and
+local integration to its single VAL-LOCAL-QA-006 verdict. Any required adverse
+result remains until a matching later PASS explicitly resolves it. Remote
+protection, hosted run, common edition, native enforcement and live/deployment
+claims remain separate from that local verdict. `SEC-P01-001` HIGH remains
+with its security/CI owner until independently resolved on its own input.
 
 Every criterion has a Task record with exact input, command, result,
 acceptance and remaining owner. Required local checks and independent review

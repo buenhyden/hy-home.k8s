@@ -1,6 +1,6 @@
 ---
 title: "Local Quality and Release Lifecycle"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -23,7 +23,9 @@ owns the architectural separation of validation, execution, and evidence.
 [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)
 records the durable local QA and SemVer release ownership decision.
 Original implementation and actual results remain in [Task 0001](tasks/tsk-0001-local-qa-and-release.md).
-The bounded current QA and Archive reappraisal belongs to [Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md).
+The completed QA and Archive reappraisal remains in
+[Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md). The new purpose-based
+QA and CI execution belongs to [Task 0003](tasks/tsk-0003-purpose-qa-and-ci.md).
 
 ## Strategic Boundaries & Non-goals
 
@@ -109,6 +111,45 @@ that identifies draft content, not approval. A final joint edition, local
 adoption and four-repository adoption require separate actual decisions and
 evidence. This repository's existing QA and Archive owners remain authoritative
 for local implementation while that common decision is pending.
+
+### Purpose-based QA and CI follow-up
+
+[WORK-003](plan.md#work-breakdown) and
+[Task 0003](tasks/tsk-0003-purpose-qa-and-ci.md) own the new P05 execution.
+Inventory the actual Git hooks, validation leaves, imports, subprocess callers,
+test discovery and fixtures, workflow jobs, input identity and result consumers.
+Classify continuing DOC, WEB, VAULT, TEMPLATE, DOCKER and K8S guarantees by
+their current repository purpose. Retire a duplicate or completed-only check
+only after its unique continuing protection and callers have an owner. Measure
+representative before/after leaf executions, parsing and Git reads before
+claiming a reduction. The current Archive reader and supported historical
+compatibility remain governed by their existing owners.
+
+Local purpose QA selects the affected dependency closure, including parent,
+links, deletion/rename and generated consumers. A changed validator, schema or
+selector gets named failure and boundary regressions; ordinary documents get
+their applicable profile, relation, link, state and content checks. Execute
+read-only lint and format on the final logical Git index before a local commit,
+and validate the actual commit message. Explicit writers repair findings and
+produce a new input. Reuse a leaf only when its bytes and history, config,
+tool, scope, mode and trust are identical; a phase label or path match alone
+does not establish that identity. Business deadlines and validation reserve
+approvals do not gate the work. Actual command limits, cancellation and child
+cleanup remain bounded by the validation runner and their observed result.
+
+The public repository's hosted PR route checks narrow branch metadata and
+selected style on the actual server candidate with trusted base configuration.
+Its required check producer, source App, branch ruleset and failure path require
+read-back at the relevant PR input before claiming hosted success. Historical
+PR runs cannot prove this Task's changed input. Local purpose QA does not run
+untrusted public PR code on a credentialed homelab runner. A deployment style
+result requires an actual deployment workflow, candidate and run. Remote
+settings, dispatch, deployment, credentials and live checks retain their
+separate operator authority. `SEC-P01-001` HIGH remains an open CI/security
+finding until the owning security review resolves its actual workflow control
+input. The same `WGOV-CORE / 3.0.0-draft.3` is only the C01/C06/C07/C12
+review candidate for this follow-up; no final common approval or joint
+adoption is inferred.
 
 ### Actual agent evaluation evidence
 
@@ -213,6 +254,8 @@ The [Plan](plan.md) records the original four bounded slices: inventory and succ
 and Git stage routing, release and commit consumers, and final evidence/review.
 WORK-002 adds a separate current QA and Archive reappraisal after those
 historical slices.
+WORK-003 adds a separate purpose-based QA and CI follow-up after the completed
+WORK-002 record. Its own Task carries current commands, results and acceptance.
 Each source owner updates its current contract and direct consumers together.
 Maintain distinct static, local runner, hosted, provider-native, and live
 evidence lanes. [Task 0001](tasks/tsk-0001-local-qa-and-release.md) is the
@@ -286,6 +329,7 @@ second work-state owner, approval source or substitute for Task acceptance.
 | VAL-LOCAL-QA-003 | Commitizen, SemVer release producer and main `CHANGELOG.md` contracts have focused positive and refusal evidence; actual remote publication is recorded separately. |
 | VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; the evaluation route and empty aggregate capacity preserve separate evidence authority without fabricating a run; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
 | VAL-LOCAL-QA-005 | The current leaf/caller/import/discovery/fixture/consumer inventory supports each QA keep, transfer or retirement decision and focused regression on its actual input. Current Archive policy, retained historical evidence and any proposed whole-unit disposition have distinct owners and proof; no frozen payload, catalog unit or route is removed without specific approval, hold and recovery evidence. The Task records source, command, result, review and remaining owner without converting prior PR success, local checks or a draft common edition into current hosted, live or joint-adoption PASS. |
+| VAL-LOCAL-QA-006 | On the actual P05 input, a leaf/caller/consumer map supports DOC, WEB, VAULT, TEMPLATE, DOCKER and K8S purpose selection, safe affected closure and any retirement or result reuse. Changed rules have focused failure and boundary regression; the final local index has selected read-only style, document and purpose checks, actual-message validation, independent review and a single Task acceptance decision. A representative before/after measurement states actual leaf, parsing and Git-read counts without an inferred speed claim. Hosted required checks and selected PR style are verified only at their own SHA/run and protection input; unavailable remote, native, deployment and live evidence stays separately unresolved. |
 
 ## Traceability
 
@@ -298,3 +342,4 @@ second work-state owner, approval source or substitute for Task acceptance.
 | [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-003 | SemVer producer and existing-tag refusal; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) commit and release consumer inventory. |
 | [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Unique work-tracking owner review; [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) Task-owned implementation result and acceptance, with only terminal SPEC-0107 delivery facts in its referenced non-authoritative handoff receipt; [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) current owner links and retired-consumer succession; [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) paired evaluation route, form ownership and empty aggregate boundary. |
 | [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-005 | Current consumer and unique coverage disposition before retirement; [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) current Archive integrity versus historical cutover proof; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) actual active script/test/workflow inventory; [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) dated source and claim-to-local-decision evidence. |
+| [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-006 | Current purpose/leaf/caller mapping and uniquely owned negative checks; [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) separate local and hosted execution; [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) impact selection and measured reuse; [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) exact-input evidence boundaries; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) active script, test, hook and workflow consumers; [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) final local index and selected checks. |
