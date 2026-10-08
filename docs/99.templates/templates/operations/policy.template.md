@@ -11,17 +11,13 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 # [Policy or Standard Name] Operations Policy
 
-## Overview
+## Purpose
 
 <!-- Author prompt: 정책의 목표, 책임을 지는 대상, 권한 경계를 밝힌다. -->
 
-## Policy Scope
+## Scope
 
-<!-- Author prompt: 통제 대상 시스템과 환경, 제외 대상을 정한다. -->
-
-## Applies To
-
-<!-- Author prompt: 책임 역할, 영향받는 자산, 적용되는 맥락을 적는다. -->
+<!-- Author prompt: 통제 대상 시스템, 환경, 제외 대상과 책임 역할을 구체적으로 정한다. -->
 
 ## Controls
 
@@ -39,19 +35,15 @@ artifact_id: "{{ARTIFACT_ID}}"
 | --- | --- | --- | --- |
 | CTRL-001 | Accountable role | Validator, review, or platform boundary | Named control evidence |
 
-## Exceptions
+## Exceptions and Escalation
 
-<!-- Author prompt: 예외의 승인, 만료, 보완 통제, 증거를 정한다. -->
+<!-- Author prompt: 예외의 근거, 승인 주체, 만료, 보완 통제, 증거와 에스컬레이션 경로를 정한다. -->
 
-## Verification
+## Verification and Review
 
-<!-- Author prompt: 각 통제를 결정론적 검사나 승인된 live 검증에 연결한다. -->
+<!-- Author prompt: 각 통제의 검사 및 증거와 검토 owner, 변경 트리거, 주기, 폐기 조건을 밝힌다. -->
 
-## Review Cadence
-
-<!-- Author prompt: 검토 owner, 트리거, 주기, 폐기 조건을 밝힌다. -->
-
-## Traceability
+## Related Documents
 
 <!-- Author prompt: 승격된 권한, 통제 owner, 적용 영역을 연결한다. -->
 

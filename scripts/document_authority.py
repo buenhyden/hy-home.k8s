@@ -45,6 +45,7 @@ OPTIONAL_TOP_LEVEL_KEYS = frozenset(
         "document_language",
         "legacy_rebased_retained_paths",
         "migration_admission",
+        "shared_contract",
     }
 )
 PROFILE_KEYS = frozenset(

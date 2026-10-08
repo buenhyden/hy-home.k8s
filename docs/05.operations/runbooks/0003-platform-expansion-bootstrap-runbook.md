@@ -1,17 +1,17 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.1.3"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
 
 # Platform Expansion Bootstrap Runbook
 
-## Overview
+## Purpose
 
 이 런북은 기본 플랫폼 위에 추가된 cert-manager, Istio, Kiali를 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
 
@@ -21,22 +21,18 @@ Headlamp 검증·복구는 [RUN-0004](./0004-rollouts-notifications-headlamp-run
 Kiali와 외부 observability 연결 복구는
 [RUN-0007](./0007-kiali-observability-connectivity-runbook.md)이 소유한다.
 
-### Purpose
-
 플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
-
-## Runbook Type
 
 `bootstrap`
 
-## When to Use
+## Trigger and Preconditions
 
 - 신규 플랫폼 확장 컴포넌트 설치
 - host 재시작 또는 k3d 클러스터 재생성 후 복구
 - cert-manager ClusterIssuer NotReady 복구
 - Istio/Kiali 배포 실패 복구
 
-## Procedure or Checklist
+## Procedure
 
 ### Checklist
 
@@ -48,8 +44,6 @@ Kiali와 외부 observability 연결 복구는
 - [ ] Tempo 연결 (트레이싱): `nc -z 192.168.0.13 3200`
 - [ ] Istio trace용 Alloy OTLP 연결: `nc -z 192.168.0.13 4317`
 - [ ] Grafana (Kiali용): `https://grafana.hy.home.arpa/api/health`가 `200`
-
-### Procedure
 
 0. k8s router 이름 해석 확인
 
@@ -91,7 +85,7 @@ Kiali와 외부 observability 연결 복구는
    ./scripts/validate-infrastructure-contracts.sh
    ```
 
-## Verification Steps
+## Verification
 
 ```bash
 # 정적 계약
@@ -106,12 +100,10 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   https://kiali.hy-k8s.home.arpa -o /dev/null -w '%{http_code}\n'
 ```
 
-## Observability and Evidence Sources
-
 - **Signals**: ClusterIssuer readiness, Istiod/Kiali deployment availability, ArgoCD Application health.
 - **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 ### cert-manager ClusterIssuer NotReady
 
@@ -175,7 +167,7 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
-## Traceability
+## Related Documents
 
 - **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)

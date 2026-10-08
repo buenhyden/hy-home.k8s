@@ -1,17 +1,17 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.3.1"
+version: "1.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
 
 # ArgoCD ESO Vault Recovery Runbook
 
-## Overview
+## Purpose
 
 외부 secret backend는 Vault API 호환 OpenBao다. ESO는 외부 Traefik 뒤의
 `https://openbao.hy.home.arpa`(host `192.168.0.13:443`)로 닿는다. cluster
@@ -31,17 +31,13 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 
 > **Agent execution boundary**: CoreDNS custom zone과 `openbao-ca` ConfigMap 재적용, OpenBao auth 설정 변경은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
-### Purpose
-
 OpenBao 연결 거부, 이름 해석 실패, 인증서 검증 실패, sealed 상태, 또는
 Kubernetes auth drift로 발생하는 ESO/OpenBao 연동 장애를 빠르게 분류하고,
 operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
-## Runbook Type
-
 `recovery`
 
-## When to Use
+## Trigger and Preconditions
 
 - `vault-backend`가 `Ready=False`
 - ESO 로그에 `connection refused`, `no such host`, `x509`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
@@ -50,7 +46,7 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 - 복구 후 ArgoCD HTTPS 진입점(`argo.hy-k8s.home.arpa`) 회귀가 의심될 때
 - k3d cluster 재생성 뒤 OpenBao Kubernetes auth가 실패할 때
 
-## Procedure or Checklist
+## Procedure
 
 ### Checklist
 
@@ -59,8 +55,6 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 - [ ] 복구 전 상태 스냅샷 수집
 - [ ] 외부 OpenBao의 `eso-read-platform` role에 `bound_audiences=vault` 설정 확인
 - [ ] OpenBao Kubernetes auth `kubernetes_host`가 `https://192.168.0.13:6550`
-
-### Procedure
 
 1. 사전 스냅샷을 저장한다.
 
@@ -170,7 +164,7 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
      rg 'path: gitops/apps/root|targetRevision: main'
    ```
 
-## Verification Steps
+## Verification
 
 - [ ] `vault-backend Ready=True`
 - [ ] `argocd-external-valkey Ready=True`
@@ -183,10 +177,24 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
       (`192.168.0.14:443`) 확인은 host 주소가 할당된 경우에만 별도 수행
 - [ ] CI 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 
-## Observability and Evidence Sources
-
 - **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, CoreDNS logs, repo-server logs.
 - **Evidence to Capture**: failed sync output, ExternalSecret condition, OpenBao auth role read result, recovery command output.
+
+## Recovery and Escalation
+
+CoreDNS custom zone 재적용이 상황을 악화시키면 Procedure 1단계의 스냅샷으로
+되돌린다. zone을 삭제하면 cluster 안에서 `openbao`, `prometheus`,
+`grafana` 이름 해석이 모두 끊기므로 삭제로 롤백하지 않는다. CA
+ConfigMap은 같은 `rootCA.pem`으로 다시 적용하는 것이 롤백이다.
+
+```bash
+# human-approved break-glass only
+kubectl apply -f "${TMPDIR:-/tmp}/coredns-custom.before.yaml"
+kubectl -n kube-system rollout restart deployment/coredns
+```
+
+- 롤백 후 `./scripts/validate-infrastructure-contracts.sh`와 `run-all.sh`를 재실행한다.
+- 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
 ### Troubleshooting Signatures
 
@@ -208,23 +216,7 @@ openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
 SAN이 없으면 인증서를 재발급한 뒤
 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 bootstrap 절차를 다시 실행한다.
 
-## Safe Rollback or Recovery Procedure
-
-CoreDNS custom zone 재적용이 상황을 악화시키면 Procedure 1단계의 스냅샷으로
-되돌린다. zone을 삭제하면 cluster 안에서 `openbao`, `prometheus`,
-`grafana` 이름 해석이 모두 끊기므로 삭제로 롤백하지 않는다. CA
-ConfigMap은 같은 `rootCA.pem`으로 다시 적용하는 것이 롤백이다.
-
-```bash
-# human-approved break-glass only
-kubectl apply -f "${TMPDIR:-/tmp}/coredns-custom.before.yaml"
-kubectl -n kube-system rollout restart deployment/coredns
-```
-
-- 롤백 후 `./scripts/validate-infrastructure-contracts.sh`와 `run-all.sh`를 재실행한다.
-- 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
-
-## Traceability
+## Related Documents
 
 - **Operations Policy**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - [`../../02.architecture/descriptions/0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)

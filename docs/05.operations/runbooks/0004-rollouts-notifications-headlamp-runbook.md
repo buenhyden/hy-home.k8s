@@ -1,29 +1,25 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.1.2"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Runbook
 
-## Overview
+## Purpose
 
 이 런북은 Argo Rollouts, Argo Notifications(Slack), Headlamp의 초기 부트스트랩, 복구, 검증 절차를 제공한다.
 
-### Purpose
-
 Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초기 부트스트랩 또는 장애 복구 시 필요한 순서를 제공한다.
-
-## Runbook Type
 
 `bootstrap`
 
-## When to Use
+## Trigger and Preconditions
 
 - Rollouts Controller가 기동하지 않거나 CRD가 없을 때
 - Notifications Slack 알림이 전달되지 않을 때
@@ -32,7 +28,7 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 
 ---
 
-## Procedure or Checklist
+## Procedure
 
 아래 절차는 Notifications secret 준비, controller 상태 확인, Rollouts 상태 확인, Headlamp 및 Rollouts Dashboard 접근 검증 순서로 수행한다.
 [RUN-0001](./0001-argocd-platform-bootstrap-runbook.md)의 CLI 전제에 더해
@@ -71,18 +67,6 @@ kubectl -n argocd get secret argocd-notifications-secret 2>/dev/null && echo "OK
 kubectl -n argocd logs deploy/argocd-notifications-controller --tail=100 | grep -i 'slack\|sent\|error'
 ```
 
-### 복구: ESO 재동기화
-
-아래 annotation과 이 런북의 restart·promote·undo 명령은 live
-state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
-[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions)에 따른
-operator-approved 실행에서만 사용한다.
-
-```bash
-kubectl -n argocd annotate externalsecret argocd-notifications-secret \
-  force-sync=$(date +%s) --overwrite
-```
-
 ---
 
 ### Procedure 3: Argo Rollouts 상태 확인
@@ -101,19 +85,6 @@ kubectl argo rollouts list rollouts --all-namespaces
 kubectl argo rollouts get rollout <name> -n <namespace> --watch
 ```
 
-### Rollout 수동 프로모션
-
-```bash
-# canary 다음 단계로 진행
-kubectl argo rollouts promote <rollout-name> -n <namespace>
-
-# 전체 즉시 프로모션
-kubectl argo rollouts promote <rollout-name> -n <namespace> --full
-
-# 롤백 (이전 버전으로)
-kubectl argo rollouts undo <rollout-name> -n <namespace>
-```
-
 ---
 
 ### Procedure 4: Headlamp 접근 검증
@@ -129,34 +100,6 @@ kubectl -n headlamp get secret headlamp-tls 2>/dev/null
 # HTTP 응답 확인 (mkcert rootCA로 TLS 검증)
 curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
   -o /dev/null -w '%{http_code}' https://headlamp.hy-k8s.home.arpa/
-```
-
-### 복구: Headlamp TLS NotReady
-
-`headlamp-tls`가 `READY=False`이면 먼저 ClusterIssuer 복구를
-[RUN-0003](./0003-platform-expansion-bootstrap-runbook.md)으로 확인한다.
-
-```bash
-kubectl -n headlamp describe certificate headlamp-tls
-kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
-argocd app get platform-headlamp-config --hard-refresh
-```
-
-### 복구: Headlamp Token Unauthorized
-
-브라우저 접근이 401이면 chart가 만든 ClusterRoleBinding을 확인하고 단기
-ServiceAccount token을 발급한다. token은 문서, 로그, 채팅에 남기지 않는다.
-
-```bash
-kubectl get clusterrolebinding headlamp-admin
-kubectl -n headlamp create token headlamp --duration=1h
-```
-
-### 복구: Headlamp 재시작
-
-```bash
-# operator-approved restart only
-kubectl -n headlamp rollout restart deployment headlamp
 ```
 
 ### k8s router 경로 확인
@@ -186,7 +129,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 ---
 
-## Verification Steps
+## Verification
 
 - [ ] `argo-rollouts` namespace에 controller + dashboard Pod Running
 - [ ] `argo-rollouts` Rollout CRD 존재
@@ -198,16 +141,69 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 - [ ] `https://rollouts.hy-k8s.home.arpa/` → 200 응답
 - [ ] `hy-k8s.home.arpa/headlamp`, `hy-k8s.home.arpa/rollouts` → 301 응답
 
-## Observability and Evidence Sources
-
 - **Signals**: Rollouts controller readiness, notification controller logs, Headlamp ingress/TLS status, k8s router HTTP response codes.
 - **Evidence to Capture**: pod status output, Slack send/error log snippets, HTTP response codes, ArgoCD Application health.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 - Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
 - Notifications 문제가 발생하면 Vault secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다.
 - Headlamp 접근 실패 시 Ingress/TLS와 k8s router 경로를 확인하고, Dashboard 재도입이 아니라 Headlamp 경로를 복구한다.
+
+### 복구: ESO 재동기화
+
+아래 annotation과 이 런북의 restart·promote·undo 명령은 live
+state를 바꾸므로 [POL-0004](../policies/0004-rollouts-notifications-headlamp-policy.md)와
+[POL-0001](../policies/0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)에 따른
+operator-approved 실행에서만 사용한다.
+
+```bash
+kubectl -n argocd annotate externalsecret argocd-notifications-secret \
+  force-sync=$(date +%s) --overwrite
+```
+
+### Rollout 수동 프로모션
+
+```bash
+# canary 다음 단계로 진행
+kubectl argo rollouts promote <rollout-name> -n <namespace>
+
+# 전체 즉시 프로모션
+kubectl argo rollouts promote <rollout-name> -n <namespace> --full
+
+# 롤백 (이전 버전으로)
+kubectl argo rollouts undo <rollout-name> -n <namespace>
+```
+
+### 복구: Headlamp TLS NotReady
+
+`headlamp-tls`가 `READY=False`이면 먼저 ClusterIssuer 복구를
+[RUN-0003](./0003-platform-expansion-bootstrap-runbook.md)으로 확인한다.
+
+```bash
+kubectl -n headlamp describe certificate headlamp-tls
+kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
+argocd app get platform-headlamp-config --hard-refresh
+```
+
+### 복구: Headlamp Token Unauthorized
+
+브라우저 접근이 401이면 chart가 만든 ClusterRoleBinding을 확인한다. 인증
+자체가 필요한 경우 승인된 운영자가 짧은 수명의 ServiceAccount token을
+비밀값 취급이 가능한 전용 경로로 발급·전달한다. 일반 터미널 출력,
+transcript, 문서, 로그, 채팅에 token을 남기지 않는다. 이 런북에서
+token 발급 명령은 실행하지 않는다.
+
+```bash
+kubectl get clusterrolebinding headlamp-admin
+```
+
+### 복구: Headlamp 재시작
+
+```bash
+# operator-approved restart only
+kubectl -n headlamp rollout restart deployment headlamp
+```
 
 ### Troubleshooting Signatures
 
@@ -216,7 +212,7 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 - Rollouts `CRD not found` → `installCRDs: true` 확인 또는 ArgoCD sync wave 순서 문제
 - Rollouts Dashboard 502 → dashboard Pod 미기동, service port 3100 확인
 
-## Traceability
+## Related Documents
 
 - **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

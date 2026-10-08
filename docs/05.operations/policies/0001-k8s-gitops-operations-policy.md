@@ -1,32 +1,30 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.1.2"
+version: "1.2.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
 
 # K8s GitOps Platform Operations Policy
 
-## Overview
+## Purpose
 
 이 문서는 Linux server 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
 여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
 검증 baseline을 뜻한다.
 
-## Policy Scope
+## Scope
 
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 Vault의 시크릿 경계
 - 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스
 - ingress-nginx, k8s 전용 router, AppProject, NetworkPolicy 통제
 - repository 정적 검증과 승인된 runtime 검증의 증적 경계
-
-## Applies To
 
 - **Systems**: `infrastructure/`, `gitops/`, `.github/workflows/`
 - **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
@@ -96,7 +94,11 @@ artifact_id: "POL-0001"
 - Git desired state 없이 EndpointSlice를 상시 수동 관리
 - 외부 서비스 workspace의 Traefik에 k8s route 추가
 
-## Exceptions
+## Exceptions and Escalation
+
+<!-- 기존 #exceptions 인용을 보존하는 이 앵커 한 줄만 HTML로 유지한다. -->
+<!-- markdownlint-disable-next-line MD033 -->
+<a id="exceptions"></a>
 
 이 절은 Stage 05 전체의 live 변경 예외 기준이다. 다른 Policy는 자신의
 component 고유 예외만 추가하고 이 기준을 반복하지 않는다.
@@ -110,7 +112,7 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 [Approval and Safety Policy](../../../.agents/governance/approval-and-safety.md)가
 소유하며, Runbook은 이 예외 안에서 실행할 절차만 제공한다.
 
-## Verification
+## Verification and Review
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -119,13 +121,11 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 | Vault and ESO recovery | auth, network, ExternalSecret 상태와 plaintext 부재 | [RUN-0002](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
 | Static controls | affected validators와 hosted CI 결과; runtime claim과 분리 | [GDE-0010](../guides/0010-ci-cd-qa-reference-guide.md) |
 
-## Review Cadence
-
 월 1회 또는 topology, external endpoint, Vault auth, ingress/TLS, AppProject,
 NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 job 수나
 문서 수가 아니라 현재 source와 semantic contract를 검토한다.
 
-## Traceability
+## Related Documents
 
 - [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Platform Bootstrap Runbook](../runbooks/0001-argocd-platform-bootstrap-runbook.md)

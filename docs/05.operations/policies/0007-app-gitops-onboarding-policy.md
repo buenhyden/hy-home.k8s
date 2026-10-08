@@ -1,39 +1,33 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.0.4"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
 
 # 앱 GitOps 온보딩 정책
 
-## Overview
+## Purpose
 
 이 문서는 `hy-home.k8s` 클러스터에 새로운 애플리케이션을 온보딩할 때 따라야 하는
 플랫폼 운영 정책을 정의한다.
 
 이 정책은 `gitops/workloads/<appname>/`에 새 앱을 추가할 때 필요한 배포 리소스, 네트워킹, 보안, GitOps 워크플로우 통제를 정의한다.
 
-### Current Contract Note
-
 이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 순서와 검증·복구 절차는
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
 
-### Purpose
-
 `운영 정책 — Linux server k3d/k3s GitOps 앱 온보딩`
 
-## Policy Scope
+## Scope
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
 - Argo Rollouts, AnalysisTemplate, ingress-nginx, cert-manager, Istio sidecar/mTLS 패턴
 - 앱 단위 OpenBao/ExternalSecret 연동과 k8s router host 계약
-
-## Applies To
 
 - **Systems**: `gitops/workloads/`, `examples/sample-app/`, `gitops/clusters/local/appproject-apps.yaml`
 - **Agents**: 문서/운영 자동화 에이전트
@@ -178,23 +172,21 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ---
 
-## Exceptions
+## Exceptions and Escalation
 
-- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의 human-approved bootstrap/break-glass 공통 예외를 따른다.
+- `kubectl apply` 또는 AppProject live 반영은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의 human-approved bootstrap/break-glass 공통 예외를 따른다.
 - ExternalSecret이 필요 없는 앱은 Vault 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
 
-## Verification
+## Verification and Review
 
 - 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
 - 런타임 증적: 온보딩 후 ArgoCD Application `Synced/Healthy`, Rollout `Healthy`, Pod `2/2 Running`, Ingress TLS 발급 상태를 확인한다.
 - 실행 가능한 검증 명령과 실패 시 복구 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 따른다.
 
-## Review Cadence
-
 - 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
 - Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 policy/runbook과 함께 검토한다.
 
-## Traceability
+## Related Documents
 
 - **Runbook**: [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)

@@ -1,30 +1,28 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.0.6"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-03"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
 
 # Service Mesh & cert-manager Operations Policy
 
-## Overview
+## Purpose
 
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 클러스터 UI(Headlamp) 통제는 [POL-0004](./0004-rollouts-notifications-headlamp-policy.md),
 k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitops-operations-policy.md)이 소유한다.
 
-## Policy Scope
+## Scope
 
 - cert-manager + mkcert ClusterIssuer(`mkcert-ca-issuer`)
 - Istio(istiod) + sidecar 주입 정책
 - Kiali + 외부 Observability 연동
-
-## Applies To
 
 - **Systems**: `gitops/platform/{cert-manager,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istio-cni-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
 - **Agents**: 문서/운영 자동화 에이전트
@@ -83,22 +81,20 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - cert-manager/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
-## Exceptions
+## Exceptions and Escalation
 
 - rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
 - Istio istiod CrashLoop 시 자원 requests 축소 허용 (단, 128Mi 미만으로 낮추지 않음).
 
-## Verification
+## Verification and Review
 
 - endpoint와 TLS 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
 
-## Review Cadence
-
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
 - cert-manager, Istio, Kiali 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
 
-## Traceability
+## Related Documents
 
 - **Architecture**: [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)

@@ -1,30 +1,28 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
 
 # Observability Platform Operations Policy
 
-## Overview
+## Purpose
 
 이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
 수집 통제를 하나의 정책으로 정의한다. 서비스 포트, in-cluster Alloy 수집과 remote write,
 Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
-## Policy Scope
+## Scope
 
 - `gitops/platform/external-services/`의 Istio 포트 명명
 - `gitops/platform/argocd/`와 `gitops/platform/monitoring/`의 metrics endpoint
 - in-cluster Alloy에서 외부 Loki로 이어지는 로그 경계
 - 외부 Prometheus/Grafana 설정과 `monitoring` AppProject destination
-
-## Applies To
 
 - **Systems**: `gitops/platform/`, `gitops/clusters/local/`, external observability workspace
 - **Roles**: Platform Owner, Observability Owner, approved operator
@@ -84,15 +82,15 @@ Service가 다시 생기면 실패한다. 수집을 위해 과도한 kubeconfig 
 - `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
   명시하며 wildcard destination으로 대체하지 않는다.
 
-## Exceptions
+## Exceptions and Escalation
 
-AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions)의
+AppProject live 변경은 [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)의
 공통 live 변경 예외를 따른다. 이 정책이 추가하는 조건은 manifest와 관련
 Runbook을 같은 변경으로 동기화하는 것이다. 외부
 Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소유하며
 이 저장소의 Runbook은 그 결과를 검증만 한다.
 
-## Verification
+## Verification and Review
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -102,12 +100,10 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 | Alloy and Loki | deployment Ready and cluster-labelled streams received | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 | Rules and AppProject | required rule groups load; monitoring destination present | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 
-## Review Cadence
-
 Service/EndpointSlice port, Alloy relabel rule, remote write endpoint, Alloy version,
 rule file, Grafana role, Loki endpoint, AppProject destination 변경 시 검토한다.
 
-## Traceability
+## Related Documents
 
 - [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
 - [Kiali Connectivity Runbook](../runbooks/0007-kiali-observability-connectivity-runbook.md)

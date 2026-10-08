@@ -867,31 +867,84 @@ def starter_placeholder(value: str) -> str | None:
     return match.group(0) if match else None
 
 
-def empty_required_h2_sections(
-    markdown: str, required_headings: Sequence[str]
-) -> tuple[str, ...]:
-    """Return required H2 occurrences whose authored section body is empty.
+@dataclass(frozen=True)
+class RequiredH2Content:
+    empty: tuple[str, ...]
+    nested_roles: tuple[str, ...]
 
-    Blank lines, fence delimiters, and author-only HTML comments do not count
-    as content. Content inside a fenced block does count, while headings inside
-    that block do not open or close sections.
-    """
+
+_BARE_PLACEHOLDER = re.compile(r"(?i)^(?:TBD|TODO|N/A|NA|pending)[\s.!?]*$")
+_TABLE_SEPARATOR = re.compile(r"^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$")
+_EMPTY_HTML_ANCHOR = re.compile(r"(?i)<a\b[^>]*>\s*</a>|<a\b[^>]*/>")
+_CHECKBOX_MARKER = re.compile(r"^\[[ xX]\](?:\s+|$)")
+
+
+def _substantive_section_body(lines: Sequence[tuple[str, bool]]) -> bool:
+    """Recognize authored prose, table data, or code, leaving facts to review."""
+
+    table_data = False
+    for index, (raw_line, fenced_code) in enumerate(lines):
+        line = raw_line.strip()
+        if not line:
+            table_data = False
+            continue
+        if fenced_code:
+            if not _BARE_PLACEHOLDER.fullmatch(line):
+                return True
+            continue
+        if _TABLE_SEPARATOR.fullmatch(line):
+            table_data = True
+            continue
+        if "|" in line:
+            if table_data:
+                cells = [cell.strip() for cell in line.strip("|").split("|")]
+                if any(
+                    cell and not _BARE_PLACEHOLDER.fullmatch(cell) for cell in cells
+                ):
+                    return True
+                continue
+            next_line = lines[index + 1][0].strip() if index + 1 < len(lines) else ""
+            if _TABLE_SEPARATOR.fullmatch(next_line) or (
+                line.startswith("|") and line.endswith("|")
+            ):
+                continue
+        table_data = False
+        prose = _EMPTY_HTML_ANCHOR.sub("", line).strip()
+        prose = re.sub(r"^(?:[-*+]|\d+[.)]|>)\s+", "", prose)
+        prose = _CHECKBOX_MARKER.sub("", prose)
+        prose = prose.strip("*_`~ ")
+        if prose and not _BARE_PLACEHOLDER.fullmatch(prose) and prose != "---":
+            return True
+    return False
+
+
+def _scan_required_h2_content(
+    markdown: str, required_headings: Sequence[str], *, substantive_body: bool
+) -> RequiredH2Content:
+    """Scan required H2 bodies once, preserving the legacy empty-body rule."""
 
     required = frozenset(required_headings)
     empty: list[str] = []
+    nested_roles: list[str] = []
     current_heading: str | None = None
     current_has_content = False
+    current_lines: list[tuple[str, bool]] = []
     fence_character: str | None = None
     fence_length = 0
     in_comment = False
     opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 
     def close_current() -> None:
-        nonlocal current_heading, current_has_content
-        if current_heading is not None and not current_has_content:
+        nonlocal current_heading, current_has_content, current_lines
+        if current_heading is not None and not (
+            _substantive_section_body(current_lines)
+            if substantive_body
+            else current_has_content
+        ):
             empty.append(current_heading)
         current_heading = None
         current_has_content = False
+        current_lines = []
 
     for raw_line in markdown.splitlines():
         if fence_character is not None:
@@ -904,6 +957,8 @@ def empty_required_h2_sections(
                 fence_length = 0
             elif current_heading is not None and raw_line.strip():
                 current_has_content = True
+                if substantive_body:
+                    current_lines.append((raw_line, True))
             continue
 
         line, in_comment = _strip_html_comments(raw_line, in_comment)
@@ -913,6 +968,8 @@ def empty_required_h2_sections(
             if marker[0] == "`" and "`" in match.group(2):
                 if current_heading is not None and line.strip():
                     current_has_content = True
+                    if substantive_body:
+                        current_lines.append((line, False))
                 continue
             fence_character = marker[0]
             fence_length = len(marker)
@@ -928,15 +985,30 @@ def empty_required_h2_sections(
                 close_current()
                 if level == 2 and title in required:
                     current_heading = title
-            elif current_heading is not None:
-                current_has_content = True
+            else:
+                if current_heading is not None:
+                    current_has_content = True
+                if substantive_body and title in required:
+                    nested_roles.append(title)
             continue
 
         if current_heading is not None and line.strip():
             current_has_content = True
+            if substantive_body:
+                current_lines.append((line, False))
 
     close_current()
-    return tuple(empty)
+    return RequiredH2Content(tuple(empty), tuple(nested_roles))
+
+
+def empty_required_h2_sections(
+    markdown: str, required_headings: Sequence[str]
+) -> tuple[str, ...]:
+    """Return empty required H2 bodies under the historical content rule."""
+
+    return _scan_required_h2_content(
+        markdown, required_headings, substantive_body=False
+    ).empty
 
 
 def _diagnostic(
@@ -1565,8 +1637,27 @@ def _body_diagnostics(
         _diagnostic(required_rule, path, profile, "required H2", heading)
         for heading in missing
     )
+    if profile.headings.ordered and not missing:
+        observed_order = [
+            heading for heading in h2 if heading in profile.headings.required
+        ]
+        if observed_order != list(profile.headings.required):
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-H2-ORDER",
+                    path,
+                    profile,
+                    json.dumps(profile.headings.required),
+                    json.dumps(observed_order),
+                )
+            )
     if profile.mode == "authored":
         h2_counts = collections.Counter(h2)
+        section_content = _scan_required_h2_content(
+            body,
+            profile.headings.required,
+            substantive_body=profile.headings.substantive_body,
+        )
         diagnostics.extend(
             _diagnostic(
                 "BODY-HEADING-EMPTY",
@@ -1575,8 +1666,18 @@ def _body_diagnostics(
                 "required H2 contains authored body content",
                 heading,
             )
-            for heading in empty_required_h2_sections(body, profile.headings.required)
+            for heading in section_content.empty
             if h2_counts[heading] == 1
+        )
+        diagnostics.extend(
+            _diagnostic(
+                "BODY-HEADING-NESTED-ROLE",
+                path,
+                profile,
+                "required role headings occur only at H2",
+                heading,
+            )
+            for heading in section_content.nested_roles
         )
     duplicate = sorted(
         heading for heading, count in collections.Counter(h2).items() if count > 1

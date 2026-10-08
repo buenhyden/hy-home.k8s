@@ -1,37 +1,35 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.0.4"
+version: "1.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
 
 # Reference Maintenance Runbook
 
-## Overview
+## Purpose
 
 이 Runbook은 `docs/90.references/`의 Audit, Research, Data 비권위
 참고 자료를 추가·갱신·종료할 때 사용하는 실행 체크리스트다. Reference
 내용의 사실과 출처는 각 문서가 소유하고, 이 Runbook은 절차만 소유한다.
-
-## Runbook Type
 
 - **Type**: Repository documentation maintenance
 - **Execution boundary**: tracked repository files and local static validation
 - **Approval boundary**: 외부 publish, provider action, live cluster mutation,
   credential use, destructive Git operation은 포함하지 않는다.
 
-## When to Use
+## Trigger and Preconditions
 
 - 외부 조사 출처 또는 확인일을 갱신할 때
 - 독립적인 Audit 또는 Data reference를 추가하거나 종료할 때
 - Reference category, filename, router, consumer link를 바꿀 때
 - 참고 자료가 현재 정책·요구·설계·절차를 중복하는지 재검토할 때
 
-## Procedure or Checklist
+## Procedure
 
 1. 자료의 semantic owner를 분류한다.
    - Agent governance는 공통 거버넌스(`.agents/`)에 둔다.
@@ -65,7 +63,7 @@ artifact_id: "RUN-0011"
    Stage 98 disposition과 Archive 인용 규칙을 따른다. disposition 승인은
    owning Task에 기록한다.
 
-## Verification Steps
+## Verification
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
@@ -81,8 +79,6 @@ git diff --check
 - [ ] 현재 동작과 버전은 Stage 01/02 및 직접 구현 소스와 일치한다.
 - [ ] 현재 Stage 문서의 Stage 98 링크가 `archive_citation` 판정을 통과한다.
 
-## Observability and Evidence Sources
-
 - changed-path 목록과 reviewed diff
 - category 및 Stage router
 - source metadata와 직접 저장소 소스
@@ -92,7 +88,7 @@ git diff --check
 정적 PASS는 외부 출처의 현재성, hosted CI, provider runtime, live cluster
 상태를 증명하지 않는다.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 - 잘못된 분류는 redirect를 만들지 않고, 동일 변경을 revert하거나 canonical
   owner에 새 수정으로 바로잡는다.
@@ -101,7 +97,7 @@ git diff --check
 - validator 실패 시 실패한 owner/router/link만 수정하고 무관한 문서를
   일괄 재생성하지 않는다.
 
-## Traceability
+## Related Documents
 
 - Stage 90 router: `docs/90.references/README.md`
 - Research collection: `docs/90.references/research/README.md`

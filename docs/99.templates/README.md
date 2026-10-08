@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.7.0"
+version: "0.8.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-08"
 layer: "templates"
 ---
 # 99.templates
@@ -21,6 +21,13 @@ relationship, template 연결은
 [Document Profile Registry](./registry.json)가 단독으로 소유한다.
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
+
+Registry의 `shared_contract`는 P01에서 연결한 하나의
+`WGOV-CORE / 3.0.0-draft.3` 공동 검토 후보와 이 지역 adapter를 식별한다.
+검토 bytes의 digest는 승인 증거가 아니다. 정본 source commit과 최종 승인
+참조는 아직 없으므로 null이며, 공동 owner buenhyden의 최초 수립·승인과
+지역 채택·네 저장소 공동 채택은 각각 실제 근거를 확보한 뒤 기록한다.
+현재 언어·상태·native 차이는 명시된 이관 경계이며 새 공통 판본을 뜻하지 않는다.
 
 ## Scope
 
@@ -80,6 +87,12 @@ form 경로의 대응은 Registry만 소유한다.
   capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
+  Guide의 분류·독자·목표, Policy의 적용 대상·통제·검토,
+  Runbook의 트리거·절차·검증·복구는 해당 역할의 core에 배치한다.
+  기존 `Lifecycle Traceability` 관계 표는 세 역할의 `Related Documents`
+  아래에서 같은 source·열·상호 참조 의미를 유지한다. 기계가 읽는 정확한
+  heading과 순서·내용 경계는 Registry가 소유한다. 빈 heading이나
+  placeholder만 채운 항목은 실질 내용이 아니며, 형식 PASS는 live 증거가 아니다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단
   구조를 갖는다. collection router `{audits,data,research}/README.md`는
   `common/readme` type으로, pack anchor
@@ -176,6 +189,11 @@ python3 scripts/sync-task-status.py --root . --path "$TASK_PATH" --write
 명시적으로 top-level `status` scalar만 동기화한다. 한 행 Task의 literal
 `frontmatter` 표시는 그대로 두며 값이 이미 맞으면 파일을 다시 쓰지 않는다.
 나머지 metadata, 본문, 행, 인용·주석·줄바꿈과 파일 mode는 보존한다.
+
+한 행 Task는 frontmatter만 사람이 작성하며, 다중 행 Task는 행 상태만 사람이
+작성한다. 다중 행 frontmatter는 기존 소비자를 위한 생성 요약이므로 사람이
+두 곳에 상태를 복사하지 않는다. 새 status 생략 방식이나 별도 enum을 도입하지
+않으며, 공동 Spec/Plan 권한 모델과 Task 대체 전이는 P03의 근거 검토에 넘긴다.
 
 현재 일반 파일과 안전한 부모 경로만 받고, Registry 분류·strict 문서 계약·
 현재 상태에서 파생 상태로의 lifecycle edge를 확인한다. 잘못된 내용이나

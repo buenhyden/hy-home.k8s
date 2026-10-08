@@ -15,29 +15,25 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: 독자가 얻을 결과와 이 가이드가 다루는 운영 영역을 밝힌다. -->
 
-## Guide Type
+## Audience and Goal
 
-<!-- Author prompt: how-to, tutorial, concept 가운데 하나를 고르고 본문을 그 목적에 맞춘다. -->
-
-## Target Audience
-
-<!-- Author prompt: 독자의 역할, 필요한 접근 권한, 알고 있어야 할 배경지식을 밝힌다. -->
+<!-- Author prompt: 주된 학습 목적을 tutorial/how-to/reference/explanation 가운데 하나로 설명하고 독자의 역할, 권한, 배경지식을 연결한다. -->
 
 ## Prerequisites
 
 <!-- Author prompt: 검증된 입력, 도구, 권한, 안전한 시작 상태를 나열한다. -->
 
-## Step-by-step Instructions
+## Guidance
 
-<!-- Author prompt: 독자가 직접 따라 해 본 단계를, 눈으로 확인할 수 있는 결과와 함께 적는다. -->
+<!-- Author prompt: 독자가 정상 경로를 이해하거나 따라갈 수 있도록 필요한 순서, 판단 기준, 관찰 가능한 결과를 적는다. -->
 
-## Common Pitfalls
+## Verification and Troubleshooting
 
-<!-- Author prompt: 흔한 실수와 그 증상, 안전한 복구 경로를 설명한다. -->
+<!-- Author prompt: 독자가 결과를 확인할 방법과 흔한 오류의 증상, 안전한 다음 경로를 설명한다. -->
 
-## Traceability
+## Related Documents
 
-<!-- Author prompt: 승격된 owner를 독자가 얻을 결과와 운영 영역에 연결한다. -->
+<!-- Author prompt: 현재 권한 원본과 관련 운영 문서를 연결하고, 승격된 owner의 독자 결과와 운영 영역을 구체적으로 적는다. -->
 
 ### Lifecycle Traceability
 

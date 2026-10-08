@@ -1,31 +1,27 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.0.5"
+version: "1.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
 
-## Overview
+## Purpose
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
 
-### Purpose
-
 신규 GitHub 앱을 `gitops/workloads/`에 추가하고 PR review 이후 ArgoCD reconciliation으로 배포/검증/rollback할 수 있게 한다.
-
-## Runbook Type
 
 `onboarding`
 
-## When to Use
+## Trigger and Preconditions
 
 - GitHub Container Registry(ghcr.io) 이미지를 클러스터에 처음 배포할 때
 - `gitops/workloads/`에 신규 workload 디렉토리를 추가할 때
@@ -60,7 +56,7 @@ prom 'up{cluster="k3d-hyhome"}'
 
 ---
 
-## Procedure or Checklist
+## Procedure
 
 아래 Procedure 1-5를 순서대로 수행한다. 배포 변경은 feature branch와 PR review를 거쳐 GitOps reconciliation으로 반영한다.
 
@@ -124,10 +120,6 @@ argocd app sync ${APP}
 
 ---
 
-## Verification Steps
-
-Procedure 2의 명령으로 Rollout, Pod, AnalysisRun, Ingress, HTTPS 접근 상태를 확인한다.
-
 ### Procedure 2: 배포 상태 검증
 
 ```bash
@@ -144,19 +136,10 @@ kubectl get analysisrun -n apps
 kubectl get ingress -n apps ${APP}
 ```
 
-### 기대 상태
-
-| 항목        | 기대값                               |
-| ----------- | ------------------------------------ |
-| Rollout     | `Healthy` / `Stable`                 |
-| Pod         | `2/2 Running`                        |
-| ArgoCD      | `Synced` / `Healthy`                 |
-| AnalysisRun | `Successful`                         |
-| Ingress     | HOSTS에 `<appname>.hy-k8s.home.arpa` |
-
 ```bash
-# 브라우저 접속 확인
-curl -sk https://${APP}.hy-k8s.home.arpa | head -5
+# 신뢰된 로컬 CA로 TLS와 HTTP 성공을 함께 확인한다.
+curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
+  -o /dev/null -w '%{http_code}' "https://${APP}.hy-k8s.home.arpa/"
 ```
 
 ---
@@ -182,32 +165,14 @@ kubectl argo rollouts get rollout ${APP} -n apps --watch
 
 ---
 
-### Procedure 4: canary 실패 → rollback
+### Procedure 4: 실패 시 복구 경로로 전환
 
-AnalysisTemplate 실패 또는 수동 abort 시 이전 버전으로 자동 rollback된다.
-
-```bash
-# 수동 abort (즉시 rollback)
-kubectl argo rollouts abort ${APP} -n apps
-
-# rollback 확인
-kubectl argo rollouts get rollout ${APP} -n apps
-# STATUS: Degraded → 이전 stable 버전으로 복귀
-
-# 안정화 후 rollout 재개 (수정된 이미지로 재배포 필요)
-# rollout.yaml 이미지 수정 후 커밋 & 푸시
-```
+AnalysisTemplate 실패나 수동 중단이 필요하면 이후 배포를 멈추고
+[Recovery and Escalation](#recovery-and-escalation)의 승인된 canary 복구
+절차로 전환한다. 이전 stable 버전 복귀와 원인 수정을 확인한 뒤에만
+다음 온보딩 단계를 진행한다.
 
 ---
-
-## Observability and Evidence Sources
-
-- **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
-- **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
-
-## Safe Rollback or Recovery Procedure
-
-Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수정이 필요한 경우 이미지 태그 또는 설정을 수정한 뒤 feature branch PR flow로 재배포한다.
 
 ### Procedure 5: Vault 시크릿 연동 추가
 
@@ -230,7 +195,42 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 ---
 
-### Troubleshooting
+## Verification
+
+Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS 결과가
+아래 기대 상태를 만족하는지 확인한다. CA 파일을 사용할 수 없으면 TLS 완료
+판정은 보류하고 인증서 owner에게 넘긴다. 이 서술은 live 검증 결과가 아니다.
+
+| 항목        | 기대값                               |
+| ----------- | ------------------------------------ |
+| Rollout     | `Healthy` / `Stable`                 |
+| Pod         | `2/2 Running`                        |
+| ArgoCD      | `Synced` / `Healthy`                 |
+| AnalysisRun | `Successful`                         |
+| Ingress     | HOSTS에 `<appname>.hy-k8s.home.arpa` |
+| HTTPS       | 신뢰된 CA 검증과 성공 응답           |
+
+- **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
+- **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
+
+## Recovery and Escalation
+
+### Canary abort and rollback
+
+AnalysisTemplate 실패나 수동 abort가 필요한 경우 승인된 운영자가 다음
+명령으로 workload 범위를 한정해 중단한다. 이전 stable 버전으로의 복귀를
+확인한 뒤 원인을 수정하고 feature branch PR flow로 재배포한다.
+
+```bash
+# operator-approved live abort only
+kubectl argo rollouts abort ${APP} -n apps
+
+# rollback 확인: 이전 stable 버전으로 복귀했는지 상태를 읽는다.
+kubectl argo rollouts get rollout ${APP} -n apps
+```
+
+GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한 뒤 PR
+review/merge와 승인된 ArgoCD reconciliation을 다시 거친다.
 
 ### ArgoCD Application이 생성되지 않는 경우
 
@@ -287,7 +287,7 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 
 ---
 
-## Traceability
+## Related Documents
 
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
 - **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)

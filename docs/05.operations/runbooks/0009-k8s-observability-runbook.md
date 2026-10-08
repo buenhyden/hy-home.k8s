@@ -1,17 +1,17 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.2.0"
+version: "2.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
 
 # k8s Observability 복구 Runbook
 
-## Overview
+## Purpose
 
 이 런북은 cluster 안 Alloy(`monitoring/alloy-k8s-logs`)의 k8s 메트릭·로그 수집에
 장애가 났을 때 진단하고 복구하는 절차를 제공한다. ArgoCD component별 확인은
@@ -49,16 +49,12 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
    Application 배포 실패
 
-### Purpose
-
 in-cluster 메트릭·로그 수집과 remote write 장애를 진단하고, GitOps 상태와 외부
 observability endpoint 연결을 복구한다.
 
-## Runbook Type
-
 `troubleshooting`
 
-## When to Use
+## Trigger and Preconditions
 
 - 외부 Prometheus에서 `up{cluster="k3d-hyhome"}` 결과가 비었거나 job이 빠졌을 때
 - `argocd_app_info`, `kube_pod_*`, `istio_requests_total`이 조회되지 않을 때
@@ -68,7 +64,7 @@ observability endpoint 연결을 복구한다.
 
 ---
 
-## Procedure or Checklist
+## Procedure
 
 아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy CrashLoop 복구,
 remote write 복구, target 누락 복구 순서로 수행한다.
@@ -249,7 +245,7 @@ kubectl get pods -n istio-system -l app=istiod \
 
 ---
 
-## Verification Steps
+## Verification
 
 ```bash
 # prom helper: 위 "조회 helper"
@@ -275,12 +271,10 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"
 ```
 
-## Observability and Evidence Sources
-
 - **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
 - **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, host port table.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 - Monitoring manifest changes should be reverted through GitOps if relabel, remote write, or egress changes regress collection.
 - External Prometheus, Loki, dashboard, and alert rule changes are reverted in the owning external workspace.
@@ -300,7 +294,7 @@ curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
 
 ---
 
-## Traceability
+## Related Documents
 
 - [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 - [Kiali Connectivity Runbook](./0007-kiali-observability-connectivity-runbook.md)

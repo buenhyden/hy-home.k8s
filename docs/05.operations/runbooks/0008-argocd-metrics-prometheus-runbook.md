@@ -1,17 +1,17 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.1.0"
+version: "2.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-23"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0008"
 ---
 
 # ArgoCD 메트릭 Prometheus 수집 복구 Runbook
 
-## Overview
+## Purpose
 
 이 런북은 외부 Prometheus에서 ArgoCD 메트릭이 조회되지 않을 때 ArgoCD 쪽 원인을
 진단하고 복구하는 절차를 제공한다.
@@ -37,16 +37,12 @@ static scrape(`30082-30086`)는 폐지되었다. Alloy 자체, remote write, egr
    port가 바뀌면 `discovery.relabel "platform_pods"` 규칙과 어긋난다.
 3. **수집 경로 장애**: 다른 k8s 메트릭도 함께 비어 있으면 ArgoCD 문제가 아니다.
 
-### Purpose
-
 ArgoCD component 메트릭이 외부 Prometheus에 들어오는지 확인하고, ArgoCD 쪽 원인을
 복구한다.
 
-## Runbook Type
-
 `maintenance`
 
-## When to Use
+## Trigger and Preconditions
 
 - `argocd_app_info{cluster="k3d-hyhome"}`가 조회되지 않을 때
 - `kubernetes-pods` job에서 ArgoCD component 일부가 빠졌을 때
@@ -54,7 +50,7 @@ ArgoCD component 메트릭이 외부 Prometheus에 들어오는지 확인하고,
 
 ---
 
-## Procedure or Checklist
+## Procedure
 
 `prom`은 외부 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)를 조회하는
 helper이며 [RUN-0009](./0009-k8s-observability-runbook.md)의 "조회 helper"에 정의되어 있다.
@@ -95,7 +91,7 @@ argocd app sync platform-monitoring
 
 ---
 
-## Verification Steps
+## Verification
 
 ```bash
 prom 'count by (app) (up{cluster="k3d-hyhome",namespace="argocd"} == 1)'
@@ -107,12 +103,10 @@ prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 
 ---
 
-## Observability and Evidence Sources
-
 - **Signals**: ArgoCD component pod readiness, `up{namespace="argocd"}` by `app`, `argocd_app_info` count.
 - **Evidence to Capture**: query output, pod label and port listing, changed relabel rule diff.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 - Incorrect relabel rule changes should be reverted through GitOps.
 - ArgoCD chart changes that renamed components are reverted in `infrastructure/argocd/values-local.yaml` or the relabel rule is updated to match.
@@ -120,7 +114,7 @@ prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
 
 ---
 
-## Traceability
+## Related Documents
 
 - **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)
 - [Operations Policy](../policies/0005-observability-platform-operations-policy.md)

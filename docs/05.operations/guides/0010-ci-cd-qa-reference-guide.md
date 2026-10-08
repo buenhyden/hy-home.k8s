@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -17,12 +17,11 @@ artifact_id: "GDE-0010"
 승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
 복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다.
 
-## Guide Type
+## Audience and Goal
 
-Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
+주된 학습 목적은 `explanation`이다. 독자는 검증 결과가 어떤 증적 등급을
+뜻하는지 구분한다. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 `.github/workflows/ci.yml`, 실행·복구 절차는 연결된 Runbook이 소유한다.
-
-## Target Audience
 
 - 문서·GitOps·자동화 변경을 작성하거나 검토하는 개발자
 - 정적 검증 결과를 운영 증적으로 해석하는 플랫폼 운영자
@@ -35,7 +34,7 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 - 변경한 표면의 소유 Spec, Policy, Runbook 확인
 - live cluster나 외부 서비스 검증이 필요하면 별도의 명시적 승인
 
-## Step-by-step Instructions
+## Guidance
 
 ### 1. 변경 표면을 먼저 분류한다
 
@@ -93,7 +92,7 @@ contract가 소유한다. 이 문서는 그 항목을 줄여 옮기지 않는다
 hook 연결과 커밋 메시지 검증 절차는
 [Git policy](../../../.agents/governance/git.md)가 소유한다.
 
-## Common Pitfalls
+## Verification and Troubleshooting
 
 - 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
 - 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
@@ -105,7 +104,7 @@ hook 연결과 커밋 메시지 검증 절차는
 - 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
   직접 연결한다.
 
-## Traceability
+## Related Documents
 
 - [Quality Policy](../../../.agents/governance/quality.md)
 - [Agent Execution Policy](../../../.agents/governance/agent-execution.md)

@@ -87,6 +87,8 @@ class FrontmatterContract:
 class HeadingContract:
     required: tuple[str, ...]
     allowed: tuple[str, ...]
+    substantive_body: bool = False
+    ordered: bool = False
 
 
 @dataclass(frozen=True)
@@ -559,6 +561,22 @@ class DocumentProfile:
 
 
 @dataclass(frozen=True)
+class SharedContract:
+    """Reviewed input identity, never an authenticated approval decision."""
+
+    contract_id: str
+    version: str
+    stage: Literal["candidate", "adopted"]
+    owner: str
+    source: str
+    source_revision: str | None
+    content_digest: str
+    approval_ref: str | None
+    local_adapter: str
+    extensions: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     profiles: tuple[DocumentProfile, ...]
@@ -572,6 +590,7 @@ class Registry:
     readme_navigation: ReadmeNavigation | None = None
     document_language: DocumentLanguage | None = None
     migration_admission: Mapping[str, Any] | None = None
+    shared_contract: SharedContract | None = None
 
 
 @dataclass(frozen=True)
@@ -1064,6 +1083,8 @@ def _profile_from_mapping(
         headings=HeadingContract(
             required=tuple(raw["sections"]["required"]),
             allowed=tuple(raw["sections"]["required"] + raw["sections"]["optional"]),
+            substantive_body=raw["sections"].get("substantive_body", False),
+            ordered=raw["sections"].get("ordered", False),
         ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
@@ -1601,6 +1622,16 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     return Registry(
         schema_version=raw["schema_version"],
         migration_admission=raw.get("migration_admission"),
+        shared_contract=(
+            SharedContract(
+                **{
+                    **raw["shared_contract"],
+                    "extensions": tuple(raw["shared_contract"]["extensions"]),
+                }
+            )
+            if "shared_contract" in raw
+            else None
+        ),
         profiles=profiles,
         lifecycle_domains=domains,
         retention_classes=tuple(

@@ -1,21 +1,21 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.0.7"
+version: "1.1.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Operations Policy
 
-## Overview
+## Purpose
 
 이 문서는 Argo Rollouts(점진적 배포), Argo Notifications(Slack 알림), Headlamp(클러스터 UI) 운영 통제 기준을 정의한다.
 
-## Policy Scope
+## Scope
 
 - Argo Rollouts — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
@@ -23,8 +23,6 @@ artifact_id: "POL-0004"
 
 chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이 정책은
 버전을 복제하지 않는다.
-
-## Applies To
 
 - **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`
 - **Agents**: 운영 자동화 에이전트
@@ -77,12 +75,12 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **Disallowed**:
   - 대체된 클러스터 UI 재설치 (ADR-0014의 Headlamp 계약과 충돌)
 
-## Exceptions
+## Exceptions and Escalation
 
 - Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
-- Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions).
+- Live cluster changes follow the shared exception in [POL-0001](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation).
 
-## Verification
+## Verification and Review
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
@@ -90,12 +88,10 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 | Argo Notifications | Controller is running, ESO-backed secret exists, and Slack send/error logs are reviewed without committing token values | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 | Headlamp and k8s router | Headlamp pods/ingress/TLS are healthy and `headlamp`/`rollouts` hostnames return expected HTTP status through the k8s router | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 
-## Review Cadence
-
 - 운영 변경 시 즉시
 - 정기 분기 검토
 
-## Traceability
+## Related Documents
 
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)

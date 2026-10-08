@@ -1,17 +1,17 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.0.0"
+version: "2.1.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-09-25"
+updated: "2026-10-08"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---
 
 # Kiali Observability 연결 복구 Runbook
 
-## Overview
+## Purpose
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
 
@@ -21,15 +21,11 @@ artifact_id: "RUN-0007"
 2. **Tempo endpoint drift**: Tempo는 `tempo-external` Service와 EndpointSlice를 거쳐 host port `192.168.0.13:3200`으로 닿는다. EndpointSlice는 ArgoCD Application `platform-external-services`가 Git에서 관리한다.
 3. **Grafana 인증 실패**: 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Grafana Viewer service account token(`istio-system/kiali-grafana-auth`, OpenBao `platform/grafana-api`)을 bearer로 보낸다. token이 없거나 만료·폐기되면 `/api/frontend/settings`가 401을 반환하고 Kiali는 Grafana를 Unreachable로 표시한다.
 
-### Purpose
-
 Kiali에서 외부 observability service가 unreachable로 표시될 때 외부 route, 이름 해석과 CA, Tempo endpoint, NetworkPolicy, Kiali configuration, Grafana auth 상태를 순서대로 진단하고 복구 owner로 보낸다.
-
-## Runbook Type
 
 `troubleshooting`
 
-## When to Use
+## Trigger and Preconditions
 
 - Kiali에서 Grafana/Prometheus/Tempo가 unreachable로 표시될 때
 - 외부 workspace가 관측 서비스의 route, host port 공개나 bind 주소를 바꾼 뒤
@@ -37,7 +33,7 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 외부 
 
 ---
 
-## Procedure or Checklist
+## Procedure
 
 아래 절차는 외부 route와 host port 확인, Kiali 파드 연결 테스트, NetworkPolicy 점검, Kiali 설정 확인, Grafana auth 확인 순서로 수행한다.
 
@@ -197,25 +193,23 @@ kubectl -n istio-system logs deploy/kiali --since=2m | rg -i 'grafana|401'
 
 ---
 
-## Verification Steps
+## Verification
 
 - [ ] Kiali pod에서 `192.168.0.13:443`과 `192.168.0.13:3200` TCP 연결이 성공한다.
 - [ ] `tempo-external-1` 주소가 host 주소 `192.168.0.13`이고 port가 `3200`이다.
 - [ ] `allow-kiali-egress-to-observability`가 `192.168.0.13/32`의 `443`, `3200`을 허용한다.
 - [ ] Kiali 로그에 Grafana `401`이나 Prometheus 연결 오류가 없다.
 
-## Observability and Evidence Sources
-
 - **Signals**: Kiali external service status, Kiali logs, `tempo-external` EndpointSlice, Kiali NetworkPolicy egress rules, Grafana API response code.
 - **Evidence to Capture**: Kiali log excerpts, route response codes, `/api/frontend/settings` HTTP result, applied PR link for GitOps corrections.
 
-## Safe Rollback or Recovery Procedure
+## Recovery and Escalation
 
 - NetworkPolicy and Kiali configuration changes are reverted through GitOps if the new address or port mapping is wrong.
 - Tempo EndpointSlice recovery follows RUN-0001 External Endpoint Recovery; name resolution and CA recovery follow RUN-0002 Procedure step 4.
 - Grafana auth changes belong to the external observability workspace; this repository only verifies their result.
 
-## Traceability
+## Related Documents
 
 - **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 - **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)

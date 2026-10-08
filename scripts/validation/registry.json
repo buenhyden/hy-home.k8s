@@ -1053,11 +1053,102 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "shared-document-history-readers",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/document_authority.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/document_contracts.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "archive-contract-tests",
+        "archive-integrity",
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Shared document history readers require current document checks and Archive recovery and integrity guards."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "document-reader-implementation",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validate-markdown-profiles.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-links-and-owners.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_operations_section_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_operations_lineage_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_shared_contract_binding.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_scope_selection.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "document-contract-registry",
+        "document-lifecycle",
+        "links-and-owners",
+        "markdown-profiles",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Document reader changes require the registered document checks and focused behavior regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "validation-surface-contract",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validation/registry.json"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "The validation surface registry must validate its own routing and repository contract."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "scripts",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|validate-(?:markdown-profiles|links-and-owners)\\.py)$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1102,7 +1193,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection)\\.py$)tests/.*$"
         }
       ],
       "validators": [

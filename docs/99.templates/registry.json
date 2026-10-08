@@ -722,15 +722,16 @@
       "sections": {
         "required": [
           "Overview",
-          "Guide Type",
-          "Target Audience",
+          "Audience and Goal",
           "Prerequisites",
-          "Step-by-step Instructions",
-          "Common Pitfalls",
-          "Traceability"
+          "Guidance",
+          "Verification and Troubleshooting",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": {
         "status_domain": [
@@ -745,7 +746,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -813,17 +814,17 @@
       },
       "sections": {
         "required": [
-          "Overview",
-          "Policy Scope",
-          "Applies To",
+          "Purpose",
+          "Scope",
           "Controls",
-          "Exceptions",
-          "Verification",
-          "Review Cadence",
-          "Traceability"
+          "Exceptions and Escalation",
+          "Verification and Review",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": {
         "status_domain": [
@@ -838,7 +839,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -906,17 +907,17 @@
       },
       "sections": {
         "required": [
-          "Overview",
-          "Runbook Type",
-          "When to Use",
-          "Procedure or Checklist",
-          "Verification Steps",
-          "Observability and Evidence Sources",
-          "Safe Rollback or Recovery Procedure",
-          "Traceability"
+          "Purpose",
+          "Trigger and Preconditions",
+          "Procedure",
+          "Verification",
+          "Recovery and Escalation",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": {
         "status_domain": [
@@ -931,7 +932,7 @@
       "relationships": {
         "source_profile_ids": [],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4404,15 +4405,16 @@
       "sections": {
         "required": [
           "Overview",
-          "Guide Type",
-          "Target Audience",
+          "Audience and Goal",
           "Prerequisites",
-          "Step-by-step Instructions",
-          "Common Pitfalls",
-          "Traceability"
+          "Guidance",
+          "Verification and Troubleshooting",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": null,
       "relationships": {
@@ -4420,7 +4422,7 @@
           "operation/guide"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4575,17 +4577,17 @@
       },
       "sections": {
         "required": [
-          "Overview",
-          "Policy Scope",
-          "Applies To",
+          "Purpose",
+          "Scope",
           "Controls",
-          "Exceptions",
-          "Verification",
-          "Review Cadence",
-          "Traceability"
+          "Exceptions and Escalation",
+          "Verification and Review",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": null,
       "relationships": {
@@ -4593,7 +4595,7 @@
           "operation/policy"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -4747,17 +4749,17 @@
       },
       "sections": {
         "required": [
-          "Overview",
-          "Runbook Type",
-          "When to Use",
-          "Procedure or Checklist",
-          "Verification Steps",
-          "Observability and Evidence Sources",
-          "Safe Rollback or Recovery Procedure",
-          "Traceability"
+          "Purpose",
+          "Trigger and Preconditions",
+          "Procedure",
+          "Verification",
+          "Recovery and Escalation",
+          "Related Documents"
         ],
         "optional": [],
-        "forbidden": []
+        "forbidden": [],
+        "substantive_body": true,
+        "ordered": true
       },
       "lifecycle": null,
       "relationships": {
@@ -4765,7 +4767,7 @@
           "operation/runbook"
         ],
         "body_contract": {
-          "section": "Traceability",
+          "section": "Related Documents",
           "table_heading": "Lifecycle Traceability",
           "enforced_statuses": [
             "draft",
@@ -6907,6 +6909,22 @@
         "target_profile": "archive/catalog",
         "target_status": null
       }
+    ]
+  },
+  "shared_contract": {
+    "contract_id": "WGOV-CORE",
+    "version": "3.0.0-draft.3",
+    "stage": "candidate",
+    "owner": "buenhyden",
+    "source": "Project-Template/.agents/governance/shared-standard.md",
+    "source_revision": null,
+    "content_digest": "sha256:3f46c63daae094649edccec33682ecba99844b184c4b78b558281c7c05ff3271",
+    "approval_ref": null,
+    "local_adapter": "docs/99.templates/registry.json",
+    "extensions": [
+      "Kubernetes/GitOps/bootstrap/external-service procedures",
+      "Existing role status vocabulary pending P03 joint provenance migration",
+      "Existing document_language and provider-native syntax"
     ]
   }
 }

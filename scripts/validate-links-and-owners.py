@@ -4815,11 +4815,21 @@ def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
 
 def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     visible = _visible_markdown(context.texts[path])
-    match = re.search(
-        r"^## Traceability\s*$([\s\S]*?)(?=^## |\Z)", visible, re.MULTILINE
+    registry = context.document_registry or load_registry(context.root)
+    profile_id = context.profiles[path].profile_id
+    profile = next(
+        (item for item in registry.profiles if item.profile_id == profile_id), None
     )
-    if match:
-        for raw in _extract_links(match.group(1), definitions_text=visible):
+    relationship_section = (
+        profile.body_contract.section if profile and profile.body_contract else None
+    )
+    section = (
+        _exact_heading_section(context.texts[path], f"## {relationship_section}")
+        if relationship_section
+        else None
+    )
+    if section is not None:
+        for raw in _extract_links(section, definitions_text=visible):
             kind, target = _local_destination(path, raw)
             if (
                 kind == "local"

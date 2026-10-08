@@ -73,7 +73,7 @@ raw secret 출력 명령의 실제 출력을 바꾸지 않는다.
 repository quality validator의 command boundary 규칙이며, 해당 변경에
 선택된 문서 내용·repository quality gate가 authored docs와 examples를
 스캔해 marker가 없으면 실패한다. live 변경 예외의 승인 조건은
-[POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions)이
+[POL-0001](./policies/0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)이
 소유한다. 공통 승인 원본 확인과 저술/실행 권한은
 [Approval and Safety](../../.agents/governance/approval-and-safety.md)가 소유한다.
 marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git

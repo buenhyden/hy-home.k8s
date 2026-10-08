@@ -89,6 +89,11 @@ synthetic failure/boundary regressions, exact-index lint/format, actual message
 checks and independent review. Full, live and hosted execution are not claimed
 by this migration.
 
+Document-reader implementation and its focused fixtures select document gates,
+not unrelated Archive or Kubernetes corpus execution. Give the central route
+Registry its own static routing/quality checks. Preserve other implementation
+routes and add the actual product gates when product paths also change.
+
 ### User-directed hosted QA removal
 
 VAL-P02-015 applies the latest explicit request to remove failing GitHub QA
@@ -404,6 +409,7 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| N/A — current explicit P02 profile/template/consumer migration request reuses existing Requirement and architecture scope | VAL-P02-016 | WORK-016 / Task0016; same candidate identity, coupled operating forms/readers/current instances, synthetic boundaries, exact index/message and independent review; P03/P08 and common approval separated |
 | N/A — explicit user instruction to retire failing or observed >=600-second hosted QA execution, integrate local/origin main and preserve owned cleanup evidence | VAL-P02-015 | WORK-015 and Task0015 in the Plan; registered-form provenance, scoped contract controls and hooks, actual-index staged/message checks, prospective and actual scoped completion plus independent review; full QA NOT_RUN, provenance inactive/fail-closed and cleanup outcomes observed separately |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-014 | Genuine registered-form provenance; authentic immutable boundary and typed retention controls; original full declared inputs and inventories; scoped hooks, five named methods, each actual-index staged/message, prospective completion/review and fresh actual closing checks; private raw direct audit deferred and hosted admission separate |
 | N/A — necessary bounded fixture repair under the explicit normal unit-commit/push/merge instruction | VAL-P02-013 | Registered-form creation metadata; current pack/template and numbered-member/uncovered-path controls; scoped hooks, each actual-index staged/message, prospective completion/review and fresh actual closing checks; hosted observations separate |

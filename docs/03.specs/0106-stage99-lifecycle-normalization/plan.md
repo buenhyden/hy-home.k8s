@@ -16,8 +16,18 @@ parent_ids: ["SPEC-0106"]
 
 WORK-016 follows the current P02 request and P01's corrected common-candidate
 route. Its local authoring/validation/commit scope supersedes historical finish
-requirements for this follow-up only; no new remote or cleanup authority is
-inferred. Keep completed parents and historical evidence intact.
+requirements for this follow-up only. The user's earlier explicit main merge
+and development branch/worktree cleanup instruction remains the selected local
+finish: verified fast-forward integration and removal of only the owned P02
+branch/worktree after unique evidence is preserved. It grants no remote push,
+PR, server, credential or live authority. Keep completed parents and historical
+evidence intact.
+
+The observed generic scripts/tests selector expanded document reader changes
+to unrelated Archive/Kubernetes gates. Repair only the exact document-reader
+and validation-registry impact routes with focused selection regressions;
+preserve all other product routes and mixed-change union behavior. This is a
+current consumer repair under WORK-016, not another full gate.
 
 The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013/014/015`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;

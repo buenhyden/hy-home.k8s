@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "2.1.0"
+version: "2.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-08"
 ---
 
 # Document Authoring Policy
@@ -80,8 +80,12 @@ express ownership, not a one-way waterfall.
    the owning Spec package; put order, risks, verification, and rollback in its
    Plan and execution evidence in its Task records. Keep one Task Table with
    criterion links, row state, result and evidence. Its frontmatter status is
-   the sole document status marker; a multi-row Task's marker must agree with
-   the Registry-bound row summary. A row's PASS alone is not completion:
+   the sole document status marker. For one row, author its state only in
+   frontmatter and use literal `frontmatter` in the row. For multiple rows,
+   author only row states; generate the required header summary with the
+   explicit Task status writer, never a second human-maintained state. The
+   read-only checker verifies that summary against Registry-bound rows.
+   A row's PASS alone is not completion:
    required work needs completed state, PASS, accepted and concrete evidence.
    Keep ordered work, dependencies, Task links and verification intent in the
    Plan, without copied execution status. Attach factual checks in Task
@@ -138,6 +142,21 @@ its author prompts in its output's language. Never hand-edit generated current
 output or create an off-taxonomy authored tree.
 
 ## Validation and Refresh
+
+The Stage 99 Registry's optional `shared_contract` identifies the one common
+review candidate and the local adapter. A candidate digest identifies reviewed
+bytes, not approval. Missing source revision or approval reference stays null;
+final common approval and actual local/joint adoption need their own evidence.
+Current state/language/native extensions remain explicit while P03 reviews
+common authority and state migration. Do not establish another local WGOV core.
+
+For Guide, Policy and Runbook, use the selected role's ordered sections and
+place its existing Lifecycle Traceability table under Related Documents.
+Classifications, prerequisites, controls, observations and recovery stay native
+submodules in their relevant roles. Fill sections with concrete content; a
+heading, comment, placeholder or empty fence is no operating instruction.
+An inapplicable item states why and who owns the remaining boundary. A format
+check cannot authenticate a current operator, live service or approval.
 
 Run strict registry, Markdown-profile, link/owner, and lifecycle checks when
 their contracts are affected. A deletion or consolidation requires replacement
