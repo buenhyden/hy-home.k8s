@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.3.0"
+version: "0.5.0"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -31,6 +31,13 @@ alone owns the new WORK-008 execution and its remaining obligations.
   was supplied and authorizes first establishment of one shared candidate.
   Future commit/digest/approval fields are populated only when their objects
   and decisions exist; they are not prerequisites to investigation or repair.
+- Resume approval: the current user replied with approval on 2026-10-08 to
+  the final handoff's exact main required-check migration question. The
+  original trusted chat binds this approval to the reviewed C4 proposal at
+  `266e104ca9d6e247443b76f92ba752eb88cb77a8`; no revocation was supplied.
+  This authorizes only the required_status_checks resource after verifying
+  App 5156553's purpose and current settings. It grants no common-edition
+  approval, push, PR creation, merge, Release or credential operation.
 - Current agent-execution, approval-and-safety, quality, document-authoring and
   document-lifecycle policies; Stage 99 registry and registered Task form.
 - Intake: clean `main...origin/main`, empty index/unstaged diff, actual HEAD
@@ -48,7 +55,7 @@ alone owns the new WORK-008 execution and its remaining obligations.
 | F02 / C11 | Recursive current tree has SPEC-0105, SPEC-0106, SPEC-0107; all three Specs, Plans and 19 existing Tasks record completed. No draft/in-progress/blocked/approved parent | P03 receives this dated inventory, not a fixed census or reauthentication of every historical AC. New follow-up work remains in this Task |
 | F19 / K-OPS-RUNBOOK | RUN-0012 draft described a planned interface, but release.py implements prepare/publish. SPEC-0107 Task EVD-138 deferred operating adoption, trusted git-cliff and publication | Reviewed current procedure is adopted as active RUN-0012/1.0.0; actual trusted-tool environment and publication remain DEFER; operations owner platform |
 | F19 / K-OPS-POLICY | POL-0003 has no eligible reciprocal Spec/Task promotion source; architecture links do not satisfy that profile | Maintain justified explicit exclusion; do not invent a promotion source |
-| F20 / K-HEAD, K-CI | Actual main protection requires ci-summary/App 15368 and qa-provenance/App 5156553. Workflow produces ci-summary metadata and independent style-pr | Prepare protected-setting migration below; no empty-success producer; next owner buenhyden/operator |
+| F20 / K-HEAD, K-CI | Intake main protection required ci-summary/App 15368 and qa-provenance/App 5156553. Workflow produces ci-summary metadata and independent style-pr | Approved required-check migration applied and read back on 2026-10-08. Gate-integrity HIGH residual SEC-P01-001 and current PR observation remain separate; next owner buenhyden/security/CI operator |
 | F23 / C02, C03 | Existing joint approved edition not established in inspected k8s and Project-Template common governance/Stage 99. Docker has a distinct SDLC-COMMON-v4 identifier | Proceed through first establishment using the one candidate below; agent-execution now defines the local caller's first-establishment route; final approval and actual adoption remain distinct |
 | C01 / VAL-P01-005 | No business timebox/reserve gate found in inspected policies, registry, runner or provider guard. Quality still mentions generic time/budget preflight | Explicitly distinguish technical child-process limits from business/session permission; quality owns resource semantics |
 | Language / Stage 99 | Operations, navigation and reference packs are Korean-first; .agents/.claude/.codex English-only; other SDLC prose English-first | Retain this actual local adapter pending a shared language decision. Native syntax, IDs, states and machine headings keep their registered spelling; no bulk history translation |
@@ -129,7 +136,8 @@ the reviewed workflow revision and latest protection read-back. Proposed
 change is limited to main's required_status_checks resource: retain strict
 and ci-summary, replace obsolete qa-provenance with existing style-pr, both
 current checks bound to github-actions/App 15368. Preserve all other protection
-and tag settings. The following is review data, not an executed API write:
+and tag settings. The following was the reviewed intake proposal; its actual
+approved execution is recorded in Approved Server Follow-up below:
 
 ```json
 {
@@ -155,7 +163,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs accepted through EVD-002/005/006. Reason: final common edition/adoption and required-check migration decisions remain unapproved (EVD-003/004). Next owner: buenhyden with Project-Template source writer and server operator |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs and approved setting operation accepted through EVD-002/004/005/006/007. Reason: common edition/adoption undecided, SEC-P01-001 control guard unresolved, and current PR style unobserved (EVD-003/008/009). Next owner: buenhyden with Project-Template source writer and security/CI operator |
 
 ## Task Evidence
 
@@ -164,9 +172,12 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Read-only Git/source/server comparison | Intake HEAD and API resources above | PASS | Inputs, source comparison and server read-back above; research agents common_research and operations_research | accepted |
 | EVD-002 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Selected local QA, actual messages and independent review | Actual C1 and corrected C2 indexes; final closing-document input is separate | PASS | Verification Summary: six C1 gates and nine C2 gates, actual messages, normal commits and independent p01_review with no blocking finding | accepted |
 | EVD-003 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Final common-edition approval and actual adoption | First-establishment candidate above; no final approval decision yet | DEFER | Common Edition Decision and Delivery above; next owner buenhyden with common-source writer | pending |
-| EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Required-check migration and actual PR style result | Exact proposed resource above; no write approval or current PR run | DEFER | Server Read-back and Proposed Change above; next owner buenhyden/operator | pending |
+| EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Approved required-check resource migration and read-back | Reviewed C4 JSON, current trusted user approval and immediate before/after snapshots | PASS | PATCH rc0 and complete protection GET comparison passed at 2026-10-08 18:13 KST; both checks bound to App15368, strict retained, other protection/rule metadata unchanged. This accepts the exact setting operation only, not security-gate equivalence or a PR result | accepted |
 | EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help and procedure adoption review | release.py at intake HEAD; --help, prepare --help and publish --help; corrected Runbook | PASS | All three help commands returned rc=0; independent p01_review confirmed procedure adoption after C2 selected QA PASS. Active procedure adoption grants no Release execution permission | accepted |
 | EVD-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Local Runbook adoption and result-recording index | C3 two-path index: RUN-0012/1.0.0 active and this Task/0.2.0 in-progress | PASS | Six selected gates, actual Commitizen message and independent p01_review passed; normal commit 7e3966d7b7341c5f0710bed5303e05b59b3c9f26 | accepted |
+| EVD-007 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | App consumer and current producer comparison | Actual historical check 110709969682; bounded SPEC-0103 Plan consumer; current main and workflow API | PASS | App 5156553 is k8s-qa-verifier/k8s QA Verifier, formerly an isolated full-QA proof producer. Current workflow list and main CI have no verifier producer | accepted |
+| EVD-008 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current hosted PR style result | Open pulls API for base main returned an empty list | DEFER | Next owner: operator on the next authorized actual PR; no PR or workflow dispatch is created merely for this observation | pending |
+| EVD-009 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Security review of verifier retirement and prospective check trust | Exact before/after settings, current ci.yml and bounded historical verifier contract | FAIL | Independent server_security_review found SEC-P01-001 HIGH: PR can alter both job definitions; read-only/pinned/helper trust does not authenticate workflow content. Conditional review permits describing the setting transition only; guard remediation remains unaccepted | pending |
 
 ## Approval and Safety Boundaries
 
@@ -179,19 +190,31 @@ correction to its retained pre-change values, never by inventing a green check.
   credentials, live resources, native trust/configuration and unrelated files.
 - **Approval Required**: current pasted P01 request authorizes scoped local
   repair, ordinary logical commits and isolated worktree/branch creation.
-  Common edition decision remains with buenhyden; server mutation, push, PR,
-  merge, tag/Release publication, worktree removal and live execution lack
-  current scoped approval. Quoted historical approvals grant none.
+  The exact server resource operation is now approved as bound below.
+  Common edition decision remains with buenhyden; push, PR, merge,
+  tag/Release publication, worktree removal and live execution lack current
+  scoped approval. Quoted historical approvals grant none.
+- **Approved Server Operation**: the current trusted user reply supersedes
+  the earlier missing approval for one `PATCH` to
+  `repos/buenhyden/hy-home.k8s/branches/main/protection/required_status_checks`
+  with the exact JSON above. Root executes it on the user's behalf after
+  matching current main/settings and App purpose. This is not delegated to
+  a subagent. Verify the original chat approval and absence of revocation
+  immediately before invoking; all other protected actions remain unapproved.
 - **Static Validation**: selected staged QA (including final-index style and
   non-style), actual pinned Commitizen message, independent read-only review;
   CLI help and focused existing regressions only where an affected contract
   needs them. Inspect active hook routing and reuse no merely matching path.
-- **Live Validation**: DEFER; no cluster, native discovery, Release or hosted
-  run is authorized or inferred. Read-only server metadata is observed above.
+- **Live Validation**: the approved remote setting operation and its read-back
+  are PASS under EVD-004. Cluster, native discovery, Release and current hosted
+  PR execution remain DEFER; a setting read-back is not a runtime PR verdict.
 - **Secret / Vault Handling**: no secret reads, prints, environment/config
   dumps or private data. Use only public rules and non-secret metadata.
 - **Rollback Plan**: bounded forward corrective commits on this branch, retaining
   original main/source history, Task and all earlier evidence. No reset/clean.
+  Server rollback is a forward PATCH of the same resource restoring
+  strict=true, ci-summary/App 15368 and qa-provenance/App 5156553 from the
+  retained before snapshot, after confirming no concurrent setting change.
 - **Evidence Location**: this Task; ignored scratch logs may support its factual
   command summary and do not become a second execution owner.
 
@@ -255,21 +278,27 @@ bounded tool-native escalation succeeded without changing sandbox or trust
 configuration. This is execution-environment evidence, not a repository defect.
 Required local commands will retain their failure/result and technical process
 limits. No business deadline, timebox, reserve approval or blanket full sweep
-is introduced. Unapproved shared consumption and server changes remain DEFER
-with the owners above; current local authoring proceeds independently.
+is introduced. At the initial local handoff, unapproved shared consumption and
+server changes remained DEFER with the owners above while local authoring
+proceeded independently. The subsequently approved server result is below.
 
 ### Remaining decisions and handoff
 
-The authorized independent local repairs are accepted through EVD-002/005/006.
+The authorized independent local repairs are accepted through EVD-002/005/006;
+the subsequently approved setting operation is accepted only through EVD-004.
 Agent-execution owns the single shared-source route; quality owns the actual
 resource semantics consumed by work-lifecycle and approval-and-safety. Parent
 Spec/Plan follow-up routes and the portable SPEC-0107 receipt reference now
 match those owners. Earlier package completion, receipt outcomes and source
-history remain intact. No CI workflow, Registry, runtime permission, secret,
-remote setting, tag or live resource was changed.
+history remain intact. The initial local repair changed no CI workflow,
+Registry, runtime permission, secret, remote setting, tag or live resource;
+the subsequent approved main required-check resource change is recorded below.
 
-This Task moves from in-progress to blocked solely for the two remaining
-decisions already separated in EVD-003/004. No missing historical approval,
+C4 moved this Task from in-progress to blocked for the two then-remaining
+decisions separated in EVD-003/004. The current server approval resumed the
+working Task to in-progress/0.4.0 before execution; after the resource operation
+and read-back it returns to blocked/0.5.0 for EVD-003/008/009. These working
+state changes are not claimed as separate Git commits. No missing historical approval,
 future digest or future commit is an intake gate. On a real decision, resume
 this Task and execute only its resulting authorized scope:
 
@@ -277,10 +306,10 @@ this Task and execute only its resulting authorized scope:
   candidate and establish its one source, actual revision and approved edition.
   Inspect the unobserved blog-data adapter, then record local and joint adoption
   separately at each actual consumer. No four-repository approval is claimed.
-- `buenhyden`/operator resolves App 5156553's intended consumer and approves or
-  rejects the exact main required-check migration above. If approved, refresh
-  the read-back, apply only that resource, then observe its read-back and an
-  actual PR style run. Until those events, required-check repair is DEFER.
+- The current user's approval authorizes root to resolve App 5156553's purpose,
+  refresh read-back and apply only the exact required-check resource above.
+  Server results are recorded below. The next authorized actual PR owns its
+  hosted style evidence; absence of an open PR remains EVD-008 DEFER.
 
 The first C4 one-path staged QA returned rc=1: five selected gates passed,
 but markdown-profiles rejected the blocked row with
@@ -292,8 +321,70 @@ existing syntax. No checker or state/result meaning changed. The failed C4
 input remains a separate historical attempt; the corrected final index needs
 its own selected checks.
 
-Current Task/0.3.0 is a closing-document input. Its own final selected QA,
+Current Task/0.5.0 is a closing-document input. Its own final selected QA,
 message, review and commit are reported after observation in the final chat
 handoff; earlier PASS rows identify only their actual checked indexes. The
 worktree and unique portable candidate remain available for the next owner.
 There is no push, PR, merge, publication or owned-ref cleanup claim.
+
+### Approved Server Follow-up
+
+C4's corrected final one-path index passed all six selected gates, actual
+Commitizen and independent p01_review; normal commit was
+`266e104ca9d6e247443b76f92ba752eb88cb77a8`. Resume observed a clean worktree
+at that commit and current main still at the intake SHA. The current user's
+approval binds only the exact previously reviewed required-check proposal.
+
+App purpose was confirmed through actual historical check-run API
+`check-runs/110709969682`: successful qa-provenance on PR124 head
+`eaeedad63e24f5e5347f458cfc57c1c574cfeb58`, App ID 5156553,
+slug k8s-qa-verifier, name k8s QA Verifier. The bounded archived SPEC-0103
+Plan Task 3 identifies its former isolated workflow_run full-QA proof consumer.
+Current main's source and Actions workflow list contain CI, Labeler, Greeting
+and dynamic dependency workflows, with no qa-verifier workflow. This resolves
+the purpose comparison; it does not certify current App installation state.
+Authenticated installation lookup returned HTTP403, guessed legacy GraphQL
+node ID NOT_FOUND, and public App lookup HTTP404. No credential or App config
+was read or changed to work around those limits.
+
+The current protection exactly matches the reviewed before values. Retain its
+complete non-secret snapshot before applying. Use the documented
+[required-check PATCH](https://docs.github.com/en/rest/branches/branch-protection#update-status-check-protection),
+compare the returned required resource with the approved JSON, then GET the
+complete protection and compare every other field against the before snapshot.
+Also compare applied branch rules and tag ruleset metadata. Abort on drift.
+No open main PR exists, so actual hosted PR style remains EVD-008 DEFER.
+The exact approved operation has now executed as recorded below.
+
+Pre-apply security review `server_security_review` reported SEC-P01-001 HIGH:
+the PR merge revision supplies ci.yml's job definitions, so a PR can change
+ci-summary/style-pr themselves despite the helper/config/lock using the base.
+App 15368 authenticates Actions, not reviewed workflow content. The retired
+App's independent full-QA/control-path proof is not replaced by style semantics.
+No secret exposure or elevated permissions were observed. Root proceeds only
+with the already approved setting migration as an intentional retirement of
+the absent producer, preserving this HIGH residual rather than claiming a
+tamper-resistant security gate. This review is not a new human risk waiver.
+Next owner buenhyden/security/CI owner: independently enforce and actually
+verify workflow-control changes before merging a workflow-changing PR or
+using these checks as a final security defense. No such PR merge is authorized
+or performed in this follow-up; protected triggers/review/ruleset remediation
+needs its own concrete approved scope and must not restore a blanket full gate.
+
+At 2026-10-08 09:13 UTC (18:13 KST), the actual command
+`rtk proxy gh api --method PATCH repos/buenhyden/hy-home.k8s/branches/main/protection/required_status_checks --input _workspace/p01-required-checks-update.json`
+returned rc0 with strict=true and checks ci-summary/App15368,
+style-pr/App15368. The immediate complete protection GET confirmed this exact
+resource. Structural comparisons passed for every other protection field,
+the empty applied branch rules list, and both tag ruleset metadata objects.
+Before/after JSON remains in the ignored `_workspace/p01-server-before-*.json`
+and `p01-server-after-*.json` snapshots as supporting public metadata, not a
+second progress owner. No App, credential, workflow, tag, rule, review policy,
+push, PR, merge or dispatch was changed. No rollback was needed. The retained
+before resource identifies a forward rollback if the operator later requests it.
+
+The real user approval is verified for this exact operation, not for the
+unresolved HIGH's waiver or a new workflow guard. SEC-P01-001 remains open
+with its next owner and prerequisite above. Current PR style cannot be observed
+without an actual authorized PR; no fabricated success check is produced.
+Common edition approval/local or joint adoption remains EVD-003 DEFER.
