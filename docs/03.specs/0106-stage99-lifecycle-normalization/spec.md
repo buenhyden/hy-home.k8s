@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.12.2"
+version: "1.13.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-06"
+updated: "2026-10-08"
 layer: "specs"
 artifact_id: "SPEC-0106"
 ---
@@ -50,6 +50,44 @@ scope. This authorization does not claim current remote state or an
 authenticated operator action.
 
 ## Contracts
+
+### Current shared-profile migration
+
+VAL-P02-016 implements the current user's P02 request from actual main
+`c9faa9f00fdf61c9286b4dc6df264de35106b611`. Use the one P01
+WGOV-CORE/3.0.0-draft.3 review candidate, with its corrected first-establishment
+route, as the common input for C02/C03/C04/C05/C12. The Registry identifies
+this candidate and local adapter; absent common-source commit and final
+approval remain null, not invented prerequisites or approval evidence.
+Final edition approval, local adoption and four-repository adoption remain
+distinct decisions owned by buenhyden. The current request authorizes local
+policy, consumer, form and document changes and normal commits, without
+extending earlier exact P01 server or cleanup authorization.
+
+Migrate Guide, Policy and Runbook to that candidate's six role sections,
+preserving native operating modules, identity, active state, owner, actual
+approval and evidence. Move their existing Lifecycle Traceability relationship
+table to Related Documents with the same columns and cardinality. Require
+substantive section bodies for these current roles: nested headings, comments,
+empty fences and placeholder-only content cannot satisfy a role. Templates
+retain author prompts and the created document's initial draft state; their
+support and revision belong to the Registry and Git. Frozen history keeps its
+observed generation and bytes.
+
+Retain the existing six-key grammar, role-specific extensions, native
+envelopes and router/reference-anchor distinction. Single-row Task execution
+is authored only in frontmatter; multi-row execution is authored only in rows,
+with the existing explicit writer generating the required frontmatter summary.
+Do not hand-maintain a second status. Existing role states and local language
+rules remain the migration adapter pending P03's shared state/provenance and
+language decisions; no new local enum or status reset is introduced.
+
+Review each current operating document separately for profile, form, content,
+owner, references, state and actual evidence, and hand unresolved product/live
+verification to P08. Local checks are selected from changed inputs plus
+synthetic failure/boundary regressions, exact-index lint/format, actual message
+checks and independent review. Full, live and hosted execution are not claimed
+by this migration.
 
 ### User-directed hosted QA removal
 
@@ -262,6 +300,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P02-016 | One identified common candidate and truthful adoption tuple; Registry/schema/forms/readers agree on the three six-section operating roles, with substantive-content refusals and preserved relationships. All current Guide/Policy/Runbook instances are migrated and individually reviewed while state, identity, native boundaries and frozen bytes are preserved. Single Task status and generated multi-row summary have one authoring source; existing README router/anchor and native/language contracts retain their current consumers. Task0016 records focused RED/GREEN, exact-index lint/format/message, independent review, P03/P08 handoffs and actual unexecuted boundaries; final common approval and four-repository adoption are reported separately. |
 | VAL-P02-015 | The hosted CI topology contains only branch-policy, qa-isolated and ci-summary; full QA is explicitly NOT_RUN, removed execution is not QA PASS, and missing full proof cannot create provenance. Direct topology/guide consumers match the new contract while isolated validation, pin/permission/bootstrap/shell and provenance refusal controls remain. Registered-form creation, scoped RED/GREEN, exact-index staged/message, completion and independent review are recorded in Task0015. Preserve local validation registration, production regressions, original evidence and normal local/main delivery history. |
 | VAL-P02-014 | Generation-admission fixtures read authentic immutable generation-9 and generation-10 boundary documents together, preserving absent-source, same-generation, invalid declaration, terminal reopening, later completion, cumulative replay and fixed budget refusals. Whitespace fixture expectations use the existing typed Registry-bound retention classification alongside frozen lifecycle states, retaining current-record and nonarchive negatives. Three observed named REDs, all four shared generation methods and one whitespace method, registered-form provenance, hook-first final bytes, each actual-index staged/message, scoped completion and independent review are recorded in Task0014. Production contracts, schemas, Registry, hooks, limits and retained archive bytes remain unchanged; hosted and integrated-main admission are separate. |
 | VAL-P02-013 | Reference pack route fixtures expect the current authored reference pack identities and their unchanged registered templates. Existing numbered member routes, uncovered loose/date paths and topology/drift refusals remain required. Two named REDs, final-byte focused controls, scoped hooks, registered-form creation metadata, each actual-index staged/message, completion and independent review are recorded in Task0013. Published Registry, templates, reference corpus and production contracts remain unchanged; hosted acceptance is separate. |
@@ -278,6 +317,10 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P02-016 maps to WORK-016 and
+[Task0016](tasks/tsk-0016-shared-profile-migration.md) in the current Plan.
+This follow-up preserves the completed parents and all prior evidence.
 
 VAL-P02-015 maps to WORK-015 in the [Plan](plan.md) and
 [Task0015](tasks/tsk-0015-hosted-qa-cleanup.md). The explicit latest user request

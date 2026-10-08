@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.12.1"
+version: "1.13.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
-updated: "2026-10-06"
+updated: "2026-10-08"
 layer: "specs"
 artifact_id: "SPEC-0106-PLAN-0001"
 parent_ids: ["SPEC-0106"]
@@ -13,6 +13,11 @@ parent_ids: ["SPEC-0106"]
 # Stage 99 Lifecycle Normalization Implementation Plan
 
 ## Global Constraints
+
+WORK-016 follows the current P02 request and P01's corrected common-candidate
+route. Its local authoring/validation/commit scope supersedes historical finish
+requirements for this follow-up only; no new remote or cleanup authority is
+inferred. Keep completed parents and historical evidence intact.
 
 The [Spec](spec.md) owns behavior and `VAL-P02-001/002/003/004/005/006/007/009/010/011/012/013/014/015`; this Plan owns order,
 dependencies, risk and rollback. Stage 99 owns machine form and lifecycle;
@@ -107,6 +112,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-016 | [VAL-P02-016](spec.md#success-criteria--verification-plan) | Identify the common candidate, couple role contracts and consumers, migrate every current operating instance, and clarify sole status authoring | Same P01 candidate; root owns Registry/guidance/Task; quality-engineer owns schema/reader/content regressions; doc-writer owns three forms and current operations; independent research/design/review | [SPEC-0106-TSK-0016](tasks/tsk-0016-shared-profile-migration.md) | Ordered inventory and design, synthetic RED/GREEN, changed-input document/relationship/state/style checks, exact-index staged and message checks, independent review; P03 shared state and P08 live/product handoffs remain distinct |
 | WORK-015 | [VAL-P02-015](spec.md#success-criteria--verification-plan) | Remove hosted full-QA execution and repair its direct topology and guidance consumers | Explicit user CI/local/origin-main scope; separate workflow, quality and governance source owners; genuine registered-form draft | [SPEC-0106-TSK-0015](tasks/tsk-0015-hosted-qa-cleanup.md) | Narrow changed-input RED/GREEN and retained refusals; exact-index staged/message and independent review; prospective completion then fresh actual closing checks; full/affected execution NOT_RUN and no fabricated provenance |
 | WORK-014 | [VAL-P02-014](spec.md#success-criteria--verification-plan) | Repair immutable generation-boundary and typed retention fixture inputs | Three named REDs; structured/public-source independent cause review; private raw direct audit deferred; genuine registered-form first draft | [SPEC-0106-TSK-0014](tasks/tsk-0014-generation-boundary-and-retention-fixtures.md) | Four existing shared generation methods and one whitespace method after hook-first final bytes; complete original declared maps/inventories, each actual-index staged/message and separate review; prospective completion then fresh actual closing checks; hosted admission separate |
 | WORK-013 | [VAL-P02-013](spec.md#success-criteria--verification-plan) | Correct obsolete reference pack identities in route fixtures | Two observed named REDs; complete implicated-class and independent cause review; genuine registered-form first draft | [SPEC-0106-TSK-0013](tasks/tsk-0013-reference-pack-route-fixtures.md) | Two named changed-input pack/template and material methods; hook-first final inputs, each actual-index staged/message and separate review; prospective completion/review then fresh actual closing checks; hosted acceptance separate |
