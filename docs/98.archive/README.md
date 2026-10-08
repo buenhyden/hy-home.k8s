@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.8.0"
+version: "0.8.1"
 type: "archive/catalog"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 layer: "archive"
 ---
 
@@ -69,7 +69,7 @@ Retention Catalog가 명명하는 보존 본문을 제외하면, 보관된 내�
 - 현재 SDLC 또는 operations authority. 보존본을 인용해도 그것이 현재가 되지는 않는다
 - 두 번째 복구 원장: redirect, path ledger, 자체 설계 본문 digest, branch SHA, recovery commit
 - 동결 generation을 새 형식으로 다시 쓰거나 historical link를 현재 경로로 다시 쓰는 작업
-- `mutable` 또는 `current` 상태 문서의 보관. 진행 중인 문서는 아무리 오래되어도 제자리에 남는다
+- 미완료 실행 또는 현재 소비자가 남은 단위의 보관. `approved` Spec·Plan은 일반적인 보관 허가가 아니며, 아래의 `spec-package` `completed/` 예외가 실제 원본 패키지 종료를 증명한 경우에만 후보가 된다
 - secret-bearing history의 일반 보존
 - metadata 또는 payload를 조용히 수정하는 provenance repair
 
@@ -205,7 +205,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 
 ### Retention Assessment
 
-Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 행이 없는 단위는 `unreviewed`이며 `retained`다. 이 표는 envelope·class·digest를 반복하지 않고, 보존 본문도 바꾸지 않는다. 허용값과 조건은 Stage 99 registry의 `archive_assessment`가 소유한다. `usable`은 역사 증거로 인용할 수 있다는 뜻이지 현재 authority가 아니다. `superseded`는 현재 owner를, 그 밖의 모든 판단은 판단과 승인을 기록한 현재 Task·Spec·ADR을 Decision으로 명명한다. `git-history-only`는 Hold가 `none`이고 단위 전체가 tree를 떠났으며 catalog envelope이 여전히 검증될 때만 쓰고, 한 번 떠난 단위는 돌아오지 않는다. `purged`는 보안 승인된 정화 계약이 없으므로 쓰지 않는다. 행은 표를 떠나지 않으며, 판단 변경 이력은 Git이 소유한다.
+Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 행이 없는 단위는 `unreviewed`이며 `retained`다. 이 표는 envelope·class·digest를 반복하지 않고, 보존 본문도 바꾸지 않는다. 허용값과 조건은 Stage 99 registry의 `archive_assessment`가 소유한다. `usable`은 역사 증거로 인용할 수 있다는 뜻이지 현재 authority가 아니다. `superseded`는 현재 owner를, 그 밖의 모든 판단은 판단과 승인을 기록한 현재 Task·Spec·ADR을 Decision으로 명명한다. `git-history-only`는 실제 가치·소비자, disposition 승인, Hold `none`, 전체 단위의 tree 제거와 도달 가능한 catalog 복구 좌표를 각각 확인한 뒤에만 쓴다. 역사 digest나 Git 좌표의 존재만으로 처분 승인 또는 hold 해소를 대신하지 않는다. 한 번 떠난 단위는 돌아오지 않는다. `purged`는 보안 승인된 정화 계약이 없으므로 쓰지 않는다. 행은 표를 떠나지 않으며, 판단 변경 이력은 Git이 소유한다. 현재 표는 비어 있어 어느 단위도 이 재평가에 따라 처분 적격으로 확인되지 않았다.
 
 | Disposition Record | Assessment | Availability | Current Owner | Decision | Assessed | Hold |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -217,9 +217,9 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 새 disposition은 다음 순서를 따른다.
 
 1. 문서에 실제로 일어난 일(완료, 대체, 후속 없는 철회, 사고 종결, route 퇴역, scope 이동)과 현재 authority를 확정하고 family를 하나 고른다. disposition 승인을 해당 Task에 기록한다.
-2. Retention class면 보존 단위를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile, identity, 종단 상태를 유지한다. spec package는 디렉터리 전체가, Incident bundle은 `incident.md`와 `postmortem.md`가 한 단위이며 구성원만 따로 옮기지 않는다. anchor(`spec.md`, `incident.md`, 또는 단일 문서)의 상태가 class를 결정하고, 나머지 구성원은 자기 family에서 종단 상태여야 한다. 경로, 파일 mode, 바이트를 링크까지 바꾸지 않는다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
+2. Retention class면 보존 단위를 `docs/98.archive/<class>/<원래 stage 경로>`로 옮기고 원래 profile과 identity를 유지한다. spec package는 디렉터리 전체가, Incident bundle은 `incident.md`와 `postmortem.md`가 한 단위이며 구성원만 따로 옮기지 않는다. anchor(`spec.md`, `incident.md`, 또는 단일 문서)의 상태가 class를 결정하고, 다른 구성원도 자기 family에서 허용된 상태여야 한다. 현재 `spec-package`의 `completed/`에서만 [Stage 99 Registry](../99.templates/registry.json)의 `completed_authority_members`가 원본 비교 base의 `spec.md`·`plan.md`에 `approved`를 허용한다. 그 예외는 원본에서 Plan 배정, 모든 Task 완료, 기준별 단일 수용 판정, 필수 실패의 후속 동일 검사 PASS 해소, 지속 owner를 검사한 패키지 종료가 실제로 통과해야 적용된다. 다른 구성원과 다른 class에는 일반 종단 상태 규칙을 적용한다. 이 기계 판정 뒤에도 실제 disposition 승인, promotion 의미 검토, hold·소비자 0·복구 좌표를 별도로 확인한다. 경로, 파일 mode, 바이트를 링크까지 바꾸지 않는다. 본문이 class가 요구하는 명명(promote 대상, 대체 문서, 철회 이유, 종결 증거와 corrective-work owner)을 갖는지 확인한다.
 3. Route disposition이면 본문 없이 기록한다. `tombstones/`의 `archive/route-tombstone`(`TOMB-####`)은 `retired_route`, `successor`, `reason`을, `migrations/`의 `archive/scope-migration`(`MIG-####`)은 `moved_scope`와 `current_owner`를 명명한다. scope migration은 저장소 밖 consumer가 옮긴 경로를 읽을 때만 기록하고, 활성 stage 사이에서 identity, family, 상태를 유지한 이동은 record 없이 identity 계보로 추적한다.
-4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. 행은 문서면 blob을, package나 bundle이면 tree를 명명한다. lifecycle gate는 보존 경로가 envelope object와 항목(상대 경로, mode, blob)마다 같은지, 그 object가 비교 base의 원래 경로 object와 같은지, anchor와 구성원 상태가 class를 허용하는지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. full 검증은 모든 catalog 행을 그 object에 대해 다시 확인하며, object가 없거나 도달할 수 없으면 실패한다. Stage 98에 들어간 보존 단위와 route record는 이후 어떤 변경도 수정하거나 제거할 수 없다.
+4. Retention Catalog에 Retention Envelope `<commit>:<original path>` 한 개를 기록한다. blob, digest, branch SHA, redirect를 추가하지 않는다. 행은 문서면 blob을, package나 bundle이면 tree를 명명한다. lifecycle gate는 보존 경로가 envelope object와 항목(상대 경로, mode, blob)마다 같은지, 그 object가 비교 base의 원래 경로 object와 같은지, anchor와 구성원 상태가 class를 허용하는지, route disposition의 envelope가 비교 base의 그 route object와 같은지, scope migration이 옮긴 문서가 현재 상태와 identity를 유지하는지 확인한다. 선택된 Archive integrity gate는 선언된 범위의 catalog 행을 원본 object와 대조하고, object가 없거나 도달할 수 없으면 실패한다. 봉인 record와 route record의 원문은 재작성하지 않는다. Retention class 본문도 부분 수정하지 않는다. 전체 보존 단위 본문의 Git-history-only 제거는 별도의 Retention Assessment에서 실제 disposition 승인, Hold 해소, 소비자 0과 도달 가능한 복구 좌표를 확인한 경우에만 가능하며 catalog envelope과 판단 기록은 남긴다.
 5. 현재 consumer를 인용 규칙에 맞춘다. `superseded/` 인용은 후속 문서로, `retired/`·`tombstones/`·`migrations/` 인용은 현재 route로 바꾼다. 인용 판정은 registry의 `archive_citation` 표를 따른다.
 6. 디렉터리가 없으면 첫 구성원과 같은 변경에서 만든다.
 

@@ -121,7 +121,6 @@ _SEMANTIC_VERSION = r"[0-9]+\.[0-9]+\.[0-9]+"
 WORK107_LEGACY_ARCHIVE_COMMIT = (
     "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c"  # pragma: allowlist secret
 )
-WORK107_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 WORK107_MIGRATION_PATH = "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md"
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -175,19 +174,6 @@ WORK107_MIGRATION_METADATA_KEYS = (
     "updated",
     "artifact_id",
 )
-_WORK107_EXECUTION_PATH = re.compile(
-    r"docs/98\.archive/04\.execution/(?P<collection>plans|tasks)/"
-    r"[0-9]{4}-[0-9]{2}-[0-9]{2}-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\.md\Z"
-)
-_WORK107_HISTORICAL_AD_TYPE = "ar" + "d"
-_WORK107_TOMBSTONE_TYPES = {
-    "prd": "PRD",
-    _WORK107_HISTORICAL_AD_TYPE: "AD",
-    "adr": "ADR",
-    "spec": "SPEC",
-    "guide": "GUIDE",
-    "runbook": "RUNBOOK",
-}
 ARCHIVE_REASONS = frozenset(
     {
         "superseded",
@@ -1295,183 +1281,8 @@ def read_commit_path_blob(root: Path, commit: str, path: str | PurePosixPath) ->
     return _work107_commit_path_blobs(root, commit, (canonical,))[canonical][1]
 
 
-def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
-    registry = _work107_commit_path_blobs(
-        root,
-        WORK107_LEGACY_ARCHIVE_COMMIT,
-        (WORK107_REGISTRY_PATH,),
-    )[WORK107_REGISTRY_PATH][1]
-    try:
-        loaded = json.loads(registry.decode("utf-8"))
-        namespaces = loaded["archiveNamespaces"]
-        paths = tuple(path for namespace in namespaces for path in namespace["records"])
-    except (KeyError, TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise _error(
-            "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive registry is malformed"
-        ) from exc
-    if (
-        not paths
-        or any(
-            not isinstance(path, str)
-            or not path.startswith("docs/98.archive/")
-            or path == WORK107_MIGRATION_PATH
-            for path in paths
-        )
-        or len(set(paths)) != len(paths)
-    ):
-        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive census differs")
-    return tuple(sorted(paths))
-
-
-# Retired numbers stay retired: every legacy path that carried one keeps it, so
-# a tombstone identity names the exact sequence slot its original vacated. The
-# three date-named PRDs predate family numbering entirely and take a
-# tombstone-local sequence in date order, under their own retired family token.
-_WORK107_NUMBERED_LEGACY = re.compile(
-    r"^docs/[0-9]{2}\.[a-z]+/(?:[a-z]+/)?(?P<number>[0-9]{3,4})-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)"
-    r"(?:/[a-z-]+)?\.md\Z"
-)
-_WORK107_DATED_LEGACY = re.compile(
-    r"^docs/[0-9]{2}\.[a-z]+/(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\.md\Z"
-)
-_WORK107_DATED_SEQUENCE = (
-    "docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
-    "docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
-    "docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md",
-)
-
-
-# `guide` and `runbook` kept their sequence under the current family tokens, so a
-# tombstone names the slot the way the corpus names it today. `prd` did not: the
-# requirement sequence restarted at REQ-0001 after these three were retired, so
-# they stay under their own retired token and claim no REQ slot.
-_WORK107_TOMBSTONE_ID_PREFIX = {
-    "PRD": "PRD",
-    "AD": "AD",
-    "ADR": "ADR",
-    "SPEC": "SPEC",
-    "GUIDE": "GDE",
-    "RUNBOOK": "RUN",
-}
-
-
-def _work107_tombstone_sequence(legacy_path: str) -> tuple[str, str]:
-    """Resolve the retired sequence slot and slug one tombstone stands for."""
-
-    # A date leads with four digits too, so the dated form is resolved first.
-    match = _WORK107_DATED_LEGACY.match(legacy_path)
-    if match is not None:
-        if legacy_path not in _WORK107_DATED_SEQUENCE:
-            raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
-        index = _WORK107_DATED_SEQUENCE.index(legacy_path) + 1
-        return f"{index:04d}", match.group("slug")
-    match = _WORK107_NUMBERED_LEGACY.match(legacy_path)
-    if match is not None:
-        return f"{int(match.group('number')):04d}", match.group("slug")
-    raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
-
-
-def _work107_tombstone_identity(
-    legacy_path: str,
-    original_type: str,
-    original_path: str,
-) -> tuple[str, str]:
-    parts = PurePosixPath(legacy_path).parts
-    if len(parts) < 4:
-        raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
-    stage = parts[2]
-    terminal_type = _WORK107_TOMBSTONE_TYPES.get(original_type)
-    allowed_stage = {
-        "01.requirements": {"PRD", "SRS", "IFC"},
-        "02.architecture": {"AD", "ADR"},
-        "03.specs": {"SPEC", "AGENT-DESIGN", "DATA-MODEL", "TESTS", "PLAN", "TASK"},
-        "05.operations": {"GUIDE", "POLICY", "RUNBOOK", "INCIDENT", "POSTMORTEM"},
-    }
-    if terminal_type is None or terminal_type not in allowed_stage.get(stage, set()):
-        raise _error(
-            "ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone type is unsupported"
-        )
-    number, slug = _work107_tombstone_sequence(original_path)
-    stable_path = f"docs/98.archive/tombstones/{stage}/{number}-{slug}.md"
-    artifact_id = f"tomb-{_WORK107_TOMBSTONE_ID_PREFIX[terminal_type]}-{number}"
-    return stable_path, artifact_id
-
-
-def build_work107_migration_rows(
-    repository_root: str | Path,
-) -> tuple[dict[str, object], ...]:
-    """Derive the exact reviewed 93-row stable rehome from the pinned legacy tree."""
-
-    root, _object_id_length = _require_repository(Path(repository_root))
-    legacy_paths = _work107_registry_archive_paths(root)
-    records = _work107_commit_path_blobs(
-        root, WORK107_LEGACY_ARCHIVE_COMMIT, legacy_paths
-    )
-    parsed: dict[str, ParsedArchiveEnvelope] = {}
-    execution: dict[str, tuple[str, str]] = {}
-    slugs: set[str] = set()
-    for legacy_path in legacy_paths:
-        envelope = parse_archive_envelope(records[legacy_path][1])
-        parsed[legacy_path] = envelope
-        match = _WORK107_EXECUTION_PATH.fullmatch(legacy_path)
-        if match is not None:
-            leaf = "plan" if match.group("collection") == "plans" else "task"
-            slug = match.group("slug")
-            execution[legacy_path] = (slug, leaf)
-            slugs.add(slug)
-    change_numbers = {slug: index for index, slug in enumerate(sorted(slugs), start=1)}
-
-    rows: list[dict[str, object]] = []
-    for legacy_path in legacy_paths:
-        envelope = parsed[legacy_path]
-        metadata = envelope.metadata
-        source_commit = metadata.get("source_commit")
-        source_blob = metadata.get("source_blob")
-        content_sha256 = metadata.get("content_sha256")
-        original_type = metadata.get("original_type")
-        if not all(
-            isinstance(value, str)
-            for value in (source_commit, source_blob, content_sha256, original_type)
-        ):
-            raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy metadata differs")
-        if legacy_path in execution:
-            slug, leaf = execution[legacy_path]
-            number = change_numbers[slug]
-            stable_path = f"docs/98.archive/changes/chg-{number:04d}-{slug}/{leaf}.md"
-            prefix = "PLAN" if leaf == "plan" else "TASK"
-            artifact_id = f"{prefix}-CHG-{number:04d}"
-            record_kind = f"change-{leaf}"
-        else:
-            original_path = metadata.get("original_path")
-            if not isinstance(original_path, str):
-                raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy metadata differs")
-            stable_path, artifact_id = _work107_tombstone_identity(
-                legacy_path, str(original_type), original_path
-            )
-            record_kind = "tombstone"
-        rows.append(
-            {
-                "schema_version": 1,
-                "migration_id": WORK107_MIGRATION_ID,
-                "legacy_path": legacy_path,
-                "stable_path": stable_path,
-                "artifact_id": artifact_id,
-                "action": "moved",
-                "replacement": None,
-                "source_commit": source_commit,
-                "legacy_archive_commit": WORK107_LEGACY_ARCHIVE_COMMIT,
-                "legacy_envelope_blob": records[legacy_path][0],
-                "source_blob": source_blob,
-                "content_sha256": content_sha256,
-                "record_kind": record_kind,
-                "reason": "Reviewed stable Stage 98 rehome",
-            }
-        )
-    return tuple(sorted(rows, key=lambda row: str(row["stable_path"])))
-
-
 def _work107_validate_row_shape(rows: tuple[Mapping[str, object], ...]) -> None:
-    """Check ledger syntax; the Git-derived comparison owns closed coverage."""
+    """Check ledger syntax; current-byte admission owns the reviewed pin."""
 
     if not rows:
         raise _error("ARCHIVE-MIGRATION-CENSUS", "ledger is empty")
@@ -1549,24 +1360,6 @@ def _work107_validate_row_shape(rows: tuple[Mapping[str, object], ...]) -> None:
         raise _error("ARCHIVE-MIGRATION-BIJECTION", "ledger identity is not unique")
 
 
-def validate_work107_migration_rows(
-    repository_root: str | Path,
-    rows: list[Mapping[str, object]] | tuple[Mapping[str, object], ...],
-) -> tuple[dict[str, object], ...]:
-    """Require the supplied ledger to equal the reviewed Git-derived bijection."""
-
-    if not isinstance(rows, (list, tuple)):
-        raise _error("ARCHIVE-MIGRATION-ROW", "ledger must be one ordered sequence")
-    materialized = tuple(dict(row) for row in rows)
-    _work107_validate_row_shape(materialized)
-    expected = build_work107_migration_rows(repository_root)
-    if materialized != expected:
-        raise _error(
-            "ARCHIVE-MIGRATION-REVIEWED", "ledger differs from reviewed mapping"
-        )
-    return materialized
-
-
 def _work107_migration_metadata_bytes() -> bytes:
     metadata = {
         "title": "SDLC Taxonomy Convergence",
@@ -1631,6 +1424,19 @@ def parse_work107_migration_document(content: bytes) -> tuple[dict[str, object],
     if render_work107_migration_document(rows) != content:
         raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration document is noncanonical")
     return rows
+
+
+def parse_pinned_work107_migration_document(
+    content: bytes,
+) -> tuple[dict[str, object], ...]:
+    """Admit only the reviewed current ledger bytes supplied by the caller."""
+
+    if (
+        not isinstance(content, bytes)
+        or hashlib.sha256(content).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256
+    ):
+        raise _error("ARCHIVE-MIGRATION-REVIEWED", "current ledger differs")
+    return parse_work107_migration_document(content)
 
 
 def _work107_git_blob_oid(content: bytes) -> str:

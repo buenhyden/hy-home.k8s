@@ -288,7 +288,6 @@ class RetiredSurfaceSelectionTest(unittest.TestCase):
             for name in (
                 "json_schema_validation",
                 "document_authority",
-                "archive_cutover_manifest",
                 "archive_recovery",
                 "document_contracts",
                 "archive_validation",
@@ -347,7 +346,7 @@ spec = importlib.util.spec_from_file_location('isolated_affected', path)
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 before = sys.path[:]
-names = ('json_schema_validation', 'document_authority', 'archive_cutover_manifest',
+names = ('json_schema_validation', 'document_authority',
          'archive_recovery', 'document_contracts', 'archive_validation',
          )
 owners_before = {name: sys.modules[name] for name in names if name in sys.modules}

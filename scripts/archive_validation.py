@@ -61,7 +61,6 @@ if __package__:
         object_type,
         resolve_default_branch,
     )
-    from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
     from scripts.document_authority import REGISTRY_PATH
     from scripts.archive_recovery import (
         ArchiveContractError,
@@ -70,7 +69,6 @@ if __package__:
         RecoveryResult,
         WP004B_PINNED_MIGRATION_DOCUMENT_SHA256,
         WP004C_SEALED_TARGET_COMMIT,
-        WORK107_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_PATH,
         _git_capture_bounded,
         _open_parent_at,
@@ -78,7 +76,7 @@ if __package__:
         _read_stream_bounded as _recovery_read_stream_bounded,
         current_named_durable_ref,
         disposition_archive_path,
-        parse_work107_migration_document,
+        parse_pinned_work107_migration_document,
         parse_archive_envelope,
         require_commits_reachable_from_durable_refs,
     )
@@ -107,7 +105,6 @@ else:  # Direct import-only execution from scripts/.
         object_type,
         resolve_default_branch,
     )
-    from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from document_authority import REGISTRY_PATH
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
@@ -116,7 +113,6 @@ else:  # Direct import-only execution from scripts/.
         RecoveryResult,
         WP004B_PINNED_MIGRATION_DOCUMENT_SHA256,
         WP004C_SEALED_TARGET_COMMIT,
-        WORK107_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_PATH,
         _git_capture_bounded,
         _open_parent_at,
@@ -124,7 +120,7 @@ else:  # Direct import-only execution from scripts/.
         _read_stream_bounded as _recovery_read_stream_bounded,
         current_named_durable_ref,
         disposition_archive_path,
-        parse_work107_migration_document,
+        parse_pinned_work107_migration_document,
         parse_archive_envelope,
         require_commits_reachable_from_durable_refs,
     )
@@ -303,7 +299,6 @@ class ArchiveValidationReport:
     historical_link_count: int = 0
     record_count: int = 0
     index_record_count: int = 0
-    namespace_counts: tuple[tuple[str, int], ...] = ()
     record_link_counts: tuple[tuple[str, int], ...] = ()
     additive_record_sources: tuple[ReviewedManifestRecord, ...] = ()
 
@@ -356,7 +351,6 @@ def _report(
     historical_link_count: int = 0,
     record_count: int = 0,
     index_record_count: int = 0,
-    namespace_counts: Sequence[tuple[str, int]] = (),
     record_link_counts: Sequence[tuple[str, int]] = (),
     additive_record_sources: Sequence[ReviewedManifestRecord] = (),
 ) -> ArchiveValidationReport:
@@ -365,17 +359,11 @@ def _report(
         historical_link_count=historical_link_count,
         record_count=record_count,
         index_record_count=index_record_count,
-        namespace_counts=tuple(namespace_counts),
         record_link_counts=tuple(record_link_counts),
         additive_record_sources=tuple(additive_record_sources),
     )
 
 
-_NAMESPACE_IDS = (
-    "arwb-base",
-    "acer-additive",
-    "progress-snapshot",
-)
 _INDEX_HEADER = (
     "| Archive Record | Original Path | Original Type | Source Commit | Source "
     "Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |"
@@ -3272,36 +3260,6 @@ def validate_mig0004_historical_targets(
             )
 
 
-def _stage98_namespace_records(
-    actual: frozenset[str],
-    stable_rows: Mapping[str, Mapping[str, object]],
-) -> tuple[dict[str, tuple[str, ...]], list[ArchiveDiagnostic]]:
-    """Derive reporting partitions from Stage 98's durable recovery owners."""
-
-    diagnostics: list[ArchiveDiagnostic] = []
-    legacy_to_stable = {
-        str(row["legacy_path"]): stable for stable, row in stable_rows.items()
-    }
-    base = frozenset(
-        legacy_to_stable.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
-    )
-    # ADR-0030 makes Git history the full-content archive, so a base record is
-    # proved by presence or by a sealed row in the digest-pinned WORK-107
-    # ledger, which carries its source blob and content digest.
-    sealed = frozenset(stable_rows)
-    if not base.issubset(actual | sealed):
-        diagnostics.append(
-            _diagnostic("ARCHIVE-NAMESPACE-BASE", ARCHIVE_ROOT.as_posix())
-        )
-    additive = actual - base
-    namespaces = {
-        "arwb-base": tuple(sorted(base & actual)),
-        "acer-additive": tuple(sorted(additive)),
-        "progress-snapshot": (),
-    }
-    return namespaces, diagnostics
-
-
 def _repository_archive_records(
     root: Path,
 ) -> tuple[dict[str, bytes], list[ArchiveDiagnostic], MigrationProof | None]:
@@ -3461,14 +3419,11 @@ def _repository_archive_records(
 def _work107_stable_rows(root: Path) -> dict[str, Mapping[str, object]]:
     """Load the exact reviewed stable ledger when WORK-107 has been applied."""
 
-    path = root / WORK107_MIGRATION_PATH
-    if not path.exists():
-        return {}
     try:
-        content = path.read_bytes()
-        if hashlib.sha256(content).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
-            raise RuntimeError("WORK-107 stable ledger digest differs")
-        validated = parse_work107_migration_document(content)
+        content = read_worktree_regular_bounded(
+            root, WORK107_MIGRATION_PATH, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
+        )
+        validated = parse_pinned_work107_migration_document(content)
         validated = apply_stable_archive_relocations(
             validated,
             relocated_stable_archive_paths(
@@ -3890,8 +3845,6 @@ def validate_repository_archive(
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK107_MIGRATION_PATH)
         )
-    namespaces, namespace_diagnostics = _stage98_namespace_records(actual, stable_rows)
-    diagnostics.extend(namespace_diagnostics)
     additive_sources: list[ReviewedManifestRecord] = []
     unproved_additions = actual - frozenset(stable_rows) if stable_rows else frozenset()
     if unproved_additions:
@@ -4111,15 +4064,11 @@ def validate_repository_archive(
             diagnostics.append(_diagnostic("ARCHIVE-INDEX-MEMBER", path))
         if int(row[-1]) != record_link_counts.get(path, -1):
             diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", path))
-    namespace_counts = tuple(
-        (namespace, len(namespaces.get(namespace, ()))) for namespace in _NAMESPACE_IDS
-    )
     return _report(
         diagnostics,
         historical_link_count=record_report.historical_link_count,
         record_count=len(records),
         index_record_count=len(index_rows),
-        namespace_counts=namespace_counts,
         record_link_counts=record_report.record_link_counts,
         additive_record_sources=tuple(sorted(additive_sources))
         if not diagnostics

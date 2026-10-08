@@ -530,7 +530,6 @@ def _repository_migration_proof(root: Path) -> Any:
 
     owners = (
         "document_authority",
-        "archive_cutover_manifest",
         "archive_recovery",
         "document_contracts",
         "archive_validation",

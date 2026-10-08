@@ -3,11 +3,11 @@ name: "archive-cutover"
 description: "Use when a governed document or whole Spec package leaves its active stage for a Stage 98 disposition, when retention fails current lifecycle, link, or Archive integrity checks, or when a citation of a retained document needs repointing."
 metadata:
   title: "Archive Cutover"
-  version: "1.1.0"
+  version: "1.1.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-07"
+  updated: "2026-10-09"
 disable-model-invocation: true
 ---
 
@@ -36,16 +36,23 @@ Catalog row is the only machine evidence of where it came from.
    [current lifecycle policy](../../governance/document-lifecycle.md).
    The Stage 99 registry's
    `retention_classes` binds each class to the anchor states it admits, and
-   `archive_citation` decides what may be cited. Record the disposition
-   approval in the owning Task.
+   `archive_citation` decides what may be cited. Verify the actual disposition
+   approval and promoted durable meaning, then record the decision and current
+   owner in the owning Task.
 2. Check the preconditions. A spec package or an Incident bundle leaves as one
-   unit, never member by member. Its anchor's state must admit the class and
-   every other member must be terminal in its own family, or the whole unit
-   stays. No current document may still cite the source as authority: repoint
-   each current citation to the successor or the current route first, because
-   retention waits for consumer zero.
+   unit, never member by member. Check the class and member states in the
+   immutable comparison-base source. Normally its anchor must be admitted by
+   the class and every other lifecycle member must be terminal or explicitly
+   admitted by the unit rule. For the `spec-package` `completed/` route alone,
+   the source Spec and Plan may both be `approved` when the same source package
+   passes completion closure: assigned Tasks are completed, each required
+   criterion has one accepted verdict, required adverse evidence is resolved,
+   and lasting meaning has a named current owner. `approved` status alone does
+   not qualify. No current document may still cite the source as authority:
+   repoint each current citation to the successor or the current route first,
+   because retention waits for consumer zero.
 3. For a retention class, move the whole unit to the class directory at its
-   own stage path with `git mv`, keeping its profile, identity, and terminal
+   own stage path with `git mv`, keeping its profile, identity, and source
    state. Change no path, file mode, or byte, links included; a retained body's
    links are read at its original path in the envelope commit.
 4. For a route disposition, author the body-less record from the
@@ -56,9 +63,10 @@ Catalog row is the only machine evidence of where it came from.
    `<commit>:<original path>`, where the commit is the comparison base. Add no
    blob, digest, branch SHA, or redirect.
 6. Validate the exact index with the selected local staged QA profile. The
-   lifecycle check covers the envelope object, anchor and member states, and
-   entry-for-entry equality; the links-and-owners check covers citation
-   decisions. The current Archive integrity check covers catalog routes and
+   lifecycle check covers the envelope object, anchor and member states,
+   applicable source-package completion, and entry-for-entry equality; the
+   links-and-owners check covers citation decisions. The current Archive
+   integrity check covers catalog routes and
    retained-content invariants over its declared input. The historical
    cutover completion proof remains in its original evidence owner and is
    not recreated by a new placement check.
@@ -67,7 +75,9 @@ Catalog row is the only machine evidence of where it came from.
 
 A retained body, a route record, a frozen record, and a frozen ledger do not
 change afterwards. A mistake found later needs its own decision. Git remains the
-recovery owner for exact source bytes.
+recovery owner for exact source bytes. A Retention Assessment Hold blocks any
+later whole-unit removal under its separately approved disposition; cutover
+eligibility does not authorize that removal.
 
 ## Outputs
 

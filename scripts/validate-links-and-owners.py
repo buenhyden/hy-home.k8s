@@ -33,11 +33,10 @@ try:
         WORK107_LEGACY_INDEX_OVERVIEW,
         WORK107_MIGRATION_PATH,
         WORK107_STABLE_INDEX_OVERVIEW,
-        parse_work107_migration_document,
+        parse_pinned_work107_migration_document,
         parse_archive_envelope,
         read_commit_path_blob,
         recover_work107_legacy_envelope,
-        validate_work107_migration_rows,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_recovery import (
@@ -46,11 +45,10 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         WORK107_LEGACY_INDEX_OVERVIEW,
         WORK107_MIGRATION_PATH,
         WORK107_STABLE_INDEX_OVERVIEW,
-        parse_work107_migration_document,
+        parse_pinned_work107_migration_document,
         parse_archive_envelope,
         read_commit_path_blob,
         recover_work107_legacy_envelope,
-        validate_work107_migration_rows,
     )
 
 try:
@@ -254,12 +252,10 @@ WORK105_AMENDED_ACCEPTED_ADR_SHA256 = {
 
 @lru_cache(maxsize=4)
 def _validated_work107_stable_archive_rows(
-    root_value: str,
     content: bytes,
 ) -> tuple[dict[str, object], ...]:
     try:
-        rows = parse_work107_migration_document(content)
-        return validate_work107_migration_rows(Path(root_value), rows)
+        return parse_pinned_work107_migration_document(content)
     except (
         ArchiveContractError,
         DocumentContractError,
@@ -279,7 +275,6 @@ def _work107_stable_archive_rows(context: "Context") -> tuple[dict[str, object],
         return ()
     content = text.encode("utf-8")
     rows = _validated_work107_stable_archive_rows(
-        str(context.root.absolute()),
         content,
     )
     if not rows:

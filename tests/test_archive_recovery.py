@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import hashlib
 import io
-import json
 import os
 import re
 import subprocess
@@ -918,48 +917,10 @@ class Work107StableArchiveContractTest(unittest.TestCase):
 
     maxDiff = None
 
-    def test_work107_ledger_round_trip_and_closed_mutations(self) -> None:
-        rows = archive_recovery.build_work107_migration_rows(ROOT)
-        rendered = archive_recovery.render_work107_migration_document(rows)
-        parsed = archive_recovery.parse_work107_migration_document(rendered)
-        self.assertEqual(parsed, rows)
-        self.assertEqual(tuple(parsed[0]), archive_recovery.WORK107_LEDGER_FIELDS)
-
-        mutations = []
-        duplicate = [dict(row) for row in rows]
-        duplicate[-1]["stable_path"] = duplicate[-2]["stable_path"]
-        mutations.append(duplicate)
-        wrong_action = [dict(row) for row in rows]
-        wrong_action[0]["action"] = "merged"
-        mutations.append(wrong_action)
-        wrong_object = [dict(row) for row in rows]
-        wrong_object[0]["legacy_envelope_blob"] = "0" * 40
-        mutations.append(wrong_object)
-        missing = [dict(row) for row in rows]
-        missing.pop()
-        mutations.append(missing)
-
-        for mutation in mutations:
-            with self.subTest(mutation=json.dumps(mutation[0], sort_keys=True)[:80]):
-                with self.assertRaises(ArchiveContractError):
-                    archive_recovery.validate_work107_migration_rows(ROOT, mutation)
-
-    def test_work107_document_syntax_accepts_subset_but_reviewed_consumer_rejects_it(
-        self,
-    ) -> None:
-        rows = archive_recovery.build_work107_migration_rows(ROOT)[:1]
-        rendered = archive_recovery.render_work107_migration_document(rows)
-
-        self.assertEqual(
-            archive_recovery.parse_work107_migration_document(rendered), rows
-        )
-        with self.assertRaisesRegex(
-            ArchiveContractError, r"^ARCHIVE-MIGRATION-REVIEWED:"
-        ):
-            archive_recovery.validate_work107_migration_rows(ROOT, rows)
-
     def test_work107_stable_wrapper_preserves_payload_and_dual_recovery(self) -> None:
-        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        rows = archive_recovery.parse_pinned_work107_migration_document(
+            (ROOT / archive_recovery.WORK107_MIGRATION_PATH).read_bytes()
+        )
         change = next(row for row in rows if row["record_kind"] == "change-plan")
         tombstone = next(row for row in rows if row["record_kind"] == "tombstone")
 

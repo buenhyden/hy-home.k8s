@@ -185,66 +185,6 @@ class FiniteWork054Wp003AgentGovernanceAdmissionTest(unittest.TestCase):
 
 class DocumentAuthorityLifecycleTests(unittest.TestCase):
     @staticmethod
-    def _wp004b_committed_transition():
-        migration_path = VALIDATOR.WORK054_WP004B_MIGRATION_PATH.as_posix()
-        target_commit = run_closed_git(
-            "log",
-            "--format=%H",
-            "--diff-filter=A",
-            "--",
-            migration_path,
-        )
-        proposed = VALIDATOR._tree_blob_map(ROOT, target_commit)
-        rows = VALIDATOR.parse_pinned_migration_control(
-            migration_path,
-            VALIDATOR._blob_bytes(
-                ROOT,
-                proposed[VALIDATOR.WORK054_WP004B_MIGRATION_PATH],
-            ),
-        )
-        source_commits = {row.get("source_commit") for row in rows}
-        if len(source_commits) != 1:
-            raise AssertionError("MIG-0004 must name one transition source commit")
-        base_commit = source_commits.pop()
-        if not isinstance(base_commit, str):
-            raise AssertionError("MIG-0004 source commit is malformed")
-        return (
-            base_commit,
-            target_commit,
-            VALIDATOR._tree_blob_map(ROOT, base_commit),
-            proposed,
-        )
-
-    @staticmethod
-    def _wp004b_admitted(base_commit, base, proposed):
-        return VALIDATOR.finite_work054_wp004b_document_authority_paths(
-            root=ROOT,
-            mode="ci",
-            base_commit=base_commit,
-            base_blobs=base,
-            proposed_blobs=proposed,
-        )
-
-    @staticmethod
-    def _mutation_result(base_commit, base, proposed, path, mutation):
-        original_blob_reader = VALIDATOR._blob_bytes
-        sentinel = "f" * 40
-        changed = dict(proposed)
-        changed[path] = sentinel
-
-        def read_blob(root, oid, **kwargs):
-            if oid == sentinel:
-                return mutation
-            return original_blob_reader(root, oid, **kwargs)
-
-        with mock.patch.object(VALIDATOR, "_blob_bytes", side_effect=read_blob):
-            return DocumentAuthorityLifecycleTests._wp004b_admitted(
-                base_commit,
-                base,
-                changed,
-            )
-
-    @staticmethod
     def _authority():
         path = ROOT / "scripts/document_authority.py"
         specification = importlib.util.spec_from_file_location(

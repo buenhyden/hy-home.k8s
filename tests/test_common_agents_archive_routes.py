@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import dataclasses
-import hashlib
 import types
 import unittest
 from pathlib import Path, PurePosixPath
@@ -11,47 +10,6 @@ from pathlib import Path, PurePosixPath
 from scripts import archive_validation as archive
 
 ROOT = Path(__file__).resolve().parents[1]
-MIGRATION = "docs/98.archive/migrations/0021-common-agent-authority-routing.md"
-
-
-class CommonAgentsArchiveRoutesTest(unittest.TestCase):
-    def test_successor_record_preserves_exact_git_source_identities(self):
-        rows, _ = archive.parse_migration_control(
-            MIGRATION, (ROOT / MIGRATION).read_bytes()
-        )
-        requests = {}
-        for row in rows:
-            requests.setdefault(row["source_commit"], []).append(row["legacy_path"])
-        sources = archive._regular_source_bytes(
-            ROOT, {commit: tuple(sorted(paths)) for commit, paths in requests.items()}
-        )
-        for row in rows:
-            with self.subTest(source=row["legacy_path"]):
-                blob, content = sources[row["source_commit"], row["legacy_path"]]
-                self.assertEqual(blob, row["source_blob"])
-                self.assertEqual(
-                    hashlib.sha256(content).hexdigest(), row["content_sha256"]
-                )
-
-    def test_prior_sealed_records_keep_their_complete_baseline_bytes(self):
-        rows, _ = archive.parse_migration_control(
-            MIGRATION, (ROOT / MIGRATION).read_bytes()
-        )
-        commits = {
-            row["source_commit"]
-            for row in rows
-            if row["legacy_path"].startswith("docs/00.agent-governance/")
-        }
-        self.assertEqual(len(commits), 1)
-        paths = tuple(
-            path.relative_to(ROOT).as_posix()
-            for path in sorted((ROOT / "docs/98.archive/migrations").glob("*.md"))
-            if path.relative_to(ROOT).as_posix() < MIGRATION
-        )
-        baseline = archive._regular_source_bytes(ROOT, {commits.pop(): paths})
-        for (_commit, path), (_blob, content) in baseline.items():
-            with self.subTest(record=path):
-                self.assertEqual((ROOT / path).read_bytes(), content)
 
 
 class CommonAuthorityOwnerDiagnosticsTest(unittest.TestCase):

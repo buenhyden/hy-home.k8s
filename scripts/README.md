@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.7.0"
+version: "0.7.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 ---
 # scripts
 
@@ -87,9 +87,21 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증 |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증 |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
-| `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py`, `archive_cutover_manifest.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
+| `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. `archive_recovery.py`의 공용 MIG-0001 reader가 현재 원장 bytes의 고정 digest와 canonical 형식을 확인하며, Archive·link 소비자가 그 결과를 읽는다. 필요할 때 역사 envelope은 bounded Git reader로 복구한다. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
 | `run-archive-contract-tests.py` | Stage 98 Archive 계약 회귀를 해당 입력의 quick·staged 또는 명시적으로 선택된 목적 gate에서 실행한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
+
+현재 MIG-0001 원장이 없거나 그 bytes가 바뀌면 Archive 검사는 실패한다.
+고정 digest는 현재 원장 identity를, canonical parser와 현재 record 검사는
+형식·source/blob/provenance를, 필요할 때 실행하는 Git reader는 역사
+envelope 복구를 맡는다. 승인된 현재 경로에서는 과거 93행을 Git에서 매번
+재생성하는 builder/checker와 과거 완료 census만 지키던 namespace guard,
+전용 manifest·테스트를 제거했다. 현재 원장의 누락·변조, record source와
+provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거부한다.
+원장 digest나 AST 소비자 조사는 과거 모든 Git object의 존재 또는 보관
+단위의 처분 승인을 증명하지 않는다. 실제 전체 단위 처분은
+[Archive Retention Assessment](../docs/98.archive/README.md)가
+별도로 소유한다.
 
 ### Agent governance owners
 
