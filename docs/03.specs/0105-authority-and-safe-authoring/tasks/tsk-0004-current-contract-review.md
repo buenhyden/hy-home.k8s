@@ -1,8 +1,8 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "blocked"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -155,7 +155,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs accepted through EVD-002; final common approval/adoption and server mutation require the decisions in EVD-003/004 |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs accepted through EVD-002/005/006. Reason: final common edition/adoption and required-check migration decisions remain unapproved (EVD-003/004). Next owner: buenhyden with Project-Template source writer and server operator |
 
 ## Task Evidence
 
@@ -166,6 +166,7 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-003 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Final common-edition approval and actual adoption | First-establishment candidate above; no final approval decision yet | DEFER | Common Edition Decision and Delivery above; next owner buenhyden with common-source writer | pending |
 | EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Required-check migration and actual PR style result | Exact proposed resource above; no write approval or current PR run | DEFER | Server Read-back and Proposed Change above; next owner buenhyden/operator | pending |
 | EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help and procedure adoption review | release.py at intake HEAD; --help, prepare --help and publish --help; corrected Runbook | PASS | All three help commands returned rc=0; independent p01_review confirmed procedure adoption after C2 selected QA PASS. Active procedure adoption grants no Release execution permission | accepted |
+| EVD-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Local Runbook adoption and result-recording index | C3 two-path index: RUN-0012/1.0.0 active and this Task/0.2.0 in-progress | PASS | Six selected gates, actual Commitizen message and independent p01_review passed; normal commit 7e3966d7b7341c5f0710bed5303e05b59b3c9f26 | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -239,8 +240,15 @@ C2 message had already passed pinned Commitizen. Normal commit created
 Independent p01_review found no
 blocking finding on that corrected input and confirmed RUN-0012's eligibility
 for active adoption, while trusted git-cliff and actual publication remain
-DEFER. The next index adopts RUN-0012/1.0.0 and records this observed result;
-its own closing-document checks remain NOT_RUN until observed.
+DEFER. C3 adopted RUN-0012/1.0.0 and recorded the observed C2 result. Its
+two-path index passed the same six selected document/style/nonstyle gates
+as C1, rc=0. Cached diff check and actual message
+`_workspace/p01-c3-message.txt` passed; independent p01_review found no
+required finding on the adoption and result-recording input. Normal commit
+created `7e3966d7b7341c5f0710bed5303e05b59b3c9f26`. RUN-0012's adoption is
+therefore a local procedure decision under the current request, not a claim
+that historical SPEC-0107 EVD-138 executed successfully. POL-0003's existing
+explicit reciprocal-source exclusion remains justified and unchanged.
 
 RTK raw shell reads initially hit `bwrap` loopback startup failure;
 bounded tool-native escalation succeeded without changing sandbox or trust
@@ -249,3 +257,43 @@ Required local commands will retain their failure/result and technical process
 limits. No business deadline, timebox, reserve approval or blanket full sweep
 is introduced. Unapproved shared consumption and server changes remain DEFER
 with the owners above; current local authoring proceeds independently.
+
+### Remaining decisions and handoff
+
+The authorized independent local repairs are accepted through EVD-002/005/006.
+Agent-execution owns the single shared-source route; quality owns the actual
+resource semantics consumed by work-lifecycle and approval-and-safety. Parent
+Spec/Plan follow-up routes and the portable SPEC-0107 receipt reference now
+match those owners. Earlier package completion, receipt outcomes and source
+history remain intact. No CI workflow, Registry, runtime permission, secret,
+remote setting, tag or live resource was changed.
+
+This Task moves from in-progress to blocked solely for the two remaining
+decisions already separated in EVD-003/004. No missing historical approval,
+future digest or future commit is an intake gate. On a real decision, resume
+this Task and execute only its resulting authorized scope:
+
+- `buenhyden` and the Project-Template source writer review the one draft.3
+  candidate and establish its one source, actual revision and approved edition.
+  Inspect the unobserved blog-data adapter, then record local and joint adoption
+  separately at each actual consumer. No four-repository approval is claimed.
+- `buenhyden`/operator resolves App 5156553's intended consumer and approves or
+  rejects the exact main required-check migration above. If approved, refresh
+  the read-back, apply only that resource, then observe its read-back and an
+  actual PR style run. Until those events, required-check repair is DEFER.
+
+The first C4 one-path staged QA returned rc=1: five selected gates passed,
+but markdown-profiles rejected the blocked row with
+`TASK-EXECUTION-EVIDENCE`. The direct named profile diagnostic returned rc=1,
+`row 1: blocked reason and next owner required`. Those details existed in
+the body but lacked the required `Reason:` and `Next owner:` row markers.
+The Task row now states both decisions and responsible owners using that
+existing syntax. No checker or state/result meaning changed. The failed C4
+input remains a separate historical attempt; the corrected final index needs
+its own selected checks.
+
+Current Task/0.3.0 is a closing-document input. Its own final selected QA,
+message, review and commit are reported after observation in the final chat
+handoff; earlier PASS rows identify only their actual checked indexes. The
+worktree and unique portable candidate remain available for the next owner.
+There is no push, PR, merge, publication or owned-ref cleanup claim.
