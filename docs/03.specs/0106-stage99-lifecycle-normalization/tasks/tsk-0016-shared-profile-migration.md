@@ -1,8 +1,8 @@
 ---
 title: "Shared Profile and Operations Form Migration"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -121,30 +121,32 @@ this local document migration.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | Migrate the shared profile adapter and current operating forms with truthful handoffs | platform | frontmatter | PASS | pending | EVD-016 independent implementation review and EVD-018 final exact-index QA PASS; closing acceptance and local integration remain pending |
+| WORK-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | Migrate the shared profile adapter and current operating forms with truthful handoffs | platform | frontmatter | PASS | accepted | EVD-016 independent review, EVD-018 exact implementation index and EVD-019 evidence/state index PASS support local VAL-P02-016 acceptance; common approval and P03/P08 external follow-ups remain separately owned |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-P02-016-001 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Intake and source inspection | Actual clean main c9faa9f; current Registry/schema/form/consumer/operations graph | PASS | Inputs above and subsequent bounded inventory in this Task | pending |
-| EVD-P02-016-002 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Scope commit index/message | Three Spec/Plan/initial-draft Task paths; actual commit 30f52bfa716449140ae9c94ece3882f426177f7e | PASS | qa.py staged: six selected gates PASS; actual commitizen message check PASS; normal commit, unchanged registered Task form source | pending |
-| EVD-P02-016-003 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | New binding/content/order/lineage regressions | tests.test_shared_contract_binding, test_operations_section_contract, test_operations_lineage_contract; Python3.12.3 and hash-pinned dependencies | PASS | 11 synthetic tests PASS after RED; initial wrong API invocation errors preserved as setup mistake, corrected API RED had 3 expected missing-schema/typed errors | pending |
-| EVD-P02-016-004 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Retained exact form and Task writer controls | Stage05 template parity method, row-summary/result method, two writer preservation/single-row methods | PASS | Four named existing methods PASS; no all-tests discovery or full/CI sweep | pending |
-| EVD-P02-016-005 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent operations/security review | All 16 current artifacts; changed RUN-0004 token and RUN-0010 TLS instructions | PASS | operations_research and doc-writer per-row packet; server_security_review scoped PASS; no live/secret commands | pending |
-| EVD-P02-016-006 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent parser review | Placeholder checkbox, empty checkbox, anchor-only and TODO-only fence inputs | FAIL | p01_review MEDIUM content boundary finding; root routes focused repair and re-review before acceptance | pending |
-| EVD-P02-016-007 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair the EVD-006 content-boundary FAIL | Seven previously accepted placeholder variants plus meaningful checklist/code/anchor text controls | PASS | quality-engineer RED seven expected failures then GREEN seven content/lineage methods; scoped Ruff check/format PASS; independent final review pending | pending |
-| EVD-P02-016-008 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent recovery placement review | RUN-0010 abort and RUN-0002 troubleshooting/SAN remediation originally remained under Procedure/Verification | FAIL | p01_review MEDIUM role-placement finding; actual commands and approvals retained for repair | pending |
-| EVD-P02-016-009 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair EVD-008 role placement | Recovery-specific submodules moved under Recovery and Escalation in two runbooks | PASS | doc-writer unique-command/section and diff checks PASS; forward checks remain Procedure/Verification; independent final review pending | pending |
-| EVD-P02-016-010 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | First integrated staged QA | 33-path index tree 68369cdb06580595916b5c0cf4c9eb49d10aad6c after scope commit | FAIL | Existing selector chose 17 leaves: 16 PASS, selected-style FAIL. Narrow diagnosis found MD033 at POL-0001's compatibility anchor; canonical broad scripts/tests routes also selected unrelated Archive/Kubernetes leaves, recorded as observations rather than new acceptance gates | pending |
-| EVD-P02-016-011 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Exact document selection repair | Document-only paths, registry route, near-name other scripts, mixed GitOps input | PASS | quality-engineer RED 11 expected failures then five GREEN methods; new exact routes preserve other product and mixed-change behavior; all 16 new focused methods PASS after integration | pending |
-| EVD-P02-016-012 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair EVD-010 style cause | POL-0001 compatibility anchor; pinned markdownlint-cli2 v0.22.1 | PASS | Single-line documented MD033 exception preserves old fragment; exact-file lint PASS; pinned Ruff check/format on changed Python PASS; final changed-index staged check still required | pending |
-| EVD-P02-016-013 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Integrated staged QA after style/selection repair | 36-path index tree 29b3aa9cc25f17d7c5241141fe7d1492503c2c6f | PASS | qa.py staged rc0: all 12 selected gates PASS; this snapshot precedes the EVD-015 helper-route repair, whose final index requires fresh checks | pending |
-| EVD-P02-016-014 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent future-scope review | Standalone document_contracts.py and document_authority.py changes | FAIL | p01_review MEDIUM: first narrow route dropped historical guards although these helpers also own Archive contracts; Stage 99 input still selected them in EVD-013, so that result is not invalidated retroactively | pending |
-| EVD-P02-016-015 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Restore shared-helper historical guards | Exact shared-document-history-readers route and standalone/narrow/mixed/near-name synthetic inputs | PASS | quality-engineer RED both helper subcases, then six focused tests GREEN; shared helpers select Archive plus document gates, other readers remain narrow, product and mixed routes retained; Ruff and JSON parse PASS | pending |
-| EVD-P02-016-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent final implementation review | Actual repaired working diff; p01_review code-reviewer did not author any changed file | PASS | Placeholder content, recovery placement, compatibility anchor, candidate null proof, identities/states and helper historical guards re-reviewed; no unresolved required finding. Reviewer ran six standalone scope-selection methods PASS; final index and closing disposition still require observation | pending |
-| EVD-P02-016-017 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Changed-index integrated QA snapshot guard | 36-path tree e5c39c46a9f4a3223f0e1087cb1894b5958a828f | FAIL | All 12 leaves PASS but aggregate rc1: source HEAD/index/files changed during QA. Root ran git write-tree during execution, which can update raw-index cache metadata; no unstaged content difference observed. This is not final QA PASS. Identify input before the next run and invoke no Git/index/writer command while it runs | pending |
-| EVD-P02-016-018 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Final frozen implementation index and message | 36-path tree 8c00fa96b8cf45069621b3d5c2dc573607220670; unchanged pinned tools/config/trust; no Git/index/writer during QA | PASS | qa.py staged aggregate rc0, all 12 selected gates PASS including final lint/format and both snapshot guards; actual implementation message previously PASS and used unchanged; normal commit d67bc63ee446fbb2b9c8ab5a69a0ec3a6944746d preserves the checked tree | pending |
+| EVD-P02-016-001 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Intake and source inspection | Actual clean main c9faa9f; current Registry/schema/form/consumer/operations graph | PASS | Inputs above and subsequent bounded inventory in this Task | accepted |
+| EVD-P02-016-002 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Scope commit index/message | Three Spec/Plan/initial-draft Task paths; actual commit 30f52bfa716449140ae9c94ece3882f426177f7e | PASS | qa.py staged: six selected gates PASS; actual commitizen message check PASS; normal commit, unchanged registered Task form source | accepted |
+| EVD-P02-016-003 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | New binding/content/order/lineage regressions | tests.test_shared_contract_binding, test_operations_section_contract, test_operations_lineage_contract; Python3.12.3 and hash-pinned dependencies | PASS | 11 synthetic tests PASS after RED; initial wrong API invocation errors preserved as setup mistake, corrected API RED had 3 expected missing-schema/typed errors | accepted |
+| EVD-P02-016-004 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Retained exact form and Task writer controls | Stage05 template parity method, row-summary/result method, two writer preservation/single-row methods | PASS | Four named existing methods PASS; no all-tests discovery or full/CI sweep | accepted |
+| EVD-P02-016-005 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent operations/security review | All 16 current artifacts; changed RUN-0004 token and RUN-0010 TLS instructions | PASS | operations_research and doc-writer per-row packet; server_security_review scoped PASS; no live/secret commands | accepted |
+| EVD-P02-016-006 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent parser review | Placeholder checkbox, empty checkbox, anchor-only and TODO-only fence inputs | FAIL | p01_review MEDIUM content boundary finding; root routes focused repair and re-review before acceptance | rejected |
+| EVD-P02-016-007 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair the EVD-006 content-boundary FAIL | Seven previously accepted placeholder variants plus meaningful checklist/code/anchor text controls | PASS | quality-engineer RED seven expected failures then GREEN seven content/lineage methods; scoped Ruff check/format PASS; independent re-review PASS in EVD-016 | accepted |
+| EVD-P02-016-008 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent recovery placement review | RUN-0010 abort and RUN-0002 troubleshooting/SAN remediation originally remained under Procedure/Verification | FAIL | p01_review MEDIUM role-placement finding; actual commands and approvals retained for repair | rejected |
+| EVD-P02-016-009 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair EVD-008 role placement | Recovery-specific submodules moved under Recovery and Escalation in two runbooks | PASS | doc-writer unique-command/section and diff checks PASS; forward checks remain Procedure/Verification; independent re-review PASS in EVD-016 | accepted |
+| EVD-P02-016-010 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | First integrated staged QA | 33-path index tree 68369cdb06580595916b5c0cf4c9eb49d10aad6c after scope commit | FAIL | Existing selector chose 17 leaves: 16 PASS, selected-style FAIL. Narrow diagnosis found MD033 at POL-0001's compatibility anchor; canonical broad scripts/tests routes also selected unrelated Archive/Kubernetes leaves, recorded as observations rather than new acceptance gates | rejected |
+| EVD-P02-016-011 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Exact document selection repair | Document-only paths, registry route, near-name other scripts, mixed GitOps input | PASS | quality-engineer RED 11 expected failures then five GREEN methods; new exact routes preserve other product and mixed-change behavior; all 16 new focused methods PASS after integration | accepted |
+| EVD-P02-016-012 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Repair EVD-010 style cause | POL-0001 compatibility anchor; pinned markdownlint-cli2 v0.22.1 | PASS | Single-line documented MD033 exception preserves old fragment; exact-file lint PASS; pinned Ruff check/format on changed Python PASS; final changed-index PASS in EVD-018 | accepted |
+| EVD-P02-016-013 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Integrated staged QA after style/selection repair | 36-path index tree 29b3aa9cc25f17d7c5241141fe7d1492503c2c6f | PASS | qa.py staged rc0: all 12 selected gates PASS; this snapshot precedes the EVD-015 helper-route repair, whose final index requires fresh checks | accepted |
+| EVD-P02-016-014 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent future-scope review | Standalone document_contracts.py and document_authority.py changes | FAIL | p01_review MEDIUM: first narrow route dropped historical guards although these helpers also own Archive contracts; Stage 99 input still selected them in EVD-013, so that result is not invalidated retroactively | rejected |
+| EVD-P02-016-015 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Restore shared-helper historical guards | Exact shared-document-history-readers route and standalone/narrow/mixed/near-name synthetic inputs | PASS | quality-engineer RED both helper subcases, then six focused tests GREEN; shared helpers select Archive plus document gates, other readers remain narrow, product and mixed routes retained; Ruff and JSON parse PASS | accepted |
+| EVD-P02-016-016 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent final implementation review | Actual repaired working diff; p01_review code-reviewer did not author any changed file | PASS | Placeholder content, recovery placement, compatibility anchor, candidate null proof, identities/states and helper historical guards re-reviewed; no unresolved required finding. Reviewer ran six standalone scope-selection methods PASS; final index and closing disposition still require observation | accepted |
+| EVD-P02-016-017 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Changed-index integrated QA snapshot guard | 36-path tree e5c39c46a9f4a3223f0e1087cb1894b5958a828f | FAIL | All 12 leaves PASS but aggregate rc1: source HEAD/index/files changed during QA. Root ran git write-tree during execution, which can update raw-index cache metadata; no unstaged content difference observed. This is not final QA PASS. Identify input before the next run and invoke no Git/index/writer command while it runs | rejected |
+| EVD-P02-016-018 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Final frozen implementation index and message | 36-path tree 8c00fa96b8cf45069621b3d5c2dc573607220670; unchanged pinned tools/config/trust; no Git/index/writer during QA | PASS | qa.py staged aggregate rc0, all 12 selected gates PASS including final lint/format and both snapshot guards; actual implementation message previously PASS and used unchanged; normal commit d67bc63ee446fbb2b9c8ab5a69a0ec3a6944746d preserves the checked tree | accepted |
+| EVD-P02-016-019 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Evidence and legal in-progress transition index/message | Single Task path tree 6355adddd3c7ba48a205a53de72ef5cda40dd4ad after d67bc63 | PASS | Six selected document/state/link/style/nonstyle gates and snapshot guards PASS; actual message docs: record verified profile migration evidence PASS; normal commit fefbd493ae315a13ec1f7f5b8285fc18e78f6075 preserves that tree | accepted |
+| EVD-P02-016-020 | [VAL-P02-016](../spec.md#success-criteria--verification-plan) | WORK-016 | Independent closing disposition and actual closing message | Task0.4 candidate after fefbd49; code-reviewer p01_review read-only and pinned Commitizen | PASS | Legal completed transition and single local criterion verdict reviewed with actual commit/check inputs; all FAIL results retained, no NOT_RUN/DEFER accepted or future closing QA claimed PASS; no required finding. Actual message docs: accept local profile migration and handoff checked PASS | accepted |
 
 ### Executed Commands and Input Identity
 
@@ -160,6 +162,8 @@ _workspace/qa-venv/bin/python -m unittest tests.test_document_strict_cutover.Sta
 _workspace/qa-venv/bin/python scripts/qa.py staged
 _workspace/qa-venv/bin/python -m pre_commit run commitizen --hook-stage commit-msg --commit-msg-filename _workspace/p02-scope-message.txt
 _workspace/qa-venv/bin/python -m pre_commit run commitizen --hook-stage commit-msg --commit-msg-filename _workspace/p02-implementation-message.txt
+_workspace/qa-venv/bin/python -m pre_commit run commitizen --hook-stage commit-msg --commit-msg-filename _workspace/p02-validation-message.txt
+_workspace/qa-venv/bin/python -m pre_commit run commitizen --hook-stage commit-msg --commit-msg-filename _workspace/p02-completion-message.txt
 ```
 
 The actual UTF-8 messages were checked with the pinned Commitizen grammar:
@@ -216,13 +220,30 @@ No remote/live PASS, common-edition approval or joint adoption is inferred.
 
 ### Local Acceptance and Finish Preparation
 
-This evidence commit follows the actual ready implementation commit with the
-legal in-progress transition. The single Task row keeps its frontmatter marker;
-there is no second authored status field. Closing acceptance will assess
-VAL-P02-016 against the actual implementation, independent review and checks,
-then record the legal completed transition. This local scope does not require
-fabricated joint approval or live evidence. P01's common-decision/HIGH Task is
-not closed by this work.
+VAL-P02-016 is locally accepted against the actual coupled implementation,
+all 16 current operating reviews, focused boundary regressions, independent
+re-review and the EVD-018/019 final input checks. The single Task row is the one
+criterion verdict; evidence rows are supporting observations, with historical
+FAILs rejected and repairs retained. Scope commit 30f52bf recorded draft,
+implementation d67bc63 recorded ready, and evidence fefbd49 recorded in-progress.
+This closing candidate records the legal completed transition after those
+actual commits. EVD-020 records the observed independent closing review and
+actual message PASS. Its new Task bytes still require closing-index checks
+before committing; no future check is reported PASS in this document.
+
+The single row keeps the frontmatter status marker; there is no second authored
+status field. Local acceptance neither fabricates joint approval nor live
+evidence and does not close P01's common-decision/HIGH Task. Durable ownership
+is Stage 99/platform for the adapter/readers; buenhyden for the one shared
+source and edition; P03 for joint state decisions; P08/platform for operating
+truth and live verification; P01 security/CI operator for SEC-P01-001 HIGH.
+
+Automatic approval review rejected an attempted blanket evidence-acceptance
+rewrite because it could approve unexecuted rows; that command never ran.
+After reading all actual rows, the safer selective update asserted explicit
+PASS/FAIL IDs and concrete locations before changing acceptance only. No result
+was changed or unexecuted check approved. Independent EVD-020 review confirmed
+the disposition; no action remains blocked by that rejection.
 
 The selected finish is clean-main fast-forward integration, followed by only
 the owned P02 branch/worktree removal. Root main was clean at c9faa9f before
@@ -231,4 +252,6 @@ and Git; the original shared candidate remains in the main checkout's P01
 scratch with its recorded digest. Owned tool environments and temporary message
 files are disposable; preserve any otherwise unique public receipt before
 worktree removal. Actual final closing-index checks, integration and cleanup
-will be reported only after they occur; no remote push/PR/release is included.
+will be reported only after they occur in the delivery response; no remote
+push/PR/release is included. An unchanged fast-forward reuses the actual checked
+tree rather than replaying identical checks under a delivery phase name.
