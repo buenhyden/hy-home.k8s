@@ -1,10 +1,10 @@
 ---
 title: "Local Quality and Release Lifecycle"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 layer: "specs"
 artifact_id: "SPEC-0107"
 ---
@@ -22,15 +22,21 @@ and [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance
 owns the architectural separation of validation, execution, and evidence.
 [ADR-0048](../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md)
 records the durable local QA and SemVer release ownership decision.
-Implementation and actual results belong to this package's [Task](tasks/tsk-0001-local-qa-and-release.md).
+Original implementation and actual results remain in [Task 0001](tasks/tsk-0001-local-qa-and-release.md).
+The bounded current QA and Archive reappraisal belongs to [Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md).
 
 ## Strategic Boundaries & Non-goals
 
-The user authorizes a scoped repair of local QA, GitHub workflows and their
+The original WORK-001 instruction authorized a scoped repair of local QA, GitHub workflows and their
 direct consumers, standard commit and release preparation, normal logical
 commits, push and main integration after valid local evidence. That instruction
 also covers cleanup of development branches and owned worktrees after their
-history and evidence are preserved. It does not establish a successful check,
+history and evidence are preserved. This describes the original delivery and
+grants no standing external authority for WORK-002. The persisted user
+instruction authorizes P04 local work, normal commits, local main integration
+and cleanup of owned development refs after their evidence is preserved;
+P04 does not infer push, PR, server-setting, tag or live authorization.
+The original instruction did not establish a successful check,
 authenticated remote setting, published Release, Project field update, native
 hook delivery, or live GitOps/Vault operation. Protected external actions need
 their actual target and operator route. A static workflow file cannot serve as
@@ -69,6 +75,40 @@ The `ci` CLI alias is a local profile contract and is assessed separately.
 General Archive integrity remains an ongoing validation rule; past cutover
 completion proof is a historical record, not a recurring gate unless a distinct
 current consumer demonstrates its necessity.
+
+### Current QA and Archive reappraisal
+
+The follow-up [Plan unit WORK-002](plan.md#work-breakdown) inventories actual
+validation leaves, callers, imports, discovery paths, fixtures, hooks and
+hosted jobs before a retirement decision. Classify each by current DOC, WEB,
+VAULT, TEMPLATE, DOCKER or K8S purpose, unique parser/selector/security
+guarantee, input identity, trust boundary and durable consumer. Keep supported
+older-version contracts when they still have a consumer. Where a guarantee
+continues, transfer its unique coverage to the current owner before removing
+a duplicate leaf, caller or registration, then dedicated helper, fixture and
+test. Where the guarantee itself has ended, document consumer-zero evidence
+and remove its coupled surfaces without inventing a replacement. A name,
+duration, previous failure, completed-document count or historical status/hash
+is not a disposal verdict. Current negative and recovery checks remain where
+they protect a supported contract.
+
+Review current Archive policy, catalog and inbound consumers separately from
+frozen historical execution and cutover records. Promote a still-current rule
+at its existing owner; preserve cited historical facts without treating their
+old procedure text as current policy. Any whole-unit Git-history-only
+disposition requires actual value and consumer analysis, specific approval,
+hold clearance and a reachable recovery coordinate before the unit changes.
+An unchanged original payload is not permission to delete its catalog or route.
+No Archive move or deletion follows merely from this Spec amendment.
+
+The same `WGOV-CORE / 3.0.0-draft.3` candidate is a review input for C06,
+C09 and C11, with proposed common owner `buenhyden` and proposed
+Project-Template path `.agents/governance/shared-standard.md`. Its inspected
+file digest is `3f46c63daae094649edccec33682ecba99844b184c4b78b558281c7c05ff3271`;
+that identifies draft content, not approval. A final joint edition, local
+adoption and four-repository adoption require separate actual decisions and
+evidence. This repository's existing QA and Archive owners remain authoritative
+for local implementation while that common decision is pending.
 
 ### Actual agent evaluation evidence
 
@@ -169,12 +209,14 @@ only when observed through an authorized interface.
 
 ## Core Design
 
-The [Plan](plan.md) orders four bounded slices: inventory and succession, local validation
+The [Plan](plan.md) records the original four bounded slices: inventory and succession, local validation
 and Git stage routing, release and commit consumers, and final evidence/review.
+WORK-002 adds a separate current QA and Archive reappraisal after those
+historical slices.
 Each source owner updates its current contract and direct consumers together.
 Maintain distinct static, local runner, hosted, provider-native, and live
-evidence lanes. The [Task](tasks/tsk-0001-local-qa-and-release.md) is the
-sole work-state and implementation-acceptance owner and records C16 source
+evidence lanes. [Task 0001](tasks/tsk-0001-local-qa-and-release.md) is the
+sole WORK-001 work-state and implementation-acceptance owner and records C16 source
 checks. Only terminal C17 closing-index, commit and post-commit facts use the
 non-authoritative handoff receipt described below. The current
 [main release Runbook](../../05.operations/runbooks/0012-main-release-preparation-runbook.md)
@@ -226,10 +268,10 @@ purpose/unit commands; implementation changed-input selection and exact
 results are recorded in the Task. Use named focused regressions for changed
 behavior, the configured actual commit-message validation and an independent
 read-only semantic review. A `completion` check, if selected, uses the current
-Spec anchor and actual index. The [Task](tasks/tsk-0001-local-qa-and-release.md)
-owns implementation execution and acceptance through the substantive C16
+Spec anchor and actual index. The original [Task 0001](tasks/tsk-0001-local-qa-and-release.md)
+owns WORK-001 execution and acceptance through the substantive C16
 input; this Spec does not promote evidence from another input or lane. For
-this SPEC-0107 closing delivery only, the controller records terminal
+the original SPEC-0107 closing delivery only, the controller records terminal
 closing-index checks and the closing commit and post-commit delivery facts
 after observation in an ignored handoff receipt referenced by the Task and
 final response. That receipt supports delivery verification; it is not a
@@ -243,6 +285,7 @@ second work-state owner, approval source or substitute for Task acceptance.
 | VAL-LOCAL-QA-002 | Local stage matrix, exact-index pre-commit style checks, selected affected and named behavior/Archive/security results, and independent review show bounded selection without a retired full/ci sweep, blanket unit discovery, duplicate same-input leaves or an unobserved hosted result claim. The selected hosted PR style check remains a required PR defense: when an actual PR run is observed, evaluate it at its own merge SHA/run; otherwise record `DEFER` for that hosted lane. Local implementation may be accepted from its distinct source and trusted-base checks. Absent deployment routing stays unobserved. Official primary sources are dated and traced from claim to local decision in Task evidence. |
 | VAL-LOCAL-QA-003 | Commitizen, SemVer release producer and main `CHANGELOG.md` contracts have focused positive and refusal evidence; actual remote publication is recorded separately. |
 | VAL-LOCAL-QA-004 | Issue/Spec/Task/Project ownership, current links and no-copy/no-bidirectional rules are reviewed; the evaluation route and empty aggregate capacity preserve separate evidence authority without fabricating a run; final Task records commands, lanes, limits, approvals, integration and remaining owner. |
+| VAL-LOCAL-QA-005 | The current leaf/caller/import/discovery/fixture/consumer inventory supports each QA keep, transfer or retirement decision and focused regression on its actual input. Current Archive policy, retained historical evidence and any proposed whole-unit disposition have distinct owners and proof; no frozen payload, catalog unit or route is removed without specific approval, hold and recovery evidence. The Task records source, command, result, review and remaining owner without converting prior PR success, local checks or a draft common edition into current hosted, live or joint-adoption PASS. |
 
 ## Traceability
 
@@ -254,3 +297,4 @@ second work-state owner, approval source or substitute for Task acceptance.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-002 | Local and hosted lane boundary review; [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) proportionate selected checks and independent review; [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) distinct local, hosted and live evidence labels; [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) focused, staged and final local input evidence. |
 | [REQ-0003-FR-0029](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-003 | SemVer producer and existing-tag refusal; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) commit and release consumer inventory. |
 | [REQ-0003-FR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-004 | Unique work-tracking owner review; [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) Task-owned implementation result and acceptance, with only terminal SPEC-0107 delivery facts in its referenced non-authoritative handoff receipt; [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) current owner links and retired-consumer succession; [REQ-0003-FR-0031](../../01.requirements/0003-workspace-agent-governance-platform.md) paired evaluation route, form ownership and empty aggregate boundary. |
+| [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-LOCAL-QA-005 | Current consumer and unique coverage disposition before retirement; [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) current Archive integrity versus historical cutover proof; [REQ-0003-FR-0030](../../01.requirements/0003-workspace-agent-governance-platform.md) actual active script/test/workflow inventory; [REQ-0003-NFR-0003](../../01.requirements/0003-workspace-agent-governance-platform.md) dated source and claim-to-local-decision evidence. |

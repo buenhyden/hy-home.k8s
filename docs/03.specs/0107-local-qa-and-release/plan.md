@@ -1,10 +1,10 @@
 ---
 title: "Local Quality and Release Lifecycle Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 layer: "specs"
 artifact_id: "SPEC-0107-PLAN-0001"
 parent_ids: ["SPEC-0107"]
@@ -14,20 +14,26 @@ parent_ids: ["SPEC-0107"]
 
 ## Global Constraints
 
-Use the [Spec](spec.md) contract and current [Task](tasks/tsk-0001-local-qa-and-release.md)
-for this request. Preserve frozen Archive and completed Task evidence, unique
+Use the [Spec](spec.md) contract, completed [Task 0001](tasks/tsk-0001-local-qa-and-release.md)
+as history and current [Task 0002](tasks/tsk-0002-archive-and-qa-retirement.md)
+for the bounded follow-up. Preserve frozen Archive and completed Task evidence, unique
 negative contracts, secret and live boundaries. No check, authorization,
 independent review or external publication is presumed from file presence.
-The user authorizes local repair, normal logical commits, push/main integration
+The original WORK-001 instruction authorized local repair, normal logical commits, push/main integration
 and cleanup of owned development refs after preservation. Release publication,
 remote Project settings and live/native trust changes need their actual
 operator route. Update one current owner and its direct consumers per rule.
+That original scope is historical and is not standing P04 external authority.
+The persisted user instruction authorizes local P04 work, normal commits,
+local main integration and owned branch/worktree cleanup after preserving
+evidence. No current push, PR, server-setting, tag or live authority is
+inferred from the original WORK-001 wording.
 
 ## Overview
 
-Execute SPEC-0107 in one Task with one execution row. Work packages describe
-dependency order only; work status, implementation commands, checks and
-acceptance are recorded in that Task. Only actual terminal SPEC-0107 closing
+The original SPEC-0107 delivery used one completed Task and WORK-001. The
+current reappraisal uses WORK-002 and its own Task; work status, implementation
+commands, checks and acceptance are recorded there. Only actual terminal original SPEC-0107 closing
 checks, commit and delivery facts go to its referenced non-authoritative
 handoff receipt. Its draft, ready, in-progress and completed transitions
 use distinct normal commits; the Task links the actual evidence and delivery
@@ -78,8 +84,30 @@ independently, record actual evidence and integrate only accepted work.
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, named purpose/unit gates after retirement, current anchor completion, semantic review |
+| WORK-002 | [VAL-LOCAL-QA-005](spec.md#success-criteria--verification-plan) | Inventory current QA leaf/caller/import/discovery/fixture/consumer graph and Archive policy/catalog/route consumers; decide keep, transfer or retire by current purpose; implement only supported, authorized local changes | Existing quality and Archive owners; immutable historical Task and Archive payloads; specific disposition approval, hold and recovery proof before any whole-unit removal | [SPEC-0107-TSK-0002](tasks/tsk-0002-archive-and-qa-retirement.md) | Intake and consumer map, focused changed-rule regression, selected actual-index document/style and purpose checks, independent review, bounded disposition and remaining-owner evidence recorded in the Task |
+
+WORK-002 follows this dependency order: trace active producer and reader
+surfaces; classify continuing and obsolete guarantees; transfer any unique
+continuing coverage; remove proven duplicate caller/registration and then
+its dedicated support; inspect current Archive policy and inbound links;
+record any separate protected whole-unit disposition decision. A historic
+cutover census, old completed Task or prior successful PR run does not prove
+the current changed input. No Archive payload, catalog unit or route is removed
+without the exact approval, hold and recovery evidence. The joint
+`WGOV-CORE / 3.0.0-draft.3` C06/C09/C11 comparison is a candidate review,
+not a final edition or four-repository adoption.
 
 ## Verification Plan
+
+For WORK-002, use current Registry and quality policy to select affected
+document, Archive, security and purpose checks after the actual consumer map
+and changed paths exist. A focused negative/boundary regression is required
+for changed validators or selectors; ordinary document edits select the
+relevant profile, relationship, link, state and style checks. Keep static
+source, local, hosted PR and live evidence separate. Prior PR 136 success is
+evidence only for its earlier input. The new Task records actual inputs,
+results, reviews and unresolved HIGH workflow-control risk. This Plan does
+not authorize a destructive Archive operation or claim QA completion.
 
 Before behavior edits, read active validation registry, selected gate commands,
 tool identities, hooks and limits. Execute focused failing and passing cases
