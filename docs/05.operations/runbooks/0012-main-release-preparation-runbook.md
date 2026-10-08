@@ -1,8 +1,8 @@
 ---
 title: "Main Release Preparation"
-version: "0.2.0"
+version: "1.0.0"
 type: "operation/runbook"
-status: "in-review"
+status: "active"
 owner: "platform"
 updated: "2026-10-08"
 layer: "operations"

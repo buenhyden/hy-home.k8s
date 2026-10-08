@@ -1,8 +1,8 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-08"
 layer: "specs"
@@ -46,7 +46,7 @@ alone owns the new WORK-008 execution and its remaining obligations.
 | --- | --- | --- |
 | F01 / K-HEAD | Local and remote main both equal the investigation SHA; no unrelated changes | Inherit actual HEAD; Git owns source recovery |
 | F02 / C11 | Recursive current tree has SPEC-0105, SPEC-0106, SPEC-0107; all three Specs, Plans and 19 existing Tasks record completed. No draft/in-progress/blocked/approved parent | P03 receives this dated inventory, not a fixed census or reauthentication of every historical AC. New follow-up work remains in this Task |
-| F19 / K-OPS-RUNBOOK | RUN-0012 draft describes a planned interface, but release.py implements prepare/publish. SPEC-0107 Task EVD-138 defers operating adoption, trusted git-cliff and publication | Correct current procedure and tool prerequisites; review adoption separately from remote publication; operations owner platform |
+| F19 / K-OPS-RUNBOOK | RUN-0012 draft described a planned interface, but release.py implements prepare/publish. SPEC-0107 Task EVD-138 deferred operating adoption, trusted git-cliff and publication | Reviewed current procedure is adopted as active RUN-0012/1.0.0; actual trusted-tool environment and publication remain DEFER; operations owner platform |
 | F19 / K-OPS-POLICY | POL-0003 has no eligible reciprocal Spec/Task promotion source; architecture links do not satisfy that profile | Maintain justified explicit exclusion; do not invent a promotion source |
 | F20 / K-HEAD, K-CI | Actual main protection requires ci-summary/App 15368 and qa-provenance/App 5156553. Workflow produces ci-summary metadata and independent style-pr | Prepare protected-setting migration below; no empty-success producer; next owner buenhyden/operator |
 | F23 / C02, C03 | Existing joint approved edition not established in inspected k8s and Project-Template common governance/Stage 99. Docker has a distinct SDLC-COMMON-v4 identifier | Proceed through first establishment using the one candidate below; agent-execution now defines the local caller's first-establishment route; final approval and actual adoption remain distinct |
@@ -155,17 +155,17 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | NOT_RUN | pending | Source comparison and server proposal above; checks and adoption remain separately unexecuted |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs accepted through EVD-002; final common approval/adoption and server mutation require the decisions in EVD-003/004 |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Read-only Git/source/server comparison | Intake HEAD and API resources above | PASS | Inputs, source comparison and server read-back above; research agents common_research and operations_research | accepted |
-| EVD-002 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Selected local QA, actual messages and independent review | Final logical indexes not yet committed | NOT_RUN | Verification Summary records each observed check after execution | pending |
+| EVD-002 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Selected local QA, actual messages and independent review | Actual C1 and corrected C2 indexes; final closing-document input is separate | PASS | Verification Summary: six C1 gates and nine C2 gates, actual messages, normal commits and independent p01_review with no blocking finding | accepted |
 | EVD-003 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Final common-edition approval and actual adoption | First-establishment candidate above; no final approval decision yet | DEFER | Common Edition Decision and Delivery above; next owner buenhyden with common-source writer | pending |
 | EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Required-check migration and actual PR style result | Exact proposed resource above; no write approval or current PR run | DEFER | Server Read-back and Proposed Change above; next owner buenhyden/operator | pending |
-| EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help | release.py at intake HEAD; --help, prepare --help and publish --help | PASS | All three help commands returned rc=0; RUN-0012 source correction under review | accepted |
+| EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help and procedure adoption review | release.py at intake HEAD; --help, prepare --help and publish --help; corrected Runbook | PASS | All three help commands returned rc=0; independent p01_review confirmed procedure adoption after C2 selected QA PASS. Active procedure adoption grants no Release execution permission | accepted |
 
 ## Approval and Safety Boundaries
 
@@ -229,9 +229,18 @@ on SPEC-0107's existing absolute checkout path in Evidence Location. The
 reference is now repository-relative, preserving the supporting receipt's
 identity, persistent-main location, completed status and historical results.
 No validator exemption or completed-package reopening was needed. That
-one-line correction changes the final index; its selected QA remains NOT_RUN
-until the next actual result. Independent review found no blocking issue in
-the policy/runbook input; corrected final input is under review.
+one-line correction changed the final index. The corrected eight-path index
+passed all nine selected gates, rc=0: agent-governance,
+document-contract-registry, document-lifecycle, knowledge-surface,
+links-and-owners, markdown-profiles, repository-quality, selected-nonstyle
+and selected-style. The final cached diff check passed; the unchanged actual
+C2 message had already passed pinned Commitizen. Normal commit created
+`dd0d1b90e30dd2c4f19b653f3d89751f2de5c2dd` with the active secret hook.
+Independent p01_review found no
+blocking finding on that corrected input and confirmed RUN-0012's eligibility
+for active adoption, while trusted git-cliff and actual publication remain
+DEFER. The next index adopts RUN-0012/1.0.0 and records this observed result;
+its own closing-document checks remain NOT_RUN until observed.
 
 RTK raw shell reads initially hit `bwrap` loopback startup failure;
 bounded tool-native escalation succeeded without changing sandbox or trust
