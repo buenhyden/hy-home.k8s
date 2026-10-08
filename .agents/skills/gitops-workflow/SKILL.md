@@ -3,11 +3,11 @@ name: "gitops-workflow"
 description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
 metadata:
   title: "Gitops Workflow"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-08"
 disable-model-invocation: true
 ---
 
@@ -19,13 +19,6 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Purpose
 
 Define the approved GitOps path for workload onboarding, change review, and sync diagnosis in `hy-home.k8s`.
-
-## Trigger Phrases
-
-- "onboard a workload"
-- "review the GitOps path"
-- "diagnose an ArgoCD sync problem"
-- "prepare a GitOps-safe change"
 
 ## When NOT to Use
 

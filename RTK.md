@@ -4,9 +4,16 @@
 
 ## Rule
 
-Prefix interactive shell commands issued by an agent in this workspace with
-`rtk` when the proxy supports the command. Use `rtk proxy <cmd>` for compatible
-raw passthrough when no specialized subcommand applies.
+Route interactive shell commands issued by an agent in this workspace through
+RTK. How depends on whether the host already does it:
+
+- When a host hook rewrites commands through RTK and the host says that
+  command output is already condensed, run commands in their native form. Re-run
+  one as `rtk proxy <cmd>` only when its result is unusable: empty when output
+  was clearly expected, contradicting its exit code, or garbled.
+- Otherwise prefix each command with `rtk` when the proxy supports it, and use
+  `rtk proxy <cmd>` for compatible raw passthrough when no specialized
+  subcommand applies.
 
 This rule governs commands the agent runs. Keep portable human examples,
 CI/workflow commands, validation-registry argv, and shell or hook internals in

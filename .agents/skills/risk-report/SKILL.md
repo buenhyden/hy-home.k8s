@@ -3,11 +3,11 @@ name: "risk-report"
 description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register."
 metadata:
   title: "Risk Report"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-08"
 disable-model-invocation: true
 ---
 
@@ -19,13 +19,6 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Purpose
 
 Define how to identify, score, and report cluster risks in a repeatable format for `hy-home.k8s`.
-
-## Trigger Phrases
-
-- "create a risk register"
-- "analyze cluster risk"
-- "summarize operational risk"
-- "prepare a risk review"
 
 ## When NOT to Use
 
