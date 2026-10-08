@@ -3,11 +3,11 @@ name: "k8s-validate"
 description: "Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository."
 metadata:
   title: "K8S Validate"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-08"
 disable-model-invocation: true
 ---
 
@@ -19,13 +19,6 @@ using this procedure. Skill invocation does not authorize additional actions.
 ## Purpose
 
 Define the validation sequence for manifest changes before GitOps review or merge preparation.
-
-## Trigger Phrases
-
-- "validate manifests"
-- "run kube-linter checks"
-- "check GitOps structure"
-- "scan for secret-handling violations"
 
 ## When NOT to Use
 
