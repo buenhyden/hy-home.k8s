@@ -3,11 +3,11 @@ name: "ops-runbook"
 description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 metadata:
   title: "Ops Runbook"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-08"
 disable-model-invocation: true
 ---
 
@@ -21,23 +21,6 @@ using this procedure. Skill invocation does not authorize additional actions.
 Author and review operations runbooks (`docs/05.operations/runbooks/`) for this repository's
 Linux server + k3d + ArgoCD platform. Ensure runbooks are executable, verifiable, and safe for operator
 use without requiring cluster access delegation.
-
-## Trigger Phrases
-
-- "write a runbook"
-- "create runbook for"
-- "document the bootstrap procedure"
-- "ops procedure for"
-- "how do we recover from"
-- "incident response runbook"
-- "deployment runbook"
-
-## When to Use
-
-- Documenting bootstrap, recovery, deployment, backup, or incident response procedures.
-- Reviewing an existing runbook for correctness, completeness, and safety.
-- Translating a break-glass or operator-bound action into a reproducible, step-by-step guide.
-- Producing files under `docs/05.operations/runbooks/`.
 
 ## When NOT to Use
 

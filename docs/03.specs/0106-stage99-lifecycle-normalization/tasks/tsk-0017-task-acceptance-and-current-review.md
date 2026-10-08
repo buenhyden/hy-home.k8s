@@ -1,6 +1,6 @@
 ---
 title: "Task Acceptance and Current Spec Review"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -143,6 +143,7 @@ write occurred; actual P03 hosted style is NOT_RUN without an authorized PR.
 | EVD-P03-017-022 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Final scoped changed-function coverage measurement | Repaired security-reviewed five-source/four-target trace against da51f933; exact hashes in final-v2 artifact | PASS | _workspace/p03-coverage-final-v2.json and .tests.log; 45/45 tests PASS in 325.631 seconds, 673/806 changed executable function lines observed, 83.5 percent; earlier artifacts preserved, current interpreter only | yes | none |
 | EVD-P03-017-023 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Coupled implementation index QA | Repaired frozen 23-path index treefff1efcad28be61faddbb6c5db5f7589325e1974 | PASS | _workspace/p03-implementation-qa-final.log; all 12 selected gates rc0, diff checks PASS, unchanged exact implementation message's pinned Commitizen proof reused; normal commit 6327c3d395a105fe9ba11aaee48f7e52c1f5c120 has that exact tree | yes | EVD-P03-017-020 |
 | EVD-P03-017-024 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Evidence-state exact index and actual message | One-path index tree25dd696a273522daea31b0ec65567d1d2a899041; _workspace/p03-evidence-message.txt | PASS | _workspace/p03-evidence-qa.log; all six selected document/style/nonstyle gates rc0, diff and pinned Commitizen PASS; normal evidence commit 0352f777bc5468affb36e0dc4621a642e8ae7fe1 retains that tree | yes | none |
+| EVD-P03-017-025 | [VAL-P03-017](../spec.md#success-criteria--verification-plan) | WORK-017 | Completed-input proof and current main reconciliation | Completion tree d86a00f2b4281a4bb79ee341a945aafa6d334dca; concurrent main 5cfd420b723cba7417a0d24c8abb94c4f329caa9 | PASS | Completion six gates and pinned message PASS, normal commit 3b0901e71efb78f30c6cb6e3b55482c15e5476f7; current main's seven disjoint PR136 governance edits preserved in a conflict-free merge candidate, source/test hashes unchanged; combined-input validation follows | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -410,3 +411,26 @@ owned worktree removal as well. Recorded commands and original scratch locations
 remain historical invocation facts; their surviving artifact files use that
 persistent directory. Original failures, interrupted outputs, actual source
 hashes and comparison limits remain available beside the final results.
+
+### Concurrent Main Reconciliation
+
+The one-path completion candidate passed all six selected gates and its actual
+pinned message check; normal commit 3b0901e71efb78f30c6cb6e3b55482c15e5476f7
+has checked tree d86a00f2b4281a4bb79ee341a945aafa6d334dca. Before delivery,
+main had concurrently advanced through a639120b and PR136 merge
+5cfd420b723cba7417a0d24c8abb94c4f329caa9. The clean-main identity assertion and
+ff-only attempt stopped that route without changing main. Its seven RTK,
+work-lifecycle and skill prompt-audit files are disjoint from P03 implementation.
+Preserve them through a conflict-free main merge in the owned P03 branch,
+validate the changed combined index and normal merge message, then deliver by
+exact-tree ff-only from that newer main. No reset, rebase or history rewrite.
+
+The modern readers, five-source coverage inputs and selected regressions are
+unchanged; their actual source hashes still bind the recorded PASS. Independent
+review confirms the imported workflow delegates quality ownership instead of
+duplicating it, skill edits remove redundant trigger text, and RTK's conditional
+native-command route requires an explicit host rewrite declaration. This host
+has supplied none, so interactive calls continue through rtk proxy. Combined
+index QA is required before merge commit; no unexecuted delivery is called PASS.
+The current Task retains completed status and immutable check rows, appending
+delivery evidence without reopening historical completed execution.

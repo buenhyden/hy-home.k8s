@@ -3,11 +3,11 @@ name: "external-service-contract-audit"
 description: "Use when auditing selectorless external Service/EndpointSlice mappings or repository consumers of external HTTP, database and OTLP endpoints."
 metadata:
   title: "External Service Contract Audit"
-  version: "1.0.0"
+  version: "1.0.1"
   type: "governance/skill"
   status: "active"
   owner: "platform"
-  updated: "2026-10-05"
+  updated: "2026-10-08"
 disable-model-invocation: true
 ---
 
@@ -20,12 +20,6 @@ using this procedure. Skill invocation grants no additional authority.
 
 Check the repository contract between an external service and its Kubernetes
 consumers before changing a port, endpoint, protocol or secret reference.
-
-## Trigger Phrases
-
-- "audit external service contracts"
-- "check selectorless Service endpoints"
-- "review an external database or OTLP endpoint change"
 
 ## When NOT to Use
 
