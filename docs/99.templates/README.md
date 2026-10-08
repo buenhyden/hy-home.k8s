@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.8.0"
+version: "0.9.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -161,17 +161,39 @@ retention, Archive 의무는 `.agents/governance`가 설명하고 정확한 mach
 Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 "artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
-Spec은 수용 기준을, Plan은 실행 순서를, Task의 단일 Task Table은 실행
-상태·결과·증거를 기록한다. Task의 frontmatter `status`는 하나의 상태
-표시이며, 여러 행의 상태와 일치하는지는 lifecycle validator가 Registry의
-`task_execution` binding에 따라 읽기 전용으로 확인한다. 완료 인계는 필수
-Spec 기준에서 Plan의 배정과 Task의 완료·PASS·accepted·구체적 증거까지
-확인한다. Plan은 `Work Unit | Criteria | Work | Dependencies | Task | Verification`을,
-Task는 `ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence`를,
-Task Evidence는 `Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance`를
-사용한다. Result, Acceptance, 실제 승인, 통합과 보관은 서로의 대체값이 아니다.
-cancelled는 실제 이유·승인 원본 참조·필수 기준 처리 근거를 요구하고 관측 결과를
-보존한다. resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
+Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예정 검증을
+소유한다. 새 Spec·Plan의 `approved`는 현재 계약의 승인·유효성을 뜻하며
+구현 완료를 뜻하지 않는다. Task의 단일 Task Table은 실행 상태·결과와
+증거 포인터를 기록하고, Criterion Acceptance 표가 기준별 수용 판정의
+유일한 작성 원본이다. Task Evidence는 검사 사실을 보존한다. 기존 완료
+Spec·Plan·Task는 당시의 `completed`와 승인·검사 근거를 소급 변경하지 않는다.
+
+Plan은 `Work Unit | Criteria | Work | Dependencies | Task | Verification`을,
+Task Table은 `ID | Upstream criterion | Work item | Owner | Status | Result | Evidence`를,
+Criterion Acceptance는 `Criterion | Acceptance | Evidence | Disposition | Current owner`를,
+Task Evidence는 `Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves`를
+사용한다. 수용 값은 `pending`·`accepted`·`rejected`·`not-required`다.
+`not-required`는 취소된 Task와 같은 package의 취소된 Spec에서 해당 기준의
+실제 범위 변경과 승인 근거를 확인한 때만 쓴다. 두 취소 처분 모두 정확한
+기준 ID를 명시하고 Task의 승인 참조는 해당 Spec 결정을 가리킨다. 후속
+Task만 정하거나 활성·
+완료·대체 Task로 끝내는 경우 기준 면제로 바꾸지 않는다. QA의
+`NOT_APPLICABLE`는 검사 대상 판정으로 이 수용 값과 다르다.
+`Required`는 `yes` 또는 `no`, `Resolves`는 `none` 또는 앞선 증거 ID를
+쉼표와 공백으로 연결한다. `no`는 원래 검증 계획에서 비필수인 검사와
+그 사유에만 쓰며 필수 실패를 사후 재분류하지 않는다. 필수
+`FAIL`·`DEFER`·`NOT_RUN`은 같은 검사·작업
+항목·기준의 뒤따르는 `PASS`가 이전 증거 ID를 명시해야 해소된다. 다른
+PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 기준의 Plan
+배정, 실제 Task 완료, 구체적 PASS 증거, 단일 `accepted` 판정과 지속
+의미의 현재 owner를 함께 확인한다. QA 결과, 기준 수용, 원본 승인,
+통합과 보관은 서로의 대체값이 아니다. 취소·대체는 남은 필수 기준의
+후속 Task의 Plan 배정을 명시한다. 기준 면제는 위의 Spec·Task 취소와
+기준별 승인 근거가 있을 때만 기록하며, 관측 결과는 보존한다.
+관측된 `FAIL`은 `PASS`처럼 구체적인 Check·Input·Location을 적는다.
+`NOT_RUN`·`DEFER`에는 아직 실제 결과 위치가 없으면 `Pending`을 쓸 수
+있지만 사유와 다음 owner를 남긴다.
+resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
 ### Explicit Task Summary Authoring
 
@@ -192,14 +214,15 @@ python3 scripts/sync-task-status.py --root . --path "$TASK_PATH" --write
 
 한 행 Task는 frontmatter만 사람이 작성하며, 다중 행 Task는 행 상태만 사람이
 작성한다. 다중 행 frontmatter는 기존 소비자를 위한 생성 요약이므로 사람이
-두 곳에 상태를 복사하지 않는다. 새 status 생략 방식이나 별도 enum을 도입하지
-않으며, 공동 Spec/Plan 권한 모델과 Task 대체 전이는 P03의 근거 검토에 넘긴다.
+두 곳에 상태를 복사하지 않는다. `ready`는 실행 준비이지 별도 승인 단계가
+아니다. `superseded`는 실제 후속 Task의 Plan 배정과 남은 기준의 귀속이 확인된 경우에만
+사용하며, 상태만 바꿔 미완료 기준이나 실패를 지우지 않는다.
 
 현재 일반 파일과 안전한 부모 경로만 받고, Registry 분류·strict 문서 계약·
 현재 상태에서 파생 상태로의 lifecycle edge를 확인한다. 잘못된 내용이나
 불법 전이는 오류 ID와 대상 경로, exit 2로 거부한다. 쓰기 전 원본이 바뀌거나
-원자적 교체가 실패하면 해당 원본을 보존한다. Result, Acceptance, Evidence와
-실제 승인 사실은 관측에 따라 별도로 작성해야 한다. validator와 Git hook은
+원자적 교체가 실패하면 해당 원본을 보존한다. Result, Criterion Acceptance,
+Task Evidence와 실제 승인 사실은 관측에 따라 별도로 작성해야 한다. validator와 Git hook은
 이 writer를 자동 호출하지 않는다.
 
 ### Shared Frontmatter Grammar
@@ -241,6 +264,15 @@ Registry의 "retention_classes"는 Stage 98 retention class마다 본문이 명�
 보존 단위로, "retention_modes"는 profile마다 쓸 수 있는 보존 방식을, "archive_citation"은
 Stage 98 인용을 판정하는 순서 있는 표를, "legacy_rebased_retained_paths"는 ADR-0038이
 상대 링크를 재기준해 보존한 16개 본문을 선언한다.
+
+현재 Registry의 `spec-package`에만 적용되는 `completed_authority_members`는
+`approved` Spec·Plan을 `completed/` 보존 후보로 볼 때 원본 비교 기준 Git tree의
+두 권한 문서가 모두 `approved`이고, 같은 원본 package의 Task 완료·Plan 배정·
+기준별 단일 `accepted`·필수 실패 해소·지속 의미 owner가 확인되도록 한다.
+`approved` 표기만으로 보관하지 않으며 다른 보존 단위의 종단 상태를 완화하지
+않는다. 지속 의미의 실제 승격, 현재 소비자 처분, 별도 보관 승인과 Retention
+Envelope의 원본 path·mode·bytes 동일성도 필요하다. 검증기의 구조 PASS가
+승인자나 운영 사실을 인증하지 않으며, 이 안내는 보관 이동을 실행하지 않는다.
 
 ## Related Documents
 

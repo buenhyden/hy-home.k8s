@@ -7,6 +7,7 @@ import json
 import contextlib
 from dataclasses import replace
 import io
+import tarfile
 import shutil
 import subprocess
 import sys
@@ -51,6 +52,18 @@ HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Acce
 SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- |"
 PRE_MIGRATION_COMMIT = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"
 MIGRATION_COMMIT = "2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb"
+PRE_P03_COMMIT = "ae93644e7e1137ed66ac243af4156ecea2d9cee4"
+
+
+def pre_p03_registry():
+    return _typed_registry_from_mapping(
+        json.loads(
+            subprocess.check_output(
+                ["git", "show", f"{PRE_P03_COMMIT}:docs/99.templates/registry.json"],
+                cwd=ROOT,
+            )
+        )
+    )
 
 
 def task_text(status: str, rows: list[str]) -> str:
@@ -110,7 +123,7 @@ def row(
 class TaskExecutionContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.registry = load_registry(ROOT)
+        cls.registry = pre_p03_registry()
         cls.profile = next(
             profile
             for profile in cls.registry.profiles
@@ -490,7 +503,11 @@ class CompletionIndexTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="task-completion-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        shutil.copytree(ROOT / "docs/99.templates", self.root / "docs/99.templates")
+        archive = subprocess.check_output(
+            ["git", "archive", PRE_P03_COMMIT, "docs/99.templates"], cwd=ROOT
+        )
+        with tarfile.open(fileobj=io.BytesIO(archive)) as source:
+            source.extractall(self.root, filter="data")
         self.spec = SPEC
         self.plan = SPEC.parent / "plan.md"
         self.task = TASK
@@ -852,7 +869,7 @@ class CompletionIndexTests(unittest.TestCase):
 class LifecycleItemTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.registry = load_registry(ROOT)
+        cls.registry = pre_p03_registry()
 
     def rules(self, before: str, after: str) -> set[str]:
         base = document_from_text(self.registry, TASK, before)

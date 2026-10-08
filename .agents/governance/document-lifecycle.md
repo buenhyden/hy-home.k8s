@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "1.8.0"
+version: "2.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-08"
 ---
 
 # Document Lifecycle Policy
@@ -33,23 +33,55 @@ their owning migration work package moves them.
 ## Current Contract
 
 - A proposed status change must be one directed edge declared by the selected
-  profile family. The 2026-09-28 approved Spec/Plan/Task terminal spelling is
-  `completed`, with the prior `done` meaning and transition edges unchanged.
-  Historical `done` remains valid in its frozen body or earlier Git generation;
-  a current Spec, Plan, or Task uses `completed`. Completion still grants no
-  disposition, removal, or new-execution authority.
-- Current document status aliases are normalized under the approved generation
-  10 contract. Correct only the actual present state and record the current
-  migration date; preserve the historical Git facts and frozen vocabulary.
-  Document approval, work execution, criterion acceptance, publication,
-  integration and archival disposition remain separate claims.
-- A current Task keeps execution state in its one Task Table and one
-  frontmatter status marker. The Registry owns allowed row states/results and
-  summary binding; the lifecycle checker compares the marker with the rows and
-  reads the Git index for completion handoff. Required Spec criteria need
-  assigned completed/PASS rows with concrete evidence. A completed Spec or
-  Plan can receive an authorized follow-up Task without reopening approval.
-  Nonrequired cancellation does not waive required work. A cancelled document
+  profile family. For a new Spec or Plan, `draft` states unreviewed intent,
+  `in-review` is the review interval, and `approved` establishes the current
+  authorized contract. Changed scope or contradicting evidence sends the
+  affected contract back to `in-review`; approval is renewed against the
+  revised target before dependent execution. `cancelled` and `superseded`
+  require a reason, actual authority and disposition of remaining criteria.
+  Approval never asserts implementation completion, criterion acceptance,
+  integration or archive eligibility.
+- A Task carries actual work state: `draft` is proposed, `ready` means the
+  approved inputs and execution prerequisites are assembled, `in-progress`
+  records started execution, and `blocked` names the obstacle and next owner.
+  Resume requires evidence that the obstacle was resolved. `completed`
+  requires completed work, applicable required checks, accepted criteria and
+  durable owner handoff. `cancelled` or `superseded` keeps its observed results
+  and assigns each remaining required criterion to a verified successor in
+  the current Plan. A criterion becomes `not-required` only for a cancelled
+  Task under a same-package cancelled Spec with actual criterion-specific
+  scope and authorization proof. Both dispositions name the criterion, and
+  the Task authorization references the Spec decision; a successor alone is
+  no waiver. Active, completed and superseded Tasks cannot use that verdict.
+  QA `NOT_APPLICABLE` describes a check without a target, not a criterion
+  waiver.
+  `ready` is no new
+  approval or live-action permission.
+- Historical `done` remains valid in its frozen body or earlier Git generation.
+  The 2026-09-28 generation used `completed` for Spec, Plan and Task closure;
+  current completed parents and Tasks retain their actual status, bytes,
+  approval and evidence instead of being backfilled as `approved`. Narrow
+  compatibility for a completed Task checks its original path, identity,
+  revision and bytes; copying an old form into a new Task does not qualify.
+  A completed parent may receive an authorized follow-up Task without
+  reopening the original record. No status alone grants disposition, removal
+  or new-execution authority.
+- Document approval, Task execution, criterion acceptance, QA result,
+  publication, integration and archival disposition are separate claims. A
+  Requirement's `approved`, an ADR's `accepted`, an operating document's
+  `active`, an Incident's `resolved`, and a Postmortem's `published` retain
+  their different role meanings; none is Task `completed`. A
+  current Task keeps execution in one Task Table and one frontmatter status
+  marker. For one row, the marker is the human source; for multiple rows, the
+  row states are the human source and an explicit writer generates the marker.
+  The Registry owns state/result values and summary binding; the lifecycle
+  checker reads the Git index for completion handoff. Each assigned criterion
+  has one authored verdict in Criterion Acceptance, and each factual Task
+  Evidence row records its required status and any earlier observation it
+  resolves. A required `FAIL`, `DEFER` or `NOT_RUN` remains visible until a
+  later matching PASS explicitly resolves its evidence ID. Unrelated PASS
+  cannot satisfy the criterion.
+- Nonrequired cancellation does not waive required work. A cancelled document
   records reason, authorization_ref and criteria_disposition. The reference
   leads to original approval evidence and does not authenticate it: verify the
   actual actor, target, action, time and revocation through the trusted approval
@@ -72,11 +104,12 @@ their owning migration work package moves them.
   disposition that matches what happened to it, and a superseded architecture
   decision follows the same rule. Stage 99 follows its retention modes: a
   retired form leaves through `git-history-only` with no Stage 98 record, and a
-  stage or collection index is retained in place. Which states are terminal stays with the
-  registry. Reaching one requires the matching disposition, and executing that
-  disposition needs its own authorization. A finished unit waits intact in its
-  source stage until that authorization; completion alone authorizes neither
-  its move nor new execution.
+  stage or collection index is retained in place. The Registry selects status
+  and package-specific retention eligibility. Eligibility does not execute a
+  disposition: actual approval, promoted durable meaning, and consumer-zero
+  review are separate. An eligible unit waits intact in its source stage until
+  that decision; status or package closure alone authorizes neither its move
+  nor new execution.
 - Stage 98 has six dispositions of two kinds. A retention class holds a whole
   once-current body under the profile that governed it: `completed/` names what
   it promoted, `superseded/` names the document that replaced it, `retired/`
@@ -110,11 +143,23 @@ their owning migration work package moves them.
   ADR-0038, keeps its six dispositions, and retains units exactly. A spec
   package is one unit with its anchor `spec.md`, an Incident bundle is one unit
   with its anchor `incident.md` and a published Postmortem, and any other
-  document is its own unit. The anchor's state admits the class, and every
-  other member is terminal in its own family. The retained path equals the
+  document is its own unit. In that generation, the anchor's terminal state
+  admitted the class and every other member was terminal in its own family.
+  The retained path equals the
   source Git object entry for entry, links included, and its catalog row names
   a blob or a tree. The sixteen bodies ADR-0038 retained with rebased links
   keep that generation and cannot grow in number.
+- For the current `spec-package` `completed/` route only, the Registry also
+  admits `approved` Spec and Plan authority members when the immutable
+  comparison-base tree contains both at that state and the same source package
+  passes closure: assigned Tasks completed, each required criterion has one
+  accepted authored verdict, required adverse evidence is explicitly resolved,
+  and the lasting meaning has a named current owner. `approved` alone does
+  not qualify. This is a scoped package rule, not general admission of active
+  documents or a change to the completed-only class for other units. Review
+  actual promotion, consumer disposition and approval of the whole retention
+  action separately. The envelope still requires exact source bytes, paths and
+  modes, and no Archive body is rewritten to meet a later contract.
 - ADR-0040 supersedes ADR-0039 and keeps its units and exact retention. A
   retained unit is frozen against unapproved change, not kept forever: its
   bytes are never edited, renamed, recreated, or partly deleted, and the one
@@ -133,7 +178,8 @@ their owning migration work package moves them.
   unit's source is integrated before the change that retains it.
 - The Stage 99 registry declares the units, binds each retention mode to the
   profiles that may use it, routes a retained body under its original profile,
-  and binds each retention class to the anchor states it admits. Frozen records
+  and binds each retention class to admitted anchor states plus the narrow
+  Spec-package authority-member closure. Frozen records
   and ledgers route by exact path, so no new sealed record or path ledger can be
   created. The lifecycle gate admits a retained unit through its catalog row,
   and the current Archive integrity gate re-verifies every row against the

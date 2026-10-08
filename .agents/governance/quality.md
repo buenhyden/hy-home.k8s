@@ -1,6 +1,6 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.1.0"
+version: "2.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -123,6 +123,20 @@ leader exits is `FAIL`.
   unavailable. An applicable optional tool's absence needs a reason and next
   owner, with its fallback classified separately. This is a visible limitation,
   never a pass.
+
+A modern Task Evidence `FAIL` records concrete Check, Input and Location as a
+`PASS` does. `NOT_RUN` and `DEFER` may use `Pending` where no result artifact
+exists, while naming the reason and next owner. QA `NOT_APPLICABLE` judges a
+check's target; it is never the Task criterion verdict `not-required`, which
+requires a cancelled Task and same-package cancelled Spec with the actual
+criterion-specific scope and authorization evidence.
+
+When a Task records a required `FAIL`, `DEFER`, or `NOT_RUN`, keep the original
+observation. A later `PASS` closes it only when the new evidence explicitly
+names the earlier evidence ID and concerns the same check, work unit and
+criterion. An unrelated PASS cannot hide a required unresolved result. The
+Task's Criterion Acceptance table owns the single criterion verdict; check
+results, approval, integration and publication are distinct facts.
 
 ### Semantic review
 

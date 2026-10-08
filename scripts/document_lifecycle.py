@@ -183,6 +183,8 @@ class LifecycleEvidenceDocument:
     body_contract_valid: bool
     task_terminal_evidence_valid: bool
     body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
+    task_evidence_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
+    task_disposition_valid: bool = True
 
 
 @dataclass(frozen=True)
@@ -197,6 +199,16 @@ class LifecycleEvidenceContext:
     created_paths: frozenset[PurePosixPath]
     base_task_rows: Mapping[PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]] = (
         field(default_factory=dict)
+    )
+    base_task_evidence_rows: Mapping[
+        PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
+    ] = field(default_factory=dict)
+    baseline_task_paths: frozenset[PurePosixPath] = frozenset()
+    task_plan_criteria: Mapping[PurePosixPath, frozenset[str]] = field(
+        default_factory=dict
+    )
+    task_spec_criteria: Mapping[PurePosixPath, frozenset[str]] = field(
+        default_factory=dict
     )
 
 
@@ -405,7 +417,7 @@ def _create_diagnostics(
         assert domain is not None  # `_stateful` admits only a declared domain.
         observed = f"absent -> {document.status or 'not-applicable'}"
         inbound = {target for _, target in domain.transitions}
-        initial_states = tuple(
+        initial_states = domain.initial_states or tuple(
             state for state, _ in domain.states if state not in inbound
         )
         if document.status not in initial_states:
@@ -414,7 +426,7 @@ def _create_diagnostics(
                     "LIFECYCLE-CREATE",
                     path=document.path,
                     profile=document.profile_id,
-                    expected=f"create in zero-indegree lifecycle state {initial_states!r}",
+                    expected=f"create in lifecycle initial state {initial_states!r}",
                     observed=observed,
                     base_mode=base_mode,
                     evidence_gap="profile lifecycle domain owns creation states",
@@ -807,15 +819,39 @@ def _task_item_edge_diagnostics(
         return value
 
     issues: list[LifecycleDiagnostic] = []
+    added_by_work: dict[str, frozenset[str]] = {}
     for work_id, old in before.items():
         new = after.get(work_id)
         rule = ""
         observed = ""
+        old_criteria = criterion_ids(old["Upstream criterion"])
+        new_criteria = (
+            criterion_ids(new["Upstream criterion"]) if new is not None else None
+        )
+        rebinding = (
+            path in context.baseline_task_paths
+            and "Acceptance" in old
+            and new is not None
+            and "Acceptance" not in new
+        )
+        added = (
+            frozenset(new_criteria) - frozenset(old_criteria)
+            if old_criteria is not None and new_criteria is not None
+            else frozenset()
+        )
+        valid_rebinding = bool(
+            rebinding
+            and old_criteria is not None
+            and new_criteria is not None
+            and set(old_criteria) < set(new_criteria)
+            and added <= context.task_plan_criteria.get(path, frozenset())
+            and added <= context.task_spec_criteria.get(path, frozenset())
+        )
+        if valid_rebinding:
+            added_by_work[work_id] = added
         if new is None:
             rule, observed = "TASK-ITEM-DELETE", f"{work_id} removed"
-        elif criterion_ids(old["Upstream criterion"]) != criterion_ids(
-            new["Upstream criterion"]
-        ):
+        elif old_criteria != new_criteria and not valid_rebinding:
             rule, observed = "TASK-ITEM-HIDE", f"{work_id} upstream criterion changed"
         elif effective_status(
             old, context.base_documents[path].status, legacy="Acceptance" not in old
@@ -846,6 +882,99 @@ def _task_item_edge_diagnostics(
                     observed=observed,
                     base_mode=base_mode,
                     evidence_gap="base and proposed bound Task rows",
+                )
+            )
+    issues.extend(
+        _task_evidence_retention_diagnostics(
+            path, context, added_by_work, base_mode=base_mode
+        )
+    )
+    return tuple(issues)
+
+
+def _task_evidence_retention_diagnostics(
+    path: PurePosixPath,
+    context: LifecycleEvidenceContext,
+    added_by_work: Mapping[str, frozenset[str]],
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Keep prior factual check rows immutable while allowing new resolution rows."""
+
+    # A single reviewed P01 cutover reclassified four retained adverse checks
+    # after the Spec/Plan split their original broad criteria. The original
+    # cells remain in the ae93644 Git object; no successful check may move.
+    p01_cutover = PurePosixPath(
+        "docs/03.specs/0105-authority-and-safe-authoring/tasks/"
+        "tsk-0004-current-contract-review.md"
+    )
+    p01_adverse_rebinds = {
+        "EVD-003": ({"VAL-P01-001", "VAL-P01-003"}, {"VAL-P01-007"}),
+        "EVD-008": ({"VAL-P01-006"}, {"VAL-P01-008"}),
+        "EVD-009": ({"VAL-P01-003", "VAL-P01-006"}, {"VAL-P01-008"}),
+        "EVD-010": ({"VAL-P01-003", "VAL-P01-006"}, {"VAL-P01-008"}),
+    }
+
+    before = {
+        dict(cells)["Evidence"].strip(): dict(cells)
+        for cells in context.base_task_evidence_rows.get(path, ())
+    }
+    view = context.proposed_documents[path]
+    after = {
+        dict(cells)["Evidence"].strip(): dict(cells)
+        for cells in view.task_evidence_rows
+    }
+    issues: list[LifecycleDiagnostic] = []
+    for identifier, old in before.items():
+        new = after.get(identifier)
+        reason = ""
+        if new is None:
+            reason = f"{identifier} deleted"
+        elif any(
+            old.get(key, "").strip() != new.get(key, "").strip()
+            for key in ("Work Unit", "Check", "Input", "Result", "Location")
+        ):
+            reason = f"{identifier} factual check changed"
+        elif "Required" in old and any(
+            old.get(key, "").strip() != new.get(key, "").strip()
+            for key in ("Required", "Resolves")
+        ):
+            reason = f"{identifier} requirement or resolution edge changed"
+        elif (
+            "Required" not in old
+            and old["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
+            and new.get("Required", "").strip() != "yes"
+        ):
+            reason = f"{identifier} prior adverse check made optional"
+        elif old.get("Criteria", "").strip() != new.get("Criteria", "").strip():
+            old_criteria = task_criterion_ids(old["Criteria"])
+            new_criteria = task_criterion_ids(new["Criteria"])
+            allowed = added_by_work.get(old["Work Unit"].strip(), frozenset())
+            reviewed = (
+                p01_adverse_rebinds.get(identifier) if path == p01_cutover else None
+            )
+            if not (
+                path in context.baseline_task_paths
+                and "Required" not in old
+                and old["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
+                and old_criteria is not None
+                and new_criteria is not None
+                and reviewed is not None
+                and set(old_criteria) == reviewed[0]
+                and set(new_criteria) == reviewed[1]
+                and set(new_criteria) <= allowed
+            ):
+                reason = f"{identifier} criterion membership changed without verified migration"
+        if reason:
+            issues.append(
+                _diagnostic(
+                    "TASK-EVIDENCE-RETENTION",
+                    path=path,
+                    profile="sdlc/task",
+                    expected="prior EVD IDs and factual fields retained; new PASS rows append resolution",
+                    observed=reason,
+                    base_mode=base_mode,
+                    evidence_gap="base and proposed Task Evidence rows with bounded P03 criterion rebinding",
                 )
             )
     return tuple(issues)
@@ -1052,6 +1181,23 @@ def compare_lifecycle(
                     base_mode=base_mode,
                 )
             )
+        if (
+            evidence_context is not None
+            and proposed.profile_id == "sdlc/task"
+            and proposed.status in {"cancelled", "superseded"}
+            and not evidence_context.proposed_documents[path].task_disposition_valid
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "TASK-DISPOSITION",
+                    path=path,
+                    profile="sdlc/task",
+                    expected="current Plan successor assignment or authorized Spec scope disposition",
+                    observed=f"{base.status} -> {proposed.status}",
+                    base_mode=base_mode,
+                    evidence_gap="terminal Task obligation has no proved successor or scope basis",
+                )
+            )
 
     created_paths = set(proposed_documents) - consumed_proposed - common_paths
     created = [
@@ -1080,9 +1226,9 @@ def validate_current_task_evidence(
     *,
     base_mode: LifecycleBaseMode,
 ) -> tuple[LifecycleDiagnostic, ...]:
-    """Reject invalid completed Tasks, including unchanged current documents."""
+    """Reject invalid terminal Tasks, including unchanged current documents."""
 
-    return tuple(
+    completed = tuple(
         _diagnostic(
             "TASK-TERMINAL-EVIDENCE",
             path=path,
@@ -1098,6 +1244,23 @@ def validate_current_task_evidence(
         and view.document.status == "completed"
         and not view.task_terminal_evidence_valid
     )
+    disposition = tuple(
+        _diagnostic(
+            "TASK-DISPOSITION",
+            path=path,
+            profile="sdlc/task",
+            expected="current Plan successor or authorized Spec cancellation basis",
+            observed=f"unchanged/current {view.document.status} without a valid obligation handoff",
+            base_mode=base_mode,
+            evidence_gap="current Plan and reciprocal successor or Spec scope authorization",
+        )
+        for path, view in sorted(context.proposed_documents.items())
+        if path.parts[:2] == ("docs", "03.specs")
+        and view.document.profile_id == "sdlc/task"
+        and view.document.status in {"cancelled", "superseded"}
+        and not view.task_disposition_valid
+    )
+    return completed + disposition
 
 
 def validate_snapshot_documents(

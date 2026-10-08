@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.6.0"
+version: "0.7.0"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -167,25 +167,36 @@ correction to its retained pre-change values, never by inventing a green check.
 
 ### Lifecycle Traceability
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | pending | Local repairs and approved setting operation accepted through EVD-002/004/005/006/007. Reason: common edition/adoption undecided, SEC-P01-001 control guard unresolved, and current PR style unobserved (EVD-003/008/009). Next owner: buenhyden with Project-Template source writer and security/CI operator |
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Local repairs and approved setting operation accepted through EVD-002/004/005/006/007. Reason: common edition/adoption undecided, SEC-P01-001 control guard unresolved, and current PR style unobserved (EVD-003/008/009). Next owner: buenhyden with Project-Template source writer and security/CI operator |
+
+## Criterion Acceptance
+
+| Criterion | Acceptance | Evidence | Disposition | Current owner |
+| --- | --- | --- | --- | --- |
+| [VAL-P01-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005 | Actual source/consumer/owner/disposition comparison is accepted; remaining common adoption belongs to VAL-P01-007 | .agents/governance/agent-execution.md; platform |
+| [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
+| [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
+| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011 | Logical local checks/review/commits/delivery limits and rollback are recorded; current hosted/control prerequisite belongs to VAL-P01-008 | platform local delivery owner |
+| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Common source/edition decision and actual adoption remain DEFER; source revision and approval reference stay absent until their real objects and decisions exist | buenhyden with one Project-Template source writer; each actual adapter owner |
+| [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010 | Actual next authorized PR style is DEFER; SEC-P01-001 HIGH remains an unaccepted conditional workflow/control PR or Release guard. This grants no new execution authority | next authorized actual PR owner and buenhyden with security/CI operator |
 
 ## Task Evidence
 
-| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Read-only Git/source/server comparison | Intake HEAD and API resources above | PASS | Inputs, source comparison and server read-back above; research agents common_research and operations_research | accepted |
-| EVD-002 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Selected local QA, actual messages and independent review | Actual C1 and corrected C2 indexes; final closing-document input is separate | PASS | Verification Summary: six C1 gates and nine C2 gates, actual messages, normal commits and independent p01_review with no blocking finding | accepted |
-| EVD-003 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Final common-edition approval and actual adoption | First-establishment candidate above; no final approval decision yet | DEFER | Common Edition Decision and Delivery above; next owner buenhyden with common-source writer | pending |
-| EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Approved required-check resource migration and read-back | Reviewed C4 JSON, current trusted user approval and immediate before/after snapshots | PASS | PATCH rc0 and complete protection GET comparison passed at 2026-10-08 18:13 KST; both checks bound to App15368, strict retained, other protection/rule metadata unchanged. This accepts the exact setting operation only, not security-gate equivalence or a PR result | accepted |
-| EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help and procedure adoption review | release.py at intake HEAD; --help, prepare --help and publish --help; corrected Runbook | PASS | All three help commands returned rc=0; independent p01_review confirmed procedure adoption after C2 selected QA PASS. Active procedure adoption grants no Release execution permission | accepted |
-| EVD-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Local Runbook adoption and result-recording index | C3 two-path index: RUN-0012/1.0.0 active and this Task/0.2.0 in-progress | PASS | Six selected gates, actual Commitizen message and independent p01_review passed; normal commit 7e3966d7b7341c5f0710bed5303e05b59b3c9f26 | accepted |
-| EVD-007 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | App consumer and current producer comparison | Actual historical check 110709969682; bounded SPEC-0103 Plan consumer; current main and workflow API | PASS | App 5156553 is k8s-qa-verifier/k8s QA Verifier, formerly an isolated full-QA proof producer. Current workflow list and main CI have no verifier producer | accepted |
-| EVD-008 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current hosted PR style result | Open pulls API for base main returned an empty list | DEFER | Next owner: operator on the next authorized actual PR; no PR or workflow dispatch is created merely for this observation | pending |
-| EVD-009 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Security review of verifier retirement and prospective check trust | Exact before/after settings, current ci.yml and bounded historical verifier contract | FAIL | Independent server_security_review found SEC-P01-001 HIGH: PR can alter both job definitions; read-only/pinned/helper trust does not authenticate workflow content. Conditional review permits describing the setting transition only; guard remediation remains unaccepted | pending |
-| EVD-010 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Renewed HIGH and workflow PR merge review | Current main protection, CI/control source, CODEOWNERS, open PR API and primary GitHub behavior docs | FAIL | Renewed server_security_review confirms HIGH for workflow/control-changing PRs. No observed exploit or actual open PR. Required jobs may be skipped; App binding does not fix PR-editable job definitions; native review guard is not enabled | pending |
-| EVD-011 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current branch scope and preserved owned evidence | main...HEAD nine-file diff; clean local main; 13 ignored artifact files | PASS | No workflow/control-implementation changes; unique review candidate and server/message evidence copied to persistent main with byte equality. Integration and cleanup results follow observation in final handoff | accepted |
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | Read-only Git/source/server comparison | Intake HEAD and API resources above | PASS | Inputs, source comparison and server read-back above; research agents common_research and operations_research | yes | none |
+| EVD-002 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Selected local QA, actual messages and independent review | Actual C1 and corrected C2 indexes; final closing-document input is separate | PASS | Verification Summary: six C1 gates and nine C2 gates, actual messages, normal commits and independent p01_review with no blocking finding | yes | none |
+| EVD-003 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Final common-edition approval and actual adoption | First-establishment candidate above; no final approval decision yet | DEFER | Common Edition Decision and Delivery above; next owner buenhyden with common-source writer | yes | none |
+| EVD-004 | [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Approved required-check resource migration and read-back | Reviewed C4 JSON, current trusted user approval and immediate before/after snapshots | PASS | PATCH rc0 and complete protection GET comparison passed at 2026-10-08 18:13 KST; both checks bound to App15368, strict retained, other protection/rule metadata unchanged. This accepts the exact setting operation only, not security-gate equivalence or a PR result | yes | none |
+| EVD-005 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | WORK-008 | Implemented release CLI help and procedure adoption review | release.py at intake HEAD; --help, prepare --help and publish --help; corrected Runbook | PASS | All three help commands returned rc=0; independent p01_review confirmed procedure adoption after C2 selected QA PASS. Active procedure adoption grants no Release execution permission | yes | none |
+| EVD-006 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Local Runbook adoption and result-recording index | C3 two-path index: RUN-0012/1.0.0 active and this Task/0.2.0 in-progress | PASS | Six selected gates, actual Commitizen message and independent p01_review passed; normal commit 7e3966d7b7341c5f0710bed5303e05b59b3c9f26 | yes | none |
+| EVD-007 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | WORK-008 | App consumer and current producer comparison | Actual historical check 110709969682; bounded SPEC-0103 Plan consumer; current main and workflow API | PASS | App 5156553 is k8s-qa-verifier/k8s QA Verifier, formerly an isolated full-QA proof producer. Current workflow list and main CI have no verifier producer | yes | none |
+| EVD-008 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Current hosted PR style result | Open pulls API for base main returned an empty list | DEFER | Next owner: operator on the next authorized actual PR; no PR or workflow dispatch is created merely for this observation | yes | none |
+| EVD-009 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Security review of verifier retirement and prospective check trust | Exact before/after settings, current ci.yml and bounded historical verifier contract | FAIL | Independent server_security_review found SEC-P01-001 HIGH: PR can alter both job definitions; read-only/pinned/helper trust does not authenticate workflow content. Conditional review permits describing the setting transition only; guard remediation remains unaccepted | yes | none |
+| EVD-010 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Renewed HIGH and workflow PR merge review | Current main protection, CI/control source, CODEOWNERS, open PR API and primary GitHub behavior docs | FAIL | Renewed server_security_review confirms HIGH for workflow/control-changing PRs. No observed exploit or actual open PR. Required jobs may be skipped; App binding does not fix PR-editable job definitions; native review guard is not enabled | yes | none |
+| EVD-011 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current branch scope and preserved owned evidence | main...HEAD nine-file diff; clean local main; 13 ignored artifact files | PASS | No workflow/control-implementation changes; unique review candidate and server/message evidence copied to persistent main with byte equality. Integration and cleanup results follow observation in final handoff | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -234,6 +245,45 @@ correction to its retained pre-change values, never by inventing a green check.
   command summary and do not become a second execution owner.
 
 ## Verification Summary
+
+### P03 Migration of the Current Pending Record
+
+The P03 local request migrates this current blocked Task from the v2 form to
+one criterion acceptance source after coupled consumers are available. Its
+blocked status, WORK-008, all original evidence IDs/checks/inputs/results/
+locations, actual approval references and dated narrative remain intact.
+The v2 record at ae93644e7e1137ed66ac243af4156ecea2d9cee4 recorded operation
+acceptance for EVD-001/002/004/005/006/007/011 and pending for
+EVD-003/008/009/010. These are preserved historical operation decisions,
+not a second current criterion verdict. Independent p01_review found the first
+P03 disposition draft incorrectly made literal local criteria depend on broader
+protected outcomes. The existing Spec/Plan now name those original follow-up
+obligations as VAL-P01-007/008. EVD-003 is rebound from original
+VAL-P01-001/003 to VAL-P01-007; EVD-008 from original VAL-P01-006 to
+VAL-P01-008; EVD-009/010 from original VAL-P01-003/006 to VAL-P01-008.
+Their original memberships remain here and in the ae93644e source record;
+IDs, checks, inputs, factual results and locations are unchanged. Required=yes
+preserves the obligations; Resolves=none makes no claim that unrelated local
+successes resolved the common decision, hosted observation or HIGH failures.
+The four literal local ACs are accepted within their original meanings,
+while the two explicit remaining criteria keep WORK-008 blocked.
+
+The earlier P01 handoff used the wording "independent control is verified or
+an exact operator-reviewed transition is authorized". P03's current
+VAL-P01-008 clarifies that an approved/read-back setting transition cannot
+substitute for independent integrity proof at the actual PR/Release input.
+No current risk waiver is supplied. The dated P01 command and delivery
+observations below remain history; their then-pending "needs" instructions
+are not renewed action authority or present checklist items.
+
+The current P03 read-only protection observation at remote main c9faa9f
+still shows strict=true, ci-summary/style-pr App15368, no qa-provenance
+requirement, and only tag-targeting rulesets. Main style-pr is skipped, not
+current PR style PASS. No P03 server, workflow, PR or live operation occurred.
+The common candidate remains WGOV-CORE/3.0.0-draft.3 with null source revision
+and approval reference. P03 local resolver changes do not close these lanes;
+resume only the lane with a real owner decision or actual authorized result.
+
 
 ### Initial index and tool readiness
 
@@ -420,8 +470,9 @@ from Actions/App15368. [Skipped required jobs permit merge](https://docs.github.
 This is a source-backed inference, not an executed attack PR. No duplicate-name
 collision bypass is claimed. No current secret exposure or privilege elevation
 was found. HIGH blocks acceptance of the next workflow/control-changing PR
-and release relying on these checks until independent control is verified or
-an exact operator-reviewed transition is authorized; next owner buenhyden with
+and release relying on these checks until independent control is verified for
+the actual input. Any operator-reviewed settings transition requires separate
+exact approval and read-back and cannot substitute for that proof; next owner buenhyden with
 security/CI responsibilities.
 
 Existing CODEOWNERS includes `/.github/ @buenhyden`, but current protection

@@ -30,6 +30,7 @@ from validation.repository.bounded_io import (
 
 
 GIT_TIMEOUT_SECONDS = 10
+TASK_LEGACY_BASELINE_COMMIT = "ae93644e7e1137ed66ac243af4156ecea2d9cee4"
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
@@ -106,6 +107,8 @@ class TaskExecution:
     evidence_section: str | None = None
     evidence_columns: tuple[str, ...] = ()
     evidence_result_states: tuple[str, ...] = ()
+    criterion_acceptance_section: str | None = None
+    criterion_acceptance_columns: tuple[str, ...] = ()
 
 
 def direct_parent(
@@ -149,13 +152,23 @@ def task_evidence_issues(
             )
         if re.fullmatch(r"WORK-[0-9]{3}", row["Work Unit"].strip()) is None:
             issues.append(("TASK-EVIDENCE-WORK", f"row {number}: invalid work unit"))
-        result, acceptance = row["Result"].strip(), row["Acceptance"].strip()
+        if binding.criterion_acceptance_section:
+            if row.get("Required", "").strip() not in {"yes", "no"}:
+                issues.append(
+                    ("TASK-EVIDENCE-REQUIRED", f"row {number}: expected yes/no")
+                )
+            if _task_evidence_ids(row.get("Resolves", "")) is None:
+                issues.append(
+                    ("TASK-EVIDENCE-RESOLUTION", f"row {number}: invalid Resolves IDs")
+                )
+        result, acceptance = row["Result"].strip(), row.get("Acceptance", "").strip()
         if result not in binding.evidence_result_states:
             issues.append(
                 ("TASK-EVIDENCE-RESULT", f"row {number}: invalid result {result!r}")
             )
-        if acceptance not in binding.acceptance_states or (
-            acceptance == "accepted" and result != "PASS"
+        if not binding.criterion_acceptance_section and (
+            acceptance not in binding.acceptance_states
+            or (acceptance == "accepted" and result != "PASS")
         ):
             issues.append(
                 (
@@ -163,16 +176,215 @@ def task_evidence_issues(
                     f"row {number}: invalid acceptance {acceptance!r}/{result} ",
                 )
             )
-        if any(not cell.strip() for cell in row.values()) or (
-            acceptance == "accepted"
-            and _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row["Location"].strip())
+        placeholder_keys = (
+            ("Check", "Input", "Location")
+            if binding.criterion_acceptance_section and result in {"PASS", "FAIL"}
+            else ("Location",)
+            if not binding.criterion_acceptance_section and acceptance == "accepted"
+            else ()
+        )
+        if any(not cell.strip() for cell in row.values()) or any(
+            _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row[key].strip())
+            for key in placeholder_keys
         ):
             issues.append(
                 (
                     "TASK-EVIDENCE-LOCATION",
-                    f"row {number}: concrete check input and location required",
+                    f"row {number}: concrete {'/'.join(placeholder_keys) or 'cell'} required",
                 )
             )
+    return tuple(issues)
+
+
+_TASK_EVIDENCE_ID = re.compile(r"EVD-(?:[A-Z0-9]+-)*[0-9]{3}")
+
+
+def _task_evidence_ids(cell: str) -> tuple[str, ...] | None:
+    value = cell.strip()
+    if value == "none":
+        return ()
+    identifiers = tuple(value.split(", "))
+    if not identifiers or any(
+        _TASK_EVIDENCE_ID.fullmatch(item) is None for item in identifiers
+    ):
+        return None
+    return identifiers if len(identifiers) == len(set(identifiers)) else None
+
+
+def task_contract_issues(
+    work_rows: Sequence[Mapping[str, str]],
+    evidence_rows: Sequence[Mapping[str, str]],
+    acceptance_rows: Sequence[Mapping[str, str]],
+    status: str,
+    binding: TaskExecution,
+) -> tuple[tuple[str, str], ...]:
+    """Validate one modern Task's execution, check graph, and sole AC decisions."""
+
+    issues = list(task_execution_issues(work_rows, status, binding))
+    issues.extend(task_evidence_issues(evidence_rows, binding))
+    if not binding.criterion_acceptance_section:
+        return tuple(issues)
+
+    work_by_id = {row["ID"].strip().strip("`"): row for row in work_rows}
+    required_criteria = {
+        criterion
+        for row in work_rows
+        for criterion in (task_criterion_ids(row["Upstream criterion"]) or ())
+    }
+    checks: dict[str, tuple[int, Mapping[str, str]]] = {}
+    closed: set[str] = set()
+    for index, check in enumerate(evidence_rows):
+        identifier = check["Evidence"].strip()
+        work = work_by_id.get(check["Work Unit"].strip())
+        criteria = task_criterion_ids(check["Criteria"])
+        work_criteria = (
+            task_criterion_ids(work["Upstream criterion"]) if work is not None else None
+        )
+        if (
+            work is None
+            or criteria is None
+            or work_criteria is None
+            or not set(criteria) <= set(work_criteria)
+        ):
+            issues.append(
+                (
+                    "TASK-EVIDENCE-WORK",
+                    f"row {index + 1}: check does not map to its work criteria",
+                )
+            )
+        resolves = _task_evidence_ids(check.get("Resolves", ""))
+        if resolves is None:
+            continue
+        if resolves and check["Result"].strip() != "PASS":
+            issues.append(
+                ("TASK-EVIDENCE-RESOLUTION", f"row {index + 1}: only PASS can resolve")
+            )
+        for target_id in resolves:
+            previous = checks.get(target_id)
+            if (
+                previous is None
+                or check["Result"].strip() != "PASS"
+                or check["Required"].strip() != "yes"
+                or previous[1]["Required"].strip() != "yes"
+                or previous[1]["Result"].strip() not in {"FAIL", "DEFER", "NOT_RUN"}
+                or any(
+                    check[key].strip() != previous[1][key].strip()
+                    for key in ("Criteria", "Work Unit", "Check")
+                )
+            ):
+                issues.append(
+                    (
+                        "TASK-EVIDENCE-RESOLUTION",
+                        f"row {index + 1}: invalid predecessor {target_id}",
+                    )
+                )
+            else:
+                closed.add(target_id)
+        checks[identifier] = (index, check)
+    if not evidence_rows:
+        issues.append(("TASK-EVIDENCE-COLUMNS", "Task Evidence requires a check row"))
+
+    decisions: set[str] = set()
+    accepted: set[str] = set()
+    for number, row in enumerate(acceptance_rows, 1):
+        criterion_ids = task_criterion_ids(row["Criterion"])
+        if criterion_ids is None or len(criterion_ids) != 1:
+            issues.append(
+                (
+                    "TASK-ACCEPTANCE-CRITERION",
+                    f"row {number}: one linked criterion required",
+                )
+            )
+            continue
+        criterion = criterion_ids[0]
+        if criterion in decisions:
+            issues.append(
+                ("TASK-ACCEPTANCE-DUPLICATE", f"row {number}: duplicate {criterion}")
+            )
+        decisions.add(criterion)
+        if criterion not in required_criteria:
+            issues.append(
+                ("TASK-ACCEPTANCE-CRITERION", f"row {number}: unassigned {criterion}")
+            )
+        verdict = row["Acceptance"].strip()
+        if verdict not in binding.acceptance_states:
+            issues.append(("TASK-ACCEPTANCE-STATE", f"row {number}: invalid {verdict}"))
+        if any(
+            not row[key].strip()
+            or _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row[key].strip())
+            for key in ("Disposition", "Current owner")
+        ):
+            issues.append(
+                (
+                    "TASK-ACCEPTANCE-DISPOSITION",
+                    f"row {number}: concrete disposition and owner required",
+                )
+            )
+        cited = _task_evidence_ids(row["Evidence"])
+        if cited is None or any(item not in checks for item in cited):
+            issues.append(
+                ("TASK-ACCEPTANCE-EVIDENCE", f"row {number}: unknown evidence ID")
+            )
+            continue
+        if any(
+            criterion not in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
+            for item in cited
+        ):
+            issues.append(
+                ("TASK-ACCEPTANCE-EVIDENCE", f"row {number}: unrelated cited evidence")
+            )
+        if verdict == "accepted":
+            accepted.add(criterion)
+            if not cited or not any(
+                checks[item][1]["Result"].strip() == "PASS"
+                and checks[item][1]["Required"].strip() == "yes"
+                and criterion in (task_criterion_ids(checks[item][1]["Criteria"]) or ())
+                for item in cited
+            ):
+                issues.append(
+                    (
+                        "TASK-ACCEPTANCE-EVIDENCE",
+                        f"row {number}: accepted criterion needs relevant PASS",
+                    )
+                )
+        elif verdict == "not-required" and status != "cancelled":
+            issues.append(
+                (
+                    "TASK-ACCEPTANCE-SCOPE",
+                    f"row {number}: linked Spec criterion cannot be waived by Task",
+                )
+            )
+    if decisions != required_criteria:
+        issues.append(
+            (
+                "TASK-ACCEPTANCE-COVERAGE",
+                "one decision per assigned Spec criterion required",
+            )
+        )
+    if accepted or status == "completed":
+        unresolved = [
+            identifier
+            for identifier, (_, check) in checks.items()
+            if check["Required"].strip() == "yes"
+            and check["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
+            and identifier not in closed
+            and (
+                status == "completed"
+                or any(
+                    criterion in accepted
+                    for criterion in (task_criterion_ids(check["Criteria"]) or ())
+                )
+            )
+        ]
+        if unresolved:
+            issues.append(("TASK-EVIDENCE-UNRESOLVED", ", ".join(unresolved)))
+    if status == "completed" and accepted != required_criteria:
+        issues.append(
+            (
+                "TASK-ACCEPTANCE-COMPLETED",
+                "completed Task requires its sole accepted criteria",
+            )
+        )
     return tuple(issues)
 
 
@@ -217,6 +429,12 @@ def derive_task_summary(states: Sequence[str], binding: TaskExecution) -> str:
         expected = "draft"
     elif all(state == "completed" for state in states):
         expected = "completed"
+    elif "superseded" in states:
+        if "cancelled" in states or any(
+            state not in {"completed", "superseded"} for state in states
+        ):
+            raise ValueError("Task summary has incompatible superseded rows")
+        expected = "superseded"
     else:
         expected = "cancelled"
     return expected
@@ -264,7 +482,15 @@ def task_execution_issues(
             issues.append(
                 ("TASK-EXECUTION-RESULT", f"row {number}: {effective_status}/{result}")
             )
-        if binding.summary_rule == "task-items-v2":
+        if binding.criterion_acceptance_section:
+            if criterion_ids and effective_status == "completed" and result != "PASS":
+                issues.append(
+                    (
+                        "TASK-EXECUTION-RESULT",
+                        f"row {number}: linked completed criterion requires PASS",
+                    )
+                )
+        elif binding.summary_rule == "task-items-v2":
             if acceptance not in binding.acceptance_states:
                 issues.append(
                     (
@@ -397,6 +623,7 @@ class LifecycleDomain:
     profile_ids: tuple[str, ...]
     states: tuple[tuple[str, Literal["mutable", "current", "terminal"]], ...]
     transitions: frozenset[tuple[str, str]]
+    initial_states: tuple[str, ...] | None = None
 
     def validation_class(
         self, state: str
@@ -429,6 +656,7 @@ class RetentionUnit:
     anchor: str
     required_members: tuple[str, ...]
     member_admitted_states: tuple[tuple[str, frozenset[str]], ...] = ()
+    completed_authority_members: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -773,6 +1001,63 @@ def _run_git(
     return completed.stdout
 
 
+@lru_cache(maxsize=8)
+def _legacy_task_registry(root: Path) -> Registry | None:
+    """Read the reviewed pre-P03 machine edition from its actual Git object."""
+
+    try:
+        raw = _run_git(
+            root,
+            ["show", f"{TASK_LEGACY_BASELINE_COMMIT}:{REGISTRY_PATH.as_posix()}"],
+            max_stdout_bytes=REGISTRY_MAX_BYTES,
+        )
+        import json
+
+        return _typed_registry_from_mapping(json.loads(raw))
+    except Exception:  # A missing baseline fails closed to the current profile.
+        return None
+
+
+def legacy_task_profile(
+    root: Path, path: PurePosixPath, text: str, profile: DocumentProfile
+) -> DocumentProfile:
+    """Keep exact unchanged completed Task bytes on their historical binding."""
+
+    if (
+        profile.profile_id != "sdlc/task"
+        or re.search(r'(?m)^status: "completed"$', text) is None
+        or "| Acceptance | Evidence |" not in text
+        or path.is_absolute()
+        or ".." in path.parts
+    ):
+        return profile
+    baseline = _legacy_task_registry(root.resolve())
+    if baseline is None:
+        return profile
+    if not task_baseline_bytes_match(root, path, text):
+        return profile
+    return next(item for item in baseline.profiles if item.profile_id == "sdlc/task")
+
+
+def task_baseline_bytes_match(root: Path, path: PurePosixPath, text: str) -> bool:
+    """Attest exact path and bytes to the actual P03 prechange main commit."""
+
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or path.parts[:2] != ("docs", "03.specs")
+        or path.parent.name != "tasks"
+    ):
+        return False
+    try:
+        return _run_git(
+            root,
+            ["show", f"{TASK_LEGACY_BASELINE_COMMIT}:{path.as_posix()}"],
+        ) == text.encode("utf-8")
+    except Exception:
+        return False
+
+
 def _within_target_scope(path: PurePosixPath) -> bool:
     if path.as_posix() == "RTK.md":
         return False
@@ -1036,6 +1321,12 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
                 evidence_result_states=tuple(
                     execution.get("evidence_result_states", ())
                 ),
+                criterion_acceptance_section=execution.get(
+                    "criterion_acceptance_section"
+                ),
+                criterion_acceptance_columns=tuple(
+                    execution.get("criterion_acceptance_columns", ())
+                ),
             )
         ),
     )
@@ -1118,6 +1409,13 @@ def _retention_unit_diagnostics(
             undeclared = sorted(set(states) - declared_states)
             if member not in item["required_members"] or undeclared:
                 problems.append(f"{member}: undeclared {undeclared!r}")
+        authority = tuple(item.get("completed_authority_members", ()))
+        if authority and (
+            name != "spec-package"
+            or set(authority) != {"spec.md", "plan.md"}
+            or "spec.md" not in item["required_members"]
+        ):
+            problems.append("approved completion is bound only to spec.md/plan.md")
         diagnostics.extend(
             _diagnostic(
                 "REGISTRY_RETENTION_UNIT",
@@ -1481,8 +1779,44 @@ def _terminal_semantic_diagnostics(
     assigned_profiles: set[str] = set()
     domains_by_profile: dict[str, Mapping[str, Any]] = {}
     families: set[str] = set()
+    task_binding = (
+        (profiles_by_id.get("sdlc/task") or {}).get("relationships") or {}
+    ).get("body_contract") or {}
+    modern_task = bool(
+        (task_binding.get("task_execution") or {}).get("criterion_acceptance_section")
+    )
     for domain in raw_registry["lifecycle_domains"]:
         family = domain["family"]
+        initial_states = domain.get("initial_states")
+        inbound = {target for _, target in domain["transitions"]}
+        if initial_states is not None and (
+            not initial_states
+            or any(
+                state not in domain["states"]
+                or domain["states"][state] == "terminal"
+                or state in inbound
+                for state in initial_states
+            )
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LIFECYCLE_DOMAIN",
+                    expected="nonempty initial_states drawn from zero-indegree nonterminal domain states",
+                    actual=f"invalid initial_states for {family}: {initial_states!r}",
+                )
+            )
+        if (
+            modern_task
+            and family in {"spec-plan", "task"}
+            and initial_states != ["draft"]
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LIFECYCLE_DOMAIN",
+                    expected=f"modern {family} initial_states=['draft']",
+                    actual=repr(initial_states),
+                )
+            )
         if family in families:
             diagnostics.append(
                 _diagnostic(
@@ -1591,6 +1925,9 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
             profile_ids=tuple(item["profile_ids"]),
             states=tuple(item["states"].items()),
             transitions=frozenset(tuple(edge) for edge in item["transitions"]),
+            initial_states=(
+                tuple(item["initial_states"]) if "initial_states" in item else None
+            ),
         )
         for item in raw["lifecycle_domains"]
     )
@@ -1653,6 +1990,9 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
                     for member, states in sorted(
                         item.get("member_admitted_states", {}).items()
                     )
+                ),
+                completed_authority_members=tuple(
+                    item.get("completed_authority_members", ())
                 ),
             )
             for item in raw.get("retention_units", ())

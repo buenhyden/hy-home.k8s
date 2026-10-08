@@ -520,7 +520,7 @@
       "id": "sdlc/task",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/03\\.specs|docs/98\\.archive/(?:completed|retired)/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^(?:docs/03\\.specs|docs/98\\.archive/(?:completed|superseded|retired)/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}-TSK-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/specs/task.template.md",
       "frontmatter": {
@@ -537,7 +537,9 @@
           "parent_ids"
         ],
         "optional": [
-          "cancellation"
+          "cancellation",
+          "supersedes",
+          "superseded_by"
         ],
         "forbidden": [],
         "order": [
@@ -550,7 +552,9 @@
           "layer",
           "artifact_id",
           "parent_ids",
-          "cancellation"
+          "cancellation",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -563,6 +567,7 @@
           "Inputs",
           "Task Table",
           "Task Evidence",
+          "Criterion Acceptance",
           "Approval and Safety Boundaries",
           "Verification Summary"
         ],
@@ -576,7 +581,8 @@
           "in-progress",
           "blocked",
           "completed",
-          "cancelled"
+          "cancelled",
+          "superseded"
         ]
       },
       "relationships": {
@@ -597,7 +603,6 @@
             "Owner",
             "Status",
             "Result",
-            "Acceptance",
             "Evidence"
           ],
           "identifier_columns": [
@@ -648,6 +653,13 @@
                 "FAIL",
                 "DEFER",
                 "NOT_APPLICABLE"
+              ],
+              "superseded": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER",
+                "NOT_APPLICABLE"
               ]
             },
             "acceptance_states": [
@@ -666,7 +678,8 @@
               "Input",
               "Result",
               "Location",
-              "Acceptance"
+              "Required",
+              "Resolves"
             ],
             "evidence_result_states": [
               "NOT_RUN",
@@ -674,6 +687,14 @@
               "FAIL",
               "DEFER",
               "NOT_APPLICABLE"
+            ],
+            "criterion_acceptance_section": "Criterion Acceptance",
+            "criterion_acceptance_columns": [
+              "Criterion",
+              "Acceptance",
+              "Evidence",
+              "Disposition",
+              "Current owner"
             ]
           }
         }
@@ -4227,7 +4248,9 @@
           "parent_ids"
         ],
         "optional": [
-          "cancellation"
+          "cancellation",
+          "supersedes",
+          "superseded_by"
         ],
         "forbidden": [],
         "order": [
@@ -4240,7 +4263,9 @@
           "layer",
           "artifact_id",
           "parent_ids",
-          "cancellation"
+          "cancellation",
+          "supersedes",
+          "superseded_by"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -4253,6 +4278,7 @@
           "Inputs",
           "Task Table",
           "Task Evidence",
+          "Criterion Acceptance",
           "Approval and Safety Boundaries",
           "Verification Summary"
         ],
@@ -4280,7 +4306,6 @@
             "Owner",
             "Status",
             "Result",
-            "Acceptance",
             "Evidence"
           ],
           "identifier_columns": [
@@ -4331,6 +4356,13 @@
                 "FAIL",
                 "DEFER",
                 "NOT_APPLICABLE"
+              ],
+              "superseded": [
+                "NOT_RUN",
+                "PASS",
+                "FAIL",
+                "DEFER",
+                "NOT_APPLICABLE"
               ]
             },
             "acceptance_states": [
@@ -4349,7 +4381,8 @@
               "Input",
               "Result",
               "Location",
-              "Acceptance"
+              "Required",
+              "Resolves"
             ],
             "evidence_result_states": [
               "NOT_RUN",
@@ -4357,6 +4390,14 @@
               "FAIL",
               "DEFER",
               "NOT_APPLICABLE"
+            ],
+            "criterion_acceptance_section": "Criterion Acceptance",
+            "criterion_acceptance_columns": [
+              "Criterion",
+              "Acceptance",
+              "Evidence",
+              "Disposition",
+              "Current owner"
             ]
           }
         }
@@ -6033,6 +6074,9 @@
     },
     {
       "family": "spec-plan",
+      "initial_states": [
+        "draft"
+      ],
       "profile_ids": [
         "sdlc/spec",
         "sdlc/plan"
@@ -6058,22 +6102,6 @@
         ],
         [
           "approved",
-          "in-progress"
-        ],
-        [
-          "in-progress",
-          "blocked"
-        ],
-        [
-          "blocked",
-          "in-progress"
-        ],
-        [
-          "in-progress",
-          "completed"
-        ],
-        [
-          "approved",
           "cancelled"
         ],
         [
@@ -6091,11 +6119,26 @@
         [
           "completed",
           "superseded"
+        ],
+        [
+          "approved",
+          "in-review"
+        ],
+        [
+          "draft",
+          "cancelled"
+        ],
+        [
+          "in-review",
+          "cancelled"
         ]
       ]
     },
     {
       "family": "task",
+      "initial_states": [
+        "draft"
+      ],
       "profile_ids": [
         "sdlc/task"
       ],
@@ -6105,7 +6148,8 @@
         "in-progress": "current",
         "blocked": "current",
         "completed": "terminal",
-        "cancelled": "terminal"
+        "cancelled": "terminal",
+        "superseded": "terminal"
       },
       "transitions": [
         [
@@ -6142,6 +6186,22 @@
         ],
         [
           "blocked",
+          "cancelled"
+        ],
+        [
+          "ready",
+          "superseded"
+        ],
+        [
+          "in-progress",
+          "superseded"
+        ],
+        [
+          "blocked",
+          "superseded"
+        ],
+        [
+          "draft",
           "cancelled"
         ]
       ]
@@ -6427,6 +6487,10 @@
       "anchor": "spec.md",
       "required_members": [
         "spec.md"
+      ],
+      "completed_authority_members": [
+        "spec.md",
+        "plan.md"
       ]
     },
     {

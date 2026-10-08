@@ -120,6 +120,7 @@ from document_contracts import (
     read_repository_text,
     task_execution_issues,
     task_evidence_issues,
+    task_contract_issues,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
 )
@@ -3842,9 +3843,11 @@ def task_base_rows(
             "Result",
             "Evidence",
         )
+        previous_columns = legacy_columns[:-1] + ("Acceptance", "Evidence")
         if table is None or tuple(table[0]) not in {
             contract.required_columns,
             legacy_columns,
+            previous_columns,
         }:
             return ()
         header, cells = table
@@ -3853,6 +3856,59 @@ def task_base_rows(
             for row in cells
         ]
     return tuple(tuple(row.items()) for row in rows)
+
+
+def task_acceptance_rows(text: str, binding: object) -> list[dict[str, str]] | None:
+    """Read the sole modern Task criterion verdict table."""
+
+    section_name = getattr(binding, "criterion_acceptance_section", None)
+    columns = getattr(binding, "criterion_acceptance_columns", ())
+    if not section_name:
+        return None
+    section = _exact_heading_section(text, f"## {section_name}")
+    table = _first_visible_table(section or "")
+    if (
+        table is None
+        or tuple(table[0]) != columns
+        or not table[1]
+        or any(len(row) != len(table[0]) for row in table[1])
+    ):
+        return None
+    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
+
+
+def task_evidence_rows(text: str, binding: object) -> list[dict[str, str]] | None:
+    """Read a complete Task check table using its exact registry columns."""
+
+    section_name = getattr(binding, "evidence_section", None)
+    columns = getattr(binding, "evidence_columns", ())
+    if not section_name:
+        return None
+    section = _exact_heading_section(text, f"## {section_name}")
+    table = _first_visible_table(section or "")
+    if (
+        table is None
+        or tuple(table[0]) != columns
+        or not table[1]
+        or any(len(row) != len(table[0]) for row in table[1])
+    ):
+        return None
+    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
+
+
+def task_base_evidence_rows(text: str) -> list[dict[str, str]] | None:
+    """Read historical or current Task evidence without changing its cells."""
+
+    section = _exact_heading_section(text, "## Task Evidence")
+    table = _first_visible_table(section or "")
+    if (
+        table is None
+        or not table[1]
+        or "Evidence" not in table[0]
+        or any(len(row) != len(table[0]) for row in table[1])
+    ):
+        return None
+    return [dict(zip(table[0], row, strict=True)) for row in table[1]]
 
 
 def lifecycle_markdown_evidence(
@@ -3968,11 +4024,15 @@ def lifecycle_markdown_evidence(
                         is None
                     ):
                         body_contract_valid = False
-            if contract.task_execution is not None and task_execution_issues(
-                rows,
-                document_status,
-                contract.task_execution,
-                template=profile.mode == "template",
+            if (
+                contract.task_execution is not None
+                and not contract.task_execution.criterion_acceptance_section
+                and task_execution_issues(
+                    rows,
+                    document_status,
+                    contract.task_execution,
+                    template=profile.mode == "template",
+                )
             ):
                 body_contract_valid = False
             binding = contract.task_execution
@@ -3985,6 +4045,9 @@ def lifecycle_markdown_evidence(
                     evidence_table is None
                     or tuple(evidence_table[0]) != binding.evidence_columns
                     or not evidence_table[1]
+                    or any(
+                        len(row) != len(evidence_table[0]) for row in evidence_table[1]
+                    )
                 ):
                     body_contract_valid = False
                 else:
@@ -3992,7 +4055,13 @@ def lifecycle_markdown_evidence(
                         dict(zip(evidence_table[0], row, strict=True))
                         for row in evidence_table[1]
                     ]
-                    if task_evidence_issues(evidence_rows, binding):
+                    if binding.criterion_acceptance_section:
+                        decision_rows = task_acceptance_rows(text, binding)
+                        if decision_rows is None or task_contract_issues(
+                            rows, evidence_rows, decision_rows, document_status, binding
+                        ):
+                            body_contract_valid = False
+                    elif task_evidence_issues(evidence_rows, binding):
                         body_contract_valid = False
             link_columns = (
                 (contract.source_link_column, contract.allowed_source_profile_ids),

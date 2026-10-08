@@ -26,10 +26,16 @@ DOCUMENT_READERS = (
     "tests/test_operations_lineage_contract.py",
     "tests/test_shared_contract_binding.py",
     "tests/test_document_scope_selection.py",
+    "scripts/sync-task-status.py",
+    "tests/test_task_acceptance_boundaries.py",
 )
 HISTORY_READERS = (
     "scripts/document_authority.py",
     "scripts/document_contracts.py",
+    "scripts/document_lifecycle.py",
+    "scripts/validate-document-lifecycle.py",
+    "tests/test_task_acceptance_contract.py",
+    "tests/test_task_execution_contract.py",
 )
 DOCUMENT_GATES = {
     "affected-surface-contract",
@@ -103,6 +109,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
         for path in (
             "scripts/validate-gitops-structure.py",
             "scripts/document_contracts.py.backup",
+            "scripts/document_lifecycle.py.backup",
         ):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(CONTRACT, path)
@@ -111,6 +118,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
         for path in (
             "tests/test_k8s_contract.py",
             "tests/test_operations_section_contract.py.backup",
+            "tests/test_task_acceptance_contract.py.backup",
         ):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(CONTRACT, path)

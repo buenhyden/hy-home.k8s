@@ -1,10 +1,10 @@
 ---
 title: "Software Development Lifecycle"
-version: "2.0.0"
+version: "3.0.0"
 type: "governance/contract"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 ---
 
 # Software Development Lifecycle
@@ -44,11 +44,14 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 1. Establish the problem, acceptance boundary, and complete requirement IDs.
 2. Record structural views and durable decisions before implementation when
    the change affects system boundaries or important trade-offs.
-3. Implement through one Stage 03 Spec package with ordered Plan and Task
-   evidence. Changed executable behavior uses a focused failing case followed
-   by a passing case; narrative changes use selected document checks. The Spec
-   states behavior and criteria, the Plan states order and dependencies, and
-   each Task records execution rows, results and evidence in one table.
+3. Review the Stage 03 Spec's change and acceptance contract and the Plan's
+   intended order, risks and verification before dependent execution. Their
+   approval establishes current authority, not an implementation result.
+   Implement through Task records in that package. Changed executable behavior
+   uses a focused failing case followed by a passing case; narrative changes
+   use selected document checks. The Task Table owns execution state and
+   result, Task Evidence owns factual checks, and one Criterion Acceptance
+   table owns each criterion verdict.
 4. Promote stable operator controls to Guide, Policy, or Runbook owners and
    preserve incident learning in Incident and Postmortem records.
 5. Supersede, retire, withdraw, or seal documents only through registry-owned
@@ -70,7 +73,7 @@ technical-design artifact.
 | --- | --- |
 | Requirement | Durable need and acceptance boundary; Stage 01. |
 | Architecture Description / Architecture Decision Record | Current structural view / durable choice and rationale; Stage 02. |
-| Spec / Plan / Task | Change contract / execution order and risk / work, verification, and handoff evidence; one Stage 03 package. |
+| Spec / Plan / Task | Approved change contract / approved execution order and risk / actual work, check evidence, criterion acceptance and handoff; one Stage 03 package. Approval is not execution completion. |
 | GitHub Issue / Project | Request and priority / a view of work state. Link to a Spec and Task by ID or URL; do not copy their full contract or evidence or synchronize status in both directions. Remote state requires observation. |
 | Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to `.agents/governance/`, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. The Stage 99 profile `governance/rule` names the shape those policy documents share, from the retired directory they once sat in; it is a stable identity rather than a claim that such a document carries one obligation. |
 | Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
@@ -86,8 +89,8 @@ technical-design artifact.
 | Transition | Entry and output | Approval and evidence | Failure or rollback |
 | --- | --- | --- | --- |
 | Need to design | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
-| Design to execution | Accepted change contract and ordered Plan; Task records work and checks | Reuse valid approval for the same scope; never infer approval from a checkbox | Revise the Plan when evidence contradicts it; preserve unrelated work |
-| Execution to handoff | Reviewed final bytes and required checks; Task result and scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Failed required checks block completion; missing external permission is DEFER |
+| Design to execution | Reviewed and approved change contract and ordered Plan; Task records work and checks | Reuse valid approval for the same scope; never infer approval from a checkbox or `ready` Task | Re-review affected authority when scope or evidence contradicts it; preserve unrelated work |
+| Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
 | Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply Stage 99 lifecycle and recovery contracts | Keep failures factual; use Git recovery rather than a second active owner |
 
 A small correction reuses its current work owner and proportional checks. It

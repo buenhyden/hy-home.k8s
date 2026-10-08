@@ -17,7 +17,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
-from typing import Callable, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from archive_cutover_manifest import (
     ARCHIVE_PROFILE,
@@ -39,9 +39,12 @@ from document_contracts import (
     is_opaque_evaluation_output,
     verify_opaque_evaluation_output,
     load_registry,
+    legacy_task_profile,
     read_repository_text,
     task_criterion_ids,
     task_execution_issues,
+    task_contract_issues,
+    task_baseline_bytes_match,
     direct_parent,
     _typed_registry_from_mapping,
 )
@@ -2319,6 +2322,8 @@ def _unit_state_gaps(
     retention: RetentionClass,
     unit: RetentionUnit | None,
     base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    *,
+    approved_completion: bool = False,
 ) -> list[str]:
     """Admit a unit by its anchor's state; every other member is terminal.
 
@@ -2332,7 +2337,15 @@ def _unit_state_gaps(
     if (
         before is None
         or before.state_issue
-        or before.status not in retention.admitted_states
+        or (
+            before.status not in retention.admitted_states
+            and not (
+                approved_completion
+                and unit is not None
+                and unit.anchor in unit.completed_authority_members
+                and before.status == "approved"
+            )
+        )
     ):
         gaps.append(f"{retention.name}/ does not admit the anchor state")
     if unit is None:
@@ -2351,6 +2364,13 @@ def _unit_state_gaps(
             continue
         document, name = base_snapshot[path], path.relative_to(source).as_posix()
         states, domain = admitted.get(name), domains.get(document.profile_id)
+        if (
+            approved_completion
+            and name in unit.completed_authority_members
+            and document.status == "approved"
+            and document.profile_id == "sdlc/plan"
+        ):
+            continue
         if states is None and domain is None:
             continue
         if (
@@ -2379,6 +2399,7 @@ def _retention_gaps(
     base_commit: str,
     proposed_commit: str | None,
     base_snapshot: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
     proposed_snapshot: Mapping[PurePosixPath, LifecycleDocument],
 ) -> tuple[list[str], tuple[tuple[PurePosixPath, PurePosixPath], ...]]:
     """Prove a retained unit is its source Git object, unchanged, links included.
@@ -2409,7 +2430,56 @@ def _retention_gaps(
         or _proposed_entries(root, record, proposed_commit) != source_entries
     ):
         gaps.append("retained unit differs from its source in path, mode, or bytes")
-    gaps.extend(_unit_state_gaps(registry, source, retention, unit, base_snapshot))
+    approved_completion = False
+    anchor = source / "spec.md"
+    plan_path = source / "plan.md"
+    if (
+        retention.name == "completed"
+        and unit is not None
+        and unit.name == "spec-package"
+        and set(unit.completed_authority_members) == {"spec.md", "plan.md"}
+        and base_snapshot.get(anchor) is not None
+        and base_snapshot[anchor].status == "approved"
+        and base_snapshot.get(plan_path) is not None
+        and base_snapshot[plan_path].status == "approved"
+    ):
+        schema_path = PurePosixPath(
+            "docs/99.templates/contracts/frontmatter.schema.json"
+        )
+        schema_oid = _tree_blob_oid(root, base_commit, schema_path)
+        schema_text = _blob_text(root, schema_oid, schema_path) if schema_oid else None
+        if schema_text is None:
+            gaps.append("approved source package lacks its frontmatter schema")
+        else:
+            try:
+                schema = json.loads(schema_text, object_pairs_hook=_unique_json_object)
+                completion = _completion_document_diagnostics(
+                    root,
+                    registry,
+                    (anchor,),
+                    base_snapshot,
+                    base_texts,
+                    schema,
+                    base_mode="explicit-ref",
+                )
+            except (TypeError, ValueError, KeyError) as error:
+                gaps.append(f"approved source completion could not be read: {error}")
+            else:
+                approved_completion = not completion
+                gaps.extend(
+                    f"approved source completion: {item.rule_id} {item.path.as_posix()}"
+                    for item in completion
+                )
+    gaps.extend(
+        _unit_state_gaps(
+            registry,
+            source,
+            retention,
+            unit,
+            base_snapshot,
+            approved_completion=approved_completion,
+        )
+    )
     pairs = tuple(
         (path, record / path.relative_to(source))
         for path in sorted(base_snapshot, key=PurePosixPath.as_posix)
@@ -2628,6 +2698,7 @@ def _disposition_lifecycle_events(
                 base_commit=base_commit,
                 proposed_commit=proposed_commit,
                 base_snapshot=base_snapshot,
+                base_texts=base_texts,
                 proposed_snapshot=proposed_snapshot,
             )
             gaps.extend(retention_gaps)
@@ -3311,6 +3382,8 @@ def _evidence_context(
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     base_texts: Mapping[PurePosixPath, str],
     proposed_texts: Mapping[PurePosixPath, str],
+    *,
+    root: Path | None = None,
 ) -> LifecycleEvidenceContext:
     profile_map = {profile.profile_id: profile for profile in registry.profiles}
     snapshot_profiles = MappingProxyType(
@@ -3319,6 +3392,10 @@ def _evidence_context(
     adapter = _link_validator_module()
     views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
     base_task_rows: dict[PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]] = {}
+    base_task_evidence_rows: dict[
+        PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
+    ] = {}
+    baseline_task_paths: set[PurePosixPath] = set()
     for path, document in base_documents.items():
         profile = profile_map.get(document.profile_id)
         if (
@@ -3331,8 +3408,19 @@ def _evidence_context(
             rows = adapter.task_base_rows(base_texts[path], profile)
             if rows:
                 base_task_rows[path] = rows
+            evidence = adapter.task_base_evidence_rows(base_texts[path])
+            if evidence:
+                base_task_evidence_rows[path] = tuple(
+                    tuple(row.items()) for row in evidence
+                )
+            if root is not None and task_baseline_bytes_match(
+                root, path, base_texts[path]
+            ):
+                baseline_task_paths.add(path)
     for path, document in proposed_documents.items():
         profile = profile_map.get(document.profile_id)
+        if profile is not None and root is not None:
+            profile = legacy_task_profile(root, path, proposed_texts[path], profile)
         if profile is None or profile.body_contract is None:
             views[path] = LifecycleEvidenceDocument(
                 document=document,
@@ -3372,7 +3460,189 @@ def _evidence_context(
             body_contract_valid=rendered.body_contract_valid,
             task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
             body_rows=rendered.body_rows,
+            task_evidence_rows=(
+                tuple(
+                    tuple(row.items())
+                    for row in adapter.task_base_evidence_rows(proposed_texts[path])
+                )
+                if document.profile_id == "sdlc/task"
+                and adapter.task_base_evidence_rows(proposed_texts[path]) is not None
+                else ()
+            ),
         )
+
+    task_ids = {
+        doc.artifact_id: path
+        for path, doc in proposed_documents.items()
+        if doc.profile_id == "sdlc/task" and doc.artifact_id
+    }
+    task_contract = profile_map.get("sdlc/task")
+    modern_task = (
+        task_contract is not None
+        and task_contract.body_contract is not None
+        and task_contract.body_contract.task_execution is not None
+        and task_contract.body_contract.task_execution.criterion_acceptance_section
+    )
+    for path, view in tuple(views.items()):
+        if (
+            not modern_task
+            or view.document.profile_id != "sdlc/task"
+            or view.document.status not in {"cancelled", "superseded"}
+        ):
+            continue
+        try:
+            metadata = frontmatter_mapping(proposed_texts[path])
+        except (ValueError, TypeError):
+            metadata = {}
+        criteria = {
+            criterion
+            for cells in view.body_rows
+            for criterion in (
+                task_criterion_ids(dict(cells)["Upstream criterion"]) or ()
+            )
+        }
+        plan_path = path.parent.parent / "plan.md"
+        plan = proposed_documents.get(plan_path)
+        plan_profile = profile_map.get("sdlc/plan")
+        plan_rows = (
+            adapter._body_contract_rows(proposed_texts[plan_path], plan_profile)
+            if plan is not None and plan_profile is not None
+            else None
+        )
+        allocations: dict[str, set[PurePosixPath]] = {}
+        for row in plan_rows or ():
+            links = adapter._extract_links(
+                row["Task"], definitions_text=proposed_texts[plan_path]
+            )
+            targets = [adapter._local_destination(plan_path, link)[1] for link in links]
+            for criterion in task_criterion_ids(row["Criteria"]) or ():
+                allocations.setdefault(criterion, set()).update(
+                    target for target in targets if target is not None
+                )
+        successor_id = metadata.get("superseded_by")
+        successor = (
+            task_ids.get(successor_id) if isinstance(successor_id, str) else None
+        )
+        reciprocal = False
+        if successor is not None and successor.parent == path.parent:
+            try:
+                successor_metadata = frontmatter_mapping(proposed_texts[successor])
+            except (ValueError, TypeError):
+                successor_metadata = {}
+            reciprocal = (
+                successor_metadata.get("supersedes") == view.document.artifact_id
+            )
+        plan_successors = {
+            criterion: allocations.get(criterion, set()) - {path}
+            for criterion in criteria
+        }
+        plan_handoff = bool(criteria) and all(
+            path not in allocations.get(criterion, set()) and plan_successors[criterion]
+            for criterion in criteria
+        )
+        if view.document.status == "superseded":
+            valid = bool(
+                view.body_contract_valid
+                and reciprocal
+                and plan_handoff
+                and all(
+                    successor in candidates for candidates in plan_successors.values()
+                )
+            )
+            if valid and successor is not None:
+                views[path] = replace(
+                    view,
+                    relationship_links=(*view.relationship_links, successor),
+                )
+                successor_view = views[successor]
+                views[successor] = replace(
+                    successor_view,
+                    relationship_links=(*successor_view.relationship_links, path),
+                )
+        else:
+            cancellation = metadata.get("cancellation")
+            authorization = (
+                cancellation.get("authorization_ref")
+                if isinstance(cancellation, dict)
+                else None
+            )
+            disposition = (
+                cancellation.get("criteria_disposition")
+                if isinstance(cancellation, dict)
+                else None
+            )
+            plan_authorized = bool(
+                plan_handoff and plan is not None and authorization == plan.artifact_id
+            )
+            spec_path = path.parent.parent / "spec.md"
+            spec = proposed_documents.get(spec_path)
+            try:
+                spec_metadata = frontmatter_mapping(proposed_texts[spec_path])
+            except (KeyError, ValueError, TypeError):
+                spec_metadata = {}
+            spec_cancellation = spec_metadata.get("cancellation")
+
+            def named_criteria(value: object) -> frozenset[str]:
+                if not isinstance(value, str):
+                    return frozenset()
+                return frozenset(
+                    re.findall(
+                        r"(?<![\w-])VAL-[A-Z0-9-]+-[0-9]{3}(?![\w-])",
+                        value,
+                    )
+                )
+
+            def concrete(value: object) -> bool:
+                return (
+                    isinstance(value, str)
+                    and bool(value.strip())
+                    and value.strip().casefold()
+                    not in {"tbd", "todo", "pending", "n/a", "na", "none"}
+                )
+
+            scope_authorized = bool(
+                spec is not None
+                and spec.status == "cancelled"
+                and authorization == spec.artifact_id
+                and isinstance(spec_cancellation, dict)
+                and criteria <= named_criteria(disposition)
+            )
+            acceptance_rows = (
+                adapter.task_acceptance_rows(
+                    proposed_texts[path], task_contract.body_contract.task_execution
+                )
+                if task_contract is not None
+                and task_contract.body_contract is not None
+                and task_contract.body_contract.task_execution is not None
+                else None
+            )
+            waived = {
+                criterion
+                for row in acceptance_rows or ()
+                if row["Acceptance"].strip() == "not-required"
+                for criterion in (task_criterion_ids(row["Criterion"]) or ())
+            }
+            waiver_authorized = bool(
+                scope_authorized
+                and waived
+                and isinstance(spec_cancellation, dict)
+                and waived
+                <= named_criteria(spec_cancellation.get("criteria_disposition"))
+                and all(
+                    concrete(spec_cancellation.get(key))
+                    for key in ("reason", "authorization_ref")
+                )
+            )
+            valid = bool(
+                view.body_contract_valid
+                and isinstance(cancellation, dict)
+                and concrete(cancellation.get("reason"))
+                and concrete(disposition)
+                and (
+                    waiver_authorized if waived else plan_authorized or scope_authorized
+                )
+            )
+        views[path] = replace(views[path], task_disposition_valid=valid)
 
     common = set(base_documents) & set(proposed_documents)
     status_changed = frozenset(
@@ -3387,6 +3657,35 @@ def _evidence_context(
         if _body_text(base_texts[path]) != _body_text(proposed_texts[path])
     )
     created = frozenset(set(proposed_documents) - set(base_documents))
+    task_plan_criteria: dict[PurePosixPath, set[str]] = {}
+    task_spec_criteria: dict[PurePosixPath, frozenset[str]] = {}
+    for plan_path, plan_doc in proposed_documents.items():
+        if not modern_task or plan_doc.profile_id != "sdlc/plan":
+            continue
+        plan_profile = profile_map["sdlc/plan"]
+        for row in (
+            adapter._body_contract_rows(proposed_texts[plan_path], plan_profile) or ()
+        ):
+            criteria = task_criterion_ids(row["Criteria"]) or ()
+            for link in adapter._extract_links(
+                row["Task"], definitions_text=proposed_texts[plan_path]
+            ):
+                _, target = adapter._local_destination(plan_path, link)
+                if (
+                    target in proposed_documents
+                    and proposed_documents[target].profile_id == "sdlc/task"
+                ):
+                    task_plan_criteria.setdefault(target, set()).update(criteria)
+    for task_path, task_doc in proposed_documents.items():
+        if not modern_task or task_doc.profile_id != "sdlc/task":
+            continue
+        spec_path = task_path.parent.parent / "spec.md"
+        spec_view = views.get(spec_path)
+        task_spec_criteria[task_path] = frozenset(
+            row["Spec criterion"].strip()
+            for cells in (spec_view.body_rows if spec_view is not None else ())
+            if (row := dict(cells)).get("Spec criterion")
+        )
     return LifecycleEvidenceContext(
         base_documents=base_documents,
         proposed_documents=MappingProxyType(views),
@@ -3399,6 +3698,12 @@ def _evidence_context(
         body_changed_paths=body_changed | created,
         created_paths=created,
         base_task_rows=MappingProxyType(base_task_rows),
+        base_task_evidence_rows=MappingProxyType(base_task_evidence_rows),
+        baseline_task_paths=frozenset(baseline_task_paths),
+        task_plan_criteria=MappingProxyType(
+            {path: frozenset(criteria) for path, criteria in task_plan_criteria.items()}
+        ),
+        task_spec_criteria=MappingProxyType(task_spec_criteria),
     )
 
 
@@ -3987,6 +4292,7 @@ class _CumulativeHistoryCache:
                 proposed_snapshot,
                 base_texts,
                 proposed_texts,
+                root=self.root,
             )
         return self.evidence[key]
 
@@ -4602,6 +4908,7 @@ def _evaluate_comparison(
         proposed_snapshot,
         base_texts,
         proposed_texts,
+        **({"root": root} if evidence_context_factory is _evidence_context else {}),
     )
     legacy_consumed_paths = (
         work054_wp003_consumed_paths
@@ -4663,19 +4970,21 @@ def _evaluate_snapshot(
 ) -> tuple[LifecycleDiagnostic, ...]:
     _verify_repository_root(root)
     inventory = enumerate_target_markdown(root, include_paths=tuple(include_paths))
-    documents = [
-        document_from_text(
-            registry,
-            path,
-            (
-                _verified_opaque_snapshot_text(root, path)
-                if is_opaque_evaluation_output(registry, path)
-                else read_repository_text(root, path)
-            ),
+    texts = {
+        path: (
+            _verified_opaque_snapshot_text(root, path)
+            if is_opaque_evaluation_output(registry, path)
+            else read_repository_text(root, path)
         )
         for path in inventory.current_paths
-    ]
-    return validate_snapshot_documents(registry, documents)
+    }
+    documents = {
+        path: document_from_text(registry, path, text) for path, text in texts.items()
+    }
+    context = _evidence_context(registry, {}, documents, {}, texts, root=root)
+    return validate_snapshot_documents(registry, tuple(documents.values())) + (
+        validate_current_task_evidence(context, base_mode="explicit-ref")
+    )
 
 
 def _evaluate_completion(
@@ -4698,10 +5007,27 @@ def _evaluate_completion(
         snapshot_hash.update(staged_authority_bytes(root, path) + b"\0")
     digest = snapshot_hash.hexdigest()
     documents, texts = _snapshot_projection(root, registry, blobs)
-    owner = _load_canonical_markdown_module()
     schema_path = PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json")
     schema_text = staged_authority_bytes(root, schema_path).decode("utf-8")
     schema = json.loads(schema_text, object_pairs_hook=_unique_json_object)
+    return _completion_document_diagnostics(
+        root, registry, include_paths, documents, texts, schema, base_mode="completion"
+    ), digest
+
+
+def _completion_document_diagnostics(
+    root: Path,
+    registry: Registry,
+    include_paths: Sequence[PurePosixPath],
+    documents: Mapping[PurePosixPath, LifecycleDocument],
+    texts: Mapping[PurePosixPath, str],
+    schema: Mapping[str, Any],
+    *,
+    base_mode: str,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Judge one immutable package snapshot for index completion or retention."""
+
+    owner = _load_canonical_markdown_module()
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     adapter = _link_validator_module()
     diagnostics: list[LifecycleDiagnostic] = []
@@ -4715,8 +5041,12 @@ def _evaluate_completion(
                 profile=documents[path].profile_id if path in documents else "",
                 expected_transition="complete Spec criterion -> Plan assignment -> Task PASS evidence",
                 observed_transition=detail,
-                base_mode="completion",
-                evidence_gap="exact Git index package traceability",
+                base_mode=base_mode,
+                evidence_gap=(
+                    "exact Git index package traceability"
+                    if base_mode == "completion"
+                    else "immutable comparison-base package traceability"
+                ),
             )
         )
 
@@ -4725,6 +5055,7 @@ def _evaluate_completion(
         profile = profiles.get(document.profile_id) if document else None
         if profile is None:
             return None
+        profile = legacy_task_profile(root, path, texts[path], profile)
         return adapter._body_contract_rows(texts[path], profile)
 
     def linked_target(path: PurePosixPath, cell: str) -> PurePosixPath | None:
@@ -4758,7 +5089,9 @@ def _evaluate_completion(
                 for finding in owner.validate_document_text(
                     texts[path],
                     path,
-                    profiles[document.profile_id],
+                    legacy_task_profile(
+                        root, path, texts[path], profiles[document.profile_id]
+                    ),
                     "strict",
                     frontmatter_schema=schema,
                 ):
@@ -4872,7 +5205,18 @@ def _evaluate_completion(
                 "one or more required criteria lack a Task assignment",
             )
 
+        context = _evidence_context(registry, {}, documents, {}, texts, root=root)
+        for diagnostic in validate_current_task_evidence(
+            context, base_mode="explicit-ref"
+        ):
+            if diagnostic.path.parent == package / "tasks":
+                fail(
+                    diagnostic.path, diagnostic.rule_id, diagnostic.observed_transition
+                )
+
         task_pairs: dict[tuple[str, PurePosixPath], list[dict[str, str]]] = {}
+        accepted_origins: dict[str, list[PurePosixPath]] = {}
+        modern_origins: dict[str, list[PurePosixPath]] = {}
         task_paths = sorted(
             (
                 path
@@ -4898,13 +5242,53 @@ def _evaluate_completion(
                         "direct indexed parent identity differs from the package path",
                     )
             entries = rows(task_path)
-            binding = profiles["sdlc/task"].body_contract.task_execution  # type: ignore[union-attr]
+            task_profile = legacy_task_profile(
+                root, task_path, texts[task_path], profiles["sdlc/task"]
+            )
+            binding = task_profile.body_contract.task_execution  # type: ignore[union-attr]
             if not entries or binding is None:
                 fail(task_path, "COMPLETION-TASK", "bound Task rows missing")
                 continue
             state = documents[task_path].status or ""
             for rule, detail in task_execution_issues(entries, state, binding):
                 fail(task_path, rule, detail)
+            if binding.criterion_acceptance_section:
+                evidence = adapter.task_evidence_rows(texts[task_path], binding)
+                decisions = adapter.task_acceptance_rows(texts[task_path], binding)
+                if evidence is None or decisions is None:
+                    fail(
+                        task_path,
+                        "COMPLETION-ACCEPTANCE",
+                        "bound evidence or criterion verdict table missing",
+                    )
+                else:
+                    for rule, detail in task_contract_issues(
+                        entries, evidence, decisions, state, binding
+                    ):
+                        fail(task_path, rule, detail)
+                    for decision in decisions:
+                        criterion_ids = task_criterion_ids(decision["Criterion"])
+                        if (
+                            criterion_ids
+                            and (criterion_ids[0], task_path) in assignments
+                        ):
+                            modern_origins.setdefault(criterion_ids[0], []).append(
+                                task_path
+                            )
+                            if decision["Acceptance"].strip() == "accepted":
+                                accepted_origins.setdefault(
+                                    criterion_ids[0], []
+                                ).append(task_path)
+            else:
+                for entry in entries:
+                    if entry.get("Acceptance", "").strip() == "accepted":
+                        for criterion in (
+                            task_criterion_ids(entry["Upstream criterion"]) or ()
+                        ):
+                            if (criterion, task_path) in assignments:
+                                accepted_origins.setdefault(criterion, []).append(
+                                    task_path
+                                )
             for entry in entries:
                 criterion_ids = task_criterion_ids(entry["Upstream criterion"])
                 if criterion_ids is None:
@@ -4929,13 +5313,36 @@ def _evaluate_completion(
                             f"unknown or foreign {criterion}",
                         )
                     else:
-                        task_pairs.setdefault((criterion, task_path), []).append(entry)
+                        if (criterion, task_path) in assignments:
+                            task_pairs.setdefault((criterion, task_path), []).append(
+                                entry
+                            )
+                        elif state not in {"cancelled", "superseded"}:
+                            fail(
+                                task_path,
+                                "COMPLETION-TRACE",
+                                f"{criterion} lacks current Plan assignment",
+                            )
         if set(task_pairs) != assignments:
             fail(
                 spec_path,
                 "COMPLETION-TRACE",
                 "Plan and Task criterion assignments differ",
             )
+        for criterion in defined:
+            if len(modern_origins.get(criterion, [])) > 1:
+                fail(
+                    spec_path,
+                    "COMPLETION-ACCEPTANCE",
+                    f"{criterion} has duplicate current Task verdict authors",
+                )
+            origins = accepted_origins.get(criterion, [])
+            if len(origins) != 1:
+                fail(
+                    spec_path,
+                    "COMPLETION-ACCEPTANCE",
+                    f"{criterion} requires exactly one accepted Task origin; found {len(origins)}",
+                )
         for criterion, task_path in assignments:
             for entry in task_pairs.get((criterion, task_path), []):
                 effective = (
@@ -4949,7 +5356,7 @@ def _evaluate_completion(
                         "COMPLETION-RESULT",
                         f"{criterion} remains {effective}/{entry['Result']}",
                     )
-    return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key)), digest
+    return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 
 def _exit_code(diagnostics: Sequence[LifecycleDiagnostic]) -> int:

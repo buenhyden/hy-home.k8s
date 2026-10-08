@@ -39,9 +39,11 @@ from document_contracts import (
     is_ignored_repository_path,
     load_internal_payload,  # noqa: F401 - re-exported
     load_registry,
+    legacy_task_profile,
     read_repository_text,
     task_execution_issues,
     task_evidence_issues,
+    task_contract_issues,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
     validate_registry,  # noqa: F401 - re-exported
@@ -847,7 +849,10 @@ def _body_contract_diagnostics(
                             value,
                         )
                     )
-    if contract.task_execution is not None:
+    if (
+        contract.task_execution is not None
+        and not contract.task_execution.criterion_acceptance_section
+    ):
         diagnostics.extend(
             _diagnostic(rule, path, profile, "valid Task execution row", detail)
             for rule, detail in task_execution_issues(
@@ -1818,10 +1823,11 @@ def validate_document(
     if profile.profile_id == "evaluation/raw-output" and profile.mode == "native":
         verify_opaque_evaluation_output(root, path)
         return []
+    text = read_repository_text(root, path)
     return validate_document_text(
-        read_repository_text(root, path),
+        text,
         path,
-        profile,
+        legacy_task_profile(root, path, text, profile),
         mode,
         today=today,
         body_contracts=body_contracts,
@@ -1936,16 +1942,76 @@ def validate_document_text(
                         "TASK-EVIDENCE-COLUMNS",
                         path,
                         profile,
-                        "eight cells in every evidence row",
+                        f"{len(binding.evidence_columns)} cells in every evidence row",
                         "ragged evidence row",
                     )
                 )
                 return sorted(diagnostics, key=diagnostic_sort_key)
             evidence_rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
-            diagnostics.extend(
-                _diagnostic(rule, path, profile, "valid Task check evidence", detail)
-                for rule, detail in task_evidence_issues(evidence_rows, binding)
-            )
+            if binding.criterion_acceptance_section:
+                decision_section = _exact_heading_section(
+                    body, f"## {binding.criterion_acceptance_section}"
+                )
+                decision_table = _first_visible_table(decision_section or "")
+                execution_section = _exact_heading_section(
+                    body, f"## {profile.body_contract.section}"
+                )
+                execution_table = _first_visible_table(
+                    _exact_heading_section(
+                        execution_section or "",
+                        f"### {profile.body_contract.table_heading}",
+                    )
+                    or ""
+                )
+                if (
+                    decision_table is None
+                    or tuple(decision_table[0]) != binding.criterion_acceptance_columns
+                    or not decision_table[1]
+                    or any(
+                        len(row) != len(decision_table[0]) for row in decision_table[1]
+                    )
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "TASK-ACCEPTANCE-COLUMNS",
+                            path,
+                            profile,
+                            repr(binding.criterion_acceptance_columns),
+                            "missing or malformed criterion acceptance table",
+                        )
+                    )
+                elif (
+                    execution_table is not None
+                    and tuple(execution_table[0])
+                    == profile.body_contract.required_columns
+                    and all(
+                        len(row) == len(execution_table[0])
+                        for row in execution_table[1]
+                    )
+                ):
+                    work_rows = [
+                        dict(zip(execution_table[0], row, strict=True))
+                        for row in execution_table[1]
+                    ]
+                    decision_rows = [
+                        dict(zip(decision_table[0], row, strict=True))
+                        for row in decision_table[1]
+                    ]
+                    diagnostics.extend(
+                        _diagnostic(
+                            rule, path, profile, "valid Task acceptance graph", detail
+                        )
+                        for rule, detail in task_contract_issues(
+                            work_rows, evidence_rows, decision_rows, status, binding
+                        )
+                    )
+            else:
+                diagnostics.extend(
+                    _diagnostic(
+                        rule, path, profile, "valid Task check evidence", detail
+                    )
+                    for rule, detail in task_evidence_issues(evidence_rows, binding)
+                )
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -2188,7 +2254,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 validate_document_text(
                     text,
                     path,
-                    profile,
+                    legacy_task_profile(root, path, text, profile),
                     args.mode,
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),

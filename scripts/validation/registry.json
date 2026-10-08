@@ -1062,6 +1062,22 @@
         {
           "kind": "exact",
           "value": "scripts/document_contracts.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/document_lifecycle.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-document-lifecycle.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_task_acceptance_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_task_execution_contract.py"
         }
       ],
       "validators": [
@@ -1091,6 +1107,14 @@
         {
           "kind": "exact",
           "value": "scripts/validate-links-and-owners.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/sync-task-status.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_task_acceptance_boundaries.py"
         },
         {
           "kind": "exact",
@@ -1148,7 +1172,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|validate-(?:markdown-profiles|links-and-owners)\\.py)$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|document_lifecycle\\.py|sync-task-status\\.py|validate-(?:markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1193,7 +1217,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection)\\.py$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract)\\.py$)tests/.*$"
         }
       ],
       "validators": [

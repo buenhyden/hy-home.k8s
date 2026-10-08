@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -70,6 +70,19 @@ and bounded delivery. It records unresolved shared-edition authority and
 server-setting approval separately. This completed parent and its earlier
 Tasks retain their existing acceptance; they do not certify the new scope.
 
+P03 clarifies the pending follow-up without broadening its permissions.
+The literal local meanings of VAL-P01-001/003/005/006 can be accepted from
+their actual comparison, approval-route, resource and delivery evidence.
+VAL-P01-007 separately owns the P01 request's remaining common-source,
+edition decision and actual adoption outcome. VAL-P01-008 owns the required/
+style result observation for the next authorized actual PR and the open
+workflow-control HIGH acceptance prerequisite if that PR changes control
+inputs. No absent PR is manufactured, no setting read-back is PR PASS, and
+no new workflow repair or server permission follows from this criterion.
+WORK-008 remains blocked on these protected/event-dependent lanes while
+independent local P03 work proceeds. All original failures, approvals and
+criterion memberships remain in the Task's dated migration provenance.
+
 ## Data Modeling & Storage Strategy
 
 Stage 99 continues to own document shape and lifecycle. Spec owns this contract,
@@ -130,6 +143,8 @@ are outside this follow-up. No new prose-mirroring test is required.
 | VAL-P01-004 | Reviewer remains read-only; routine review supplies quality rather than permission |
 | VAL-P01-005 | Safety and resource owners are distinct; required-check preflight and no-bypass evidence |
 | VAL-P01-006 | Logical commits, actual checks, independent review, delivery limits and rollback recorded |
+| VAL-P01-007 | The one common source and reviewed edition have a real owner decision, source revision and approval reference; actual local and joint adoption are recorded separately. Missing approval or unobserved adapters remain pending with their owners, not fabricated PASS or an intake prerequisite. |
+| VAL-P01-008 | Observe actual required/style results on the next authorized PR input. Before accepting a workflow/control-changing PR or Release relying on these gates, independently verify control integrity for that actual input. An operator-reviewed settings transition needs its own exact approval and read-back and cannot substitute for integrity proof. Until the event and proof exist, retain DEFER/FAIL and next owners; this conditional criterion grants no PR, workflow, server or Release execution authority. |
 
 ## Traceability
 
@@ -150,3 +165,5 @@ Execution order belongs to the [Plan](plan.md).
 | [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-P01-004 | Registry/projection validation and independent review |
 | [REQ-0003-FR-0016](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-P01-005 | Runner and resource boundary inspection |
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-P01-006 | Task command, index and commit evidence |
+| N/A — current explicit P01 common-source/edition/adoption request | VAL-P01-007 | WORK-008 / Task0004 EVD-003; actual source-owner decision, edition identity and separate local/joint adoption |
+| N/A — current P01 actual-PR inspection and subsequent HIGH/workflow-PR review request | VAL-P01-008 | WORK-008 / Task0004 EVD-008/009/010; conditional actual-input required/style and independent control proof, with no new execution authority |

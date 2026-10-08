@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "2.2.0"
+version: "3.0.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -78,19 +78,38 @@ express ownership, not a one-way waterfall.
 7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
-   Plan and execution evidence in its Task records. Keep one Task Table with
-   criterion links, row state, result and evidence. Its frontmatter status is
+   Plan and execution evidence in its Task records. A fresh Spec and Plan
+   describe authorized, current intent when approved; Task execution and
+   criterion acceptance remain separate from that approval. Keep one Task
+   Table with criterion links, row state, result and evidence. Its frontmatter status is
    the sole document status marker. For one row, author its state only in
    frontmatter and use literal `frontmatter` in the row. For multiple rows,
    author only row states; generate the required header summary with the
    explicit Task status writer, never a second human-maintained state. The
    read-only checker verifies that summary against Registry-bound rows.
-   A row's PASS alone is not completion:
-   required work needs completed state, PASS, accepted and concrete evidence.
+   Record each criterion's sole authored `pending`, `accepted`, `rejected`, or
+   `not-required` disposition in the Task's Criterion Acceptance table, with
+   evidence, disposition rationale and current owner. Neither the execution
+   row nor a factual check row repeats that verdict. A row's PASS alone is not
+   completion: required work needs a completed execution state, concrete PASS
+   evidence and an accepted criterion verdict, with no unresolved required
+   adverse result. Keep failed or deferred observations in Task Evidence; a
+   later PASS resolves an earlier required result only when it names that
+   evidence ID and matches the check, work unit and criterion.
+   `not-required` is reserved for a cancelled Task whose same-package Spec is
+   also cancelled with actual criterion-specific scope and authorization proof.
+   Both cancellation dispositions name the exact criterion, and the Task's
+   authorization reference points to that Spec decision.
+   A successor-only handoff, active/completed/superseded Task, or QA
+   `NOT_APPLICABLE` result does not waive a criterion.
    Keep ordered work, dependencies, Task links and verification intent in the
    Plan, without copied execution status. Attach factual checks in Task
-   Evidence with exact inputs, results, locations and acceptance; these do not
-   replace execution rows or authorization.
+   Evidence with exact inputs, results, locations, whether each check is
+   required, and any earlier evidence it resolves; these facts do not replace
+   execution rows, the sole criterion verdict or authorization.
+   An observed `FAIL` needs concrete Check, Input and Location just as `PASS`
+   does. Unrun `NOT_RUN` or unavailable `DEFER` may retain `Pending` in a
+   location until real evidence exists, with the reason and next owner stated.
 8. Promote durable cross-change decisions to an Architecture Decision and
    current system views to an Architecture Description. Do not create parallel
    design, test, release, or progress authority. This repository uses external
@@ -147,8 +166,9 @@ The Stage 99 Registry's optional `shared_contract` identifies the one common
 review candidate and the local adapter. A candidate digest identifies reviewed
 bytes, not approval. Missing source revision or approval reference stays null;
 final common approval and actual local/joint adoption need their own evidence.
-Current state/language/native extensions remain explicit while P03 reviews
-common authority and state migration. Do not establish another local WGOV core.
+The locally reviewed state, language and native extensions remain explicit in
+this adapter; a future common edition needs its actual owner decision and
+adoption evidence. Do not establish another local WGOV core.
 
 For Guide, Policy and Runbook, use the selected role's ordered sections and
 place its existing Lifecycle Traceability table under Related Documents.

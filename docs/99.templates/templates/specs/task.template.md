@@ -22,21 +22,29 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ## Task Table
 
-<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states; the frontmatter status summarizes them. Preview the summary with scripts/sync-task-status.py using an explicit --root and one current --path; add --write only to synchronize that scalar after the rows are valid and the lifecycle edge is legal. This never generates Result, Acceptance, Evidence, or approval. See the Stage 99 author guide for usage. Result is observed execution outcome, Acceptance is the criterion disposition, and Evidence points to concrete records. -->
+<!-- Author prompt: keep one row per executable item and link each upstream VAL criterion to the owning Spec, using comma-space between links. For exactly one row, write literal frontmatter in its Status cell and put the actual state only in the frontmatter status key. For multiple rows, use actual row states; the frontmatter status summarizes them. Preview the summary with scripts/sync-task-status.py using an explicit --root and one current --path; add --write only to synchronize that scalar after the rows are valid and the lifecycle edge is legal. This never generates Result, Evidence, criterion acceptance, or approval. See the Stage 99 author guide for usage. Result is observed execution outcome; the sole criterion decision belongs below. -->
 
 ### Lifecycle Traceability
 
-| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | pending | Pending named repository evidence |
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | One bounded change | {{OWNER}} | frontmatter | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
-<!-- Author prompt: record attached check evidence separately from execution status. Each Evidence ID identifies a factual check with its exact input and location; an unrun check remains pending. -->
+<!-- Author prompt: record each factual check with an exact input and location. Required is yes or no. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Check, Work Unit, and Criteria that explicitly names its Evidence ID. Keep failed rows as history. -->
 
-| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | pending |
+| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EVD-001 | [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision or fixture | NOT_RUN | Pending | yes | none |
+
+## Criterion Acceptance
+
+<!-- Author prompt: keep exactly one decision row for each assigned Spec criterion. Accepted requires relevant concrete PASS evidence and no unresolved required failure. Pending or rejected retains the current owner and next disposition. Not-required requires an actual Spec scope basis; a Task cannot waive an assigned required criterion by itself. -->
+
+| Criterion | Acceptance | Evidence | Disposition | Current owner |
+| --- | --- | --- | --- | --- |
+| [VAL-FEATURE-001]({{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan) | pending | none | Run named deterministic check | {{OWNER}} |
 
 ## Approval and Safety Boundaries
 

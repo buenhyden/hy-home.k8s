@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.11.1"
+version: "0.12.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-08"
 layer: "specs"
 ---
 # 03.specs
@@ -20,14 +20,16 @@ layer: "specs"
 구체화하는 Spec stage다. 서비스 동작, API 계약, 변경 한정 설계와 검증
 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
 
-Spec은 실행 기준을 소유하는 문서다.
-Spec은 목표 계약을 담으므로 아직 구현되지 않은 동작을 포함할 수 있다. 관측된 구현과의 의도된 차이는
-구현 대기다. Spec·Plan·Task의 현재 완료 상태 이름은 2026-09-28 승인에 따라
-`completed`로 바뀌었고 이전 `done`과 같은 종단 의미를 가진다. Stage 98의 동결된
-`done` 기록은 원문 그대로 남는다. 수용 조건과 검사한 구현이 일치할 때만
-`completed`를 인정한다. 끝난 package는
-처분이 승인될 때까지 이 stage에서 기다리고, 승인되면 ADR-0040에 따라 `98.archive/completed/`에 package
-단위로 원본 Git object 그대로 보존되며, Retention Catalog가 원래 경로를 한 번 명명하고 원본은 Git history가 복구한다.
+Spec은 변경 계약과 수용 기준을, Plan은 그 계약을 실행할 순서·위험·예정
+검증을 소유한다. 새 Spec·Plan의 `approved`는 검토된 계약의 현재 권한과
+유효성을 뜻하며 구현 완료나 기준 수용의 표지가 아니다. Task의 실행 상태,
+검사 사실과 기준별 단일 수용 판정이 실제 완료를 증명한다. `ready` Task는
+실행 준비 상태이지 승인이나 실제 착수의 증거가 아니다. 기존 완료
+Spec·Plan·Task는 당시의 `completed` 상태와 근거를 보존하고, Stage 98의
+동결된 `done` 기록도 원문 그대로 읽는다. 끝난 package는 처분이 승인될
+때까지 이 stage에서 기다리고, 승인되면 ADR-0040에 따라
+`98.archive/completed/`에 package 단위로 원본 Git object 그대로 보존된다.
+Retention Catalog가 원래 경로를 한 번 명명하고 원본은 Git history가 복구한다.
 
 ### Stage Readers
 
@@ -88,7 +90,7 @@ SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
-3. 변경 한정 설계와 실행 계약은 `spec.md`, 구현 순서·위험·검증·rollback은 `plan.md`, 실행 증거는 package-local Task record가 소유한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
+3. 변경 한정 설계와 수용 기준은 `spec.md`, 실행 순서·위험·예정 검증·rollback은 `plan.md`, 실제 실행·검사 사실·기준별 수용 판정은 package-local Task record가 소유한다. 범위나 근거가 승인 계약을 바꾸면 영향을 받는 Spec·Plan을 재검토한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
 5. 종단 처분은 Stage 98 disposition이 기록한다. 끝난 package는 consumer-zero 뒤 `98.archive/completed/`에 보존하고, 대체되거나 후속 없이 철회된 단독 문서는 `superseded/` 또는 `retired/`에 본문 그대로 보존한다. 경로 이동은 본문 없는 `migrations/`가 현재 owner를 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 원본 바이트는 Git history가 복구한다.
 
