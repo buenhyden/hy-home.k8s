@@ -1,6 +1,10 @@
 """Commit syntax and changelog disposition share native configuration owners."""
 
 import re
+import os
+import shutil
+import subprocess
+import tempfile
 import tomllib
 import unittest
 from pathlib import Path
@@ -29,6 +33,9 @@ class CommitContractTests(unittest.TestCase):
             "fix(gitops): preserve namespace ownership",
             "docs: Explain the rollback boundary",
             "feat(policy): change admission rules\n\nBREAKING CHANGE: deny unowned namespaces",
+            "feat(gitops)!: change admission",
+            "fix!: remove fallback",
+            "feat(운영): 한글 범위 유지",
             "revert(gitops): restore the prior route\n\nThis reverts commit abcdef0.",
             "docs: " + "long guidance " * 9 + "remains a recommendation",
         ):
@@ -37,8 +44,9 @@ class CommitContractTests(unittest.TestCase):
         for message in (
             "invalid subject",
             "fix: trailing period.",
-            "feat(gitops)!: change admission",
             "fix: ",
+            "fix:    ",
+            "fix: repair\rroute",
             "fix(): empty scope",
             "fix: subject\nbody without separator",
         ):
@@ -51,6 +59,9 @@ class CommitContractTests(unittest.TestCase):
         parsed = re.fullmatch(self.cz["commit_parser"], message)
         self.assertIsNotNone(parsed)
         self.assertEqual(parsed["scope"], "gitops")
+        self.assertIsNotNone(
+            re.fullmatch(self.cz["commit_parser"], "feat(gitops)!: remove route")
+        )
 
     def test_changelog_first_match_covers_supported_types(self):
         def disposition(subject, body="", breaking=False):
@@ -73,6 +84,75 @@ class CommitContractTests(unittest.TestCase):
             disposition("feat(policy): change admission", breaking=True)["group"],
             "Breaking Changes",
         )
+        self.assertEqual(
+            disposition(
+                "docs: describe migration",
+                body="This is not a BREAKING CHANGE instruction.",
+            )["group"],
+            "Documentation",
+        )
+        self.assertEqual(
+            disposition(
+                "feat(policy): change admission",
+                body="Migration notes.\n\nBREAKING CHANGE: deny old route",
+                breaking=True,
+            )["group"],
+            "Breaking Changes",
+        )
+
+    def test_native_changelog_distinguishes_prose_and_breaking_commits(self):
+        cliff = shutil.which("git-cliff")
+        if cliff is None:
+            self.skipTest("git-cliff is unavailable; native proof is separate")
+        self.assertFalse(Path(cliff).resolve().is_relative_to(ROOT))
+        with tempfile.TemporaryDirectory(prefix="commit-contract-") as temporary:
+            root = Path(temporary)
+            environment = {
+                "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_CONFIG_GLOBAL": os.devnull,
+                "GIT_CONFIG_PARAMETERS": "",
+                "GIT_CONFIG_COUNT": "0",
+                "GIT_AUTHOR_NAME": "Fixture",
+                "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+                "GIT_COMMITTER_NAME": "Fixture",
+                "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+                "HOME": temporary,
+            }
+
+            def run(*argv):
+                result = subprocess.run(
+                    argv,
+                    cwd=root,
+                    env=environment,
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=20,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                return result.stdout
+
+            run("/usr/bin/git", "init", "--quiet")
+            for message in (
+                "docs: describe migration\n\nThis is not a BREAKING CHANGE instruction.",
+                "feat(core): change API\n\nBREAKING CHANGE: remove old API",
+                "feat(core)!: remove route",
+                "fix!: remove fallback",
+            ):
+                run("/usr/bin/git", "commit", "--allow-empty", "--quiet", "-m", message)
+            changelog = run(cliff, "--config", str(ROOT / "cliff.toml"), "--unreleased")
+            headings = list(re.finditer(r"(?m)^### (.+)$", changelog))
+            sections = {}
+            for index, heading in enumerate(headings):
+                end = headings[index + 1].start() if index + 1 < len(headings) else None
+                sections[heading.group(1)] = changelog[heading.end() : end]
+            self.assertIn("Describe migration", sections.get("Documentation", ""))
+            breaking = sections.get("Breaking Changes", "")
+            for subject in ("Change API", "Remove route", "Remove fallback"):
+                self.assertIn(subject, breaking)
+            self.assertNotIn("Describe migration", breaking)
 
 
 if __name__ == "__main__":

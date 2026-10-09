@@ -1180,6 +1180,14 @@
         {
           "kind": "exact",
           "value": "tests/test_qa_runner.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_affected_surfaces.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/fixtures/validation-surfaces.json"
         }
       ],
       "validators": [
@@ -1194,11 +1202,38 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "release-tooling",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/release.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_commit_contracts.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_release.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Release tooling requires its direct registered static checks and named release behavior regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "scripts",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1243,7 +1278,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner)\\.py$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/fixtures/validation-surfaces\\.json$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner|test_validate_affected_surfaces|test_(?:commit_contracts|release))\\.py$)tests/.*$"
         }
       ],
       "validators": [

@@ -1,8 +1,8 @@
-# <type>(<scope>): <subject>
-# .cz.toml is the new-message validation owner. Scope is optional.
+# <type>(<scope>)[!]: <subject>
+# .cz.toml is the new-message validation owner. Scope and ! are optional.
 # Ordinary authored messages require supported type, nonempty subject,
-# no final period, blank line
-# before optional body/footer. type(scope)! is unsupported; use the footer below.
+# no final period, and a blank line before optional body/footer.
+# Breaking changes use ! before the colon, a breaking footer, or both.
 # .cz.toml retains generated-message prefix exceptions; those grant no Git authority.
 # Native Revert messages are accepted but excluded from the conventional changelog.
 # Recommended: imperative and specific subject, preferably under 72 characters.
@@ -13,6 +13,8 @@
 # Optional footer examples:
 # Closes #7
 # BREAKING CHANGE: unowned namespaces are now denied
+# BREAKING-CHANGE: unowned namespaces are now denied
+# Bang example: feat(gitops)!: require namespace ownership
 # Revert example: revert(gitops): restore the prior route
 # The optional body can identify the reverted commit; do not rewrite history.
 #

@@ -22,6 +22,7 @@ from tests.git_fixture import GitFixture
 
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "scripts/release.py"
+NOTES = "## [0.1.0] - 2026-10-07\n\n### Added\n- Fixture.\n"
 
 
 class ReleaseVersionTest(unittest.TestCase):
@@ -135,13 +136,15 @@ class ReleaseCliTest(unittest.TestCase):
             if argv[0] == "gh":
                 observed.append(tuple(argv))
                 if argv[2] == "create":
-                    self.assertTrue(
-                        Path(argv[argv.index("--notes-file") + 1]).is_file()
+                    self.assertEqual(
+                        Path(argv[argv.index("--notes-file") + 1]).read_text(), NOTES
                     )
                 if argv[2] == "view":
                     return json.dumps(
                         {
                             "isDraft": len(observed) == 2,
+                            "isPrerelease": False,
+                            "body": NOTES,
                             "tagName": "v0.1.0",
                             "targetCommitish": sha,
                             "assets": [{"name": "fixture.tgz"}],
@@ -287,6 +290,8 @@ class ReleaseCliTest(unittest.TestCase):
                     return json.dumps(
                         {
                             "isDraft": len(calls) == 2,
+                            "isPrerelease": False,
+                            "body": NOTES,
                             "tagName": "v0.1.0",
                             "targetCommitish": sha,
                             "assets": [{"name": "fixture.tgz"}],
@@ -366,6 +371,8 @@ class ReleaseCliTest(unittest.TestCase):
                 return json.dumps(
                     {
                         "isDraft": True,
+                        "isPrerelease": False,
+                        "body": NOTES,
                         "tagName": "v0.1.0",
                         "targetCommitish": sha,
                         "assets": [{"name": "fixture.tgz"}],
@@ -393,8 +400,94 @@ class ReleaseCliTest(unittest.TestCase):
                     sha,
                     (asset,),
                     draft=True,
+                    notes=NOTES,
                 )
         self.assertEqual(error.exception.code, "RELEASE-ASSET-VERIFY")
+
+    def test_release_view_requires_exact_notes_and_prerelease_in_both_phases(
+        self,
+    ) -> None:
+        sha = "a" * 40
+        notes = "Approved release notes\n"
+        for draft, tag, prerelease in (
+            (True, "v0.1.0", False),
+            (False, "v0.1.0-rc.1", True),
+        ):
+            with self.subTest(draft=draft, tag=tag):
+                valid = {
+                    "isDraft": draft,
+                    "isPrerelease": prerelease,
+                    "body": notes,
+                    "tagName": tag,
+                    "targetCommitish": sha,
+                    "assets": [],
+                }
+                version = release.parse_version(tag)
+                with mock.patch.object(
+                    release, "_command", return_value=json.dumps(valid)
+                ):
+                    release._verify_release(
+                        self.root, version, sha, (), draft=draft, notes=notes
+                    )
+                for field, value in (
+                    ("body", None),
+                    ("body", 10),
+                    ("body", "Different release notes\n"),
+                    ("isPrerelease", None),
+                    ("isPrerelease", "true"),
+                    ("isPrerelease", not prerelease),
+                ):
+                    with self.subTest(draft=draft, tag=tag, field=field, value=value):
+                        observed = dict(valid)
+                        if value is None:
+                            observed.pop(field)
+                        else:
+                            observed[field] = value
+                        with mock.patch.object(
+                            release, "_command", return_value=json.dumps(observed)
+                        ):
+                            with self.assertRaises(release.ReleaseError) as error:
+                                release._verify_release(
+                                    self.root,
+                                    version,
+                                    sha,
+                                    (),
+                                    draft=draft,
+                                    notes=notes,
+                                )
+                        self.assertEqual(
+                            error.exception.code,
+                            "RELEASE-DRAFT-VERIFY"
+                            if draft
+                            else "RELEASE-PUBLISH-VERIFY",
+                        )
+
+    def test_publish_preview_reads_exact_main_commit_after_worktree_race(self) -> None:
+        self.prepare_main_release()
+        changelog = self.root / "CHANGELOG.md"
+        committed = changelog.read_bytes()
+        original_state = release._local_state
+
+        def changed_after_clean(*args, **kwargs):
+            sha = original_state(*args, **kwargs)
+            changelog.write_bytes(committed.replace(b"Fixture.", b"Uncommitted."))
+            return sha
+
+        with (
+            mock.patch.object(release, "_local_state", side_effect=changed_after_clean),
+            mock.patch.object(
+                release, "_release_notes", wraps=release._release_notes
+            ) as observed,
+            redirect_stdout(io.StringIO()),
+        ):
+            release.publish(
+                self.root,
+                release.parse_version("v0.1.0"),
+                initial=True,
+                requested_assets=(),
+                execute=False,
+            )
+        self.assertEqual(observed.call_args.args[0], committed)
 
     def test_prepare_preserves_reviewed_prior_release_section_verbatim(self) -> None:
         reviewed = (

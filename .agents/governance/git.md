@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -86,6 +86,12 @@ publication; an invalid or mismatched input fails closed. The current
 release-preparation PR targeting `main` updates the tracked `CHANGELOG.md`
 from integrated changes. The committed main file is the release history; a
 temporary generated artifact is only review input and is never its owner.
+Publication verifies changelog bytes captured from the exact main commit,
+not a later working-tree edit. The remote draft and published Release must
+match the reviewed tag, target, prerelease state, release notes and required
+assets before
+the operation counts as complete; the tag and prior changelog sections are
+immutable history.
 If immutable Releases are enabled, attach every required asset to the draft
 before publication. Actual tag/Release publication, remote immutable-release
 settings and rulesets require direct observation and their operator approval
@@ -104,11 +110,20 @@ prefix exceptions retain Git/tool compatibility and grant no merge or history
 rewrite authority. Git-cliff filters non-conventional history, including a
 native `Revert` prefix; use `revert(scope): subject` when changelog inclusion is
 intended. The hook permits an empty message only so Git can abort the commit.
-A final ordinary subject period is rejected; breaking changes use
-`BREAKING CHANGE:` in the footer because `type(scope)!` syntax is unsupported. Use an
-imperative, specific subject, preferably under 72 characters. Length, case and
-body wrapping are guidance, not extra validator rules. Historical parsers may
-retain prior punctuation without permitting it in new messages.
+A new authored subject needs a supported type, optional nonempty scope and
+nonblank text; Unicode is allowed, while a final period or embedded carriage
+return is rejected. `type!:` and `type(scope)!:` mark a breaking change, as do
+`BREAKING CHANGE:` and `BREAKING-CHANGE:` footers. The native changelog parser
+uses its parsed breaking result, not arbitrary prose elsewhere in a body.
+Use an imperative, specific subject, preferably under 72 characters. Length,
+case and body wrapping are guidance, not extra validator rules. Historical
+parsers may retain prior punctuation without permitting it in new messages.
+
+The PR branch-metadata and selected style checks do not validate a PR title
+or an authored squash message. If an operator chooses squash, validate the
+actual proposed final commit message against the same Commitizen contract
+before that remote merge; do not infer its syntax from source commits or
+from `style-pr` success.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and

@@ -1,6 +1,6 @@
 ---
 title: "Commit Message Prompt Contract"
-version: "0.1.1"
+version: "0.2.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
@@ -38,15 +38,21 @@ refuses and no draft is produced.
 ## Output
 
 One Conventional Commit message: a `type(scope): summary` subject in the
-imperative, and a body stating the reason when it is not obvious from the
-subject. No trailing metadata is invented, and no evidence is claimed that the
-staged difference does not show.
+imperative, with optional scope. Use `type!:` or `type(scope)!:` only when the
+staged change actually breaks the public contract; a
+`BREAKING CHANGE:` or `BREAKING-CHANGE:` footer can describe that impact.
+Unicode subject text is allowed. The subject must contain nonblank text and
+must not end with a period or contain a carriage return. Include a body for a
+reason not obvious from the subject. Invent no trailing metadata or evidence
+the staged difference does not show.
 
 ## Validation
 
 The draft is judged by Commitizen using [`.cz.toml`](../../.cz.toml).
 Generation is not validation. Selected staged file QA checks the exact index;
-the separate commit-msg check validates the actual candidate message. Follow
+the separate commit-msg check validates the actual candidate message. A PR
+title or hosted `style-pr` result is no substitute for that check, including
+when a squash message is proposed. Follow
 the [Git policy](../governance/git.md)
 for validating the actual candidate message and observing active hooks;
 workstation configuration is Task evidence, never a shared policy assumption.

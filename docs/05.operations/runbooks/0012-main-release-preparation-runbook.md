@@ -1,6 +1,6 @@
 ---
 title: "Main Release Preparation"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -48,7 +48,7 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 | 2 | main에서 `release/vX.Y.Z` 브랜치를 만들고 release tool의 `prepare` preview로 제안 내용을 확인한 뒤, 명시적 `--write`로 정규 `CHANGELOG.md`를 작성해 release-preparation PR을 연다. 1.0 이후 breaking/additive compatible/compatible fix는 major/minor/patch다. 첫 0.y는 운영자가 version과 호환성 약속을 명시한다. | 릴리스 노트가 실제 통합 내용에 대응한다. | dev push 또는 7일 artifact만으로 정규 이력을 대신하려 한다. |
 | 3 | 변경 입력에 해당하는 focused·affected·exact-index 및 명명된 목적·Archive·보안 단위 검사를 수행하고 로컬 커밋 직전 최종 index의 필수 lint·format을 확인한다. 오래 걸리는 full/ci 일괄 검사와 blanket unit discovery는 완료 조건으로 실행하지 않는다. 독립 리뷰, 별도 PR SHA/run의 hosted style 결과와 정상 PR/merge 결과를 확인한다. | Task에 서로 다른 입력의 결과, 도구, 승인 경계와 최종 main SHA가 기록된다. | 선택된 필수 검사 실패, `NOT_RUN`, 중요한 리뷰 finding, 또는 SHA 불일치가 있다. |
 | 4 | 게시 직전 현재 main commit, 해당 SemVer tag/Release의 부재 또는 동일 대상, 변경된 승인 조건을 원격에서 확인한다. 이전 `main-<full SHA>` tag는 역사로 그대로 둔다. | 정확한 대상과 재시도 가능 조건이 확정된다. | 기존 tag를 이동해야 하거나 remote 설정·권한이 미관측이다. |
-| 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자만 `--execute`를 사용한다. 구현은 정확한 main SHA에서 모든 자산을 붙인 draft를 만든 후 게시한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, 자산, 원격 상태가 다르거나 producer가 두 개다. |
+| 5 | release tool의 `publish` preview를 읽고, 원격 대상·승인·자산을 대조한 운영자만 `--execute`를 사용한다. 구현은 정확한 main commit에서 추출한 `CHANGELOG.md`의 릴리스 노트와 모든 자산을 한 draft의 tag·target·prerelease 상태에 묶어 검증한 뒤 게시한다. 게시 후에도 같은 필드·본문과 자산을 재조회한다. immutable Release 설정이 실제 활성이라면 자산 확인 후에만 게시한다. | 하나의 SemVer tag와 Release가 검토된 main commit에 연결된다. | 승인 범위, main blob, 노트 본문, 자산, draft/게시 상태 또는 원격 설정이 다르다. |
 | 6 | tag 대상, Release 상태, `CHANGELOG.md`가 반영된 main SHA를 다시 읽고 Task에 관측 사실을 기록한다. | publish 결과 또는 `DEFER` 원인이 한 owner에 남는다. | 원격 결과가 없으면 로컬 파일로 성공을 추정한다. |
 
 ## Verification
@@ -67,8 +67,9 @@ python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/pa
 
 `prepare --write`는 `release/vX.Y.Z` 브랜치에서만 정규 CHANGELOG를
 작성한다. 게시 입력은 version, 깨끗한 정확한 local/remote main SHA, 저장소
-identity, main의 추적된 CHANGELOG section, tag 충돌 부재, 저장소 안의
-일반 파일인 상대 경로 자산을 확인해야 한다.
+identity, 그 SHA가 가리키는 main `CHANGELOG.md` blob의 section, tag 충돌
+부재, 저장소 안의 일반 파일인 상대 경로 자산을 확인해야 한다. 작업 트리에
+우연히 남은 다른 CHANGELOG bytes는 main blob의 대체 입력이 아니다.
 
 유효한 기존 SemVer tag가 하나도 없는 최초 릴리스에는 운영자가 첫 버전을
 선택했다는 사실을 `prepare`와 `publish` 모두에서 명시적
@@ -91,7 +92,8 @@ python3 scripts/release.py --root . publish --version vX.Y.Z --asset relative/pa
 `--initial-version`을 함께 전달한다. 이 flag는 승인 자체나 첫 버전의
 적합성 증거가 아니며, 운영자의 선택·검토 결과를 Task에 별도로 남긴다.
 
-게시 후에는 GitHub의 tag ref, Release 대상과 자산 상태를 직접 확인한다.
+게시 후에는 GitHub의 tag ref, Release target·draft·prerelease 상태와
+릴리스 노트 본문, 자산 이름·내용 상태를 직접 확인한다.
 원격 조회가 없으면 그 단계는 `DEFER`다. CLI 옵션과 동작이 실제 구현에서
 달라지면 이 절차를 먼저 수정한다.
 

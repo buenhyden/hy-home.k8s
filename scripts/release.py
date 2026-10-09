@@ -221,6 +221,13 @@ def _changelog(root: Path) -> bytes:
     return content
 
 
+def _committed_changelog(root: Path, sha: str) -> bytes:
+    content = _command(root, ("git", "show", f"{sha}:CHANGELOG.md")).encode("utf-8")
+    if len(content) > 4 * 1024 * 1024 or not content.startswith(b"# Changelog\n"):
+        raise ReleaseError("RELEASE-CHANGELOG-INVALID", "CHANGELOG.md")
+    return content
+
+
 def _release_notes(content: bytes, version: SemVer) -> str:
     try:
         text = content.decode("utf-8", errors="strict")
@@ -485,7 +492,13 @@ def _remote_main(
 
 
 def _verify_release(
-    root: Path, version: SemVer, sha: str, assets: Sequence[Path], *, draft: bool
+    root: Path,
+    version: SemVer,
+    sha: str,
+    assets: Sequence[Path],
+    *,
+    draft: bool,
+    notes: str,
 ) -> None:
     raw = _command(
         root,
@@ -497,7 +510,7 @@ def _verify_release(
             "--repo",
             REPOSITORY,
             "--json",
-            "isDraft,tagName,targetCommitish,assets",
+            "isDraft,isPrerelease,tagName,targetCommitish,body,assets",
         ),
         timeout=30,
     )
@@ -506,6 +519,8 @@ def _verify_release(
         names = {item["name"] for item in body["assets"]}
         valid = (
             body["isDraft"] is draft
+            and body["isPrerelease"] is bool(version.prerelease)
+            and body["body"] == notes
             and body["tagName"] == version.tag
             and body["targetCommitish"] == sha
             and names == {item.name for item in assets}
@@ -559,7 +574,7 @@ def publish(
     local_sha = _local_state(root, "main")
     previous = _local_versions(root)
     _check_order(version, previous, initial)
-    content = _changelog(root)
+    content = _committed_changelog(root, local_sha)
     notes = _release_notes(content, version)
     _verify_history(root, content, previous)
     assets = _assets(root, requested_assets)
@@ -599,7 +614,7 @@ def publish(
             raise ReleaseError("RELEASE-DRAFT-INCOMPLETE", version.tag) from exc
         # Draft tags may be pending until publication. Verify the actual draft
         # target and uploaded assets before making the release visible.
-        _verify_release(root, version, local_sha, copied, draft=True)
+        _verify_release(root, version, local_sha, copied, draft=True, notes=notes)
         _remote_main(root, version, local_sha, initial=initial, draft_created=True)
         try:
             _command(
@@ -617,7 +632,7 @@ def publish(
             )
         except ReleaseError as exc:
             raise ReleaseError("RELEASE-DRAFT-UNPUBLISHED", version.tag) from exc
-        _verify_release(root, version, local_sha, copied, draft=False)
+        _verify_release(root, version, local_sha, copied, draft=False, notes=notes)
         _remote_main(
             root,
             version,

@@ -5,15 +5,15 @@ name = "cz_customize"
 allowed_prefixes = ["Merge", "Revert", "Pull request", "fixup!", "squash!", "amend!"]
 
 [tool.commitizen.customize]
-schema = "<type>(<scope>): <subject>\n\n[optional body]\n\n[optional footer]"
+schema = "<type>(<scope>)[!]: <subject>\n\n[optional body]\n\n[optional footer]"
 example = "feat(gitops): add namespace ownership policy"
 info_path = ".gitmessage"
-message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
-schema_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?: [^\\n]*[^.\\n](\\n\\n[\\s\\S]+)?$"
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}{% if breaking %}!{% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+schema_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?!?: (?=[^\\r\\n]*\\S)[^\\r\\n]*[^.\\r\\n](\\n\\n[\\s\\S]+)?$"
 # New-message validation rejects a final period; historical parsing retains it.
 # Subject length/capitalization are guidance, not extra schema constraints.
-commit_parser = "^(?P<change_type>feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(?:\\((?P<scope>[^()\\r\\n]+)\\))?: (?P<message>[^\\n]+)(?:\\n\\n(?P<body>[\\s\\S]+))?$"
-changelog_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?:"
+commit_parser = "^(?P<change_type>feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(?:\\((?P<scope>[^()\\r\\n]+)\\))?(?P<breaking>!)?: (?P<message>[^\\r\\n]+)(?:\\n\\n(?P<body>[\\s\\S]+))?$"
+changelog_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?!?:"
 change_type_map = { feat = "Feat", fix = "Fix", refactor = "Refactor", style = "Style", docs = "Docs", test = "Test", build = "Build", ci = "CI", perf = "Perf", revert = "Revert", chore = "Chore", release = "Release", deps = "Deps" }
 change_type_order = ["Feat", "Fix", "Refactor", "Perf", "Docs", "Test", "Build", "CI", "Style", "Deps", "Chore", "Revert", "Release"]
 
@@ -42,6 +42,12 @@ choices = [
 type = "input"
 name = "scope"
 message = "변경 범위(scope)를 입력하세요 (선택)"
+
+[[tool.commitizen.customize.questions]]
+type = "confirm"
+name = "breaking"
+message = "호환성을 깨는 변경인가요? (! 표기)"
+default = false
 
 [[tool.commitizen.customize.questions]]
 type = "input"

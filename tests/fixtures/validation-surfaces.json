@@ -82,6 +82,31 @@
       "expectedSurface": "validation-surface-contract"
     },
     {
+      "name": "validation-routing-test",
+      "path": "tests/test_validate_affected_surfaces.py",
+      "expectedSurface": "validation-surface-contract"
+    },
+    {
+      "name": "validation-routing-cases",
+      "path": "tests/fixtures/validation-surfaces.json",
+      "expectedSurface": "validation-surface-contract"
+    },
+    {
+      "name": "release-entrypoint",
+      "path": "scripts/release.py",
+      "expectedSurface": "release-tooling"
+    },
+    {
+      "name": "release-contract-test",
+      "path": "tests/test_release.py",
+      "expectedSurface": "release-tooling"
+    },
+    {
+      "name": "commit-contract-test",
+      "path": "tests/test_commit_contracts.py",
+      "expectedSurface": "release-tooling"
+    },
+    {
       "name": "secrets",
       "path": "secrets/README.md",
       "expectedSurface": "readme-router-protected"

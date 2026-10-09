@@ -201,6 +201,65 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "authored-documents",
         )
 
+    def test_release_tooling_keeps_its_direct_contract_checks(self) -> None:
+        for path in (
+            "scripts/release.py",
+            "tests/test_release.py",
+            "tests/test_commit_contracts.py",
+        ):
+            with self.subTest(path=path):
+                affected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                staged = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertEqual(
+                    affected["validators"],
+                    ["affected-surface-contract", "repository-quality"],
+                )
+                self.assertEqual(
+                    staged["validators"],
+                    [
+                        "affected-surface-contract",
+                        "repository-quality",
+                        "selected-nonstyle",
+                        "selected-style",
+                    ],
+                )
+
+        generic_script = self.validator.select_paths(
+            self.contract, ["scripts/validate-k8s-manifests.sh"], "affected", ROOT
+        )
+        generic_test = self.validator.select_paths(
+            self.contract, ["tests/test_archive_validation.py"], "affected", ROOT
+        )
+        self.assertIn("k8s-manifests", generic_script["validators"])
+        self.assertIn("archive-contract-tests", generic_test["validators"])
+
+    def test_validation_routing_cases_keep_their_existing_owner(self) -> None:
+        for path in (
+            "tests/test_validate_affected_surfaces.py",
+            "tests/fixtures/validation-surfaces.json",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(
+                    self.validator.classify_path(self.contract, path)["id"],
+                    "validation-surface-contract",
+                )
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertEqual(
+                    selected["validators"],
+                    [
+                        "affected-surface-contract",
+                        "repository-quality",
+                        "selected-nonstyle",
+                        "selected-style",
+                    ],
+                )
+
     def test_rejection_cases(self) -> None:
         for case in self.fixture["rejectionCases"]:
             with self.subTest(case=case["name"]):
