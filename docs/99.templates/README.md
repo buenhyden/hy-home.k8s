@@ -43,11 +43,15 @@ Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한�
 있으므로 공동 owner의 최종 승인과 지역 채택 상태를 혼동해 `adopted`로
 승격하지 않는다. Project-Template의 P06 Git 소비자는 별도 commit
 `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
-Commitizen 문법 차이는 현재 수정 후보에서 원래 네 문장 재비교와 집중
+Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
 회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
-제목의 로컬 정적 경계도 후보 입력에서 확인했지만, 최종 선택 index·실제
-메시지·독립 검토 및 지역 수용 판정은 아직 남아 있다. PR 제목의 GitHub
-Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다. 다른 세 저장소와
+제목의 로컬 정적 경계도 확인했다. 수정된 21개 경로는 선택된 19개
+검사를 모두 통과했고, 실제 commit 메시지의 고정 Commitizen·지역 형태
+검사와 독립 소스 검토를 거쳐 `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc`로
+정상 commit된 뒤 동일 tree로 지역 `main`에 통합됐다. 이는 C07 지역
+구현과 로컬 전달의 근거이며 공통 계약 전체의 지역 채택 판정은 아니다.
+PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다.
+다른 세 저장소와
 네 저장소 공동 채택은 각자의 실제 adapter·
 승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
 요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도

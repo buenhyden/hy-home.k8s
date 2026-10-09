@@ -432,6 +432,44 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         self.assertEqual({hook["id"] for hook in hooks}, set(checker.NONSTYLE_IDS))
         self.assertNotIn("--all-files", yaml.safe_dump(projected))
         self.assertEqual(len([h for h in hooks if h["id"] == "gitleaks"]), 1)
+        self.assertNotIn("local", {repo["repo"] for repo in projected["repos"]})
+
+    def test_only_exact_local_commit_message_hook_is_excluded(self) -> None:
+        checker = load_checker()
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        local = next(repo for repo in config["repos"] if repo["repo"] == "local")
+        native = local["hooks"][0]
+
+        def project(local_repo: dict) -> None:
+            candidate = {
+                **config,
+                "repos": [
+                    local_repo if repo is local else repo for repo in config["repos"]
+                ],
+            }
+            checker.project_nonstyle(yaml.safe_dump(candidate).encode())
+
+        project(local)
+        rejected = (
+            {**local, "hooks": [{**native, "stages": ["pre-commit"]}]},
+            {**local, "hooks": [{**native, "stages": ["pre-commit", "commit-msg"]}]},
+            {**local, "hooks": [{**native, "id": "unknown-native-hook"}]},
+            {**local, "hooks": [{**native, "entry": "python3 other-script.py"}]},
+            {**local, "hooks": [{**native, "always_run": False}]},
+            {**local, "hooks": [{**native, "always_run": 1}]},
+            {**local, "hooks": [{**native, "always_run": 1.0}]},
+            {**local, "hooks": [{**native, "args": ["--skip"]}]},
+            {**local, "hooks": [native, native]},
+            {**local, "hooks": ["malformed"]},
+            {**local, "rev": "local"},
+        )
+        for local_repo in rejected:
+            with self.subTest(local_repo=local_repo):
+                with self.assertRaisesRegex(checker.NonstyleError, "NONSTYLE-CONFIG"):
+                    project(local_repo)
+        repeated = {**config, "repos": [*config["repos"], local]}
+        with self.assertRaisesRegex(checker.NonstyleError, "unreviewed local hook"):
+            checker.project_nonstyle(yaml.safe_dump(repeated).encode())
 
     def test_secret_baseline_exclusion_preserves_existing_selection(self) -> None:
         checker = load_checker()

@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.9.4"
+version: "0.9.8"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -247,8 +247,9 @@ candidate checks only. Root then repeated the original four synthetic
 subjects with the same fullmatch method against the changed k8s candidate
 and the committed approved PT source. EVD-037 records four matching accepts
 and resolves EVD-031 for that syntax comparison alone. The final selected
-index, actual final message, independent review and adapter adoption remain
-unobserved in this Task. The hosted CI writer additionally prepared a
+index, actual final message and independent review were subsequently
+completed on the corrected source under EVD-042. Broader adapter adoption
+remains unobserved. The hosted CI writer additionally prepared a
 pull-request-only title metadata step with its grammar read from an exact-SHA
 credential-free reviewed-base checkout. EVD-038 records eight local synthetic
 regressions and scoped workflow security/contract checks on the proposed
@@ -269,8 +270,8 @@ compare the approved edition with k8s Commitizen grammar, generated merge and
 revert messages, PR-title form and release parser; correct only the observed
 differences under the owning P06 consumer paths, then review and check those
 actual inputs. EVD-037 now resolves EVD-031's original four-case grammar
-failure; other C07 consumer and final-index checks remain separate. No local
-adapter binding, hosted PR run, Release or
+failure; EVD-042 records the corrected C07 source checks and local delivery.
+No full-core local adapter adoption, hosted PR run, Release or
 four-repository adoption has been accepted from the source decision.
 
 | Finding / source | Current observation at intake | Disposition and current owner |
@@ -387,7 +388,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-edition decision and C07 regional consumer repair, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: EVD-030 resolves EVD-025 for bounded prior local delivery. EVD-032 resolves PT native failures and EVD-033 records exact WGOV-CORE 3.0.0 approval. EVD-034/035 preserve focused RED/GREEN, EVD-036 native syntax, and EVD-037 resolves EVD-031's four-case grammar mismatch. EVD-038 remains a valid prior static source check, while EVD-039 found the missing title-edit trigger and EVD-040 resolves that named local failure. EVD-041 records the final selected QA failure on the current staged input; no local adoption follows. Actual hosted result, regional/four-repository adoption and EVD-003's combined obligation remain pending. EVD-018 retains owner-accepted SEC-P01-001 HIGH without technical closure or actual PR proof. Next owner: regional P06 consumer and adapter owners for remaining C07 checks and adoption; buenhyden with CI/security operator for the next protected event |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-edition decision and C07 regional consumer repair, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: EVD-030 resolves EVD-025 for bounded prior local delivery. EVD-032 resolves PT native failures and EVD-033 records exact WGOV-CORE 3.0.0 approval. EVD-034/035 preserve focused RED/GREEN, EVD-036 native syntax, and EVD-037 resolves EVD-031's four-case grammar mismatch. EVD-038 remains a valid prior static source check, while EVD-039 found the missing title-edit trigger and EVD-040 resolves that named local failure. EVD-041 retains the first selected QA failure; EVD-042 resolves it with 19 selected gates, actual message admission and normal local source delivery. This completes the bounded C07 local source repair only. EVD-043 retains the first two-document nonstyle failure; EVD-044 resolves that same check for a four-path first repair with 15 selected gates PASS. EVD-045 records the targeted RED-to-GREEN repair for the distinct malformed-YAML boolean/numeric boundary on identified consumer bytes; two-file independent rereview passed; Task-document review and changed-input selected admission remain pending. Actual hosted result, full-core regional/four-repository adoption and EVD-003's combined obligation remain pending. EVD-018 retains owner-accepted SEC-P01-001 HIGH without technical closure or actual PR proof. Next owner: quality consumer and root delivery for Task-document review and final checked delivery input; regional P06 consumer and adapter owners for full-core adoption; buenhyden with CI/security operator for the next protected event |
 
 ## Criterion Acceptance
 
@@ -397,7 +398,7 @@ correction to its retained pre-change values, never by inventing a green check.
 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-025, EVD-029, EVD-030 | EVD-023 preserves the earlier accepted local source and resolves EVD-017/021/022; EVD-020 separately resolves EVD-019. Baseline-only EVD-029 and corrected combined-input EVD-030 establish the current bounded local handoff, with EVD-030 resolving EVD-025 on the same check. This accepts local delivery only; hosted/control proof belongs to VAL-P01-008 | platform local delivery and Registry baseline owner |
-| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012, EVD-024, EVD-026, EVD-027, EVD-028, EVD-031, EVD-032, EVD-033, EVD-034, EVD-035, EVD-036, EVD-037, EVD-038, EVD-039, EVD-040, EVD-041 | PT source admission and buenhyden's exact WGOV-CORE 3.0.0 decision are verified in EVD-032/033. EVD-034/035 preserve focused C07 RED/GREEN, EVD-036 native shape checks and EVD-037 the corrected four-case grammar comparison. Prior static title checks EVD-038 did not cover edited events; EVD-039 retains that local failure and EVD-040 resolves it on the corrected source. EVD-041 records the current selected-index language failure, so adapter admission is pending. Generated provenance, actual hosted title result and regional adoption remain unobserved. EVD-003 still includes actual adoption; separate PT/k8s/other adopter evidence remains pending | regional P06 consumer and each actual adapter owner; buenhyden owns any new edition decision |
+| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012, EVD-024, EVD-026, EVD-027, EVD-028, EVD-031, EVD-032, EVD-033, EVD-034, EVD-035, EVD-036, EVD-037, EVD-038, EVD-039, EVD-040, EVD-041, EVD-042, EVD-043, EVD-044, EVD-045 | PT source admission and buenhyden's exact WGOV-CORE 3.0.0 decision are verified in EVD-032/033. EVD-034/035 preserve focused C07 RED/GREEN, EVD-036 native shape checks and EVD-037 the corrected four-case grammar comparison. Prior static title checks EVD-038 did not cover edited events; EVD-039 retains that local failure and EVD-040 resolves it on the corrected source. EVD-041 preserves the first selected-index language failure; EVD-042 resolves that same check for the corrected local source and records C07 repair delivery. EVD-043 preserves the first evidence-only delivery failure; EVD-044 resolves that named gate on the first four-path repair with 15 selected PASS. EVD-045 records a separate focused repair of the malformed-YAML boolean/numeric guard on identified bytes; the two-file independent rereview passed, while Task-document review and changed-input admission remain pending. Full-core regional adoption, generated operation provenance and actual hosted title result remain unobserved. EVD-003 still includes actual adoption; separate PT/k8s/other adopter evidence remains pending | regional P06 consumer and each actual adapter owner; buenhyden owns any new edition decision |
 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010, EVD-013, EVD-014, EVD-015, EVD-016, EVD-018 | Current settings read-backs passed and buenhyden accepted the residual HIGH risk in EVD-018, without technical closure, an independent-machine proof or actual next-PR required/style result. No future PR gate or execution authority is accepted | buenhyden with CI/security operator; next authorized actual PR owner for SHA/run evidence |
 
 ## Task Evidence
@@ -445,6 +446,10 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-039 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | PR title edited-event revalidation | Initial PR-title workflow candidate `.github/workflows/ci.yml` blob `ef042121a9a05389f0d0001f179d3adf9aafa6f2`; independent CI source review and new named title-edit regression | FAIL | `_workspace/residual-controls/c07-hosted-title-edited-event-handoff.json`, SHA-256 `ac913bb2fc39341a99090c93386922f5f82189f81a40046b9d8276ead7880b33`: p05review found no `pull_request` `edited` type; the named test failed because the initial trigger had only the main branch filter. A title edit could leave a stale check on the same head SHA. EVD-038's earlier eight static tests remain their own valid result, not edited-event proof | yes | none |
 | EVD-040 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | PR title edited-event revalidation | Corrected workflow blob `2631d7b6166938cae0a1effc8f44b864983dc574` with `pull_request` types `opened`, `synchronize`, `reopened`, `edited`; local synthetic event and contract checks | PASS | `_workspace/residual-controls/c07-hosted-title-edited-event-handoff.json`, SHA-256 `ac913bb2fc39341a99090c93386922f5f82189f81a40046b9d8276ead7880b33`: named edited-event test and nine affected tests PASS, CI Python contract and Actions security checks PASS, selected Ruff/format/diff checks PASS. Main branch target, `contents: read`, required job names and pinned action identities stay fixed. This resolves EVD-039's local source defect only; GitHub rerun association, actual edited PR SHA and SEC-P01-001 workflow-content proof remain NOT_RUN | yes | EVD-039 |
 | EVD-041 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Final C07 contract staged QA | Staged tree `bafea948882f5e7b0d933b5a185f5f1cb3d727ba`, 21 selected paths, 19 gates, before English-first evidence presentation correction | FAIL | `_workspace/residual-controls/common-c07-approved-source-staged-qa-fail.json`, SHA-256 `09ef58013667c558b6e63bd1cf7d3fab26ea4edce1fb87e02f0733a60bde1d01`: rc1, 18 PASS and `markdown-profiles` FAIL. Raw `_workspace/residual-controls/common-c07-markdown-diagnostic.json`, SHA-256 `71dda40161a664c31edb9f0822f2d003a68f14ae2843daa50ac640c60e09093b`, reports `LANG-ENGLISH-FIRST` at the approval quotation prose and EVD-033. The exact owner answer remains preserved as inline evidence data; corrected bytes need a new staged result before adapter admission | yes | none |
+| EVD-042 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Final C07 contract staged QA | Corrected 21-path staged tree `5796d335cb74a64679e1c0e7994b840c7867ecc0`, actual final commit message, normal source commit `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc` with the same checked tree and local `main` fast-forward | PASS | `_workspace/residual-controls/common-c07-approved-source-corrected-staged-qa-pass.json`, SHA-256 `6a225488b359a1f5f888694ad0e7419942108c0742298a93d36b6a11228ae2de`: 19 of 19 selected gates PASS, rc0. Pinned Commitizen and the local generated-message shape guard passed on the actual source message; the installed hook chain ran in the normal commit. `_workspace/residual-controls/common-c07-source-integration.json`, SHA-256 `a1f8e4afa423af5a7f7b2f96706e61e7cc5725f032a5280fb7b2c48db10a1b60`, records the identical-tree local main fast-forward and normal source-worktree cleanup. Independent read-only source review `_workspace/residual-controls/common-c07-semantic-review.json` SHA-256 `6016b7282601b2d8d466f23b4d85b144aecdf2efcaa3d953e0f4ddaf881a7382` and corrected English-first evidence review `common-c07-language-correction-review.json` SHA-256 `0e247820e14c7b79d44291c91bdc67a777f38ef9fe17e0025114932550103b32` report PASS within their source scopes. This resolves EVD-041 for the corrected local input and records C07 source delivery, not full-core regional/four-repository adoption, actual hosted PR execution or SEC-P01-001 closure | yes | EVD-041 |
+| EVD-043 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | C07 consumer delivery staged QA | Two-document evidence-only index tree `97ee449bfb786101739403946ce5f4a081d38f74` based on source commit `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc`; six selected gates | FAIL | `_workspace/residual-controls/common-c07-delivery-staged-qa-fail.json`, SHA-256 `7eec6a2a011da85a6e21d6bbd1051feedcd35fcd59f385cbade525efc939334f`: rc1, five PASS and `selected-nonstyle` rc2. Exact trusted-HEAD config diagnostic `_workspace/residual-controls/common-c07-delivery-reviewed-config-diagnostic.json`, SHA-256 `bf91a2cb178c043d43936758d89dc80bbcf75e78ed924669a50f43704a2b7aee`, identifies `NONSTYLE-CONFIG: hook source is not pinned` for the new local C07 guard. A separate direct-worktree probe reported unavailable snapshot input and is not this gate's cause. Quality consumer owner must correct the durable hook-registration selection and demonstrate a named regression plus new staged result. EVD-042's earlier source-tree PASS remains valid only for its checked input; this evidence-only input has no PASS or final delivery admission | yes | none |
+| EVD-044 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | C07 consumer delivery staged QA | First corrected four-path staged tree `c1cac650d445251fd917a2f56975fe980551828e`, including Task/README and nonstyle consumer/test changes, based on source commit `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc` | PASS | `_workspace/residual-controls/common-c07-nonstyle-first-repaired-staged-qa-pass.json`, SHA-256 `56e0bfa8b713e717db633b2d3861250cb166b2d71150103bceda6d272df9702b`: all 15 selected gates PASS, rc0; its `selected-nonstyle` gate passed on this first corrected input. Focused RED/GREEN receipt `_workspace/residual-controls/common-c07-nonstyle-consumer-repair.json`, SHA-256 `495fb142cb2cd2e6f8ff0500a5675c68be2e4fb1d853080adf9f13d5d086f688`, records three focused tests PASS and local Ruff 0.16.10 checks; pinned selected-style PASS is the staged-gate result. This resolves EVD-043's named hook-source failure for this input only. Independent review then found a distinct LOW boundary: malformed YAML `always_run: 1` or `1.0` may be admitted by Python equality with `True`; the quality consumer owner is repairing that guard. No final semantic acceptance, source commit, integration, hosted result or full-core adoption is claimed from this row | yes | EVD-043 |
+| EVD-045 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | C07 local hook registration boundary | Corrected nonstyle consumer `scripts/validate-selected-nonstyle.py` SHA-256 `924a03f4f72e3a95bfb25a39c712d0846f0bbd55ee8a536453e7958bbbd8bc5b` and focused test SHA-256 `b30fa34970c8a0584d9eceae95801731dda1746b329d3afdbc3b7b7f7cf2ac1e` | PASS | `_workspace/residual-controls/common-c07-nonstyle-bool-boundary.json`, SHA-256 `2e581987ad41b4322429d11b0a7249443d3745b314dbeb7184afed1b2fa67d82`: before the type check, two numeric subtests for malformed YAML `always_run: 1` and `1.0` failed because they were admitted as `True`; after requiring actual `bool` type for the exact local registration, three named focused tests passed, including both rejection cases. Locally installed Ruff 0.16.10 format/check and owned-file diff check passed. Independent read-only two-file review `_workspace/residual-controls/common-c07-nonstyle-independent-review.json`, SHA-256 `9119b88dce7ae18eb2b117c34425da05cdbb86c079e150374c297e79d8474c60`, reports the LOW finding resolved with no remaining finding in that scope. This records targeted repair and source review on identified bytes, not a new selected-index result, Task-document review or normal commit; EVD-044 remains a valid PASS for its prior input | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -905,3 +910,64 @@ prose and EVD-033. EVD-041 retains that failure. The prose now states the
 decision in English and retains the unchanged original answer as inline data;
 the corrected index has no observed PASS yet. VAL-P01-007 and WORK-008 remain
 pending/DEFER, with no local or four-repository adoption claimed.
+
+### 2026-10-09 corrected C07 local source delivery
+
+EVD-042 records the corrected staged tree `5796d335cb74a64679e1c0e7994b840c7867ecc0`:
+all 19 selected gates passed, including the earlier English-first failure in
+EVD-041. The actual source message passed pinned Commitizen and the explicit
+local generated-message shape guard. Normal commit
+`2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc` and the local `main`
+fast-forward have that same checked tree; independent source and presentation
+reviews passed on their stated inputs. This resolves EVD-041 and delivers the
+bounded C07 regional implementation. No unchanged-input leaf was rerun for
+the local fast-forward. The final Task/README evidence-only unit has its own
+subsequent admission. The broader common contract C04/C08 applicability and
+full regional/four-repository adoption remain pending under VAL-P01-007 and
+WORK-008. Actual hosted PR execution is unobserved, and SEC-P01-001 remains
+owner-accepted HIGH without technical closure. This Task stays blocked for
+those distinct obligations.
+
+### 2026-10-09 evidence-only delivery index failure
+
+The subsequent two-document Task/README index `97ee449bfb786101739403946ce5f4a081d38f74`
+passed five of six selected gates and failed `selected-nonstyle` with rc2.
+EVD-043 records the exact trusted-HEAD configuration diagnostic: the new
+local C07 guard's hook source is not pinned under the current nonstyle
+consumer. The separate direct-worktree probe lacked a snapshot input and is
+not presented as the actual gate cause. The quality consumer owner is fixing
+the hook-registration selection and must provide a named regression and new
+selected-index result before this evidence-only delivery is admitted. The
+earlier source tree `5796d335cb74a64679e1c0e7994b840c7867ecc0` retains its
+19/19 PASS result; it does not stand in for the failed newer index. This Task
+remains blocked, VAL-P01-007 pending and WORK-008 DEFER, with the separate
+hosted, full-core adoption and owner-accepted HIGH obligations unchanged.
+
+### 2026-10-09 first nonstyle consumer repair
+
+The first four-path corrected index `c1cac650d445251fd917a2f56975fe980551828e`
+passed all 15 selected gates, including `selected-nonstyle`. EVD-044 resolves
+EVD-043's exact hook-source failure for that input. Three focused consumer
+tests passed after their initial RED result; their Ruff 0.16.10 checks are
+local observations, while the staged `selected-style` gate passed on its own
+configured input. Independent review then found that malformed YAML numeric
+values `always_run: 1` and `always_run: 1.0` could compare equal to `True`.
+The quality consumer owner is correcting this separate LOW boundary before
+final semantic review and changed-input admission. No final delivery commit
+or local-main integration is inferred from EVD-044. VAL-P01-007 stays pending,
+WORK-008 DEFER and this Task blocked for the broader adoption, hosted and
+owner-accepted HIGH lanes.
+
+### 2026-10-09 targeted YAML boolean boundary repair
+
+EVD-045 records the identified nonstyle consumer and test bytes. The two
+numeric `always_run` rejection subtests first failed against the prior
+equality comparison, then the three named tests passed after an explicit
+boolean-type check. Local Ruff 0.16.10 and owned-file diff checks passed.
+The independent two-file source reviewer marked the LOW finding resolved
+with no remaining finding in that scope. This is targeted code evidence;
+the final Task-document review, changed-input selected-index QA, actual
+commit and local integration have not yet been observed for this repair.
+EVD-044's 15/15 result remains tied to its earlier index. VAL-P01-007 is
+pending, WORK-008 DEFER and this Task blocked for the full-core adoption,
+hosted and owner-accepted HIGH obligations.
