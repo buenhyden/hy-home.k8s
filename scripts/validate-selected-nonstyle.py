@@ -201,6 +201,14 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                     raise NonstyleError(
                         "NONSTYLE-CONFIG: secret baseline changed scope"
                     )
+                existing_exclude = hook.get("exclude")
+                if existing_exclude is not None and not isinstance(
+                    existing_exclude, str
+                ):
+                    raise NonstyleError(
+                        "NONSTYLE-CONFIG: secret exclusion is malformed"
+                    )
+                baseline_exclude = r"^\.secrets\.baseline$"
                 hook = {
                     **hook,
                     "args": [
@@ -208,6 +216,11 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                         ".git/qa-trusted-secrets.baseline",
                         *args[2:],
                     ],
+                    "exclude": (
+                        f"(?:{existing_exclude})|{baseline_exclude}"
+                        if existing_exclude
+                        else baseline_exclude
+                    ),
                 }
             elif identifier == "kube-linter":
                 if hook.get("args") != ["--config", ".kube-linter.yaml"]:

@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import importlib.util
+import base64
 import contextlib
+import hashlib
 import io
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -125,6 +128,8 @@ class SelectedNonstyleContractTests(unittest.TestCase):
                             str(root / ".pre-commit-config.yaml"),
                             "--include-path",
                             "proof.txt",
+                            "--include-path",
+                            ".secrets.baseline",
                         ]
                     )
             finally:
@@ -268,6 +273,93 @@ class SelectedNonstyleContractTests(unittest.TestCase):
             self.assertEqual(result, 2)
             self.assertIn("NONSTYLE-HOOK-FAIL", stderr.getvalue())
 
+    def test_new_synthetic_secret_is_not_hidden_by_baseline_exclusion(self) -> None:
+        checker = load_checker()
+        with tempfile.TemporaryDirectory(
+            prefix="selected-nonstyle-new-secret-"
+        ) as temporary:
+            root = Path(temporary)
+            env = {
+                **os.environ,
+                "GIT_AUTHOR_NAME": "Fixture",
+                "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+                "GIT_COMMITTER_NAME": "Fixture",
+                "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+            }
+
+            def git(*args: str) -> None:
+                subprocess.run(
+                    ["git", *args], cwd=root, env=env, check=True, capture_output=True
+                )
+
+            git("init", "-q")
+            for name in (
+                ".pre-commit-config.yaml",
+                ".secrets.baseline",
+                ".kube-linter.yaml",
+            ):
+                (root / name).write_bytes((ROOT / name).read_bytes())
+            (root / ".gitleaks.toml").write_text(
+                '[[rules]]\nid = "synthetic-marker"\nregex = "SYNTHETIC_LEAK_MARKER"\n',
+                encoding="utf-8",
+            )
+            target = root / "proof.json"
+            target.write_text("{}\n", encoding="utf-8")
+            git("add", ".")
+            git("commit", "-qm", "fixture")
+            token = (
+                base64.urlsafe_b64encode(
+                    hashlib.sha256(b"synthetic-boundary-proof-2026-10-09").digest()
+                )
+                .decode()
+                .rstrip("=")
+            )
+            target.write_text('{"api_token": "' + token + '"}\n', encoding="utf-8")
+            git("add", "proof.json")
+            cache = Path.home() / ".cache/pre-commit"
+            if not cache.is_dir():
+                self.skipTest("pre-commit cache unavailable")
+            previous = os.environ.get("PRE_COMMIT_HOME")
+            real_run = checker.run
+            outputs: list[bytes] = []
+
+            def observed_run(argv, **kwargs):
+                result = real_run(argv, **kwargs)
+                if "pre_commit" in argv:
+                    outputs.append(result.stdout + result.stderr)
+                return result
+
+            try:
+                os.environ["PRE_COMMIT_HOME"] = str(cache)
+                stderr = io.StringIO()
+                with (
+                    contextlib.redirect_stderr(stderr),
+                    patch.object(checker, "run", side_effect=observed_run),
+                ):
+                    result = checker.main(
+                        [
+                            "--root",
+                            str(root),
+                            "--config",
+                            str(root / ".pre-commit-config.yaml"),
+                            "--include-path",
+                            "proof.json",
+                        ]
+                    )
+            finally:
+                if previous is None:
+                    os.environ.pop("PRE_COMMIT_HOME", None)
+                else:
+                    os.environ["PRE_COMMIT_HOME"] = previous
+            self.assertEqual(result, 2)
+            self.assertIn("NONSTYLE-HOOK-FAIL", stderr.getvalue())
+            self.assertTrue(
+                any(
+                    b"Detect secrets" in output and b"Failed" in output
+                    for output in outputs
+                )
+            )
+
     def test_staged_broken_symlink_is_checked_in_full_index_topology(self) -> None:
         checker = load_checker()
         with tempfile.TemporaryDirectory(prefix="selected-nonstyle-") as temporary:
@@ -340,6 +432,43 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         self.assertEqual({hook["id"] for hook in hooks}, set(checker.NONSTYLE_IDS))
         self.assertNotIn("--all-files", yaml.safe_dump(projected))
         self.assertEqual(len([h for h in hooks if h["id"] == "gitleaks"]), 1)
+
+    def test_secret_baseline_exclusion_preserves_existing_selection(self) -> None:
+        checker = load_checker()
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        original = next(
+            hook
+            for repo in config["repos"]
+            for hook in repo["hooks"]
+            if hook["id"] == "detect-secrets"
+        )
+
+        def projected_exclude() -> str:
+            projected = checker.project_nonstyle(yaml.safe_dump(config).encode())
+            return next(
+                hook["exclude"]
+                for repo in projected["repos"]
+                for hook in repo["hooks"]
+                if hook["id"] == "detect-secrets"
+            )
+
+        original_exclude = original["exclude"]
+        exclusion = projected_exclude()
+        self.assertEqual(exclusion, f"(?:{original_exclude})|^\\.secrets\\.baseline$")
+        self.assertIsNotNone(re.search(exclusion, ".secrets.baseline"))
+        self.assertIsNotNone(
+            re.search(
+                exclusion,
+                "docs/90.references/data/active-corpus-eligibility-ledger.json",
+            )
+        )
+        self.assertIsNone(re.search(exclusion, "docs/99.templates/registry.json"))
+        self.assertIsNone(re.search(exclusion, "nested/.secrets.baseline"))
+        original["exclude"] = ""
+        self.assertEqual(projected_exclude(), r"^\.secrets\.baseline$")
+        original["exclude"] = []
+        with self.assertRaisesRegex(checker.NonstyleError, "exclusion is malformed"):
+            projected_exclude()
 
     def test_unreviewed_or_whole_tree_hook_fails_closed(self) -> None:
         checker = load_checker()
