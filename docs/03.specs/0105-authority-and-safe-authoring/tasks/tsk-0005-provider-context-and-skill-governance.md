@@ -1,8 +1,8 @@
 ---
 title: "Provider, Context and Skill Governance Follow-up"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -31,6 +31,19 @@ does not decide them.
   checkout-root `_workspace/p07-provider-governance/intake-input.json`
   records the initial writer/scope map; it is an intake observation, not an
   implementation or validation result.
+- The Spec/Plan/Task draft intake passed six selected exact-index gates with
+  rc 0 on tree `10880150f683f214770ec6f312e276fcb750abac`, with the index
+  unchanged. `_workspace/p07-provider-governance/intake-index-qa.json` has
+  SHA-256 `3293114f1b361f0a7d72f435155762cd1608d00126f44b67fdce583fc773b6b8`
+  and its log SHA-256 is
+  `8f26ad19d28212bb67255b0fad2e5d7567ee35f12d30718515f2742307cfb4e6`.
+  The actual message SHA-256
+  `3c123c3563eef49f0af0eddbb5d291738e5bef77136a8fb29af9a391e2ff7a11`
+  passed the pinned message check; a normal commit created
+  `c718b2d653d9adcbcacbe8a30ce346041888bf4f` at that tree.
+  `_workspace/p07-provider-governance/intake-commit.json` has SHA-256
+  `db179411defc7da0e1294b78e3ce583da59c2c7092f2eafdab7621a141abf99d`.
+  These are intake-document results, not P07 implementation or native proof.
 - The current user's P07 request authorizes scoped local investigation,
   policy and consumer repair, selected validation, normal logical commits,
   local main integration and owned cleanup. Remote push, PR, dispatch,
@@ -118,6 +131,8 @@ does not decide them.
 
 ## Verification Summary
 
-This is a draft intake. No P07 code, document migration, selected QA, native
-session, common approval, remote action or local integration is recorded as
-PASS. Previous package results remain dated evidence at their original owners.
+The intake documents passed their six selected exact-index gates, actual
+message check and normal commit. P07 policy/consumer implementation and its
+required planned checks remain unrun on the new input. No native session,
+common approval, remote action or local integration is recorded as PASS.
+Previous package results remain dated evidence at their original owners.
