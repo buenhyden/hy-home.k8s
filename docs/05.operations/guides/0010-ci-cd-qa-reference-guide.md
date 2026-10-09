@@ -1,10 +1,10 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.4.0"
+version: "1.5.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "GDE-0010"
 ---
@@ -13,7 +13,7 @@ artifact_id: "GDE-0010"
 
 ## Overview
 
-이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions branch metadata,
+이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions PR branch·title metadata와 별도 style,
 승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
 복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다.
 
@@ -50,7 +50,7 @@ artifact_id: "GDE-0010"
 | 구현·validator·QA 계약 변경 | 바뀐 규칙의 focused 회귀와, 작업 트리 입력에 별도 증거가 필요할 때 `python3 scripts/qa.py quick` | 새 동작의 실패·경계 사례를 해당 입력에서 확인 |
 | staged 변경 | `git diff --cached --check`, 실제 메시지 검사 및 선택된 `python3 scripts/qa.py staged` | 정확한 Git index snapshot과 commit 문법을 서로 다른 입력으로 확인 |
 | global QA 계약 변경 또는 명시적 한정 감사 | 변경 목적에 해당하는 named 동작·Archive·보안 회귀와 선택된 affected/staged gate | 사전 도구·예산 확인 후 필요한 보호만 확인; full/ci sweep·blanket unit discovery는 선택하지 않음 |
-| hosted CI | GitHub Actions의 branch result·`ci-summary`와 별도 PR `style-pr` | 각각의 PR SHA/run에서 branch metadata와 선택된 style만 확인; 목적·문서 내용 QA를 대리하지 않음 |
+| hosted CI | GitHub Actions의 PR branch·title result·`ci-summary`와 별도 PR `style-pr` | 각각의 PR SHA/run에서 branch·trusted-base authored title 문법과 선택된 style만 확인; 목적·문서 내용 QA를 대리하지 않음 |
 
 명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
 따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지
@@ -69,8 +69,10 @@ source이며, job과 required check의 현재 구성은
 ### 4. 증적 등급을 구분해 handoff한다
 
 - 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
-- 호스팅 CI: event와 branch metadata, 선택된 PR style의 적용 가능한 결과를
-  각자의 SHA/run에서만 확인한다.
+- 호스팅 CI: event와 PR branch·trusted-base title metadata, 선택된 PR style의
+  적용 가능한 결과를 각자의 SHA/run에서만 확인한다. title에는 생성 메시지
+  예외가 없고, 최종 squash 메시지는 별도 로컬 검증 대상이다. 정적 설정과
+  로컬 title 회귀가 통과해도 실제 hosted 결과가 없으면 `NOT_RUN`이다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 
 [REQ-0004의 제품 품질 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#product-quality-measurement-boundary)는

@@ -1,6 +1,6 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.4.1"
+version: "0.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -16,7 +16,7 @@ updated: "2026-10-09"
 
 ## Scope
 
-이 디렉터리는 PR branch metadata, 선택된 PR style 검사와 저장소 유지보수
+이 디렉터리는 PR branch·title metadata, 선택된 PR style 검사와 저장소 유지보수
 자동화를 제공한다.
 로컬 QA와 release 준비는 별도의 현재 소유자가 수행한다. GitHub Actions는
 full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 또는 release
@@ -24,7 +24,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 ## Structure
 
-- `workflows/` - branch metadata, 선택된 PR style과 유지보수 자동화
+- `workflows/` - PR branch·title metadata, 선택된 PR style과 유지보수 자동화
 - `ISSUE_TEMPLATE/` - 버그·기능 요청 접수 양식
 - `PULL_REQUEST_TEMPLATE.md` - PR 검토와 로컬 증거 연결 안내
 - `CODEOWNERS` - 경로별 리뷰 소유권
@@ -37,8 +37,9 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 - branch 전략은 `.agents/governance/git.md`가 소유한다.
   `workflows/ci.yml`의 `ci-summary` job은 PR의 base와 source prefix를
-  검사한다. main push와 manual dispatch에는 branch 검사를
-  `NOT_APPLICABLE`로 보고한다. 별도 `style-pr` job은 main 대상 PR에서만
+  검사하고, PR title을 신뢰된 base SHA의 `.cz.toml` authored schema로
+  검사한다. title에는 생성 Merge/Revert 예외가 없다. main push와 manual
+  dispatch의 branch·title 대상은 `NOT_APPLICABLE`이다. 별도 `style-pr` job은 main 대상 PR에서만
   선택된 style을 검사한다. 과거 hosted full QA `NOT_RUN` 기록은 Task 역사에
   남고 현재 `ci-summary`의 완료 gate가 아니다. 어느 job의 성공도 로컬
   목적·단위·문서 내용 검사의 통과를 뜻하지 않는다.
@@ -65,19 +66,27 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - ARWB-003의 전체 cutover는 과거 로컬·수동 증거다. 지속적인 Archive
   무결성 검사는 현재 validation owner에서 수행한다.
 - `ci.yml`은 pull request의 형태를 검증한다. 원격 branch protection은
-  직접 push 제한을 설정하지만 관리자 예외가 켜져 있으므로 실제 강제 범위는
-  위 main 보호 설정 기록의 날짜와 필드에서 확인한다.
+  직접 push 제한을 설정한다. 2026-10-09 승인된 원격 read-back에서
+  `enforce_admins: true`를 확인해 관리자도 기존 보호 조건을 만족해야 한다.
+  관리자 거부 push 실험은 `NOT_RUN`이며 이후 설정 변경은 미관측이다.
+  PR이 required job을 skip/no-op으로 바꾸는 잔여 위험은 HIGH로 유지하고
+  소유자가 인수한 기록이 있다. 이 metadata 변경과 정적 검증은 위험의
+  기술적 해소나 이후 PR의 일괄 승인을 뜻하지 않는다.
 - PR 작성자와 리뷰어 안내는 `PULL_REQUEST_TEMPLATE.md`에 있다.
 - 전체 SHA로 Action을 고정하는 규칙은 저장소 품질 gate가 강제한다.
 
 ### Workflow Roles
 
 - `ci.yml`의 `ci-summary`는 main 대상 push·pull request·`workflow_dispatch`
-  에서 branch metadata를 검사한다. 별도
+  에서 PR branch·title metadata를 처리한다. PR title은 검증된 base
+  SHA의 regular `.cz.toml`만 읽고 후보 branch의 코드·설정은 실행하지
+  않는다. main push/manual에는 PR title 검사를 수행하지 않는다. 별도
   `style-pr`은 main 대상 PR merge 입력의 NUL 구분 변경 경로를 검증된 base
   SHA와 대조한 뒤, 신뢰된 base의 공유 style helper와 기존 여덟 pinned
   pre-commit hook 규칙으로 선택된 lint·format만 검사한다. `style-pr`의
-  정적 등록은 GitHub 실행이나 성공 증거가 아니다. 배포 workflow는 없다.
+  정적 등록은 GitHub 실행이나 성공 증거가 아니다. 로컬 title 경계 회귀는
+  정적 구현 증거이며 현재 후보의 hosted 결과는 실제 SHA/run이 관측되기
+  전까지 `NOT_RUN`이다. 배포 workflow는 없다.
 - `labeler.yml`과 `greetings.yml`은 저장소 유지보수 자동화다.
   QA 통과나 사람의 리뷰 승인을 대체하지 않는다.
 - 과거 hosted verifier, SHA main tag publisher, 임시 changelog artifact와
@@ -93,7 +102,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Branch metadata and selected PR style. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` validates PR base/source prefix and reports branch policy `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No local purpose, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | PR branch/title metadata and independently selected PR style. | `ci-summary` runs on main-centered `push`, `pull_request` and `workflow_dispatch`; `style-pr` runs only on PRs targeting main. | `ci-summary` validates PR base/source prefix and one-line title against trusted-base `.cz.toml`, without generated-message exceptions; branch/title targets are `NOT_APPLICABLE` on main push/manual; `style-pr` checks selected style at its PR merge SHA/run with trusted-base tools. | No local purpose, unit or document-content QA; No deploy CD; no direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on every opened or synchronized pull request; the action matches paths itself. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 

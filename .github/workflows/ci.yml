@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 permissions:
@@ -69,6 +70,60 @@ jobs:
             exit 1
           fi
           exit 0
+      - name: Checkout reviewed base for PR title
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted-base
+          persist-credentials: false
+      - name: Set up Python for PR title
+        if: github.event_name == 'pull_request'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Validate PR title against reviewed base
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python3 -I - <<'PY'
+          import os
+          import re
+          import stat
+          import subprocess
+          import sys
+          import tomllib
+
+          base_sha = os.environ.get("BASE_SHA", "")
+          title = os.environ.get("PR_TITLE", "")
+          if not re.fullmatch(r"[0-9a-f]{40}", base_sha):
+              sys.exit("invalid reviewed base identity")
+          actual = subprocess.run(
+              ["git", "-C", "trusted-base", "rev-parse", "HEAD"],
+              check=True, capture_output=True, text=True,
+          ).stdout.strip()
+          if actual != base_sha:
+              sys.exit("reviewed base identity mismatch")
+          fd = os.open("trusted-base/.cz.toml", os.O_RDONLY | os.O_NOFOLLOW)
+          try:
+              info = os.fstat(fd)
+              if not stat.S_ISREG(info.st_mode) or info.st_size > 65536:
+                  sys.exit("reviewed message configuration must be a bounded regular file")
+              content = os.read(fd, 65537)
+          finally:
+              os.close(fd)
+          if len(content) > 65536:
+              sys.exit("reviewed message configuration exceeds the input bound")
+          config = tomllib.loads(content.decode("utf-8"))
+          pattern = config["tool"]["commitizen"]["customize"]["schema_pattern"]
+          if not isinstance(pattern, str) or not title or "\n" in title or "\r" in title:
+              sys.exit("PR title must be one Conventional Commit subject line")
+          if re.fullmatch(pattern, title) is None:
+              sys.exit("PR title does not match the reviewed message schema")
+          print("pr-title result=validated verdict=PASS")
+          PY
 
   style-pr:
     if: github.event_name == 'pull_request'

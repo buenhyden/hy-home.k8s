@@ -6977,13 +6977,13 @@
   },
   "shared_contract": {
     "contract_id": "WGOV-CORE",
-    "version": "3.0.0-draft.7",
+    "version": "3.0.0",
     "stage": "candidate",
     "owner": "buenhyden",
     "source": "Project-Template/.agents/governance/standards.md",
-    "source_revision": "8541f88da9ca013dd8d02d8c2467f5bc561665a2",
-    "content_digest": "sha256:773f166c2109d32ac68c81115e9f71913dfb37f32d9b6b70f74d83c90bac6fd9",
-    "approval_ref": null,
+    "source_revision": "bc5b70556c57198768119f94c287f93c87964482",
+    "content_digest": "sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee",
+    "approval_ref": "call_415633a444f34091860dcb4b8700431d/0",
     "local_adapter": "docs/99.templates/registry.json",
     "extensions": [
       "Kubernetes/GitOps/bootstrap/external-service procedures",

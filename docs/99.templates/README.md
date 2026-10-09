@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.9.1"
+version: "0.10.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -22,29 +22,36 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-Registry의 `shared_contract`는 `WGOV-CORE / 3.0.0-draft.7` 공동 검토
-후보와 이 지역 adapter를 식별한다. 공동 owner는 buenhyden이고, 정본 후보의
-입구는 Project-Template의 기존 `.agents/governance/standards.md`다. 완료된
-Project-Template SPEC-0156 Task0001이 식별한 입력은 기존 Stage 00·99와
-추가 QA·Git·harness·모델·환경 정책, handoff prompt와 Skill을 포함한
-67개 source 경로다. digest는 중복 없는 저장소 상대 경로를 UTF-8
+Registry의 `shared_contract`는 buenhyden이 정확한 원본에 대해 승인한
+`WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter 후보를 식별한다. 공동
+정본의 입구는 Project-Template의 기존 `.agents/governance/standards.md`다.
+그 소스 묶음은 Stage 00·99, QA·Git·harness·모델·환경 정책, handoff prompt와
+Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경로를 UTF-8
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
-후보의 `source_revision`은 실제 Git commit `8541f88da9ca013dd8d02d8c2467f5bc561665a2`다.
-해당 blob의 digest는 Registry의 값과 일치하며, 확인한 Project-Template
-`dev`의 `bed7352aedb8d2d688e211bed7802f7b1a5880e6`에서도 같은 입력이다.
-commit과 digest는 내용 식별이며 승인 증거가 아니다. C02 정본 식별과
-C04·C07·C08의 경계 보완은 사용자 승인에 따라 Project-Template의 전용
-작업 공간에 적용했다. 문서 검사 통과 후 전체 refs 변경을 감지한 native
-hook이 commit을 거부했으므로, P06 Git 작업 종료 뒤 정상 commit을 재시도한다.
-P06 writer의 Commitizen 수정은 별도 commit `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서
-관측했으며, 이 공동 후보의 새 commit과 digest는 아직 없다.
-이 후보 포인터는 그 소비자의 적합성이나 지역 채택 PASS를 뜻하지 않는다. 최종 판본
-승인, 이 저장소의 지역 채택, 네 저장소의 공동 채택은 각각 실제 결정과 적용
-증거가 생긴 뒤 기록한다. 현재 `stage`는 `candidate`, `approval_ref`는
-`null`이다. Kubernetes의 Task 상태 요약·과거 완료 부모, 문서 언어와 native
-문법은 명시된 지역 차이이며 별도 공동 정본을 뜻하지 않는다.
+검토용 `3.0.0-draft.8` 묶음의 실제 정상 commit은
+`bc5b70556c57198768119f94c287f93c87964482`이고, 그 원본 blob digest는
+Registry의 `sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee`다.
+별도 인증된 buenhyden 결정 `call_415633a444f34091860dcb4b8700431d/0`은
+바로 이 commit·digest를 최종 `WGOV-CORE / 3.0.0`으로 승인했다. commit과
+digest만으로 승인을 추론하지 않으며, 이 결정 참조가 판본 승인 근거다.
+Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한정된다.
+
+현재 Registry의 `stage: candidate`는 **이 k8s 지역 adapter의 채택이 아직
+완료되지 않았다**는 뜻이다. Stage 99 계약에는 `candidate`와 `adopted`만
+있으므로 공동 owner의 최종 승인과 지역 채택 상태를 혼동해 `adopted`로
+승격하지 않는다. Project-Template의 P06 Git 소비자는 별도 commit
+`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
+Commitizen 문법 차이는 현재 수정 후보에서 원래 네 문장 재비교와 집중
+회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
+제목의 로컬 정적 경계도 후보 입력에서 확인했지만, 최종 선택 index·실제
+메시지·독립 검토 및 지역 수용 판정은 아직 남아 있다. PR 제목의 GitHub
+Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다. 다른 세 저장소와
+네 저장소 공동 채택은 각자의 실제 adapter·
+승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
+요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도
+공동 정본을 뜻하지 않는다.
 
 ## Scope
 

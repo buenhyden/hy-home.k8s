@@ -1,10 +1,10 @@
 ---
 title: "Commit Message Prompt Contract"
-version: "0.2.0"
+version: "0.3.0"
 type: "governance/prompt"
 status: "draft"
 owner: "platform"
-updated: "2026-09-08"
+updated: "2026-10-09"
 ---
 
 # Commit Message Prompt Contract
@@ -41,8 +41,10 @@ One Conventional Commit message: a `type(scope): summary` subject in the
 imperative, with optional scope. Use `type!:` or `type(scope)!:` only when the
 staged change actually breaks the public contract; a
 `BREAKING CHANGE:` or `BREAKING-CHANGE:` footer can describe that impact.
-Unicode subject text is allowed. The subject must contain nonblank text and
-must not end with a period or contain a carriage return. Include a body for a
+Unicode subject text, type capitalization and final punctuation are allowed
+by the `.cz.toml` authored grammar. The subject must contain nonblank text
+without embedded header line breaks; subject length and capitalization are
+guidance rather than extra gates. Include a body for a
 reason not obvious from the subject. Invent no trailing metadata or evidence
 the staged difference does not show.
 
@@ -50,7 +52,7 @@ the staged difference does not show.
 
 The draft is judged by Commitizen using [`.cz.toml`](../../.cz.toml).
 Generation is not validation. Selected staged file QA checks the exact index;
-the separate commit-msg check validates the actual candidate message. A PR
+the separate paired commit-msg checks validate the actual candidate message. A PR
 title or hosted `style-pr` result is no substitute for that check, including
 when a squash message is proposed. Follow
 the [Git policy](../governance/git.md)

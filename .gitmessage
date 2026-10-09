@@ -1,9 +1,12 @@
 # <type>(<scope>)[!]: <subject>
 # .cz.toml is the new-message validation owner. Scope and ! are optional.
-# Ordinary authored messages require supported type, nonempty subject,
-# no final period, and a blank line before optional body/footer.
+# Ordinary authored messages require a supported type, nonempty scope when used,
+# a nonblank subject, and a blank line before optional body/footer.
+# Unicode, type capitalization and a final period are permitted by the grammar.
 # Breaking changes use ! before the colon, a breaking footer, or both.
-# .cz.toml retains generated-message prefix exceptions; those grant no Git authority.
+# .cz.toml defines exact generated Merge/Revert shapes; the paired hook guard
+# rejects prefix-only spoofs. A manually authored matching shape also passes.
+# These checks prove no Git generation, merge/revert or provenance, and grant no authority.
 # Native Revert messages are accepted but excluded from the conventional changelog.
 # Recommended: imperative and specific subject, preferably under 72 characters.
 # Capitalization and body wrapping are recommendations, not enforced grammar.

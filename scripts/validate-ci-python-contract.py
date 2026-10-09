@@ -20,6 +20,42 @@ WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
 CHECKOUT_ACTION = "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
 SETUP_PYTHON_ACTION = "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+PR_TITLE_RUN = """python3 -I - <<'PY'
+import os
+import re
+import stat
+import subprocess
+import sys
+import tomllib
+
+base_sha = os.environ.get("BASE_SHA", "")
+title = os.environ.get("PR_TITLE", "")
+if not re.fullmatch(r"[0-9a-f]{40}", base_sha):
+    sys.exit("invalid reviewed base identity")
+actual = subprocess.run(
+    ["git", "-C", "trusted-base", "rev-parse", "HEAD"],
+    check=True, capture_output=True, text=True,
+).stdout.strip()
+if actual != base_sha:
+    sys.exit("reviewed base identity mismatch")
+fd = os.open("trusted-base/.cz.toml", os.O_RDONLY | os.O_NOFOLLOW)
+try:
+    info = os.fstat(fd)
+    if not stat.S_ISREG(info.st_mode) or info.st_size > 65536:
+        sys.exit("reviewed message configuration must be a bounded regular file")
+    content = os.read(fd, 65537)
+finally:
+    os.close(fd)
+if len(content) > 65536:
+    sys.exit("reviewed message configuration exceeds the input bound")
+config = tomllib.loads(content.decode("utf-8"))
+pattern = config["tool"]["commitizen"]["customize"]["schema_pattern"]
+if not isinstance(pattern, str) or not title or "\\n" in title or "\\r" in title:
+    sys.exit("PR title must be one Conventional Commit subject line")
+if re.fullmatch(pattern, title) is None:
+    sys.exit("PR title does not match the reviewed message schema")
+print("pr-title result=validated verdict=PASS")
+PY"""
 EXPECTED_PINS = {
     "jsonschema": "4.26.0",
     "pre-commit": "4.6.1",
@@ -1460,12 +1496,21 @@ def _validate_no_outside_python_validation(workflow: dict[str, Any]) -> None:
             if not isinstance(step, dict):
                 continue
             uses = step.get("uses")
-            if isinstance(uses, str) and uses.startswith("actions/setup-python@"):
+            if (
+                isinstance(uses, str)
+                and uses.startswith("actions/setup-python@")
+                and not (job_id == "ci-summary" and uses == SETUP_PYTHON_ACTION)
+            ):
                 fail(
                     "CI-PYTHON-WORKFLOW",
                     f"non-style job must not own setup-python: {job_id}",
                 )
-            if _guarded_pip_install(_run_text(step)):
+            command = _run_text(step)
+            if job_id == "ci-summary" and command == PR_TITLE_RUN:
+                # The exact heredoc is admitted below as one reviewed metadata
+                # step. The generic shell grammar deliberately rejects heredocs.
+                continue
+            if _guarded_pip_install(command):
                 fail(
                     "CI-PYTHON-WORKFLOW",
                     f"non-style job must not own a pip install: {job_id}",
@@ -1602,9 +1647,16 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         "workflow_dispatch",
     }:
         fail("CI-TOPOLOGY", "CI requires push, pull_request, and manual entrypoints")
-    for event in ("push", "pull_request"):
-        if events[event] != {"branches": ["main"]}:
-            fail("CI-TOPOLOGY", "required CI must target main without path filters")
+    if events["push"] != {"branches": ["main"]}:
+        fail("CI-TOPOLOGY", "required push CI must target main without path filters")
+    if events["pull_request"] != {
+        "branches": ["main"],
+        "types": ["opened", "synchronize", "reopened", "edited"],
+    }:
+        fail(
+            "CI-TOPOLOGY",
+            "required PR metadata must rerun on title edits and target main",
+        )
     if workflow.get("permissions") != {"contents": "read"}:
         fail("CI-TOPOLOGY", "CI permissions must remain contents: read")
     jobs = workflow.get("jobs")
@@ -1632,8 +1684,12 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         if forbidden in summary:
             fail("CI-TOPOLOGY", f"ci-summary must not declare {forbidden}")
     steps = summary.get("steps")
-    if not isinstance(steps, list) or len(steps) != 1 or not isinstance(steps[0], dict):
-        fail("CI-TOPOLOGY", "ci-summary requires one metadata step")
+    if (
+        not isinstance(steps, list)
+        or len(steps) != 4
+        or any(not isinstance(step, dict) for step in steps)
+    ):
+        fail("CI-TOPOLOGY", "ci-summary requires branch and PR title metadata steps")
     step = steps[0]
     for forbidden in ("uses", "if", "continue-on-error", "shell"):
         if forbidden in step:
@@ -1664,6 +1720,41 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     )
     if not all(fragment in summary_text for fragment in required):
         fail("CI-TOPOLOGY", "summary must fail closed on event and branch metadata")
+    pr_condition = "github.event_name == 'pull_request'"
+    expected_pr_steps = (
+        {
+            "if": pr_condition,
+            "uses": CHECKOUT_ACTION,
+            "with": {
+                "ref": "${{ github.event.pull_request.base.sha }}",
+                "path": "trusted-base",
+                "persist-credentials": False,
+            },
+        },
+        {
+            "if": pr_condition,
+            "uses": SETUP_PYTHON_ACTION,
+            "with": {"python-version": "3.12"},
+        },
+        {
+            "if": pr_condition,
+            "env": {
+                "PR_TITLE": "${{ github.event.pull_request.title }}",
+                "BASE_SHA": "${{ github.event.pull_request.base.sha }}",
+            },
+            "run": PR_TITLE_RUN,
+        },
+    )
+    for index, (actual, reviewed) in enumerate(
+        zip(steps[1:], expected_pr_steps, strict=True), start=2
+    ):
+        normalized = {
+            key: (_run_text(actual) if key == "run" else value)
+            for key, value in actual.items()
+            if key != "name"
+        }
+        if normalized != reviewed:
+            fail("CI-TOPOLOGY", f"PR title metadata step {index} changed")
     _validate_qa_execution(workflow)
 
 
