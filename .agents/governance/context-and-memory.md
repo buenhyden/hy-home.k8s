@@ -1,10 +1,10 @@
 ---
 title: "Context and Memory Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-09"
 ---
 
 # Context and Memory Policy
@@ -95,10 +95,14 @@ writer's ownership before writing shared files.
 Stop dependent mutation on a mismatch, expired/deleted/redacted source, revoked
 or missing approval, concurrent writer conflict, or partial subprocess result.
 Retain completed evidence, identify failed/DEFER lanes, remaining work, rollback
-and next owner, then refresh only invalidated evidence. Known elapsed/shared
-budget and retry limits accompany the handoff; unknown account limits are
-DEFER. A summary saying PASS does not waive this recheck. These are agent and
-operator obligations, not a claim of native runtime enforcement.
+and next owner, then refresh only invalidated evidence. Carry actual
+cancellation, observed provider request/resource limits and `Retry-After`
+with the affected handoff. Do not create an elapsed-time work deadline,
+shared worker allocation or reserve approval from a checkpoint; unknown
+account limits remain unverified for the dependent provider request and do
+not block independent local work. A summary saying PASS does not waive this
+recheck. These are agent and operator obligations, not a claim of native
+runtime enforcement.
 
 ## Validation and Refresh
 

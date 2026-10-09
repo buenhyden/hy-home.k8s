@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "provider": "codex",
+  "capability_models": {
+    "top": "gpt-6-sol",
+    "worker": "gpt-6-sol"
+  },
+  "capability_reasoning": {
+    "top": "xhigh",
+    "worker": "high"
+  },
+  "permission_scopes": {
+    "read-only-evidence": "read-only",
+    "read-only-research": "read-only",
+    "orchestration": "read-only",
+    "scoped-authoring": "workspace-write"
+  },
+  "role_overrides": {
+    "supervisor": {
+      "model": "gpt-6-astra"
+    },
+    "doc-writer": {
+      "reasoning_effort": "medium"
+    },
+    "incident-responder": {
+      "reasoning_effort": "high"
+    },
+    "security-auditor": {
+      "reasoning_effort": "high"
+    },
+    "wiki-curator": {
+      "reasoning_effort": "medium"
+    },
+    "architect": {
+      "model": "gpt-6-astra"
+    }
+  },
+  "skill_policy": {
+    "allow_implicit_invocation": false
+  }
+}

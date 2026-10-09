@@ -18,7 +18,7 @@
       "const": "./registry.schema.json"
     },
     "schema_version": {
-      "const": 1
+      "const": 2
     },
     "registry_id": {
       "const": "hy-home.k8s/agents"
@@ -70,9 +70,7 @@
         "id",
         "gateway",
         "projection_root",
-        "capability_models",
-        "permission_scopes",
-        "capability_reasoning"
+        "bindings"
       ],
       "properties": {
         "id": {
@@ -84,14 +82,8 @@
         "projection_root": {
           "const": ".claude/agents"
         },
-        "capability_models": {
-          "$ref": "#/$defs/capabilityModelBinding"
-        },
-        "permission_scopes": {
-          "$ref": "#/$defs/claudePermissionScopes"
-        },
-        "capability_reasoning": {
-          "$ref": "#/$defs/claudeCapabilityReasoningBinding"
+        "bindings": {
+          "const": ".claude/bindings.json"
         }
       }
     },
@@ -102,9 +94,7 @@
         "id",
         "gateway",
         "projection_root",
-        "capability_models",
-        "permission_scopes",
-        "capability_reasoning"
+        "bindings"
       ],
       "properties": {
         "id": {
@@ -116,14 +106,8 @@
         "projection_root": {
           "const": ".codex/agents"
         },
-        "capability_models": {
-          "$ref": "#/$defs/capabilityModelBinding"
-        },
-        "permission_scopes": {
-          "$ref": "#/$defs/codexPermissionScopes"
-        },
-        "capability_reasoning": {
-          "$ref": "#/$defs/capabilityReasoningBinding"
+        "bindings": {
+          "const": ".codex/bindings.json"
         }
       }
     },
@@ -263,15 +247,6 @@
               "pattern": "^\\.codex/agents/[a-z0-9-]+\\.toml$"
             }
           }
-        },
-        "native_scope_override": {
-          "$ref": "#/$defs/nativeScopeOverride"
-        },
-        "native_reasoning_override": {
-          "$ref": "#/$defs/nativeReasoningOverride"
-        },
-        "native_model_override": {
-          "$ref": "#/$defs/nativeModelOverride"
         }
       }
     },
@@ -360,19 +335,6 @@
         }
       }
     },
-    "nativeScopeOverride": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "claude": {
-          "$ref": "#/$defs/claudeToolScope"
-        },
-        "codex": {
-          "$ref": "#/$defs/codexSandboxScope"
-        }
-      }
-    },
     "codexReasoningEffort": {
       "type": "string",
       "enum": [
@@ -400,32 +362,6 @@
         }
       }
     },
-    "nativeReasoningOverride": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "codex": {
-          "$ref": "#/$defs/codexReasoningEffort"
-        },
-        "claude": {
-          "$ref": "#/$defs/claudeReasoningEffort"
-        }
-      }
-    },
-    "nativeModelOverride": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "codex": {
-          "$ref": "#/$defs/nativeModelIdentifier"
-        },
-        "claude": {
-          "$ref": "#/$defs/nativeModelIdentifier"
-        }
-      }
-    },
     "claudeReasoningEffort": {
       "type": "string",
       "enum": [
@@ -449,6 +385,144 @@
         },
         "worker": {
           "$ref": "#/$defs/claudeReasoningEffort"
+        }
+      }
+    },
+    "claudeRoleOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/nativeModelIdentifier"
+        },
+        "reasoning_effort": {
+          "$ref": "#/$defs/claudeReasoningEffort"
+        },
+        "scope": {
+          "$ref": "#/$defs/claudeToolScope"
+        }
+      }
+    },
+    "claudeBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "provider",
+        "capability_models",
+        "capability_reasoning",
+        "permission_scopes",
+        "role_overrides",
+        "skill_policy"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "provider": {
+          "const": "claude"
+        },
+        "capability_models": {
+          "$ref": "#/$defs/capabilityModelBinding"
+        },
+        "capability_reasoning": {
+          "$ref": "#/$defs/claudeCapabilityReasoningBinding"
+        },
+        "permission_scopes": {
+          "$ref": "#/$defs/claudePermissionScopes"
+        },
+        "role_overrides": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/claudeRoleOverride"
+          }
+        },
+        "skill_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "disable-model-invocation"
+          ],
+          "properties": {
+            "disable-model-invocation": {
+              "type": "boolean",
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "codexRoleOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/nativeModelIdentifier"
+        },
+        "reasoning_effort": {
+          "$ref": "#/$defs/codexReasoningEffort"
+        },
+        "scope": {
+          "$ref": "#/$defs/codexSandboxScope"
+        }
+      }
+    },
+    "codexBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "provider",
+        "capability_models",
+        "capability_reasoning",
+        "permission_scopes",
+        "role_overrides",
+        "skill_policy"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "provider": {
+          "const": "codex"
+        },
+        "capability_models": {
+          "$ref": "#/$defs/capabilityModelBinding"
+        },
+        "capability_reasoning": {
+          "$ref": "#/$defs/capabilityReasoningBinding"
+        },
+        "permission_scopes": {
+          "$ref": "#/$defs/codexPermissionScopes"
+        },
+        "role_overrides": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/codexRoleOverride"
+          }
+        },
+        "skill_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "allow_implicit_invocation"
+          ],
+          "properties": {
+            "allow_implicit_invocation": {
+              "type": "boolean",
+              "const": false
+            }
+          }
         }
       }
     }

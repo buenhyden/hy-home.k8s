@@ -1,70 +1,19 @@
 {
   "$schema": "./registry.schema.json",
-  "schema_version": 1,
+  "schema_version": 2,
   "registry_id": "hy-home.k8s/agents",
   "providers": [
     {
       "id": "claude",
       "gateway": "CLAUDE.md",
       "projection_root": ".claude/agents",
-      "capability_models": {
-        "top": "opus",
-        "worker": "sonnet"
-      },
-      "capability_reasoning": {
-        "top": "xhigh",
-        "worker": "high"
-      },
-      "permission_scopes": {
-        "read-only-evidence": [
-          "Read",
-          "Grep",
-          "Glob",
-          "Bash"
-        ],
-        "read-only-research": [
-          "Read",
-          "Grep",
-          "Glob",
-          "Bash",
-          "WebFetch",
-          "WebSearch"
-        ],
-        "scoped-authoring": [
-          "Read",
-          "Write",
-          "Edit",
-          "Grep",
-          "Glob",
-          "Bash"
-        ],
-        "orchestration": [
-          "Read",
-          "Grep",
-          "Glob",
-          "Bash",
-          "Task"
-        ]
-      }
+      "bindings": ".claude/bindings.json"
     },
     {
       "id": "codex",
       "gateway": "AGENTS.md",
       "projection_root": ".codex/agents",
-      "capability_models": {
-        "top": "gpt-6-sol",
-        "worker": "gpt-6-sol"
-      },
-      "permission_scopes": {
-        "read-only-evidence": "read-only",
-        "read-only-research": "read-only",
-        "orchestration": "read-only",
-        "scoped-authoring": "workspace-write"
-      },
-      "capability_reasoning": {
-        "top": "xhigh",
-        "worker": "high"
-      }
+      "bindings": ".codex/bindings.json"
     }
   ],
   "permission_classes": [
@@ -204,10 +153,6 @@
         "neutral": ".agents/roles/supervisor.md",
         "claude": ".claude/agents/supervisor.md",
         "codex": ".codex/agents/supervisor.toml"
-      },
-      "native_model_override": {
-        "codex": "gpt-6-astra",
-        "claude": "fable"
       }
     },
     {
@@ -257,10 +202,6 @@
         "neutral": ".agents/roles/doc-writer.md",
         "claude": ".claude/agents/doc-writer.md",
         "codex": ".codex/agents/doc-writer.toml"
-      },
-      "native_reasoning_override": {
-        "codex": "medium",
-        "claude": "medium"
       }
     },
     {
@@ -310,10 +251,6 @@
         "neutral": ".agents/roles/incident-responder.md",
         "claude": ".claude/agents/incident-responder.md",
         "codex": ".codex/agents/incident-responder.toml"
-      },
-      "native_reasoning_override": {
-        "codex": "high",
-        "claude": "high"
       }
     },
     {
@@ -410,10 +347,6 @@
         "neutral": ".agents/roles/security-auditor.md",
         "claude": ".claude/agents/security-auditor.md",
         "codex": ".codex/agents/security-auditor.toml"
-      },
-      "native_reasoning_override": {
-        "codex": "high",
-        "claude": "high"
       }
     },
     {
@@ -437,10 +370,6 @@
         "neutral": ".agents/roles/wiki-curator.md",
         "claude": ".claude/agents/wiki-curator.md",
         "codex": ".codex/agents/wiki-curator.toml"
-      },
-      "native_reasoning_override": {
-        "codex": "medium",
-        "claude": "medium"
       }
     },
     {
@@ -513,10 +442,6 @@
         "neutral": ".agents/roles/architect.md",
         "claude": ".claude/agents/architect.md",
         "codex": ".codex/agents/architect.toml"
-      },
-      "native_model_override": {
-        "codex": "gpt-6-astra",
-        "claude": "fable"
       }
     },
     {

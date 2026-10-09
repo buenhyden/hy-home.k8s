@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "2.0.0"
+version: "2.1.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -52,7 +52,8 @@ No separate governance registry, per-provider policy fork, Release family, or sh
 
 | Plane | Canonical owner | Consumers and limits |
 | --- | --- | --- |
-| Agent role/skill machine truth | [Common governance role registry](../../../.agents/roles/registry.json) and adjacent schema | Current Claude/Codex projections; native discovery and runtime enforcement are separate evidence |
+| Agent role/skill machine truth | [Common governance role registry](../../../.agents/roles/registry.json) and adjacent schema | Neutral IDs, classes, handoffs, skills and provider binding paths; no concrete native value authored here |
+| Provider-native binding | [Claude bindings](../../../.claude/bindings.json) and [Codex bindings](../../../.codex/bindings.json) | One concrete model/effort/scope/skill table per provider; checked role projections consume it under independent neutral permission ceilings, while discovery and runtime enforcement remain separate evidence |
 | Human execution policy | [Common governance](../../../.agents/README.md) | Root/provider gateways, role responsibilities, approval, quality, and document authoring; copying the machine schema is forbidden |
 | Document machine contract and forms | [Stage 99 Registry](../../99.templates/registry.json) and [forms](../../99.templates/README.md) | Profile, route, metadata, identity, lifecycle, and template consumers |
 | Validation dispatch | [Validation Registry](../../../scripts/validation/registry.json) | Local affected-path, lane, and argv; each validator keeps its own failure meaning |
@@ -69,7 +70,7 @@ not evidence of an observed authenticated discovery or run.
 ### Consumer and validation flow
 
 1. A task sets its scope, role, skill, and approval boundaries in common governance and links to a package-local Plan/Task.
-2. The current domain owner and the Registry select the change's profile, affected paths, and required local lanes; tools, budget and execution authority are resolved before implementation.
+2. The current domain owner and registries select the change's profile, affected paths, and required local lanes; actual tools, resources and execution authority are resolved before implementation without a business/session deadline gate.
 3. Each validator checks its independent contract and records its result, fallback, and limits under the matching evidence class.
 4. The reviewer confirms consumer succession and negative fixtures and validates a stable staged snapshot.
 5. The Task records commands, results, and unfinished owners. No external execution happens without separate approval and observation.
@@ -173,10 +174,10 @@ permission enforcement, nor hosted CI success. Actual validation state is confir
 | --- | --- | --- |
 | Entry | Root `AGENTS.md` and `CLAUDE.md` | Explicitly select common policy and relevant procedures |
 | Policy | `.agents/governance/` | Approval, security, Git, document and quality meaning |
-| Role metadata | `.agents/roles/registry.json` and adjacent schema | Stable IDs, permissions, handoffs, skill and adapter references |
+| Role metadata | `.agents/roles/registry.json` and adjacent schema | Stable IDs, neutral permission classes, handoffs, skills and provider binding paths |
 | Role bodies and procedures | `.agents/roles/` and `.agents/skills/` | Neutral responsibilities and reusable work steps |
 | Provider contract | `.claude/provider.md` and `.codex/provider.md` | Supported native syntax, loading route, and evidence limits |
-| Native adapters | `.claude/` and `.codex/` | Native metadata and explicit common references |
+| Native adapters | `.claude/bindings.json`, `.codex/bindings.json` and their projections | Provider-specific values and explicit common references; projections are checked consumers, not generators |
 | QA execution | `scripts/qa.py`, validation registry and bounded runner | Profile selection, one execution per gate/input, fail-closed results |
 | Release production | `scripts/release.py`, `.cz.toml`, `cliff.toml` and main `CHANGELOG.md` | Local preparation and one SemVer tag/Release producer; publication remains an authorized external operation |
 | Change evidence | Stage 03 Task and Git | Actual commands, scope, failures, limitations and handoff |
@@ -193,9 +194,13 @@ superseded predecessors ADR-0034 and ADR-0035 decided.
 
 ## Data Architecture
 
-Role metadata references canonical role bodies and skill IDs; it does not copy
-policy prose. Provider files retain native format and model bindings. Static
-metadata validation cannot prove account availability or authenticated execution.
+Role metadata references canonical role bodies, skill IDs and provider binding
+paths; it does not copy native values or policy prose. Each provider binding
+table owns its native model, effort, skill and scope mapping; checked role
+projections retain the supported client format. Independent neutral class
+ceilings reject a coordinated table/projection permission widening. Static
+metadata validation cannot prove account availability, native permission
+enforcement or authenticated execution.
 
 QA profiles contain gate IDs. The execution registry alone owns commands and
 selection configuration; the runner owns bounded process handling. Quick checks

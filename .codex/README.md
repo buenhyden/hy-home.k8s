@@ -1,10 +1,10 @@
 ---
 title: "Codex Native Adapter"
-version: "2.0.0"
+version: "2.1.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 ---
 
 # Codex Native Adapter
@@ -17,15 +17,18 @@ This directory owns only Codex syntax, support notes and native connections.
 ## Scope
 
 Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
-canonical role for common contracts. Update native references in both adapters
-when paths change. The registry owns the capability tier to model binding and
-the permission class to `sandbox_mode` binding; a projection restates those
-values and the validator rejects any that drift. Native files do not prove
-model access, role discovery or permission enforcement. No generator is used.
+canonical role for common contracts. [bindings.json](bindings.json) owns this
+provider's concrete tier models, effort, native scopes and role departures;
+the neutral registry references its path. Role TOML files are checked
+consumers of the table, constrained by the neutral class ceiling. Update
+affected references when a path changes. Static parity does not prove model
+access, role discovery or permission enforcement. No generator is used.
 
 ## Structure
 
 - `agents/`: native role definitions with explicit common file reads.
+- `bindings.json`: canonical Codex model, effort, skill and permission values
+  consumed by checked role projections.
 - `CODEX.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
 - `hooks.json`: the pre-action guard registration, judged by the same

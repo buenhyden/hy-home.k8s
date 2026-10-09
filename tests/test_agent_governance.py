@@ -58,6 +58,7 @@ class NativeBoundaryTests(unittest.TestCase):
         ]
         paths = [
             self.validator.REGISTRY_SCHEMA_PATH.as_posix(),
+            *(provider["bindings"] for provider in self.registry["providers"]),
             ".agents/README.md",
             ".agents/workflows/delegated-development.md",
             "AGENTS.md",
@@ -90,6 +91,15 @@ class NativeBoundaryTests(unittest.TestCase):
             destination = self.root / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / path, destination)
+        for provider in self.registry["providers"]:
+            binding = self.root / provider["bindings"]
+            data = json.loads(binding.read_text(encoding="utf-8"))
+            data["role_overrides"] = {
+                role_id: override
+                for role_id, override in data["role_overrides"].items()
+                if role_id == role["id"]
+            }
+            binding.write_text(json.dumps(data), encoding="utf-8")
         (self.root / self.validator.REGISTRY_PATH).write_text(json.dumps(self.registry))
         (self.root / ".claude/skills").mkdir(parents=True)
         for skill in self.registry["skills"]:
@@ -588,6 +598,54 @@ class NativeBoundaryTests(unittest.TestCase):
         path.write_text(path.read_text().replace("Glob, Bash", "Glob, Bash, Write"))
         self.assert_rejected("AGENT-NATIVE-PERMISSION")
 
+    def test_coordinated_claude_binding_and_projection_cannot_widen_read_only_role(
+        self,
+    ):
+        import json
+
+        binding = self.root / ".claude/bindings.json"
+        data = json.loads(binding.read_text())
+        self.assertFalse(
+            next(
+                item
+                for item in self.registry["permission_classes"]
+                if item["id"] == "read-only-evidence"
+            )["allows_mutation"]
+        )
+        data["permission_scopes"]["read-only-evidence"].append("Write")
+        binding.write_text(json.dumps(data))
+        projection = self.root / ".claude/agents/code-reviewer.md"
+        projection.write_text(
+            projection.read_text().replace(
+                'tools: "Read, Grep, Glob, Bash"',
+                'tools: "Read, Grep, Glob, Bash, Write"',
+            )
+        )
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+
+    def test_coordinated_codex_binding_and_projection_cannot_widen_read_only_role(self):
+        import json
+
+        binding = self.root / ".codex/bindings.json"
+        data = json.loads(binding.read_text())
+        self.assertFalse(
+            next(
+                item
+                for item in self.registry["permission_classes"]
+                if item["id"] == "read-only-evidence"
+            )["allows_mutation"]
+        )
+        data["permission_scopes"]["read-only-evidence"] = "workspace-write"
+        binding.write_text(json.dumps(data))
+        projection = self.root / ".codex/agents/code-reviewer.toml"
+        projection.write_text(
+            projection.read_text().replace(
+                'sandbox_mode = "read-only"',
+                'sandbox_mode = "workspace-write"',
+            )
+        )
+        self.assert_rejected("AGENT-NATIVE-PERMISSION")
+
     def test_native_body_rejects_missing_duplicate_hidden_and_new_policy(self):
         path = self.root / ".claude/agents/code-reviewer.md"
         original = path.read_text()
@@ -605,17 +663,12 @@ class NativeBoundaryTests(unittest.TestCase):
                 path.write_text(body)
                 self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
-    def test_claude_permission_scope_is_owned_by_the_registry(self):
-        """Both providers read their native scope from one declaration.
-
-        Codex already resolves `sandbox_mode` through the registry. The
-        Claude tool allowlist must resolve the same way, so a scope change
-        is a registry edit rather than a validator edit.
-        """
+    def test_claude_permission_scope_is_owned_by_the_provider_binding(self):
+        """A changed provider scope must match the projection it binds."""
         import json
 
-        path = self.root / self.validator.REGISTRY_PATH
-        claude = next(p for p in self.registry["providers"] if p["id"] == "claude")
+        path = self.root / ".claude/bindings.json"
+        claude = json.loads(path.read_text())
         self.assertIn(
             "permission_scopes", claude, "Claude declares no permission scope"
         )
@@ -625,23 +678,23 @@ class NativeBoundaryTests(unittest.TestCase):
             {item["id"] for item in self.registry["permission_classes"]},
             "the scope map must be total over the declared permission classes",
         )
-        narrowed = json.loads(json.dumps(self.registry))
-        provider = next(p for p in narrowed["providers"] if p["id"] == "claude")
-        provider["permission_scopes"]["read-only-evidence"] = ["Read", "Grep", "Glob"]
+        narrowed = json.loads(json.dumps(claude))
+        narrowed["permission_scopes"]["read-only-evidence"] = ["Read", "Grep", "Glob"]
         path.write_text(json.dumps(narrowed))
         self.assert_rejected("AGENT-NATIVE-PERMISSION")
-        path.write_text(json.dumps(self.registry))
+        path.write_text(json.dumps(claude))
 
     def test_role_scope_override_is_declared_data_not_a_coded_exception(self):
         """A narrowing is declared data, and its projection must follow it."""
         import json
 
-        path = self.root / self.validator.REGISTRY_PATH
+        path = self.root / ".claude/bindings.json"
         projection = self.root / ".claude/agents/code-reviewer.md"
         source = projection.read_text()
-        overridden = json.loads(json.dumps(self.registry))
-        overridden["roles"][0]["native_scope_override"] = {
-            "claude": ["Read", "Grep", "Glob"]
+        original = path.read_text()
+        overridden = json.loads(original)
+        overridden["role_overrides"]["code-reviewer"] = {
+            "scope": ["Read", "Grep", "Glob"]
         }
         path.write_text(json.dumps(overridden))
         self.assert_rejected("AGENT-NATIVE-PERMISSION")
@@ -653,22 +706,16 @@ class NativeBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
         projection.write_text(source)
-        path.write_text(json.dumps(self.registry))
+        path.write_text(original)
 
     def test_shipped_registry_reproduces_every_claude_projection(self):
-        """The declaration must match what the twelve real projections carry."""
-        import json
+        """The provider binding must match each registered projection."""
         import re
 
-        registry = json.loads(
-            (ROOT / self.validator.REGISTRY_PATH).read_text(encoding="utf-8")
-        )
-        claude = next(p for p in registry["providers"] if p["id"] == "claude")
-        for role in registry["roles"]:
-            expected = (
-                role.get("native_scope_override", {}).get("claude")
-                or claude["permission_scopes"][role["permission_class"]]
-            )
+        full_registry = self.validator.load_json(ROOT, self.validator.REGISTRY_PATH)
+        bindings = self.validator.load_provider_bindings(ROOT, full_registry)
+        for role in full_registry["roles"]:
+            expected = self.validator._bound_scope(bindings, role, "claude")
             text = (ROOT / role["projections"]["claude"]).read_text(encoding="utf-8")
             observed = re.search(r'(?m)^tools: "([^"]+)"$', text).group(1)
             with self.subTest(role=role["id"]):
@@ -725,11 +772,11 @@ class NativeBoundaryTests(unittest.TestCase):
     def test_missing_capability_binding_rejects(self):
         import json
 
-        registry = self.root / self.validator.REGISTRY_PATH.as_posix()
-        data = json.loads(registry.read_text())
-        del data["providers"][0]["capability_models"]["worker"]
-        registry.write_text(json.dumps(data))
-        self.assert_rejected()
+        binding = self.root / ".claude/bindings.json"
+        data = json.loads(binding.read_text())
+        del data["capability_models"]["worker"]
+        binding.write_text(json.dumps(data))
+        self.assert_rejected("AGENT-NATIVE-BINDING")
 
     def test_unsupported_native_model_effort_and_metadata_reject(self):
         import json
@@ -998,11 +1045,10 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
         cls.registry = json.loads(
             (ROOT / ".agents/roles/registry.json").read_text(encoding="utf-8")
         )
-        cls.claude = next(
-            provider
-            for provider in cls.registry["providers"]
-            if provider["id"] == "claude"
-        )
+        from tests.test_validate_agent_registry import load_validator
+
+        validator = load_validator()
+        cls.claude = validator.load_provider_bindings(ROOT, cls.registry)["claude"]
 
     def role(self, role_id):
         return next(role for role in self.registry["roles"] if role["id"] == role_id)
@@ -1016,9 +1062,7 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
         """
         researcher = self.role("docs-researcher")
         self.assertNotIn(
-            "native_scope_override",
-            researcher,
-            "the network role must not widen a class through its projection",
+            "scope", self.claude["role_overrides"].get("docs-researcher", {})
         )
         scopes = self.claude["permission_scopes"]
         granted = scopes[researcher["permission_class"]]
@@ -1041,7 +1085,7 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
         for role in self.registry["roles"]:
             with self.subTest(role=role["id"]):
                 scope = (
-                    role.get("native_scope_override", {}).get("claude")
+                    self.claude["role_overrides"].get(role["id"], {}).get("scope")
                     or scopes[role["permission_class"]]
                 )
                 self.assertIn("Bash", scope)

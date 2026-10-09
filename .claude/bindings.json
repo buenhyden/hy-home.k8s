@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "provider": "claude",
+  "capability_models": {
+    "top": "opus",
+    "worker": "sonnet"
+  },
+  "capability_reasoning": {
+    "top": "xhigh",
+    "worker": "high"
+  },
+  "permission_scopes": {
+    "read-only-evidence": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "read-only-research": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "scoped-authoring": [
+      "Read",
+      "Write",
+      "Edit",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "orchestration": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash",
+      "Task"
+    ]
+  },
+  "role_overrides": {
+    "supervisor": {
+      "model": "fable"
+    },
+    "doc-writer": {
+      "reasoning_effort": "medium"
+    },
+    "incident-responder": {
+      "reasoning_effort": "high"
+    },
+    "security-auditor": {
+      "reasoning_effort": "high"
+    },
+    "wiki-curator": {
+      "reasoning_effort": "medium"
+    },
+    "architect": {
+      "model": "fable"
+    }
+  },
+  "skill_policy": {
+    "disable-model-invocation": true
+  }
+}

@@ -1,17 +1,20 @@
 ---
 title: "Agent Responsibilities"
-version: "2.0.0"
+version: "2.1.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 ---
 # Agent Responsibilities
 
 ## Overview
 
-Select the responsibility needed for the task, then resolve the concrete role
-and provider projection from the [agent registry](registry.json).
+Select the responsibility needed for the task, then resolve its neutral role
+from the [agent registry](registry.json) and the selected provider's concrete
+values from [Codex bindings](../../.codex/bindings.json) or
+[Claude bindings](../../.claude/bindings.json). Role projections are checked
+native consumers of those values.
 This router is not a duplicate roster or permission inventory.
 
 ## Scope
@@ -130,8 +133,8 @@ Coordinate authorized work and reconcile ownership, dependencies, review, and
 evidence. The supervisor's registry permission class is orchestration, not
 authoring; governance maintenance requires an explicitly scoped authoring owner
 and routing grants a worker no new tools or write paths. Common governance owns
-human policy, the neutral registry owns the roster and handoffs, and provider
-projections own native configuration.
+human policy, the neutral registry owns the roster and handoffs, provider
+binding tables own native configuration, and projections are checked consumers.
 
 - Decompose work into bounded tasks with explicit file responsibility and
   dependencies.

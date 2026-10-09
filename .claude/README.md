@@ -1,10 +1,10 @@
 ---
 title: "Claude Native Adapter"
-version: "2.0.0"
+version: "2.1.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 ---
 
 # Claude Native Adapter
@@ -17,16 +17,18 @@ This directory owns only Claude syntax, support notes and native connections.
 ## Scope
 
 Edit [roles/registry.json](../.agents/roles/registry.json) and the selected
-canonical role for common contracts. Update native references in both adapters
-when paths change. The registry owns the capability tier to model binding and the
-permission class to `tools` binding; a projection restates those values
-and the validator rejects any that drift. Native files
-do not prove model access, role discovery or permission enforcement. No
-generator is used.
+canonical role for common contracts. [bindings.json](bindings.json) owns this
+provider's concrete tier models, effort, native tools and role departures;
+the neutral registry references its path. Role Markdown files are checked
+consumers of the table, constrained by the neutral class ceiling. Update
+affected references when a path changes. Static parity does not prove model
+access, role discovery or permission enforcement. No generator is used.
 
 ## Structure
 
 - `agents/`: native role definitions with explicit common file reads.
+- `bindings.json`: canonical Claude model, effort, skill and permission values
+  consumed by checked role projections.
 - `CLAUDE.md`: explicitly read provider baseline.
 - [provider.md](provider.md): provider-specific loading and support contract.
 - `settings.json`: existing permissions and the registered pre-action hook.
@@ -50,11 +52,12 @@ it cannot grant extra tools or approval. Edit procedures once under
 
 ## Verification
 
-`python3 scripts/validate-agent-governance.py --root .` checks registry, native
-syntax, exact role/skill references, link boundaries and permission parity.
-`python3 scripts/qa.py full` checks the final repository snapshot. Actual native
-loading, invocation and hook events are separate checks requiring a fresh
-session and applicable authorization.
+`python3 scripts/validate-agent-governance.py --root .` checks registry,
+binding-table syntax, exact role/skill references, link boundaries and
+neutral-ceiling permission parity. Select affected and staged gates from the
+current validation registry for their actual inputs; the retired full/ci
+sweep is not a completion command. Actual native loading, invocation and
+hook events require a fresh authorized session and separate evidence.
 
 ## Related Documents
 

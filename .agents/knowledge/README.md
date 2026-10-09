@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 ---
 # Common Knowledge
 
@@ -45,7 +45,9 @@ row that would restate one is a defect rather than a convenience.
 4. Write pointer validity as an observable change. Optional observation metadata
    follows the context-and-memory policy, with a source hash and expiry date;
    it does not duplicate the source statement or authorize a change.
-5. Index every new document in the Item Index above.
+5. When a new knowledge pointer document is admitted, link it from the
+   Structure section above; keep owner details in that document rather than
+   copying them into this router.
 
 ## Related Documents
 

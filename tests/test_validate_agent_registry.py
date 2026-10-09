@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
+import shutil
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -78,17 +81,10 @@ class AgentRegistryTests(unittest.TestCase):
         mutated["roles"][0]["permission_class"] = "unbounded-write"
         self.assert_rule(mutated, "AGENT-REGISTRY-PERMISSION")
 
-    def test_native_scope_override_may_narrow_its_permission_class(self) -> None:
+    def test_native_binding_path_is_exact_provider_owner(self) -> None:
         mutated = self.registry_copy()
-        role = next(item for item in mutated["roles"] if item["id"] == "code-reviewer")
-        role["native_scope_override"] = {"claude": ["Read", "Grep"]}
-        self.validator.validate_registry(REPOSITORY_ROOT, mutated, check_files=False)
-
-    def test_native_scope_override_cannot_widen_its_permission_class(self) -> None:
-        mutated = self.registry_copy()
-        role = next(item for item in mutated["roles"] if item["id"] == "code-reviewer")
-        role["native_scope_override"] = {"claude": ["Read", "Grep", "WebSearch"]}
-        self.assert_rule(mutated, "AGENT-REGISTRY-PERMISSION")
+        mutated["providers"][0]["bindings"] = "../untrusted/bindings.json"
+        self.assert_rule(mutated, "AGENT-REGISTRY-SCHEMA")
 
     def test_unknown_handoff_is_rejected(self) -> None:
         mutated = self.registry_copy()
@@ -146,54 +142,50 @@ class CapabilityModelBindingTests(unittest.TestCase):
         cls.registry = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
+        cls.bindings = cls.validator.load_provider_bindings(
+            REPOSITORY_ROOT, cls.registry
+        )
 
     def test_a_model_departure_is_declared_rather_than_implied(self) -> None:
-        bindings = {
-            provider["id"]: provider["capability_models"]
-            for provider in self.registry["providers"]
-        }
         for role in self.registry["roles"]:
             tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
-            declared = role.get("native_model_override", {})
             for provider in role["supported_providers"]:
-                resolved = self.validator._bound_model(self.registry, role, provider)
+                resolved = self.validator._bound_model(self.bindings, role, provider)
+                binding = self.bindings[provider]
                 with self.subTest(role=role["id"], provider=provider):
                     self.assertEqual(
-                        resolved, declared.get(provider, bindings[provider][tier])
+                        resolved,
+                        binding["role_overrides"]
+                        .get(role["id"], {})
+                        .get("model", binding["capability_models"][tier]),
                     )
 
     def test_a_model_override_replaces_only_its_own_provider(self) -> None:
         role = {
+            "id": "synthetic-model-departure",
             "capability_tier_ref": ".agents/governance/model-selection.md#worker",
-            "native_model_override": {"codex": "override-model"},
         }
-        bindings = {
-            provider["id"]: provider["capability_models"]["worker"]
-            for provider in self.registry["providers"]
-        }
+        bindings = copy.deepcopy(self.bindings)
+        bindings["codex"]["role_overrides"][role["id"]] = {"model": "override-model"}
         self.assertEqual(
-            self.validator._bound_model(self.registry, role, "codex"), "override-model"
+            self.validator._bound_model(bindings, role, "codex"), "override-model"
         )
         self.assertEqual(
-            self.validator._bound_model(self.registry, role, "claude"),
-            bindings["claude"],
+            self.validator._bound_model(bindings, role, "claude"),
+            bindings["claude"]["capability_models"]["worker"],
         )
 
     def test_a_claude_model_override_replaces_only_claude(self) -> None:
         role = {
+            "id": "synthetic-claude-model-departure",
             "capability_tier_ref": ".agents/governance/model-selection.md#worker",
-            "native_model_override": {"claude": "fable"},
         }
-        codex_worker = next(
-            provider["capability_models"]["worker"]
-            for provider in self.registry["providers"]
-            if provider["id"] == "codex"
-        )
+        bindings = copy.deepcopy(self.bindings)
+        bindings["claude"]["role_overrides"][role["id"]] = {"model": "fable"}
+        self.assertEqual(self.validator._bound_model(bindings, role, "claude"), "fable")
         self.assertEqual(
-            self.validator._bound_model(self.registry, role, "claude"), "fable"
-        )
-        self.assertEqual(
-            self.validator._bound_model(self.registry, role, "codex"), codex_worker
+            self.validator._bound_model(bindings, role, "codex"),
+            bindings["codex"]["capability_models"]["worker"],
         )
 
 
@@ -206,20 +198,21 @@ class CodexReasoningBindingTests(unittest.TestCase):
         cls.registry = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
+        cls.bindings = cls.validator.load_provider_bindings(
+            REPOSITORY_ROOT, cls.registry
+        )
 
     def test_a_departure_is_declared_rather_than_implied(self) -> None:
-        binding = next(
-            entry["capability_reasoning"]
-            for entry in self.registry["providers"]
-            if entry["id"] == "codex"
-        )
+        binding = self.bindings["codex"]
         for role in self.registry["roles"]:
             tier = role["capability_tier_ref"].rsplit("#", 1)[-1]
-            declared = role.get("native_reasoning_override", {}).get("codex")
-            resolved = self.validator._bound_reasoning(self.registry, role)
+            declared = (
+                binding["role_overrides"].get(role["id"], {}).get("reasoning_effort")
+            )
+            resolved = self.validator._bound_reasoning(self.bindings, role)
             with self.subTest(role=role["id"]):
                 if declared is None:
-                    self.assertEqual(resolved, binding[tier])
+                    self.assertEqual(resolved, binding["capability_reasoning"][tier])
                 else:
                     self.assertEqual(resolved, declared)
 
@@ -233,23 +226,177 @@ class ClaudeReasoningBindingTests(unittest.TestCase):
         cls.registry = cls.validator.load_json(
             REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
         )
+        cls.bindings = cls.validator.load_provider_bindings(
+            REPOSITORY_ROOT, cls.registry
+        )
 
     def test_a_claude_effort_override_replaces_only_claude(self) -> None:
         role = {
+            "id": "synthetic-claude-reasoning-departure",
             "capability_tier_ref": ".agents/governance/model-selection.md#top",
-            "native_reasoning_override": {"claude": "medium"},
         }
-        codex_top = next(
-            entry["capability_reasoning"]["top"]
-            for entry in self.registry["providers"]
-            if entry["id"] == "codex"
+        bindings = copy.deepcopy(self.bindings)
+        bindings["claude"]["role_overrides"][role["id"]] = {
+            "reasoning_effort": "medium"
+        }
+        self.assertEqual(
+            self.validator._bound_reasoning(bindings, role, "claude"), "medium"
         )
         self.assertEqual(
-            self.validator._bound_reasoning(self.registry, role, "claude"), "medium"
+            self.validator._bound_reasoning(bindings, role),
+            bindings["codex"]["capability_reasoning"]["top"],
+        )
+
+
+class ProviderBindingLoaderTests(unittest.TestCase):
+    """Provider-owned native values cannot widen the neutral role authority."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.validator = load_validator()
+        cls.registry = cls.validator.load_json(
+            REPOSITORY_ROOT, cls.validator.REGISTRY_PATH
+        )
+
+    def setUp(self) -> None:
+        directory = tempfile.TemporaryDirectory(prefix="agent-native-binding-")
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        sources = (
+            self.validator.REGISTRY_SCHEMA_PATH,
+            *(Path(provider["bindings"]) for provider in self.registry["providers"]),
+        )
+        for source in sources:
+            target = self.root / source
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPOSITORY_ROOT / source, target)
+
+    def binding_path(self, provider: str) -> Path:
+        return self.root / next(
+            row["bindings"]
+            for row in self.registry["providers"]
+            if row["id"] == provider
+        )
+
+    def mutate_binding(self, provider: str, change) -> None:
+        path = self.binding_path(provider)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        change(data)
+        path.write_text(json.dumps(data), encoding="utf-8")
+
+    def assert_binding_rule(self, code: str) -> None:
+        with self.assertRaises(self.validator.HarnessError) as raised:
+            self.validator.load_provider_bindings(self.root, self.registry)
+        self.assertEqual(raised.exception.code, code)
+
+    def test_current_tables_bind_without_widening_and_keep_advisory_bash(self) -> None:
+        bindings = self.validator.load_provider_bindings(self.root, self.registry)
+        self.assertEqual(
+            set(bindings), {row["id"] for row in self.registry["providers"]}
+        )
+        self.assertIn(
+            "Bash", bindings["claude"]["permission_scopes"]["read-only-evidence"]
         )
         self.assertEqual(
-            self.validator._bound_reasoning(self.registry, role), codex_top
+            bindings["codex"]["permission_scopes"]["read-only-evidence"],
+            "read-only",
         )
+
+    def test_narrower_codex_class_scope_is_valid(self) -> None:
+        self.mutate_binding(
+            "codex",
+            lambda data: data["permission_scopes"].__setitem__(
+                "scoped-authoring", "read-only"
+            ),
+        )
+        self.assertEqual(
+            self.validator.load_provider_bindings(self.root, self.registry)["codex"][
+                "permission_scopes"
+            ]["scoped-authoring"],
+            "read-only",
+        )
+
+    def test_provider_scope_cannot_widen_read_only_class(self) -> None:
+        for provider, scope in (
+            ("claude", ["Read", "Grep", "Glob", "Bash", "Write"]),
+            ("codex", "workspace-write"),
+        ):
+            with self.subTest(provider=provider):
+                original = self.binding_path(provider).read_bytes()
+                self.mutate_binding(
+                    provider,
+                    lambda data: data["permission_scopes"].__setitem__(
+                        "read-only-evidence", scope
+                    ),
+                )
+                self.assert_binding_rule("AGENT-NATIVE-PERMISSION")
+                self.binding_path(provider).write_bytes(original)
+
+    def test_unknown_role_override_and_skill_policy_type_reject(self) -> None:
+        for provider, policy in (
+            ("claude", "disable-model-invocation"),
+            ("codex", "allow_implicit_invocation"),
+        ):
+            with self.subTest(provider=provider):
+                path = self.binding_path(provider)
+                original = path.read_bytes()
+                self.mutate_binding(
+                    provider,
+                    lambda data: data["role_overrides"].__setitem__(
+                        "unknown-role", {"model": "unowned"}
+                    ),
+                )
+                self.assert_binding_rule("AGENT-NATIVE-BINDING")
+                path.write_bytes(original)
+                self.mutate_binding(
+                    provider,
+                    lambda data: data["skill_policy"].__setitem__(policy, "false"),
+                )
+                self.assert_binding_rule("AGENT-NATIVE-BINDING")
+                path.write_bytes(original)
+
+    def test_role_override_cannot_widen_read_only_class(self) -> None:
+        for provider, scope in (
+            ("claude", ["Read", "Grep", "Glob", "Bash", "Write"]),
+            ("codex", "workspace-write"),
+        ):
+            with self.subTest(provider=provider):
+                path = self.binding_path(provider)
+                original = path.read_bytes()
+                self.mutate_binding(
+                    provider,
+                    lambda data: data["role_overrides"].__setitem__(
+                        "code-reviewer", {"scope": scope}
+                    ),
+                )
+                self.assert_binding_rule("AGENT-NATIVE-PERMISSION")
+                path.write_bytes(original)
+
+    def test_wrong_provider_and_duplicate_json_key_reject(self) -> None:
+        path = self.binding_path("codex")
+        original = path.read_bytes()
+        self.mutate_binding(
+            "codex", lambda data: data.__setitem__("provider", "claude")
+        )
+        self.assert_binding_rule("AGENT-NATIVE-BINDING")
+        path.write_bytes(original)
+        path.write_text(
+            path.read_text().replace(
+                '"provider":', '"provider": "codex", "provider":', 1
+            )
+        )
+        self.assert_binding_rule("AGENT-REGISTRY-INPUT")
+        path.write_bytes(original)
+
+    def test_missing_or_symlinked_binding_rejects(self) -> None:
+        path = self.binding_path("codex")
+        original = path.read_bytes()
+        path.unlink()
+        self.assert_binding_rule("AGENT-NATIVE-BINDING")
+        path.symlink_to(self.binding_path("claude"))
+        self.assert_binding_rule("AGENT-NATIVE-BINDING")
+        path.unlink()
+        path.write_bytes(original)
 
 
 if __name__ == "__main__":

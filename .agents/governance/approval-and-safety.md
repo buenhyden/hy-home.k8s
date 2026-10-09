@@ -1,10 +1,10 @@
 ---
 title: "Approval and Safety Policy"
-version: "1.3.0"
+version: "1.3.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 ---
 
 # Approval and Safety Policy
@@ -115,21 +115,26 @@ operations to a subagent.
   that needs no shell declares a narrowed native scope instead. This difference
   is documented and accepted; do not describe it as parity, and do not report
   the weaker side's policy prohibition as an enforced control.
-- A permission class is the only place native reach widens. A projection may
-  drop a tool its class grants, and the registry validator rejects one that
-  adds a tool the class withholds, so a per-role exception can never become a
-  second permission authority. Network reach is therefore its own read-only
-  class rather than an exception on the ordinary one: the role that researches
-  primary sources carries it, and no other read-only role gains it by default.
+- A neutral permission class sets the maximum reach. A provider binding may
+  choose a narrower native scope within that ceiling, and a native
+  `role_overrides.scope` may narrow the provider binding for one role. The
+  projection must match the resulting binding exactly. The validator rejects
+  any binding or projection that exceeds the neutral class ceiling, so a
+  per-role exception cannot become a second permission authority. Network
+  reach is therefore its own read-only class rather than an exception on the
+  ordinary one: the role that researches primary sources carries it, and no
+  other read-only role gains it by default.
 - The owning Task or incident also records rollback or backup and required
   evidence before an exception. Missing authority stops the protected operation
   at its local draft, not independent approved authoring.
 - Safety denial is an authorization boundary. Cost, time and output limits
   belong to [quality](quality.md#validation-runner-envelope) and the validation
-  runner; a resource limit is not secret/live approval. Resolve required-check
-  tools, environment, resources and authority during work-lifecycle preflight.
-  Preserve failures and obtain necessary native permission for actual resources without
-  bypassing a guard or misreporting an unexecuted check.
+  runner; a technical resource limit is not secret/live approval or a new
+  business deadline, session timebox or validation-reserve permission. Resolve
+  required-check tools, environment, resources and authority during
+  work-lifecycle preflight.
+  Preserve failures and obtain necessary native permission for actual
+  resources without bypassing a guard or misreporting an unexecuted check.
 
 ## Validation and Refresh
 

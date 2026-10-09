@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.3.1"
+version: "1.4.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-09"
 ---
 
 # Claude Provider Notes
@@ -24,12 +24,11 @@ These may restrict but never expand common approval boundaries.
 ## Governance Context
 
 Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), relevant
-responsibility, and current Task. Claude Markdown role projections carry
-native model and least-privilege tool metadata; the neutral registry owns
-their shared responsibility and permission meaning. The `tools` allowlist a
-projection carries is the registry's `permission_scopes` entry for that role's
-permission class, rendered verbatim; a role whose native authority genuinely
-differs declares `native_scope_override` instead of departing silently.
+responsibility, and current Task. [Claude bindings](bindings.json) own native
+model, effort, skill and tool values; Markdown role projections consume those
+values. The neutral registry owns responsibility and permission-class meaning.
+The `tools` allowlist is checked against its neutral class ceiling; a role's
+native departure is declared in the binding table and cannot widen the class.
 
 ## Current Contract
 
@@ -65,8 +64,8 @@ invocation. The common procedure retains the selected role and user scope.
   version. Verify the intended runtime contract when configuration changes.
 
 Role projections carry the documented model aliases rather than a pinned
-generation identifier, and [the registry](../.agents/roles/registry.json) owns
-which alias each capability tier binds. An alias keeps the selection stable
+generation identifier, and [Claude bindings](bindings.json) own which alias
+each capability tier binds. An alias keeps the selection stable
 when a generation changes, and the validator rejects a projection whose model
 does not resolve from the binding. Observed on `claude 2.1.263` (2026-09-06).
 On `claude 2.1.283` (2026-09-27) an authorized session observed discovery of
@@ -76,8 +75,8 @@ hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
 (`docs/98.archive/README.md`)
 owns that evidence.
-Projections also carry `effort`, which the registry binds per tier on both
-providers, with a role override where effort or model genuinely differs.
+Projections also carry `effort`, which the provider binding table owns per
+tier, with a role override where effort or model genuinely differs.
 Models stay aliases (`fable`, `opus`, `sonnet`, `haiku`), so each one follows
 the newest generation of its family. Only supervisor and architect bind
 `fable`. A running session keeps the definitions it loaded at start, so verify

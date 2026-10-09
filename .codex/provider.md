@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.2.4"
+version: "1.3.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-09-29"
+updated: "2026-10-09"
 ---
 
 # Codex Provider Notes
@@ -23,9 +23,10 @@ running client. The neutral registry owns shared role and permission meaning.
 ## Governance Context
 
 Load the gateway, [work lifecycle](../.agents/workflows/work-lifecycle.md), relevant
-responsibility, and current Task. Codex TOML role projections carry native
-model and reasoning metadata; configured values alone do not prove provider
-resolution or tool enforcement.
+responsibility, and current Task. [Codex bindings](bindings.json) own concrete
+model, reasoning, skill and native scope values; TOML role projections consume
+those values under the neutral registry's role and permission-class ceiling.
+Configured values alone do not prove provider resolution or tool enforcement.
 
 ## Current Contract
 
@@ -39,10 +40,12 @@ team document, not a special automatic entry filename.
 - Explicitly read required `.agents/skills/<id>/SKILL.md`
   procedures selected by the role. Root AGENTS and native role instructions
   require these reads; they do not register native skills.
-- Use native sandbox and approval controls. Each role projection declares the
-  `sandbox_mode` its registry permission class binds, resolved through the same
-  `permission_scopes` lookup the Claude `tools` allowlist uses; that is
-  configuration the validator checks, not proof the client applied it.
+- Use native sandbox and approval controls. [Codex bindings](bindings.json)
+  map the neutral registry's permission class to a native `sandbox_mode`;
+  [Claude bindings](../.claude/bindings.json) separately map that class to a
+  native `tools` allowlist. Each role projection consumes its provider's
+  binding. The validator checks this configuration, not whether a client
+  applied it.
 - Observed on `codex-cli 0.153.4` (2026-09-06): the client reports `hooks` as a
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline
@@ -86,22 +89,24 @@ team document, not a special automatic entry filename.
   `trust_level = "trusted"` entry for this checkout, all 17 projections became
   spawnable. The first spawn then failed with HTTP 400, because
   `gpt-5.3-codex-spark` "is not supported when using Codex with a ChatGPT
-  account" and is absent from `codex debug models`. The registry `worker` tier
-  now binds `gpt-6-sol`, which the catalog describes as the "Workhorse model for
-  coding and everyday work". A spawned `code-reviewer` then reported `gpt-6-sol`,
+  account" and is absent from `codex debug models`. At that observation the
+  registry `worker` tier bound `gpt-6-sol`, which the catalog described as the
+  "Workhorse model for coding and everyday work". A spawned `code-reviewer` then reported `gpt-6-sol`,
   `high`, and `read-only`. A probe `apply_patch` was rejected by the read-only
   sandbox, and no hook event was observed, so hook delivery still needs the
   user's hook review through `/hooks`.
 - SPEC-0096 (2026-09-27) rebound the Codex tiers. `gpt-5.5`, a legacy model
   that retires from Codex on 2026-10-14, and `gpt-5.3-codex-spark` gave way to
-  `gpt-6-sol` for both tiers. Supervisor and architect declare
-  `native_model_override.codex = gpt-6-astra`, which keeps Astra to the
-  planning roles. Rollout records of spawned threads show that the client
+  `gpt-6-sol` for both tiers. At that revision supervisor and architect used
+  `native_model_override.codex = gpt-6-astra`; the current override is in
+  [Codex bindings](bindings.json), not the neutral registry. Rollout records
+  of spawned threads show that the client
   applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task owns
   the rationale and the evidence.
 - Because delivery is unproven, the enforced boundary for a non-authoring role
-  on this provider is the operating-system `sandbox_mode` the registry binds,
-  not the hook. A role in a mutation-capable class relies on the hook only for
+  on this provider is the operating-system `sandbox_mode` mapped by its
+  binding under the neutral class ceiling, not the hook. A role in a
+  mutation-capable class relies on the hook only for
   advice, never for prevention.
 - Response contract observed in the installed client on 2026-09-06:
   `PreToolUse` accepts `permissionDecision`, `permissionDecisionReason` and

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import ctypes
+import hashlib
 import importlib.util
 import json
 import os
@@ -498,6 +499,12 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         return (
             ".agents/roles/registry.json",
             ".agents/roles/registry.schema.json",
+            *(
+                provider["bindings"]
+                for provider in json.loads(
+                    (REPO_ROOT / ".agents/roles/registry.json").read_text()
+                )["providers"]
+            ),
             "scripts/validation/registry.json",
             "scripts/validation/registry.schema.json",
             self.validator.documents.REGISTRY_PATH.as_posix(),
@@ -508,6 +515,26 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 if profile["template_source"] is not None
             ),
         )
+
+    def test_each_native_binding_must_be_an_indexed_owner_candidate(self) -> None:
+        candidates = self.owner_candidates()
+        binding_paths = tuple(
+            provider["bindings"]
+            for provider in json.loads(
+                (REPO_ROOT / ".agents/roles/registry.json").read_text()
+            )["providers"]
+        )
+        for missing in binding_paths:
+            with (
+                self.subTest(missing=missing),
+                self.validator._RepositoryReader(REPO_ROOT) as reader,
+                self.assertRaises(self.validator.ContractError) as raised,
+            ):
+                self.validator._load_owners(
+                    reader, tuple(path for path in candidates if path != missing)
+                )
+            self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
+            self.assertIn(missing, raised.exception.detail)
 
     def test_missing_typed_document_registry_never_falls_back_to_reopen(self) -> None:
         with (
@@ -540,6 +567,17 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.assertEqual(read_current_bytes("README.md", len(expected)), expected)
             with self.assertRaises(self.validator.ContractError):
                 read_current_bytes("README.md", len(expected) - 1)
+            for provider in json.loads(
+                (REPO_ROOT / ".agents/roles/registry.json").read_text()
+            )["providers"]:
+                path = provider["bindings"]
+                current = (REPO_ROOT / path).read_bytes()
+                held = read_current_bytes(path, len(current))
+                self.assertEqual(
+                    hashlib.sha256(held).digest(), hashlib.sha256(current).digest()
+                )
+                with self.assertRaises(self.validator.ContractError):
+                    read_current_bytes(path, len(current) - 1)
             self.assertEqual(
                 read_symlink(".claude/skills/risk-report"),
                 "../../.agents/skills/risk-report",
@@ -569,6 +607,10 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         ):
             owners = self.validator._load_owners(reader, self.owner_candidates())
         self.assertIs(owners.document_registry, observed[0])
+        for provider in json.loads(
+            (REPO_ROOT / ".agents/roles/registry.json").read_text()
+        )["providers"]:
+            self.assertIn(provider["bindings"], owners.native_paths)
 
     def test_git_runner_is_absolute_closed_and_ambient_state_free(self) -> None:
         root = self.make_valid_root()

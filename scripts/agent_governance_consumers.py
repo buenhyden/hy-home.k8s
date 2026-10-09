@@ -834,6 +834,8 @@ def _load_owners(
     for path in (
         terminal.REGISTRY_PATH,
         terminal.REGISTRY_SCHEMA_PATH,
+        PurePosixPath(".claude/bindings.json"),
+        PurePosixPath(".codex/bindings.json"),
         affected.CONTRACT_PATH,
         affected.SCHEMA_PATH,
         documents.REGISTRY_PATH,
@@ -896,6 +898,7 @@ def _load_owners(
         fail("AGQC-LEGACY-OWNER", "validated document registry is unavailable")
     native_paths = {
         *(provider["gateway"] for provider in registry["providers"]),
+        *(provider["bindings"] for provider in registry["providers"]),
         *(skill["path"] for skill in registry["skills"]),
         *(path for role in registry["roles"] for path in role["projections"].values()),
     }

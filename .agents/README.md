@@ -1,10 +1,10 @@
 ---
 title: "Common Agent Governance"
-version: "2.2.0"
+version: "2.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 ---
 
 # Common Agent Governance
@@ -18,8 +18,10 @@ loaders; the entire directory is not an automatic instruction loader.
 ## Scope
 
 Provider differences and native adapters live in [.claude/](../.claude/)
-and [.codex/](../.codex/). Edit common meaning here; retain native syntax
-there. No role copies or provider generator own a second policy.
+and [.codex/](../.codex/). Edit common role, class, skill and handoff meaning
+here; each provider's `bindings.json` owns its concrete model, effort and
+native permission mapping. Checked role projections consume those values;
+neither the common registry nor a generator is a second native-value owner.
 [Governance](governance/) and the prompt contracts
 own `knowledge/` and `prompts/`; each is delivered with a Stage 99 profile,
 affected-surface coverage and at least one named consumer, so a directory
@@ -38,7 +40,7 @@ retirement remains effective.
 | Path | Purpose |
 | --- | --- |
 | [governance/](governance/) | Normative lifecycle and terminology (sdlc.md); approval, safety, quality, Git, documents, context and model policy |
-| [roles/](roles/) | Responsibility selection and common handoff contracts; `roles/registry.json` holds role IDs, permissions, skill references and native paths |
+| [roles/](roles/) | Responsibility selection and common handoff contracts; `roles/registry.json` holds role IDs, neutral permissions, skill references and native binding paths |
 | `skills/<id>/` | Callable common procedure packages; registry determines the package set |
 | `workflows/` | Ordinary lifecycle/delegation procedures, explicitly read |
 | `knowledge/` | Hand-maintained pointers to canonical owners; states no policy of its own |
@@ -80,8 +82,10 @@ execution registry owns mutable gate commands and limits.
 ## Verification
 
 Run `python3 scripts/validate-agent-governance.py --root .` when role, skill,
-permission or routing contracts are selected. Use the local affected and
-exact-index profiles for their actual changed scope. For shared QA machinery
+permission, native binding or routing contracts are selected. This is static
+schema/projection and neutral-ceiling evidence, not native enforcement. Use
+the local affected and exact-index profiles for their actual changed scope.
+For shared QA machinery
 changes or an explicitly bounded audit, select the registered purpose gates
 and named behavior, Archive and security regressions after resource preflight;
 the retired full/ci sweep is not a completion command. No role-projection

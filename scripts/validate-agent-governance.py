@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Validate the terminal provider-neutral agent registry.
 
-Machine authority lives only in ``.agents/roles/registry.json`` and its schema.
+Common role authority lives in ``.agents/roles/registry.json`` and its schema.
+Provider binding tables own native values copied into runtime projections.
 """
 
 from __future__ import annotations
@@ -482,23 +483,6 @@ def validate_registry(
                 "AGENT-REGISTRY-PERMISSION",
                 f"{role_id} references an unknown permission class",
             )
-        for provider_entry in registry["providers"]:
-            override = role.get("native_scope_override", {}).get(provider_entry["id"])
-            if override is None:
-                continue
-            granted = provider_entry.get("permission_scopes", {}).get(
-                role["permission_class"]
-            )
-            if granted is None:
-                continue
-            # A projection adapts the class it projects, so it may drop what the
-            # class grants. Adding to it would make the projection a second
-            # permission authority beside the registry.
-            if not set(_scope_members(override)).issubset(_scope_members(granted)):
-                fail(
-                    "AGENT-REGISTRY-PERMISSION",
-                    f"{role_id} widens its permission class on {provider_entry['id']}",
-                )
         if tuple(role["supported_providers"]) != REGISTRY_PROVIDER_IDS:
             fail(
                 "AGENT-REGISTRY-PROVIDER",
@@ -857,8 +841,12 @@ def _validate_skill_bundles(
         fail(code, "skill bundle entry is unreachable from SKILL.md")
 
 
-def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
+def _validate_skill_packages(
+    root: Path, skills: dict[str, str], native_policy: dict[str, bool]
+) -> None:
     code = "AGENT-REGISTRY-SKILL"
+    implicit = native_policy["allow_implicit_invocation"]
+    expected = f"policy:\n  allow_implicit_invocation: {json.dumps(implicit)}\n"
     _validate_directory_entries(
         root, ".agents/skills", {name: stat.S_IFDIR for name in skills}, code=code
     )
@@ -892,8 +880,8 @@ def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
             or set(metadata) != {"policy"}
             or not isinstance(metadata["policy"], dict)
             or set(metadata["policy"]) != {"allow_implicit_invocation"}
-            or metadata["policy"]["allow_implicit_invocation"] is not False
-            or text != "policy:\n  allow_implicit_invocation: false\n"
+            or metadata["policy"]["allow_implicit_invocation"] is not implicit
+            or text != expected
         ):
             fail(code, "Codex skill policy must permit explicit invocation only")
     _validate_directory_entries(
@@ -961,77 +949,128 @@ def _validate_hook_handler(root: Path, provider: str, handler: Any) -> None:
         _read_regular_file(root, script, code="AGENT-NATIVE-HOOK")
 
 
-def _bound_reasoning(
-    registry: dict[str, Any], role: dict[str, Any], provider: str = "codex"
-) -> Any:
-    """Resolve one role's native reasoning effort from the registry.
-
-    A capability tier binds the effort for every role that carries it, the same
-    way the tier binds the model. A role whose effort genuinely differs declares
-    the exception as data, so no projection can hold an unowned value.
-    """
-
-    binding = next(
-        entry.get("capability_reasoning", {})
-        for entry in registry["providers"]
-        if entry["id"] == provider
-    )
-    override = role.get("native_reasoning_override", {}).get(provider)
-    if override is not None:
-        return override
-    return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
-
-
-def _bound_model(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
-    """Resolve one role's native model from the registry.
-
-    A capability tier binds the model for every role that carries it. A role
-    whose model genuinely differs on one provider declares the exception as
-    data, so the rule and its departure are read in the same file.
-    """
-
-    override = role.get("native_model_override", {}).get(provider)
-    if override is not None:
-        return override
-    binding = next(
-        entry.get("capability_models", {})
-        for entry in registry["providers"]
-        if entry["id"] == provider
-    )
-    return binding.get(role["capability_tier_ref"].rsplit("#", 1)[-1])
-
-
-def _scope_members(scope: Any) -> tuple[str, ...]:
-    """Return a scope's members, whether it names one mode or lists tools."""
-
-    if isinstance(scope, str):
-        return (scope,)
-    return tuple(scope)
-
-
-def _bound_scope(registry: dict[str, Any], role: dict[str, Any], provider: str) -> Any:
-    """Resolve one role's native execution scope from the registry.
-
-    A permission class binds the scope for every role that carries it. A role
-    whose native authority genuinely differs declares the exception as data,
-    so the rule and its departure are read in the same file.
-    """
-
-    scopes = next(
-        entry.get("permission_scopes", {})
-        for entry in registry["providers"]
-        if entry["id"] == provider
-    )
-    override = role.get("native_scope_override", {}).get(provider)
-    if override is not None:
-        return override
-    scope = scopes.get(role["permission_class"])
-    if scope is None:
-        fail(
-            "AGENT-NATIVE-PERMISSION",
-            f"{provider} declares no scope for {role['permission_class']}",
+def _scope_within_class(provider: str, scope: Any, permission: dict[str, Any]) -> bool:
+    """Check native capabilities against common meaning, not another copy."""
+    if provider == "codex":
+        return scope == "read-only" or (
+            scope == "workspace-write" and permission["allows_mutation"]
         )
-    return scope
+    # Bash remains advisory for a read-only role; this class check does not
+    # claim that exposing a shell prevents writes or network operations.
+    capabilities = {
+        "Read": "read",
+        "Grep": "read",
+        "Glob": "read",
+        "Bash": "read",
+        "Write": "mutation",
+        "Edit": "mutation",
+        "WebFetch": "research",
+        "WebSearch": "research",
+        "Task": "delegation",
+        "Agent": "delegation",
+    }
+    allowed = {"read"}
+    if permission["allows_mutation"]:
+        allowed.add("mutation")
+    if permission["allows_delegation"]:
+        allowed.add("delegation")
+    if permission["id"] == "read-only-research":
+        allowed.add("research")
+    return isinstance(scope, list) and all(
+        capabilities.get(tool) in allowed for tool in scope
+    )
+
+
+def _scope_narrows(provider: str, scope: Any, granted: Any) -> bool:
+    if provider == "codex":
+        order = {"read-only": 0, "workspace-write": 1}
+        return scope in order and granted in order and order[scope] <= order[granted]
+    return set(scope).issubset(granted)
+
+
+def load_provider_bindings(
+    root: Path, registry: dict[str, Any]
+) -> dict[str, dict[str, Any]]:
+    """Read only the two provider-owned tables through the bounded JSON reader."""
+    code = "AGENT-NATIVE-BINDING"
+    schema = load_json(root, REGISTRY_SCHEMA_PATH)
+    roles = {role["id"]: role for role in registry["roles"]}
+    permissions = {item["id"]: item for item in registry["permission_classes"]}
+    bindings = {}
+    for entry in registry["providers"]:
+        provider = entry["id"]
+        if (
+            provider not in REGISTRY_PROVIDER_IDS
+            or provider in bindings
+            or entry.get("bindings") != f".{provider}/bindings.json"
+        ):
+            fail(code, "provider binding path differs from its exact owner")
+        data = load_json(root, entry["bindings"], code=code)
+        try:
+            native_schema = {
+                "$schema": schema["$schema"],
+                "$defs": schema["$defs"],
+                "$ref": f"#/$defs/{provider}Bindings",
+            }
+            errors = schema_errors(native_schema, data)
+        except (SchemaEvaluationError, KeyError, TypeError):
+            fail(code, "invalid provider binding schema")
+        if errors:
+            fail(code, "provider binding data differs from its schema")
+        if set(data["role_overrides"]) - set(roles):
+            fail(code, "provider binding names an unregistered role")
+        for permission_id, scope in data["permission_scopes"].items():
+            if not _scope_within_class(provider, scope, permissions[permission_id]):
+                fail("AGENT-NATIVE-PERMISSION", "provider scope exceeds its class")
+        for role_id, override in data["role_overrides"].items():
+            role = roles[role_id]
+            if provider not in role["supported_providers"]:
+                fail(code, "role does not support its override provider")
+            if "scope" not in override:
+                continue
+            permission = permissions[role["permission_class"]]
+            scope = override["scope"]
+            granted = data["permission_scopes"][permission["id"]]
+            if not _scope_within_class(
+                provider, scope, permission
+            ) or not _scope_narrows(provider, scope, granted):
+                fail("AGENT-NATIVE-PERMISSION", "role scope exceeds its class binding")
+        bindings[provider] = data
+    if set(bindings) != set(REGISTRY_PROVIDER_IDS):
+        fail(code, "provider binding set is incomplete")
+    return bindings
+
+
+def _bound_reasoning(
+    bindings: dict[str, dict[str, Any]],
+    role: dict[str, Any],
+    provider: str = "codex",
+) -> Any:
+    binding = bindings[provider]
+    override = binding["role_overrides"].get(role["id"], {})
+    return override.get(
+        "reasoning_effort",
+        binding["capability_reasoning"][role["capability_tier_ref"].rsplit("#", 1)[-1]],
+    )
+
+
+def _bound_model(
+    bindings: dict[str, dict[str, Any]], role: dict[str, Any], provider: str
+) -> Any:
+    binding = bindings[provider]
+    override = binding["role_overrides"].get(role["id"], {})
+    return override.get(
+        "model",
+        binding["capability_models"][role["capability_tier_ref"].rsplit("#", 1)[-1]],
+    )
+
+
+def _bound_scope(
+    bindings: dict[str, dict[str, Any]], role: dict[str, Any], provider: str
+) -> Any:
+    binding = bindings[provider]
+    override = binding["role_overrides"].get(role["id"], {})
+    return override.get("scope", binding["permission_scopes"][role["permission_class"]])
 
 
 def _gateway_loader_refs(provider_id: str) -> set[str]:
@@ -1045,6 +1084,7 @@ def _gateway_loader_refs(provider_id: str) -> set[str]:
 
 def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     """Validate direct canonical reads and native configuration, never discovery."""
+    bindings = load_provider_bindings(root, registry)
     skills = {skill["id"]: skill["path"] for skill in registry["skills"]}
     _validate_directory_entries(
         root,
@@ -1109,7 +1149,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             optional=frozenset({"baseline.md", "with-skill.md", "score.md"}),
             code="AGENT-EVALUATION-OWNER",
         )
-    _validate_skill_packages(root, skills)
+    _validate_skill_packages(root, skills, bindings["codex"]["skill_policy"])
     for skill_id, path in skills.items():
         if path != f".agents/skills/{skill_id}/SKILL.md":
             fail("AGENT-REGISTRY-SKILL", "skill identity differs from package path")
@@ -1118,7 +1158,8 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         if (
             set(metadata)
             != {"name", "description", "metadata", "disable-model-invocation"}
-            or metadata.get("disable-model-invocation") is not True
+            or metadata.get("disable-model-invocation")
+            is not bindings["claude"]["skill_policy"]["disable-model-invocation"]
             or metadata["name"] != skill_id
             or not isinstance(metadata["description"], str)
             or not metadata["description"].strip()
@@ -1149,8 +1190,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         ):
             fail("AGENT-REGISTRY-SKILL", "invalid skill identity or metadata")
     capability_models = {
-        provider["id"]: provider["capability_models"]
-        for provider in registry["providers"]
+        provider: binding["capability_models"] for provider, binding in bindings.items()
     }
     for role in registry["roles"]:
         canonical = role["projections"]["neutral"]
@@ -1171,22 +1211,22 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                     "AGENT-NATIVE-METADATA",
                     f"{provider} declares no model for tier {capability_tier}",
                 )
-            bound_model = _bound_model(registry, role, provider)
-            bound_scope = _bound_scope(registry, role, provider)
+            bound_model = _bound_model(bindings, role, provider)
+            bound_scope = _bound_scope(bindings, role, provider)
             if provider == "claude":
                 metadata, body = _frontmatter(text)
                 allowed = {"name", "description", "model", "effort", "tools"}
-                bound_effort = _bound_reasoning(registry, role, "claude")
+                bound_effort = _bound_reasoning(bindings, role, "claude")
                 if metadata.get("effort") != bound_effort:
                     fail(
                         "AGENT-NATIVE-METADATA",
-                        f"{role['id']}: effort must equal the registry binding "
+                        f"{role['id']}: effort must equal the native binding "
                         f"{bound_effort!r}",
                     )
                 if metadata.get("model") != bound_model:
                     fail(
                         "AGENT-NATIVE-METADATA",
-                        f"{role['id']}: model must equal the registry binding "
+                        f"{role['id']}: model must equal the native binding "
                         f"{bound_model!r}",
                     )
                 raw_tools = metadata.get("tools", "")
@@ -1194,7 +1234,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                 if observed != list(bound_scope):
                     fail(
                         "AGENT-NATIVE-PERMISSION",
-                        f"{role['id']}: tools must equal the registry scope "
+                        f"{role['id']}: tools must equal the native scope "
                         f"{list(bound_scope)!r} for {role['permission_class']}",
                     )
             else:
@@ -1213,22 +1253,22 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                 if metadata.get("sandbox_mode") != bound_scope:
                     fail(
                         "AGENT-NATIVE-PERMISSION",
-                        f"{role['id']}: sandbox_mode must equal the registry scope "
+                        f"{role['id']}: sandbox_mode must equal the native scope "
                         f"{bound_scope!r} for {role['permission_class']}",
                     )
                 body = metadata.get("developer_instructions", "")
                 if metadata.get("model") != bound_model:
                     fail(
                         "AGENT-NATIVE-METADATA",
-                        f"{role['id']}: model must equal the registry binding "
+                        f"{role['id']}: model must equal the native binding "
                         f"{bound_model!r}",
                     )
-                bound_reasoning = _bound_reasoning(registry, role)
+                bound_reasoning = _bound_reasoning(bindings, role)
                 if metadata.get("model_reasoning_effort") != bound_reasoning:
                     fail(
                         "AGENT-NATIVE-METADATA",
                         f"{role['id']}: model_reasoning_effort must equal the "
-                        f"registry binding {bound_reasoning!r}",
+                        f"native binding {bound_reasoning!r}",
                     )
                 if (
                     not isinstance(metadata.get("model"), str)
