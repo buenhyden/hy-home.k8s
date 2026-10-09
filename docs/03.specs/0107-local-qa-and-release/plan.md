@@ -1,6 +1,6 @@
 ---
 title: "Local Quality and Release Lifecycle Plan"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -35,12 +35,19 @@ and consumer repair, selected local validation, normal logical commits, local
 main integration and cleanup of its owned branch and worktree. It does not
 grant remote write or dispatch, deployment, secret access, settings changes or
 an expanded live authority.
+The current P06 instruction authorizes bounded local investigation, source and
+consumer repair, selected validation, normal logical commits, local main
+integration and owned-worktree cleanup for commit, release and work tracking.
+It does not authorize tag or Release publication, remote Issue or Project
+mutation, server settings, workflow dispatch, secrets, deployment or live
+operation. Keep prior completed Task records intact.
 
 ## Overview
 
 The original SPEC-0107 delivery used one completed Task and WORK-001. The
-completed reappraisal used WORK-002 and its own Task. Current P05 execution,
-checks and acceptance belong only to WORK-003 and Task 0003. Only actual terminal original SPEC-0107 closing
+completed reappraisal used WORK-002 and its own Task. Completed P05 execution,
+checks and acceptance belong only to WORK-003 and Task 0003. P06 execution
+belongs to WORK-004 and Task 0004. Only actual terminal original SPEC-0107 closing
 checks, commit and delivery facts go to its referenced non-authoritative
 handoff receipt. Its draft, ready, in-progress and completed transitions
 use distinct normal commits; the Task links the actual evidence and delivery
@@ -93,6 +100,7 @@ independently, record actual evidence and integrate only accepted work.
 | WORK-001 | [VAL-LOCAL-QA-001](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-002](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-003](spec.md#success-criteria--verification-plan), [VAL-LOCAL-QA-004](spec.md#success-criteria--verification-plan) | Audit consumers, transfer continuous coverage, retire obsolete callers, align local delivery, commit/release and Issue/Project owners, route actual paired evaluation capacity, then hand off observed evidence | Current REQ-0003/AD-0006/FR-0031 links; selected tools and budget; disjoint writers; independent review | [SPEC-0107-TSK-0001](tasks/tsk-0001-local-qa-and-release.md) | Changed-behavior RED/GREEN, evaluation profile/link and empty-result checks, conditional quick selection, exact-index staged and message, named purpose/unit gates after retirement, current anchor completion, semantic review |
 | WORK-002 | [VAL-LOCAL-QA-005](spec.md#success-criteria--verification-plan) | Inventory current QA leaf/caller/import/discovery/fixture/consumer graph and Archive policy/catalog/route consumers; decide keep, transfer or retire by current purpose; implement only supported, authorized local changes | Existing quality and Archive owners; immutable historical Task and Archive payloads; specific disposition approval, hold and recovery proof before any whole-unit removal | [SPEC-0107-TSK-0002](tasks/tsk-0002-archive-and-qa-retirement.md) | Intake and consumer map, focused changed-rule regression, selected actual-index document/style and purpose checks, independent review, bounded disposition and remaining-owner evidence recorded in the Task |
 | WORK-003 | [VAL-LOCAL-QA-006](spec.md#success-criteria--verification-plan) | Map current purpose QA, scripts/tests/hooks and hosted producer/consumer inputs; remove proven duplicate or completed-only work with unique protection retained; select affected checks and exact-index style; measure representative executions and route local versus hosted outcomes | Completed WORK-001/002 records; existing quality/validation/CI owners; source and trust boundary proof before reuse; separate authority for remote settings, dispatch or live execution | [SPEC-0107-TSK-0003](tasks/tsk-0003-purpose-qa-and-ci.md) | Exact caller and input map, focused changed-rule failure/boundary regression, selected final-index document/purpose/style and actual-message checks, measured comparison, independent review and Task-owned acceptance |
+| WORK-004 | [VAL-LOCAL-QA-007](spec.md#success-criteria--verification-plan) | Align the one authored/generated commit grammar, effective hook and prompt consumers; audit release preview/write/publish boundaries and public compatibility/history/asset checks; keep Issue/Spec/Task/Project links and state ownership one-way | Completed WORK-001–003 history; current `.cz.toml`, Git policy, release Runbook, hook connection and actual read-only hosted settings; distinct operator authority for tags, Releases and Project writes | [SPEC-0107-TSK-0004](tasks/tsk-0004-commit-release-and-work-tracking.md) | Current owner/consumer map, focused positive/refusal and boundary cases, selected exact-index and actual-message checks, independent review, actual local integration and Task's single local criterion verdict; remote publication and Project scope separately observed or deferred |
 
 WORK-002 follows this dependency order: trace active producer and reader
 surfaces; classify continuing and obsolete guarantees; transfer any unique
@@ -117,7 +125,29 @@ input. An earlier PR run is historical evidence, not WORK-003 execution.
 The `WGOV-CORE / 3.0.0-draft.3` C01/C06/C07/C12 comparison remains a common
 candidate without source revision, approval or joint adoption evidence.
 
+WORK-004 starts from the actual Commitizen, Git, Runbook, Issue and hosted
+consumers. Preserve already coherent `main`/`codex/` routing and completed
+Task evidence. Repair only proven grammar, prompt, hook, release or link
+inconsistencies with their direct tests and readers. Verify authored and
+generated-message behavior before changing policy text. Treat local release
+preview, tracked changelog write and remote publication as separate steps,
+and leave unavailable Project or immutable-Release settings unresolved. The
+common C02/C05/C07/C10 comparison uses the same draft.3 candidate, without
+claiming final common approval or local/joint adoption.
+
 ## Verification Plan
+
+For WORK-004, inspect the exact current Commitizen config, active hook path,
+message draft builder, release CLI, selected workflow and Issue/Project
+consumers. Changed rules receive focused positive, negative and boundary
+regressions; document edits receive the applicable Stage 99 profile, link,
+relation and state checks. Run selected read-only lint/format and purpose
+gates on the exact final index, validate the actual candidate message, and
+record normal commits and local integration on their own snapshots. An
+observed main-push check or earlier PR success is not P06's hosted PR result.
+Tag/Release publication, remote Project state, native hook delivery, immutable
+Release setting and deployment/live results need direct authorized evidence;
+otherwise Task 0004 records `DEFER` or `NOT_RUN` with the next owner.
 
 For WORK-003, derive the exact affected gate and named unit set from the
 current validation registry and measured caller map. Use focused RED/GREEN for
@@ -172,6 +202,15 @@ in this change, so trial execution, score truth and native skill loading are
 
 ## Risks & Mitigations
 
+For WORK-004, a broader message regex could accept unsupported authored
+syntax or reject generated Git messages: test the exact Commitizen tool and
+real candidate file before changing the shared grammar. A release script
+could move a prior tag or publish before assets are verified: retain
+history/target checks and keep execution behind the operator boundary. An
+Issue/Project view could become a second acceptance ledger: keep only direct
+IDs or short links and the Task as execution owner. Review current server
+settings separately from tracked workflow prose.
+
 Removing a historical test might discard an ongoing guarantee: map current
 consumer, preserve distinct negative behavior and recovery evidence first.
 Local versus hosted inputs may differ: bind every result to bytes, config,
@@ -182,6 +221,15 @@ DEFER until directly observed. Rollback uses forward correction while retaining
 Task, Git and Archive evidence.
 
 ## Completion Criteria
+
+WORK-004 reaches local acceptance only when its Task records the bounded
+source and consumer map, relevant changed-rule regressions, exact-index and
+actual-message PASS, independent review, normal local commits, and one
+VAL-LOCAL-QA-007 decision with unresolved required failures explicitly
+resolved. The Task closing commit and local main integration receive actual
+later delivery evidence rather than a prospective OID. A local acceptance
+does not close remote publication, Project access, immutable Release settings,
+native enforcement, common-edition approval or live operation.
 
 WORK-003 reaches local acceptance only when its Task links actual source and
 consumer changes, selected named regressions, final-index QA/style and actual
