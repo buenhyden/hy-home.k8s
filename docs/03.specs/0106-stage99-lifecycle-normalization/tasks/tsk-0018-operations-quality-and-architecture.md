@@ -1,8 +1,8 @@
 ---
 title: "Current Operations Quality and Architecture Review"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -31,6 +31,15 @@ or live validation.
   `.worktrees/p08-operations-quality` begin there. Ignored checkout-root
   `_workspace/p08-operations-quality/intake-observation.json` records the
   current path/status inventory; it is not an implementation result.
+- The four-file intake at that base passed its six selected exact-index gates
+  with rc 0 and unchanged tree
+  `7eb71f97f0d5123107c48e36ae5773efc9188410`, then an actual pinned
+  Commitizen message check and normal commit produced
+  `f686280ecfa75ca15fda66637779df34f295a56d`. Independent read-only
+  review passed after the source-member/reciprocal link correction. The
+  continuation branch `codex/p08-operations-content` and worktree
+  `.worktrees/p08-operations-content` start at that commit. Those are
+  contract-intake results, not P08 operating-document acceptance.
 - The actual Stage 99 Registry selects `operation/guide`, `operation/policy`
   and `operation/runbook` with their corresponding
   `docs/99.templates/templates/operations/{guide,policy,runbook}.template.md`
@@ -99,7 +108,7 @@ status and actual-evidence disposition per row before acceptance.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-018 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | Review all current operating content and architectural/product evidence, repair supported local drift and hand off distinct live/common decisions | platform | frontmatter | NOT_RUN | EVD-P08-018-001 through EVD-P08-018-004 are planned, not passed |
+| WORK-018 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | Review all current operating content and architectural/product evidence, repair supported local drift and hand off distinct live/common decisions | platform | frontmatter | NOT_RUN | EVD-P08-018-001 through EVD-P08-018-004 are planned execution checks; EVD-P08-018-005 through EVD-P08-018-009 record actual intake and adverse safety/shell inputs, not implementation acceptance |
 
 ## Task Evidence
 
@@ -109,6 +118,11 @@ status and actual-evidence disposition per row before acceptance.
 | EVD-P08-018-002 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Current owner, reference and lifecycle preservation | Actual IDs, active states, reciprocal links or justified exclusions, current operations routers and related Spec/Plan/Task evidence | NOT_RUN | Pending changed-input relationship, link, status and semantic review | yes | none |
 | EVD-P08-018-003 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Selected final local document and message checks | Final changed index, registered profile/content/link/lifecycle/style leaves, actual message and independent review | NOT_RUN | Pending commands, revisions, results, failures and resolutions in this Task | yes | none |
 | EVD-P08-018-004 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Local finish and protected evidence boundary | Actual normal commits and clean main input; separate hosted, external/live, release, secret, common edition and archive-disposition decisions | NOT_RUN | Pending local integration receipt and named next owners; no protected result claimed | yes | none |
+| EVD-P08-018-005 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Four-file intake contract review | Current REQ-0004 member/Spec reciprocal links, active AD-0007 owner, completed SPEC-0106 parent, new Plan WORK-018 and draft Task bytes | PASS | `_workspace/p08-operations-quality/intake-final-review.json`, SHA-256 `55c62ec77b5e8a0b29ae928ceb42a2fd1ddf97bfc99859dbdc341d99ea4a4270`; resolves original intake MEDIUM missing current-owner traceability | yes | none |
+| EVD-P08-018-006 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Four-file intake index and message | REQ-0004, SPEC-0106 Spec/Plan and new Task exact index tree `7eb71f97f0d5123107c48e36ae5773efc9188410`; selected `scripts/qa.py staged`, pinned Commitizen and normal commit | PASS | `_workspace/p08-operations-quality/intake-index-qa.json`, SHA-256 `41c631085f28219b49ba45b0335d6115e27a8d87ecc6bffaf4cc832c0038e5e6`, log SHA-256 `58d974aaf41bf117c8be336c19979c24b758197a713a91be67fdb1b5faf05ea3`; `intake-commit.json`, SHA-256 `99e1a3bba1d1ac82e7a6a3f4a7186955318289655f5b5fafe139eff00acff570` | yes | none |
+| EVD-P08-018-007 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Current operating safety review | Independent read-only static audit of all 16 current operating bodies at `4ce1bf78` confirmed five bounded documentation findings: RUN-0009 private credential-reading helper and RUN-0008/0010 consumers; RUN-0001 optional PostgreSQL described as required; RUN-0010 remote push approval ambiguity and unsafe shell/path example; RUN-0001 bootstrap/login operator boundary. A separate CA-pipe concern was withdrawn after review. No secret value, live action or protection result was observed | FAIL | `_workspace/p08-operations-quality/security-baseline-review.json`, SHA-256 `e375767566a5c6b5043e576827dfb6d9c7a8dff5c2551886fe11b6f001afa00f`; findings P08-DOC-001 through P08-DOC-005 | yes | none |
+| EVD-P08-018-008 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Onboarding shell syntax | On base `4ce1bf78`, the extracted RUN-0010 shell fence at source lines 67–92 was checked with `/usr/bin/bash -n`; rc 2, because literal `APP=<appname>` parses as redirection. This is a real document command defect, not a cluster or GitHub invocation | FAIL | `_workspace/p08-operations-quality/onboarding-shell-red.json`, SHA-256 `cb729ee91179bacf226723cec818fa217e9ba1029b9a8527705595671c7d0f0d`, input SHA-256 `3f72af9159f7acf96a9ab8edacef757df3c19d568cc523342934bf48e9ca3169`, stderr SHA-256 `ea56875f684f03c28bf500ca5ad96f2d928e0aec27ece6a7db29107365a155f8` | yes | none |
+| EVD-P08-018-009 | [VAL-P08-018](../spec.md#success-criteria--verification-plan) | WORK-018 | Public quality-reference boundary | Official public overview research identified ISO/IEC 25010:2023, 25023:2016 and 25030:2019 and reader/architecture frameworks as optional lenses. No paid clause text, universal threshold, standard-conformity certification, product measurement or native/live execution was observed; REQ-0004 remains the in-review product threshold owner | PASS | `_workspace/p08-operations-quality/official-source-review.json`, SHA-256 `e27f63f88721fbad8130192636ad9d7c600b3d67b1d85027090bc7a1a5e49484` | yes | none |
 
 ## Criterion Acceptance
 
@@ -154,8 +168,11 @@ status and actual-evidence disposition per row before acceptance.
 ## Verification Summary
 
 At intake, clean main, the Stage 99 profile/form map and the 16 current
-operating bodies have been inspected for routing and status. No P08 document
-repair, independent acceptance review, selected QA, normal commit, local
-integration or live result is claimed yet. Task0016/0017's completed local
-results remain their own historical evidence; common edition approval,
-native/live and remote outcomes remain distinct future decisions.
+operating bodies were inspected for routing and status. The four-file
+contract intake passed review, selected exact-index QA, message check and
+normal commit. Independent static safety review retained five actual
+document findings, and RUN-0010's extracted shell fence failed `bash -n`;
+both need same-check correction evidence before acceptance. No P08 operating
+body repair, implementation QA, local integration or live result is claimed.
+Task0016/0017's completed local results remain their own historical evidence;
+common edition approval, native/live and remote outcomes remain separate.
