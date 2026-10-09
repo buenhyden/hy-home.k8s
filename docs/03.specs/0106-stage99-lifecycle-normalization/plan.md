@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.14.0"
+version: "1.15.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "specs"
 artifact_id: "SPEC-0106-PLAN-0001"
 parent_ids: ["SPEC-0106"]
@@ -13,6 +13,38 @@ parent_ids: ["SPEC-0106"]
 # Stage 99 Lifecycle Normalization Implementation Plan
 
 ## Global Constraints
+
+WORK-018 follows the current P08 operating-content request at clean local
+`main` `4ce1bf78b1536592db7fae65c233ee5a341b0375`. P02's completed
+Task0016 supplies the six-section role forms, migrated 16-instance inventory
+and documented P08 product/live handoff; P03's completed Task0017 supplies
+execution and acceptance meaning. Neither Task nor the completed Spec/Plan is
+reopened. Task0018 is the sole new execution and criterion decision owner.
+The existing [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+is in-review and owns product quality scenarios, formulas, units, environments
+and thresholds; the existing active
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+owns architecture paths and source/evidence limits. Preserve both current
+states. The Requirement writer and architect keep those distinct owner files;
+operating authors consume them without copying numerical thresholds.
+Use the same unapproved `WGOV-CORE / 3.0.0-draft.3` candidate; no absent
+future source commit or approval blocks independent local review. Root owns
+Spec/Plan and Git/index integration, one document writer owns the assigned
+current operating bodies, and read-only research/review checks source and
+semantic accuracy without competing writers. Do not infer authority for
+remote writes, release publication, live cluster, secrets, private/provider
+settings or an Archive disposition from this work.
+
+Order actual current-document/source inventory, then a per-document
+seven-axis and product-quality disposition, then only justified current
+body/consumer corrections, then affected profile/link/lifecycle/style and
+independent semantic review, normal logical commits and the previously
+authorized clean-local-main/owned-worktree finish. Reuse P02's form and
+reader contracts; a true contract defect must be coupled to its Stage 99
+consumer owner before editing. Keep existing IDs, active statuses,
+reciprocal links or justified exclusions, P02/P03 evidence and the actual
+external/live limitations. Task0018 records missing service inputs and next
+owners rather than turning template text or static checks into live PASS.
 
 WORK-017 follows the current P03 request at clean main ae93644e. Root owns
 this Spec/Plan/new Task and the selected blocked P01 Task rewrite; one assigned
@@ -139,6 +171,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-018 | [VAL-P08-018](spec.md#success-criteria--verification-plan) | Reconcile all 16 current operating documents to real product and operating evidence; preserve adopted forms, IDs, active states and links while correcting supported content and naming missing owners | P02 Task0016's migrated forms and per-row handoff; P03 Task0017's evidence/status semantics; in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) owns measurable quality and active [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns paths/evidence boundaries; one writer per file; protected live input remains separate | [SPEC-0106-TSK-0018](tasks/tsk-0018-operations-quality-and-architecture.md) | REQ-owned scenario/formula/unit/environment/threshold or named gap, AD-owned path/source boundary, seven-axis per-document Task disposition, selected document profile/relationship/link/lifecycle/style/message checks, independent semantic review, local logical commit and clean-main integration; native/hosted/live/common adoption not inferred |
 | WORK-017 | [VAL-P03-017](spec.md#success-criteria--verification-plan) | Review actual current AC obligations, separate role authority/execution, couple criterion acceptance and failure resolution, and migrate pending Task consumers | Same shared candidate and P02 local result; architect design before single-owner contract changes; P05/P07/P08 external handoffs separate | [SPEC-0106-TSK-0017](tasks/tsk-0017-task-acceptance-and-current-review.md) | Recursive intake/AC disposition, synthetic failing/boundary cases, retained history/status-writer controls, changed-index document/state/link/style/message and independent review; no unobserved hosted/live approval |
 | WORK-016 | [VAL-P02-016](spec.md#success-criteria--verification-plan) | Identify the common candidate, couple role contracts and consumers, migrate every current operating instance, and clarify sole status authoring | Same P01 candidate; root owns Registry/guidance/Task; quality-engineer owns schema/reader/content regressions; doc-writer owns three forms and current operations; independent research/design/review | [SPEC-0106-TSK-0016](tasks/tsk-0016-shared-profile-migration.md) | Ordered inventory and design, synthetic RED/GREEN, changed-input document/relationship/state/style checks, exact-index staged and message checks, independent review; P03 shared state and P08 live/product handoffs remain distinct |
 | WORK-015 | [VAL-P02-015](spec.md#success-criteria--verification-plan) | Remove hosted full-QA execution and repair its direct topology and guidance consumers | Explicit user CI/local/origin-main scope; separate workflow, quality and governance source owners; genuine registered-form draft | [SPEC-0106-TSK-0015](tasks/tsk-0015-hosted-qa-cleanup.md) | Narrow changed-input RED/GREEN and retained refusals; exact-index staged/message and independent review; prospective completion then fresh actual closing checks; full/affected execution NOT_RUN and no fabricated provenance |

@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.14.0"
+version: "1.15.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "specs"
 artifact_id: "SPEC-0106"
 ---
@@ -50,6 +50,46 @@ scope. This authorization does not claim current remote state or an
 authenticated operator action.
 
 ## Contracts
+
+### Current operations quality and architecture follow-up
+
+VAL-P08-018 applies the current P08 request at clean local `main`
+`4ce1bf78b1536592db7fae65c233ee5a341b0375`. P02 Task0016 already
+migrated the three Stage 05 forms and all 16 current Guide, Policy and
+Runbook instances; P03 Task0017 keeps its separate completed execution-state
+history. Keep both completed parents and Tasks intact. New WORK-018 and
+Task0018 own only this current content and operating-validity review.
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+is the existing in-review product-requirement owner for measurable quality
+scenarios, formulas, units, environments and decision thresholds;
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+is the existing active architecture owner for current paths, topology and
+source/evidence boundaries. This follow-up does not mark the Requirement
+approved, duplicate its numerical thresholds in architecture, or create a
+second product contract in operations prose.
+
+Use the same `WGOV-CORE / 3.0.0-draft.3` joint review candidate and existing
+Stage 99 local adapter, without claiming a final common approval, a source
+commit, local adoption or joint four-repository adoption. For each actual
+current operating document, decide profile, form, substantive item content,
+current owner, references and reciprocal or justified exclusion, lifecycle
+status, and evidence separately. Compare product-specific Kubernetes,
+GitOps, bootstrap and external-service claims to their actual current source
+and operator boundary. For quality statements, identify the scenario,
+observable metric, unit, environment and decision threshold when evidence
+supports them; otherwise record the missing input and its next owner. A
+section heading, placeholder, static manifest or dated statement alone is
+not proof of a current product or live result.
+
+Preserve every stable artifact ID, justified cross-link or exclusion, current
+active state and existing evidence unless an actual source and authorized
+status decision support a change. RUN-0012 is already active; do not reset it
+to its template's initial draft or call a release published from documentation.
+Do not revive a completed parent or create a parallel progress ledger. Bound
+new checks to affected document profiles, relationships, links, lifecycle and
+style, with independent semantic review. Repository-static results, native
+tool behavior, hosted PR results, external services and live cluster outcomes
+are different evidence lanes; record unavailable protected lanes as such.
 
 ### Current Task acceptance and Spec review follow-up
 
@@ -342,6 +382,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P08-018 | At the actual P08 revision, [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) owns the in-review measurable product quality requirement, and [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns active topology and source/evidence boundaries without duplicate thresholds. Each of the 16 current Guide/Policy/Runbook artifacts has one per-document disposition for profile, form, substantive content, current owner, references, state and actual evidence. Changed quality claims identify scenario, metric or formula, unit, environment and threshold or a concrete missing input and next owner. Existing IDs, active state, useful role modules, reciprocal links or justified exclusions and P02/P03 evidence remain traceable; changes follow the same draft.3 candidate as a local adapter without inventing final approval or adoption. Selected document/relationship/lifecycle/style/message checks, independent review, actual normal commits and authorized local integration are bound to Task0018; remote, native, live and common decisions remain separate. |
 | VAL-P03-017 | Actual recursive Spec/Task selection and AC disposition; one criterion acceptance origin with bound factual evidence and explicit failure resolution; role-specific approval/execution separation, cancellation/supersession ownership and historical read compatibility; coupled Registry/schema/forms/consumers, focused RED/GREEN, exact-index style/message and independent review. Preserve completed parents/Tasks, operating adoption versus actual Release, the same common candidate and unexecuted P05/P07/P08/joint/hosted/live handoffs in Task0017. |
 | VAL-P02-016 | One identified common candidate and truthful adoption tuple; Registry/schema/forms/readers agree on the three six-section operating roles, with substantive-content refusals and preserved relationships. All current Guide/Policy/Runbook instances are migrated and individually reviewed while state, identity, native boundaries and frozen bytes are preserved. Single Task status and generated multi-row summary have one authoring source; existing README router/anchor and native/language contracts retain their current consumers. Task0016 records focused RED/GREEN, exact-index lint/format/message, independent review, P03/P08 handoffs and actual unexecuted boundaries; final common approval and four-repository adoption are reported separately. |
 | VAL-P02-015 | The hosted CI topology contains only branch-policy, qa-isolated and ci-summary; full QA is explicitly NOT_RUN, removed execution is not QA PASS, and missing full proof cannot create provenance. Direct topology/guide consumers match the new contract while isolated validation, pin/permission/bootstrap/shell and provenance refusal controls remain. Registered-form creation, scoped RED/GREEN, exact-index staged/message, completion and independent review are recorded in Task0015. Preserve local validation registration, production regressions, original evidence and normal local/main delivery history. |
@@ -360,6 +401,11 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P08-018 maps to WORK-018 and
+[Task0018](tasks/tsk-0018-operations-quality-and-architecture.md). The
+completed P02 form migration and P03 execution-state review supply inputs,
+not current P08 product/live acceptance.
 
 VAL-P03-017 maps to WORK-017 and
 [Task0017](tasks/tsk-0017-task-acceptance-and-current-review.md). This scoped
@@ -451,6 +497,10 @@ execution evidence without changing the first Task's historical observations.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
+| REQ-0004-FR-0003 | VAL-P08-018 | WORK-018 / Task0018 compares explicit external secret, data and observability interfaces with the operating documents; AD-0007 owns current topology/source paths, and external runtime remains separately observed. |
+| REQ-0004-FR-0008 | VAL-P08-018 | WORK-018 / Task0018 separates syntax, render, policy, product-semantic and live evidence depth for all 16 current documents; REQ-0004 remains the in-review quality owner. |
+| REQ-0004-NFR-0001 | VAL-P08-018 | WORK-018 / Task0018 records scenario, metric/formula, unit, environment and threshold at the Requirement owner, or names the missing input/owner; AD-0007 supplies architecture boundaries without copied thresholds. |
+| REQ-0004-NFR-0002 | VAL-P08-018 | WORK-018 / Task0018 reviews token-safe instructions and secret-value absence without reading a secret or claiming runtime enforcement. |
 | N/A — current explicit P03 execution/acceptance/review request reuses existing Requirement and lifecycle architecture scope | VAL-P03-017 | WORK-017 / Task0017; current AC disposition, criterion evidence graph, role-specific transition and successor boundaries, selected input checks and independent review; protected/joint/external decisions separate |
 | N/A — current explicit P02 profile/template/consumer migration request reuses existing Requirement and architecture scope | VAL-P02-016 | WORK-016 / Task0016; same candidate identity, coupled operating forms/readers/current instances, synthetic boundaries, exact index/message and independent review; P03/P08 and common approval separated |
 | N/A — explicit user instruction to retire failing or observed >=600-second hosted QA execution, integrate local/origin main and preserve owned cleanup evidence | VAL-P02-015 | WORK-015 and Task0015 in the Plan; registered-form provenance, scoped contract controls and hooks, actual-index staged/message checks, prospective and actual scoped completion plus independent review; full QA NOT_RUN, provenance inactive/fail-closed and cleanup outcomes observed separately |
