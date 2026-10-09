@@ -1,8 +1,8 @@
 ---
 title: "Current Quality Observation and External Contract Alignment"
-version: "0.3.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -25,10 +25,12 @@ and Plan and completed
 completed. The scoped source was committed locally at
 `be6aaa5154c3debe38a643f99b941ad6a7bc7c73` and passed selected source
 checks. The decision and source were adopted into local `main` at
-`620e8f1bc0dd8887f833ee2abfdd04100cac8a9a`; this Task is executing its
-bounded local acceptance and handoff. The received observations and adopted
-source do not accept every product quality scenario or authorize a new
-protected operation.
+`620e8f1bc0dd8887f833ee2abfdd04100cac8a9a`. This Task accepts the
+bounded local source alignment and records the remaining measurement and
+operator handoffs. Its execution input was committed as
+`b40c5d5d5e035dbf4762bcc3ca9bee2935fd6380`; this closure is not yet a
+local `main` merge. Neither the received observations nor the adopted source
+accept every product quality scenario or authorize a new protected operation.
 
 ## Inputs
 
@@ -95,7 +97,7 @@ protected operation.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-019 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | Bind dated observations to six REQ-0004 scenarios and align current local K8s consumers with Docker management/development services; preserve unmeasured recovery and public-gateway boundaries | platform | frontmatter | DEFER | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019, EVD-P08-019-020, EVD-P08-019-021, EVD-P08-019-022 |
+| WORK-019 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | Bind dated observations to six REQ-0004 scenarios and align current local K8s consumers with Docker management/development services; preserve unmeasured recovery and public-gateway boundaries | platform | frontmatter | PASS | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019, EVD-P08-019-020, EVD-P08-019-021, EVD-P08-019-022, EVD-P08-019-023 |
 
 ## Task Evidence
 
@@ -123,12 +125,13 @@ protected operation.
 | EVD-P08-019-020 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Local decision admission and source integration | The four-file ADR-0049 acceptance/Task-ready/README admission index tree `15cb36fc344740ba2fe45e811c5650eee99a3fcf` passed `validation-venv/bin/python scripts/qa.py staged` 6/6 selected gates, exit 0, with independent review PASS. The root then ran `git merge --ff-only codex/residual-acceptance` from clean local `main`; local `main` became `620e8f1bc0dd8887f833ee2abfdd04100cac8a9a`. The source and admission commits were thus adopted locally with no changed merge input. No remote publication, post-change live reconciliation or DB login occurred. | PASS | `_workspace/residual-controls/contract-admission-staged-qa-pass.json`, SHA-256 `ff00185771faae0b3a1c387ef1469e33f9b6a8b8090eedf869c3650b3d1fd960`; `_workspace/residual-controls/local-contract-integration.json`, SHA-256 `bf6ecd203b2706f85621f7ab1bbf1c6dbf2fba47c98b813ff97a0970cd347e18` | yes | none |
 | EVD-P08-019-021 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Selected document checks and independent semantic review | Actual execution-phase staged QA on tree `b917db03bb534f5ff81b85b65e298201a9b504b3` passed five selected gates and failed `document-lifecycle`: EVD-P08-019-007's factual Input was rewritten after its initial commit. The historical row must remain byte-equivalent in factual fields, and a separate row must record any source-based unit correction. | FAIL | `_workspace/residual-controls/evidence-execution-staged-qa-fail.json`, SHA-256 `b5112e5d7d9302c29ab0f4113486fbf655f7eed50a82eaa9a5334329e77f8055`; `_workspace/residual-controls/evidence-execution-lifecycle-diagnostic.json`, SHA-256 `4fba424599049d5d0ef3ac6dbef0cb8e43b05ad5b633e4c833eb2cba93ca50b8` | yes | none |
 | EVD-P08-019-022 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Inotify source measurement unit review | The unchanged original host receipt ran `sysctl -n fs.inotify.max_user_instances` at 2026-10-09 05:26:53 UTC and returned 1024 instances. EVD-P08-019-007 retains its original “watch limit” wording as historical evidence; that label was a Task authoring error. The corrected scenario interpretation below uses the actual instances metric. This review made no new host read or runtime change. | PASS | `_workspace/residual-controls/live-extra-observations.json`, SHA-256 `063f30401cc99b7e255c49a871232c143bfadb5a065e73331cc6e57c95fd2171` | yes | none |
+| EVD-P08-019-023 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Selected document checks and independent semantic review | The corrected three-file execution index tree `a2eb9bdacd3cb4dee39c6013c839bc70d833a4f4`, committed as `b40c5d5d5e035dbf4762bcc3ca9bee2935fd6380`, passed `validation-venv/bin/python scripts/qa.py staged` 6/6 selected gates, exit 0. The historical EVD-P08-019-007 factual fields remained intact and the inotify correction was appended as EVD-P08-019-022; independent correction review returned PASS. This is local static evidence, not post-change live or hosted evidence. | PASS | `_workspace/residual-controls/evidence-execution-corrected-staged-qa-pass.json`, SHA-256 `9edcd815bd904187644e9cce66eb90133991a9804b18d8e1cb8c371aaee0627c`; log SHA-256 `f4b65ba359ee6342cf0f7201042e5390c5d8b3bb5cb854c77e60465721e0b454`; `_workspace/residual-controls/evidence-execution-correction-review.json`, SHA-256 `c0e1f6e51c6fb74e190c9bb2719b352785a2c1b221f544abb958166f1a95feed` | yes | EVD-P08-019-021 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-P08-019](../spec.md#success-criteria--verification-plan) | pending | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019, EVD-P08-019-020, EVD-P08-019-021, EVD-P08-019-022 | Preserve dated observations and current local source as distinct inputs. EVD-P08-019-012 resolves selected numeric telemetry, not public-gateway authentication. EVD-P08-019-019 resolves earlier selected-check failures on changed source; EVD-P08-019-020 proves ADR-0049 admission and source adoption to local `main`. EVD-P08-019-021 preserves the latest lifecycle failure pending a changed-input PASS; EVD-P08-019-022 corrects only the interpretation of the original inotify sample without rewriting EVD-P08-019-007. Task execution and this scoped acceptance decision remain in progress. Actual Argo CD reconciliation and live removal require later operator evidence. Recovery and product thresholds remain separate REQ-owned handoffs. | platform for local contract acceptance; operator for live reconciliation; REQ-0004 Platform Owner with Security Reviewer, external service owner and application owner for undecided thresholds |
+| [VAL-P08-019](../spec.md#success-criteria--verification-plan) | accepted | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019, EVD-P08-019-020, EVD-P08-019-021, EVD-P08-019-022, EVD-P08-019-023 | Bounded local source alignment accepted: EVD-P08-019-012 resolves the selected numeric telemetry transport; EVD-P08-019-019 resolves earlier selected source-check DEFER/FAIL rows; EVD-P08-019-020 proves accepted ADR-0049 and source adoption to local `main`; EVD-P08-019-023 resolves the later lifecycle failure EVD-P08-019-021, preserving every earlier factual row. EVD-P08-019-022 corrects the interpretation of the original inotify sample. The earlier HA refusal and wrong-host response remain dated prior-source evidence. Public-gateway authentication, recovery duration, product thresholds, authenticated DB login, remote publication and post-change Argo CD reconciliation/prune remain unmeasured or unexecuted under their named owners; this is not all-scenario product or live acceptance. | platform for local contract acceptance; operator for live reconciliation; REQ-0004 Platform Owner with Security Reviewer, external service owner and application owner for undecided thresholds |
 
 ## Approval and Safety Boundaries
 
@@ -170,8 +173,9 @@ protected operation.
   Root owns commands, exact index snapshots and result receipts. Earlier
   failures remain in EVD-P08-019-014 through -016 and -018, with their
   changed-input resolution linked. The later execution-phase lifecycle failure
-  is retained in EVD-P08-019-021 and awaits a changed-input PASS; this Task's
-  scoped criterion acceptance remains pending.
+  remains in EVD-P08-019-021 and is resolved by the changed-input 6/6 PASS in
+  EVD-P08-019-023. This accepts the scoped local criterion, not a runtime or
+  hosted check.
 - **Live Validation**: EVD-P08-019-001 through -008 and -011/-012 are bounded
   received observations at the older source revision. Public-gateway requests
   redirected (EVD-P08-019-009),
@@ -205,7 +209,7 @@ post-change live PASS. Scenario disposition against REQ-0004:
 | --- | --- | --- |
 | GitOps reproducibility | 22 Applications Synced/Healthy at observed revisions | Static selected-target render completeness and repeated reconciliation remain unmeasured; Platform Owner |
 | Secret and TLS recovery | SecretStore/ExternalSecret/Certificate Ready status and one declared Adminer TLS success | Recovery time from actual failure, completeness and threshold remain unmeasured; Platform Owner and Security Reviewer |
-| External interfaces | At the older source revision, EndpointSlices included optional HA PostgreSQL write/read; management Valkey LAN 26379 accepted TCP, while HA 15432/15433 refused and selected metadata showed no `pg-router`. Both management PG loopback 25432 and development PG loopback 25433 accepted host TCP, with each container healthy; development Valkey was healthy on Docker-only `dev_data_net:6379`, so a host-port probe was not applicable. The newer local source removes HA K8s consumers, keeps Valkey cluster excluded, and retains management Valkey. | Changed-source tuple/consumer checks and later actual ArgoCD reconciliation remain unobserved here; authenticated database/Valkey operation and K8s DB connection are not established. Platform Owner and external service owner |
+| External interfaces | At the older source revision, EndpointSlices included optional HA PostgreSQL write/read; management Valkey LAN 26379 accepted TCP, while HA 15432/15433 refused and selected metadata showed no `pg-router`. Both management PG loopback 25432 and development PG loopback 25433 accepted host TCP, with each container healthy; development Valkey was healthy on Docker-only `dev_data_net:6379`, so a host-port probe was not applicable. The adopted local source removes HA K8s consumers, keeps Valkey cluster excluded, and retains management Valkey; selected source/consumer checks passed 21/21. | Post-change Argo CD reconciliation and live tuple removal remain unobserved; authenticated database/Valkey operation and K8s DB connection are not established. Platform Owner and external service owner |
 | Telemetry | Loki ready and 2749 log events in one five-minute aggregate; five declared Argo CD component `up` samples all 1 and labelled application-info count 22 through authorized Docker operator transport | Public gateway returned HTTP 302 without credentials, so its authenticated behavior remains unverified; platform operator owns any separate gateway test |
 | Workload onboarding | At the older source revision, Adminer Rollout was ready/desired 1/1 and declared host HTTP 200 with verified TLS while its DB default targeted HA write `:15432`. Newer local source removes that default and supplies no replacement. | The sampled HA port refused TCP and no DB login/query succeeded; newer source has no post-change live result or K8s-to-management/development PG path. Application owner, external service owner and Platform Owner |
 | Single-host recovery | One server and three agents Ready; `fs.inotify.max_user_instances=1024` instances from the original 05:26:53 UTC host read. The earlier “watch limit” description was a Task authoring error, with no new host read. | Actual rebuild duration and decision threshold remain unmeasured; Platform Owner |
@@ -214,7 +218,8 @@ The wrong undeclared Adminer host's 404 and former HA PostgreSQL TCP refusals
 remain visible in the factual evidence. Neither replaces the declared Adminer
 route result or proves a required platform outage. Dated Docker metadata
 and loopback TCP acceptance do not establish authenticated SQL, application
-read/write, K8s reachability or recovery. The local retirement change also
-does not prove cluster reconciliation or remote deployment. No all-scenario product acceptance,
-disaster recovery, public-gateway authentication, native/hosted check or
-common edition adoption is claimed here.
+read/write, K8s reachability or recovery. The locally accepted retirement
+change does not prove cluster reconciliation or remote deployment. No
+all-scenario product acceptance, disaster recovery, public-gateway
+authentication, native/hosted check or common edition adoption is claimed
+here.
