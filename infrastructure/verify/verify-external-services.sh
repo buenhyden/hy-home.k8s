@@ -29,20 +29,16 @@ echo "[INFO] Checking external service contracts"
 kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
-kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT"
+kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT" ||
+  fail "cannot list platform external services"
 
-rg -q 'postgres-write-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-write-external"
-rg -q 'postgres-read-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing postgres-read-external"
 rg -q 'valkey-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing valkey-external"
-
-rw_port="$(kubectl -n platform get svc postgres-write-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-[ "$rw_port" = "15432" ] || fail "postgres-write-external port mismatch (actual=$rw_port)"
-
-ro_port="$(kubectl -n platform get svc postgres-read-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-[ "$ro_port" = "15433" ] || fail "postgres-read-external port mismatch (actual=$ro_port)"
 
 valkey_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
 [ "$valkey_port" = "6379" ] || fail "valkey-external port mismatch (actual=$valkey_port)"
+
+valkey_target_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].targetPort}' 2>/dev/null || true)"
+[ "$valkey_target_port" = "26379" ] || fail "valkey Service targetPort mismatch (actual=$valkey_target_port)"
 
 valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.ports[0].port}' 2>/dev/null || true)"
 [ "$valkey_ep_port" = "26379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
@@ -51,8 +47,6 @@ valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 [ "$valkey_ep_addr" = "192.168.0.13" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
 echo "[INFO] Checking observability external service contracts"
-
-kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT" 2>/dev/null || true
 
 for svc in loki-external tempo-external alloy-external; do
   rg -q "$svc" "$PLATFORM_SERVICES_OUTPUT" || fail "missing $svc in platform namespace"

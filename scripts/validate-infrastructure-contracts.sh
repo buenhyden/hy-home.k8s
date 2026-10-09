@@ -28,7 +28,6 @@ require_multiline_pattern() {
 echo "[INFO] static contract verification started"
 
 ROOT_APP="$ROOT_DIR/gitops/clusters/local/root-application.yaml"
-POSTGRES_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/postgres-external.yaml"
 COREDNS_CUSTOM="$ROOT_DIR/infrastructure/coredns-custom.yaml"
 K3D_CONFIG="$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml"
 VAULT_STORE="$ROOT_DIR/gitops/platform/eso/vault-secret-store.yaml"
@@ -54,7 +53,6 @@ SAMPLE_EXTERNAL_SECRET="$ROOT_DIR/examples/sample-app/external-secret.yaml"
 for file in \
   "$ROOT_APP" \
   "$ROOT_KUSTOMIZATION" \
-  "$POSTGRES_EXTERNAL" \
   "$VAULT_STORE" \
   "$VAULT_TOKEN_REVIEWER" \
   "$VALKEY_EXTERNAL" \
@@ -81,12 +79,6 @@ require_pattern 'path:\s*gitops/apps/root' "$ROOT_APP"
 require_pattern 'targetRevision:\s*main' "$ROOT_APP"
 
 echo "[INFO] verify external service contracts"
-require_pattern 'name:\s*postgres-write-external' "$POSTGRES_EXTERNAL"
-require_pattern 'port:\s*15432' "$POSTGRES_EXTERNAL"
-require_pattern 'name:\s*postgres-read-external' "$POSTGRES_EXTERNAL"
-require_pattern 'port:\s*15433' "$POSTGRES_EXTERNAL"
-require_pattern '192\.168\.0\.13' "$POSTGRES_EXTERNAL"
-
 # External services are reached through host-published addresses (ADR-0046),
 # never through k3d-hyhome container addresses.
 if grep -rPn '172\.18\.0\.([0-9]|1[0-9])(/32)?$' \
@@ -330,7 +322,7 @@ echo "[INFO] verify apps namespace NetworkPolicy"
 APPS_NP="$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
 require_file "$APPS_NP"
 require_pattern '192\.168\.0\.13/32' "$APPS_NP"
-require_pattern 'port:\s*15432' "$APPS_NP"
+require_pattern 'port:\s*4317' "$APPS_NP"
 
 echo "[INFO] verify monitoring namespace NetworkPolicy"
 MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml"
@@ -364,7 +356,6 @@ PY
 ISTIOD_APP="$ROOT_DIR/gitops/apps/root/platform-istiod-app.yaml"
 require_pattern 'service:\s*alloy-external\.platform\.svc\.cluster\.local' "$ISTIOD_APP"
 require_multiline_pattern 'defaultProviders:\n\s+tracing:\n\s+- otel-tracing' "$ISTIOD_APP"
-require_multiline_pattern 'port:\s*15433\n(\s+- protocol: TCP\n)?\s+port:\s*4317' "$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
 # kube-state-metrics labels name the object it describes; without
 # honor_labels the target's namespace wins and namespace="apps" matches nothing.
 require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"

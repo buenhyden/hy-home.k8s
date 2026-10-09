@@ -6977,18 +6977,18 @@
   },
   "shared_contract": {
     "contract_id": "WGOV-CORE",
-    "version": "3.0.0-draft.3",
+    "version": "3.0.0-draft.6",
     "stage": "candidate",
     "owner": "buenhyden",
-    "source": "Project-Template/.agents/governance/shared-standard.md",
-    "source_revision": null,
-    "content_digest": "sha256:3f46c63daae094649edccec33682ecba99844b184c4b78b558281c7c05ff3271",
+    "source": "Project-Template/.agents/governance/standards.md",
+    "source_revision": "19fc393b3bd544ae4edc9a31721d30abcf94dc7f",
+    "content_digest": "sha256:0c29b704db24ef04007e3f8416bebef6f70b00483b59d828a6c783103cfbc042",
     "approval_ref": null,
     "local_adapter": "docs/99.templates/registry.json",
     "extensions": [
       "Kubernetes/GitOps/bootstrap/external-service procedures",
-      "Existing role status vocabulary pending P03 joint provenance migration",
-      "Existing document_language and provider-native syntax"
+      "Task Table/frontmatter summary and historical completed-parent lifecycle",
+      "Registry document_language and Codex/Claude native syntax"
     ]
   }
 }

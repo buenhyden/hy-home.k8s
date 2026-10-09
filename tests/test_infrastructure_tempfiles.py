@@ -77,9 +77,8 @@ if os.environ.get("STUB_FAIL_TOOL") == tool:
     sys.exit(1)
 
 VALUES = {
-    ("svc", "postgres-write-external", "{.spec.ports[0].port}"): "15432",
-    ("svc", "postgres-read-external", "{.spec.ports[0].port}"): "15433",
     ("svc", "valkey-external", "{.spec.ports[0].port}"): "6379",
+    ("svc", "valkey-external", "{.spec.ports[0].targetPort}"): "26379",
     ("svc", "loki-external", "{.spec.ports[0].port}"): "3100",
     ("svc", "tempo-external", "{.spec.ports[0].port}"): "3200",
     ("svc", "alloy-external", "{.spec.ports[0].port}"): "4317",
@@ -104,10 +103,13 @@ if tool == "rm":
 elif tool == "curl":
     print("HTTP/2 200")
 elif tool == "kubectl" and "version" not in args:
+    append("KUBECTL\t" + "\t".join(args))
     get_index = args.index("get")
     kind = args[get_index + 1]
     if kind == "svc,endpointslice":
-        print("postgres-write-external postgres-read-external valkey-external")
+        if os.environ.get("STUB_FAIL_PLATFORM_LIST") == "1":
+            sys.exit(1)
+        print("valkey-external")
         print("loki-external tempo-external alloy-external")
     elif kind == "application":
         print("path: gitops/apps/root")
@@ -121,7 +123,12 @@ elif tool == "kubectl" and "version" not in args:
             for value in args
             if value.startswith("jsonpath=")
         )
-        print(VALUES[(kind, name, jsonpath)], end="")
+        value = VALUES[(kind, name, jsonpath)]
+        if (kind, name, jsonpath) == (
+            "svc", "valkey-external", "{.spec.ports[0].targetPort}"
+        ):
+            value = os.environ.get("STUB_VALKEY_TARGET_PORT", value)
+        print(value, end="")
 """
 
 
@@ -133,7 +140,7 @@ EXPECTED_PASSES = {
 
 FAILURES = {
     "verify-gitops.sh": ("rg", "root-platform path contract mismatch"),
-    "verify-external-services.sh": ("rg", "missing postgres-write-external"),
+    "verify-external-services.sh": ("rg", "missing valkey-external"),
     "verify-ingress-tls.sh": ("curl", "https fallback endpoint is not reachable"),
 }
 
@@ -294,6 +301,48 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
                 )
                 self.assertTrue(all(not path.parent.exists() for path in output_paths))
                 self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_service_queries_keep_platform_namespace(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "external-namespace"
+        tmpdir.mkdir()
+        log = self.root / "external-namespace.log"
+
+        result = self.run_script(script, tmpdir, log)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        queries = [
+            line.split("\t")[1:]
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("KUBECTL\t")
+        ]
+        self.assertTrue(queries)
+        self.assertTrue(all(query[:2] == ["-n", "platform"] for query in queries))
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_service_target_port_failure_keeps_cleanup(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "external-target-port"
+        tmpdir.mkdir()
+        log = self.root / "external-target-port.log"
+
+        result = self.run_script(script, tmpdir, log, STUB_VALKEY_TARGET_PORT="6379")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("[FAIL] valkey Service targetPort mismatch", result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_service_list_failure_has_diagnostic_and_cleanup(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "external-list-failure"
+        tmpdir.mkdir()
+        log = self.root / "external-list-failure.log"
+
+        result = self.run_script(script, tmpdir, log, STUB_FAIL_PLATFORM_LIST="1")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("[FAIL] cannot list platform external services", result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
 
     def test_cleanup_failure_turns_success_into_failure(self) -> None:
         for script in SCRIPTS:

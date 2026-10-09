@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.15.0"
+version: "1.16.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -50,6 +50,51 @@ scope. This authorization does not claim current remote state or an
 authenticated operator action.
 
 ## Contracts
+
+### Current live quality observation follow-up
+
+VAL-P08-019 records a bounded, authorized read-only observation after the
+completed P08 document migration, followed by the user's current request to
+retire the unused HA PostgreSQL K8s route, keep the unconsumed Valkey cluster
+outside this repository, and align the
+local external interface with actual `hy-home.docker` management/development
+services. Keep the completed Spec/Plan and Task0018 at their recorded
+decisions. The new WORK-019/Task0019 owns the observation, local source/consumer
+alignment and its criterion decision; it does not turn static review into live
+acceptance. [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+remains in-review and owns the six product-quality scenarios, formulas,
+environments and unresolved thresholds. Active
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+owns topology, source paths and evidence boundaries. Proposed
+[ADR-0049](../../02.architecture/decisions/0049-external-data-service-contract-alignment.md)
+records the narrow data-service amendment to ADR-0044/0046; it is not yet an
+accepted decision at first source creation.
+
+For the named `k3d-hyhome` context, identify each observed source revision,
+target, time, input, result and non-secret receipt. Separate desired-state
+source and Kubernetes status from a checked TLS response, numeric telemetry,
+authenticated Prometheus results and recovery behavior. Map all six
+REQ-0004 scenarios to observed, partial or deferred evidence without treating
+a present EndpointSlice, a healthy status or an unauthenticated redirect as
+proof of an external service's complete behavior. Retain the unselected
+wrong-host response and former `postgres-ha`/`pg-router` TCP refusals as
+dated observations at their original source revision, without recasting either
+as a required platform failure or management/development PostgreSQL status.
+The current local source keeps required management Valkey at the LAN interface,
+removes retired HA K8s consumers, keeps Valkey cluster excluded, and distinguishes Docker-only
+development Valkey from the two localhost PostgreSQL publishes. Do not create
+LAN PG/development Valkey endpoints or silently redirect Adminer; its current
+source has no default DB server, and DB login needs a separately reviewed
+connection. Static alignment is accepted only with selected source/consumer
+checks and review; actual ArgoCD reconciliation and live removal remain
+operator-owned DEFER until observed. Measure declared Argo CD `up` and labelled
+`argocd_app_info` through an authorized operator transport. A public gateway
+redirect does not establish these values or the gateway's authenticated
+behavior; retain both observations separately without reading or printing
+credentials. Recovery duration, fault injection, restart and deployment are
+outside this read-only observation. Mark their missing measurements and
+threshold owners explicitly without making a future incident a prerequisite
+to accepting the bounded observation.
 
 ### Current operations quality and architecture follow-up
 
@@ -382,6 +427,7 @@ the Task owns all later execution observations.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
+| VAL-P08-019 | Task0019 binds the actual read-only `k3d-hyhome` status, TLS, endpoint and numeric samples to named targets, times, source/receipt revision and the six REQ-0004 scenarios; it preserves contrary and unselected observations and distinguishes static, status, direct response, operator-transport telemetry and unmeasured recovery. The current local source/consumer review retains required management Valkey LAN `26379`, management/development PostgreSQL at localhost-only `25432/25433` and Docker-only development Valkey, while retiring the HA PostgreSQL K8s route and keeping Valkey cluster out of scope without inventing PG LAN access or an Adminer DB login. The earlier HA `15432/15433` refusal and Adminer default remain dated prior-source evidence, not current source or post-change live proof. Record Prometheus `up` and `argocd_app_info` through authorized operator transport while leaving public-gateway authentication unproven. Selected source/document checks, independent review and local adoption can accept the local source alignment; actual ArgoCD reconciliation, removal at live cluster and remote merge remain separate operator/hosted evidence. Recovery duration and product thresholds retain their REQ-owned handoff without fault injection or an all-scenario PASS claim. |
 | VAL-P08-018 | At the actual P08 revision, [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) owns the in-review measurable product quality requirement, and [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns active topology and source/evidence boundaries without duplicate thresholds. Each of the 16 current Guide/Policy/Runbook artifacts has one per-document disposition for profile, form, substantive content, current owner, references, state and actual evidence. Changed quality claims identify scenario, metric or formula, unit, environment and threshold or a concrete missing input and next owner. Existing IDs, active state, useful role modules, reciprocal links or justified exclusions and P02/P03 evidence remain traceable; changes follow the same draft.3 candidate as a local adapter without inventing final approval or adoption. Selected document/relationship/lifecycle/style/message checks, independent review, actual normal commits and authorized local integration are bound to Task0018; remote, native, live and common decisions remain separate. |
 | VAL-P03-017 | Actual recursive Spec/Task selection and AC disposition; one criterion acceptance origin with bound factual evidence and explicit failure resolution; role-specific approval/execution separation, cancellation/supersession ownership and historical read compatibility; coupled Registry/schema/forms/consumers, focused RED/GREEN, exact-index style/message and independent review. Preserve completed parents/Tasks, operating adoption versus actual Release, the same common candidate and unexecuted P05/P07/P08/joint/hosted/live handoffs in Task0017. |
 | VAL-P02-016 | One identified common candidate and truthful adoption tuple; Registry/schema/forms/readers agree on the three six-section operating roles, with substantive-content refusals and preserved relationships. All current Guide/Policy/Runbook instances are migrated and individually reviewed while state, identity, native boundaries and frozen bytes are preserved. Single Task status and generated multi-row summary have one authoring source; existing README router/anchor and native/language contracts retain their current consumers. Task0016 records focused RED/GREEN, exact-index lint/format/message, independent review, P03/P08 handoffs and actual unexecuted boundaries; final common approval and four-repository adoption are reported separately. |
@@ -401,6 +447,10 @@ the Task owns all later execution observations.
 | VAL-P02-002 | The existing Task summary rules have one shared implementation. An explicit command previews and optionally synchronizes only the frontmatter status of a valid multi-row current Task, preserves the one-row marker and every other byte, refuses unsafe paths, invalid content and illegal transitions without partial writes, and keeps validation read-only. Focused RED/GREEN, exact-index staged and message checks, completion and independent review are recorded in the follow-up Task. Local full and affected execution are excluded for this follow-up only; required hosted checks govern authorized PR and merge. |
 
 ## Traceability
+
+VAL-P08-019 maps to WORK-019 and
+[Task0019](tasks/tsk-0019-live-quality-observation.md). Completed P08
+Task0018 supplies document/source boundaries, not the later live result.
 
 VAL-P08-018 maps to WORK-018 and
 [Task0018](tasks/tsk-0018-operations-quality-and-architecture.md). The

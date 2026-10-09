@@ -22,12 +22,25 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-Registry의 `shared_contract`는 P01에서 연결한 하나의
-`WGOV-CORE / 3.0.0-draft.3` 공동 검토 후보와 이 지역 adapter를 식별한다.
-검토 bytes의 digest는 승인 증거가 아니다. 정본 source commit과 최종 승인
-참조는 아직 없으므로 null이며, 공동 owner buenhyden의 최초 수립·승인과
-지역 채택·네 저장소 공동 채택은 각각 실제 근거를 확보한 뒤 기록한다.
-현재 언어·상태·native 차이는 명시된 이관 경계이며 새 공통 판본을 뜻하지 않는다.
+Registry의 `shared_contract`는 `WGOV-CORE / 3.0.0-draft.6` 공동 검토
+후보와 이 지역 adapter를 식별한다. 공동 owner는 buenhyden이고, 정본 후보의
+입구는 Project-Template의 기존 `.agents/governance/standards.md`다. 이 후보는
+그 파일을 포함한 Stage 00 정책 다섯 개, Stage 99 README·Registry·schema 두
+개, 그리고 source commit에 추적된 `docs/99.templates/templates/**` 전체인
+54개 파일을 대상으로 한다. digest는 중복 없는 저장소 상대 경로를 UTF-8
+순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
+차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
+
+후보의 `source_revision`은 실제 Git commit `19fc393b3bd544ae4edc9a31721d30abcf94dc7f`다.
+해당 54개 blob의 digest는 Registry의 값과 일치한다. 확인 당시
+Project-Template `dev`의 `ede1f04f348b082b79738c581a9d3868229096b9`도
+이 54개 bytes가 같았다. commit과 digest는 내용 식별이며 승인 증거가 아니다.
+Project-Template의 진행 중인 P05는 공통 QA 정책을 수정 중이므로 최종 판본의
+source commit과 digest는 그 결과를 반영해 다시 고정해야 한다. 최종 판본
+승인, 이 저장소의 지역 채택, 네 저장소의 공동 채택은 각각 실제 결정과 적용
+증거가 생긴 뒤 기록한다. 현재 `stage`는 `candidate`, `approval_ref`는
+`null`이다. Kubernetes의 Task 상태 요약·과거 완료 부모, 문서 언어와 native
+문법은 명시된 지역 차이이며 별도 공동 정본을 뜻하지 않는다.
 
 ## Scope
 

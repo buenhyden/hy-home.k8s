@@ -56,8 +56,6 @@ spec:
             - name: http
               containerPort: 8080
           env:
-            - name: ADMINER_DEFAULT_SERVER
-              value: postgres-write-external.platform.svc.cluster.local:15432
             - name: ADMINER_DESIGN
               value: pepa-linha
           resources:

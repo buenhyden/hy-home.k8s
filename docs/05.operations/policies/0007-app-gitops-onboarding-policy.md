@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -111,7 +111,10 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 현재 `apps` namespace 전체에 egress 정책(`allow-egress-apps`)이 적용된다:
 
-- postgres (host `192.168.0.13:15432`, `15433`, ADR-0046) egress 허용
+- 현재 앱 egress에 폐기된 `postgres-ha` `15432/15433` 허용은 없다.
+  management/development PostgreSQL은 host loopback 전용이므로 현재 K8s
+  앱의 DB 연결 대상이 아니다. 연결이 필요하면 서비스 노출, 인증/Secret,
+  NetworkPolicy와 운영 권한을 별도 검토한다
 - Istio sidecar trace용 외부 Alloy OTLP(host `192.168.0.13:4317`) egress 허용
 - kube-dns egress 허용
 - Istiod(`15010`, `15012`, `15014`) egress 허용

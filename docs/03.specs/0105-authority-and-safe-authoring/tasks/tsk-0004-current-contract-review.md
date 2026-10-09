@@ -1,10 +1,10 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.7.0"
+version: "0.8.0"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "specs"
 artifact_id: "SPEC-0105-TSK-0004"
 parent_ids: ["SPEC-0105-PLAN-0001"]
@@ -52,6 +52,102 @@ alone owns the new WORK-008 execution and its remaining obligations.
   `codex/p01-current-contract`, created from that existing logical commit.
   Root controller is the sole writer. Read-only `common_research` and
   `operations_research` supplied source comparisons without writing files.
+
+### 2026-10-09 residual execution input
+
+The current user's request to process the common-edition decision, bounded
+live measurement and two external HIGH findings is the active scope reference.
+It authorizes investigation and the separately reviewed operations actually
+performed; it does not turn a draft into an approved edition or a status
+snapshot into all six product-scenario measurements. This continuation starts
+from clean local `main` commit
+`3793510b04d77d3548145d89a934ed5e3888301e` in
+`codex/residual-controls` / `.worktrees/residual-controls`. Prior local
+criteria and completed Tasks retain their original decisions.
+
+The proposed common source has advanced beyond the historical draft.3 input:
+Project-Template `.agents/governance/standards.md` holds one frozen
+`WGOV-CORE / 3.0.0-draft.6` candidate at source commit
+`19fc393b3bd544ae4edc9a31721d30abcf94dc7f` with content SHA-256
+`0c29b704db24ef04007e3f8416bebef6f70b00483b59d828a6c783103cfbc042`.
+The latest inspected approval reference is null. This is an existing reviewable
+source, not a final decision, local adoption or four-repository adoption.
+Project-Template's P05 checkout has another active writer and is not modified
+by this Task. The source/adapter owner must bind any actual final approval to
+its reviewed edition and record adoption separately.
+
+Public read-only GitHub metadata shows one listed collaborator,
+`buenhyden` (User 9127269), with admin permission; main protection still
+requires strict `ci-summary` and `style-pr` from App 15368. The applied main
+branch rules list and open PR list are empty in this snapshot. A sole human
+does not supply an independent reviewer or an adversarial actor test by
+assertion. Two prior `main-*` tag rulesets, nine historical tags and the
+empty Release list were retained during the newly approved `v*` control-plane
+change. New active ruleset 24769894 matches `refs/tags/v*` creation with
+only User 9127269 as an `always` bypass; 24769895 matches `v*` update and
+deletion with no bypass. Immutable Releases read back `enabled: true` after
+the actual configuration operations. Fork PR contributor approval also read
+back `all_external_contributors` after the reviewed setting change from
+`first_time_contributors`. EVD-012, EVD-013 and EVD-015 identify their
+read-back input and limits; no tag/Release was created, moved or deleted and
+no negative-actor, external-fork/new-SHA or strict SemVer/main-SHA producer
+behavior was executed.
+
+A further reviewed main-protection operation enabled administrator enforcement:
+the POST returned rc 0 and the full GET reported `enforce_admins: true` while
+strict `ci-summary` and `style-pr` remained bound to App 15368 and the required
+review count remained zero. EVD-016 records this later setting separately from
+the earlier `enforce_admins: false` snapshot. No administrator push denial was
+attempted; administrator coverage does not prove workflow-content provenance,
+non-skipped jobs or a negative fork run.
+
+The root's eight read-only `kubectl --context k3d-hyhome` status/metadata
+commands at this reviewed source returned rc 0 for API readiness, nodes,
+ArgoCD Applications, platform Pods, ClusterSecretStores, ExternalSecrets,
+Certificates and Rollouts. The actual command plan and per-command timestamps,
+arguments, stdout/stderr hashes and results are in
+`_workspace/residual-controls/live-observation-plan.json` and
+`live-observations.json`. This is a bounded live **status snapshot**: it
+does not read Secret objects or values, prove recovery duration, external
+Prometheus series, TLS client handshake, workload-onboarding result or the
+six [REQ-0004](../../../01.requirements/0004-current-local-gitops-platform.md#product-quality-measurement-boundary)
+quality-scenario samples. Draft
+[SPEC-0106-TSK-0019](../../0106-stage99-lifecycle-normalization/tasks/tsk-0019-live-quality-observation.md)
+is the prospective owner of subsequent live scenario sampling; its actual
+intake/admission remains pending. The platform/REQ-0004 and approved service
+operators remain responsible for targets, windows, metrics and thresholds.
+Later telemetry receipts are recorded in that draft, not accepted here.
+
+SEC-P01-001 remains with buenhyden and the CI/security operator until an
+independent control path proves the actual workflow/control PR input; branch
+settings and the new `v*` tag rules do not authenticate PR-editable CI jobs.
+SEC-P06-001's identified server configuration gap is closed by the `v*` rules
+and immutable Release read-back. SPEC-0107's repository/release owner still
+owns the separate exact-main/SemVer producer and first-publication checks.
+The sole GitHub owner and absent negative actor are explicit limits of the
+configuration proof, not a fabricated deny PASS. SEC-P01-001 remains HIGH:
+the restrictive fork approval setting does not independently authenticate
+workflow content at an exact run, head SHA and test merge.
+
+At 2026-10-09T06:29:24Z, buenhyden explicitly accepted the remaining
+SEC-P01-001 workflow risk while retaining its HIGH grade. The reviewed
+decision in `_workspace/residual-controls/workflow-residual-risk-decision.json`
+identifies the inspected main commit, workflow blob hashes, current controls,
+owner procedure and revisit triggers. It is an owner risk disposition, not a
+technical fix, a negative-fork test or standing approval of future PRs. For
+each actual run the CI/security owner must compare run ID, event, PR number,
+event-specific check SHA against the expected head or test-merge SHA, current
+head/test merge, workflow/control diff and latest required-check identities.
+Revisit on collaborator/App/token permission, trigger/trust/required-context,
+available negative-fork evidence or approval change. Any remote operation
+still needs its own applicable authorization and exact inputs.
+
+The root separated a four-file trusted-control preflight at frozen index tree
+`70dcfc9048e912717810ce1444ff2fa4f55261e6`, then normally committed it
+as `32be232908da7cff71ff1003349407fb2a2993da` and fast-forwarded local
+`main` to the same tree. The prior changing-index and quality/nonstyle
+failure and the corrected 16-gate PASS are separate EVD-019/020 inputs.
+This preflight does not resolve EVD-017's later full residual-document index.
 
 ### Source and Consumer Comparison
 
@@ -169,7 +265,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Local repairs and approved setting operation accepted through EVD-002/004/005/006/007. Reason: common edition/adoption undecided, SEC-P01-001 control guard unresolved, and current PR style unobserved (EVD-003/008/009). Next owner: buenhyden with Project-Template source writer and security/CI operator |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: Original local repairs and setting operation stay accepted, but EVD-012 identifies one committed draft.6 candidate without final approval/adoption. EVD-013/015/016 accept bounded settings and EVD-018 records HIGH owner-accepted risk without technical closure or PR-result proof. Trusted preflight EVD-019 failed then EVD-020 passed; full residual index EVD-017/021/022 still awaits a clean recheck. Next owner: buenhyden with Project-Template source/adapter owners and CI/security control operator |
 
 ## Criterion Acceptance
 
@@ -178,9 +274,9 @@ correction to its retained pre-change values, never by inventing a green check.
 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005 | Actual source/consumer/owner/disposition comparison is accepted; remaining common adoption belongs to VAL-P01-007 | .agents/governance/agent-execution.md; platform |
 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
-| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011 | Logical local checks/review/commits/delivery limits and rollback are recorded; current hosted/control prerequisite belongs to VAL-P01-008 | platform local delivery owner |
-| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Common source/edition decision and actual adoption remain DEFER; source revision and approval reference stay absent until their real objects and decisions exist | buenhyden with one Project-Template source writer; each actual adapter owner |
-| [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010 | Actual next authorized PR style is DEFER; SEC-P01-001 HIGH remains an unaccepted conditional workflow/control PR or Release guard. This grants no new execution authority | next authorized actual PR owner and buenhyden with security/CI operator |
+| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | pending | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022 | The original local receipts remain valid for their dated inputs. Corrected four-file trusted preflight EVD-020 resolves EVD-019 only; full residual staged QA failures EVD-017/021/022 still need a new exact-index PASS before this follow-up local delivery is accepted. Hosted/control proof belongs to VAL-P01-008 | platform local delivery owner |
+| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012 | A real draft.6 candidate source commit and digest now exist, but final edition approval reference is null and actual local/joint adoption remain DEFER. Candidate identity does not resolve the distinct final-decision check in EVD-003 | buenhyden with the one Project-Template source writer and each actual adapter owner |
+| [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010, EVD-013, EVD-014, EVD-015, EVD-016, EVD-018 | Current settings read-backs passed and buenhyden accepted the residual HIGH risk in EVD-018, without technical closure, an independent-machine proof or actual next-PR required/style result. No future PR gate or execution authority is accepted | buenhyden with CI/security operator; next authorized actual PR owner for SHA/run evidence |
 
 ## Task Evidence
 
@@ -197,6 +293,17 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-009 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Security review of verifier retirement and prospective check trust | Exact before/after settings, current ci.yml and bounded historical verifier contract | FAIL | Independent server_security_review found SEC-P01-001 HIGH: PR can alter both job definitions; read-only/pinned/helper trust does not authenticate workflow content. Conditional review permits describing the setting transition only; guard remediation remains unaccepted | yes | none |
 | EVD-010 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Renewed HIGH and workflow PR merge review | Current main protection, CI/control source, CODEOWNERS, open PR API and primary GitHub behavior docs | FAIL | Renewed server_security_review confirms HIGH for workflow/control-changing PRs. No observed exploit or actual open PR. Required jobs may be skipped; App binding does not fix PR-editable job definitions; native review guard is not enabled | yes | none |
 | EVD-011 | [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Current branch scope and preserved owned evidence | main...HEAD nine-file diff; clean local main; 13 ignored artifact files | PASS | No workflow/control-implementation changes; unique review candidate and server/message evidence copied to persistent main with byte equality. Integration and cleanup results follow observation in final handoff | yes | none |
+| EVD-012 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Current common candidate source identity | One frozen Project-Template `.agents/governance/standards.md` candidate `WGOV-CORE / 3.0.0-draft.6`, source commit `19fc393b3bd544ae4edc9a31721d30abcf94dc7f`, content SHA-256 `0c29b704db24ef04007e3f8416bebef6f70b00483b59d828a6c783103cfbc042`, and approval reference null | PASS | Current candidate provenance above; this identifies review bytes only. EVD-003 final edition approval and distinct local/joint adoption remain DEFER with buenhyden/common-source and actual adapter owners | yes | none |
+| EVD-013 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Current public settings and SemVer control read-back | Public repository, main protection, listed collaborators, open PRs, existing/new tag rulesets and immutable Releases; exact approved POST/PUT operations and full GET read-back at 2026-10-09T05:25:51Z | PASS | `_workspace/residual-controls/server-intake-summary.json`, SHA-256 `afc9e13b3ffb6965dd18006ad141114ae6c00a959ab69407df6a00664de06e5f`; `semver-operations.json`, SHA-256 `846541779d7d7af183d38a92e5c9f0d64a600ea2d501368d24978c09cc0fe694`; `semver-controls-readback.json`, SHA-256 `c8dd7b71ce3c8259b92584c96678c1612f5a81ad2f9f3e151ebc722967b237ca`; scoped security review `semver-security-review.json`, SHA-256 `360dee48e59cdfe68133cd2e2ba0a1d0860606f4ad4fd523294a86ac0f673c30`. Result is control-plane configuration/read-back, not EVD-009/010 workflow integrity resolution, a deny probe or tag/Release publication | yes | none |
+| EVD-014 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Current hosted PR style result | Current open PR list for main is empty at the public read-back; no actual next authorized workflow/control PR SHA/run exists for selected `style-pr` and independent guard observation | DEFER | `_workspace/residual-controls/open-prs.json`, SHA-256 `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`; next owner buenhyden with the actual PR and CI/security operator; no synthetic PR or green check | yes | none |
+| EVD-015 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Fork PR contributor approval resource read-back | Reviewed Actions fork PR contributor approval PUT/GET, `first_time_contributors` to `all_external_contributors` | PASS | `_workspace/residual-controls/fork-approval-readback.json`, SHA-256 `bc75cb5f6e3e006a0ec7a99b6515ac10a2cb6b9b879b0b9a3d7b45ed295a61f1`; restrictive resource setting was read back, while external-fork/new-head-SHA denial and workflow-content authentication were NOT_RUN. SEC-P01-001 remains HIGH under EVD-009/010 | yes | none |
+| EVD-016 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Main administrator enforcement resource read-back | Reviewed `POST repos/buenhyden/hy-home.k8s/branches/main/protection/enforce_admins` and full protection GET at 2026-10-09T05:40:55Z | PASS | `_workspace/residual-controls/main-admin-enforcement-readback.json`, SHA-256 `c4d6e5af0125078d4a88a2ebed7deff4202388fdd36544b2c99feeb9138300c7`: `enforce_admins: true`, strict `ci-summary`/`style-pr` App 15368 and review count zero; earlier false snapshot remains historical. No admin push/deny probe; SEC-P01-001 workflow provenance, skip/no-op and independent fork proof remain open | yes | none |
+| EVD-017 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Initial staged index of 12 changed paths, 11 selected gates, before the blocked-row correction and other owner diagnostics | FAIL | `_workspace/residual-controls/source-staged-qa-fail.json`, SHA-256 `7ccce692f75bf4a5e1bfb267caa466a7cdfcd68cb6034ebd20a538d9a16ea72c`, and `source-staged-qa.log`, SHA-256 `0f97946899bd0f08342d38158a328977cd0da03d70078842e`: six gates PASS, five FAIL (`document-lifecycle`, `links-and-owners`, `markdown-profiles`, `repository-quality`, `selected-nonstyle`). `_workspace/residual-controls/markdown-profiles-diagnostic.json`, SHA-256 `3e2f83a2ecb756540b5055fd9e85e3b96a982a60782051ffd7258794193cfe71`, names this Task's missing literal blocked `Reason:` marker; other failures remain with their respective writers pending diagnosis and recheck. A later exact Check/Work Unit/Criteria PASS must resolve EVD-017; none is claimed here | yes | none |
+| EVD-018 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | WORK-008 | SEC-P01-001 owner risk disposition | Trusted buenhyden reply at 2026-10-09T06:29:24Z to reviewed proposal SHA-256 `29c14554824618ade8cdad256fba78cae1e6deb2bd37cb26c28a09534292c30f`; inspected main `3793510b04d77d3548145d89a934ed5e3888301e` and three workflow blob hashes | PASS | `_workspace/residual-controls/workflow-residual-risk-decision.json`, SHA-256 `24f203e5c04de9ac66305b068542b17b426a1b4c2c17e9aa8b6974a6147412c5`: owner accepted residual risk with HIGH retained, event-specific manual verification and listed revisit triggers. EVD-009/010 FAIL and EVD-008/014 DEFER remain; no technical FIXED, negative-fork PASS, future PR blanket approval or remote operation authority | yes | none |
+| EVD-019 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Trusted control preflight | Initial two-path staged index tree `7685a6e14662c2ef95fb3db2e568b7658578def2`, concurrent Task author repairs during QA | FAIL | `_workspace/residual-controls/preflight-staged-qa-fail.json`, SHA-256 `bf424fa21b2e50a497ba3936257e1b57e938a05a26072a5107273e5afb5c8c14`: seven of nine gates PASS, repository-quality and selected-nonstyle FAIL, and source tree changed during QA; no admissible overall PASS | yes | none |
+| EVD-020 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Trusted control preflight | Four frozen reviewed paths at index tree `70dcfc9048e912717810ce1444ff2fa4f55261e6`, pinned `scripts/qa.py staged` | PASS | `_workspace/residual-controls/preflight-staged-qa-pass.json`, SHA-256 `59787d9fb73fceef28d5a8b526befc6450fc60788c018bc92408b4f482e093c8`: 16 gates PASS, rc0; independent four-file security/code review `_workspace/residual-controls/trusted-control-correction-review.json`, SHA-256 `a1340a3c6567997db8525af99f8eba5ab23dca6294dbabf310e9d459f491a47a`; checked normal commit `32be232908da7cff71ff1003349407fb2a2993da` has the same tree and local main fast-forward. This resolves only EVD-019, not EVD-017 | yes | EVD-019 |
+| EVD-021 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected source staged index tree `96cf651343e7eabb00a9895783d011f70eef50b5` before Task0019 profile repair and the later local-service boundary extension | FAIL | `_workspace/residual-controls/corrected-source-staged-qa-fail.json`, SHA-256 `0de0d916b41e5f342f7772964fc87ca53bbdf436ce950f82c99d320002daa9b4`, and `corrected-source-staged-qa.log`, SHA-256 `20f5d3483c610db9a3c2372c5da3c39d27526b31c2abe3cf7243036578a8e2e1`: 10 gates PASS, `markdown-profiles` FAIL, rc1. `corrected-source-markdown-diagnostic.json`, SHA-256 `396a4d8e094667f41aa764a561f5969292d03b6657ca5a9c1e35582bf2bdfaf8`, reports `TASK-EXECUTION-RESULT` for Task0019 row 1 `draft/DEFER`; its owner is correcting that profile. The other ten passing leaves do not form overall acceptance; an exact same-check recheck must resolve this and EVD-017. No PASS is claimed | yes | none |
+| EVD-022 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Source staged index tree `725e5f8cd90f7add8729f82503806550f95f9b0d` across 24 changed paths, before the current matrix-reader correction | FAIL | `_workspace/residual-controls/external-alignment-staged-qa-fail.json`, SHA-256 `cca17ffa16b0e47047383694669d6c51f023f0c31f9d5ec76e89a0fd5bda5a3d`: rc1, 20 of 21 gates PASS. `_workspace/residual-controls/external-alignment-markdown-diagnostic.json`, SHA-256 `28995d9ee071df897bb66b6165870c75628d3df9beeb9b88267946b70a1260c1`, identifies `DOC-MATRIX-PARITY` for the `gitops/README.md` External Service Contract and Secret Management matrices (`row-target-set-differs`). The reader still expects retired HA PostgreSQL write/read and Platformpostgres-app-secret targets; the current matrix consumer owner is correcting that obligation. Passing leaves do not establish overall acceptance, and obsolete documentation rows are not restored to satisfy it | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -210,17 +317,22 @@ correction to its retained pre-change values, never by inventing a green check.
 - **Approval Required**: current pasted P01 request authorizes scoped local
   repair, ordinary logical commits and isolated worktree/branch creation.
   The exact server resource operation is now approved as bound below.
-  Common edition decision remains with buenhyden; push, PR, hosted merge,
-  tag/Release publication and live execution lack current
-  scoped approval. Quoted historical approvals grant none.
-- **Approved Server Operation**: the current trusted user reply supersedes
-  the earlier missing approval for one `PATCH` to
+  The 2026-10-09 trusted user request additionally authorizes the bounded
+  residual investigation, read-only `k3d-hyhome` status snapshot and reviewed
+  `v*` control-plane operations recorded above. This is the authorization
+  reference for those performed steps, not an edition-specific final approval
+  or standing permission. The final common decision remains with buenhyden;
+  push, PR, hosted merge, tag/Release publication, secret reads, cluster
+  mutation and unreviewed protected actions are not established by this Task.
+  Quoted historical approvals grant none.
+- **Approved Server Operation (2026-10-08 record)**: the then-current trusted
+  user reply superseded the earlier missing approval for one `PATCH` to
   `repos/buenhyden/hy-home.k8s/branches/main/protection/required_status_checks`
-  with the exact JSON above. Root executes it on the user's behalf after
-  matching current main/settings and App purpose. This is not delegated to
-  a subagent. Verify the original chat approval and absence of revocation
-  immediately before invoking; other protected actions remain unapproved
-  except the subsequently approved local Git finish below.
+  with the exact JSON above. Root executed it on the user's behalf after
+  matching then-current main/settings and App purpose, with the read-back in
+  EVD-004. This dated authorization is not a repeat instruction or a basis
+  for the distinct 2026-10-09 operations; those have their own reviewed
+  input and receipt in EVD-013.
 - **Approved Git Finish**: the latest user request authorizes local main
   fast-forward of codex/p01-current-contract and removal of that owned branch
   and `.worktrees/p01-current-contract` only. Preserve the unique candidate and
@@ -231,9 +343,14 @@ correction to its retained pre-change values, never by inventing a green check.
   non-style), actual pinned Commitizen message, independent read-only review;
   CLI help and focused existing regressions only where an affected contract
   needs them. Inspect active hook routing and reuse no merely matching path.
-- **Live Validation**: the approved remote setting operation and its read-back
-  are PASS under EVD-004. Cluster, native discovery, Release and current hosted
-  PR execution remain DEFER; a setting read-back is not a runtime PR verdict.
+- **Live Validation**: the 2026-10-09 eight-command read-only cluster
+  status/metadata snapshot returned rc 0 at the named context and reviewed
+  source; this is a bounded observation, not completion of REQ-0004's six
+  product scenarios. External telemetry, TLS/recovery duration, deployment
+  acceptance, native discovery, Release and current hosted PR execution remain
+  unmeasured or DEFER with their named owners. EVD-004 and EVD-013 accept only
+  their respective server control-plane settings/read-back, not runtime PR
+  or publisher behavior.
 - **Secret / Vault Handling**: no secret reads, prints, environment/config
   dumps or private data. Use only public rules and non-secret metadata.
 - **Rollback Plan**: bounded forward corrective commits on this branch, retaining
@@ -242,7 +359,10 @@ correction to its retained pre-change values, never by inventing a green check.
   strict=true, ci-summary/App 15368 and qa-provenance/App 5156553 from the
   retained before snapshot, after confirming no concurrent setting change.
 - **Evidence Location**: this Task; ignored scratch logs may support its factual
-  command summary and do not become a second execution owner.
+  command summary and do not become a second execution owner. The current
+  non-secret residual observations live under `_workspace/residual-controls/`;
+  REQ-0004/P08, SPEC-0107/P06 and the common source/adapter owners remain the
+  actual downstream execution owners named above.
 
 ## Verification Summary
 
@@ -510,3 +630,63 @@ compare its tree/OID with the checked branch. Preserve the candidate and
 metadata before removing the clean owned worktree and merged local branch.
 The final chat reports those observed delivery events without a second
 progress ledger or a premature Task completion claim.
+
+### 2026-10-09 residual disposition
+
+The preceding P01 close notes are dated evidence and are not an instruction
+to repeat the original setting migration or worktree finish. At current
+`3793510b04d77d3548145d89a934ed5e3888301e`, one Project-Template
+draft.6 content commit and digest exist, while the approval reference is null.
+EVD-012 advances the source identification only; VAL-P01-007 and its original
+EVD-003 final-edition/adoption check remain pending. Buenhyden owns the
+reviewed edition decision and each repository adapter owner supplies actual
+local/joint adoption evidence. Do not call the current candidate an approved
+joint standard or create a second k8s-local core.
+
+The requested read-only public server intake, approved `v*` tag/immutable
+Release configuration, restrictive fork approval and later administrator
+enforcement produced successful operations and GET read-backs in EVD-013,
+EVD-015 and EVD-016. Historical `main-*` rules, tags and the empty Release
+list remain unchanged; the configured
+creation rule names sole User 9127269, the update/deletion rule has no bypass,
+fork approval now reads `all_external_contributors`, and main protection now
+enforces administrators with its two strict App-bound checks unchanged. The
+identified SEC-P06-001 server-configuration gap is closed by these read-backs. The
+SPEC-0107 repository/release operator still owns separate exact-main/SemVer
+producer and first-publication checks. No negative-actor deny, external-fork
+new-head-SHA run, administrator push denial, exact `v*` producer or immutable
+Release publication was observed.
+
+EVD-018 records buenhyden's actual acceptance of the residual SEC-P01-001
+workflow risk with HIGH retained. It changes the owner's risk disposition,
+not the code or native enforcement; EVD-009/010 remain failed technical
+findings and EVD-008/014 remain absent actual-PR observations. Each protected
+event still needs its own identity/diff review and applicable authorization.
+The four-file trusted preflight first failed in EVD-019 and passed after
+reviewed correction in EVD-020, committed as `32be2329` with local main at
+the same tree. That narrow PASS does not resolve the full residual document
+index failures EVD-017, EVD-021 and EVD-022. The latest input passed 20 of
+21 gates but failed the current GitOps README matrix reader, which still
+requires retired targets. VAL-P01-006 remains pending until an exact recheck
+resolves all three failures.
+The conditional `required_deployment` design is only a future fork/independent
+environment candidate: `deployments:write` bypass and the unproven
+independent machine prevent treating it as SEC-P01-001 closure. The one listed
+collaborator and zero required approvals leave no human independent reviewer
+path observed. SEC-P01-001 stays HIGH with buenhyden and CI/security owner;
+VAL-P01-008 stays rejected until an actual authorized PR/control input has
+independent proof and its own required/style result. No synthetic check or
+test PR was created.
+
+Eight named `k3d-hyhome` status commands returned rc 0 for their observed
+snapshot. They were read-only, secret-value-free and bounded to the source
+revision named above. These initial commands do not establish all six
+REQ-0004 quality scenarios. Subsequent telemetry and interface samples and
+their limits are recorded in draft
+[SPEC-0106-TSK-0019](../../0106-stage99-lifecycle-normalization/tasks/tsk-0019-live-quality-observation.md),
+whose intake/admission and recovery/threshold handoff remain pending with
+REQ-0004's platform/observability/service operators; the completed P08
+local document Task is not reopened. The source documents retain their current
+states and no completed prior Task is restarted. WORK-008 remains DEFER and
+this Task stays `blocked` because final shared-edition approval, actual
+adoption and independent workflow-control proof remain unresolved.

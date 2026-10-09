@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -22,7 +22,7 @@ artifact_id: "POL-0001"
 
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 Vault의 시크릿 경계
-- 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스
+- 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스와 management/development 경계
 - ingress-nginx, k8s 전용 router, AppProject, NetworkPolicy 통제
 - repository 정적 검증과 승인된 runtime 검증의 증적 경계
 
@@ -55,9 +55,19 @@ artifact_id: "POL-0001"
 
 - External-service Service와 EndpointSlice desired state는
   `gitops/platform/external-services/*.yaml`을 single source of truth로 삼는다.
-- 외부 서비스는 host 주소 `192.168.0.13`의 공개 port로 닿는다(ADR-0046).
-  포트 계약은 OpenBao `443`(외부 Traefik), Valkey `6379`(host `26379`),
-  PostgreSQL write `15432`, PostgreSQL read `15433`이다.
+- K8s가 소비하는 외부 서비스 인터페이스는 검토한 `192.168.0.13` 경로를
+  따른다. OpenBao는 외부 Traefik `443`, 필수 ArgoCD Valkey는
+  management `mng-valkey`의 `valkey-external:6379` → host `26379`다.
+  이전 `postgres-ha`/`pg-router` write/read `15432/15433`과 Valkey cluster는
+  현행 K8s 인터페이스에서 폐기한다. EndpointSlice의 존재만으로 실제
+  runtime 접근을 판정하지 않는다.
+- 외부 Docker workspace의 `mng-pg`는 기본 `127.0.0.1:25432`, `dev-pg`는
+  기본 `127.0.0.1:25433`으로 host에 게시한다. `dev-valkey`는 Docker
+  `dev_data_net` 내부 `6379`만 expose하고 host publish가 없다. 이 세
+  인터페이스는 현재 K8s EndpointSlice 대상이 아니다. PostgreSQL localhost publish를 LAN 또는
+  K8s가 직접 접근할 수 있다고 간주하거나 임의로 재지정하지 않는다.
+  현재 Adminer는 기본 DB 서버를 지정하지 않는다. K8s에서 관리/개발 PG를
+  사용하려면 별도 연결·NetworkPolicy·Secret 설계와 승인이 필요하다.
 - Vault는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰,
   비밀번호, API key를 저장하지 않는다.
 - 시크릿 backend는 Vault API 호환 OpenBao이며, Kubernetes 식별자

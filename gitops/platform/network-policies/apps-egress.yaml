@@ -1,7 +1,6 @@
 # apps namespace egress NetworkPolicy
 # 대상: apps namespace의 모든 파드 (현재: adminer)
 # 허용 egress:
-#   - postgres-write-external / postgres-read-external (host 192.168.0.13, ADR-0046)
 #   - OTLP traces from the Istio sidecar to the external Alloy (192.168.0.13:4317)
 #   - kube-dns (kube-system)
 #   - Istiod control plane (istio-system:15010/15012/15014)
@@ -16,15 +15,11 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # PostgreSQL write/read (postgres-write-external / postgres-read-external)
+    # OTLP traces to the external Alloy (ADR-0046)
     - to:
         - ipBlock:
             cidr: 192.168.0.13/32
       ports:
-        - protocol: TCP
-          port: 15432
-        - protocol: TCP
-          port: 15433
         - protocol: TCP
           port: 4317
     # kube-dns
