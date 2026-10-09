@@ -1,19 +1,24 @@
 [tool.commitizen]
 name = "cz_customize"
-# Preserve pinned Commitizen's generated-message exceptions explicitly.
+# Keep only generated Git Merge/Revert exceptions; the paired guard checks shapes.
 # These do not authorize merge, fixup, squash, amend, or history rewriting.
-allowed_prefixes = ["Merge", "Revert", "Pull request", "fixup!", "squash!", "amend!"]
+allowed_prefixes = ["Merge", "Revert"]
 
 [tool.commitizen.customize]
 schema = "<type>(<scope>)[!]: <subject>\n\n[optional body]\n\n[optional footer]"
 example = "feat(gitops): add namespace ownership policy"
 info_path = ".gitmessage"
 message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}{% if breaking %}!{% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
-schema_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?!?: (?=[^\\r\\n]*\\S)[^\\r\\n]*[^.\\r\\n](\\n\\n[\\s\\S]+)?$"
-# New-message validation rejects a final period; historical parsing retains it.
+schema_pattern = '''^(?i:feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(?:\([^\s()\r\n](?:[^()\r\n]*[^\s()\r\n])?\))?!?: [^\s\r\n](?:[^\r\n]*[^\s\r\n])?(?:\r?\n\r?\n(?=[\s\S]*\S)[\s\S]+)?$'''
+# Shared candidate grammar permits Unicode, type case and final punctuation.
 # Subject length/capitalization are guidance, not extra schema constraints.
-commit_parser = "^(?P<change_type>feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(?:\\((?P<scope>[^()\\r\\n]+)\\))?(?P<breaking>!)?: (?P<message>[^\\r\\n]+)(?:\\n\\n(?P<body>[\\s\\S]+))?$"
-changelog_pattern = "^(feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\\([^()\\r\\n]+\\))?!?:"
+commit_parser = '''^(?P<change_type>(?i:feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps))(?:\((?P<scope>[^\s()\r\n](?:[^()\r\n]*[^\s()\r\n])?)\))?(?P<breaking>!)?: (?P<message>[^\s\r\n](?:[^\r\n]*[^\s\r\n])?)(?:\r?\n\r?\n(?P<body>(?=[\s\S]*\S)[\s\S]+))?$'''
+
+# Generated shapes and breaking footer meaning share the same grammar owner.
+generated_merge_pattern = '''^Merge (?:(?:branch|remote-tracking branch|tag) '[^'\r\n]+'(?: into [^\r\n]+)?|commit '[0-9a-f]{40}'(?: into [^\r\n]+)?|pull request #[1-9][0-9]* from [A-Za-z0-9_.-]+/[^\s\r\n]+)(?:\r?\n\r?\n[\s\S]*)?$'''
+generated_revert_pattern = '''^Revert "[^\r\n]+"\r?\n\r?\nThis reverts commit [0-9a-f]{40}\.(?:\r?\n)?$'''
+breaking_footer_pattern = '''(?:\A|\r?\n\r?\n)(?:[A-Za-z][A-Za-z-]*(?::[ \t]+|[ \t]+#)[^\r\n]*\r?\n)*BREAKING(?: CHANGE|-CHANGE):[ \t]+\S[^\r\n]*'''
+changelog_pattern = '^(?i:feat|fix|refactor|style|docs|test|build|ci|perf|revert|chore|release|deps)(\(.+\))?(!)?:'
 change_type_map = { feat = "Feat", fix = "Fix", refactor = "Refactor", style = "Style", docs = "Docs", test = "Test", build = "Build", ci = "CI", perf = "Perf", revert = "Revert", chore = "Chore", release = "Release", deps = "Deps" }
 change_type_order = ["Feat", "Fix", "Refactor", "Perf", "Docs", "Test", "Build", "CI", "Style", "Deps", "Chore", "Revert", "Release"]
 
@@ -52,7 +57,7 @@ default = false
 [[tool.commitizen.customize.questions]]
 type = "input"
 name = "subject"
-message = "제목(subject)을 입력하세요 (끝 마침표 금지)"
+message = "제목(subject)을 입력하세요"
 
 [[tool.commitizen.customize.questions]]
 type = "input"

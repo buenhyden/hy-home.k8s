@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.1.0"
+version: "2.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 ---
 
 # Git Policy
@@ -105,25 +105,36 @@ with the Task and Git.
 supported types, optional scope, subject and body/footer syntax of ordinary
 authored messages. [`.gitmessage`](../../.gitmessage) explains that grammar to
 authors; a second commitlint grammar must not duplicate it. The configured
-commit-msg hook is the local enforcement point. Explicit generated-message
-prefix exceptions retain Git/tool compatibility and grant no merge or history
-rewrite authority. Git-cliff filters non-conventional history, including a
-native `Revert` prefix; use `revert(scope): subject` when changelog inclusion is
-intended. The hook permits an empty message only so Git can abort the commit.
-A new authored subject needs a supported type, optional nonempty scope and
-nonblank text; Unicode is allowed, while a final period or embedded carriage
-return is rejected. `type!:` and `type(scope)!:` mark a breaking change, as do
-`BREAKING CHANGE:` and `BREAKING-CHANGE:` footers. The native changelog parser
-uses its parsed breaking result, not arbitrary prose elsewhere in a body.
-Use an imperative, specific subject, preferably under 72 characters. Length,
-case and body wrapping are guidance, not extra validator rules. Historical
-parsers may retain prior punctuation without permitting it in new messages.
+commit-msg hook is the local enforcement point. Exact generated Git `Merge` and
+`Revert` syntax exceptions grant no merge or
+history rewrite authority. The pinned Commitizen hook accepts these two prefixes;
+the paired `scripts/commit-message-exceptions.py` hook narrows that acceptance
+using the generated patterns in `.cz.toml`. These checks validate syntax only:
+a manually authored message with the same shape also passes. They authenticate
+neither Git generation, an actual merge/revert, nor its provenance or authority.
+A prefix alone, `Pull request`,
+`fixup!`, `squash!`, or `amend!` does not receive an exception. The configured
+commit-msg stage permits an empty message so Git can abort the commit.
 
-The PR branch-metadata and selected style checks do not validate a PR title
-or an authored squash message. If an operator chooses squash, validate the
-actual proposed final commit message against the same Commitizen contract
-before that remote merge; do not infer its syntax from source commits or
-from `style-pr` success.
+New authored messages require a supported type, an optional nonempty scope and
+a nonblank subject. Unicode, type capitalization and final punctuation are
+permitted. The grammar excludes embedded header line breaks and requires a blank
+line before an optional body/footer. `type!:` and `type(scope)!:` mark breaking
+changes, as do `BREAKING CHANGE:` and `BREAKING-CHANGE:` footers. Git-cliff's
+case-consistent grouping consumes its native parsed breaking result, rather than
+arbitrary prose elsewhere in a body. Generated Git `Revert` messages remain
+non-conventional and are filtered from the changelog; use `revert(scope): subject`
+when changelog inclusion is intended. Prefer an imperative, specific subject
+under 72 characters; length, capitalization and body wrapping are guidance.
+History is read without rewriting older messages.
+
+The hosted PR title metadata route uses the trusted base's `.cz.toml` authored
+schema, with no generated-message exceptions. Its tracked configuration does not
+establish execution; the hosted result remains `NOT_RUN` until the actual PR SHA
+and run are observed. A title result and selected PR style result do not validate
+an authored squash message. If an operator chooses squash, validate the exact
+proposed final commit message against both local message checks before that remote
+merge. A successful title check does not authorize the merge.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and
@@ -153,11 +164,15 @@ committing:
 
 ```bash
 pre-commit run commitizen --hook-stage commit-msg --commit-msg-filename "$MESSAGE_FILE"
+pre-commit run commit-message-exceptions --hook-stage commit-msg --commit-msg-filename "$MESSAGE_FILE"
 ```
 
-Use that file for the real commit. When unrelated unstaged configuration would
+Both checks must succeed on that same file; do not replay a leaf already
+observed through an active hook on identical input/configuration. Use that file
+for the real commit. When unrelated unstaged configuration would
 make pre-commit stash or refuse, use an isolated temporary Git repository with
-the index's Commitizen pin/configuration and the same candidate message. This
+the index's Commitizen pin, `.cz.toml`, exception guard and both hook registrations,
+and the same candidate message. This
 is explicit message evidence, not proof of hook installation or delivery in
 the source repository. Never change hooksPath, disable a hook, or set a skip
 variable in order to make a failing check pass or to leave a check unrun;

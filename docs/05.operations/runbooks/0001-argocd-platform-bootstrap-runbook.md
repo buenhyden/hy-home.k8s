@@ -1,6 +1,6 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.2.1"
+version: "1.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -15,8 +15,10 @@ artifact_id: "RUN-0001"
 
 이 런북은 Linux server 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 
-클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 필수 Valkey(`6379`)와 선택적
-PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행한다.
+클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 필수 management Valkey
+(`valkey-external:6379` → host `26379`) 확인을 수행한다. Management와
+development PostgreSQL은 별도의 host-loopback 선택 점검 대상이며 현재
+K8s DB endpoint가 아니다.
 
 ## Trigger and Preconditions
 
@@ -35,10 +37,10 @@ PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행�
 - [ ] Linux server host의 native Docker Engine 정상 상태 (`docker context show`가 `default`)
 - [ ] bootstrap 필수 CLI(`k3d`, `kubectl`, `helm`, `docker`, `curl`, `jq`, `openssl`, `rg`) 설치; `argocd` CLI는 운영 확인용
 - [ ] `fs.inotify.max_user_instances` 512 이상 (bootstrap이 미달 시 중단)
-- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`). cluster는 host 주소 `192.168.0.13`의 공개 port로 닿는다 (ADR-0046). `pg-router`는 `postgresql-cluster`의 opt-in profile `postgres-ha`로만 기동하며 bootstrap 필수가 아니다 (ADR-0044)
+- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`openbao`, `openbao-agent`, `mng-valkey`). Cluster는 management Valkey의 host `192.168.0.13:26379`에 닿는다. 외부 `mng-pg`와 `dev-pg`의 기본 host publish는 각각 `127.0.0.1:25432`와 `127.0.0.1:25433`이고, `dev-valkey`는 Docker `dev_data_net` 안에서만 `6379`를 expose한다. 이 셋은 현재 K8s endpoint가 아니다. 과거 `postgres-ha`/`pg-router`와 Valkey cluster 절차는 현행 bootstrap 대상이 아니다
 - [ ] k8s router 주소 `192.168.0.14`가 host에 할당되어 있고, 외부 Traefik이 모든 주소의 80/443을 점유하지 않음 (ADR-0043)
 - [ ] Valkey `192.168.0.13:26379` 접근 가능
-- [ ] (앱이 쓰는 경우) PostgreSQL HAProxy `192.168.0.13:15432/15433` 접근 가능
+- [ ] (host의 해당 Docker 서비스가 필요한 경우) `mng-pg` `127.0.0.1:25432`, `dev-pg` `127.0.0.1:25433`를 각 서비스 owner가 선택적으로 점검한다. 이 localhost 결과를 K8s DB 접속으로 해석하지 않는다
 - [ ] k3d API가 `192.168.0.13:6550`에 bind되고 인증서 SAN에 그 주소가 있음. 이전 설정(`0.0.0.0`)으로 만든 cluster는 재생성한다
 - [ ] OpenBao Kubernetes auth `kubernetes_host`가 `https://192.168.0.13:6550`
 - [ ] OpenBao(`https://openbao.hy.home.arpa`, Vault API 호환) 접근 가능 및 unseal 상태
@@ -51,7 +53,8 @@ PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행�
 
    ```bash
    nc -z 192.168.0.13 26379
-   nc -z 192.168.0.13 15432 || echo 'pg-router stopped (optional)'
+   # 해당 Docker 서비스의 host-loopback 준비를 선택 점검할 때만:
+   # nc -z 127.0.0.1 25432 && nc -z 127.0.0.1 25433
    echo | openssl s_client -connect 192.168.0.13:6550 2>/dev/null |
      openssl x509 -noout -ext subjectAltName | rg '192\.168\.0\.13'
    VAULT_CA_FILE=secrets/certs/rootCA.pem
@@ -111,28 +114,18 @@ PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행�
 
    ```bash
    kubectl -n platform get svc,endpointslice
-   kubectl -n platform get svc,endpointslice | rg 'postgres-(write|read)-external'
    kubectl -n platform get svc valkey-external -o yaml
    ```
 
-9. 필수 Valkey 경로를 클러스터 내부에서 확인한다. PostgreSQL HAProxy는
-   `postgres-ha` profile이 기동 중인 경우에만 별도로 점검한다.
+9. 필수 management Valkey 경로를 클러스터 내부에서 확인한다. localhost에
+   게시된 `mng-pg`/`dev-pg`나 Docker 내부 `dev-valkey`로 이 검사를 바꿔
+   실행하지 않는다. 현재 PostgreSQL용 K8s Service가 없으므로 여기서
+   DB 접속 검사를 시도하지 않는다.
 
    ```bash
    kubectl -n platform run svc-probe --rm -it --restart=Never \
      --image=busybox:1.36 -- sh -c \
      "nc -zvw3 valkey-external 6379"
-   ```
-
-   `postgres-ha`가 실제 켜져 있다면 다음 연결 검사도 수행한다. 꺼져 있는
-   상태는 bootstrap 실패가 아니다. Service와 EndpointSlice의 desired state
-   확인은 앞 단계에서 그대로 수행한다.
-
-   ```bash
-   kubectl -n platform run postgres-probe --rm -it --restart=Never \
-     --image=busybox:1.36 -- sh -c \
-     "nc -zvw3 postgres-write-external 15432 && \
-      nc -zvw3 postgres-read-external 15433"
    ```
 
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
@@ -147,11 +140,12 @@ PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행�
 
 - [ ] `kubectl get nodes`에서 4개 노드 Ready 확인
 - [ ] `kubectl -n argocd get pods` 정상
-- [ ] `kubectl get svc,endpointslice -A | rg 'postgres-(write|read)-external|valkey-external'`
+- [ ] `kubectl get svc,endpointslice -A | rg 'valkey-external'`에서 management
+      Valkey만 현행 데이터 서비스 interface로 확인
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
 - [ ] `argocd app list` 및 sync 상태 확인
-- [ ] `svc-probe`에서 필수 `valkey-external:6379` 연결 성공. `postgres-ha`
-      profile이 켜져 있으면 `postgres-probe`에서 write/read 포트도 성공
+- [ ] `svc-probe`에서 필수 management `valkey-external:6379` 연결 성공.
+      선택적 localhost PostgreSQL 점검 결과는 별도 host 증거로 기록
 
 - **Signals**: ArgoCD health/sync, ESO sync status, pod readiness
 - **Evidence to Capture**: 명령 출력, 이벤트 로그, 실패/복구 타임스탬프

@@ -1310,6 +1310,55 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
             VALIDATOR.validate_workflow(workflow)
 
+    def test_required_pr_metadata_cannot_skip_title_edits(self):
+        import copy
+
+        baseline = self.workflow()
+        VALIDATOR.validate_workflow(baseline)
+        for types in (
+            ["opened", "synchronize", "reopened"],
+            ["opened", "synchronize", "reopened", "edited", "ready_for_review"],
+        ):
+            with self.subTest(types=types):
+                workflow = copy.deepcopy(baseline)
+                events = workflow.get("on", workflow.get(True))
+                events["pull_request"]["types"] = types
+                with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+                    VALIDATOR.validate_workflow(workflow)
+
+    def test_title_metadata_keeps_exact_trusted_base_and_fail_closed_code(self):
+        import copy
+
+        baseline = self.workflow()
+        VALIDATOR.validate_workflow(baseline)
+        variants = []
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][1]["with"]["ref"] = "${{ github.sha }}"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][1]["with"]["persist-credentials"] = True
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][2]["uses"] = "actions/setup-python@v7"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][3]["env"]["PR_TITLE"] = (
+            "${{ github.head_ref }}"
+        )
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][3]["run"] = "echo title-valid"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"].pop(3)
+        variants.append(workflow)
+        for workflow in variants:
+            with (
+                self.subTest(workflow=workflow),
+                self.assertRaises(VALIDATOR.ContractError),
+            ):
+                VALIDATOR.validate_workflow(workflow)
+
     def test_extra_hosted_jobs_and_qa_execution_are_rejected(self):
         for name in ("qa", "qa-source", "qa-isolated", "branch-policy"):
             workflow = self.workflow()

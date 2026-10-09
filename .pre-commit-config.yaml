@@ -10,7 +10,17 @@ repos:
     rev: efb1a7dc7a81934ff473100ae3a5a716f3022534 # frozen: v4.15.1
     hooks:
       - id: commitizen
+        args: [--allow-abort, --commit-msg-file]
         stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: commit-message-exceptions
+        name: Validate Generated Git Commit Message Exceptions
+        entry: python3 scripts/commit-message-exceptions.py
+        language: system
+        stages: [commit-msg]
+        always_run: true
 
   # --- 1. 파일 시스템 및 기본 형식 검사 ---
   - repo: https://github.com/pre-commit/pre-commit-hooks

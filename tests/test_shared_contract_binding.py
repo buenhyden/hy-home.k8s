@@ -19,14 +19,21 @@ class SharedContractBindingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
 
-    def test_candidate_nullable_proof_is_read_without_approval_inference(self) -> None:
-        candidate = validate_registry(ROOT, self.raw).shared_contract
+    def test_candidate_may_bind_source_without_approval_inference(self) -> None:
+        raw = copy.deepcopy(self.raw)
+        raw["shared_contract"].update(
+            stage="candidate",
+            version="3.1.0-draft.1",
+            source_revision="a" * 40,
+            approval_ref=None,
+        )
+        candidate = validate_registry(ROOT, raw).shared_contract
         self.assertEqual(candidate.stage, "candidate")
-        self.assertIsNone(candidate.source_revision)
+        self.assertEqual(candidate.source_revision, "a" * 40)
         self.assertIsNone(candidate.approval_ref)
         self.assertIsInstance(candidate.extensions, tuple)
 
-    def test_adopted_binding_requires_proof_and_release_edition(self) -> None:
+    def test_adopted_binding_requires_provenance_fields_and_final_edition(self) -> None:
         for key in ("source_revision", "approval_ref", "version"):
             with self.subTest(key=key):
                 raw = copy.deepcopy(self.raw)

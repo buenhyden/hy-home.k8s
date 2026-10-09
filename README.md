@@ -1,10 +1,10 @@
 ---
 title: "hy-home.k8s"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-09"
 ---
 # hy-home.k8s
 
@@ -223,8 +223,11 @@ outside-doc 참조 경계는 문서 저술 정책이
 로컬 검증은 공통 QA 진입점을 사용한다. `quick`은 변경 범위, `staged`는
 정확한 Git index를 검사한다. 필요한 동작·Archive·보안 단위 검사와 목적
 gate를 현재 Registry에서 선택한다. 긴 `full`/`ci` 일괄 검사와 blanket unit
-discovery는 현재 완료 조건이 아니다. GitHub Actions는 PR branch metadata와
-선택된 style만 별도 입력에서 검사한다.
+discovery는 현재 완료 조건이 아니다. GitHub Actions의 `ci-summary`는 PR branch metadata와 신뢰된 base의
+`.cz.toml`을 읽는 title 문법을 검사하고, `style-pr`은 선택된 style을
+별도 입력에서 검사한다. title에는 생성 메시지 예외가 없다. 정적 설정과
+로컬 회귀는 hosted 성공을 증명하지 않으며 실제 SHA/run 결과가 없으면
+해당 hosted 검사는 `NOT_RUN`이다.
 
 ```bash
 python3 scripts/qa.py --list

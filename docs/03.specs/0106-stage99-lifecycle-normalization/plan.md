@@ -1,6 +1,6 @@
 ---
 title: "Stage 99 Lifecycle Normalization Plan"
-version: "1.15.0"
+version: "1.16.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -13,6 +13,36 @@ parent_ids: ["SPEC-0106"]
 # Stage 99 Lifecycle Normalization Implementation Plan
 
 ## Global Constraints
+
+WORK-019 follows completed P08 Task0018 with an authorized, already observed
+read-only `k3d-hyhome` status/TLS/endpoint/numeric sample and the user's later
+local HA PostgreSQL retirement/Valkey-cluster exclusion request. Task0019 is the
+single new execution and criterion-decision owner; do not reopen historical
+Tasks or reset the completed Spec/Plan. Use the existing in-review
+[REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+for six product-quality scenarios and undecided thresholds, and active
+[AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+for source, topology and evidence boundaries. Proposed
+[ADR-0049](../../02.architecture/decisions/0049-external-data-service-contract-alignment.md)
+records the partial successor clauses pending the legal acceptance transition.
+Adopt actual earlier operator
+receipts with their original observation times. Compare tracked external
+Docker management/development publications with K8s consumer paths. Retain
+the former `postgres-ha`/`pg-router` port refusal as dated evidence, not a
+current desired endpoint or diagnosis of either localhost PostgreSQL. The
+source work removes retired HA consumers and keeps Valkey cluster excluded while preserving management
+Valkey LAN `26379`; no unreviewed LAN PG route, development Valkey endpoint or
+Adminer DB default is introduced. Static source/consumer alignment and local
+acceptance are separate from unobserved ArgoCD reconciliation and actual live
+removal. Separate numeric values obtained
+through authorized operator transport from public gateway redirects and
+unmeasured recovery duration; the
+latter is a named future handoff, not a required fault experiment in this work
+unit. Do not read credentials, inject faults, restart, deploy, change Git
+remotes or infer common adoption. Root owns the existing observation receipts
+and any further authorized operator query; the document writer owns only the
+Spec, Plan and Task text, followed by selected document checks and independent
+review.
 
 WORK-018 follows the current P08 operating-content request at clean local
 `main` `4ce1bf78b1536592db7fae65c233ee5a341b0375`. P02's completed
@@ -171,6 +201,7 @@ P01 completion and SPEC-0104 archive disposition stay intact.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
+| WORK-019 | [VAL-P08-019](spec.md#success-criteria--verification-plan) | Bind already authorized status/TLS/external/numeric samples to six REQ-0004 scenarios; retire unused HA PostgreSQL K8s consumers, keep Valkey cluster excluded, and align the current local external contract to Docker management/development services; carry the recovery handoff honestly | Completed P08 Task0018; dated `k3d-hyhome` and Docker operator receipts; tracked `hy-home.docker` Compose; user's retirement decision; manifest/script/document writers own disjoint files; in-review REQ-0004 and active AD-0007 | [SPEC-0106-TSK-0019](tasks/tsk-0019-live-quality-observation.md) | Preserve original receipts at old source revision, required management Valkey LAN interface and host-loopback/Docker-only boundaries; selected changed-source/consumer checks and independent review for local acceptance. Prometheus numeric samples via authorized operator transport and public-route redirect remain distinct. New ArgoCD reconciliation, live removal, remote delivery, DB login and recovery measurements are separate DEFER; no fault injection or secret read |
 | WORK-018 | [VAL-P08-018](spec.md#success-criteria--verification-plan) | Reconcile all 16 current operating documents to real product and operating evidence; preserve adopted forms, IDs, active states and links while correcting supported content and naming missing owners | P02 Task0016's migrated forms and per-row handoff; P03 Task0017's evidence/status semantics; in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md) owns measurable quality and active [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md) owns paths/evidence boundaries; one writer per file; protected live input remains separate | [SPEC-0106-TSK-0018](tasks/tsk-0018-operations-quality-and-architecture.md) | REQ-owned scenario/formula/unit/environment/threshold or named gap, AD-owned path/source boundary, seven-axis per-document Task disposition, selected document profile/relationship/link/lifecycle/style/message checks, independent semantic review, local logical commit and clean-main integration; native/hosted/live/common adoption not inferred |
 | WORK-017 | [VAL-P03-017](spec.md#success-criteria--verification-plan) | Review actual current AC obligations, separate role authority/execution, couple criterion acceptance and failure resolution, and migrate pending Task consumers | Same shared candidate and P02 local result; architect design before single-owner contract changes; P05/P07/P08 external handoffs separate | [SPEC-0106-TSK-0017](tasks/tsk-0017-task-acceptance-and-current-review.md) | Recursive intake/AC disposition, synthetic failing/boundary cases, retained history/status-writer controls, changed-index document/state/link/style/message and independent review; no unobserved hosted/live approval |
 | WORK-016 | [VAL-P02-016](spec.md#success-criteria--verification-plan) | Identify the common candidate, couple role contracts and consumers, migrate every current operating instance, and clarify sole status authoring | Same P01 candidate; root owns Registry/guidance/Task; quality-engineer owns schema/reader/content regressions; doc-writer owns three forms and current operations; independent research/design/review | [SPEC-0106-TSK-0016](tasks/tsk-0016-shared-profile-migration.md) | Ordered inventory and design, synthetic RED/GREEN, changed-input document/relationship/state/style checks, exact-index staged and message checks, independent review; P03 shared state and P08 live/product handoffs remain distinct |

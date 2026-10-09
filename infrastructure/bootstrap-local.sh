@@ -13,12 +13,13 @@ ROOT_CA_FILE="${ROOT_CA_FILE:-$CERT_DIR/rootCA.pem}"
 ROOT_CA_KEY_FILE="${ROOT_CA_KEY_FILE:-$CERT_DIR/rootCA-key.pem}"
 VAULT_ADDR="${VAULT_ADDR:-https://openbao.hy.home.arpa}"
 VAULT_CA_FILE="${VAULT_CA_FILE:-$ROOT_CA_FILE}"
-# ADR-0046: external services are reached through host-published ports.
+# ArgoCD needs the management Valkey LAN publish (ADR-0046). PostgreSQL
+# management and development profiles publish only to the Docker host loopback.
 EXTERNAL_HOST_IP="${EXTERNAL_HOST_IP:-192.168.0.13}"
-POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-$EXTERNAL_HOST_IP}"
-POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
-POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-$EXTERNAL_HOST_IP}"
-POSTGRES_READ_PORT="${POSTGRES_READ_PORT:-15433}"
+POSTGRES_MNG_ADDR="${POSTGRES_MNG_ADDR:-127.0.0.1}"
+POSTGRES_MNG_PORT="${POSTGRES_MNG_PORT:-25432}"
+POSTGRES_DEV_ADDR="${POSTGRES_DEV_ADDR:-127.0.0.1}"
+POSTGRES_DEV_PORT="${POSTGRES_DEV_PORT:-25433}"
 VALKEY_ADDR="${VALKEY_ADDR:-$EXTERNAL_HOST_IP}"
 VALKEY_PORT="${VALKEY_PORT:-26379}"
 
@@ -171,9 +172,9 @@ fi
 echo "[2/11] Validate external dependencies"
 wait_for_vault_ready
 check_tcp_dependency "valkey" "$VALKEY_ADDR" "$VALKEY_PORT"
-# pg-router serves apps only and its profile may be stopped (ADR-0046).
-warn_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
-warn_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
+# These host-local profiles are optional and are not K8s Service endpoints.
+warn_tcp_dependency "postgres-management" "$POSTGRES_MNG_ADDR" "$POSTGRES_MNG_PORT"
+warn_tcp_dependency "postgres-development" "$POSTGRES_DEV_ADDR" "$POSTGRES_DEV_PORT"
 
 VALKEY_PASSWORD="$(vault_curl \
   "$VAULT_ADDR/v1/secret/data/platform/argocd" |

@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.7.1"
+version: "0.7.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 layer: "architecture"
 ---
 # 02.architecture/decisions (ADR)
@@ -73,6 +73,7 @@ layer: "architecture"
 |   [`./0046-external-services-over-host-addresses.md`](./0046-external-services-over-host-addresses.md) | External service transport 결정 |
 |   [`./0047-agent-contract-and-resource-ownership.md`](./0047-agent-contract-and-resource-ownership.md) | Agent 계약과 resource 소유 경계의 한정 개정 |
 |   [`./0048-local-qa-and-semver-release-ownership.md`](./0048-local-qa-and-semver-release-ownership.md) | 로컬 QA 단계별 책임과 단일 SemVer 릴리스 생산자 결정 |
+|   [`./0049-external-data-service-contract-alignment.md`](./0049-external-data-service-contract-alignment.md) | 외부 데이터 서비스의 management/development 및 현행 K8s 소비 경계 한정 개정 |
 
 ## Usage
 

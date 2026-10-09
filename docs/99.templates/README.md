@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.9.0"
+version: "0.10.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "templates"
 ---
 # 99.templates
@@ -22,12 +22,40 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-Registry의 `shared_contract`는 P01에서 연결한 하나의
-`WGOV-CORE / 3.0.0-draft.3` 공동 검토 후보와 이 지역 adapter를 식별한다.
-검토 bytes의 digest는 승인 증거가 아니다. 정본 source commit과 최종 승인
-참조는 아직 없으므로 null이며, 공동 owner buenhyden의 최초 수립·승인과
-지역 채택·네 저장소 공동 채택은 각각 실제 근거를 확보한 뒤 기록한다.
-현재 언어·상태·native 차이는 명시된 이관 경계이며 새 공통 판본을 뜻하지 않는다.
+Registry의 `shared_contract`는 buenhyden이 정확한 원본에 대해 승인한
+`WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter 후보를 식별한다. 공동
+정본의 입구는 Project-Template의 기존 `.agents/governance/standards.md`다.
+그 소스 묶음은 Stage 00·99, QA·Git·harness·모델·환경 정책, handoff prompt와
+Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경로를 UTF-8
+순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
+차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
+
+검토용 `3.0.0-draft.8` 묶음의 실제 정상 commit은
+`bc5b70556c57198768119f94c287f93c87964482`이고, 그 원본 blob digest는
+Registry의 `sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee`다.
+별도 인증된 buenhyden 결정 `call_415633a444f34091860dcb4b8700431d/0`은
+바로 이 commit·digest를 최종 `WGOV-CORE / 3.0.0`으로 승인했다. commit과
+digest만으로 승인을 추론하지 않으며, 이 결정 참조가 판본 승인 근거다.
+Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한정된다.
+
+현재 Registry의 `stage: candidate`는 **이 k8s 지역 adapter의 채택이 아직
+완료되지 않았다**는 뜻이다. Stage 99 계약에는 `candidate`와 `adopted`만
+있으므로 공동 owner의 최종 승인과 지역 채택 상태를 혼동해 `adopted`로
+승격하지 않는다. Project-Template의 P06 Git 소비자는 별도 commit
+`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
+Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
+회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
+제목의 로컬 정적 경계도 확인했다. 수정된 21개 경로는 선택된 19개
+검사를 모두 통과했고, 실제 commit 메시지의 고정 Commitizen·지역 형태
+검사와 독립 소스 검토를 거쳐 `2a99a8bb25e4ffd521af89a3cf4e9dd7d66288bc`로
+정상 commit된 뒤 동일 tree로 지역 `main`에 통합됐다. 이는 C07 지역
+구현과 로컬 전달의 근거이며 공통 계약 전체의 지역 채택 판정은 아니다.
+PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 않았다.
+다른 세 저장소와
+네 저장소 공동 채택은 각자의 실제 adapter·
+승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
+요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도
+공동 정본을 뜻하지 않는다.
 
 ## Scope
 

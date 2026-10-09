@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.7.0"
+version: "1.8.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -78,7 +78,7 @@ remote integration, runtime capability assertion or live operation.
 | WORK-005 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | WP-003 follow-up: validate and commit local handoff | WORK-004; reviewable follow-up diff | [SPEC-0105-TSK-0002](tasks/tsk-0002-quoted-secret-output.md) | Full QA, message and commit evidence in the Task |
 | WORK-006 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-004](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guidance and authority boundaries; recheck SPEC-0106 closing evidence | Completed original work; clean `9067729b` base and current scoped request | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Source/consumer classification, exact revisions and P02 Task evidence |
 | WORK-007 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | Review, verify and commit the bounded local documentation handoff | WORK-006; reviewed logical index and check readiness | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Exact-index, completion, message, reviewer and commit evidence in the Task |
-| WORK-008 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan), [VAL-P01-006](spec.md#success-criteria--verification-plan), [VAL-P01-007](spec.md#success-criteria--verification-plan), [VAL-P01-008](spec.md#success-criteria--verification-plan) | Compare authority, shared-edition evidence, language, resource gates, RUN-0012 and server producers; repair local owners and retain common adoption and conditional actual-PR/control follow-up separately | Current P01 request; current tree and server read-back; one writer per file; no invented approval or unrequested PR/guard execution | [SPEC-0105-TSK-0004](tasks/tsk-0004-current-contract-review.md) | Local criteria use selected checks/messages/review; common adoption requires actual source-owner decision and the conditional PR/control criterion its actual event/proof. Task retains DEFER/FAIL and current owners. |
+| WORK-008 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan), [VAL-P01-006](spec.md#success-criteria--verification-plan), [VAL-P01-007](spec.md#success-criteria--verification-plan), [VAL-P01-008](spec.md#success-criteria--verification-plan) | Compare authority, the approved shared edition and its C07 regional commit/PR-title/release consumers, language, resource gates, RUN-0012 and server producers; repair scoped local consumer differences and retain regional adoption and conditional actual-PR/control follow-up separately | Current P01 request and exact WGOV-CORE 3.0.0 source-owner decision; current tree and server read-back; one writer per file; C07 regional implementation and selected checks before local adoption; no unrequested PR/guard execution | [SPEC-0105-TSK-0004](tasks/tsk-0004-current-contract-review.md) | Local criteria use selected checks/messages/review; shared edition approval is distinct from actual regional/four-repository adoption. C07 grammar, generated message, PR-title and release consumer parity require their actual inputs and owner review; conditional PR/control criterion requires its own event/proof. Task retains DEFER/FAIL and current owners. |
 | WORK-009 | [VAL-P01-009](spec.md#success-criteria--verification-plan) | Compare current neutral and native model/context/skill/loop/workspace owners, correct only proven local contract and consumer conflicts, and hand off distinct runtime/common decisions | Clean local main `34828945b1ce084b7287dfeebde757ff8500af7a`; disjoint writers; existing WORK-008 blocked obligations remain with Task 0004 | [SPEC-0105-TSK-0005](tasks/tsk-0005-provider-context-and-skill-governance.md) | Focused changed-boundary failures and controls; selected exact-index and actual message; independent code/security review where affected; local logical commit/integration; native and common results recorded separately |
 
 ## Verification Plan
@@ -104,6 +104,17 @@ timebox or reserve approval. Existing technical command and cleanup limits
 remain reviewed process-safety controls. Preserve all earlier execution
 records; do not revive their retired full sweep for this follow-up. Missing
 common-source authority or server-write approval stops only its dependent step.
+
+The source owner's exact WGOV-CORE 3.0.0 decision binds Project-Template
+commit `bc5b70556c57198768119f94c287f93c87964482` and its reviewed
+`sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c91725ee`
+source bundle. WORK-008 now compares the local Commitizen grammar, generated
+message handling, PR-title form and release parser to that edition through
+their current owners. Repair only demonstrated differences, select focused
+behavioral and exact-index checks, and preserve prior FAIL evidence. Approval
+of this source is not Project-Template, k8s or four-repository adoption; each
+adapter needs its own reviewed version/source/digest/approval binding and
+actual local acceptance. No hosted PR/run or Release result is inferred.
 
 ### Historical WORK-001 through WORK-007 plans
 

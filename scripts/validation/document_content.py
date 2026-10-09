@@ -64,7 +64,7 @@ GITOPS_MATRIXES = (
             "Validation",
         ),
         "fixed",
-        ("Vault API", "PostgreSQL write", "PostgreSQL read", "Valkey auth"),
+        ("Vault API", "Valkey auth"),
     ),
     Matrix(
         "Secret Management Responsibility Matrix",
@@ -79,7 +79,6 @@ GITOPS_MATRIXES = (
         "fixed",
         (
             "ClusterSecretStore vault-backend",
-            "Platform postgres-app-secret",
             "ArgoCD argocd-external-valkey",
             "ArgoCD argocd-notifications-secret",
             "Sample app ExternalSecret",

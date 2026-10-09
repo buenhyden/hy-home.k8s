@@ -1,6 +1,6 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.2.0"
+version: "1.2.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
@@ -118,13 +118,15 @@ operator가 확인한다. `hy-k8s.home.arpa/${APP}` 진입이 필요하면
 merge하면 수동 `argocd app sync`를 기다리지 않고 배포·삭제·복구가 시작될
 수 있다. 원격 push와 별도로, 운영자는 **merge 전에** 대상 앱·이미지·
 리소스 변경 범위, 자동 prune 영향과 복구 경로를 검토하고 배포 권한을
-확인한다. merge 후의 수동 승인 단계로 배포를 보류할 수 없다.
+확인한다. `argocd app sync`는 별도 operator-approved 수동 재조정일 때만
+실행한다. merge 후의 수동 승인 단계로 배포를 보류할 수 없다.
 
 ```bash
 git add "gitops/workloads/${APP}/"
 git commit -m "feat: add ${APP} to GitOps"
+# feature branch only; PR review/merge into main follows deployment authorization.
 # 검토된 commit·원격 저장소·branch 대상과 별도 push 승인을 운영자가 확인한 경우에만
-git push origin "feat/${APP}-gitops"
+git push origin feat/"${APP}"-gitops
 ```
 
 PR 검토·승인된 merge와 실제 `main` 반영 뒤 자동 reconciliation의 결과를
@@ -192,8 +194,9 @@ sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \
 
 git add "gitops/workloads/${APP}/rollout.yaml"
 git commit -m "chore: bump ${APP} to ${NEW_TAG}"
+# feature branch only; PR review/merge into main follows deployment authorization.
 # 검토된 commit·원격 저장소·branch 대상과 별도 push 승인을 운영자가 확인한 경우에만
-git push origin "chore/${APP}-${NEW_TAG}"
+git push origin chore/"${APP}"-"${NEW_TAG}"
 
 # merge 전 자동 배포 영향을 검토·승인하고, merge 후 자동 reconciliation 결과 확인
 kubectl argo rollouts get rollout ${APP} -n apps --watch

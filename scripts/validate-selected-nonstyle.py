@@ -55,6 +55,21 @@ STYLE_IDS = frozenset(
         "ruff-format",
     )
 )
+# This native message check runs only at commit-msg. The selected non-style
+# projection runs at pre-commit/manual and must not execute local code.
+LOCAL_COMMIT_MESSAGE_REPO = {
+    "repo": "local",
+    "hooks": [
+        {
+            "id": "commit-message-exceptions",
+            "name": "Validate Generated Git Commit Message Exceptions",
+            "entry": "python3 scripts/commit-message-exceptions.py",
+            "language": "system",
+            "stages": ["commit-msg"],
+            "always_run": True,
+        }
+    ],
+}
 MAX_CONFIG_BYTES = 1024 * 1024
 MAX_PATHS = 2048
 MAX_PATH_BYTES = 4096
@@ -161,11 +176,20 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
         raise NonstyleError("NONSTYLE-CONFIG: pre-commit default stage is required")
     selected = []
     seen: set[str] = set()
+    seen_local = False
     for repo in config["repos"]:
+        if isinstance(repo, dict) and repo.get("repo") == "local":
+            if (
+                seen_local
+                or repo != LOCAL_COMMIT_MESSAGE_REPO
+                or not isinstance(repo["hooks"][0]["always_run"], bool)
+            ):
+                raise NonstyleError("NONSTYLE-CONFIG: unreviewed local hook")
+            seen_local = True
+            continue
         if (
             not isinstance(repo, dict)
             or not isinstance(repo.get("repo"), str)
-            or repo["repo"] == "local"
             or re.fullmatch(r"[0-9a-f]{40}", str(repo.get("rev", ""))) is None
             or not isinstance(repo.get("hooks"), list)
         ):
@@ -201,6 +225,14 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                     raise NonstyleError(
                         "NONSTYLE-CONFIG: secret baseline changed scope"
                     )
+                existing_exclude = hook.get("exclude")
+                if existing_exclude is not None and not isinstance(
+                    existing_exclude, str
+                ):
+                    raise NonstyleError(
+                        "NONSTYLE-CONFIG: secret exclusion is malformed"
+                    )
+                baseline_exclude = r"^\.secrets\.baseline$"
                 hook = {
                     **hook,
                     "args": [
@@ -208,6 +240,11 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                         ".git/qa-trusted-secrets.baseline",
                         *args[2:],
                     ],
+                    "exclude": (
+                        f"(?:{existing_exclude})|{baseline_exclude}"
+                        if existing_exclude
+                        else baseline_exclude
+                    ),
                 }
             elif identifier == "kube-linter":
                 if hook.get("args") != ["--config", ".kube-linter.yaml"]:

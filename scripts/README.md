@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.7.3"
+version: "0.8.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -75,6 +75,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `validation/registry.json`과 그 schema | validator, surface, lane, 인자, fallback 계약 |
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
+| `commit-message-exceptions.py` | `.pre-commit-config.yaml`의 commit-msg stage에서 pinned Commitizen 뒤에 실행한다. `.cz.toml`의 생성 메시지 pattern으로 Git Merge/Revert 생성 형식의 구문만 예외로 인정하며 prefix 위조를 거부한다. 같은 형식의 수동 메시지도 통과하므로 실제 생성·merge/revert·provenance를 증명하지 않는다. 일반 메시지 문법은 Commitizen, PR title은 trusted-base authored schema가 소유하고 이 guard를 쓰지 않는다. hook 등록만으로 실제 로딩·실행을 주장하지 않는다. |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
 | `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
@@ -212,8 +213,11 @@ formatter는 직접 호출하지 말고 `pre-commit`으로 실행한다. hook �
 대상으로 삼아, 작성된 문서와 보관된 문서 안의 fenced snippet을 다시 쓴다.
 shfmt와 공백 수정도 리뷰를 거친 소스 경로에 대해 명시적으로 `--files`로 실행하는
 작업이다. 선택된 staged style은 격리된 정확한 index에서 실행하며 formatter가
-무언가를 바꾸면 검증이 실패한다. commit-msg는 별도이며 실제 후보 메시지에는
-공통 Git 정책을 따른다.
+무언가를 바꾸면 검증이 실패한다. commit-msg는 별도이며 실제 후보 UTF-8 메시지에는 pinned Commitizen과
+`commit-message-exceptions`를 같은 파일로 적용하는
+[공통 Git 정책](../.agents/governance/git.md#commit-message-validation)을 따른다.
+활성 hook에서 같은 입력의 leaf가 실제 실행되었다면 수동으로 반복하지 않는다.
+수동 fallback 검증은 hook 설치·전달 증거를 대신하지 않는다.
 
 NUL로 구분된 명시적 변경 경로 집합에는 다음을 쓴다.
 

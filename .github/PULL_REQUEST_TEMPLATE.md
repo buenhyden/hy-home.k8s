@@ -14,7 +14,7 @@ Fixes # (link to issue if applicable)
 - [ ] No PR targeting `main` bypasses the CI metadata check.
 - [ ] Draft/WIP status is intentional; this PR is not ready for review or merge until required checks pass and verification evidence is complete.
 - [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
-- [ ] CI `ci-summary` validates pull request branch metadata; check the dated main protection read-back for required checks and administrator bypass.
+- [ ] CI `ci-summary` validates PR branch metadata and the title against the trusted base's `.cz.toml` authored schema, without generated-message exceptions; check the dated main protection read-back for required checks and administrator bypass.
 
 ## 4. Change Review Categories
 
@@ -50,7 +50,11 @@ Follow the [Quality Policy](../.agents/governance/quality.md#canonical-completio
 for the delivery route and evidence required for this PR. Link the owning Task's
 selected local purpose checks and exact-index staged result on their actual
 inputs. Link both hosted `ci-summary` and `style-pr` results with each PR SHA
-and run identity when observed. This workflow does not run local purpose or
+and run identity when observed. Static workflow configuration and local title
+boundary tests do not establish a hosted result; unobserved hosted checks remain
+`NOT_RUN`. Title validation does not validate the exact final squash commit
+message; use both local message checks under the Git policy for that message.
+This workflow does not run local purpose or
 document-content QA. Live evidence remains `DEFER` without direct observation
 and a named next owner.
 Link the owning Task for execution status, acceptance, and check evidence;
