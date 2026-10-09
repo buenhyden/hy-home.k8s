@@ -1,8 +1,8 @@
 ---
 title: "External Data Service Contract Alignment"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-10-09"
 layer: "architecture"
@@ -17,12 +17,14 @@ The request owner chose to retire this Kubernetes repository's former HA
 PostgreSQL route, keep Valkey-cluster consumption outside its current scope,
 and align its data-service
 interface with the tracked `hy-home.docker` management and development
-services. This proposed record identifies the narrow replacement clauses of
+services. This accepted decision identifies the narrow replacement clauses of
 [ADR-0044](./0044-stateful-data-stores-stay-external.md) and
 [ADR-0046](./0046-external-services-over-host-addresses.md). Their external
 runtime ownership and host-transport decisions remain accepted for the
-unaffected services. The proposed state is initial authoring, not an accepted
-decision or observed cluster reconciliation.
+unaffected services. The request owner's 2026-10-09 retirement instruction is
+the decision basis; the scoped source was committed locally at
+`be6aaa5154c3debe38a643f99b941ad6a7bc7c73`. Acceptance of this decision
+does not establish remote publication or observed cluster reconciliation.
 
 ## Context
 
@@ -146,7 +148,7 @@ ADR-0044's external placement, separation from cluster persistence and
 external backup ownership remain. ADR-0046's host-address transport for
 OpenBao, telemetry and management Valkey, and its API/CA/router decisions
 remain. Their original dated context and bytes stay as historical decisions;
-neither whole document is superseded or archived by this proposed ADR.
+neither whole document is superseded or archived by this scoped ADR.
 
 - **Requirement:** [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md),
   FR-0001/0003/0004/0008/0010 and NFR-0002.

@@ -1,8 +1,8 @@
 ---
-title: "Current Live Quality Observation"
-version: "0.1.0"
+title: "Current Quality Observation and External Contract Alignment"
+version: "0.2.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -10,7 +10,7 @@ artifact_id: "SPEC-0106-TSK-0019"
 parent_ids: ["SPEC-0106-PLAN-0001"]
 ---
 
-# Task: Current Live Quality Observation
+# Task: Current Quality Observation and External Contract Alignment
 
 ## Overview
 
@@ -22,9 +22,11 @@ the former HA PostgreSQL K8s consumers, keeps Valkey cluster excluded, and align
 contract with actual Docker management/development services. The parent Spec
 and Plan and completed
 [P08 Task0018](tsk-0018-operations-quality-and-architecture.md) remain
-completed. This draft records inputs and a prospective local source change;
-it is not acceptance of every product quality scenario or permission to run a
-new protected operation.
+completed. The scoped source was committed locally at
+`be6aaa5154c3debe38a643f99b941ad6a7bc7c73` and passed selected source
+checks. This Task is ready for its execution and local integration decision;
+the received observations and committed source do not accept every product
+quality scenario or authorize a new protected operation.
 
 ## Inputs
 
@@ -33,9 +35,11 @@ new protected operation.
   undecided thresholds. Active
   [AD-0007](../../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
   owns the current single-host topology, source paths and evidence limits.
-  Proposed [ADR-0049](../../../02.architecture/decisions/0049-external-data-service-contract-alignment.md)
-  identifies the partial ADR-0044/0046 data-service amendment; the proposed
-  creation is not itself acceptance or live reconciliation.
+  Accepted [ADR-0049](../../../02.architecture/decisions/0049-external-data-service-contract-alignment.md)
+  version 1.0.0 identifies the partial ADR-0044/0046 data-service amendment.
+  Its decision basis is the request owner's 2026-10-09 retirement instruction;
+  decision acceptance and the local source commit do not establish live
+  reconciliation or remote publication.
 - Operator receipts are in ignored checkout-root
   `_workspace/residual-controls/`: `live-observations.json` (SHA-256
   `c7160d35c0f06606fbf40dab785cc0e1bc8d036820b9a92c7f3031bb35d3adae`),
@@ -69,7 +73,8 @@ new protected operation.
   `dev_data_net:6379` with no host publish. The K8s
   source at the earlier observation revision had required management Valkey
   plus `15432/15433` opt-in `postgres-ha`/`pg-router` tuples. The current
-  unaccepted local source removes those PostgreSQL tuples and retains only
+  committed local source at `be6aaa5154c3debe38a643f99b941ad6a7bc7c73`
+  removes those PostgreSQL tuples and retains only
   management Valkey under `gitops/platform/external-services/`. Neither the
   historical tuples nor localhost PG are a new K8s PG endpoint.
   Source and Docker metadata observations remain separate from authenticated
@@ -77,7 +82,7 @@ new protected operation.
 - At the earlier live-observation revision, the
   [Adminer Rollout](../../../../gitops/workloads/adminer/rollout.yaml) set
   `ADMINER_DEFAULT_SERVER` to the former HA write `:15432`. The current
-  unaccepted local source removes that default, without redirecting it to
+  committed local source removes that default, without redirecting it to
   management/development PostgreSQL. The older UI HTTP 200 and Rollout
   Healthy sample did not demonstrate a DB login or query, and no later live
   reconciliation or DB result is claimed.
@@ -88,7 +93,7 @@ new protected operation.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-019 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | Bind dated observations to six REQ-0004 scenarios and align current local K8s consumers with Docker management/development services; preserve unmeasured recovery and public-gateway boundaries | platform | frontmatter | NOT_RUN | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018 |
+| WORK-019 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | Bind dated observations to six REQ-0004 scenarios and align current local K8s consumers with Docker management/development services; preserve unmeasured recovery and public-gateway boundaries | platform | frontmatter | NOT_RUN | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019 |
 
 ## Task Evidence
 
@@ -112,12 +117,13 @@ new protected operation.
 | EVD-P08-019-016 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Selected document checks and independent semantic review | At source index tree `96cf651343e7eabb00a9895783d011f70eef50b5`, 10 of 11 selected gates passed, but `markdown-profiles` rejected this newly drafted Task's first row `DEFER`: a draft Task row must use `NOT_RUN`. The earlier live PASS rows remain received inputs; no operator observation is reset. This failure predates the user's HA/cluster retirement extension and awaits changed-input QA. | FAIL | `_workspace/residual-controls/corrected-source-staged-qa-fail.json`, SHA-256 `0de0d916b41e5f342f7772964fc87ca53bbdf436ce950f82c99d320002daa9b4`; `corrected-source-markdown-diagnostic.json`, SHA-256 `396a4d8e094667f41aa764a561f5969292d03b6657ca5a9c1e35582bf2bdfaf8`; prior log SHA-256 `20f5d3483c610db9a3c2372c5da3c39d27526b31c2abe3cf7243036578a8e2e1` | yes | none |
 | EVD-P08-019-017 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | External contract source and consumer focused review | At local base `32be232908da7cff71ff1003349407fb2a2993da` and tracked Docker revision `77a80bc1478c3dfb46cfe8b8de97aa971817c494`, the assigned implementation removed the HA PostgreSQL manifest/consumer while preserving management Valkey and observability tuples. Its author observed 3/3 focused RED then 3/3 GREEN, 9/9 owned-module PASS, three Bash syntax checks and Ruff checks; independent network-reviewer read-only review returned PASS for current port/bind alignment. The receipt lists exact eight changed-file hashes. This is focused local source evidence, not final exact-index QA, remote merge or live reconciliation. | PASS | `_workspace/residual-controls/external-alignment-implementation-review.json`, SHA-256 `edcbbc597e86461a56fce39f10e8d5b145bd2a680c15886ce5de72d0c38286b3` | yes | none |
 | EVD-P08-019-018 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Selected document checks and independent semantic review | At staged source tree `725e5f8cd90f7add8729f82503806550f95f9b0d`, 20 selected gates passed and `markdown-profiles` failed with `DOC-MATRIX-PARITY` for both current GitOps README matrices. The unchanged reader still expected retired PostgreSQL write/read and former `postgres-app-secret` rows. The source consumer must change to the new current row set; restoring retired rows would misstate the user's contract. No final source QA PASS is claimed. | FAIL | `_workspace/residual-controls/external-alignment-staged-qa-fail.json`, SHA-256 `cca17ffa16b0e47047383694669d6c51f023f0c31f9d5ec76e89a0fd5bda5a3d`; `external-alignment-markdown-diagnostic.json`, SHA-256 `28995d9ee071df897bb66b6165870c75628d3df9beeb9b88267946b70a1260c1` | yes | none |
+| EVD-P08-019-019 | [VAL-P08-019](../spec.md#success-criteria--verification-plan) | WORK-019 | Selected document checks and independent semantic review | Exact staged source tree `bcc4185d7ae76cb01ec1699a9c2e7ed11e9d766c` (25 paths, committed locally as `be6aaa5154c3debe38a643f99b941ad6a7bc7c73`) passed `validation-venv/bin/python scripts/qa.py staged`: 21/21 selected gates, exit 0. The registered Markdown matrix reader now expects the current Valkey/telemetry rows; its changed-input gate passed. Independent semantic source and consumer-delta reviews were recorded. This is local static evidence, not live reconciliation, remote main publication or Task execution acceptance. | PASS | `_workspace/residual-controls/external-alignment-corrected-staged-qa-pass.json`, SHA-256 `963cad7f1bbbe5729c98520dfcf02d5be6db9a08e1db8d9f963a9fd7d73079c0`; log SHA-256 `a118b009cd01565e75d1561aa0b46eeeb191c37d2e46583657fa57b1adc5932a`; `current-matrix-consumer-green.json`, SHA-256 `aa1c84850d33e929a2751380e02bdc4acc1546e567700c8d67520f3f0ab00a85`; `external-alignment-semantic-review.json`, SHA-256 `cd155a1be1ddcf97191a5be300956d9a7722283c9c544d16c47613c515e51cbe`; `external-alignment-consumer-correction-review.json`, SHA-256 `6f343306f88b2585e22140d7f721ef672ba4d638588d84190f6969154bedfca1` | yes | EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-018 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-P08-019](../spec.md#success-criteria--verification-plan) | pending | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018 | Preserve the dated observations and the current source retirement as distinct inputs. EVD-P08-019-012 resolves only the selected numeric telemetry DEFER, not public-gateway authentication. EVD-P08-019-017 supports focused implementation/review, not final QA. EVD-P08-019-013 through -016 and -018 remain required pending/failing document checks until a changed-input PASS explicitly resolves them. Accept local source/consumer alignment only after selected checks and independent review; actual ArgoCD reconciliation and live removal require later operator evidence. Recovery and product thresholds remain separate REQ-owned handoffs. | platform for local contract acceptance; operator for live reconciliation; REQ-0004 Platform Owner with Security Reviewer, external service owner and application owner for undecided thresholds |
+| [VAL-P08-019](../spec.md#success-criteria--verification-plan) | pending | EVD-P08-019-001, EVD-P08-019-002, EVD-P08-019-003, EVD-P08-019-004, EVD-P08-019-005, EVD-P08-019-006, EVD-P08-019-007, EVD-P08-019-008, EVD-P08-019-009, EVD-P08-019-010, EVD-P08-019-011, EVD-P08-019-012, EVD-P08-019-013, EVD-P08-019-014, EVD-P08-019-015, EVD-P08-019-016, EVD-P08-019-017, EVD-P08-019-018, EVD-P08-019-019 | Preserve dated observations and committed local source retirement as distinct inputs. EVD-P08-019-012 resolves selected numeric telemetry, not public-gateway authentication. EVD-P08-019-017 supports focused implementation/review; EVD-P08-019-019 resolves the earlier required selected-check DEFER/FAIL rows on the changed source. ADR-0049 is accepted for the scoped local contract. Task execution and local integration acceptance remain pending; actual Argo CD reconciliation and live removal require later operator evidence. Recovery and product thresholds remain separate REQ-owned handoffs. | platform for local contract acceptance; operator for live reconciliation; REQ-0004 Platform Owner with Security Reviewer, external service owner and application owner for undecided thresholds |
 
 ## Approval and Safety Boundaries
 
@@ -136,7 +142,9 @@ new protected operation.
   `gitops/workloads/adminer/rollout.yaml`,
   `infrastructure/{bootstrap-local.sh,verify/verify-external-services.sh}`,
   `scripts/validate-infrastructure-contracts.sh`,
+  `scripts/validation/document_content.py`,
   `tests/test_infrastructure_tempfiles.py` and
+  `tests/test_shared_contract_binding.py`, plus
   `.agents/skills/external-service-contract-audit/references/external-service-contracts.md`;
   document, manifest and script writers keep distinct file ownership. The
   six non-secret operator receipts and external Docker Compose source above
@@ -151,9 +159,11 @@ new protected operation.
   server configuration change are outside this execution.
 - **Static Validation**: Selected Stage 99 task/profile, relationship, link,
   lifecycle and Markdown style checks, plus affected manifest/script consumer
-  checks on final local inputs; root owns commands, exact index snapshots and
-  result receipts. Earlier failures remain in EVD-P08-019-014 through -016;
-  current changed-source acceptance is pending.
+  checks passed 21/21 on the committed local source index (EVD-P08-019-019).
+  Root owns commands, exact index snapshots and result receipts. Earlier
+  failures remain in EVD-P08-019-014 through -016 and -018, with their
+  changed-input resolution linked; Task execution and integration acceptance
+  remain pending.
 - **Live Validation**: EVD-P08-019-001 through -008 and -011/-012 are bounded
   received observations at the older source revision. Public-gateway requests
   redirected (EVD-P08-019-009),
