@@ -1,8 +1,8 @@
 ---
 title: "Commit, Release and Work Tracking Follow-up"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
-status: "draft"
+status: "ready"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -26,6 +26,19 @@ consumer repairs and one bounded local criterion decision.
   `45c2d800e6a89509bd7a4473c3382ca7ef44aa63`, with isolated branch
   `codex/p06-git-release` and worktree `.worktrees/p06-git-release` created
   from that commit. No audit SHA reset or previous Task reopening occurred.
+- The three-document intake was admitted on staged tree
+  `acee0deac09dcc9beb378b5e836c3f14de1c5b54` by six selected local
+  gates, then normally committed as
+  `8e15711bf85e55e59b680185ea723715d261fef2`. Ignored checkout-root
+  `_workspace/p06-git-release/intake-index-qa.log` has SHA-256
+  `db3a8886b827b8801fb5a3ba0fe81e33a5a8e6f2aac7b6ce3d73260914ab96dc`.
+  The actual candidate message SHA-256
+  `612cc5fd8a25eac41eb7cb682704832d8435fffa47da9096bc03c6f7c2c0bd3e`
+  passed pinned Commitizen as recorded in
+  `_workspace/p06-git-release/intake-message-check.log`, SHA-256
+  `a5b63bcd3a30352d4fdcf55092a6cec1dfed4d6141ef853ed7bfbd064f4a1a6f`.
+  This admits the intake documents, not P06 implementation or the planned
+  Task evidence checks below.
 - The current [Spec](../spec.md), [Plan](../plan.md),
   [REQ-0003](../../../01.requirements/0003-workspace-agent-governance-platform.md),
   [ADR-0048](../../../02.architecture/decisions/0048-local-qa-and-semver-release-ownership.md),
@@ -116,8 +129,9 @@ consumer repairs and one bounded local criterion decision.
 
 ## Verification Summary
 
-P06 local code, document and selected index checks have not run on the new
-Task input. Remote read-back is dated context, not hosted PR, Project or
+The intake documents passed their six selected exact-index gates, actual
+message check and normal commit. P06 code and implementation checks remain
+unrun on the new Task input. Remote read-back is dated context, not hosted PR, Project or
 publication success. Current hook configuration is an observation, not proof
 of delivery. The first version, actual release, immutable setting, Project
 state and common core adoption need their separate owners and evidence.
