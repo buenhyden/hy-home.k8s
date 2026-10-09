@@ -1,8 +1,8 @@
 ---
 title: "Commit, Release and Work Tracking Follow-up"
-version: "0.3.0"
+version: "1.0.0"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-09"
 layer: "specs"
@@ -17,7 +17,7 @@ parent_ids: ["SPEC-0107-PLAN-0001"]
 This Task owns P06 execution for [WORK-004](../plan.md#work-breakdown) and
 [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan). Completed
 [Tasks 0001–0003](../spec.md#overview) retain their original results. This
-new Task will record actual commit grammar, hook, release and Issue/Project
+new Task records actual commit grammar, hook, release and Issue/Project
 consumer repairs and one bounded local criterion decision.
 
 ## Inputs
@@ -115,7 +115,7 @@ consumer repairs and one bounded local criterion decision.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-004 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | Map and repair only proven commit grammar, hook, release and work-tracking consumer differences; validate the local input and hand off external lanes | platform | frontmatter | NOT_RUN | EVD-P06-001 through EVD-P06-004 remain planned checks; source and document repair is in progress, without final WORK admission |
+| WORK-004 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | Map and repair only proven commit grammar, hook, release and work-tracking consumer differences; validate the local input and hand off external lanes | platform | frontmatter | PASS | EVD-P06-005 through EVD-P06-020 record adverse inputs, resolutions, source admission, independent review and local main integration; external lanes remain with their owners |
 
 ## Task Evidence
 
@@ -139,12 +139,14 @@ consumer repairs and one bounded local criterion decision.
 | EVD-P06-016 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | WORK-004 | Issue, Spec, Task and Project ownership | Corrected Registry, fixture and selector tests: three named methods, process rc 0 and 3 PASS. `.agents` and Release owners retain their direct leaves while the generic Archive fallback remains for actual Archive inputs; the two release-only metadata files no longer select unrelated Archive/K8S work | PASS | `_workspace/p06-git-release/route-owner-green.log`, SHA-256 `ee0b6e5981189c0827c3cc32d823c826eac54cf9dc46efabe92b6ced8b448d3e`; `_workspace/p06-git-release/route-owner-final.json`, SHA-256 `f556bc5f68041bb71411b6c522209e22af99e0a70e70f7417a3ce26f9c605595` | yes | EVD-P06-015 |
 | EVD-P06-017 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | WORK-004 | Issue, Spec, Task and Project ownership | Read-only affected-surface contract on revised local source returned rc 0 over 1,301 tracked paths with no uncovered or ambiguous path; the selection prediction is 11 gates for the 13 changed paths, before actual final-index execution | PASS | `_workspace/p06-git-release/route-owner-static.log`, SHA-256 `17b4c067a00ac8ecc03df7c8108d3054095c1fe69a5cca960f0ff64303af0e5e`; `_workspace/p06-git-release/route-owner-final.json` | yes | none |
 | EVD-P06-018 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | WORK-004 | Final local exact-index, message and independent review | Independent code and security rereviews passed the three-file routing correction diff SHA-256 `f149db937f828edce4fb1d9f9cb232e1f8f5cc91d0ffad62f20e2fd089668c6a`; the other nine reviewed source files were unchanged. Exact routes retain relevant contract checks and the generic fallback. These reviews did not run final staged QA or authorize remote publication; both HIGH findings remain external | PASS | `_workspace/p06-git-release/source-review-results-v2.json`, SHA-256 `62628770ad415951064dc9000c1cfe7d6cf65684803d83bce035df5569a64bd6` | yes | none |
+| EVD-P06-019 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | WORK-004 | Commit grammar, prompt and actual hook boundary | Actual source message SHA-256 `15fd67bc6da80766cf327ebf8f146a4ea958056cb71d4ef21a86323dad3f5dea` passed pinned Commitizen commit-msg on the source input, followed by normal commit `cf2340c6afee1da2d0a438de6588c56d5ec74710` with active hooks. Local generator, prompt, policy and actual message are joined by EVD-P06-008, EVD-P06-013 and this commit; no provider-native hook delivery or remote squash result is inferred | PASS | `_workspace/p06-git-release/source-admission.json`, SHA-256 `c834e74c4a91a509215e4f719ed25bf1bf40c3efd79057059c0a72c5d33a1a6e`; commit log SHA-256 `f0f3e44ec0964efc08df78f03b0bfdd36e807046b30485a6d354c9b0f7f6f38d` | yes | EVD-P06-001 |
+| EVD-P06-020 | [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | WORK-004 | Final local exact-index, message and independent review | `validation-venv/bin/python scripts/qa.py staged` on exact tree `594b7e054c932ae0dd0f9a79b3c1d0a481a30e48` passed 11 selected gates with rc 0 and unchanged index. The corrected Task evidence passed independent factual rereview; source code/security reviews cover initial 12 files plus later 3-file delta. The source commit `cf2340c6afee1da2d0a438de6588c56d5ec74710` was locally fast-forwarded from main `45c2d800e6a89509bd7a4473c3382ca7ef44aa63` to the same tree with rc 0 and no remote write | PASS | `_workspace/p06-git-release/source-index-final.json`, SHA-256 `8b5c6f1293a2fb2d904dc25dc139c6d19b9903671b8f59235bc48fe4d7eb0756`; QA log SHA-256 `54ff778057af82c8fb1efeafd1673b400e3575f2a521d622b3e40a00dc72a59e`; `_workspace/p06-git-release/task-review-final.json`, SHA-256 `82a634aca1408bf0d75593d8b720ee6ea0a247e7d0f677180e4bdf4164b52791`; `_workspace/p06-git-release/source-main-integration.json`, SHA-256 `23cae278b75ac4960b575e34b9c69591d80602c638b9f59b79c7f1b600d66f18` | yes | EVD-P06-004 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | pending | EVD-P06-001, EVD-P06-002, EVD-P06-003, EVD-P06-004 | Investigate current consumers; implement only confirmed differences; run selected local checks and independent review before one local acceptance decision. Preserve separate remote publication, Project, native and common-edition owners | platform for local source and documents; remote repository/release operator for external settings and publication; common standard owner for final edition |
+| [VAL-LOCAL-QA-007](../spec.md#success-criteria--verification-plan) | accepted | EVD-P06-008, EVD-P06-009, EVD-P06-011, EVD-P06-012, EVD-P06-013, EVD-P06-014, EVD-P06-016, EVD-P06-017, EVD-P06-018, EVD-P06-019, EVD-P06-020 | Accept the bounded local grammar, release preview/refusal, direct consumer routing and work-owner repair on reviewed source commit `cf2340c6afee1da2d0a438de6588c56d5ec74710` and its identical locally integrated main tree. EVD-P06-005–007 and EVD-P06-015 adverse inputs were resolved by same-check results; EVD-P06-010's unobserved outer rc was resolved by EVD-P06-011. The Task's own closing-document admission follows this decision. No actual tag/Release, Project v2 state, hosted PR, provider-native enforcement or jointly approved common edition is accepted. `SEC-P01-001` HIGH workflow-content protection remains with CI/security; `SEC-P06-001` HIGH `v*`/immutable-release protection remains with the repository/release operator before first publication | platform for local Git/release source and Task; CI/security operator for `SEC-P01-001` workflow-content protection; repository/release operator for `SEC-P06-001` `v*`/immutable-release prerequisites, remote publication and Project access; common-standard owner for final edition |
 
 ## Approval and Safety Boundaries
 
@@ -176,9 +178,21 @@ consumer repairs and one bounded local criterion decision.
 ## Verification Summary
 
 The intake and ready-transition documents each passed six selected exact-index
-gates, actual message checks and normal commits. Source and document repair
-is in progress; no final P06 implementation or selected-index result is claimed
-by those intake receipts. Remote read-back is dated context, not hosted PR, Project or
-publication success. Current hook configuration is an observation, not proof
-of delivery. The first version, actual release, immutable setting, Project
-state and common core adoption need their separate owners and evidence.
+gates, actual message checks and normal commits. The final source input passed
+11 selected staged gates and its actual candidate message check; normal commit
+`cf2340c6afee1da2d0a438de6588c56d5ec74710` was fast-forwarded to local
+main with an identical tree. This is the local acceptance input; the closing
+Task document has its own subsequent index/message/commit admission. Remote
+read-back remains dated context, not hosted PR, Project or publication success.
+The first version, actual Release, immutable setting, Project state, provider
+enforcement and common core adoption need their separate owners and evidence.
+An earlier closing-document index attempt on superseded tree
+`70377f315a0d5be19056ac9eedf47388c5d32c3b` was cancelled for the owner
+clarification, with no overall PASS:
+`_workspace/p06-git-release/closure-index-qa.json` SHA-256
+`0acdfb97a390cc0df6f49a9355e19e8a7d1dcb36954185a7f804f11ca28e3073`
+and `closure-cancellation.json` SHA-256
+`0da74c363e4e3f6b52afcb1900a5c13e0aef20b974833223554983bba5a235db`.
+The final closing-document index, message, normal commit, local main
+integration and owned cleanup belong to a terminal non-authoritative
+`_workspace/p06-git-release/delivery.json` receipt after they occur.
