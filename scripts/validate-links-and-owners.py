@@ -117,6 +117,8 @@ from document_contracts import (
     verify_opaque_evaluation_output,
     load_registry,
     read_repository_text,
+    scoped_document_content_paths,
+    validated_changed_paths,
     task_execution_issues,
     task_evidence_issues,
     task_contract_issues,
@@ -4752,6 +4754,7 @@ def _body_contract_link_diagnostics(
     path_prefixes: tuple[PurePosixPath, ...] = (),
     *,
     registry: Registry | None = None,
+    selected_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
     """Validate registry-owned relationship cells and reciprocal evidence."""
 
@@ -4760,6 +4763,8 @@ def _body_contract_link_diagnostics(
     diagnostics: list[Diagnostic] = []
     known_paths = set(context.paths)
     for path in context.paths:
+        if selected_paths is not None and path not in selected_paths:
+            continue
         view = context.profiles[path]
         profile = profiles_by_id.get(view.profile_id)
         if profile is None:
@@ -5750,12 +5755,47 @@ def _apply_debt(
     ]
 
 
+def _body_link_scope(
+    context: Context,
+    changed_paths: Sequence[str],
+    registry: Registry,
+) -> frozenset[PurePosixPath] | None:
+    """Bound body-row checks to changed documents and direct inbound users.
+
+    The ordinary link, parent, README, governance and owner graphs remain
+    global. This one-hop closure does not recursively pull in router hubs.
+    """
+
+    selected = scoped_document_content_paths(registry, changed_paths, context.paths)
+    if selected is None:
+        return None
+    changed = frozenset(PurePosixPath(raw) for raw in changed_paths)
+    affected = set(selected)
+    for source in context.paths:
+        profile = context.profiles[source]
+        parent = direct_parent(source, profile.profile_id)
+        if parent is not None and parent[0] in changed:
+            affected.add(source)
+        if source in changed and parent is not None:
+            affected.add(parent[0])
+        for raw_link in _extract_links(context.texts[source]):
+            kind, target = _local_destination(
+                source, raw_link, template=profile.mode == "template"
+            )
+            if kind in {"local", "anchor"} and target in changed:
+                affected.add(source)
+                break
+    return frozenset(affected)
+
+
 def _raw_diagnostics(
     context: Context,
     registry: Registry,
     profiles_by_id: dict[str, DocumentProfile],
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
+    *,
+    selected_body_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
     diagnostics = _link_diagnostics(context)
     for path in context.paths:
@@ -5783,6 +5823,7 @@ def _raw_diagnostics(
             body_contracts,
             body_contract_path_prefixes,
             registry=registry,
+            selected_paths=selected_body_paths,
         )
     )
     diagnostics.extend(_readme_navigation_diagnostics(context))
@@ -5907,12 +5948,28 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--inventory", action="store_true")
     parser.add_argument("--include-path", action="append", default=[])
+    parser.add_argument("--change-scope", action="store_true")
+    parser.add_argument("--changed-path", action="append", default=[])
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.change_scope != bool(args.changed_path):
+            raise ConfigurationError(
+                "--change-scope requires one or more --changed-path values"
+            )
+        if args.change_scope and (
+            args.body_contracts == "audit" or args.body_contract_path_prefix
+        ):
+            raise ConfigurationError(
+                "explicit body-contract audit cannot use change scope"
+            )
+        if args.inventory and args.change_scope:
+            raise ConfigurationError("inventory cannot use change scope")
+        if args.change_scope:
+            validated_changed_paths(args.changed_path)
         if args.inventory and args.format != "json":
             raise ConfigurationError("--inventory requires --format json")
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
@@ -5949,12 +6006,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             print(json.dumps(envelope, ensure_ascii=False, separators=(",", ":")))
             return int(bool(rows))
+        selected_body_paths = (
+            _body_link_scope(context, args.changed_path, registry)
+            if args.change_scope
+            else None
+        )
         diagnostics = _raw_diagnostics(
             context,
             registry,
             profiles_by_id,
             args.body_contracts,
             tuple(args.body_contract_path_prefix),
+            selected_body_paths=selected_body_paths,
         )
         rows = _apply_debt(context.root, diagnostics, args.mode)
         if args.format == "json":

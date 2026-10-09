@@ -41,6 +41,8 @@ from document_contracts import (
     load_registry,
     legacy_task_profile,
     read_repository_text,
+    scoped_document_content_paths,
+    validated_changed_paths,
     task_execution_issues,
     task_evidence_issues,
     task_contract_issues,
@@ -1744,6 +1746,9 @@ def document_language_diagnostics(
     registry: Any,
     documents: Sequence[tuple[PurePosixPath, DocumentProfile, str]],
     english_only_texts: Mapping[PurePosixPath, str],
+    *,
+    content_paths: frozenset[PurePosixPath] | None = None,
+    english_only_paths: frozenset[PurePosixPath] | None = None,
 ) -> list[Diagnostic]:
     """SPEC-0093: each document is written in the language its profile names."""
 
@@ -1769,6 +1774,12 @@ def document_language_diagnostics(
         if kind is None or kind == "english-only":
             continue
         checked.add(path)
+        if (
+            content_paths is not None
+            and path not in content_paths
+            and path not in contract.pending_paths
+        ):
+            continue
         found = document_language.findings(text, kind, contract)
         if path in contract.pending_paths:
             if not found:
@@ -1787,6 +1798,8 @@ def document_language_diagnostics(
             for code, detail in found
         )
     for path, text in sorted(english_only_texts.items()):
+        if english_only_paths is not None and path not in english_only_paths:
+            continue
         diagnostics.extend(
             Diagnostic(code, path, "", "english-only", detail, OWNER)
             for code, detail in document_language.findings(
@@ -1883,6 +1896,7 @@ def validate_document_text(
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
     frontmatter_schema: Mapping[str, Any] | None = None,
+    include_body: bool = True,
 ) -> list[Diagnostic]:
     """Validate exact caller-supplied text without consulting filesystem bytes."""
 
@@ -1910,7 +1924,8 @@ def validate_document_text(
     body = _frontmatter_body(
         text, path, profile, diagnostics, effective_today, frontmatter_schema
     )
-    diagnostics.extend(_body_diagnostics(path, profile, body))
+    if include_body:
+        diagnostics.extend(_body_diagnostics(path, profile, body))
     status = ""
     metadata: dict[str, Any] = {}
     if profile.frontmatter.mode == "required":
@@ -1921,6 +1936,8 @@ def validate_document_text(
         value = metadata.get("status")
         status = value if isinstance(value, str) else ""
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
+    if not include_body:
+        return sorted(diagnostics, key=diagnostic_sort_key)
     binding = profile.body_contract.task_execution if profile.body_contract else None
     if binding and binding.evidence_section:
         section = _exact_heading_section(body, f"## {binding.evidence_section}")
@@ -2191,6 +2208,8 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--include-path", action="append", default=[])
+    parser.add_argument("--change-scope", action="store_true")
+    parser.add_argument("--changed-path", action="append", default=[])
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--inventory", action="store_true")
     return parser
@@ -2200,6 +2219,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     root = args.root.resolve()
     try:
+        if args.change_scope != bool(args.changed_path):
+            raise ValueError(
+                "--change-scope requires one or more --changed-path values"
+            )
+        if args.change_scope and (
+            args.body_contracts == "audit" or args.body_contract_path_prefix
+        ):
+            raise ValueError("explicit body-contract audit cannot use change scope")
+        if args.inventory and args.change_scope:
+            raise ValueError("inventory cannot use change scope")
+        changed_paths = (
+            validated_changed_paths(args.changed_path) if args.change_scope else ()
+        )
         registry = load_registry(root)
         frontmatter_schema = load_frontmatter_schema(root)
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
@@ -2213,6 +2245,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         inventory = enumerate_target_markdown(
             root, include_paths=markdown_include_paths
+        )
+        content_paths = (
+            scoped_document_content_paths(
+                registry, args.changed_path, inventory.current_paths
+            )
+            if args.change_scope
+            else None
         )
         if args.inventory:
             payload = {
@@ -2259,13 +2298,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
                     frontmatter_schema=frontmatter_schema,
+                    include_body=content_paths is None or path in content_paths,
                 )
             )
-            diagnostics.extend(
-                document_content_diagnostics(
-                    root, path, profile, text, registry=registry
+            if content_paths is None or path in content_paths:
+                diagnostics.extend(
+                    document_content_diagnostics(
+                        root, path, profile, text, registry=registry
+                    )
                 )
-            )
         diagnostics.extend(artifact_identity_uniqueness_diagnostics(identity_documents))
         language = getattr(registry, "document_language", None)
         english_only_texts: dict[PurePosixPath, str] = {}
@@ -2284,9 +2325,35 @@ def main(argv: Sequence[str] | None = None) -> int:
                     english_only_texts[entry.path] = read_repository_text(
                         root, entry.path
                     )
+            for path in changed_paths:
+                if (
+                    path in english_only_texts
+                    or not path.as_posix().startswith(language.english_only_roots)
+                    or path.suffix not in language.english_only_suffixes
+                    or is_opaque_evaluation_output(registry, path)
+                ):
+                    continue
+                try:
+                    (root / path).lstat()
+                except FileNotFoundError:
+                    # Deleted Git paths have no current language body.
+                    continue
+                if is_ignored_repository_path(root, path):
+                    raise ValueError(f"changed English-only path is ignored: {path}")
+                # The bounded reader rejects symlinks in every path component,
+                # non-regular files, oversized input and invalid UTF-8.
+                english_only_texts[path] = read_repository_text(root, path)
         diagnostics.extend(
             document_language_diagnostics(
-                registry, identity_documents, english_only_texts
+                registry,
+                identity_documents,
+                english_only_texts,
+                content_paths=content_paths,
+                english_only_paths=(
+                    frozenset((*content_paths, *changed_paths))
+                    if content_paths is not None
+                    else None
+                ),
             )
         )
         rows = _outcome_rows(root, diagnostics, args.mode)

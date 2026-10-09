@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import dataclasses
+import contextlib
 import importlib.util
+import io
 import sys
 import unittest
+from unittest import mock
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -197,12 +200,61 @@ class TemplateTests(unittest.TestCase):
 
 
 class ValidatorTests(unittest.TestCase):
+    def test_scoped_changed_agent_json_still_checks_english_only_text(self):
+        changed = PurePosixPath(".agents/roles/registry.json")
+        original_read = PROFILES.read_repository_text
+        original_parse = PROFILES._parse_ls_files_stage_z
+
+        def korean_registry(root, path):
+            text = original_read(root, path)
+            if path == changed:
+                return text.replace(
+                    '"registry_id": "hy-home.k8s/agents"',
+                    '"registry_id": "한글"',
+                    1,
+                )
+            return text
+
+        for indexed in (True, False):
+            with self.subTest(indexed=indexed):
+                output = io.StringIO()
+
+                def stage_entries(raw):
+                    entries = original_parse(raw)
+                    return (
+                        entries
+                        if indexed
+                        else tuple(entry for entry in entries if entry.path != changed)
+                    )
+
+                with (
+                    mock.patch.object(
+                        PROFILES, "read_repository_text", side_effect=korean_registry
+                    ),
+                    mock.patch.object(
+                        PROFILES, "_parse_ls_files_stage_z", side_effect=stage_entries
+                    ),
+                    contextlib.redirect_stdout(output),
+                ):
+                    result = PROFILES.main(
+                        (
+                            "--root",
+                            str(ROOT),
+                            "--format",
+                            "json",
+                            "--change-scope",
+                            f"--changed-path={changed}",
+                        )
+                    )
+                self.assertEqual(result, 1)
+                self.assertIn("LANG-ENGLISH-ONLY", output.getvalue())
+
     @classmethod
     def setUpClass(cls):
         cls.registry = contracts.load_registry(ROOT)
         cls.profiles = {p.profile_id: p for p in cls.registry.profiles}
 
-    def codes(self, docs, pending=(), english_only=None):
+    def codes(self, docs, pending=(), english_only=None, content_paths=None):
         registry = dataclasses.replace(
             self.registry, document_language=contract(pending)
         )
@@ -214,7 +266,7 @@ class ValidatorTests(unittest.TestCase):
             {
                 item.rule_id
                 for item in PROFILES.document_language_diagnostics(
-                    registry, items, english_only or {}
+                    registry, items, english_only or {}, content_paths=content_paths
                 )
             }
         )
@@ -231,6 +283,22 @@ class ValidatorTests(unittest.TestCase):
     def test_untracked_or_unchecked_pending_path_fails(self):
         self.assertEqual(self.codes([], pending=("docs/missing.md",)), ["LANG-PENDING"])
 
+    def test_selected_language_skips_unrelated_prose_but_pending_stays_global(self):
+        unrelated = ("docs/README.md", "common/readme-stage-index", f"# D\n\n{EN}\n")
+        selected = (
+            "docs/03.specs/README.md",
+            "common/readme-stage-index",
+            f"# D\n\n{KO}\n",
+        )
+        scope = frozenset({PurePosixPath(selected[0])})
+        self.assertEqual(self.codes([unrelated, selected], content_paths=scope), [])
+        self.assertEqual(
+            self.codes(
+                [unrelated, selected], pending=(selected[0],), content_paths=scope
+            ),
+            ["LANG-PENDING"],
+        )
+
     def test_terminal_document_is_not_checked(self):
         doc = (
             "docs/03.specs/0001-x/spec.md",
@@ -242,6 +310,18 @@ class ValidatorTests(unittest.TestCase):
     def test_english_only_texts_are_checked(self):
         texts = {PurePosixPath(".agents/x.yaml"): "a: \ud55c\n"}
         self.assertEqual(self.codes([], english_only=texts), ["LANG-ENGLISH-ONLY"])
+
+    def test_scoped_english_only_keeps_unrelated_content_out(self):
+        changed = PurePosixPath(".agents/roles/registry.json")
+        unrelated = PurePosixPath(".agents/roles/README.md")
+        found = PROFILES.document_language_diagnostics(
+            self.registry,
+            (),
+            {changed: '{"name":"valid"}', unrelated: "한글"},
+            content_paths=frozenset(),
+            english_only_paths=frozenset({changed}),
+        )
+        self.assertEqual(found, [])
 
 
 class RegistryTests(unittest.TestCase):

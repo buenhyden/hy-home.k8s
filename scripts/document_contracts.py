@@ -942,6 +942,112 @@ def _normalize_relative_path(value: str | PurePosixPath) -> PurePosixPath:
     return path
 
 
+_DOCUMENT_SCOPE_READERS = frozenset(
+    {
+        "scripts/document_authority.py",
+        "scripts/document_contracts.py",
+        "scripts/document_language.py",
+        "scripts/document_lifecycle.py",
+        "scripts/validation/document_content.py",
+        "scripts/validate-document-contract-registry.py",
+        "scripts/validate-document-lifecycle.py",
+        "scripts/validate-links-and-owners.py",
+        "scripts/validate-markdown-profiles.py",
+        "scripts/sync-task-status.py",
+    }
+)
+
+
+def validated_changed_paths(
+    changed_paths: Sequence[str | PurePosixPath],
+) -> tuple[PurePosixPath, ...]:
+    """Preserve each raw old/new Git path while rejecting malformed CLI input."""
+    if not changed_paths:
+        raise ValueError("change scope requires at least one changed path")
+    normalized = tuple(_normalize_relative_path(raw) for raw in changed_paths)
+    for raw, path in zip(changed_paths, normalized, strict=True):
+        if str(raw) != path.as_posix():
+            raise ValueError(f"changed path is not normalized: {raw}")
+    return normalized
+
+
+def scoped_document_content_paths(
+    registry: Registry,
+    changed_paths: Sequence[str | PurePosixPath],
+    current_paths: Sequence[PurePosixPath],
+) -> frozenset[PurePosixPath] | None:
+    """Select body checks; None means a contract change requires the full corpus.
+
+    Metadata and relationship checks remain global in their respective readers.
+    Raw deleted paths are retained so their README matrix owners are checked.
+    """
+
+    normalized = validated_changed_paths(changed_paths)
+    current = frozenset(current_paths)
+    selected: set[PurePosixPath] = set()
+    for path in normalized:
+        name = path.as_posix()
+        if (
+            name.startswith("docs/99.templates/")
+            or name in _DOCUMENT_SCOPE_READERS
+            or name.startswith("scripts/validation/registry.")
+            or name
+            in {
+                "scripts/qa.py",
+                "scripts/run-validation-lane.py",
+                "scripts/validate-affected-surfaces.py",
+            }
+        ):
+            return None
+        if path in current:
+            # A changed Markdown document is checked only when it is in the
+            # reader's current, already validated inventory.
+            classify_path(registry, path)
+            selected.add(path)
+        owner: str | None = None
+        parts = path.parts
+        if len(parts) >= 2 and parts[0] == "examples":
+            owner = "examples/README.md"
+        elif (
+            len(parts) == 3
+            and parts[:2] == (".github", "workflows")
+            and path.suffix == ".yml"
+        ):
+            owner = ".github/repository-surface.md"
+        elif len(parts) >= 3 and parts[:2] in {
+            ("gitops", "platform"),
+            ("gitops", "workloads"),
+        }:
+            owner = f"{parts[0]}/{parts[1]}/README.md"
+        elif len(parts) >= 3 and parts[:3] in {
+            ("gitops", "clusters", "local"),
+            ("gitops", "apps", "root"),
+        }:
+            owner = "gitops/README.md"
+        elif (
+            len(parts) == 4
+            and parts[:2] == ("docs", "05.operations")
+            and parts[2] in {"guides", "policies", "runbooks"}
+            and path.suffix == ".md"
+        ):
+            owner = f"docs/05.operations/{parts[2]}/README.md"
+        elif len(parts) >= 4 and parts[:3] == (
+            "docs",
+            "05.operations",
+            "incidents",
+        ):
+            owner = "docs/05.operations/incidents/README.md"
+        elif len(parts) >= 2 and parts[0] == "infrastructure":
+            owner = "infrastructure/README.md"
+            if len(parts) == 3 and parts[1] == "verify" and path.suffix == ".sh":
+                selected.add(PurePosixPath("infrastructure/verify/README.md"))
+        if owner is not None:
+            selected.add(PurePosixPath(owner))
+    if missing := selected - current:
+        raise ValueError(f"document matrix owner missing: {sorted(missing)[0]}")
+    return frozenset(selected)
+
+
 def _decode_git_path(raw: bytes) -> PurePosixPath:
     try:
         return _normalize_relative_path(raw.decode("utf-8"))

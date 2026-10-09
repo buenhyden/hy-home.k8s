@@ -60,6 +60,9 @@ VALIDATOR_CLEANUP_SECONDS = 2.0
 VALIDATOR_ESCAPE_REPORT_LIMIT = 8
 VALIDATOR_PIPE_POLL_SECONDS = 0.05
 VALIDATOR_READ_CHUNK_BYTES = 64 * 1024
+CHANGED_DOCUMENT_ARG_MAX_COUNT = 512
+CHANGED_DOCUMENT_ARG_MAX_BYTES = 64 * 1024
+CHANGED_DOCUMENT_SINGLE_ARG_MAX_BYTES = 16 * 1024
 VALIDATOR_OWNED_PROCESS_POLL_SECONDS = 0.01
 PR_GET_CHILD_SUBREAPER = 37
 PR_SET_CHILD_SUBREAPER = 36
@@ -1614,8 +1617,15 @@ def validator_argv(
                 continue
             argv.append("--include-path=" + raw_path)
         return argv
-    if validator.get("pathInput") != "include-existing-markdown":
+    path_input = validator.get("pathInput")
+    if path_input not in {
+        "include-existing-markdown",
+        "include-existing-markdown-and-changed",
+    }:
         return argv
+    if path_input == "include-existing-markdown-and-changed":
+        for raw_path in paths:
+            contract_module.normalize_path(raw_path)
     include_candidates = list(paths)
 
     archive_form = "docs/99.templates/templates/archive/tombstone.template.md"
@@ -1632,6 +1642,18 @@ def validator_argv(
         if validator["id"] not in surface["validators"]:
             continue
         argv.extend(("--include-path", raw_path))
+    if path_input == "include-existing-markdown-and-changed" and paths:
+        changed_args = ["--changed-path=" + raw_path for raw_path in paths]
+        try:
+            sizes = [len(value.encode("utf-8")) + 1 for value in changed_args]
+        except UnicodeError as exc:
+            raise ValueError("changed document path is not UTF-8") from exc
+        if (
+            len(changed_args) <= CHANGED_DOCUMENT_ARG_MAX_COUNT
+            and max(sizes) <= CHANGED_DOCUMENT_SINGLE_ARG_MAX_BYTES
+            and sum(sizes) <= CHANGED_DOCUMENT_ARG_MAX_BYTES
+        ):
+            argv.extend(("--change-scope", *changed_args))
     return argv
 
 

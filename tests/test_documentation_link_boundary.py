@@ -46,6 +46,49 @@ STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT
 
 
 class RetainedReciprocalAndTemplateTests(unittest.TestCase):
+    def test_deleted_target_selects_one_hop_incoming_body_reader(self) -> None:
+        deleted = PurePosixPath("docs/05.operations/runbooks/deleted.md")
+        incoming = PurePosixPath("docs/05.operations/guides/0001-incoming.md")
+        unrelated = PurePosixPath("docs/05.operations/guides/0002-unrelated.md")
+        context = SimpleNamespace(
+            paths=(incoming, unrelated),
+            profiles={
+                incoming: SimpleNamespace(
+                    profile_id="operation/guide", mode="authored"
+                ),
+                unrelated: SimpleNamespace(
+                    profile_id="operation/guide", mode="authored"
+                ),
+            },
+            texts={
+                incoming: "[missing](../runbooks/deleted.md#step)",
+                unrelated: "[incoming](0001-incoming.md)",
+            },
+        )
+        with mock.patch.object(
+            validator, "scoped_document_content_paths", return_value=frozenset()
+        ):
+            selected = validator._body_link_scope(
+                context, (deleted.as_posix(),), SimpleNamespace()
+            )
+        self.assertEqual(selected, frozenset({incoming}))
+
+    def test_change_scope_option_rejects_partial_or_audit_invocation(self) -> None:
+        from contextlib import redirect_stderr
+
+        for options in (
+            ("--change-scope",),
+            ("--changed-path=docs/README.md",),
+            ("--change-scope", "--changed-path=docs//README.md"),
+            (
+                "--change-scope",
+                "--changed-path=docs/README.md",
+                "--body-contracts=audit",
+            ),
+        ):
+            with self.subTest(options=options), redirect_stderr(StringIO()):
+                self.assertEqual(validator.main(options), 2)
+
     def test_main_uses_current_context_registry_and_inventory_once(self) -> None:
         registry = SimpleNamespace(profiles=())
         inventory = SimpleNamespace(baseline_paths=(), current_paths=(), new_paths=())

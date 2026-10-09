@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.7.2"
+version: "0.7.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -76,7 +76,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `select-affected-surfaces.py` | 경로를 surface로 고르는 순수 선택 projection |
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
-| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
+| `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 선택된 변경 경로를 문서 reader에 전달하며, 인자 수나 크기 한계를 넘으면 reader의 전체 검사를 사용한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
 | `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
 | `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
@@ -84,7 +84,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 
 | 경로 묶음 | 책임 |
 | --- | --- |
-| `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증 |
+| `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증. affected·staged의 변경 경로가 본문 검사 대상을 정하며, 현재 문서의 metadata·identity 검사와 English-only 파일 검사는 유지한다. 생산자·reader helper 변경은 Registry의 문서 검사 owner로 연결한다. |
 | `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
 | `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. `archive_recovery.py`의 공용 MIG-0001 reader가 현재 원장 bytes의 고정 digest와 canonical 형식을 확인하며, Archive·link 소비자가 그 결과를 읽는다. 필요할 때 역사 envelope은 bounded Git reader로 복구한다. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
@@ -173,7 +173,8 @@ QA는 추적 경로와, 해당하는 ignore되지 않은 미추적 경로를 직
 경로, 삭제, 이름 변경도 포함한다. 작업 트리 변경에는 `qa.py quick`을, 정확한
 index에는 `qa.py staged`를 쓴다. 하위 runner는 진단용 인터페이스이며 QA의
 스냅샷 격리를 대신하지 않는다. runner에 넘기는 명시적 경로 파일은 크기가
-제한되고 NUL로 구분되어야 한다.
+제한되고 NUL로 구분되어야 한다. 문서 reader의 `--change-scope`는 이 선택
+입력이 있을 때만 쓰며, 명시적 전체 감사에서는 사용하지 않는다.
 
 ### Reproducing the local dependency identity
 

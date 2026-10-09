@@ -2170,7 +2170,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 contract_module,
             )
 
-    def test_deleted_markdown_is_not_classified_for_current_include_arguments(self):
+    def test_deleted_markdown_still_reaches_change_scope_without_current_include(self):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
         validator = next(
@@ -2190,8 +2190,70 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                     contract,
                     contract_module,
                 )
-        self.assertEqual(actual, validator["argv"])
+        self.assertEqual(
+            actual[len(validator["argv"]) :],
+            ["--change-scope", "--changed-path=retired-policy.md"],
+        )
         classify.assert_not_called()
+
+    def test_renamed_document_forwards_old_and_new_names_but_includes_only_new(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "markdown-profiles"
+        )
+        old = "docs/05.operations/policies/0003-old.md"
+        new = "docs/05.operations/policies/0004-new.md"
+        with tempfile.TemporaryDirectory(prefix="changed-doc-runner-") as temporary:
+            root = Path(temporary)
+            target = root / new
+            target.parent.mkdir(parents=True)
+            target.write_text("current\n", encoding="utf-8")
+            actual = RUNNER.validator_argv(
+                root, "staged", [old, new], validator, contract, contract_module
+            )
+        self.assertEqual(
+            actual[len(validator["argv"]) :],
+            [
+                "--include-path",
+                new,
+                "--change-scope",
+                f"--changed-path={old}",
+                f"--changed-path={new}",
+            ],
+        )
+
+    def test_changed_document_argument_budget_falls_back_to_full_validation(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "markdown-profiles"
+        )
+        paths = [
+            f"docs/05.operations/policies/{index:04d}-example.md"
+            for index in range(600)
+        ]
+        with tempfile.TemporaryDirectory(prefix="changed-doc-runner-") as temporary:
+            actual = RUNNER.validator_argv(
+                Path(temporary), "affected", paths, validator, contract, contract_module
+            )
+        self.assertEqual(actual, validator["argv"])
+
+    def test_malformed_changed_document_path_fails_before_scoped_dispatch(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "markdown-profiles"
+        )
+        with self.assertRaises(contract_module.ContractError):
+            RUNNER.validator_argv(
+                ROOT,
+                "affected",
+                ["docs/../escaped.md"],
+                validator,
+                contract,
+                contract_module,
+            )
 
     def test_proven_deleted_markdown_keeps_scope_and_validator_failure(self):
         contract_module = RUNNER.load_contract_module()
@@ -2233,12 +2295,19 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
     def _run(paths: list[str], lane: str = "affected"):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
-        completed = bounded_result(QUALITY_MARKER + "\n")
+
+        def completed(argv, **kwargs):
+            del kwargs
+            if "scripts/validation/platform/assurance.py" in argv:
+                report = StructuredPlatformResultTest().complete_report()
+                return bounded_result(json.dumps(report))
+            return bounded_result(QUALITY_MARKER + "\n")
+
         output = StringIO()
         with (
             patch.object(RUNNER.shutil, "which", return_value="/usr/bin/bash"),
             patch.object(
-                RUNNER, "run_bounded_command", return_value=completed
+                RUNNER, "run_bounded_command", side_effect=completed
             ) as invoked,
             redirect_stdout(output),
         ):
@@ -2272,7 +2341,15 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
 
         self.assertEqual(result, 0)
         self.assertTrue({"k8s-manifests", "secret-handling"} <= selected)
-        self.assertEqual(statuses, dict.fromkeys(selected, "PASS"))
+        self.assertEqual(
+            {
+                identifier: status
+                for identifier, status in statuses.items()
+                if identifier in selected
+            },
+            dict.fromkeys(selected, "PASS"),
+        )
+        self.assertEqual(statuses.get("platform-assurance-depth"), "DEFER")
         self.assertEqual(invoked.call_count, len(selected))
         self.assertIn('scope="affected:paths=1"', output)
 
@@ -2284,7 +2361,8 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             contract_module.select_paths(contract, [path], "staged", ROOT)["validators"]
         )
         path_input_count = sum(
-            row.get("pathInput") == "include-existing-markdown"
+            row.get("pathInput")
+            in {"include-existing-markdown", "include-existing-markdown-and-changed"}
             for row in contract["validators"]
             if row["id"] in selected
         )
@@ -2301,6 +2379,14 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(len(propagated), path_input_count)
         for argv in propagated:
             self.assertIn("--include-path", argv)
+        changed_argv = [
+            call.args[0]
+            for call in invoked.call_args_list
+            if "--change-scope" in call.args[0]
+        ]
+        self.assertEqual(len(changed_argv), 2)
+        for argv in changed_argv:
+            self.assertIn("--changed-path=README.md", argv)
 
 
 class ValidatorTimeoutBudgetTest(unittest.TestCase):

@@ -211,6 +211,7 @@
         "pathInput": {
           "enum": [
             "include-existing-markdown",
+            "include-existing-markdown-and-changed",
             "include-existing-files"
           ]
         },

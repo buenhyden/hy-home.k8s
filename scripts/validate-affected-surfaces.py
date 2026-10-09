@@ -53,6 +53,7 @@ MAX_JSON_INPUT_BYTES = 8 * 1024 * 1024
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
 )
+CHANGED_DOCUMENT_VALIDATORS = frozenset(("links-and-owners", "markdown-profiles"))
 SAFE_ARG = re.compile(r"^[A-Za-z0-9_./:@%+=,-]+$")
 INTERPRETER_CONTRACTS = {
     "bash": {
@@ -305,12 +306,23 @@ def validate_contract(
     path_input_validators = {
         identifier
         for identifier, validator in validators.items()
-        if validator.get("pathInput") == "include-existing-markdown"
+        if validator.get("pathInput")
+        in {"include-existing-markdown", "include-existing-markdown-and-changed"}
     }
     if path_input_validators != PATH_INPUT_VALIDATORS:
         fail(
             "SURFACE-VALIDATOR-PATH-INPUT",
-            "include-existing-markdown ownership differs from the exact document validator set",
+            "document path input ownership differs from the exact document validator set",
+        )
+    changed_document_validators = {
+        identifier
+        for identifier, validator in validators.items()
+        if validator.get("pathInput") == "include-existing-markdown-and-changed"
+    }
+    if changed_document_validators != CHANGED_DOCUMENT_VALIDATORS:
+        fail(
+            "SURFACE-VALIDATOR-PATH-INPUT",
+            "changed document path input ownership differs from the exact reader set",
         )
     selected_style = validators.get("selected-style")
     selected_nonstyle = validators.get("selected-nonstyle")

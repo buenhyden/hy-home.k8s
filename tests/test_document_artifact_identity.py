@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import contextlib
+import dataclasses
+import datetime as dt
 import importlib.util
 import io
 import re
@@ -11,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path, PurePosixPath
 
 
@@ -414,6 +417,98 @@ class RetiredArtifactIdentityTest(unittest.TestCase):
                 )
             ],
             ["LIFECYCLE-IDENTITY-REUSE"],
+        )
+
+
+class ScopedDocumentMetadataTests(unittest.TestCase):
+    def test_scoped_cli_keeps_global_duplicate_identity_and_pending_census(self):
+        unrelated = PurePosixPath(
+            "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md"
+        )
+        selected = (
+            "docs/03.specs/0107-local-qa-and-release/tasks/"
+            "tsk-0003-purpose-qa-and-ci.md"
+        )
+        source_registry = MARKDOWN.load_registry(ROOT)
+        language = dataclasses.replace(
+            source_registry.document_language,
+            pending_paths=frozenset({unrelated}),
+        )
+        registry = dataclasses.replace(source_registry, document_language=language)
+        original_read = MARKDOWN.read_repository_text
+
+        def duplicate_identity(root, path):
+            text = original_read(root, path)
+            if path == unrelated:
+                return text.replace(
+                    'artifact_id: "SPEC-0106"', 'artifact_id: "SPEC-0107"', 1
+                )
+            return text
+
+        output = io.StringIO()
+        with (
+            mock.patch.object(MARKDOWN, "load_registry", return_value=registry),
+            mock.patch.object(
+                MARKDOWN, "read_repository_text", side_effect=duplicate_identity
+            ),
+            contextlib.redirect_stdout(output),
+        ):
+            code = MARKDOWN.main(
+                (
+                    "--root",
+                    str(ROOT),
+                    "--format",
+                    "json",
+                    "--change-scope",
+                    f"--changed-path={selected}",
+                )
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("ARTIFACT-IDENTITY-DUPLICATE", output.getvalue())
+        self.assertIn("LANG-PENDING", output.getvalue())
+
+    def test_change_scope_cli_rejects_zero_malformed_and_explicit_audit(self):
+        for options in (
+            ("--change-scope",),
+            ("--changed-path=docs/README.md",),
+            ("--change-scope", "--changed-path=docs//README.md"),
+            (
+                "--change-scope",
+                "--changed-path=docs/README.md",
+                "--body-contracts=audit",
+            ),
+        ):
+            with (
+                self.subTest(options=options),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                self.assertEqual(MARKDOWN.main(options), 2)
+
+    def test_unselected_body_is_skipped_but_malformed_frontmatter_still_fails(self):
+        path = PurePosixPath(
+            "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0003-purpose-qa-and-ci.md"
+        )
+        registry = MARKDOWN.load_registry(ROOT)
+        profile = MARKDOWN.classify_path(registry, path)
+        source = (ROOT / path).read_text(encoding="utf-8")
+        self.assertIn("## Task Evidence", source)
+        broken = source.replace("## Task Evidence", "## Missing Evidence", 1)
+        broken = broken.replace('owner: "platform"', "owner: 3", 1)
+        full = MARKDOWN.validate_document_text(
+            broken, path, profile, "strict", today=dt.date(2026, 10, 9)
+        )
+        metadata_only = MARKDOWN.validate_document_text(
+            broken,
+            path,
+            profile,
+            "strict",
+            today=dt.date(2026, 10, 9),
+            include_body=False,
+        )
+        self.assertIn("TASK-EVIDENCE-COLUMNS", {item.rule_id for item in full})
+        self.assertIn("FM-OWNER", {item.rule_id for item in metadata_only})
+        self.assertNotIn(
+            "TASK-EVIDENCE-COLUMNS", {item.rule_id for item in metadata_only}
         )
 
 

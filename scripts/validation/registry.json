@@ -307,7 +307,7 @@
         "--mode",
         "strict"
       ],
-      "pathInput": "include-existing-markdown",
+      "pathInput": "include-existing-markdown-and-changed",
       "lanes": [
         "affected",
         "staged"
@@ -329,7 +329,7 @@
         "--mode",
         "strict"
       ],
-      "pathInput": "include-existing-markdown",
+      "pathInput": "include-existing-markdown-and-changed",
       "lanes": [
         "affected",
         "staged"
@@ -719,6 +719,7 @@
         "agent-governance",
         "ci-python-contract",
         "github-actions-security",
+        "markdown-profiles",
         "repository-quality"
       ],
       "protectedLevel": "protected",
@@ -909,6 +910,7 @@
       "validators": [
         "gitops-structure",
         "k8s-manifests",
+        "markdown-profiles",
         "platform-assurance",
         "policy-gates",
         "repository-quality",
@@ -934,6 +936,7 @@
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
+        "markdown-profiles",
         "platform-assurance",
         "policy-gates",
         "repository-quality",
@@ -959,6 +962,7 @@
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
+        "markdown-profiles",
         "policy-gates",
         "repository-quality",
         "secret-handling"
@@ -991,6 +995,7 @@
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
+        "markdown-profiles",
         "platform-assurance",
         "policy-gates",
         "repository-quality",
@@ -1021,6 +1026,7 @@
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
+        "markdown-profiles",
         "policy-gates",
         "repository-quality",
         "secret-handling",
@@ -1100,6 +1106,14 @@
     {
       "id": "document-reader-implementation",
       "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/document_language.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validation/document_content.py"
+        },
         {
           "kind": "exact",
           "value": "scripts/validate-markdown-profiles.py"
@@ -1184,7 +1198,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|document_lifecycle\\.py|qa\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
         }
       ],
       "validators": [
