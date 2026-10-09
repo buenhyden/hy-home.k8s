@@ -816,6 +816,40 @@ class NativeBoundaryTests(unittest.TestCase):
             path.write_text(changed)
             self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
+    @staticmethod
+    def _baseline(refs):
+        return (
+            "Read the following repository files before acting:\n"
+            + "".join(f"- `{ref}`\n" for ref in refs)
+            + "\nRead the selected canonical role and every skill procedure it requires.\n"
+            "Tracked configuration does not establish native discovery or runtime enforcement.\n"
+        )
+
+    def test_claude_baseline_omits_reads_the_gateway_imports(self):
+        """Root CLAUDE.md @-imports these, so the baseline would only reread them."""
+        reads = (
+            self.validator.REGISTRY_PATH.as_posix(),
+            ".agents/governance/agent-execution.md",
+            ".agents/governance/approval-and-safety.md",
+            ".agents/governance/quality.md",
+        )
+        path = self.root / ".claude/CLAUDE.md"
+        path.write_text(self._baseline(reads))
+        self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
+        for imported in (
+            ".claude/provider.md",
+            ".agents/workflows/work-lifecycle.md",
+            "RTK.md",
+        ):
+            path.write_text(self._baseline((*reads, imported)))
+            self.assert_rejected("AGENT-NATIVE-REFERENCE")
+
+    def test_codex_baseline_keeps_every_explicit_read(self):
+        """The Codex gateway imports nothing, so its baseline still names each owner."""
+        path = self.root / ".codex/CODEX.md"
+        path.write_text(path.read_text().replace("- `RTK.md`\n", ""))
+        self.assert_rejected("AGENT-NATIVE-REFERENCE")
+
     def test_current_common_source_cannot_reintroduce_old_dependency(self):
         path = self.root / ".codex/provider.md"
         path.write_text(path.read_text() + "Read `.agents/registry.json`.\n")
