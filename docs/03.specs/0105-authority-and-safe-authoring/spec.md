@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring"
-version: "1.5.0"
+version: "1.6.0"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
@@ -83,6 +83,14 @@ WORK-008 remains blocked on these protected/event-dependent lanes while
 independent local P03 work proceeds. All original failures, approvals and
 criterion memberships remain in the Task's dated migration provenance.
 
+The 2026-10-09 P07 [provider-governance follow-up](tasks/tsk-0005-provider-context-and-skill-governance.md)
+uses VAL-P01-009 for a separate local review of neutral/provider ownership,
+model and context rules, skill consumers, loop and workspace boundaries, and
+their actual validators. It does not reopen completed Tasks or absorb Task
+0004's common-edition and protected server obligations. The proposed
+`WGOV-CORE / 3.0.0-draft.3` is a shared review input, not an approved source
+or a provider-runtime result. The new Task owns P07 execution and evidence.
+
 ## Data Modeling & Storage Strategy
 
 Stage 99 continues to own document shape and lifecycle. Spec owns this contract,
@@ -145,6 +153,7 @@ are outside this follow-up. No new prose-mirroring test is required.
 | VAL-P01-006 | Logical commits, actual checks, independent review, delivery limits and rollback recorded |
 | VAL-P01-007 | The one common source and reviewed edition have a real owner decision, source revision and approval reference; actual local and joint adoption are recorded separately. Missing approval or unobserved adapters remain pending with their owners, not fabricated PASS or an intake prerequisite. |
 | VAL-P01-008 | Observe actual required/style results on the next authorized PR input. Before accepting a workflow/control-changing PR or Release relying on these gates, independently verify control integrity for that actual input. An operator-reviewed settings transition needs its own exact approval and read-back and cannot substitute for integrity proof. Until the event and proof exist, retain DEFER/FAIL and next owners; this conditional criterion grants no PR, workflow, server or Release execution authority. |
+| VAL-P01-009 | On the actual P07 input, distinguish neutral role, capability, skill, context, loop and work-handoff meaning from provider-native model, effort, discovery, hook and permission configuration. Repair verified owner/consumer conflicts, including business/session deadline or reserve wording, while preserving real provider limits, cancellation, technical process safety, protected approvals and no-progress stops. The new Task connects focused boundary regressions, exact-index/message checks, independent review, local integration and remaining owners. Static files do not establish native runtime behavior, final common approval or four-repository adoption. |
 
 ## Traceability
 
@@ -167,3 +176,4 @@ Execution order belongs to the [Plan](plan.md).
 | [REQ-0003-FR-0018](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-P01-006 | Task command, index and commit evidence |
 | N/A — current explicit P01 common-source/edition/adoption request | VAL-P01-007 | WORK-008 / Task0004 EVD-003; actual source-owner decision, edition identity and separate local/joint adoption |
 | N/A — current P01 actual-PR inspection and subsequent HIGH/workflow-PR review request | VAL-P01-008 | WORK-008 / Task0004 EVD-008/009/010; conditional actual-input required/style and independent control proof, with no new execution authority |
+| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md), [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md), [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-P01-009 | WORK-009 / Task0005; neutral/provider/skill/context/workspace owner and consumer comparison, focused changed-boundary checks, exact local validation and reviewed handoff; native and common adoption remain separate |

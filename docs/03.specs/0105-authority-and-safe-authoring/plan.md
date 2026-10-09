@@ -1,6 +1,6 @@
 ---
 title: "Common Authority and Safe Authoring Plan"
-version: "1.6.0"
+version: "1.7.0"
 type: "sdlc/plan"
 status: "completed"
 owner: "platform"
@@ -40,6 +40,11 @@ The 2026-10-08 [current-contract follow-up](tasks/tsk-0004-current-contract-revi
 owns the latest P01 comparison and local repairs. The completed Plan remains
 the approved routing owner; new execution state belongs only to that Task.
 
+The 2026-10-09 P07 [provider-governance follow-up](tasks/tsk-0005-provider-context-and-skill-governance.md)
+owns a distinct local WORK-009. Task 0004 retains its blocked common-edition
+and protected server obligations. This completed Plan records only the new
+work route; Task 0005 owns P07 progress, results and acceptance.
+
 ## Context
 
 The observed baseline is clean `main` at the supplied investigation revision
@@ -74,8 +79,22 @@ remote integration, runtime capability assertion or live operation.
 | WORK-006 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-004](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan) | Reconcile dated hosted evidence, current guidance and authority boundaries; recheck SPEC-0106 closing evidence | Completed original work; clean `9067729b` base and current scoped request | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Source/consumer classification, exact revisions and P02 Task evidence |
 | WORK-007 | [VAL-P01-006](spec.md#success-criteria--verification-plan) | Review, verify and commit the bounded local documentation handoff | WORK-006; reviewed logical index and check readiness | [SPEC-0105-TSK-0003](tasks/tsk-0003-authority-evidence-follow-up.md) | Exact-index, completion, message, reviewer and commit evidence in the Task |
 | WORK-008 | [VAL-P01-001](spec.md#success-criteria--verification-plan), [VAL-P01-003](spec.md#success-criteria--verification-plan), [VAL-P01-005](spec.md#success-criteria--verification-plan), [VAL-P01-006](spec.md#success-criteria--verification-plan), [VAL-P01-007](spec.md#success-criteria--verification-plan), [VAL-P01-008](spec.md#success-criteria--verification-plan) | Compare authority, shared-edition evidence, language, resource gates, RUN-0012 and server producers; repair local owners and retain common adoption and conditional actual-PR/control follow-up separately | Current P01 request; current tree and server read-back; one writer per file; no invented approval or unrequested PR/guard execution | [SPEC-0105-TSK-0004](tasks/tsk-0004-current-contract-review.md) | Local criteria use selected checks/messages/review; common adoption requires actual source-owner decision and the conditional PR/control criterion its actual event/proof. Task retains DEFER/FAIL and current owners. |
+| WORK-009 | [VAL-P01-009](spec.md#success-criteria--verification-plan) | Compare current neutral and native model/context/skill/loop/workspace owners, correct only proven local contract and consumer conflicts, and hand off distinct runtime/common decisions | Clean local main `34828945b1ce084b7287dfeebde757ff8500af7a`; disjoint writers; existing WORK-008 blocked obligations remain with Task 0004 | [SPEC-0105-TSK-0005](tasks/tsk-0005-provider-context-and-skill-governance.md) | Focused changed-boundary failures and controls; selected exact-index and actual message; independent code/security review where affected; local logical commit/integration; native and common results recorded separately |
 
 ## Verification Plan
+
+### P07 WORK-009 follow-up
+
+Inventory actual neutral policies, registered skills and callers, provider
+projections and hook adapters before changing a contract. Repair the owner and
+each affected consumer in one reviewable unit; preserve technical process
+limits, protected native approval and cancellation while removing an observed
+business/session time gate. Use focused negative and boundary checks for
+behavioral changes, selected document/profile checks for authored guidance,
+and the final exact-index/message checks. Record static configuration and
+actual native discovery, delivery or model resolution as different evidence
+lanes. No remote, private/global configuration, paid session, trust bypass or
+common-edition approval is inferred from this local plan.
 
 ### Current WORK-008 follow-up
 
