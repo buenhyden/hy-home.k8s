@@ -235,19 +235,13 @@
         "validators": [
           "affected-surface-contract",
           "agent-governance",
-          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
           "external-service-contracts",
-          "gitops-structure",
-          "infrastructure-contracts",
-          "k8s-manifests",
           "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
-          "policy-gates",
-          "repository-quality",
-          "secret-handling"
+          "repository-quality"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []

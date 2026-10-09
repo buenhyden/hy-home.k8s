@@ -53,6 +53,14 @@ does not decide them.
   `aba81011ae877769cb18f934423624cf0920660561c175b673b129d8ca18e8ba`;
   `ready-commit.json` has SHA-256
   `5c9d51c2e2803585ec8c188961d8207945fd8e6ab851bfd3a9f46b1c2090eaef`.
+- The first P07 source, reviewed permanent documents and this Task were
+  committed as `c64edee2f7d579bafe0fb125ae2ad962e6f5ebd8` after a
+  selected staged check. Scope review then found the validation registry's
+  generic `scripts/` and `tests/` fallback selected unrelated Archive and
+  K8S gates for this agent-governance input. Follow-up routing work starts
+  from that commit on `codex/p07-agent-validation-routing` in
+  `.worktrees/p07-agent-validation-routing`; local main integration and
+  whole P07 acceptance remain pending.
 - The current user's P07 request authorizes scoped local investigation,
   policy and consumer repair, selected validation, normal logical commits,
   local main integration and owned cleanup. Remote push, PR, dispatch,
@@ -91,7 +99,7 @@ does not decide them.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-009 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | Compare current neutral/native model, skill, context, loop and workspace owners; repair verified local conflicts with affected consumers and evidence | platform | frontmatter | NOT_RUN | EVD-P07-001 through EVD-P07-005 remain planned final checks; EVD-P07-006 through EVD-P07-019 record scoped implementation, review and failure resolution, while final index/message/commit/integration admission remains pending |
+| WORK-009 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | Compare current neutral/native model, skill, context, loop and workspace owners; repair verified local conflicts with affected consumers and evidence | platform | frontmatter | NOT_RUN | EVD-P07-001 through EVD-P07-005 remain planned final checks; EVD-P07-006 through EVD-P07-023 record the first source unit and corrected selector tests, while the follow-up unit's final index, local integration and acceptance remain pending |
 
 ## Task Evidence
 
@@ -116,6 +124,10 @@ does not decide them.
 | EVD-P07-017 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Neutral and native model/provider ownership | Final-byte `unittest tests.test_agent_governance tests.test_agent_governance_consumers -q` returned rc 0, 98 cases passing on the current source and copied-document inputs. Together with EVD-P07-016's separately observed 24-case rc 0, the three affected modules have current-input PASS in two commands; there is no single final 122-case command receipt. This refresh resolves the changed-input failures at EVD-P07-012 through EVD-P07-014 without erasing them | PASS | `_workspace/p07-provider-governance/binding-governance-consumers-currentdocs.json`, SHA-256 `4e498c6faf3ef7789882a64662ee5085edb18588a39d12e05fa26a720c8bf54d`; log SHA-256 `1defe0d5c635a6c060eb46b12aa1401aec2d81884e686e4c2e98ace516a9577d` | yes | EVD-P07-012, EVD-P07-013, EVD-P07-014 |
 | EVD-P07-018 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Neutral and native model/provider ownership | Independent code and security rereview of the exact 20-file implementation snapshot passed scoped static review after the binding-candidate HIGH and current owner/ceiling wording MEDIUM corrections. The reviewers did not run tests or native sessions; source, tests and eleven permanent documents are hash-bound in the receipt | PASS | `_workspace/p07-provider-governance/implementation-review.json`, SHA-256 `8e2d357c1ab14316ff0bbca3dc4b0350b32239ee1d20a2408d9ae799e6f17f12` | yes | none |
 | EVD-P07-019 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Neutral and native model/provider ownership | The checked static source, skill inventory, current-input tests and reviewed current owners now distinguish provider binding values from neutral class ceilings; the negative coordinated-widening input in EVD-P07-006 is rejected by the repaired static consumer. Related policy removes invented elapsed/shared allocation gates, repairs the knowledge router and preserves actual cancellation/technical/resource and expiry boundaries. This does not establish native skill invocation, hook delivery, permission enforcement, authenticated model access or final common-edition approval; those dependent lanes remain with the native operator and common owner | PASS | EVD-P07-007, EVD-P07-009, EVD-P07-016 through EVD-P07-018 and the reviewed current governance/provider documents | yes | EVD-P07-006 |
+| EVD-P07-020 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Final local index, message, review and integration | First source unit: actual `python scripts/qa.py staged` on 21 changed paths returned rc 0 with 17 gate PASS and unchanged index tree `929438a093d062c1871e0c1a42e47a03fd7cbd78`; pinned Commitizen message check and normal commit returned rc 0, producing `c64edee2f7d579bafe0fb125ae2ad962e6f5ebd8`. This proves that source unit's admission only, not local main integration or whole P07 acceptance | PASS | `_workspace/p07-provider-governance/source-index-qa.json`, SHA-256 `017948c1d250d2757a2cbbddec21ee3f114b9df220e15827152ab9d3d0bc1246`, log SHA-256 `216b5c7739307e4325f804444c9044466f6357402025db5c662994f8d1c545c9`; `source-commit.json`, SHA-256 `9f5f6c51e10bc4d94d5fb61747a4c93cf29916ebe9f8b4bb0731c19766fa6b22` | yes | none |
+| EVD-P07-021 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Skill package, caller and hook boundary | Read-only `match_route` review at `c64edee2` on the five changed agent source/test paths found that the generic `scripts/` route selected nine gates, including K8S and Archive, while the generic `tests/` route selected four, including Archive. All 17 selected gates had returned rc 0 at EVD-P07-020; the FAIL here is the purpose-selection decision, not a claim that a validator failed. A narrow route and meaningful negative control are still pending | FAIL | `_workspace/p07-provider-governance/routing-scope-observation.json`, SHA-256 `da1a47676c751167ef77d7fe929d749bf36d77e289ff8f0264eb4805de8c17f6`; selection in EVD-P07-020 | yes | none |
+| EVD-P07-022 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Skill package, caller and hook boundary | Against `c64edee2`, one named affected/staged selector test returned rc 1 with 12 failing subcases for six agent source/test paths: generic `scripts`/`tests` surface IDs were selected instead of `agent-implementation-contract`. The original stderr exceeded the tool output bound and was not saved; the receipt preserves the observed summary and bounded selections, not a reconstructed transcript | FAIL | `_workspace/p07-agent-validation-routing/routing-red.json`, SHA-256 `dc7706788ba1cb6ef19ecacd181d673e8156eee99b1c5e9da5068d0ad8e7b132` | yes | none |
+| EVD-P07-023 | [VAL-P01-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Skill package, caller and hook boundary | Corrected route in `scripts/validation/registry.json` and focused selector/test fixture inputs returned rc 0: three named affected-surface tests passed and the read-only registry contract checked 1304 tracked paths, 30/32 surfaces and 24 validators with no uncovered or ambiguous paths. New path-specific route selects the agent contract without unrelated Archive/K8S fallback; final changed-index admission remains pending | PASS | `_workspace/p07-agent-validation-routing/routing-final.json`, SHA-256 `b2c1237390211d71b1aceef69d0b2a7f95bc7eee2b24573bd77ee8ce39787817`; named-test log SHA-256 `4fb90f13b55dd4dd2e7825871088ab3d8e0243f9c3115d058439b5d8ebd926b4`; registry log SHA-256 `7d1ae07f468e3e1950a776b5d29e625e2c9fba9966e08b56b2f3a5e288c57905` | yes | EVD-P07-021, EVD-P07-022 |
 
 ## Criterion Acceptance
 
@@ -161,6 +173,12 @@ The first 120-case command, later 58-case module and 122-case combined command
 each returned rc 1 on different test snapshots. Their fixture and assertion
 defects were repaired; final current-input 24-case registry and 98-case
 governance/consumer commands each returned rc 0. There is no single final
-122-case receipt or final source/index admission. Native runtime, common
-approval, remote action and local integration remain unobserved. Previous
-package results remain dated evidence at their original owners.
+122-case receipt. The first source unit passed its 17 selected gates, actual
+message check and normal commit. Subsequent route review found unrelated
+Archive/K8S selection through generic source paths. A new named RED test
+reproduced the route error, while the corrected route's three focused tests
+and registry contract passed. The follow-up source unit still needs final
+index/message/review and normal commit evidence before local integration.
+Native runtime, common approval, remote action and local integration remain
+unobserved. Previous package results remain dated evidence at their original
+owners.

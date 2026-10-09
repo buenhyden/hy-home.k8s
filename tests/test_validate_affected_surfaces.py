@@ -260,6 +260,55 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     ],
                 )
 
+    def test_agent_implementation_and_its_regressions_use_agent_contract_gates(
+        self,
+    ) -> None:
+        paths = (
+            "scripts/validate-agent-governance.py",
+            "scripts/agent_governance_consumers.py",
+            "scripts/agent_registry_loader.py",
+            "tests/test_validate_agent_registry.py",
+            "tests/test_agent_governance.py",
+            "tests/test_agent_governance_consumers.py",
+        )
+        required = {
+            "affected-surface-contract",
+            "agent-governance",
+            "repository-quality",
+        }
+        unrelated = {
+            "archive-contract-tests",
+            "gitops-structure",
+            "infrastructure-contracts",
+            "k8s-manifests",
+            "policy-gates",
+            "secret-handling",
+        }
+        for path in paths:
+            for lane in ("affected", "staged"):
+                with self.subTest(path=path, lane=lane):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertEqual(
+                        self.validator.classify_path(self.contract, path)["id"],
+                        "agent-implementation-contract",
+                    )
+                    self.assertTrue(required <= set(selected["validators"]))
+                    self.assertFalse(unrelated & set(selected["validators"]))
+
+        for path, expected in (
+            ("scripts/validate-k8s-manifests.sh", "k8s-manifests"),
+            ("tests/test_archive_validation.py", "archive-contract-tests"),
+        ):
+            with self.subTest(control=path):
+                self.assertIn(
+                    expected,
+                    self.validator.select_paths(
+                        self.contract, [path], "affected", ROOT
+                    )["validators"],
+                )
+
     def test_rejection_cases(self) -> None:
         for case in self.fixture["rejectionCases"]:
             with self.subTest(case=case["name"]):

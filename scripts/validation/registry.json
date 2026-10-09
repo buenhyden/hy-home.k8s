@@ -1167,6 +1167,46 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "agent-implementation-contract",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/validate-agent-governance.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/agent_governance_consumers.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/agent_registry_loader.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_agent_registry.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_agent_governance.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_agent_governance_consumers.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "repository-quality"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Agent registry implementation and its direct regressions require the canonical agent contract and repository quality checks."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "validation-surface-contract",
       "routes": [
         {
@@ -1233,7 +1273,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1278,7 +1318,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/fixtures/validation-surfaces\\.json$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner|test_validate_affected_surfaces|test_(?:commit_contracts|release))\\.py$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/fixtures/validation-surfaces\\.json$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner|test_validate_affected_surfaces|test_(?:commit_contracts|release))\\.py$)(?!tests/(?:test_agent_governance(?:_consumers)?|test_validate_agent_registry)\\.py$)tests/.*$"
         }
       ],
       "validators": [
