@@ -14,7 +14,7 @@ Fixes # (link to issue if applicable)
 - [ ] No PR targeting `main` bypasses the CI metadata check.
 - [ ] Draft/WIP status is intentional; this PR is not ready for review or merge until required checks pass and verification evidence is complete.
 - [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
-- [ ] CI `ci-summary` validates pull request branch metadata; GitHub branch protection/rulesets enforce direct-push restrictions.
+- [ ] CI `ci-summary` validates pull request branch metadata; check the dated main protection read-back for required checks and administrator bypass.
 
 ## 4. Change Review Categories
 
@@ -48,11 +48,11 @@ Describe the manual verification or automated tests conducted.
 
 Follow the [Quality Policy](../.agents/governance/quality.md#canonical-completion-sequence)
 for the delivery route and evidence required for this PR. Link the owning Task's
-focused, exact-index staged and applicable local full results. Link the
-hosted `ci-summary` result for branch metadata with its exact SHA and run
-identity when available. Full QA is `NOT_RUN` in this workflow; a local result
-is recorded only for its actual input. Live evidence remains `DEFER` without
-direct observation and a named next owner.
+selected local purpose checks and exact-index staged result on their actual
+inputs. Link both hosted `ci-summary` and `style-pr` results with each PR SHA
+and run identity when observed. This workflow does not run local purpose or
+document-content QA. Live evidence remains `DEFER` without direct observation
+and a named next owner.
 Link the owning Task for execution status, acceptance, and check evidence;
 do not copy its progress or outcomes into this PR description.
 
@@ -60,7 +60,7 @@ do not copy its progress or outcomes into this PR description.
 - [ ] Workflow triggers and job ownership reviewed (if `.github` automation changed)
 - [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting numbered stage docs are routed through `docs/98.archive/README.md` only.
 - [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve each provider README and adjacent executable assets as one boundary; they are not live provider-latest guidance unless an approved provider refresh spec exists.
-- [ ] Coverage policy reviewed: 90% target for future testable application code where applicable; source-code test surfaces own coverage evidence, while Bash/YAML/Markdown infrastructure changes use validation-matrix evidence instead of application coverage claims
+- [ ] Coverage policy reviewed: apply the approved target where testable application code exists; Bash/YAML/Markdown infrastructure changes use applicable purpose and contract checks instead of application coverage claims
 - [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.
 - [ ] No live cluster mutation or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)

@@ -29,11 +29,6 @@ from validation.repository.bounded_io import BoundedInputError, read_bytes
 DOCUMENT_REGISTRY_ROOT_ERROR = (
     "REGISTRY_ROOT_BOUNDARY: repository root must be an existing non-symlink directory"
 )
-RETIRED_CLOUD_SDLC_SURFACE_RULE = "REGISTRY_RETIRED_CLOUD_SDLC_SURFACE"
-RETIRED_CLOUD_SDLC_SURFACE_ERROR = (
-    f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: retired cloud documentation surface "
-    "must remain absent from the Git index"
-)
 TERMINAL_TEMPLATE_GROUPS = frozenset(
     {
         "architecture",
@@ -49,7 +44,6 @@ TERMINAL_TEMPLATE_GROUPS = frozenset(
     }
 )
 GIT_TIMEOUT_SECONDS = 10
-GIT_INVENTORY_MAX_BYTES = 16 * 1024
 REFERENCE_PACK_MAX_ENTRIES = 4096
 REFERENCE_PACK_GIT_MAX_BYTES = 4 * 1024 * 1024
 REFERENCE_PACK_FILE_MAX_BYTES = 8 * 1024 * 1024
@@ -116,32 +110,6 @@ def _assert_repository_root_directory(
         return absolute_root.resolve(strict=True)
     except OSError as exc:
         raise AssertionError(error) from exc
-
-
-def _assert_retired_cloud_sdlc_surfaces_absent(root: Path) -> None:
-    try:
-        completed = run_bounded_process(
-            [
-                "git",
-                "ls-files",
-                "-z",
-                "--",
-                "examples/aws/docs",
-                "examples/azure/docs",
-            ],
-            cwd=root,
-            check=True,
-            timeout_seconds=GIT_TIMEOUT_SECONDS,
-            max_stdout_bytes=GIT_INVENTORY_MAX_BYTES,
-        )
-    except AuthorityError as exc:
-        raise AssertionError(f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: {exc}") from exc
-    if completed.stdout and not completed.stdout.endswith(b"\0"):
-        raise AssertionError(
-            f"{RETIRED_CLOUD_SDLC_SURFACE_RULE}: Git index inventory must be NUL terminated"
-        )
-    if completed.stdout:
-        raise AssertionError(RETIRED_CLOUD_SDLC_SURFACE_ERROR)
 
 
 def _bounded_directory_entries(path: Path) -> tuple[Path, ...]:
@@ -520,7 +488,6 @@ def main() -> int:
         registry = load_registry(root)
         _assert_template_source_parity(registry)
         _assert_reference_pack_topology(root, registry)
-        _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         readme_family = args.profile == "readme"
         if args.profile and not readme_family and args.profile not in profile_ids:

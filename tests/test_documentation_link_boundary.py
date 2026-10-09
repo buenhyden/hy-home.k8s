@@ -6,8 +6,11 @@ from __future__ import annotations
 import importlib.util
 import sys
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path, PurePosixPath
 from types import SimpleNamespace
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +46,37 @@ STAGE_PREFIXES = validator._stage_document_prefixes(validator.load_registry(ROOT
 
 
 class RetainedReciprocalAndTemplateTests(unittest.TestCase):
+    def test_main_uses_current_context_registry_and_inventory_once(self) -> None:
+        registry = SimpleNamespace(profiles=())
+        inventory = SimpleNamespace(baseline_paths=(), current_paths=(), new_paths=())
+        context = SimpleNamespace(
+            root=ROOT,
+            current_registry=registry,
+            current_inventory=inventory,
+        )
+        with (
+            mock.patch.object(validator, "_build_context", return_value=context),
+            mock.patch.object(
+                validator,
+                "load_registry",
+                side_effect=AssertionError("duplicate registry load"),
+            ),
+            mock.patch.object(
+                validator,
+                "enumerate_target_markdown",
+                side_effect=AssertionError("duplicate inventory scan"),
+            ),
+            mock.patch.object(validator, "_raw_diagnostics", return_value=[]),
+            mock.patch.object(validator, "_apply_debt", return_value=[]),
+            mock.patch.object(
+                sys,
+                "argv",
+                ["validate-links-and-owners.py", "--root", str(ROOT)],
+            ),
+            redirect_stdout(StringIO()),
+        ):
+            self.assertEqual(validator.main(), 0)
+
     def test_actual_plan_and_task_forms_accept_whole_placeholder_paths_with_fragments(
         self,
     ) -> None:
@@ -53,14 +87,14 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
         context = validator._build_context(ROOT, forms)
         registry = validator.load_registry(ROOT)
         expected = "{{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan"
-        self.assertEqual(
-            sum(
-                raw == expected
-                for path in forms
+        for path in forms:
+            spec_links = [
+                raw
                 for raw in validator._extract_links(context.texts[path])
-            ),
-            3,
-        )
+                if raw.startswith("{{SPEC_RELATIVE_PATH}}")
+            ]
+            self.assertTrue(spec_links, path)
+            self.assertEqual(set(spec_links), {expected})
         diagnostics = validator._raw_diagnostics(
             context,
             registry,
@@ -112,6 +146,8 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             ROOT, (owner, validator.ARCHIVE_INDEX_PATH, expected)
         )
         self.assertIsNone(context.document_registry)
+        self.assertIsNotNone(context.current_registry)
+        self.assertEqual(context.current_inventory.current_paths, context.paths)
         self.assertTrue(validator._links_back_to(context, owner, expected))
         self.assertFalse(
             validator._links_back_to(

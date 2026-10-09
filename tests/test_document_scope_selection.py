@@ -22,6 +22,7 @@ CONTRACT = json.loads((ROOT / "scripts/validation/registry.json").read_text())
 DOCUMENT_READERS = (
     "scripts/validate-markdown-profiles.py",
     "scripts/validate-links-and-owners.py",
+    "scripts/validate-document-contract-registry.py",
     "tests/test_operations_section_contract.py",
     "tests/test_operations_lineage_contract.py",
     "tests/test_shared_contract_binding.py",
@@ -92,6 +93,28 @@ class DocumentScopeSelectionTests(unittest.TestCase):
             set(selected["validators"]),
             {"affected-surface-contract", "repository-quality"},
         )
+
+    def test_qa_entrypoint_and_its_regression_have_the_selector_owner(self) -> None:
+        for path in ("scripts/qa.py", "tests/test_qa_runner.py"):
+            with self.subTest(path=path):
+                surface = ROUTES.classify_path(CONTRACT, path)
+                self.assertEqual(surface["id"], "validation-surface-contract")
+                selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
+                self.assertEqual(
+                    set(selected["validators"]),
+                    {"affected-surface-contract", "repository-quality"},
+                )
+
+    def test_shared_validation_consumers_keep_broad_gate_closure(self) -> None:
+        for path in (
+            "scripts/run-validation-lane.py",
+            "scripts/validate-affected-surfaces.py",
+            "scripts/select-affected-surfaces.py",
+        ):
+            with self.subTest(path=path):
+                surface = ROUTES.classify_path(CONTRACT, path)
+                self.assertEqual(surface["id"], "scripts")
+                self.assertIn("k8s-manifests", surface["validators"])
 
     def test_mixed_infrastructure_change_adds_its_product_gates(self) -> None:
         selected = ROUTES.select_paths(

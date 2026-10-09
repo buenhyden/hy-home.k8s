@@ -1110,6 +1110,10 @@
         },
         {
           "kind": "exact",
+          "value": "scripts/validate-document-contract-registry.py"
+        },
+        {
+          "kind": "exact",
           "value": "scripts/sync-task-status.py"
         },
         {
@@ -1154,6 +1158,14 @@
         {
           "kind": "exact",
           "value": "scripts/validation/registry.json"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/qa.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_qa_runner.py"
         }
       ],
       "validators": [
@@ -1172,7 +1184,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|document_lifecycle\\.py|sync-task-status\\.py|validate-(?:markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|document_authority\\.py|document_contracts\\.py|document_lifecycle\\.py|qa\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1217,7 +1229,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract)\\.py$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner)\\.py$)tests/.*$"
         }
       ],
       "validators": [

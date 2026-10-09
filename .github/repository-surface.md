@@ -1,10 +1,10 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.4.0"
+version: "0.4.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-09"
 ---
 # GitHub Configuration Hub
 
@@ -46,8 +46,10 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   소유한다. 로컬 커밋, PR, main 통합과 인계의 증거 순서는
   [Quality policy](../.agents/governance/quality.md#delivery-ownership)가
   소유한다. hosted `ci-summary`와 `style-pr` 결과는 각각 별도의 SHA·run
-  identity를 가진다. workflow 설정만으로 실제 원격 실행이나 required-check
-  활성화를 인증하지 않는다.
+  identity를 가진다. [main 보호 설정 기록](rulesets/main-protection.md)의
+  2026-10-09 원격 read-back은 두 job 모두 GitHub Actions App `15368`의
+  required check이고 strict가 `true`임을 확인했다. 그 관측은 이후 변경의
+  실행 결과나 독립적인 workflow-control 보증이 아니다.
 - `.github/requirements/ci-validation.txt`와
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
   보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
@@ -62,7 +64,9 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   복사하지 않는다.
 - ARWB-003의 전체 cutover는 과거 로컬·수동 증거다. 지속적인 Archive
   무결성 검사는 현재 validation owner에서 수행한다.
-- `ci.yml`은 pull request의 형태를 검증한다. 직접 push 제한은 저장소 로컬 파일 밖에서 GitHub branch protection과 ruleset이 강제한다.
+- `ci.yml`은 pull request의 형태를 검증한다. 원격 branch protection은
+  직접 push 제한을 설정하지만 관리자 예외가 켜져 있으므로 실제 강제 범위는
+  위 main 보호 설정 기록의 날짜와 필드에서 확인한다.
 - PR 작성자와 리뷰어 안내는 `PULL_REQUEST_TEMPLATE.md`에 있다.
 - 전체 SHA로 Action을 고정하는 규칙은 저장소 품질 gate가 강제한다.
 
@@ -79,7 +83,8 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - 과거 hosted verifier, SHA main tag publisher, 임시 changelog artifact와
   stale 자동 종료는 현재 workflow에서 은퇴했다. 당시 인증된 활성화·태그
   기록은 [Archive 탐색](../docs/98.archive/README.md)에 남아 있다.
-  현재 원격 App, 환경, ruleset, 보호 설정은 여기서 재조회하지 않았다.
+  현재 원격 App·ruleset·보호 설정은 위 날짜의 read-back 범위에서만
+  관찰했다. 환경과 이후 변경은 여기서 확인하지 않았다.
 - release 준비 PR은 main의 `CHANGELOG.md`를 갱신하고, SemVer tag와
   GitHub Release는 승인된 정확한 main commit의 단일 producer가 맡는다.
   저장소 파일만으로 실제 게시나 원격 설정을 인증하지 않는다.

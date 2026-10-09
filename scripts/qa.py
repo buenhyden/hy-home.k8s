@@ -406,6 +406,7 @@ def gate_input_identity(
     paths: Sequence[str],
     base_ref: str,
     environment: Mapping[str, str],
+    captured_tree: Mapping[str, tuple[int, bytes] | None] | None = None,
 ) -> str:
     """Hash a versioned, bounded canonical description of an audited gate input."""
     if lane not in ("affected", "staged"):
@@ -418,7 +419,7 @@ def gate_input_identity(
         if mode == "change-scoped" and lane in ("affected", "staged")
         else lane
     )
-    tree = tree_identity(snapshot)
+    tree = captured_tree if captured_tree is not None else tree_identity(snapshot)
     if len(tree) > 100_000:
         raise ValueError("reuse input has too many files")
     files = [
@@ -627,6 +628,7 @@ def main() -> int:
                     paths=paths,
                     base_ref=baseline,
                     environment=runner.validation_environment(snapshot),
+                    captured_tree=private_tree_before,
                 )
                 identities[identifier] = identity
                 if store.matching_pass(identifier, identity):

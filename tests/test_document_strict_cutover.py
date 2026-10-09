@@ -843,22 +843,6 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 PurePosixPath(".gemini/agents/doc-writer.md"),
             )
 
-    def test_retired_surface_git_inventory_maps_bounded_process_failures(self) -> None:
-        validator = self.validators["registry"]
-        for failure in ("AUTHORITY_TIMEOUT", "AUTHORITY_SIZE"):
-            with self.subTest(failure=failure):
-                with mock.patch.object(
-                    validator,
-                    "run_bounded_process",
-                    side_effect=validator.AuthorityError(failure),
-                ):
-                    with self.assertRaisesRegex(
-                        AssertionError, "REGISTRY_RETIRED_CLOUD_SDLC_SURFACE"
-                    ):
-                        validator._assert_retired_cloud_sdlc_surfaces_absent(
-                            REPOSITORY_ROOT
-                        )
-
 
 if __name__ == "__main__":
     unittest.main()

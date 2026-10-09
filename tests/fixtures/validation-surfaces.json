@@ -77,9 +77,9 @@
       "expectedSurface": "policy"
     },
     {
-      "name": "scripts",
+      "name": "qa-entrypoint",
       "path": "scripts/qa.py",
-      "expectedSurface": "scripts"
+      "expectedSurface": "validation-surface-contract"
     },
     {
       "name": "secrets",
@@ -241,18 +241,11 @@
       "expected": {
         "validators": [
           "affected-surface-contract",
-          "agent-governance",
-          "archive-contract-tests",
           "document-contract-registry",
           "document-lifecycle",
-          "gitops-structure",
-          "infrastructure-contracts",
-          "k8s-manifests",
           "links-and-owners",
           "markdown-profiles",
-          "policy-gates",
-          "repository-quality",
-          "secret-handling"
+          "repository-quality"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []

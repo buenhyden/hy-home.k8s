@@ -157,7 +157,7 @@ class QaTests(unittest.TestCase):
             (snapshot / "file.txt").write_text("hidden mutation\n")
             self.assertEqual(self.qa.git(snapshot, "diff", "--name-only", "-z"), b"")
             with self.assertRaisesRegex(
-                ValueError, "private snapshot changed: raw-index,file-bytes"
+                ValueError, "private snapshot changed: file-bytes"
             ):
                 self.qa.require_unchanged_private_snapshot(
                     snapshot,
@@ -729,7 +729,9 @@ class QaTests(unittest.TestCase):
             redirect_stderr(errors),
         ):
             self.assertEqual(self.qa.main(), 1)
-        self.assertIn("modified", errors.getvalue())
+        self.assertIn(
+            "QA private snapshot changed: raw-index,file-bytes", errors.getvalue()
+        )
         self.assertEqual((self.root / "file.txt").read_text(), "original\n")
         self.assertEqual((self.root / ".git/index").read_bytes(), source_index_before)
 
@@ -741,6 +743,28 @@ if __name__ == "__main__":
 class LocalEvidenceTests(unittest.TestCase):
     setUp = QaTests.setUp
     git = QaTests.git
+
+    def test_captured_private_tree_keeps_identity_without_rescanning(self):
+        gate = {
+            "id": "fixture-change-scoped",
+            "argv": ["python3", "check.py"],
+            "reuse": {"mode": "change-scoped"},
+        }
+        arguments = {
+            "lane": "staged",
+            "paths": ("file.txt",),
+            "base_ref": "fixed-base",
+            "environment": {"LANG": "C.UTF-8"},
+        }
+        expected = self.qa.gate_input_identity(self.root, gate, **arguments)
+        captured = self.qa.tree_identity(self.root)
+        with mock.patch.object(
+            self.qa, "tree_identity", side_effect=AssertionError("duplicate tree scan")
+        ):
+            actual = self.qa.gate_input_identity(
+                self.root, gate, **arguments, captured_tree=captured
+            )
+        self.assertEqual(actual, expected)
 
     def test_exact_input_identity_changes_for_bytes_mode_paths_base_and_argv(self):
         gate = {

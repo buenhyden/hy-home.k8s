@@ -107,6 +107,7 @@ from document_contracts import (
     DocumentContractError,
     DocumentProfile,
     Registry,
+    TargetInventory,
     _parse_ls_files_stage_z,
     _run_git,
     classify_path,
@@ -407,6 +408,8 @@ class Context:
     read_current_bytes: Callable[[str, int], bytes] | None = None
     tracked_modes: Mapping[PurePosixPath, str] | None = None
     readme_navigation: Any = None
+    current_registry: Registry | None = None
+    current_inventory: TargetInventory | None = None
 
 
 @dataclass(frozen=True, order=True)
@@ -893,6 +896,8 @@ def _build_context(
         read_current_bytes=read_current_bytes,
         tracked_modes=tracked_modes,
         readme_navigation=getattr(registry, "readme_navigation", None),
+        current_registry=registry,
+        current_inventory=inventory,
     )
 
 
@@ -3475,8 +3480,10 @@ def _stage_grammar_diagnostics(
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(context)
-    registry = getattr(context, "document_registry", None) or load_registry(
-        context.root
+    registry = (
+        context.document_registry
+        or context.current_registry
+        or load_registry(context.root)
     )
     stage_prefixes = _stage_document_prefixes(registry)
 
@@ -4149,7 +4156,12 @@ def _links_back_to(
     registry: Registry | None = None,
 ) -> bool:
     origin = owner
-    registry = registry or context.document_registry or load_registry(context.root)
+    registry = (
+        registry
+        or context.document_registry
+        or context.current_registry
+        or load_registry(context.root)
+    )
     if registry is not None and retention_class_of(registry, owner) is not None:
         rows, errors = parse_catalog(context.texts.get(ARCHIVE_INDEX_PATH, ""))
         enclosing = [
@@ -4879,7 +4891,11 @@ def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
 
 def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     visible = _visible_markdown(context.texts[path])
-    registry = context.document_registry or load_registry(context.root)
+    registry = (
+        context.document_registry
+        or context.current_registry
+        or load_registry(context.root)
+    )
     profile_id = context.profiles[path].profile_id
     profile = next(
         (item for item in registry.profiles if item.profile_id == profile_id), None
@@ -5289,7 +5305,11 @@ def readme_navigation_diagnostics(
 def _readme_navigation_diagnostics(context: Context) -> list[Diagnostic]:
     navigation = getattr(context, "readme_navigation", None)
     if navigation is None:
-        registry = context.document_registry or load_registry(context.root)
+        registry = (
+            context.document_registry
+            or context.current_registry
+            or load_registry(context.root)
+        )
         navigation = getattr(registry, "readme_navigation", None)
     if navigation is None:
         return []
@@ -5897,9 +5917,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise ConfigurationError("--inventory requires --format json")
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         context = _build_context(args.root, include_paths)
-        registry = load_registry(context.root)
+        registry = context.current_registry or load_registry(context.root)
         profiles_by_id = {profile.profile_id: profile for profile in registry.profiles}
-        inventory = enumerate_target_markdown(context.root, include_paths=include_paths)
+        inventory = context.current_inventory or enumerate_target_markdown(
+            context.root, include_paths=include_paths
+        )
         counts = {
             "baseline": len(inventory.baseline_paths),
             "current": len(inventory.current_paths),

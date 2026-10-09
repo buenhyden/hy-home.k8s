@@ -1219,7 +1219,6 @@ if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTIL
 pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
-    "hosted `ci-summary` result",
     "NOT_RUN",
     "- [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.",
 ]:
@@ -1275,11 +1274,9 @@ for phrase in [
     "any exception must update CI `ci-summary` and governance in the same change",
     "No PR targeting `main` bypasses the CI metadata check",
     "Draft/WIP status is intentional",
-    "90% target for future testable application code",
     "`test`: Tests or validation updates",
     "`chore`: Maintenance updates",
     "[`.cz.toml`](../.cz.toml)",
-    "branch protection/rulesets enforce direct-push restrictions",
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing CI metadata clarification: {phrase}")

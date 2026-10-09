@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.7.1"
+version: "0.7.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -77,7 +77,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `githooks/chained-hook.sh`와 그 `pre-commit`, `commit-msg`, `pre-push` 링크 | 사용자의 전역 Git hook을 먼저 실행한 뒤 이 workspace의 hook을 실행하고, 처음 나온 0이 아닌 상태를 반환 |
 | `validate-affected-surfaces.py` | registry와 추적 경로 coverage 검증 |
 | `run-validation-lane.py` | 현재 v4 소스의 affected·staged 선택 입력을 제한해 실행하고 결과를 정규화한다. 구형 all-files 집계 경로 제거의 검증·수용 상태는 [Stage 03 Spec navigation](../docs/03.specs/README.md)에서 찾는 SPEC-0107 Task가 기록한다. |
-| `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 최종 트리나 정확한 index 스냅샷에서 실행한다. validator argv나 규칙 구현은 담지 않는다. |
+| `qa.py` | 지원되는 QA 진입점. profile의 gate ID를 registry에서 해석해, 격리된 작업 트리나 정확한 index 스냅샷에서 실행한다. 한 실행에서 캡처한 스냅샷 트리를 gate 입력 identity에도 재사용한다. validator argv나 규칙 구현은 담지 않는다. |
 | `validation/` 규칙 module | 전용 validator가 아직 소유하지 않은 저장소 전체 규칙(repository/quality.py)과, 현재 실행 대상과 Git 우선 역사 복구의 구분(current_executable_references.py) |
 
 ### Document and archive owners
@@ -85,7 +85,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | 경로 묶음 | 책임 |
 | --- | --- |
 | `document_contracts.py`, `validate-document-contract-registry.py`, `validate-markdown-profiles.py` | route·profile 분류와 작성된 Markdown의 의미 검증 |
-| `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증 |
+| `document_authority.py`, `validate-links-and-owners.py` | 현재 owner와 문서 간 관계의 의미 검증. 링크 검사 한 실행의 context가 Registry와 문서 inventory를 보유해 같은 입력의 재조회에 쓰인다. |
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
 | `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. `archive_recovery.py`의 공용 MIG-0001 reader가 현재 원장 bytes의 고정 digest와 canonical 형식을 확인하며, Archive·link 소비자가 그 결과를 읽는다. 필요할 때 역사 envelope은 bounded Git reader로 복구한다. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |

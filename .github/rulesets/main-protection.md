@@ -9,33 +9,35 @@ setting is in force; only a dated authenticated read-back is.
 
 - **An authenticated read-back was recorded on 2026-09-10 by the account
   `buenhyden`.** `gh api repos/buenhyden/hy-home.k8s/rulesets` and
-  `gh api repos/buenhyden/hy-home.k8s/rules/branches/main` both returned `[]`,
-  so no repository ruleset exists and none is in force. What is in force is
-  classic branch protection, read from
-  `gh api repos/buenhyden/hy-home.k8s/branches/main/protection`. The fields
-  observed in that response are listed under Observed State below. Every row
-  under Target Ruleset is now either matched or contradicted by that reading
-  rather than awaiting verification.
+  `gh api repos/buenhyden/hy-home.k8s/rules/branches/main` both returned `[]`
+  at that time. Classic branch protection was read from
+  `gh api repos/buenhyden/hy-home.k8s/branches/main/protection`. The original
+  fields and the correction that followed are retained below as dated history.
+- **A new authenticated read-back was recorded on 2026-10-09 by `buenhyden`.**
+  Classic protection, applied branch rules, inherited rulesets, main HEAD and a
+  prior PR's check runs were read separately. The current observation is below;
+  the prior PR run does not test a later candidate.
 - A read-back belongs in the active Task with its date, the exact fields read,
   and the account that read them, and this file may then carry the claim. The
   2026-09-10 reading was taken with no Stage 03 package open, so its date,
-  fields and account are carried here instead; that departure is recorded
-  rather than hidden, and the next reading returns to a Task when one is open.
+  fields and account are carried here instead. The 2026-10-09 read-back is
+  routed through [Stage 03 navigation](../../docs/03.specs/README.md) to the
+  current QA execution record `SPEC-0107-TSK-0003`.
 - Evidence from another repository does not transfer. This file previously
   carried required-check names, a workflow-contract path, a governance path, a
   Spec reference and `gh api` targets that belong to the sibling
   `hy-home.docker` workspace; none of them exist here, and none of them
   described this repository's protection.
-- Environment, deployment, release, and later control-plane state remain
+- Environment, deployment, release, and unobserved control-plane state remain
   `unverified` unless an approved observation records them.
 
-## Observed State
+## Historical 2026-09-10 State
 
 Read on 2026-09-10 from `branches/main/protection` by `buenhyden`, before the
 correction recorded below. This is point-in-time evidence for that moment and
 for those fields only.
 
-| Field | Observed | Target Ruleset row | Agreement |
+| Field | Observed | Then-target row | Agreement at the time |
 | --- | --- | --- | --- |
 | `required_pull_request_reviews` | present | Require pull requests before merge | matches |
 | `required_pull_request_reviews.required_approving_review_count` | `0` | Require zero approving reviews | matches |
@@ -48,7 +50,7 @@ for those fields only.
 | `required_status_checks.strict` | `false` | Require the latest branch head to pass required checks | **contradicts** |
 | `enforce_admins.enabled` | `false` | no row states an expectation | **unstated** |
 
-Also observed and unstated by Target Ruleset: `required_signatures.enabled`
+Also observed and unstated by the then-target: `required_signatures.enabled`
 `false`, `block_creations.enabled` `false`, `lock_branch.enabled` `false`,
 `allow_fork_syncing.enabled` `false`,
 `required_pull_request_reviews.dismiss_stale_reviews` `false`, and
@@ -57,9 +59,8 @@ Also observed and unstated by Target Ruleset: `required_signatures.enabled`
 `enforce_admins` being `false` is why a direct push to `main` by the repository
 owner succeeded on 2026-09-10 while the remote reported bypassed rule
 violations for the pull-request requirement and the `ci-summary` check. The
-rules are configured and they are not applied to administrators. Target Ruleset
-states no expectation for that field, so the difference is a gap in the
-intended contract rather than a drift from it.
+rules were configured and not applied to administrators. The then-target had
+no expectation for that field; the decision added later appears below.
 
 ### 2026-09-10 correction and re-read
 
@@ -81,12 +82,40 @@ Eleven fields were sent at their observed values and re-read unchanged:
 `required_signatures`. The endpoint replaces the whole object, so sending them
 explicitly is what preserved them.
 
-`enforce_admins` was not changed. Target Ruleset now states an expectation for
+`enforce_admins` was not changed. The target now states an expectation for
 it, so the field is no longer unstated; what remains is a recorded operating
 decision rather than a difference from intent.
 
 Every row above is evidence for 2026-09-10 only. A later claim of enforcement
 needs a new authenticated read-back.
+
+## Observed State
+
+### Current 2026-10-09 Observation
+
+The account `buenhyden` read
+`repos/buenhyden/hy-home.k8s/branches/main/protection`,
+`repos/buenhyden/hy-home.k8s/rules/branches/main`, and
+`repos/buenhyden/hy-home.k8s/rulesets?includes_parents=true`. The read-back
+also identified main HEAD `5cfd420b723cba7417a0d24c8abb94c4f329caa9`.
+These are remote observations at that revision, not validation of later local
+commits.
+
+| Field | Observed on 2026-10-09 | Consequence |
+| --- | --- | --- |
+| `required_status_checks.strict` | `true` | Required checks use the latest branch input. |
+| `required_status_checks.checks` | `ci-summary` and `style-pr`, each from GitHub Actions App `15368` | Both named PR results are required separately. `qa-provenance` is no longer required. |
+| `required_pull_request_reviews.required_approving_review_count` / `require_code_owner_reviews` | `0` / `false` | A CODEOWNERS entry alone is not a required review. |
+| `enforce_admins.enabled` | `false` | Administrator bypass remains possible. |
+| Applied branch rules | `[]` | No branch ruleset adds an independent workflow-control gate. |
+| Inherited rulesets | Two active tag rulesets, `24341547` and `24342332` | Tag rules do not establish a branch check or PR workflow-control guard. |
+
+For prior PR 136, head `a639120b8548f4835a716a082696f01038870d27`,
+GitHub Actions run `37785109216` reported both named jobs successful. That
+result belongs to its own SHA and run; it does not prove later hosted execution.
+`SEC-P01-001` remains HIGH for a PR that changes its own workflow or control
+definition. Required checks from App `15368` do not independently authenticate
+PR-editable job definitions. The security/CI operator owns that separate guard.
 
 ## Target Ruleset
 
@@ -102,6 +131,10 @@ needs a new authenticated read-back.
 - Block force pushes.
 - Block branch deletion.
 - Require the latest branch head to pass required checks before merge.
+- Require both `ci-summary` and PR-only `style-pr` from GitHub Actions App
+  `15368` on a pull request; the former checks branch metadata and the latter
+  checks selected style. Their separate required results carry the style
+  failure to the merge decision.
 - Do not enforce squash/rebase-only or linear-history settings that would
   discard referenced objects, so delivered history can keep them.
 - Leave `enforce_admins` disabled, and read the consequence rather than the
@@ -120,25 +153,26 @@ support them.
 
 ## Required Status Checks
 
-The dated remote observation above required one aggregate check.
+The current dated remote observation requires two separate checks.
 `.github/workflows/ci.yml` owns the current tracked job identities and
 `.github/repository-surface.md` explains their roles.
 
 - `ci-summary`
+- `style-pr`
 
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
 push/manual dispatch. Its earlier full-QA `NOT_RUN` field is historical
-evidence, not a current required check. Success
-establishes only this metadata policy; local QA has its own input and evidence.
-The tracked workflow also defines PR-only `style-pr` for selected style at its
-own merge SHA/run. Its presence does not establish a successful run or make it
-a remotely required check; actual protection settings need an authenticated
-read-back before that claim.
+evidence, not a current required check. Success establishes only this metadata
+policy; local QA has its own input and evidence. `style-pr` checks selected
+style on the PR merge candidate using the reviewed base's tool and configuration
+copies. Its job result is separately required by the 2026-10-09 protection
+read-back. A main push or manual dispatch skips the PR-only job; that skip is
+not PR style PASS.
 
-The dated observed configuration above requires only `ci-summary`; it does not
-establish the current remote settings or a `style-pr` requirement. Former hosted full-QA proof and
-`main-<SHA>` publication were retired from the current workflows. Their
+The 2026-09-10 observation required only `ci-summary` and is historical.
+Former hosted full-QA proof and `main-<SHA>` publication were retired from the
+current workflows. Their
 historical authenticated results remain reachable through the
 [Archive index](../../docs/98.archive/README.md). A future protected publication
 path requires a new current contract, its own identity and an authenticated
@@ -160,7 +194,7 @@ A difference from this intended contract is a prompt to inspect, not permission
 to restore old settings. Obtain a fresh authenticated read-back and bind any
 approved correction to the exact field, before-state, target and recovery.
 
-The 2026-09-10 reading under Observed State is the first captured
+The 2026-09-10 reading under Historical 2026-09-10 State is the first captured
 before-state for this repository. It covers `branches/main/protection` and the
 absence of any ruleset on that date, and nothing else. Capture a fresh reading
 before changing any field rather than relying on that one, and record it in the
