@@ -1,6 +1,6 @@
 ---
 title: "CI/CD 및 QA 검증 경계 가이드"
-version: "1.3.0"
+version: "1.4.0"
 type: "operation/guide"
 status: "active"
 owner: "platform"
@@ -72,6 +72,12 @@ source이며, job과 required check의 현재 구성은
 - 호스팅 CI: event와 branch metadata, 선택된 PR style의 적용 가능한 결과를
   각자의 SHA/run에서만 확인한다.
 - 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
+
+[REQ-0004의 제품 품질 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#product-quality-measurement-boundary)는
+정적 입력의 판정과 운영 환경의 측정 결과를 별도로 요구한다. 소유 Task에는
+선택된 시나리오, 환경, 표본, owner, 측정 결과 또는 `NOT_RUN`/`DEFER`를
+연결한다. 문서 링크나 manifest 검사의 PASS를 제품 품질·서비스 가용성의
+관측값으로 바꾸지 않는다.
 
 handoff 기록 항목은
 [Quality Policy](../../../.agents/governance/quality.md)의 handoff evidence

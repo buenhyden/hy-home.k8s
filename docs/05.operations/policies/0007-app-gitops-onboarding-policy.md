@@ -1,6 +1,6 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -47,7 +47,8 @@ artifact_id: "POL-0007"
 apps namespace의 모든 워크로드는 `argoproj.io/v1alpha1/Rollout`을 사용해야 한다.
 Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되지 않으며, 플랫폼 정책상 신규 앱은 Rollout을 사용한다.
 
-**이유**: canary 전략으로 점진적 트래픽 전환과 자동 rollback을 보장하기 위함.
+**이유**: canary와 분석 게이트로 단계적 전환과 실패 시 중단·복구 경로를
+제공하기 위함이다. 실제 rollback의 성공은 해당 Rollout의 운영 증거로 판정한다.
 
 **Required evidence**: `gitops/workloads/<appname>/rollout.yaml`이 존재하고 고정 이미지 태그와 canary 전략을 사용한다.
 
@@ -168,7 +169,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | Network/TLS        | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, hy-k8s.home.arpa hostname이 적용됨                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | External routing   | 앱 host가 k8s router로 해석되고, apex path가 필요하면 redirect Ingress가 추가됨                                     | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 | Secret handling    | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음                                        | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Runtime health     | ArgoCD Application, Rollout, Pod readiness, Ingress/TLS 접근 증적이 남음                                            | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Runtime health     | 명명된 앱의 ArgoCD Application, Rollout, 실제 Pod ready/desired 수, Ingress/TLS 접근 증적이 남음                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 
 ---
 
@@ -180,11 +181,15 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 ## Verification and Review
 
 - 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
-- 런타임 증적: 온보딩 후 ArgoCD Application `Synced/Healthy`, Rollout `Healthy`, Pod `2/2 Running`, Ingress TLS 발급 상태를 확인한다.
+- 런타임 증적: 승인된 온보딩 후 명명된 ArgoCD Application의 `Synced/Healthy`, Rollout 상태, 실제 Pod ready/desired 컨테이너 수와 Ingress TLS 상태를 확인한다. 현재 sample의 `2/2`를 모든 새 앱의 고정 컨테이너 수로 취급하지 않는다.
 - 실행 가능한 검증 명령과 실패 시 복구 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 따른다.
 
 - 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
 - Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 policy/runbook과 함께 검토한다.
+- [REQ-0004 workload 온보딩 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-workload-onboarding)가
+  적용 가능한 정적 통제의 판정식·표본·목표와 운영 관측의 별도 결정을 소유한다.
+  이 정책의 adminer 분석 주기와 canary 설정은 현재 구성 예시이며 새 앱의
+  보편적인 가용성 목표가 아니다.
 
 ## Related Documents
 

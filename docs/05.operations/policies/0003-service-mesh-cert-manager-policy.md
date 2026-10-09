@@ -1,6 +1,6 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -84,7 +84,12 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 ## Exceptions and Escalation
 
 - rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
-- Istio istiod CrashLoop 시 자원 requests 축소 허용 (단, 128Mi 미만으로 낮추지 않음).
+- Istio istiod CrashLoop가 관측되어 requests 변경이 필요한 경우 Platform Owner가
+  현재 `gitops/apps/root/platform-istiod-app.yaml`의 requests(`100m`, `128Mi`)와
+  limits(`500m`, `512Mi`), 실패 증상, 변경안과 rollback을 검토한다. 변경안의
+  memory request는 128Mi 아래로 낮추지 않는다. Platform Owner 승인과
+  [POL-0001의 live 예외](./0001-k8s-gitops-operations-policy.md#exceptions-and-escalation)가
+  필요한 실행은 운영자에게 넘기고 실제 조정 결과를 별도 증거로 기록한다.
 
 ## Verification and Review
 
@@ -93,6 +98,10 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
 - cert-manager, Istio, Kiali 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
+- CA·TLS와 외부 Kiali 연결의 제품 측정 기준은
+  [REQ-0004의 Secret TLS 복구](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-secret-tls-recovery)와
+  [외부 인터페이스](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface)에
+  둔다. 이 정책의 현재 설정 확인은 복구 시간이나 실제 연결 성공을 증명하지 않는다.
 
 ## Related Documents
 
@@ -103,6 +112,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
+- **Current control review**: [SPEC-0106 P08 Task0018](../../03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0018-operations-quality-and-architecture.md) compares this policy with the current istiod source and records the local review result. It is not the original promotion approval or live adoption evidence.
 
 ### Lifecycle Traceability
 

@@ -1,10 +1,10 @@
 ---
 title: "Platform Expansion Bootstrap Runbook"
-version: "1.2.0"
+version: "1.2.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0003"
 ---
@@ -20,10 +20,6 @@ artifact_id: "RUN-0003"
 Headlamp 검증·복구는 [RUN-0004](./0004-rollouts-notifications-headlamp-runbook.md),
 Kiali와 외부 observability 연결 복구는
 [RUN-0007](./0007-kiali-observability-connectivity-runbook.md)이 소유한다.
-
-플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
-
-`bootstrap`
 
 ## Trigger and Preconditions
 

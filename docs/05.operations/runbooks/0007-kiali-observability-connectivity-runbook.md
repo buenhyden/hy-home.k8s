@@ -1,10 +1,10 @@
 ---
 title: "Kiali Observability 연결 복구 Runbook"
-version: "2.1.0"
+version: "2.1.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0007"
 ---
@@ -20,10 +20,6 @@ artifact_id: "RUN-0007"
 1. **외부 경로 drift**: Kiali는 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)와 Grafana(`https://grafana.hy.home.arpa`)를 외부 Traefik으로 호출한다(ADR-0046). 이름 해석(CoreDNS custom zone), gateway CA(`istio-system/kiali-cabundle`), Basic Auth Secret(`istio-system/kiali-prometheus-auth`) 중 하나가 어긋나거나 외부 workspace가 route를 바꾸면 연결이 끊긴다.
 2. **Tempo endpoint drift**: Tempo는 `tempo-external` Service와 EndpointSlice를 거쳐 host port `192.168.0.13:3200`으로 닿는다. EndpointSlice는 ArgoCD Application `platform-external-services`가 Git에서 관리한다.
 3. **Grafana 인증 실패**: 외부 Grafana는 익명 API 접근을 허용하지 않는다. Kiali는 Grafana Viewer service account token(`istio-system/kiali-grafana-auth`, OpenBao `platform/grafana-api`)을 bearer로 보낸다. token이 없거나 만료·폐기되면 `/api/frontend/settings`가 401을 반환하고 Kiali는 Grafana를 Unreachable로 표시한다.
-
-Kiali에서 외부 observability service가 unreachable로 표시될 때 외부 route, 이름 해석과 CA, Tempo endpoint, NetworkPolicy, Kiali configuration, Grafana auth 상태를 순서대로 진단하고 복구 owner로 보낸다.
-
-`troubleshooting`
 
 ## Trigger and Preconditions
 

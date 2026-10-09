@@ -1,10 +1,10 @@
 ---
 title: "GitHub 앱 GitOps 온보딩 런북"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0010"
 ---
@@ -16,10 +16,6 @@ artifact_id: "RUN-0010"
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
-
-신규 GitHub 앱을 `gitops/workloads/`에 추가하고 PR review 이후 ArgoCD reconciliation으로 배포/검증/rollback할 수 있게 한다.
-
-`onboarding`
 
 ## Trigger and Preconditions
 
@@ -50,9 +46,13 @@ kubectl -n argo-rollouts get pods | grep argo-rollouts
 # controller는 https://prometheus.hy.home.arpa를 Basic Auth header로 호출한다.
 kubectl -n apps get externalsecret prometheus-api-auth
 kubectl -n argo-rollouts get configmap hy-home-root-ca
-# host에서 조회: RUN-0009의 prom helper
-prom 'up{cluster="k3d-hyhome"}'
 ```
+
+Prometheus 수집 상태가 필요하면 외부 observability 운영자에게
+[RUN-0009](./0009-k8s-observability-runbook.md)의 승인된 인증 조회 경로에서
+`up{cluster="k3d-hyhome"}` 결과를 요청한다. 이 저장소의 절차는 인증정보
+파일이나 임의의 조회 helper를 읽지 않는다. 조회가 미실행이면 그 사실을
+남기고 AnalysisRun 결과를 성공으로 추정하지 않는다.
 
 ---
 
@@ -65,19 +65,27 @@ prom 'up{cluster="k3d-hyhome"}'
 ### 1-1. 예시 복사 및 플레이스홀더 교체
 
 ```bash
-# 변수 설정
-APP=<appname>          # 예: my-api
-OWNER=<github-owner>   # 예: buenhyden
-TAG=<tag>              # 예: v1.0.0
-PORT=<port>            # 예: 8080
+# 실제 대상에 맞게 값을 검토한 뒤 교체한다. 이 네 줄은 유효한 예시다.
+APP=my-api
+OWNER=buenhyden
+TAG=v1.0.0
+PORT=8080
+
+# 경로·이미지·치환 입력은 제한된 값만 받는다.
+[[ "$APP" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]] &&
+  (( ${#APP} <= 63 )) || exit 2
+[[ "$OWNER" =~ ^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$ ]] || exit 2
+[[ "$TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]*$ ]] &&
+  (( ${#TAG} <= 128 )) || exit 2
+[[ "$PORT" =~ ^[1-9][0-9]{0,4}$ ]] && (( PORT <= 65535 )) || exit 2
 
 # 예시 manifest만 복사 (README는 ApplicationSet 감지 경로에 두지 않는다)
-git switch -c feat/${APP}-gitops
-mkdir -p gitops/workloads/${APP}
-cp examples/sample-app/*.yaml gitops/workloads/${APP}/
+git switch -c "feat/${APP}-gitops"
+mkdir -p "gitops/workloads/${APP}"
+cp examples/sample-app/*.yaml "gitops/workloads/${APP}/"
 
 # 플레이스홀더 일괄 교체
-for f in gitops/workloads/${APP}/*.yaml; do
+for f in "gitops/workloads/${APP}/"*.yaml; do
   sed -i \
     "s|<appname>|${APP}|g; \
      s|<owner>|${OWNER}|g; \
@@ -87,8 +95,14 @@ for f in gitops/workloads/${APP}/*.yaml; do
 done
 
 # 결과 확인
-cat gitops/workloads/${APP}/rollout.yaml | grep image
+rg 'image:' "gitops/workloads/${APP}/rollout.yaml"
 ```
+
+현재 최소 예시의 Ingress backend는 `8080`으로 고정돼 있다. 다른 `PORT`를
+선택하면 치환 대상뿐 아니라 `ingress.yaml`의 backend port와 Service,
+Rollout의 모든 port·probe를 함께 검토·수정하고 정적 검사를 통과해야 한다.
+예시 파일을 복사했다는 사실만으로 임의 port 지원이나 배포 성공을
+판정하지 않는다.
 
 ### 1-2. 접속 이름 확인
 
@@ -99,23 +113,41 @@ operator가 확인한다. `hy-k8s.home.arpa/${APP}` 진입이 필요하면
 
 ### 1-3. GitOps 커밋 & 푸시
 
+`apps-generator`는 `main`의 `gitops/workloads/*`를 읽고 생성한 Application에
+`automated.prune: true`, `selfHeal: true`를 적용한다. 따라서 PR을 `main`에
+merge하면 수동 `argocd app sync`를 기다리지 않고 배포·삭제·복구가 시작될
+수 있다. 원격 push와 별도로, 운영자는 **merge 전에** 대상 앱·이미지·
+리소스 변경 범위, 자동 prune 영향과 복구 경로를 검토하고 배포 권한을
+확인한다. merge 후의 수동 승인 단계로 배포를 보류할 수 없다.
+
 ```bash
-git add gitops/workloads/${APP}/
+git add "gitops/workloads/${APP}/"
 git commit -m "feat: add ${APP} to GitOps"
-# feature branch로 push한 뒤 PR review/merge를 거친다
-git push origin feat/${APP}-gitops
+# 검토된 commit·원격 저장소·branch 대상과 별도 push 승인을 운영자가 확인한 경우에만
+git push origin "feat/${APP}-gitops"
 ```
+
+PR 검토·승인된 merge와 실제 `main` 반영 뒤 자동 reconciliation의 결과를
+읽는다. 로컬 commit이나 push만으로 Application이 생성되었다고 판정하지
+않는다.
 
 ### 1-4. ArgoCD Application 생성 확인
 
 ```bash
-# apps-generator가 새 Application을 생성하는지 확인 (최대 3분)
-watch argocd app list | grep ${APP}
+# apps-generator가 path.basename 이름의 새 Application을 생성했는지 확인
+kubectl -n argocd get application "$APP"
 
-# apps-generator는 ApplicationSet이므로 app sync 대상이 아니다. 생성된 Application을 동기화한다.
+# apps-generator는 ApplicationSet이므로 app sync 대상이 아니다.
 kubectl -n argocd describe applicationset apps-generator
-# operator-triggered reconciliation only
-argocd app sync ${APP}
+```
+
+자동 동기화가 실패하거나 멈춘 **이미 생성된** Application을 운영자가 별도
+승인 범위에서 수동 재조정할 때만 다음 명령을 사용한다. 생성 전 기본 배포
+단계로 실행하지 않는다.
+
+```bash
+# operator-approved manual reconciliation only
+argocd app sync "$APP"
 ```
 
 ---
@@ -126,7 +158,7 @@ argocd app sync ${APP}
 # Rollout 진행 상황 실시간 확인
 kubectl argo rollouts get rollout ${APP} -n apps --watch
 
-# Pod 상태 확인 (2/2 Running = app + istio-proxy)
+# 대상 workload manifest의 컨테이너와 기대 Istio sidecar에 맞는 ready/desired 확인
 kubectl get pods -n apps -l app.kubernetes.io/name=${APP}
 
 # AnalysisRun 확인 (canary 단계에서 자동 생성)
@@ -146,20 +178,24 @@ curl --fail --silent --show-error --cacert secrets/certs/rootCA.pem \
 
 ### Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
 
+이 이미지 변경도 `main` merge 직후 자동으로 canary가 시작될 수 있다.
+운영자는 merge 전에 이미지·분석·롤백 범위와 배포 권한을 확인한다.
+
 ```bash
 NEW_TAG=v1.1.0
-git switch -c chore/${APP}-${NEW_TAG}
+[[ "$NEW_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]*$ ]] || exit 2
+git switch -c "chore/${APP}-${NEW_TAG}"
 
 # rollout.yaml 태그 업데이트
 sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \
-  gitops/workloads/${APP}/rollout.yaml
+  "gitops/workloads/${APP}/rollout.yaml"
 
-git add gitops/workloads/${APP}/rollout.yaml
+git add "gitops/workloads/${APP}/rollout.yaml"
 git commit -m "chore: bump ${APP} to ${NEW_TAG}"
-# feature branch로 push한 뒤 PR review/merge를 거친다
-git push origin chore/${APP}-${NEW_TAG}
+# 검토된 commit·원격 저장소·branch 대상과 별도 push 승인을 운영자가 확인한 경우에만
+git push origin "chore/${APP}-${NEW_TAG}"
 
-# canary 진행 상황 확인
+# merge 전 자동 배포 영향을 검토·승인하고, merge 후 자동 reconciliation 결과 확인
 kubectl argo rollouts get rollout ${APP} -n apps --watch
 ```
 
@@ -204,7 +240,7 @@ Procedure 2의 Rollout, Pod, AnalysisRun, Ingress와 CA 검증을 거친 HTTPS �
 | 항목        | 기대값                               |
 | ----------- | ------------------------------------ |
 | Rollout     | `Healthy` / `Stable`                 |
-| Pod         | `2/2 Running`                        |
+| Pod         | 선택한 workload의 앱 컨테이너와 기대 sidecar를 포함한 실제 ready/desired 수 일치 |
 | ArgoCD      | `Synced` / `Healthy`                 |
 | AnalysisRun | `Successful`                         |
 | Ingress     | HOSTS에 `<appname>.hy-k8s.home.arpa` |
@@ -229,8 +265,10 @@ kubectl argo rollouts abort ${APP} -n apps
 kubectl argo rollouts get rollout ${APP} -n apps
 ```
 
-GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한 뒤 PR
-review/merge와 승인된 ArgoCD reconciliation을 다시 거친다.
+GitOps manifest 수정이 필요하면 이미지 태그 또는 설정을 수정한다.
+수정 PR의 merge 전 자동 배포·prune 영향을 재평가하고 승인받는다. merge
+뒤에는 자동 reconciliation 결과를 확인하며, 수동 sync가 별도로 필요한
+경우에만 위의 승인된 재조정 경계를 따른다.
 
 ### ArgoCD Application이 생성되지 않는 경우
 
@@ -259,10 +297,13 @@ argocd app sync platform-namespaces
 # AnalysisRun 상세 확인
 kubectl describe analysisrun -n apps $(kubectl get analysisrun -n apps -o name | head -1)
 
-# Prometheus 연결 확인 (host, RUN-0009의 prom helper)
-prom 'kube_pod_container_status_restarts_total{namespace="apps"}'
 # AnalysisRun 오류가 401이면 apps/prometheus-api-auth, x509면 hy-home-root-ca 확인
 ```
+
+외부 Prometheus의 `kube_pod_container_status_restarts_total{namespace="apps"}`
+쿼리 결과가 필요하면 [RUN-0009](./0009-k8s-observability-runbook.md)의 승인된
+인증 조회 경로로 요청한다. 인증정보나 원시 비밀 출력은 해당 운영 Task나
+사건 기록에 복사하지 않는다.
 
 ### TLS 인증서 미발급
 

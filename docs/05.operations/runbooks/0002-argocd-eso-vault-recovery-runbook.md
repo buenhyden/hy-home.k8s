@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -30,12 +30,6 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 해석이나 `x509` 오류를 이 단계로 보낸다.
 
 > **Agent execution boundary**: CoreDNS custom zone과 `openbao-ca` ConfigMap 재적용, OpenBao auth 설정 변경은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
-
-OpenBao 연결 거부, 이름 해석 실패, 인증서 검증 실패, sealed 상태, 또는
-Kubernetes auth drift로 발생하는 ESO/OpenBao 연동 장애를 빠르게 분류하고,
-operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
-
-`recovery`
 
 ## Trigger and Preconditions
 
@@ -140,16 +134,29 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
    argocd app sync platform-argocd-config
    ```
 
-7. 런타임 계약 회귀를 검증한다.
+7. 복구한 경로에 해당하는 라이브 계약을 운영자가 선택해 검증한다. ESO
+   readiness는 아래 `Verification`의 metadata 조회로 확인하고,
+   NetworkPolicy와 ingress/TLS를 수정한 경우에만 각 검증 스크립트를
+   실행한다. 모든 live 전제가 충족된 별도 전체 플랫폼 수용 작업에서만
+   `infrastructure/verify/run-all.sh`를 사용한다.
+
+   NetworkPolicy를 수정했다면:
 
    ```bash
    ./infrastructure/verify/verify-network-policies.sh
-   ./infrastructure/verify/verify-ingress-tls.sh
-   CHECK_K8S_ROUTER=true ./infrastructure/verify/verify-ingress-tls.sh
-   ./infrastructure/verify/run-all.sh
    ```
 
-8. CI 정적 계약 회귀를 검증한다.
+   ingress/TLS를 수정했다면:
+
+   ```bash
+   ./infrastructure/verify/verify-ingress-tls.sh
+   ```
+
+   k8s router 주소가 host에 할당되어 있고 그 경로도 변경했다면
+   `CHECK_K8S_ROUTER=true ./infrastructure/verify/verify-ingress-tls.sh`로
+   추가 확인한다. 각 호출의 실제 입력과 결과를 Task 또는 사건 기록에 남긴다.
+
+8. 저장소 정적 계약 회귀를 검증한다.
 
    ```bash
    ./scripts/validate-infrastructure-contracts.sh
@@ -175,7 +182,7 @@ operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 - [ ] ingress/TLS 계약(host=`argo.hy-k8s.home.arpa`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
 - [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; k8s router
       (`192.168.0.14:443`) 확인은 host 주소가 할당된 경우에만 별도 수행
-- [ ] CI 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
+- [ ] 선택한 저장소 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 
 - **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, CoreDNS logs, repo-server logs.
 - **Evidence to Capture**: failed sync output, ExternalSecret condition, OpenBao auth role read result, recovery command output.
@@ -193,7 +200,8 @@ kubectl apply -f "${TMPDIR:-/tmp}/coredns-custom.before.yaml"
 kubectl -n kube-system rollout restart deployment/coredns
 ```
 
-- 롤백 후 `./scripts/validate-infrastructure-contracts.sh`와 `run-all.sh`를 재실행한다.
+- 롤백 후 변경한 입력에 해당하는 정적 계약과 위 선택 live 검사를 다시
+  확인한다. 전체 플랫폼 수용 검사가 필요한 별도 작업만 `run-all.sh`를 수행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
 ### Troubleshooting Signatures

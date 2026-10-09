@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD 메트릭 Prometheus 수집 복구 Runbook"
-version: "2.2.0"
+version: "2.3.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0008"
 ---
@@ -37,11 +37,6 @@ static scrape(`30082-30086`)는 폐지되었다. Alloy 자체, remote write, egr
    port가 바뀌면 `discovery.relabel "platform_pods"` 규칙과 어긋난다.
 3. **수집 경로 장애**: 다른 k8s 메트릭도 함께 비어 있으면 ArgoCD 문제가 아니다.
 
-ArgoCD component 메트릭이 외부 Prometheus에 들어오는지 확인하고, ArgoCD 쪽 원인을
-복구한다.
-
-`maintenance`
-
 ## Trigger and Preconditions
 
 - `argocd_app_info{cluster="k3d-hyhome"}`가 조회되지 않을 때
@@ -52,21 +47,22 @@ ArgoCD component 메트릭이 외부 Prometheus에 들어오는지 확인하고,
 
 ## Procedure
 
-`prom`은 외부 Prometheus API(`https://prometheus.hy.home.arpa`, Basic Auth)를 조회하는
-helper이며 [RUN-0009](./0009-k8s-observability-runbook.md)의 "조회 helper"에 정의되어 있다.
+외부 Prometheus 쿼리는 [RUN-0009](./0009-k8s-observability-runbook.md)의
+승인된 인증 조회 경로로 외부 observability 운영자에게 요청한다. 여기서는
+PromQL과 비밀값을 제외한 집계 결과만 공유한다. 인증 경로가 없으면 쿼리
+결과를 `DEFER`하고 아래 Kubernetes metadata 대조를 진행한다.
 
 ### Procedure 1: 범위 판단
 
-```bash
-prom 'count by (job) (up{cluster="k3d-hyhome"})'
-```
+PromQL: `count by (job) (up{cluster="k3d-hyhome"})`
 
 job 자체가 없으면 ArgoCD가 아니라 수집 경로 문제다. RUN-0009로 이동한다.
 
 ### Procedure 2: ArgoCD component target 확인
 
+PromQL: `up{cluster="k3d-hyhome",namespace="argocd"}`
+
 ```bash
-prom 'up{cluster="k3d-hyhome",namespace="argocd"}'
 kubectl get pods -n argocd -L app.kubernetes.io/name
 ```
 
@@ -93,13 +89,12 @@ argocd app sync platform-monitoring
 
 ## Verification
 
-```bash
-prom 'count by (app) (up{cluster="k3d-hyhome",namespace="argocd"} == 1)'
-# → 위 표의 component 5개
+| PromQL | 기대 관측 |
+| --- | --- |
+| `count by (app) (up{cluster="k3d-hyhome",namespace="argocd"} == 1)` | 위 표의 component 다섯 개 |
+| `count(argocd_app_info{cluster="k3d-hyhome"})` | `gitops/apps/root`가 정의한 Application 수 이상 |
 
-prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
-# → gitops/apps/root가 정의한 Application 수 이상
-```
+현재 조회 결과가 없으면 이 런북의 원격 메트릭 수용을 `DEFER`한다.
 
 ---
 

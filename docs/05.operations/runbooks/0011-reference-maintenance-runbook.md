@@ -1,10 +1,10 @@
 ---
 title: "Reference Maintenance Runbook"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0011"
 ---
@@ -65,11 +65,21 @@ artifact_id: "RUN-0011"
 
 ## Verification
 
+현재 QA 실행 registry가 변경 경로에 맞춰 gate를 선택한다. 작업 트리의
+`quick`은 선택된 입력의 미리보기이며, commit 직전에는 최종 Git index를
+대상으로 `staged`를 한 번 수행한다. Stage 98 처분이 있으면 승인과
+consumer 대조를 먼저 끝내고 선택된 Archive 고유 검사를 결과에 포함한다.
+수동으로 모든 현행 문서의 strict 검사를 상시 반복하지 않는다.
+
 ```bash
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/qa.py quick
 git diff --check
+```
+
+최종 파일을 명시적으로 stage한 뒤 그 index에 대해 별도로 실행한다.
+
+```bash
+python3 scripts/qa.py staged
 ```
 
 - [ ] Reference가 공통 거버넌스나 현재 Stage 01/02/03/05 owner를 대체하지 않는다.
@@ -82,7 +92,7 @@ git diff --check
 - changed-path 목록과 reviewed diff
 - category 및 Stage router
 - source metadata와 직접 저장소 소스
-- 위 validator의 종료 코드와 요약
+- 선택된 gate ID, 입력 snapshot, 도구·종료 코드와 요약
 - 종료 전 consumer 검색 결과와 disposition 승인 기록
 
 정적 PASS는 외부 출처의 현재성, hosted CI, provider runtime, live cluster

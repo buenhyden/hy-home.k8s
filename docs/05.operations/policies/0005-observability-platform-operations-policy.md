@@ -1,6 +1,6 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -102,6 +102,11 @@ Prometheus·Grafana·Loki 설정 변경은 외부 observability workspace가 소
 
 Service/EndpointSlice port, Alloy relabel rule, remote write endpoint, Alloy version,
 rule file, Grafana role, Loki endpoint, AppProject destination 변경 시 검토한다.
+Alloy의 relabel·remote-write 설정과 실제 외부 Prometheus의 series 수신은
+서로 다른 증거다. 명명된 cluster와 외부 endpoint에 대한 관측이 없으면 위
+`up`·`argocd_app_info` 조건을 미검증으로 남긴다. 측정식·표본·판정 목표의
+단일 원본은 [REQ-0004 telemetry 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-telemetry)이며,
+이 정책과 RUN-0008/0009는 책임자와 검증 경로를 제공한다.
 
 ## Related Documents
 

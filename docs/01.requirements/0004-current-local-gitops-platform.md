@@ -1,6 +1,6 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.1.1"
+version: "1.2.0"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
@@ -70,6 +70,122 @@ and does not substitute a static PASS for unobserved remote or runtime state. Th
 - **Acceptance criterion 02**: Validate the GitOps ownership and reconciliation boundaries of root, platform, and workload.
 - **Acceptance criterion 03**: Validate the syntax of tracked Kubernetes manifests.
 - **Acceptance criterion 04**: Validate the authority separation between current documents and the historical Archive, and the related repository gates.
+- **Acceptance criterion 05**: Review the six local product quality scenarios below against their named source, measurement boundary and owner. A repository-static result does not satisfy a live or external measurement.
+
+### Product quality measurement boundary
+
+The following scenarios are proposed product acceptance inputs while this
+Requirement remains `in-review`. A target is a decision threshold, not an
+observed result. The public overviews of [ISO/IEC 25010:2023](https://www.iso.org/standard/78176.html),
+[ISO/IEC 25023:2016](https://www.iso.org/standard/35747.html) and
+[ISO/IEC 25030:2019](https://www.iso.org/standard/72116.html) inform the
+distinction between product quality, measurement and requirements; they do not supply a universal
+threshold or establish conformity. The accountable owner must record the
+named revision, environment, sampling window, tool, result and missing
+dependency before accepting a measurement. Static source inspection and
+authorized live observation are separate rows of evidence.
+
+### Quality scenario: GitOps reproducibility
+
+At a reviewed repository revision, a platform engineer selects the affected
+root/platform/workload targets and runs the current pinned render, schema and
+product-reference validation contract once for that input. The response is a
+renderable desired state with no unresolved required reference. The static
+metric is **100 × valid selected targets / selected targets** (percent); the
+proposed threshold is **100%** at the selected revision, with renderer version,
+fallback and diagnostics recorded. If no target is selected, the result is
+`NOT_APPLICABLE` with the actual selection reason, never a passing zero
+denominator. The Platform Owner owns the static decision;
+ArgoCD reconciliation at a named cluster is a separate operator observation.
+This scenario refines REQ-0004-FR-0001, FR-0002 and FR-0008; [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+owns the render target and source paths.
+
+### Quality scenario: Secret TLS recovery
+
+After a named CA, certificate or external-secret failure, an approved
+operator restores the affected service without exposing a secret value.
+The static metric is **100 × resolved required TLS/ESO references / required
+references in the selected manifests** (percent); the proposed source-contract
+threshold is **100%**. With no applicable reference, the owner records
+`NOT_APPLICABLE` and why rather than a passing zero denominator.
+The sample is the affected cert-manager, ArgoCD, ESO and service-interface
+references at a reviewed revision. Runtime recovery duration is measured
+from the first recorded failure to the first recorded healthy service check
+(minutes), but its acceptance threshold is **TBD by the Platform Owner and
+Security Reviewer** for the named local-cluster incident class; it has not
+been measured by this document. Only a separately authorized operator may
+record the runtime sample, using status and metadata without secret values.
+This scenario refines REQ-0004-FR-0003 and NFR-0002.
+
+### Quality scenario: External interface
+
+When a declared external endpoint changes, the Platform Owner compares the
+Service/EndpointSlice name, address, port and protocol tuple with the
+reviewed desired-state interface. The static metric is
+**100 × matching required tuples / selected required tuples** (percent); the proposed threshold is
+**100% of the selected required tuples**, with the selected target and
+revision as the sampling frame. A selection with no required tuple is
+`NOT_APPLICABLE` with a reason. Actual DNS, TLS, network reachability and
+service response are a separate operator sample at the named cluster and
+external service; the acceptable response rate and observation window are
+**TBD by the Platform Owner and external-service owner** before live
+acceptance. The tuple comparison does not assert that the external runtime
+exists or responds. This scenario refines REQ-0004-FR-0003 and FR-0010.
+
+### Quality scenario: Telemetry
+
+After an authorized ArgoCD/Alloy change, the Observability Owner checks the
+five declared ArgoCD component targets and `argocd_app_info` with the
+`cluster="k3d-hyhome"` label in the external Prometheus. The metrics are
+healthy declared ArgoCD targets (`up == 1`, targets) and present
+`argocd_app_info` series (series); the local operational decision targets
+are **five of five declared components** and **at least one labelled
+application series**. The five component names and ports are the
+`platform_pods` selector in `gitops/platform/monitoring/alloy-k8s-logs.yaml`;
+`prometheus.remote_write.external_prometheus` supplies the cluster label.
+The sample is one recorded query set for the named cluster, external
+Prometheus and post-reconciliation time window, repeated
+on target or label changes. The current source can establish relabel and
+remote-write configuration only; no query result or availability is
+established here. This scenario refines REQ-0004-FR-0008 and NFR-0001;
+[POL-0005](../05.operations/policies/0005-observability-platform-operations-policy.md)
+routes the authorized checks.
+
+### Quality scenario: Workload onboarding
+
+For a new `apps` workload, the application author submits a fixed-image
+Rollout, AnalysisTemplate, Service, Ingress, Kustomization and conditional
+ExternalSecret, then the Platform Owner reviews its admission contract.
+The static metric is **100 × matched applicable required artifact/control
+checks / applicable required checks** (percent); the proposed threshold is
+**100% for the selected workload**. The sample is each candidate workload
+at its reviewed revision, excluding a justified optional ExternalSecret.
+If there is no selected workload, record `NOT_APPLICABLE` and the reason;
+do not report a passing zero denominator.
+The current adminer example's 30-second analysis interval, four samples,
+failure limit one and canary weights are component configuration, not a
+platform-wide availability threshold. Actual Rollout health, ingress/TLS
+and promotion require an approved operator's separate named-cluster sample;
+their service-specific acceptance threshold is **TBD by the application
+owner and Platform Owner**. This scenario refines REQ-0004-FR-0010,
+FR-0014 and NFR-0001.
+
+### Quality scenario: Single-host recovery
+
+When the local host is rebuilt or a node fails, the Platform Owner first
+checks the declared `servers: 1`, `agents: 3` k3d topology and bootstrap
+inotify preflight, then an approved operator records the actual recovery.
+The source metrics are declared server and agent counts (nodes) and the
+configured bootstrap preflight minimum for
+`fs.inotify.max_user_instances` (instances). The current source-contract
+thresholds are **one server, three agents and a minimum of 512 instances**.
+The actual host sysctl value is a separate operator preflight measurement
+on the selected Linux host; source inspection cannot establish it. Recovery
+duration is measured
+from recorded start to a named healthy GitOps/platform check (minutes);
+its target is **TBD by the Platform Owner** after a reviewed local-host
+recovery plan and environment are named. One server is not a production HA
+or failover claim. This scenario refines REQ-0004-FR-0001 and NFR-0001.
 
 ## Scope and Non-goals
 

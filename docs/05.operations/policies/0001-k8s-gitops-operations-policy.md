@@ -1,6 +1,6 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -124,6 +124,12 @@ desired state와 맞추고 승인·검증 증적을 남긴다. 예외는 만료 
 월 1회 또는 topology, external endpoint, Vault auth, ingress/TLS, AppProject,
 NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 job 수나
 문서 수가 아니라 현재 source와 semantic contract를 검토한다.
+제품 품질의 표본·계산식·판정 목표는
+[REQ-0004의 GitOps 재현성](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-gitops-reproducibility),
+[외부 인터페이스](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface),
+[단일 호스트 복구](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-single-host-recovery)
+시나리오가 소유한다. 이 정책의 manifest 값과 static PASS는 해당 목표의
+설정 근거이며, reconciled 상태나 복구 시간을 측정한 결과가 아니다.
 
 ## Related Documents
 

@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.2.0"
+version: "1.2.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -15,15 +15,18 @@ artifact_id: "RUN-0001"
 
 이 런북은 Linux server 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 
-클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 외부 endpoint 연결(Valkey `6379`, PostgreSQL `15432/15433`)을 재현 가능하게 수행한다.
-
-`bootstrap`
+클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 필수 Valkey(`6379`)와 선택적
+PostgreSQL(`15432/15433`) 외부 endpoint 확인을 재현 가능하게 수행한다.
 
 ## Trigger and Preconditions
 
 - 신규 로컬 플랫폼 초기 구축
 - 환경 재구축/복구
 - 정책 검증 전 사전 점검
+- 실행 운영자는 대상 k3d context, host 주소와 검토한 Git revision, 해당 bootstrap
+  또는 복구 행위의 승인 범위와 현재 유효성을 먼저 확인한다. 클러스터 생성,
+  Secret 생성, ArgoCD 로그인·동기화와 직접 적용은 이 문서 자체의 승인으로
+  실행하지 않는다. 인증정보는 transcript와 Task에 남기지 않는다.
 
 ## Procedure
 
@@ -112,14 +115,24 @@ artifact_id: "RUN-0001"
    kubectl -n platform get svc valkey-external -o yaml
    ```
 
-9. 클러스터 내부에서 write/read/Postgres와 Valkey 포트 연결성을 점검한다.
+9. 필수 Valkey 경로를 클러스터 내부에서 확인한다. PostgreSQL HAProxy는
+   `postgres-ha` profile이 기동 중인 경우에만 별도로 점검한다.
 
    ```bash
    kubectl -n platform run svc-probe --rm -it --restart=Never \
      --image=busybox:1.36 -- sh -c \
+     "nc -zvw3 valkey-external 6379"
+   ```
+
+   `postgres-ha`가 실제 켜져 있다면 다음 연결 검사도 수행한다. 꺼져 있는
+   상태는 bootstrap 실패가 아니다. Service와 EndpointSlice의 desired state
+   확인은 앞 단계에서 그대로 수행한다.
+
+   ```bash
+   kubectl -n platform run postgres-probe --rm -it --restart=Never \
+     --image=busybox:1.36 -- sh -c \
      "nc -zvw3 postgres-write-external 15432 && \
-      nc -zvw3 postgres-read-external 15433 && \
-      nc -zvw3 valkey-external 6379"
+      nc -zvw3 postgres-read-external 15433"
    ```
 
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
@@ -137,7 +150,8 @@ artifact_id: "RUN-0001"
 - [ ] `kubectl get svc,endpointslice -A | rg 'postgres-(write|read)-external|valkey-external'`
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
 - [ ] `argocd app list` 및 sync 상태 확인
-- [ ] `svc-probe`에서 `postgres-write-external:15432`, `postgres-read-external:15433`, `valkey-external:6379` 연결 성공
+- [ ] `svc-probe`에서 필수 `valkey-external:6379` 연결 성공. `postgres-ha`
+      profile이 켜져 있으면 `postgres-probe`에서 write/read 포트도 성공
 
 - **Signals**: ArgoCD health/sync, ESO sync status, pod readiness
 - **Evidence to Capture**: 명령 출력, 이벤트 로그, 실패/복구 타임스탬프

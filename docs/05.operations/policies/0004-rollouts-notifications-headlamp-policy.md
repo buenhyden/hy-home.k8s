@@ -1,6 +1,6 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.1.0"
+version: "1.2.0"
 type: "operation/policy"
 status: "active"
 owner: "platform"
@@ -90,6 +90,11 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 
 - 운영 변경 시 즉시
 - 정기 분기 검토
+- Rollout 구성과 AnalysisTemplate 참조의 정적 검사는
+  [REQ-0004 workload 온보딩 시나리오](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-workload-onboarding)의
+  source-side 입력이다. Dashboard, Slack 전송, Headlamp 접근 및 실제 promotion
+  결과는 명명된 환경의 운영자 증거가 필요하다. 이 정책은 제품 임계값의
+  별도 작성 원본이 아니다.
 
 ## Related Documents
 

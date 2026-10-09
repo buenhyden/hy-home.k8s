@@ -1,10 +1,10 @@
 ---
 title: "k8s Observability 복구 Runbook"
-version: "2.3.0"
+version: "2.4.0"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "operations"
 artifact_id: "RUN-0009"
 ---
@@ -49,11 +49,6 @@ Prometheus의 NodePort static scrape는 폐지되었다.
 5. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어
    Application 배포 실패
 
-in-cluster 메트릭·로그 수집과 remote write 장애를 진단하고, GitOps 상태와 외부
-observability endpoint 연결을 복구한다.
-
-`troubleshooting`
-
 ## Trigger and Preconditions
 
 - 외부 Prometheus에서 `up{cluster="k3d-hyhome"}` 결과가 비었거나 job이 빠졌을 때
@@ -84,20 +79,18 @@ remote write 복구, target 누락 복구 순서로 수행한다.
 
 ### Procedure 1: 전체 상태 진단
 
-### 조회 helper
+### 외부 Prometheus 조회
 
-host에서 외부 Prometheus를 조회할 때 쓴다. 비밀번호는 외부 workspace의 secret
-파일에서 읽어 curl의 stdin 설정(`-K -`)으로 넘긴다. 명령 인자나 shell history에
-남지 않는다.
+외부 observability 운영자가 승인된 인증 조회 경로에서 아래 PromQL을 실행한다.
+이 저장소의 Runbook은 비밀번호 파일을 읽거나 인증 helper를 만들지 않는다.
+운영자는 쿼리, 조회 시각·범위, 성공/실패와 비밀값을 제외한 집계 결과만
+Task 또는 사건 기록에 인계한다. 인증된 조회 경로가 준비되지 않았으면
+Prometheus 결과는 `DEFER`하고 Kubernetes 쪽 진단을 계속한다.
 
-```bash
-prom() {
-  printf 'user = "k8s-prometheus:%s"\n' \
-    "$(cat ~/data/hy-home.docker/secrets/observability/prometheus_api_password.txt)" |
-    curl -s -K - --cacert secrets/certs/rootCA.pem \
-      https://prometheus.hy.home.arpa/api/v1/query --data-urlencode "query=$1"
-}
-```
+| 진단 대상 | PromQL |
+| --- | --- |
+| job별 target | `count by (job) (up{cluster="k3d-hyhome"})` |
+| ArgoCD Application 메트릭 | `count(argocd_app_info{cluster="k3d-hyhome"})` |
 
 ```bash
 LOKI=http://192.168.0.13:3100
@@ -109,12 +102,6 @@ echo "=== remote write 오류 ==="
 kubectl logs -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --since=10m \
   | rg -i 'remote_write|prometheus.remote_write|level=error' | tail -5
 
-echo "=== job별 target ==="
-prom 'count by (job) (up{cluster="k3d-hyhome"})'
-
-echo "=== ArgoCD 메트릭 ==="
-prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
-
 echo "=== Loki k8s 로그 ==="
 curl -s -G "$LOKI/loki/api/v1/query_range" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
@@ -122,7 +109,8 @@ curl -s -G "$LOKI/loki/api/v1/query_range" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림 수:', len(d['data']['result']))"
 ```
 
-`prom`이 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로 이동한다.
+승인된 조회 경로가 401, `x509` 오류를 내거나 응답하지 않으면 Procedure 4로
+이동하고, 실제 인증·TLS 복구는 외부 observability owner에게 넘긴다.
 
 ---
 
@@ -248,28 +236,28 @@ kubectl get pods -n istio-system -l app=istiod \
 ## Verification
 
 ```bash
-# prom helper: 위 "조회 helper"
 echo "[1] alloy-k8s-logs"
 kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-headers \
   | awk '{print "  "$1": "$3}'
 
-echo "[2] jobs"
-prom 'count by (job) (up{cluster="k3d-hyhome"})'
-# → kubernetes-pods, kubelet, cadvisor
-
-echo "[3] components"
-prom 'count by (app) (up{cluster="k3d-hyhome",job="kubernetes-pods"})'
-
-echo "[4] ArgoCD and node metrics"
-prom 'count(argocd_app_info{cluster="k3d-hyhome"})'
-prom 'count(kube_node_info{cluster="k3d-hyhome"})'
-
-echo "[5] Loki k8s log streams"
+echo "[2] Loki k8s log streams"
 curl -s -G "http://192.168.0.13:3100/loki/api/v1/query_range" \
   --data-urlencode 'query={cluster="k3d-hyhome"}' \
   --data-urlencode "since=15m" --data-urlencode "limit=1" \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print('  스트림:', len(d['data']['result']))"
 ```
+
+외부 운영자는 승인된 인증 경로에서 다음 PromQL을 조회하고 정상 상태
+기준값과 대조한다.
+
+| PromQL | 기대 관측 |
+| --- | --- |
+| `count by (job) (up{cluster="k3d-hyhome"})` | `kubernetes-pods`, `kubelet`, `cadvisor` |
+| `count by (app) (up{cluster="k3d-hyhome",job="kubernetes-pods"})` | 수집 대상 component별 target |
+| `count(argocd_app_info{cluster="k3d-hyhome"})` | 현재 root Application 수 이상 |
+| `count(kube_node_info{cluster="k3d-hyhome"})` | 현행 k3d 4개 노드 |
+
+실제 쿼리 결과와 시각이 없으면 이 부분은 검증 완료가 아니다.
 
 - **Signals**: Alloy pod readiness, Alloy remote write errors, `up{cluster="k3d-hyhome"}` by job and app, Loki stream count.
 - **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, host port table.

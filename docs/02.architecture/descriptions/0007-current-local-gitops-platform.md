@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.5.0"
+version: "1.6.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-04"
+updated: "2026-10-09"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -51,6 +51,24 @@ The architecture's core goals are local reproducibility, GitOps-first ownership,
 - **Scalability**: Workload onboarding uses ApplicationSet over `gitops/workloads/*`.
 - **Observability**: Kiali and monitoring manifests integrate with external observability endpoints.
 - **Operability**: Static checks and runbooks separate repo-backed validation from live runtime validation.
+
+### Quality scenario architecture paths
+
+The in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md)
+owns each scenario's measure, unit, environment, sample, and threshold or named
+gap. This view identifies the current implementation path and the evidence
+boundary; it does not promote a configured check or repository-static result
+into an observed service-level result. [VAL-P08-018](../../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan)
+owns this change's local review, not future operator observations.
+
+| Requirement scenario | Architecture source and response | Evidence boundary and operating owner |
+| --- | --- | --- |
+| [GitOps reproducibility](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-gitops-reproducibility) ([REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md)) | The [root Application](../../../gitops/clusters/local/root-application.yaml), [platform Applications](../../../gitops/apps/root/), and workload ApplicationSet declare the reconciliation graph. [Platform assurance](../../../scripts/validation/platform/assurance.py) checks reviewed inputs. | Repository render, schema, and reference checks are static evidence; ArgoCD sync and health require separate cluster observation by the Platform Owner under [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md) and [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md). |
+| [Secret and TLS recovery](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-secret-tls-recovery) ([REQ-0004-FR-0003](../../01.requirements/0004-current-local-gitops-platform.md), [REQ-0004-NFR-0002](../../01.requirements/0004-current-local-gitops-platform.md)) | [ESO declarations](../../../gitops/platform/eso/), the CoreDNS host mapping, and the gateway CA connect the cluster to external OpenBao without storing secret values here. | Static endpoint and secret-reference checks do not prove OpenBao availability, successful authentication, or recovery. The approved operator observes store/ExternalSecret status and TLS through [RUN-0002](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md); the external service owner handles OpenBao state. |
+| [External interface](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-external-interface) ([REQ-0004-FR-0003](../../01.requirements/0004-current-local-gitops-platform.md)) | [Service and EndpointSlice declarations](../../../gitops/platform/external-services/) describe cluster-facing data and telemetry interfaces; [ADR-0044](../decisions/0044-stateful-data-stores-stay-external.md) and [ADR-0046](../decisions/0046-external-services-over-host-addresses.md) keep the stateful runtime outside the cluster. | A matching declaration is static evidence only. [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) routes approved connectivity checks to the Platform Owner, while the external workspace owns service uptime and backups. |
+| [Telemetry visibility](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-telemetry) ([REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)) | [In-cluster Alloy](../../../gitops/platform/monitoring/) collects metrics and logs; [ADR-0045](../decisions/0045-in-cluster-telemetry-collection.md) places storage and query behind external Prometheus and Loki. | Declarative scrape and remote-write routes do not prove receipt. The Observability Owner uses [POL-0005](../../05.operations/policies/0005-observability-platform-operations-policy.md), [RUN-0008](../../05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md), and [RUN-0009](../../05.operations/runbooks/0009-k8s-observability-runbook.md) for authorized target and stream observations. |
+| [Workload onboarding](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-workload-onboarding) ([REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)) | The [workload ApplicationSet](../../../gitops/clusters/local/applicationset-apps.yaml) scans [workload declarations](../../../gitops/workloads/); their Rollout and AnalysisTemplate definitions provide a component-specific progressive-delivery path. | Manifest checks prove declared structure, not a successful rollout or universal availability. The application and Platform Owners capture actual Application, Rollout, pod, ingress, and TLS state under [POL-0007](../../05.operations/policies/0007-app-gitops-onboarding-policy.md) and [RUN-0010](../../05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md). |
+| [Single-host recovery](../../01.requirements/0004-current-local-gitops-platform.md#quality-scenario-single-host-recovery) ([REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md)) | [k3d configuration](../../../infrastructure/k3d/k3d-cluster.yaml) and bootstrap assets implement the local single-host baseline selected by [ADR-0042](../decisions/0042-linux-server-single-host-baseline.md). | Static topology and resource preflight do not establish high availability or recovery duration. The Platform Owner records any approved rebuild and service-state observation through [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md) and [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md). |
 
 ## System Overview & Context
 
