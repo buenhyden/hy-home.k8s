@@ -1,6 +1,6 @@
 ---
 title: "gitops"
-version: "0.3.1"
+version: "0.3.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -189,7 +189,10 @@ kind와 raw platform manifest kind를 기준으로 유지한다.
 1. 현재 플랫폼 구조는 Architecture (`docs/02.architecture/descriptions/README.md`), 운영 통제는 Operations Policy (`docs/05.operations/policies/README.md`)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
 3. 변경은 feature branch와 PR review를 거쳐 `main`에 병합하고, ArgoCD가 Git 상태를 reconcile하도록 둔다.
-4. 매니페스트 변경 후 `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`, `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
+4. 변경 작업 중에는 `python3 scripts/qa.py quick`로 영향 경로를 검사하고,
+   커밋 직전 최종 index는 `python3 scripts/qa.py staged`로 검사한다. 표에
+   적힌 직접 leaf 명령은 선택된 gate의 실패를 분리하거나 해당 책임을 따로
+   확인할 때만 골라 실행하며 같은 입력의 gate를 반복하지 않는다.
 5. secret 값은 매니페스트에 직접 쓰지 않고 External Secrets/Vault 계약으로 연결한다.
 
 ### Current Hardening Deferrals

@@ -111,12 +111,12 @@ arguments, stdout/stderr hashes and results are in
 does not read Secret objects or values, prove recovery duration, external
 Prometheus series, TLS client handshake, workload-onboarding result or the
 six [REQ-0004](../../../01.requirements/0004-current-local-gitops-platform.md#product-quality-measurement-boundary)
-quality-scenario samples. Draft
+quality-scenario samples. In-progress
 [SPEC-0106-TSK-0019](../../0106-stage99-lifecycle-normalization/tasks/tsk-0019-live-quality-observation.md)
-is the prospective owner of subsequent live scenario sampling; its actual
-intake/admission remains pending. The platform/REQ-0004 and approved service
+owns subsequent live scenario sampling and local external-service alignment;
+its own execution acceptance remains separate. The platform/REQ-0004 and approved service
 operators remain responsible for targets, windows, metrics and thresholds.
-Later telemetry receipts are recorded in that draft, not accepted here.
+Later telemetry receipts are recorded there, not accepted here.
 
 SEC-P01-001 remains with buenhyden and the CI/security operator until an
 independent control path proves the actual workflow/control PR input; branch
@@ -265,7 +265,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: Original local repairs and setting operation stay accepted, but EVD-012 identifies one committed draft.6 candidate without final approval/adoption. EVD-013/015/016 accept bounded settings and EVD-018 records HIGH owner-accepted risk without technical closure or PR-result proof. Trusted preflight EVD-019 failed then EVD-020 passed; full residual index EVD-017/021/022 still awaits a clean recheck. Next owner: buenhyden with Project-Template source/adapter owners and CI/security control operator |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: Local source/admission QA and integration now pass under EVD-023, resolving full-index failures EVD-017/021/022; trusted preflight EVD-019 was separately resolved by EVD-020. EVD-012 identifies a committed draft.6 candidate without final approval/adoption. EVD-013/015/016 accept bounded settings and EVD-018 records HIGH owner-accepted risk without technical closure or actual PR proof. Next owner: buenhyden with Project-Template source/adapter owners and CI/security control operator |
 
 ## Criterion Acceptance
 
@@ -274,7 +274,7 @@ correction to its retained pre-change values, never by inventing a green check.
 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005 | Actual source/consumer/owner/disposition comparison is accepted; remaining common adoption belongs to VAL-P01-007 | .agents/governance/agent-execution.md; platform |
 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
-| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | pending | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022 | The original local receipts remain valid for their dated inputs. Corrected four-file trusted preflight EVD-020 resolves EVD-019 only; full residual staged QA failures EVD-017/021/022 still need a new exact-index PASS before this follow-up local delivery is accepted. Hosted/control proof belongs to VAL-P01-008 | platform local delivery owner |
+| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023 | The original local receipts remain valid for their dated inputs. Corrected trusted preflight EVD-020 resolves EVD-019; frozen source/admission index QA, independent review, normal commits and local main fast-forward under EVD-023 resolve EVD-017/021/022 for this local source. This accepts local delivery only; hosted/control proof belongs to VAL-P01-008 | platform local delivery owner |
 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012 | A real draft.6 candidate source commit and digest now exist, but final edition approval reference is null and actual local/joint adoption remain DEFER. Candidate identity does not resolve the distinct final-decision check in EVD-003 | buenhyden with the one Project-Template source writer and each actual adapter owner |
 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010, EVD-013, EVD-014, EVD-015, EVD-016, EVD-018 | Current settings read-backs passed and buenhyden accepted the residual HIGH risk in EVD-018, without technical closure, an independent-machine proof or actual next-PR required/style result. No future PR gate or execution authority is accepted | buenhyden with CI/security operator; next authorized actual PR owner for SHA/run evidence |
 
@@ -304,6 +304,7 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-020 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Trusted control preflight | Four frozen reviewed paths at index tree `70dcfc9048e912717810ce1444ff2fa4f55261e6`, pinned `scripts/qa.py staged` | PASS | `_workspace/residual-controls/preflight-staged-qa-pass.json`, SHA-256 `59787d9fb73fceef28d5a8b526befc6450fc60788c018bc92408b4f482e093c8`: 16 gates PASS, rc0; independent four-file security/code review `_workspace/residual-controls/trusted-control-correction-review.json`, SHA-256 `a1340a3c6567997db8525af99f8eba5ab23dca6294dbabf310e9d459f491a47a`; checked normal commit `32be232908da7cff71ff1003349407fb2a2993da` has the same tree and local main fast-forward. This resolves only EVD-019, not EVD-017 | yes | EVD-019 |
 | EVD-021 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected source staged index tree `96cf651343e7eabb00a9895783d011f70eef50b5` before Task0019 profile repair and the later local-service boundary extension | FAIL | `_workspace/residual-controls/corrected-source-staged-qa-fail.json`, SHA-256 `0de0d916b41e5f342f7772964fc87ca53bbdf436ce950f82c99d320002daa9b4`, and `corrected-source-staged-qa.log`, SHA-256 `20f5d3483c610db9a3c2372c5da3c39d27526b31c2abe3cf7243036578a8e2e1`: 10 gates PASS, `markdown-profiles` FAIL, rc1. `corrected-source-markdown-diagnostic.json`, SHA-256 `396a4d8e094667f41aa764a561f5969292d03b6657ca5a9c1e35582bf2bdfaf8`, reports `TASK-EXECUTION-RESULT` for Task0019 row 1 `draft/DEFER`; its owner is correcting that profile. The other ten passing leaves do not form overall acceptance; an exact same-check recheck must resolve this and EVD-017. No PASS is claimed | yes | none |
 | EVD-022 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Source staged index tree `725e5f8cd90f7add8729f82503806550f95f9b0d` across 24 changed paths, before the current matrix-reader correction | FAIL | `_workspace/residual-controls/external-alignment-staged-qa-fail.json`, SHA-256 `cca17ffa16b0e47047383694669d6c51f023f0c31f9d5ec76e89a0fd5bda5a3d`: rc1, 20 of 21 gates PASS. `_workspace/residual-controls/external-alignment-markdown-diagnostic.json`, SHA-256 `28995d9ee071df897bb66b6165870c75628d3df9beeb9b88267946b70a1260c1`, identifies `DOC-MATRIX-PARITY` for the `gitops/README.md` External Service Contract and Secret Management matrices (`row-target-set-differs`). The reader still expects retired HA PostgreSQL write/read and Platformpostgres-app-secret targets; the current matrix consumer owner is correcting that obligation. Passing leaves do not establish overall acceptance, and obsolete documentation rows are not restored to satisfy it | yes | none |
+| EVD-023 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected frozen 25-path source index tree `bcc4185d7ae76cb01ec1699a9c2e7ed11e9d766c`, then four-path contract admission tree `15cb36fc344740ba2fe45e811c5650eee99a3fcf` | PASS | `_workspace/residual-controls/external-alignment-corrected-staged-qa-pass.json`, SHA-256 `963cad7f1bbbe5729c98520dfcf02d5be6db9a08e1db8d9f963a9fd7d73079c0`: 21/21 selected gates PASS rc0; `contract-admission-staged-qa-pass.json`, SHA-256 `ff00185771faae0b3a1c387ef1469e33f9b6a8b8090eedf869c3650b3d1fd960`: 6/6 selected document gates PASS rc0. Independent source semantic review `external-alignment-semantic-review.json`, SHA-256 `cd155a1be1ddcf97191a5be300956d9a7722283c9c544d16c47613c515e51cbe`, and matrix-consumer correction review `external-alignment-consumer-correction-review.json`, SHA-256 `6f343306f88b2585e22140d7f721ef672ba4d638588d84190f6969154bedfca1`. Normal commits `be6aaa5154c3debe38a643f99b941ad6a7bc7c73` and `620e8f1bc0dd8887f833ee2abfdd04100cac8a9a` have those respective trees; `_workspace/residual-controls/local-contract-integration.json`, SHA-256 `bf6ecd203b2706f85621f7ab1bbf1c6dbf2fba47c98b813ff97a0970cd347e18`, records clean local main fast-forward through both. This resolves the three earlier full-index failures for this local source; native/live/remote acceptance is not inferred | yes | EVD-017, EVD-021, EVD-022 |
 
 ## Approval and Safety Boundaries
 
@@ -664,11 +665,12 @@ findings and EVD-008/014 remain absent actual-PR observations. Each protected
 event still needs its own identity/diff review and applicable authorization.
 The four-file trusted preflight first failed in EVD-019 and passed after
 reviewed correction in EVD-020, committed as `32be2329` with local main at
-the same tree. That narrow PASS does not resolve the full residual document
-index failures EVD-017, EVD-021 and EVD-022. The latest input passed 20 of
-21 gates but failed the current GitOps README matrix reader, which still
-requires retired targets. VAL-P01-006 remains pending until an exact recheck
-resolves all three failures.
+the same tree. Later corrected source QA passed all 21 selected gates, and
+contract admission passed six selected document gates. EVD-023 records those
+reviewed inputs and the two normal commits fast-forwarded to local main;
+it resolves full-index failures EVD-017/021/022 without erasing them.
+VAL-P01-006 is accepted for this local delivery only, while actual hosted,
+native and post-change live observations remain separate.
 The conditional `required_deployment` design is only a future fork/independent
 environment candidate: `deployments:write` bypass and the unproven
 independent machine prevent treating it as SEC-P01-001 closure. The one listed
@@ -682,9 +684,9 @@ Eight named `k3d-hyhome` status commands returned rc 0 for their observed
 snapshot. They were read-only, secret-value-free and bounded to the source
 revision named above. These initial commands do not establish all six
 REQ-0004 quality scenarios. Subsequent telemetry and interface samples and
-their limits are recorded in draft
+their limits are recorded in in-progress
 [SPEC-0106-TSK-0019](../../0106-stage99-lifecycle-normalization/tasks/tsk-0019-live-quality-observation.md),
-whose intake/admission and recovery/threshold handoff remain pending with
+whose execution acceptance and recovery/threshold handoff remain pending with
 REQ-0004's platform/observability/service operators; the completed P08
 local document Task is not reopened. The source documents retain their current
 states and no completed prior Task is restarted. WORK-008 remains DEFER and
