@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.8.1"
+version: "0.8.2"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -192,7 +192,29 @@ not the final combined Registry/scanner input. EVD-025 keeps VAL-P01-006
 pending until that actual same-check recheck passes, without revoking
 EVD-023's dated valid proof.
 
+The resumed local source is normal commit
+`5fa937da7933d486a551426f5238ea487c5552e7`, checked tree
+`10dff03ce7cacb6f034f3282f3c43e0af063184a`, fast-forwarded to `main`
+and inherited by `.worktrees/common-handoff-evidence`. The combined
+three-path staged QA returned rc 0 with all 11 selected gates passing; the
+actual message check and normal commit passed on that input. EVD-030 resolves
+only EVD-025's new local QA failure. EVD-029's baseline-only PASS remains a
+different checked input. Project-Template native admission failures EVD-027
+and EVD-028 and final WGOV-CORE approval/adoption remain separate. The latest
+committed common candidate observed here is still draft.7; no new shared
+source commit, digest or approval is inferred from this k8s result.
+
 ### Source and Consumer Comparison
+
+An independent current C07 reader comparison used committed k8s
+`5fa937da7933d486a551426f5238ea487c5552e7` and PT
+`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`, without editing either grammar.
+Both admit the synthetic Unicode and breaking-marker subjects; k8s rejects
+the trailing-period subject and uppercase type that PT admits. EVD-031
+retains this observed parity failure. Source preparation and local delivery
+do not adopt or normalize that difference. The common decision owner and
+regional P06 consumer owners must reconcile the edition boundary before an
+actual adoption claim; no completed P06 Task is reopened here.
 
 | Finding / source | Current observation at intake | Disposition and current owner |
 | --- | --- | --- |
@@ -308,7 +330,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: EVD-023 remains valid for its dated local source, but the new three-path QA input fails under EVD-025, so VAL-P01-006 is pending for this handoff. EVD-026 confirms scoped Project-Template application authority; EVD-027 retains the failed native commit admission and no new source commit or approval is claimed. EVD-024 identifies the latest committed draft.7 candidate; EVD-013/015/016 cover settings and EVD-018 records HIGH owner-accepted risk without technical closure or actual PR proof. Next owner: platform for the selected QA correction; buenhyden with the Project-Template source/adapter and CI/security control operators for remaining decisions |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: EVD-030 resolves EVD-025 for the checked local handoff input, so VAL-P01-006 is accepted only for this bounded delivery alongside earlier EVD-023/029. EVD-026 confirms scoped Project-Template application authority, while native admission failures EVD-027/028 remain unresolved and no new shared source commit or approval is claimed. EVD-024 identifies the latest committed draft.7 candidate; EVD-013/015/016 cover settings and EVD-018 records HIGH owner-accepted risk without technical closure or actual PR proof. Next owner: buenhyden with the Project-Template source/adapter and CI/security control operators for remaining common-edition and workflow decisions |
 
 ## Criterion Acceptance
 
@@ -317,8 +339,8 @@ correction to its retained pre-change values, never by inventing a green check.
 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005 | Actual source/consumer/owner/disposition comparison is accepted; remaining common adoption belongs to VAL-P01-007 | .agents/governance/agent-execution.md; platform |
 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
-| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | pending | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-025 | EVD-023 preserves the accepted dated local source and resolves EVD-017/021/022; EVD-020 separately resolves EVD-019. The new handoff index failed selected-nonstyle in EVD-025. An actual same-check recheck on corrected input is required before this new local-delivery decision; hosted/control proof belongs to VAL-P01-008 | platform local delivery and Registry baseline owner |
-| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012, EVD-024, EVD-026, EVD-027 | Draft.7 remains the latest committed source identity. Scoped Project-Template application authority and source edits are observed in EVD-026, but the native normal commit failed in EVD-027; a corrected admission, actual source commit/digest, P06 consumer comparison, exact final-edition decision and separate local/joint adoption remain pending. The authorized application is not a final decision and does not resolve EVD-003 | buenhyden with the one Project-Template source writer, P06 consumer owner and each actual adapter owner |
+| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-025, EVD-029, EVD-030 | EVD-023 preserves the earlier accepted local source and resolves EVD-017/021/022; EVD-020 separately resolves EVD-019. Baseline-only EVD-029 and corrected combined-input EVD-030 establish the current bounded local handoff, with EVD-030 resolving EVD-025 on the same check. This accepts local delivery only; hosted/control proof belongs to VAL-P01-008 | platform local delivery and Registry baseline owner |
+| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012, EVD-024, EVD-026, EVD-027, EVD-028, EVD-031 | Draft.7 remains the latest committed source identity. Scoped Project-Template application authority and source edits are observed in EVD-026, but both native admissions EVD-027/028 failed; a corrected admission, actual source commit/digest, P06 consumer comparison including the observed C07 regional inequality in EVD-031, exact final-edition decision and separate local/joint adoption remain pending. The authorized application is not a final decision and does not resolve EVD-003 | buenhyden with the one Project-Template source writer, P06 consumer owner and each actual adapter owner |
 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010, EVD-013, EVD-014, EVD-015, EVD-016, EVD-018 | Current settings read-backs passed and buenhyden accepted the residual HIGH risk in EVD-018, without technical closure, an independent-machine proof or actual next-PR required/style result. No future PR gate or execution authority is accepted | buenhyden with CI/security operator; next authorized actual PR owner for SHA/run evidence |
 
 ## Task Evidence
@@ -354,6 +376,8 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-027 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Project-Template native commit admission | First normal commit attempt with installed pre-commit hook, index tree `b9df8942e7c643f901b4f65cbe97e0ca637fd035`, six changed files | FAIL | `_workspace/residual-controls/common-source-native-commit-fail.json`, SHA-256 `3486194cc3781c91c0745b2236e7a3009b536728753fea995c2530bb4e6145ab`; `common-source-normal-commit.log`, SHA-256 `a3209c9124ff48ec734fc7b2f691774a6257d3741597348dc014cb779717cc03`: native hook rc1 on Task157 unregistered workspace path and Standards Stage 05 individual-document authority link. No commit created. Corrected bytes require a new native result on their actual index; no PASS or source revision is asserted | yes | none |
 | EVD-028 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Project-Template native commit admission | Corrected six-file index `d563f4ca602ced1a51ac258549343faebbcbb5f9`, normal native hook | FAIL | `_workspace/residual-controls/common-source-concurrent-ref-admission-fail.json`, SHA-256 `901acf0e7a1fe992cc73547b61a5f9e8441a9d5a4d93bc1bbd8f96ec7ebe6e5d`: document/readiness/link/lifecycle/style leaves pass, but the final native snapshot guard reports source index/refs/origin identity changed; the concurrent P06 ref advanced to `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`. Source HEAD remains the baseline and no commit exists. User reply `call_72dab5fe8b7245838af3889e9869dbff/0` directs retry after P06 Git completion; no gate bypass or new candidate source/adoption is claimed | yes | none |
 | EVD-029 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Public common revision trusted preflight | Baseline-only index `b81fb6fdbdc8508bcaf1570fa4d82524ed2fe245`; exact nonsecret Registry public-SHA entry, detector configuration unchanged | PASS | `_workspace/residual-controls/common-public-sha-preflight-qa-pass.json`, SHA-256 `64116422aff1dfb3d2be5668497822285fdf5a478fe762dad3a54e6b14643457`: five staged gates PASS rc0, actual message check PASS, normal commit `15d62ca8883bbcb9b02da85ab58a0a68263adaae` and local main/continuation fast-forward. Read-only reviewer confirms narrow scope. `common-public-sha-final-sdk-boundary.json`, SHA-256 `f0ef897a73766e0e26d00413ecf4a1b42ac0c04ba85557ebb37e6034cb041395`: known public SHA has zero new findings, unknown synthetic API token one. Earlier invalid fixture failures remain retained. This does not resolve combined-input failure EVD-025 or approve a common edition | yes | none |
+| EVD-030 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected combined three-path staged index tree `10dff03ce7cacb6f034f3282f3c43e0af063184a`; `validation-venv/bin/python scripts/qa.py staged` | PASS | `_workspace/residual-controls/common-handoff-corrected-staged-qa-pass.json`, SHA-256 `81f5e971519917fa7e1d0aea3a91bba7975c666a7ebc260323cc8e01b28da82e`: 11 of 11 selected gates PASS, rc0. Actual message validation and normal commit `5fa937da7933d486a551426f5238ea487c5552e7` have the checked tree; local `main` fast-forwarded to that commit before this evidence continuation. This resolves only EVD-025 for the corrected local input, not EVD-027/028, final edition approval or regional adoption | yes | EVD-025 |
+| EVD-031 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | C07 regional grammar parity | Read-only raw Git `.cz.toml` schema comparison at k8s `5fa937da7933d486a551426f5238ea487c5552e7` and PT `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`, four synthetic subjects | FAIL | `_workspace/residual-controls/common-c07-adapter-comparison.json`, SHA-256 `1be5b09f7a8c186df459353ce449026a13c9ee52d0bda435c22e108c1ef4173f`: Unicode and breaking-marker subjects agree, while trailing-period subject and uppercase type are rejected by k8s and admitted by PT. This records current regional grammar inequality, not source admission, final edition approval or adopted parity. Next owners: buenhyden/common source owner and the regional P06 consumers for the exact edition boundary and prospective adapter correction | yes | none |
 
 ## Approval and Safety Boundaries
 
@@ -741,3 +765,19 @@ local document Task is not reopened. The source documents retain their current
 states and no completed prior Task is restarted. WORK-008 remains DEFER and
 this Task stays `blocked` because final shared-edition approval, actual
 adoption and independent workflow-control proof remain unresolved.
+
+### 2026-10-09 common-source handoff result
+
+The narrow Registry public-SHA preflight EVD-029 and corrected combined
+three-path index EVD-030 have distinct inputs. EVD-030's 11/11 selected-gate
+PASS, actual message validation, normal commit `5fa937da7933d486a551426f5238ea487c5552e7`
+and same-tree local main fast-forward resolve EVD-025. VAL-P01-006 is accepted
+for this bounded local handoff; earlier EVD-023 remains valid for its source.
+The Project-Template source application was authorized and performed, but
+EVD-027 and EVD-028 remain failed native admissions, so the new source has
+no committed candidate revision or digest in this record. The exact
+buenhyden final-edition decision, local and other adapters' adoption, and
+SEC-P01-001 workflow proof remain outstanding with their named owners.
+WORK-008 therefore remains DEFER and this Task remains blocked. No hosted
+PR, source8 approval, remote merge or product-live result follows from the
+local QA receipt.
