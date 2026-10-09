@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.9.0"
+version: "0.9.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-09"
 layer: "templates"
 ---
 # 99.templates
@@ -22,21 +22,25 @@ relationship, template 연결은
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
-Registry의 `shared_contract`는 `WGOV-CORE / 3.0.0-draft.6` 공동 검토
+Registry의 `shared_contract`는 `WGOV-CORE / 3.0.0-draft.7` 공동 검토
 후보와 이 지역 adapter를 식별한다. 공동 owner는 buenhyden이고, 정본 후보의
-입구는 Project-Template의 기존 `.agents/governance/standards.md`다. 이 후보는
-그 파일을 포함한 Stage 00 정책 다섯 개, Stage 99 README·Registry·schema 두
-개, 그리고 source commit에 추적된 `docs/99.templates/templates/**` 전체인
-54개 파일을 대상으로 한다. digest는 중복 없는 저장소 상대 경로를 UTF-8
+입구는 Project-Template의 기존 `.agents/governance/standards.md`다. 완료된
+Project-Template SPEC-0156 Task0001이 식별한 입력은 기존 Stage 00·99와
+추가 QA·Git·harness·모델·환경 정책, handoff prompt와 Skill을 포함한
+67개 source 경로다. digest는 중복 없는 저장소 상대 경로를 UTF-8
 순서로 정렬하고 각 경로 bytes·NUL·해당 Git blob 원문 bytes를 SHA-256에
 차례로 넣어 계산한다. blob 뒤에는 별도 NUL을 넣지 않는다.
 
-후보의 `source_revision`은 실제 Git commit `19fc393b3bd544ae4edc9a31721d30abcf94dc7f`다.
-해당 54개 blob의 digest는 Registry의 값과 일치한다. 확인 당시
-Project-Template `dev`의 `ede1f04f348b082b79738c581a9d3868229096b9`도
-이 54개 bytes가 같았다. commit과 digest는 내용 식별이며 승인 증거가 아니다.
-Project-Template의 진행 중인 P05는 공통 QA 정책을 수정 중이므로 최종 판본의
-source commit과 digest는 그 결과를 반영해 다시 고정해야 한다. 최종 판본
+후보의 `source_revision`은 실제 Git commit `8541f88da9ca013dd8d02d8c2467f5bc561665a2`다.
+해당 blob의 digest는 Registry의 값과 일치하며, 확인한 Project-Template
+`dev`의 `bed7352aedb8d2d688e211bed7802f7b1a5880e6`에서도 같은 입력이다.
+commit과 digest는 내용 식별이며 승인 증거가 아니다. C02 정본 식별과
+C04·C07·C08의 경계 보완은 사용자 승인에 따라 Project-Template의 전용
+작업 공간에 적용했다. 문서 검사 통과 후 전체 refs 변경을 감지한 native
+hook이 commit을 거부했으므로, P06 Git 작업 종료 뒤 정상 commit을 재시도한다.
+P06 writer의 Commitizen 수정은 별도 commit `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서
+관측했으며, 이 공동 후보의 새 commit과 digest는 아직 없다.
+이 후보 포인터는 그 소비자의 적합성이나 지역 채택 PASS를 뜻하지 않는다. 최종 판본
 승인, 이 저장소의 지역 채택, 네 저장소의 공동 채택은 각각 실제 결정과 적용
 증거가 생긴 뒤 기록한다. 현재 `stage`는 `candidate`, `approval_ref`는
 `null`이다. Kubernetes의 Task 상태 요약·과거 완료 부모, 문서 언어와 native

@@ -6977,12 +6977,12 @@
   },
   "shared_contract": {
     "contract_id": "WGOV-CORE",
-    "version": "3.0.0-draft.6",
+    "version": "3.0.0-draft.7",
     "stage": "candidate",
     "owner": "buenhyden",
     "source": "Project-Template/.agents/governance/standards.md",
-    "source_revision": "19fc393b3bd544ae4edc9a31721d30abcf94dc7f",
-    "content_digest": "sha256:0c29b704db24ef04007e3f8416bebef6f70b00483b59d828a6c783103cfbc042",
+    "source_revision": "8541f88da9ca013dd8d02d8c2467f5bc561665a2",
+    "content_digest": "sha256:773f166c2109d32ac68c81115e9f71913dfb37f32d9b6b70f74d83c90bac6fd9",
     "approval_ref": null,
     "local_adapter": "docs/99.templates/registry.json",
     "extensions": [

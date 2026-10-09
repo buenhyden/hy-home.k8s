@@ -1,6 +1,6 @@
 ---
 title: "Current Authority and Shared Contract Review"
-version: "0.8.0"
+version: "0.8.1"
 type: "sdlc/task"
 status: "blocked"
 owner: "platform"
@@ -67,14 +67,25 @@ criteria and completed Tasks retain their original decisions.
 
 The proposed common source has advanced beyond the historical draft.3 input:
 Project-Template `.agents/governance/standards.md` holds one frozen
-`WGOV-CORE / 3.0.0-draft.6` candidate at source commit
-`19fc393b3bd544ae4edc9a31721d30abcf94dc7f` with content SHA-256
-`0c29b704db24ef04007e3f8416bebef6f70b00483b59d828a6c783103cfbc042`.
+`WGOV-CORE / 3.0.0-draft.7` candidate at source commit
+`8541f88da9ca013dd8d02d8c2467f5bc561665a2` with content SHA-256
+`773f166c2109d32ac68c81115e9f71913dfb37f32d9b6b70f74d83c90bac6fd9`.
 The latest inspected approval reference is null. This is an existing reviewable
 source, not a final decision, local adoption or four-repository adoption.
-Project-Template's P05 checkout has another active writer and is not modified
-by this Task. The source/adapter owner must bind any actual final approval to
-its reviewed edition and record adoption separately.
+Project-Template's P05 completed at inspected `dev`
+`bed7352aedb8d2d688e211bed7802f7b1a5880e6`, with the same 67 source
+blobs. Its separate P06 writer owns the current Commitizen adapter correction.
+Native `HOOK-PATH-ROOT` rejected the initial foreign-workspace write before
+mutation. The subsequently authorized C02/C04/C07/C08 patch and execution
+package are now applied in the isolated Project-Template workspace. Two
+normal commit attempts failed: first on document ownership/path findings,
+then on the native source/ref identity boundary after those findings were
+corrected. The concurrent P06 branch advanced to
+`10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3` during the second check.
+The user instructed retry after P06 Git work finishes. There is still no new
+shared source commit, digest or approval reference. The source/adapter owner
+must complete normal admission and consumer comparison, then bind an actual
+final approval to the reviewed edition and record adoption separately.
 
 Public read-only GitHub metadata shows one listed collaborator,
 `buenhyden` (User 9127269), with admin permission; main protection still
@@ -148,6 +159,38 @@ as `32be232908da7cff71ff1003349407fb2a2993da` and fast-forwarded local
 `main` to the same tree. The prior changing-index and quality/nonstyle
 failure and the corrected 16-gate PASS are separate EVD-019/020 inputs.
 This preflight does not resolve EVD-017's later full residual-document index.
+
+### 2026-10-09 common-source handoff input
+
+Buenhyden's authenticated reply `call_c13cf25231e54322a8e77c33a12b1f4f/0`
+approved application and selected validation of the reviewed Project-Template
+source/package patches in its isolated workspace. The approval covers normal
+local commits, excludes concurrent P06 files and remote/live actions, and is
+not ratification of a final WGOV-CORE edition. Native `HOOK-PATH-ROOT` had
+previously denied a foreign-workspace write before mutation. Under the scoped
+approval, the first `apply_patch` invocation rejected a unified diff before
+writing; `git apply` then applied Standards section 6 and `apply_patch`
+applied the five Spec/router/Registry files. EVD-026 records application and
+authority only. The first normal Project-Template commit attempt failed its
+native document hook at index tree `b9df8942e7c643f901b4f65cbe97e0ca637fd035`;
+EVD-027 retains that failure. Corrected source bytes are undergoing a new
+native admission at a distinct index. EVD-028 records that attempt's document
+checks passing but overall admission failing on changed shared refs. No
+source commit or digest was created. The last committed shared
+candidate remains draft.7 with a null approval reference, and the P06
+Commitizen consumer remains with its separate owner.
+
+The current three-path k8s staged index tree
+`2c55b62eca202e461791862c5c1425062abfad22` also failed selected local
+QA. Ten gates passed and selected-nonstyle failed on a `detect-secrets` high
+entropy finding for Registry `source_revision`. The exact public-SHA baseline
+preflight now passes five selected gates and is normal commit
+`15d62ca8883bbcb9b02da85ab58a0a68263adaae`, fast-forwarded to local main
+and this continuation. Pinned detector SDK comparison allows that known value
+and still detects an unknown synthetic API token. Its scope is membership,
+not the final combined Registry/scanner input. EVD-025 keeps VAL-P01-006
+pending until that actual same-check recheck passes, without revoking
+EVD-023's dated valid proof.
 
 ### Source and Consumer Comparison
 
@@ -265,7 +308,7 @@ correction to its retained pre-change values, never by inventing a green check.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: Local source/admission QA and integration now pass under EVD-023, resolving full-index failures EVD-017/021/022; trusted preflight EVD-019 was separately resolved by EVD-020. EVD-012 identifies a committed draft.6 candidate without final approval/adoption. EVD-013/015/016 accept bounded settings and EVD-018 records HIGH owner-accepted risk without technical closure or actual PR proof. Next owner: buenhyden with Project-Template source/adapter owners and CI/security control operator |
+| WORK-008 | [VAL-P01-001](../spec.md#success-criteria--verification-plan), [VAL-P01-003](../spec.md#success-criteria--verification-plan), [VAL-P01-005](../spec.md#success-criteria--verification-plan), [VAL-P01-006](../spec.md#success-criteria--verification-plan), [VAL-P01-007](../spec.md#success-criteria--verification-plan), [VAL-P01-008](../spec.md#success-criteria--verification-plan) | Current comparison, local repairs, shared-source decision, protected server follow-up and verified local handoff | platform; buenhyden for protected decisions | frontmatter | DEFER | Reason: EVD-023 remains valid for its dated local source, but the new three-path QA input fails under EVD-025, so VAL-P01-006 is pending for this handoff. EVD-026 confirms scoped Project-Template application authority; EVD-027 retains the failed native commit admission and no new source commit or approval is claimed. EVD-024 identifies the latest committed draft.7 candidate; EVD-013/015/016 cover settings and EVD-018 records HIGH owner-accepted risk without technical closure or actual PR proof. Next owner: platform for the selected QA correction; buenhyden with the Project-Template source/adapter and CI/security control operators for remaining decisions |
 
 ## Criterion Acceptance
 
@@ -274,8 +317,8 @@ correction to its retained pre-change values, never by inventing a green check.
 | [VAL-P01-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005 | Actual source/consumer/owner/disposition comparison is accepted; remaining common adoption belongs to VAL-P01-007 | .agents/governance/agent-execution.md; platform |
 | [VAL-P01-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-004, EVD-007 | Approval-route semantics and the exact approved setting operation remain distinguished from authentication and future gate integrity | .agents/governance/approval-and-safety.md; platform |
 | [VAL-P01-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-011 | Local resource/safety owners, no-bypass checks and reviewed local delivery are accepted within the original bounded scope | .agents/governance/quality.md and .agents/governance/approval-and-safety.md; platform |
-| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023 | The original local receipts remain valid for their dated inputs. Corrected trusted preflight EVD-020 resolves EVD-019; frozen source/admission index QA, independent review, normal commits and local main fast-forward under EVD-023 resolve EVD-017/021/022 for this local source. This accepts local delivery only; hosted/control proof belongs to VAL-P01-008 | platform local delivery owner |
-| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012 | A real draft.6 candidate source commit and digest now exist, but final edition approval reference is null and actual local/joint adoption remain DEFER. Candidate identity does not resolve the distinct final-decision check in EVD-003 | buenhyden with the one Project-Template source writer and each actual adapter owner |
+| [VAL-P01-006](../spec.md#success-criteria--verification-plan) | pending | EVD-002, EVD-006, EVD-011, EVD-017, EVD-019, EVD-020, EVD-021, EVD-022, EVD-023, EVD-025 | EVD-023 preserves the accepted dated local source and resolves EVD-017/021/022; EVD-020 separately resolves EVD-019. The new handoff index failed selected-nonstyle in EVD-025. An actual same-check recheck on corrected input is required before this new local-delivery decision; hosted/control proof belongs to VAL-P01-008 | platform local delivery and Registry baseline owner |
+| [VAL-P01-007](../spec.md#success-criteria--verification-plan) | pending | EVD-003, EVD-012, EVD-024, EVD-026, EVD-027 | Draft.7 remains the latest committed source identity. Scoped Project-Template application authority and source edits are observed in EVD-026, but the native normal commit failed in EVD-027; a corrected admission, actual source commit/digest, P06 consumer comparison, exact final-edition decision and separate local/joint adoption remain pending. The authorized application is not a final decision and does not resolve EVD-003 | buenhyden with the one Project-Template source writer, P06 consumer owner and each actual adapter owner |
 | [VAL-P01-008](../spec.md#success-criteria--verification-plan) | rejected | EVD-008, EVD-009, EVD-010, EVD-013, EVD-014, EVD-015, EVD-016, EVD-018 | Current settings read-backs passed and buenhyden accepted the residual HIGH risk in EVD-018, without technical closure, an independent-machine proof or actual next-PR required/style result. No future PR gate or execution authority is accepted | buenhyden with CI/security operator; next authorized actual PR owner for SHA/run evidence |
 
 ## Task Evidence
@@ -305,6 +348,12 @@ correction to its retained pre-change values, never by inventing a green check.
 | EVD-021 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected source staged index tree `96cf651343e7eabb00a9895783d011f70eef50b5` before Task0019 profile repair and the later local-service boundary extension | FAIL | `_workspace/residual-controls/corrected-source-staged-qa-fail.json`, SHA-256 `0de0d916b41e5f342f7772964fc87ca53bbdf436ce950f82c99d320002daa9b4`, and `corrected-source-staged-qa.log`, SHA-256 `20f5d3483c610db9a3c2372c5da3c39d27526b31c2abe3cf7243036578a8e2e1`: 10 gates PASS, `markdown-profiles` FAIL, rc1. `corrected-source-markdown-diagnostic.json`, SHA-256 `396a4d8e094667f41aa764a561f5969292d03b6657ca5a9c1e35582bf2bdfaf8`, reports `TASK-EXECUTION-RESULT` for Task0019 row 1 `draft/DEFER`; its owner is correcting that profile. The other ten passing leaves do not form overall acceptance; an exact same-check recheck must resolve this and EVD-017. No PASS is claimed | yes | none |
 | EVD-022 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Source staged index tree `725e5f8cd90f7add8729f82503806550f95f9b0d` across 24 changed paths, before the current matrix-reader correction | FAIL | `_workspace/residual-controls/external-alignment-staged-qa-fail.json`, SHA-256 `cca17ffa16b0e47047383694669d6c51f023f0c31f9d5ec76e89a0fd5bda5a3d`: rc1, 20 of 21 gates PASS. `_workspace/residual-controls/external-alignment-markdown-diagnostic.json`, SHA-256 `28995d9ee071df897bb66b6165870c75628d3df9beeb9b88267946b70a1260c1`, identifies `DOC-MATRIX-PARITY` for the `gitops/README.md` External Service Contract and Secret Management matrices (`row-target-set-differs`). The reader still expects retired HA PostgreSQL write/read and Platformpostgres-app-secret targets; the current matrix consumer owner is correcting that obligation. Passing leaves do not establish overall acceptance, and obsolete documentation rows are not restored to satisfy it | yes | none |
 | EVD-023 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Corrected frozen 25-path source index tree `bcc4185d7ae76cb01ec1699a9c2e7ed11e9d766c`, then four-path contract admission tree `15cb36fc344740ba2fe45e811c5650eee99a3fcf` | PASS | `_workspace/residual-controls/external-alignment-corrected-staged-qa-pass.json`, SHA-256 `963cad7f1bbbe5729c98520dfcf02d5be6db9a08e1db8d9f963a9fd7d73079c0`: 21/21 selected gates PASS rc0; `contract-admission-staged-qa-pass.json`, SHA-256 `ff00185771faae0b3a1c387ef1469e33f9b6a8b8090eedf869c3650b3d1fd960`: 6/6 selected document gates PASS rc0. Independent source semantic review `external-alignment-semantic-review.json`, SHA-256 `cd155a1be1ddcf97191a5be300956d9a7722283c9c544d16c47613c515e51cbe`, and matrix-consumer correction review `external-alignment-consumer-correction-review.json`, SHA-256 `6f343306f88b2585e22140d7f721ef672ba4d638588d84190f6969154bedfca1`. Normal commits `be6aaa5154c3debe38a643f99b941ad6a7bc7c73` and `620e8f1bc0dd8887f833ee2abfdd04100cac8a9a` have those respective trees; `_workspace/residual-controls/local-contract-integration.json`, SHA-256 `bf6ecd203b2706f85621f7ab1bbf1c6dbf2fba47c98b813ff97a0970cd347e18`, records clean local main fast-forward through both. This resolves the three earlier full-index failures for this local source; native/live/remote acceptance is not inferred | yes | EVD-017, EVD-021, EVD-022 |
+| EVD-024 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Latest common candidate source identification | Independent read-only raw Git blob digest review of Project-Template source `8541f88da9ca013dd8d02d8c2467f5bc561665a2` and inspected `dev` `bed7352aedb8d2d688e211bed7802f7b1a5880e6`: the single draft.7 candidate's 67 paths hash to `773f166c2109d32ac68c81115e9f71913dfb37f32d9b6b70f74d83c90bac6fd9`. P05 is completed; approval remains null. Prepared standards section 6 patch was not applied because native `HOOK-PATH-ROOT` denied the foreign path. P06 owns the separate Commitizen correction. This identifies content and a handoff, without resolving final approval/adoption EVD-003. | PASS | `_workspace/residual-controls/common-current-source.json`, SHA-256 `ec6eb7f5fa491a2ec8a753a60c4a5786dbb2eeec0ce2d817032275d100693c6f`; `common-standards-proposal.patch`, SHA-256 `7a76c1793128defe92fb9f66163913ae9f0aff7b951c7ef66837c689e0a9980a`; reviewer `/root/common_establishment`, no foreign source mutation | yes | none |
+| EVD-025 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Final residual local document QA | Three-path staged index tree `2c55b62eca202e461791862c5c1425062abfad22`; `validation-venv/bin/python scripts/qa.py staged` | FAIL | `_workspace/residual-controls/common-handoff-staged-qa-fail.json`, SHA-256 `aec152fb1dcb9cdf93820ef000782d81ca876c853f817c485561ca823914e487`: rc1, 10 of 11 selected gates PASS; selected-nonstyle rc2. `common-handoff-nonstyle-child-diagnostic.json` identifies `detect-secrets` Hex High Entropy at `docs/99.templates/registry.json:6984` on the candidate `source_revision`. Registry baseline correction is pending with its owner; prior EVD-023 PASS belongs to its earlier index, and no current-index PASS is claimed | yes | none |
+| EVD-026 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Scoped common-source application authority | Authenticated reply `call_c13cf25231e54322a8e77c33a12b1f4f/0` approved exact Project-Template source/package application and selected validation; first foreign write was denied, first parser rejected a unified diff before mutation, then two supported commands applied the reviewed six files | PASS | `_workspace/residual-controls/common-source-application.json`, SHA-256 `2144320f1ce0da7cc6d06716b68b221d4e8a005bfd24319818a81cab007f1607`: Standards section 6 plus five package/router/Registry files applied in the isolated Project-Template worktree. PASS is limited to scoped authorization and application; it is neither native commit admission nor final WGOV-CORE approval/adoption | yes | none |
+| EVD-027 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Project-Template native commit admission | First normal commit attempt with installed pre-commit hook, index tree `b9df8942e7c643f901b4f65cbe97e0ca637fd035`, six changed files | FAIL | `_workspace/residual-controls/common-source-native-commit-fail.json`, SHA-256 `3486194cc3781c91c0745b2236e7a3009b536728753fea995c2530bb4e6145ab`; `common-source-normal-commit.log`, SHA-256 `a3209c9124ff48ec734fc7b2f691774a6257d3741597348dc014cb779717cc03`: native hook rc1 on Task157 unregistered workspace path and Standards Stage 05 individual-document authority link. No commit created. Corrected bytes require a new native result on their actual index; no PASS or source revision is asserted | yes | none |
+| EVD-028 | [VAL-P01-007](../spec.md#success-criteria--verification-plan) | WORK-008 | Project-Template native commit admission | Corrected six-file index `d563f4ca602ced1a51ac258549343faebbcbb5f9`, normal native hook | FAIL | `_workspace/residual-controls/common-source-concurrent-ref-admission-fail.json`, SHA-256 `901acf0e7a1fe992cc73547b61a5f9e8441a9d5a4d93bc1bbd8f96ec7ebe6e5d`: document/readiness/link/lifecycle/style leaves pass, but the final native snapshot guard reports source index/refs/origin identity changed; the concurrent P06 ref advanced to `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`. Source HEAD remains the baseline and no commit exists. User reply `call_72dab5fe8b7245838af3889e9869dbff/0` directs retry after P06 Git completion; no gate bypass or new candidate source/adoption is claimed | yes | none |
+| EVD-029 | [VAL-P01-006](../spec.md#success-criteria--verification-plan) | WORK-008 | Public common revision trusted preflight | Baseline-only index `b81fb6fdbdc8508bcaf1570fa4d82524ed2fe245`; exact nonsecret Registry public-SHA entry, detector configuration unchanged | PASS | `_workspace/residual-controls/common-public-sha-preflight-qa-pass.json`, SHA-256 `64116422aff1dfb3d2be5668497822285fdf5a478fe762dad3a54e6b14643457`: five staged gates PASS rc0, actual message check PASS, normal commit `15d62ca8883bbcb9b02da85ab58a0a68263adaae` and local main/continuation fast-forward. Read-only reviewer confirms narrow scope. `common-public-sha-final-sdk-boundary.json`, SHA-256 `f0ef897a73766e0e26d00413ecf4a1b42ac0c04ba85557ebb37e6034cb041395`: known public SHA has zero new findings, unknown synthetic API token one. Earlier invalid fixture failures remain retained. This does not resolve combined-input failure EVD-025 or approve a common edition | yes | none |
 
 ## Approval and Safety Boundaries
 
