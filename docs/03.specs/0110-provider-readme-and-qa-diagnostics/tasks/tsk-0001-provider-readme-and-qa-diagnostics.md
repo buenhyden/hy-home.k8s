@@ -30,9 +30,9 @@ Execute the three work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PRQA-001](../spec.md#success-criteria--verification-plan) | Translate the eight pending READMEs | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | Missing-tool diagnostics and README sentence | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-PRQA-003](../spec.md#success-criteria--verification-plan) | Record keep decisions for satisfied findings | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PRQA-001](../spec.md#success-criteria--verification-plan) | Translate the eight pending READMEs | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | Missing-tool diagnostics and README sentence | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-PRQA-003](../spec.md#success-criteria--verification-plan) | Record keep decisions for satisfied findings | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
