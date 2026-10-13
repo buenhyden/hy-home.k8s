@@ -1247,6 +1247,60 @@ class NativeDenyCoverageTests(unittest.TestCase):
             )
         )
 
+    def test_option_first_cluster_and_tool_mutation_is_denied(self):
+        verbs = (
+            "delete pod a",
+            "apply -f a.yaml",
+            "create ns a",
+            "replace -f a.yaml",
+            "exec a -- sh",
+            "patch deploy a -p {}",
+            "edit deploy a",
+            "label pod a k=v",
+            "annotate pod a k=v",
+            "set image deploy/a a=b",
+            "scale deploy a --replicas=0",
+            "rollout restart deploy/a",
+            "rollout undo deploy/a",
+            "port-forward svc/a 8080",
+            "drain node-a",
+            "cordon node-a",
+            "uncordon node-a",
+            "taint node node-a k=v:NoSchedule",
+            "cp a:/etc/x ./x",
+            "debug a -it --image=busybox",
+            "attach a",
+            "run a --image=busybox",
+            "proxy",
+        )
+        commands = [f"kubectl -n a {verb}" for verb in verbs]
+        commands += [f"kubectl --context c {verb}" for verb in verbs]
+        commands += [f"kubectl {verb}" for verb in verbs[-5:]]
+        commands += [
+            "helm install a chart",
+            "helm upgrade --install a chart",
+            "helm -n a uninstall a",
+            "helm delete a",
+            "helm rollback a 1",
+            "vault kv delete secret/a",
+            "vault kv destroy -versions=1 secret/a",
+            "vault kv metadata delete secret/a",
+            "vault delete secret/a",
+            "vault secrets disable kv",
+            "vault policy write a a.hcl",
+            "vault token create",
+            "vault login",
+            "argocd --grpc-web app sync a",
+            "argocd --grpc-web app delete a",
+            "argocd app rollback a 1",
+            "argocd account generate-token",
+            "argocd cluster rm a",
+            "k3d node delete a",
+            "k3d registry delete a",
+            "k3d cluster stop a",
+        ]
+        self.assert_denied(commands)
+
 
 if __name__ == "__main__":
     unittest.main()
