@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -29,9 +29,9 @@ Execute the three work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Store module, CLI and Git ignore entry | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Memory policy and requirement revision | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Store module, CLI and Git ignore entry | platform | completed | PASS | EVD-005, EVD-008 in commit `9b4bd50043fea1f6575bcd9c553b04e341a77c0c` |
+| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | blocked | DEFER | EVD-006 in commit `8586346f445394fe2c7f1043c1569b13a3b62c35`. Reason: VAL-MEMORY-002 needs two real provider sessions reading the same memory and showing no native memory write. Next owner: operator, to run the observation commands in the Verification Summary |
+| WORK-003 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Memory policy and requirement revision | platform | completed | PASS | EVD-007 in commit `aeafdebbb0b004807809d00931150fa3dd284e58` |
 
 ## Task Evidence
 
@@ -41,13 +41,17 @@ Execute the three work units of the [Plan](../plan.md) for
 | EVD-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Native settings tests and staged QA | WORK-002 commit index | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Cross-provider session observation | Two real provider sessions in two worktrees | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Policy validators and staged QA | WORK-003 commit index | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Store tests and staged QA | `tests.test_workspace_memory` failed to import before the module existed, then 11 tests passed: implicit-creation refusal, linked-worktree identity, tier schema and Task-state rejection, revision conflict retention, four concurrent writers with one winner, idempotent retry, capacity refusal without loss, stale-source exclusion with history kept, no delete API, verified backup kept on replacement failure, rollback journal and CLI round trip. `qa.py staged` from the validation environment passed all 12 selected gates. Local SQLite 3.45.1 | PASS | This Task; commit `9b4bd50043fea1f6575bcd9c553b04e341a77c0c` | yes | EVD-001 |
+| EVD-006 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Native settings tests and staged QA | `tests.test_agent_governance` errored on the absent `.codex/config.toml` fixture before repair, then 59 tests passed, including rejection of a missing, true, null, zero or string `autoMemoryEnabled` and of a Codex config that is missing, enables memories, or adds `[hooks]` or another key. `qa.py staged` passed all 10 selected gates. This is repository-static evidence; client behavior is not observed | PASS | This Task; commit `8586346f445394fe2c7f1043c1569b13a3b62c35` | yes | EVD-002 |
+| EVD-007 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Policy validators and staged QA | First staged run failed `links-and-owners` on a README deep link and a policy-to-Spec link; both were replaced by stage-index routing and the rerun passed all 9 selected gates, including knowledge surface and document lifecycle | PASS | This Task; commit `aeafdebbb0b004807809d00931150fa3dd284e58` | yes | EVD-004 |
+| EVD-008 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Real store smoke check | `scripts/workspace_memory.py init` created the Git-ignored store at the main root with workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`; a long-term memory written from the main worktree was read back with the same ID, revision and body from a temporary linked worktree, then marked current. One process and one provider only, so it does not satisfy VAL-MEMORY-002 | PASS | `.workspace-memory/memory.sqlite3` (ignored runtime data) | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-001 and WORK-003 checks | platform |
-| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-002 checks and observe two sessions | platform |
+| [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-007 | Accept the store, its limits and the policy on focused local evidence; the area limit is observed only | platform |
+| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | Run the two-session observation; static settings evidence alone does not satisfy the criterion | operator |
 
 ## Approval and Safety Boundaries
 
@@ -76,4 +80,19 @@ Execute the three work units of the [Plan](../plan.md) for
 
 ## Verification Summary
 
-Pending execution.
+WORK-001 and WORK-003 are complete and VAL-MEMORY-001 is accepted. WORK-002
+is committed but blocked on its acceptance observation, so this Task stays
+blocked rather than completed. Every commit passed `qa.py staged` from the
+documented validation environment.
+
+To close VAL-MEMORY-002, start a new Claude session and a new trusted Codex
+session in two different worktrees of this repository and in each run
+`python3 scripts/workspace_memory.py resolve` and
+`python3 scripts/workspace_memory.py get mem-e71dedf07add48d5`; the
+workspace ID, revision and body must match. Then confirm that neither
+session wrote native memory (no new Claude project memory entry, no Codex
+memory generation). Record the clients, worktrees and results here.
+
+Limitations: the 4 GiB area limit is observed, not enforced; hosted CI,
+push and pull request are not executed. Next owner: the operator for the
+observation, SPEC-0109 Plan approval, push and pull request.
