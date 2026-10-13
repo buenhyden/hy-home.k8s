@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$(git rev-parse --show-toplevel)/.codex/hooks/pre-tool-use.sh\"",
+            "command": "hook=\"$(git rev-parse --show-toplevel 2>/dev/null)/.codex/hooks/pre-tool-use.sh\" ; [ -f \"$hook\" ] || { echo \"[FAIL] HOOK-ADAPTER: the write guard adapter is unavailable\" >&2 ; exit 2 ; } ; exec bash \"$hook\"",
             "timeout": 30,
             "statusMessage": "Checking the repository write boundary"
           }

@@ -560,6 +560,33 @@ class ProviderAdapterOwnershipTest(unittest.TestCase):
             self.assertNotIn(".claude/", command)
             self.assertIn(".codex/hooks/", command)
 
+    def test_the_codex_registration_blocks_outside_the_repository(self):
+        """SPEC-0114: a session directory without this checkout must not skip
+        the guard; the runtime blocks only on exit 2."""
+        registration = json.loads(CODEX_REGISTRATION_PATH.read_text(encoding="utf-8"))
+        command = registration["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        payload = scalar_payload(SAMPLE_DOCUMENT)
+        with tempfile.TemporaryDirectory() as outside:
+            blocked = subprocess.run(
+                ("/bin/sh", "-c", command),
+                input=payload,
+                capture_output=True,
+                text=True,
+                cwd=outside,
+                timeout=60,
+            )
+        self.assertEqual(blocked.returncode, 2, blocked.stderr)
+        self.assertIn("[FAIL]", blocked.stderr)
+        inside = subprocess.run(
+            ("/bin/sh", "-c", command),
+            input=payload,
+            capture_output=True,
+            text=True,
+            cwd=str(ROOT),
+            timeout=60,
+        )
+        self.assertEqual(inside.returncode, 0, inside.stderr)
+
     def test_the_codex_adapter_exists_and_names_its_provider(self):
         self.assertTrue(
             CODEX_ADAPTER_PATH.is_file(), "the Codex adapter must be a real file"
