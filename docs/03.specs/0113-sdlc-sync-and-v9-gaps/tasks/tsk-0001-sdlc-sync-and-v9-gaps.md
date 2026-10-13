@@ -30,7 +30,7 @@ Execute the seven work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | Correct stale requirements, architecture and Spec text | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | Correct stale requirements, architecture and Spec text | platform | completed | PASS | EVD-012, EVD-015 |
 | WORK-002 | [VAL-SYNC-002](../spec.md#success-criteria--verification-plan) | Frozen-exclusion cross-check test and fix recipe | platform | completed | PASS | EVD-011 |
 | WORK-003 | [VAL-SYNC-003](../spec.md#success-criteria--verification-plan) | Four F05 claim statuses in the Stage 99 README | platform | completed | PASS | EVD-010 |
 | WORK-004 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | F18 evidence correction | platform | completed | PASS | EVD-008 |
@@ -56,12 +56,13 @@ Execute the seven work units of the [Plan](../plan.md) for
 | EVD-012 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused checks and staged QA | Corrected the audited stale text. SPEC-0109 (v0.3.0) no longer calls itself a pre-implementation draft: its Overview, limits, interface and FR-0022 row reflect the delivered store, and it links AD-0006 back. AD-0006 (v2.2.0) describes the memory store in its checkpoint section, names SPEC-0109 in the FR-0022 row and lists SPEC-0108 to SPEC-0113. REQ-0003 (v2.1.0, updated 2026-10-13) gains a Traceability paragraph for SPEC-0108 to SPEC-0113 and the SPEC-0107 links missing from FR-0001, FR-0005, FR-0024, FR-0026, FR-0027 and IF-0001. SPEC-0106 gains a dated successor note on the retired writer, SPEC-0108 VAL-TSKSUM-002 a point-in-time note, and ADR-0036 a sentence separating the SPEC-0109 store from the retired memory structure. The SPEC-0108 to SPEC-0112 Tasks each gain a delivery row for pull requests #140 to #142. The first staged run failed `BODY-LINK-RECIPROCAL` until SPEC-0109 linked AD-0006; the rerun passed | PASS | This Task; WORK-001 commit | yes | EVD-001 |
 | EVD-013 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | WORK-007 commit index | NOT_RUN | Pending | yes | none |
 | EVD-014 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | The full suite on main `86daf815` (1405 tests) failed `test_subprocess_run_calls_declare_a_timeout` on `scripts/workspace_memory.py:88`, a SPEC-0109 regression that its staged QA did not select; the same module at base `57f44c44` has no such file. The Git call now has `timeout=GIT_TIMEOUT_SECONDS` (10), and `TimeoutExpired` reports `MEMORY_UNAVAILABLE: Git did not answer in time`. The new `test_git_timeout_reports_the_store_unavailable` errored with an uncaught `TimeoutExpired` against the previous module and passes now; 12 store tests and the tooling timeout test passed. The other 13 suite failures also fail at base `57f44c44` and are outside this package. `qa.py staged` on the WORK-007 index passed | PASS | This Task; WORK-007 commit | yes | EVD-013 |
+| EVD-015 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review and full suite | An independent read-only review of `86daf815..9397d6f6` found no HIGH issue and confirmed the merge SHAs, F05 claim sources, memory wording, the AGENTS.md validator effect and the timeout mapping. Its findings were fixed in `95bb89eb`: REQ-0003 no longer calls the completed SPEC-0107 a draft; the SPEC-0113 Plan and Task count seven units; the F22 test also compares the two harness globs between pre-commit and markdownlint (it passed on the repository and failed on two tampered copies); SPEC-0109 names its body rewrite a revision rather than a note and drops 'once approved'; the `workspace_memory.py` limits comment says accepted; the SPEC-0108 to SPEC-0112 Task summaries and the SPEC-0108 Plan gain dated notes closing the merge handoff and the pending README risk, with patch version bumps. The SPEC-0109 Overview, limits and interface text was rewritten in place, beyond the notes-only allowance named below; Git keeps the earlier text. The full suite on `9397d6f6` ran 1407 tests with 12 failures and 1 error: 12 match failures on main `86daf815`, and `test_pre_effect_group_interrupt_reuses_deadline_and_finishes_tree` passed three times alone (load-sensitive timing). `qa.py staged` on the review-fix index passed | PASS | This Task; review-fix commit | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-001 checks | platform |
+| [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-015 | Accept the document sync and the review fixes; the SPEC-0109 in-place rewrite is recorded | platform |
 | [VAL-SYNC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-011 | Accept the Registry cross-check and the explicit fix recipe | platform |
 | [VAL-SYNC-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accept the four separate claim statuses | platform |
 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accept the correction record | platform |
@@ -88,7 +89,7 @@ Execute the seven work units of the [Plan](../plan.md) for
   After the full test run the operator added WORK-007 the same day, which
   extends the allowed paths to `scripts/workspace_memory.py` and
   `tests/test_workspace_memory.py`. Push, pull request and merge await the
-  operator.
+  operator; this Task does not infer them.
 - **Static Validation**: focused tests, document validators and staged QA
   from the documented validation environment.
 - **Live Validation**: DEFER — no live surface is touched.
@@ -98,4 +99,16 @@ Execute the seven work units of the [Plan](../plan.md) for
 
 ## Verification Summary
 
-Pending execution.
+All seven work units are complete and all seven criteria are accepted.
+Every commit passed `qa.py staged` from the documented validation
+environment, and one independent review covered the whole branch; its
+findings were fixed in `95bb89eb` (EVD-015).
+
+Limitations: the F02 split is a reorder inside one `AGENTS.md`, because no
+verified Codex loader reads a second instruction file in the same directory;
+WGOV-CORE four-repository adoption is unobserved and local acceptance covers
+C07 only; hosted CI, push and pull request are not executed here. Residual
+risk: 12 suite failures that already fail on main `86daf815` stay outside
+this package, and one timing test fails only under full-suite load. Rollback:
+forward revert of the package commits. Next owner: the operator for push,
+pull request and merge.
