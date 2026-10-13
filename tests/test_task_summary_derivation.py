@@ -12,7 +12,6 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import document_contracts as contracts  # noqa: E402
 
 
-
 class TaskSummaryDerivationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

@@ -4769,7 +4769,9 @@ def _body_contract_link_diagnostics(
         profile = profiles_by_id.get(view.profile_id)
         if profile is None:
             continue
-        status = task_status(context.metadata[path], context.texts.get(path, ""), profile)
+        status = task_status(
+            context.metadata[path], context.texts.get(path, ""), profile
+        )
         if not _body_contract_link_is_enforced(
             path, profile, status, body_contracts, path_prefixes
         ):

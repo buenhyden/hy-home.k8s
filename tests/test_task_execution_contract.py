@@ -1345,7 +1345,9 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         }
 
     def test_absent_summary_is_derived_and_present_summary_wins(self) -> None:
-        self.assertEqual(self.task_status({}, self.without_status, self.profile), "completed")
+        self.assertEqual(
+            self.task_status({}, self.without_status, self.profile), "completed"
+        )
         self.assertEqual(
             self.task_status({"status": "draft"}, self.without_status, self.profile),
             "draft",
@@ -1358,7 +1360,9 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         self.assertNotIn(
             "TASK-EXECUTION-SUMMARY", self.rule_ids("in-progress", "completed", "draft")
         )
-        self.assertIn("TASK-EXECUTION-SUMMARY", self.rule_ids("draft", "completed", "draft"))
+        self.assertIn(
+            "TASK-EXECUTION-SUMMARY", self.rule_ids("draft", "completed", "draft")
+        )
         self.assertIn("TASK-EXECUTION-STATUS", self.rule_ids("", "frontmatter"))
 
     def test_lifecycle_reads_the_derived_status(self) -> None:
@@ -1379,11 +1383,15 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         self.assertEqual(rule_ids(self.without_status), rule_ids(self.with_status))
         self.assertIn("TASK-EXECUTION-STATUS", rule_ids(self.single_without))
         hidden = self.without_status.replace(
-            "### Lifecycle Traceability\n", "### Lifecycle Traceability\n<!--\n# x\n-->\n", 1
+            "### Lifecycle Traceability\n",
+            "### Lifecycle Traceability\n<!--\n# x\n-->\n",
+            1,
         )
         self.assertEqual(self.task_status({}, hidden, self.profile), "")
         self.assertIn("TASK-EXECUTION-SUMMARY", rule_ids(hidden))
-        self.assertEqual(self.task_status({"status": None}, self.without_status, self.profile), "")
+        self.assertEqual(
+            self.task_status({"status": None}, self.without_status, self.profile), ""
+        )
 
 
 if __name__ == "__main__":
