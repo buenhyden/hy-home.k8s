@@ -28,8 +28,8 @@ Execute the two work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | Pin the acceptance test package snapshot | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | Project the generation Task and replace the retired edge | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | Pin the acceptance test package snapshot | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | Project the generation Task and replace the retired edge | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
