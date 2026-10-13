@@ -68,8 +68,9 @@ focused, staged and review evidence here.
 - **Forbidden Paths**: frozen Archive payloads, other Spec packages, live
   cluster, Vault and secret material.
 - **Approval Required**: the operator selected the scope and the `ask`
-  conversion in this session; push, pull request and merge await the
-  operator.
+  conversion in this session and approved SPEC-0108 and its Plan on
+  2026-10-13 after reviewing the result at `d142c250`; push, pull request
+  and merge await the operator.
 - **Static Validation**: focused unit tests, the four validators named in
   the Spec and `python3 scripts/qa.py staged` per commit.
 - **Live Validation**: DEFER — no live surface is touched; native Claude
