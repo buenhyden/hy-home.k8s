@@ -44,7 +44,13 @@ RETIRED_SURFACES = (
     "GEMINI.md",
 )
 CODEX_CONFIG_PATH = ".codex/config.toml"
-CODEX_CONFIG = {"memories": {"generate_memories": False, "use_memories": False}}
+CODEX_CONFIG = {
+    "approval_policy": "on-request",
+    "sandbox_mode": "workspace-write",
+    "sandbox_workspace_write": {"network_access": True},
+    "shell_environment_policy": {"inherit": "core", "ignore_default_excludes": False},
+    "memories": {"generate_memories": False, "use_memories": False},
+}
 PROVIDER_HOOK_PATHS = {
     "claude": ".claude/settings.json",
     "codex": ".codex/hooks.json",
@@ -1520,7 +1526,11 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     except tomllib.TOMLDecodeError:
         fail("AGENT-NATIVE-CONFIG", "project Codex config is not TOML")
     if codex_config != CODEX_CONFIG:
-        fail("AGENT-NATIVE-CONFIG", "project Codex config must only disable memories")
+        fail(
+            "AGENT-NATIVE-CONFIG",
+            "project Codex config must equal the reviewed sandbox, environment "
+            "and memory settings",
+        )
     # Exact equality is what bounds the allow list. A list of forbidden broad
     # grants would be weaker than this and would read as the real control, so
     # this comparison stays the only one. Ignored personal settings are outside

@@ -870,6 +870,30 @@ class NativeBoundaryTests(unittest.TestCase):
         self.assert_rejected("AGENT-NATIVE-CONFIG")
         config.write_text(original)
 
+    def test_codex_project_config_keeps_sandbox_and_secret_filtering(self):
+        import tomllib
+
+        config = self.root / ".codex/config.toml"
+        original = config.read_text()
+        data = tomllib.loads(original)
+        self.assertEqual(data["approval_policy"], "on-request")
+        self.assertEqual(data["sandbox_mode"], "workspace-write")
+        self.assertIs(data["sandbox_workspace_write"]["network_access"], True)
+        self.assertEqual(data["shell_environment_policy"]["inherit"], "core")
+        self.assertIs(
+            data["shell_environment_policy"]["ignore_default_excludes"], False
+        )
+        for old, new in (
+            ('approval_policy = "on-request"', 'approval_policy = "never"'),
+            ('sandbox_mode = "workspace-write"', 'sandbox_mode = "danger-full-access"'),
+            ("ignore_default_excludes = false", "ignore_default_excludes = true"),
+            ('inherit = "core"', 'inherit = "all"'),
+        ):
+            with self.subTest(change=new):
+                config.write_text(original.replace(old, new))
+                self.assert_rejected("AGENT-NATIVE-CONFIG")
+        config.write_text(original)
+
     def test_unsupported_settings_and_automatic_qa_hook_reject(self):
         import copy
         import json
