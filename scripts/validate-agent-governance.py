@@ -49,11 +49,11 @@ CODEX_CONFIG_PATH = ".codex/config.toml"
 # way the config and Claude permission lists are exact; a reviewed edit
 # updates this value together with the file.
 CODEX_RULES_PATH = ".codex/rules/default.rules"
-CODEX_RULES_SHA256 = "35e7f71fae743059befbe4aa33ecd3b40c8add9f9469bc6334b1699646d381f1"  # pragma: allowlist secret
+CODEX_RULES_SHA256 = "79f1be94f8d76ce246e0c790d96009529330df875add78a8575e876d47739dc3"  # pragma: allowlist secret
 CODEX_CONFIG = {
     "approval_policy": "on-request",
     "sandbox_mode": "workspace-write",
-    "sandbox_workspace_write": {"network_access": True},
+    "sandbox_workspace_write": {"network_access": False},
     "shell_environment_policy": {"inherit": "core", "ignore_default_excludes": False},
     "memories": {"generate_memories": False, "use_memories": False},
 }
@@ -95,7 +95,6 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git show *)",
     "Bash(git fetch *)",
     "Bash(git ls-remote *)",
-    "Bash(git push *)",
     "Bash(git merge *)",
     "Bash(gh pr view *)",
     "Bash(gh pr checks *)",
@@ -106,13 +105,15 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(gh run view *)",
     "Bash(gh run list *)",
 )
-# SPEC-0114: pushes, merges and pull requests run without a native prompt
-# because an operator request is their approval; force, delete, mirror and
-# admin forms stay denied below. Raw API calls and `git -C` keep a prompt
-# because a prefix rule cannot see their effect.
+# SPEC-0114: merges and pull requests run without a native prompt because an
+# operator request is their approval; force, delete, mirror and admin forms
+# stay denied below. Raw API calls, `git -C` and every push keep a prompt
+# because a prefix rule cannot see their effect; a refspec deletion such as
+# `origin :branch` has no expressible deny pattern.
 CLAUDE_ASK_PERMISSIONS = (
     "Bash(gh api *)",
     "Bash(git -C *)",
+    "Bash(git push *)",
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
@@ -308,6 +309,10 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(git ls-remote * -u*)",
     "Bash(git fetch -u*)",
     "Bash(git fetch * -u*)",
+    "Bash(gh pr merge --admin*)",
+    "Bash(git push --force-with-lease*)",
+    "Bash(git push -d *)",
+    "Bash(git push --prune*)",
 )
 
 

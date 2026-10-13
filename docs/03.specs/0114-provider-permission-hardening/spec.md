@@ -1,10 +1,10 @@
 ---
 title: "Provider Native Permission and Hook Hardening"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-14"
 layer: "specs"
 artifact_id: "SPEC-0114"
 ---
@@ -33,9 +33,14 @@ and no provider file copies policy. The defects are in native controls:
   environment variables reach shell commands, and no project rules mirror
   the Claude deny list.
 
-The operator chose to allow push, pull request creation and merge on
-Claude, with `--admin` merges denied, and to allow network access in the
-Codex workspace sandbox. The [Plan](plan.md) orders the work and
+The operator first chose to allow push, pull request creation and merge on
+Claude and network access in the Codex workspace sandbox. After the
+independent review on 2026-10-14 showed that a refspec deletion
+(`origin :branch`) and flag-first force or delete pushes cannot be fully
+denied by pattern, and that sandbox network let reordered destructive
+commands run without approval, the operator chose to keep every push at ask
+and to turn the Codex workspace network off; pull request creation and
+merge stay allowed and `--admin` merges are denied. The [Plan](plan.md) orders the work and
 [Task 0001](tasks/tsk-0001-provider-permission-hardening.md) records it.
 
 ## Strategic Boundaries & Non-goals
@@ -43,8 +48,8 @@ Codex workspace sandbox. The [Plan](plan.md) orders the work and
 - In scope:
   - Claude deny additions for secret reads and output, option-first
     cluster and tool mutation, and deletion and history destruction;
-  - Claude allow for read-only Git and GitHub commands, branch push,
-    `gh pr create`, `gh pr merge` and `git merge`; ask for `gh api` and
+  - Claude allow for read-only Git and GitHub commands, `gh pr create`,
+    `gh pr merge` and `git merge`; ask for every push, `gh api` and
     `git -C`; `disableBypassPermissionsMode`;
   - the shared write guard and both hook adapters: `NotebookEdit` and
     `notebook_path`, block reasons on stderr, fail-closed adapters, a
@@ -68,7 +73,8 @@ Codex workspace sandbox. The [Plan](plan.md) orders the work and
   `Bash(*)` is admitted; validators keep exact equality of the native
   lists and the Codex config.
 - Every added deny or forbidden rule names a concrete escape it closes.
-  Pattern limits that remain (refspec `:branch` deletion, `git -C`
+  Pattern limits that remain (refspec `:branch` and `+branch` pushes, which
+  therefore stay at ask, `git -C`
   variants, programs that open files themselves, shell scripts that a
   prefix rule sees as one argv) are residual risk, never claimed covered.
 - A hook adapter that cannot run the guard, or a guard that fails
@@ -112,7 +118,7 @@ No stored data changes.
   `gh secret`, `gh variable`, `gh repo delete`, `gh repo edit`,
   `gh release delete`, `gh run cancel`, `gh pr merge * --admin`.
 - Claude allow additions: `git log`, `git show`, `git fetch`,
-  `git ls-remote`, branch push, `git merge`, `gh pr view`, `gh pr checks`,
+  `git ls-remote`, `git merge`, `gh pr view`, `gh pr checks`,
   `gh pr list`, `gh pr diff`, `gh pr create`, `gh pr merge`, `gh run view`,
   `gh run list`. Ask: `gh api`, `git -C`.
 - Claude hook matcher `Bash|Write|Edit|MultiEdit|NotebookEdit`; Codex
@@ -120,11 +126,12 @@ No stored data changes.
   guard's bounded Git and selector calls.
 - Codex config adds `approval_policy = "on-request"`,
   `sandbox_mode = "workspace-write"`,
-  `[sandbox_workspace_write] network_access = true` and
+  `[sandbox_workspace_write] network_access = false` and
   `[shell_environment_policy] inherit = "core"`,
   `ignore_default_excludes = false`.
-- `.codex/rules/default.rules` forbids the same command families as the
-  Claude deny list, in argv-prefix form.
+- `.codex/rules/default.rules` forbids a subset of the Claude deny families
+  in argv-prefix form; option-first and reordered forms are not expressible
+  and rely on the sandbox without network and the approval policy.
 
 ## Edge Cases & Error Handling
 
@@ -158,10 +165,10 @@ a trusted project; the operator owns that trust and hook re-trust.
 | VAL-PERM-001 | Claude secret read and secret-output denies are present; a test rejects their loss; a session probe is refused. |
 | VAL-PERM-002 | Option-first cluster and tool mutation denies are present; a test rejects their loss; a namespaced `kubectl` delete probe is refused. |
 | VAL-PERM-003 | Deletion and history-destroying denies are present; a test rejects their loss; a forced recursive removal of a missing path and a dry-run positional branch-delete push are refused. |
-| VAL-PERM-004 | The named read-only, push, pull request and merge commands are allow, `--admin` merge is denied, `gh api` and `git -C` are ask, bypass mode is disabled, and tests still reject a wildcard allow. |
+| VAL-PERM-004 | The named read-only, pull request and merge commands are allow, every push asks, `--admin` merge is denied, `gh api` and `git -C` are ask, bypass mode is disabled, and tests still reject a wildcard allow. |
 | VAL-PERM-005 | The guard checks `NotebookEdit` paths and Bash-carried patch envelopes, prints block reasons on stderr, and both adapters block on guard failure or a missing interpreter; each case has a failing-then-passing test. |
 | VAL-PERM-006 | The Codex config sets approval, sandbox, network and environment filtering, the validator pins it, and the installed client accepts it. |
-| VAL-PERM-007 | `.codex/rules/default.rules` forbids the Claude deny families; `codex execpolicy check` reports `forbidden` for each family and the validator pins the file. |
+| VAL-PERM-007 | `.codex/rules/default.rules` forbids the argv-prefix forms of the Claude deny families; `codex execpolicy check` reports `forbidden` for each family and the validator pins the file. |
 | VAL-PERM-008 | The Codex hook resolves the guard without the session directory and blocks when it cannot; a test covers a session outside the repository. |
 | VAL-PERM-009 | Provider notes and READMEs describe the lists, the probe results and the residual limits, and REQ-0003 links SPEC-0114. |
 

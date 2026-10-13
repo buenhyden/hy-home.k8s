@@ -72,3 +72,4 @@ prefix_rule(pattern = ["gh", "repo", ["delete", "edit"]], decision = "forbidden"
 prefix_rule(pattern = ["gh", "release", ["create", "delete"]], decision = "forbidden", justification = "release publication or deletion")
 prefix_rule(pattern = ["gh", "workflow", "run"], decision = "forbidden", justification = "remote dispatch")
 prefix_rule(pattern = ["gh", "run", "cancel"], decision = "forbidden", justification = "remote run mutation")
+prefix_rule(pattern = ["gh", "pr", "merge", "--admin"], decision = "forbidden", justification = "bypasses branch protection")

@@ -9,9 +9,10 @@
 # data but never the executable.
 # Registration alone is not evidence that the installed client discovered,
 # loaded, or delivered this hook; see .codex/provider.md.
-# Fail closed: the runtime blocks only on exit 2, so any adapter failure exits 2.
+# Fail closed: the runtime blocks only on exit 2, so any non-zero step,
+# including the guard itself, exits 2 through the ERR trap.
 set -euo pipefail
-trap 'echo "[FAIL] HOOK-ADAPTER: the write guard could not run" >&2; exit 2' ERR
+trap 'echo "[FAIL] HOOK-ADAPTER: the write guard did not allow this call" >&2; exit 2' ERR
 
 ADAPTER_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
 GUARD="$ADAPTER_DIR/../../scripts/provider_write_guard.py"
@@ -19,4 +20,4 @@ PROJECT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 command -v python3 >/dev/null
 [[ -f "$GUARD" ]]
 
-exec python3 "$GUARD" --provider codex --project-dir "$PROJECT_DIR"
+python3 "$GUARD" --provider codex --project-dir "$PROJECT_DIR"

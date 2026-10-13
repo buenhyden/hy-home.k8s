@@ -906,6 +906,49 @@ class FailClosedGuardTests(unittest.TestCase):
             self.assertEqual(guard.guarded_main([]), 2)
         self.assertIn("HOOK-INTERNAL", stderr.getvalue())
 
+    def test_any_nonzero_guard_exit_blocks(self):
+        guard = self.load_guard()
+        guard.main = lambda argv=None: 1
+        with mock.patch("sys.stderr", new_callable=io.StringIO):
+            self.assertEqual(guard.guarded_main([]), 2)
+
+    def test_a_guard_that_outlives_its_deadline_blocks(self):
+        import time
+
+        guard = self.load_guard()
+        guard.GUARD_DEADLINE_SECONDS = 1
+
+        def hang(argv=None):
+            time.sleep(5)
+            return 0
+
+        guard.main = hang
+        with mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
+            self.assertEqual(guard.guarded_main([]), 2)
+        self.assertIn("HOOK-TIMEOUT", stderr.getvalue())
+
+    def test_each_adapter_blocks_when_the_interpreter_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fake = Path(directory) / "python3"
+            fake.write_text("#!/bin/sh\nexit 1\n")
+            fake.chmod(0o755)
+            for adapter in (HOOK_PATH, CODEX_ADAPTER_PATH):
+                with self.subTest(adapter=adapter.name):
+                    result = subprocess.run(
+                        ("/bin/bash", str(adapter)),
+                        input=scalar_payload(SAMPLE_DOCUMENT),
+                        capture_output=True,
+                        text=True,
+                        env={
+                            "PATH": f"{directory}:/usr/bin:/bin",
+                            "CLAUDE_PROJECT_DIR": str(ROOT),
+                        },
+                        cwd=str(ROOT),
+                        timeout=60,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn("[FAIL]", result.stderr)
+
     def test_a_selector_rejection_reason_reaches_stderr(self):
         guard = self.load_guard()
         guard.run_surface_selector = lambda root: False

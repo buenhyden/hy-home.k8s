@@ -53,17 +53,18 @@ team document, not a special automatic entry filename.
   The project `.codex/config.toml` holds `[memories]` with
   `generate_memories = false` and `use_memories = false` and, since SPEC-0114,
   `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`,
-  workspace network access and `[shell_environment_policy]` with
+  no workspace network access and `[shell_environment_policy]` with
   `inherit = "core"` and `ignore_default_excludes = false`; the validator
   rejects any other key or table, including `[hooks]`. `codex-cli 0.162.1`
   rejected an invalid `sandbox_mode` in this file on 2026-10-13, so the project
   layer is parsed; whether the environment filter applies is unobserved.
-  `.codex/rules/default.rules` forbids, as argv prefixes, the command families
-  the Claude deny list covers, and the validator pins its digest; an
-  option-first form is not expressible as a prefix and stays residual risk.
-  The hook registration exits 2 when its adapter cannot be found, and a
-  changed hook runs only after the user re-trusts it through `/hooks`. Both keys were found in
-  the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);
+  `.codex/rules/default.rules` forbids, as argv prefixes, a subset of the
+  command families the Claude deny list covers, and the validator pins its
+  digest; option-first and reordered forms are not expressible as prefixes,
+  so without sandbox network a network command still needs approval. The hook
+  registration exits 2 when its adapter cannot be found, and a changed hook
+  runs only after the user re-trusts it through `/hooks`. The memory keys were
+  found in the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);
   Codex applies a project config only to a trusted project, so the effect is
   separate runtime evidence.
   It registers `PreToolUse` on `Bash|apply_patch` and runs `.codex/hooks/pre-tool-use.sh`,

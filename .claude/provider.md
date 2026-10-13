@@ -44,12 +44,14 @@ invocation. The common procedure retains the selected role and user scope.
   override it. A rule matches command text from its first character, so deny
   carries option-first forms (`kubectl * delete *`), positional push forms and
   Bash path patterns for secret files: in a session probe a `Read` deny did not
-  stop `cat` on the same path. Read-only Git and GitHub commands, push, pull
+  stop `cat` on the same path. Read-only Git and GitHub commands, pull
   request creation and merge are allowed because an operator request is their
-  approval; `gh api` and `git -C` ask; `disableBypassPermissionsMode` is
-  `disable`. A refspec `:branch` deletion, `git -C` forms and programs that
-  open files themselves cannot be matched; they stay residual risk, not
-  coverage.
+  approval; every push, `gh api` and `git -C` ask, because a refspec
+  `:branch` or `+branch` push cannot be matched by a deny pattern;
+  `disableBypassPermissionsMode` is `disable`. Executable-carrying Git options
+  (`--upload-pack`, `--receive-pack`, `--exec`, `--output`) are denied.
+  Programs that open files themselves and text-obfuscated paths cannot be
+  matched; they stay residual risk, not coverage.
 - Tracked settings register only `.claude/hooks/k8s-pre-edit.sh` for pre-action
   safety, on the shell, structured file and notebook tools. It fails closed:
   an adapter or guard failure exits 2 with a reason on stderr. That file is

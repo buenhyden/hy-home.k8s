@@ -879,7 +879,7 @@ class NativeBoundaryTests(unittest.TestCase):
         data = tomllib.loads(original)
         self.assertEqual(data["approval_policy"], "on-request")
         self.assertEqual(data["sandbox_mode"], "workspace-write")
-        self.assertIs(data["sandbox_workspace_write"]["network_access"], True)
+        self.assertIs(data["sandbox_workspace_write"]["network_access"], False)
         self.assertEqual(data["shell_environment_policy"]["inherit"], "core")
         self.assertIs(
             data["shell_environment_policy"]["ignore_default_excludes"], False
@@ -888,6 +888,7 @@ class NativeBoundaryTests(unittest.TestCase):
             ('approval_policy = "on-request"', 'approval_policy = "never"'),
             ('sandbox_mode = "workspace-write"', 'sandbox_mode = "danger-full-access"'),
             ("ignore_default_excludes = false", "ignore_default_excludes = true"),
+            ("network_access = false", "network_access = true"),
             ('inherit = "core"', 'inherit = "all"'),
         ):
             with self.subTest(change=new):
@@ -1363,12 +1364,19 @@ class NativeDenyCoverageTests(unittest.TestCase):
         permissions = json.loads((ROOT / ".claude/settings.json").read_text())[
             "permissions"
         ]
+
+        def decision(command):
+            # Deny, then ask, then allow: the first list with a match decides.
+            for kind in ("deny", "ask", "allow"):
+                if any(_bash_rule_matches(r, command) for r in permissions[kind]):
+                    return kind
+            return None
+
         for command in (
             "git log --oneline -3",
             "git show HEAD",
             "git fetch origin",
             "git ls-remote --heads origin",
-            "git push -u origin feat/a",
             "git merge --ff-only origin/main",
             "gh pr view 1",
             "gh pr checks 1",
@@ -1380,14 +1388,26 @@ class NativeDenyCoverageTests(unittest.TestCase):
             "gh run list",
         ):
             with self.subTest(command=command):
-                self.assertTrue(
-                    any(_bash_rule_matches(r, command) for r in permissions["allow"])
-                )
-        for command in ("gh api repos/a/b", "git -C sub status"):
+                self.assertEqual(decision(command), "allow")
+        # A refspec deletion (`origin :branch`) cannot be denied by a pattern,
+        # so every push keeps a prompt (operator decision, SPEC-0114 review).
+        for command in (
+            "git push -u origin feat/a",
+            "git push origin :feat/a",
+            "git push origin +main",
+            "gh api repos/a/b",
+            "git -C sub status",
+        ):
             with self.subTest(command=command):
-                self.assertTrue(
-                    any(_bash_rule_matches(r, command) for r in permissions["ask"])
-                )
+                self.assertEqual(decision(command), "ask")
+        for command in (
+            "gh pr merge --admin 1",
+            "gh pr merge 1 --admin",
+            "git push --force-with-lease origin main",
+            "git push -d origin feat/a",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(decision(command), "deny")
         self.assertNotIn("Bash(*)", permissions["allow"])
 
     def test_deletion_and_history_destruction_is_denied(self):

@@ -23,6 +23,7 @@ import json
 import os
 import re
 import shlex
+import signal
 import stat
 import subprocess
 import sys
@@ -49,6 +50,10 @@ GIT_TIMEOUT_SECONDS = 5
 # selector reads the routing registry and classifies the edited paths, which
 # stays far below this bound even when handed the whole tracked tree.
 SELECTOR_TIMEOUT_SECONDS = 5
+# The whole guard must finish before the thirty-second hook registration;
+# repository_relative may run two Git probes per distinct directory, so the
+# sum of per-call bounds is not a ceiling and this deadline is.
+GUARD_DEADLINE_SECONDS = 25
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 
 project_dir: str = ""
@@ -673,14 +678,32 @@ def guarded_main(argv: list[str] | None = None) -> int:
     """Run the guard so that any unexpected failure blocks with a reason.
 
     Both runtimes treat only exit 2 as blocking; an uncaught exception would
-    exit 1 and let the call through."""
+    exit 1 and let the call through, and a hook the runtime kills at its
+    registered timeout does not block either. A deadline below that timeout
+    therefore turns a hung probe into a controlled rejection."""
+
+    def expire(signum, frame):
+        raise TimeoutError
+
+    previous = signal.signal(signal.SIGALRM, expire)
+    signal.alarm(GUARD_DEADLINE_SECONDS)
     try:
-        return main(argv)
+        code = main(argv)
     except SystemExit as stop:
-        return stop.code if isinstance(stop.code, int) else 2
+        code = stop.code if isinstance(stop.code, int) else 2
+    except TimeoutError:
+        print(
+            "[FAIL] HOOK-TIMEOUT: the write guard exceeded its deadline",
+            file=sys.stderr,
+        )
+        return 2
     except Exception as error:  # noqa: BLE001 - every failure must block
         print(f"[FAIL] HOOK-INTERNAL: {type(error).__name__}", file=sys.stderr)
         return 2
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, previous)
+    return 0 if code == 0 else 2
 
 
 if __name__ == "__main__":
