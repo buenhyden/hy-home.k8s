@@ -37,6 +37,7 @@ Execute the single work unit of the [Plan](../plan.md) for
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-PIN-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Archive simulation, focused tests and staged QA | WORK-001 commit index | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-PIN-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Archive simulation, focused tests and staged QA | Scratch clone at `918ed00f` with the SPEC-0105 and SPEC-0107 packages and SPEC-0106 `tsk-0016` moved out of `docs/03.specs/`: the SPEC-0105 rebind test, `ExactLegacyTaskBindingTests` and `OptionalMultiRowStatusTests` errored with `FileNotFoundError` (3 errors) before the change and 6 tests passed after it. In the repository both modules ran 47 tests OK, with no assertion removed. Package reads now come from `bceca1b7` and the legacy baseline from `TASK_LEGACY_BASELINE_COMMIT`. `qa.py staged` on the WORK-001 index passed all selected gates | PASS | This Task; WORK-001 commit | yes | EVD-001 |
 
 ## Criterion Acceptance
 

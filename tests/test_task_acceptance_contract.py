@@ -15,6 +15,7 @@ from pathlib import Path, PurePosixPath
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from document_contracts import (  # noqa: E402
+    TASK_LEGACY_BASELINE_COMMIT,
     _terminal_semantic_diagnostics,
     _typed_registry_from_mapping,
     classify_path,
@@ -37,6 +38,10 @@ ROOT = Path(__file__).resolve().parents[1]
 # change this fixture.
 PACKAGE_SNAPSHOT = (
     "2a27d98f520c6f0b5f261cc59355aae57184cf75"  # pragma: allowlist secret
+)
+# Completed packages read as fixtures; archiving them must not change a test.
+FIXTURE_SNAPSHOT = (
+    "bceca1b7a495a4025291062e4b204f79ae2064c4"  # pragma: allowlist secret
 )
 
 
@@ -174,7 +179,9 @@ class TaskHistoryRetentionTests(unittest.TestCase):
             cwd=ROOT,
         ).decode("utf-8")
         proposed_texts = {
-            item: (ROOT / item).read_text(encoding="utf-8")
+            item: subprocess.check_output(
+                ["git", "show", f"{FIXTURE_SNAPSHOT}:{item}"], cwd=ROOT, text=True
+            )
             for item in (path, spec, plan)
         }
         context = cli._evidence_context(
@@ -624,7 +631,11 @@ class ExactLegacyTaskBindingTests(unittest.TestCase):
             "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/"
             "tsk-0016-shared-profile-migration.md"
         )
-        text = (ROOT / path).read_text(encoding="utf-8")
+        text = subprocess.check_output(
+            ["git", "show", f"{TASK_LEGACY_BASELINE_COMMIT}:{path}"],
+            cwd=ROOT,
+            text=True,
+        )
         current = classify_path(registry, path)
         self.assertNotEqual(legacy_task_profile(ROOT, path, text, current), current)
         self.assertEqual(legacy_task_profile(ROOT, path, text + "\n", current), current)

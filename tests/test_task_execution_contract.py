@@ -1359,6 +1359,11 @@ class GenerationAdmissionTests(unittest.TestCase):
             )
 
 
+# Completed SPEC-0107 package read as a fixture; archiving it must not change
+# a test.
+FIXTURE_SNAPSHOT = (
+    "bceca1b7a495a4025291062e4b204f79ae2064c4"  # pragma: allowlist secret
+)
 CURRENT_TASK = PurePosixPath(
     "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0004-commit-release-and-work-tracking.md"
 )
@@ -1375,7 +1380,9 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         cls.registry = load_registry(ROOT)
         cls.profile = classify_path(cls.registry, CURRENT_TASK)
         cls.binding = cls.profile.body_contract.task_execution
-        single = (ROOT / CURRENT_TASK).read_text(encoding="utf-8")
+        single = subprocess.check_output(
+            ["git", "show", f"{FIXTURE_SNAPSHOT}:{CURRENT_TASK}"], cwd=ROOT, text=True
+        )
         lines = single.split("\n")
         index = next(
             i for i, line in enumerate(lines) if line.startswith("| WORK-004 |")
