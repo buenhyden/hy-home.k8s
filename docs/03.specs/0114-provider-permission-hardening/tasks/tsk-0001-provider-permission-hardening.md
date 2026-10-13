@@ -47,7 +47,7 @@ Execute the nine work units of the [Plan](../plan.md) for
 | WORK-006 | [VAL-PERM-006](../spec.md#success-criteria--verification-plan) | Codex config security keys | platform | completed | PASS | EVD-015 |
 | WORK-007 | [VAL-PERM-007](../spec.md#success-criteria--verification-plan) | Codex forbidden rules | platform | completed | PASS | EVD-016 |
 | WORK-008 | [VAL-PERM-008](../spec.md#success-criteria--verification-plan) | Codex hook path independent of the session directory | platform | completed | PASS | EVD-017 |
-| WORK-009 | [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | Provider notes, READMEs, REQ-0003 links and session probes | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-009 | [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | Provider notes, READMEs, REQ-0003 links and session probes | platform | completed | PASS | EVD-018, EVD-020 |
 
 ## Task Evidence
 
@@ -86,7 +86,7 @@ Execute the nine work units of the [Plan](../plan.md) for
 | [VAL-PERM-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-015 | Accept the Codex sandbox, approval, network and environment settings; the filter's runtime effect stays unobserved | platform |
 | [VAL-PERM-007](../spec.md#success-criteria--verification-plan) | accepted | EVD-016 | Accept the Codex forbidden rules; option-first forms stay residual | platform |
 | [VAL-PERM-008](../spec.md#success-criteria--verification-plan) | accepted | EVD-017 | Accept the fail-closed Codex hook registration; re-trust stays with the operator | platform |
-| [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-009 checks | platform |
+| [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | accepted | EVD-018, EVD-020 | Accept the provider notes, READMEs, links, probe record and review fixes; recorded trade-offs stay residual | platform |
 
 ## Approval and Safety Boundaries
 
@@ -115,4 +115,21 @@ Execute the nine work units of the [Plan](../plan.md) for
 
 ## Verification Summary
 
-Pending execution.
+All nine work units are complete and all nine criteria are accepted. Every
+commit passed `qa.py staged` from the documented validation environment; an
+automated review and an independent security review covered the branch, and
+their findings were fixed in `ca8e0890` and `d5041d89` (EVD-019, EVD-020).
+Session probes after each change refused secret reads, option-first
+`kubectl`, forced recursive removal, a positional branch-delete push and a
+flag-first admin merge. The Codex project config and rules were accepted by
+`codex-cli 0.162.1`.
+
+Limitations: command-text rules cannot see refspec pushes (so every push
+asks), text-obfuscated paths, input redirection or programs that open files
+themselves; Codex rules cover argv prefixes only; the Codex environment
+filter, hook delivery and the new sandbox network setting are not yet
+observed in a Codex session, and the changed Codex hook needs the user's
+re-trust through `/hooks`. Residual risk: broad Bash secret-path denies can
+block routine commands that mention those paths. Rollback: forward revert of
+the package commits. Next owner: the operator for push, pull request and
+merge.
