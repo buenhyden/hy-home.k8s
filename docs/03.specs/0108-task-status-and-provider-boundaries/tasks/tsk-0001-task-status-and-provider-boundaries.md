@@ -2,7 +2,6 @@
 title: "Task Status Derivation and Provider Boundaries"
 version: "0.1.0"
 type: "sdlc/task"
-status: "draft"
 owner: "platform"
 updated: "2026-10-13"
 layer: "specs"

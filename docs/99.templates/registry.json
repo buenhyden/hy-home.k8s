@@ -529,7 +529,6 @@
           "title",
           "version",
           "type",
-          "status",
           "owner",
           "updated",
           "layer",
@@ -537,6 +536,7 @@
           "parent_ids"
         ],
         "optional": [
+          "status",
           "cancellation",
           "supersedes",
           "superseded_by"
@@ -4240,7 +4240,6 @@
           "title",
           "version",
           "type",
-          "status",
           "owner",
           "updated",
           "layer",
@@ -4248,6 +4247,7 @@
           "parent_ids"
         ],
         "optional": [
+          "status",
           "cancellation",
           "supersedes",
           "superseded_by"

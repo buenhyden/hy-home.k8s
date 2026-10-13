@@ -44,6 +44,7 @@ from document_contracts import (
     scoped_document_content_paths,
     validated_changed_paths,
     task_execution_issues,
+    task_status,
     task_evidence_issues,
     task_contract_issues,
     direct_parent,
@@ -1519,7 +1520,10 @@ def _frontmatter_body(
                     repr(data.get("parent_ids")),
                 )
             )
-        if data.get("status") == "cancelled" and "cancellation" in contract.allowed:
+        if (
+            task_status(data, text, profile) == "cancelled"
+            and "cancellation" in contract.allowed
+        ):
             cancellation = data.get("cancellation")
             fields = ("reason", "authorization_ref", "criteria_disposition")
             if (
@@ -1732,8 +1736,8 @@ def _terminal(registry: Any, profile: DocumentProfile, text: str) -> bool:
         _, metadata, _ = extract_frontmatter(text)
     except ContractError:
         return False
-    status = metadata.get("status")
-    if not isinstance(status, str):
+    status = task_status(metadata, text, profile)
+    if not status:
         return False
     return any(
         profile.profile_id in domain.profile_ids
@@ -1933,8 +1937,7 @@ def validate_document_text(
             _, metadata, _ = extract_frontmatter(text)
         except ContractError:
             metadata = {}
-        value = metadata.get("status")
-        status = value if isinstance(value, str) else ""
+        status = task_status(metadata, text, profile)
     diagnostics.extend(artifact_identity_diagnostics(path, profile, metadata))
     if not include_body:
         return sorted(diagnostics, key=diagnostic_sort_key)

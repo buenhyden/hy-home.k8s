@@ -1293,5 +1293,98 @@ class GenerationAdmissionTests(unittest.TestCase):
             )
 
 
+CURRENT_TASK = PurePosixPath(
+    "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0004-commit-release-and-work-tracking.md"
+)
+
+
+class OptionalMultiRowStatusTests(unittest.TestCase):
+    """A multi-row Task may omit its frontmatter summary; readers derive it."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        from document_contracts import classify_path, load_registry, task_status
+
+        cls.task_status = staticmethod(task_status)
+        cls.registry = load_registry(ROOT)
+        cls.profile = classify_path(cls.registry, CURRENT_TASK)
+        cls.binding = cls.profile.body_contract.task_execution
+        single = (ROOT / CURRENT_TASK).read_text(encoding="utf-8")
+        lines = single.split("\n")
+        index = next(
+            i for i, line in enumerate(lines) if line.startswith("| WORK-004 |")
+        )
+        first = lines[index].replace("| frontmatter |", "| completed |", 1)
+        second = first.replace("| WORK-004 |", "| WORK-099 |", 1)
+        lines[index : index + 1] = [first, second]
+        cls.with_status = "\n".join(lines)
+        cls.without_status = cls.with_status.replace('status: "completed"\n', "", 1)
+        cls.single = single
+        cls.single_without = single.replace('status: "completed"\n', "", 1)
+
+    def rows(self, *states: str) -> list[dict[str, str]]:
+        return [
+            {
+                "ID": f"WORK-{index:03d}",
+                "Upstream criterion": "N/A — synthetic",
+                "Work item": "x",
+                "Owner": "platform",
+                "Status": state,
+                "Result": "PASS" if state == "completed" else "NOT_RUN",
+                "Evidence": "test: PASS",
+            }
+            for index, state in enumerate(states, 1)
+        ]
+
+    def rule_ids(self, status: str, *states: str) -> set[str]:
+        return {
+            rule
+            for rule, _ in task_execution_issues(
+                self.rows(*states), status, self.binding
+            )
+        }
+
+    def test_absent_summary_is_derived_and_present_summary_wins(self) -> None:
+        self.assertEqual(self.task_status({}, self.without_status, self.profile), "completed")
+        self.assertEqual(
+            self.task_status({"status": "draft"}, self.without_status, self.profile),
+            "draft",
+        )
+        self.assertEqual(self.task_status({}, self.single_without, self.profile), "")
+
+    def test_execution_rules_require_only_the_single_row_status(self) -> None:
+        # An empty summary on parsed rows means the shared reader could not derive it.
+        self.assertIn("TASK-EXECUTION-SUMMARY", self.rule_ids("", "completed", "draft"))
+        self.assertNotIn(
+            "TASK-EXECUTION-SUMMARY", self.rule_ids("in-progress", "completed", "draft")
+        )
+        self.assertIn("TASK-EXECUTION-SUMMARY", self.rule_ids("draft", "completed", "draft"))
+        self.assertIn("TASK-EXECUTION-STATUS", self.rule_ids("", "frontmatter"))
+
+    def test_lifecycle_reads_the_derived_status(self) -> None:
+        document = document_from_text(self.registry, CURRENT_TASK, self.without_status)
+        self.assertEqual((document.status, document.state_issue), ("completed", None))
+        document = document_from_text(self.registry, CURRENT_TASK, self.single_without)
+        self.assertIsNone(document.status)
+
+    def test_profile_validation_accepts_an_omitted_multi_row_summary(self) -> None:
+        def rule_ids(text: str) -> set[str]:
+            return {
+                item.rule_id
+                for item in MARKDOWN.validate_document_text(
+                    text, CURRENT_TASK, self.profile, "strict"
+                )
+            }
+
+        self.assertEqual(rule_ids(self.without_status), rule_ids(self.with_status))
+        self.assertIn("TASK-EXECUTION-STATUS", rule_ids(self.single_without))
+        hidden = self.without_status.replace(
+            "### Lifecycle Traceability\n", "### Lifecycle Traceability\n<!--\n# x\n-->\n", 1
+        )
+        self.assertEqual(self.task_status({}, hidden, self.profile), "")
+        self.assertIn("TASK-EXECUTION-SUMMARY", rule_ids(hidden))
+        self.assertEqual(self.task_status({"status": None}, self.without_status, self.profile), "")
+
+
 if __name__ == "__main__":
     unittest.main()

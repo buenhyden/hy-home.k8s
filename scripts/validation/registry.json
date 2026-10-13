@@ -1128,10 +1128,6 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/sync-task-status.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_task_acceptance_boundaries.py"
         },
         {
@@ -1273,7 +1269,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|sync-task-status\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)scripts/.*$"
         }
       ],
       "validators": [

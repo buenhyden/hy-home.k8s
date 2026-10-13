@@ -440,6 +440,50 @@ def derive_task_summary(states: Sequence[str], binding: TaskExecution) -> str:
     return expected
 
 
+def _task_row_states(text: str, contract: "BodyContract") -> list[str] | None:
+    """Status cells of the bound Task table in its current column form only."""
+
+    lines = text.split("\n")
+    try:
+        start = lines.index(f"## {contract.section}")
+        start = lines.index(f"### {contract.table_heading}", start)
+    except ValueError:
+        return None
+    table: list[list[str]] = []
+    for line in lines[start + 1 :]:
+        if line.startswith("#"):
+            break
+        if line.startswith("|"):
+            cells = re.split(r"(?<!\\)\|", line.strip())[1:-1]
+            table.append([cell.strip() for cell in cells])
+        elif table:
+            break
+    # ponytail: plain pipe split; the full validators still check the table shape.
+    if len(table) < 3 or tuple(table[0]) != contract.required_columns:
+        return None
+    column = table[0].index("Status")
+    return [row[column] for row in table[2:] if len(row) == len(table[0])]
+
+
+def task_status(
+    metadata: Mapping[str, Any], text: str, profile: "DocumentProfile"
+) -> str:
+    """Frontmatter status, else the summary a multi-row Task's rows derive, else ''."""
+
+    if "status" in metadata:
+        value = metadata["status"]
+        return value if isinstance(value, str) else ""
+    contract = profile.body_contract
+    binding = contract.task_execution if contract else None
+    states = _task_row_states(text, contract) if binding else None
+    if binding is None or not states or len(states) < 2:
+        return ""
+    try:
+        return derive_task_summary(states, binding)
+    except ValueError:
+        return ""
+
+
 def task_execution_issues(
     rows: Sequence[Mapping[str, str]],
     status: str,
@@ -574,6 +618,8 @@ def task_execution_issues(
     ):
         return tuple(issues)
     expected = derive_task_summary(states, binding)
+    # Readers pass a derived summary for an omitted multi-row status, so an empty
+    # value here means the shared reader could not read the table: fail closed.
     if status != expected:
         issues.append(
             ("TASK-EXECUTION-SUMMARY", f"frontmatter {status!r}, rows {expected!r}")
@@ -962,7 +1008,6 @@ _DOCUMENT_SCOPE_READERS = frozenset(
         "scripts/validate-document-lifecycle.py",
         "scripts/validate-links-and-owners.py",
         "scripts/validate-markdown-profiles.py",
-        "scripts/sync-task-status.py",
     }
 )
 

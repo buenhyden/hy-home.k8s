@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.10.0"
+version: "0.11.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 layer: "templates"
 ---
 # 99.templates
@@ -223,35 +223,19 @@ PASS로 미해소 필수 결과를 숨기지 않는다. 완료 인계는 필수 
 있지만 사유와 다음 owner를 남긴다.
 resolved Incident에는 시간대를 포함한 실제 resolved_at과 해결 증거가 필요하다.
 
-### Explicit Task Summary Authoring
+### Task Status Authoring
 
-다중 행 Task의 Status를 먼저 실제 관측에 맞게 작성한 뒤
-[`sync-task-status.py`](../../scripts/sync-task-status.py)로 frontmatter 요약을
-미리 확인할 수 있다. `TASK_PATH`에는 현재 저장소의 실제 `sdlc/task` 경로 하나를
-설정한다.
-
-```bash
-python3 scripts/sync-task-status.py --root . --path "$TASK_PATH"
-python3 scripts/sync-task-status.py --root . --path "$TASK_PATH" --write
-```
-
-첫 명령은 현재 값과 파생 값을 표시하는 읽기 전용 preview다. 두 번째 명령은
-명시적으로 top-level `status` scalar만 동기화한다. 한 행 Task의 literal
-`frontmatter` 표시는 그대로 두며 값이 이미 맞으면 파일을 다시 쓰지 않는다.
-나머지 metadata, 본문, 행, 인용·주석·줄바꿈과 파일 mode는 보존한다.
-
-한 행 Task는 frontmatter만 사람이 작성하며, 다중 행 Task는 행 상태만 사람이
-작성한다. 다중 행 frontmatter는 기존 소비자를 위한 생성 요약이므로 사람이
-두 곳에 상태를 복사하지 않는다. `ready`는 실행 준비이지 별도 승인 단계가
+한 행 Task는 Status 칸에 literal `frontmatter`를 쓰고 실제 상태는 frontmatter
+`status` 하나에만 쓴다. 다중 행 Task는 각 행의 Status만 사람이 작성하고
+frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상태에서
+요약을 읽을 때마다 파생하므로 별도 동기화 명령이 없다. 이미 `status`를 가진
+다중 행 Task는 그 값이 행 파생 값과 같아야 하며, 과거 기록은 다시 쓰지 않는다.
+현재 열 형식의 표를 읽을 수 없으면 요약을 파생하지 않고 상태 누락으로
+실패한다. `ready`는 실행 준비이지 별도 승인 단계가
 아니다. `superseded`는 실제 후속 Task의 Plan 배정과 남은 기준의 귀속이 확인된 경우에만
 사용하며, 상태만 바꿔 미완료 기준이나 실패를 지우지 않는다.
-
-현재 일반 파일과 안전한 부모 경로만 받고, Registry 분류·strict 문서 계약·
-현재 상태에서 파생 상태로의 lifecycle edge를 확인한다. 잘못된 내용이나
-불법 전이는 오류 ID와 대상 경로, exit 2로 거부한다. 쓰기 전 원본이 바뀌거나
-원자적 교체가 실패하면 해당 원본을 보존한다. Result, Criterion Acceptance,
-Task Evidence와 실제 승인 사실은 관측에 따라 별도로 작성해야 한다. validator와 Git hook은
-이 writer를 자동 호출하지 않는다.
+Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
+별도로 작성한다.
 
 ### Shared Frontmatter Grammar
 
