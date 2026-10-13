@@ -37,7 +37,7 @@ Execute the nine work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | Claude secret read and secret-output denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | Claude secret read and secret-output denies | platform | completed | PASS | EVD-010 |
 | WORK-002 | [VAL-PERM-002](../spec.md#success-criteria--verification-plan) | Claude option-first cluster and tool mutation denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-PERM-003](../spec.md#success-criteria--verification-plan) | Claude deletion and history-destroying denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-PERM-005](../spec.md#success-criteria--verification-plan) | Fail-closed shared guard and adapters | platform | in-progress | NOT_RUN | Pending named repository evidence |
@@ -60,12 +60,13 @@ Execute the nine work units of the [Plan](../plan.md) for
 | EVD-007 | [VAL-PERM-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | WORK-007 commit index | NOT_RUN | Pending | yes | none |
 | EVD-008 | [VAL-PERM-008](../spec.md#success-criteria--verification-plan) | WORK-008 | Focused checks and staged QA | WORK-008 commit index | NOT_RUN | Pending | yes | none |
 | EVD-009 | [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | WORK-009 | Focused checks and staged QA | WORK-009 commit index | NOT_RUN | Pending | yes | none |
+| EVD-010 | [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused checks and staged QA | New `NativeDenyCoverageTests` in `tests/test_agent_governance.py` checks each named escape against the tracked deny list with a matcher that follows the documented rule semantics (text from the first character, `*` anywhere, `:*` as a trailing space wildcard). Before the change it failed for eight secret paths (`secrets/`, kube, ssh, Vault token, gh config, Claude and Codex credentials, `/proc/*/environ`) and eleven secret-printing commands (`gh auth token`, `vault print token`, a raw kubeconfig view, raw API reads, `k3d kubeconfig get`, option-first and slash-form `kubectl` secret reads, `helm get values`, `export -p`, `declare -x`, `declare -p`). Session probes in this session after the change: the Read tool on `secrets/probe-none-spec0114` and `kubectl -n probe-none-spec0114 get secret none` were refused, but `cat secrets/probe-none-spec0114` and `cat .env.probe-none-spec0114` ran (the existing `Read(./.env.*)` rule did not stop them either; the output carried an RTK-style `(os error 2)` suffix, so a user-level rewrite is the likely cause, not verified because private user configuration was not read). Bash path denies (`* secrets/*`, `* ./secrets/*`, `* .env*`, `*/.env*` and the credential paths) were therefore added, and both `cat` probes were then refused. In total 28 deny rules were added to `.claude/settings.json` and `CLAUDE_REQUIRED_DENY_PERMISSIONS` together; the module and `validate-agent-governance.py` passed. `qa.py staged` on the WORK-001 index passed | PASS | This Task; WORK-001 commit | yes | EVD-001 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-001 checks | platform |
+| [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accept the secret read and secret-output denies; Bash path denies close the observed Read-deny gap | platform |
 | [VAL-PERM-002](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-002 checks | platform |
 | [VAL-PERM-003](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-003 checks | platform |
 | [VAL-PERM-004](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-005 checks | platform |

@@ -1147,5 +1147,106 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
                 self.assertIn("read-only repository search", body)
 
 
+def _bash_rule_matches(rule: str, command: str) -> bool:
+    """Approximate Claude Code Bash rule matching (SPEC-0114).
+
+    The rule text matches from the first character; `*` matches anything,
+    `:*` at the end equals a trailing ` *`, and a single trailing ` *` also
+    matches the bare command.
+    """
+    import re
+
+    inner = rule[len("Bash(") : -1]
+    if inner.endswith(":*"):
+        inner = inner[:-2] + " *"
+    if inner.endswith(" *") and inner.count("*") == 1:
+        pattern = re.escape(inner[:-2]) + r"(?: .*)?"
+    else:
+        pattern = ".*".join(re.escape(part) for part in inner.split("*"))
+    return re.fullmatch(pattern, command, re.S) is not None
+
+
+class NativeDenyCoverageTests(unittest.TestCase):
+    """Each named escape must hit a tracked Claude deny rule (SPEC-0114)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        settings = json.loads((ROOT / ".claude/settings.json").read_text())
+        cls.deny = settings["permissions"]["deny"]
+
+    def assert_denied(self, commands):
+        bash = [rule for rule in self.deny if rule.startswith("Bash(")]
+        for command in commands:
+            with self.subTest(command=command):
+                self.assertTrue(
+                    any(_bash_rule_matches(rule, command) for rule in bash),
+                    f"no deny rule matches {command!r}",
+                )
+
+    def assert_read_denied(self, rules):
+        for rule in rules:
+            with self.subTest(rule=rule):
+                self.assertIn(rule, self.deny)
+
+    def test_matcher_follows_the_documented_prefix_semantics(self):
+        self.assertTrue(
+            _bash_rule_matches("Bash(git push --delete:*)", "git push --delete x")
+        )
+        self.assertFalse(
+            _bash_rule_matches(
+                "Bash(git push --delete:*)", "git push origin --delete x"
+            )
+        )
+        self.assertTrue(
+            _bash_rule_matches("Bash(kubectl * delete *)", "kubectl -n a delete pod b")
+        )
+        self.assertTrue(_bash_rule_matches("Bash(gh auth token*)", "gh auth token"))
+
+    def test_secret_reads_and_output_are_denied(self):
+        self.assert_read_denied(
+            (
+                "Read(./secrets/**)",
+                "Read(~/.kube/**)",
+                "Read(~/.ssh/**)",
+                "Read(~/.vault-token)",
+                "Read(~/.config/gh/**)",
+                "Read(~/.claude/.credentials.json)",
+                "Read(~/.codex/auth.json)",
+                "Read(//proc/*/environ)",
+            )
+        )
+        self.assert_denied(
+            (
+                "gh auth token",
+                "vault print token",
+                "kubectl config view --raw",
+                "kubectl get --raw /api/v1/namespaces/a/secrets",
+                "k3d kubeconfig get local",
+                "kubectl -n a get secret b -o yaml",
+                "kubectl get -o yaml secret/b",
+                "helm get values release",
+                "export -p",
+                "declare -x",
+                "declare -p",
+                # A Read deny did not stop a Bash read in a session probe, so
+                # each secret path also needs a Bash pattern.
+                "cat secrets/a.pem",
+                "cat ./secrets/a.pem",
+                "cat .env",
+                "head -5 .env.local",
+                "grep -r k sub/.env",
+                "cat ~/.kube/config",
+                "cat ~/.ssh/id_ed25519",
+                "cat ~/.vault-token",
+                "cat ~/.config/gh/hosts.yml",
+                "cat ~/.claude/.credentials.json",
+                "cat ~/.codex/auth.json",
+                "cat /proc/self/environ",
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

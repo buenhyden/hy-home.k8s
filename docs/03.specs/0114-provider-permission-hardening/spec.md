@@ -43,7 +43,7 @@ Codex workspace sandbox. The [Plan](plan.md) orders the work and
 - In scope:
   - Claude deny additions for secret reads and output, option-first
     cluster and tool mutation, and deletion and history destruction;
-  - Claude allow for read-only Git and GitHub commands, `git push`,
+  - Claude allow for read-only Git and GitHub commands, branch push,
     `gh pr create`, `gh pr merge` and `git merge`; ask for `gh api` and
     `git -C`; `disableBypassPermissionsMode`;
   - the shared write guard and both hook adapters: `NotebookEdit` and
@@ -104,7 +104,7 @@ No stored data changes.
   `token create`, `login`; Argo CD option-first `app sync` and
   `app delete`, `app rollback`, `account generate-token`, `cluster rm`;
   `k3d * delete`, `k3d cluster stop`; recursive and force removal
-  variants, `find * -delete`, `sudo`; positional `git push` force, delete,
+  variants, `find * -delete`, `sudo`; positional push force, delete,
   mirror and prune; forced `git branch` deletion; forced `git checkout`
   and `git switch`; `git stash drop` and `clear`; `git filter-branch`,
   `git filter-repo`, `git update-ref -d`, `git reflog expire`,
@@ -112,7 +112,7 @@ No stored data changes.
   `gh secret`, `gh variable`, `gh repo delete`, `gh repo edit`,
   `gh release delete`, `gh run cancel`, `gh pr merge * --admin`.
 - Claude allow additions: `git log`, `git show`, `git fetch`,
-  `git ls-remote`, `git push`, `git merge`, `gh pr view`, `gh pr checks`,
+  `git ls-remote`, branch push, `git merge`, `gh pr view`, `gh pr checks`,
   `gh pr list`, `gh pr diff`, `gh pr create`, `gh pr merge`, `gh run view`,
   `gh run list`. Ask: `gh api`, `git -C`.
 - Claude hook matcher `Bash|Write|Edit|MultiEdit|NotebookEdit`; Codex
