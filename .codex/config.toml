@@ -1,0 +1,6 @@
+# Project Codex configuration. SPEC-0109: both providers use the shared
+# workspace memory store, so native memory generation and use stay disabled.
+# Hook registration stays in hooks.json.
+[memories]
+generate_memories = false
+use_memories = false

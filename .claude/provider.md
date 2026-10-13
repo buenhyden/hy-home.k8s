@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 ---
 
 # Claude Provider Notes
@@ -58,8 +58,14 @@ invocation. The common procedure retains the selected role and user scope.
   accepted; it is not parity, and neither side is described as the other.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
-- Treat auto-memory and ignored local warning files as auxiliary context, not
-  shared policy or a substitute for repository validators.
+- `settings.json` sets `autoMemoryEnabled: false`, and the validator rejects
+  any other value: both providers keep reusable context in the shared
+  workspace memory store owned by
+  [context and memory](../.agents/governance/context-and-memory.md). Existing
+  native memory files are neither deleted nor imported. A setting proves
+  intent only; whether a session honors it is separate runtime evidence.
+- Treat ignored local warning files as auxiliary context, not shared policy or
+  a substitute for repository validators.
 - Do not add native metadata fields from assumptions about another client
   version. Verify the intended runtime contract when configuration changes.
 

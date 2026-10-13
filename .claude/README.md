@@ -1,6 +1,6 @@
 ---
 title: "Claude Native Adapter"
-version: "2.2.0"
+version: "2.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -31,7 +31,8 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
   skill, 권한의 정규 값.
 - `CLAUDE.md`: 명시적으로 읽는 provider baseline.
 - [provider.md](provider.md): provider별 적재·지원 계약.
-- `settings.json`: 현재 권한(allow, ask, deny)과 등록된 사전 동작 hook.
+- `settings.json`: 현재 권한(allow, ask, deny), 등록된 사전 동작 hook, native 자동
+  memory 비활성화(`autoMemoryEnabled: false`).
 - `hooks/k8s-pre-edit.sh`: shell과 구조화 파일 도구에 대한 동기식 쓰기
   경계의 Claude adapter. 자기 provider 이름을 붙여 payload를 넘길 뿐이고,
   경계 자체는 `scripts/provider_write_guard.py`가 소유한다. provider마다 자기
@@ -47,7 +48,7 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
 [provider baseline](CLAUDE.md)을 읽은 뒤 선택한 공통 역할과 그 역할에 필요한
 절차를 읽는다. 공통 skill은 명시적으로만 호출하며 추가 도구나 승인을 주지
 않는다. 절차는 `.agents/skills/`에서 한 번만 고친다. 개인 로컬 설정과 memory는
-공통 정책이 아니다.
+공통 정책이 아니며, 재사용할 맥락은 공유 workspace memory store에 둔다.
 
 ## Verification
 

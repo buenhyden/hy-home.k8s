@@ -43,6 +43,8 @@ RETIRED_SURFACES = (
     ".gemini",
     "GEMINI.md",
 )
+CODEX_CONFIG_PATH = ".codex/config.toml"
+CODEX_CONFIG = {"memories": {"generate_memories": False, "use_memories": False}}
 PROVIDER_HOOK_PATHS = {
     "claude": ".claude/settings.json",
     "codex": ".codex/hooks.json",
@@ -1361,8 +1363,22 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         for ref in refs:
             _read_regular_file(root, ref, code="AGENT-NATIVE-REFERENCE")
     settings = load_json(root, ".claude/settings.json")
-    if not isinstance(settings, dict) or set(settings) != {"permissions", "hooks"}:
+    if (
+        not isinstance(settings, dict)
+        or set(settings) != {"permissions", "hooks", "autoMemoryEnabled"}
+        or settings["autoMemoryEnabled"] is not False
+    ):
         fail("AGENT-NATIVE-METADATA", "unsupported native settings")
+    # SPEC-0109: both providers use the shared workspace memory store, so the
+    # project disables native memory; the Codex config holds only that table.
+    try:
+        codex_config = tomllib.loads(
+            _read_text(root, CODEX_CONFIG_PATH, "AGENT-NATIVE-CONFIG")
+        )
+    except tomllib.TOMLDecodeError:
+        fail("AGENT-NATIVE-CONFIG", "project Codex config is not TOML")
+    if codex_config != CODEX_CONFIG:
+        fail("AGENT-NATIVE-CONFIG", "project Codex config must only disable memories")
     # Exact equality is what bounds the allow list. A list of forbidden broad
     # grants would be weaker than this and would read as the real control, so
     # this comparison stays the only one. Ignored personal settings are outside
