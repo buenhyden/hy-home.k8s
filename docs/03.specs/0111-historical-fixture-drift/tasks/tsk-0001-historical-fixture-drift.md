@@ -54,9 +54,9 @@ Execute the two work units of the [Plan](../plan.md) for
 - **Forbidden Paths**: `scripts/`, `docs/99.templates/`, other Spec
   packages, frozen Archive payloads, live cluster, Vault and secret
   material.
-- **Approval Required**: the operator selected this scope on 2026-10-13;
-  SPEC-0111 and Plan approval, push, pull request and merge await the
-  operator.
+- **Approval Required**: the operator selected this scope and approved
+  SPEC-0111 and its Plan for implementation on 2026-10-13 after reviewing
+  the draft at `f2eea19c`; push, pull request and merge await the operator.
 - **Static Validation**: focused tests and staged QA from the documented
   validation environment.
 - **Live Validation**: DEFER — no live surface is touched.
