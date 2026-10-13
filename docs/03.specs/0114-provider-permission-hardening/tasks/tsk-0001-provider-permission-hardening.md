@@ -88,8 +88,9 @@ Execute the nine work units of the [Plan](../plan.md) for
 - **Forbidden Paths**: removal of any existing deny entry; personal,
   user-level or managed settings; project trust; workflows; live cluster,
   Vault and secret material.
-- **Approval Required**: SPEC-0114 and Plan approval; push, pull request
-  and merge are run only on an operator request.
+- **Approval Required**: the operator approved SPEC-0114 and its Plan for
+  implementation on 2026-10-13 after reviewing the draft at `94bc4965`;
+  push, pull request and merge are run only on an operator request.
 - **Static Validation**: governance and guard tests, the governance
   validator, `codex execpolicy check` and staged QA from the documented
   validation environment.
