@@ -1,6 +1,6 @@
 ---
 title: "Provider README Language and QA Tool Diagnostics"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -93,3 +93,7 @@ are not executed; under the system interpreter the style tests fail
 explicitly with `NONSTYLE-TOOL`. Next owner: the operator for SPEC-0110
 approval, the F21 ruleset alternative, push and pull request; platform for
 SPEC-0109 once approved.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-014), so the push, pull request and merge handoff above is closed and
+no next owner remains.

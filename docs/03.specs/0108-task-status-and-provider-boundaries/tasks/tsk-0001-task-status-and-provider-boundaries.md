@@ -1,6 +1,6 @@
 ---
 title: "Task Status Derivation and Provider Boundaries"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -90,3 +90,8 @@ the clean base; native `ask` prompting, hosted CI, push and pull request are
 not executed. Residual risk: the eight pending READMEs remain English until a
 later Task translates them. Next owner: the operator for push, pull request
 and merge; platform for the pending READMEs and SPEC-0109 review.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-009), so the push, pull request and merge handoff above is closed and
+no next owner remains. SPEC-0110 later translated the eight pending READMEs,
+so that residual risk is closed.

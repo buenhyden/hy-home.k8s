@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -100,3 +100,7 @@ Limitations: the 4 GiB area limit is observed, not enforced; the Codex
 session's worktree and project trust were operator-relayed rather than
 observed; an interactive linked-worktree session later confirmed the result (EVD-013). Merge of pull
 request #140 awaits the operator. Next owner: the operator for merge.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-015), so the push, pull request and merge handoff above is closed and
+no next owner remains.

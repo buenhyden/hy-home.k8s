@@ -1,6 +1,6 @@
 ---
 title: "Historical Fixture Drift in Lifecycle Tests"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -82,3 +82,7 @@ generation replay follows the live templates and Registry by design; the
 fixture cancellation values rely on the field staying unvalidated.
 Limitations: hosted CI, push and pull request are not executed. Next owner:
 the operator for push, pull request and merge.
+
+SPEC-0113 note (2026-10-13): pull request #141 merged at `bceca1b7`
+(EVD-006), so the push, pull request and merge handoff above is closed and
+no next owner remains.

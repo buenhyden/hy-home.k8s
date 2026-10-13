@@ -201,6 +201,22 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             {item for item in ignores if item.startswith("docs/98.archive/")},
             {f"docs/98.archive/{root}/" for root in roots},
         )
+        harness = re.search(
+            r"harnesses/.*?/\(\?:([a-z|-]+)\)\\\.md",
+            hooks["end-of-file-fixer"]["exclude"],
+        )
+        self.assertIsNotNone(harness)
+        self.assertEqual(
+            {
+                item
+                for item in ignores
+                if item.startswith(".agents/evaluations/harnesses/")
+            },
+            {
+                f".agents/evaluations/harnesses/*/{name}.md"
+                for name in harness.group(1).split("|")
+            },
+        )
 
     def test_heading_and_residue_probes_belong_to_tests(self):
         tree = ast.parse((SCRIPTS / "validation/repository/quality.py").read_text())

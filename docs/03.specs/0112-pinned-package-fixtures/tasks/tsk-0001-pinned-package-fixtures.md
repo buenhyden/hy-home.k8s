@@ -1,6 +1,6 @@
 ---
 title: "Pinned Package Fixtures in Lifecycle Tests"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 status: "completed"
 owner: "platform"
@@ -84,3 +84,7 @@ unit test and is caught by lifecycle validation instead; one archived
 SPEC-0080 plan is still read from the working tree. Limitations: hosted
 CI, push and pull request are not executed. Next owner: the operator for
 push, pull request and merge.
+
+SPEC-0113 note (2026-10-13): pull request #142 merged at `86daf815`
+(EVD-004), so the push, pull request and merge handoff above is closed and
+no next owner remains.

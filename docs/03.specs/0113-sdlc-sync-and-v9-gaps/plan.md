@@ -31,7 +31,7 @@ duplicates and of misrouted README changes.
 
 ## Goals & In-Scope
 
-Close the six criteria of the Spec.
+Close the seven criteria of the Spec.
 
 ## Non-Goals & Out-of-Scope
 
@@ -65,5 +65,5 @@ validation environment on the exact index before its commit.
 
 ## Completion Criteria
 
-All six criteria have PASS evidence and an accepted decision in the Task;
+All seven criteria have PASS evidence and an accepted decision in the Task;
 push and pull request remain operator actions.

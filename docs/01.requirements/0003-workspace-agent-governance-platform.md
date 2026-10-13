@@ -233,9 +233,9 @@ Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 
 [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md) is the current
 local-QA and release contract for REQ-0003-FR-0001/0005/0016/0017/0018/0024/0026/0027/0029/0030,
-REQ-0003-NFR-0002/0003 and REQ-0003-IF-0001. Its draft records intended
-succession from the historical SPEC-0103 result; current implementation and
-acceptance remain with its Task rather than this Requirement Package.
+REQ-0003-NFR-0002/0003 and REQ-0003-IF-0001. It is completed and records
+succession from the historical SPEC-0103 result; implementation and
+acceptance evidence remain with its Task rather than this Requirement Package.
 
 Later current packages trace here as well: SPEC-0108 (Task status derivation
 and provider boundaries) for REQ-0003-FR-0007/0012/0014/0019/0024/0026;

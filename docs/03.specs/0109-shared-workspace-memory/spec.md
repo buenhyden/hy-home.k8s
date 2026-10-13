@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "0.3.0"
+version: "0.3.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -21,8 +21,9 @@ implementation on the same day after review at `8b56cb82`. Before this
 package the [context and memory policy](../../../.agents/governance/context-and-memory.md)
 discarded task-local context and kept no memory directory (Spec 0054 and
 Spec 0065 retirements). The Task delivered the store and native memory
-disablement and revised that policy and REQ-0003-FR-0022 together; a
-SPEC-0113 note on 2026-10-13 brought this text up to date.
+disablement and revised that policy and REQ-0003-FR-0022 together. A
+SPEC-0113 revision on 2026-10-13 rewrote this Spec from design-draft to
+delivered wording; Git history keeps the earlier text.
 [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 describes the store in its checkpoint architecture.
 
@@ -31,7 +32,7 @@ The [Plan](plan.md) orders the work and
 
 ## Strategic Boundaries & Non-goals
 
-- In scope once approved: a SQLite store, a shared CLI, tier schemas,
+- In scope: a SQLite store, a shared CLI, tier schemas,
   retention, quotas, revision conflicts, backup and native memory
   disablement for both providers.
 - Non-goals: memory as Task evidence, approval or acceptance; copying

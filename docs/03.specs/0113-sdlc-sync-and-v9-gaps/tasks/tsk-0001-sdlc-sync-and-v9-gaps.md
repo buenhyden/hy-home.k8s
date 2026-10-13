@@ -13,7 +13,7 @@ parent_ids: ["SPEC-0113-PLAN-0001"]
 
 ## Overview
 
-Execute the six work units of the [Plan](../plan.md) for
+Execute the seven work units of the [Plan](../plan.md) for
 [SPEC-0113](../spec.md) and record their evidence here.
 
 ## Inputs

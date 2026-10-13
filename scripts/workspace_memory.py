@@ -27,7 +27,7 @@ STORE_DIR = ".workspace-memory"
 STORE_NAME = "memory.sqlite3"
 BACKUP_NAME = "memory.backup.sqlite3"
 MIB = 1024 * 1024
-# Proposed initial limits from SPEC-0109; logical bytes count every revision
+# Initial limits accepted in the SPEC-0109 Task; logical bytes count every revision
 # and conflict. The 4 GiB store area is observed only (no filesystem quota).
 TIER_LIMITS = {"short-term": 64 * MIB, "long-term": 128 * MIB, "domain": 256 * MIB}
 DOMAIN_LIMIT = 64 * MIB
