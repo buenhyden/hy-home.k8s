@@ -542,10 +542,6 @@
         },
         {
           "kind": "exact",
-          "value": ".hadolint.yaml"
-        },
-        {
-          "kind": "exact",
           "value": ".kube-linter.yaml"
         },
         {
