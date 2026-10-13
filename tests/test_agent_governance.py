@@ -1301,6 +1301,54 @@ class NativeDenyCoverageTests(unittest.TestCase):
         ]
         self.assert_denied(commands)
 
+    def test_deletion_and_history_destruction_is_denied(self):
+        self.assert_denied(
+            (
+                "rm -fr a",
+                "rm -Rf a",
+                "rm -r -f a",
+                "rm -r a",
+                "rm --recursive a",
+                "rm --force a",
+                "rm a -rf",
+                "rm -f a",
+                "sudo rm -rf a",
+                "find . -name x -delete",
+                "git push origin --force",
+                "git push origin --force-with-lease",
+                "git push origin -f",
+                "git push origin --delete a",
+                "git push -u origin --delete a",
+                "git push origin -d a",
+                "git push origin --mirror",
+                "git push origin --prune",
+                "git branch -d -f a",
+                "git branch --delete --force a",
+                "git branch -df a",
+                "git checkout -f",
+                "git checkout --force main",
+                "git switch --discard-changes main",
+                "git switch -f main",
+                "git stash drop",
+                "git stash clear",
+                "git filter-branch --all",
+                "git filter-repo --path a",
+                "git update-ref -d refs/heads/a",
+                "git reflog expire --all",
+                "git gc --prune=now",
+                "git worktree remove --force a",
+                "git worktree remove a --force",
+                "git config --global user.name a",
+                "gh secret set A",
+                "gh variable set A",
+                "gh repo delete a",
+                "gh repo edit --visibility public",
+                "gh release delete v1",
+                "gh run cancel 1",
+                "gh pr merge 1 --admin",
+            )
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
