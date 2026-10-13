@@ -73,8 +73,9 @@ Execute the six work units of the [Plan](../plan.md) for
 - **Forbidden Paths**: `.pre-commit-config.yaml` exclusion removal,
   `docs/99.templates/registry.json` and schemas, validators, workflows,
   frozen Archive payloads, live cluster, Vault and secret material.
-- **Approval Required**: SPEC-0113 and Plan approval, push, pull request
-  and merge await the operator.
+- **Approval Required**: the operator approved SPEC-0113 and its Plan for
+  implementation on 2026-10-13 after reviewing the draft at `535d8c11`;
+  push, pull request and merge await the operator.
 - **Static Validation**: focused tests, document validators and staged QA
   from the documented validation environment.
 - **Live Validation**: DEFER — no live surface is touched.

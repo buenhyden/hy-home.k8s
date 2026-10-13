@@ -2,7 +2,7 @@
 title: "SDLC Document Sync and Remaining v9 Gaps"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-10-13"
 layer: "specs"
