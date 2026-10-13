@@ -30,7 +30,7 @@ Execute the three work units of the [Plan](../plan.md) for
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Store module, CLI and Git ignore entry | platform | completed | PASS | EVD-005, EVD-008 in commit `9b4bd50043fea1f6575bcd9c553b04e341a77c0c` |
-| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | in-progress | PASS | EVD-006 in commit `8586346f445394fe2c7f1043c1569b13a3b62c35`; EVD-012 linked-worktree session observation |
+| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | completed | PASS | EVD-006 in commit `8586346f445394fe2c7f1043c1569b13a3b62c35`; EVD-009 to EVD-012 runtime observations |
 | WORK-003 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Memory policy and requirement revision | platform | completed | PASS | EVD-007 in commit `aeafdebbb0b004807809d00931150fa3dd284e58` |
 
 ## Task Evidence
@@ -55,7 +55,7 @@ Execute the three work units of the [Plan](../plan.md) for
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-007 | Accept the store, its limits and the policy on focused local evidence; the area limit is observed only | platform |
-| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-009, EVD-010, EVD-011 | Both providers read the same memory and neither wrote native memory (EVD-009 to EVD-011); still open: one provider session started from a linked worktree | operator |
+| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-009, EVD-010, EVD-011, EVD-012 | Accept on the operator's instruction: Codex and Claude sessions, one of them started in a linked worktree, read the same memory ID, revision and body from one file, and neither wrote native memory | platform |
 
 ## Approval and Safety Boundaries
 
@@ -75,7 +75,8 @@ Execute the three work units of the [Plan](../plan.md) for
   operator.
 - **Static Validation**: focused store and governance tests, document
   validators and staged QA from the documented validation environment.
-- **Live Validation**: DEFER until two real provider sessions are observed.
+- **Live Validation**: PASS — EVD-009 to EVD-012 observe real Codex and
+  Claude sessions across two worktrees.
 - **Secret / Vault Handling**: the store rejects secret sensitivity; no
   secret is read or printed.
 - **Rollback Plan**: forward revert of the package commits; the ignored
@@ -84,19 +85,15 @@ Execute the three work units of the [Plan](../plan.md) for
 
 ## Verification Summary
 
-WORK-001 and WORK-003 are complete and VAL-MEMORY-001 is accepted. WORK-002
-is committed but blocked on its acceptance observation, so this Task stays
-blocked rather than completed. Every commit passed `qa.py staged` from the
-documented validation environment.
+All three work units are complete and both criteria are accepted.
+VAL-MEMORY-001 rests on focused store tests and the policy validators.
+VAL-MEMORY-002 rests on runtime observations: a Codex and a new Claude
+session read the same memory from the main worktree, a fresh Claude session
+started in a temporary linked worktree read the same memory ID, revision and
+body, and neither provider wrote native memory (EVD-009 to EVD-012). Every
+commit passed `qa.py staged` from the documented validation environment.
 
-To close VAL-MEMORY-002, start a new Claude session and a new trusted Codex
-session in two different worktrees of this repository and in each run
-`python3 scripts/workspace_memory.py resolve` and
-`python3 scripts/workspace_memory.py get mem-e71dedf07add48d5`; the
-workspace ID, revision and body must match. Then confirm that neither
-session wrote native memory (no new Claude project memory entry, no Codex
-memory generation). Record the clients, worktrees and results here.
-
-Limitations: the 4 GiB area limit is observed, not enforced; hosted CI,
-push and pull request are not executed. Next owner: the operator for the
-observation, SPEC-0109 Plan approval, push and pull request.
+Limitations: the 4 GiB area limit is observed, not enforced; the Codex
+session's worktree and project trust were operator-relayed rather than
+observed; the linked-worktree session was non-interactive. Merge of pull
+request #140 awaits the operator. Next owner: the operator for merge.
