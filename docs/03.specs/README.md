@@ -1,6 +1,6 @@
 ---
 title: "03.specs"
-version: "0.13.0"
+version: "0.14.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -78,7 +78,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0106-stage99-lifecycle-normalization/
 ├── 0107-local-qa-and-release/
 ├── 0108-task-status-and-provider-boundaries/
-└── 0109-shared-workspace-memory/
+├── 0109-shared-workspace-memory/
+└── 0110-provider-readme-and-qa-diagnostics/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -86,6 +87,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Local Quality and Release Lifecycle](./0107-local-qa-and-release/)은 로컬 QA와 릴리스 절차의 변경 계약을 소유한다.
 [Task Status Derivation and Provider Boundaries](./0108-task-status-and-provider-boundaries/)는 다중 행 Task 요약 파생, provider README 언어, Claude 원격 명령 확인 경계를 소유한다.
 [Shared Workspace Memory Store](./0109-shared-workspace-memory/)는 아직 승인되지 않은 공유 기억 저장소 설계 초안이다.
+[Provider README Language and QA Tool Diagnostics](./0110-provider-readme-and-qa-diagnostics/)는 provider README 한국어화와 로컬 style 도구 누락 진단을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
