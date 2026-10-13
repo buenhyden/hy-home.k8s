@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-14"
 ---
 
 # Claude Provider Notes
@@ -40,9 +40,20 @@ invocation. The common procedure retains the selected role and user scope.
   authorized delegation through the available runtime mechanism.
 - Read shared skills through `.claude/skills`, a view of the neutral owner.
   File presence alone does not prove native discovery or use.
+- Tracked permissions follow SPEC-0114. Deny is checked first and no allow can
+  override it. A rule matches command text from its first character, so deny
+  carries option-first forms (`kubectl * delete *`), positional push forms and
+  Bash path patterns for secret files: in a session probe a `Read` deny did not
+  stop `cat` on the same path. Read-only Git and GitHub commands, push, pull
+  request creation and merge are allowed because an operator request is their
+  approval; `gh api` and `git -C` ask; `disableBypassPermissionsMode` is
+  `disable`. A refspec `:branch` deletion, `git -C` forms and programs that
+  open files themselves cannot be matched; they stay residual risk, not
+  coverage.
 - Tracked settings register only `.claude/hooks/k8s-pre-edit.sh` for pre-action
-  safety, on the shell and structured file tools. That file is this provider's
-  thin adapter; the boundary itself is owned by
+  safety, on the shell, structured file and notebook tools. It fails closed:
+  an adapter or guard failure exits 2 with a reason on stderr. That file is
+  this provider's thin adapter; the boundary itself is owned by
   `scripts/provider_write_guard.py`, which the adapter resolves from its own
   checkout so a project directory pointed at another tree supplies data and
   never the program. It enforces a boundary only when the intended runtime

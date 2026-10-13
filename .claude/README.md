@@ -1,10 +1,10 @@
 ---
 title: "Claude Native Adapter"
-version: "2.3.0"
+version: "2.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-14"
 ---
 
 # Claude Native Adapter
@@ -31,8 +31,9 @@ model, effort, native 도구, 역할별 예외를 소유하고 중립 registry�
   skill, 권한의 정규 값.
 - `CLAUDE.md`: 명시적으로 읽는 provider baseline.
 - [provider.md](provider.md): provider별 적재·지원 계약.
-- `settings.json`: 현재 권한(allow, ask, deny), 등록된 사전 동작 hook, native 자동
-  memory 비활성화(`autoMemoryEnabled: false`).
+- `settings.json`: 현재 권한(allow, ask, deny), bypass 모드 비활성화, 등록된
+  사전 동작 hook, native 자동 memory 비활성화(`autoMemoryEnabled: false`).
+  권한 범위와 남은 한계는 [provider.md](provider.md)와 SPEC-0114가 소유한다.
 - `hooks/k8s-pre-edit.sh`: shell과 구조화 파일 도구에 대한 동기식 쓰기
   경계의 Claude adapter. 자기 provider 이름을 붙여 payload를 넘길 뿐이고,
   경계 자체는 `scripts/provider_write_guard.py`가 소유한다. provider마다 자기

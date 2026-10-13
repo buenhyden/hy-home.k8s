@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.4.0"
+version: "1.5.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-14"
 ---
 
 # Codex Provider Notes
@@ -50,9 +50,19 @@ team document, not a special automatic entry filename.
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline
   table is not, so one file holds the registration and the two cannot disagree.
-  The project `.codex/config.toml` holds only `[memories]` with
-  `generate_memories = false` and `use_memories = false`, and the validator
-  rejects any other key or table, including `[hooks]`. Both keys were found in
+  The project `.codex/config.toml` holds `[memories]` with
+  `generate_memories = false` and `use_memories = false` and, since SPEC-0114,
+  `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`,
+  workspace network access and `[shell_environment_policy]` with
+  `inherit = "core"` and `ignore_default_excludes = false`; the validator
+  rejects any other key or table, including `[hooks]`. `codex-cli 0.162.1`
+  rejected an invalid `sandbox_mode` in this file on 2026-10-13, so the project
+  layer is parsed; whether the environment filter applies is unobserved.
+  `.codex/rules/default.rules` forbids, as argv prefixes, the command families
+  the Claude deny list covers, and the validator pins its digest; an
+  option-first form is not expressible as a prefix and stays residual risk.
+  The hook registration exits 2 when its adapter cannot be found, and a
+  changed hook runs only after the user re-trusts it through `/hooks`. Both keys were found in
   the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);
   Codex applies a project config only to a trusted project, so the effect is
   separate runtime evidence.
