@@ -37,15 +37,15 @@ Execute the nine work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | Claude secret read and secret-output denies | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-PERM-002](../spec.md#success-criteria--verification-plan) | Claude option-first cluster and tool mutation denies | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-PERM-003](../spec.md#success-criteria--verification-plan) | Claude deletion and history-destroying denies | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-PERM-005](../spec.md#success-criteria--verification-plan) | Fail-closed shared guard and adapters | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-005 | [VAL-PERM-004](../spec.md#success-criteria--verification-plan) | Claude allow, ask and bypass mode | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-006 | [VAL-PERM-006](../spec.md#success-criteria--verification-plan) | Codex config security keys | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-007 | [VAL-PERM-007](../spec.md#success-criteria--verification-plan) | Codex forbidden rules | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-008 | [VAL-PERM-008](../spec.md#success-criteria--verification-plan) | Codex hook path independent of the session directory | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-009 | [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | Provider notes, READMEs, REQ-0003 links and session probes | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PERM-001](../spec.md#success-criteria--verification-plan) | Claude secret read and secret-output denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-PERM-002](../spec.md#success-criteria--verification-plan) | Claude option-first cluster and tool mutation denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-PERM-003](../spec.md#success-criteria--verification-plan) | Claude deletion and history-destroying denies | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-PERM-005](../spec.md#success-criteria--verification-plan) | Fail-closed shared guard and adapters | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-005 | [VAL-PERM-004](../spec.md#success-criteria--verification-plan) | Claude allow, ask and bypass mode | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-006 | [VAL-PERM-006](../spec.md#success-criteria--verification-plan) | Codex config security keys | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-007 | [VAL-PERM-007](../spec.md#success-criteria--verification-plan) | Codex forbidden rules | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-008 | [VAL-PERM-008](../spec.md#success-criteria--verification-plan) | Codex hook path independent of the session directory | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-009 | [VAL-PERM-009](../spec.md#success-criteria--verification-plan) | Provider notes, READMEs, REQ-0003 links and session probes | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
