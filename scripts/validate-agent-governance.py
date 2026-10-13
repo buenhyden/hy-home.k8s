@@ -78,6 +78,14 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
 )
+# Requested pushes, merges and pull requests stay behind a per-call prompt;
+# force, delete and mirror pushes remain denied below.
+CLAUDE_ASK_PERMISSIONS = (
+    "Bash(git push:*)",
+    "Bash(git merge:*)",
+    "Bash(gh pr create:*)",
+    "Bash(gh pr merge:*)",
+)
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
     "Read(./.env.*)",
@@ -93,10 +101,6 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(kubectl get secrets:*)",
     "Bash(kubectl describe secret:*)",
     "Bash(kubectl describe secrets:*)",
-    "Bash(git push:*)",
-    "Bash(git merge:*)",
-    "Bash(gh pr create:*)",
-    "Bash(gh pr merge:*)",
     "Bash(gh release create:*)",
     "Bash(gh workflow run:*)",
     "Bash(kubectl delete:*)",
@@ -1365,6 +1369,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     # it: they are not tracked configuration and carry no shared authority.
     if settings["permissions"] != {
         "allow": list(CLAUDE_ALLOWED_PERMISSIONS),
+        "ask": list(CLAUDE_ASK_PERMISSIONS),
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),
     }:
         fail("AGENT-NATIVE-PERMISSION", "permission settings widened or lost denial")

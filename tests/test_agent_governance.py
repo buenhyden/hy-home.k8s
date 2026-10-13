@@ -805,12 +805,18 @@ class NativeBoundaryTests(unittest.TestCase):
 
         path = self.root / ".claude/settings.json"
         data = json.loads(path.read_text())
-        for action in ("deny", "allow"):
+        for action in ("deny", "allow", "ask", "ask-to-allow"):
             import copy
 
             changed = copy.deepcopy(data)
             if action == "deny":
                 changed["permissions"]["deny"].pop()
+            elif action == "ask":
+                changed["permissions"]["ask"].pop()
+            elif action == "ask-to-allow":
+                changed["permissions"]["allow"].append(
+                    changed["permissions"]["ask"].pop()
+                )
             else:
                 changed["permissions"]["allow"].append("Bash(*)")
             path.write_text(json.dumps(changed))

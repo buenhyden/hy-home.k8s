@@ -30,7 +30,8 @@ their execution and acceptance.
 - In scope: Task summary derivation and the retirement of
   `scripts/sync-task-status.py`; the README exception to the English-only
   roots and the Korean body of `.agents/roles/README.md`; the Claude
-  `ask` list for `git push`, `git merge`, `gh pr create` and `gh pr merge`.
+  `ask` list for the plain remote publish, local merge and pull-request
+  create and merge commands named in `.claude/settings.json`.
 - Non-goals: rewriting historical Task status, translating the other eight
   provider-root READMEs in this package, the shared memory store (its design
   belongs to [SPEC-0109](../0109-shared-workspace-memory/spec.md)), Codex
