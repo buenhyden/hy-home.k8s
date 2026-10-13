@@ -300,6 +300,14 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(gh release delete*)",
     "Bash(gh run cancel*)",
     "Bash(gh pr merge * --admin*)",
+    "Bash(git *--upload-pack*)",
+    "Bash(git *--receive-pack*)",
+    "Bash(git *--exec*)",
+    "Bash(git *--output*)",
+    "Bash(git ls-remote -u*)",
+    "Bash(git ls-remote * -u*)",
+    "Bash(git fetch -u*)",
+    "Bash(git fetch * -u*)",
 )
 
 

@@ -1435,6 +1435,19 @@ class NativeDenyCoverageTests(unittest.TestCase):
                 "gh release delete v1",
                 "gh run cancel 1",
                 "gh pr merge 1 --admin",
+                # Allowed Git commands must not carry an executable or an
+                # arbitrary output path (automated security review).
+                "git fetch --upload-pack=sh origin",
+                "git fetch origin --upload-pack sh",
+                "git ls-remote -u sh origin",
+                "git ls-remote --upload-pack=sh origin",
+                "git push --receive-pack=sh origin a",
+                "git push origin a --exec=sh",
+                # `ext::` transports stay off by Git default
+                # (`protocol.ext.allow` unset); a rule ending in `::*` would
+                # read as the legacy trailing `:*` form, so none is added.
+                "git log --output=/tmp/a",
+                "git show HEAD --output /tmp/a",
             )
         )
 
