@@ -42,6 +42,21 @@ class SelectedStyleBoundaryTest(unittest.TestCase):
         with self.assertRaisesRegex(STYLE.StyleError, "manual stage"):
             STYLE._style_repositories(STYLE.yaml.safe_dump(source).encode())
 
+    def test_missing_pre_commit_module_names_the_tool(self) -> None:
+        with patch.object(STYLE.importlib.util, "find_spec", return_value=None):
+            with self.assertRaisesRegex(STYLE.StyleError, "^STYLE-TOOL: "):
+                STYLE._require_pre_commit()
+
+    def test_hook_failure_reports_only_fixed_hook_lines(self) -> None:
+        output = (
+            b"markdownlint-cli2....Failed\n- hook id: markdownlint-cli2\n"
+            b"- exit code: 1\nprivate body token=synthetic\n"
+        )
+        self.assertEqual(
+            STYLE._hook_failure_lines(output),
+            "- hook id: markdownlint-cli2\n- exit code: 1\n",
+        )
+
     def test_nul_path_transport_rejects_traversal_before_reading(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             listing = Path(temporary) / "paths.z"

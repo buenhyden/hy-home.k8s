@@ -653,8 +653,13 @@ def failure_snippet(completed: BoundedCommandResult) -> str:
         return encoded(unittest_summary)
     hook_ids: list[str] = []
     exit_codes: list[str] = []
+    rules: list[str] = []
     modified = False
     for line in payload.splitlines():
+        # Only the fixed selected-style rule ID is released, never its message.
+        rule = re.match(r"((?:NON)?STYLE(?:-[A-Z]{1,24}){1,3}): ", line, re.ASCII)
+        if rule and rule[1] not in rules and len(rules) < 4:
+            rules.append(rule[1])
         hook = re.fullmatch(r"- hook id: ([a-z][a-z0-9-]{0,63})", line, re.ASCII)
         if hook and hook[1] not in hook_ids and len(hook_ids) < 8:
             hook_ids.append(hook[1])
@@ -662,8 +667,9 @@ def failure_snippet(completed: BoundedCommandResult) -> str:
         if exit_code and exit_code[1] not in exit_codes and len(exit_codes) < 8:
             exit_codes.append(exit_code[1])
         modified |= line == "- files were modified by this hook"
-    if hook_ids or exit_codes or modified:
-        fields = [*(f"- hook id: {value}" for value in hook_ids)]
+    if hook_ids or exit_codes or modified or rules:
+        fields = [*(f"rule={value}" for value in rules)]
+        fields.extend(f"- hook id: {value}" for value in hook_ids)
         fields.extend(f"- exit code: {value}" for value in exit_codes)
         if modified:
             fields.append("modified=true")

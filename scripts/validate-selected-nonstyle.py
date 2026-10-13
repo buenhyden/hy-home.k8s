@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 from contextlib import contextmanager
 import os
 import re
@@ -78,6 +79,25 @@ MAX_INDEX_BYTES = 16 * 1024 * 1024
 
 class NonstyleError(ValueError):
     """A selected non-style input or execution failure."""
+
+
+_HOOK_LINE = re.compile(r"- (?:hook id: [a-z][a-z0-9-]{0,63}|exit code: [0-9]{1,3})")
+
+
+def _require_pre_commit() -> None:
+    if importlib.util.find_spec("pre_commit") is None:
+        raise NonstyleError(
+            "NONSTYLE-TOOL: pre_commit module unavailable to the invoking interpreter"
+        )
+
+
+def _hook_failure_lines(output: bytes | str) -> str:
+    """Keep only pre-commit's fixed hook id and exit code lines."""
+
+    text = output.decode("utf-8", "replace") if isinstance(output, bytes) else output
+    return "".join(
+        line + "\n" for line in text.splitlines() if _HOOK_LINE.fullmatch(line)
+    )
 
 
 def _closed_environment() -> dict[str, str]:
@@ -359,6 +379,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not paths:
             print("NONSTYLE-NOT_APPLICABLE: no selected index files")
             return 0
+        _require_pre_commit()
         if _worktree_diff(root):
             raise NonstyleError("NONSTYLE-INDEX: working tree differs from exact index")
         config_path = Path(os.path.abspath(args.config))
@@ -437,6 +458,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if _worktree_diff(root):
             raise NonstyleError("NONSTYLE-MUTATION: snapshot files changed")
         if result.returncode:
+            sys.stderr.write(_hook_failure_lines(result.stdout))
             raise NonstyleError("NONSTYLE-HOOK-FAIL: selected non-style hook failed")
         print(f"NONSTYLE-PASS: checked {len(paths)} selected index paths")
         return 0

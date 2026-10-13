@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.8.0"
+version: "0.9.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 ---
 # scripts
 
@@ -196,8 +196,12 @@ python3 -m venv "$VALIDATION_VENV"
 ```
 
 먼저 `VALIDATION_VENV`를 승인된 환경 경로로 설정한다. Python gate에는 호출한
-Python이 그대로 쓰인다. 다른 도구는 고정된 시스템 경로를 쓰며 pre-commit은
-신뢰할 수 있는 interpreter 인접 경로나 계정 소유의 정확한 fallback도 허용한다.
+Python이 그대로 쓰인다. selected style·nonstyle gate는 그 Python의
+`pre_commit` 모듈을 실행하므로 이 모듈이 없으면 `STYLE-TOOL` 또는
+`NONSTYLE-TOOL`로 실패한다. 다른 도구는 고정된 시스템 경로를 쓰며 gitleaks와
+conftest만 신뢰할 수 있는 interpreter 인접 경로나 계정 소유의 정확한 fallback도
+허용한다. 시스템 Python에 `ensurepip`가 없으면 `uv venv`와 `uv pip install
+--require-hashes`로 같은 lock을 설치할 수 있다.
 저장소 로컬 venv나 namespace가 매핑된 상위 디렉터리 소유권 때문에 그 fallback이
 달라질 수 있으므로, venv 활성화 여부가 아니라 실제로 해석된 실행 파일을
 기록한다. shell validator의 `python3`는 닫힌 시스템 PATH를 따르므로 그 library

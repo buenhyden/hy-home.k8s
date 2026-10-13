@@ -2586,6 +2586,25 @@ class FailureSnippetDiagnosabilityTest(unittest.TestCase):
         self.assertNotIn("hidden", generic)
         self.assertLessEqual(len(json.loads(generic)), 1024)
 
+    def test_selected_style_rule_label_is_released_without_its_message(self):
+        snippet = self._snippet(
+            "STYLE-TOOL: pre_commit module unavailable token=synthetic-value\n"
+        )
+        self.assertIn("rule=STYLE-TOOL", snippet)
+        self.assertNotIn("synthetic-value", snippet)
+        hook = self._snippet(
+            "- hook id: detect-secrets\n- exit code: 3\n"
+            "NONSTYLE-HOOK-FAIL: selected non-style hook failed\n"
+        )
+        self.assertIn("rule=NONSTYLE-HOOK-FAIL", hook)
+        self.assertIn("- hook id: detect-secrets", hook)
+        long_token = self._snippet("STYLE-" + "A" * 40 + ": private\n")
+        self.assertIn("details withheld", long_token)
+        self.assertNotIn("A" * 25, long_token)
+        other = self._snippet("ARCHIVE-THING: private detail\n")
+        self.assertIn("details withheld", other)
+        self.assertNotIn("ARCHIVE-THING", other)
+
     def test_hook_failure_lines_are_still_prioritized(self):
         snippet = self._snippet(
             "harmless warning\n",

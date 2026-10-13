@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 from contextlib import contextmanager
 import os
 import re
@@ -50,6 +51,25 @@ MAX_CONFIG_BYTES = 1024 * 1024
 
 class StyleError(ValueError):
     """A bounded selected-style input or execution failure."""
+
+
+_HOOK_LINE = re.compile(r"- (?:hook id: [a-z][a-z0-9-]{0,63}|exit code: [0-9]{1,3})")
+
+
+def _require_pre_commit() -> None:
+    if importlib.util.find_spec("pre_commit") is None:
+        raise StyleError(
+            "STYLE-TOOL: pre_commit module unavailable to the invoking interpreter"
+        )
+
+
+def _hook_failure_lines(output: bytes | str) -> str:
+    """Keep only pre-commit's fixed hook id and exit code lines."""
+
+    text = output.decode("utf-8", "replace") if isinstance(output, bytes) else output
+    return "".join(
+        line + "\n" for line in text.splitlines() if _HOOK_LINE.fullmatch(line)
+    )
 
 
 def _git(root: Path, *args: str) -> bytes:
@@ -326,6 +346,7 @@ def _private_check(
         if altered:
             raise StyleError("STYLE-FORMAT-MUTATION: selected hook proposed a change")
         if result.returncode:
+            sys.stderr.write(_hook_failure_lines(result.stdout))
             raise StyleError("STYLE-HOOK-FAIL: selected style hook failed")
 
 
@@ -359,6 +380,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not selected:
             print("STYLE-NOT_APPLICABLE: no selected regular files")
             return 0
+        _require_pre_commit()
         config = _trusted_bytes(root, args.config, ".pre-commit-config.yaml")
         markdown_config = _trusted_bytes(
             root, args.markdown_config, ".markdownlint-cli2.yaml"

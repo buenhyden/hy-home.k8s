@@ -34,6 +34,18 @@ def load_checker():
 
 
 class SelectedNonstyleContractTests(unittest.TestCase):
+    def test_missing_pre_commit_module_names_the_tool(self) -> None:
+        checker = load_checker()
+        with patch.object(checker.importlib.util, "find_spec", return_value=None):
+            with self.assertRaisesRegex(checker.NonstyleError, "^NONSTYLE-TOOL: "):
+                checker._require_pre_commit()
+        self.assertEqual(
+            checker._hook_failure_lines(
+                b"x\n- hook id: detect-secrets\n- exit code: 3\ny\n"
+            ),
+            "- hook id: detect-secrets\n- exit code: 3\n",
+        )
+
     def test_worktree_diff_probe_preserves_private_index_bytes(self) -> None:
         checker = load_checker()
         with tempfile.TemporaryDirectory(prefix="nonstyle-index-probe-") as temporary:
