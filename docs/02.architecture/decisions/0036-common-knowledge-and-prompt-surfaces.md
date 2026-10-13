@@ -1,10 +1,10 @@
 ---
 title: "Common Knowledge and Prompt Surfaces"
-version: "1.0.3"
+version: "1.0.4"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-10-13"
 layer: "architecture"
 artifact_id: "ADR-0036"
 supersedes: "ADR-0035"
@@ -48,7 +48,9 @@ document contract exists to catch.
 The retired memory structure is a separate matter. It was retired under Spec
 0054 and Spec 0065 because a generated progress ledger competed with the owning
 Spec Task for the same authority. Nothing in this decision reopens it, and the
-governance validator continues to fail closed if that surface reappears.
+governance validator continues to fail closed if that surface reappears. The
+Git-ignored runtime store that SPEC-0109 added later lives outside `.agents/`,
+holds decision context only and is not that retired structure.
 
 ## Decision
 

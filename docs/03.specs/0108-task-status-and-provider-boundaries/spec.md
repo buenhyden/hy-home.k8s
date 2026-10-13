@@ -1,6 +1,6 @@
 ---
 title: "Task Status Derivation and Provider Boundaries"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -110,7 +110,7 @@ actually prompts for an `ask` entry.
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-TSKSUM-001 | Focused tests show an omitted multi-row summary is derived identically by lifecycle, profile and link readers, a mismatched present summary and a status-less single row still fail, and the writer, its CLI tests and registrations are removed with derivation coverage kept. |
-| VAL-TSKSUM-002 | Language tests and the profile validator show provider-root READMEs follow their profile, non-README files stay English only, `.agents/roles/README.md` passes Korean-first and the remaining READMEs are pending. |
+| VAL-TSKSUM-002 | Language tests and the profile validator show provider-root READMEs follow their profile, non-README files stay English only, `.agents/roles/README.md` passes Korean-first and the remaining READMEs are pending (point-in-time; SPEC-0110 later translated them and emptied `pending_paths`). |
 | VAL-TSKSUM-003 | The governance validator requires the exact allow, ask and deny lists and rejects a lost or widened ask entry; protected push variants remain denied. Native prompting stays unobserved. |
 
 ## Traceability

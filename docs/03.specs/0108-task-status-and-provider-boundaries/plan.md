@@ -1,6 +1,6 @@
 ---
 title: "Task Status Derivation and Provider Boundaries Plan"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -46,7 +46,8 @@ status that already equals their derivation.
 
 Translation of the eight pending READMEs, the shared memory store
 ([SPEC-0109](../0109-shared-workspace-memory/spec.md)), Codex native
-configuration and the remaining v9 phases.
+configuration and the remaining v9 phases. (SPEC-0113 note, 2026-10-13:
+SPEC-0110 later translated the eight READMEs.)
 
 ## Work Breakdown
 

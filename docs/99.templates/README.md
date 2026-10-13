@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.11.0"
+version: "0.12.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -56,6 +56,17 @@ PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 �
 승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
 요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도
 공동 정본을 뜻하지 않는다.
+
+`WGOV-CORE / 3.0.0`에 대한 네 주장은 근거와 상태가 서로 다르며, 하나의
+근거로 다른 주장을 대신하지 않는다. 근거 Task는 SPEC-0105의
+`tasks/tsk-0004-current-contract-review.md`다.
+
+| 주장 | 현재 상태 | 근거 |
+| --- | --- | --- |
+| 공동 승인 | 확인됨 | Registry `approval_ref`와 Task EVD-033의 결정 원문 |
+| 원본 검증 | Project-Template 원본 입력에서만 확인됐고 이 저장소에서는 다시 검증하지 않았다 | Task EVD-032의 67개 경로 원본 blob 비교. 비교 원자료는 Git이 무시하는 `_workspace/residual-controls/`에 있어 Git으로 복구되지 않는다 |
+| 지역 수용 | C07 범위만 완료됐다. C04·C08 적용성과 공통 core 전체의 지역 채택은 미완료다 | 위 C07 문단과 같은 Task |
+| 네 저장소 공동 채택 | 근거 없음, 관측하지 않았다 | 다른 세 저장소의 adapter·적용 근거가 기록되기 전까지 주장하지 않는다 |
 
 ## Scope
 

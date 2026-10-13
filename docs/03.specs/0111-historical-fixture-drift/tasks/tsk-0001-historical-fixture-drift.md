@@ -1,6 +1,6 @@
 ---
 title: "Historical Fixture Drift in Lifecycle Tests"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -40,6 +40,7 @@ Execute the two work units of the [Plan](../plan.md) for
 | EVD-003 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests and staged QA | `tests.test_task_acceptance_contract` from the validation environment: 12 tests with 2 `ApprovedPackageRetentionTests` failures (`COMPLETION-ALLOCATION`, `COMPLETION-ACCEPTANCE`) on main `07ef6b7e`, 12 OK after reading the three SPEC-0107 files from `2a27d98f`; no assertion changed. A scratch-clone `git bisect` placed the break on `2a9daeb7`. `qa.py staged` on the WORK-001 index first failed `selected-nonstyle` (detect-secrets on the SHA) and then `selected-style` (format); after the repository's allowlist pragma and Ruff format, all 10 selected gates passed | PASS | This Task; WORK-001 commit | yes | EVD-001 |
 | EVD-004 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Focused tests and staged QA | `GenerationAdmissionTests` from the validation environment: 6 tests with 3 failures on main `07ef6b7e` (`TASK-ITEM-HIDE` on the SPEC-0106 Task, `LIFECYCLE-CREATE` on its Spec), bisected to `9067729b`; 6 OK after projecting that one Task into the current table form and closing the Spec through the declared cancellation edge. A new assertion shows the retired Spec `in-progress` to `completed` edge reports `LIFECYCLE-EDGE`. Both modules together ran 47 tests OK. `qa.py staged` on the WORK-002 index passed all 10 selected gates | PASS | This Task; WORK-002 commit | yes | EVD-002 |
 | EVD-005 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent read-only review | A code-reviewer subagent reviewed `5cb5d87d` and `e925c469`, reran 18 tests OK and diffed `current_task_form` on the real blob: 806 lines kept, 17 changed, all 12 evidence rows kept. No HIGH or MEDIUM finding. LOW, accepted: the projection is guarded only downstream; FAIL rows map to `Resolves=none`, which an in-progress Task allows today; the cancelled step no longer replays a Spec reaching a terminal state with an in-progress Task, and the fixture cancellation values are unvalidated; the replay still copies live templates and Registry by design, and three other live reads outside this scope (SPEC-0105 package, SPEC-0106 `tsk-0016`, `CURRENT_TASK`) could drift the same way | PASS | This Task | no | none |
+| EVD-006 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Delivery to main | Pull request #141 merged with a merge commit `bceca1b7a495a4025291062e4b204f79ae2064c4` at 2026-10-13 16:54 KST after its hosted checks passed; the operator ran push, pull request creation, merge and branch cleanup. The push, pull request and merge handoff named in this Task is closed. Recorded by SPEC-0113 | PASS | Pull request #141 | no | none |
 
 ## Criterion Acceptance
 
@@ -81,3 +82,7 @@ generation replay follows the live templates and Registry by design; the
 fixture cancellation values rely on the field staying unvalidated.
 Limitations: hosted CI, push and pull request are not executed. Next owner:
 the operator for push, pull request and merge.
+
+SPEC-0113 note (2026-10-13): pull request #141 merged at `bceca1b7`
+(EVD-006), so the push, pull request and merge handoff above is closed and
+no next owner remains.

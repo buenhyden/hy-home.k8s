@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -51,6 +51,7 @@ Execute the three work units of the [Plan](../plan.md) for
 | EVD-012 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Cross-provider session observation | With the operator's 2026-10-13 instruction to proceed with acceptance, a fresh non-interactive `claude 2.1.296` session (`claude -p`, allowed tools limited to the two commands) was started at 15:02 KST inside a temporary linked worktree whose Git directory was `.git/worktrees/val-mem-wt`. `resolve` returned the main-root store path and workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`; `get mem-e71dedf07add48d5` returned revision 1 with the same body and unchanged source hash as EVD-009 and EVD-010. The new project directory for that worktree held only the session transcript and no `memory` directory, and the main project memory files kept their 11:51 KST times. With EVD-009 to EVD-011 this gives two providers, two worktrees, one memory and no native memory write. The worktree was removed afterward | PASS | This Task (session output and file times observed 15:02 KST) | yes | EVD-003 |
 | EVD-013 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Interactive linked-worktree session | The operator created linked worktree `../hy-home.k8s-wt` at `6405ccf4` and started an interactive Claude Code session there at 15:11 KST; its relayed `resolve` output named the main-root store and workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`, and `get mem-e71dedf07add48d5` returned revision 1, the same body and no stale source. That worktree's Claude project directory held only the session transcript and no `memory` directory, and the main project memory files kept their 11:51 KST times. Supplements EVD-012 with an interactive session | PASS | This Task (operator-relayed transcript; file times observed 15:13 KST) | no | none |
 | EVD-014 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Codex session read after linked-worktree setup | In the same exchange as EVD-013 the operator relayed a Codex session's output: `resolve` named the main-root store and workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`, and `get mem-e71dedf07add48d5` returned revision 1, `current`, the same claim and no stale source. The Codex worktree was not stated. File metadata only, read at 15:16 KST under the earlier permission: `memories_1.sqlite` still dated 2026-10-02 11:15 KST and no memories directory, so no native memory write | PASS | This Task (operator-relayed transcript; metadata observed 15:16 KST) | no | none |
+| EVD-015 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Delivery to main | Pull request #140 merged with a merge commit `07ef6b7eabea8c654b6825e4443c8eebf206f7b8` at 2026-10-13 15:22 KST after its hosted checks passed; the operator ran push, pull request creation, merge and branch cleanup. The push, pull request and merge handoff named in this Task is closed. Recorded by SPEC-0113 | PASS | Pull request #140 | no | none |
 
 ## Criterion Acceptance
 
@@ -99,3 +100,7 @@ Limitations: the 4 GiB area limit is observed, not enforced; the Codex
 session's worktree and project trust were operator-relayed rather than
 observed; an interactive linked-worktree session later confirmed the result (EVD-013). Merge of pull
 request #140 awaits the operator. Next owner: the operator for merge.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-015), so the push, pull request and merge handoff above is closed and
+no next owner remains.

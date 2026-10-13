@@ -73,6 +73,12 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertEqual(opened.get(memory["memory_id"])["body"], SHORT)
         self.assertEqual(opened.workspace_id, self.store.workspace_id)
 
+    def test_git_timeout_reports_the_store_unavailable(self) -> None:
+        expired = subprocess.TimeoutExpired(["git"], MEMORY.GIT_TIMEOUT_SECONDS)
+        with mock.patch.object(MEMORY.subprocess, "run", side_effect=expired):
+            with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_UNAVAILABLE"):
+                MEMORY.representative_root(Path("."))
+
     def test_tier_schema_and_task_state_copies_are_rejected(self) -> None:
         for tier, body in (
             ("short-term", {"context": "x"}),

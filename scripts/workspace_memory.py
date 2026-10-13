@@ -27,7 +27,7 @@ STORE_DIR = ".workspace-memory"
 STORE_NAME = "memory.sqlite3"
 BACKUP_NAME = "memory.backup.sqlite3"
 MIB = 1024 * 1024
-# Proposed initial limits from SPEC-0109; logical bytes count every revision
+# Initial limits accepted in the SPEC-0109 Task; logical bytes count every revision
 # and conflict. The 4 GiB store area is observed only (no filesystem quota).
 TIER_LIMITS = {"short-term": 64 * MIB, "long-term": 128 * MIB, "domain": 256 * MIB}
 DOMAIN_LIMIT = 64 * MIB
@@ -36,6 +36,7 @@ DATABASE_LIMIT = 1024 * MIB
 AREA_OBSERVED_LIMIT = 4096 * MIB
 RUNTIME_FILE_LIMIT = 8
 BUSY_TIMEOUT_MS = 5000
+GIT_TIMEOUT_SECONDS = 10
 
 REQUIRED_BODY = {
     "short-term": ("context", "narrative"),
@@ -97,7 +98,10 @@ def representative_root(cwd: Path) -> Path:
             check=True,
             capture_output=True,
             text=True,
+            timeout=GIT_TIMEOUT_SECONDS,
         ).stdout.strip()
+    except subprocess.TimeoutExpired as exc:
+        raise MemoryError_("MEMORY_UNAVAILABLE: Git did not answer in time") from exc
     except (OSError, subprocess.CalledProcessError) as exc:
         raise MemoryError_("MEMORY_UNAVAILABLE: not inside a Git worktree") from exc
     common_path = Path(common)

@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "0.2.0"
+version: "0.3.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -13,22 +13,26 @@ artifact_id: "SPEC-0109"
 
 ## Overview
 
-Design-only draft for v9 findings F23, F24 and F27: one memory store that
-Claude and Codex sessions in this workspace both read and write, retained
-across task completion, session end and elapsed time. The operator chose on
-2026-10-13 to record the design first, then approved this revised design
-and its implementation on the same day after review at `8b56cb82`. This draft does
-not change the current [context and memory policy](../../../.agents/governance/context-and-memory.md),
-which discarded task-local context and kept no memory directory
-(Spec 0054 and Spec 0065 retirements); the implementing Task revises that
-policy and REQ-0003-FR-0022 together.
+Design for v9 findings F23, F24 and F27: one memory store that Claude and
+Codex sessions in this workspace both read and write, retained across task
+completion, session end and elapsed time. The operator chose on 2026-10-13
+to record the design first, then approved this revised design and its
+implementation on the same day after review at `8b56cb82`. Before this
+package the [context and memory policy](../../../.agents/governance/context-and-memory.md)
+discarded task-local context and kept no memory directory (Spec 0054 and
+Spec 0065 retirements). The Task delivered the store and native memory
+disablement and revised that policy and REQ-0003-FR-0022 together. A
+SPEC-0113 revision on 2026-10-13 rewrote this Spec from design-draft to
+delivered wording; Git history keeps the earlier text.
+[AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
+describes the store in its checkpoint architecture.
 
 The [Plan](plan.md) orders the work and
 [Task 0001](tasks/tsk-0001-shared-workspace-memory.md) records it.
 
 ## Strategic Boundaries & Non-goals
 
-- In scope once approved: a SQLite store, a shared CLI, tier schemas,
+- In scope: a SQLite store, a shared CLI, tier schemas,
   retention, quotas, revision conflicts, backup and native memory
   disablement for both providers.
 - Non-goals: memory as Task evidence, approval or acceptance; copying
@@ -80,30 +84,29 @@ Common envelope: `schema_version`, `workspace_id`, `memory_id`, `tier`,
 | long-term | reviewed claim, reason, applicability, counterexamples and limits, sources |
 | domain | `domain_id`, symptom, cause, resolution, compatible environment, applicability |
 
-Proposed initial limits, not yet approved: short-term 64 MiB, long-term
+Initial limits, accepted in the Task: short-term 64 MiB, long-term
 128 MiB, all domains 256 MiB, one domain 64 MiB, one revision payload
 256 KiB, main database 1 GiB, whole store area 4 GiB, at most eight runtime
 files. Logical usage counts every revision and conflict. `max_page_count`
 bounds only the main database; a hard 4 GiB guarantee needs a filesystem
 quota, otherwise the limit is reported as observed, not enforced. The
-review observed an ext4 root filesystem with no project quota, so the first
+review observed an ext4 root filesystem with no project quota, so the
 implementation reports the area limit as observed only.
 
 ## Interfaces & Data Structures
 
 A shared CLI under `scripts/` with: resolve workspace, current query,
 bounded history query, write with expected revision, eligibility
-correction, usage report and consistent backup. Claude sets
-`autoMemoryEnabled: false` in `.claude/settings.json`; the governance
-validator already rejects a subagent `memory` field and must admit exactly
-this new settings key with the value `false`. Codex uses
-`[memories] generate_memories = false` and `use_memories = false`; the
-review found both keys in the installed `codex-cli 0.162.1` binary (static
-evidence only). `.codex/config.toml` is not validated today, so adoption
-adds an exact-content check that admits only that table, rewrites the
-`.codex/README.md` and `.codex/provider.md` statements that tie the absent
-file to hook registration, and records that Codex reads a project config
-only for a trusted project. Disabling Claude auto memory stops the existing
+correction, usage report and consistent backup (`scripts/workspace_memory.py`).
+Claude sets `autoMemoryEnabled: false` in `.claude/settings.json`, and the
+governance validator admits exactly that key with the value `false` while
+still rejecting a subagent `memory` field. Codex uses
+`[memories] generate_memories = false` and `use_memories = false` in
+`.codex/config.toml`; the review found both keys in the installed
+`codex-cli 0.162.1` binary (static evidence only). The validator pins that
+file's exact content, `.codex/README.md` and `.codex/provider.md` no longer
+tie the file to hook registration, and Codex reads a project config only
+for a trusted project. Disabling Claude auto memory stops the existing
 per-project native memory from being read in new sessions; its files are
 neither deleted nor imported automatically.
 
@@ -142,5 +145,5 @@ explicit owner decisions recorded in a Task.
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-MEMORY-001 | Requires an approved requirement change first: FR-0022 currently forbids restoring a shared progress owner, which this store must not become. |
+| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-MEMORY-001 | FR-0022 as revised admits the store as decision context only; it is never Task status, evidence, approval or acceptance, nor a shared progress owner. |
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-MEMORY-002 | Repository-static versus provider-runtime evidence kept apart. |

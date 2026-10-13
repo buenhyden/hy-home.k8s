@@ -1,6 +1,6 @@
 ---
 title: "scripts"
-version: "0.9.0"
+version: "0.10.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -217,7 +217,16 @@ formatter는 직접 호출하지 말고 `pre-commit`으로 실행한다. hook �
 대상으로 삼아, 작성된 문서와 보관된 문서 안의 fenced snippet을 다시 쓴다.
 shfmt와 공백 수정도 리뷰를 거친 소스 경로에 대해 명시적으로 `--files`로 실행하는
 작업이다. 선택된 staged style은 격리된 정확한 index에서 실행하며 formatter가
-무언가를 바꾸면 검증이 실패한다. commit-msg는 별도이며 실제 후보 UTF-8 메시지에는 pinned Commitizen과
+무언가를 바꾸면 검증이 실패한다. 수정과 검사는 분리한다. 명시적 수정은
+리뷰한 소스 경로만 지정해 아래처럼 실행하고, diff를 확인한 뒤 다시 stage하고
+검사를 새로 돌린다. frozen Archive와 raw 평가 출력은 hook의 `exclude`가 막으며,
+그 목록은 `tests/test_validation_tooling_ownership.py`가 Registry와 대조한다.
+
+```bash
+pre-commit run <hook-id> --hook-stage manual --files <reviewed-path>...
+```
+
+commit-msg는 별도이며 실제 후보 UTF-8 메시지에는 pinned Commitizen과
 `commit-message-exceptions`를 같은 파일로 적용하는
 [공통 Git 정책](../.agents/governance/git.md#commit-message-validation)을 따른다.
 활성 hook에서 같은 입력의 leaf가 실제 실행되었다면 수동으로 반복하지 않는다.

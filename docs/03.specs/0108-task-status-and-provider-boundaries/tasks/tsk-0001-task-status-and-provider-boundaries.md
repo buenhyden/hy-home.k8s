@@ -1,6 +1,6 @@
 ---
 title: "Task Status Derivation and Provider Boundaries"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -48,6 +48,7 @@ focused, staged and review evidence here.
 | EVD-006 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Task contract tests and staged QA | `OptionalMultiRowStatusTests` failed (import error, then FM-KEYSET) before repair and passed after, with `tests.test_task_summary_derivation` and `tests.test_document_scope_selection` OK. Staged QA on the WORK-003 index: 14 selected gates PASS including lifecycle, links, profiles, archive and Kubernetes gates; only the two PATH-limited style gates FAIL; pre-commit and manual stages passed with no file change | PASS | This Task; commit `9cadabddc0922fd8bf371371cf57427933876093` | yes | EVD-003 |
 | EVD-007 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Independent read-only review | A code-reviewer subagent found that an unreadable table let an omitted summary skip the summary check (MEDIUM) and that a non-string status fell back to derivation (LOW); both were fixed with failing-then-passing regressions before commit. A fenced decoy table now fails loudly; SPEC-0106 mentions of the retired writer remain as history | PASS | This Task; commit `9cadabddc0922fd8bf371371cf57427933876093` | yes | none |
 | EVD-008 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Related regression on the clean base | The 3 `GenerationAdmissionTests` and 2 `ApprovedPackageRetentionTests` failures also occur on an unmodified `57f44c4446e9ad0e9c8ae87e81c1d208aa7f3c8b` worktree, so they are pre-existing; the other 219 related tests passed | PASS | This Task | no | none |
+| EVD-009 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Delivery to main | Pull request #140 merged with a merge commit `07ef6b7eabea8c654b6825e4443c8eebf206f7b8` at 2026-10-13 15:22 KST after its hosted checks passed; the operator ran push, pull request creation, merge and branch cleanup. The push, pull request and merge handoff named in this Task is closed. Recorded by SPEC-0113 | PASS | Pull request #140 | no | none |
 
 ## Criterion Acceptance
 
@@ -89,3 +90,8 @@ the clean base; native `ask` prompting, hosted CI, push and pull request are
 not executed. Residual risk: the eight pending READMEs remain English until a
 later Task translates them. Next owner: the operator for push, pull request
 and merge; platform for the pending READMEs and SPEC-0109 review.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-009), so the push, pull request and merge handoff above is closed and
+no next owner remains. SPEC-0110 later translated the eight pending READMEs,
+so that residual risk is closed.

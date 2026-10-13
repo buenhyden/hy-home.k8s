@@ -1,6 +1,6 @@
 ---
 title: "Provider README Language and QA Tool Diagnostics"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -50,6 +50,8 @@ Execute the three work units of the [Plan](../plan.md) for
 | EVD-010 | [VAL-PRQA-003](../spec.md#success-criteria--verification-plan) | WORK-003 | F21 operator decision | On 2026-10-13 the operator chose to keep `style-pr` on the `edited` trigger (option A) after reviewing four options: keep; split the title check into its own required workflow with a ruleset change; skip on title-only edits (rejected: GitHub reports a skipped required job as Success); reuse an earlier result (rejected). Measured PR CI runs took 19 to 34 seconds | PASS | This Task; `.github/workflows/ci.yml` unchanged | no | none |
 | EVD-011 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted PR checks | PR #140 at head `b81a095ef2f1bd5dc0958ce222ea120ef5a79bf8`: `ci-summary`, `style-pr`, `greeting`, `label` and GitGuardian completed SUCCESS on 2026-10-13. Later branch commits need their own hosted run | PASS | PR #140 checks | no | none |
 | EVD-012 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | WORK-002 | CI contract after main integration | Merging main brought Dependabot #139 (`actions/checkout` v7.0.1, `3d3c42e5aac5ba805825da76410c181273ba90b1`, verified against the upstream tag). `scripts/validate-ci-python-contract.py` then failed `CI-STYLE-TOPOLOGY` on main as well, because hosted CI does not run this local contract. Commit `2bc0dc89` updated the pinned action; the contract and its 1 test module passed and staged QA returned rc 0 | PASS | This Task; commit `2bc0dc89459cac5ac7e54a0825b985c5a299dc5e` | no | none |
+| EVD-013 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Correction of hosted evidence scope | Correction recorded by SPEC-0113 on 2026-10-13: EVD-011 listed `greeting` and `label` beside the hosted checks. Those are notification and metadata automation (`.github/workflows/greetings.yml`, `labeler.yml`), and their success is not QA evidence for any criterion. The hosted style and summary results are `style-pr` and `ci-summary`, and local `qa.py staged` stays the purpose QA. EVD-011 is kept as history | PASS | This Task; [SPEC-0113](../../0113-sdlc-sync-and-v9-gaps/spec.md) | no | none |
+| EVD-014 | [VAL-PRQA-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Delivery to main | Pull request #140 merged with a merge commit `07ef6b7eabea8c654b6825e4443c8eebf206f7b8` at 2026-10-13 15:22 KST after its hosted checks passed; the operator ran push, pull request creation, merge and branch cleanup. The push, pull request and merge handoff named in this Task is closed. Recorded by SPEC-0113 | PASS | Pull request #140 | no | none |
 
 ## Criterion Acceptance
 
@@ -91,3 +93,7 @@ are not executed; under the system interpreter the style tests fail
 explicitly with `NONSTYLE-TOOL`. Next owner: the operator for SPEC-0110
 approval, the F21 ruleset alternative, push and pull request; platform for
 SPEC-0109 once approved.
+
+SPEC-0113 note (2026-10-13): pull request #140 merged at `07ef6b7e`
+(EVD-014), so the push, pull request and merge handoff above is closed and
+no next owner remains.
