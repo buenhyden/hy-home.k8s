@@ -66,7 +66,8 @@ Execute the three work units of the [Plan](../plan.md) for
 - **Forbidden Paths**: `.github/` workflows and rulesets, frozen Archive
   payloads, other Spec packages, live cluster, Vault and secret material.
 - **Approval Required**: the operator directed this follow-up on
-  2026-10-13; push, pull request, merge and any ruleset change await the
+  2026-10-13 and approved SPEC-0110 and its Plan after reviewing the result
+  at `8b56cb82`; push, pull request, merge and any ruleset change await the
   operator.
 - **Static Validation**: focused tests, the profile validator and staged QA
   from the documented validation environment.

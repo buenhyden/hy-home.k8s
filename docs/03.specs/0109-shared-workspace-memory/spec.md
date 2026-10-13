@@ -2,7 +2,7 @@
 title: "Shared Workspace Memory Store"
 version: "0.2.0"
 type: "sdlc/spec"
-status: "in-review"
+status: "approved"
 owner: "platform"
 updated: "2026-10-13"
 layer: "specs"
@@ -16,11 +16,12 @@ artifact_id: "SPEC-0109"
 Design-only draft for v9 findings F23, F24 and F27: one memory store that
 Claude and Codex sessions in this workspace both read and write, retained
 across task completion, session end and elapsed time. The operator chose on
-2026-10-13 to record the design without implementing it. This draft does
+2026-10-13 to record the design first, then approved this revised design
+and its implementation on the same day after review at `8b56cb82`. This draft does
 not change the current [context and memory policy](../../../.agents/governance/context-and-memory.md),
-which still discards task-local context and keeps no memory directory
-(Spec 0054 and Spec 0065 retirements). Adopting this design reverses that
-decision and needs its own review and approval.
+which discarded task-local context and kept no memory directory
+(Spec 0054 and Spec 0065 retirements); the implementing Task revises that
+policy and REQ-0003-FR-0022 together.
 
 ## Strategic Boundaries & Non-goals
 
