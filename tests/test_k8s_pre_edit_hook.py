@@ -9,12 +9,14 @@ it, and never run an executable selected by tool input. Codex supplies no
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -808,9 +810,13 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
         guard_source = GUARD_PATH.read_text(encoding="utf-8")
         namespace: dict = {}
         for line in guard_source.splitlines():
-            if line.startswith("SELECTOR_TIMEOUT_SECONDS ="):
+            if line.startswith(("SELECTOR_TIMEOUT_SECONDS =", "GIT_TIMEOUT_SECONDS =")):
                 exec(line, namespace)  # noqa: S102 - one reviewed constant line
-        bound = namespace["SELECTOR_TIMEOUT_SECONDS"]
+        # SPEC-0114: a hook killed by its timeout lets the call through, so the
+        # registration covers the selector plus the guard's four Git probe sites.
+        bound = (
+            namespace["SELECTOR_TIMEOUT_SECONDS"] + 4 * namespace["GIT_TIMEOUT_SECONDS"]
+        )
 
         registrations = []
         claude_settings = json.loads(
@@ -829,6 +835,78 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
             # A bound above the registration is never reached: the runtime
             # kills the hook first and the controlled rejection is lost.
             self.assertLessEqual(bound, timeout)
+
+
+class FailClosedGuardTests(unittest.TestCase):
+    """SPEC-0114: no tool shape, carrier or failure lets a write pass unchecked."""
+
+    def load_guard(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("guard_under_test", GUARD_PATH)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_notebook_edit_outside_the_repository_is_rejected(self):
+        payload = json.dumps(
+            {
+                "tool_name": "NotebookEdit",
+                "tool_input": {"notebook_path": "/etc/x.ipynb", "new_source": "x"},
+            }
+        )
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-PATH-ROOT", result.stderr)
+
+    def test_a_patch_carried_through_bash_is_evaluated(self):
+        command = (
+            "apply_patch <<'EOF'\n" + envelope("*** Update File: /etc/x") + "EOF\n"
+        )
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-PATH-ROOT", result.stderr)
+
+    def test_an_unexpected_guard_error_blocks_with_a_reason(self):
+        guard = self.load_guard()
+
+        def explode(argv=None):
+            raise RuntimeError("synthetic")
+
+        guard.main = explode
+        with mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
+            self.assertEqual(guard.guarded_main([]), 2)
+        self.assertIn("HOOK-INTERNAL", stderr.getvalue())
+
+    def test_a_selector_rejection_reason_reaches_stderr(self):
+        guard = self.load_guard()
+        guard.run_surface_selector = lambda root: False
+        with (
+            mock.patch("sys.stdin", io.StringIO(scalar_payload(SAMPLE_DOCUMENT))),
+            mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+            mock.patch("sys.stdout", new_callable=io.StringIO),
+        ):
+            code = guard.guarded_main(
+                ["--provider", "codex", "--project-dir", str(ROOT)]
+            )
+        self.assertEqual(code, 2)
+        self.assertIn("HOOK-SURFACE-SELECTION", stderr.getvalue())
+
+    def test_each_adapter_blocks_when_the_interpreter_is_missing(self):
+        for adapter in (HOOK_PATH, CODEX_ADAPTER_PATH):
+            with self.subTest(adapter=adapter.name):
+                result = subprocess.run(
+                    ("/bin/bash", str(adapter)),
+                    input=scalar_payload(SAMPLE_DOCUMENT),
+                    capture_output=True,
+                    text=True,
+                    env={"PATH": "/nonexistent", "CLAUDE_PROJECT_DIR": str(ROOT)},
+                    cwd=str(ROOT),
+                    timeout=60,
+                )
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn("[FAIL]", result.stderr)
 
 
 if __name__ == "__main__":

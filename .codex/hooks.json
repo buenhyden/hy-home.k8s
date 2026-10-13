@@ -8,7 +8,7 @@
           {
             "type": "command",
             "command": "bash \"$(git rev-parse --show-toplevel)/.codex/hooks/pre-tool-use.sh\"",
-            "timeout": 10,
+            "timeout": 30,
             "statusMessage": "Checking the repository write boundary"
           }
         ]

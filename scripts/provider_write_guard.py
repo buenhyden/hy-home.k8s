@@ -41,10 +41,11 @@ PATCH_HEADERS = (
     "*** Move to:",
 )
 GIT_TIMEOUT_SECONDS = 5
-# The guard runs inside a pre-action hook whose own registration allows ten
-# seconds, so the selector must not be able to outlive that window. A bound
-# above that window is never reached: the runtime kills the hook first and the
-# guard loses the controlled rejection this constant exists to produce. The
+# The guard runs inside a pre-action hook whose registration allows thirty
+# seconds, which covers this bound plus the four Git probe sites. A bound
+# above that window is never reached: the runtime kills the hook first, a
+# killed hook does not block, and the guard loses the controlled rejection this
+# constant exists to produce. The
 # selector reads the routing registry and classifies the edited paths, which
 # stays far below this bound even when handed the whole tracked tree.
 SELECTOR_TIMEOUT_SECONDS = 5
@@ -166,7 +167,7 @@ def add_path(value) -> None:
 
 
 def consume_scalar_alias(mapping) -> int:
-    present = [key for key in ("file_path", "path") if key in mapping]
+    present = [key for key in ("file_path", "path", "notebook_path") if key in mapping]
     for key in present:
         if not isinstance(mapping[key], str) or not mapping[key]:
             reject("HOOK-PATH-TYPE")
@@ -213,14 +214,18 @@ def _patch_segments(command: object) -> list[str]:
 
 
 def is_patch_envelope(tool_name: object, command: object) -> bool:
-    """Decide by tool name, or by a segment that opens with the envelope marker.
+    """Decide by tool name, or by a line that is exactly the envelope marker.
 
-    Matching a marker anywhere inside a command would misread an ordinary shell
-    command that merely mentions one, so only a leading marker counts."""
+    Matching a marker anywhere inside a line would misread an ordinary shell
+    command that merely mentions one, so only a marker standing on its own line
+    counts. That line form also catches a patch carried through a shell
+    heredoc, which a leading-marker test missed."""
     if tool_name == "apply_patch":
         return True
     return any(
-        segment.lstrip().startswith(PATCH_BEGIN) for segment in _patch_segments(command)
+        line.strip() == PATCH_BEGIN
+        for segment in _patch_segments(command)
+        for line in segment.splitlines()
     )
 
 
@@ -654,16 +659,29 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"systemMessage": "\n\n".join(messages)}))
 
     if not run_surface_selector(resolved_root):
-        print(
-            json.dumps(
-                {
-                    "systemMessage": "Affected-surface selection rejected an edit path. Normalize it to one repository-relative POSIX path and update the canonical surface contract before editing."
-                }
-            )
+        # A blocking exit shows the model stderr only, so the reason goes there.
+        reject_with_detail(
+            "HOOK-SURFACE-SELECTION",
+            "affected-surface selection rejected an edit path; normalize it to one "
+            "repository-relative POSIX path and update the canonical surface "
+            "contract before editing",
         )
-        return 2
     return 0
 
 
+def guarded_main(argv: list[str] | None = None) -> int:
+    """Run the guard so that any unexpected failure blocks with a reason.
+
+    Both runtimes treat only exit 2 as blocking; an uncaught exception would
+    exit 1 and let the call through."""
+    try:
+        return main(argv)
+    except SystemExit as stop:
+        return stop.code if isinstance(stop.code, int) else 2
+    except Exception as error:  # noqa: BLE001 - every failure must block
+        print(f"[FAIL] HOOK-INTERNAL: {type(error).__name__}", file=sys.stderr)
+        return 2
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(guarded_main())
