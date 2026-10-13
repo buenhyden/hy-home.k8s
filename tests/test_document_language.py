@@ -59,11 +59,22 @@ class ClassifyTests(unittest.TestCase):
             PurePosixPath(path), profile, mode, output, terminal, contract()
         )
 
-    def test_english_only_root_wins_over_readme_profile(self):
+    def test_readme_under_english_only_root_takes_its_profile(self):
         self.assertEqual(
             self.kind(".agents/roles/README.md", "common/readme-stage-index", "router"),
-            "english-only",
+            "korean-first",
         )
+        self.assertEqual(
+            self.kind(".agents/roles/architect.md", "governance/role"), "english-only"
+        )
+
+    def test_english_only_paths_exclude_readmes(self):
+        rule = contract()
+        self.assertTrue(rule.english_only(PurePosixPath(".codex/bindings.json")))
+        self.assertTrue(rule.english_only(PurePosixPath(".agents/roles/architect.md")))
+        self.assertFalse(rule.english_only(PurePosixPath(".claude/README.md")))
+        self.assertFalse(rule.english_only(PurePosixPath(".agents/roles/notes.txt")))
+        self.assertFalse(rule.english_only(PurePosixPath("docs/x.md")))
 
     def test_profiles_pick_the_language(self):
         self.assertEqual(
@@ -313,9 +324,15 @@ class ValidatorTests(unittest.TestCase):
 
     def test_scoped_english_only_keeps_unrelated_content_out(self):
         changed = PurePosixPath(".agents/roles/registry.json")
-        unrelated = PurePosixPath(".agents/roles/README.md")
-        found = PROFILES.document_language_diagnostics(
+        unrelated = PurePosixPath(".agents/roles/architect.md")
+        registry = dataclasses.replace(
             self.registry,
+            document_language=dataclasses.replace(
+                self.registry.document_language, pending_paths=frozenset()
+            ),
+        )
+        found = PROFILES.document_language_diagnostics(
+            registry,
             (),
             {changed: '{"name":"valid"}', unrelated: "한글"},
             content_paths=frozenset(),
@@ -351,6 +368,7 @@ class RegistryTests(unittest.TestCase):
 
     def test_consistent_contract_passes(self):
         self.assertEqual(self.faults(), [])
+        self.assertEqual(self.faults(pending_paths=[".agents/README.md"]), [])
 
     def test_contradictions_fail(self):
         for changes in (
@@ -360,7 +378,7 @@ class RegistryTests(unittest.TestCase):
             {"english_only_suffixes": ["md"]},
             {"english_sections": [""]},
             {"min_latin_words": 0},
-            {"pending_paths": [".agents/README.md"]},
+            {"pending_paths": [".agents/governance/x.md"]},
         ):
             with self.subTest(changes=changes):
                 self.assertEqual(self.faults(**changes), ["REGISTRY_DOCUMENT_LANGUAGE"])

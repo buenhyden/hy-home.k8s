@@ -2318,8 +2318,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if (
                     entry.stage == 0
                     and entry.mode.startswith("100")
-                    and entry.path.as_posix().startswith(language.english_only_roots)
-                    and entry.path.suffix in language.english_only_suffixes
+                    and language.english_only(entry.path)
                     and not is_opaque_evaluation_output(registry, entry.path)
                 ):
                     english_only_texts[entry.path] = read_repository_text(
@@ -2328,8 +2327,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             for path in changed_paths:
                 if (
                     path in english_only_texts
-                    or not path.as_posix().startswith(language.english_only_roots)
-                    or path.suffix not in language.english_only_suffixes
+                    or not language.english_only(path)
                     or is_opaque_evaluation_output(registry, path)
                 ):
                     continue

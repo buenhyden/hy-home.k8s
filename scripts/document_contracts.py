@@ -749,6 +749,15 @@ class DocumentLanguage:
     min_latin_words: int
     pending_paths: frozenset[PurePosixPath]
 
+    def english_only(self, path: PurePosixPath) -> bool:
+        """A non-README file under an English-only root; READMEs follow their profile."""
+
+        return (
+            path.as_posix().startswith(self.english_only_roots)
+            and path.suffix in self.english_only_suffixes
+            and path.name != "README.md"
+        )
+
 
 @dataclass(frozen=True)
 class DocumentProfile:
@@ -2263,7 +2272,7 @@ def _document_language_registry_diagnostics(
     if contract["min_latin_words"] < 1:
         faults.append("min_latin_words is below one")
     for value in contract["pending_paths"]:
-        if value.startswith(roots):
+        if value.startswith(roots) and PurePosixPath(value).name != "README.md":
             faults.append(f"pending path {value} is under an English-only root")
     return [
         _diagnostic(
