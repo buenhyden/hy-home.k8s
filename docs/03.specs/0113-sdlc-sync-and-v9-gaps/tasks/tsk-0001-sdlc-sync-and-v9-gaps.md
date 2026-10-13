@@ -36,7 +36,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | WORK-004 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | F18 evidence correction | platform | completed | PASS | EVD-008 |
 | WORK-005 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | Remove the stale `.hadolint.yaml` route | platform | completed | PASS | EVD-007 |
 | WORK-006 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | `AGENTS.md` common and Codex-only blocks | platform | completed | PASS | EVD-009 |
-| WORK-007 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | Bound the memory store Git call with a timeout | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-007 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | Bound the memory store Git call with a timeout | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
