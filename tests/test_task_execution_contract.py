@@ -1381,7 +1381,9 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         cls.profile = classify_path(cls.registry, CURRENT_TASK)
         cls.binding = cls.profile.body_contract.task_execution
         single = subprocess.check_output(
-            ["git", "show", f"{FIXTURE_SNAPSHOT}:{CURRENT_TASK}"], cwd=ROOT, text=True
+            ["git", "show", f"{FIXTURE_SNAPSHOT}:{CURRENT_TASK}"],
+            cwd=ROOT,
+            encoding="utf-8",
         )
         lines = single.split("\n")
         index = next(

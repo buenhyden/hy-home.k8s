@@ -180,7 +180,9 @@ class TaskHistoryRetentionTests(unittest.TestCase):
         ).decode("utf-8")
         proposed_texts = {
             item: subprocess.check_output(
-                ["git", "show", f"{FIXTURE_SNAPSHOT}:{item}"], cwd=ROOT, text=True
+                ["git", "show", f"{FIXTURE_SNAPSHOT}:{item}"],
+                cwd=ROOT,
+                encoding="utf-8",
             )
             for item in (path, spec, plan)
         }
@@ -239,7 +241,9 @@ class ApprovedPackageRetentionTests(unittest.TestCase):
         task = self.package / "tasks/tsk-0001-local-qa-and-release.md"
         texts = {
             path: subprocess.check_output(
-                ["git", "show", f"{PACKAGE_SNAPSHOT}:{path}"], cwd=ROOT, text=True
+                ["git", "show", f"{PACKAGE_SNAPSHOT}:{path}"],
+                cwd=ROOT,
+                encoding="utf-8",
             )
             for path in (spec, plan, task)
         }
@@ -634,7 +638,7 @@ class ExactLegacyTaskBindingTests(unittest.TestCase):
         text = subprocess.check_output(
             ["git", "show", f"{TASK_LEGACY_BASELINE_COMMIT}:{path}"],
             cwd=ROOT,
-            text=True,
+            encoding="utf-8",
         )
         current = classify_path(registry, path)
         self.assertNotEqual(legacy_task_profile(ROOT, path, text, current), current)
