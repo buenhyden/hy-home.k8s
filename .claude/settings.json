@@ -8,13 +8,25 @@
       "Bash(git diff --name-only)",
       "Bash(git diff --cached --name-only)",
       "Bash(git rev-parse HEAD)",
-      "Bash(git ls-files)"
+      "Bash(git ls-files)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git fetch *)",
+      "Bash(git ls-remote *)",
+      "Bash(git push *)",
+      "Bash(git merge *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh run view *)",
+      "Bash(gh run list *)"
     ],
     "ask": [
-      "Bash(git push:*)",
-      "Bash(git merge:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr merge:*)"
+      "Bash(gh api *)",
+      "Bash(git -C *)"
     ],
     "deny": [
       "Read(./.env)",
@@ -202,7 +214,8 @@
       "Bash(gh release delete*)",
       "Bash(gh run cancel*)",
       "Bash(gh pr merge * --admin*)"
-    ]
+    ],
+    "disableBypassPermissionsMode": "disable"
   },
   "hooks": {
     "PreToolUse": [

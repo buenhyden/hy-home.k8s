@@ -823,6 +823,23 @@ class NativeBoundaryTests(unittest.TestCase):
             path.write_text(json.dumps(changed))
             self.assert_rejected("AGENT-NATIVE-PERMISSION")
 
+    def test_bypass_permissions_mode_must_stay_disabled(self):
+        import json
+
+        path = self.root / ".claude/settings.json"
+        data = json.loads(path.read_text())
+        self.assertEqual(data["permissions"]["disableBypassPermissionsMode"], "disable")
+        for value in (None, "enable"):
+            with self.subTest(value=value):
+                changed = json.loads(path.read_text())
+                if value is None:
+                    del changed["permissions"]["disableBypassPermissionsMode"]
+                else:
+                    changed["permissions"]["disableBypassPermissionsMode"] = value
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-PERMISSION")
+                path.write_text(json.dumps(data))
+
     def test_native_memory_must_stay_disabled_on_both_providers(self):
         import copy
         import json
@@ -1300,6 +1317,39 @@ class NativeDenyCoverageTests(unittest.TestCase):
             "k3d cluster stop a",
         ]
         self.assert_denied(commands)
+
+    def test_delivery_commands_are_allowed_and_raw_api_asks(self):
+        import json
+
+        permissions = json.loads((ROOT / ".claude/settings.json").read_text())[
+            "permissions"
+        ]
+        for command in (
+            "git log --oneline -3",
+            "git show HEAD",
+            "git fetch origin",
+            "git ls-remote --heads origin",
+            "git push -u origin feat/a",
+            "git merge --ff-only origin/main",
+            "gh pr view 1",
+            "gh pr checks 1",
+            "gh pr list",
+            "gh pr diff 1",
+            "gh pr create --base main --title a --body b",
+            "gh pr merge 1 --merge",
+            "gh run view 1",
+            "gh run list",
+        ):
+            with self.subTest(command=command):
+                self.assertTrue(
+                    any(_bash_rule_matches(r, command) for r in permissions["allow"])
+                )
+        for command in ("gh api repos/a/b", "git -C sub status"):
+            with self.subTest(command=command):
+                self.assertTrue(
+                    any(_bash_rule_matches(r, command) for r in permissions["ask"])
+                )
+        self.assertNotIn("Bash(*)", permissions["allow"])
 
     def test_deletion_and_history_destruction_is_denied(self):
         self.assert_denied(

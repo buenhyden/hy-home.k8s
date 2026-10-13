@@ -79,14 +79,28 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git diff --cached --name-only)",
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
+    "Bash(git log *)",
+    "Bash(git show *)",
+    "Bash(git fetch *)",
+    "Bash(git ls-remote *)",
+    "Bash(git push *)",
+    "Bash(git merge *)",
+    "Bash(gh pr view *)",
+    "Bash(gh pr checks *)",
+    "Bash(gh pr list *)",
+    "Bash(gh pr diff *)",
+    "Bash(gh pr create *)",
+    "Bash(gh pr merge *)",
+    "Bash(gh run view *)",
+    "Bash(gh run list *)",
 )
-# Requested pushes, merges and pull requests stay behind a per-call prompt;
-# force, delete and mirror pushes remain denied below.
+# SPEC-0114: pushes, merges and pull requests run without a native prompt
+# because an operator request is their approval; force, delete, mirror and
+# admin forms stay denied below. Raw API calls and `git -C` keep a prompt
+# because a prefix rule cannot see their effect.
 CLAUDE_ASK_PERMISSIONS = (
-    "Bash(git push:*)",
-    "Bash(git merge:*)",
-    "Bash(gh pr create:*)",
-    "Bash(gh pr merge:*)",
+    "Bash(gh api *)",
+    "Bash(git -C *)",
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
@@ -1515,6 +1529,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         "allow": list(CLAUDE_ALLOWED_PERMISSIONS),
         "ask": list(CLAUDE_ASK_PERMISSIONS),
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),
+        "disableBypassPermissionsMode": "disable",
     }:
         fail("AGENT-NATIVE-PERMISSION", "permission settings widened or lost denial")
     validate_provider_hooks(root, "claude", settings.get("hooks"))
