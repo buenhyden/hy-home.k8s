@@ -46,13 +46,14 @@ Execute the three work units of the [Plan](../plan.md) for
 | EVD-007 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-003 | Policy validators and staged QA | First staged run failed `links-and-owners` on a README deep link and a policy-to-Spec link; both were replaced by stage-index routing and the rerun passed all 9 selected gates, including knowledge surface and document lifecycle | PASS | This Task; commit `aeafdebbb0b004807809d00931150fa3dd284e58` | yes | EVD-004 |
 | EVD-008 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Real store smoke check | `scripts/workspace_memory.py init` created the Git-ignored store at the main root with workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`; a long-term memory written from the main worktree was read back with the same ID, revision and body from a temporary linked worktree, then marked current. One process and one provider only, so it does not satisfy VAL-MEMORY-002 | PASS | `.workspace-memory/memory.sqlite3` (ignored runtime data) | no | none |
 | EVD-009 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Codex session read observation | Operator-relayed output on 2026-10-13 from a Codex session running `resolve` and `get mem-e71dedf07add48d5`: same store path, workspace ID `83ced050-f616-4b01-8a20-e3e61c9acea9`, revision 1, body and source hash as the Claude-side read. The Codex worktree, session freshness and project trust were not stated, no new Claude session was observed, and native memory non-write was not checked | PASS | This Task (operator-relayed transcript) | no | none |
+| EVD-010 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Claude session read observation | Operator-relayed output on 2026-10-13 from a new Claude Code session started after `autoMemoryEnabled: false` was committed: `resolve` and `get mem-e71dedf07add48d5` returned the same store path, workspace ID, revision 1, body and unchanged source as EVD-009. The project native memory directory files were last modified at 11:51 KST, before that session (about 14:23 KST), so it wrote no native memory. Both sessions resolved the main root; the worktree each ran from was not stated | PASS | This Task (operator-relayed transcript; file times observed 14:24 KST) | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-007 | Accept the store, its limits and the policy on focused local evidence; the area limit is observed only | platform |
-| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-009 | Codex read matched (EVD-009); still needs a new Claude session in another worktree, the Codex worktree and trust, and native memory non-write | operator |
+| [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-009, EVD-010 | Both providers read the same memory (EVD-009, EVD-010) and Claude wrote no native memory; still open: one session from a linked worktree and Codex native memory non-write | operator |
 
 ## Approval and Safety Boundaries
 
@@ -68,7 +69,7 @@ Execute the three work units of the [Plan](../plan.md) for
   home, user or managed provider configuration, frozen Archive payloads,
   live cluster, Vault and secret material.
 - **Approval Required**: the operator approved the design and its
-  implementation on 2026-10-13; push, pull request and merge await the
+  implementation on 2026-10-13, and the Plan the same day; push, pull request and merge await the
   operator.
 - **Static Validation**: focused store and governance tests, document
   validators and staged QA from the documented validation environment.
