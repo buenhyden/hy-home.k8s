@@ -36,6 +36,7 @@ DATABASE_LIMIT = 1024 * MIB
 AREA_OBSERVED_LIMIT = 4096 * MIB
 RUNTIME_FILE_LIMIT = 8
 BUSY_TIMEOUT_MS = 5000
+GIT_TIMEOUT_SECONDS = 10
 
 REQUIRED_BODY = {
     "short-term": ("context", "narrative"),
@@ -97,7 +98,10 @@ def representative_root(cwd: Path) -> Path:
             check=True,
             capture_output=True,
             text=True,
+            timeout=GIT_TIMEOUT_SECONDS,
         ).stdout.strip()
+    except subprocess.TimeoutExpired as exc:
+        raise MemoryError_("MEMORY_UNAVAILABLE: Git did not answer in time") from exc
     except (OSError, subprocess.CalledProcessError) as exc:
         raise MemoryError_("MEMORY_UNAVAILABLE: not inside a Git worktree") from exc
     common_path = Path(common)
