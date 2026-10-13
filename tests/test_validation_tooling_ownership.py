@@ -161,6 +161,47 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             for pattern in patterns:
                 self.assertIsNone(pattern.search(relative), relative)
 
+    def test_frozen_exclusions_follow_the_registry(self):
+        """Hook-local frozen lists must equal what the Registry declares."""
+
+        registry = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        profiles = registry["profiles"]
+        if isinstance(profiles, dict):
+            profiles = list(profiles.values())
+        archive = {
+            p.get("id") or p.get("profile_id"): p.get("path_pattern") or ""
+            for p in profiles
+            if (p.get("id") or p.get("profile_id")).startswith("archive/")
+        }
+        sealed = {
+            name.replace("\\-", "-")
+            for name in re.findall(
+                r"migrations/((?:[0-9a-z]|\\-)+)\\\.md", archive["archive/migration"]
+            )
+        }
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hooks = {h["id"]: h for r in config["repos"] for h in r["hooks"]}
+        block = re.search(
+            r"migrations/\(\?:(.*?)\)\\\.md",
+            hooks["end-of-file-fixer"]["exclude"],
+            re.S,
+        )
+        self.assertIsNotNone(block)
+        excluded = set(re.findall(r"\b\d{4}-[a-z0-9-]+\b", block.group(1)))
+        self.assertTrue(sealed)
+        self.assertEqual(excluded, sealed)
+
+        roots = {item["class"] for item in registry["retention_classes"]}
+        for pattern in archive.values():
+            roots |= set(re.findall(r"docs/98\\\.archive/([a-z]+)/", pattern))
+        ignores = yaml.safe_load((ROOT / ".markdownlint-cli2.yaml").read_text())[
+            "ignores"
+        ]
+        self.assertEqual(
+            {item for item in ignores if item.startswith("docs/98.archive/")},
+            {f"docs/98.archive/{root}/" for root in roots},
+        )
+
     def test_heading_and_residue_probes_belong_to_tests(self):
         tree = ast.parse((SCRIPTS / "validation/repository/quality.py").read_text())
         probes = [
