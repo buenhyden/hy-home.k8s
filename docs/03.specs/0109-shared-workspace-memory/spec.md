@@ -1,6 +1,6 @@
 ---
 title: "Shared Workspace Memory Store"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
@@ -53,9 +53,16 @@ One store at the representative worktree root, resolved from
 at `.workspace-memory/memory.sqlite3` (Git-ignored, excluded from
 templates and builds). Linked worktrees use the same physical file; an
 unresolvable root reports the store unavailable and never creates a second
-database. Writes run in one transaction that checks expected revision,
-idempotency key, tier and domain usage and payload size, then commits body,
-revision and usage together.
+database. Writes run in one `BEGIN IMMEDIATE` transaction with a bounded
+busy timeout that checks expected revision, idempotency key, tier and domain
+usage and payload size, then commits body, revision and usage together.
+
+The store uses the rollback journal (`journal_mode=DELETE`), not WAL. The
+review on 2026-10-13 observed the local Python SQLite library at 3.45.1,
+which is neither 3.51.3 or later nor one of the named WAL-reset backports
+(3.44.6, 3.50.7). The rollback journal avoids that defect, keeps one writer
+at a time, and leaves only the database, its transient journal, one backup
+and one temporary backup file as runtime files.
 
 ## Data Modeling & Storage Strategy
 
@@ -74,18 +81,27 @@ Proposed initial limits, not yet approved: short-term 64 MiB, long-term
 256 KiB, main database 1 GiB, whole store area 4 GiB, at most eight runtime
 files. Logical usage counts every revision and conflict. `max_page_count`
 bounds only the main database; a hard 4 GiB guarantee needs a filesystem
-quota, otherwise the limit is reported as observed, not enforced.
+quota, otherwise the limit is reported as observed, not enforced. The
+review observed an ext4 root filesystem with no project quota, so the first
+implementation reports the area limit as observed only.
 
 ## Interfaces & Data Structures
 
 A shared CLI under `scripts/` with: resolve workspace, current query,
 bounded history query, write with expected revision, eligibility
 correction, usage report and consistent backup. Claude sets
-`autoMemoryEnabled: false` in `.claude/settings.json` and removes any
-subagent `memory` field; Codex uses `[memories] generate_memories = false`
-and `use_memories = false` where the installed client supports them.
-Introducing `.codex/config.toml` also changes the provider note, the
-validator and native admission.
+`autoMemoryEnabled: false` in `.claude/settings.json`; the governance
+validator already rejects a subagent `memory` field and must admit exactly
+this new settings key with the value `false`. Codex uses
+`[memories] generate_memories = false` and `use_memories = false`; the
+review found both keys in the installed `codex-cli 0.162.1` binary (static
+evidence only). `.codex/config.toml` is not validated today, so adoption
+adds an exact-content check that admits only that table, rewrites the
+`.codex/README.md` and `.codex/provider.md` statements that tie the absent
+file to hook registration, and records that Codex reads a project config
+only for a trusted project. Disabling Claude auto memory stops the existing
+per-project native memory from being read in new sessions; its files are
+neither deleted nor imported automatically.
 
 ## Edge Cases & Error Handling
 
@@ -102,9 +118,12 @@ explicit owner decisions recorded in a Task.
 
 ## Verification Commands
 
-Not yet defined. Before implementation, record the linked
-`sqlite3.sqlite_version` and its WAL-reset fix status (3.51.3 or later, or
-the 3.44.6 and 3.50.7 backports).
+- Focused store tests on a temporary database: tier schemas, revision
+  conflict, quota refusal without loss, retention after Task completion,
+  source-change exclusion, backup replacement and backup failure.
+- `python3 scripts/validate-agent-governance.py --root .` for the native
+  settings and Codex config checks.
+- Record the linked `sqlite3.sqlite_version` with each acceptance run.
 
 ## Success Criteria & Verification Plan
 
