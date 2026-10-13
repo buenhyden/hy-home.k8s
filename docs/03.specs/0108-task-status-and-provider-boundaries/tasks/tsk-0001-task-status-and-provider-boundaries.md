@@ -32,9 +32,9 @@ focused, staged and review evidence here.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TSKSUM-002](../spec.md#success-criteria--verification-plan) | README language exception and Korean roles router | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-TSKSUM-003](../spec.md#success-criteria--verification-plan) | Claude ask list and exact permission validation | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | Shared Task status reader and writer retirement | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-TSKSUM-002](../spec.md#success-criteria--verification-plan) | README language exception and Korean roles router | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-TSKSUM-003](../spec.md#success-criteria--verification-plan) | Claude ask list and exact permission validation | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-TSKSUM-001](../spec.md#success-criteria--verification-plan) | Shared Task status reader and writer retirement | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
