@@ -173,7 +173,7 @@ def classify(
     """Name the language rule a document answers to, or None when unchecked."""
 
     value = path.as_posix()
-    if value.startswith(contract.english_only_roots):
+    if contract.english_only(path):
         return "english-only"
     if value.startswith(ARCHIVE_PREFIX) and value != ARCHIVE_INDEX:
         return None

@@ -1,4 +1,5 @@
 {
+  "autoMemoryEnabled": false,
   "permissions": {
     "allow": [
       "Bash(git status --short)",
@@ -8,6 +9,12 @@
       "Bash(git diff --cached --name-only)",
       "Bash(git rev-parse HEAD)",
       "Bash(git ls-files)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -24,10 +31,6 @@
       "Bash(kubectl get secrets:*)",
       "Bash(kubectl describe secret:*)",
       "Bash(kubectl describe secrets:*)",
-      "Bash(git push:*)",
-      "Bash(git merge:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr merge:*)",
       "Bash(gh release create:*)",
       "Bash(gh workflow run:*)",
       "Bash(kubectl delete:*)",

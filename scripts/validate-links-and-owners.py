@@ -120,6 +120,7 @@ from document_contracts import (
     scoped_document_content_paths,
     validated_changed_paths,
     task_execution_issues,
+    task_status,
     task_evidence_issues,
     task_contract_issues,
     direct_parent,
@@ -3961,8 +3962,7 @@ def lifecycle_markdown_evidence(
     body_rows: tuple[tuple[tuple[str, str], ...], ...] = ()
     body_table_links: tuple[PurePosixPath, ...] = ()
     body_contract_valid = False
-    status_value = frontmatter_mapping(text).get("status")
-    document_status = status_value if isinstance(status_value, str) else ""
+    document_status = task_status(frontmatter_mapping(text), text, profile)
 
     if profile.body_contract is not None:
         contract = profile.body_contract
@@ -4769,8 +4769,9 @@ def _body_contract_link_diagnostics(
         profile = profiles_by_id.get(view.profile_id)
         if profile is None:
             continue
-        status_value = context.metadata[path].get("status", "")
-        status = status_value if isinstance(status_value, str) else ""
+        status = task_status(
+            context.metadata[path], context.texts.get(path, ""), profile
+        )
         if not _body_contract_link_is_enforced(
             path, profile, status, body_contracts, path_prefixes
         ):
@@ -4851,11 +4852,10 @@ def _body_contract_link_diagnostics(
                         )
                         continue
                     target_profile = profiles_by_id[target_view.profile_id]
-                    target_status_value = context.metadata[target].get("status", "")
-                    target_status = (
-                        target_status_value
-                        if isinstance(target_status_value, str)
-                        else ""
+                    target_status = task_status(
+                        context.metadata[target],
+                        context.texts.get(target, ""),
+                        target_profile,
                     )
                     reciprocal_in_scope = _body_contract_link_is_enforced(
                         target,

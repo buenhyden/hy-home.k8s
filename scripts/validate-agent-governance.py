@@ -43,6 +43,8 @@ RETIRED_SURFACES = (
     ".gemini",
     "GEMINI.md",
 )
+CODEX_CONFIG_PATH = ".codex/config.toml"
+CODEX_CONFIG = {"memories": {"generate_memories": False, "use_memories": False}}
 PROVIDER_HOOK_PATHS = {
     "claude": ".claude/settings.json",
     "codex": ".codex/hooks.json",
@@ -78,6 +80,14 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
 )
+# Requested pushes, merges and pull requests stay behind a per-call prompt;
+# force, delete and mirror pushes remain denied below.
+CLAUDE_ASK_PERMISSIONS = (
+    "Bash(git push:*)",
+    "Bash(git merge:*)",
+    "Bash(gh pr create:*)",
+    "Bash(gh pr merge:*)",
+)
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
     "Read(./.env.*)",
@@ -93,10 +103,6 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(kubectl get secrets:*)",
     "Bash(kubectl describe secret:*)",
     "Bash(kubectl describe secrets:*)",
-    "Bash(git push:*)",
-    "Bash(git merge:*)",
-    "Bash(gh pr create:*)",
-    "Bash(gh pr merge:*)",
     "Bash(gh release create:*)",
     "Bash(gh workflow run:*)",
     "Bash(kubectl delete:*)",
@@ -1357,14 +1363,29 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         for ref in refs:
             _read_regular_file(root, ref, code="AGENT-NATIVE-REFERENCE")
     settings = load_json(root, ".claude/settings.json")
-    if not isinstance(settings, dict) or set(settings) != {"permissions", "hooks"}:
+    if (
+        not isinstance(settings, dict)
+        or set(settings) != {"permissions", "hooks", "autoMemoryEnabled"}
+        or settings["autoMemoryEnabled"] is not False
+    ):
         fail("AGENT-NATIVE-METADATA", "unsupported native settings")
+    # SPEC-0109: both providers use the shared workspace memory store, so the
+    # project disables native memory; the Codex config holds only that table.
+    try:
+        codex_config = tomllib.loads(
+            _read_text(root, CODEX_CONFIG_PATH, "AGENT-NATIVE-CONFIG")
+        )
+    except tomllib.TOMLDecodeError:
+        fail("AGENT-NATIVE-CONFIG", "project Codex config is not TOML")
+    if codex_config != CODEX_CONFIG:
+        fail("AGENT-NATIVE-CONFIG", "project Codex config must only disable memories")
     # Exact equality is what bounds the allow list. A list of forbidden broad
     # grants would be weaker than this and would read as the real control, so
     # this comparison stays the only one. Ignored personal settings are outside
     # it: they are not tracked configuration and carry no shared authority.
     if settings["permissions"] != {
         "allow": list(CLAUDE_ALLOWED_PERMISSIONS),
+        "ask": list(CLAUDE_ASK_PERMISSIONS),
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),
     }:
         fail("AGENT-NATIVE-PERMISSION", "permission settings widened or lost denial")

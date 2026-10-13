@@ -72,6 +72,7 @@ class NativeBoundaryTests(unittest.TestCase):
             "RTK.md",
             "CLAUDE.md",
             ".claude/settings.json",
+            ".codex/config.toml",
             ".claude/hooks/k8s-pre-edit.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
@@ -805,16 +806,52 @@ class NativeBoundaryTests(unittest.TestCase):
 
         path = self.root / ".claude/settings.json"
         data = json.loads(path.read_text())
-        for action in ("deny", "allow"):
+        for action in ("deny", "allow", "ask", "ask-to-allow"):
             import copy
 
             changed = copy.deepcopy(data)
             if action == "deny":
                 changed["permissions"]["deny"].pop()
+            elif action == "ask":
+                changed["permissions"]["ask"].pop()
+            elif action == "ask-to-allow":
+                changed["permissions"]["allow"].append(
+                    changed["permissions"]["ask"].pop()
+                )
             else:
                 changed["permissions"]["allow"].append("Bash(*)")
             path.write_text(json.dumps(changed))
             self.assert_rejected("AGENT-NATIVE-PERMISSION")
+
+    def test_native_memory_must_stay_disabled_on_both_providers(self):
+        import copy
+        import json
+
+        path = self.root / ".claude/settings.json"
+        data = json.loads(path.read_text())
+        self.assertIs(data["autoMemoryEnabled"], False)
+        for value in (True, None, 0, "false"):
+            changed = copy.deepcopy(data)
+            changed["autoMemoryEnabled"] = value
+            path.write_text(json.dumps(changed))
+            self.assert_rejected("AGENT-NATIVE-METADATA")
+        changed = copy.deepcopy(data)
+        del changed["autoMemoryEnabled"]
+        path.write_text(json.dumps(changed))
+        self.assert_rejected("AGENT-NATIVE-METADATA")
+        path.write_text(json.dumps(data))
+        config = self.root / ".codex/config.toml"
+        original = config.read_text()
+        for text in (
+            original.replace("use_memories = false", "use_memories = true"),
+            original + "\n[hooks]\n",
+            original + 'model = "synthetic"\n',
+        ):
+            config.write_text(text)
+            self.assert_rejected("AGENT-NATIVE-CONFIG")
+        config.unlink()
+        self.assert_rejected("AGENT-NATIVE-CONFIG")
+        config.write_text(original)
 
     def test_unsupported_settings_and_automatic_qa_hook_reject(self):
         import copy

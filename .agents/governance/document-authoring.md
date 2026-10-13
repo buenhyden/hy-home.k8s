@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.0.0"
+version: "3.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-13"
 ---
 
 # Document Authoring Policy
@@ -155,7 +155,8 @@ of those markers. Template history belongs to Registry contract version and
 Git, not to the created document's "version".
 The registry's `document_language` contract owns each document's language:
 Navigation, reference-pack and operations profiles are Korean-first, files under `.agents/`,
-`.claude/`, and `.codex/` are English only, every other current document is
+`.claude/`, and `.codex/` are English only except a `README.md`, which follows
+its navigation profile, every other current document is
 English-first, agent requirement sections stay English, and a template writes
 its author prompts in its output's language. Never hand-edit generated current
 output or create an off-taxonomy authored tree.

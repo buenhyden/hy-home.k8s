@@ -32,7 +32,6 @@ DOCUMENT_READERS = (
     "tests/test_operations_lineage_contract.py",
     "tests/test_shared_contract_binding.py",
     "tests/test_document_scope_selection.py",
-    "scripts/sync-task-status.py",
     "tests/test_task_acceptance_boundaries.py",
 )
 HISTORY_READERS = (

@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 ---
 
 # Codex Provider Notes
@@ -50,6 +50,12 @@ team document, not a special automatic entry filename.
   stable feature, and the documented surfaces are `.codex/hooks.json` and a
   `[hooks]` table in `.codex/config.toml`. `hooks.json` is adopted; the inline
   table is not, so one file holds the registration and the two cannot disagree.
+  The project `.codex/config.toml` holds only `[memories]` with
+  `generate_memories = false` and `use_memories = false`, and the validator
+  rejects any other key or table, including `[hooks]`. Both keys were found in
+  the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);
+  Codex applies a project config only to a trusted project, so the effect is
+  separate runtime evidence.
   It registers `PreToolUse` on `Bash|apply_patch` and runs `.codex/hooks/pre-tool-use.sh`,
   this provider's own adapter for the shared guard at
   `scripts/provider_write_guard.py`. The documented payload carries `tool_name`
@@ -126,8 +132,9 @@ team document, not a special automatic entry filename.
   `tests/test_k8s_pre_edit_hook.py`. Neither establishes that this client
   delivered the event. Run explicit repository validation and do not infer
   event delivery from a file.
-- Keep provider-local memory advisory and re-observe repository/task state on
-  resume. Shared context and safety rules live in policies, not this note.
+- Use the shared workspace memory store from
+  [context and memory](../.agents/governance/context-and-memory.md) instead of
+  native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.
 - Follow `RTK.md` for shell tooling. Record an unavailable tool or runtime
   instead of inspecting private configuration to manufacture readiness.
 

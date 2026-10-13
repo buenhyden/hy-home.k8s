@@ -13,6 +13,7 @@ import yaml
 from document_authority import AuthorityError, require_reciprocal_supersession
 from document_contracts import (
     DocumentProfile,
+    task_status,
     Registry,
     classify_path,
     task_criterion_ids,
@@ -1409,6 +1410,8 @@ def document_from_text(
     else:
         profile_issue = f"frontmatter type is unknown: {claimed_profile_id!r}"
     status = metadata.get("status")
+    if status is None:
+        status = task_status(metadata, text, selected_profile) or None
     if not isinstance(status, str):
         return LifecycleDocument(
             path=path,

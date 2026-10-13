@@ -85,3 +85,6 @@ graphify-out/manifest.json
 graphify-out/cost.json
 
 sessions/
+
+# Shared workspace memory store (SPEC-0109); runtime data, never tracked.
+/.workspace-memory/
