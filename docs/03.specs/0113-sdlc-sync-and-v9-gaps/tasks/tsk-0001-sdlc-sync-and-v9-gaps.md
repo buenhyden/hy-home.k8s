@@ -1,6 +1,6 @@
 ---
 title: "SDLC Document Sync and Remaining v9 Gaps"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-13"
@@ -57,6 +57,7 @@ Execute the seven work units of the [Plan](../plan.md) for
 | EVD-013 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | WORK-007 commit index | NOT_RUN | Pending | yes | none |
 | EVD-014 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | The full suite on main `86daf815` (1405 tests) failed `test_subprocess_run_calls_declare_a_timeout` on `scripts/workspace_memory.py:88`, a SPEC-0109 regression that its staged QA did not select; the same module at base `57f44c44` has no such file. The Git call now has `timeout=GIT_TIMEOUT_SECONDS` (10), and `TimeoutExpired` reports `MEMORY_UNAVAILABLE: Git did not answer in time`. The new `test_git_timeout_reports_the_store_unavailable` errored with an uncaught `TimeoutExpired` against the previous module and passes now; 12 store tests and the tooling timeout test passed. The other 13 suite failures also fail at base `57f44c44` and are outside this package. `qa.py staged` on the WORK-007 index passed | PASS | This Task; WORK-007 commit | yes | EVD-013 |
 | EVD-015 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent review and full suite | An independent read-only review of `86daf815..9397d6f6` found no HIGH issue and confirmed the merge SHAs, F05 claim sources, memory wording, the AGENTS.md validator effect and the timeout mapping. Its findings were fixed in `95bb89eb`: REQ-0003 no longer calls the completed SPEC-0107 a draft; the SPEC-0113 Plan and Task count seven units; the F22 test also compares the two harness globs between pre-commit and markdownlint (it passed on the repository and failed on two tampered copies); SPEC-0109 names its body rewrite a revision rather than a note and drops 'once approved'; the `workspace_memory.py` limits comment says accepted; the SPEC-0108 to SPEC-0112 Task summaries and the SPEC-0108 Plan gain dated notes closing the merge handoff and the pending README risk, with patch version bumps. The SPEC-0109 Overview, limits and interface text was rewritten in place, beyond the notes-only allowance named below; Git keeps the earlier text. The full suite on `9397d6f6` ran 1407 tests with 12 failures and 1 error: 12 match failures on main `86daf815`, and `test_pre_effect_group_interrupt_reuses_deadline_and_finishes_tree` passed three times alone (load-sensitive timing). `qa.py staged` on the review-fix index passed | PASS | This Task; review-fix commit | yes | none |
+| EVD-016 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Delivery to main | Pull request #143 merged with a merge commit `5a9fe19088c77e7ea8e6601df1e564df8d12caab` at 2026-10-13 20:18 KST after `ci-summary`, `style-pr` and GitGuardian passed; the operator ran push, pull request creation, merge and branch cleanup. The push, pull request and merge handoff named in this Task is closed | PASS | Pull request #143 | no | none |
 
 ## Criterion Acceptance
 
@@ -112,3 +113,7 @@ risk: 12 suite failures that already fail on main `86daf815` stay outside
 this package, and one timing test fails only under full-suite load. Rollback:
 forward revert of the package commits. Next owner: the operator for push,
 pull request and merge.
+
+Delivery note (2026-10-13): pull request #143 merged at `5a9fe190`
+(EVD-016), so the push, pull request and merge handoff above is closed and
+no next owner remains.
