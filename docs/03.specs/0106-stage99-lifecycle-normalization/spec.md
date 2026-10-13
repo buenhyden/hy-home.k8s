@@ -1,10 +1,10 @@
 ---
 title: "Stage 99 Lifecycle Normalization"
-version: "1.16.0"
+version: "1.16.1"
 type: "sdlc/spec"
 status: "completed"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 layer: "specs"
 artifact_id: "SPEC-0106"
 ---
@@ -344,6 +344,12 @@ historical fixtures prove old frozen generations remain readable without
 format rewrites.
 
 ### Follow-up: explicit multi-row Task summary
+
+> Successor note (2026-10-13, SPEC-0113): SPEC-0108 retired
+> `scripts/sync-task-status.py`. A multi-row Task may now omit frontmatter
+> `status`, and readers derive it from the rows with `task_status()`; a
+> present value must still equal the derivation. The text below records
+> this package's own delivery.
 
 `VAL-P02-002` closes the manual copy of a multi-row Task's derived status.
 Extract the existing `task-items-v1`/`task-items-v2` aggregation into one pure

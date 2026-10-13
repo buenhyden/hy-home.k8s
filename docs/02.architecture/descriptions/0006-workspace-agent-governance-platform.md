@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "2.1.0"
+version: "2.2.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -119,6 +119,12 @@ The [bounded validation runner](../../../scripts/run-validation-lane.py) owns
 the timeout, output, and child cleanup limits, and the Task owns the no-progress stop and handoff evidence.
 A checkpoint is ignored transient recovery state and replaces neither policy, the Task, nor a credential store.
 Compaction and resume keep only finished and unfinished work, validation results, and the next action, and exclude sensitive data and full transcripts.
+Reusable decision context may live in the shared workspace memory store of
+[SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)
+(`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
+providers read and write it, and their native memory is disabled in project
+configuration. It is never Task status, evidence, approval or acceptance, and
+it is not the retired shared progress ledger.
 
 ### Convergence infrastructure and deployment
 
@@ -343,7 +349,7 @@ verification require their own actual evidence and applicable authorization.
 | [REQ-0003-FR-0019](../../01.requirements/0003-workspace-agent-governance-platform.md) | Package-local sequencing with unchanged historical program lineage | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0020](../../01.requirements/0003-workspace-agent-governance-platform.md) | ADR-0040 unit retention, reappraisal, and ordered citation table | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0021](../../01.requirements/0003-workspace-agent-governance-platform.md) | Reference provenance separated from current execution authority | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | Ignored checkpoint state and the shared memory store versus Task-owned durable execution evidence | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md), [SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md) |
 | [REQ-0003-FR-0023](../../01.requirements/0003-workspace-agent-governance-platform.md) | Profile-owned stable identity and source-preserving migration mapping | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0024](../../01.requirements/0003-workspace-agent-governance-platform.md) | Consumer-zero removal of compatibility surfaces after semantic transfer | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [REQ-0003-FR-0025](../../01.requirements/0003-workspace-agent-governance-platform.md) | Current Agent Registry and common governance risk, trust, and approval owners | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), [Spec 0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
@@ -408,6 +414,7 @@ historical evidence rather than parallel operating instructions.
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
 - **Local QA and release implementation**: [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md)
+- **Later current implementations**: Task status derivation and provider boundaries ([SPEC-0108](../../03.specs/0108-task-status-and-provider-boundaries/spec.md)), shared workspace memory ([SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)), provider README language and QA tool diagnostics ([SPEC-0110](../../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md)), lifecycle test fixtures ([SPEC-0111](../../03.specs/0111-historical-fixture-drift/spec.md), [SPEC-0112](../../03.specs/0112-pinned-package-fixtures/spec.md)) and document sync ([SPEC-0113](../../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md))
 - **Original governance implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical decisions**: ADR-0019, [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), ADR-0034, ADR-0035
