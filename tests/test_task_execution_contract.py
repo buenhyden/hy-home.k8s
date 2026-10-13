@@ -66,6 +66,54 @@ def pre_p03_registry():
     )
 
 
+def current_task_form(text: str) -> str:
+    """Project a generation 10 Task's tables into the current column contract.
+
+    The current contract reads the eight-column form only as exact completed
+    baseline bytes, so a historical replay keeps every row and drops or maps
+    only the retired Acceptance column.
+    """
+
+    lines = []
+    for line in text.split("\n"):
+        cells = line.split(" | ")
+        if line.startswith(("| ID | ", "| WORK-")) and len(cells) == 8:
+            del cells[6]
+        elif line.startswith("| Evidence | ") and cells[-1] == "Acceptance |":
+            cells[-1] = "Required | Resolves |"
+        elif line.startswith("| EVD-") and len(cells) == 8:
+            required = "no" if cells[-1].startswith("not-required") else "yes"
+            cells[-1] = f"{required} | none |"
+        elif line == "| --- | --- | --- | --- | --- | --- | --- | --- |":
+            cells = None
+        lines.append(line if cells is None else " | ".join(cells))
+    text = "\n".join(lines)
+    task, _, evidence = text.partition("## Task Evidence")
+    task = task.replace(
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    )
+    evidence = evidence.replace(
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    )
+    return task + "## Task Evidence" + evidence
+
+
+def cancelled_spec(text: str) -> str:
+    """Close an in-progress Spec through its declared cancellation edge."""
+
+    return text.replace(
+        'status: "in-progress"',
+        'status: "cancelled"\n'
+        "cancellation:\n"
+        '  reason: "fixture"\n'
+        '  authorization_ref: "fixture"\n'
+        '  criteria_disposition: "fixture"',
+        1,
+    )
+
+
 def task_text(status: str, rows: list[str]) -> str:
     return "\n".join(
         [
@@ -967,6 +1015,10 @@ class GenerationAdmissionTests(unittest.TestCase):
             )
             for entry in self.registry.migration_admission["entries"]
         }
+        task_ref = PurePosixPath(self.registry.migration_admission["task_ref"])
+        self.after_bytes[task_ref] = current_task_form(
+            self.after_bytes[task_ref].decode()
+        ).encode()
         self.before, self.after = {}, {}
         for entry in self.registry.migration_admission["entries"]:
             path = PurePosixPath(entry["path"])
@@ -1139,16 +1191,11 @@ class GenerationAdmissionTests(unittest.TestCase):
                     (),
                     [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
                 )
-            text = (
-                (root / SPEC)
-                .read_text()
-                .replace('status: "in-progress"', 'status: "completed"', 1)
-            )
-            (root / SPEC).write_text(text)
-            completed = commit()
+            (root / SPEC).write_text(cancelled_spec((root / SPEC).read_text()))
+            cancelled = commit()
             for before_commit, after_commit in (
                 (absent, intake),
-                (migration, completed),
+                (migration, cancelled),
             ):
                 findings = LIFECYCLE_CLI._history_event_diagnostics(
                     root,
@@ -1167,13 +1214,13 @@ class GenerationAdmissionTests(unittest.TestCase):
                 )
             self.assertFalse(
                 LIFECYCLE_CLI._history_proves_cumulative_create(
-                    root, self.registry, SPEC, absent, completed
+                    root, self.registry, SPEC, absent, cancelled
                 )
             )
             task_path = PurePosixPath(self.registry.migration_admission["task_ref"])
             self.assertFalse(
                 LIFECYCLE_CLI._history_proves_cumulative_create(
-                    root, self.registry, task_path, absent, completed
+                    root, self.registry, task_path, absent, cancelled
                 )
             )
             new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
@@ -1186,7 +1233,7 @@ class GenerationAdmissionTests(unittest.TestCase):
                 root,
                 self.registry,
                 mode="ci",
-                base_ref=completed,
+                base_ref=cancelled,
                 to_ref=invalid_create,
                 include_paths=(new_path,),
             )
@@ -1197,24 +1244,43 @@ class GenerationAdmissionTests(unittest.TestCase):
                 ),
                 [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
             )
+            # The current Spec lifecycle retired in-progress -> completed.
+            (root / SPEC).write_text(
+                cache._snapshot(migration)[1][SPEC].replace(
+                    'status: "in-progress"', 'status: "completed"', 1
+                )
+            )
+            retired = commit()
+            findings = LIFECYCLE_CLI._history_event_diagnostics(
+                root,
+                self.registry,
+                SPEC,
+                migration,
+                retired,
+                cache._snapshot(migration)[0][SPEC],
+                LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)._snapshot(
+                    retired
+                )[0][SPEC],
+                cache,
+            )
+            self.assertIn(
+                "LIFECYCLE-EDGE",
+                {item.rule_id for item in findings},
+                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
+            )
 
     def _assert_seeded_snapshot_budget(self, mode: str) -> None:
         with self._authentic_generation_replay() as (root, commit, absent, intake):
             migration = commit()
             _cache = LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)
-            text = (
-                (root / SPEC)
-                .read_text()
-                .replace('status: "in-progress"', 'status: "completed"', 1)
-            )
-            (root / SPEC).write_text(text)
-            completed = commit()
+            (root / SPEC).write_text(cancelled_spec((root / SPEC).read_text()))
+            cancelled = commit()
             task_path = PurePosixPath(self.registry.migration_admission["task_ref"])
             package_paths = {SPEC, SPEC.parent / "plan.md", task_path}
             seed_blobs = LIFECYCLE_CLI._tree_blob_map(root, absent)
             snapshot_blobs = {
                 revision: LIFECYCLE_CLI._tree_blob_map(root, revision)
-                for revision in (intake, migration, completed)
+                for revision in (intake, migration, cancelled)
             }
             newly_read_sizes = {
                 revision: LIFECYCLE_CLI._snapshot_blob_size(
@@ -1229,7 +1295,7 @@ class GenerationAdmissionTests(unittest.TestCase):
             }
             snapshot_limit = max(newly_read_sizes.values())
             self.assertGreater(
-                LIFECYCLE_CLI._snapshot_blob_size(root, snapshot_blobs[completed]),
+                LIFECYCLE_CLI._snapshot_blob_size(root, snapshot_blobs[cancelled]),
                 snapshot_limit,
             )
             self.assertLess(
@@ -1243,13 +1309,13 @@ class GenerationAdmissionTests(unittest.TestCase):
                 with self.assertRaises(LIFECYCLE_CLI._CumulativeHistoryBudgetExceeded):
                     LIFECYCLE_CLI._CumulativeHistoryCache(
                         root, self.registry
-                    )._snapshot(completed)
+                    )._snapshot(cancelled)
                 findings = LIFECYCLE_CLI._evaluate_comparison(
                     root,
                     self.registry,
                     mode=mode,
                     **({"base_ref": absent} if mode == "ci" else {"from_ref": absent}),
-                    to_ref=completed,
+                    to_ref=cancelled,
                     include_paths=tuple(package_paths),
                 )
             package_findings = tuple(
