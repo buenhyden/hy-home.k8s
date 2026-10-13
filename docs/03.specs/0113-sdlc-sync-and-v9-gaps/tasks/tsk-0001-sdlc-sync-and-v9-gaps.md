@@ -35,7 +35,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | WORK-003 | [VAL-SYNC-003](../spec.md#success-criteria--verification-plan) | Four F05 claim statuses in the Stage 99 README | platform | in-progress | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | F18 evidence correction | platform | completed | PASS | EVD-008 |
 | WORK-005 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | Remove the stale `.hadolint.yaml` route | platform | completed | PASS | EVD-007 |
-| WORK-006 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | `AGENTS.md` common and Codex-only blocks | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-006 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | `AGENTS.md` common and Codex-only blocks | platform | completed | PASS | EVD-009 |
 
 ## Task Evidence
 
@@ -49,6 +49,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | EVD-006 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Focused checks and staged QA | WORK-006 commit index | NOT_RUN | Pending | yes | none |
 | EVD-007 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Focused checks and staged QA | Before: `select-affected-surfaces.py` routed a reintroduced `.hadolint.yaml` silently to `agent-governance`, `ci-python-contract` and `repository-quality` although the file was deleted in `1014bba7` and no other consumer names it. After removing the exact route the same path reports `SURFACE-PATH-UNMATCHED`, so a reintroduction fails closed; 88 registry, scope and consumer tests passed. `qa.py staged` on the WORK-005 index passed | PASS | This Task; WORK-005 commit | yes | EVD-005 |
 | EVD-008 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Focused checks and staged QA | Appended EVD-013 to the SPEC-0110 Task stating that `greeting` and `label` success in its EVD-011 is notification automation, not QA evidence, and naming `style-pr`, `ci-summary` and local `qa.py staged` as the QA results; EVD-011 stays as history. `qa.py staged` on the WORK-004 index passed | PASS | This Task; WORK-004 commit | yes | EVD-004 |
+| EVD-009 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | WORK-006 | Focused checks and staged QA | `AGENTS.md` now reads the common lifecycle and `RTK.md` first, then the common owner list, then a block labelled 'Codex-only provider reads' with `.codex/provider.md` and `.codex/CODEX.md`; line texts and the validated reference set are unchanged (24 lines). Moving the Codex reads into a separate native entry was not done: Codex documents load at most one instruction file per directory and no verified loader exists for `.codex/CODEX.md`, and the operator chose this reorder. `validate-agent-governance.py` and the profile validator passed, and 129 governance, consumer and language tests passed. `qa.py staged` on the WORK-006 index passed | PASS | This Task; WORK-006 commit | yes | EVD-006 |
 
 ## Criterion Acceptance
 
@@ -59,7 +60,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | [VAL-SYNC-003](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-003 checks | platform |
 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accept the correction record | platform |
 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accept the route removal; reintroduction now fails closed | platform |
-| [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-006 checks | platform |
+| [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accept the common and Codex-only blocks; a native split stays unverified and out of scope | platform |
 
 ## Approval and Safety Boundaries
 
