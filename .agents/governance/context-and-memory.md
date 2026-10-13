@@ -1,10 +1,10 @@
 ---
 title: "Context and Memory Policy"
-version: "1.2.0"
+version: "1.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-13"
 ---
 
 # Context and Memory Policy
@@ -48,21 +48,53 @@ canonical owners before using remembered paths, results, or approvals.
 - Provider-local recall never writes canonical truth directly; verify it
   against the repository first. A provider's memory feature does not change
   repository ownership or permission.
-- Discard task-local context after its useful evidence reaches the owner.
-  Refresh, supersede, or retire durable knowledge through its profile contract.
+- Hand task-local evidence to its Task owner. Reusable decision context may
+  instead be kept in the shared workspace memory store below; durable policy
+  and domain knowledge still refresh, supersede, or retire through their
+  profile contract.
 - Do not read or store credentials, secret values, auth configuration, shell
   history, environment dumps, raw prompts, or complete provider transcripts.
 - The `memory/progress.md` ledger is retired under Spec 0054 WP-012 and the
   `memory/` directory under Spec 0065; their bytes are recoverable from Git
-  through `MIG-0007` and `MIG-0009`. Progress and task status belong to the
-  owning Spec Task. No governance memory directory remains, so durable
-  knowledge stays with the responsible policy, skill, operating document, or
-  reference owner. `.agents/knowledge/` maps those owners
+  through `MIG-0007` and `MIG-0009`, and neither is restored. Progress and task
+  status belong to the owning Spec Task, and durable knowledge stays with the
+  responsible policy, skill, operating document, or reference owner. `.agents/knowledge/` maps those owners
   without restating them; it is a pointer surface, never a second store of
   current state.
 - Ignored checkpoints are optional recovery aids. Static validation of a
   synthetic checkpoint proves neither actual checkpoint execution nor provider
   memory, hook, or compaction behavior.
+
+### Shared workspace memory store
+
+SPEC-0109, reached through the Stage 03 index (`docs/03.specs/README.md`),
+defines one store that Claude and Codex sessions both read and write:
+`.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the
+Git common directory so every linked worktree reaches the same file. It is
+Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once,
+and never create a second store when the root cannot be resolved.
+
+- A memory body is decision context: why a choice was made, why a check
+  failed, how it was resolved and when that applies again. It is never Task
+  status, evidence, approval or acceptance, and the store rejects bodies that
+  carry those fields. Cite the original record in the Task instead.
+- Tiers share one envelope (`workspace_id`, `memory_id`, `tier`, `revision`,
+  `owner`, source refs, `eligibility`, `sensitivity`, body). `short-term`
+  needs context and narrative, `long-term` a reviewed claim, reason and
+  applicability, and `domain` a `domain_id`, symptom, cause and resolution.
+- Task completion, session end, compaction, promotion and age never delete
+  or summarize a memory. Eligibility (`candidate`, `current`, `needs-review`,
+  `superseded`, `withdrawn`) only controls the default view, which returns
+  `current` memories whose source refs are unchanged; history keeps every
+  revision and conflict and is labelled as history.
+- A write names the expected revision. A stale write is kept as a conflict
+  when capacity allows, otherwise both revisions are reported and nothing
+  changes. A full tier, domain or revision limit refuses only the new write
+  with `MEMORY_CAPACITY_EXCEEDED`; ordinary repository work and QA continue.
+- Never store credentials, secret values, personal data or raw transcripts;
+  the store accepts only `public` or `internal` sensitivity.
+- Native Claude and Codex memory stay disabled in project configuration, and
+  their existing files are neither deleted nor imported.
 
 ### Bounded observation metadata
 

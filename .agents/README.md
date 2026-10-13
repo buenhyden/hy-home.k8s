@@ -1,6 +1,6 @@
 ---
 title: "Common Agent Governance"
-version: "2.4.0"
+version: "2.5.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -31,8 +31,10 @@ provider별 차이와 native adapter는 [.claude/](../.claude/)와
 근거 영역이지 상시 합성 채점기나 저장소 QA 관문이 아니다.
 gate 선택은 여전히 `scripts/validation/registry.json`이, 공용 검증 helper는
 `scripts/`가 소유한다. rule 디렉터리는 `governance/`와 중복되므로 두지 않고,
-쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. MIG-0009의 memory 퇴역은
-여전히 유효하다.
+쓰이지 않는 script나 rule 뼈대도 도입하지 않는다. MIG-0009가 퇴역시킨 진행
+ledger와 `memory/` 디렉터리는 되살리지 않는다. 세션과 provider를 넘어 재사용할
+판단 맥락은 `governance/context-and-memory.md`가 정한 공유
+workspace memory store에 둔다.
 
 ## Structure
 
