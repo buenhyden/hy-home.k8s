@@ -33,6 +33,11 @@ from document_lifecycle import (  # noqa: E402
 
 CRITERION = "[VAL-P03-001](../spec.md#success-criteria--verification-plan)"
 ROOT = Path(__file__).resolve().parents[1]
+# SPEC-0107 package before 2a9daeb7 added a second Task; later edits must not
+# change this fixture.
+PACKAGE_SNAPSHOT = (
+    "2a27d98f520c6f0b5f261cc59355aae57184cf75"  # pragma: allowlist secret
+)
 
 
 def load_lifecycle_cli():
@@ -226,7 +231,9 @@ class ApprovedPackageRetentionTests(unittest.TestCase):
         plan = self.package / "plan.md"
         task = self.package / "tasks/tsk-0001-local-qa-and-release.md"
         texts = {
-            path: (ROOT / path).read_text(encoding="utf-8")
+            path: subprocess.check_output(
+                ["git", "show", f"{PACKAGE_SNAPSHOT}:{path}"], cwd=ROOT, text=True
+            )
             for path in (spec, plan, task)
         }
         for path in (spec, plan):
