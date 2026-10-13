@@ -28,7 +28,7 @@ Execute the two work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | Pin the acceptance test package snapshot | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | Pin the acceptance test package snapshot | platform | completed | PASS | EVD-003 in this commit |
 | WORK-002 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | Project the generation Task and replace the retired edge | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -37,6 +37,7 @@ Execute the two work units of the [Plan](../plan.md) for
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests and staged QA | WORK-001 commit index | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-FIXTURE-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Focused tests and staged QA | WORK-002 commit index | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-FIXTURE-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests and staged QA | `tests.test_task_acceptance_contract` from the validation environment: 12 tests with 2 `ApprovedPackageRetentionTests` failures (`COMPLETION-ALLOCATION`, `COMPLETION-ACCEPTANCE`) on main `07ef6b7e`, 12 OK after reading the three SPEC-0107 files from `2a27d98f`; no assertion changed. A scratch-clone `git bisect` placed the break on `2a9daeb7`. `qa.py staged` on the WORK-001 index first failed `selected-nonstyle` (detect-secrets on the SHA) and then `selected-style` (format); after the repository's allowlist pragma and Ruff format, all 10 selected gates passed | PASS | This Task; WORK-001 commit | yes | EVD-001 |
 
 ## Criterion Acceptance
 
