@@ -23,6 +23,9 @@ which discarded task-local context and kept no memory directory
 (Spec 0054 and Spec 0065 retirements); the implementing Task revises that
 policy and REQ-0003-FR-0022 together.
 
+The [Plan](plan.md) orders the work and
+[Task 0001](tasks/tsk-0001-shared-workspace-memory.md) records it.
+
 ## Strategic Boundaries & Non-goals
 
 - In scope once approved: a SQLite store, a shared CLI, tier schemas,
