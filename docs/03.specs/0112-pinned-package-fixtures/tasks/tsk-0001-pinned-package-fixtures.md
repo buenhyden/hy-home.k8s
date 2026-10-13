@@ -2,7 +2,7 @@
 title: "Pinned Package Fixtures in Lifecycle Tests"
 version: "0.1.0"
 type: "sdlc/task"
-status: "ready"
+status: "in-progress"
 owner: "platform"
 updated: "2026-10-13"
 layer: "specs"
