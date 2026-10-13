@@ -73,6 +73,7 @@ class NativeBoundaryTests(unittest.TestCase):
             "CLAUDE.md",
             ".claude/settings.json",
             ".codex/config.toml",
+            ".codex/rules/default.rules",
             ".claude/hooks/k8s-pre-edit.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
@@ -893,6 +894,20 @@ class NativeBoundaryTests(unittest.TestCase):
                 config.write_text(original.replace(old, new))
                 self.assert_rejected("AGENT-NATIVE-CONFIG")
         config.write_text(original)
+
+    def test_codex_forbidden_rules_are_pinned(self):
+        rules = self.root / ".codex/rules/default.rules"
+        original = rules.read_text()
+        for text in (
+            original.replace('decision = "forbidden"', 'decision = "allow"', 1),
+            original + 'prefix_rule(pattern = ["git"], decision = "allow")\n',
+        ):
+            with self.subTest(text=text[-60:]):
+                rules.write_text(text)
+                self.assert_rejected("AGENT-NATIVE-CONFIG")
+        rules.unlink()
+        self.assert_rejected("AGENT-NATIVE-CONFIG")
+        rules.write_text(original)
 
     def test_unsupported_settings_and_automatic_qa_hook_reject(self):
         import copy

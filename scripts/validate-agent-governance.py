@@ -8,6 +8,7 @@ Provider binding tables own native values copied into runtime projections.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import posixpath
@@ -44,6 +45,11 @@ RETIRED_SURFACES = (
     "GEMINI.md",
 )
 CODEX_CONFIG_PATH = ".codex/config.toml"
+# SPEC-0114: the reviewed Codex execpolicy file. A digest keeps it exact the
+# way the config and Claude permission lists are exact; a reviewed edit
+# updates this value together with the file.
+CODEX_RULES_PATH = ".codex/rules/default.rules"
+CODEX_RULES_SHA256 = "35e7f71fae743059befbe4aa33ecd3b40c8add9f9469bc6334b1699646d381f1"  # pragma: allowlist secret
 CODEX_CONFIG = {
     "approval_policy": "on-request",
     "sandbox_mode": "workspace-write",
@@ -1531,6 +1537,9 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
             "project Codex config must equal the reviewed sandbox, environment "
             "and memory settings",
         )
+    rules_text = _read_text(root, CODEX_RULES_PATH, "AGENT-NATIVE-CONFIG")
+    if hashlib.sha256(rules_text.encode("utf-8")).hexdigest() != CODEX_RULES_SHA256:
+        fail("AGENT-NATIVE-CONFIG", "project Codex rules differ from the reviewed file")
     # Exact equality is what bounds the allow list. A list of forbidden broad
     # grants would be weaker than this and would read as the real control, so
     # this comparison stays the only one. Ignored personal settings are outside

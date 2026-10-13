@@ -1,0 +1,74 @@
+# Project Codex execpolicy rules (SPEC-0114).
+# These forbid the command families that `.claude/settings.json` denies.
+# A rule matches an exact argv prefix, so a form whose dangerous token sits
+# behind an option it cannot predict (for example `kubectl -n x delete`) is
+# not covered here; the workspace sandbox and the approval policy remain the
+# primary Codex controls, and SPEC-0114 records these limits as residual risk.
+
+# Secret output.
+prefix_rule(pattern = ["gh", "auth", "token"], decision = "forbidden", justification = "prints a GitHub token")
+prefix_rule(pattern = ["vault", "print", "token"], decision = "forbidden", justification = "prints a Vault token")
+prefix_rule(pattern = ["vault", ["read", "login"]], decision = "forbidden", justification = "reads Vault secrets or credentials")
+prefix_rule(pattern = ["vault", "kv", "get"], decision = "forbidden", justification = "reads Vault secrets")
+prefix_rule(pattern = ["vault", "token", ["lookup", "create"]], decision = "forbidden", justification = "exposes or mints Vault tokens")
+prefix_rule(pattern = ["kubectl", "config", "view", "--raw"], decision = "forbidden", justification = "prints kubeconfig credentials")
+prefix_rule(pattern = ["kubectl", ["get", "describe"], ["secret", "secrets"]], decision = "forbidden", justification = "reads Kubernetes secrets")
+prefix_rule(pattern = ["k3d", "kubeconfig"], decision = "forbidden", justification = "prints kubeconfig credentials")
+prefix_rule(pattern = ["helm", "get", "values"], decision = "forbidden", justification = "values can carry secrets")
+prefix_rule(pattern = [["env", "printenv"]], decision = "forbidden", justification = "dumps the environment")
+
+# Cluster and tool mutation.
+prefix_rule(
+    pattern = ["kubectl", ["delete", "apply", "create", "replace", "exec", "patch", "edit", "label", "annotate", "set", "scale", "port-forward", "drain", "cordon", "uncordon", "taint", "cp", "debug", "attach", "run", "proxy"]],
+    decision = "forbidden",
+    justification = "live cluster mutation or access needs an explicit operator action",
+)
+prefix_rule(pattern = ["kubectl", "rollout", ["restart", "undo"]], decision = "forbidden", justification = "live cluster mutation")
+prefix_rule(pattern = ["helm", ["install", "upgrade", "uninstall", "delete", "rollback"]], decision = "forbidden", justification = "live release mutation")
+prefix_rule(pattern = ["vault", ["write", "delete"]], decision = "forbidden", justification = "Vault mutation")
+prefix_rule(pattern = ["vault", "kv", ["put", "patch", "delete", "destroy"]], decision = "forbidden", justification = "Vault mutation")
+prefix_rule(pattern = ["vault", "kv", "metadata", "delete"], decision = "forbidden", justification = "Vault mutation")
+prefix_rule(pattern = ["vault", "secrets", "disable"], decision = "forbidden", justification = "Vault mutation")
+prefix_rule(pattern = ["vault", "policy", "write"], decision = "forbidden", justification = "Vault mutation")
+prefix_rule(pattern = ["argocd", "app", ["sync", "set", "patch", "delete", "create", "unset", "terminate-op", "rollback"]], decision = "forbidden", justification = "Argo CD mutation")
+prefix_rule(pattern = ["argocd", "account", "generate-token"], decision = "forbidden", justification = "mints an Argo CD token")
+prefix_rule(pattern = ["argocd", "cluster", "rm"], decision = "forbidden", justification = "Argo CD mutation")
+prefix_rule(pattern = ["k3d", "cluster", ["delete", "stop"]], decision = "forbidden", justification = "local cluster destruction")
+prefix_rule(pattern = ["k3d", ["node", "registry"], "delete"], decision = "forbidden", justification = "local cluster destruction")
+
+# Deletion and history destruction.
+prefix_rule(pattern = ["rm", ["-rf", "-fr", "-Rf", "-fR", "-r", "-R", "-f", "--recursive", "--force"]], decision = "forbidden", justification = "forced or recursive deletion")
+prefix_rule(pattern = ["sudo"], decision = "forbidden", justification = "privilege escalation")
+prefix_rule(pattern = ["git", "reset", "--hard"], decision = "forbidden", justification = "discards work")
+prefix_rule(pattern = ["git", ["clean", "restore", "rebase", "filter-branch", "filter-repo"]], decision = "forbidden", justification = "discards work or rewrites history")
+prefix_rule(pattern = ["git", "commit", "--amend"], decision = "forbidden", justification = "rewrites history")
+prefix_rule(pattern = ["git", "checkout", ["--", "-f", "--force"]], decision = "forbidden", justification = "discards work")
+prefix_rule(pattern = ["git", "switch", ["-f", "--force", "--discard-changes"]], decision = "forbidden", justification = "discards work")
+prefix_rule(pattern = ["git", "stash", ["drop", "clear"]], decision = "forbidden", justification = "discards work")
+prefix_rule(pattern = ["git", "branch", ["-D", "-df"]], decision = "forbidden", justification = "forced branch deletion")
+prefix_rule(pattern = ["git", "branch", ["-d", "--delete"], ["-f", "--force"]], decision = "forbidden", justification = "forced branch deletion")
+prefix_rule(pattern = ["git", "update-ref", "-d"], decision = "forbidden", justification = "ref deletion")
+prefix_rule(pattern = ["git", "reflog", "expire"], decision = "forbidden", justification = "history destruction")
+prefix_rule(pattern = ["git", "gc", ["--prune", "--prune=now"]], decision = "forbidden", justification = "history destruction")
+prefix_rule(pattern = ["git", "worktree", "remove", ["-f", "--force"]], decision = "forbidden", justification = "forced worktree removal")
+prefix_rule(pattern = ["git", "config", "--global"], decision = "forbidden", justification = "user-level configuration")
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease", "--delete", "-d", "--mirror", "--prune"]],
+    decision = "forbidden",
+    justification = "forced, deleting or mirroring push",
+)
+prefix_rule(
+    pattern = ["git", "push", "origin", ["--force", "-f", "--force-with-lease", "--delete", "-d", "--mirror", "--prune"]],
+    decision = "forbidden",
+    justification = "forced, deleting or mirroring push",
+)
+prefix_rule(
+    pattern = ["git", "push", "-u", "origin", ["--force", "-f", "--force-with-lease", "--delete", "-d", "--mirror", "--prune"]],
+    decision = "forbidden",
+    justification = "forced, deleting or mirroring push",
+)
+prefix_rule(pattern = ["gh", ["secret", "variable"]], decision = "forbidden", justification = "repository secret or variable change")
+prefix_rule(pattern = ["gh", "repo", ["delete", "edit"]], decision = "forbidden", justification = "repository mutation")
+prefix_rule(pattern = ["gh", "release", ["create", "delete"]], decision = "forbidden", justification = "release publication or deletion")
+prefix_rule(pattern = ["gh", "workflow", "run"], decision = "forbidden", justification = "remote dispatch")
+prefix_rule(pattern = ["gh", "run", "cancel"], decision = "forbidden", justification = "remote run mutation")
