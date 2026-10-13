@@ -53,8 +53,12 @@ Execute the single work unit of the [Plan](../plan.md) for
 - **Forbidden Paths**: `scripts/`, `docs/99.templates/`, other Spec
   packages, frozen Archive payloads, live cluster, Vault and secret
   material.
-- **Approval Required**: SPEC-0112 and Plan approval, push, pull request
-  and merge await the operator.
+- **Approval Required**: the operator approved SPEC-0112 and its Plan for
+  implementation on 2026-10-13 after reviewing the draft at `33b19203`.
+  A scripting error put the Spec and Plan approval and this Task's start in
+  one commit, `d3487935`, whose message names only the start; each
+  document still moved one edge. Push, pull request and merge await the
+  operator.
 - **Static Validation**: archive simulation in a scratch clone, focused
   tests and staged QA from the documented validation environment.
 - **Live Validation**: DEFER — no live surface is touched.
