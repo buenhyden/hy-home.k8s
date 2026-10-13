@@ -9,12 +9,14 @@ it, and never run an executable selected by tool input. Codex supplies no
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -558,6 +560,33 @@ class ProviderAdapterOwnershipTest(unittest.TestCase):
             self.assertNotIn(".claude/", command)
             self.assertIn(".codex/hooks/", command)
 
+    def test_the_codex_registration_blocks_outside_the_repository(self):
+        """SPEC-0114: a session directory without this checkout must not skip
+        the guard; the runtime blocks only on exit 2."""
+        registration = json.loads(CODEX_REGISTRATION_PATH.read_text(encoding="utf-8"))
+        command = registration["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        payload = scalar_payload(SAMPLE_DOCUMENT)
+        with tempfile.TemporaryDirectory() as outside:
+            blocked = subprocess.run(
+                ("/bin/sh", "-c", command),
+                input=payload,
+                capture_output=True,
+                text=True,
+                cwd=outside,
+                timeout=60,
+            )
+        self.assertEqual(blocked.returncode, 2, blocked.stderr)
+        self.assertIn("[FAIL]", blocked.stderr)
+        inside = subprocess.run(
+            ("/bin/sh", "-c", command),
+            input=payload,
+            capture_output=True,
+            text=True,
+            cwd=str(ROOT),
+            timeout=60,
+        )
+        self.assertEqual(inside.returncode, 0, inside.stderr)
+
     def test_the_codex_adapter_exists_and_names_its_provider(self):
         self.assertTrue(
             CODEX_ADAPTER_PATH.is_file(), "the Codex adapter must be a real file"
@@ -808,9 +837,13 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
         guard_source = GUARD_PATH.read_text(encoding="utf-8")
         namespace: dict = {}
         for line in guard_source.splitlines():
-            if line.startswith("SELECTOR_TIMEOUT_SECONDS ="):
+            if line.startswith(("SELECTOR_TIMEOUT_SECONDS =", "GIT_TIMEOUT_SECONDS =")):
                 exec(line, namespace)  # noqa: S102 - one reviewed constant line
-        bound = namespace["SELECTOR_TIMEOUT_SECONDS"]
+        # SPEC-0114: a hook killed by its timeout lets the call through, so the
+        # registration covers the selector plus the guard's four Git probe sites.
+        bound = (
+            namespace["SELECTOR_TIMEOUT_SECONDS"] + 4 * namespace["GIT_TIMEOUT_SECONDS"]
+        )
 
         registrations = []
         claude_settings = json.loads(
@@ -829,6 +862,121 @@ class ProviderScopedEnvironmentTests(unittest.TestCase):
             # A bound above the registration is never reached: the runtime
             # kills the hook first and the controlled rejection is lost.
             self.assertLessEqual(bound, timeout)
+
+
+class FailClosedGuardTests(unittest.TestCase):
+    """SPEC-0114: no tool shape, carrier or failure lets a write pass unchecked."""
+
+    def load_guard(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("guard_under_test", GUARD_PATH)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_notebook_edit_outside_the_repository_is_rejected(self):
+        payload = json.dumps(
+            {
+                "tool_name": "NotebookEdit",
+                "tool_input": {"notebook_path": "/etc/x.ipynb", "new_source": "x"},
+            }
+        )
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-PATH-ROOT", result.stderr)
+
+    def test_a_patch_carried_through_bash_is_evaluated(self):
+        command = (
+            "apply_patch <<'EOF'\n" + envelope("*** Update File: /etc/x") + "EOF\n"
+        )
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": command}})
+        result = run_hook(payload, ROOT)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-PATH-ROOT", result.stderr)
+
+    def test_an_unexpected_guard_error_blocks_with_a_reason(self):
+        guard = self.load_guard()
+
+        def explode(argv=None):
+            raise RuntimeError("synthetic")
+
+        guard.main = explode
+        with mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
+            self.assertEqual(guard.guarded_main([]), 2)
+        self.assertIn("HOOK-INTERNAL", stderr.getvalue())
+
+    def test_any_nonzero_guard_exit_blocks(self):
+        guard = self.load_guard()
+        guard.main = lambda argv=None: 1
+        with mock.patch("sys.stderr", new_callable=io.StringIO):
+            self.assertEqual(guard.guarded_main([]), 2)
+
+    def test_a_guard_that_outlives_its_deadline_blocks(self):
+        import time
+
+        guard = self.load_guard()
+        guard.GUARD_DEADLINE_SECONDS = 1
+
+        def hang(argv=None):
+            time.sleep(5)
+            return 0
+
+        guard.main = hang
+        with mock.patch("sys.stderr", new_callable=io.StringIO) as stderr:
+            self.assertEqual(guard.guarded_main([]), 2)
+        self.assertIn("HOOK-TIMEOUT", stderr.getvalue())
+
+    def test_each_adapter_blocks_when_the_interpreter_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fake = Path(directory) / "python3"
+            fake.write_text("#!/bin/sh\nexit 1\n")
+            fake.chmod(0o755)
+            for adapter in (HOOK_PATH, CODEX_ADAPTER_PATH):
+                with self.subTest(adapter=adapter.name):
+                    result = subprocess.run(
+                        ("/bin/bash", str(adapter)),
+                        input=scalar_payload(SAMPLE_DOCUMENT),
+                        capture_output=True,
+                        text=True,
+                        env={
+                            "PATH": f"{directory}:/usr/bin:/bin",
+                            "CLAUDE_PROJECT_DIR": str(ROOT),
+                        },
+                        cwd=str(ROOT),
+                        timeout=60,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn("[FAIL]", result.stderr)
+
+    def test_a_selector_rejection_reason_reaches_stderr(self):
+        guard = self.load_guard()
+        guard.run_surface_selector = lambda root: False
+        with (
+            mock.patch("sys.stdin", io.StringIO(scalar_payload(SAMPLE_DOCUMENT))),
+            mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,
+            mock.patch("sys.stdout", new_callable=io.StringIO),
+        ):
+            code = guard.guarded_main(
+                ["--provider", "codex", "--project-dir", str(ROOT)]
+            )
+        self.assertEqual(code, 2)
+        self.assertIn("HOOK-SURFACE-SELECTION", stderr.getvalue())
+
+    def test_each_adapter_blocks_when_the_interpreter_is_missing(self):
+        for adapter in (HOOK_PATH, CODEX_ADAPTER_PATH):
+            with self.subTest(adapter=adapter.name):
+                result = subprocess.run(
+                    ("/bin/bash", str(adapter)),
+                    input=scalar_payload(SAMPLE_DOCUMENT),
+                    capture_output=True,
+                    text=True,
+                    env={"PATH": "/nonexistent", "CLAUDE_PROJECT_DIR": str(ROOT)},
+                    cwd=str(ROOT),
+                    timeout=60,
+                )
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn("[FAIL]", result.stderr)
 
 
 if __name__ == "__main__":

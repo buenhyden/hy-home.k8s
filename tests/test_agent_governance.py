@@ -73,6 +73,7 @@ class NativeBoundaryTests(unittest.TestCase):
             "CLAUDE.md",
             ".claude/settings.json",
             ".codex/config.toml",
+            ".codex/rules/default.rules",
             ".claude/hooks/k8s-pre-edit.sh",
             ".agents/governance/model-selection.md",
             ".agents/workflows/work-lifecycle.md",
@@ -823,6 +824,23 @@ class NativeBoundaryTests(unittest.TestCase):
             path.write_text(json.dumps(changed))
             self.assert_rejected("AGENT-NATIVE-PERMISSION")
 
+    def test_bypass_permissions_mode_must_stay_disabled(self):
+        import json
+
+        path = self.root / ".claude/settings.json"
+        data = json.loads(path.read_text())
+        self.assertEqual(data["permissions"]["disableBypassPermissionsMode"], "disable")
+        for value in (None, "enable"):
+            with self.subTest(value=value):
+                changed = json.loads(path.read_text())
+                if value is None:
+                    del changed["permissions"]["disableBypassPermissionsMode"]
+                else:
+                    changed["permissions"]["disableBypassPermissionsMode"] = value
+                path.write_text(json.dumps(changed))
+                self.assert_rejected("AGENT-NATIVE-PERMISSION")
+                path.write_text(json.dumps(data))
+
     def test_native_memory_must_stay_disabled_on_both_providers(self):
         import copy
         import json
@@ -852,6 +870,45 @@ class NativeBoundaryTests(unittest.TestCase):
         config.unlink()
         self.assert_rejected("AGENT-NATIVE-CONFIG")
         config.write_text(original)
+
+    def test_codex_project_config_keeps_sandbox_and_secret_filtering(self):
+        import tomllib
+
+        config = self.root / ".codex/config.toml"
+        original = config.read_text()
+        data = tomllib.loads(original)
+        self.assertEqual(data["approval_policy"], "on-request")
+        self.assertEqual(data["sandbox_mode"], "workspace-write")
+        self.assertIs(data["sandbox_workspace_write"]["network_access"], False)
+        self.assertEqual(data["shell_environment_policy"]["inherit"], "core")
+        self.assertIs(
+            data["shell_environment_policy"]["ignore_default_excludes"], False
+        )
+        for old, new in (
+            ('approval_policy = "on-request"', 'approval_policy = "never"'),
+            ('sandbox_mode = "workspace-write"', 'sandbox_mode = "danger-full-access"'),
+            ("ignore_default_excludes = false", "ignore_default_excludes = true"),
+            ("network_access = false", "network_access = true"),
+            ('inherit = "core"', 'inherit = "all"'),
+        ):
+            with self.subTest(change=new):
+                config.write_text(original.replace(old, new))
+                self.assert_rejected("AGENT-NATIVE-CONFIG")
+        config.write_text(original)
+
+    def test_codex_forbidden_rules_are_pinned(self):
+        rules = self.root / ".codex/rules/default.rules"
+        original = rules.read_text()
+        for text in (
+            original.replace('decision = "forbidden"', 'decision = "allow"', 1),
+            original + 'prefix_rule(pattern = ["git"], decision = "allow")\n',
+        ):
+            with self.subTest(text=text[-60:]):
+                rules.write_text(text)
+                self.assert_rejected("AGENT-NATIVE-CONFIG")
+        rules.unlink()
+        self.assert_rejected("AGENT-NATIVE-CONFIG")
+        rules.write_text(original)
 
     def test_unsupported_settings_and_automatic_qa_hook_reject(self):
         import copy
@@ -1145,6 +1202,274 @@ class ReadOnlyShellScopeTests(unittest.TestCase):
                     encoding="utf-8"
                 )
                 self.assertIn("read-only repository search", body)
+
+
+def _bash_rule_matches(rule: str, command: str) -> bool:
+    """Approximate Claude Code Bash rule matching (SPEC-0114).
+
+    The rule text matches from the first character; `*` matches anything,
+    `:*` at the end equals a trailing ` *`, and a single trailing ` *` also
+    matches the bare command.
+    """
+    import re
+
+    inner = rule[len("Bash(") : -1]
+    if inner.endswith(":*"):
+        inner = inner[:-2] + " *"
+    if inner.endswith(" *") and inner.count("*") == 1:
+        pattern = re.escape(inner[:-2]) + r"(?: .*)?"
+    else:
+        pattern = ".*".join(re.escape(part) for part in inner.split("*"))
+    return re.fullmatch(pattern, command, re.S) is not None
+
+
+class NativeDenyCoverageTests(unittest.TestCase):
+    """Each named escape must hit a tracked Claude deny rule (SPEC-0114)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        settings = json.loads((ROOT / ".claude/settings.json").read_text())
+        cls.deny = settings["permissions"]["deny"]
+
+    def assert_denied(self, commands):
+        bash = [rule for rule in self.deny if rule.startswith("Bash(")]
+        for command in commands:
+            with self.subTest(command=command):
+                self.assertTrue(
+                    any(_bash_rule_matches(rule, command) for rule in bash),
+                    f"no deny rule matches {command!r}",
+                )
+
+    def assert_read_denied(self, rules):
+        for rule in rules:
+            with self.subTest(rule=rule):
+                self.assertIn(rule, self.deny)
+
+    def test_matcher_follows_the_documented_prefix_semantics(self):
+        self.assertTrue(
+            _bash_rule_matches("Bash(git push --delete:*)", "git push --delete x")
+        )
+        self.assertFalse(
+            _bash_rule_matches(
+                "Bash(git push --delete:*)", "git push origin --delete x"
+            )
+        )
+        self.assertTrue(
+            _bash_rule_matches("Bash(kubectl * delete *)", "kubectl -n a delete pod b")
+        )
+        self.assertTrue(_bash_rule_matches("Bash(gh auth token*)", "gh auth token"))
+
+    def test_secret_reads_and_output_are_denied(self):
+        self.assert_read_denied(
+            (
+                "Read(./secrets/**)",
+                "Read(~/.kube/**)",
+                "Read(~/.ssh/**)",
+                "Read(~/.vault-token)",
+                "Read(~/.config/gh/**)",
+                "Read(~/.claude/.credentials.json)",
+                "Read(~/.codex/auth.json)",
+                "Read(//proc/*/environ)",
+            )
+        )
+        self.assert_denied(
+            (
+                "gh auth token",
+                "vault print token",
+                "kubectl config view --raw",
+                "kubectl get --raw /api/v1/namespaces/a/secrets",
+                "k3d kubeconfig get local",
+                "kubectl -n a get secret b -o yaml",
+                "kubectl get -o yaml secret/b",
+                "helm get values release",
+                "export -p",
+                "declare -x",
+                "declare -p",
+                # A Read deny did not stop a Bash read in a session probe, so
+                # each secret path also needs a Bash pattern.
+                "cat secrets/a.pem",
+                "cat ./secrets/a.pem",
+                "cat .env",
+                "head -5 .env.local",
+                "grep -r k sub/.env",
+                "cat ~/.kube/config",
+                "cat ~/.ssh/id_ed25519",
+                "cat ~/.vault-token",
+                "cat ~/.config/gh/hosts.yml",
+                "cat ~/.claude/.credentials.json",
+                "cat ~/.codex/auth.json",
+                "cat /proc/self/environ",
+            )
+        )
+
+    def test_option_first_cluster_and_tool_mutation_is_denied(self):
+        verbs = (
+            "delete pod a",
+            "apply -f a.yaml",
+            "create ns a",
+            "replace -f a.yaml",
+            "exec a -- sh",
+            "patch deploy a -p {}",
+            "edit deploy a",
+            "label pod a k=v",
+            "annotate pod a k=v",
+            "set image deploy/a a=b",
+            "scale deploy a --replicas=0",
+            "rollout restart deploy/a",
+            "rollout undo deploy/a",
+            "port-forward svc/a 8080",
+            "drain node-a",
+            "cordon node-a",
+            "uncordon node-a",
+            "taint node node-a k=v:NoSchedule",
+            "cp a:/etc/x ./x",
+            "debug a -it --image=busybox",
+            "attach a",
+            "run a --image=busybox",
+            "proxy",
+        )
+        commands = [f"kubectl -n a {verb}" for verb in verbs]
+        commands += [f"kubectl --context c {verb}" for verb in verbs]
+        commands += [f"kubectl {verb}" for verb in verbs[-5:]]
+        commands += [
+            "helm install a chart",
+            "helm upgrade --install a chart",
+            "helm -n a uninstall a",
+            "helm delete a",
+            "helm rollback a 1",
+            "vault kv delete secret/a",
+            "vault kv destroy -versions=1 secret/a",
+            "vault kv metadata delete secret/a",
+            "vault delete secret/a",
+            "vault secrets disable kv",
+            "vault policy write a a.hcl",
+            "vault token create",
+            "vault login",
+            "argocd --grpc-web app sync a",
+            "argocd --grpc-web app delete a",
+            "argocd app rollback a 1",
+            "argocd account generate-token",
+            "argocd cluster rm a",
+            "k3d node delete a",
+            "k3d registry delete a",
+            "k3d cluster stop a",
+        ]
+        self.assert_denied(commands)
+
+    def test_delivery_commands_are_allowed_and_raw_api_asks(self):
+        import json
+
+        permissions = json.loads((ROOT / ".claude/settings.json").read_text())[
+            "permissions"
+        ]
+
+        def decision(command):
+            # Deny, then ask, then allow: the first list with a match decides.
+            for kind in ("deny", "ask", "allow"):
+                if any(_bash_rule_matches(r, command) for r in permissions[kind]):
+                    return kind
+            return None
+
+        for command in (
+            "git log --oneline -3",
+            "git show HEAD",
+            "git fetch origin",
+            "git ls-remote --heads origin",
+            "git merge --ff-only origin/main",
+            "gh pr view 1",
+            "gh pr checks 1",
+            "gh pr list",
+            "gh pr diff 1",
+            "gh pr create --base main --title a --body b",
+            "gh pr merge 1 --merge",
+            "gh run view 1",
+            "gh run list",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(decision(command), "allow")
+        # A refspec deletion (`origin :branch`) cannot be denied by a pattern,
+        # so every push keeps a prompt (operator decision, SPEC-0114 review).
+        for command in (
+            "git push -u origin feat/a",
+            "git push origin :feat/a",
+            "git push origin +main",
+            "gh api repos/a/b",
+            "git -C sub status",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(decision(command), "ask")
+        for command in (
+            "gh pr merge --admin 1",
+            "gh pr merge 1 --admin",
+            "git push --force-with-lease origin main",
+            "git push -d origin feat/a",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(decision(command), "deny")
+        self.assertNotIn("Bash(*)", permissions["allow"])
+
+    def test_deletion_and_history_destruction_is_denied(self):
+        self.assert_denied(
+            (
+                "rm -fr a",
+                "rm -Rf a",
+                "rm -r -f a",
+                "rm -r a",
+                "rm --recursive a",
+                "rm --force a",
+                "rm a -rf",
+                "rm -f a",
+                "sudo rm -rf a",
+                "find . -name x -delete",
+                "git push origin --force",
+                "git push origin --force-with-lease",
+                "git push origin -f",
+                "git push origin --delete a",
+                "git push -u origin --delete a",
+                "git push origin -d a",
+                "git push origin --mirror",
+                "git push origin --prune",
+                "git branch -d -f a",
+                "git branch --delete --force a",
+                "git branch -df a",
+                "git checkout -f",
+                "git checkout --force main",
+                "git switch --discard-changes main",
+                "git switch -f main",
+                "git stash drop",
+                "git stash clear",
+                "git filter-branch --all",
+                "git filter-repo --path a",
+                "git update-ref -d refs/heads/a",
+                "git reflog expire --all",
+                "git gc --prune=now",
+                "git worktree remove --force a",
+                "git worktree remove a --force",
+                "git config --global user.name a",
+                "gh secret set A",
+                "gh variable set A",
+                "gh repo delete a",
+                "gh repo edit --visibility public",
+                "gh release delete v1",
+                "gh run cancel 1",
+                "gh pr merge 1 --admin",
+                # Allowed Git commands must not carry an executable or an
+                # arbitrary output path (automated security review).
+                "git fetch --upload-pack=sh origin",
+                "git fetch origin --upload-pack sh",
+                "git ls-remote -u sh origin",
+                "git ls-remote --upload-pack=sh origin",
+                "git push --receive-pack=sh origin a",
+                "git push origin a --exec=sh",
+                # `ext::` transports stay off by Git default
+                # (`protocol.ext.allow` unset); a rule ending in `::*` would
+                # read as the legacy trailing `:*` form, so none is added.
+                "git log --output=/tmp/a",
+                "git show HEAD --output /tmp/a",
+            )
+        )
 
 
 if __name__ == "__main__":

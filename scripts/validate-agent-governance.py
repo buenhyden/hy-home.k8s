@@ -8,6 +8,7 @@ Provider binding tables own native values copied into runtime projections.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import posixpath
@@ -44,7 +45,18 @@ RETIRED_SURFACES = (
     "GEMINI.md",
 )
 CODEX_CONFIG_PATH = ".codex/config.toml"
-CODEX_CONFIG = {"memories": {"generate_memories": False, "use_memories": False}}
+# SPEC-0114: the reviewed Codex execpolicy file. A digest keeps it exact the
+# way the config and Claude permission lists are exact; a reviewed edit
+# updates this value together with the file.
+CODEX_RULES_PATH = ".codex/rules/default.rules"
+CODEX_RULES_SHA256 = "79f1be94f8d76ce246e0c790d96009529330df875add78a8575e876d47739dc3"  # pragma: allowlist secret
+CODEX_CONFIG = {
+    "approval_policy": "on-request",
+    "sandbox_mode": "workspace-write",
+    "sandbox_workspace_write": {"network_access": False},
+    "shell_environment_policy": {"inherit": "core", "ignore_default_excludes": False},
+    "memories": {"generate_memories": False, "use_memories": False},
+}
 PROVIDER_HOOK_PATHS = {
     "claude": ".claude/settings.json",
     "codex": ".codex/hooks.json",
@@ -79,14 +91,29 @@ CLAUDE_ALLOWED_PERMISSIONS = (
     "Bash(git diff --cached --name-only)",
     "Bash(git rev-parse HEAD)",
     "Bash(git ls-files)",
+    "Bash(git log *)",
+    "Bash(git show *)",
+    "Bash(git fetch *)",
+    "Bash(git ls-remote *)",
+    "Bash(git merge *)",
+    "Bash(gh pr view *)",
+    "Bash(gh pr checks *)",
+    "Bash(gh pr list *)",
+    "Bash(gh pr diff *)",
+    "Bash(gh pr create *)",
+    "Bash(gh pr merge *)",
+    "Bash(gh run view *)",
+    "Bash(gh run list *)",
 )
-# Requested pushes, merges and pull requests stay behind a per-call prompt;
-# force, delete and mirror pushes remain denied below.
+# SPEC-0114: merges and pull requests run without a native prompt because an
+# operator request is their approval; force, delete, mirror and admin forms
+# stay denied below. Raw API calls, `git -C` and every push keep a prompt
+# because a prefix rule cannot see their effect; a refspec deletion such as
+# `origin :branch` has no expressible deny pattern.
 CLAUDE_ASK_PERMISSIONS = (
-    "Bash(git push:*)",
-    "Bash(git merge:*)",
-    "Bash(gh pr create:*)",
-    "Bash(gh pr merge:*)",
+    "Bash(gh api *)",
+    "Bash(git -C *)",
+    "Bash(git push *)",
 )
 CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Read(./.env)",
@@ -146,6 +173,146 @@ CLAUDE_REQUIRED_DENY_PERMISSIONS = (
     "Bash(git push --mirror:*)",
     "Bash(rm -rf:*)",
     "Bash(k3d cluster delete:*)",
+    "Read(./secrets/**)",
+    "Read(~/.kube/**)",
+    "Read(~/.ssh/**)",
+    "Read(~/.vault-token)",
+    "Read(~/.config/gh/**)",
+    "Read(~/.claude/.credentials.json)",
+    "Read(~/.codex/auth.json)",
+    "Read(//proc/*/environ)",
+    "Bash(gh auth token*)",
+    "Bash(vault print token*)",
+    "Bash(kubectl *--raw*)",
+    "Bash(k3d kubeconfig *)",
+    "Bash(kubectl * secret*)",
+    "Bash(helm get values*)",
+    "Bash(export -p*)",
+    "Bash(declare -x*)",
+    "Bash(declare -p*)",
+    "Bash(* secrets/*)",
+    "Bash(* ./secrets/*)",
+    "Bash(* .env*)",
+    "Bash(*/.env*)",
+    "Bash(*/.kube/*)",
+    "Bash(*/.ssh/*)",
+    "Bash(*.vault-token*)",
+    "Bash(*/.config/gh/*)",
+    "Bash(*.credentials.json*)",
+    "Bash(*/.codex/auth.json*)",
+    "Bash(*/environ*)",
+    "Bash(kubectl * delete *)",
+    "Bash(kubectl * apply *)",
+    "Bash(kubectl * create *)",
+    "Bash(kubectl * replace *)",
+    "Bash(kubectl * exec *)",
+    "Bash(kubectl * patch *)",
+    "Bash(kubectl * edit *)",
+    "Bash(kubectl * label *)",
+    "Bash(kubectl * annotate *)",
+    "Bash(kubectl * set *)",
+    "Bash(kubectl * scale *)",
+    "Bash(kubectl * rollout restart *)",
+    "Bash(kubectl * rollout undo *)",
+    "Bash(kubectl * port-forward *)",
+    "Bash(kubectl * drain *)",
+    "Bash(kubectl * cordon *)",
+    "Bash(kubectl * uncordon *)",
+    "Bash(kubectl * taint *)",
+    "Bash(kubectl * cp *)",
+    "Bash(kubectl * debug *)",
+    "Bash(kubectl * attach *)",
+    "Bash(kubectl * run *)",
+    "Bash(kubectl * proxy *)",
+    "Bash(kubectl * proxy)",
+    "Bash(kubectl cp *)",
+    "Bash(kubectl debug *)",
+    "Bash(kubectl attach *)",
+    "Bash(kubectl run *)",
+    "Bash(kubectl proxy *)",
+    "Bash(helm install *)",
+    "Bash(helm * install *)",
+    "Bash(helm upgrade *)",
+    "Bash(helm * upgrade *)",
+    "Bash(helm uninstall *)",
+    "Bash(helm * uninstall *)",
+    "Bash(helm delete *)",
+    "Bash(helm * delete *)",
+    "Bash(helm rollback *)",
+    "Bash(helm * rollback *)",
+    "Bash(vault kv delete*)",
+    "Bash(vault kv destroy*)",
+    "Bash(vault kv metadata delete*)",
+    "Bash(vault delete*)",
+    "Bash(vault secrets disable*)",
+    "Bash(vault policy write*)",
+    "Bash(vault token create*)",
+    "Bash(vault login*)",
+    "Bash(argocd * app sync*)",
+    "Bash(argocd * app delete*)",
+    "Bash(argocd app rollback*)",
+    "Bash(argocd * app rollback*)",
+    "Bash(argocd account generate-token*)",
+    "Bash(argocd cluster rm*)",
+    "Bash(k3d * delete*)",
+    "Bash(k3d cluster stop*)",
+    "Bash(rm -r*)",
+    "Bash(rm -R*)",
+    "Bash(rm -f*)",
+    "Bash(rm * -r*)",
+    "Bash(rm * -R*)",
+    "Bash(rm * -f*)",
+    "Bash(rm --recursive*)",
+    "Bash(rm * --recursive*)",
+    "Bash(rm --force*)",
+    "Bash(rm * --force*)",
+    "Bash(sudo *)",
+    "Bash(find * -delete*)",
+    "Bash(git push * --force*)",
+    "Bash(git push * -f*)",
+    "Bash(git push * --delete*)",
+    "Bash(git push * -d *)",
+    "Bash(git push * --mirror*)",
+    "Bash(git push * --prune*)",
+    "Bash(git branch * --force*)",
+    "Bash(git branch -d -f*)",
+    "Bash(git branch -df*)",
+    "Bash(git checkout -f*)",
+    "Bash(git checkout --force*)",
+    "Bash(git switch --discard-changes*)",
+    "Bash(git switch * --discard-changes*)",
+    "Bash(git switch -f*)",
+    "Bash(git switch --force*)",
+    "Bash(git stash drop*)",
+    "Bash(git stash clear*)",
+    "Bash(git filter-branch*)",
+    "Bash(git filter-repo*)",
+    "Bash(git update-ref -d*)",
+    "Bash(git reflog expire*)",
+    "Bash(git gc --prune*)",
+    "Bash(git worktree remove --force*)",
+    "Bash(git worktree remove -f*)",
+    "Bash(git worktree remove * --force*)",
+    "Bash(git config --global*)",
+    "Bash(gh secret *)",
+    "Bash(gh variable *)",
+    "Bash(gh repo delete*)",
+    "Bash(gh repo edit*)",
+    "Bash(gh release delete*)",
+    "Bash(gh run cancel*)",
+    "Bash(gh pr merge * --admin*)",
+    "Bash(git *--upload-pack*)",
+    "Bash(git *--receive-pack*)",
+    "Bash(git *--exec*)",
+    "Bash(git *--output*)",
+    "Bash(git ls-remote -u*)",
+    "Bash(git ls-remote * -u*)",
+    "Bash(git fetch -u*)",
+    "Bash(git fetch * -u*)",
+    "Bash(gh pr merge --admin*)",
+    "Bash(git push --force-with-lease*)",
+    "Bash(git push -d *)",
+    "Bash(git push --prune*)",
 )
 
 
@@ -1378,7 +1545,14 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     except tomllib.TOMLDecodeError:
         fail("AGENT-NATIVE-CONFIG", "project Codex config is not TOML")
     if codex_config != CODEX_CONFIG:
-        fail("AGENT-NATIVE-CONFIG", "project Codex config must only disable memories")
+        fail(
+            "AGENT-NATIVE-CONFIG",
+            "project Codex config must equal the reviewed sandbox, environment "
+            "and memory settings",
+        )
+    rules_text = _read_text(root, CODEX_RULES_PATH, "AGENT-NATIVE-CONFIG")
+    if hashlib.sha256(rules_text.encode("utf-8")).hexdigest() != CODEX_RULES_SHA256:
+        fail("AGENT-NATIVE-CONFIG", "project Codex rules differ from the reviewed file")
     # Exact equality is what bounds the allow list. A list of forbidden broad
     # grants would be weaker than this and would read as the real control, so
     # this comparison stays the only one. Ignored personal settings are outside
@@ -1387,6 +1561,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         "allow": list(CLAUDE_ALLOWED_PERMISSIONS),
         "ask": list(CLAUDE_ASK_PERMISSIONS),
         "deny": list(CLAUDE_REQUIRED_DENY_PERMISSIONS),
+        "disableBypassPermissionsMode": "disable",
     }:
         fail("AGENT-NATIVE-PERMISSION", "permission settings widened or lost denial")
     validate_provider_hooks(root, "claude", settings.get("hooks"))

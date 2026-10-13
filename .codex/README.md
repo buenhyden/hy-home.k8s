@@ -1,10 +1,10 @@
 ---
 title: "Codex Native Adapter"
-version: "2.3.0"
+version: "2.4.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-14"
 ---
 
 # Codex Native Adapter
@@ -42,11 +42,14 @@ model 접근, 역할 발견, 권한 강제를 증명하지 않는다. 생성기�
   소비한다. Claude는 이를 native command로도 투영하지만 그것은 Claude의 편의
   기능이지 공유 정책이 아니므로, 여기에 없는 것은 누락이 아니라 선언된
   차이다.
-- `config.toml`: native memory 생성과 사용을 끄는 `[memories]` 표만 담는다.
-  공유 workspace memory store를 쓰기 때문이며, validator가 다른 key나 표(특히
-  `[hooks]`)를 거부한다. hook 등록은 계속 `hooks.json` 한 파일이 소유한다.
-  Codex는 신뢰된 프로젝트에서만 프로젝트 설정을 적용한다.
-- 프로젝트 `skills/`와 `rules/`는 채택하지 않는다. Codex 프로젝트 skill은
+- `config.toml`: native memory를 끄는 `[memories]` 표와, 승인 정책, sandbox,
+  workspace network, 비밀 환경변수 필터(`[shell_environment_policy]`)를 담는다.
+  validator가 정확히 이 값만 허용하고 다른 key나 표(특히 `[hooks]`)를 거부한다.
+  hook 등록은 계속 `hooks.json` 한 파일이 소유한다. Codex는 신뢰된
+  프로젝트에서만 프로젝트 설정을 적용한다.
+- `rules/default.rules`: 비밀 출력, cluster 변경, 삭제·이력 파괴 명령을 argv
+  prefix로 금지하는 execpolicy 규칙. validator가 digest로 고정한다.
+- 프로젝트 `skills/`는 채택하지 않는다. Codex 프로젝트 skill은
   client가 문서화한 프로젝트 skill root인 `.agents/skills/`에 있다. 각 능력
   주장이 어떤 client 판본에서 관측되었는지는 [provider.md](provider.md)를 본다.
 

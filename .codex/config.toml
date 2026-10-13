@@ -1,6 +1,20 @@
 # Project Codex configuration. SPEC-0109: both providers use the shared
 # workspace memory store, so native memory generation and use stay disabled.
+# SPEC-0114: a command asks before it leaves the workspace sandbox, the sandbox
+# has no network access, so push, pull request and other network commands
+# need approval and meet the project rules, and only core environment
+# variables, without secret-named ones, reach shell commands.
 # Hook registration stays in hooks.json.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false
+
+[shell_environment_policy]
+inherit = "core"
+ignore_default_excludes = false
+
 [memories]
 generate_memories = false
 use_memories = false
