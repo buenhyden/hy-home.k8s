@@ -36,6 +36,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | WORK-004 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | F18 evidence correction | platform | completed | PASS | EVD-008 |
 | WORK-005 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | Remove the stale `.hadolint.yaml` route | platform | completed | PASS | EVD-007 |
 | WORK-006 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | `AGENTS.md` common and Codex-only blocks | platform | completed | PASS | EVD-009 |
+| WORK-007 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | Bound the memory store Git call with a timeout | platform | draft | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
@@ -53,6 +54,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | EVD-010 | [VAL-SYNC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Focused checks and staged QA | The Stage 99 README (v0.12.0) now states each `WGOV-CORE / 3.0.0` claim separately: common approval confirmed (Registry `approval_ref`, SPEC-0105 Task EVD-033); original-source verification confirmed only on the Project-Template input and not re-verified here, with its raw comparison data in the Git-ignored `_workspace/residual-controls/`; local acceptance complete for C07 only, with C04 and C08 applicability and full-core adoption pending; four-repository adoption unobserved and not claimed. `stage: candidate` is unchanged. Profile validator passed; `qa.py staged` on the WORK-003 index passed | PASS | This Task; WORK-003 commit | yes | EVD-003 |
 | EVD-011 | [VAL-SYNC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Focused checks and staged QA | New `test_frozen_exclusions_follow_the_registry` compares the sealed migration names in the pre-commit `&frozen_archive` exclusion with the Registry `archive/migration` `path_pattern`, and the markdownlint Archive ignores with the Registry retention classes and archive profile roots. It passed on the repository and failed on two tampered copies (one migration line removed from the exclusion; the `resolved/` ignore removed). `scripts/README.md` (v0.10.0) now separates fixing from checking with a copyable `pre-commit run <hook-id> --hook-stage manual --files <reviewed-path>...` recipe. The exclusion itself is unchanged. `qa.py staged` on the WORK-002 index passed | PASS | This Task; WORK-002 commit | yes | EVD-002 |
 | EVD-012 | [VAL-SYNC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused checks and staged QA | Corrected the audited stale text. SPEC-0109 (v0.3.0) no longer calls itself a pre-implementation draft: its Overview, limits, interface and FR-0022 row reflect the delivered store, and it links AD-0006 back. AD-0006 (v2.2.0) describes the memory store in its checkpoint section, names SPEC-0109 in the FR-0022 row and lists SPEC-0108 to SPEC-0113. REQ-0003 (v2.1.0, updated 2026-10-13) gains a Traceability paragraph for SPEC-0108 to SPEC-0113 and the SPEC-0107 links missing from FR-0001, FR-0005, FR-0024, FR-0026, FR-0027 and IF-0001. SPEC-0106 gains a dated successor note on the retired writer, SPEC-0108 VAL-TSKSUM-002 a point-in-time note, and ADR-0036 a sentence separating the SPEC-0109 store from the retired memory structure. The SPEC-0108 to SPEC-0112 Tasks each gain a delivery row for pull requests #140 to #142. The first staged run failed `BODY-LINK-RECIPROCAL` until SPEC-0109 linked AD-0006; the rerun passed | PASS | This Task; WORK-001 commit | yes | EVD-001 |
+| EVD-013 | [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | WORK-007 | Focused checks and staged QA | WORK-007 commit index | NOT_RUN | Pending | yes | none |
 
 ## Criterion Acceptance
 
@@ -64,6 +66,7 @@ Execute the six work units of the [Plan](../plan.md) for
 | [VAL-SYNC-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accept the correction record | platform |
 | [VAL-SYNC-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accept the route removal; reintroduction now fails closed | platform |
 | [VAL-SYNC-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accept the common and Codex-only blocks; a native split stays unverified and out of scope | platform |
+| [VAL-SYNC-007](../spec.md#success-criteria--verification-plan) | pending | none | Run WORK-007 checks | platform |
 
 ## Approval and Safety Boundaries
 
@@ -80,8 +83,11 @@ Execute the six work units of the [Plan](../plan.md) for
   `docs/99.templates/registry.json` and schemas, validators, workflows,
   frozen Archive payloads, live cluster, Vault and secret material.
 - **Approval Required**: the operator approved SPEC-0113 and its Plan for
-  implementation on 2026-10-13 after reviewing the draft at `535d8c11`;
-  push, pull request and merge await the operator.
+  implementation on 2026-10-13 after reviewing the draft at `535d8c11`.
+  After the full test run the operator added WORK-007 the same day, which
+  extends the allowed paths to `scripts/workspace_memory.py` and
+  `tests/test_workspace_memory.py`. Push, pull request and merge await the
+  operator.
 - **Static Validation**: focused tests, document validators and staged QA
   from the documented validation environment.
 - **Live Validation**: DEFER — no live surface is touched.

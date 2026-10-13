@@ -35,7 +35,10 @@ package closes. The [Plan](plan.md) orders the work and
   - F05 claim statuses;
   - the F18 evidence correction;
   - the F39 stale route;
-  - the F02 gateway section order.
+  - the F02 gateway section order;
+  - added by the operator on 2026-10-13: the missing subprocess timeout in
+    `scripts/workspace_memory.py`, a SPEC-0109 regression found by the full
+    test run.
 - Non-goals:
   - generating the pre-commit configuration;
   - a Stage 99 schema change;
@@ -104,6 +107,7 @@ Rollback is a forward revert of the package commits.
 | VAL-SYNC-004 | The SPEC-0110 Task records that the `greeting` and `label` results are not QA evidence. |
 | VAL-SYNC-005 | The `.hadolint.yaml` route is gone and the validation registry tests pass. |
 | VAL-SYNC-006 | `AGENTS.md` shows a common block and a labelled Codex-only block, and the governance validator and tests pass unchanged. |
+| VAL-SYNC-007 | `test_subprocess_run_calls_declare_a_timeout` fails on `scripts/workspace_memory.py` before the change and passes after it; a Git timeout reports `MEMORY_UNAVAILABLE`, and the store tests pass. |
 
 ## Traceability
 
@@ -117,3 +121,4 @@ Rollback is a forward revert of the package commits.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-SYNC-004 | Hosted results never certify local QA. |
 | [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-SYNC-005 | No orphan route on an active surface. |
 | [REQ-0003-FR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-SYNC-006 | Thin provider gateway boundary; governance validator. |
+| [REQ-0003-FR-0028](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-SYNC-007 | Bounded subprocess and deterministic failure; focused tests. |

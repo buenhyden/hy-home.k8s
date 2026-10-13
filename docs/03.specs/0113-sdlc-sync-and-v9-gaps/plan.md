@@ -49,6 +49,7 @@ The non-goals listed in the Spec.
 | WORK-004 | [VAL-SYNC-004](spec.md#success-criteria--verification-plan) | F18 evidence correction | None | [Task](tasks/tsk-0001-sdlc-sync-and-v9-gaps.md) | Document validators and staged QA |
 | WORK-005 | [VAL-SYNC-005](spec.md#success-criteria--verification-plan) | Remove the stale `.hadolint.yaml` route | None | [Task](tasks/tsk-0001-sdlc-sync-and-v9-gaps.md) | Validation registry tests and staged QA |
 | WORK-006 | [VAL-SYNC-006](spec.md#success-criteria--verification-plan) | `AGENTS.md` common and Codex-only blocks | None | [Task](tasks/tsk-0001-sdlc-sync-and-v9-gaps.md) | Governance validator, tests and staged QA |
+| WORK-007 | [VAL-SYNC-007](spec.md#success-criteria--verification-plan) | Bound the memory store Git call with a timeout | None | [Task](tasks/tsk-0001-sdlc-sync-and-v9-gaps.md) | Failing then passing tooling test, store tests and staged QA |
 
 ## Verification Plan
 
