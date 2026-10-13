@@ -6768,16 +6768,7 @@
       "Agent Harness Requirements"
     ],
     "min_latin_words": 8,
-    "pending_paths": [
-      ".agents/README.md",
-      ".agents/evaluations/README.md",
-      ".agents/evaluations/harnesses/README.md",
-      ".agents/evaluations/templates/README.md",
-      ".agents/knowledge/README.md",
-      ".agents/prompts/README.md",
-      ".claude/README.md",
-      ".codex/README.md"
-    ]
+    "pending_paths": []
   },
   "migration_admission": {
     "from_generation": 9,
