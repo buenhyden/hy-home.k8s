@@ -29,9 +29,9 @@ Execute the three work units of the [Plan](../plan.md) for
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Store module, CLI and Git ignore entry | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Memory policy and requirement revision | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Store module, CLI and Git ignore entry | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-MEMORY-002](../spec.md#success-criteria--verification-plan) | Native memory disablement and validation | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-MEMORY-001](../spec.md#success-criteria--verification-plan) | Memory policy and requirement revision | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
