@@ -76,6 +76,15 @@ if os.environ.get("STUB_MODE") == "block" and tool == "kubectl" and "version" in
 if os.environ.get("STUB_FAIL_TOOL") == tool:
     sys.exit(1)
 
+if tool == "curl":
+    append("CURL\t" + "\t".join(args))
+
+if tool == "curl" and os.environ.get("STUB_UNTRUSTED_TLS") == "1":
+    if any(arg.startswith("-k") or arg == "--insecure" for arg in args):
+        print("HTTP/2 200")
+        sys.exit(0)
+    sys.exit(60)
+
 VALUES = {
     ("svc", "valkey-external", "{.spec.ports[0].port}"): "6379",
     ("svc", "valkey-external", "{.spec.ports[0].targetPort}"): "26379",
@@ -101,12 +110,21 @@ VALUES = {
 if tool == "rm":
     os.execv("/usr/bin/rm", ["rm", *args])
 elif tool == "curl":
-    print("HTTP/2 200")
+    if "https://hy-k8s.home.arpa/argo" in args:
+        print("HTTP/2 302\nlocation: https://argo.hy-k8s.home.arpa/")
+    else:
+        print("HTTP/2 200")
 elif tool == "kubectl" and "version" not in args:
     append("KUBECTL\t" + "\t".join(args))
     get_index = args.index("get")
     kind = args[get_index + 1]
-    if kind == "svc,endpointslice":
+    if kind == "nodes":
+        print(os.environ.get("STUB_NODES", "\n".join(["node Ready control-plane 1d v1"] * 4)))
+    elif kind == "deploy":
+        print("1", end="")
+    elif kind == "ipaddresspool":
+        print("192.168.0.240-192.168.0.250", end="")
+    elif kind == "svc,endpointslice":
         if os.environ.get("STUB_FAIL_PLATFORM_LIST") == "1":
             sys.exit(1)
         print("valkey-external")
@@ -115,7 +133,9 @@ elif tool == "kubectl" and "version" not in args:
         print("path: gitops/apps/root")
         print("targetRevision: main")
     elif "jsonpath={.status.health.status}" in args:
-        print("Healthy", end="")
+        print(os.environ.get("STUB_APP_HEALTH", "Healthy"), end="")
+    elif "jsonpath={.status.sync.status}" in args:
+        print(os.environ.get("STUB_APP_SYNC", "Synced"), end="")
     else:
         name = args[get_index + 2]
         jsonpath = next(
@@ -141,7 +161,10 @@ EXPECTED_PASSES = {
 FAILURES = {
     "verify-gitops.sh": ("rg", "root-platform path contract mismatch"),
     "verify-external-services.sh": ("rg", "missing valkey-external"),
-    "verify-ingress-tls.sh": ("curl", "https fallback endpoint is not reachable"),
+    "verify-ingress-tls.sh": (
+        "curl",
+        "https fallback endpoint TLS trust or reachability failed",
+    ),
 }
 
 SIGNAL_CHILD_LAUNCHER = (
@@ -318,6 +341,73 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
         ]
         self.assertTrue(queries)
         self.assertTrue(all(query[:2] == ["-n", "platform"] for query in queries))
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_cluster_not_ready_nodes_do_not_count_as_ready(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-cluster.sh"
+        tmpdir = self.root / "cluster-not-ready"
+        tmpdir.mkdir()
+        log = self.root / "cluster-not-ready.log"
+
+        result = self.run_script(
+            script,
+            tmpdir,
+            log,
+            STUB_NODES="\n".join(["node NotReady control-plane 1d v1"] * 4),
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("expected at least 4 Ready nodes", result.stderr)
+
+    def test_gitops_requires_healthy_and_synced_apps(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-gitops.sh"
+        for state in ({"STUB_APP_HEALTH": "Degraded"}, {"STUB_APP_SYNC": "OutOfSync"}):
+            with self.subTest(state=state):
+                tmpdir = self.root / f"gitops-{next(iter(state.values()))}"
+                tmpdir.mkdir()
+                log = self.root / f"gitops-{next(iter(state.values()))}.log"
+
+                result = self.run_script(script, tmpdir, log, **state)
+
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("[FAIL]", result.stderr)
+                self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_ingress_rejects_untrusted_tls(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-ingress-tls.sh"
+        tmpdir = self.root / "ingress-untrusted"
+        tmpdir.mkdir()
+        log = self.root / "ingress-untrusted.log"
+
+        result = self.run_script(script, tmpdir, log, STUB_UNTRUSTED_TLS="1")
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("https fallback endpoint", result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_ingress_router_probes_use_local_ca_without_insecure_mode(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-ingress-tls.sh"
+        tmpdir = self.root / "ingress-router"
+        tmpdir.mkdir()
+        log = self.root / "ingress-router.log"
+
+        result = self.run_script(script, tmpdir, log, CHECK_K8S_ROUTER="true")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        calls = [
+            line.split("\t")[1:]
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("CURL\t")
+        ]
+        self.assertEqual(len(calls), 3)
+        for args in calls:
+            with self.subTest(args=args):
+                self.assertIn("--cacert", args)
+                self.assertEqual(
+                    args[args.index("--cacert") + 1],
+                    str(ROOT / "secrets/certs/rootCA.pem"),
+                )
+                self.assertFalse(any(arg.startswith("-k") for arg in args))
         self.assertEqual(list(tmpdir.iterdir()), [])
 
     def test_external_service_target_port_failure_keeps_cleanup(self) -> None:

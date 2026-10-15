@@ -1,10 +1,10 @@
 ---
 title: "verify"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-15"
 ---
 # verify
 
@@ -33,12 +33,12 @@ updated: "2026-10-05"
 
 | Test script | Type | Preconditions | Result semantics | Retention / command surface |
 | --- | --- | --- | --- | --- |
-| `verify-cluster.sh` | Live | Bootstrapped k3d context, trusted kubeconfig CA, kubectl, and MetalLB. | PASS means cluster node topology and MetalLB readiness match the local platform baseline. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and synchronized root/platform applications. | PASS means the live root Application source contract and required platform Application presence checks pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-secrets.sh` | Live | External Secrets Operator, Vault auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-external-services.sh` | Live | Platform namespace services and EndpointSlices exist for external PostgreSQL, Vault, Valkey, and observability contracts. | PASS means live service ports and EndpointSlice addresses match the declared local contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-cluster.sh` | Live | Bootstrapped k3d context, trusted kubeconfig CA, kubectl, and MetalLB. | PASS means at least four nodes report Ready and MetalLB matches the local platform baseline. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and reconciled root/platform applications. | PASS means the live root Application source contract holds and each required Application is Healthy and Synced. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-secrets.sh` | Live | External Secrets Operator, OpenBao HTTPS/Kubernetes auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-external-services.sh` | Live | Platform namespace Services and EndpointSlices exist for external Valkey and observability contracts. | PASS means live service ports and EndpointSlice addresses match the declared local contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS secret, curl, rg, and optional k8s router check inputs are available. | PASS means live ingress/TLS and fallback endpoint checks return the expected contracts. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS, the mkcert root CA file used by the verifier, curl, rg, and optional k8s router inputs are available. | PASS means ArgoCD ingress/TLS and fallback endpoint pass CA-verified HTTPS; router checks run only when enabled, and Headlamp/Kiali TLS type mismatches report warnings. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
 
 ## Usage

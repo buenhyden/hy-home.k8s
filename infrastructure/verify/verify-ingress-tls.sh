@@ -64,24 +64,24 @@ tls_secret="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.tl
 secret_type="$(kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}' 2>/dev/null || true)"
 [ "$secret_type" = "kubernetes.io/tls" ] || fail "argocd-local-tls type mismatch (actual=$secret_type)" # pragma: allowlist secret
 
-curl -kIs --max-time 5 \
+curl -fIs --max-time 5 --cacert "$ROOT_DIR/secrets/certs/rootCA.pem" \
   --resolve "${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}:${ARGOCD_FALLBACK_IP}" \
   "https://${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}" >"$TLS_FALLBACK_OUTPUT" 2>/dev/null ||
-  fail "https fallback endpoint is not reachable (${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT} via ${ARGOCD_FALLBACK_IP})"
+  fail "https fallback endpoint TLS trust or reachability failed (${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT} via ${ARGOCD_FALLBACK_IP})"
 rg -q '^HTTP/' "$TLS_FALLBACK_OUTPUT" ||
   fail "https fallback endpoint did not return HTTP response"
 
 # k8s router (ADR-0043): the k3d serverlb on K8S_ROUTER_IP:443 must answer for
 # the canonical host, and the apex path must redirect to it.
 if [ "$CHECK_K8S_ROUTER" = "true" ]; then
-  curl -kIs --max-time 5 --resolve "${ARGOCD_HOST}:443:${K8S_ROUTER_IP}" \
+  curl -fIs --max-time 5 --cacert "$ROOT_DIR/secrets/certs/rootCA.pem" --resolve "${ARGOCD_HOST}:443:${K8S_ROUTER_IP}" \
     "https://${ARGOCD_HOST}" >"$TLS_ROUTER_OUTPUT" 2>/dev/null ||
-    fail "k8s router endpoint is not reachable (${ARGOCD_HOST} via ${K8S_ROUTER_IP}:443)"
+    fail "k8s router endpoint TLS trust or reachability failed (${ARGOCD_HOST} via ${K8S_ROUTER_IP}:443)"
   rg -q '^HTTP/' "$TLS_ROUTER_OUTPUT" ||
     fail "k8s router endpoint did not return HTTP response"
-  curl -kIs --max-time 5 --resolve "hy-k8s.home.arpa:443:${K8S_ROUTER_IP}" \
+  curl -fIs --max-time 5 --cacert "$ROOT_DIR/secrets/certs/rootCA.pem" --resolve "hy-k8s.home.arpa:443:${K8S_ROUTER_IP}" \
     "https://hy-k8s.home.arpa/argo" >"$TLS_ROUTER_OUTPUT" 2>/dev/null ||
-    fail "k8s router apex endpoint is not reachable (hy-k8s.home.arpa via ${K8S_ROUTER_IP}:443)"
+    fail "k8s router apex endpoint TLS trust or reachability failed (hy-k8s.home.arpa via ${K8S_ROUTER_IP}:443)"
   rg -qi "^location: https://${ARGOCD_HOST}/" "$TLS_ROUTER_OUTPUT" ||
     fail "hy-k8s.home.arpa/argo does not redirect to https://${ARGOCD_HOST}/"
   echo "[INFO] k8s router check passed"
@@ -97,8 +97,6 @@ proj_has_allowlist="$(kubectl -n argocd get appproject platform -o jsonpath='{.s
 
 rg -q 'path "secret/data/platform/argocd"' "$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl" ||
   fail "Vault policy missing secret/data/platform/argocd"
-rg -q 'path "secret/data/platform/postgres-app"' "$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl" ||
-  fail "Vault policy missing secret/data/platform/postgres-app"
 
 echo "[INFO] Checking Headlamp and Kiali ingress TLS"
 

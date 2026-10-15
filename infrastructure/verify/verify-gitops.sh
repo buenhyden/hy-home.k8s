@@ -39,12 +39,17 @@ rg -q 'targetRevision: main' "$ROOT_PLATFORM_OUTPUT" ||
 check_app() {
   local app="$1"
   local health
+  local sync
   health="$(kubectl -n argocd get app "$app" -o jsonpath='{.status.health.status}' 2>/dev/null || true)"
   [ -n "$health" ] || fail "${app} app not found in argocd namespace"
-  echo "  - ${app}: health=${health}"
+  [ "$health" = "Healthy" ] || fail "${app} app health is ${health}, expected Healthy"
+  sync="$(kubectl -n argocd get app "$app" -o jsonpath='{.status.sync.status}' 2>/dev/null || true)"
+  [ "$sync" = "Synced" ] || fail "${app} app sync is ${sync:-missing}, expected Synced"
+  echo "  - ${app}: health=${health}, sync=${sync}"
 }
 
-echo "[INFO] Checking platform application presence"
+echo "[INFO] Checking root and platform application reconciliation"
+check_app "root-platform"
 check_app "platform-eso-config"
 check_app "platform-cert-manager"
 check_app "platform-cert-manager-config"

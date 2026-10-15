@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.7.0"
+version: "1.7.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-15"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -83,7 +83,7 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 | Reconciliation and permissions | [Cluster declarations](../../../gitops/clusters/local/) own the root Application, AppProjects and workload ApplicationSet; the root targets `gitops/apps/root`, and the ApplicationSet scans `gitops/workloads/*`. [Platform Applications](../../../gitops/apps/root/) and [namespace declarations](../../../gitops/platform/namespaces/) own platform desired state. | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) |
 | Host and browser entry | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml) binds the API to `192.168.0.13:6550` and serverlb to `192.168.0.14:80/443`, forwarding to ingress-nginx NodePorts `30080/30443`. k8s hosts use `<name>.hy-k8s.home.arpa` (`argo` for ArgoCD); [apex redirects](../../../gitops/platform/ingress-routes/) send `hy-k8s.home.arpa/<name>` to the HTTPS subdomain with 301. The external Traefik carries no k8s route (ADR-0042, ADR-0043, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); operator owns host addresses and name resolution |
 | External secrets | [ESO configuration](../../../gitops/platform/eso/) uses the `vault-backend` store and Vault API provider to reach external OpenBao at `https://openbao.hy.home.arpa` with a pinned CA. Bootstrap owns the CoreDNS host mapping and CA distribution; secret values stay outside Git (ADR-0041, ADR-0046). | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0002](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
-| External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) retain only the required management Valkey interface `valkey-external:6379` → host `192.168.0.13:26379` for ArgoCD. The external `hy-home.docker` source publishes `mng-pg` at `127.0.0.1:25432` and `dev-pg` at `127.0.0.1:25433`; `dev-valkey` exposes `6379` only in `dev_data_net`. No PostgreSQL or development Valkey K8s Service/EndpointSlice or LAN endpoint is declared. The former `postgres-ha`/`pg-router` write/read routes are retired from this repository; Valkey cluster had no K8s consumer. Earlier live samples refer to their dated source. Adminer has no default database server in current local source. A future K8s-to-PostgreSQL path requires a separately reviewed connection, policy and secret design; loopback TCP and container health do not establish that path. [ADR-0049](../decisions/0049-external-data-service-contract-alignment.md) is the proposed scoped amendment; its acceptance remains separate from this source description. | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md), [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md); external workspace owns data runtime and backups |
+| External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) retain only the required management Valkey interface `valkey-external:6379` → host `192.168.0.13:26379` for ArgoCD. The external `hy-home.docker` source publishes `mng-pg` at `127.0.0.1:25432` and `dev-pg` at `127.0.0.1:25433`; `dev-valkey` exposes `6379` only in `dev_data_net`. No PostgreSQL or development Valkey K8s Service/EndpointSlice or LAN endpoint is declared. The former `postgres-ha`/`pg-router` write/read routes are retired from this repository; Valkey cluster had no K8s consumer. Earlier live samples refer to their dated source. Adminer has no default database server in current local source. A future K8s-to-PostgreSQL path requires a separately reviewed connection, policy and secret design; loopback TCP and container health do not establish that path. [ADR-0049](../decisions/0049-external-data-service-contract-alignment.md) is the accepted scoped amendment; its acceptance does not establish live reconciliation or database reachability. | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md), [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md); external workspace owns data runtime and backups |
 | Telemetry and service UIs | [Alloy](../../../gitops/platform/monitoring/), [Kiali](../../../gitops/apps/root/platform-kiali-app.yaml) and [Rollouts](../../../gitops/apps/root/platform-rollouts-app.yaml) use the external observability backend. Prometheus and Grafana use HTTPS gateway names, authentication and CA verification; Loki, Tempo and Alloy OTLP retain Service/EndpointSlice interfaces. Metrics collection stays in-cluster; storage stays external (ADR-0037, ADR-0045, ADR-0046). | [RUN-0009](../../05.operations/runbooks/0009-k8s-observability-runbook.md), [POL-0003](../../05.operations/policies/0003-service-mesh-cert-manager-policy.md) |
 
 The executable sources own exact values and versions. These boundaries and the
@@ -102,7 +102,7 @@ This AD inherits AD-0010's boundaries for platform validation, interfaces, examp
 | Desired-state tree | [root Application](../../../gitops/clusters/local/root-application.yaml), [root kustomization](../../../gitops/apps/root/kustomization.yaml) | The static structure of root → platform Applications / workload ApplicationSet, not live reconciliation evidence |
 | Local runtime and namespace policy | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml), [namespace declarations](../../../gitops/platform/namespaces/) | Enforce only on workloads the repository owns and validates statically; chart/injection uncertainty is audit/warn |
 | Dispatch and GitHub projections | [Validation Registry](../../../scripts/validation/registry.json), [.github](../../../.github/) | The Registry owns lanes and argv; labels/CODEOWNERS projection parity remains an unassigned assurance residual after Spec 0048 was withdrawn without a successor |
-| Platform verification | [Validation Registry](../../../scripts/validation/registry.json), [platform assurance](../../../scripts/validation/platform/assurance.py), [static contract checks](../../../scripts/validate-infrastructure-contracts.sh) | Existing syntax, structure, policy and product gates compose with one full/CI offline render/schema gate. Per-target evidence identifies depth, tool/version, fallback and result; the runner owns the execution lane. Live observation remains separate. |
+| Platform verification | [Validation Registry](../../../scripts/validation/registry.json), [platform assurance](../../../scripts/validation/platform/assurance.py), [static contract checks](../../../scripts/validate-infrastructure-contracts.sh) | Affected-path and exact-index staged selection compose syntax, structure, policy and product checks with the offline render/schema purpose gate. Per-target evidence identifies depth, tool/version, fallback and result; the runner owns the execution lane. Live observation remains separate. |
 | Cloud examples | [AWS](../../../examples/aws/README.md), [Azure](../../../examples/azure/README.md) | Terraform/Bicep format/validate/lint/build; provider credentials, apply, or deploy need separate approval |
 | Local browser/service transport | [k8s router](../../../infrastructure/k3d/k3d-cluster.yaml), [apex redirects](../../../gitops/platform/ingress-routes/), [external service interfaces](../../../gitops/platform/external-services/) | Check the dedicated k8s router (ADR-0043) and the local-only transport exceptions without widening an exception into a general security allowance |
 
@@ -111,7 +111,8 @@ structure, policy, and the Vault/ESO source and secret boundary. A missing tool,
 input, an unsafe path, and a fallback each need a direct negative fixture, and a required-tool
 failure is not hidden as a SKIP.
 
-The full/CI platform gate renders reviewed local GitOps and sample-app roots
+The platform assurance gate runs when selected by affected paths or the staged
+index under the Validation Registry. It renders reviewed local GitOps and sample-app roots
 with an immutable Kustomize tool and validates covered built-in GVKs with the
 existing JSON Schema engine and a pinned offline Kubernetes schema corpus.
 The [schema manifest](../../../scripts/validation/platform/schemas/manifest.json)
@@ -121,6 +122,9 @@ unreviewed loading directives before rendering. This choice reuses the upstream
 renderer and installed schema engine; a local renderer implementation or a
 second schema CLI would duplicate their responsibilities. Remote bases,
 generators and plugin flexibility are outside the reviewed loading contract.
+Retired full/CI sweeps are not completion gates. Hosted metadata and selected
+style checks have their own observed inputs and cannot certify local platform
+assurance or live cluster health.
 
 [Platform reference checks](../../../scripts/validation/platform/ingress.py)
 resolve rendered Ingress class, host, TLS, namespace, backend Service and port
@@ -154,6 +158,10 @@ GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
 their scope currently has no implementation owner. The AD succession does not mean any tranche or WP-013 is complete.
+[SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md) owns the current
+scoped verifier and ESO consumer repairs under VAL-R10-008; its Task records
+selected static results and any separately authorized live observation. This
+follow-up does not reopen the withdrawn packages or certify live readiness.
 
 ## Data Architecture
 
