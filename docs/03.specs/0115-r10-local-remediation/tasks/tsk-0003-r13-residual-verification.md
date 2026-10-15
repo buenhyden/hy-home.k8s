@@ -1,8 +1,8 @@
 ---
 title: "r13 Residual Verification"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-16"
 layer: "specs"
@@ -41,11 +41,11 @@ new common edition, native isolation, protected workflow control or deployment.
   kubeconfig immediately before each selected verifier. Both verifiers used
   read-only Kubernetes GET operations and exited zero. Their results concern
   the observed cluster state, not deployment of `8d8fa1e5`.
-- `WORK-012` is first recorded `in-progress` because the scoped user authority,
+- `WORK-012` was first recorded `in-progress` because the scoped user authority,
   exact local delivery, draft PR and two selected live outcomes are already
-  observed. The hosted leaves have since passed, but the criterion decision
-  remains pending until this new document input receives independent review
-  and normal local validation/delivery.
+  observed. The hosted leaves then passed. Independent review and normal local
+  validation/delivery of the new document input completed before the acceptance
+  decision below.
 
 ## Task Table
 
@@ -53,7 +53,7 @@ new common edition, native isolation, protected workflow control or deployment.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-012 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | Verify the authorized exact PR and selected live checks; classify and hand off separate residual lanes | platform | frontmatter | NOT_RUN | EVD-001–007 record exact authorization, remote delivery, selected live and hosted PASS; independent document review and normal local delivery remain pending |
+| WORK-012 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | Verify the authorized exact PR and selected live checks; classify and hand off separate residual lanes | platform | frontmatter | PASS | EVD-001–007 record exact authorization, remote delivery, selected live and hosted PASS; EVD-013/014 record independent review and normal local delivery; separate lanes remain owner-bound |
 
 ## Task Evidence
 
@@ -71,12 +71,14 @@ new common edition, native isolation, protected workflow control or deployment.
 | EVD-010 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | WORK-012 | Independent workflow protection | PR-editable `ci.yml` and inline metadata projection; observed `main` required contexts `ci-summary` and `style-pr` from App `15368`, four active tag-only rulesets and `rules/branches/main=[]` | DEFER | Those branch/context observations do not establish an independently protected workflow producer. CI/repository owner retains HIGH risk and any reviewed remote control change | no | none |
 | EVD-011 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | WORK-012 | Global hooksPath provenance | User-relayed global-key query produced no stdout; exit status was not provided, while native automatic review denied the tool's exact global-key read | DEFER | No empty/unset PASS or global hook-chain claim follows from absent stdout; local Git operator owns a bounded provenance observation if needed | no | none |
 | EVD-012 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | WORK-012 | Broader live assurance | Full `run-all.sh`, HTTPS/authentication, ESO and NetworkPolicy checks outside the two selected GET runs | NOT_RUN | Responsible GitOps/security operators own any later approved targeted verification; selected EVD-004/005 do not establish these outcomes | no | none |
+| EVD-013 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | WORK-012 | Independent three-document review | Spec SHA-256 `470e9f99e22c31e20c63513d6e5086e978f3ee1e61f06dbb17bae93eb5c4738a`, Plan `5ea133b85e4bb9b188f489b9c3eb52fb1137a66891ab1ae5eaa615cbea258e33`, initial Task `38122681af0237d92e40e26d314091517fe1a600acf665ac057d98bd5a4d37e4`; later staged tree `8021050deeb06cbdc276aaf30ac0923d035e0492` held the identical three bytes | PASS | Registered code-reviewer `/root/final_reconciliation_review` approved the scoped Spec/Plan/Task substance, evidence classes and separate owner limits before the first commit. This review does not certify the later Task-only closeout hook | yes | none |
+| EVD-014 | [VAL-R13-004](../spec.md#success-criteria--verification-plan) | WORK-012 | Normal active staged document QA | Reviewed three-document index tree `8021050deeb06cbdc276aaf30ac0923d035e0492`; commit `2cf1db1d637e4f7558d26095eabc2b6068711bb1`; pinned local Python 3.12.3/pre-commit 4.6.1 | PASS | Normal commit hook reported `Validate Staged QA Snapshot`, `commitizen check`, and `Validate Generated Git Commit Message Exceptions` Passed; exact three-document commit succeeded and worktree/index were clean. This records the first document delivery, not an unobserved final Task-only hook or remote push | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-R13-004](../spec.md#success-criteria--verification-plan) | pending | EVD-001, EVD-002, EVD-003, EVD-004, EVD-005, EVD-006, EVD-007 | Required selected remote, hosted and live checks passed on their named inputs. Review this new Task and its lane handoffs, validate the actual local document index, then decide. Native, common-source, global-hook, independent workflow-protection and broader live outcomes remain separate unresolved owner work. | platform and CI transport owner; GitOps, native, common and local Git owners for their lanes |
+| [VAL-R13-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-002, EVD-003, EVD-004, EVD-005, EVD-006, EVD-007, EVD-013, EVD-014 | The exact authorized remote PR, named hosted leaves and two selected read-only live verifiers passed on their recorded inputs. Independent review and normal local document delivery passed. Native startup failure, common-source authentication, global-hook provenance, independent workflow protection and broader live assurance remain separate unresolved owner work; no deployment, merge or new remote push is inferred. | platform and CI transport owner; GitOps, native, common and local Git owners for their lanes |
 
 ## Approval and Safety Boundaries
 
@@ -106,9 +108,11 @@ new common edition, native isolation, protected workflow control or deployment.
 
 The exact remote push and draft PR were observed, as were two selected read-only
 live verifier PASS results on the confirmed `k3d-hyhome` context. Both named
-hosted jobs and their selected leaf steps passed on PR #149's first run. Task
-0003 remains in progress pending document review and normal local delivery.
-Native sandbox startup failed; independent
-common-source authentication, global hooksPath provenance, protected workflow
-control and broader live assurance remain separate owner-bound limits. No merge,
-deployment or full live-health conclusion is recorded here.
+hosted jobs and their selected leaf steps passed on PR #149's first run.
+Independent review passed as EVD-013 and the first three-document normal local
+commit passed as EVD-014, supporting the scoped VAL-R13-004 acceptance above.
+The Task-only closeout hook and resulting commit are not preclaimed here.
+Native sandbox startup failed; independent common-source authentication,
+global hooksPath provenance, protected workflow control and broader live
+assurance remain separate owner-bound limits. No merge, deployment or full
+live-health conclusion is recorded here.
