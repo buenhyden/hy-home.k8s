@@ -798,6 +798,7 @@ class DocumentLanguage:
     """SPEC-0093: which language each document is written in."""
 
     english_only_roots: tuple[str, ...]
+    korean_allowed_markdown_roots: tuple[str, ...]
     english_only_suffixes: frozenset[str]
     korean_first_profiles: frozenset[str]
     english_sections: frozenset[str]
@@ -811,6 +812,14 @@ class DocumentLanguage:
             path.as_posix().startswith(self.english_only_roots)
             and path.suffix in self.english_only_suffixes
             and path.name != "README.md"
+            and not self.korean_allowed_markdown(path)
+        )
+
+    def korean_allowed_markdown(self, path: PurePosixPath) -> bool:
+        return (
+            path.suffix == ".md"
+            and path.name != "README.md"
+            and path.as_posix().startswith(self.korean_allowed_markdown_roots)
         )
 
 
@@ -2327,6 +2336,9 @@ def _document_language_from_mapping(
         return None
     return DocumentLanguage(
         english_only_roots=tuple(raw["english_only_roots"]),
+        korean_allowed_markdown_roots=tuple(
+            raw.get("korean_allowed_markdown_roots", ())
+        ),
         english_only_suffixes=frozenset(raw["english_only_suffixes"]),
         korean_first_profiles=frozenset(raw["korean_first_profiles"]),
         english_sections=frozenset(raw["english_sections"]),
@@ -2355,6 +2367,11 @@ def _document_language_registry_diagnostics(
     for root in roots:
         if not root.endswith("/"):
             faults.append(f"english-only root {root} does not end in /")
+    for root in contract["korean_allowed_markdown_roots"]:
+        if root != ".agents/" or root not in roots:
+            faults.append(
+                f"Korean-allowed Markdown root {root} is not an English-only .agents/ root"
+            )
     for suffix in contract["english_only_suffixes"]:
         if not suffix.startswith("."):
             faults.append(f"suffix {suffix} does not start with .")

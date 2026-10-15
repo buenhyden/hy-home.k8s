@@ -1804,6 +1804,8 @@ def document_language_diagnostics(
     for path, text in sorted(english_only_texts.items()):
         if english_only_paths is not None and path not in english_only_paths:
             continue
+        if not contract.english_only(path):
+            continue
         diagnostics.extend(
             Diagnostic(code, path, "", "english-only", detail, OWNER)
             for code, detail in document_language.findings(

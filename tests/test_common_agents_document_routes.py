@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import ast
 import importlib.util
-import os
 import sys
 import tempfile
 import unittest
@@ -127,6 +125,7 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                 )
         for invalid in (
             valid.replace("disable-model-invocation: true\n", ""),
+            valid.replace("name:", "이름:", 1),
             valid.replace("---\n\n#", "tools: Bash\n---\n\n#"),
             valid.replace("---\n\n#", "disable-model-invocation: true\n---\n\n#"),
         ):
@@ -136,38 +135,29 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                 )
 
     def test_retired_governance_root_rejects_even_a_dangling_link(self) -> None:
-        source = (ROOT / "scripts/validation/repository/quality.py").read_text(
-            encoding="utf-8"
-        )
-        candidates = [
-            node
-            for node in ast.parse(source).body
-            if isinstance(node, ast.If) and "os.path.lexists" in ast.unparse(node.test)
-        ]
-        code = compile(ast.Module(body=candidates, type_ignores=[]), "quality", "exec")
+        from tests.test_validate_agent_registry import load_validator
+
+        validator = load_validator()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / ".agents").mkdir()
-            failures: list[str] = []
-            context = {"root": root, "os": os, "fail": failures.append}
-            exec(code, context)
-            self.assertEqual(failures, [])
+            validator.validate_absent_surfaces(root)
             old = root / "docs/00.agent-governance"
             old.parent.mkdir()
             old.symlink_to("missing-governance")
-            exec(code, context)
-            self.assertTrue(failures)
+            with self.assertRaises(validator.HarnessError) as raised:
+                validator.validate_absent_surfaces(root)
+            self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
             old.unlink()
-            failures.clear()
             (root / ".agents/memory").mkdir()
-            exec(code, context)
-            self.assertTrue(failures)
+            with self.assertRaises(validator.HarnessError) as raised:
+                validator.validate_absent_surfaces(root)
+            self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
 
-    def test_common_agent_documents_and_native_sidecars_stay_english_only(self) -> None:
+    def test_common_agent_markdown_allows_korean_but_native_sidecars_do_not(
+        self,
+    ) -> None:
         paths = (
-            ".agents/README.md",
-            ".agents/governance/quality.md",
-            ".agents/skills/routing/SKILL.md",
             ".agents/skills/routing/agents/openai.yaml",
             ".claude/provider.md",
             ".codex/provider.md",
@@ -188,6 +178,16 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
         self.assertEqual(
             sorted(item.path.as_posix() for item in diagnostics), sorted(paths)
         )
+
+    def test_translated_common_governance_h2_is_rejected(self) -> None:
+        path = PurePosixPath(".agents/governance/document-authoring.md")
+        profile = contracts.classify_path(self.registry, path)
+        source = (ROOT / path).read_text(encoding="utf-8")
+        translated = source.replace("## Overview", "## 개요", 1)
+        diagnostics = MARKDOWN.validate_document_text(
+            translated, path, profile, "strict"
+        )
+        self.assertIn("BODY-HEADING-REQUIRED", {item.rule_id for item in diagnostics})
 
 
 class ArchiveStageIndexRouteTests(unittest.TestCase):

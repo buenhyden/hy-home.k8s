@@ -1,10 +1,10 @@
 ---
 title: "Document Authoring Policy"
-version: "3.1.0"
+version: "3.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-16"
 ---
 
 # Document Authoring Policy
@@ -153,13 +153,15 @@ TITLE, OWNER, UPDATED, ARTIFACT_ID and PARENT_ID; parent_ids names exactly one
 direct structural owner rather than a duplicate spec_id. Authored documents contain none
 of those markers. Template history belongs to Registry contract version and
 Git, not to the created document's "version".
-The registry's `document_language` contract owns each document's language:
-Navigation, reference-pack and operations profiles are Korean-first, files under `.agents/`,
-`.claude/`, and `.codex/` are English only except a `README.md`, which follows
-its navigation profile, every other current document is
-English-first, agent requirement sections stay English, and a template writes
-its author prompts in its output's language. Never hand-edit generated current
-output or create an off-taxonomy authored tree.
+Registry의 `document_language`가 문서별 언어를 소유한다. Navigation,
+reference-pack, operations profile은 한국어가 기본이다. `.agents/`의 governed
+Markdown에는 새 설명을 한국어로 쓰며 기존 영어 본문도 유효하다. 기계 key와 필수
+heading은 등록된 문법을 유지한다. `.agents/`의 비 Markdown 파일과 `.claude/`,
+`.codex/`의 non-README 파일은 영어 전용이다. README는 navigation profile을
+따른다. 그 밖의 현재 문서, 특히 Stage 01~03의 non-README 저술은 영어를
+유지하고 agent requirement section도 영어다. Template의 author prompt는
+등록된 언어를 따르며, 생성된 현행 산출물을 손으로 고치거나 taxonomy 밖의
+저술 트리를 만들지 않는다.
 
 ## Validation and Refresh
 
