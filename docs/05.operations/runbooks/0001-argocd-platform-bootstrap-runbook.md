@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD Platform Bootstrap Runbook"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-16"
 layer: "operations"
 artifact_id: "RUN-0001"
 ---
@@ -98,8 +98,8 @@ K8s DB endpoint가 아니다.
 6. ArgoCD 루트 앱 및 GitOps 경로 계약을 확인한다.
 
    ```bash
-   kubectl -n argocd get application root-platform -o yaml | \
-     rg 'path: gitops/apps/root|targetRevision: main'
+   test "$(kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.path}')" = 'gitops/apps/root'
+   test "$(kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.targetRevision}')" = 'main'
    kubectl -n argocd get applications,applicationsets
    ```
 
@@ -157,7 +157,7 @@ K8s DB endpoint가 아니다.
 | `vault is sealed (status=503)`                                                     | Vault health code가 503                      | Vault unseal 수행 후 health 재확인                             | CA 검증을 사용하는 HTTPS health 요청                                                        |
 | bootstrap `[2/11]` 단계가 `jq` 오류로 중단                                          | `platform/argocd`의 `valkey_password` 누락 또는 토큰 권한 부족 | OpenBao 운영자가 경로·키·정책을 확인한다                      | bootstrap 재실행                                                                          |
 | `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 Vault 값 불일치              | ExternalSecret 재조정 대기, 지속되면 [RUN-0002](./0002-argocd-eso-vault-recovery-runbook.md) | `kubectl -n argocd get externalsecret argocd-external-valkey` + ArgoCD 로그              |
-| `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | `kubectl -n argocd get application root-platform -o yaml \| rg 'path:'`                   |
+| `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | 절차 6의 `spec.source.path`·`spec.source.targetRevision` 정확한 값 비교 재실행              |
 
 ## Recovery and Escalation
 

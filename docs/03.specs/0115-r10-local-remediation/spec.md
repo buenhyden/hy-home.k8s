@@ -1,10 +1,10 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.2.0"
+version: "0.5.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "specs"
 artifact_id: "SPEC-0115"
 ---
@@ -26,6 +26,30 @@ for this request after independent review under the user's direct local
 authorization. This does not adopt a new WGOV common edition or approve a
 remote or live action.
 
+The 2026-10-16 r13 follow-up is tracked by
+[Task 0002](tasks/tsk-0002-r13-follow-up.md). The prior r10 approval and Task
+0001's terminal acceptance remain historical facts, not decisions for the r13
+delta. The r13 request directly authorizes scoped reversible local
+investigation, repair, validation and logical commits. Task 0002 owns
+independent review and new criterion decisions.
+
+The user's later 2026-10-16 authorization adds a bounded residual verification
+stream for the exact local commit `8d8fa1e5`, its main-targeting draft PR and
+named CI jobs, plus two read-only live verifier runs with the explicitly supplied
+kubeconfig. [Task 0003](tasks/tsk-0003-r13-residual-verification.md) owns only
+this follow-up's actual evidence and VAL-R13-004 decision. Tasks 0001 and 0002
+retain their terminal decisions.
+
+The user's subsequent 2026-10-16 authorization covers pushing the then-current
+local `81d76f2d` document closeout, a main-targeting PR and actual CI, a
+reviewed protection-setting decision, and merge when its concrete prerequisites
+are met. [Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) owns
+only that protected integration stream and VAL-R13-005. Tasks 0001–0003 keep
+their terminal evidence and decisions; authorization alone is not evidence of
+an independent reviewer, effective protection or a merge. The user then
+clarified that this is a one-person project; retaining the current settings
+as a reviewed no-op leaves the independent-review HIGH risk visible.
+
 ## Strategic Boundaries & Non-goals
 
 - Inspect current `main`, index, worktree, consumers and original evidence
@@ -41,13 +65,19 @@ remote or live action.
 - No secret-value read, private memory database inspection, global or managed
   configuration edit, live cluster or Vault operation, deployment, remote
   mutation, data deletion, history rewrite or unilateral common-edition claim.
-  Protected external actions follow their own current authority.
+  Protected external actions follow their own current authority. The later
+  authorization above applies only to its exact remote delivery and read-only
+  live GET verification targets; it grants no merge, deployment or mutation of
+  cluster resources. The subsequent authorization is limited to Task 0004's
+  reviewed remote protection and integration targets; it grants no protection
+  weakening, self-approval, live mutation or new common-edition decision.
 
 ## Contracts
 
-- Each material finding records its source path and revision, observation
-  class, impact, disposition, current owner and criterion in Task 0001. Static,
-  recorded, reproduced, inferred and inaccessible evidence remain distinct.
+- Each r10 material finding records its source path and revision, observation
+  class, impact, disposition, current owner and criterion in Task 0001. The r13
+  delta uses Task 0002. Static, recorded, reproduced, inferred and inaccessible
+  evidence remain distinct.
 - The Stage 99 Registry, schema and selected templates own local document
   form. Spec holds changed behavior and acceptance, Plan holds order and
   intended checks, and Task holds actual results and sole criterion decisions.
@@ -89,30 +119,52 @@ remote or live action.
   Any TLS check either validates peer trust or explicitly reports a narrower
   transport-only observation. Unused PostgreSQL ESO grants and stale readers
   are removed only after confirming current consumers.
+- The r13 follow-up traces each material P01–P08 candidate to current source,
+  revision, observation class, disposition, affected consumer and current
+  owner in Task 0002. A candidate becomes a defect only after confirmation.
+  Changed local contracts and their selected QA/CI consumers move together;
+  unchanged protections need no churn. New common headings or lifecycle
+  meanings need a separate common-edition decision before adoption.
+- The hosted PR metadata producer binds actual merge identity and parents and
+  checks every commit in the base-to-head range against trusted-base message
+  grammar; the workflow separately checks its PR branch-prefix policy.
+  Candidate commit objects are read as data; checked-out candidate
+  modules and configuration are not executed by that producer. Its canonical
+  Python logic and inline workflow projection must agree. The workflow itself
+  remains a separate hosted trust boundary requiring actual protection and
+  run evidence.
+- A repeated stale memory conflict with the same idempotency key returns its
+  recorded safe result without another retained conflict or quota charge.
+  Retained conflict history includes its source references.
+- GitOps source verification compares exact Application source fields. The
+  external-service verifier checks the complete declared Service and every
+  same-service EndpointSlice route, port, address and readiness state; static
+  source tests do not establish live cluster behavior.
 
 ## Core Design
 
 Classify each r10 observation against current source and the existing
 SPEC-0105 to SPEC-0114 outcomes. Route a confirmed gap to the narrowest
 authoritative owner, implement its dependent change as one reviewable unit,
-then attach focused evidence to Task 0001. Keep common-edition proposals and
-unobserved remote or live claims explicitly pending at their own owner.
+then attach focused evidence to the owning request Task. Keep common-edition
+proposals and unobserved remote or live claims pending at their own owner.
 
 ## Data Modeling & Storage Strategy
 
-Task 0001 is the durable inventory and execution owner. It stores bounded
-finding rows, selected check inputs and results, review disposition and next
-owner; source data and raw secret-bearing logs do not move into the repository.
+Task 0001 retains r10 inventory, execution and criterion decisions. Task 0002
+owns the r13 follow-up inventory, selected check inputs and results, review
+disposition and next owner; source data and raw secret-bearing logs do not move
+into the repository.
 Git retains source and rollback history. Stage 98 retains only eligible,
 approved whole units under its existing catalog and hold rules.
 
 ## Interfaces & Data Structures
 
-The local inputs are the r10 request, current Git state, Stage 99 profiles,
-the active requirement and architecture owners, package Tasks, validation
-registry and actual provider/CI records. Findings use the Task's inventory
-table; check facts use its registered Evidence columns. No new schema or
-parallel progress ledger is introduced by this Spec.
+The local inputs are the r10 and r13 requests, current Git state, Stage 99
+profiles, the active requirement and architecture owners, package Tasks,
+validation registry and actual provider/CI records. Each request's findings
+and check facts stay in its own Task inventory and Evidence columns. No new
+schema or parallel progress ledger is introduced by this Spec.
 
 ## Edge Cases & Error Handling
 
@@ -139,8 +191,8 @@ operator with an exact target and reviewed revision.
 Use the selected `scripts/qa.py staged` profile on an actual staged input,
 plus affected named tests and validators. Check the exact Task document with
 the document profile, link and lifecycle readers after factual updates.
-Record selected tool versions, inputs and results in Task 0001. A hosted run,
-Codex sandbox, memory runtime or live cluster check is reported only when
+Record selected tool versions, inputs and results in the owning request Task.
+A hosted run, Codex sandbox, memory runtime or live cluster check is reported only when
 actually observed in its own trust boundary.
 
 ## Success Criteria & Verification Plan
@@ -155,6 +207,11 @@ actually observed in its own trust boundary.
 | VAL-R10-006 | P06 source, commit/PR title, release producer and remote protection claims match observed authority and actual revisions. |
 | VAL-R10-007 | P07 memory retries reject same-key different requests, source refresh uses the caller worktree and rejects external symlinks, every reconnect is page bounded, and backup is serialized, bounded and verified without losing a good snapshot; native config, hook delivery and sandbox behavior remain separate evidence. |
 | VAL-R10-008 | P08 live verifiers reject NotReady, unhealthy and OutOfSync state, TLS trust is validated or its transport-only limit stated, unused PostgreSQL ESO access and stale readers are reconciled, and static checks stay separate from live acceptance. |
+| VAL-R13-001 | The r13 comparison baseline, prior r10 acceptance and PR #148 integration are distinguished; material P01–P08 candidates have source/revision, observation class, disposition and owner in Task 0002. |
+| VAL-R13-002 | Confirmed local defects are repaired at current owners with affected callers and selected QA/CI inputs; each changed behavior has focused before/after evidence and selected validation on its actual input, without weakening a unique required protection. |
+| VAL-R13-003 | Lasting meaning is promoted to its current owner and whole-unit retention is assessed against links, holds and eligibility; actual delivery and criterion decisions are recorded only in Task 0002, with common-edition, remote, native and live claims separately observed or deferred. |
+| VAL-R13-004 | Task 0003 records the exact authorized commit, remote draft PR and named `ci-summary`/`style-pr` leaf outcomes, plus the two selected live verifier results, with revision, target, trust boundary, approval scope and current owner. Required hosted leaves and selected live checks need actual PASS evidence before local acceptance; unobserved or failed required outcomes keep this criterion pending. Common-source, native sandbox, global-hook provenance, independent workflow protection and broader live checks remain separately classified and handed to their owners, without promotion to PASS. |
+| VAL-R13-005 | Task 0004 records the user's exact follow-up authority, pushed revision and PR target, actual named CI leaf results on the final reviewed head, and the branch-protection decision with a before/after snapshot and rollback route if settings change. For the user's one-person operation, the absent independent reviewer and residual HIGH risk remain visible while strict App-bound required contexts, admin enforcement, conversation resolution and no-force/no-delete settings are retained. Failed or unobserved required hosted checks keep acceptance and merge pending; authorization or a green intermediate aggregate cannot certify the final head or merge. Record actual PR merge identity and post-merge state only if performed. |
 
 ## Traceability
 
@@ -171,3 +228,11 @@ actually observed in its own trust boundary.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R10-005 | Local selected QA and separate hosted evidence |
 | [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R10-007 | Memory owner and focused failure checks |
 | [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R10-008 | Declared/rendered K8s and direct-runtime evidence split |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-001 | Current Git/source comparison and Task 0002 finding trace |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-002 | Affected producer/caller map, focused regression and selected QA |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Current-owner and whole-unit retention review |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Separate dated local, hosted, provider and live evidence |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-004 | Exact PR revision, named hosted job/leaf results and protection limit in Task 0003 |
+| [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R13-004 | Authorized read-only selected live verifier inputs and outcomes in Task 0003 |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Exact hosted revision/leaf, branch-protection and independent review evidence in Task 0004 |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Separate authorization, delivery and actual merge identity in Task 0004 |

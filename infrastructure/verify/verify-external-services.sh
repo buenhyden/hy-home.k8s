@@ -8,7 +8,7 @@ fail() {
 
 TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/verify-external-services.XXXXXXXX")" ||
   fail "cannot create private temporary directory"
-PLATFORM_SERVICES_OUTPUT="$TEMP_DIR/platform-services.txt"
+PLATFORM_SERVICES_OUTPUT="$TEMP_DIR/platform-services.json"
 
 cleanup() {
   local status=$?
@@ -28,54 +28,95 @@ echo "[INFO] Checking external service contracts"
 
 kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
+command -v python3 >/dev/null 2>&1 || fail "python3 is required for service contract validation"
 
-kubectl -n platform get svc,endpointslice >"$PLATFORM_SERVICES_OUTPUT" ||
+kubectl -n platform get svc,endpointslice -o json >"$PLATFORM_SERVICES_OUTPUT" ||
   fail "cannot list platform external services"
 
-rg -q 'valkey-external' "$PLATFORM_SERVICES_OUTPUT" || fail "missing valkey-external"
+python3 - "$PLATFORM_SERVICES_OUTPUT" <<'PY' || exit 1
+import json
+import sys
 
-valkey_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-[ "$valkey_port" = "6379" ] || fail "valkey-external port mismatch (actual=$valkey_port)"
 
-valkey_target_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].targetPort}' 2>/dev/null || true)"
-[ "$valkey_target_port" = "26379" ] || fail "valkey Service targetPort mismatch (actual=$valkey_target_port)"
+def check(items):
+    # Frontend, backend, name and protocol are separate route contracts.
+    expected = {
+        "valkey-external": {("tcp-valkey", 6379, 26379, "TCP")},
+        "loki-external": {("http", 3100, 3100, "TCP")},
+        "tempo-external": {("http", 3200, 3200, "TCP")},
+        "alloy-external": {
+            ("grpc-otlp", 4317, 4317, "TCP"),
+            ("http-otlp", 4318, 4318, "TCP"),
+        },
+    }
+    services = {}
+    slices = {name: [] for name in expected}
+    for item in items:
+        kind = item["kind"]
+        metadata = item["metadata"]
+        if kind == "Service" and metadata["name"] in expected:
+            name = metadata["name"]
+            if name in services:
+                raise ValueError(f"duplicate {name} Service")
+            services[name] = item["spec"]
+        elif kind == "EndpointSlice":
+            name = metadata.get("labels", {}).get("kubernetes.io/service-name")
+            if name in slices:
+                slices[name].append(item)
 
-valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.ports[0].port}' 2>/dev/null || true)"
-[ "$valkey_ep_port" = "26379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
+    for name, routes in expected.items():
+        if name not in services:
+            raise ValueError(f"missing {name}")
+        service = services[name]
+        if service.get("type", "ClusterIP") != "ClusterIP":
+            raise ValueError(f"{name} Service type mismatch")
+        if service.get("clusterIP") == "None":
+            raise ValueError(f"{name} headless Service cannot provide the declared ClusterIP route")
+        if service.get("selector"):
+            raise ValueError(f"{name} Service must be selectorless")
+        ports = service["ports"]
+        actual = {
+            (port.get("name"), port["port"], port.get("targetPort", port["port"]), port.get("protocol", "TCP"))
+            for port in ports
+        }
+        if len(actual) != len(ports) or actual != routes:
+            if name == "valkey-external" and any(port[2] != 26379 for port in actual):
+                raise ValueError("valkey Service targetPort mismatch")
+            raise ValueError(f"{name} Service port contract mismatch")
+        if not slices[name]:
+            raise ValueError(f"missing {name} EndpointSlice")
+        backends = {(port, backend, protocol) for port, _, backend, protocol in routes}
+        covered = set()
+        for slice_item in slices[name]:
+            if slice_item.get("addressType") != "IPv4":
+                raise ValueError(f"{name} EndpointSlice address type mismatch")
+            slice_ports = slice_item.get("ports", [])
+            actual_ports = {
+                (port.get("name"), port["port"], port.get("protocol", "TCP"))
+                for port in slice_ports
+            }
+            if not actual_ports or len(actual_ports) != len(slice_ports) or not actual_ports <= backends:
+                raise ValueError(f"{name} EndpointSlice port mismatch")
+            endpoints = slice_item.get("endpoints", [])
+            if not endpoints or any(
+                not endpoint.get("addresses")
+                or any(address != "192.168.0.13" for address in endpoint["addresses"])
+                or (endpoint.get("conditions") or {}).get("ready") is False
+                for endpoint in endpoints
+            ):
+                raise ValueError(f"{name} EndpointSlice address or readiness mismatch")
+            covered.update(actual_ports)
+        if covered != backends:
+            raise ValueError(f"{name} EndpointSlice backend coverage mismatch")
 
-valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
-[ "$valkey_ep_addr" = "192.168.0.13" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
-echo "[INFO] Checking observability external service contracts"
-
-for svc in loki-external tempo-external alloy-external; do
-  rg -q "$svc" "$PLATFORM_SERVICES_OUTPUT" || fail "missing $svc in platform namespace"
-done
-
-check_obs_port() {
-  local svc="$1"
-  local expected_port="$2"
-  local actual
-  actual="$(kubectl -n platform get svc "$svc" -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-  [ "$actual" = "$expected_port" ] || fail "${svc} port mismatch (expected=${expected_port}, actual=${actual})"
-}
-
-check_obs_port "loki-external" "3100"
-check_obs_port "tempo-external" "3200"
-check_obs_port "alloy-external" "4317"
-
-check_obs_ep() {
-  local slice="$1"
-  local expected_addr="$2"
-  local actual
-  actual="$(kubectl -n platform get endpointslice "${slice}-1" -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
-  [ "$actual" = "$expected_addr" ] || fail "${slice}-1 address mismatch (expected=${expected_addr}, actual=${actual})"
-}
-
-# ADR-0046: every external service is reached through the host address;
-# Prometheus API and Grafana are called by name through the external Traefik.
-for svc in loki-external tempo-external alloy-external; do
-  check_obs_ep "$svc" "192.168.0.13"
-done
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        check(json.load(stream)["items"])
+except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+    message = str(error) if isinstance(error, ValueError) else "invalid platform service list"
+    print(f"[FAIL] {message}", file=sys.stderr)
+    sys.exit(1)
+PY
 
 echo "[PASS] external service contract checks passed"

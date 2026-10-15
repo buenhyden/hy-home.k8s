@@ -18,44 +18,9 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
+PR_METADATA_SCRIPT_PATH = Path("scripts/validate-pr-metadata.py")
 CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 SETUP_PYTHON_ACTION = "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
-PR_TITLE_RUN = """python3 -I - <<'PY'
-import os
-import re
-import stat
-import subprocess
-import sys
-import tomllib
-
-base_sha = os.environ.get("BASE_SHA", "")
-title = os.environ.get("PR_TITLE", "")
-if not re.fullmatch(r"[0-9a-f]{40}", base_sha):
-    sys.exit("invalid reviewed base identity")
-actual = subprocess.run(
-    ["git", "-C", "trusted-base", "rev-parse", "HEAD"],
-    check=True, capture_output=True, text=True,
-).stdout.strip()
-if actual != base_sha:
-    sys.exit("reviewed base identity mismatch")
-fd = os.open("trusted-base/.cz.toml", os.O_RDONLY | os.O_NOFOLLOW)
-try:
-    info = os.fstat(fd)
-    if not stat.S_ISREG(info.st_mode) or info.st_size > 65536:
-        sys.exit("reviewed message configuration must be a bounded regular file")
-    content = os.read(fd, 65537)
-finally:
-    os.close(fd)
-if len(content) > 65536:
-    sys.exit("reviewed message configuration exceeds the input bound")
-config = tomllib.loads(content.decode("utf-8"))
-pattern = config["tool"]["commitizen"]["customize"]["schema_pattern"]
-if not isinstance(pattern, str) or not title or "\\n" in title or "\\r" in title:
-    sys.exit("PR title must be one Conventional Commit subject line")
-if re.fullmatch(pattern, title) is None:
-    sys.exit("PR title does not match the reviewed message schema")
-print("pr-title result=validated verdict=PASS")
-PY"""
 EXPECTED_PINS = {
     "jsonschema": "4.26.0",
     "pre-commit": "4.6.1",
@@ -1479,7 +1444,28 @@ def _validate_style_pr_job(job: dict[str, Any]) -> None:
             fail("CI-STYLE-TOPOLOGY", f"PR style step {index + 1} changed")
 
 
-def _validate_no_outside_python_validation(workflow: dict[str, Any]) -> None:
+def _reviewed_metadata_run(root: Path) -> str:
+    descriptor = _open_regular_file(root, PR_METADATA_SCRIPT_PATH, "CI-TOPOLOGY")
+    try:
+        if os.fstat(descriptor).st_size > 65536:
+            fail("CI-TOPOLOGY", "reviewed PR metadata script exceeds 65536 bytes")
+        source = os.read(descriptor, 65537)
+        if len(source) > 65536 or not source.endswith(b"\n"):
+            fail(
+                "CI-TOPOLOGY",
+                "reviewed PR metadata script must be bounded and newline terminated",
+            )
+        body = source.decode("utf-8")
+    except (OSError, UnicodeError):
+        fail("CI-TOPOLOGY", "reviewed PR metadata script cannot be read as UTF-8")
+    finally:
+        _close_descriptor(descriptor)
+    return "python3 -I - <<'PY'\n" + body + "PY"
+
+
+def _validate_no_outside_python_validation(
+    workflow: dict[str, Any], root: Path
+) -> None:
     jobs = workflow.get("jobs")
     if not isinstance(jobs, dict):
         fail("CI-PYTHON-WORKFLOW", "workflow jobs must be a mapping")
@@ -1506,7 +1492,11 @@ def _validate_no_outside_python_validation(workflow: dict[str, Any]) -> None:
                     f"non-style job must not own setup-python: {job_id}",
                 )
             command = _run_text(step)
-            if job_id == "ci-summary" and command == PR_TITLE_RUN:
+            if (
+                job_id == "ci-summary"
+                and command.startswith("python3 -I - <<'PY'\n")
+                and command == _reviewed_metadata_run(root)
+            ):
                 # The exact heredoc is admitted below as one reviewed metadata
                 # step. The generic shell grammar deliberately rejects heredocs.
                 continue
@@ -1632,12 +1622,13 @@ def validate_dependencies(root: Path) -> int:
     _validate_shell_boundaries(workflow)
     _validate_qa_execution(workflow)
     _validate_gitleaks_tool(workflow)
-    _validate_no_outside_python_validation(workflow)
+    _validate_no_outside_python_validation(workflow, root)
     return int("style-pr" in jobs)
 
 
-def validate_workflow(workflow: dict[str, Any]) -> None:
+def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> None:
     """Own branch metadata and the bounded PR-only style defense."""
+    root = Path(__file__).resolve().parents[1] if root is None else root
     if "env" in workflow:
         fail("CI-TOPOLOGY", "workflow-level env can alter reviewed job execution")
     events = workflow.get("on", workflow.get(True))
@@ -1686,7 +1677,7 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     steps = summary.get("steps")
     if (
         not isinstance(steps, list)
-        or len(steps) != 4
+        or len(steps) != 5
         or any(not isinstance(step, dict) for step in steps)
     ):
         fail("CI-TOPOLOGY", "ci-summary requires branch and PR title metadata steps")
@@ -1705,7 +1696,7 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     if "full-qa result=" in summary_text:
         fail("CI-TOPOLOGY", "metadata summary must not report retired full QA")
     required = (
-        "allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'",
+        "allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|claude|dependabot)/'",
         'case "$event" in',
         'if [ "$base" != main ]; then',
         '[[ "$head" =~ $allowed_branch_regex ]]',
@@ -1720,6 +1711,19 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     )
     if not all(fragment in summary_text for fragment in required):
         fail("CI-TOPOLOGY", "summary must fail closed on event and branch metadata")
+    terminating = [
+        line.strip()
+        for line in re.findall(
+            r"(?m)^[ \t]*(?:exit|exec)(?:[ \t]+[^\n]*)?$", summary_text
+        )
+    ]
+    if (
+        terminating != ["exit 1", "exit 0"]
+        or len(re.findall(r"\b(?:exit|exec)\b", summary_text)) != 2
+        or summary_text.count("branch_verdict=PASS") != 1
+        or not summary_text.endswith("exit 0")
+    ):
+        fail("CI-TOPOLOGY", "summary may terminate only after branch verdict")
     pr_condition = "github.event_name == 'pull_request'"
     expected_pr_steps = (
         {
@@ -1733,6 +1737,15 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         },
         {
             "if": pr_condition,
+            "uses": CHECKOUT_ACTION,
+            "with": {
+                "path": "candidate-commits",
+                "fetch-depth": 0,
+                "persist-credentials": False,
+            },
+        },
+        {
+            "if": pr_condition,
             "uses": SETUP_PYTHON_ACTION,
             "with": {"python-version": "3.12"},
         },
@@ -1741,8 +1754,10 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
             "env": {
                 "PR_TITLE": "${{ github.event.pull_request.title }}",
                 "BASE_SHA": "${{ github.event.pull_request.base.sha }}",
+                "HEAD_SHA": "${{ github.event.pull_request.head.sha }}",
+                "MERGE_SHA": "${{ github.sha }}",
             },
-            "run": PR_TITLE_RUN,
+            "run": _reviewed_metadata_run(root),
         },
     )
     for index, (actual, reviewed) in enumerate(
@@ -1754,14 +1769,14 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
             if key != "name"
         }
         if normalized != reviewed:
-            fail("CI-TOPOLOGY", f"PR title metadata step {index} changed")
+            fail("CI-TOPOLOGY", f"PR metadata step {index} changed")
     _validate_qa_execution(workflow)
 
 
 def validate_repository(root: Path) -> int:
     count = validate_dependencies(root)
     text = _read_regular_text(root, WORKFLOW_PATH, "CI-PYTHON-WORKFLOW")
-    validate_workflow(_load_yaml(text, "CI-PYTHON-WORKFLOW", WORKFLOW_PATH))
+    validate_workflow(_load_yaml(text, "CI-PYTHON-WORKFLOW", WORKFLOW_PATH), root)
     return count
 
 

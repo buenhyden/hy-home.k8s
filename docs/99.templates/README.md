@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.14.0"
+version: "0.15.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "templates"
 ---
 # 99.templates
@@ -56,6 +56,16 @@ PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 �
 승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
 요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도
 공동 정본을 뜻하지 않는다.
+
+현재 지역 `candidate`의 언어 확장에서는 `.agents/` governed Markdown에 새로
+쓰는 설명을 한국어로 작성하며 기존 영어 본문도 유효하다. Registry가 요구하는
+heading과 native key, 명령·인용·원시 증거는 원문을 유지한다. `.agents/`의
+JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
+영어 전용이다. README는 해당 navigation profile을 따른다.
+`docs/01.requirements`~`docs/03.specs`의 non-README 본문은 계속 영어다.
+공통 Governance form의 기계 field·heading과 영어 author prompt는 유지하고,
+복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장은
+승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 `WGOV-CORE / 3.0.0`에 대한 네 주장은 근거와 상태가 서로 다르며, 하나의
 근거로 다른 주장을 대신하지 않는다. 근거 Task는 SPEC-0105의

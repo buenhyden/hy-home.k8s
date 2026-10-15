@@ -180,6 +180,41 @@ class WorkspaceMemoryTest(unittest.TestCase):
                     self.write(idempotency_key="bound", **changes)
         self.assertEqual(self.store.usage()["tiers"]["short-term"]["revisions"], 1)
 
+    def test_conflict_retry_replays_result_without_storing_or_charging_twice(
+        self,
+    ) -> None:
+        first = self.write()
+        self.write(memory_id=first["memory_id"], expected_revision=1)
+        request = {
+            "memory_id": first["memory_id"],
+            "expected_revision": 1,
+            "body": SHORT | {"narrative": "stale"},
+            "idempotency_key": "stale-retry",
+        }
+        conflict = self.write(**request)
+        used = self.store.usage()["tiers"]["short-term"]["bytes"]
+        self.assertEqual(self.write(**request), conflict)
+        self.assertEqual(len(self.store.history(first["memory_id"])["conflicts"]), 1)
+        self.assertEqual(self.store.usage()["tiers"]["short-term"]["bytes"], used)
+        for changes in ({"expected_revision": 0}, {"body": SHORT}):
+            with self.subTest(changes=changes):
+                with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+                    self.write(**(request | changes))
+
+    def test_conflict_history_retains_source_provenance(self) -> None:
+        first = self.write()
+        conflict = self.write(
+            memory_id=first["memory_id"],
+            expected_revision=0,
+            source_refs=["policy.md"],
+        )
+        self.assertTrue(conflict["stored"])
+        source_refs = self.store.history(first["memory_id"])["conflicts"][0][
+            "source_refs"
+        ]
+        self.assertEqual([ref["path"] for ref in source_refs], ["policy.md"])
+        self.assertEqual(len(source_refs[0]["sha256"]), 64)
+
     def test_legacy_unbound_idempotency_key_fails_closed_without_loss(self) -> None:
         first = self.write()
         with sqlite3.connect(self.store.path) as connection:
@@ -209,6 +244,16 @@ class WorkspaceMemoryTest(unittest.TestCase):
                 memory_id=kept["memory_id"],
                 expected_revision=0,
                 body=SHORT | {"narrative": "y" * 100},
+                idempotency_key="capacity-conflict",
+            )
+            self.assertEqual(
+                self.write(
+                    memory_id=kept["memory_id"],
+                    expected_revision=0,
+                    body=SHORT | {"narrative": "y" * 100},
+                    idempotency_key="capacity-conflict",
+                ),
+                refused,
             )
         self.assertEqual(refused["outcome"], "conflict")
         self.assertFalse(refused["stored"])

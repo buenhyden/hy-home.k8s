@@ -510,6 +510,11 @@ class CiPythonContractTests(unittest.TestCase):
         (root / ".github/workflows/ci.yml").write_text(
             (REPO_ROOT / ".github/workflows/ci.yml").read_text()
         )
+        metadata = root / VALIDATOR.PR_METADATA_SCRIPT_PATH
+        metadata.parent.mkdir(exist_ok=True)
+        metadata.write_bytes(
+            (REPO_ROOT / VALIDATOR.PR_METADATA_SCRIPT_PATH).read_bytes()
+        )
         result = subprocess.run(
             [sys.executable, str(VALIDATOR_PATH), "--root", str(root)],
             cwd=REPO_ROOT,
@@ -1310,6 +1315,30 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
             VALIDATOR.validate_workflow(workflow)
 
+    def test_summary_requires_pr_commit_range_producer(self):
+        workflow = self.workflow()
+        workflow["jobs"]["ci-summary"]["steps"] = workflow["jobs"]["ci-summary"][
+            "steps"
+        ][:4]
+        with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+            VALIDATOR.validate_workflow(workflow)
+
+    def test_summary_requires_present_matching_canonical_metadata_script(self):
+        workflow = self.workflow()
+        with tempfile.TemporaryDirectory(prefix="pr-metadata-contract-") as directory:
+            root = Path(directory)
+            source = root / "scripts/validate-pr-metadata.py"
+            with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+                VALIDATOR.validate_workflow(workflow, root)
+            source.parent.mkdir()
+            source.write_bytes(
+                (REPO_ROOT / VALIDATOR.PR_METADATA_SCRIPT_PATH).read_bytes()
+            )
+            VALIDATOR.validate_workflow(workflow, root)
+            source.write_text(source.read_text() + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+                VALIDATOR.validate_workflow(workflow, root)
+
     def test_required_pr_metadata_cannot_skip_title_edits(self):
         import copy
 
@@ -1339,18 +1368,21 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
         workflow["jobs"]["ci-summary"]["steps"][1]["with"]["persist-credentials"] = True
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"][2]["uses"] = "actions/setup-python@v7"
+        workflow["jobs"]["ci-summary"]["steps"][2]["with"]["fetch-depth"] = 1
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"][3]["env"]["PR_TITLE"] = (
+        workflow["jobs"]["ci-summary"]["steps"][3]["uses"] = "actions/setup-python@v7"
+        variants.append(workflow)
+        workflow = copy.deepcopy(baseline)
+        workflow["jobs"]["ci-summary"]["steps"][4]["env"]["PR_TITLE"] = (
             "${{ github.head_ref }}"
         )
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"][3]["run"] = "echo title-valid"
+        workflow["jobs"]["ci-summary"]["steps"][4]["run"] = "echo title-valid"
         variants.append(workflow)
         workflow = copy.deepcopy(baseline)
-        workflow["jobs"]["ci-summary"]["steps"].pop(3)
+        workflow["jobs"]["ci-summary"]["steps"].pop(4)
         variants.append(workflow)
         for workflow in variants:
             with (
@@ -1427,6 +1459,25 @@ class MetadataAndStyleCiContractTests(unittest.TestCase):
                 self.assertRaises(VALIDATOR.ContractError),
             ):
                 VALIDATOR.validate_workflow(workflow)
+
+    def test_summary_rejects_early_success_before_branch_verdict(self):
+        workflow = self.workflow()
+        step = workflow["jobs"]["ci-summary"]["steps"][0]
+        original = step["run"]
+        for premature in (
+            "exit 0\n",
+            "exit\n",
+            "exec true\n",
+            ":; exit 0\n",
+            "if true; then exit 0; fi\n",
+            "branch_verdict=PASS\n",
+        ):
+            with self.subTest(premature=premature):
+                step["run"] = original.replace(
+                    "set -euo pipefail\n", "set -euo pipefail\n" + premature, 1
+                )
+                with self.assertRaisesRegex(VALIDATOR.ContractError, "CI-TOPOLOGY"):
+                    VALIDATOR.validate_workflow(workflow)
 
 
 class HostedStyleJobBoundaryTests(unittest.TestCase):

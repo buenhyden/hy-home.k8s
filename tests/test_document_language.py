@@ -6,6 +6,7 @@ import dataclasses
 import contextlib
 import importlib.util
 import io
+import json
 import sys
 import unittest
 from unittest import mock
@@ -37,6 +38,7 @@ EN = "This paragraph explains the platform bootstrap order in plain English word
 def contract(pending=()):
     return contracts.DocumentLanguage(
         english_only_roots=(".agents/", ".claude/", ".codex/"),
+        korean_allowed_markdown_roots=(".agents/",),
         english_only_suffixes=frozenset({".md", ".json", ".yaml"}),
         korean_first_profiles=frozenset(
             {"common/readme-stage-index", "operation/runbook"}
@@ -65,13 +67,15 @@ class ClassifyTests(unittest.TestCase):
             "korean-first",
         )
         self.assertEqual(
-            self.kind(".agents/roles/architect.md", "governance/role"), "english-only"
+            self.kind(".agents/roles/architect.md", "governance/role"),
+            "korean-allowed",
         )
 
     def test_english_only_paths_exclude_readmes(self):
         rule = contract()
         self.assertTrue(rule.english_only(PurePosixPath(".codex/bindings.json")))
-        self.assertTrue(rule.english_only(PurePosixPath(".agents/roles/architect.md")))
+        self.assertFalse(rule.english_only(PurePosixPath(".agents/roles/architect.md")))
+        self.assertTrue(rule.english_only(PurePosixPath(".agents/roles/registry.json")))
         self.assertFalse(rule.english_only(PurePosixPath(".claude/README.md")))
         self.assertFalse(rule.english_only(PurePosixPath(".agents/roles/notes.txt")))
         self.assertFalse(rule.english_only(PurePosixPath("docs/x.md")))
@@ -82,6 +86,10 @@ class ClassifyTests(unittest.TestCase):
             "korean-first",
         )
         self.assertEqual(self.kind("docs/03.specs/x/spec.md"), "english-first")
+        self.assertEqual(
+            self.kind(".claude/agents/architect.md", "governance/role"),
+            "english-only",
+        )
 
     def test_templates_take_their_output_language(self):
         self.assertEqual(
@@ -117,6 +125,14 @@ class ClassifyTests(unittest.TestCase):
 
 
 class EnglishTests(unittest.TestCase):
+    def test_common_agent_prose_accepts_hangul_without_changing_old_english(self):
+        self.assertEqual(found(f"## Overview\n\n{KO}\n", "korean-allowed"), [])
+        self.assertEqual(found(f"## Overview\n\n{EN}\n", "korean-allowed"), [])
+
+    def test_common_agent_requirement_section_stays_english(self):
+        text = f"## Overview\n\n{KO}\n\n## AI Agent Requirements\n\n{KO}\n"
+        self.assertEqual(found(text, "korean-allowed"), ["LANG-ENGLISH-FIRST"])
+
     def test_hangul_in_prose_fails_and_code_passes(self):
         self.assertEqual(
             found(f"# T\n\n{EN} {KO}\n", "english-first"), ["LANG-ENGLISH-FIRST"]
@@ -322,6 +338,26 @@ class ValidatorTests(unittest.TestCase):
         texts = {PurePosixPath(".agents/x.yaml"): "a: \ud55c\n"}
         self.assertEqual(self.codes([], english_only=texts), ["LANG-ENGLISH-ONLY"])
 
+    def test_korean_common_agent_markdown_keeps_other_surfaces_english(self):
+        common_path = PurePosixPath(".agents/governance/quality.md")
+        native_path = PurePosixPath(".codex/provider.md")
+        texts = {
+            common_path: f"## Overview\n\n{KO}\n",
+            native_path: f"## Overview\n\n{KO}\n",
+            PurePosixPath(".agents/roles/registry.json"): '{"description": "한글"}',
+        }
+        self.assertEqual(
+            self.codes(
+                [(str(common_path), "governance/rule", texts[common_path])],
+                english_only=texts,
+            ),
+            ["LANG-ENGLISH-ONLY"],
+        )
+
+    def test_stage_03_authored_prose_stays_english(self):
+        doc = ("docs/03.specs/x/spec.md", "sdlc/spec", f"## Overview\n\n{KO}\n")
+        self.assertEqual(self.codes([doc]), ["LANG-ENGLISH-FIRST"])
+
     def test_scoped_english_only_keeps_unrelated_content_out(self):
         changed = PurePosixPath(".agents/roles/registry.json")
         unrelated = PurePosixPath(".agents/roles/architect.md")
@@ -342,9 +378,16 @@ class ValidatorTests(unittest.TestCase):
 
 
 class RegistryTests(unittest.TestCase):
+    def test_current_registry_requires_local_language_selector(self):
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        raw["document_language"].pop("korean_allowed_markdown_roots")
+        with self.assertRaisesRegex(contracts.DocumentContractError, "REGISTRY_SCHEMA"):
+            contracts.validate_registry(ROOT, raw)
+
     def raw(self, **changes):
         value = {
             "english_only_roots": [".agents/"],
+            "korean_allowed_markdown_roots": [".agents/"],
             "english_only_suffixes": [".md"],
             "korean_first_profiles": ["common/readme-stage-index"],
             "english_sections": ["AI Agent Requirements"],
@@ -375,13 +418,17 @@ class RegistryTests(unittest.TestCase):
             {"korean_first_profiles": ["missing/profile"]},
             {"korean_first_profiles": ["common/root-provider-shim"]},
             {"english_only_roots": [".agents"]},
+            {"korean_allowed_markdown_roots": [".codex/"]},
+            {"korean_allowed_markdown_roots": [".agents"]},
             {"english_only_suffixes": ["md"]},
             {"english_sections": [""]},
             {"min_latin_words": 0},
             {"pending_paths": [".agents/governance/x.md"]},
         ):
             with self.subTest(changes=changes):
-                self.assertEqual(self.faults(**changes), ["REGISTRY_DOCUMENT_LANGUAGE"])
+                self.assertEqual(
+                    set(self.faults(**changes)), {"REGISTRY_DOCUMENT_LANGUAGE"}
+                )
 
 
 if __name__ == "__main__":

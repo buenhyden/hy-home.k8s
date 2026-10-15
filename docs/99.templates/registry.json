@@ -6744,6 +6744,9 @@
       ".claude/",
       ".codex/"
     ],
+    "korean_allowed_markdown_roots": [
+      ".agents/"
+    ],
     "english_only_suffixes": [
       ".md",
       ".toml",
@@ -6995,7 +6998,7 @@
     "extensions": [
       "Kubernetes/GitOps/bootstrap/external-service procedures",
       "Task Table/frontmatter summary and historical completed-parent lifecycle",
-      "Registry document_language and Codex/Claude native syntax",
+      "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
       "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
       "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval"
     ]

@@ -152,6 +152,10 @@ def validate_documents(root: Path, paths: Sequence[Path]) -> list[str]:
                 identities.add(identity)
                 if kind == "Service":
                     spec = _mapping(document.get("spec"))
+                    if spec.get("type", "ClusterIP") == "ExternalName":
+                        raise ValueError(
+                            "ExternalName has no numeric EndpointSlice route"
+                        )
                     key = (namespace, name)
                     selector = spec.get("selector")
                     if "selector" in spec:
@@ -159,7 +163,14 @@ def validate_documents(root: Path, paths: Sequence[Path]) -> list[str]:
                     if selector:
                         managed.add(key)
                         continue
-                    services[key] = _ports(spec.get("ports"), service=True)
+                    ports = spec.get("ports")
+                    routes = _ports(ports, service=True)
+                    if spec.get("clusterIP") == "None" and any(
+                        port.get("targetPort", port["port"]) != port["port"]
+                        for port in ports
+                    ):
+                        raise ValueError("headless Service cannot translate ports")
+                    services[key] = routes
                 else:
                     labels = _mapping(metadata.get("labels"))
                     key = (namespace, _name(labels.get("kubernetes.io/service-name")))

@@ -175,6 +175,8 @@ def classify(
     value = path.as_posix()
     if contract.english_only(path):
         return "english-only"
+    if contract.korean_allowed_markdown(path):
+        return "korean-allowed"
     if value.startswith(ARCHIVE_PREFIX) and value != ARCHIVE_INDEX:
         return None
     if mode == "template":
@@ -194,6 +196,12 @@ def findings(text: str, language: str, contract: Any) -> list[tuple[str, str]]:
 
     if language == "english-only":
         return [("LANG-ENGLISH-ONLY", item) for item in _hangul_lines(text.split("\n"))]
+    if language == "korean-allowed":
+        lines = _outside_code(_blank_comments(_body(text)))
+        return [
+            ("LANG-ENGLISH-FIRST", item)
+            for item in _english_section_lines(lines, contract.english_sections)
+        ]
     body = _body(text)
     if language == "template-korean":
         return [

@@ -36,7 +36,7 @@ jobs:
           if [ "${EVENT_NAME+x}" != x ] || [ "${BASE_REF+x}" != x ] || [ "${HEAD_REF+x}" != x ] || [ "${SOURCE_REF+x}" != x ]; then
             missing=1
           fi
-          allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'
+          allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|claude|dependabot)/'
           branch_result=unknown_event
           branch_verdict=FAIL
           case "$event" in
@@ -46,7 +46,7 @@ jobs:
                 echo 'PR base branch must be main'
               elif ! [[ "$head" =~ $allowed_branch_regex ]]; then
                 branch_result=invalid_head
-                echo 'PR source branch must start with one of: feat/, fix/, docs/, refactor/, test/, chore/, ci/, release/, hotfix/, codex/, dependabot/'
+                echo 'PR source branch must start with one of: feat/, fix/, docs/, refactor/, test/, chore/, ci/, release/, hotfix/, codex/, claude/, dependabot/'
               else
                 branch_result=validated
                 branch_verdict=PASS
@@ -77,16 +77,25 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           path: trusted-base
           persist-credentials: false
+      - name: Checkout pull request merge for commit messages
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: candidate-commits
+          fetch-depth: 0
+          persist-credentials: false
       - name: Set up Python for PR title
         if: github.event_name == 'pull_request'
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - name: Validate PR title against reviewed base
+      - name: Validate PR title and commit range against reviewed base
         if: github.event_name == 'pull_request'
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          MERGE_SHA: ${{ github.sha }}
         run: |
           python3 -I - <<'PY'
           import os
@@ -97,15 +106,49 @@ jobs:
           import tomllib
 
           base_sha = os.environ.get("BASE_SHA", "")
+          head_sha = os.environ.get("HEAD_SHA", "")
+          merge_sha = os.environ.get("MERGE_SHA", "")
           title = os.environ.get("PR_TITLE", "")
-          if not re.fullmatch(r"[0-9a-f]{40}", base_sha):
-              sys.exit("invalid reviewed base identity")
+          if any(
+              re.fullmatch(r"[0-9a-f]{40}", sha) is None
+              for sha in (base_sha, head_sha, merge_sha)
+          ):
+              sys.exit("invalid pull request commit identity")
           actual = subprocess.run(
               ["git", "-C", "trusted-base", "rev-parse", "HEAD"],
-              check=True, capture_output=True, text=True,
+              check=True,
+              capture_output=True,
+              text=True,
+              timeout=10,
           ).stdout.strip()
           if actual != base_sha:
               sys.exit("reviewed base identity mismatch")
+
+
+          def git(*args):
+              return subprocess.run(
+                  ["git", "-C", "candidate-commits", *args],
+                  check=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.DEVNULL,
+                  timeout=15,
+              ).stdout
+
+
+          if git("rev-parse", "HEAD").decode("ascii").strip() != merge_sha:
+              sys.exit("pull request merge identity mismatch")
+          if git("rev-parse", "HEAD^1").decode("ascii").strip() != base_sha:
+              sys.exit("pull request base parent mismatch")
+          if git("rev-parse", "HEAD^2").decode("ascii").strip() != head_sha:
+              sys.exit("pull request head parent mismatch")
+          merge_size = git("cat-file", "-s", "HEAD").decode("ascii").strip()
+          if not merge_size.isdecimal() or int(merge_size) > 65536:
+              sys.exit("pull request merge object is invalid or oversized")
+          merge_headers = git("cat-file", "commit", "HEAD").partition(b"\n\n")[0]
+          if sum(line.startswith(b"parent ") for line in merge_headers.splitlines()) != 2:
+              sys.exit("pull request merge must have exactly two parents")
+          if git("rev-parse", "--is-shallow-repository").strip() != b"false":
+              sys.exit("pull request history is shallow")
           fd = os.open("trusted-base/.cz.toml", os.O_RDONLY | os.O_NOFOLLOW)
           try:
               info = os.fstat(fd)
@@ -117,12 +160,66 @@ jobs:
           if len(content) > 65536:
               sys.exit("reviewed message configuration exceeds the input bound")
           config = tomllib.loads(content.decode("utf-8"))
-          pattern = config["tool"]["commitizen"]["customize"]["schema_pattern"]
+          commitizen = config["tool"]["commitizen"]
+          grammar = commitizen["customize"]
+          pattern = grammar["schema_pattern"]
           if not isinstance(pattern, str) or not title or "\n" in title or "\r" in title:
               sys.exit("PR title must be one Conventional Commit subject line")
           if re.fullmatch(pattern, title) is None:
               sys.exit("PR title does not match the reviewed message schema")
           print("pr-title result=validated verdict=PASS")
+          patterns = {
+              name: re.compile(grammar[name])
+              for name in (
+                  "schema_pattern",
+                  "commit_parser",
+                  "generated_merge_pattern",
+                  "generated_revert_pattern",
+              )
+          }
+          prefixes = commitizen["allowed_prefixes"]
+          if not isinstance(prefixes, list) or not all(
+              isinstance(p, str) and p for p in prefixes
+          ):
+              sys.exit("invalid reviewed generated-message prefixes")
+          commits = (
+              git("rev-list", "--max-count=257", f"{base_sha}..{head_sha}")
+              .decode("ascii")
+              .splitlines()
+          )
+          if (
+              not commits
+              or len(commits) > 256
+              or head_sha not in commits
+              or any(re.fullmatch(r"[0-9a-f]{40}", sha) is None for sha in commits)
+          ):
+              sys.exit("pull request commit range is empty, invalid, or exceeds 256 commits")
+          for sha in commits:
+              size_text = git("cat-file", "-s", sha).decode("ascii").strip()
+              if not size_text.isdecimal() or int(size_text) > 65536:
+                  sys.exit(f"commit object is invalid or exceeds 65536 bytes: {sha}")
+              raw = git("cat-file", "commit", sha)
+              if len(raw) != int(size_text):
+                  sys.exit(f"commit object size mismatch: {sha}")
+              headers, separator, body = raw.partition(b"\n\n")
+              if not separator:
+                  sys.exit(f"commit message is missing: {sha}")
+              message = body.decode("utf-8").rstrip("\n")
+              parents = sum(line.startswith(b"parent ") for line in headers.splitlines())
+              authored = patterns["schema_pattern"].fullmatch(message) and patterns[
+                  "commit_parser"
+              ].fullmatch(message)
+              generated_merge = (
+                  "Merge" in prefixes
+                  and parents >= 2
+                  and patterns["generated_merge_pattern"].fullmatch(message)
+              )
+              generated_revert = "Revert" in prefixes and patterns[
+                  "generated_revert_pattern"
+              ].fullmatch(message)
+              if not (authored or generated_merge or generated_revert):
+                  sys.exit(f"commit message does not match the reviewed schema: {sha}")
+          print(f"pr-commits result=validated verdict=PASS count={len(commits)}")
           PY
 
   style-pr:
