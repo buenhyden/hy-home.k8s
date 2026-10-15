@@ -466,7 +466,7 @@ def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
         r"examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml)$"
     )
     secret_re = re.compile(r"(secret|credential|password|token)", re.IGNORECASE)
-    document_routes = load_document_routes(resolved_root)
+    document_routes = load_document_routes(resolved_root) if paths else ()
 
     messages: list[str] = []
     for path in paths:
@@ -518,7 +518,7 @@ def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
                             "- Template-First is mandatory: resolve the route in `docs/99.templates/registry.json`; use `docs/99.templates/README.md` for author guidance.",
                             f"- Registry profile: `{profile_id}`.",
                             route_line,
-                            "- New authored docs must keep `status: draft`, required template headings, and the registry-selected relationship section.",
+                            "- New authored docs must use the selected profile's registry-permitted initial status, required template headings, and relationship section.",
                             "- Folder-level adds, moves, or removals require the owning `README.md` to be updated in the same change.",
                             "- Run explicit repository QA for documentation template enforcement.",
                         ]
@@ -545,7 +545,7 @@ def build_messages(resolved_root: str, shell_targets: list[str]) -> list[str]:
     return messages
 
 
-def run_surface_selector(resolved_root: str) -> bool:
+def run_surface_selector(resolved_root: str) -> str | None:
     """Run the affected-surface selector over the collected paths.
 
     The program always comes from the project directory. The resolved root is
@@ -576,13 +576,16 @@ def run_surface_selector(resolved_root: str) -> bool:
         )
     except subprocess.SubprocessError:
         # A hung or unlaunchable selector is a failure, never a silent pass.
-        return False
+        return "HOOK-SURFACE-SELECTION"
     finally:
         try:
             os.unlink(paths_file)
         except OSError:
             pass
-    return completed.returncode == 0
+    if completed.returncode == 0:
+        return None
+    failure = re.search(r"(?m)^\[FAIL\] (SURFACE-[A-Z0-9-]+):", completed.stderr)
+    return failure.group(1) if failure else "HOOK-SURFACE-SELECTION"
 
 
 def read_payload(provider: str) -> str:
@@ -663,13 +666,13 @@ def main(argv: list[str] | None = None) -> int:
     if messages:
         print(json.dumps({"systemMessage": "\n\n".join(messages)}))
 
-    if not run_surface_selector(resolved_root):
+    failure = run_surface_selector(resolved_root) if paths else None
+    if failure:
         # A blocking exit shows the model stderr only, so the reason goes there.
         reject_with_detail(
             "HOOK-SURFACE-SELECTION",
-            "affected-surface selection rejected an edit path; normalize it to one "
-            "repository-relative POSIX path and update the canonical surface "
-            "contract before editing",
+            f"{failure}: affected-surface contract rejected a structured edit; "
+            "inspect the registered route or profile before editing",
         )
     return 0
 

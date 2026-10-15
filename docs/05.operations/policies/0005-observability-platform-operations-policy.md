@@ -1,10 +1,10 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-15"
 layer: "operations"
 artifact_id: "POL-0005"
 ---
@@ -53,7 +53,7 @@ Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 `gitops/platform/external-services/`의 Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
 현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
-PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
+Loki와 Tempo의 `http`를 사용한다. suffix-only
 이름이나 프로토콜이 없는 이름은 금지한다.
 
 ### In-Cluster Metric Collection

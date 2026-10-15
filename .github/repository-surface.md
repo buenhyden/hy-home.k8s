@@ -48,7 +48,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   [Quality policy](../.agents/governance/quality.md#delivery-ownership)가
   소유한다. hosted `ci-summary`와 `style-pr` 결과는 각각 별도의 SHA·run
   identity를 가진다. [main 보호 설정 기록](rulesets/main-protection.md)의
-  2026-10-09 원격 read-back은 두 job 모두 GitHub Actions App `15368`의
+  2026-10-15 원격 read-back은 두 job 모두 GitHub Actions App `15368`의
   required check이고 strict가 `true`임을 확인했다. 그 관측은 이후 변경의
   실행 결과나 독립적인 workflow-control 보증이 아니다.
 - `.github/requirements/ci-validation.txt`와
@@ -66,7 +66,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - ARWB-003의 전체 cutover는 과거 로컬·수동 증거다. 지속적인 Archive
   무결성 검사는 현재 validation owner에서 수행한다.
 - `ci.yml`은 pull request의 형태를 검증한다. 원격 branch protection은
-  직접 push 제한을 설정한다. 2026-10-09 승인된 원격 read-back에서
+  직접 push 제한을 설정한다. 2026-10-15 인증된 원격 read-back에서
   `enforce_admins: true`를 확인해 관리자도 기존 보호 조건을 만족해야 한다.
   관리자 거부 push 실험은 `NOT_RUN`이며 이후 설정 변경은 미관측이다.
   PR이 required job을 skip/no-op으로 바꾸는 잔여 위험은 HIGH로 유지하고

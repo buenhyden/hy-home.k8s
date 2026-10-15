@@ -1,10 +1,10 @@
 ---
 title: "99.templates"
-version: "0.12.0"
+version: "0.14.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-15"
 layer: "templates"
 ---
 # 99.templates
@@ -64,7 +64,7 @@ PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 �
 | 주장 | 현재 상태 | 근거 |
 | --- | --- | --- |
 | 공동 승인 | 확인됨 | Registry `approval_ref`와 Task EVD-033의 결정 원문 |
-| 원본 검증 | Project-Template 원본 입력에서만 확인됐고 이 저장소에서는 다시 검증하지 않았다 | Task EVD-032의 67개 경로 원본 blob 비교. 비교 원자료는 Git이 무시하는 `_workspace/residual-controls/`에 있어 Git으로 복구되지 않는다 |
+| 원본 검증 | Project-Template 원본 입력에서만 확인됐고 이 저장소에서는 다시 검증하지 않았다 | Task EVD-032의 67개 경로 원본 blob 비교. 비교 원자료는 당시 Git이 무시하는 `_workspace/residual-controls/`에 있었으며 2026-10-15 현재 checkout에서는 그 경로가 없다. 이 저장소 Git만으로 원자료나 digest 재현을 주장하지 않는다 |
 | 지역 수용 | C07 범위만 완료됐다. C04·C08 적용성과 공통 core 전체의 지역 채택은 미완료다 | 위 C07 문단과 같은 Task |
 | 네 저장소 공동 채택 | 근거 없음, 관측하지 않았다 | 다른 세 저장소의 adapter·적용 근거가 기록되기 전까지 주장하지 않는다 |
 
@@ -247,6 +247,25 @@ frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상�
 사용하며, 상태만 바꿔 미완료 기준이나 실패를 지우지 않는다.
 Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
 별도로 작성한다.
+
+현재 k8s 지역 adapter 후보의 Task 최초 기록은 관측된 `draft`·`ready`·
+`in-progress`·`blocked`를 허용한다. 사용자의 현행 범위 지시로 이미 시작한
+실행을 처음 문서화할 때 실제 행 상태를 그대로 쓴다. Task Inputs에는 지시의
+범위와 현재 권한, 실제 착수 또는
+차단 근거, 각 행의 owner와 선행 조건을 남긴다. `ready`에는 승인된 입력과
+준비 완료가 필요하며, `blocked`에는 원인·재개 조건·다음 owner가 필요하다.
+`completed` 등 종단 상태로 새 Task를 만들 수 없고, 이후 전이·기준 수용·
+필수 증거 규칙은 그대로 적용된다. 최초 `draft` commit을 합성하지 않는다.
+이는 Registry `shared_contract.extensions`에 명시할 지역 `candidate` 확장이지
+승인된 WGOV-CORE 3.0.0의 새 의미나 전체 지역 채택 판정이 아니다.
+
+`Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 `candidate`의 좁은 확장이다. 범위를 정한
+현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
+`approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
+`draft`이며, `approved`는 실행 완료나 Task 기준 수용 또는 Archive 적격을
+뜻하지 않는다. 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지
+않는다. 이 지역 규칙은 WGOV-CORE 3.0.0의 새 판본 승인이나 지역 전체
+채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
 
 ### Shared Frontmatter Grammar
 

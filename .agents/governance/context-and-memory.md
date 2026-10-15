@@ -1,10 +1,10 @@
 ---
 title: "Context and Memory Policy"
-version: "1.3.0"
+version: "1.4.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-15"
 ---
 
 # Context and Memory Policy
@@ -73,6 +73,10 @@ defines one store that Claude and Codex sessions both read and write:
 Git common directory so every linked worktree reaches the same file. It is
 Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once,
 and never create a second store when the root cannot be resolved.
+If the representative worktree or Git common directory moves, stop and have the
+operator reconnect the existing store and verify its workspace identity before
+resuming. A separate Git directory layout is currently unsupported; it reports
+`MEMORY_UNAVAILABLE` and does not authorize a replacement store.
 
 - A memory body is decision context: why a choice was made, why a check
   failed, how it was resolved and when that applies again. It is never Task
@@ -91,6 +95,21 @@ and never create a second store when the root cannot be resolved.
   when capacity allows, otherwise both revisions are reported and nothing
   changes. A full tier, domain or revision limit refuses only the new write
   with `MEMORY_CAPACITY_EXCEEDED`; ordinary repository work and QA continue.
+- An idempotency key is bound to the complete request, including target,
+  expected revision, body, sources and scope. Reusing it with different input
+  fails with `MEMORY_CONFLICT`; an old result without a request digest cannot
+  be replayed as a successful write. Existing revisions remain intact.
+- Repository-relative source refs currently retain `path` and `sha256`. A
+  source is read from the caller's worktree; a symlink in any path component,
+  a non-regular file, an inaccessible file or changed bytes makes it
+  unavailable or stale. Default retrieval excludes stale entries. Direct ID
+  and history reads can show them for review, never as current authority.
+- The SQLite page limit is set and checked on each connection and bounds the
+  main database only. The 4 GiB store-area limit remains an observation, not
+  a filesystem quota. Backups use a private temporary file, serialize with
+  other backups, verify schema, workspace identity, revisions and conflicts,
+  then atomically replace the single backup. A failed backup preserves the
+  previous valid copy.
 - Never store credentials, secret values, personal data or raw transcripts;
   the store accepts only `public` or `internal` sensitivity.
 - Native Claude and Codex memory stay disabled in project configuration, and

@@ -39,8 +39,6 @@ YAML_PARSE_ERROR = "YAML must parse without duplicate keys"
 EXPECTED_POLICY_PATHS = (
     "secret/data/platform/argocd",
     "secret/metadata/platform/argocd",
-    "secret/data/platform/postgres-app",
-    "secret/metadata/platform/postgres-app",
     "secret/data/platform/notifications",
     "secret/metadata/platform/notifications",
     "secret/data/platform/prometheus-api",

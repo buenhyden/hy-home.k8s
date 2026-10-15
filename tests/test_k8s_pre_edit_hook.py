@@ -741,6 +741,47 @@ class ShellWriteObservationTests(unittest.TestCase):
         result = run_hook(shell_payload("echo x > not-a-registered-surface.txt"), ROOT)
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_invalid_surface_registry_blocks_only_structured_edits(self):
+        registry = main_checkout() / "scripts/validation/registry.json"
+        original = registry.read_bytes()
+        contract = json.loads(original)
+        for profile in ("quick", "staged"):
+            contract["profiles"][profile].remove("affected-surface-contract")
+        registry.write_text(json.dumps(contract), encoding="utf-8")
+        try:
+            read = run_hook(shell_payload("git status --short"), main_checkout())
+            advisory = run_hook(
+                shell_payload(f"cat > {SAMPLE_DOCUMENT}"), main_checkout()
+            )
+            patch = run_hook(
+                patch_payload(
+                    envelope("*** Update File: scripts/provider_write_guard.py")
+                ),
+                main_checkout(),
+            )
+        finally:
+            registry.write_bytes(original)
+        self.assertEqual(read.returncode, 0, read.stderr)
+        self.assertEqual(advisory.returncode, 0, advisory.stderr)
+        self.assertIn(SAMPLE_DOCUMENT, advisory.stdout)
+        self.assertEqual(patch.returncode, 2, patch.stderr)
+        self.assertIn("SURFACE-PROFILE-COVERAGE", patch.stderr)
+
+    def test_invalid_document_registry_does_not_block_shell_observation(self):
+        registry = main_checkout() / "docs/99.templates/registry.json"
+        original = registry.read_bytes()
+        registry.write_text("{", encoding="utf-8")
+        try:
+            read = run_hook(shell_payload("git status --short"), main_checkout())
+            advisory = run_hook(
+                shell_payload(f"cat > {SAMPLE_DOCUMENT}"), main_checkout()
+            )
+        finally:
+            registry.write_bytes(original)
+        self.assertEqual(read.returncode, 0, read.stderr)
+        self.assertEqual(advisory.returncode, 0, advisory.stderr)
+        self.assertIn(SAMPLE_DOCUMENT, advisory.stdout)
+
 
 class CodexPayloadTests(unittest.TestCase):
     """The guard judges a Codex PreToolUse payload by the same boundary.
@@ -951,7 +992,7 @@ class FailClosedGuardTests(unittest.TestCase):
 
     def test_a_selector_rejection_reason_reaches_stderr(self):
         guard = self.load_guard()
-        guard.run_surface_selector = lambda root: False
+        guard.run_surface_selector = lambda root: "SURFACE-PATH-UNMATCHED"
         with (
             mock.patch("sys.stdin", io.StringIO(scalar_payload(SAMPLE_DOCUMENT))),
             mock.patch("sys.stderr", new_callable=io.StringIO) as stderr,

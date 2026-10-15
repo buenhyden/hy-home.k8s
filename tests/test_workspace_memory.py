@@ -64,6 +64,15 @@ class WorkspaceMemoryTest(unittest.TestCase):
         with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_EXISTS"):
             MEMORY.Store.init(self.root)
 
+    def test_store_path_symlink_is_unavailable(self) -> None:
+        external = self.root.parent / "moved.sqlite3"
+        self.store.path.rename(external)
+        self.store.path.symlink_to(external)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_UNAVAILABLE"):
+            MEMORY.Store.open(self.root)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_UNAVAILABLE"):
+            self.store.query()
+
     def test_linked_worktree_resolves_the_same_database(self) -> None:
         linked = self.root.parent / "linked"
         git(self.root, "worktree", "add", "-q", "--detach", str(linked))
@@ -158,6 +167,35 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertEqual(first["memory_id"], again["memory_id"])
         self.assertEqual(self.store.usage()["tiers"]["short-term"]["revisions"], 1)
 
+    def test_idempotency_key_binds_the_complete_request(self) -> None:
+        first = self.write(idempotency_key="bound")
+        for changes in (
+            {"body": SHORT | {"narrative": "different"}},
+            {"source_refs": ["policy.md"]},
+            {"owner": "another-owner"},
+            {"memory_id": first["memory_id"], "expected_revision": 1},
+        ):
+            with self.subTest(changes=changes):
+                with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+                    self.write(idempotency_key="bound", **changes)
+        self.assertEqual(self.store.usage()["tiers"]["short-term"]["revisions"], 1)
+
+    def test_legacy_unbound_idempotency_key_fails_closed_without_loss(self) -> None:
+        first = self.write()
+        with sqlite3.connect(self.store.path) as connection:
+            connection.execute("drop table idempotency")
+            connection.execute(
+                "create table idempotency (key text primary key, result text not null)"
+            )
+            connection.execute(
+                "insert into idempotency values (?, ?)",
+                ("old-key", json.dumps(first)),
+            )
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_CONFLICT"):
+            self.write(idempotency_key="old-key")
+        self.assertEqual(self.store.get(first["memory_id"])["body"], SHORT)
+        self.assertEqual(self.write(idempotency_key="new-key")["revision"], 1)
+
     def test_capacity_refusal_keeps_existing_memory(self) -> None:
         kept = self.write()
         before = self.store.usage()["tiers"]["short-term"]["bytes"]
@@ -194,6 +232,55 @@ class WorkspaceMemoryTest(unittest.TestCase):
             self.store.get(candidate["memory_id"])["eligibility"], "candidate"
         )
 
+    def test_source_symlinks_outside_repository_are_never_read(self) -> None:
+        external = self.root.parent / "outside.txt"
+        external.write_text("private fixture\n", encoding="utf-8")
+        (self.root / "outside-link").symlink_to(external)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+            self.write(source_refs=["outside-link"])
+        (self.root / "linked-dir").symlink_to(
+            self.root.parent, target_is_directory=True
+        )
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+            self.write(source_refs=["linked-dir/outside.txt"])
+        os.mkfifo(self.root / "pipe")
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+            self.write(source_refs=["pipe"])
+        fresh = self.write(source_refs=["policy.md"])
+        self.store.set_eligibility(fresh["memory_id"], "current", expected_revision=1)
+        (self.root / "policy.md").unlink()
+        (self.root / "policy.md").symlink_to(external)
+        self.assertEqual(self.store.query(), [])
+        self.assertEqual(
+            self.store.get(fresh["memory_id"])["stale_sources"], ["policy.md"]
+        )
+
+    def test_malformed_source_refs_have_a_stable_schema_error(self) -> None:
+        for raw in ("./", None):
+            with self.subTest(raw=raw):
+                with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_SCHEMA"):
+                    self.write(source_refs=[raw])
+
+    def test_source_freshness_uses_the_callers_worktree(self) -> None:
+        linked = self.root.parent / "linked-source"
+        git(self.root, "worktree", "add", "-q", "--detach", str(linked))
+        (linked / "policy.md").write_text("linked version\n", encoding="utf-8")
+        linked_store = MEMORY.Store.open(linked)
+        item = linked_store.write(
+            tier="short-term", body=SHORT, owner="platform", source_refs=["policy.md"]
+        )
+        linked_store.set_eligibility(item["memory_id"], "current", expected_revision=1)
+        self.assertEqual(len(linked_store.query()), 1)
+        self.assertEqual(self.store.query(), [])
+
+    def test_reconnected_database_retains_its_page_limit(self) -> None:
+        with self.store._connect() as connection:
+            page_size = connection.execute("pragma page_size").fetchone()[0]
+            self.assertEqual(
+                connection.execute("pragma max_page_count").fetchone()[0],
+                MEMORY.DATABASE_LIMIT // page_size,
+            )
+
     def test_no_api_deletes_memory_and_backup_preserves_all_revisions(self) -> None:
         self.assertFalse(
             [name for name in dir(MEMORY.Store) if "delete" in name or "purge" in name]
@@ -215,6 +302,72 @@ class WorkspaceMemoryTest(unittest.TestCase):
         self.assertLessEqual(
             len(os.listdir(self.store.path.parent)), MEMORY.RUNTIME_FILE_LIMIT
         )
+
+    def test_backup_rejects_existing_target_symlink(self) -> None:
+        external = self.root.parent / "external-backup"
+        external.write_text("untouched", encoding="utf-8")
+        target = self.store.path.parent / MEMORY.BACKUP_NAME
+        target.symlink_to(external)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_BACKUP_FAILED"):
+            self.store.backup()
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(external.read_text(encoding="utf-8"), "untouched")
+
+    def test_backup_preserves_previous_copy_if_store_identity_changes(self) -> None:
+        self.write()
+        backup = self.store.backup()["path"]
+        foreign_root = self.root.parent / "foreign"
+        foreign_root.mkdir()
+        git(foreign_root, "init", "-q")
+        foreign_store = MEMORY.Store.init(foreign_root)
+        self.store.path.rename(self.root.parent / "original.sqlite3")
+        foreign_store.path.rename(self.store.path)
+        with self.assertRaisesRegex(MEMORY.MemoryError_, "MEMORY_BACKUP_FAILED"):
+            self.store.backup()
+        with sqlite3.connect(backup) as copy:
+            self.assertEqual(
+                copy.execute(
+                    "select value from meta where key='workspace_id'"
+                ).fetchone()[0],
+                self.store.workspace_id,
+            )
+
+    def test_backup_uses_a_new_temporary_file_and_preserves_conflicts(self) -> None:
+        external = self.root.parent / "external-temp"
+        external.write_text("untouched", encoding="utf-8")
+        (self.store.path.parent / (MEMORY.BACKUP_NAME + ".tmp")).symlink_to(external)
+        first = self.write()
+        self.write(memory_id=first["memory_id"], expected_revision=0)
+        result = self.store.backup()
+        with sqlite3.connect(result["path"]) as copy:
+            self.assertEqual(
+                copy.execute("select count(*) from conflict").fetchone()[0], 1
+            )
+            self.assertEqual(
+                copy.execute(
+                    "select value from meta where key='workspace_id'"
+                ).fetchone()[0],
+                self.store.workspace_id,
+            )
+        self.assertEqual(external.read_text(encoding="utf-8"), "untouched")
+
+    def test_parallel_backups_produce_a_valid_container(self) -> None:
+        self.write()
+        script = ROOT / "scripts/workspace_memory.py"
+        command = [sys.executable, str(script), "--root", str(self.root), "backup"]
+        racers = [
+            subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            for _ in range(4)
+        ]
+        results = [racer.communicate() for racer in racers]
+        self.assertEqual([racer.returncode for racer in racers], [0] * 4, results)
+        with sqlite3.connect(self.store.path.parent / MEMORY.BACKUP_NAME) as copy:
+            self.assertEqual(copy.execute("pragma integrity_check").fetchone()[0], "ok")
+            self.assertEqual(
+                copy.execute("select count(*) from revision").fetchone()[0], 1
+            )
 
     def test_rollback_journal_is_used(self) -> None:
         with sqlite3.connect(self.store.path) as connection:

@@ -77,25 +77,33 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 self.assertIsNotNone(pattern.search("scripts/check-secret-handling.sh"))
                 self.assertIsNone(pattern.search(".claude/settings.local.json"))
 
-    def test_shfmt_reports_mismatches_through_pre_commit_mutation(self):
+    def test_shfmt_rewrites_only_in_manual_or_private_style_stage(self):
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
         hook = next(
             h for r in config["repos"] for h in r["hooks"] if h["id"] == "shfmt"
         )
         self.assertIn("--write", hook["args"])
+        self.assertEqual(config["default_stages"], ["manual"])
 
-    def test_secret_modes_do_not_confuse_index_and_snapshot(self):
+    def test_commit_uses_one_staged_qa_producer_and_manual_file_hooks(self):
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
-        hooks = [
-            h for r in config["repos"] for h in r["hooks"] if h["id"] == "gitleaks"
-        ]
-        native = [h for h in hooks if h.get("stages") == ["pre-commit"]]
-        manual = [h for h in hooks if h.get("stages") == ["manual"]]
-        self.assertEqual(len(native), 1)
-        self.assertEqual(len(manual), 1)
-        self.assertEqual(manual[0]["entry"].split()[:2], ["gitleaks", "dir"])
-        self.assertFalse(manual[0]["pass_filenames"])
-        self.assertIn("--redact", manual[0]["entry"])
+        hooks = {h["id"]: h for r in config["repos"] for h in r["hooks"]}
+        self.assertEqual(config["default_stages"], ["manual"])
+        self.assertEqual(hooks["gitleaks"]["stages"], ["manual"])
+        self.assertEqual(hooks["gitleaks"]["args"], ["--config=.gitleaks.toml"])
+        self.assertEqual(hooks["staged-qa"]["stages"], ["pre-commit"])
+        self.assertEqual(hooks["staged-qa"]["entry"], "python3 scripts/qa.py staged")
+        self.assertTrue(hooks["staged-qa"]["always_run"])
+        self.assertFalse(hooks["staged-qa"]["pass_filenames"])
+        self.assertEqual(
+            [h["id"] for h in hooks.values() if h.get("stages") == ["pre-commit"]],
+            ["staged-qa"],
+        )
+        for identifier, hook in hooks.items():
+            if identifier in {"commitizen", "commit-message-exceptions", "staged-qa"}:
+                continue
+            with self.subTest(file_hook=identifier):
+                self.assertEqual(hook["stages"], ["manual"])
         commitizen = next(
             h for r in config["repos"] for h in r["hooks"] if h["id"] == "commitizen"
         )
@@ -106,8 +114,13 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         for repository in config["repos"]:
             for hook in repository["hooks"]:
                 identifier = hook.get("alias", hook["id"])
-                if identifier in {"gitleaks", "commitizen"}:
-                    continue  # The equivalent snapshot scan and message stage are separate.
+                if identifier in {
+                    "gitleaks",
+                    "commitizen",
+                    "commit-message-exceptions",
+                    "staged-qa",
+                }:
+                    continue  # Explicit security, message, and staged QA stages.
                 with self.subTest(hook=identifier):
                     self.assertIn(
                         "manual", hook.get("stages", config.get("default_stages", []))

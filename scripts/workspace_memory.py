@@ -11,13 +11,16 @@ from __future__ import annotations
 import argparse
 import contextlib
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
 import re
 import sqlite3
+import stat
 import subprocess
 import sys
+import tempfile
 import uuid
 from pathlib import Path
 from typing import Any, Iterator, Sequence
@@ -66,7 +69,7 @@ create table if not exists conflict (
   created_at text not null, owner text not null, source_refs text not null,
   body text not null, payload_bytes integer not null);
 create table if not exists idempotency (
-  key text primary key, result text not null);
+  key text primary key, result text not null, request_hash text);
 """
 
 
@@ -110,10 +113,28 @@ def representative_root(cwd: Path) -> Path:
     return common_path.parent
 
 
+def caller_root(cwd: Path) -> Path:
+    try:
+        return Path(
+            subprocess.run(
+                ["git", "-C", str(cwd), "rev-parse", "--show-toplevel"],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=GIT_TIMEOUT_SECONDS,
+            ).stdout.strip()
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        raise MemoryError_(
+            "MEMORY_UNAVAILABLE: caller worktree is unavailable"
+        ) from exc
+
+
 class Store:
-    def __init__(self, path: Path, root: Path):
+    def __init__(self, path: Path, root: Path, source_root: Path):
         self.path = path
         self.root = root
+        self.source_root = source_root
         with self._connect() as connection:
             row = connection.execute(
                 "select value from meta where key = 'workspace_id'"
@@ -128,7 +149,10 @@ class Store:
     @classmethod
     def init(cls, cwd: Path) -> "Store":
         root = representative_root(cwd)
+        source_root = caller_root(cwd)
         path = root / STORE_DIR / STORE_NAME
+        if path.parent.is_symlink() or path.is_symlink():
+            raise MemoryError_("MEMORY_UNAVAILABLE: store path is linked")
         if path.exists():
             raise MemoryError_("MEMORY_EXISTS: the workspace store already exists")
         path.parent.mkdir(mode=0o700, exist_ok=True)
@@ -148,23 +172,34 @@ class Store:
             connection.commit()
         finally:
             connection.close()
-        return cls(path, root)
+        return cls(path, root, source_root)
 
     @classmethod
     def open(cls, cwd: Path) -> "Store":
         root = representative_root(cwd)
         path = root / STORE_DIR / STORE_NAME
-        if not path.is_file():
+        if path.parent.is_symlink() or path.is_symlink() or not path.is_file():
             raise MemoryError_("MEMORY_UNAVAILABLE: run init at the workspace root")
-        return cls(path, root)
+        return cls(path, root, caller_root(cwd))
 
     @contextlib.contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
-        connection = sqlite3.connect(self.path, isolation_level=None)
+        if self.path.parent.is_symlink() or self.path.is_symlink():
+            raise MemoryError_("MEMORY_UNAVAILABLE: store path is linked")
+        connection = sqlite3.connect(
+            self.path.as_uri() + "?mode=rw", uri=True, isolation_level=None
+        )
         try:
             connection.execute(f"pragma busy_timeout={BUSY_TIMEOUT_MS}")
             connection.execute("pragma journal_mode=delete")
             connection.execute("pragma foreign_keys=on")
+            page_size = connection.execute("pragma page_size").fetchone()[0]
+            limit = DATABASE_LIMIT // page_size
+            if (
+                connection.execute(f"pragma max_page_count={limit}").fetchone()[0]
+                != limit
+            ):
+                raise MemoryError_("MEMORY_CAPACITY_EXCEEDED: database page limit")
             yield connection
         finally:
             connection.close()
@@ -180,16 +215,51 @@ class Store:
                 raise
             connection.execute("commit")
 
-    def _source_ref(self, raw: str) -> dict[str, str]:
+    def _source_digest(self, raw: str) -> str:
+        if not isinstance(raw, str):
+            raise MemoryError_("MEMORY_SCHEMA: source ref is not a path")
         relative = Path(raw)
-        if relative.is_absolute() or ".." in relative.parts:
+        if not relative.parts or relative.is_absolute() or ".." in relative.parts:
             raise MemoryError_("MEMORY_SCHEMA: source refs are repository-relative")
-        target = self.root / relative
-        if not target.is_file():
-            raise MemoryError_(f"MEMORY_SCHEMA: source {raw} is not a file")
+        try:
+            directory = os.open(
+                self.source_root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+            )
+            try:
+                for part in relative.parts[:-1]:
+                    child = os.open(
+                        part,
+                        os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                        dir_fd=directory,
+                    )
+                    os.close(directory)
+                    directory = child
+                file_fd = os.open(
+                    relative.parts[-1],
+                    os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
+                    dir_fd=directory,
+                )
+                with os.fdopen(file_fd, "rb") as source:
+                    if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+                        raise MemoryError_(
+                            "MEMORY_SCHEMA: source is not a regular file"
+                        )
+                    digest = hashlib.sha256()
+                    for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                        digest.update(chunk)
+                    return digest.hexdigest()
+            finally:
+                os.close(directory)
+        except (OSError, ValueError) as exc:
+            raise MemoryError_(
+                "MEMORY_SCHEMA: source is unavailable or linked"
+            ) from exc
+
+    def _source_ref(self, raw: str) -> dict[str, str]:
+        digest = self._source_digest(raw)
         return {
-            "path": relative.as_posix(),
-            "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+            "path": Path(raw).as_posix(),
+            "sha256": digest,
         }
 
     @staticmethod
@@ -256,14 +326,40 @@ class Store:
         refs = [self._source_ref(raw) for raw in source_refs]
         payload = _canonical({"body": body, "source_refs": refs, "owner": owner})
         size = len(payload.encode("utf-8"))
+        request_hash = hashlib.sha256(
+            _canonical(
+                {
+                    "tier": tier,
+                    "domain_id": domain_id,
+                    "owner": owner,
+                    "body": body,
+                    "source_refs": refs,
+                    "sensitivity": sensitivity,
+                    "memory_id": memory_id,
+                    "expected_revision": expected_revision,
+                }
+            ).encode("utf-8")
+        ).hexdigest()
         if size > REVISION_LIMIT:
             raise MemoryError_("MEMORY_CAPACITY_EXCEEDED: revision payload limit")
         with self._write() as connection:
             if idempotency_key is not None:
+                if "request_hash" not in {
+                    column[1]
+                    for column in connection.execute("pragma table_info(idempotency)")
+                }:
+                    connection.execute(
+                        "alter table idempotency add column request_hash text"
+                    )
                 seen = connection.execute(
-                    "select result from idempotency where key = ?", (idempotency_key,)
+                    "select result, request_hash from idempotency where key = ?",
+                    (idempotency_key,),
                 ).fetchone()
                 if seen is not None:
+                    if seen[1] != request_hash:
+                        raise MemoryError_(
+                            "MEMORY_CONFLICT: idempotency key belongs to another request"
+                        )
                     return json.loads(seen[0])
             if memory_id is None:
                 if expected_revision is not None:
@@ -338,8 +434,8 @@ class Store:
             }
             if idempotency_key is not None:
                 connection.execute(
-                    "insert into idempotency values (?, ?)",
-                    (idempotency_key, _canonical(result)),
+                    "insert into idempotency (key, result, request_hash) values (?, ?, ?)",
+                    (idempotency_key, _canonical(result), request_hash),
                 )
             return result
 
@@ -375,13 +471,14 @@ class Store:
             body,
         ) = row
         refs = json.loads(refs)
-        stale = [
-            ref["path"]
-            for ref in refs
-            if not (self.root / ref["path"]).is_file()
-            or hashlib.sha256((self.root / ref["path"]).read_bytes()).hexdigest()
-            != ref["sha256"]
-        ]
+        stale = []
+        for ref in refs:
+            try:
+                changed = self._source_digest(ref["path"]) != ref["sha256"]
+            except MemoryError_:
+                changed = True
+            if changed:
+                stale.append(ref["path"])
         return {
             "memory_id": memory_id,
             "tier": tier,
@@ -491,26 +588,70 @@ class Store:
         """Refresh the single backup container; keep the old one on failure."""
 
         target = self.path.parent / BACKUP_NAME
-        temporary = self.path.parent / (BACKUP_NAME + ".tmp")
+        temporary: Path | None = None
         try:
-            with (
-                self._connect() as source,
-                contextlib.closing(sqlite3.connect(temporary)) as copy,
-            ):
-                source.backup(copy)
-                if copy.execute("pragma integrity_check").fetchone()[0] != "ok":
-                    raise OSError("backup integrity check failed")
-                expected = source.execute("select count(*) from revision").fetchone()[0]
-                if (
-                    copy.execute("select count(*) from revision").fetchone()[0]
-                    != expected
+            if self.path.parent.is_symlink() or self.path.is_symlink():
+                raise OSError("store path is linked")
+            with os.fdopen(
+                os.open(self.path, os.O_RDONLY | os.O_NOFOLLOW), "rb"
+            ) as lock:
+                if not stat.S_ISREG(os.fstat(lock.fileno()).st_mode):
+                    raise OSError("store is not a regular file")
+                fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+                if target.is_symlink() or (target.exists() and not target.is_file()):
+                    raise OSError("backup target is linked or not a regular file")
+                fd, name = tempfile.mkstemp(
+                    prefix=BACKUP_NAME + ".", dir=self.path.parent
+                )
+                os.close(fd)
+                temporary = Path(name)
+                with (
+                    self._connect() as source,
+                    contextlib.closing(sqlite3.connect(temporary)) as copy,
                 ):
-                    raise OSError("backup revision count differs")
-            os.replace(temporary, target)
+
+                    def state(connection: sqlite3.Connection) -> tuple[Any, ...]:
+                        return (
+                            connection.execute(
+                                "select key, value from meta order by key"
+                            ).fetchall(),
+                            connection.execute(
+                                "select type, name, sql from sqlite_master"
+                                " where name not like 'sqlite_%' order by type, name"
+                            ).fetchall(),
+                            tuple(
+                                connection.execute(
+                                    f"select count(*) from {table}"
+                                ).fetchone()[0]
+                                for table in (
+                                    "memory",
+                                    "revision",
+                                    "conflict",
+                                    "idempotency",
+                                )
+                            ),
+                        )
+
+                    expected = state(source)
+                    if source.execute(
+                        "select value from meta where key = 'workspace_id'"
+                    ).fetchone() != (self.workspace_id,):
+                        raise OSError("backup workspace identity differs")
+                    source.backup(copy)
+                    if copy.execute("pragma integrity_check").fetchone()[0] != "ok":
+                        raise OSError("backup integrity check failed")
+                    if state(copy) != expected or state(source) != expected:
+                        raise OSError("backup schema, identity or records differ")
+                    revisions = expected[2][1]
+                if target.is_symlink():
+                    raise OSError("backup target became linked")
+                os.replace(temporary, target)
         except (OSError, sqlite3.Error) as exc:
-            temporary.unlink(missing_ok=True)
             raise MemoryError_("MEMORY_BACKUP_FAILED: previous backup kept") from exc
-        return {"path": str(target), "revisions": expected}
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+        return {"path": str(target), "revisions": revisions}
 
 
 def main(argv: Sequence[str] | None = None) -> int:

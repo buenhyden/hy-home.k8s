@@ -15,8 +15,12 @@ setting is in force; only a dated authenticated read-back is.
   fields and the correction that followed are retained below as dated history.
 - **A new authenticated read-back was recorded on 2026-10-09 by `buenhyden`.**
   Classic protection, applied branch rules, inherited rulesets, main HEAD and a
-  prior PR's check runs were read separately. The current observation is below;
+  prior PR's check runs were read separately. The dated observation is below;
   the prior PR run does not test a later candidate.
+- **An authenticated read-back was recorded on 2026-10-15 by `buenhyden`.**
+  Classic protection, applied branch rules, repository rulesets, main HEAD,
+  a main push check run, SemVer tag refs and Releases were read separately.
+  The newer observation follows the 2026-10-09 record.
 - A read-back belongs in the active Task with its date, the exact fields read,
   and the account that read them, and this file may then carry the claim. The
   2026-09-10 reading was taken with no Stage 03 package open, so its date,
@@ -91,7 +95,7 @@ needs a new authenticated read-back.
 
 ## Observed State
 
-### Current 2026-10-09 Observation
+### Historical 2026-10-09 Observation
 
 The account `buenhyden` read
 `repos/buenhyden/hy-home.k8s/branches/main/protection`,
@@ -116,6 +120,35 @@ result belongs to its own SHA and run; it does not prove later hosted execution.
 `SEC-P01-001` remains HIGH for a PR that changes its own workflow or control
 definition. Required checks from App `15368` do not independently authenticate
 PR-editable job definitions. The security/CI operator owns that separate guard.
+
+### Current 2026-10-15 Observation
+
+The authenticated account `buenhyden` read
+`branches/main/protection`, `rules/branches/main`,
+`rulesets?includes_parents=true`, `branches/main`, `releases`, and
+`git/matching-refs/tags/v` for this repository. Main was
+`a45da94c9573c2613943c4881f85b80e4dfa65dc`. The public branch response
+and its main-push check runs were also read through the GitHub connector;
+the connector's full protection request returned 403, so the full protection
+fields below come from the authenticated `gh api` read instead.
+
+| Field | Observed on 2026-10-15 | Consequence |
+| --- | --- | --- |
+| `required_status_checks.strict` / `checks` | `true`; `ci-summary` and `style-pr`, each App `15368` | Both named checks remain required on current PR input. |
+| `required_pull_request_reviews.required_approving_review_count` / `require_code_owner_reviews` | `0` / `false` | CODEOWNERS alone does not require an approving review. |
+| `required_conversation_resolution.enabled` / `allow_force_pushes.enabled` / `allow_deletions.enabled` | `true` / `false` / `false` | Conversations must resolve; force pushes and deletion remain blocked. |
+| `enforce_admins.enabled` | `true` | The 2026-10-09 administrator bypass observation no longer describes this setting. The target below still says disabled; no remote setting was changed during this read. |
+| Applied branch rules | `[]` | No branch ruleset supplies independent workflow control. |
+| Repository rulesets | Four active tag rulesets: `24341547` immutable main-SHA tags, `24342332` publisher-only main-SHA tag creation, `24769895` immutable SemVer tags, `24769894` publisher-only SemVer tag creation | These govern tags, not PR workflow definitions. The two SemVer rulesets were absent from the older list. |
+| SemVer tag refs / Releases | `[]` / `[]` | No `v*` tag or GitHub Release was observed at this read; this does not certify any later publication. |
+
+Main push run `38491011372` at that SHA reported `ci-summary` successful and
+`style-pr` skipped. This is a main-push result, not PR style evidence. PR #145
+was merged as `24d914d7fb0ad6a79a4aa9dd56d4a3573a4ab5ea`; that earlier
+merge is not a check result for a future candidate. The current
+`enforce_admins` value differs from the documented target below. The operator
+must decide whether to revise that target or authorize a scoped remote
+correction; this read-back authorizes neither action.
 
 ## Target Ruleset
 
