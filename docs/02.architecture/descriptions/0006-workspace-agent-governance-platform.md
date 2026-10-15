@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "2.2.0"
+version: "2.2.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-15"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -124,13 +124,30 @@ Reusable decision context may live in the shared workspace memory store of
 (`scripts/workspace_memory.py`, Git-ignored `.workspace-memory/`). Both
 providers read and write it, and their native memory is disabled in project
 configuration. It is never Task status, evidence, approval or acceptance, and
-it is not the retired shared progress ledger.
+it is not the retired shared progress ledger. The shared store belongs to the
+representative worktree; source references are checked against the caller
+worktree without following symlinks. Request-bound retries, a capacity bound
+on every store connection, and verified atomic backup replacement protect
+context integrity. [SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md)
+owns this hardening and its focused evidence; it grants no authority to the
+stored context.
 
 ### Convergence infrastructure and deployment
 
 Tracked provider configuration and projections are secret-free repository configuration. The user's credential store is
 neither read nor migrated. Native parsers and canaries are handled in the provider owner's independent evidence lane,
 and no provider credential is added to hosted CI.
+
+[SPEC-0114](../../03.specs/0114-provider-permission-hardening/spec.md) owns the
+provider permission and hook hardening. Its Task records native configuration
+parsing and later operator-relayed hook delivery as separate observations.
+The recorded host `bwrap` startup failure does not establish operating-system
+sandbox isolation; a command subsequently approved outside that sandbox
+supplies no workspace-isolation evidence. Native syntax and loading remain
+with the [provider notes](../../../.codex/provider.md), while current r10
+findings and follow-up verification belong to
+[SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md). These current
+boundaries preserve the original Task results and their observation classes.
 
 The implementation validation owners are [document contracts](../../../scripts/document_contracts.py),
 [lifecycle](../../../scripts/document_lifecycle.py),
@@ -414,7 +431,7 @@ historical evidence rather than parallel operating instructions.
 - **Current decision**: [ADR-0036](../decisions/0036-common-knowledge-and-prompt-surfaces.md)
 - **Local QA and release decision**: [ADR-0048](../decisions/0048-local-qa-and-semver-release-ownership.md)
 - **Local QA and release implementation**: [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md)
-- **Later current implementations**: Task status derivation and provider boundaries ([SPEC-0108](../../03.specs/0108-task-status-and-provider-boundaries/spec.md)), shared workspace memory ([SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)), provider README language and QA tool diagnostics ([SPEC-0110](../../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md)), lifecycle test fixtures ([SPEC-0111](../../03.specs/0111-historical-fixture-drift/spec.md), [SPEC-0112](../../03.specs/0112-pinned-package-fixtures/spec.md)) and document sync ([SPEC-0113](../../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md))
+- **Later current implementations**: Task status derivation and provider boundaries ([SPEC-0108](../../03.specs/0108-task-status-and-provider-boundaries/spec.md)), shared workspace memory ([SPEC-0109](../../03.specs/0109-shared-workspace-memory/spec.md)), provider README language and QA tool diagnostics ([SPEC-0110](../../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md)), lifecycle test fixtures ([SPEC-0111](../../03.specs/0111-historical-fixture-drift/spec.md), [SPEC-0112](../../03.specs/0112-pinned-package-fixtures/spec.md)), document sync ([SPEC-0113](../../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md)) and provider permission/hook hardening ([SPEC-0114](../../03.specs/0114-provider-permission-hardening/spec.md))
 - **Original governance implementation**: [SPEC-0072](../../98.archive/completed/03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)
 - **Wider SDLC program**: [SPEC-0054](../../98.archive/completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical decisions**: ADR-0019, [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md), ADR-0034, ADR-0035
