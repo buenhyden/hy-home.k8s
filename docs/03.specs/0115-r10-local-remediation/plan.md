@@ -1,10 +1,10 @@
 ---
 title: "r10 Local Governance and Delivery Remediation Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "specs"
 artifact_id: "SPEC-0115-PLAN-0001"
 parent_ids: ["SPEC-0115"]
@@ -22,11 +22,13 @@ authority and reviewed target.
 
 ## Overview
 
-Execute [SPEC-0115](spec.md) through the single
-[Task](tasks/tsk-0001-r10-local-remediation.md). P01 to P08 are purposes and
-order, not eight new packages. The Task is the only findings and progress
-owner for this request. Independent review and the user's scoped local
-authorization approve this local execution plan; common-edition, remote,
+Execute [SPEC-0115](spec.md) through [Task 0001](tasks/tsk-0001-r10-local-remediation.md)
+for completed r10 work and [Task 0002](tasks/tsk-0002-r13-follow-up.md) for
+the r13 follow-up. P01 to P08 are purposes and order, not eight new packages.
+Each Task is the sole findings, execution and criterion-decision owner for its
+request. Independent review and the user's scoped local authorization approved
+the r10 plan; the current r13 request authorizes reversible local follow-up,
+with its review and new criterion decisions pending. Common-edition, remote,
 native-sandbox and live decisions remain at their respective owners.
 
 ## Context
@@ -38,6 +40,12 @@ source verification and C07 local acceptance, while its adapter remains
 `candidate`. SPEC-0105 Task 0004 holds pending full-core adoption. The Codex
 session observed hook delivery and dummy-variable absence but a failed local
 `bwrap` sandbox, so static config is not runtime isolation evidence.
+
+The r13 comparison coordinate is local `main` HEAD
+`8488e1098c2eac8c0db469c4eb59457d471575a8` on 2026-10-16, observed
+clean before creating `codex/r13-follow-up`. PR #148's dated remote merge is a
+separate recorded event. New local checks use the changed source/index input;
+the previous accepted r10 receipts are historical evidence only.
 
 ## Goals & In-Scope
 
@@ -71,6 +79,9 @@ actual closure and disposition prerequisites.
 | WORK-006 | [VAL-R10-006](spec.md#success-criteria--verification-plan) | Review commit/release producer and current remote protection evidence | WORK-001, WORK-005 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Local source tests and dated remote read-only observations |
 | WORK-007 | [VAL-R10-007](spec.md#success-criteria--verification-plan) | Repair memory retry, worktree/ref, page-bound and backup safety; separate provider config/hook/sandbox evidence | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Same-key conflict, external symlink, linked-worktree refresh, reconnect and serialized backup failure regressions; actual runtime only when available |
 | WORK-008 | [VAL-R10-008](spec.md#success-criteria--verification-plan) | Repair verifier readiness/health/sync, TLS trust or stated bound, unused ESO grant and current readers | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Negative NotReady/unhealthy/OutOfSync cases, TLS and grant/consumer checks, selected render/security checks; live state only from authorized observation |
+| WORK-009 | [VAL-R13-001](spec.md#success-criteria--verification-plan) | Compare r13 candidates with current owners, completed r10 receipts and dated PR #148 evidence; record P01–P08 dispositions | Prior r10 delivery | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current Git/source comparison and bounded finding review |
+| WORK-010 | [VAL-R13-002](spec.md#success-criteria--verification-plan) | Repair confirmed local source and direct consumers, including QA/CI selectors where their actual inputs change | WORK-009 finding for each affected slice | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Focused failing/passing behavior, selected checks on changed input, independent review |
+| WORK-011 | [VAL-R13-003](spec.md#success-criteria--verification-plan) | Reconcile current documentation, actual delivery, and whole-unit retention; distinguish unobserved common/remote/native/live lanes | Relevant WORK-009/010 results | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current-owner/link/lifecycle review, exact Git results and separately dated lane evidence |
 
 ## Verification Plan
 

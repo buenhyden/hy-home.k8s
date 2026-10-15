@@ -1,10 +1,10 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "specs"
 artifact_id: "SPEC-0115"
 ---
@@ -25,6 +25,13 @@ execution and criterion decisions. The scoped local specification is approved
 for this request after independent review under the user's direct local
 authorization. This does not adopt a new WGOV common edition or approve a
 remote or live action.
+
+The 2026-10-16 r13 follow-up is tracked by
+[Task 0002](tasks/tsk-0002-r13-follow-up.md). The prior r10 approval and Task
+0001's terminal acceptance remain historical facts, not decisions for the r13
+delta. The r13 request directly authorizes scoped reversible local
+investigation, repair, validation and logical commits; independent review and
+new criterion decisions remain pending in Task 0002.
 
 ## Strategic Boundaries & Non-goals
 
@@ -89,30 +96,37 @@ remote or live action.
   Any TLS check either validates peer trust or explicitly reports a narrower
   transport-only observation. Unused PostgreSQL ESO grants and stale readers
   are removed only after confirming current consumers.
+- The r13 follow-up traces each material P01–P08 candidate to current source,
+  revision, observation class, disposition, affected consumer and current
+  owner in Task 0002. A candidate becomes a defect only after confirmation.
+  Changed local contracts and their selected QA/CI consumers move together;
+  unchanged protections need no churn. New common headings or lifecycle
+  meanings need a separate common-edition decision before adoption.
 
 ## Core Design
 
 Classify each r10 observation against current source and the existing
 SPEC-0105 to SPEC-0114 outcomes. Route a confirmed gap to the narrowest
 authoritative owner, implement its dependent change as one reviewable unit,
-then attach focused evidence to Task 0001. Keep common-edition proposals and
-unobserved remote or live claims explicitly pending at their own owner.
+then attach focused evidence to the owning request Task. Keep common-edition
+proposals and unobserved remote or live claims pending at their own owner.
 
 ## Data Modeling & Storage Strategy
 
-Task 0001 is the durable inventory and execution owner. It stores bounded
-finding rows, selected check inputs and results, review disposition and next
-owner; source data and raw secret-bearing logs do not move into the repository.
+Task 0001 retains r10 inventory, execution and criterion decisions. Task 0002
+owns the r13 follow-up inventory, selected check inputs and results, review
+disposition and next owner; source data and raw secret-bearing logs do not move
+into the repository.
 Git retains source and rollback history. Stage 98 retains only eligible,
 approved whole units under its existing catalog and hold rules.
 
 ## Interfaces & Data Structures
 
-The local inputs are the r10 request, current Git state, Stage 99 profiles,
-the active requirement and architecture owners, package Tasks, validation
-registry and actual provider/CI records. Findings use the Task's inventory
-table; check facts use its registered Evidence columns. No new schema or
-parallel progress ledger is introduced by this Spec.
+The local inputs are the r10 and r13 requests, current Git state, Stage 99
+profiles, the active requirement and architecture owners, package Tasks,
+validation registry and actual provider/CI records. Each request's findings
+and check facts stay in its own Task inventory and Evidence columns. No new
+schema or parallel progress ledger is introduced by this Spec.
 
 ## Edge Cases & Error Handling
 
@@ -139,8 +153,8 @@ operator with an exact target and reviewed revision.
 Use the selected `scripts/qa.py staged` profile on an actual staged input,
 plus affected named tests and validators. Check the exact Task document with
 the document profile, link and lifecycle readers after factual updates.
-Record selected tool versions, inputs and results in Task 0001. A hosted run,
-Codex sandbox, memory runtime or live cluster check is reported only when
+Record selected tool versions, inputs and results in the owning request Task.
+A hosted run, Codex sandbox, memory runtime or live cluster check is reported only when
 actually observed in its own trust boundary.
 
 ## Success Criteria & Verification Plan
@@ -155,6 +169,9 @@ actually observed in its own trust boundary.
 | VAL-R10-006 | P06 source, commit/PR title, release producer and remote protection claims match observed authority and actual revisions. |
 | VAL-R10-007 | P07 memory retries reject same-key different requests, source refresh uses the caller worktree and rejects external symlinks, every reconnect is page bounded, and backup is serialized, bounded and verified without losing a good snapshot; native config, hook delivery and sandbox behavior remain separate evidence. |
 | VAL-R10-008 | P08 live verifiers reject NotReady, unhealthy and OutOfSync state, TLS trust is validated or its transport-only limit stated, unused PostgreSQL ESO access and stale readers are reconciled, and static checks stay separate from live acceptance. |
+| VAL-R13-001 | The r13 comparison baseline, prior r10 acceptance and PR #148 integration are distinguished; material P01–P08 candidates have source/revision, observation class, disposition and owner in Task 0002. |
+| VAL-R13-002 | Confirmed local defects are repaired at current owners with affected callers and selected QA/CI inputs; each changed behavior has focused before/after evidence and selected validation on its actual input, without weakening a unique required protection. |
+| VAL-R13-003 | Lasting meaning is promoted to its current owner and whole-unit retention is assessed against links, holds and eligibility; actual delivery and criterion decisions are recorded only in Task 0002, with common-edition, remote, native and live claims separately observed or deferred. |
 
 ## Traceability
 
@@ -171,3 +188,7 @@ actually observed in its own trust boundary.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R10-005 | Local selected QA and separate hosted evidence |
 | [REQ-0003-FR-0022](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R10-007 | Memory owner and focused failure checks |
 | [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R10-008 | Declared/rendered K8s and direct-runtime evidence split |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-001 | Current Git/source comparison and Task 0002 finding trace |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-002 | Affected producer/caller map, focused regression and selected QA |
+| [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Current-owner and whole-unit retention review |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Separate dated local, hosted, provider and live evidence |
