@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation Plan"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -26,11 +26,14 @@ Execute [SPEC-0115](spec.md) through [Task 0001](tasks/tsk-0001-r10-local-remedi
 for completed r10 work, [Task 0002](tasks/tsk-0002-r13-follow-up.md) for the
 completed r13 local repair, and
 [Task 0003](tasks/tsk-0003-r13-residual-verification.md) for the later bounded
-residual verification. P01 to P08 are purposes and order, not eight new
+residual verification, and
+[Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) for the subsequent
+protected remote integration. P01 to P08 are purposes and order, not eight new
 packages. Each Task owns only its assigned execution and criterion decisions.
-The later user authorization applies to exact remote and read-only live targets;
-common-edition, native-sandbox and independent workflow-protection decisions
-remain with their respective owners.
+The Task 0003 authorization applied to exact remote and read-only live targets;
+the subsequent Task 0004 authorization covers a further exact push, main PR,
+CI, reviewed protection decision and conditional merge. Common-edition and
+native-sandbox decisions remain with their respective owners.
 
 ## Context
 
@@ -54,6 +57,15 @@ main-targeting draft PR plus two selected read-only live GET verifiers. Their
 actual hosted and live outcomes are recorded only in Task 0003; the completed
 Task 0002 acceptance is not reopened.
 
+The subsequent integration starts from local commit
+`81d76f2d0194505948c3241d2761e90e19ac0429`. The user approved a remote
+push, main-targeting PR, CI, protection-setting change if needed and merge
+within their reviewed targets. The user clarified that this is a one-person
+project, so the existing strict protection may be retained without mutation
+while its independent-review HIGH risk remains recorded. Task 0004 records
+each actual remote result; prior Task 0003 hosted results applied to
+`8d8fa1e5`, not this revision.
+
 ## Goals & In-Scope
 
 - Inventory material P01 to P08 findings with exact sources, classifications,
@@ -67,15 +79,20 @@ Task 0002 acceptance is not reopened.
 - Verify the exact authorized PR's named hosted leaves and two selected live
   checks; record the observed input and output and hand off other lanes without
   widening their assurance.
+- Verify the subsequent exact pushed revision, hosted leaves and reviewed
+  protection decision; record the user's one-person operation and the
+  independent-review gap before any merge, then record an actual integration
+  identity only if the protected operation occurs.
 
 ## Non-Goals & Out-of-Scope
 
 No new common WGOV approval, four-repository adoption, remote ruleset or
 Project mutation, Release publication, live cluster/Vault/backup mutation,
 memory-store cleanup, bulk document restyling or Archive move without its
-actual closure and disposition prerequisites. The later authority covers the
-exact push, draft PR/CI and two read-only live verifier runs, not merge or
-deployment.
+actual closure and disposition prerequisites. Task 0003's authority covered
+its exact push, draft PR/CI and two read-only live verifier runs. The subsequent
+authority is bounded to Task 0004's reviewed protection and integration target;
+it does not authorize weaker protection, self-approval or deployment.
 
 ## Work Breakdown
 
@@ -95,6 +112,7 @@ deployment.
 | WORK-010 | [VAL-R13-002](spec.md#success-criteria--verification-plan) | Repair confirmed local source and direct consumers, including QA/CI selectors where their actual inputs change | WORK-009 finding for each affected slice | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Focused failing/passing behavior, selected checks on changed input, independent review |
 | WORK-011 | [VAL-R13-003](spec.md#success-criteria--verification-plan) | Reconcile current documentation, actual delivery, and whole-unit retention; distinguish unobserved common/remote/native/live lanes | Relevant WORK-009/010 results | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current-owner/link/lifecycle review, exact Git results and separately dated lane evidence |
 | WORK-012 | [VAL-R13-004](spec.md#success-criteria--verification-plan) | Record exact authorized remote delivery and named CI leaves, selected live GET results, and independent residual-lane owner handoff | Completed local commit `8d8fa1e5` and later scoped user authorization | [Task 0003](tasks/tsk-0003-r13-residual-verification.md) | Remote SHA/PR identity and actual `ci-summary`/`style-pr` leaf results; kubeconfig/context-confirmed selected live verifier output; separate DEFER/FAIL boundaries |
+| WORK-013 | [VAL-R13-005](spec.md#success-criteria--verification-plan) | Verify the newly authorized exact revision and CI, appraise reviewed protection including a justified no-op for one-person operation, and decide conditional integration with residual HIGH risk explicit | Local `81d76f2d`, subsequent user approval and Task 0003's distinct terminal handoff | [Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) | Remote SHA/PR and named hosted leaves for final head; protection snapshot, no-op rationale or reviewed before/after change, solo decision and actual merge identity if performed |
 
 ## Verification Plan
 
@@ -113,6 +131,18 @@ kubeconfig and verified context. A green API status does not prove deployment of
 global-hook and workflow-protection observations in separate lanes with current
 owners. A required hosted leaf left unobserved or failed prevents Task 0003
 acceptance.
+
+For WORK-013, distinguish the new pushed SHA and hosted run from PR #149's
+earlier `8d8fa1e5` run. Record the admin-readable protection snapshot before a
+change, reviewed exact setting delta, post-change verification and a bounded
+rollback route. If retained unchanged, record the no-op rationale and verify
+the effective settings. A configured required context or zero-review rule is
+not an independent reviewer; the user's one-person decision leaves that HIGH
+risk visible. Keep merge pending until the final head's required hosted leaves,
+protection decision and current approval are evidenced; record the resulting
+merge SHA and branch state only after execution. A Task 0004 factual closeout
+may be delivered by a separate documentation PR; do not make its own merge
+receipt a circular prerequisite for VAL-R13-005.
 
 ## Risks & Mitigations
 

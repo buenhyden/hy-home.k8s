@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -40,6 +40,16 @@ kubeconfig. [Task 0003](tasks/tsk-0003-r13-residual-verification.md) owns only
 this follow-up's actual evidence and VAL-R13-004 decision. Tasks 0001 and 0002
 retain their terminal decisions.
 
+The user's subsequent 2026-10-16 authorization covers pushing the then-current
+local `81d76f2d` document closeout, a main-targeting PR and actual CI, a
+reviewed protection-setting decision, and merge when its concrete prerequisites
+are met. [Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) owns
+only that protected integration stream and VAL-R13-005. Tasks 0001–0003 keep
+their terminal evidence and decisions; authorization alone is not evidence of
+an independent reviewer, effective protection or a merge. The user then
+clarified that this is a one-person project; retaining the current settings
+as a reviewed no-op leaves the independent-review HIGH risk visible.
+
 ## Strategic Boundaries & Non-goals
 
 - Inspect current `main`, index, worktree, consumers and original evidence
@@ -58,7 +68,9 @@ retain their terminal decisions.
   Protected external actions follow their own current authority. The later
   authorization above applies only to its exact remote delivery and read-only
   live GET verification targets; it grants no merge, deployment or mutation of
-  cluster resources.
+  cluster resources. The subsequent authorization is limited to Task 0004's
+  reviewed remote protection and integration targets; it grants no protection
+  weakening, self-approval, live mutation or new common-edition decision.
 
 ## Contracts
 
@@ -199,6 +211,7 @@ actually observed in its own trust boundary.
 | VAL-R13-002 | Confirmed local defects are repaired at current owners with affected callers and selected QA/CI inputs; each changed behavior has focused before/after evidence and selected validation on its actual input, without weakening a unique required protection. |
 | VAL-R13-003 | Lasting meaning is promoted to its current owner and whole-unit retention is assessed against links, holds and eligibility; actual delivery and criterion decisions are recorded only in Task 0002, with common-edition, remote, native and live claims separately observed or deferred. |
 | VAL-R13-004 | Task 0003 records the exact authorized commit, remote draft PR and named `ci-summary`/`style-pr` leaf outcomes, plus the two selected live verifier results, with revision, target, trust boundary, approval scope and current owner. Required hosted leaves and selected live checks need actual PASS evidence before local acceptance; unobserved or failed required outcomes keep this criterion pending. Common-source, native sandbox, global-hook provenance, independent workflow protection and broader live checks remain separately classified and handed to their owners, without promotion to PASS. |
+| VAL-R13-005 | Task 0004 records the user's exact follow-up authority, pushed revision and PR target, actual named CI leaf results on the final reviewed head, and the branch-protection decision with a before/after snapshot and rollback route if settings change. For the user's one-person operation, the absent independent reviewer and residual HIGH risk remain visible while strict App-bound required contexts, admin enforcement, conversation resolution and no-force/no-delete settings are retained. Failed or unobserved required hosted checks keep acceptance and merge pending; authorization or a green intermediate aggregate cannot certify the final head or merge. Record actual PR merge identity and post-merge state only if performed. |
 
 ## Traceability
 
@@ -221,3 +234,5 @@ actually observed in its own trust boundary.
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Separate dated local, hosted, provider and live evidence |
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-004 | Exact PR revision, named hosted job/leaf results and protection limit in Task 0003 |
 | [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R13-004 | Authorized read-only selected live verifier inputs and outcomes in Task 0003 |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Exact hosted revision/leaf, branch-protection and independent review evidence in Task 0004 |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Separate authorization, delivery and actual merge identity in Task 0004 |
