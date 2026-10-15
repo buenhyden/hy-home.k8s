@@ -52,6 +52,27 @@ class ExternalServiceContractsTests(unittest.TestCase):
     def test_backend_port_may_differ_from_frontend(self):
         self.assertEqual(self.check(), [])
 
+    def test_externalname_cannot_claim_selectorless_endpoint_route(self):
+        docs = copy.deepcopy(self.documents)
+        docs[0]["spec"]["type"] = "ExternalName"
+        self.assertTrue(self.check(docs))
+
+    def test_nodeport_remains_valid_for_generic_selectorless_join(self):
+        docs = copy.deepcopy(self.documents)
+        docs[0]["spec"]["type"] = "NodePort"
+        self.assertEqual(self.check(docs), [])
+
+    def test_headless_service_requires_same_frontend_and_backend_port(self):
+        docs = copy.deepcopy(self.documents)
+        docs[0]["spec"]["clusterIP"] = "None"
+        self.assertTrue(self.check(docs))
+
+        alloy = list(
+            yaml.safe_load_all((ROOT / PREFIX / "alloy-external.yaml").read_text())
+        )
+        alloy[0]["spec"]["clusterIP"] = "None"
+        self.assertEqual(self.check(alloy), [])
+
     def test_identical_endpoints_and_split_ports_across_slices(self):
         service, first = list(
             yaml.safe_load_all((ROOT / PREFIX / "alloy-external.yaml").read_text())

@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.4.1"
+version: "1.4.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-16"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -167,8 +167,8 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 9. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
 
    ```bash
-   kubectl -n argocd get app root-platform -o yaml | \
-     rg 'path: gitops/apps/root|targetRevision: main'
+   test "$(kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.path}')" = 'gitops/apps/root'
+   test "$(kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.targetRevision}')" = 'main'
    ```
 
 ## Verification

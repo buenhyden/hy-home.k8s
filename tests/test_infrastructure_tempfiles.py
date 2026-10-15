@@ -24,6 +24,7 @@ SHARED_TMP_REDIRECT = re.compile(r"(?:[0-9]+)?>>?\s*(/tmp/[^\s;&|]+)")
 STUB = r"""#!/usr/bin/python3
 from __future__ import annotations
 
+import json
 import os
 import signal
 import stat
@@ -127,11 +128,61 @@ elif tool == "kubectl" and "version" not in args:
     elif kind == "svc,endpointslice":
         if os.environ.get("STUB_FAIL_PLATFORM_LIST") == "1":
             sys.exit(1)
-        print("valkey-external")
-        print("loki-external tempo-external alloy-external")
-    elif kind == "application":
-        print("path: gitops/apps/root")
-        print("targetRevision: main")
+        services = {
+            "valkey-external": [
+                ("tcp-valkey", 6379, int(os.environ.get("STUB_VALKEY_TARGET_PORT", "26379")))
+            ],
+            "loki-external": [("http", 3100, 3100)],
+            "tempo-external": [("http", 3200, 3200)],
+            "alloy-external": [("grpc-otlp", 4317, 4317), ("http-otlp", 4318, 4318)],
+        }
+        items = []
+        slices = {}
+        for name, ports in services.items():
+            items.append({
+                "kind": "Service", "metadata": {"name": name},
+                "spec": {"type": os.environ.get("STUB_SERVICE_TYPE", "ClusterIP"), "clusterIP": os.environ.get("STUB_CLUSTER_IP", "10.43.0.10"), "ports": [
+                    {"name": label, "port": frontend, "targetPort": backend}
+                    for label, frontend, backend in ports
+                ]},
+            })
+            slices[name] = {
+                "kind": "EndpointSlice", "addressType": "IPv4",
+                "metadata": {"name": name + "-1", "labels": {"kubernetes.io/service-name": name}},
+                "ports": [
+                    {"name": label, "protocol": "TCP", "port": backend}
+                    for label, frontend, backend in ports
+                ],
+                "endpoints": [{"addresses": ["192.168.0.13"]}],
+            }
+            items.append(slices[name])
+        if os.environ.get("STUB_EXTRA_SLICE"):
+            name = os.environ["STUB_EXTRA_SLICE"]
+            items.append({
+                "kind": "EndpointSlice", "addressType": "IPv4",
+                "metadata": {"name": name + "-2", "labels": {"kubernetes.io/service-name": name}},
+                "ports": [{"name": services[name][0][0], "protocol": "TCP", "port": services[name][0][2]}],
+                "endpoints": [{"addresses": ["192.168.0.99"]}],
+            })
+        if os.environ.get("STUB_EXTRA_ADDRESS"):
+            name = os.environ["STUB_EXTRA_ADDRESS"]
+            slices[name]["endpoints"].append({"addresses": ["192.168.0.99"]})
+        if os.environ.get("STUB_EXTRA_PORT"):
+            name = os.environ["STUB_EXTRA_PORT"]
+            slices[name]["ports"].append({"name": "rogue", "protocol": "TCP", "port": 9999})
+        if os.environ.get("STUB_EMPTY_SLICE"):
+            name = os.environ["STUB_EMPTY_SLICE"]
+            slices[name]["endpoints"] = []
+        if os.environ.get("STUB_SPLIT_ALLOY"):
+            items.append({
+                "kind": "EndpointSlice", "addressType": "IPv4",
+                "metadata": {"name": "alloy-external-2", "labels": {"kubernetes.io/service-name": "alloy-external"}},
+                "ports": [slices["alloy-external"]["ports"].pop()],
+                "endpoints": [{"addresses": ["192.168.0.13"]}],
+            })
+        print(json.dumps({"items": items}))
+    elif kind == "application" and "yaml" in args:
+        print("metadata:\n  annotations:\n    note: 'path: gitops/apps/root targetRevision: main'\nspec:\n  source:\n    path: " + os.environ.get("STUB_GITOPS_SOURCE", "gitops/apps/root") + "\n    targetRevision: " + os.environ.get("STUB_GITOPS_REVISION", "main"))
     elif "jsonpath={.status.health.status}" in args:
         print(os.environ.get("STUB_APP_HEALTH", "Healthy"), end="")
     elif "jsonpath={.status.sync.status}" in args:
@@ -143,7 +194,10 @@ elif tool == "kubectl" and "version" not in args:
             for value in args
             if value.startswith("jsonpath=")
         )
-        value = VALUES[(kind, name, jsonpath)]
+        if kind == "application":
+            value = os.environ.get("STUB_GITOPS_SOURCE", "gitops/apps/root") if jsonpath == "{.spec.source.path}" else os.environ.get("STUB_GITOPS_REVISION", "main")
+        else:
+            value = VALUES[(kind, name, jsonpath)]
         if (kind, name, jsonpath) == (
             "svc", "valkey-external", "{.spec.ports[0].targetPort}"
         ):
@@ -159,10 +213,16 @@ EXPECTED_PASSES = {
 }
 
 FAILURES = {
-    "verify-gitops.sh": ("rg", "root-platform path contract mismatch"),
-    "verify-external-services.sh": ("rg", "missing valkey-external"),
+    "verify-gitops.sh": (
+        {"STUB_GITOPS_SOURCE": "wrong/path"},
+        "root-platform path contract mismatch",
+    ),
+    "verify-external-services.sh": (
+        {"STUB_EXTRA_ADDRESS": "loki-external"},
+        "loki-external EndpointSlice address or readiness mismatch",
+    ),
     "verify-ingress-tls.sh": (
-        "curl",
+        {"STUB_FAIL_TOOL": "curl"},
         "https fallback endpoint TLS trust or reachability failed",
     ),
 }
@@ -311,9 +371,9 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
                 tmpdir = self.root / f"failure-{script.stem}"
                 tmpdir.mkdir()
                 log = self.root / f"failure-{script.stem}.log"
-                fail_tool, diagnostic = FAILURES[script.name]
+                failure_values, diagnostic = FAILURES[script.name]
 
-                result = self.run_script(script, tmpdir, log, STUB_FAIL_TOOL=fail_tool)
+                result = self.run_script(script, tmpdir, log, **failure_values)
 
                 self.assertEqual(result.returncode, 1)
                 self.assertIn(f"[FAIL] {diagnostic}", result.stderr)
@@ -373,6 +433,22 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
                 self.assertIn("[FAIL]", result.stderr)
                 self.assertEqual(list(tmpdir.iterdir()), [])
 
+    def test_gitops_ignores_annotation_decoys_for_source_contract(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-gitops.sh"
+        for field, value in (
+            ("STUB_GITOPS_SOURCE", "wrong/path"),
+            ("STUB_GITOPS_REVISION", "wrong"),
+        ):
+            with self.subTest(field=field):
+                tmpdir = self.root / field
+                tmpdir.mkdir()
+                result = self.run_script(
+                    script, tmpdir, self.root / f"{field}.log", **{field: value}
+                )
+                self.assertEqual(result.returncode, 1, result.stdout)
+                self.assertIn("contract mismatch", result.stderr)
+                self.assertEqual(list(tmpdir.iterdir()), [])
+
     def test_ingress_rejects_untrusted_tls(self) -> None:
         script = ROOT / "infrastructure/verify/verify-ingress-tls.sh"
         tmpdir = self.root / "ingress-untrusted"
@@ -420,6 +496,86 @@ class InfrastructureTemporaryFileTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("[FAIL] valkey Service targetPort mismatch", result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_services_reject_extra_routes(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        for field, service in (
+            ("STUB_EXTRA_SLICE", "loki-external"),
+            ("STUB_EXTRA_ADDRESS", "valkey-external"),
+            ("STUB_EXTRA_PORT", "alloy-external"),
+            ("STUB_EMPTY_SLICE", "tempo-external"),
+        ):
+            with self.subTest(field=field):
+                tmpdir = self.root / field
+                tmpdir.mkdir()
+                result = self.run_script(
+                    script, tmpdir, self.root / f"{field}.log", **{field: service}
+                )
+                self.assertEqual(result.returncode, 1, result.stdout)
+                self.assertIn("[FAIL]", result.stderr)
+                self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_services_accept_split_named_ports(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "split-alloy"
+        tmpdir.mkdir()
+        result = self.run_script(
+            script, tmpdir, self.root / "split-alloy.log", STUB_SPLIT_ALLOY="1"
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_services_reject_non_clusterip_service_type(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        for service_type in ("ExternalName", "NodePort"):
+            with self.subTest(service_type=service_type):
+                tmpdir = self.root / service_type
+                tmpdir.mkdir()
+                result = self.run_script(
+                    script,
+                    tmpdir,
+                    self.root / f"{service_type}.log",
+                    STUB_SERVICE_TYPE=service_type,
+                )
+                self.assertEqual(result.returncode, 1, result.stdout)
+                self.assertIn("Service type mismatch", result.stderr)
+                self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_services_reject_headless_service(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "headless"
+        tmpdir.mkdir()
+        result = self.run_script(
+            script,
+            tmpdir,
+            self.root / "headless.log",
+            STUB_CLUSTER_IP="None",
+        )
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("headless Service", result.stderr)
+        self.assertEqual(list(tmpdir.iterdir()), [])
+
+    def test_external_services_report_missing_python_before_listing(self) -> None:
+        script = ROOT / "infrastructure/verify/verify-external-services.sh"
+        tmpdir = self.root / "missing-python"
+        tmpdir.mkdir()
+        (self.bin / "mktemp").symlink_to("/usr/bin/mktemp")
+        env = self.environment(tmpdir, self.root / "missing-python.log")
+        env["PATH"] = str(self.bin)
+
+        result = subprocess.run(
+            ["/usr/bin/bash", str(script)],
+            cwd=ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("python3 is required", result.stderr)
         self.assertEqual(list(tmpdir.iterdir()), [])
 
     def test_external_service_list_failure_has_diagnostic_and_cleanup(self) -> None:

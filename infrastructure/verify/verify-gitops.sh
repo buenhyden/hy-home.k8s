@@ -8,7 +8,7 @@ fail() {
 
 TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/verify-gitops.XXXXXXXX")" ||
   fail "cannot create private temporary directory"
-ROOT_PLATFORM_OUTPUT="$TEMP_DIR/root-platform.yaml"
+ROOT_PLATFORM_OUTPUT="$TEMP_DIR/root-platform-path.txt"
 
 cleanup() {
   local status=$?
@@ -29,11 +29,11 @@ echo "[INFO] Checking ArgoCD GitOps contracts"
 kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
-kubectl -n argocd get application root-platform -o yaml >"$ROOT_PLATFORM_OUTPUT"
+kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.path}' >"$ROOT_PLATFORM_OUTPUT"
 
-rg -q 'path: gitops/apps/root' "$ROOT_PLATFORM_OUTPUT" ||
+[ "$(<"$ROOT_PLATFORM_OUTPUT")" = 'gitops/apps/root' ] ||
   fail "root-platform path contract mismatch"
-rg -q 'targetRevision: main' "$ROOT_PLATFORM_OUTPUT" ||
+[ "$(kubectl -n argocd get application root-platform -o jsonpath='{.spec.source.targetRevision}' 2>/dev/null)" = 'main' ] ||
   fail "root-platform targetRevision contract mismatch"
 
 check_app() {
