@@ -406,6 +406,11 @@ class Store:
                         "current_revision": row[2],
                         "stored": stored,
                     }
+                    if idempotency_key is not None:
+                        connection.execute(
+                            "insert into idempotency (key, result, request_hash) values (?, ?, ?)",
+                            (idempotency_key, _canonical(result), request_hash),
+                        )
                     return result
                 if not self._fits(connection, tier, domain_id, size):
                     raise MemoryError_("MEMORY_CAPACITY_EXCEEDED: tier or domain limit")
@@ -532,7 +537,7 @@ class Store:
                 (memory_id,),
             ).fetchall()
             conflicts = connection.execute(
-                "select expected_revision, current_revision, created_at, owner, body from conflict"
+                "select expected_revision, current_revision, created_at, owner, source_refs, body from conflict"
                 " where memory_id = ? order by conflict_id",
                 (memory_id,),
             ).fetchall()
@@ -557,7 +562,8 @@ class Store:
                     "current_revision": c[1],
                     "created_at": c[2],
                     "owner": c[3],
-                    "body": json.loads(c[4]),
+                    "source_refs": json.loads(c[4]),
+                    "body": json.loads(c[5]),
                 }
                 for c in conflicts
             ],
