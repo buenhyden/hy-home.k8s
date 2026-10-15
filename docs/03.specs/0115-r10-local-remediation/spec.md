@@ -30,8 +30,8 @@ The 2026-10-16 r13 follow-up is tracked by
 [Task 0002](tasks/tsk-0002-r13-follow-up.md). The prior r10 approval and Task
 0001's terminal acceptance remain historical facts, not decisions for the r13
 delta. The r13 request directly authorizes scoped reversible local
-investigation, repair, validation and logical commits; independent review and
-new criterion decisions remain pending in Task 0002.
+investigation, repair, validation and logical commits. Task 0002 owns
+independent review and new criterion decisions.
 
 ## Strategic Boundaries & Non-goals
 
@@ -52,9 +52,10 @@ new criterion decisions remain pending in Task 0002.
 
 ## Contracts
 
-- Each material finding records its source path and revision, observation
-  class, impact, disposition, current owner and criterion in Task 0001. Static,
-  recorded, reproduced, inferred and inaccessible evidence remain distinct.
+- Each r10 material finding records its source path and revision, observation
+  class, impact, disposition, current owner and criterion in Task 0001. The r13
+  delta uses Task 0002. Static, recorded, reproduced, inferred and inaccessible
+  evidence remain distinct.
 - The Stage 99 Registry, schema and selected templates own local document
   form. Spec holds changed behavior and acceptance, Plan holds order and
   intended checks, and Task holds actual results and sole criterion decisions.
@@ -102,6 +103,21 @@ new criterion decisions remain pending in Task 0002.
   Changed local contracts and their selected QA/CI consumers move together;
   unchanged protections need no churn. New common headings or lifecycle
   meanings need a separate common-edition decision before adoption.
+- The hosted PR metadata producer binds actual merge identity and parents and
+  checks every commit in the base-to-head range against trusted-base message
+  grammar; the workflow separately checks its PR branch-prefix policy.
+  Candidate commit objects are read as data; checked-out candidate
+  modules and configuration are not executed by that producer. Its canonical
+  Python logic and inline workflow projection must agree. The workflow itself
+  remains a separate hosted trust boundary requiring actual protection and
+  run evidence.
+- A repeated stale memory conflict with the same idempotency key returns its
+  recorded safe result without another retained conflict or quota charge.
+  Retained conflict history includes its source references.
+- GitOps source verification compares exact Application source fields. The
+  external-service verifier checks the complete declared Service and every
+  same-service EndpointSlice route, port, address and readiness state; static
+  source tests do not establish live cluster behavior.
 
 ## Core Design
 

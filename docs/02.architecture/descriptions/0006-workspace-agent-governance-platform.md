@@ -1,10 +1,10 @@
 ---
 title: "Agent and Document Governance Architecture"
-version: "2.2.1"
+version: "2.2.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "architecture"
 artifact_id: "AD-0006"
 ---
@@ -295,13 +295,19 @@ evidence capacity available without adding a new QA gate.
 | Global QA-contract change or bounded audit | Resolve tools, time, output and native execution approval for affected purpose gates and named behavior, Archive and security units; do not run a blanket sweep |
 | Release | Validate release inputs and publish through one producer; tag or Release publication does not repeat QA |
 
-GitHub Actions retains `ci-summary`, which validates branch metadata, and a
-separate PR-only selected style job. `ci-summary` reports the branch-policy
-verdict itself. Missing metadata, an invalid
-PR base or source branch, or an unexpected event/ref fails that job;
-PR branch policy is not applicable on main. Historical hosted full QA
-`NOT_RUN` records remain evidence, not a current check. A successful metadata
-or style job does not certify local purpose QA. This design gives up an
+GitHub Actions retains `ci-summary`, which validates branch and PR commit
+metadata, and a separate PR-only selected style job. `ci-summary` reports the
+branch-policy verdict itself. Its canonical Python producer is projected as
+matching inline workflow logic: it reads candidate commit objects as data,
+uses trusted-base message grammar, checks the actual merge identity and parents,
+and validates the complete base-to-head commit range. The workflow separately
+checks its PR branch-prefix policy. Missing metadata, an
+invalid PR base or source branch, a failed commit identity/range check, or an
+unexpected event/ref fails that job; PR branch policy is not applicable on
+main. The workflow and its inline projection remain PR-editable, so independent
+protected workflow control requires separate remote evidence. Historical hosted
+full QA `NOT_RUN` records remain evidence, not a current check. A successful
+metadata or style job does not certify local purpose QA. This design gives up an
 independent hosted full/unit QA execution and its per-push attestation.
 Actual remote protections, settings and execution remain separately observed.
 

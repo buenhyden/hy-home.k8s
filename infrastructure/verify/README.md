@@ -1,10 +1,10 @@
 ---
 title: "verify"
-version: "0.2.1"
+version: "0.2.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 ---
 # verify
 
@@ -34,7 +34,7 @@ updated: "2026-10-15"
 | Test script | Type | Preconditions | Result semantics | Retention / command surface |
 | --- | --- | --- | --- | --- |
 | `verify-cluster.sh` | Live | Bootstrapped k3d context, trusted kubeconfig CA, kubectl, and MetalLB. | PASS means at least four nodes report Ready and MetalLB matches the local platform baseline. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and reconciled root/platform applications. | PASS means the live root Application source path/revision matches and the ten applications named in the script are Healthy and Synced; other root children are outside this check. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-gitops.sh` | Live | Reachable ArgoCD namespace and reconciled root/platform applications. | PASS means the live root Application source path/revision matches and the applications explicitly named in the script are Healthy and Synced; other root children are outside this check. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-secrets.sh` | Live | External Secrets Operator, OpenBao HTTPS/Kubernetes auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-external-services.sh` | Live | Python 3 is available; platform namespace Services and EndpointSlices exist for external Valkey and observability contracts. | PASS means non-headless selectorless ClusterIP Service ports and every same-service EndpointSlice port/address match the four declared local contracts; connectivity and authentication are outside this check. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
