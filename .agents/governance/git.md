@@ -1,10 +1,10 @@
 ---
 title: "Git Policy"
-version: "2.2.0"
+version: "2.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-16"
 ---
 
 # Git Policy
@@ -69,7 +69,7 @@ named purpose and unit checks on the bounded final branch snapshot. Push and PR
 creation carry that evidence without re-executing the same leaf. Compare the
 integrated main tree and history with what was checked; a changed merge input
 gets only its invalidated checks, and an identical fast-forward does not replay
-them. The hosted `ci-summary` job owns the PR branch-metadata verdict directly;
+them. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
 the hosted PR style job owns only its selected style verdict. Each observed
 result has its own SHA and trust boundary and never stands in for local purpose,
 unit or document-content checks. A deployment style result requires an actual
@@ -128,13 +128,18 @@ when changelog inclusion is intended. Prefer an imperative, specific subject
 under 72 characters; length, capitalization and body wrapping are guidance.
 History is read without rewriting older messages.
 
-The hosted PR title metadata route uses the trusted base's `.cz.toml` authored
-schema, with no generated-message exceptions. Its tracked configuration does not
-establish execution; the hosted result remains `NOT_RUN` until the actual PR SHA
-and run are observed. A title result and selected PR style result do not validate
-an authored squash message. If an operator chooses squash, validate the exact
-proposed final commit message against both local message checks before that remote
-merge. A successful title check does not authorize the merge.
+Hosted `ci-summary`는 PR title을 신뢰된 base의 `.cz.toml` 저술 schema로만 검사하고
+generated-message 예외를 title에 적용하지 않는다. 같은 base의 문법과 generated
+`Merge`·`Revert` pattern으로 `base..head`에 새로 들어온 commit message를
+merge commit까지 검사한다. PR event의 정확한 base·head·merge SHA와 merge의
+부모 관계를 먼저 결속한다. [CI workflow](../../.github/workflows/ci.yml)와
+[그 정적 검증기](../../scripts/validate-ci-python-contract.py)가 실행 조건을
+소유하고 [hosted surface](../../.github/repository-surface.md)가 결과 사용처를
+안내한다. Tracked 설정만으로 실행을 주장하지 않으며 실제 PR SHA와 run을
+관측하기 전 hosted 결과는 `NOT_RUN`이다. 문법 검사는 Git 생성 여부, 출처,
+승인 또는 merge 권한을 인증하지 않는다. PR title과 선택된 style 결과도 squash
+message를 검증하지 않는다. Operator가 squash를 선택하면 remote merge 전에
+최종 제안 message를 두 local message 검사로 확인한다.
 
 Selected local file checks do not validate a commit message. Inspect the
 effective `core.hooksPath` source and
@@ -143,9 +148,9 @@ hook has already run an identical leaf on the checked index, record that result
 without manually replaying it; a different mode, tool or input is separate.
 
 Git honours one hook directory, so a user-global `core.hooksPath` makes this
-repository's own hooks unreachable and silently drops the commit-message check
-and every staged formatter. The supported repair is to widen what runs, never
-to choose one side: this repository's `core.hooksPath` points at
+repository's own hooks unreachable and silently drops the commit-message checks
+and mandatory selected staged QA and style checks. The supported repair widens
+what runs: this repository's `core.hooksPath` points at
 `scripts/githooks`, whose entries run the user's global hook first and then the
 workspace hook, returning the first non-zero status unchanged. Enable it once
 per clone with `git config core.hooksPath scripts/githooks`; it is local

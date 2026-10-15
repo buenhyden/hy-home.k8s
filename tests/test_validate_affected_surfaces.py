@@ -170,6 +170,10 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 {"ci-python-contract", "github-actions-security"},
             ),
             (".github/requirements/ci-validation.in", {"ci-python-contract"}),
+            ("scripts/validate-pr-metadata.py", {"ci-python-contract"}),
+            ("scripts/validate-ci-python-contract.py", {"ci-python-contract"}),
+            ("tests/test_validate_ci_python_contract.py", {"ci-python-contract"}),
+            ("tests/test_ci_qa_workflow.py", {"ci-python-contract"}),
             (
                 "docs/98.archive/completed/03.specs/route-probe/spec.md",
                 {"archive-integrity"},

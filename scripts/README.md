@@ -1,10 +1,10 @@
 ---
 title: "scripts"
-version: "0.10.0"
+version: "0.11.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-16"
 ---
 # scripts
 
@@ -120,7 +120,7 @@ provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거�
 | `validate-k8s-manifests.sh`, `validate-policy-gates.sh` | manifest 문법과 저장소 정책 검사 |
 | `validate-infrastructure-contracts.sh` | 저장소 정적 infrastructure 계약 검사. live cluster 검사는 `infrastructure/verify/`에 있다. |
 | `validate-vault-eso-contracts.py`, `check-secret-handling.sh` | Vault·ESO 참조 계약과, 값을 가린 secret 패턴 검사 |
-| `validate-github-actions-security.py`, `validate-ci-python-contract.py` | workflow 공급망과 Python 의존성 계약 |
+| `validate-github-actions-security.py`, `validate-ci-python-contract.py`, `validate-pr-metadata.py` | workflow 공급망과 Python 의존성 계약. `validate-pr-metadata.py`는 `ci-summary`의 PR metadata 검사 원본으로, 신뢰된 base의 `.cz.toml` 문법에 따라 PR title과 새 commit 범위를 확인한다. hosted 결과는 로컬 QA를 대체하지 않는다. |
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
 
