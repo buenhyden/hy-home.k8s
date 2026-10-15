@@ -1,8 +1,8 @@
 ---
 title: "r13 Protected Remote Integration"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/task"
-status: "in-progress"
+status: "completed"
 owner: "platform"
 updated: "2026-10-16"
 layer: "specs"
@@ -60,11 +60,13 @@ merge.
   pass. The actual PR #149 merge receipt would enter a Task-only closeout in a
   separate documentation PR. That documentation PR's own merge is reported
   from its API result, not required as evidence inside its own Task body.
-- `WORK-013` begins `in-progress` on the actual scoped authorization and
-  protection inspection. The final PR head's hosted leaves and merge stay
-  pending; retained settings must be reconfirmed before merge. The earlier
-  native/common/global/live limits remain at the
-  owners named by Task 0003.
+- `WORK-013` began `in-progress` on the actual scoped authorization and
+  protection inspection. The final PR head's named hosted leaves later passed,
+  unchanged protection was verified, and PR #149 merged at the exact recorded
+  revision. The earlier native/common/global/live limits remain at the owners
+  named by Task 0003. The separate Task-only documentation closeout PR is not
+  claimed as merged by this Task; its actual result belongs to the delivery
+  report after this body exists.
 
 ## Task Table
 
@@ -72,7 +74,7 @@ merge.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-013 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | Verify the final remote revision and named CI, document the reviewed no-op protection decision and one-person HIGH limit, then record authorized integration if performed | platform | frontmatter | NOT_RUN | EVD-001–008 capture authority, protection baseline, solo limit and intermediate head/CI; final head hosted leaves, retained-settings verification and merge remain pending |
+| WORK-013 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | Verify the final remote revision and named CI, document the reviewed no-op protection decision and one-person HIGH limit, then record authorized integration if performed | platform | frontmatter | PASS | EVD-009–015 record initial review/local delivery, final-head CI, unchanged protection, actual PR #149 merge and post-merge identity; EVD-003/008 remain separate non-required limits |
 
 ## Task Evidence
 
@@ -86,12 +88,19 @@ merge.
 | EVD-006 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Intermediate hosted ci-summary named leaves | PR #149 head `81d76f2d`; run `38821963107` attempt 1 | PASS | [ci-summary job 116720469155](https://github.com/buenhyden/hy-home.k8s/actions/runs/38821963107/job/116720469155) succeeded: named `Validate branch metadata` and `Validate PR title and commit range against reviewed base` leaf steps passed, including 10 commit messages. This result applies to this intermediate head, not a later document head or independently protected producer | no | none |
 | EVD-007 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Intermediate hosted style-pr named leaves | Same PR #149 intermediate head; run `38821963107` attempt 1 | PASS | [style-pr job 116720469458](https://github.com/buenhyden/hy-home.k8s/actions/runs/38821963107/job/116720469458) succeeded with named `Bind base and select changed files`, `Install pinned style runner`, and `Lint and format changed files` leaf steps. This result does not cover a later document head | no | none |
 | EVD-008 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Earlier hosted concurrency run | PR #149 run `38821933732` before completed run `38821963107` | FAIL | [Run 38821933732](https://github.com/buenhyden/hy-home.k8s/actions/runs/38821933732) was cancelled by concurrency; it is not a PASS or the accepted final input. The subsequent intermediate-head run is EVD-006/007 | no | none |
+| EVD-009 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Independent initial three-document review | Spec SHA-256 `78b7bd554c2cedc33634e8185110bb70e7daac067ccf275028f7aeaa13a139d1`, Plan `f3090f13572a6da34b4606bd0aa6be738ea5ab95cc7b46eccf175516b37dd702`, initial Task `92045ddf246de4e84d7009f3190d43d32f3e11b172cfb2dfc06a2cc020f889e0` | PASS | Registered code-reviewer `/root/final_reconciliation_review` approved the scoped Spec/Plan/Task candidate after correction of the cancelled-run classification and exact CI step labels. This review did not certify the later merge or this Task-only closeout | yes | none |
+| EVD-010 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Normal active staged document QA | Initial three-document tree `506b36e780a1a38703d50fd744b9259d3ef364fc`; commit `408aa058e922f305f7839293445159b4832de5df`; pinned Python 3.12.3/pre-commit 4.6.1 | PASS | Normal commit hook reported `Validate Staged QA Snapshot`, `commitizen check` and `Validate Generated Git Commit Message Exceptions` Passed. The exact three-document commit succeeded with clean index/worktree; this is local delivery, not a future Task-only closeout hook | yes | none |
+| EVD-011 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Final-head hosted ci-summary named leaves | PR #149 head `408aa058e922f305f7839293445159b4832de5df`; run `38822894757` attempt 1; GitHub Actions App `15368` | PASS | [ci-summary job 116723454003](https://github.com/buenhyden/hy-home.k8s/actions/runs/38822894757/job/116723454003) succeeded with named `Validate branch metadata` and `Validate PR title and commit range against reviewed base` leaf steps, including 11 commits. This does not prove an independently protected workflow producer | yes | none |
+| EVD-012 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Final-head hosted style-pr named leaves | Same PR #149 final head and run `38822894757` attempt 1 | PASS | [style-pr job 116723454045](https://github.com/buenhyden/hy-home.k8s/actions/runs/38822894757/job/116723454045) succeeded with named `Bind base and select changed files`, `Install pinned style runner`, and `Lint and format changed files` leaf steps; none was skipped or neutral | yes | none |
+| EVD-013 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Main protection retained-setting comparison | Before `/tmp/r13-pr149-protection-before-ssio_2yf.json` and after `/tmp/r13-pr149-protection-after-hirrr52c.json`, each mode `0600`; PR #149 pre-merge decision | PASS | Protection operator compared selected settings and found strict `ci-summary`/`style-pr` App `15368`, enforced administrators and conversation resolution, review count zero, and disabled force push/deletion unchanged. No setting mutation or independent-review assurance is claimed; EVD-003 HIGH gap remains | yes | none |
+| EVD-014 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Authorized PR #149 merge identity | Final PR head `408aa058e922f305f7839293445159b4832de5df`, base `8488e1098c2eac8c0db469c4eb59457d471575a8`, merge candidate tree `506b36e780a1a38703d50fd744b9259d3ef364fc` | PASS | After supervisor reconciliation of the user's current request, `/root/ci_commit_range` invoked the normal PR merge API bound to `expected_head_sha=408aa058e922f305f7839293445159b4832de5df`. [PR #149](https://github.com/buenhyden/hy-home.k8s/pull/149) merged at `2026-10-15T23:21:40Z` as `2b978bec2d6caa7d5980b88e6085e92dc88f1995`; parents are exact base and head, and merge tree matches the head and synthetic candidate. HIGH independent-review risk remains | yes | none |
+| EVD-015 | [VAL-R13-005](../spec.md#success-criteria--verification-plan) | WORK-013 | Post-merge main identity | Remote `main` merge `2b978bec2d6caa7d5980b88e6085e92dc88f1995`; base-to-head GitHub comparison | PASS | CI transport owner reported 11 exact comparison commits, `behind_by=0`, and read-back ancestry/tree matching EVD-014. The closeout branch `codex/r13-integration-closeout` starts at that merge with clean index/worktree; no deployment or secondary documentation PR merge follows from this check | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-R13-005](../spec.md#success-criteria--verification-plan) | pending | EVD-001, EVD-002, EVD-004, EVD-005, EVD-006, EVD-007 | Intermediate remote head and named CI passed. A first Task 0004 document commit will create a final PR head that still needs actual named CI PASS and retained-protection verification before the PR merge. EVD-003 is a separate HIGH independent-review gap under the user's explicit one-person operation, not a PASS or an invented collaborator. | platform, CI transport and repository protection operators; user for the solo-operation decision |
+| [VAL-R13-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-002, EVD-004, EVD-009, EVD-010, EVD-011, EVD-012, EVD-013, EVD-014, EVD-015 | The reviewed final PR #149 head passed named hosted leaves, retained protection was verified unchanged, and the authorized merge/ancestry/tree were observed. The user's explicit merge authorization, followed by the one-person clarification, permits this scoped integration while EVD-003 independent review remains DEFER/HIGH and EVD-008 records a separate cancelled intermediate run. Neither is promoted to PASS; no native/common/global/live conclusion or documentation closeout PR merge is inferred. | platform, CI transport and repository protection operators; user for the solo-operation decision |
 
 ## Approval and Safety Boundaries
 
@@ -102,14 +111,17 @@ merge.
 - **Forbidden Paths**: Terminal Tasks 0001–0003, sealed Archive payloads,
   credentials, private memory, global configuration, live cluster mutation,
   protection weakening or self-approval.
-- **Approval Required**: Approving actor is the user in the 2026-10-16
-  conversation follow-up; executor for push/PR/CI is the CI transport owner,
-  while the exact protection and merge executors must be recorded before their
-  actions. Subject is `buenhyden/hy-home.k8s`, `main`, starting from reviewed
-  local `81d76f2d`; validity is this scoped integration request only. The
-  executor must recheck target and revocation immediately before a protected
-  change. The user confirmed one-person operation; no second account or
-  permission grant is authorized or inferred.
+- **Approval Required**: The approving actor was the user in the 2026-10-16
+  conversation follow-up, with a later one-person clarification. The supervisor
+  reconciled that current request against exact PR #149 base/head, named CI and
+  retained protection immediately before directing the normal merge; no
+  intervening revocation message was observed in this conversation. The
+  executor `/root/ci_commit_range` bound the merge API to
+  `expected_head_sha=408aa058e922f305f7839293445159b4832de5df`. Subject
+  was `buenhyden/hy-home.k8s` `main`; the approval applied to this scoped
+  integration, not standing authority. This conversation approval is not an
+  independent GitHub review or a separate executor revocation-check receipt.
+  No second account or permission grant was authorized or inferred.
 - **Static Validation**: Independent semantic review and selected Stage 99
   profile, relationship, link, lifecycle and style checks on the actual local
   document index; preserve separate hosted SHA/run evidence.
@@ -130,13 +142,13 @@ merge.
 
 ## Verification Summary
 
-The user authorized the bounded remote and protection operations, and the
-read-only admin protection snapshot is available. The current protection
-requires two named strict CI contexts but zero approvals; a collaborator GET
-did not identify an independent reviewer. The user confirmed one-person
-operation, so the reviewed settings decision is to keep the existing controls
-without mutation and retain the HIGH review gap. PR #149's intermediate
-`81d76f2d` head passed named CI, while an earlier run was cancelled. A later
-document head's CI, retained-settings verification and any merge are not yet
-recorded. This Task remains in progress with VAL-R13-005 pending. No earlier
-Task acceptance is reopened.
+The reviewed final PR #149 head `408aa058` passed named hosted CI and merged
+as `2b978bec` after the retained strict protection settings were checked.
+The merged tree and post-merge comparison matched the reviewed input. The
+user's one-person decision leaves the independent-review HIGH gap in EVD-003;
+the earlier cancelled run in EVD-008 remains an adverse historical result,
+not a final-head PASS. VAL-R13-005 is accepted for this bounded integration.
+This Task-only closeout document's own hook, later documentation PR CI and
+merge are not preclaimed; report those from their actual producing results.
+No earlier Task acceptance or native, common, global-hook or live conclusion
+is reopened.
