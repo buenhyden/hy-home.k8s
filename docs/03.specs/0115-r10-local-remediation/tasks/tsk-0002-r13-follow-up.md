@@ -138,9 +138,9 @@ release 2→2. These are selected leaf counts, not speed measurements.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-009 | [VAL-R13-001](../spec.md#success-criteria--verification-plan) | Trace P01–P08 candidates and current owners | platform | in-progress | NOT_RUN | R13-F-001–017 and EVD-001/012/025 distinguish baseline, prior acceptance, dated integration and current owners; final criterion decision waits for corrected normal doc QA |
-| WORK-010 | [VAL-R13-002](../spec.md#success-criteria--verification-plan) | Repair confirmed source and selected consumers | platform | in-progress | NOT_RUN | EVD-014/020/024 resolve prior required failures; EVD-028 records the new final-doc normal QA failure; focused corrected checks EVD-029 pass, with changed-index normal hook still pending |
-| WORK-011 | [VAL-R13-003](../spec.md#success-criteria--verification-plan) | Reconcile promotion, retention, delivery and lane limits | platform | in-progress | NOT_RUN | EVD-017 records prior readiness and EVD-021 actual start; current F008/F011/F016 dispositions and EVD-027 reviewed, while final delivery/criterion decision awaits corrected normal doc QA |
+| WORK-009 | [VAL-R13-001](../spec.md#success-criteria--verification-plan) | Trace P01–P08 candidates and current owners | platform | completed | PASS | R13-F-001–017 and EVD-001/012/025 distinguish baseline, prior acceptance, dated integration and current owners; corrected owner documents passed EVD-030; VAL-R13-001 accepted below |
+| WORK-010 | [VAL-R13-002](../spec.md#success-criteria--verification-plan) | Repair confirmed source and selected consumers | platform | completed | PASS | EVD-014/020/024/030 resolve EVD-003/018/007/028; EVD-010 resolves EVD-009; focused repairs, source commits, final corrected doc QA and review support VAL-R13-002 below |
+| WORK-011 | [VAL-R13-003](../spec.md#success-criteria--verification-plan) | Reconcile promotion, retention, delivery and lane limits | platform | completed | PASS | EVD-017 records readiness, EVD-021 actual start, and EVD-027 review; F008/F011/F016 keep separate owners and A commit `4dc5f999` delivered corrected current docs; VAL-R13-003 accepted below |
 
 ## Task Evidence
 
@@ -175,14 +175,15 @@ release 2→2. These are selected leaf counts, not speed measurements.
 | EVD-027 | [VAL-R13-003](../spec.md#success-criteria--verification-plan) | WORK-011 | Independent final five-document semantic review | Same single reviewed substantive candidate and reviewer as EVD-025 | PASS | The one review confirmed current-owner/retention and separate common, hosted, native and live evidence limits; no second review run is claimed. Later header-only and factual closeout delta review remains separate. | yes | none |
 | EVD-028 | [VAL-R13-002](../spec.md#success-criteria--verification-plan) | WORK-010 | Normal active staged QA | Five-document final closeout index tree `f401d5cff5feec219c246f0edb940406634a3e02`; pinned Python 3.12.3/pre-commit 4.6.1 | FAIL | Normal commit hook selected six gates: document-contract-registry, links-and-owners, selected-nonstyle and selected-style PASS; document-lifecycle and markdown-profiles FAIL rc1. Exact diagnostics on unchanged input: historical EVD-008 factual text had been edited, and VAL-R13-003 acceptance cited unrelated-criterion evidence; terminal Task invalidity cascaded from that graph error. No commit was created. This required failure remains open until an actual matching normal-hook PASS. | yes | none |
 | EVD-029 | [VAL-R13-002](../spec.md#success-criteria--verification-plan) | WORK-010 | Focused corrected document diagnostics | Intermediate corrected five-document index tree `92ca93051bbe4abab735c637a62373ef31f16a98`, after restoring EVD-008 exact committed bytes and narrowing VAL-R13-003 citations | PASS | Strict `validate-markdown-profiles.py` changed-scope PASS SUMMARY 0 and strict `validate-document-lifecycle.py` PASS. These focused results identify the document correction; they do not resolve EVD-028 or stand in for the later normal selected aggregate on the final staged input. | no | none |
+| EVD-030 | [VAL-R13-002](../spec.md#success-criteria--verification-plan) | WORK-010 | Normal active staged QA | Corrected five-document index tree `ebb20c9587b3907f4b1d088d59ff1bfe79f7f7e6`; actual commit `4dc5f9999aa83e0090c4f2da5950aa5a7d48c2c1`; pinned Python 3.12.3/pre-commit 4.6.1 | PASS | Normal active staged QA, commitizen and generated-message checks PASS on the changed coherent input; the five-document commit succeeded and worktree/index were clean afterward. Historical EVD-008 bytes remained exact and VAL-R13-003 cited only its own evidence. This result resolves EVD-028, not an unobserved future Task-only hook. | yes | EVD-028 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-R13-001](../spec.md#success-criteria--verification-plan) | pending | EVD-001, EVD-012, EVD-025 | Bounded P01–P08 inventory R13-F-001–017 and dated PR #148 distinction are documented; final criterion decision waits for corrected normal document QA. Original 67-path proof remains deferred to its source owner. | platform |
-| [VAL-R13-002](../spec.md#success-criteria--verification-plan) | pending | none | Confirmed source repairs, focused checks and local commits are recorded, but EVD-028 is a new unresolved required final-document normal QA failure. EVD-029 is focused diagnosis only; decide after an actual changed-index normal hook result. | platform, quality engineer and scoped source owners |
-| [VAL-R13-003](../spec.md#success-criteria--verification-plan) | pending | EVD-017, EVD-021, EVD-027 | Current owner and bounded retention appraisal are documented; final delivery decision waits for corrected normal document QA. Common-edition, global hooksPath, native/cross-provider, new hosted and live lanes remain separately deferred. | platform; buenhyden for common edition; CI, Git and live operators for their boundaries |
+| [VAL-R13-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-012, EVD-025 | Bounded P01–P08 inventory R13-F-001–017 distinguishes current baseline, prior r10 Task acceptance and dated PR #148 integration; each material candidate has source, class, disposition and owner. Original 67-path proof remains deferred to its source owner. | platform |
+| [VAL-R13-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-004, EVD-005, EVD-006, EVD-008, EVD-010, EVD-011, EVD-013, EVD-014, EVD-015, EVD-016, EVD-020, EVD-022, EVD-023, EVD-024, EVD-026, EVD-030 | Confirmed memory, verifier/runbook, language and CI repairs reached current consumers, focused RED→GREEN checks and actual logical commit hooks. Required EVD-003/007/009/018/028 failures have matching later PASS resolutions; independent review accepted the scoped result. New hosted workflow and live behavior remain unobserved. | platform, quality engineer and scoped source owners |
+| [VAL-R13-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-017, EVD-021, EVD-027 | Meaning is in current Spec/AD/Stage 99, verifier/runbook and CI owners; all five SPEC-0110–0114 packages remain current after bounded inbound/hold appraisal. Commit `4dc5f999` and preceding logical source commits are actual local delivery. Common-edition decision, global hooksPath provenance, provider-native/cross-provider behavior, new hosted protection/run and live cluster/CA/Vault outcomes remain separately deferred to their named owners. | platform; buenhyden for common edition; CI, Git and live operators for their boundaries |
 
 ## Approval and Safety Boundaries
 
@@ -218,12 +219,13 @@ EVD-020. Scoped memory, verifier/runbook, language and CI logical commits
 passed their active hooks. EVD-024 derives a coherent links-and-owners PASS
 from exact historical selection plus EVD-016's aggregate exit 0, resolving
 EVD-007 without claiming retained leaf stdout. Independent final substantive
-document review passed as EVD-025. The first five-document closeout hook then
-failed on an edited historical evidence row and unrelated criterion citation
-(EVD-028). Both focused corrected document checks passed on an intermediate
-index (EVD-029), while normal selected QA on the final changed index and all
-three criterion decisions remain pending. No final closeout commit has occurred
-at this record. The 2026-10-15 PR #148 run and protection observation
+document review passed as EVD-025. The first five-document closeout hook failed
+on an edited historical evidence row and unrelated criterion citation
+(EVD-028); focused corrected document checks passed (EVD-029), followed by
+normal changed-index selected QA and commit PASS (EVD-030). All three scoped
+local criteria are accepted above. This Task-only factual closeout has not yet
+been committed or run through its own normal hook at this record. The
+2026-10-15 PR #148 run and protection observation
 apply only to that merged revision. Common-edition adoption, current native
 isolation, global hook provenance, cross-provider memory use, new hosted
 workflow control and cluster/live behavior have no new r13 acceptance evidence
