@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -33,6 +33,13 @@ delta. The r13 request directly authorizes scoped reversible local
 investigation, repair, validation and logical commits. Task 0002 owns
 independent review and new criterion decisions.
 
+The user's later 2026-10-16 authorization adds a bounded residual verification
+stream for the exact local commit `8d8fa1e5`, its main-targeting draft PR and
+named CI jobs, plus two read-only live verifier runs with the explicitly supplied
+kubeconfig. [Task 0003](tasks/tsk-0003-r13-residual-verification.md) owns only
+this follow-up's actual evidence and VAL-R13-004 decision. Tasks 0001 and 0002
+retain their terminal decisions.
+
 ## Strategic Boundaries & Non-goals
 
 - Inspect current `main`, index, worktree, consumers and original evidence
@@ -48,7 +55,10 @@ independent review and new criterion decisions.
 - No secret-value read, private memory database inspection, global or managed
   configuration edit, live cluster or Vault operation, deployment, remote
   mutation, data deletion, history rewrite or unilateral common-edition claim.
-  Protected external actions follow their own current authority.
+  Protected external actions follow their own current authority. The later
+  authorization above applies only to its exact remote delivery and read-only
+  live GET verification targets; it grants no merge, deployment or mutation of
+  cluster resources.
 
 ## Contracts
 
@@ -188,6 +198,7 @@ actually observed in its own trust boundary.
 | VAL-R13-001 | The r13 comparison baseline, prior r10 acceptance and PR #148 integration are distinguished; material P01–P08 candidates have source/revision, observation class, disposition and owner in Task 0002. |
 | VAL-R13-002 | Confirmed local defects are repaired at current owners with affected callers and selected QA/CI inputs; each changed behavior has focused before/after evidence and selected validation on its actual input, without weakening a unique required protection. |
 | VAL-R13-003 | Lasting meaning is promoted to its current owner and whole-unit retention is assessed against links, holds and eligibility; actual delivery and criterion decisions are recorded only in Task 0002, with common-edition, remote, native and live claims separately observed or deferred. |
+| VAL-R13-004 | Task 0003 records the exact authorized commit, remote draft PR and named `ci-summary`/`style-pr` leaf outcomes, plus the two selected live verifier results, with revision, target, trust boundary, approval scope and current owner. Required hosted leaves and selected live checks need actual PASS evidence before local acceptance; unobserved or failed required outcomes keep this criterion pending. Common-source, native sandbox, global-hook provenance, independent workflow protection and broader live checks remain separately classified and handed to their owners, without promotion to PASS. |
 
 ## Traceability
 
@@ -208,3 +219,5 @@ actually observed in its own trust boundary.
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-002 | Affected producer/caller map, focused regression and selected QA |
 | [REQ-0003-FR-0027](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Current-owner and whole-unit retention review |
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-003 | Separate dated local, hosted, provider and live evidence |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-004 | Exact PR revision, named hosted job/leaf results and protection limit in Task 0003 |
+| [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R13-004 | Authorized read-only selected live verifier inputs and outcomes in Task 0003 |

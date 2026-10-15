@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation Plan"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -23,13 +23,14 @@ authority and reviewed target.
 ## Overview
 
 Execute [SPEC-0115](spec.md) through [Task 0001](tasks/tsk-0001-r10-local-remediation.md)
-for completed r10 work and [Task 0002](tasks/tsk-0002-r13-follow-up.md) for
-the r13 follow-up. P01 to P08 are purposes and order, not eight new packages.
-Each Task is the sole findings, execution and criterion-decision owner for its
-request. Independent review and the user's scoped local authorization approved
-the r10 plan; the current r13 request authorizes reversible local follow-up,
-with its review and new criterion decisions pending. Common-edition, remote,
-native-sandbox and live decisions remain at their respective owners.
+for completed r10 work, [Task 0002](tasks/tsk-0002-r13-follow-up.md) for the
+completed r13 local repair, and
+[Task 0003](tasks/tsk-0003-r13-residual-verification.md) for the later bounded
+residual verification. P01 to P08 are purposes and order, not eight new
+packages. Each Task owns only its assigned execution and criterion decisions.
+The later user authorization applies to exact remote and read-only live targets;
+common-edition, native-sandbox and independent workflow-protection decisions
+remain with their respective owners.
 
 ## Context
 
@@ -47,6 +48,12 @@ clean before creating `codex/r13-follow-up`. PR #148's dated remote merge is a
 separate recorded event. New local checks use the changed source/index input;
 the previous accepted r10 receipts are historical evidence only.
 
+The later residual-verification input is local commit
+`8d8fa1e54e1032476fb98215747b5d3579a33322`, with an authorized push and
+main-targeting draft PR plus two selected read-only live GET verifiers. Their
+actual hosted and live outcomes are recorded only in Task 0003; the completed
+Task 0002 acceptance is not reopened.
+
 ## Goals & In-Scope
 
 - Inventory material P01 to P08 findings with exact sources, classifications,
@@ -57,13 +64,18 @@ the previous accepted r10 receipts are historical evidence only.
   independent read-only review before local delivery.
 - Record residual remote, runtime, common-edition and live boundaries without
   promoting their claims from local checks.
+- Verify the exact authorized PR's named hosted leaves and two selected live
+  checks; record the observed input and output and hand off other lanes without
+  widening their assurance.
 
 ## Non-Goals & Out-of-Scope
 
 No new common WGOV approval, four-repository adoption, remote ruleset or
-Project mutation, Release publication, live cluster/Vault/backup operation,
+Project mutation, Release publication, live cluster/Vault/backup mutation,
 memory-store cleanup, bulk document restyling or Archive move without its
-actual closure and disposition prerequisites.
+actual closure and disposition prerequisites. The later authority covers the
+exact push, draft PR/CI and two read-only live verifier runs, not merge or
+deployment.
 
 ## Work Breakdown
 
@@ -82,6 +94,7 @@ actual closure and disposition prerequisites.
 | WORK-009 | [VAL-R13-001](spec.md#success-criteria--verification-plan) | Compare r13 candidates with current owners, completed r10 receipts and dated PR #148 evidence; record P01–P08 dispositions | Prior r10 delivery | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current Git/source comparison and bounded finding review |
 | WORK-010 | [VAL-R13-002](spec.md#success-criteria--verification-plan) | Repair confirmed local source and direct consumers, including QA/CI selectors where their actual inputs change | WORK-009 finding for each affected slice | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Focused failing/passing behavior, selected checks on changed input, independent review |
 | WORK-011 | [VAL-R13-003](spec.md#success-criteria--verification-plan) | Reconcile current documentation, actual delivery, and whole-unit retention; distinguish unobserved common/remote/native/live lanes | Relevant WORK-009/010 results | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current-owner/link/lifecycle review, exact Git results and separately dated lane evidence |
+| WORK-012 | [VAL-R13-004](spec.md#success-criteria--verification-plan) | Record exact authorized remote delivery and named CI leaves, selected live GET results, and independent residual-lane owner handoff | Completed local commit `8d8fa1e5` and later scoped user authorization | [Task 0003](tasks/tsk-0003-r13-residual-verification.md) | Remote SHA/PR identity and actual `ci-summary`/`style-pr` leaf results; kubeconfig/context-confirmed selected live verifier output; separate DEFER/FAIL boundaries |
 
 ## Verification Plan
 
@@ -92,6 +105,14 @@ For narrative documents, run selected profile, relationship, link and state
 checks plus common style. Review final scope and record exact input, result,
 limitations and reviewer disposition in the Task. Do not rerun an identical
 leaf merely because local delivery advances.
+
+For WORK-012, use the actual remote PR SHA/run and named job/leaf outcomes,
+plus the two read-only live verifier results from the explicitly supplied
+kubeconfig and verified context. A green API status does not prove deployment of
+`8d8fa1e5` or every cluster contract. Keep native startup, common-source,
+global-hook and workflow-protection observations in separate lanes with current
+owners. A required hosted leaf left unobserved or failed prevents Task 0003
+acceptance.
 
 ## Risks & Mitigations
 
