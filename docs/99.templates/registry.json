@@ -6097,6 +6097,10 @@
           "in-review"
         ],
         [
+          "draft",
+          "approved"
+        ],
+        [
           "in-review",
           "approved"
         ],
@@ -6992,7 +6996,8 @@
       "Kubernetes/GitOps/bootstrap/external-service procedures",
       "Task Table/frontmatter summary and historical completed-parent lifecycle",
       "Registry document_language and Codex/Claude native syntax",
-      "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state"
+      "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
+      "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval"
     ]
   }
 }

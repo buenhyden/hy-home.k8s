@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.13.0"
+version: "0.14.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -258,6 +258,14 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 필수 증거 규칙은 그대로 적용된다. 최초 `draft` commit을 합성하지 않는다.
 이는 Registry `shared_contract.extensions`에 명시할 지역 `candidate` 확장이지
 승인된 WGOV-CORE 3.0.0의 새 의미나 전체 지역 채택 판정이 아니다.
+
+`Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 `candidate`의 좁은 확장이다. 범위를 정한
+현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
+`approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
+`draft`이며, `approved`는 실행 완료나 Task 기준 수용 또는 Archive 적격을
+뜻하지 않는다. 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지
+않는다. 이 지역 규칙은 WGOV-CORE 3.0.0의 새 판본 승인이나 지역 전체
+채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
 
 ### Shared Frontmatter Grammar
 

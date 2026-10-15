@@ -1,8 +1,8 @@
 ---
 title: "r10 Local Governance and Delivery Remediation Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-15"
 layer: "specs"
@@ -25,7 +25,9 @@ authority and reviewed target.
 Execute [SPEC-0115](spec.md) through the single
 [Task](tasks/tsk-0001-r10-local-remediation.md). P01 to P08 are purposes and
 order, not eight new packages. The Task is the only findings and progress
-owner for this request.
+owner for this request. Independent review and the user's scoped local
+authorization approve this local execution plan; common-edition, remote,
+native-sandbox and live decisions remain at their respective owners.
 
 ## Context
 
@@ -62,7 +64,7 @@ actual closure and disposition prerequisites.
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-R10-001](spec.md#success-criteria--verification-plan) | Re-observe baseline, WGOV evidence, authority and finding ownership | None | [Task](tasks/tsk-0001-r10-local-remediation.md) | Git/source/decision comparison and findings review |
-| WORK-002 | [VAL-R10-002](spec.md#success-criteria--verification-plan) | Audit current profiles, first-recorded Task state and document/consumer drift | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Initial in-progress/blocked/ready and terminal-refusal cases; selected profile, language, link and lifecycle checks |
+| WORK-002 | [VAL-R10-002](spec.md#success-criteria--verification-plan) | Audit current profiles, first-recorded Task state, direct reviewed Spec/Plan approval and document/consumer drift | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Initial in-progress/blocked/ready and terminal-refusal cases; local candidate direct draft-to-approved positive/negative cases; selected profile, language, link and lifecycle checks |
 | WORK-003 | [VAL-R10-003](spec.md#success-criteria--verification-plan) | Reconcile actual Task evidence and stale current summaries | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Evidence-to-criterion review and selected document checks |
 | WORK-004 | [VAL-R10-004](spec.md#success-criteria--verification-plan) | Appraise Archive readiness and one-use QA consumer retirement | WORK-002, WORK-003 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Closure/hold/consumer review; Archive validator if moved |
 | WORK-005 | [VAL-R10-005](spec.md#success-criteria--verification-plan) | Reconcile local/hosted QA and make mandatory hooks fail closed; default pre-commit invokes one staged QA without worktree-writing file hooks | WORK-001 | [Task](tasks/tsk-0001-r10-local-remediation.md) | Hook error/unset, missing tool, recursion/dedup, old/new config projection and affected producer regressions; selected QA |

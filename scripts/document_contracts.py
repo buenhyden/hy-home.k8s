@@ -35,6 +35,10 @@ TASK_FIRST_RECORDING_EXTENSION = (
     "Local candidate Task first-recording of observed draft, ready, in-progress, "
     "or blocked state"
 )
+SPEC_PLAN_DIRECT_APPROVAL_EXTENSION = (
+    "Local candidate Spec/Plan direct draft-to-approved transition "
+    "after actual batch review and approval"
+)
 TASK_INITIAL_STATES = ("draft", "ready", "in-progress", "blocked")
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
@@ -1956,10 +1960,33 @@ def _terminal_semantic_diagnostics(
         and shared_contract.get("stage") == "candidate"
         and TASK_FIRST_RECORDING_EXTENSION in shared_contract.get("extensions", ())
     )
+    candidate_spec_direct_approval = (
+        isinstance(shared_contract, Mapping)
+        and shared_contract.get("stage") == "candidate"
+        and SPEC_PLAN_DIRECT_APPROVAL_EXTENSION in shared_contract.get("extensions", ())
+    )
     for domain in raw_registry["lifecycle_domains"]:
         family = domain["family"]
         initial_states = domain.get("initial_states")
         inbound = {target for _, target in domain["transitions"]}
+        if (
+            modern_task
+            and family == "spec-plan"
+            and (
+                (["draft", "approved"] in domain["transitions"])
+                != candidate_spec_direct_approval
+            )
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_LIFECYCLE_DOMAIN",
+                    expected=(
+                        "spec-plan draft-to-approved edge exactly when the local "
+                        "candidate extension is declared"
+                    ),
+                    actual="spec-plan direct approval extension/edge mismatch",
+                )
+            )
         observed_task_initial = (
             modern_task
             and family == "task"

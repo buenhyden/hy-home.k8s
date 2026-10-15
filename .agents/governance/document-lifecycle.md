@@ -1,6 +1,6 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.1.0"
+version: "2.2.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -68,6 +68,15 @@ their owning migration work package moves them.
   protected-action approval remain unchanged. This is an explicit local
   `shared_contract.extensions` candidate, not a new WGOV-CORE 3.0.0 edition
   or proof of full regional adoption.
+- `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`
+  admits the direct edge for this k8s candidate
+  adapter when a scoped user request, actual batch review and approval are
+  recorded. New Spec and Plan creation remains draft-only; approval means the
+  reviewed contract and plan are authorized, not execution completion, Task
+  criterion acceptance or Archive eligibility. Do not create an intermediate
+  Git state that was not observed solely to satisfy a transition reader.
+  This local candidate extension does not change WGOV-CORE 3.0.0 or claim
+  regional adoption, and all later transitions retain their existing checks.
 - Historical `done` remains valid in its frozen body or earlier Git generation.
   The 2026-09-28 generation used `completed` for Spec, Plan and Task closure;
   current completed parents and Tasks retain their actual status, bytes,

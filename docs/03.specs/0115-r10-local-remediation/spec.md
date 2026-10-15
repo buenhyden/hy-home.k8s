@@ -1,8 +1,8 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-15"
 layer: "specs"
@@ -21,7 +21,10 @@ assurance surfaces. [REQ-0003](../../01.requirements/0003-workspace-agent-govern
 and [AD-0007](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 are current upstream owners. The [Plan](plan.md) orders eight purposes, and
 [Task 0001](tasks/tsk-0001-r10-local-remediation.md) holds findings, actual
-execution and criterion decisions.
+execution and criterion decisions. The scoped local specification is approved
+for this request after independent review under the user's direct local
+authorization. This does not adopt a new WGOV common edition or approve a
+remote or live action.
 
 ## Strategic Boundaries & Non-goals
 
@@ -50,11 +53,15 @@ execution and criterion decisions.
   intended checks, and Task holds actual results and sole criterion decisions.
   Completed or sealed history retains its original evidence.
 - The local candidate adapter admits a new Task's first recorded actual
-  nonterminal `ready`, `in-progress` or `blocked` row when its current scoped
+  nonterminal `draft`, `ready`, `in-progress` or `blocked` row when its current scoped
   authorization, prerequisites and observed state are recorded in Task
   Inputs. A new terminal Task remains invalid; later transitions and
   acceptance are unchanged. No synthetic draft commit is required, and this
   extension is not a WGOV-CORE 3.0.0 reapproval or full local adoption.
+- `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`
+  admits this reviewed local Spec/Plan approval
+  directly from draft. First creation remains draft-only, and approval says
+  nothing about Task completion, Archive eligibility or common adoption.
 - A selected check runs once per identical input and trust boundary. Local
   purpose QA, hosted `ci-summary` metadata, hosted `style-pr`, provider-native
   enforcement and live Kubernetes behavior each require their own evidence.
@@ -119,8 +126,10 @@ native, hosted or live success.
 ## Failure Modes & Fallback / Human Escalation
 
 Stop a dependent protected action on missing authority, revocation, sandbox
-failure or a required gate failure; continue independent local work. Revert a
-reviewed logical commit forward if its local behavior regresses. Refer a new
+failure or a required gate failure; continue independent local work. Repair a
+regression with a forward corrective source change; any later memory-engine
+downgrade needs the compatibility and backup review described in Task 0001.
+Refer a new
 WGOV edition to buenhyden and each adapter owner, a contested architecture
 decision to the architect, and live or remote operations to the responsible
 operator with an exact target and reviewed revision.
