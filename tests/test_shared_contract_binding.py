@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from document_contracts import (  # noqa: E402
     DocumentContractError,
+    TASK_FIRST_RECORDING_EXTENSION,
     validate_registry,
 )
 
@@ -18,6 +19,22 @@ from document_contracts import (  # noqa: E402
 class SharedContractBindingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+
+    @staticmethod
+    def prior_task_creation(raw: dict) -> dict:
+        previous = copy.deepcopy(raw)
+        task = next(
+            domain
+            for domain in previous["lifecycle_domains"]
+            if domain["family"] == "task"
+        )
+        task["initial_states"] = ["draft"]
+        previous["shared_contract"]["extensions"] = [
+            item
+            for item in previous["shared_contract"]["extensions"]
+            if item != TASK_FIRST_RECORDING_EXTENSION
+        ]
+        return previous
 
     def test_candidate_may_bind_source_without_approval_inference(self) -> None:
         raw = copy.deepcopy(self.raw)
@@ -36,7 +53,7 @@ class SharedContractBindingTests(unittest.TestCase):
     def test_adopted_binding_requires_provenance_fields_and_final_edition(self) -> None:
         for key in ("source_revision", "approval_ref", "version"):
             with self.subTest(key=key):
-                raw = copy.deepcopy(self.raw)
+                raw = self.prior_task_creation(self.raw)
                 raw["shared_contract"].update(
                     stage="adopted",
                     source_revision="a" * 40,
@@ -50,7 +67,7 @@ class SharedContractBindingTests(unittest.TestCase):
                     validate_registry(ROOT, raw)
 
     def test_complete_adoption_is_only_structural_evidence(self) -> None:
-        raw = copy.deepcopy(self.raw)
+        raw = self.prior_task_creation(self.raw)
         raw["shared_contract"].update(
             stage="adopted",
             source_revision="a" * 40,
@@ -60,7 +77,7 @@ class SharedContractBindingTests(unittest.TestCase):
         self.assertEqual(validate_registry(ROOT, raw).shared_contract.stage, "adopted")
 
     def test_absent_binding_remains_compatible_and_unknown_key_fails(self) -> None:
-        raw = copy.deepcopy(self.raw)
+        raw = self.prior_task_creation(self.raw)
         del raw["shared_contract"]
         self.assertIsNone(validate_registry(ROOT, raw).shared_contract)
         raw["unknown_common_source"] = {}

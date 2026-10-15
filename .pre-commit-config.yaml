@@ -1,8 +1,7 @@
 default_install_hook_types: [pre-commit, commit-msg]
-# No hook is installed at the pre-push stage and re-running the same file
-# hooks on a push would repeat the commit boundary, so the two reachable
-# stages are the staged commit boundary and the explicit manual gate.
-default_stages: [pre-commit, manual]
+# The commit boundary runs the exact staged QA snapshot once. External file
+# hooks remain available for explicit manual runs and private QA projections.
+default_stages: [manual]
 
 repos:
   # --- 0. 커밋 메시지 검사 ---
@@ -21,24 +20,39 @@ repos:
         language: system
         stages: [commit-msg]
         always_run: true
+      - id: staged-qa
+        name: Validate Staged QA Snapshot
+        entry: python3 scripts/qa.py staged
+        language: system
+        stages: [pre-commit]
+        always_run: true
+        pass_filenames: false
 
   # --- 1. 파일 시스템 및 기본 형식 검사 ---
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-added-large-files
+        stages: [manual]
         args: [--maxkb=5000]
       - id: check-case-conflict
+        stages: [manual]
       - id: check-merge-conflict
+        stages: [manual]
       - id: check-symlinks
+        stages: [manual]
       # Kubernetes manifests are multi-document by nature. Parsing them with
       # `--allow-multiple-documents` keeps every tracked YAML file under the
       # syntax gate instead of excluding the manifest tree from it.
       - id: check-yaml
+        stages: [manual]
         args: [--allow-multiple-documents]
       - id: check-toml
+        stages: [manual]
       - id: check-json
+        stages: [manual]
       - id: end-of-file-fixer
+        stages: [manual]
         # Projection of terminal archive placement and sealed migration paths.
         # Refresh with lifecycle transitions; the ownership test compares actual
         # lifecycle meaning, including historical accepted controls. New draft
@@ -78,21 +92,24 @@ repos:
           | \.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:baseline|with-skill)\.md
           )$
       - id: mixed-line-ending
+        stages: [manual]
         exclude: *frozen_archive
       - id: trailing-whitespace
+        stages: [manual]
         exclude: *frozen_archive
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: 6eaad039603a4de39fddd1cf5f727391efe9974e # frozen: v8.30.0
     hooks:
       - id: gitleaks
-        stages: [pre-commit]
+        stages: [manual]
         args: ['--config=.gitleaks.toml']
 
   - repo: https://github.com/Yelp/detect-secrets
     rev: 01886c8a910c64595c47f186ca1ffc0b77fa5458 # frozen: v1.5.0
     hooks:
       - id: detect-secrets
+        stages: [manual]
         args:
           - '--baseline'
           - '.secrets.baseline'
@@ -108,6 +125,7 @@ repos:
     rev: 996abf60411a8d954288ac9856aae7602b80cbda # frozen: v0.22.1
     hooks:
       - id: markdownlint-cli2
+        stages: [manual]
         require_serial: true
         # 필요시 파일 확장자/경로를 args로 조정 가능
         # args: ["**/*.md"]
@@ -116,17 +134,20 @@ repos:
     rev: f805888065fdb6162e1f800e50bb9460cbd223d6 # frozen: 0.37.2
     hooks:
       - id: check-dependabot
+        stages: [manual]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
     hooks:
       - id: shellcheck
+        stages: [manual]
         files: '^((scripts|infrastructure)/.*\.sh|scripts/githooks/(pre-commit|commit-msg|pre-push)|\.(claude|codex)/hooks/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: 05c1426671b9237fb5e1444dd63aa5731bec0dfb # frozen: v3.13.1-1
     hooks:
       - id: shfmt
+        stages: [manual]
         args: [--write, -i, '2'] # pre-commit fails when formatting changes bytes
         files: '^((scripts|infrastructure)/.*\.sh|scripts/githooks/(pre-commit|commit-msg|pre-push)|\.(claude|codex)/hooks/.*\.sh)$'
 
@@ -146,8 +167,10 @@ repos:
     rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
     hooks:
       - id: ruff-check
+        stages: [manual]
         types: [python]
       - id: ruff-format
+        stages: [manual]
         types: [python]
 
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
@@ -155,15 +178,18 @@ repos:
     rev: a4727cbbcd26d7098e96b9cb738169b59711ae51 # frozen: v1.24.1
     hooks:
       - id: zizmor
+        stages: [manual]
 
   - repo: https://github.com/rhysd/actionlint
     rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
     hooks:
       - id: actionlint # GitHub Actions 워크플로우 검사
+        stages: [manual]
 
   - repo: https://github.com/stackrox/kube-linter
     rev: 10ae003038c81855aca8489df5e35da150f4dc2e # frozen: v0.8.3
     hooks:
       - id: kube-linter
+        stages: [manual]
         args: [--config, .kube-linter.yaml]
         files: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml)$'

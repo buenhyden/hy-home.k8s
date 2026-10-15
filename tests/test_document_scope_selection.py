@@ -201,6 +201,57 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 self.assertEqual(surface["id"], "tests")
                 self.assertIn("archive-contract-tests", surface["validators"])
 
+    def test_memory_and_hook_changes_select_their_own_regressions(self) -> None:
+        cases = (
+            (
+                "scripts/workspace_memory.py",
+                "workspace-memory-implementation",
+                "workspace-memory-regressions",
+            ),
+            (
+                "tests/test_workspace_memory.py",
+                "workspace-memory-tests",
+                "workspace-memory-regressions",
+            ),
+            (
+                "scripts/githooks/chained-hook.sh",
+                "git-hook-implementation",
+                "git-hook-chain-regressions",
+            ),
+            (
+                "tests/test_chained_git_hooks.py",
+                "git-hook-tests",
+                "git-hook-chain-regressions",
+            ),
+        )
+        for path, surface_id, gate in cases:
+            with self.subTest(path=path):
+                surface = ROUTES.classify_path(CONTRACT, path)
+                self.assertEqual(surface["id"], surface_id)
+                selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
+                self.assertIn(gate, selected["validators"])
+                self.assertNotIn("archive-contract-tests", selected["validators"])
+                self.assertNotIn("k8s-manifests", selected["validators"])
+                if path.startswith("scripts/"):
+                    self.assertIn("secret-handling", selected["validators"])
+
+    def test_old_name_and_shared_config_inputs_keep_direct_gates(self) -> None:
+        cases = (
+            (("scripts/workspace_memory.py",), "workspace-memory-regressions"),
+            (
+                ("scripts/workspace_memory.py", "scripts/workspace_memory_v2.py"),
+                "workspace-memory-regressions",
+            ),
+            (
+                ("scripts/githooks/chained-hook.sh", ".pre-commit-config.yaml"),
+                "git-hook-chain-regressions",
+            ),
+        )
+        for paths, gate in cases:
+            with self.subTest(paths=paths):
+                selected = ROUTES.select_paths(CONTRACT, paths, "affected")
+                self.assertIn(gate, selected["validators"])
+
 
 class DocumentContentClosureTests(unittest.TestCase):
     @classmethod

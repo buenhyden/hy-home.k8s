@@ -71,6 +71,15 @@ LOCAL_COMMIT_MESSAGE_REPO = {
         }
     ],
 }
+LOCAL_STAGED_QA_HOOK = {
+    "id": "staged-qa",
+    "name": "Validate Staged QA Snapshot",
+    "entry": "python3 scripts/qa.py staged",
+    "language": "system",
+    "stages": ["pre-commit"],
+    "always_run": True,
+    "pass_filenames": False,
+}
 MAX_CONFIG_BYTES = 1024 * 1024
 MAX_PATHS = 2048
 MAX_PATH_BYTES = 4096
@@ -188,12 +197,16 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
     if not isinstance(config, dict) or not isinstance(config.get("repos"), list):
         raise NonstyleError("NONSTYLE-CONFIG: hook repositories are unavailable")
     default_stages = config.get("default_stages", ["pre-commit"])
-    if (
-        not isinstance(default_stages, list)
-        or not all(isinstance(stage, str) for stage in default_stages)
-        or "pre-commit" not in default_stages
-    ):
-        raise NonstyleError("NONSTYLE-CONFIG: pre-commit default stage is required")
+    if default_stages not in (["pre-commit", "manual"], ["manual"]):
+        raise NonstyleError("NONSTYLE-CONFIG: reviewed default stage is required")
+    file_stage = "manual" if default_stages == ["manual"] else "pre-commit"
+    expected_local = {
+        **LOCAL_COMMIT_MESSAGE_REPO,
+        "hooks": [
+            *LOCAL_COMMIT_MESSAGE_REPO["hooks"],
+            *([LOCAL_STAGED_QA_HOOK] if file_stage == "manual" else []),
+        ],
+    }
     selected = []
     seen: set[str] = set()
     seen_local = False
@@ -201,8 +214,15 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
         if isinstance(repo, dict) and repo.get("repo") == "local":
             if (
                 seen_local
-                or repo != LOCAL_COMMIT_MESSAGE_REPO
+                or repo != expected_local
                 or not isinstance(repo["hooks"][0]["always_run"], bool)
+                or (
+                    file_stage == "manual"
+                    and (
+                        not isinstance(repo["hooks"][1]["always_run"], bool)
+                        or not isinstance(repo["hooks"][1]["pass_filenames"], bool)
+                    )
+                )
             ):
                 raise NonstyleError("NONSTYLE-CONFIG: unreviewed local hook")
             seen_local = True
@@ -224,16 +244,20 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                 isinstance(stage, str) for stage in stages
             ):
                 raise NonstyleError("NONSTYLE-CONFIG: hook stages are malformed")
-            if "pre-commit" not in stages:
+            if identifier not in NONSTYLE_IDS | STYLE_IDS | {"commitizen"}:
+                raise NonstyleError("NONSTYLE-CONFIG: unreviewed hook")
+            if file_stage not in stages:
                 continue
             if identifier in STYLE_IDS or identifier == "commitizen":
                 continue
             if identifier not in NONSTYLE_IDS or identifier in seen:
                 raise NonstyleError("NONSTYLE-CONFIG: unreviewed or repeated hook")
+            if file_stage == "manual" and stages != ["manual"]:
+                raise NonstyleError("NONSTYLE-CONFIG: commit file hook changed scope")
             if identifier == "gitleaks" and (
                 hook.get("entry") is not None
                 or hook.get("pass_filenames") is not None
-                or hook.get("stages") != ["pre-commit"]
+                or hook.get("stages") != [file_stage]
                 or hook.get("args") != ["--config=.gitleaks.toml"]
             ):
                 raise NonstyleError("NONSTYLE-CONFIG: staged Gitleaks changed scope")
@@ -286,13 +310,13 @@ def project_nonstyle(config_bytes: bytes) -> dict[str, Any]:
                         ".git/qa-trusted-actionlint.yaml",
                     ],
                 }
-            hooks.append(hook)
+            hooks.append({**hook, "stages": ["pre-commit"]})
             seen.add(identifier)
         if hooks:
             selected.append({**repo, "hooks": hooks})
-    if seen != NONSTYLE_IDS:
+    if not seen_local or seen != NONSTYLE_IDS:
         raise NonstyleError("NONSTYLE-CONFIG: reviewed non-style set is incomplete")
-    return {**config, "repos": selected}
+    return {**config, "default_stages": ["pre-commit"], "repos": selected}
 
 
 def _selected_index_paths(root: Path, paths: Sequence[str]) -> list[str]:

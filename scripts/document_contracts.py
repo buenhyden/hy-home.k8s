@@ -31,6 +31,11 @@ from validation.repository.bounded_io import (
 
 GIT_TIMEOUT_SECONDS = 10
 TASK_LEGACY_BASELINE_COMMIT = "ae93644e7e1137ed66ac243af4156ecea2d9cee4"
+TASK_FIRST_RECORDING_EXTENSION = (
+    "Local candidate Task first-recording of observed draft, ready, in-progress, "
+    "or blocked state"
+)
+TASK_INITIAL_STATES = ("draft", "ready", "in-progress", "blocked")
 MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
@@ -1945,35 +1950,52 @@ def _terminal_semantic_diagnostics(
     modern_task = bool(
         (task_binding.get("task_execution") or {}).get("criterion_acceptance_section")
     )
+    shared_contract = raw_registry.get("shared_contract")
+    candidate_task_recording = (
+        isinstance(shared_contract, Mapping)
+        and shared_contract.get("stage") == "candidate"
+        and TASK_FIRST_RECORDING_EXTENSION in shared_contract.get("extensions", ())
+    )
     for domain in raw_registry["lifecycle_domains"]:
         family = domain["family"]
         initial_states = domain.get("initial_states")
         inbound = {target for _, target in domain["transitions"]}
+        observed_task_initial = (
+            modern_task
+            and family == "task"
+            and candidate_task_recording
+            and initial_states == list(TASK_INITIAL_STATES)
+        )
         if initial_states is not None and (
             not initial_states
             or any(
                 state not in domain["states"]
                 or domain["states"][state] == "terminal"
-                or state in inbound
+                or (state in inbound and not observed_task_initial)
                 for state in initial_states
             )
         ):
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_LIFECYCLE_DOMAIN",
-                    expected="nonempty initial_states drawn from zero-indegree nonterminal domain states",
+                    expected="nonempty nonterminal creation states; zero-indegree except the local candidate Task first-recording extension",
                     actual=f"invalid initial_states for {family}: {initial_states!r}",
                 )
             )
+        expected_initial_states = (
+            list(TASK_INITIAL_STATES)
+            if family == "task" and candidate_task_recording
+            else ["draft"]
+        )
         if (
             modern_task
             and family in {"spec-plan", "task"}
-            and initial_states != ["draft"]
+            and initial_states != expected_initial_states
         ):
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_LIFECYCLE_DOMAIN",
-                    expected=f"modern {family} initial_states=['draft']",
+                    expected=f"modern {family} initial_states={expected_initial_states!r}",
                     actual=repr(initial_states),
                 )
             )

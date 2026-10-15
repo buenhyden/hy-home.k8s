@@ -1,10 +1,10 @@
 ---
 title: "03.specs"
-version: "0.18.0"
+version: "0.19.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-15"
 layer: "specs"
 ---
 # 03.specs
@@ -83,7 +83,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0111-historical-fixture-drift/
 ├── 0112-pinned-package-fixtures/
 ├── 0113-sdlc-sync-and-v9-gaps/
-└── 0114-provider-permission-hardening/
+├── 0114-provider-permission-hardening/
+└── 0115-r10-local-remediation/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -96,6 +97,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Pinned Package Fixtures in Lifecycle Tests](./0112-pinned-package-fixtures/)는 완료 package 문서를 읽는 나머지 테스트의 Git 고정을 소유한다.
 [SDLC Document Sync and Remaining v9 Gaps](./0113-sdlc-sync-and-v9-gaps/)는 SPEC-0108 이후 요구사항·아키텍처·Spec 문서 정합성과 남은 v9 지적 사항을 소유한다.
 [Provider Native Permission and Hook Hardening](./0114-provider-permission-hardening/)은 Claude·Codex native 권한, Codex 설정·rules와 공유 write guard hook 보강을 소유한다.
+[r10 Local Governance and Delivery Remediation](./0115-r10-local-remediation/)은 현행 거버넌스·문서·검증·전달·GitOps 범위의 r10 조사와 지역 교정을 추적한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.

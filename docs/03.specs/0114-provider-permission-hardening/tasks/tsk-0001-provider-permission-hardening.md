@@ -1,9 +1,9 @@
 ---
 title: "Provider Native Permission and Hook Hardening"
-version: "0.1.2"
+version: "0.1.3"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-10-13"
+updated: "2026-10-15"
 layer: "specs"
 artifact_id: "SPEC-0114-TSK-0001"
 parent_ids: ["SPEC-0114-PLAN-0001"]
@@ -128,19 +128,17 @@ flag-first admin merge. The Codex project config and rules were accepted by
 
 Limitations: command-text rules cannot see refspec pushes (so every push
 asks), text-obfuscated paths, input redirection or programs that open files
-themselves; Codex rules cover argv prefixes only; the Codex environment
-filter, hook delivery and the new sandbox network setting are not yet
-observed in a Codex session, and the changed Codex hook needs the user's
-re-trust through `/hooks`. Residual risk: broad Bash secret-path denies can
-block routine commands that mention those paths. Rollback: forward revert of
-the package commits. Next owner: the operator for push, pull request and
-merge.
+themselves; Codex rules cover argv prefixes only. Broad Bash secret-path
+denies can block routine commands that mention those paths. Rollback:
+forward revert of the package commits.
 
 Delivery note (2026-10-14): pull request #145 merged at `24d914d7`
 (EVD-021), so the push, pull request and merge handoff above is closed. The
-Codex hook re-trust and session observation remain with the operator.
+operator's hook re-trust and session observation are recorded in EVD-022.
 
 Codex note (2026-10-14): an operator-run Codex session observed hook
-delivery, secret-variable removal, the forbidden deletion rule and the network
-approval prompt (EVD-022). The workspace sandbox failed to start on this host,
-so commands ran outside it after approval; that remains residual risk.
+delivery, dummy secret-variable absence, the forbidden deletion rule and the
+network approval prompt (EVD-022). The observation cannot isolate which
+setting removed the variable. The workspace sandbox failed to start on this
+host, so commands ran outside it after approval; sandbox isolation remains
+unverified here. The operator owns a future native sandbox observation.

@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.0.0"
+version: "2.1.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-15"
 ---
 
 # Document Lifecycle Policy
@@ -57,6 +57,17 @@ their owning migration work package moves them.
   waiver.
   `ready` is no new
   approval or live-action permission.
+- For a newly recorded Task in this k8s candidate adapter, the first Git
+  version may carry an actual nonterminal `ready`, `in-progress` or `blocked`
+  row when the current scoped user authorization and Task Inputs identify the
+  owner, prerequisites and evidence of preparation, execution or obstacle.
+  `ready` still requires approved inputs and assembled prerequisites;
+  `blocked` names the cause, resume condition and next owner. A new terminal
+  Task is refused. Do not invent a draft-only commit to simulate an unobserved
+  transition. Later transitions, required evidence, criterion acceptance and
+  protected-action approval remain unchanged. This is an explicit local
+  `shared_contract.extensions` candidate, not a new WGOV-CORE 3.0.0 edition
+  or proof of full regional adoption.
 - Historical `done` remains valid in its frozen body or earlier Git generation.
   The 2026-09-28 generation used `completed` for Spec, Plan and Task closure;
   current completed parents and Tasks retain their actual status, bytes,

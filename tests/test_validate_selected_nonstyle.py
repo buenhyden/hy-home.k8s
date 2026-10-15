@@ -445,8 +445,42 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         self.assertNotIn("--all-files", yaml.safe_dump(projected))
         self.assertEqual(len([h for h in hooks if h["id"] == "gitleaks"]), 1)
         self.assertNotIn("local", {repo["repo"] for repo in projected["repos"]})
+        self.assertEqual(projected["default_stages"], ["pre-commit"])
+        self.assertTrue(all(hook["stages"] == ["pre-commit"] for hook in hooks))
 
-    def test_only_exact_local_commit_message_hook_is_excluded(self) -> None:
+    def test_legacy_contract_remains_projectable(self) -> None:
+        checker = load_checker()
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        local = next(repo for repo in config["repos"] if repo["repo"] == "local")
+        legacy = {
+            **config,
+            "default_stages": ["pre-commit", "manual"],
+            "repos": [
+                {**repo, "hooks": [local["hooks"][0]]} if repo is local else repo
+                for repo in config["repos"]
+            ],
+        }
+        gitleaks = next(
+            hook
+            for repo in legacy["repos"]
+            for hook in repo["hooks"]
+            if hook["id"] == "gitleaks"
+        )
+        gitleaks["stages"] = ["pre-commit"]
+        for repo in legacy["repos"]:
+            if repo["repo"] == "local":
+                continue
+            for hook in repo["hooks"]:
+                if hook["id"] not in {"commitizen", "gitleaks"}:
+                    hook.pop("stages", None)
+        projected = checker.project_nonstyle(yaml.safe_dump(legacy).encode())
+        self.assertEqual(projected["default_stages"], ["pre-commit"])
+        self.assertEqual(
+            {hook["id"] for repo in projected["repos"] for hook in repo["hooks"]},
+            set(checker.NONSTYLE_IDS),
+        )
+
+    def test_only_exact_reviewed_local_hooks_are_excluded(self) -> None:
         checker = load_checker()
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
         local = next(repo for repo in config["repos"] if repo["repo"] == "local")
@@ -472,6 +506,14 @@ class SelectedNonstyleContractTests(unittest.TestCase):
             {**local, "hooks": [{**native, "always_run": 1.0}]},
             {**local, "hooks": [{**native, "args": ["--skip"]}]},
             {**local, "hooks": [native, native]},
+            {
+                **local,
+                "hooks": [
+                    *local["hooks"][:-1],
+                    {**local["hooks"][-1], "pass_filenames": 0},
+                ],
+            },
+            {**local, "hooks": [*local["hooks"], {**native, "id": "extra"}]},
             {**local, "hooks": ["malformed"]},
             {**local, "rev": "local"},
         )
@@ -482,6 +524,9 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         repeated = {**config, "repos": [*config["repos"], local]}
         with self.assertRaisesRegex(checker.NonstyleError, "unreviewed local hook"):
             checker.project_nonstyle(yaml.safe_dump(repeated).encode())
+        absent = {**config, "repos": [r for r in config["repos"] if r is not local]}
+        with self.assertRaisesRegex(checker.NonstyleError, "incomplete"):
+            checker.project_nonstyle(yaml.safe_dump(absent).encode())
 
     def test_secret_baseline_exclusion_preserves_existing_selection(self) -> None:
         checker = load_checker()
@@ -523,9 +568,9 @@ class SelectedNonstyleContractTests(unittest.TestCase):
     def test_unreviewed_or_whole_tree_hook_fails_closed(self) -> None:
         checker = load_checker()
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
-        manual_only = {**config, "default_stages": ["manual"]}
-        with self.assertRaisesRegex(checker.NonstyleError, "pre-commit default stage"):
-            checker.project_nonstyle(yaml.safe_dump(manual_only).encode())
+        precommit_only = {**config, "default_stages": ["pre-commit"]}
+        with self.assertRaisesRegex(checker.NonstyleError, "default stage"):
+            checker.project_nonstyle(yaml.safe_dump(precommit_only).encode())
         config["repos"][-1]["hooks"].append({"id": "unreviewed-hook"})
         with self.assertRaises(checker.NonstyleError):
             checker.project_nonstyle(yaml.safe_dump(config).encode())
@@ -539,6 +584,11 @@ class SelectedNonstyleContractTests(unittest.TestCase):
         normal["pass_filenames"] = False
         normal["entry"] = "gitleaks dir ."
         with self.assertRaises(checker.NonstyleError):
+            checker.project_nonstyle(yaml.safe_dump(config).encode())
+        normal.pop("pass_filenames")
+        normal.pop("entry")
+        normal["stages"] = ["manual", "pre-commit"]
+        with self.assertRaisesRegex(checker.NonstyleError, "commit file hook"):
             checker.project_nonstyle(yaml.safe_dump(config).encode())
 
 

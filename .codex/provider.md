@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.5.0"
+version: "1.6.0"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-14"
+updated: "2026-10-15"
 ---
 
 # Codex Provider Notes
@@ -57,13 +57,14 @@ team document, not a special automatic entry filename.
   `inherit = "core"` and `ignore_default_excludes = false`; the validator
   rejects any other key or table, including `[hooks]`. `codex-cli 0.162.1`
   rejected an invalid `sandbox_mode` in this file on 2026-10-13, so the project
-  layer is parsed; whether the environment filter applies is unobserved.
+  layer is parsed. A later session observed that a dummy secret-named variable
+  was absent, but did not isolate which setting removed it.
   `.codex/rules/default.rules` forbids, as argv prefixes, a subset of the
   command families the Claude deny list covers, and the validator pins its
   digest; option-first and reordered forms are not expressible as prefixes,
   so without sandbox network a network command still needs approval. The hook
   registration exits 2 when its adapter cannot be found, and a changed hook
-  runs only after the user re-trusts it through `/hooks`. The memory keys were
+  needs the user's review through `/hooks`. The memory keys were
   found in the installed `codex-cli 0.162.1` binary on 2026-10-13 (static evidence);
   Codex applies a project config only to a trusted project, so the effect is
   separate runtime evidence.
@@ -79,8 +80,8 @@ team document, not a special automatic entry filename.
   hook definition. The interactive `/hooks` command inspects sources and their
   review state. The user owns that trust decision; do not change global trust
   or bypass hook review to manufacture runtime acceptance.
-- Runtime delivery remains unresolved. The authorized 0.153.4 smoke session in
-  a disposable clone used `--ephemeral --ignore-user-config --sandbox read-only`.
+- The earlier 0.153.4 smoke session did not establish hook delivery. It ran in
+  a disposable clone with `--ephemeral --ignore-user-config --sandbox read-only`.
   It completed, but emitted no hook-delivery event and reported a skill-context
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
@@ -88,16 +89,17 @@ team document, not a special automatic entry filename.
   or hook enforcement. The SPEC-0086 Task (`docs/98.archive/README.md`)
   owns that attempt's evidence; SPEC-0072's Task recorded it first and
   transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
-  Next owner: the user/operator for a reviewed project/hook trust state and an
-  explicitly authorized observable session.
+  At that point the next owner was the user/operator for a reviewed project/hook
+  trust state and an explicitly authorized observable session.
 - On `codex-cli 0.155.1` (2026-09-27) an authorized `--sandbox read-only`
   session in this worktree again reported the skill-context budget message.
   It listed none of the project skills, which matches implicit invocation being
   off. It discovered none of the `.codex/agents/*.toml` roles and did not expose
   an exact model identifier. It refused a probe write fail-closed, because
-  `bwrap` could not start the sandbox. Hook delivery stays `DEFER`: the user
-  declined a trust bypass. The SPEC-0086 Task owns that evidence, and the user
-  and operator remain the next owners of the project and hook trust state.
+  `bwrap` could not start the sandbox. Hook delivery was `DEFER` for that
+  attempt: the user declined a trust bypass. The SPEC-0086 Task owns that
+  evidence; at that point the user and operator owned the project and hook
+  trust state.
 - Root cause and repair (2026-09-27, `codex-cli 0.155.1`). The roles were
   undiscovered because this checkout was not a trusted project: user config
   trusted only `/home/hyunyoun`, and an untrusted project ignores every project
@@ -110,8 +112,8 @@ team document, not a special automatic entry filename.
   registry `worker` tier bound `gpt-6-sol`, which the catalog described as the
   "Workhorse model for coding and everyday work". A spawned `code-reviewer` then reported `gpt-6-sol`,
   `high`, and `read-only`. A probe `apply_patch` was rejected by the read-only
-  sandbox, and no hook event was observed, so hook delivery still needs the
-  user's hook review through `/hooks`.
+  sandbox, and no hook event was observed in that session. The later
+  SPEC-0114 observation below supersedes only that delivery gap.
 - SPEC-0096 (2026-09-27) rebound the Codex tiers. `gpt-5.5`, a legacy model
   that retires from Codex on 2026-10-14, and `gpt-5.3-codex-spark` gave way to
   `gpt-6-sol` for both tiers. At that revision supervisor and architect used
@@ -120,11 +122,13 @@ team document, not a special automatic entry filename.
   of spawned threads show that the client
   applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task owns
   the rationale and the evidence.
-- Because delivery is unproven, the enforced boundary for a non-authoring role
-  on this provider is the operating-system `sandbox_mode` mapped by its
-  binding under the neutral class ceiling, not the hook. A role in a
-  mutation-capable class relies on the hook only for
-  advice, never for prevention.
+- The intended boundary for a non-authoring role on this provider is the
+  operating-system `sandbox_mode` mapped by its binding under the neutral class
+  ceiling. A delivered hook does not establish sandbox enforcement. On this host,
+  `bwrap` failed and commands ran outside the sandbox after approval in the
+  SPEC-0114 observation, so isolation remains unverified here. A role in a
+  mutation-capable class uses the hook for scoped path decisions, not as an
+  operating-system file or network boundary.
 - Response contract observed in the installed client on 2026-09-06:
   `PreToolUse` accepts `permissionDecision`, `permissionDecisionReason` and
   `systemMessage`, and treats `decision:approve`, `continue:false`,
@@ -140,9 +144,18 @@ team document, not a special automatic entry filename.
   receives.
 - That registration is tracked configuration checked by the governance
   validator and exercised against Codex-shaped payloads in
-  `tests/test_k8s_pre_edit_hook.py`. Neither establishes that this client
-  delivered the event. Run explicit repository validation and do not infer
-  event delivery from a file.
+  `tests/test_k8s_pre_edit_hook.py`. These static checks do not establish event
+  delivery. The operator's new trusted Codex session on 2026-10-14 observed a
+  `PreToolUse` denial on an `apply_patch` probe with no file created after
+  `/hooks` review (SPEC-0114 Task EVD-022). It also observed a dummy
+  secret-named environment variable absent and a network approval prompt;
+  those observations do not prove the environment filter's specific cause or
+  sandbox isolation. Keep config parsing, hook delivery, rule matching, approval
+  and sandbox enforcement as separate evidence lanes.
+  The active SPEC-0115 Task also records this chat's native hook denials while
+  an intermediate validation Registry edit was incomplete, followed by a
+  bounded repair and selected repository checks. That is further hook invocation
+  evidence, not proof that the sandbox started.
 - Use the shared workspace memory store from
   [context and memory](../.agents/governance/context-and-memory.md) instead of
   native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.

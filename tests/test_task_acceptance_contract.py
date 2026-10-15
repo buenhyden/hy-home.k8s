@@ -16,11 +16,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from document_contracts import (  # noqa: E402
     TASK_LEGACY_BASELINE_COMMIT,
+    TASK_FIRST_RECORDING_EXTENSION,
     _terminal_semantic_diagnostics,
     _typed_registry_from_mapping,
     classify_path,
     legacy_task_profile,
     load_registry,
+    validate_registry,
 )
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
@@ -648,7 +650,9 @@ class ExactLegacyTaskBindingTests(unittest.TestCase):
 
 
 class SpecPlanAuthorityTests(unittest.TestCase):
-    def test_modern_parent_and_task_creation_must_start_draft(self) -> None:
+    def test_modern_parent_creation_stays_draft_and_task_initial_set_is_exact(
+        self,
+    ) -> None:
         registry = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
 
         def issues(payload):
@@ -662,7 +666,10 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             ("spec-plan", ["blocked"]),
             ("spec-plan", ["in-progress"]),
             ("spec-plan", None),
+            ("task", ["draft"]),
             ("task", ["ready"]),
+            ("task", ["draft", "ready", "completed"]),
+            ("task", ["draft", "ready", "in-progress", "blocked", "cancelled"]),
             ("task", None),
         ):
             with self.subTest(family=family, invalid=invalid):
@@ -690,6 +697,66 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             )
         )
         self.assertNotIn("REGISTRY_LIFECYCLE_DOMAIN", issues(previous))
+
+    def test_local_candidate_task_first_recording_accepts_observed_nonterminal_state(
+        self,
+    ) -> None:
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        self.assertEqual(raw["shared_contract"]["stage"], "candidate")
+        self.assertIn(
+            TASK_FIRST_RECORDING_EXTENSION, raw["shared_contract"]["extensions"]
+        )
+        registry = validate_registry(ROOT, raw)
+        task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
+        for status in ("draft", "ready", "in-progress", "blocked"):
+            with self.subTest(status=status):
+                created = LifecycleDocument(task, "sdlc/task", status)
+                self.assertNotIn(
+                    "LIFECYCLE-CREATE",
+                    {
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry, {}, {task: created}, base_mode="staged"
+                        )
+                    },
+                )
+        for status in ("completed", "cancelled", "superseded"):
+            with self.subTest(status=status):
+                created = LifecycleDocument(task, "sdlc/task", status)
+                self.assertIn(
+                    "LIFECYCLE-CREATE",
+                    {
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry, {}, {task: created}, base_mode="staged"
+                        )
+                    },
+                )
+
+    def test_task_first_recording_requires_explicit_candidate_extension(self) -> None:
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        for candidate in (
+            {**raw, "shared_contract": {**raw["shared_contract"], "extensions": []}},
+            {
+                **raw,
+                "shared_contract": {
+                    **raw["shared_contract"],
+                    "extensions": ["unreviewed Task creation permission"],
+                },
+            },
+            {
+                **raw,
+                "shared_contract": {**raw["shared_contract"], "stage": "adopted"},
+            },
+        ):
+            with self.subTest(shared_contract=candidate["shared_contract"]):
+                self.assertIn(
+                    "REGISTRY_LIFECYCLE_DOMAIN",
+                    {
+                        item.rule_id
+                        for item in _terminal_semantic_diagnostics(ROOT, candidate)
+                    },
+                )
 
     def test_new_parent_cannot_claim_legacy_execution_state(self) -> None:
         registry = load_registry(ROOT)

@@ -6137,7 +6137,10 @@
     {
       "family": "task",
       "initial_states": [
-        "draft"
+        "draft",
+        "ready",
+        "in-progress",
+        "blocked"
       ],
       "profile_ids": [
         "sdlc/task"
@@ -6988,7 +6991,8 @@
     "extensions": [
       "Kubernetes/GitOps/bootstrap/external-service procedures",
       "Task Table/frontmatter summary and historical completed-parent lifecycle",
-      "Registry document_language and Codex/Claude native syntax"
+      "Registry document_language and Codex/Claude native syntax",
+      "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state"
     ]
   }
 }
