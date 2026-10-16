@@ -14,7 +14,8 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ## Global Constraints
 
-<!-- Author prompt: copy exact project-wide constraints from the approved Spec. Every work package implicitly inherits them. -->
+<!-- Author prompt: Link the approved Spec constraints and state only additional execution constraints here. -->
+<!-- Author prompt: Every work package inherits the approved Spec constraints. -->
 
 ## Overview
 
@@ -53,3 +54,16 @@ parent_ids: ["{{PARENT_ID}}"]
 ## Completion Criteria
 
 <!-- Author prompt: define the conditions that close work without claiming live evidence. -->
+
+## Promotion
+
+<!-- Author prompt: Use this section as the sole durable-contract promotion receipt for this Plan. -->
+<!-- Author prompt: Name each lasting contract and one current Stage 00, 01, 02, or 05 authority. -->
+<!-- Author prompt: Link that authority with one relative Markdown link and give its concrete section or member. -->
+<!-- Author prompt: For a Registry-realized contract, link the current rule that delegates mechanics to Stage 99. -->
+<!-- Author prompt: If nothing durable is promoted, use only the row `none | none | No durable contract was introduced`. -->
+<!-- Author prompt: Record actual receiving owner updates before claiming promotion. -->
+
+| Durable contract | Promoted to | Where |
+| --- | --- | --- |
+| {{DURABLE_CONTRACT}} | [{{CURRENT_AUTHORITY_TITLE}}]({{CURRENT_AUTHORITY_PATH}}) | {{LOCATION_IN_OWNER}} |

@@ -460,7 +460,8 @@
           "Completion Criteria"
         ],
         "optional": [
-          "Global Constraints"
+          "Global Constraints",
+          "Promotion"
         ],
         "forbidden": []
       },
@@ -4180,7 +4181,8 @@
           "Completion Criteria"
         ],
         "optional": [
-          "Global Constraints"
+          "Global Constraints",
+          "Promotion"
         ],
         "forbidden": []
       },
@@ -6988,7 +6990,7 @@
   "shared_contract": {
     "contract_id": "WGOV-CORE",
     "version": "3.0.0",
-    "stage": "candidate",
+    "stage": "adopted",
     "owner": "buenhyden",
     "source": "Project-Template/.agents/governance/standards.md",
     "source_revision": "bc5b70556c57198768119f94c287f93c87964482",
@@ -7000,7 +7002,9 @@
       "Task Table/frontmatter summary and historical completed-parent lifecycle",
       "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
       "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
-      "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval"
+      "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
+      "Task superseded state with verified successor and criterion transfer",
+      "Advisory shared workspace-memory SQLite store with Task and repository authority"
     ]
   }
 }

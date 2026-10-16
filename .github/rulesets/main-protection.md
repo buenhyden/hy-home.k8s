@@ -1,9 +1,9 @@
-# Main Branch Protection Intended State and Recovery
+# Main Protection and Actions Policy Intended State and Recovery
 
-This file is a local record of the intended GitHub settings for `main` in
-`buenhyden/hy-home.k8s`. It is not an agent instruction surface and does not
-apply remote repository settings by itself. Nothing here is evidence that a
-setting is in force; only a dated authenticated read-back is.
+This file is a local record of intended `main` protection and repository
+Actions settings in `buenhyden/hy-home.k8s`. It is not an agent instruction
+surface and does not apply remote settings by itself. Nothing here is evidence
+that a setting is in force; only a dated authenticated read-back is.
 
 ## Observation Boundary
 
@@ -21,6 +21,10 @@ setting is in force; only a dated authenticated read-back is.
   Classic protection, applied branch rules, repository rulesets, main HEAD,
   a main push check run, SemVer tag refs and Releases were read separately.
   The newer observation follows the 2026-10-09 record.
+- **An authenticated read-back was recorded on 2026-10-16 KST by
+  `buenhyden`.** Main protection, repository Actions permissions, default
+  workflow permissions and main HEAD were read separately after PR #150 merged.
+  The before-state and subsequent SHA-pinning read-back are recorded below.
 - A read-back belongs in the active Task with its date, the exact fields read,
   and the account that read them, and this file may then carry the claim. The
   2026-09-10 reading was taken with no Stage 03 package open, so its date,
@@ -137,7 +141,7 @@ fields below come from the authenticated `gh api` read instead.
 | `required_status_checks.strict` / `checks` | `true`; `ci-summary` and `style-pr`, each App `15368` | Both named checks remain required on current PR input. |
 | `required_pull_request_reviews.required_approving_review_count` / `require_code_owner_reviews` | `0` / `false` | CODEOWNERS alone does not require an approving review. |
 | `required_conversation_resolution.enabled` / `allow_force_pushes.enabled` / `allow_deletions.enabled` | `true` / `false` / `false` | Conversations must resolve; force pushes and deletion remain blocked. |
-| `enforce_admins.enabled` | `true` | The 2026-10-09 administrator bypass observation no longer describes this setting. The target below still says disabled; no remote setting was changed during this read. |
+| `enforce_admins.enabled` | `true` | The 2026-10-09 administrator bypass observation no longer describes this setting. The stale target was corrected after this read; no remote setting changed during it. |
 | Applied branch rules | `[]` | No branch ruleset supplies independent workflow control. |
 | Repository rulesets | Four active tag rulesets: `24341547` immutable main-SHA tags, `24342332` publisher-only main-SHA tag creation, `24769895` immutable SemVer tags, `24769894` publisher-only SemVer tag creation | These govern tags, not PR workflow definitions. The two SemVer rulesets were absent from the older list. |
 | SemVer tag refs / Releases | `[]` / `[]` | No `v*` tag or GitHub Release was observed at this read; this does not certify any later publication. |
@@ -145,12 +149,29 @@ fields below come from the authenticated `gh api` read instead.
 Main push run `38491011372` at that SHA reported `ci-summary` successful and
 `style-pr` skipped. This is a main-push result, not PR style evidence. PR #145
 was merged as `24d914d7fb0ad6a79a4aa9dd56d4a3573a4ab5ea`; that earlier
-merge is not a check result for a future candidate. The current
-`enforce_admins` value differs from the documented target below. The operator
-must decide whether to revise that target or authorize a scoped remote
-correction; this read-back authorizes neither action.
+merge is not a check result for a future candidate. The former
+`enforce_admins` target below was stale; the 2026-10-16 read-back and revised
+target retain administrator enforcement without a protection mutation.
 
-## Target Ruleset
+### 2026-10-16 Integration and Actions Setting
+
+At `2026-10-15T23:41:40Z` (`2026-10-16` KST), authenticated account
+`buenhyden` read main at `c49aa468b6d24a511cfb9420f8c56cb09ae5ce0d`.
+Classic protection still required strict `ci-summary` and `style-pr` from
+GitHub Actions App `15368`, enforced administrators and conversation resolution,
+required zero approving reviews, and blocked force pushes and deletion.
+`repos/buenhyden/hy-home.k8s/actions/permissions` returned `enabled: true`,
+`allowed_actions: all`, and `sha_pinning_required: false`.
+`actions/permissions/workflow` returned `default_workflow_permissions: read`
+and `can_approve_pull_request_reviews: false`. These are observed remote
+settings before the SHA-pinning change, not an independent workflow-control
+gate. After the authorized one-field update, the authenticated read-back at
+`2026-10-15T23:51:56Z` returned `sha_pinning_required: true`; Actions stayed
+enabled with `allowed_actions: all`, the token defaults and PR approval setting
+were unchanged, and the same main SHA and protection fields above remained.
+This setting read-back does not establish compatibility of a later PR run.
+
+## Target Main Protection
 
 - Target branch: `main`.
 - Require pull requests before merge.
@@ -170,19 +191,33 @@ correction; this read-back authorizes neither action.
   failure to the merge decision.
 - Do not enforce squash/rebase-only or linear-history settings that would
   discard referenced objects, so delivered history can keep them.
-- Leave `enforce_admins` disabled, and read the consequence rather than the
-  wording: the pull-request requirement and the required check do not bind the
-  administrator, so a direct push to `main` by the owner succeeds and is
-  reported as a bypass. This is deliberate. The repository has one operator and
-  `allow_force_pushes` is blocked, so enabling administrator enforcement would
-  leave a pull request as the only recovery path for a branch the same operator
-  must be able to repair. Enabling it is a separate operating decision, not a
-  correction of drift, and every administrator bypass stays visible in the
-  remote's push output.
+- Keep `enforce_admins` enabled, so the owner also uses a pull request and the
+  required checks for `main`. A recovery exception requires its own reviewed
+  operator decision and remote read-back; this document grants no bypass.
 
 Branch, merge, finish and recovery rules themselves are owned by
 `.agents/governance/git.md`. This file records only the remote settings that
 support them.
+
+## Repository Actions Policy Target
+
+Keep Actions enabled, `allowed_actions: all`, default workflow token
+permissions at `read`, and PR creation/approval by Actions disabled. Require
+`sha_pinning_required: true` at the repository setting while every external
+`uses:` reference in tracked workflows remains a full commit SHA. The setting
+is effective in the dated post-update read-back above; the earlier `false`
+reading is its historical before-state. Hosted compatibility for the next PR
+still needs that PR's exact SHA and run result.
+
+This server-side requirement protects Action dependency identity across
+future workflow edits. When upgrading an Action, review its new full SHA and
+the affected workflow checks before delivery. A failed run calls for repairing
+the pin and verifying the actual PR run, not silently disabling the setting.
+Changing the remote setting back requires a new reviewed before-state,
+operator decision and after-state. SHA pinning does not protect the body of a
+PR-editable `pull_request` workflow, its shell steps, or required job names.
+The repository's default read token is not a hard ceiling on workflow-defined
+permissions. The independent workflow-control risk remains HIGH.
 
 ## Required Status Checks
 
@@ -243,6 +278,8 @@ this repository:
 
 - `gh api repos/buenhyden/hy-home.k8s/rulesets --paginate`
 - `gh api repos/buenhyden/hy-home.k8s/branches/main/protection`
+- `gh api repos/buenhyden/hy-home.k8s/actions/permissions`
+- `gh api repos/buenhyden/hy-home.k8s/actions/permissions/workflow`
 
 Every dated read-back is point-in-time evidence, not a perpetual guarantee.
 Any later claim of remote enforcement requires a new authenticated read-back;

@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation Plan"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -14,11 +14,14 @@ parent_ids: ["SPEC-0115"]
 
 ## Global Constraints
 
-Preserve terminal evidence and sealed Archive bytes. Do not read secrets or
-private memory data, mutate live or remote state, edit global configuration,
-or claim a new WGOV edition, local adoption or sandbox enforcement without
-its actual decision and observation. A protected action needs its own current
-authority and reviewed target.
+Inherit the [Spec's strategic boundaries](spec.md#strategic-boundaries--non-goals).
+For WORK-014–017, reconcile each producer and dependent consumer before a
+local adoption decision; obtain the broad loaded-profile preflight and
+independent security review before the approved host operation; compare the
+remote before/after setting and subsequent hosted run as separate inputs; and
+bind every selected live observation to its confirmed kubeconfig/context.
+Keep each adverse required result open until a matching check actually
+resolves it. Terminal Tasks 0001–0004 remain historical inputs to this plan.
 
 ## Overview
 
@@ -28,12 +31,19 @@ completed r13 local repair, and
 [Task 0003](tasks/tsk-0003-r13-residual-verification.md) for the later bounded
 residual verification, and
 [Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) for the subsequent
-protected remote integration. P01 to P08 are purposes and order, not eight new
+protected remote integration, then
+[Task 0005](tasks/tsk-0005-r13-residual-controls.md) for four independent
+residual-control lanes. P01 to P08 are purposes and order, not eight new
 packages. Each Task owns only its assigned execution and criterion decisions.
 The Task 0003 authorization applied to exact remote and read-only live targets;
 the subsequent Task 0004 authorization covers a further exact push, main PR,
 CI, reviewed protection decision and conditional merge. Common-edition and
 native-sandbox decisions remain with their respective owners.
+
+The latest request continues the existing approved common core only for local
+C04/C08 applicability and acceptance, native host isolation, further selected
+live validation and solo hosted workflow hardening. Task 0005 keeps separate
+criteria and outcomes; prior terminal Tasks remain fixed.
 
 ## Context
 
@@ -66,6 +76,13 @@ while its independent-review HIGH risk remains recorded. Task 0004 records
 each actual remote result; prior Task 0003 hosted results applied to
 `8d8fa1e5`, not this revision.
 
+At the clean `main` baseline `c49aa468b6d24a511cfb9420f8c56cb09ae5ce0d`,
+the four later lanes have different trust boundaries and owners. The earlier
+C07 local acceptance and `WGOV-CORE / 3.0.0` approval are inputs to a bounded
+C04/C08 decision, not a new edition. Native host mutation needs a separate
+operator decision. Additional live checks remain selected observations, and
+remote Actions SHA pinning does not by itself make PR-editable jobs independent.
+
 ## Goals & In-Scope
 
 - Inventory material P01 to P08 findings with exact sources, classifications,
@@ -83,6 +100,9 @@ each actual remote result; prior Task 0003 hosted results applied to
   protection decision; record the user's one-person operation and the
   independent-review gap before any merge, then record an actual integration
   identity only if the protected operation occurs.
+- Reconcile the four residual lanes at their own owners, preserve distinct
+  source/runtime/live/remote inputs and decisions, and accept only criteria
+  with their own actual required evidence.
 
 ## Non-Goals & Out-of-Scope
 
@@ -93,6 +113,9 @@ actual closure and disposition prerequisites. Task 0003's authority covered
 its exact push, draft PR/CI and two read-only live verifier runs. The subsequent
 authority is bounded to Task 0004's reviewed protection and integration target;
 it does not authorize weaker protection, self-approval or deployment.
+Task 0005 does not grant a new common edition or four-repository adoption,
+host configuration change before exact operator approval, live mutation, or
+independent workflow protection from a SHA-pinning setting alone.
 
 ## Work Breakdown
 
@@ -113,6 +136,10 @@ it does not authorize weaker protection, self-approval or deployment.
 | WORK-011 | [VAL-R13-003](spec.md#success-criteria--verification-plan) | Reconcile current documentation, actual delivery, and whole-unit retention; distinguish unobserved common/remote/native/live lanes | Relevant WORK-009/010 results | [Task 0002](tasks/tsk-0002-r13-follow-up.md) | Current-owner/link/lifecycle review, exact Git results and separately dated lane evidence |
 | WORK-012 | [VAL-R13-004](spec.md#success-criteria--verification-plan) | Record exact authorized remote delivery and named CI leaves, selected live GET results, and independent residual-lane owner handoff | Completed local commit `8d8fa1e5` and later scoped user authorization | [Task 0003](tasks/tsk-0003-r13-residual-verification.md) | Remote SHA/PR identity and actual `ci-summary`/`style-pr` leaf results; kubeconfig/context-confirmed selected live verifier output; separate DEFER/FAIL boundaries |
 | WORK-013 | [VAL-R13-005](spec.md#success-criteria--verification-plan) | Verify the newly authorized exact revision and CI, appraise reviewed protection including a justified no-op for one-person operation, and decide conditional integration with residual HIGH risk explicit | Local `81d76f2d`, subsequent user approval and Task 0003's distinct terminal handoff | [Task 0004](tasks/tsk-0004-r13-protection-and-integration.md) | Remote SHA/PR and named hosted leaves for final head; protection snapshot, no-op rationale or reviewed before/after change, solo decision and actual merge identity if performed |
+| WORK-014 | [VAL-R13-006](spec.md#success-criteria--verification-plan) | Authenticate approved core original/67-path manifest and implement the bounded local C04/C08 applicability and acceptance decision | Recorded WGOV 3.0.0 approval, prior C07 acceptance, original-source access and common/local owner decision | [Task 0005](tasks/tsk-0005-r13-residual-controls.md) | Exact original revision/digest and current consumer checks; actual local decision and selected QA |
+| WORK-015 | [VAL-R13-007](spec.md#success-criteria--verification-plan) | Review and dry-parse host AppArmor preparation, obtain separate host operator approval and test actual native sandbox isolation | Host-supported profile and exact operator approval before mutation | [Task 0005](tasks/tsk-0005-r13-residual-controls.md) | Profile bytes/parser result, approval/target, native startup and isolation probes on the approved host |
+| WORK-016 | [VAL-R13-008](spec.md#success-criteria--verification-plan) | Execute and classify the named additional read-only live checks, retaining first failures and bounded retries | Explicit kubeconfig/context and live operator read-only scope | [Task 0005](tasks/tsk-0005-r13-residual-controls.md) | Leaf cluster/ESO/NetworkPolicy/ingress TLS/router HEAD inputs and results; separate unobserved auth/isolation |
+| WORK-017 | [VAL-R13-009](spec.md#success-criteria--verification-plan) | Verify server-side Actions SHA-pinning hardening and compatible hosted delivery without overstating same-App trust | Reviewed remote setting delta, before snapshot and CI/protection owner | [Task 0005](tasks/tsk-0005-r13-residual-controls.md) | Before/after remote setting, named hosted CI and unchanged protection; same-App HIGH handoff |
 
 ## Verification Plan
 
@@ -144,6 +171,14 @@ merge SHA and branch state only after execution. A Task 0004 factual closeout
 may be delivered by a separate documentation PR; do not make its own merge
 receipt a circular prerequisite for VAL-R13-005.
 
+For WORK-014–017, select each lane's actual producer and compare its input to
+the earlier Task 0003/0004 baseline. Record required adverse checks and their
+same-check resolutions without borrowing PASS from a different trust boundary.
+Host approval precedes runtime isolation testing; a selected live retry is
+preserved alongside its first failure. Verify the remote SHA-pinning setting
+and CI compatibility separately from the unresolved same-App candidate-job
+forgery risk.
+
 ## Risks & Mitigations
 
 - A proposed WGOV change could be misrepresented as approved: leave it pending
@@ -164,3 +199,15 @@ owners and consumers pass their selected checks and independent review. Any
 remaining protected, common-edition, native or live operation has a named next
 owner and a candid `DEFER` boundary. Normal logical commits and their local
 integration are reported from actual Git results.
+
+## Promotion
+
+| Durable contract | Promoted to | Where |
+| --- | --- | --- |
+| Document authoring roles, form selection and the delegated Stage 99 machine contract | [Document authoring policy](../../../.agents/governance/document-authoring.md) | `Authority Boundary` and `Current Contract` delegate exact profiles, forms and headings to `docs/99.templates/registry.json` and its templates; Stage 99 is the implementation owner, not another policy authority. |
+| Lifecycle, Task evidence and completed-package handoff | [Document lifecycle policy](../../../.agents/governance/document-lifecycle.md) | `Current Contract` owns approval, evidence, required checks and this Plan's Promotion obligation; the Stage 99 Registry supplies directed states and validation mechanics. |
+| Repository validation and handoff obligations | [Quality policy](../../../.agents/governance/quality.md) | `Current Contract` governs selected checks and independent review on actual changed inputs; the Task records their execution receipts. |
+
+The four Task 0005 lanes still require their own decisions and checks. This
+receipt identifies existing durable owners; it does not turn planned common
+adoption, host isolation, hosted compatibility or live observations into PASS.

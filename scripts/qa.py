@@ -204,6 +204,21 @@ def index_file(root: Path) -> Path:
     )
 
 
+def require_canonical_staged_index(root: Path) -> None:
+    """Refuse a supplied index this snapshot ignores; relative paths use process CWD."""
+    incoming = os.environ.get("GIT_INDEX_FILE")
+    if incoming is None:
+        return
+    if ".." in Path(incoming).parts:
+        raise ValueError("GIT_INDEX_FILE has ambiguous parent components")
+    canonical = Path(os.path.abspath(index_file(root)))
+    if Path(os.path.abspath(incoming)) != canonical:
+        raise ValueError(
+            "GIT_INDEX_FILE points outside the canonical Git index; "
+            "staged QA cannot validate this commit index"
+        )
+
+
 def merge_head_bytes(root: Path) -> bytes | None:
     path = Path(
         os.fsdecode(
@@ -581,6 +596,8 @@ def main() -> int:
                 identifiers = contract_module.profile_gate_ids(contract, profile)
                 print(profile + ": " + ", ".join(identifiers))
             return 0
+        if args.profile == "staged":
+            require_canonical_staged_index(root)
         baseline = base_revision(root, args.profile, args.base_ref)
         paths = changed_paths(root, staged=args.profile == "staged")
         source_head_before = git(root, "rev-parse", "HEAD")

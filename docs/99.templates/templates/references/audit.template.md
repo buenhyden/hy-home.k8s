@@ -17,7 +17,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Reference Type
 
-<!-- Author prompt: classify this as research, snapshot, glossary, or evidence reference. -->
+<!-- Author prompt: Identify this Audit as a dated assurance assessment and name the decision or control it informs. -->
 
 ## Authority Boundary
 
@@ -25,11 +25,29 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Scope
 
-<!-- Author prompt: define included questions, exclusions, and time boundary. -->
+<!-- Author prompt: define the assurance question, exclusions, and time boundary. -->
+
+### Criteria and Inspected Surface
+
+| Criterion | In-scope surface |
+| --- | --- |
+| <!-- Author prompt: Name the assessed criterion. --> | <!-- Author prompt: Name the inspected boundary or control. --> |
 
 ## Definitions / Facts
 
-<!-- Author prompt: record source-backed definitions or facts needed by downstream work. -->
+<!-- Author prompt: keep observations distinct from conclusions. -->
+
+### Observed Evidence
+
+| Observation | Source and input | Result |
+| --- | --- | --- |
+| <!-- Author prompt: State the observed fact. --> | <!-- Author prompt: Name the source and exact revision or date. --> | <!-- Author prompt: Record the actual result. --> |
+
+### Findings and Gaps
+
+| Finding or gap | Severity | Evidence |
+| --- | --- | --- |
+| <!-- Author prompt: State the deviation or evidence gap. --> | <!-- Author prompt: State justified impact. --> | <!-- Author prompt: Cite the observation. --> |
 
 ## Sources
 
@@ -38,6 +56,17 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Review and Freshness
 
 <!-- Author prompt: state refresh triggers, staleness risks, and current-truth owner. -->
+
+### Remediation
+
+| Remediation | Owner | Due or decision date |
+| --- | --- | --- |
+| <!-- Author prompt: Name a bounded correction or disposition. --> | <!-- Author prompt: Name its accountable owner. --> | <!-- Author prompt: State an actual date or accepted deferral. --> |
+
+### Verification State
+
+<!-- Author prompt: State what was verified, failed, deferred, or not run, with the input and remaining owner. -->
+<!-- Author prompt: Do not turn a finding into a remediation PASS. -->
 
 ## Related Documents
 

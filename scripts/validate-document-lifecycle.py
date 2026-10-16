@@ -56,6 +56,7 @@ from document_lifecycle import (
     document_from_text,
     generation_admission_paths,
     lifecycle_diagnostic_sort_key,
+    local_contract_diagnostics,
     validate_snapshot_documents,
     validate_current_task_evidence,
 )
@@ -2666,6 +2667,243 @@ def _work105_predecessor_unresolved_links(
     return () if exact else unresolved_links
 
 
+def _local_plan_task_contract_issues(
+    registry: Registry,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
+    proposed_texts: Mapping[PurePosixPath, str],
+) -> tuple[tuple[PurePosixPath, str, str, str, str], ...]:
+    """Check only this local adopter's changed Plan and execution inputs."""
+
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+    plan_profile = profiles.get("sdlc/plan")
+    if plan_profile is None or "Promotion" not in plan_profile.headings.allowed:
+        return ()  # Older committed registries did not own this local extension.
+    adapter = _link_validator_module()
+    issues: list[tuple[PurePosixPath, str, str, str, str]] = []
+
+    def issue(
+        path: PurePosixPath, profile: str, rule: str, expected: str, observed: str
+    ) -> None:
+        issues.append((path, profile, rule, expected, observed))
+
+    def promotion_valid(path: PurePosixPath, text: str) -> bool:
+        """Check receipt structure and current owner; Where semantics need review."""
+        section = adapter._exact_heading_section(text, "## Promotion")
+        visible = adapter._visible_markdown(section or "")
+        table = adapter._first_visible_table(visible)
+        table_count = sum(
+            bool(re.fullmatch(r"\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*", line))
+            for line in visible.splitlines()
+        )
+        if (
+            table_count != 1
+            or table is None
+            or table[0] != ["Durable contract", "Promoted to", "Where"]
+        ):
+            return False
+        rows = table[1]
+        if not rows or any(len(row) != 3 for row in rows):
+            return False
+        if len(rows) == 1 and rows[0][0] == "none":
+            return rows[0] == ["none", "none", "No durable contract was introduced"]
+        if any(
+            any(
+                not cell.strip()
+                or cell.strip().casefold() in {"none", "pending", "tbd"}
+                for cell in row
+            )
+            for row in rows
+        ):
+            return False
+        seen: set[tuple[str, str]] = set()
+        for contract, promoted_to, where in rows:
+            links = adapter._extract_links(promoted_to, definitions_text=text)
+            if len(links) != 1 or not where.strip():
+                return False
+            kind, target = adapter._local_destination(path, links[0])
+            if kind not in {"local", "anchor"} or target is None:
+                return False
+            current_owner = target.parts[:1] == (".agents",) or target.parts[:2] in {
+                ("docs", "00.agent-governance"),
+                ("docs", "01.requirements"),
+                ("docs", "02.architecture"),
+                ("docs", "05.operations"),
+            }
+            if not current_owner or target.suffix != ".md":
+                return False
+            owner = proposed_documents.get(target)
+            if (
+                owner is None
+                or owner.profile_id == "unclassified"
+                or owner.state_issue is not None
+                or owner.status not in {"approved", "active", "accepted"}
+            ):
+                return False
+            identity = (contract.strip(), target.as_posix())
+            if identity in seen:
+                return False
+            seen.add(identity)
+        return True
+
+    for path, plan in proposed_documents.items():
+        if (
+            plan.profile_id != "sdlc/plan"
+            or path.parts[:2] != ("docs", "03.specs")
+            or plan.status in {"cancelled", "superseded"}
+            or base_texts.get(path) == proposed_texts[path]
+        ):
+            continue
+        constraints = adapter._exact_heading_section(
+            proposed_texts[path], "## Global Constraints"
+        )
+        visible_constraints = adapter._visible_markdown(constraints or "").strip()
+        spec_path, spec_id = direct_parent(path, "sdlc/plan") or (None, None)
+        spec = proposed_documents.get(spec_path) if spec_path else None
+        linked_spec = any(
+            adapter._local_destination(path, link)[1] == spec_path
+            for link in adapter._extract_links(
+                visible_constraints, definitions_text=proposed_texts[path]
+            )
+        )
+        if (
+            not visible_constraints
+            or spec is None
+            or spec.profile_id != "sdlc/spec"
+            or spec.artifact_id != spec_id
+            or frontmatter_mapping(proposed_texts[path]).get("parent_ids") != [spec_id]
+            or not linked_spec
+        ):
+            issue(
+                path,
+                "sdlc/plan",
+                "PLAN-GLOBAL-CONSTRAINTS",
+                "one substantive Global Constraints section",
+                "changed Plan has no substantive shared constraints",
+            )
+        if not promotion_valid(path, proposed_texts[path]):
+            issue(
+                path,
+                "sdlc/plan",
+                "PLAN-PROMOTION",
+                "one Promotion table with a current Stage 00/01/02/05 owner or explicit none",
+                "changed Plan has no valid durable-owner receipt",
+            )
+
+    for path, task in proposed_documents.items():
+        if (
+            task.profile_id != "sdlc/task"
+            or path.parts[:2] != ("docs", "03.specs")
+            or base_texts.get(path) == proposed_texts[path]
+        ):
+            continue
+        task_profile = profiles.get("sdlc/task")
+        rows = (
+            adapter._body_contract_rows(proposed_texts[path], task_profile) or ()
+            if task_profile is not None
+            else ()
+        )
+        active = task.status in {"ready", "in-progress", "completed"} or any(
+            row.get("Status", "").strip() in {"ready", "in-progress", "completed"}
+            for row in rows
+        )
+        base_evidence = {
+            row.get("Evidence", "").strip(): row
+            for row in adapter.task_base_evidence_rows(base_texts.get(path, "")) or ()
+        }
+        active = active or any(
+            row.get("Result", "").strip() == "PASS"
+            and base_evidence.get(row.get("Evidence", "").strip()) != row
+            for row in adapter.task_base_evidence_rows(proposed_texts[path]) or ()
+        )
+        if not active:
+            continue
+        plan_path, plan_id = direct_parent(path, "sdlc/task") or (None, None)
+        spec_path = path.parent.parent / "spec.md"
+        plan = proposed_documents.get(plan_path) if plan_path else None
+        spec = proposed_documents.get(spec_path)
+        task_metadata = frontmatter_mapping(proposed_texts[path])
+        plan_metadata = (
+            frontmatter_mapping(proposed_texts[plan_path])
+            if plan_path in proposed_texts
+            else {}
+        )
+        prior_task = base_documents.get(path)
+        prior_rows = (
+            adapter._body_contract_rows(base_texts[path], task_profile) or ()
+            if prior_task is not None and task_profile is not None
+            else ()
+        )
+        same_existing_work = bool(
+            prior_task is not None
+            and prior_task.profile_id == "sdlc/task"
+            and prior_task.artifact_id == task.artifact_id
+            and prior_task.status == "completed"
+            and prior_rows
+            and tuple(
+                (
+                    row.get("ID"),
+                    row.get("Upstream criterion"),
+                    row.get("Work item"),
+                    row.get("Owner"),
+                )
+                for row in prior_rows
+            )
+            == tuple(
+                (
+                    row.get("ID"),
+                    row.get("Upstream criterion"),
+                    row.get("Work item"),
+                    row.get("Owner"),
+                )
+                for row in rows
+            )
+        )
+
+        def approved_parent(
+            parent_path: PurePosixPath | None, parent: LifecycleDocument | None
+        ) -> bool:
+            if parent_path is None or parent is None:
+                return False
+            if parent.status == "approved":
+                return True
+            old = base_documents.get(parent_path)
+            return bool(
+                same_existing_work
+                and parent.status == "completed"
+                and old is not None
+                and old.profile_id == parent.profile_id
+                and old.artifact_id == parent.artifact_id
+                and old.status == "completed"
+                and base_texts.get(parent_path) == proposed_texts.get(parent_path)
+            )
+
+        expected_spec = direct_parent(plan_path, "sdlc/plan") if plan_path else None
+        valid = bool(
+            plan_path is not None
+            and plan is not None
+            and plan.profile_id == "sdlc/plan"
+            and plan.artifact_id == plan_id
+            and task_metadata.get("parent_ids") == [plan_id]
+            and expected_spec == (spec_path, spec.artifact_id if spec else None)
+            and plan_metadata.get("parent_ids") == [spec.artifact_id if spec else None]
+            and spec is not None
+            and spec.profile_id == "sdlc/spec"
+            and approved_parent(plan_path, plan)
+            and approved_parent(spec_path, spec)
+        )
+        if not valid:
+            issue(
+                path,
+                "sdlc/task",
+                "TASK-PARENT-APPROVAL",
+                "typed same-package approved Spec and Plan before Task execution",
+                "changed executable Task lacks approved parent identity or status",
+            )
+    return tuple(issues)
+
+
 def _evidence_context(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -2994,6 +3232,9 @@ def _evidence_context(
             {path: frozenset(criteria) for path, criteria in task_plan_criteria.items()}
         ),
         task_spec_criteria=MappingProxyType(task_spec_criteria),
+        local_contract_issues=_local_plan_task_contract_issues(
+            registry, base_documents, proposed_documents, base_texts, proposed_texts
+        ),
     )
 
 
@@ -4495,7 +4736,28 @@ def _completion_document_diagnostics(
                 "one or more required criteria lack a Task assignment",
             )
 
-        context = _evidence_context(registry, {}, documents, {}, texts, root=root)
+        baseline_documents: dict[PurePosixPath, LifecycleDocument] = {}
+        baseline_texts: dict[PurePosixPath, str] = {}
+        if base_mode == "completion":
+            for current_path, current_doc in documents.items():
+                if current_path not in {spec_path, plan_path} and not (
+                    current_path.parent == package / "tasks"
+                    and current_doc.profile_id == "sdlc/task"
+                ):
+                    continue
+                try:
+                    prior_oid = _tree_blob_oid(root, "HEAD", current_path)
+                except InvocationError:  # An unborn fixture has no comparison base.
+                    prior_oid = None
+                if prior_oid is not None:
+                    prior_text = _blob_text(root, prior_oid, current_path)
+                    baseline_texts[current_path] = prior_text
+                    baseline_documents[current_path] = document_from_text(
+                        registry, current_path, prior_text, legacy_completion=True
+                    )
+        context = _evidence_context(
+            registry, baseline_documents, documents, baseline_texts, texts, root=root
+        )
         for diagnostic in validate_current_task_evidence(
             context, base_mode="explicit-ref"
         ):
@@ -4503,6 +4765,19 @@ def _completion_document_diagnostics(
                 fail(
                     diagnostic.path, diagnostic.rule_id, diagnostic.observed_transition
                 )
+        if base_mode == "completion":
+            for diagnostic in local_contract_diagnostics(
+                context, base_mode="completion"
+            ):
+                if (
+                    diagnostic.path == plan_path
+                    or diagnostic.path.parent == package / "tasks"
+                ):
+                    fail(
+                        diagnostic.path,
+                        diagnostic.rule_id,
+                        diagnostic.observed_transition,
+                    )
 
         task_pairs: dict[tuple[str, PurePosixPath], list[dict[str, str]]] = {}
         accepted_origins: dict[str, list[PurePosixPath]] = {}

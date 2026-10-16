@@ -1,6 +1,6 @@
 ---
 title: "r10 Local Governance and Delivery Remediation"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -50,6 +50,17 @@ an independent reviewer, effective protection or a merge. The user then
 clarified that this is a one-person project; retaining the current settings
 as a reviewed no-op leaves the independent-review HIGH risk visible.
 
+The user's next 2026-10-16 request authorizes continued work on four separate
+residuals: local applicability and acceptance of the remaining C04/C08 parts
+of the already approved `WGOV-CORE / 3.0.0`, provider-native isolation,
+additional scoped live validation, and a concrete improvement to the solo
+hosted workflow risk. [Task 0005](tasks/tsk-0005-r13-residual-controls.md)
+owns VAL-R13-006 through VAL-R13-009 and their distinct factual outcomes.
+Tasks 0001–0004 retain terminal decisions. This request is not approval of a
+new common edition, four-repository adoption, unreviewed host configuration
+mutation or proof that the PR-editable same-App workflow producer is
+independent.
+
 ## Strategic Boundaries & Non-goals
 
 - Inspect current `main`, index, worktree, consumers and original evidence
@@ -71,6 +82,10 @@ as a reviewed no-op leaves the independent-review HIGH risk visible.
   cluster resources. The subsequent authorization is limited to Task 0004's
   reviewed remote protection and integration targets; it grants no protection
   weakening, self-approval, live mutation or new common-edition decision.
+  Task 0005's four new lanes use the latest user request and each owner's
+  current scope: common-source and local adoption decisions, host-native
+  preparation with an operator decision before any host change, read-only
+  additional live observations, and reviewed remote Actions SHA pinning.
 
 ## Contracts
 
@@ -212,6 +227,10 @@ actually observed in its own trust boundary.
 | VAL-R13-003 | Lasting meaning is promoted to its current owner and whole-unit retention is assessed against links, holds and eligibility; actual delivery and criterion decisions are recorded only in Task 0002, with common-edition, remote, native and live claims separately observed or deferred. |
 | VAL-R13-004 | Task 0003 records the exact authorized commit, remote draft PR and named `ci-summary`/`style-pr` leaf outcomes, plus the two selected live verifier results, with revision, target, trust boundary, approval scope and current owner. Required hosted leaves and selected live checks need actual PASS evidence before local acceptance; unobserved or failed required outcomes keep this criterion pending. Common-source, native sandbox, global-hook provenance, independent workflow protection and broader live checks remain separately classified and handed to their owners, without promotion to PASS. |
 | VAL-R13-005 | Task 0004 records the user's exact follow-up authority, pushed revision and PR target, actual named CI leaf results on the final reviewed head, and the branch-protection decision with a before/after snapshot and rollback route if settings change. For the user's one-person operation, the absent independent reviewer and residual HIGH risk remain visible while strict App-bound required contexts, admin enforcement, conversation resolution and no-force/no-delete settings are retained. Failed or unobserved required hosted checks keep acceptance and merge pending; authorization or a green intermediate aggregate cannot certify the final head or merge. Record actual PR merge identity and post-merge state only if performed. |
+| VAL-R13-006 | Authenticate the existing approved `WGOV-CORE / 3.0.0` original and its 67-path source manifest on the actual source revision, then determine and apply only C04/C08 applicability and local acceptance at their current owners. Keep source authentication, prior C07 acceptance, local adapter state and any explicit common-owner decision distinct. Missing source or adoption evidence keeps this criterion pending; a new common edition and four-repository adoption are outside this criterion. |
+| VAL-R13-007 | Prepare a reviewed host AppArmor profile and dry-parse result for the native sandbox, obtain the host operator's exact approval before any host mutation, and verify actual native sandbox startup and isolation behavior on that approved host input. A static profile, CLI declaration or earlier `bwrap` failure cannot serve as a runtime PASS; absent host authority or runtime evidence keeps this criterion pending. |
+| VAL-R13-008 | Run the named additional read-only live cluster, ESO metadata, NetworkPolicy object, ingress TLS and router HEAD checks on an explicitly confirmed kubeconfig/context. Preserve any first failure and a later same-check retry as separate evidence with exact input and resolution; distinguish these selected observations from authentication, traffic-isolation, deployment or whole-cluster assurance. |
+| VAL-R13-009 | Apply and verify the reviewed remote Actions `sha_pinning_required=true` setting with a before/after snapshot, compatible named hosted CI on the relevant revision and preserved main protection controls. This is a bounded supply-chain hardening result; the same-App candidate-job forgery and absent independent reviewer remain separate HIGH risks unless independently mitigated and observed. |
 
 ## Traceability
 
@@ -236,3 +255,7 @@ actually observed in its own trust boundary.
 | [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R13-004 | Authorized read-only selected live verifier inputs and outcomes in Task 0003 |
 | [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Exact hosted revision/leaf, branch-protection and independent review evidence in Task 0004 |
 | [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-005 | Separate authorization, delivery and actual merge identity in Task 0004 |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-006 | Existing common-source authentication and separate local C04/C08 acceptance in Task 0005 |
+| [REQ-0003-FR-0026](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-007 | Provider-native host approval and observed isolation kept apart from static preparation in Task 0005 |
+| [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | VAL-R13-008 | Exact additional live scope, failure/retry and unobserved limit in Task 0005 |
+| [REQ-0003-FR-0017](../../01.requirements/0003-workspace-agent-governance-platform.md) | VAL-R13-009 | Remote SHA-pinning before/after and separate hosted compatibility evidence in Task 0005 |

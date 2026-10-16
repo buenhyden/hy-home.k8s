@@ -994,6 +994,311 @@ class LifecycleItemTests(unittest.TestCase):
         self.assertIn("TASK-ITEM-DELETE", self.rules(old, current))
 
 
+class AdoptedExecutionParentTests(unittest.TestCase):
+    """Current Plan/Task authority is checked on actual changed snapshots."""
+
+    package = PurePosixPath("docs/03.specs/0900-approved-parent-fixture")
+    spec = package / "spec.md"
+    plan = package / "plan.md"
+    task = package / "tasks/tsk-0001-fixture.md"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = load_registry(ROOT)
+
+    def spec_text(self, status: str = "approved") -> str:
+        return (
+            "---\n"
+            'title: "Fixture Spec"\nversion: "0.1.0"\n'
+            f'type: "sdlc/spec"\nstatus: "{status}"\n'
+            'owner: "platform"\nupdated: "2026-10-16"\n'
+            'layer: "specs"\nartifact_id: "SPEC-0900"\n'
+            "---\n# Spec\n"
+        )
+
+    def plan_text(self, status: str = "approved") -> str:
+        return (
+            "---\n"
+            'title: "Fixture Plan"\nversion: "0.1.0"\n'
+            f'type: "sdlc/plan"\nstatus: "{status}"\n'
+            'owner: "platform"\nupdated: "2026-10-16"\n'
+            'layer: "specs"\nartifact_id: "SPEC-0900-PLAN-0001"\n'
+            'parent_ids: ["SPEC-0900"]\n'
+            "---\n# Plan\n"
+            "## Global Constraints\nKeep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.\n"
+            "## Promotion\n"
+            "| Durable contract | Promoted to | Where |\n"
+            "| --- | --- | --- |\n"
+            "| none | none | No durable contract was introduced |\n"
+        )
+
+    def task_text(
+        self,
+        status: str = "ready",
+        parent_id: str = "SPEC-0900-PLAN-0001",
+        row_status: str = "frontmatter",
+    ) -> str:
+        return (
+            "---\n"
+            'title: "Fixture Task"\nversion: "0.1.0"\n'
+            f'type: "sdlc/task"\nstatus: "{status}"\n'
+            'owner: "platform"\nupdated: "2026-10-16"\n'
+            'layer: "specs"\nartifact_id: "SPEC-0900-TSK-0001"\n'
+            f'parent_ids: ["{parent_id}"]\n'
+            "---\n# Task\n"
+            "## Task Table\n### Lifecycle Traceability\n"
+            "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
+            "| --- | --- | --- | --- | --- | --- | --- |\n"
+            f"| WORK-001 | [VAL-P02-001](../spec.md) | Verify | platform | {row_status} | {'PASS' if status == 'completed' else 'NOT_RUN'} | Fixture |\n"
+        )
+
+    def rules(
+        self,
+        *,
+        base: dict[PurePosixPath, str] | None = None,
+        proposed: dict[PurePosixPath, str],
+    ) -> set[str]:
+        before = base or {}
+        base_docs = {
+            path: document_from_text(self.registry, path, text)
+            for path, text in before.items()
+        }
+        proposed_docs = {
+            path: document_from_text(self.registry, path, text)
+            for path, text in proposed.items()
+        }
+        context = LIFECYCLE_CLI._evidence_context(
+            self.registry, base_docs, proposed_docs, before, proposed
+        )
+        return {
+            finding.rule_id
+            for finding in compare_lifecycle(
+                self.registry,
+                base_docs,
+                proposed_docs,
+                base_mode="staged",
+                evidence_context=context,
+                enforce_task_execution=True,
+            )
+        }
+
+    def test_changed_plan_requires_constraints_and_promotion_owner(self) -> None:
+        plan = self.plan_text()
+        base = {self.spec: self.spec_text(), self.plan: plan}
+        bad = (
+            (
+                plan.replace(
+                    "## Global Constraints\nKeep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.\n",
+                    "",
+                ),
+                "PLAN-GLOBAL-CONSTRAINTS",
+            ),
+            (plan.replace("## Promotion\n", "## Other\n"), "PLAN-PROMOTION"),
+            (
+                plan.replace(
+                    "| none | none | No durable contract was introduced |", "| | | |"
+                ),
+                "PLAN-PROMOTION",
+            ),
+            (
+                plan.replace(
+                    "| none | none | No durable contract was introduced |",
+                    "| Shared lifecycle | [old Task](tasks/tsk-0001-fixture.md) | done |",
+                ),
+                "PLAN-PROMOTION",
+            ),
+            (
+                plan.replace(
+                    "| none | none | No durable contract was introduced |",
+                    "| none | none | none |",
+                ),
+                "PLAN-PROMOTION",
+            ),
+            (
+                plan.replace(
+                    "No durable contract was introduced",
+                    "No durable contract introduced",
+                ),
+                "PLAN-PROMOTION",
+            ),
+            (
+                plan.replace(
+                    "[Spec](spec.md#strategic-boundaries--non-goals)",
+                    "Spec",
+                ),
+                "PLAN-GLOBAL-CONSTRAINTS",
+            ),
+        )
+        for changed, rule in bad:
+            with self.subTest(rule=rule):
+                proposed = {**base, self.plan: changed}
+                self.assertIn(rule, self.rules(base=base, proposed=proposed))
+        completed_without_receipt = self.plan_text("completed").replace(
+            "## Promotion\n", "## Other\n"
+        )
+        self.assertIn(
+            "PLAN-PROMOTION",
+            self.rules(
+                base=base, proposed={**base, self.plan: completed_without_receipt}
+            ),
+        )
+        self.assertNotIn("PLAN-PROMOTION", self.rules(base=base, proposed=base))
+        with_prompt = plan.replace(
+            "## Global Constraints\n",
+            "## Global Constraints\n<!-- Author prompt: link the Spec -->\n",
+        )
+        self.assertNotIn(
+            "PLAN-GLOBAL-CONSTRAINTS",
+            self.rules(base=base, proposed={**base, self.plan: with_prompt}),
+        )
+
+    def test_promotion_requires_current_owner_and_sole_none_decision(self) -> None:
+        owner_path = PurePosixPath(".agents/governance/document-lifecycle.md")
+        owner_text = (ROOT / owner_path).read_text(encoding="utf-8")
+        plan = self.plan_text()
+        valid_row = (
+            "| Lifecycle contract | "
+            "[current owner](../../../.agents/governance/document-lifecycle.md) "
+            "| `Current Contract` |"
+        )
+        current = plan.replace(
+            "| none | none | No durable contract was introduced |", valid_row
+        )
+        base = {self.spec: self.spec_text(), self.plan: plan, owner_path: owner_text}
+        self.assertNotIn(
+            "PLAN-PROMOTION",
+            self.rules(base=base, proposed={**base, self.plan: current}),
+        )
+        member_location = current.replace(
+            "`Current Contract` |",
+            "Registry member delegated by Current Contract |",
+        )
+        self.assertNotIn(
+            "PLAN-PROMOTION",
+            self.rules(base=base, proposed={**base, self.plan: member_location}),
+        )
+        for bad in (
+            current + "| none | none | No durable contract was introduced |\n",
+            current.replace("`Current Contract` |", " |"),
+            current
+            + "\n| Durable contract | Promoted to | Where |\n"
+            + "| --- | --- | --- |\n"
+            + "| Other | [current owner](../../../.agents/governance/document-lifecycle.md) | `Current Contract` |\n",
+            current.replace(
+                "../../../.agents/governance/document-lifecycle.md",
+                "tasks/tsk-0001-fixture.md",
+            ),
+        ):
+            with self.subTest(bad=bad[-90:]):
+                self.assertIn(
+                    "PLAN-PROMOTION",
+                    self.rules(base=base, proposed={**base, self.plan: bad}),
+                )
+
+    def test_active_task_needs_approved_typed_parents(self) -> None:
+        spec = self.spec_text()
+        plan = self.plan_text()
+        valid = {self.spec: spec, self.plan: plan, self.task: self.task_text()}
+        self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(proposed=valid))
+        for change in (
+            {self.plan: self.plan_text("in-review")},
+            {self.spec: self.spec_text("in-review")},
+            {self.plan: self.plan_text("in-progress")},
+            {self.spec: self.spec_text("in-progress")},
+            {self.task: self.task_text(parent_id="SPEC-9999-PLAN-0001")},
+        ):
+            with self.subTest(change=change):
+                self.assertIn(
+                    "TASK-PARENT-APPROVAL", self.rules(proposed={**valid, **change})
+                )
+        blocked = {
+            **valid,
+            self.plan: self.plan_text("in-review"),
+            self.task: self.task_text("blocked"),
+        }
+        self.assertNotIn("TASK-PARENT-APPROVAL", self.rules(proposed=blocked))
+        working_blocked = {
+            **blocked,
+            self.task: self.task_text("blocked", row_status="in-progress"),
+        }
+        self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=working_blocked))
+        evidence_blocked = {
+            **blocked,
+            self.task: self.task_text("blocked")
+            + "## Task Evidence\n"
+            + "| Evidence | Result |\n| --- | --- |\n| EVD-001 | PASS |\n",
+        }
+        self.assertIn("TASK-PARENT-APPROVAL", self.rules(proposed=evidence_blocked))
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=valid, proposed={**valid, self.plan: self.plan_text("in-review")}
+            ),
+        )
+
+    def test_exact_completed_parent_extension_keeps_historical_authority(self) -> None:
+        base = {
+            self.spec: self.spec_text("completed"),
+            self.plan: self.plan_text("completed"),
+        }
+        proposed = {**base, self.task: self.task_text()}
+        self.assertIn("TASK-PARENT-APPROVAL", self.rules(base=base, proposed=proposed))
+        planted = {
+            **base,
+            self.task: self.task_text("blocked", row_status="blocked"),
+        }
+        self.assertEqual(self.rules(base=base, proposed=planted), set())
+        resumed = {
+            **planted,
+            self.task: self.task_text("in-progress", row_status="in-progress"),
+        }
+        self.assertIn(
+            "TASK-PARENT-APPROVAL", self.rules(base=planted, proposed=resumed)
+        )
+        old_task = self.task_text("completed", row_status="completed")
+        prior_execution = {**base, self.task: old_task}
+        self.assertNotIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=prior_execution,
+                proposed={
+                    **prior_execution,
+                    self.task: old_task + "\n## Note\nSame work.",
+                },
+            ),
+        )
+        added_work = old_task.replace(
+            "| WORK-001 |",
+            "| WORK-002 | [VAL-P02-002](../spec.md) | New work | platform | ready | NOT_RUN | Fixture |\n| WORK-001 |",
+            1,
+        )
+        self.assertIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=prior_execution,
+                proposed={**prior_execution, self.task: added_work},
+            ),
+        )
+        changed_work = old_task.replace("| Verify |", "| New obligation |", 1)
+        self.assertIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=prior_execution,
+                proposed={**prior_execution, self.task: changed_work},
+            ),
+        )
+        self.assertIn(
+            "TASK-PARENT-APPROVAL",
+            self.rules(
+                base=base,
+                proposed={
+                    **proposed,
+                    self.plan: self.plan_text("completed") + "\nchanged",
+                },
+            ),
+        )
+
+
 class GenerationAdmissionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.registry = load_registry(ROOT)
