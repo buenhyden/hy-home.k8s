@@ -37,9 +37,9 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | Publisher script and focused tests | platform | completed | PASS | EVD-009 and EVD-018 tests, EVD-007 staged QA, EVD-005 review resolved by EVD-006 |
-| WORK-002 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | RUN-0013 and README routes | platform | in-progress | PASS | EVD-010 final review of PR #152 head `4305b4f7`; EVD-011 staged QA. A re-review of the follow-up hook-safety commit precedes acceptance |
+| WORK-002 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | RUN-0013 and README routes | platform | completed | PASS | EVD-010 and EVD-022 independent reviews, EVD-011, EVD-017 and EVD-021 staged QA |
 | WORK-003 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | Review App creation, installation and first check run | operator | completed | PASS | EVD-013 App and installation, EVD-014 first check run resolving EVD-003 and EVD-012, EVD-016 bootstrap copy |
-| WORK-004 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | Main protection requirement and EVD-012 disposition | operator and platform | in-progress | PASS | EVD-015 protection read-back; blocked and mergeable PR observations pending |
+| WORK-004 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | Main protection requirement and EVD-012 disposition | operator and platform | completed | PASS | EVD-024 approval, EVD-015 protection update, EVD-023 blocked and mergeable observations and merge |
 
 ## Task Evidence
 
@@ -63,15 +63,22 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 | EVD-016 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Bootstrap publisher copy | `git cat-file blob 6907f0d0:scripts/independent_review.py` to a scratch file outside the repository | PASS | Copy blob `0ad8bf05e3b86bcaf4e6919215dee99df22e3631` equals the reviewed commit's blob. This is the one-time PR #152 exception named in RUN-0013; later PRs use the `origin/main` copy | no | none |
 | EVD-017 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Selected staged QA | Normal commit `6907f0d0` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | Staged QA, Commitizen and the generated-message exception hook passed | yes | none |
 | EVD-018 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Publisher focused tests | Working tree after `6907f0d0` with the revocation-warning test added | PASS | Pinned interpreter: 16 tests OK, including a failed `DELETE /installation/token` that warns on stderr without the token and keeps the check-run result | yes | none |
+| EVD-019 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review App installation | Operator-run read-only `GET /installation/repositories` with a metadata-read installation token, revoked after use | PASS | `total 1 ['buenhyden/hy-home.k8s']`: the installation covers only this repository | no | none |
+| EVD-020 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Publisher focused tests | Commit `e3a4b71377843321c5520cdcae5558b4ecf969f7` | PASS | The independent reviewer ran the 16 tests on a `git archive` copy of that commit: OK. This binds EVD-018 to the commit where the revocation-warning test landed | yes | none |
+| EVD-021 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Selected staged QA | Normal commit `e3a4b713` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | Staged QA, Commitizen and the generated-message exception hook passed | yes | none |
+| EVD-022 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent PR-head review | Same `security-auditor` reviewer, `git diff 6907f0d0 e3a4b713` and re-reviews of `6907f0d0` | PASS | `approve` on both heads, no critical, high or medium finding. Remaining LOW items (SEC-P01-001 level, approval record, commit-bound evidence, API repository list) are applied in this closeout | yes | none |
+| EVD-023 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Main protection read-back | PR #152 head `e3a4b713` after EVD-015; read-only `gh pr view` and `commits/<head>/check-runs` by `buenhyden` | PASS | `2026-10-16T07:18:34Z`: `BLOCKED` with `ci-summary` and `style-pr` from App `15368` `success` and no `independent-review`. Operator published check run `116860817539` from App `5341483` (`success`). `07:20:59Z`: `CLEAN`/`MERGEABLE`. PR #152 merged as `7c7e6e8110f031194d7e2c5e3a39b11ead7de677` | yes | EVD-004 |
+| EVD-024 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Protection change approval | Operator answer on 2026-10-16 before EVD-015 to the exact proposal: `PATCH branches/main/protection/required_status_checks`, strict `true`, checks `ci-summary@15368`, `style-pr@15368`, `independent-review@5341483`, no other field | PASS | The operator selected "approve, apply now". The approval covers this one PATCH and its read-back; it is not standing authority for later protection changes | yes | none |
+| EVD-025 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Reviewer procedure | The `security-auditor` session reviewing `e3a4b713` | FAIL | The reviewer disclosed one plain `git fetch -q origin` in the PR worktree without `-c core.hooksPath=/dev/null`, the pattern RUN-0013 forbids. The worktree held this package's own authored branch, so no hostile hook was present; the lapse is recorded, not repeated | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007, EVD-009, EVD-018 | Tests, staged QA and independent review passed; EVD-005 is resolved by EVD-006 | platform |
-| [VAL-IR-002](../spec.md#success-criteria--verification-plan) | pending | EVD-010, EVD-011 | Re-review of the hook-safety follow-up commit before acceptance | platform |
+| [VAL-IR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-017, EVD-021, EVD-022 | Documents pass staged QA and independent review; EVD-025 is a recorded non-required procedure lapse | platform |
 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-013, EVD-014, EVD-016 | App `5341483` is installed with the scoped permissions and produced a `success` check run on a real PR head; EVD-012 is resolved by EVD-014 | operator |
-| [VAL-IR-004](../spec.md#success-criteria--verification-plan) | pending | EVD-015 | Observe the PR blocked without `independent-review` and mergeable with it | operator and platform |
+| [VAL-IR-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-015, EVD-023, EVD-024 | Approved protection update, observed blocked and mergeable states and merge; EVD-004 is resolved by EVD-023 | operator and platform |
 
 ## Approval and Safety Boundaries
 
@@ -104,11 +111,13 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 
 ## Verification Summary
 
-The publisher, its tests, staged QA and the independent reviews pass
-(VAL-IR-001). App `5341483` produced the first `success` check run after one
-installation-visibility failure (VAL-IR-003), and `main` now requires it
-(EVD-015). The final PR-head review and the blocked/mergeable observation
-remain. With the requirement in force, PR-edited workflows can no longer
-satisfy every required check, which closes the forgery path behind SPEC-0115
-Task 0005 EVD-012. The operator's own key access, reviewer prompt injection
-and same-user execution of hostile PR code remain residual risks.
+All four criteria are accepted. The publisher, its 16 tests, staged QA and
+independent reviews pass (VAL-IR-001, VAL-IR-002). App `5341483` is installed
+only on this repository and produced `success` check runs after one
+installation-visibility failure (VAL-IR-003). `main` requires
+`independent-review` from that App; PR #152 was observed `BLOCKED` without it
+and `CLEAN` with it, then merged (VAL-IR-004). Required-check forgery by a
+PR-edited workflow is closed; the PR-editable workflow body remains a separate
+MEDIUM risk in the main protection record. The operator's own key access,
+reviewer prompt injection and same-user execution of hostile PR code remain
+residual risks, and EVD-025 records one reviewer procedure lapse.

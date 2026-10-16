@@ -195,6 +195,14 @@ is published only through RUN-0013 in
 solo operator's own key access, reviewer prompt injection and same-user
 execution of hostile PR code; it is not independent human review.
 
+The two parts now have separate levels. Satisfying every required `main`
+check with a PR-edited workflow is closed as of 2026-10-16: PR #152 head
+`e3a4b713` was observed `BLOCKED` with both Actions checks `success` and no
+`independent-review`, then `CLEAN` after the RUN-0013 publication. The
+PR-editable workflow body itself, which still runs PR-authored steps in
+Actions with the read-only default token, remains open and is graded MEDIUM
+by SPEC-0116, pending confirmation by the CI and security owner.
+
 ## Target Main Protection
 
 - Target branch: `main`.
@@ -244,7 +252,9 @@ Changing the remote setting back requires a new reviewed before-state,
 operator decision and after-state. SHA pinning does not protect the body of a
 PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
-permissions. The independent workflow-control risk remains HIGH.
+permissions. Required-check forgery is closed by the `independent-review`
+requirement above; the PR-editable workflow body remains a separate MEDIUM
+risk.
 
 ## Required Status Checks
 
