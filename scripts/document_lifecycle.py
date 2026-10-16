@@ -1221,11 +1221,19 @@ def compare_lifecycle(
     diagnostics.extend(archive_evidence_diagnostics)
 
     if enforce_task_execution and evidence_context is not None:
+        # Sanctioned generation-boundary bytes predate the new-work guards.
         diagnostics.extend(
-            local_contract_diagnostics(evidence_context, base_mode=base_mode)
+            item
+            for item in local_contract_diagnostics(
+                evidence_context, base_mode=base_mode
+            )
+            if item.path not in generation_admissions
         )
 
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
+
+
+LOCAL_CONTRACT_EVIDENCE_GAP = "current same-package Plan and Spec authority"
 
 
 def local_contract_diagnostics(
@@ -1241,7 +1249,7 @@ def local_contract_diagnostics(
             expected=expected,
             observed=observed,
             base_mode=base_mode,
-            evidence_gap="current same-package Plan and Spec authority",
+            evidence_gap=LOCAL_CONTRACT_EVIDENCE_GAP,
         )
         for path, profile, rule, expected, observed in context.local_contract_issues
     )

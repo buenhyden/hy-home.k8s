@@ -2368,7 +2368,7 @@ def _document_language_registry_diagnostics(
     for root in roots:
         if not root.endswith("/"):
             faults.append(f"english-only root {root} does not end in /")
-    for root in contract["korean_allowed_markdown_roots"]:
+    for root in contract.get("korean_allowed_markdown_roots", ()):
         if root != ".agents/" or root not in roots:
             faults.append(
                 f"Korean-allowed Markdown root {root} is not an English-only .agents/ root"

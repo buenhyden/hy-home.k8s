@@ -780,6 +780,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             ),
             adapter_targets={},
             route_state="terminal",
+            document_registry=None,
+            current_registry=None,
         )
         # Unrelated sealed migration corpora do not exist in this disposable repo.
         # The generic migration/source/index proof and actual renderer remain real.
