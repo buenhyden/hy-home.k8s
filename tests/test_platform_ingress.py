@@ -136,6 +136,52 @@ class PlatformIngressTest(unittest.TestCase):
                 INGRESS.validate(root, desired_documents()),
             )
 
+    def test_chart_version_bump_is_not_pinned(self):
+        for chart in ("headlamp", "kiali", "ingress-nginx", "rollouts"):
+            with (
+                self.subTest(chart=chart),
+                tempfile.TemporaryDirectory() as temporary,
+            ):
+                root = Path(temporary)
+                copy_declarations(root)
+                path = root / f"gitops/apps/root/platform-{chart}-app.yaml"
+                app = yaml.safe_load(path.read_text())
+                app["spec"]["source"]["targetRevision"] = "99.99.99"
+                path.write_text(yaml.safe_dump(app))
+                self.assertEqual([], INGRESS.validate(root, desired_documents()))
+
+    def test_wrong_chart_repo_or_namespace_fails(self):
+        cases = (
+            ("repoURL", "https://example.invalid/charts"),
+            ("chart", "unknown"),
+        )
+        for key, bad in cases:
+            with (
+                self.subTest(key=key),
+                tempfile.TemporaryDirectory() as temporary,
+            ):
+                root = Path(temporary)
+                copy_declarations(root)
+                path = root / "gitops/apps/root/platform-headlamp-app.yaml"
+                app = yaml.safe_load(path.read_text())
+                app["spec"]["source"][key] = bad
+                path.write_text(yaml.safe_dump(app))
+                self.assertIn(
+                    "INGRESS_OWNER headlamp/headlamp",
+                    INGRESS.validate(root, desired_documents()),
+                )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            copy_declarations(root)
+            path = root / "gitops/apps/root/platform-headlamp-app.yaml"
+            app = yaml.safe_load(path.read_text())
+            app["spec"]["destination"]["namespace"] = "other"
+            path.write_text(yaml.safe_dump(app))
+            self.assertIn(
+                "INGRESS_OWNER headlamp/headlamp",
+                INGRESS.validate(root, desired_documents()),
+            )
+
     def test_chart_service_generation_controls_fail_closed(self):
         cases = (
             (

@@ -1,6 +1,6 @@
 """Parsed ingress cross-references for the current local GitOps platform.
 
-Chart/operator Services are checked against their pinned owner declarations;
+Chart/operator Services are checked against their owner declarations (the Application owns chart version);
 this is repository evidence, not a claim that those Services were rendered.
 """
 
@@ -62,7 +62,7 @@ def _load(root: Path, relative: str):
     return value if isinstance(value, Mapping) else None
 
 
-def _chart(root, name, chart, repo, version, namespace, release=None):
+def _chart(root, name, chart, repo, namespace, release=None):
     app = _load(root, f"gitops/apps/root/platform-{name}-app.yaml")
     source = _get(app, "spec", "source")
     destination = _get(app, "spec", "destination")
@@ -73,7 +73,6 @@ def _chart(root, name, chart, repo, version, namespace, release=None):
             _get(app, "metadata", "name") == f"platform-{name}",
             _get(source, "repoURL") == repo,
             _get(source, "chart") == chart,
-            _get(source, "targetRevision") == version,
             _get(source, "helm", "releaseName") == (release or name),
             _get(destination, "namespace") == namespace,
             _get(destination, "server") == "https://kubernetes.default.svc",
@@ -93,7 +92,6 @@ def _owner_declarations(root):
         "headlamp",
         "headlamp",
         "https://kubernetes-sigs.github.io/headlamp/",
-        "0.41.0",
         "headlamp",
     )
     kiali = _chart(
@@ -101,7 +99,6 @@ def _owner_declarations(root):
         "kiali",
         "kiali-operator",
         "https://kiali.org/helm-charts",
-        "2.10.0",
         "istio-system",
     )
     nginx = _chart(
@@ -109,7 +106,6 @@ def _owner_declarations(root):
         "ingress-nginx",
         "ingress-nginx",
         "https://kubernetes.github.io/ingress-nginx",
-        "4.12.0",
         "ingress-nginx",
     )
     return {
@@ -198,7 +194,6 @@ def _declared_ingresses(root):
         "rollouts",
         "argo-rollouts",
         "https://argoproj.github.io/argo-helm",
-        "2.40.9",
         "argo-rollouts",
         "argo-rollouts",
     )
