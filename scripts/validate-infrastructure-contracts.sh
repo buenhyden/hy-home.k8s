@@ -99,7 +99,7 @@ if grep -lP 'sync-wave:\s*"[1-9]' "$ROOT_DIR"/gitops/platform/{monitoring,kiali}
   fail 'ExternalSecrets for Alloy and Kiali must sync before their consumers (wave <= 0)'
 fi
 # The admission hook Jobs run in an injected namespace; a sidecar never exits.
-require_pattern 'sidecar\.istio\.io/inject:\s*"false"' "$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
+require_pattern 'sidecar\.istio\.io/inject:\s*"false"' "$INGRESS_APP"
 # istio-cni must install into the only CNI bin dir the k3s containerd reads.
 # The chart's platform profile overrides cniBinDir, so the k3s profile is pinned.
 require_pattern '^\s*platform:\s*k3s$' "$ROOT_DIR/gitops/apps/root/platform-istio-cni-app.yaml"
@@ -118,7 +118,6 @@ require_pattern 'domain:\s*argo\.hy-k8s\.home\.arpa' "$ARGOCD_VALUES"
 require_pattern 'hosts:\s*$' "$ARGOCD_VALUES"
 require_pattern 'argo\.hy-k8s\.home\.arpa' "$ARGOCD_VALUES"
 require_pattern 'secretName:\s*argocd-local-tls' "$ARGOCD_VALUES"
-require_pattern 'type:\s*LoadBalancer' "$INGRESS_APP"
 
 echo "[INFO] verify AppProject wildcard ban and allow-list"
 if grep -Pq 'group:\s*"\*"|kind:\s*"\*"' "$APPPROJECT_APPS"; then
@@ -308,10 +307,6 @@ require_pattern 'templateName:\s*adminer-stability' "$ADMINER_ROLLOUT"
 require_pattern 'stableService:\s*adminer-stable' "$ADMINER_ROLLOUT"
 require_pattern 'canaryService:\s*adminer-canary' "$ADMINER_ROLLOUT"
 require_pattern 'host:\s*adminer\.hy-k8s\.home\.arpa' "$ADMINER_INGRESS"
-require_pattern 'ingressClassName:\s*nginx' "$ADMINER_INGRESS"
-# The sidecar in ingress-nginx must reach adminer through the mesh host, or STRICT mTLS resets it.
-require_pattern "service-upstream:\\s*'true'" "$ADMINER_INGRESS"
-require_pattern 'upstream-vhost:\s*adminer\.apps\.svc\.cluster\.local' "$ADMINER_INGRESS"
 require_pattern 'mode:\s*STRICT' "$ADMINER_PA"
 require_pattern 'name:\s*adminer-stability' "$ADMINER_AT"
 require_pattern 'kind:\s*VirtualService' "$ADMINER_VS"
@@ -360,7 +355,7 @@ require_multiline_pattern 'defaultProviders:\n\s+tracing:\n\s+- otel-tracing' "$
 # honor_labels the target's namespace wins and namespace="apps" matches nothing.
 require_multiline_pattern 'prometheus\.scrape "kube_state_metrics" \{[^}]*honor_labels\s*=\s*true' "$ALLOY_K8S"
 # The metrics NodePorts for the retired static scrape stay removed; only
-# ingress-nginx keeps fixed NodePorts (router, ADR-0043).
+# the ingress controller keeps fixed NodePorts (router, ADR-0043).
 if grep -rlP '^\s*type:\s*NodePort\b' "$ROOT_DIR/gitops/platform"; then
   fail 'metrics NodePort Services are retired; the in-cluster Alloy scrapes pods directly (ADR-0045)'
 fi
@@ -381,22 +376,16 @@ if grep -Pq 'key:\s*secret/apps/<appname>/config' "$SAMPLE_EXTERNAL_SECRET"; the
 fi
 
 # k8s router contract (ADR-0043): the k3d serverlb binds only the dedicated
-# host address and forwards to fixed ingress-nginx NodePorts; k8s hosts live
-# under hy-k8s.home.arpa and the apex path redirects to the subdomain.
+# host address and forwards to the ingress controller's fixed NodePorts, which
+# with the apex routes and Service shape are checked by
+# scripts/validation/platform/ingress.py; k8s hosts live under hy-k8s.home.arpa.
 K3D_CONFIG="$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml"
-APEX_REDIRECTS="$ROOT_DIR/gitops/platform/ingress-routes/apex-redirects.yaml"
 require_pattern "port:\s*'?192\.168\.0\.14:80:30080'?" "$K3D_CONFIG"
 require_pattern "port:\s*'?192\.168\.0\.14:443:30443'?" "$K3D_CONFIG"
 if grep -Pq "port:\s*'?(80|443):(80|443)'?\s*$" "$K3D_CONFIG"; then
   fail 'k3d serverlb must not bind host 80/443 on every address (ADR-0043)'
 fi
-require_pattern 'http:\s*30080' "$INGRESS_APP"
-require_pattern 'https:\s*30443' "$INGRESS_APP"
 require_pattern '^\s*-\s*platform-ingress-routes-app\.yaml' "$ROOT_KUSTOMIZATION"
-for app in argo kiali headlamp rollouts adminer; do
-  require_pattern "path:\s*/${app}$" "$APEX_REDIRECTS"
-  require_pattern "permanent-redirect:\s*https://${app}\.hy-k8s\.home\.arpa/$" "$APEX_REDIRECTS"
-done
 if grep -rPq '(argo|argocd|kiali|headlamp|rollouts|adminer)\.hy\.home\.arpa' \
   "$ROOT_DIR/gitops" "$ROOT_DIR/infrastructure" "$ROOT_DIR/examples"; then
   fail 'k8s hosts must use hy-k8s.home.arpa, not hy.home.arpa (ADR-0043)'
