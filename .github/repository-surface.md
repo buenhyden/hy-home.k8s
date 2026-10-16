@@ -60,8 +60,8 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
   보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
   설치하며 로컬 목적·단위 검사는 실행하지 않는다.
-  `scripts/validate-ci-python-contract.py`가 고정 pin과 workflow 경계를
-  검사하므로 lock과 소비자 단언은 함께 리뷰한다.
+  `scripts/validate-ci-python-contract.py`는 pin 형식, 직접 pin과 lock의
+  일치, hash 존재와 workflow 경계를 검사하며 pin 값 사본은 두지 않는다.
 - Issue는 요청과 triage priority를 소유한다. 승인된 수용 계약은 Spec,
   실행 결과는 Task에 기록하고 Project는 상태를 표시한다. Issue form은
   접수 단계에 Spec이나 Requirement 링크를 요구하지 않는다.

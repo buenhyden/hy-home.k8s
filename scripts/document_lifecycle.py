@@ -1222,6 +1222,8 @@ def compare_lifecycle(
 
     if enforce_task_execution and evidence_context is not None:
         # Sanctioned generation-boundary bytes predate the new-work guards.
+        # Safe without byte equality only because admissions exist solely at a
+        # real schema 9 -> 10 registry transition; keep that if reusing them.
         diagnostics.extend(
             item
             for item in local_contract_diagnostics(

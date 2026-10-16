@@ -464,17 +464,17 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         # A ready first version is now a legal local initial state; a copied
         # terminal Task is still no creation history.
         self.git.commit(target.as_posix(), self.registered_task_document("completed"))
-        ready = self.oid("HEAD")
+        completed_copy = self.oid("HEAD")
         self.assertFalse(
             VALIDATOR._history_proves_cumulative_create(
                 self.root,
                 self.registry,
                 target,
                 self.base,
-                ready,
+                completed_copy,
             )
         )
-        result, output = self.invoke("ci", base_ref=self.base, to_ref=ready)
+        result, output = self.invoke("ci", base_ref=self.base, to_ref=completed_copy)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
 
