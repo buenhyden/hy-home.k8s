@@ -10,6 +10,8 @@
     {"name": "valid-allowlisted-job", "workflow": "greetings.yml", "job": "greeting", "permissions": {"issues": "write", "pull-requests": "write"}, "expected": []},
     {"name": "unlisted-write", "workflow": "ci.yml", "job": "build", "permissions": {"pages": "write"}, "expected": ["write permission is not allowlisted"]},
     {"name": "write-all", "permissions": "write-all", "expected": ["write-all is forbidden"]},
+    {"name": "live-mutation-kubectl-apply", "run": "kubectl apply -f x.yaml", "expected": ["forbidden live mutation or publish command kubectl apply"]},
+    {"name": "live-mutation-git-push", "run": "git push origin HEAD", "expected": ["forbidden live mutation or publish command git push"]},
     {"name": "missing-timeout", "timeout": false, "expected": ["job must declare timeout-minutes"]}
   ],
   "repositoryBoundaryCases": [

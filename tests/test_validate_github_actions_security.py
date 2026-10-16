@@ -97,7 +97,7 @@ def _write_self_test_case(root: Path, case: dict) -> None:
             suffix = f" # {case['comment']}" if case.get("comment") else ""
             lines.append(f"      - uses: {case['uses']}{suffix}")
         else:
-            lines.append("      - run: 'true'")
+            lines.append(f"      - run: '{case.get('run', 'true')}'")
     workflow_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

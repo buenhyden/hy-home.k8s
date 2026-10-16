@@ -18,6 +18,15 @@ REMOTE_REF = re.compile(r"^[^\s/@]+/[^\s@]+(?:/[^\s@]+)*@([0-9a-f]{40})$")
 DOCKER_REF = re.compile(r"^docker://[^\s@]+@sha256:([0-9a-f]{64})$")
 VERSION_COMMENT = re.compile(r"#\s*(v?[0-9]+(?:\.[0-9]+){0,2})\s*$")
 USES_LINE = re.compile(r"^\s*(?:-\s*)?uses\s*:\s*(?P<value>.+?)\s*$")
+FORBIDDEN_COMMANDS = (
+    "kubectl apply",
+    "kubectl patch",
+    "argocd app sync",
+    "argocd app set",
+    "vault kv",
+    "docker push",
+    "git push",
+)
 ALLOWED_JOB_WRITES = {
     ("greetings.yml", "greeting"): {"issues", "pull-requests"},
     ("labeler.yml", "label"): {"pull-requests"},
@@ -158,6 +167,15 @@ def _validate_uses(path: Path, data: dict, lines: list[str]) -> list[str]:
     return errors
 
 
+def _validate_live_mutations(path: Path, lines: list[str]) -> list[str]:
+    text = "\n".join(lines)
+    return [
+        _diagnostic(path, f"forbidden live mutation or publish command {command}")
+        for command in FORBIDDEN_COMMANDS
+        if command in text
+    ]
+
+
 def _validate_permissions(path: Path, data: dict) -> list[str]:
     errors: list[str] = []
     permissions = data.get("permissions")
@@ -245,7 +263,11 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
 def validate_workflow(path: Path, data: dict, lines: list[str]) -> list[str]:
     """Validate one parsed workflow."""
 
-    return _validate_permissions(path, data) + _validate_uses(path, data, lines)
+    return (
+        _validate_permissions(path, data)
+        + _validate_uses(path, data, lines)
+        + _validate_live_mutations(path, lines)
+    )
 
 
 def _load_yaml(path: Path) -> tuple[dict | None, list[str], str | None]:
