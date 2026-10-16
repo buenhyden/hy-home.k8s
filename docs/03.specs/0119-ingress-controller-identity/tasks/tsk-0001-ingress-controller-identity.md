@@ -32,8 +32,8 @@ shell assertions.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | Declared controller identity in `ingress.py` | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-ICI-002](../spec.md#success-criteria--verification-plan) | Remove duplicated shell assertions | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | Declared controller identity in `ingress.py` | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-ICI-002](../spec.md#success-criteria--verification-plan) | Remove duplicated shell assertions | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 

@@ -307,6 +307,30 @@ class PlatformIngressTest(unittest.TestCase):
         self.assertIn("INGRESS_DEFAULT_BACKEND apps/adminer", errors)
         self.assertIn("INGRESS_ANNOTATION apps/adminer", errors)
 
+    def swapped(self, **change):
+        controller = copy.deepcopy(INGRESS.CONTROLLER)
+        controller.update(change)
+        return INGRESS.validate(ROOT, desired_documents(), controller)
+
+    def test_swapped_ingress_class_fails_every_route(self):
+        errors = self.swapped(ingressClass="other")
+        routes = INGRESS.ROUTES
+        self.assertTrue(routes)
+        for namespace, name in routes:
+            self.assertIn(f"INGRESS_ROUTE {namespace}/{name}", errors)
+
+    def test_swapped_namespace_leaves_apex_routes_missing_or_unknown(self):
+        errors = self.swapped(namespace="other")
+        for name in ("argo", "kiali", "headlamp", "rollouts", "adminer"):
+            self.assertIn(f"INGRESS_MISSING other/apex-{name}", errors)
+            self.assertIn(f"INGRESS_UNKNOWN ingress-nginx/apex-{name}", errors)
+
+    def test_renamed_redirect_annotation_fails_redirect(self):
+        controller = copy.deepcopy(INGRESS.CONTROLLER)
+        controller["annotations"]["sslRedirect"] = "force-tls"
+        errors = INGRESS.validate(ROOT, desired_documents(), controller)
+        self.assertIn("INGRESS_REDIRECT apps/adminer", errors)
+
 
 if __name__ == "__main__":
     unittest.main()
