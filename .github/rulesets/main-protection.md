@@ -25,6 +25,9 @@ that a setting is in force; only a dated authenticated read-back is.
   `buenhyden`.** Main protection, repository Actions permissions, default
   workflow permissions and main HEAD were read separately after PR #150 merged.
   The before-state and subsequent SHA-pinning read-back are recorded below.
+- **Authenticated read-backs were recorded on 2026-10-16 at `08:22:11Z`,
+  `08:24:26Z`/`08:24:33Z`, `08:39:24Z` and `08:48:05Z` by `buenhyden`**
+  around retiring unused Actions credentials. It follows the independent review requirement below.
 - **An authenticated read-back was recorded on 2026-10-16 at
   `07:03:23Z`/`07:03:24Z` by `buenhyden`** before and after the approved
   `required_status_checks` update for SPEC-0116. It follows below.
@@ -126,7 +129,7 @@ GitHub Actions run `37785109216` reported both named jobs successful. That
 result belongs to its own SHA and run; it does not prove later hosted execution.
 `SEC-P01-001` remained HIGH as of 2026-10-09 for a PR that changes its own
 workflow or control definition; see the 2026-10-16 Independent Review
-Requirement section for its current split. Required checks from App `15368` do not independently authenticate
+Requirement and Credential Retirement sections for its current split. Required checks from App `15368` do not independently authenticate
 PR-editable job definitions. The security/CI operator owns that separate guard.
 
 ### Current 2026-10-15 Observation
@@ -200,11 +203,66 @@ The two parts now have separate levels. Satisfying every required `main`
 check with a PR-edited workflow is closed as of 2026-10-16: PR #152 head
 `e3a4b713` was observed `BLOCKED` with both Actions checks `success` and no
 `independent-review`, then `CLEAN` after the RUN-0013 publication. The
-PR-editable workflow body itself remains HIGH and owner-accepted, as recorded
-by SPEC-0105 Task 0004: a PR-edited `pull_request` workflow still runs
+PR-editable workflow body itself was HIGH and owner-accepted, as recorded by
+SPEC-0105 Task 0004: a PR-edited `pull_request` workflow still runs
 PR-authored steps in Actions and can declare permissions beyond the read-only
-default. Any regrade belongs to the CI and security owner with its own
-likelihood and impact derivation.
+default. Its Severe impact came from the repository-level secret
+`GHCR_TOKEN`, which no current workflow used but any same-repository PR
+workflow could read.
+
+### 2026-10-16 Credential Retirement and Workflow-Body Regrade
+
+With the operator's decision, the authenticated account `buenhyden` (user
+`9127269`) read the repository at `2026-10-16T08:24:26Z`, deleted the unused
+repository secret `GHCR_TOKEN`, the five retired `QA_*` Actions variables, and
+the retired `qa-control` and `qa-tag-publish` environments with their
+`QA_VERIFIER_PRIVATE_KEY` and `QA_PUBLISHER_PRIVATE_KEY`, and removed the
+retired publisher App `5156559` from the bypass list of ruleset `24342332`.
+The read-back at `08:24:33Z` showed no repository secret, variable or
+environment and an empty `24342332` bypass list; `24342332` still blocks
+`main-<SHA>` tag creation for everyone, matching the retired publication path.
+`24769894` keeps the operator `9127269` as the SemVer tag producer, and the
+two immutable tag rulesets have no bypass. The operator later reported revoking
+the PAT behind `GHCR_TOKEN` and deleting the retired Apps `5156553` and
+`5156559` in the GitHub UI; those are operator reports, not API read-backs.
+`actions/permissions` read at `08:22:11Z` still returned
+`sha_pinning_required: true`. Further operator-run read-only reads returned
+zero Codespaces secrets, no deploy keys, no webhooks and fork PR approval
+`all_external_contributors` at `08:39:24Z`, and zero self-hosted runners with
+GitHub Pages disabled at `08:48:05Z`. A user-owned repository has no
+organization secrets.
+
+The operator then made a current derivation with the risk-report matrix. It
+replaces the earlier HIGH basis of SPEC-0105, which graded the PR-editable job
+definitions themselves. Likelihood is **Possible**: same-repository branches
+come only from the admin collaborator `buenhyden` or a session acting with that
+account, and from `dependabot[bot]`, whose runs get a read-only token and no
+secrets; external fork PRs need approval and receive no secrets. Impact is
+**Moderate**. The observed basis: no repository Actions secret, variable or
+environment, Dependabot or Codespaces secret, deploy key, webhook or
+self-hosted runner remains; every job runs on GitHub-hosted `ubuntu-latest`;
+and no file in the repository trusts the GitHub OIDC token. External OIDC
+trust outside the repository was not inspected. A PR-edited workflow that
+declares write permissions can still push or delete non-`main` branches, create
+tags outside the protected patterns, create or delete releases, cancel or
+disable workflows and delete run logs and artifacts, edit issue and PR text
+that agent sessions later read, and post statuses or deployments. It cannot
+push `main`, change protected tag patterns, approve reviews or produce
+`independent-review` from App `5341483`, and Argo CD tracks only `main`. These
+effects stay inside the repository and are recoverable, which is Moderate. The
+level is **MEDIUM**, monitor-only, as the sole CI and security owner's decision
+with a recorded `security-auditor` concurrence (SPEC-0115 Task 0005 EVD-052).
+Review cue: a new repository secret or access-granting variable, an
+environment without a `main`-only policy, a self-hosted runner, OIDC trust
+keyed on this repository or owner, a GitOps revision other than `main`, a
+cluster image pulled from a package of this repository, GitHub Pages, a new or
+wider write permission in a committed workflow beyond the existing greeting and
+labeler `issues`/`pull-requests` write, or a new collaborator. Any of these
+raises the level back to HIGH until reassessed.
+
+The absent independent human reviewer remains a separate **HIGH** risk owned
+by the operator: the `independent-review` reviewer is an AI agent under the
+same solo operator, so the gate is not independent human review.
 
 ## Target Main Protection
 
@@ -256,8 +314,8 @@ operator decision and after-state. SHA pinning does not protect the body of a
 PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
 permissions. Required-check forgery is closed by the `independent-review`
-requirement above; the PR-editable workflow body remains a separate,
-owner-accepted HIGH risk.
+requirement above; the PR-editable workflow body is a separate MEDIUM risk
+after the 2026-10-16 credential retirement.
 
 ## Required Status Checks
 
