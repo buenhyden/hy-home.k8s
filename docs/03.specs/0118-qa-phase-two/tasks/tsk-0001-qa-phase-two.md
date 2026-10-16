@@ -32,10 +32,10 @@ narrowed script and test surfaces, and a gate for the lifecycle modules.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | Workflow rule single ownership | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | CI metadata test rename | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | Narrowed script and test surfaces | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | Lifecycle module gate | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | Workflow rule single ownership | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | CI metadata test rename | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | Narrowed script and test surfaces | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | Lifecycle module gate | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
