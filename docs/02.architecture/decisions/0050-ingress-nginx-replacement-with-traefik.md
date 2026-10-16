@@ -1,8 +1,8 @@
 ---
 title: "Ingress-NGINX Replacement with Traefik"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-10-16"
 layer: "architecture"
@@ -116,7 +116,8 @@ redirects. Gateway API is deferred until the Istio upgrade in
 
 ## Traceability
 
-The research behind this decision was read on 2026-10-16 from the Kubernetes,
+The operator accepted Option B (Traefik provider) on 2026-10-16, after a
+comparison with Istio Gateway API. The research behind this decision was read on 2026-10-16 from the Kubernetes,
 Istio, Traefik, Gateway API and cert-manager release pages and advisories.
 
 ### Lifecycle Traceability
