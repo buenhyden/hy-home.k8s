@@ -168,6 +168,11 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             "scripts/document_contracts.py",
             "scripts/run-document-contract-tests.py",
             "tests/test_task_acceptance_contract.py",
+            "tests/git_fixture.py",
+            "tests/archive_generation_fixture.py",
+            "tests/test_document_lifecycle_archive_cutover.py",
+            "scripts/archive_recovery.py",
+            "scripts/validate-markdown-profiles.py",
             "docs/99.templates/registry.json",
             "docs/99.templates/templates/specs/task.template.md",
         ):
@@ -188,6 +193,45 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                     self.contract, [path], "staged", ROOT
                 )
                 self.assertNotIn("document-contract-tests", selected["validators"])
+
+    def test_lifecycle_helpers_keep_archive_and_document_gates(self) -> None:
+        for path in (
+            "tests/git_fixture.py",
+            "tests/archive_generation_fixture.py",
+            "tests/test_document_lifecycle_archive_cutover.py",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertTrue(
+                    {"archive-contract-tests", "document-contract-tests"}
+                    <= set(selected["validators"])
+                )
+        for path in (
+            "scripts/archive_validation.py",
+            "scripts/archive_recovery.py",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertTrue(
+                    {"document-lifecycle", "links-and-owners"}
+                    <= set(selected["validators"])
+                )
+
+    def test_actions_security_inputs_select_their_gate(self) -> None:
+        for path in (
+            "scripts/validate-github-actions-security.py",
+            "tests/test_validate_github_actions_security.py",
+            "tests/fixtures/github-actions-security.json",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertIn("github-actions-security", selected["validators"])
 
     def test_purpose_checks_follow_their_changed_surfaces_without_full_sweep(self):
         cases = (

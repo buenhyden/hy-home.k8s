@@ -137,6 +137,36 @@
       "expectedSurface": "shared-document-history-readers"
     },
     {
+      "name": "lifecycle-git-fixture",
+      "path": "tests/git_fixture.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-archive-generation-fixture",
+      "path": "tests/archive_generation_fixture.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-archive-cutover-helper",
+      "path": "tests/test_document_lifecycle_archive_cutover.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "actions-security-validator",
+      "path": "scripts/validate-github-actions-security.py",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
+      "name": "actions-security-test",
+      "path": "tests/test_validate_github_actions_security.py",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
+      "name": "actions-security-fixture",
+      "path": "tests/fixtures/github-actions-security.json",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
       "name": "shared-import-stays-broad",
       "path": "scripts/validation/repository/bounded_io.py",
       "expectedSurface": "scripts"
@@ -301,6 +331,7 @@
         "validators": [
           "affected-surface-contract",
           "document-contract-registry",
+          "document-contract-tests",
           "document-lifecycle",
           "links-and-owners",
           "markdown-profiles",
@@ -416,6 +447,9 @@
           "agent-governance",
           "archive-contract-tests",
           "archive-integrity",
+          "document-contract-tests",
+          "document-lifecycle",
+          "links-and-owners",
           "repository-quality"
         ],
         "protectedLevel": "protected",
@@ -494,6 +528,23 @@
           "repository-quality",
           "selected-nonstyle",
           "selected-style"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "actions-security-validator-selects-its-gate",
+      "lane": "affected",
+      "paths": [
+        "scripts/validate-github-actions-security.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "ci-python-contract",
+          "github-actions-security",
+          "repository-quality"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
