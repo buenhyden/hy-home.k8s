@@ -86,6 +86,121 @@ class QaTests(unittest.TestCase):
         self.assertIn(b"file.txt", self.qa.git(self.root, "diff", "--name-only", "-z"))
         self.assertEqual((self.root / ".git/index").read_bytes(), baseline)
 
+    def test_staged_rejects_git_supplied_alternate_index_before_reporting_pass(self):
+        import io
+        from contextlib import redirect_stderr
+
+        canonical = self.qa.index_file(self.root)
+        alternate = canonical.with_name("alternate-index")
+        alternate.write_bytes(canonical.read_bytes())
+        (self.root / "file.txt").write_text("candidate in canonical index\n")
+        self.git("add", "file.txt")
+        contract = {"validators": []}
+        diagnostics = io.StringIO()
+        with (
+            mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(alternate)}),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "select_paths", return_value={"validators": []}
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "profile_gate_ids", return_value=[]
+            ),
+            mock.patch.object(self.qa.runner, "run_selected", return_value=0) as leaf,
+            redirect_stderr(diagnostics),
+        ):
+            self.assertEqual(self.qa.main(), 1)
+        leaf.assert_not_called()
+        self.assertIn("GIT_INDEX_FILE", diagnostics.getvalue())
+
+    def test_staged_accepts_unset_and_canonical_git_index(self):
+        from contextlib import chdir
+
+        canonical = self.qa.index_file(self.root)
+        for supplied in (None, str(canonical)):
+            with self.subTest(supplied=supplied), mock.patch.dict(os.environ):
+                if supplied is None:
+                    os.environ.pop("GIT_INDEX_FILE", None)
+                else:
+                    os.environ["GIT_INDEX_FILE"] = supplied
+                self.qa.require_canonical_staged_index(self.root)
+        with (
+            chdir(self.root),
+            mock.patch.dict(os.environ, {"GIT_INDEX_FILE": ".git/index"}),
+        ):
+            self.qa.require_canonical_staged_index(self.root)
+
+        contract = {"validators": []}
+        with (
+            mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(canonical)}),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "validate_contract", return_value=contract
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "select_paths", return_value={"validators": []}
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "profile_gate_ids", return_value=[]
+            ),
+            mock.patch.object(self.qa.runner, "run_selected", return_value=0),
+        ):
+            self.assertEqual(self.qa.main(), 0)
+
+    def test_staged_rejects_symlink_dotdot_index_before_leaf(self):
+        import io
+        from contextlib import redirect_stderr
+
+        canonical = self.qa.index_file(self.root)
+        outside = self.root.parent / "outside"
+        nested = outside / "nested"
+        nested.mkdir(parents=True)
+        alternate = outside / "index"
+        alternate.write_bytes(canonical.read_bytes())
+        alias = canonical.parent / "qa-index-alias"
+        alias.symlink_to(nested, target_is_directory=True)
+        ambiguous = alias / ".." / "index"
+        self.assertEqual(Path(os.path.abspath(ambiguous)), canonical)
+        self.assertNotEqual(ambiguous.resolve(), canonical)
+        diagnostics = io.StringIO()
+        with (
+            mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(ambiguous)}),
+            mock.patch.object(
+                sys, "argv", ["qa.py", "staged", "--root", str(self.root)]
+            ),
+            mock.patch.object(
+                self.qa.contract_module,
+                "validate_contract",
+                return_value={"validators": []},
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "select_paths", return_value={"validators": []}
+            ),
+            mock.patch.object(
+                self.qa.contract_module, "profile_gate_ids", return_value=[]
+            ),
+            mock.patch.object(self.qa.runner, "run_selected", return_value=0) as leaf,
+            redirect_stderr(diagnostics),
+        ):
+            self.assertEqual(self.qa.main(), 1)
+        leaf.assert_not_called()
+        self.assertIn("GIT_INDEX_FILE", diagnostics.getvalue())
+
+    def test_linked_worktree_canonical_index_uses_git_path(self):
+        linked = self.root.parent / "linked"
+        self.git("worktree", "add", "-q", "-b", "qa-linked", str(linked))
+        canonical = self.qa.index_file(linked)
+        self.assertNotEqual(canonical, linked / ".git/index")
+        with mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(canonical)}):
+            self.qa.require_canonical_staged_index(linked)
+
     def test_final_tree_and_index_are_distinct_and_source_is_unchanged(self):
         (self.root / "file.txt").write_text("staged invalid\n")
         self.git("mv", "gone.txt", "renamed space.txt")

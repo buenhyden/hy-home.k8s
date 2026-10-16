@@ -650,7 +650,7 @@ class ExactLegacyTaskBindingTests(unittest.TestCase):
 
 
 class SpecPlanAuthorityTests(unittest.TestCase):
-    def test_local_candidate_spec_plan_direct_approval_after_batch_review(self) -> None:
+    def test_local_spec_plan_direct_approval_after_batch_review(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         extension = (
             "Local candidate Spec/Plan direct draft-to-approved transition "
@@ -659,7 +659,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
         domain = next(
             item for item in raw["lifecycle_domains"] if item["family"] == "spec-plan"
         )
-        self.assertEqual(raw["shared_contract"]["stage"], "candidate")
+        self.assertIn(raw["shared_contract"]["stage"], ("candidate", "adopted"))
         self.assertIn(extension, raw["shared_contract"]["extensions"])
         self.assertEqual(domain["initial_states"], ["draft"])
         self.assertIn(["draft", "approved"], domain["transitions"])
@@ -692,7 +692,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                     },
                 )
 
-    def test_spec_plan_direct_approval_requires_exact_candidate_extension(self) -> None:
+    def test_spec_plan_direct_approval_requires_exact_local_extension(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         extension = (
             "Local candidate Spec/Plan direct draft-to-approved transition "
@@ -720,7 +720,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                 **raw["shared_contract"],
                 "extensions": [*extensions, "unreviewed direct approval"],
             },
-            {**raw["shared_contract"], "stage": "adopted"},
+            {**raw["shared_contract"], "stage": "unreviewed"},
         ):
             with self.subTest(shared_contract=shared):
                 self.assertTrue(
@@ -794,13 +794,48 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                 cwd=ROOT,
             )
         )
-        self.assertNotIn("REGISTRY_LIFECYCLE_DOMAIN", issues(previous))
+        # Preserve historical lifecycle fields while supplying the current language contract.
+        projection = previous | {"document_language": registry["document_language"]}
+        self.assertNotIn("REGISTRY_LIFECYCLE_DOMAIN", issues(projection))
 
-    def test_local_candidate_task_first_recording_accepts_observed_nonterminal_state(
+    def test_local_lifecycle_extensions_remain_effective_after_adoption(self) -> None:
+        raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
+        adopted = raw | {
+            "shared_contract": {**raw["shared_contract"], "stage": "adopted"}
+        }
+        registry = validate_registry(ROOT, adopted)
+        spec = PurePosixPath("docs/03.specs/0999-new-package/spec.md")
+        task = PurePosixPath("docs/03.specs/0999-new-package/tasks/tsk-0001-work.md")
+        self.assertNotIn(
+            "LIFECYCLE-EDGE",
+            {
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry,
+                    {spec: LifecycleDocument(spec, "sdlc/spec", "draft")},
+                    {spec: LifecycleDocument(spec, "sdlc/spec", "approved")},
+                    base_mode="staged",
+                )
+            },
+        )
+        self.assertNotIn(
+            "LIFECYCLE-CREATE",
+            {
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry,
+                    {},
+                    {task: LifecycleDocument(task, "sdlc/task", "blocked")},
+                    base_mode="staged",
+                )
+            },
+        )
+
+    def test_local_task_first_recording_accepts_observed_nonterminal_state(
         self,
     ) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
-        self.assertEqual(raw["shared_contract"]["stage"], "candidate")
+        self.assertIn(raw["shared_contract"]["stage"], ("candidate", "adopted"))
         self.assertIn(
             TASK_FIRST_RECORDING_EXTENSION, raw["shared_contract"]["extensions"]
         )
@@ -831,7 +866,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
                     },
                 )
 
-    def test_task_first_recording_requires_explicit_candidate_extension(self) -> None:
+    def test_task_first_recording_requires_explicit_local_extension(self) -> None:
         raw = json.loads((ROOT / "docs/99.templates/registry.json").read_text())
         for candidate in (
             {**raw, "shared_contract": {**raw["shared_contract"], "extensions": []}},
@@ -844,7 +879,7 @@ class SpecPlanAuthorityTests(unittest.TestCase):
             },
             {
                 **raw,
-                "shared_contract": {**raw["shared_contract"], "stage": "adopted"},
+                "shared_contract": {**raw["shared_contract"], "stage": "unreviewed"},
             },
         ):
             with self.subTest(shared_contract=candidate["shared_contract"]):

@@ -1,6 +1,6 @@
 ---
 title: "99.templates"
-version: "0.15.0"
+version: "0.16.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -23,7 +23,7 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 안내한다.
 
 Registry의 `shared_contract`는 buenhyden이 정확한 원본에 대해 승인한
-`WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter 후보를 식별한다. 공동
+`WGOV-CORE / 3.0.0`과 이 저장소의 지역 adapter를 식별한다. 공동
 정본의 입구는 Project-Template의 기존 `.agents/governance/standards.md`다.
 그 소스 묶음은 Stage 00·99, QA·Git·harness·모델·환경 정책, handoff prompt와
 Skill을 포함한 67개 저장소 상대 경로다. digest는 중복 없는 경로를 UTF-8
@@ -37,11 +37,16 @@ Registry의 `sha256:aa2523943e35908ba24e4e415793f7aa8099de247aa3628ec1678cd6c917
 바로 이 commit·digest를 최종 `WGOV-CORE / 3.0.0`으로 승인했다. commit과
 digest만으로 승인을 추론하지 않으며, 이 결정 참조가 판본 승인 근거다.
 Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한정된다.
+현재 k8s 작업에서는 원본 commit의 Git blob 67개를 독립적으로 읽어 같은
+경로 정렬·NUL·원문 byte 절차로 digest를 재계산해 일치함을 확인했다.
+이 원본 인증의 근거는 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
+EVD-001이며, 지역 채택이나 다른 저장소의 적용 증거가 아니다.
 
-현재 Registry의 `stage: candidate`는 **이 k8s 지역 adapter의 채택이 아직
-완료되지 않았다**는 뜻이다. Stage 99 계약에는 `candidate`와 `adopted`만
-있으므로 공동 owner의 최종 승인과 지역 채택 상태를 혼동해 `adopted`로
-승격하지 않는다. Project-Template의 P06 Git 소비자는 별도 commit
+Registry의 `stage: adopted`는 이 저장소의 지역 adapter 선언이다. 공동
+owner의 원본 판본 승인과는 별도이며, 현재 작업트리의 값만으로 지역 수용
+완료를 주장하지 않는다. 지역 수용은 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
+EVD-002 통합 검사·독립 검토와 기준 수용 판정에 따른다.
+Project-Template의 P06 Git 소비자는 별도 commit
 `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
 Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
 회귀가 통과했다. 생성 메시지의 정확한 예외 형태, release parser와 PR
@@ -54,18 +59,19 @@ PR 제목의 GitHub Actions 실제 실행이나 PR SHA 결과는 관측하지 �
 다른 세 저장소와
 네 저장소 공동 채택은 각자의 실제 adapter·
 승인판본 적용 근거가 생긴 뒤 별도로 기록한다. Kubernetes의 Task 상태
-요약·과거 완료 부모, 문서 언어와 native 문법은 명시된 지역 차이이며 별도
-공동 정본을 뜻하지 않는다.
+요약·후속 Task로 의무를 이관하는 `superseded`·과거 완료 부모, 문서 언어와
+native 문법, Task와 저장소의 권한을 대체하지 않는 자문용 공유 workspace
+memory는 명시된 지역 차이이며 별도 공동 정본을 뜻하지 않는다.
 
-현재 지역 `candidate`의 언어 확장에서는 `.agents/` governed Markdown에 새로
+현행 지역 언어 확장에서는 `.agents/` governed Markdown에 새로
 쓰는 설명을 한국어로 작성하며 기존 영어 본문도 유효하다. Registry가 요구하는
 heading과 native key, 명령·인용·원시 증거는 원문을 유지한다. `.agents/`의
 JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 영어 전용이다. README는 해당 navigation profile을 따른다.
 `docs/01.requirements`~`docs/03.specs`의 non-README 본문은 계속 영어다.
 공통 Governance form의 기계 field·heading과 영어 author prompt는 유지하고,
-복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장은
-승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
+복사해 작성한 `.agents/` 본문의 새 설명에 위 지역 규칙을 적용한다. 이 확장
+하나만으로 승인된 WGOV-CORE 3.0.0의 새 판본이나 전체 지역 채택을 뜻하지 않는다.
 
 `WGOV-CORE / 3.0.0`에 대한 네 주장은 근거와 상태가 서로 다르며, 하나의
 근거로 다른 주장을 대신하지 않는다. 근거 Task는 SPEC-0105의
@@ -74,8 +80,8 @@ JSON·YAML 등 비 Markdown 파일과 `.codex/`·`.claude/`의 native 문서는
 | 주장 | 현재 상태 | 근거 |
 | --- | --- | --- |
 | 공동 승인 | 확인됨 | Registry `approval_ref`와 Task EVD-033의 결정 원문 |
-| 원본 검증 | Project-Template 원본 입력에서만 확인됐고 이 저장소에서는 다시 검증하지 않았다 | Task EVD-032의 67개 경로 원본 blob 비교. 비교 원자료는 당시 Git이 무시하는 `_workspace/residual-controls/`에 있었으며 2026-10-15 현재 checkout에서는 그 경로가 없다. 이 저장소 Git만으로 원자료나 digest 재현을 주장하지 않는다 |
-| 지역 수용 | C07 범위만 완료됐다. C04·C08 적용성과 공통 core 전체의 지역 채택은 미완료다 | 위 C07 문단과 같은 Task |
+| 원본 검증 | 현재 k8s 작업에서 원본 commit의 67개 Git blob으로 digest를 독립 재계산해 일치함을 확인했다 | [잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의 EVD-001. 앞선 [Task](../03.specs/0105-authority-and-safe-authoring/tasks/tsk-0004-current-contract-review.md)의 EVD-032 원자료는 당시 Git이 무시하는 `_workspace/residual-controls/`에 있었으며 2026-10-15 checkout에서 접근되지 않았다. 현재 검증은 별도 로컬 Git 원본 객체에 근거한다 |
+| 지역 수용 | C07 범위는 완료됐다. C04·C08 문서 의미 검토는 통과했으며, 공통 core 전체의 통합 검사와 기준 수용 판정은 진행 중이다 | [잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의 EVD-002·EVD-023과 기준 수용 표 |
 | 네 저장소 공동 채택 | 근거 없음, 관측하지 않았다 | 다른 세 저장소의 adapter·적용 근거가 기록되기 전까지 주장하지 않는다 |
 
 ## Scope
@@ -216,6 +222,14 @@ Spec은 변경 계약과 수용 기준을, Plan은 실행 순서와 위험·예�
 증거 포인터를 기록하고, Criterion Acceptance 표가 기준별 수용 판정의
 유일한 작성 원본이다. Task Evidence는 검사 사실을 보존한다. 기존 완료
 Spec·Plan·Task는 당시의 `completed`와 승인·검사 근거를 소급 변경하지 않는다.
+새로 작성하거나 현행 내용을 바꾸는 Plan은 승인된 Spec의 제약을
+`Global Constraints`에서 연결하고 Plan에만 필요한 추가 실행 제약을 적으며,
+지속 계약의 실제 현행 소유자와 위치를 `Promotion`에 기록한다. 완료 판정에서는
+이 표가 유일한 승격 기록이며, 승격 대상이 없으면
+`none | none | No durable contract was introduced` 한 행만 명시한다.
+Registry의 두 절은 과거 profile 호환을 위해 optional로 등록하고, 현행 Plan의
+작성·완료 의무는 lifecycle reader가 선택한 입력에 대해 검사한다. Stage 99
+형식 구현은 해당 형식을 위임하는 현행 정책 소유자를 가리킨다.
 
 Plan은 `Work Unit | Criteria | Work | Dependencies | Task | Verification`을,
 Task Table은 `ID | Upstream criterion | Work item | Owner | Status | Result | Evidence`를,
@@ -258,7 +272,7 @@ frontmatter `status`는 생략한다. validator와 lifecycle reader는 행 상�
 Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에 따라
 별도로 작성한다.
 
-현재 k8s 지역 adapter 후보의 Task 최초 기록은 관측된 `draft`·`ready`·
+현재 k8s 지역 adapter의 Task 최초 기록은 관측된 `draft`·`ready`·
 `in-progress`·`blocked`를 허용한다. 사용자의 현행 범위 지시로 이미 시작한
 실행을 처음 문서화할 때 실제 행 상태를 그대로 쓴다. Task Inputs에는 지시의
 범위와 현재 권한, 실제 착수 또는
@@ -266,16 +280,16 @@ Result, Criterion Acceptance, Task Evidence와 실제 승인 사실은 관측에
 준비 완료가 필요하며, `blocked`에는 원인·재개 조건·다음 owner가 필요하다.
 `completed` 등 종단 상태로 새 Task를 만들 수 없고, 이후 전이·기준 수용·
 필수 증거 규칙은 그대로 적용된다. 최초 `draft` commit을 합성하지 않는다.
-이는 Registry `shared_contract.extensions`에 명시할 지역 `candidate` 확장이지
-승인된 WGOV-CORE 3.0.0의 새 의미나 전체 지역 채택 판정이 아니다.
+이는 Registry `shared_contract.extensions`에 명시된 지역 확장이다. 이 규칙
+하나만으로 승인된 WGOV-CORE 3.0.0의 새 의미나 전체 지역 채택을 판정하지 않는다.
 
-`Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 `candidate`의 좁은 확장이다. 범위를 정한
+`Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`도 이 지역 adapter의 좁은 확장이다. 범위를 정한
 현행 사용자 지시, 실제 묶음 리뷰와 승인이 기록된 Spec·Plan은 `draft`에서
 `approved`로 직접 전이할 수 있다. 새 Spec·Plan의 최초 Git 기록은 계속
 `draft`이며, `approved`는 실행 완료나 Task 기준 수용 또는 Archive 적격을
 뜻하지 않는다. 관측하지 않은 중간 상태의 commit을 만들어 전이를 꾸미지
-않는다. 이 지역 규칙은 WGOV-CORE 3.0.0의 새 판본 승인이나 지역 전체
-채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
+않는다. 이 지역 규칙 하나만으로 WGOV-CORE 3.0.0의 새 판본 승인이나 지역
+전체 채택을 뜻하지 않으며, 후속 전이와 증거 검증은 그대로 유지한다.
 
 ### Shared Frontmatter Grammar
 

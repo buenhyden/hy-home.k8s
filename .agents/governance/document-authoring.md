@@ -1,6 +1,6 @@
 ---
 title: "Document Authoring Policy"
-version: "3.2.0"
+version: "3.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -123,7 +123,8 @@ express ownership, not a one-way waterfall.
 11. Keep a Stage 90 collection complete at all three of its levels. The
     registry routes each level and names its form; the reason they are distinct
     is that a collection outlives any one pack, a pack owns its own observation
-    boundary and refresh trigger, and a member carries one dated finding. A
+    boundary and refresh trigger, and a member carries one dated observation or
+    finding with its source. A
     collection with a missing level pushes one of those three jobs onto a
     document that does not own it.
 12. Treat a sealed retirement as retiring a document, not a location. A
@@ -135,6 +136,14 @@ express ownership, not a one-way waterfall.
     or keeping a second recovery ledger.
 14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
+
+Architecture Description은 요구와 연결된 품질 시나리오의 자극·환경·응답·측정값,
+구조 선택과 ADR, 책임과 관계를 읽을 수 있는 context/container 관점을 설명한다.
+Stage 90의 Audit는 기준·검사 범위·관측·심각도와 근거가 있는 발견·교정 owner·검증
+상태를, Research는 질문·방법·출처별 주장·한계·권고를, Data는 범위와 출처·생성
+방법·필드 의미와 단위·실제 사실·노후화 경계를 각각 소유한다. Registry는 지역
+heading과 형식을, 양식은 작성 출발점을 제공하며 사실·판정·현재 권한은 각 문서의
+실제 근거와 소유자가 결정한다.
 
 Governed Markdown uses the ordered common prefix "title", "version",
 "type", "status", "owner", and "updated"; later keys appear only when the
@@ -165,13 +174,14 @@ heading은 등록된 문법을 유지한다. `.agents/`의 비 Markdown 파일�
 
 ## Validation and Refresh
 
-The Stage 99 Registry's optional `shared_contract` identifies the one common
-review candidate and the local adapter. A candidate digest identifies reviewed
-bytes, not approval. Missing source revision or approval reference stays null;
-final common approval and actual local/joint adoption need their own evidence.
-The locally reviewed state, language and native extensions remain explicit in
-this adapter; a future common edition needs its actual owner decision and
-adoption evidence. Do not establish another local WGOV core.
+Stage 99 Registry의 선택적 `shared_contract`는 승인된 공동 판본과 이 지역
+adapter를 식별한다. 고정된 원본 revision과 digest는 검토한 bytes를 가리키며,
+`approval_ref`는 별도 공동 결정을 기록한다. Registry의 stage 값은 지역
+선언이지 그 자체로 수용 증거가 아니다. 실제 지역 채택에는 소유 Task의 통합
+검사·독립 검토·기준 판정이 필요하고, 공동 채택에는 각 저장소의 적용 근거가
+필요하다. 이 adapter의 상태·언어·native 확장은 명시적으로 유지한다. 새 공동
+판본에는 실제 소유자 결정과 채택 근거가 필요하며, 별도 지역 WGOV core를
+만들지 않는다.
 
 For Guide, Policy and Runbook, use the selected role's ordered sections and
 place its existing Lifecycle Traceability table under Related Documents.

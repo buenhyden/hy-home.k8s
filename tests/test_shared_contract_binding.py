@@ -78,6 +78,14 @@ class SharedContractBindingTests(unittest.TestCase):
 
     def test_absent_binding_remains_compatible_and_unknown_key_fails(self) -> None:
         raw = self.prior_task_creation(self.raw)
+        spec_plan = next(
+            domain
+            for domain in raw["lifecycle_domains"]
+            if domain["family"] == "spec-plan"
+        )
+        spec_plan["transitions"] = [
+            edge for edge in spec_plan["transitions"] if edge != ["draft", "approved"]
+        ]
         del raw["shared_contract"]
         self.assertIsNone(validate_registry(ROOT, raw).shared_contract)
         raw["unknown_common_source"] = {}

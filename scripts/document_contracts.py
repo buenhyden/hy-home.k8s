@@ -1964,14 +1964,15 @@ def _terminal_semantic_diagnostics(
         (task_binding.get("task_execution") or {}).get("criterion_acceptance_section")
     )
     shared_contract = raw_registry.get("shared_contract")
-    candidate_task_recording = (
-        isinstance(shared_contract, Mapping)
-        and shared_contract.get("stage") == "candidate"
+    local_extension_stage = isinstance(
+        shared_contract, Mapping
+    ) and shared_contract.get("stage") in {"candidate", "adopted"}
+    local_task_recording = (
+        local_extension_stage
         and TASK_FIRST_RECORDING_EXTENSION in shared_contract.get("extensions", ())
     )
-    candidate_spec_direct_approval = (
-        isinstance(shared_contract, Mapping)
-        and shared_contract.get("stage") == "candidate"
+    local_spec_direct_approval = (
+        local_extension_stage
         and SPEC_PLAN_DIRECT_APPROVAL_EXTENSION in shared_contract.get("extensions", ())
     )
     for domain in raw_registry["lifecycle_domains"]:
@@ -1983,7 +1984,7 @@ def _terminal_semantic_diagnostics(
             and family == "spec-plan"
             and (
                 (["draft", "approved"] in domain["transitions"])
-                != candidate_spec_direct_approval
+                != local_spec_direct_approval
             )
         ):
             diagnostics.append(
@@ -1991,7 +1992,7 @@ def _terminal_semantic_diagnostics(
                     "REGISTRY_LIFECYCLE_DOMAIN",
                     expected=(
                         "spec-plan draft-to-approved edge exactly when the local "
-                        "candidate extension is declared"
+                        "extension is declared at candidate or adopted stage"
                     ),
                     actual="spec-plan direct approval extension/edge mismatch",
                 )
@@ -1999,7 +2000,7 @@ def _terminal_semantic_diagnostics(
         observed_task_initial = (
             modern_task
             and family == "task"
-            and candidate_task_recording
+            and local_task_recording
             and initial_states == list(TASK_INITIAL_STATES)
         )
         if initial_states is not None and (
@@ -2014,13 +2015,13 @@ def _terminal_semantic_diagnostics(
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_LIFECYCLE_DOMAIN",
-                    expected="nonempty nonterminal creation states; zero-indegree except the local candidate Task first-recording extension",
+                    expected="nonempty nonterminal creation states; zero-indegree except the local Task first-recording extension",
                     actual=f"invalid initial_states for {family}: {initial_states!r}",
                 )
             )
         expected_initial_states = (
             list(TASK_INITIAL_STATES)
-            if family == "task" and candidate_task_recording
+            if family == "task" and local_task_recording
             else ["draft"]
         )
         if (

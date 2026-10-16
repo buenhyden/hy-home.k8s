@@ -23,9 +23,19 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: make quality attributes measurable and link each to a requirement. -->
 
+<!-- Author prompt: For each material quality concern, state a requirement-linked scenario. -->
+<!-- Author prompt: Name the stimulus, operating environment, expected response, and measurable threshold; an adjective alone is not a scenario. -->
+
+| Quality attribute | Stimulus | Environment | Response | Measure |
+| --- | --- | --- | --- | --- |
+| <!-- Author prompt: Name the requirement-backed attribute. --> | <!-- Author prompt: State the triggering event. --> | <!-- Author prompt: State the operating condition. --> | <!-- Author prompt: State the system response. --> | <!-- Author prompt: State a measurable threshold. --> |
+
 ## System Overview & Context
 
-<!-- Author prompt: describe components, actors, trust boundaries, and major interactions. -->
+<!-- Author prompt: Describe components, actors, trust boundaries, and major interactions. -->
+<!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
+<!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
+<!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. -->
 
 ## Data Architecture
 

@@ -1,10 +1,10 @@
 ---
 title: "Document Lifecycle Policy"
-version: "2.2.0"
+version: "2.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 ---
 
 # Document Lifecycle Policy
@@ -41,6 +41,16 @@ their owning migration work package moves them.
   require a reason, actual authority and disposition of remaining criteria.
   Approval never asserts implementation completion, criterion acceptance,
   integration or archive eligibility.
+- 새로 작성하거나 현행 범위에 맞춰 고치는 Plan은 승인된 Spec의 제약을
+  `Global Constraints`에서 연결하고 추가 실행 제약만 적으며, 단일 `Promotion`
+  기록 경로를 둔다. 진행 중인 계획은 승격 예정 대상을 승인이나 완료 증거로 쓰지 않는다.
+  Spec Package의 완료를 수용할 때에는 Plan의 `Promotion` 기록이 모든 지속 계약을
+  현재 Stage 00·01·02·05 소유 문서의 상대 링크와 그 안의 구체적 위치에 연결해야
+  한다. 지속 계약이 없으면 `none | none | No durable contract was introduced`
+  한 행만 명시한다. Registry가 구현하는 형식은
+  Stage 99 자체를 별도 현행 정책으로 지목하지 않고 해당 형식을 위임한 현행 규칙을
+  지목한다. Task의 PASS, 부모의 `approved`, 후속 Archive 판단만으로 이 승격을
+  대신하지 않는다. 과거 Plan 원문은 새 기록을 위해 다시 쓰지 않는다.
 - A Task carries actual work state: `draft` is proposed, `ready` means the
   approved inputs and execution prerequisites are assembled, `in-progress`
   records started execution, and `blocked` names the obstacle and next owner.
@@ -57,7 +67,7 @@ their owning migration work package moves them.
   waiver.
   `ready` is no new
   approval or live-action permission.
-- For a newly recorded Task in this k8s candidate adapter, the first Git
+- For a newly recorded Task in this k8s regional adapter, the first Git
   version may carry an actual nonterminal `ready`, `in-progress` or `blocked`
   row when the current scoped user authorization and Task Inputs identify the
   owner, prerequisites and evidence of preparation, execution or obstacle.
@@ -66,17 +76,17 @@ their owning migration work package moves them.
   Task is refused. Do not invent a draft-only commit to simulate an unobserved
   transition. Later transitions, required evidence, criterion acceptance and
   protected-action approval remain unchanged. This is an explicit local
-  `shared_contract.extensions` candidate, not a new WGOV-CORE 3.0.0 edition
-  or proof of full regional adoption.
+  `shared_contract.extensions` rule, not a new WGOV-CORE 3.0.0 edition
+  or, by itself, proof of full regional adoption.
 - `Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval`
-  admits the direct edge for this k8s candidate
+  admits the direct edge for this k8s regional
   adapter when a scoped user request, actual batch review and approval are
   recorded. New Spec and Plan creation remains draft-only; approval means the
   reviewed contract and plan are authorized, not execution completion, Task
   criterion acceptance or Archive eligibility. Do not create an intermediate
   Git state that was not observed solely to satisfy a transition reader.
-  This local candidate extension does not change WGOV-CORE 3.0.0 or claim
-  regional adoption, and all later transitions retain their existing checks.
+  This local extension does not change WGOV-CORE 3.0.0 or, by itself, claim
+  regional adoption; all later transitions retain their existing checks.
 - Historical `done` remains valid in its frozen body or earlier Git generation.
   The 2026-09-28 generation used `completed` for Spec, Plan and Task closure;
   current completed parents and Tasks retain their actual status, bytes,
@@ -84,8 +94,11 @@ their owning migration work package moves them.
   compatibility for a completed Task checks its original path, identity,
   revision and bytes; copying an old form into a new Task does not qualify.
   A completed parent may receive an authorized follow-up Task without
-  reopening the original record. No status alone grants disposition, removal
-  or new-execution authority.
+  reopening the original record. 후속 Task의 기록 허용만으로 실행 권한이
+  생기지 않는다. 새 활성 작업의 `ready`·`in-progress` 전이와 실제 실행에는
+  그 작업을 소유하는 현행 `approved` Spec·Plan이 필요하다. 완료된 부모의
+  호환은 이전에 완료된 Task의 동일 작업·증거 수령에만 적용한다. No status
+  alone grants disposition, removal or new-execution authority.
 - Document approval, Task execution, criterion acceptance, QA result,
   publication, integration and archival disposition are separate claims. A
   Requirement's `approved`, an ADR's `accepted`, an operating document's

@@ -17,7 +17,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 ## Reference Type
 
-<!-- Author prompt: classify this as research, snapshot, glossary, or evidence reference. -->
+<!-- Author prompt: Identify this Research as a dated inquiry and name the decision or knowledge gap it informs. -->
 
 ## Authority Boundary
 
@@ -27,17 +27,47 @@ artifact_id: "{{ARTIFACT_ID}}"
 
 <!-- Author prompt: define included questions, exclusions, and time boundary. -->
 
+### Research Questions
+
+<!-- Author prompt: State each answerable question and its decision use. -->
+
+### Method
+
+<!-- Author prompt: State how sources were selected, compared, and verified. -->
+
 ## Definitions / Facts
 
-<!-- Author prompt: record source-backed definitions or facts needed by downstream work. -->
+<!-- Author prompt: keep sourced claims distinct from interpretation. -->
+
+### Claim-Source Matrix
+
+| Claim | Source | Verification state |
+| --- | --- | --- |
+| <!-- Author prompt: State one bounded claim. --> | <!-- Author prompt: Cite direct support. --> | <!-- Author prompt: Record verified, disputed, or unverified. --> |
+
+### Findings
+
+<!-- Author prompt: Answer the research questions from the claim-source matrix. -->
 
 ## Sources
 
-<!-- Author prompt: cite primary sources with observation dates and local adoption notes. -->
+<!-- Author prompt: Prefer primary sources and distinguish source authority from a local adoption decision. -->
+
+| Source | Grade | Retrieved | Relevance |
+| --- | --- | --- | --- |
+| <!-- Author prompt: Link the source. --> | <!-- Author prompt: State evidence grade. --> | <!-- Author prompt: Use an ISO date. --> | <!-- Author prompt: State direct support. --> |
 
 ## Review and Freshness
 
 <!-- Author prompt: state refresh triggers, staleness risks, and current-truth owner. -->
+
+### Limitations
+
+<!-- Author prompt: State missing, conflicting, or time-sensitive evidence. -->
+
+### Recommendations
+
+<!-- Author prompt: Name decision options and owners without promoting research to current policy or claiming an unobserved implementation. -->
 
 ## Related Documents
 
