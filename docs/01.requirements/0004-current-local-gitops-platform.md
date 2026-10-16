@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.2.1"
+version: "1.2.2"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-16"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -224,7 +224,7 @@ that RUN-0004 points to.
 | REQ-0004-FR-0007 | GitHub's label and code ownership projections must match the single affected-path owner, and missing, duplicate, or ambiguous routing must be validated. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 | REQ-0004-FR-0008 | Platform validation results must distinguish the depth (syntax, render, schema/policy, product semantic, and live observation) and the tool, fallback, lane, and result. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static evidence; custom CRD schemas and live observation remain DEFER with owners above; [SPEC-0106 P08](../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan) — VAL-P08-018 operating-content follow-up |
 | REQ-0004-FR-0009 | An executable cloud example must carry guidance beside the example and provider-native static validation, and must be verifiable without credentials or apply/deploy. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static checks; generated and live outputs remain DEFER with owner above |
+| REQ-0004-FR-0010 | Ingress references, resource kinds, GitOps structure, policy, secret sync, and explicit local-only transport exceptions must be checked fail-closed. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static checks; generated and live outputs remain DEFER with owner above; [SPEC-0119](../03.specs/0119-ingress-controller-identity/spec.md) declares the ingress controller identity once |
 | REQ-0004-FR-0011 | Platform assurance work must proceed in ordered per-package review, validation, and rollback units and must prove the final local-only integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 | REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 | REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |

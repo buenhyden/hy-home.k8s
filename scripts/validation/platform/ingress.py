@@ -13,25 +13,61 @@ import yaml
 
 HOST_SUFFIX = "hy-k8s.home.arpa"
 ISSUER = "mkcert-ca-issuer"
-REDIRECT = "nginx.ingress.kubernetes.io/permanent-redirect"
-SSL_REDIRECT = "nginx.ingress.kubernetes.io/ssl-redirect"
 
-# Identity, route, backend and TLS secret are repository-specific desired state.
-ROUTES = {
-    ("apps", "adminer"): ("adminer", "/", "adminer", 8080, "adminer-tls"),
-    ("headlamp", "headlamp"): ("headlamp", "/", "headlamp", 4466, "headlamp-tls"),
-    ("istio-system", "kiali"): ("kiali", "/kiali", "kiali", 20001, "kiali-tls"),
-    **{
-        ("ingress-nginx", f"apex-{name}"): (
-            "",
-            f"/{name}",
-            "ingress-nginx-controller",
-            80,
-            "hy-k8s-apex-tls",
-        )
-        for name in ("argo", "kiali", "headlamp", "rollouts", "adminer")
+# The one declaration of the ingress controller identity (SPEC-0119). A
+# controller swap edits it in the same change as the manifests.
+CONTROLLER = {
+    "kind": "ingress-nginx",
+    "ingressClass": "nginx",
+    "namespace": "ingress-nginx",
+    "application": {
+        "name": "ingress-nginx",
+        "chart": "ingress-nginx",
+        "repo": "https://kubernetes.github.io/ingress-nginx",
+        "release": "ingress-nginx",
     },
+    "service": {
+        "name": "ingress-nginx-controller",
+        "httpPort": 80,
+        "nodePorts": {"http": 30080, "https": 30443},
+    },
+    "annotationPrefix": "nginx.ingress.kubernetes.io/",
+    "annotations": {
+        "sslRedirect": "ssl-redirect",
+        "permanentRedirect": "permanent-redirect",
+        "serviceUpstream": "service-upstream",
+        "upstreamVhost": "upstream-vhost",
+        "appRoot": "app-root",
+    },
+    "forbiddenSuffix": "-snippet",
 }
+
+
+def _annotation(controller, intent):
+    return controller["annotationPrefix"] + controller["annotations"][intent]
+
+
+def _routes(controller):
+    """Identity, route, backend and TLS secret are repository-specific desired state."""
+    service = controller["service"]
+    return {
+        ("apps", "adminer"): ("adminer", "/", "adminer", 8080, "adminer-tls"),
+        ("headlamp", "headlamp"): ("headlamp", "/", "headlamp", 4466, "headlamp-tls"),
+        ("istio-system", "kiali"): ("kiali", "/kiali", "kiali", 20001, "kiali-tls"),
+        **{
+            (controller["namespace"], f"apex-{name}"): (
+                "",
+                f"/{name}",
+                service["name"],
+                service["httpPort"],
+                "hy-k8s-apex-tls",
+            )
+            for name in ("argo", "kiali", "headlamp", "rollouts", "adminer")
+        },
+    }
+
+
+ROUTES = _routes(CONTROLLER)
 
 
 def _get(value, *keys):
@@ -86,7 +122,35 @@ def _chart(root, name, chart, repo, namespace, release=None):
     return values if isinstance(values, Mapping) else None
 
 
-def _owner_declarations(root):
+def _controller_values_ok(values, controller):
+    """Chart value checks specific to the declared controller chart."""
+    nodes = controller["service"]["nodePorts"]
+    return (
+        _get(values, "controller", "service", "type") == "LoadBalancer"
+        and _get(values, "controller", "service", "nodePorts", "http") == nodes["http"]
+        and _get(values, "controller", "service", "nodePorts", "https")
+        == nodes["https"]
+        and _get(values, "nameOverride") in (None, "")
+        and _get(values, "fullnameOverride") in (None, "")
+        and _get(values, "namespaceOverride") in (None, "")
+        and _get(values, "controller", "name") in (None, "controller")
+        and _get(values, "controller", "enabled") in (None, True)
+        and _get(values, "controller", "service", "enabled") in (None, True)
+        and _get(values, "controller", "service", "external", "enabled") in (None, True)
+        and _get(values, "controller", "service", "enableHttp") in (None, True)
+        and _get(values, "controller", "service", "enableHttps") in (None, True)
+        and _get(values, "controller", "service", "ports", "http")
+        in (None, controller["service"]["httpPort"])
+        and _get(values, "controller", "service", "ports", "https") in (None, 443)
+        and _get(values, "controller", "service", "allocateLoadBalancerNodePorts")
+        in (None, True)
+        and _get(values, "controller", "allowSnippetAnnotations") in (None, False)
+        and _get(values, "controller", "config", "allow-snippet-annotations")
+        in (None, False, "false")
+    )
+
+
+def _owner_declarations(root, controller):
     headlamp = _chart(
         root,
         "headlamp",
@@ -101,12 +165,14 @@ def _owner_declarations(root):
         "https://kiali.org/helm-charts",
         "istio-system",
     )
-    nginx = _chart(
+    app = controller["application"]
+    values = _chart(
         root,
-        "ingress-nginx",
-        "ingress-nginx",
-        "https://kubernetes.github.io/ingress-nginx",
-        "ingress-nginx",
+        app["name"],
+        app["chart"],
+        app["repo"],
+        controller["namespace"],
+        app["release"],
     )
     return {
         ("headlamp", "headlamp", 4466): all(
@@ -143,32 +209,17 @@ def _owner_declarations(root):
                 _get(kiali, "cr", "spec", "server", "web_root") == "/kiali",
             )
         ),
-        ("ingress-nginx", "ingress-nginx-controller", 80): _get(
-            nginx, "controller", "service", "type"
-        )
-        == "LoadBalancer"
-        and _get(nginx, "controller", "service", "nodePorts", "http") == 30080
-        and _get(nginx, "controller", "service", "nodePorts", "https") == 30443
-        and _get(nginx, "nameOverride") in (None, "")
-        and _get(nginx, "fullnameOverride") in (None, "")
-        and _get(nginx, "namespaceOverride") in (None, "")
-        and _get(nginx, "controller", "name") in (None, "controller")
-        and _get(nginx, "controller", "enabled") in (None, True)
-        and _get(nginx, "controller", "service", "enabled") in (None, True)
-        and _get(nginx, "controller", "service", "external", "enabled") in (None, True)
-        and _get(nginx, "controller", "service", "enableHttp") in (None, True)
-        and _get(nginx, "controller", "service", "enableHttps") in (None, True)
-        and _get(nginx, "controller", "service", "ports", "http") in (None, 80)
-        and _get(nginx, "controller", "service", "ports", "https") in (None, 443)
-        and _get(nginx, "controller", "service", "allocateLoadBalancerNodePorts")
-        in (None, True)
-        and _get(nginx, "controller", "allowSnippetAnnotations") in (None, False)
-        and _get(nginx, "controller", "config", "allow-snippet-annotations")
-        in (None, False, "false"),
+        (
+            controller["namespace"],
+            controller["service"]["name"],
+            controller["service"]["httpPort"],
+        ): _controller_values_ok(values, controller)
+        if controller["kind"] == "ingress-nginx"
+        else values is not None,
     }
 
 
-def _declared_ingresses(root):
+def _declared_ingresses(root, controller):
     errors = []
     argo = _load(root, "infrastructure/argocd/values-local.yaml")
     argo_ingress = _get(argo, "server", "ingress")
@@ -178,13 +229,14 @@ def _declared_ingresses(root):
         (
             _get(argo, "global", "domain") == argo_host,
             _get(argo_ingress, "enabled") is True,
-            _get(argo_ingress, "ingressClassName") == "nginx",
+            _get(argo_ingress, "ingressClassName") == controller["ingressClass"],
             _get(argo_ingress, "hostname") == argo_host,
             _get(argo_ingress, "tls") is False,
             _get(argo_tls, "hosts") == [argo_host],
             _get(argo_tls, "secretName") == "argocd-local-tls",
             _get(argo_ingress, "annotations", "cert-manager.io/cluster-issuer") is None,
-            _get(argo_ingress, "annotations", SSL_REDIRECT) in (None, "true"),
+            _get(argo_ingress, "annotations", _annotation(controller, "sslRedirect"))
+            in (None, "true"),
         )
     ):
         errors.append("INGRESS_DECLARATION argocd/bootstrap")
@@ -205,21 +257,25 @@ def _declared_ingresses(root):
         (
             _get(dashboard, "enabled") is True,
             _get(ingress, "enabled") is True,
-            _get(ingress, "ingressClassName") == "nginx",
+            _get(ingress, "ingressClassName") == controller["ingressClass"],
             _get(ingress, "hosts") == [host],
             _get(tls, "hosts") == [host],
             _get(tls, "secretName") == "rollouts-dashboard-tls",
             _get(ingress, "annotations", "cert-manager.io/cluster-issuer") == ISSUER,
-            _get(ingress, "annotations", SSL_REDIRECT) == "true",
+            _get(ingress, "annotations", _annotation(controller, "sslRedirect"))
+            == "true",
         )
     ):
         errors.append("INGRESS_DECLARATION argo-rollouts/dashboard")
     return errors
 
 
-def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
+def validate(
+    root: Path, rendered_documents: Iterable[Mapping], controller=CONTROLLER
+) -> list[str]:
     """Return fixed-code findings; never include untrusted manifest values."""
     errors = []
+    routes = _routes(controller)
     ingresses = {}
     services = {}
     issuers = []
@@ -259,9 +315,9 @@ def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
         and _get(issuers[0], "spec", "ca", "secretName") == "mkcert-root-ca"
     ):
         errors.append("INGRESS_ISSUER_OWNER mkcert-ca-issuer")
-    owners = _owner_declarations(root)
-    errors.extend(_declared_ingresses(root))
-    for identity, (subdomain, path, service, port, secret) in ROUTES.items():
+    owners = _owner_declarations(root, controller)
+    errors.extend(_declared_ingresses(root, controller))
+    for identity, (subdomain, path, service, port, secret) in routes.items():
         label = "/".join(identity)
         doc = ingresses.get(identity)
         if doc is None:
@@ -279,7 +335,7 @@ def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
         route = _one(_get(rule, "http", "paths"))
         if not all(
             (
-                _get(doc, "spec", "ingressClassName") == "nginx",
+                _get(doc, "spec", "ingressClassName") == controller["ingressClass"],
                 _get(rule, "host") == expected_host,
                 _get(route, "path") == path,
                 _get(route, "pathType") == "Prefix",
@@ -302,18 +358,19 @@ def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
         annotations = _get(doc, "metadata", "annotations")
         if not isinstance(annotations, Mapping) or any(
             isinstance(key, str)
-            and key.startswith("nginx.ingress.kubernetes.io/")
-            and key.endswith("-snippet")
+            and key.startswith(controller["annotationPrefix"])
+            and key.endswith(controller["forbiddenSuffix"])
             for key in annotations
         ):
             errors.append(f"INGRESS_ANNOTATION {label}")
-        apex = identity[0] == "ingress-nginx"
+        apex = identity[0] == controller["namespace"]
         expected_redirect = (
             f"https://{identity[1][5:]}.{HOST_SUFFIX}/" if apex else None
         )
         if (
-            _get(annotations, SSL_REDIRECT) != "true"
-            or _get(annotations, REDIRECT) != expected_redirect
+            _get(annotations, _annotation(controller, "sslRedirect")) != "true"
+            or _get(annotations, _annotation(controller, "permanentRedirect"))
+            != expected_redirect
         ):
             errors.append(f"INGRESS_REDIRECT {label}")
         expected_issuer = ISSUER if not apex or identity[1] == "apex-argo" else None
@@ -321,15 +378,14 @@ def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
             errors.append(f"INGRESS_ISSUER {label}")
         if identity == ("apps", "adminer"):
             if (
-                _get(annotations, "nginx.ingress.kubernetes.io/service-upstream")
-                != "true"
-                or _get(annotations, "nginx.ingress.kubernetes.io/upstream-vhost")
+                _get(annotations, _annotation(controller, "serviceUpstream")) != "true"
+                or _get(annotations, _annotation(controller, "upstreamVhost"))
                 != "adminer.apps.svc.cluster.local"
             ):
                 errors.append(f"INGRESS_MESH {label}")
         elif (
             identity == ("istio-system", "kiali")
-            and _get(annotations, "nginx.ingress.kubernetes.io/app-root") != "/kiali"
+            and _get(annotations, _annotation(controller, "appRoot")) != "/kiali"
         ):
             errors.append(f"INGRESS_APP_ROOT {label}")
 
@@ -350,6 +406,6 @@ def validate(root: Path, rendered_documents: Iterable[Mapping]) -> list[str]:
         elif not owners.get((identity[0], service, port), False):
             errors.append(f"INGRESS_OWNER {label}")
 
-    for identity in sorted(ingresses.keys() - ROUTES.keys()):
+    for identity in sorted(ingresses.keys() - routes.keys()):
         errors.append(f"INGRESS_UNKNOWN {'/'.join(identity)}")
     return errors
