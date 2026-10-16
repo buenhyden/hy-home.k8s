@@ -41,10 +41,9 @@ LANES = (
     "staged",
     "message/manual",
     "remote/live",
-    "inventory",
 )
 PROTECTED_LEVELS = ("none", "review", "protected")
-EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
+EVIDENCE_LANES = ("repo-static", "remote/live")
 MAX_PATH_INPUT_BYTES = 4 * 1024 * 1024
 MAX_GIT_STDOUT_BYTES = 16 * 1024 * 1024
 MAX_GIT_STDERR_BYTES = 256 * 1024

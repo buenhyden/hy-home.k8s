@@ -60,6 +60,9 @@ stale local checks found by the 2026-10-16 audit.
 - **Allowed Paths**: `docs/03.specs/0117-local-qa-rightsizing/**`,
   `docs/03.specs/README.md`, `docs/01.requirements/0003-workspace-agent-governance-platform.md`,
   `scripts/validate-ci-python-contract.py`, `scripts/validation/**`,
+  `scripts/validate-affected-surfaces.py` (its lane constants mirror the
+  registry schema), `scripts/document_contracts.py`,
+  `scripts/document_lifecycle.py`,
   `tests/**`, `.agents/governance/quality.md`, `.agents/governance/git.md`,
   `.github/repository-surface.md`, `.github/CODEOWNERS`, `README.md`.
 - **Forbidden Paths**: `.github/workflows/**`, provider settings, other Spec

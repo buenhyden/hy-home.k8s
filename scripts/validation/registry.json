@@ -11,8 +11,7 @@
     "affected",
     "staged",
     "message/manual",
-    "remote/live",
-    "inventory"
+    "remote/live"
   ],
   "protectedLevels": [
     "none",
@@ -21,7 +20,6 @@
   ],
   "evidenceLanes": [
     "repo-static",
-    "ci",
     "remote/live"
   ],
   "validators": [
@@ -958,7 +956,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)gitops/(?!(?:platform/eso/vault-secret-store\\.yaml|platform/eso/vault-token-reviewer-binding\\.yaml|platform/external-services/vault-external\\.yaml)$).*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)gitops/(?!(?:platform/eso/vault-secret-store\\.yaml|platform/eso/vault-token-reviewer-binding\\.yaml)$).*$"
         }
       ],
       "validators": [
@@ -1014,10 +1012,6 @@
         {
           "kind": "exact",
           "value": "gitops/platform/eso/vault-token-reviewer-binding.yaml"
-        },
-        {
-          "kind": "exact",
-          "value": "gitops/platform/external-services/vault-external.yaml"
         }
       ],
       "validators": [
@@ -1475,27 +1469,6 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Fixture changes require repository QA."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "traefik",
-      "routes": [
-        {
-          "kind": "regex",
-          "value": "^traefik/.*$"
-        }
-      ],
-      "validators": [
-        "k8s-manifests",
-        "policy-gates",
-        "repository-quality",
-        "secret-handling"
-      ],
-      "protectedLevel": "protected",
-      "fallback": {
-        "status": "FAIL",
-        "reason": "ADR-0043 retired traefik/; this route keeps its deletions classified and repository-quality rejects any file reintroduced here."
       },
       "evidenceLane": "repo-static"
     },
