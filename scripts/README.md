@@ -123,6 +123,7 @@ provenance 오류, alias·링크 오류는 각각의 현재 owner가 계속 거�
 | `validate-github-actions-security.py`, `validate-ci-python-contract.py`, `validate-pr-metadata.py` | workflow 공급망과 Python 의존성 계약. `validate-pr-metadata.py`는 `ci-summary`의 PR metadata 검사 원본으로, 신뢰된 base의 `.cz.toml` 문법에 따라 PR title과 새 commit 범위를 확인한다. hosted 결과는 로컬 QA를 대체하지 않는다. |
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
+| `independent_review.py` | 운영자가 직접 실행한다. 로컬 독립 리뷰 verdict를 PR의 현재 head에 묶어 리뷰 App의 `independent-review` check run으로 게시한다. 절차는 Stage 05 RUN-0013, 계약은 SPEC-0116이 소유한다. 모델 API를 호출하지 않는다. |
 
 ## Usage
 

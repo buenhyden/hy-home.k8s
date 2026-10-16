@@ -1,10 +1,10 @@
 ---
 title: "05.operations/runbooks"
-version: "0.2.1"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-10-16"
 layer: "operations"
 ---
 # 05.operations/runbooks
@@ -69,6 +69,7 @@ layer: "operations"
 | [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md) | 앱 GitOps 온보딩·검증·복구 런북 |
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md) | Stage 90 Audit/Data/Research pack 유지보수 런북 |
 | [`./0012-main-release-preparation-runbook.md`](./0012-main-release-preparation-runbook.md) | main CHANGELOG 준비와 SemVer GitHub Release의 운영자 게시 절차 |
+| [`./0013-independent-review-check-runbook.md`](./0013-independent-review-check-runbook.md) | 로컬 독립 리뷰를 리뷰 App의 필수 `independent-review` check로 게시하는 절차 |
 
 ## Usage
 
