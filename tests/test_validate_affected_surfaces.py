@@ -163,6 +163,32 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         self.assertNotIn("archive-contract-tests", form["validators"])
         self.assertIn("document-contract-registry", form["validators"])
 
+    def test_document_contract_tests_follow_their_real_inputs(self) -> None:
+        for path in (
+            "scripts/document_contracts.py",
+            "scripts/run-document-contract-tests.py",
+            "tests/test_task_acceptance_contract.py",
+            "docs/99.templates/registry.json",
+            "docs/99.templates/templates/specs/task.template.md",
+        ):
+            for lane in ("affected", "staged"):
+                with self.subTest(path=path, lane=lane):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertIn("document-contract-tests", selected["validators"])
+        for path in (
+            "docs/03.specs/README.md",
+            "scripts/provider_write_guard.py",
+            "tests/test_release.py",
+            "tests/test_archive_dispositions.py",
+        ):
+            with self.subTest(unrelated=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertNotIn("document-contract-tests", selected["validators"])
+
     def test_purpose_checks_follow_their_changed_surfaces_without_full_sweep(self):
         cases = (
             (

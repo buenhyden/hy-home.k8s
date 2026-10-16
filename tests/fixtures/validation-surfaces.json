@@ -127,6 +127,16 @@
       "expectedSurface": "tooling-scripts"
     },
     {
+      "name": "lifecycle-module-reader-test",
+      "path": "tests/test_document_lifecycle_cumulative_history.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-gate-runner",
+      "path": "scripts/run-document-contract-tests.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
       "name": "shared-import-stays-broad",
       "path": "scripts/validation/repository/bounded_io.py",
       "expectedSurface": "scripts"
@@ -462,6 +472,30 @@
           "repository-quality"
         ],
         "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "lifecycle-module-selects-document-contract-gate",
+      "lane": "staged",
+      "paths": [
+        "tests/test_completed_state_migration.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "archive-contract-tests",
+          "archive-integrity",
+          "document-contract-registry",
+          "document-contract-tests",
+          "document-lifecycle",
+          "links-and-owners",
+          "markdown-profiles",
+          "repository-quality",
+          "selected-nonstyle",
+          "selected-style"
+        ],
+        "protectedLevel": "protected",
         "unmatchedPaths": []
       }
     },

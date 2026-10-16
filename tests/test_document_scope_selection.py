@@ -83,7 +83,8 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 )
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
                 self.assertEqual(
-                    set(selected["validators"]), DOCUMENT_GATES | ARCHIVE_GATES
+                    set(selected["validators"]),
+                    DOCUMENT_GATES | ARCHIVE_GATES | {"document-contract-tests"},
                 )
                 self.assertNotIn("k8s-manifests", selected["validators"])
 
