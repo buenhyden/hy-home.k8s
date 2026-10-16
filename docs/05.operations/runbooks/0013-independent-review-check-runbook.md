@@ -29,11 +29,13 @@ PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
 
 `main` 대상 PR을 병합하려 하거나 그 PR에 새 commit이 push된 경우 사용한다.
 
+- 리뷰 App은 App ID `5341483`이다. 다른 App으로 바꾸려면 SPEC-0116 갱신과
+  `main` 보호 규칙 변경이 함께 필요하다.
 - 리뷰 App이 이 저장소에만 설치되어 있고 권한은 `Checks: write`,
   `Pull requests: read`, `Metadata: read`뿐이다. webhook은 비활성이다.
 - 개인 키는 저장소 밖(예: `~/.config/hy-home-review/app.pem`)에 mode
-  `0600`으로 있고, `REVIEW_APP_ID`와 `REVIEW_APP_KEY_FILE`이 그 App과 키를
-  가리킨다. 키를 GitHub secret, Environment, 저장소, 대화에 넣지 않는다.
+  `0600`으로 있고, `REVIEW_APP_ID=5341483`과 `REVIEW_APP_KEY_FILE`이 그 App과
+  키를 가리킨다. 키를 GitHub secret, Environment, 저장소, 대화에 넣지 않는다.
 - `openssl`과 Python 3.12가 있다.
 - publisher는 키를 다루므로 신뢰된 사본만 실행한다. 매번
   `git fetch origin main && PUBLISHER=$(mktemp) && git cat-file blob origin/main:scripts/independent_review.py > "$PUBLISHER"`로
@@ -71,7 +73,7 @@ verdict 형식:
 ## Verification
 
 `gh api repos/buenhyden/hy-home.k8s/commits/<head>/check-runs`에서
-`independent-review`의 `app.id`가 리뷰 App이고 `head_sha`가 PR head와
+`independent-review`의 `app.id`가 `5341483`이고 `head_sha`가 PR head와
 같은지 확인한다. PR의 병합 가능 여부는 GitHub가 판정한다. 게시 출력과
 check run URL은 해당 변경의 Task 증거에 남긴다.
 

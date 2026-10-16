@@ -66,6 +66,8 @@ check from that App ID. The [Plan](plan.md) orders the work and
   `head.sha` equal to the verdict's `head_sha`. The check run is created on
   that SHA only, so any later push leaves the new head without it; strict
   required checks separately make the reviewed head include the latest `main`.
+- The review App is App ID `5341483`, created by the operator on 2026-10-16.
+  Replacing it requires a Spec update and a matching `main` protection change.
 - The installation token is requested for this one repository with only
   `checks: write` and `pull_requests: read`. The private key file must be a
   regular, non-symlink file with no group or other permission bits. The key
@@ -183,7 +185,7 @@ Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
 | --- | --- |
 | VAL-IR-001 | Publisher tests pass on the implementation; staged QA on the exact index; independent read-only review of the script. |
 | VAL-IR-002 | RUN-0013 and the README routes pass selected document checks and independent review against this Spec. |
-| VAL-IR-003 | The operator-created review App is installed only on this repository with `checks: write` and `pull_requests: read`; an observed `independent-review` check run on a real PR head reports that App's ID, not `15368`. |
+| VAL-IR-003 | The operator-created review App is installed only on this repository with `checks: write` and `pull_requests: read`; an observed `independent-review` check run on a real PR head reports App ID `5341483`, not `15368`. |
 | VAL-IR-004 | Before/after `main` protection read-back shows only `independent-review` from the review App added; a PR is observed blocked without that check and mergeable with it; the main protection record and EVD-012 disposition state what is closed and what remains. |
 
 ## Traceability

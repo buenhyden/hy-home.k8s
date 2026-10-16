@@ -38,7 +38,7 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | Publisher script and focused tests | platform | in-progress | PASS | EVD-009 tests, EVD-007 staged QA, EVD-005 review resolved by EVD-006 |
 | WORK-002 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | RUN-0013 and README routes | platform | in-progress | PASS | EVD-006 reviewed the documents at `e6fc44d6`; the final PR-head review is pending |
-| WORK-003 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | Review App creation, installation and first check run | operator | in-progress | NOT_RUN | The operator created the App and stored its key locally; App ID and single-repository installation confirmation pending |
+| WORK-003 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | Review App creation, installation and first check run | operator | in-progress | NOT_RUN | The operator created the App and stored its key locally; App ID `5341483` reported by the operator; single-repository installation is checked by the first publish |
 | WORK-004 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | Main protection requirement and EVD-012 disposition | operator and platform | ready | NOT_RUN | Depends on WORK-003 and an exact protection-change approval |
 
 ## Task Evidence
