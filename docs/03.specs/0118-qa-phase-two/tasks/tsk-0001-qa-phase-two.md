@@ -32,10 +32,10 @@ narrowed script and test surfaces, and a gate for the lifecycle modules.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | Workflow rule single ownership | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | CI metadata test rename | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | Narrowed script and test surfaces | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | Lifecycle module gate | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | Workflow rule single ownership | platform | completed | PASS | EVD-002, EVD-015 tests, EVD-007, EVD-016 staged QA, EVD-020 review resolving EVD-011 |
+| WORK-002 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | CI metadata test rename | platform | completed | PASS | EVD-003 tests, EVD-008 staged QA, EVD-012 review |
+| WORK-003 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | Narrowed script and test surfaces | platform | completed | PASS | EVD-004, EVD-017 selection tests, EVD-009, EVD-018 staged QA, EVD-013, EVD-021 review |
+| WORK-004 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | Lifecycle module gate | platform | completed | PASS | EVD-005, EVD-019 gate runs, EVD-006 selection tests, EVD-010 staged QA, EVD-022 review resolving EVD-014 |
 
 ## Task Evidence
 
@@ -51,15 +51,28 @@ narrowed script and test surfaces, and a gate for the lifecycle modules.
 | EVD-008 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Selected staged QA | Commit `d08208df` by the delegated `quality-engineer` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed (agent-reported; no `--no-verify`) | yes | none |
 | EVD-009 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | Commit `eec2559a` by the delegated `quality-engineer` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed (agent-reported; no `--no-verify`) | yes | none |
 | EVD-010 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Selected staged QA | Commit `d72363e5` by the delegated `quality-engineer` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed (agent-reported; no `--no-verify`) | yes | none |
+| EVD-011 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff 2e27681d ce429c00`, head `ce429c00251272dc35929789d70356a6b2a62ff5` | FAIL | `request_changes`. MEDIUM: the forbidden live-mutation workflow scan (`kubectl apply`/`patch`, `argocd app sync`/`set`, `vault kv`, `docker push`, `git push`) was removed from `quality.py` with no remaining owner. LOW: labeler concurrency and duplicate step labels are no longer enforced | yes | none |
+| EVD-012 | [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff 2e27681d ce429c00`, head `ce429c00251272dc35929789d70356a6b2a62ff5` | PASS | The deleted cases are covered by `validate-ci-python-contract.py`, and behavior tests are kept; the reviewer reran `test_ci_branch_metadata` 2 and `test_validate_ci_python_contract` 77 OK | yes | none |
+| EVD-013 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff 2e27681d ce429c00`, head `ce429c00251272dc35929789d70356a6b2a62ff5` | PASS | Classification is exact (1,357 paths, uncovered 0, ambiguous 0), and unknown scripts and tests stay broad. LOW: the `archive_*.py` and `bounded_io.py` under-selection predates this branch; dropping `agent-governance` from `tests` skips its check that a retired fixture is not recreated; `github-actions-security` was not selected by its own inputs | yes | none |
+| EVD-014 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff 2e27681d ce429c00`, head `ce429c00251272dc35929789d70356a6b2a62ff5` | FAIL | `request_changes`. The gate is registered correctly and fails closed on import errors, but it is MEDIUM-not-selected by its direct inputs: the document-reader scripts, the `archive_*.py` modules and three shared test helpers | yes | none |
+| EVD-015 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Focused tests and validators | Commit `5f00157a`: the live-mutation scan moved to `validate-github-actions-security.py` | PASS | Two new fixture cases (`kubectl apply`, `git push`) failed first and pass after. The scan uses the same seven tokens over every workflow. `test_validate_github_actions_security` 5 OK; the validator passes on the repository | yes | none |
+| EVD-016 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Selected staged QA | Commit `5f00157a` by the delegated `quality-engineer` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed (agent-reported) | yes | none |
+| EVD-017 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selection tests and classification | Commit `060d6346`: `document-reader-implementation` and `archive-scripts` select `document-contract-tests`; `archive-scripts` also selects `document-lifecycle` and `links-and-owners`; three lifecycle helpers move to `shared-document-history-readers`; the actions security script, test and fixture move to `ci-metadata-contract`, which now selects `github-actions-security` | PASS | 26 subtests failed first and pass after. `test_validate_affected_surfaces` 25, `test_document_scope_selection` 21, `test_archive_registry_contract` 17, `test_validation_profiles` 17, `test_affected_surface_migration` 16 and `test_validation_tooling_ownership` 16, all OK. Classification: 1,357 paths, uncovered 0, ambiguous 0 | yes | none |
+| EVD-018 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | Commit `060d6346` by the delegated `quality-engineer` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed (agent-reported) | yes | none |
+| EVD-019 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Lifecycle module gate run | `python scripts/run-document-contract-tests.py --root .` at head `060d6346` | PASS | `[PASS] document contract regressions passed: modules=4 tests=91`, rc 0 | yes | none |
+| EVD-020 | [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff ce429c00 060d6346`, head `060d634674146e4c4388e752ede5631e7ae3ead5` | PASS | `approve`: the live-mutation tokens match the removed scan and apply to every workflow. LOW: only two of the seven tokens have a fixture case | yes | EVD-011 |
+| EVD-021 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff ce429c00 060d6346`, head `060d634674146e4c4388e752ede5631e7ae3ead5` | PASS | `approve`: the new routes are exclusive and the catch-alls exclude them. The reviewer reran classification and 51 focused tests, all OK | yes | none |
+| EVD-022 | [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff ce429c00 060d6346`, head `060d634674146e4c4388e752ede5631e7ae3ead5` | PASS | `approve`: the gate is now selected by the document readers, the `archive_*.py` modules and the three shared helpers | yes | EVD-014 |
+| EVD-023 | [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | WORK-003 | QA runner tests | `python -m unittest tests.test_qa_runner` in the branch worktree, run while the review fixes were being written | PASS | `Ran 38 tests in 551.690s`, OK. This is supporting evidence only, because the run overlapped the fix commits | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | pending | none | Validator and test change remains | platform |
-| [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | pending | none | Test rename remains | platform |
-| [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | pending | none | Registry change remains | platform |
-| [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | pending | none | Gate registration remains | platform |
+| [VAL-QP2-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-007, EVD-011, EVD-015, EVD-016, EVD-020 | Each workflow rule has one owner in the actions security validator; EVD-011 is resolved by EVD-020 | platform |
+| [VAL-QP2-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-003, EVD-008, EVD-012 | CI metadata test renamed with its behavior tests kept | platform |
+| [VAL-QP2-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-009, EVD-013, EVD-017, EVD-018, EVD-021, EVD-023 | Narrowed surfaces classify every path once and select the gates that read them | platform |
+| [VAL-QP2-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005, EVD-006, EVD-010, EVD-014, EVD-019, EVD-022 | Lifecycle modules run on their inputs; EVD-001 is resolved by EVD-005 and EVD-014 by EVD-022 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -82,4 +95,25 @@ narrowed script and test surfaces, and a gate for the lifecycle modules.
 
 ## Verification Summary
 
-Pending.
+All four criteria are accepted. Workflow pinning, permissions, `timeout-minutes`
+and the live-mutation command scan now have one owner,
+`validate-github-actions-security.py` (VAL-QP2-001). The CI metadata test has
+a current name and keeps its behavior tests (VAL-QP2-002). Script and test
+surfaces select only the gates that read them, cluster scripts now select their
+own validators, and every tracked path classifies once (VAL-QP2-003).
+`document-contract-tests` runs the four lifecycle modules when their inputs
+change (VAL-QP2-004). The first independent review requested changes; its two
+MEDIUM findings were fixed, and a second review approved the fix commits.
+
+Residual risk:
+- Workflow-level `concurrency` and duplicate step labels are no longer checked.
+- Dropping `agent-governance` from `tests` skips its check that a retired
+  fixture is not recreated.
+- `bounded_io.py` and `json_schema_validation.py` still under-select their
+  importers; this predates the branch.
+- Only two of the seven live-mutation tokens have a fixture case.
+- `test_run_validation_lane` has a timing-sensitive case that fails under load.
+- Actions security inputs also select `ci-python-contract`.
+- 63 test modules still have no gate; that is a separate Spec.
+
+Next owner: platform.
