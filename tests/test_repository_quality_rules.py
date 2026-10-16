@@ -29,6 +29,7 @@ class RepositoryQualityRuleTests(unittest.TestCase):
             "is_inert_prohibition",
             "is_bare_or_main_push",
             "is_unmarked_command",
+            "is_task_evidence_record",
             "rel",
         }
         nodes = [
@@ -448,6 +449,16 @@ class RepositoryQualityRuleTests(unittest.TestCase):
                 False,
             )
         )
+
+    def test_task_evidence_rows_cite_commands_as_records(self):
+        record = self.rules["is_task_evidence_record"]
+        row = "| EVD-011 | [VAL-X](../spec.md) | WORK-001 | Review | head | FAIL | scan of `kubectl apply` and `git push` removed | yes | none |"
+        task = "docs/03.specs/0118-qa-phase-two/tasks/tsk-0001-qa-phase-two.md"
+        self.assertTrue(record(task, row))
+        self.assertFalse(record(task, "Run `kubectl apply -f app.yaml` now."))
+        self.assertFalse(record(task, "| WORK-001 | `kubectl apply` |"))
+        self.assertFalse(record("docs/05.operations/runbooks/0001-x.md", row))
+        self.assertFalse(record("docs/03.specs/0118-qa-phase-two/spec.md", row))
 
     def test_prohibited_prose_does_not_hide_other_live_commands(self):
         decide = self.rules["is_unmarked_command"]
