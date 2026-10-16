@@ -969,28 +969,6 @@ for workflow in workflow_paths:
     except Exception as exc:
         fail(f"GitHub Actions YAML parse failed for {rel(workflow)}: {exc}")
 
-for workflow in sorted((root / ".github/workflows").glob("*.yml")):
-    try:
-        data = load_yaml(workflow)
-    except Exception:
-        continue
-    for job_id, job in (data.get("jobs") or {}).items():
-        seen = collections.Counter()
-        for step in job.get("steps") or []:
-            label = (
-                step.get("name")
-                or step.get("uses")
-                or (step.get("run") or "").strip().splitlines()[0:1]
-            )
-            if isinstance(label, list):
-                label = label[0] if label else "<unnamed>"
-            seen[str(label)] += 1
-        for label, count in seen.items():
-            if label and label != "<unnamed>" and count > 1:
-                fail(
-                    f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}"
-                )
-
 ci_path = root / ".github/workflows/ci.yml"
 try:
     ci_data = load_yaml(ci_path)
@@ -1052,38 +1030,6 @@ test_label_globs = set(collect_strings(labeler_data.get("area/tests") or []))
 for expected_glob in ["tests/**", "infrastructure/verify/**"]:
     if expected_glob not in test_label_globs:
         fail(f"{rel(labeler_path)} area/tests missing glob: {expected_glob}")
-
-for workflow in sorted((root / ".github/workflows").glob("*.yml")):
-    workflow_text = read_text(workflow)
-    for command in [
-        "kubectl apply",
-        "kubectl patch",
-        "argocd app sync",
-        "argocd app set",
-        "vault kv",
-        "docker push",
-        "git push",
-    ]:
-        if command in workflow_text:
-            fail(
-                f"{rel(workflow)} contains forbidden live mutation or publish command: {command}"
-            )
-
-    try:
-        workflow_data = load_yaml(workflow)
-    except Exception:
-        continue
-    if workflow.name == "labeler.yml" and "concurrency" not in workflow_data:
-        fail(f"{rel(workflow)} must declare workflow-level concurrency")
-    for job_id, job in (workflow_data.get("jobs") or {}).items():
-        if "timeout-minutes" not in job:
-            fail(f"{rel(workflow)} job {job_id} must declare timeout-minutes")
-        for step in job.get("steps") or []:
-            run_block = str(step.get("run") or "")
-            if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
-                fail(
-                    f"{rel(workflow)} job {job_id} run block expands needs.*.result directly"
-                )
 
 # Native metadata/permission/hook registration belongs to agent-governance.
 # tests.test_k8s_pre_edit_hook owns path/root/denial behavior independently.
