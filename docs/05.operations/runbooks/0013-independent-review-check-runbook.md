@@ -48,8 +48,8 @@ PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
   `REVIEW_APP_KEY_FILE`은 게시 명령에만 지정한다. PR worktree의
   `scripts/independent_review.py`는 실행하지 않는다. PR이 publisher를 바꾸면
   운영자가 그 diff를 직접 읽은 뒤에만 게시한다. SPEC-0116 자신의 PR #152만
-  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외이며, 그 사본은 Task에
-  기록한 commit과 blob으로 고정한다.
+  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외이며, 그 사본은 SPEC-0116
+  Task EVD-016의 commit `6907f0d0`과 blob `0ad8bf05`로 고정했다.
 
 PR 작성 세션이 직접 리뷰하거나, head가 확정되지 않았거나, 키 위치가
 불확실하면 멈춘다.

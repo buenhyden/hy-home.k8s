@@ -200,6 +200,31 @@ class PublishTests(unittest.TestCase):
         self.assertEqual(body["conclusion"], "success")
         self.assertEqual(calls[-1][:2], ("DELETE", "/installation/token"))
 
+    def test_failed_revocation_warns_and_keeps_result(self):
+        def fake(method, path, auth, body=None):
+            if method == "DELETE":
+                raise review.ReviewError("revoke failed")
+            if path.endswith("/installation"):
+                return {"id": 7}
+            if path.endswith("/access_tokens"):
+                return {"token": "secret-token"}
+            if "/pulls/" in path:
+                return self.pull()
+            return {"id": 1}
+
+        err = StringIO()
+        with (
+            mock.patch.object(review, "app_jwt", return_value="jwt"),
+            mock.patch.object(review, "github", side_effect=fake),
+            redirect_stderr(err),
+        ):
+            result = review.publish(
+                "o/r", 5, review.load_verdict(verdict()), "1", Path("k")
+            )
+        self.assertEqual(result, {"id": 1})
+        self.assertIn("WARN: token revocation failed", err.getvalue())
+        self.assertNotIn("secret-token", err.getvalue())
+
     def test_refuses_moved_closed_or_non_main_pull(self):
         for pull in (
             self.pull(head={"sha": "b" * 40}),

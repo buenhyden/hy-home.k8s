@@ -25,6 +25,9 @@ that a setting is in force; only a dated authenticated read-back is.
   `buenhyden`.** Main protection, repository Actions permissions, default
   workflow permissions and main HEAD were read separately after PR #150 merged.
   The before-state and subsequent SHA-pinning read-back are recorded below.
+- **An authenticated read-back was recorded on 2026-10-16 at
+  `07:03:23Z`/`07:03:24Z` by `buenhyden`** before and after the approved
+  `required_status_checks` update for SPEC-0116. It follows below.
 - A read-back belongs in the active Task with its date, the exact fields read,
   and the account that read them, and this file may then carry the claim. The
   2026-09-10 reading was taken with no Stage 03 package open, so its date,
@@ -171,6 +174,27 @@ enabled with `allowed_actions: all`, the token defaults and PR approval setting
 were unchanged, and the same main SHA and protection fields above remained.
 This setting read-back does not establish compatibility of a later PR run.
 
+### 2026-10-16 Independent Review Requirement
+
+At `2026-10-16T07:03:23Z` the authenticated account `buenhyden` read
+`branches/main/protection`: strict checks `ci-summary` and `style-pr` from
+App `15368`, administrators and conversation resolution enforced, zero
+approving reviews, and force pushes and deletion blocked. Under the operator's
+exact approval, `PATCH branches/main/protection/required_status_checks` set
+strict `true` and added `independent-review` from review App `5341483`. The
+read-back at `07:03:24Z` showed the three bound checks, and every other
+protection field was identical to the before-state. The change, its PR
+observations and its acceptance are routed through
+[Stage 03 navigation](../../docs/03.specs/README.md) to SPEC-0116 Task 0001.
+
+`SEC-P01-001` / SPEC-0115 EVD-012 disposition: a PR that rewrites `ci.yml` can
+still forge `ci-summary` and `style-pr`, but no workflow holds the review App
+key, so it cannot produce `independent-review` from App `5341483`. That check
+is published only through RUN-0013 in
+[Stage 05 runbooks](../../docs/05.operations/runbooks/README.md) after a local read-only review of the exact head. The remaining risk is the
+solo operator's own key access, reviewer prompt injection and same-user
+execution of hostile PR code; it is not independent human review.
+
 ## Target Main Protection
 
 - Target branch: `main`.
@@ -189,6 +213,9 @@ This setting read-back does not establish compatibility of a later PR run.
   `15368` on a pull request; the former checks branch metadata and the latter
   checks selected style. Their separate required results carry the style
   failure to the merge decision.
+- Require `independent-review` from review App `5341483`, published only
+  through RUN-0013, so a PR-edited workflow cannot satisfy every required
+  check.
 - Do not enforce squash/rebase-only or linear-history settings that would
   discard referenced objects, so delivered history can keep them.
 - Keep `enforce_admins` enabled, so the owner also uses a pull request and the
@@ -221,12 +248,13 @@ permissions. The independent workflow-control risk remains HIGH.
 
 ## Required Status Checks
 
-The current dated remote observation requires two separate checks.
-`.github/workflows/ci.yml` owns the current tracked job identities and
-`.github/repository-surface.md` explains their roles.
+The current dated remote observation requires three separate checks.
+`.github/workflows/ci.yml` owns the two Actions job identities and
+`.github/repository-surface.md` explains their roles; SPEC-0116 owns the third.
 
-- `ci-summary`
-- `style-pr`
+- `ci-summary` (App `15368`)
+- `style-pr` (App `15368`)
+- `independent-review` (App `5341483`, no workflow; published locally)
 
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
