@@ -2,7 +2,7 @@
 title: "Independent Review Merge Gate"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-16"
 layer: "specs"
@@ -64,12 +64,19 @@ check from that App ID. The [Plan](plan.md) orders the work and
 - Before publishing, the publisher reads the pull request with the App's
   installation token and requires it to be open against `main` with
   `head.sha` equal to the verdict's `head_sha`. The check run is created on
-  that SHA only, so strict required checks discard it on any later push.
+  that SHA only, so any later push leaves the new head without it; strict
+  required checks separately make the reviewed head include the latest `main`.
 - The installation token is requested for this one repository with only
   `checks: write` and `pull_requests: read`. The private key file must be a
   regular, non-symlink file with no group or other permission bits. The key
   and model credentials never enter the repository, GitHub secrets,
   environments or workflow files.
+- The publisher holds the review App key, so it runs only from a trusted copy:
+  the `origin/main` blob, never the pull request worktree. A pull request that
+  changes the publisher is reviewed with that diff read by the operator before
+  publishing. This package's own pull request is the one bootstrap exception:
+  the publisher comes from the independently reviewed commit of this branch.
+- The operator reads every verdict before publishing it.
 - The reviewer must be a registered read-only reviewer role in a session that
   did not author or modify the reviewed changes, per
   [semantic review](../../../.agents/governance/quality.md#semantic-review).
@@ -110,7 +117,7 @@ printed or committed.
  "findings": [{"severity": "medium", "path": "a.py", "message": "..."}]}
 ```
 
-Command: `python3 -I scripts/independent_review.py --repo OWNER/NAME --pr N
+Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
 --verdict FILE [--check-only]`, with `REVIEW_APP_ID` and
 `REVIEW_APP_KEY_FILE` in the environment. Output on success:
 `independent-review id=… app=… head=… conclusion=… <url>`; on any error
@@ -122,8 +129,9 @@ Command: `python3 -I scripts/independent_review.py --repo OWNER/NAME --pr N
   request's current head`); re-review the new head.
 - Closed, merged or non-`main` pull request: publish refuses.
 - Key file with group/other bits, symlink or missing: refuses before signing.
-- GitHub HTTP or network failure: `FAIL` with method, path and status only; no
-  token or key material is printed. A failure leaves the required check
+- GitHub HTTP or network failure, openssl failure or timeout, or an
+  unexpected response shape: `FAIL` with a bounded reason only; no token or
+  key material is printed. The installation token is revoked after use. A failure leaves the required check
   missing, which blocks merge.
 - Oversized text is rejected (summary and message 4,000 characters, 100
   findings); the rendered check summary is capped at 60,000 characters.
@@ -142,12 +150,20 @@ Command: `python3 -I scripts/independent_review.py --repo OWNER/NAME --pr N
   the publisher with the key path, can publish without a genuine review. The
   gate removes forgery by PR-edited workflows; it does not make a solo
   operator independent of themself.
+- Residual: the reviewer reads attacker-controllable pull request content
+  (this is a public repository) and can be steered toward `approve` by prompt
+  injection. The attack moves from workflow forgery to reviewer steering, and
+  the operator's reading of the verdict is the remaining control.
+- Residual: no provider deny rule covers the review key directory; only the
+  default permission prompt stops a local agent from reading it. A scoped
+  provider-permission follow-up may add Read and Bash denies for that path.
 
 ## Verification Commands
 
 - `python -m unittest tests/test_independent_review.py` — verdict shape,
-  conclusion rule, table escaping, key mode and an openssl-verified JWT
-  signature.
+  conclusion rule, rendering and truncation, key mode and owner, an
+  openssl-verified JWT and its claim window, `publish()` head/base refusal,
+  token scope, check body and token revocation, and `main()` error exits.
 - `python3 -I scripts/independent_review.py --check-only …` — offline verdict
   validation.
 - `gh api repos/buenhyden/hy-home.k8s/branches/main/protection` before and

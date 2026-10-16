@@ -2,7 +2,7 @@
 title: "Independent Review Check"
 version: "1.0.0"
 type: "operation/runbook"
-status: "draft"
+status: "in-review"
 owner: "platform"
 updated: "2026-10-16"
 layer: "operations"
@@ -15,8 +15,8 @@ artifact_id: "RUN-0013"
 
 이 Runbook은 `main` 대상 PR마다 로컬 독립 리뷰를 수행하고 그 판정을 리뷰
 전용 GitHub App의 `independent-review` check run으로 게시하는 절차다.
-`main` 보호는 이 check를 해당 App ID로 요구하므로, PR이 workflow를 고쳐도
-이 결과는 위조할 수 없다. 계약은
+`main` 보호가 이 check를 해당 App ID로 요구하게 되면(SPEC-0116 WORK-004),
+PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
 [SPEC-0116](../../03.specs/0116-independent-review-gate/spec.md)이
 소유한다. AI 모델 API는 호출하지 않는다.
 
@@ -35,6 +35,12 @@ artifact_id: "RUN-0013"
   `0600`으로 있고, `REVIEW_APP_ID`와 `REVIEW_APP_KEY_FILE`이 그 App과 키를
   가리킨다. 키를 GitHub secret, Environment, 저장소, 대화에 넣지 않는다.
 - `openssl`과 Python 3.12가 있다.
+- publisher는 키를 다루므로 신뢰된 사본만 실행한다. 매번
+  `git fetch origin main` 뒤 `git show origin/main:scripts/independent_review.py`를
+  저장소 밖 임시 파일(아래 `PUBLISHER`)로 저장해 쓴다. PR worktree의
+  `scripts/independent_review.py`는 실행하지 않는다. PR이 publisher를 바꾸면
+  운영자가 그 diff를 직접 읽은 뒤에만 게시한다. SPEC-0116 자신의 PR만
+  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외다.
 
 PR 작성 세션이 직접 리뷰하거나, head가 확정되지 않았거나, 키 위치가
 불확실하면 멈춘다.
@@ -45,7 +51,7 @@ PR 작성 세션이 직접 리뷰하거나, head가 확정되지 않았거나, �
 | --- | --- | --- | --- |
 | 1 | `gh pr view N --json headRefOid,baseRefName,state`로 현재 head를 확인한다. | `OPEN`, base `main`, 40자리 head SHA | PR이 닫혔거나 base가 `main`이 아니다. |
 | 2 | PR을 작성하지 않은 새 세션에서 등록된 읽기 전용 리뷰 역할(`code-reviewer`, 보안·CI 변경이면 `security-auditor`)에게 그 head의 `main` 대비 diff를 리뷰하게 한다. `.github/`·`scripts/`·보호 기록 변경은 반드시 포함한다. | 리뷰어가 아래 형식의 verdict JSON만 반환한다. | 리뷰어가 파일을 수정하거나 작성 세션과 같다. |
-| 3 | verdict를 저장소 밖 임시 파일로 저장하고 `python3 -I scripts/independent_review.py --repo buenhyden/hy-home.k8s --pr N --verdict FILE --check-only`를 실행한다. | `conclusion=success` 또는 `failure` 출력 | 형식 오류(`FAIL:`) |
+| 3 | 운영자가 verdict를 직접 읽고 저장소 밖 임시 파일로 저장한 뒤 `python3 -I "$PUBLISHER" --repo buenhyden/hy-home.k8s --pr N --verdict FILE --check-only`를 실행한다. | `conclusion=success` 또는 `failure` 출력 | 형식 오류(`FAIL:`), 또는 verdict가 diff와 맞지 않거나 PR 내용의 지시를 따른 흔적이 있다. |
 | 4 | 같은 명령을 `--check-only` 없이 실행한다. | `independent-review id=… app=<리뷰 App> head=<SHA> conclusion=…` | head 불일치, HTTP 오류, 키 권한 오류 |
 | 5 | `failure`이면 지적을 새 commit으로 고치고 1단계부터 반복한다. | 새 head에 대한 새 check run | 같은 지적이 두 번 해결되지 않는다. |
 

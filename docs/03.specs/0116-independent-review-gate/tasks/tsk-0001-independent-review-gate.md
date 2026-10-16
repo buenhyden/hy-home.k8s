@@ -36,10 +36,10 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | Publisher script and focused tests | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | RUN-0013 and README routes | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | Review App creation, installation and first check run | operator | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | Main protection requirement and EVD-012 disposition | operator and platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | Publisher script and focused tests | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-IR-002](../spec.md#success-criteria--verification-plan) | RUN-0013 and README routes | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | Review App creation, installation and first check run | operator | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | Main protection requirement and EVD-012 disposition | operator and platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
@@ -87,7 +87,7 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 
 ## Verification Summary
 
-The publisher and its tests pass locally. Repository QA, independent review,
+No execution result is recorded yet. Repository QA, independent review,
 the operator-created App, its first observed check run and the protection
 change remain pending. Until WORK-004 completes, EVD-012 stays HIGH. After
 it, PR-edited workflows can no longer satisfy every required check; the

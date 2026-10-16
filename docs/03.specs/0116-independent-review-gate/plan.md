@@ -2,7 +2,7 @@
 title: "Independent Review Merge Gate Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-16"
 layer: "specs"
@@ -26,7 +26,7 @@ This plan executes [SPEC-0116](spec.md) on branch
 
 ## Context
 
-The research recorded in the Task found that the ruleset "require workflows"
+The research (Task EVD-001) found that the ruleset "require workflows"
 rule is documented for organizations only, that GitHub App reviews and Copilot
 reviews do not reliably count toward required approvals, and that a check
 bound to an App ID other than `15368` can only be produced with that App's
@@ -65,7 +65,11 @@ time, account and fields; repository QA does not stand in for them.
   runbook names recovery, and the protection change happens only after a
   successful check run has been observed.
 - A check run published for a stale head: the publisher refuses unless the
-  verdict SHA equals the PR's current head, and strict checks drop it on push.
+  verdict SHA equals the PR's current head; a later push leaves the new head
+  without the check.
+- A pull request that edits the publisher to force success or leak the key:
+  the publisher runs only from the `origin/main` copy, with this package's PR
+  as the stated bootstrap exception.
 - The author session runs the reviewer itself: the runbook requires a fresh
   reviewer session with a read-only role; this remains procedural and is
   recorded as residual risk.

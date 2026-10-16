@@ -8,6 +8,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
+from unittest import mock
 from pathlib import Path
 
 
@@ -87,15 +90,24 @@ class VerdictTests(unittest.TestCase):
         self.assertIn("| low | - | a\\|b c |", summary)
         self.assertIn("a" * 40, summary)
 
+    def test_render_marks_truncation(self):
+        data = review.load_verdict(
+            verdict(findings=[finding("low") | {"message": "x" * 3999}] * 100)
+        )
+        summary = review.render(data)[1]
+        self.assertLessEqual(len(summary), review.MAX_SUMMARY)
+        self.assertTrue(summary.endswith("full verdict._"))
+
 
 class KeyFileTests(unittest.TestCase):
     def test_key_file_must_be_owner_only_regular_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             key = Path(tmp) / "app.pem"
             key.write_text("key", encoding="utf-8")
-            os.chmod(key, 0o644)
-            with self.assertRaises(review.ReviewError):
-                review.check_key_file(key)
+            for mode in (0o644, 0o640, 0o604, 0o660):
+                os.chmod(key, mode)
+                with self.assertRaises(review.ReviewError):
+                    review.check_key_file(key)
             os.chmod(key, 0o600)
             self.assertEqual(review.check_key_file(key), key)
             link = Path(tmp) / "link.pem"
@@ -118,6 +130,11 @@ class JwtTests(unittest.TestCase):
             )
             token = review.app_jwt("123", key)
             header, payload, signature = token.split(".")
+            claims = review.json.loads(
+                review.base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4))
+            )
+            self.assertEqual(claims["iss"], "123")
+            self.assertLessEqual(claims["exp"] - claims["iat"], 600)
             sig = Path(tmp) / "sig"
             pad = "=" * (-len(signature) % 4)
             sig.write_bytes(review.base64.urlsafe_b64decode(signature + pad))
@@ -130,6 +147,118 @@ class JwtTests(unittest.TestCase):
                 timeout=30,
             )
             self.assertEqual(verify.returncode, 0)
+
+
+class PublishTests(unittest.TestCase):
+    def run_publish(self, pull, data=None):
+        calls = []
+
+        def fake(method, path, auth, body=None):
+            calls.append((method, path, auth, body))
+            if path.endswith("/installation"):
+                return {"id": 7}
+            if path.endswith("/access_tokens"):
+                return {"token": "secret-token"}
+            if "/pulls/" in path:
+                return pull
+            if path.endswith("/check-runs"):
+                return {"id": 1}
+            return {}
+
+        with (
+            mock.patch.object(review, "app_jwt", return_value="jwt"),
+            mock.patch.object(review, "github", side_effect=fake),
+        ):
+            try:
+                result = review.publish(
+                    "o/r", 5, review.load_verdict(data or verdict()), "1", Path("k")
+                )
+            except review.ReviewError as exc:
+                result = exc
+        return result, calls
+
+    def pull(self, **overrides):
+        data = {"state": "open", "base": {"ref": "main"}, "head": {"sha": "a" * 40}}
+        data.update(overrides)
+        return data
+
+    def test_publishes_scoped_check_on_reviewed_head(self):
+        result, calls = self.run_publish(self.pull())
+        self.assertEqual(result, {"id": 1})
+        token_body = calls[1][3]
+        self.assertEqual(token_body["repositories"], ["r"])
+        self.assertEqual(
+            token_body["permissions"], {"checks": "write", "pull_requests": "read"}
+        )
+        method, path, auth, body = calls[3]
+        self.assertEqual(
+            (method, path, auth),
+            ("POST", "/repos/o/r/check-runs", "token secret-token"),
+        )
+        self.assertEqual(body["name"], "independent-review")
+        self.assertEqual(body["head_sha"], "a" * 40)
+        self.assertEqual(body["conclusion"], "success")
+        self.assertEqual(calls[-1][:2], ("DELETE", "/installation/token"))
+
+    def test_refuses_moved_closed_or_non_main_pull(self):
+        for pull in (
+            self.pull(head={"sha": "b" * 40}),
+            self.pull(state="closed"),
+            self.pull(base={"ref": "dev"}),
+        ):
+            result, calls = self.run_publish(pull)
+            self.assertIsInstance(result, review.ReviewError)
+            self.assertNotIn("/check-runs", [c[1] for c in calls])
+            self.assertEqual(calls[-1][:2], ("DELETE", "/installation/token"))
+
+
+class MainTests(unittest.TestCase):
+    def run_main(self, argv, env):
+        err = StringIO()
+        with (
+            mock.patch.object(sys, "argv", ["independent_review.py", *argv]),
+            mock.patch.dict(os.environ, env, clear=True),
+            redirect_stderr(err),
+        ):
+            return review.main(), err.getvalue()
+
+    def test_errors_exit_one_without_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            good = Path(tmp) / "v.json"
+            good.write_text(review.json.dumps(verdict()), encoding="utf-8")
+            bad = Path(tmp) / "bad.json"
+            bad.write_text("{", encoding="utf-8")
+            base = ["--repo", "o/r", "--pr", "1", "--verdict"]
+            cases = [
+                (base + [str(bad)], {}),
+                (["--repo", "bad", "--pr", "1", "--verdict", str(good)], {}),
+                (base + [str(good)], {"REVIEW_APP_ID": "x"}),
+                (base + [str(good)], {"REVIEW_APP_ID": "1"}),
+            ]
+            for argv, env in cases:
+                code, err = self.run_main(argv, env)
+                self.assertEqual(code, 1)
+                self.assertTrue(err.startswith("FAIL: "), err)
+
+    def test_check_only_makes_no_network_call(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            good = Path(tmp) / "v.json"
+            good.write_text(review.json.dumps(verdict()), encoding="utf-8")
+            with mock.patch.object(review, "github") as github:
+                code, _ = self.run_main(
+                    [
+                        "--repo",
+                        "o/r",
+                        "--pr",
+                        "1",
+                        "--verdict",
+                        str(good),
+                        "--check-only",
+                    ],
+                    {},
+                )
+            self.assertEqual(code, 0)
+            github.assert_not_called()
 
 
 if __name__ == "__main__":

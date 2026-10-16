@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import http.client
 import json
 import os
 import re
@@ -80,6 +81,7 @@ def render(verdict: dict) -> tuple[str, str]:
     title = f"{verdict['decision']} by {verdict['reviewer']}"
     if verdict["decision"] == "approve" and result == "failure":
         title += " (blocked by critical/high finding)"
+    truncated = "\n\n_Summary truncated; see the reviewer's full verdict._"
     lines = [
         f"Reviewed head `{verdict['head_sha']}`; conclusion `{result}`.",
         "",
@@ -88,24 +90,32 @@ def render(verdict: dict) -> tuple[str, str]:
     if verdict["findings"]:
         lines += ["", "| Severity | Path | Finding |", "| --- | --- | --- |"]
         for finding in verdict["findings"]:
-            cells = [finding["severity"], finding["path"] or "-", finding["message"]]
+            path = f"`{finding['path'].replace('`', '')}`" if finding["path"] else "-"
+            cells = [finding["severity"], path, finding["message"]]
             lines.append(
                 "| "
                 + " | ".join(c.replace("|", "\\|").replace("\n", " ") for c in cells)
                 + " |"
             )
-    return title[:200], "\n".join(lines)[:MAX_SUMMARY]
+    summary = "\n".join(lines)
+    if len(summary) > MAX_SUMMARY:
+        summary = summary[: MAX_SUMMARY - len(truncated)] + truncated
+    return title[:200], summary
 
 
 def check_key_file(path: Path) -> Path:
-    """Require an owner-only regular private key file."""
+    """Require a regular private key file owned by and readable only by us."""
 
     try:
         info = path.lstat()
     except OSError as exc:
         raise ReviewError("review App key file is unreadable") from exc
-    if not stat.S_ISREG(info.st_mode) or info.st_mode & 0o077:
-        raise ReviewError("review App key must be a regular file with mode 0600")
+    if (
+        not stat.S_ISREG(info.st_mode)
+        or info.st_mode & 0o077
+        or info.st_uid != os.getuid()
+    ):
+        raise ReviewError("review App key must be our own regular file with mode 0600")
     return path
 
 
@@ -122,13 +132,16 @@ def app_jwt(app_id: str, key_file: Path) -> str:
         json.dumps({"iat": now - 60, "exp": now + 540, "iss": app_id}).encode()
     )
     signing_input = f"{header}.{payload}".encode("ascii")
-    signed = subprocess.run(
-        ["openssl", "dgst", "-sha256", "-sign", str(key_file)],
-        input=signing_input,
-        capture_output=True,
-        check=False,
-        timeout=10,
-    )
+    try:
+        signed = subprocess.run(
+            ["openssl", "dgst", "-sha256", "-sign", str(key_file)],
+            input=signing_input,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ReviewError(f"openssl failed: {type(exc).__name__}") from None
     if signed.returncode != 0 or not signed.stdout:
         raise ReviewError("openssl could not sign the App JWT")
     return f"{header}.{payload}.{_b64(signed.stdout)}"
@@ -149,10 +162,11 @@ def github(method: str, path: str, auth: str, body: dict | None = None) -> dict:
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            return json.load(response)
+            raw = response.read()
+        return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as exc:
         raise ReviewError(f"GitHub {method} {path} returned {exc.code}") from None
-    except (urllib.error.URLError, TimeoutError, ValueError) as exc:
+    except (OSError, http.client.HTTPException, ValueError) as exc:
         raise ReviewError(f"GitHub {method} {path} failed: {type(exc).__name__}")
 
 
@@ -171,24 +185,30 @@ def publish(repo: str, pr: int, verdict: dict, app_id: str, key_file: Path) -> d
         },
     )["token"]
     auth = "token " + token
-    pull = github("GET", f"/repos/{repo}/pulls/{pr}", auth)
-    if pull["state"] != "open" or pull["base"]["ref"] != "main":
-        raise ReviewError("pull request must be open against main")
-    if pull["head"]["sha"] != verdict["head_sha"]:
-        raise ReviewError("verdict head_sha is not the pull request's current head")
-    title, summary = render(verdict)
-    return github(
-        "POST",
-        f"/repos/{repo}/check-runs",
-        auth,
-        {
-            "name": CHECK_NAME,
-            "head_sha": verdict["head_sha"],
-            "status": "completed",
-            "conclusion": conclusion(verdict),
-            "output": {"title": title, "summary": summary},
-        },
-    )
+    try:
+        pull = github("GET", f"/repos/{repo}/pulls/{pr}", auth)
+        if pull["state"] != "open" or pull["base"]["ref"] != "main":
+            raise ReviewError("pull request must be open against main")
+        if pull["head"]["sha"] != verdict["head_sha"]:
+            raise ReviewError("verdict head_sha is not the pull request's current head")
+        title, summary = render(verdict)
+        return github(
+            "POST",
+            f"/repos/{repo}/check-runs",
+            auth,
+            {
+                "name": CHECK_NAME,
+                "head_sha": verdict["head_sha"],
+                "status": "completed",
+                "conclusion": conclusion(verdict),
+                "output": {"title": title, "summary": summary},
+            },
+        )
+    finally:
+        try:
+            github("DELETE", "/installation/token", auth)
+        except ReviewError:
+            pass
 
 
 def main() -> int:
@@ -218,13 +238,17 @@ def main() -> int:
             raise ReviewError("REVIEW_APP_ID must name the review App ID")
         key_file = check_key_file(Path(os.environ.get("REVIEW_APP_KEY_FILE", "")))
         run = publish(args.repo, args.pr, verdict, app_id, key_file)
+        line = (
+            f"{CHECK_NAME} id={run['id']} app={run['app']['id']} "
+            f"head={run['head_sha']} conclusion={run['conclusion']} {run['html_url']}"
+        )
+    except (KeyError, TypeError):
+        print("FAIL: unexpected GitHub response shape", file=sys.stderr)
+        return 1
     except ReviewError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
-    print(
-        f"{CHECK_NAME} id={run['id']} app={run['app']['id']} "
-        f"head={run['head_sha']} conclusion={run['conclusion']} {run['html_url']}"
-    )
+    print(line)
     return 0
 
 
