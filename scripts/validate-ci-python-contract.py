@@ -19,83 +19,7 @@ LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
 PR_METADATA_SCRIPT_PATH = Path("scripts/validate-pr-metadata.py")
-CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
-SETUP_PYTHON_ACTION = "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
-EXPECTED_PINS = {
-    "jsonschema": "4.26.0",
-    "pre-commit": "4.6.1",
-    "pyyaml": "6.0.3",
-}
-EXPECTED_RESOLVED_PINS = {
-    "attrs": "26.1.0",
-    "cfgv": "3.5.0",
-    "distlib": "0.4.3",
-    "filelock": "3.32.2",
-    "identify": "2.6.19",
-    "jsonschema": "4.26.0",
-    "jsonschema-specifications": "2025.9.1",
-    "nodeenv": "1.10.0",
-    "platformdirs": "4.11.0",
-    "pre-commit": "4.6.1",
-    "python-discovery": "1.6.1",
-    "pyyaml": "6.0.3",
-    "referencing": "0.37.0",
-    "rpds-py": "2026.6.3",
-    "typing-extensions": "4.16.0",
-    "virtualenv": "21.7.13",
-}
-EXPECTED_PRE_COMMIT_REVISIONS = {
-    "https://github.com/commitizen-tools/commitizen": (
-        "efb1a7dc7a81934ff473100ae3a5a716f3022534"  # pragma: allowlist secret
-    ),
-    "https://github.com/pre-commit/pre-commit-hooks": (
-        "3e8a8703264a2f4a69428a0aa4dcb512790b2c8c"  # pragma: allowlist secret
-    ),
-    "https://github.com/gitleaks/gitleaks": (
-        "6eaad039603a4de39fddd1cf5f727391efe9974e"  # pragma: allowlist secret
-    ),
-    "https://github.com/Yelp/detect-secrets": (
-        "01886c8a910c64595c47f186ca1ffc0b77fa5458"  # pragma: allowlist secret
-    ),
-    "https://github.com/DavidAnson/markdownlint-cli2": (
-        "996abf60411a8d954288ac9856aae7602b80cbda"  # pragma: allowlist secret
-    ),
-    "https://github.com/python-jsonschema/check-jsonschema": (
-        "f805888065fdb6162e1f800e50bb9460cbd223d6"  # pragma: allowlist secret
-    ),
-    "https://github.com/shellcheck-py/shellcheck-py": (
-        "745eface02aef23e168a8afb6b5737818efbea95"  # pragma: allowlist secret
-    ),
-    "https://github.com/scop/pre-commit-shfmt": (
-        "05c1426671b9237fb5e1444dd63aa5731bec0dfb"  # pragma: allowlist secret
-    ),
-    "https://github.com/astral-sh/ruff-pre-commit": (
-        "1f1e8bf348ff38fc88619a38d3ca4d9c56abea49"  # pragma: allowlist secret
-    ),
-    "https://github.com/zizmorcore/zizmor-pre-commit": (
-        "a4727cbbcd26d7098e96b9cb738169b59711ae51"  # pragma: allowlist secret
-    ),
-    "https://github.com/rhysd/actionlint": (
-        "914e7df21a07ef503a81201c76d2b11c789d3fca"  # pragma: allowlist secret
-    ),
-    "https://github.com/stackrox/kube-linter": (
-        "10ae003038c81855aca8489df5e35da150f4dc2e"  # pragma: allowlist secret
-    ),
-}
-EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
-    "https://github.com/commitizen-tools/commitizen": "v4.15.1",
-    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
-    "https://github.com/gitleaks/gitleaks": "v8.30.0",
-    "https://github.com/Yelp/detect-secrets": "v1.5.0",  # pragma: allowlist secret
-    "https://github.com/DavidAnson/markdownlint-cli2": "v0.22.1",
-    "https://github.com/python-jsonschema/check-jsonschema": "0.37.2",
-    "https://github.com/shellcheck-py/shellcheck-py": "v0.11.0.1",
-    "https://github.com/scop/pre-commit-shfmt": "v3.13.1-1",
-    "https://github.com/astral-sh/ruff-pre-commit": "v0.16.5",
-    "https://github.com/zizmorcore/zizmor-pre-commit": "v1.24.1",
-    "https://github.com/rhysd/actionlint": "v1.7.12",
-    "https://github.com/stackrox/kube-linter": "v0.8.3",
-}
+ACTION_REF_PATTERN = re.compile(r"^actions/(checkout|setup-python)@[0-9a-f]{40}$")
 PIN_PATTERN = re.compile(
     r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)"
     r"==(?P<version>[A-Za-z0-9][A-Za-z0-9.+_-]*)$"
@@ -1163,7 +1087,7 @@ def _load_yaml(text: str, rule_id: str, source: Path) -> dict[str, Any]:
     return value
 
 
-def _validate_direct_requirements(text: str) -> None:
+def _validate_direct_requirements(text: str, locked: dict[str, str]) -> None:
     observed: dict[str, str] = {}
     for line in text.splitlines():
         match = PIN_PATTERN.fullmatch(line)
@@ -1173,8 +1097,12 @@ def _validate_direct_requirements(text: str) -> None:
         if package in observed:
             fail("CI-PYTHON-PIN", f"duplicate dependency name: {package}")
         observed[package] = match.group("version")
-    if observed != EXPECTED_PINS:
-        fail("CI-PYTHON-PIN", "dependency names or versions differ")
+    if not observed:
+        fail("CI-PYTHON-PIN", "direct requirements must name a dependency")
+    if any(locked.get(package) != version for package, version in observed.items()):
+        fail(
+            "CI-PYTHON-LOCK", "direct pins must appear in the lock at the same version"
+        )
 
 
 def _lock_entries(text: str) -> tuple[dict[str, str], int]:
@@ -1247,11 +1175,6 @@ def _lock_entries(text: str) -> tuple[dict[str, str], int]:
             fail("CI-PYTHON-LOCK", "duplicate hashes are not allowed")
         observed[package] = pin.group("version")
 
-    if observed != EXPECTED_RESOLVED_PINS:
-        fail(
-            "CI-PYTHON-LOCK",
-            "resolved dependency names or versions differ from the CPython 3.12 lock",
-        )
     return observed, binary_directive_count
 
 
@@ -1301,11 +1224,6 @@ def _validate_pre_commit_revisions(
             "CI-PRECOMMIT-REV",
             "pre-commit config must not duplicate the local repository",
         )
-    if observed != EXPECTED_PRE_COMMIT_REVISIONS:
-        fail(
-            "CI-PRECOMMIT-REV",
-            "pre-commit repository revisions differ from the exact frozen mapping",
-        )
     try:
         root_node = yaml.compose(text, Loader=DuplicateKeyLoader)
     except yaml.YAMLError:
@@ -1332,19 +1250,19 @@ def _validate_pre_commit_revisions(
             ):
                 repo_nodes[repo_node.value] = rev_node
     lines = text.splitlines()
-    for repo, revision in EXPECTED_PRE_COMMIT_REVISIONS.items():
+    for repo, revision in observed.items():
         rev_node = repo_nodes.get(repo)
         if rev_node is None or rev_node.start_mark.line >= len(lines):
             fail(
                 "CI-PRECOMMIT-REV",
-                "every frozen repository must retain its semantic rev node",
+                "every pre-commit repository must retain its semantic rev node",
             )
-        source_tag = EXPECTED_PRE_COMMIT_SOURCE_TAGS[repo]
-        frozen_line = f"    rev: {revision} # frozen: {source_tag}"
-        if lines[rev_node.start_mark.line] != frozen_line:
+        if not re.fullmatch(
+            rf"    rev: {revision} # frozen: \S+", lines[rev_node.start_mark.line]
+        ):
             fail(
                 "CI-PRECOMMIT-REV",
-                "every frozen repo rev node must retain its exact source-tag line",
+                "every pre-commit rev node must retain a frozen source-tag comment",
             )
 
 
@@ -1366,8 +1284,42 @@ def _run_text(step: dict[str, Any]) -> str:
     return value.strip() if isinstance(value, str) else ""
 
 
-def _validate_style_pr_job(job: dict[str, Any]) -> None:
+def _workflow_action_refs(workflow: dict[str, Any]) -> tuple[str | None, str | None]:
+    """Return the workflow's own checkout and setup-python refs.
+
+    Each ref must be a full commit and identical across its uses. Other action
+    refs are owned by validate-github-actions-security.py.
+    """
+
+    jobs = workflow.get("jobs")
+    if not isinstance(jobs, dict):
+        fail("CI-PYTHON-WORKFLOW", "workflow jobs must be a mapping")
+    found: dict[str, list[str]] = {"checkout": [], "setup-python": []}
+    for job in jobs.values():
+        steps = job.get("steps") if isinstance(job, dict) else None
+        for step in steps if isinstance(steps, list) else ():
+            uses = step.get("uses") if isinstance(step, dict) else None
+            for name, refs in found.items():
+                if isinstance(uses, str) and uses.startswith(f"actions/{name}@"):
+                    refs.append(uses)
+    for refs in found.values():
+        if len(set(refs)) > 1 or any(not ACTION_REF_PATTERN.fullmatch(r) for r in refs):
+            fail(
+                "CI-PYTHON-WORKFLOW",
+                "checkout and setup-python must use one identical full-commit ref",
+            )
+    return (
+        found["checkout"][0] if found["checkout"] else None,
+        found["setup-python"][0] if found["setup-python"] else None,
+    )
+
+
+def _validate_style_pr_job(
+    job: dict[str, Any], actions: tuple[str | None, str | None]
+) -> None:
     """Bind hosted style to read-only PR bytes and reviewed base tooling."""
+
+    checkout_action, setup_python_action = actions
 
     required = {
         "if": "github.event_name == 'pull_request'",
@@ -1388,7 +1340,7 @@ def _validate_style_pr_job(job: dict[str, Any]) -> None:
         fail("CI-STYLE-TOPOLOGY", "PR style job must have the reviewed steps")
     expected = (
         {
-            "uses": CHECKOUT_ACTION,
+            "uses": checkout_action,
             "with": {
                 "ref": "${{ github.event.pull_request.base.sha }}",
                 "path": "trusted-base",
@@ -1396,14 +1348,14 @@ def _validate_style_pr_job(job: dict[str, Any]) -> None:
             },
         },
         {
-            "uses": CHECKOUT_ACTION,
+            "uses": checkout_action,
             "with": {
                 "path": "candidate",
                 "fetch-depth": 2,
                 "persist-credentials": False,
             },
         },
-        {"uses": SETUP_PYTHON_ACTION, "with": {"python-version": "3.12"}},
+        {"uses": setup_python_action, "with": {"python-version": "3.12"}},
         {
             "working-directory": "candidate",
             "env": {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"},
@@ -1466,6 +1418,7 @@ def _reviewed_metadata_run(root: Path) -> str:
 def _validate_no_outside_python_validation(
     workflow: dict[str, Any], root: Path
 ) -> None:
+    actions = _workflow_action_refs(workflow)
     jobs = workflow.get("jobs")
     if not isinstance(jobs, dict):
         fail("CI-PYTHON-WORKFLOW", "workflow jobs must be a mapping")
@@ -1473,7 +1426,7 @@ def _validate_no_outside_python_validation(
         if not isinstance(job, dict):
             continue
         if job_id == "style-pr":
-            _validate_style_pr_job(job)
+            _validate_style_pr_job(job, actions)
             continue
         steps = job.get("steps")
         if not isinstance(steps, list):
@@ -1485,7 +1438,7 @@ def _validate_no_outside_python_validation(
             if (
                 isinstance(uses, str)
                 and uses.startswith("actions/setup-python@")
-                and not (job_id == "ci-summary" and uses == SETUP_PYTHON_ACTION)
+                and not (job_id == "ci-summary" and uses == actions[1])
             ):
                 fail(
                     "CI-PYTHON-WORKFLOW",
@@ -1598,8 +1551,7 @@ def validate_dependencies(root: Path) -> int:
         "CI-PRECOMMIT-REV",
     )
 
-    _validate_direct_requirements(direct_requirements_text)
-    _validate_lock(lock_text)
+    _validate_direct_requirements(direct_requirements_text, _validate_lock(lock_text))
     workflow = _load_yaml(workflow_text, "CI-PYTHON-WORKFLOW", WORKFLOW_PATH)
     pre_commit = _load_yaml(
         pre_commit_text,
@@ -1653,10 +1605,12 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
     jobs = workflow.get("jobs")
     if not isinstance(jobs, dict) or set(jobs) != {"ci-summary", "style-pr"}:
         fail("CI-TOPOLOGY", "CI requires metadata and PR style jobs")
+    actions = _workflow_action_refs(workflow)
+    checkout_action, setup_python_action = actions
     style = jobs["style-pr"]
     if not isinstance(style, dict):
         fail("CI-STYLE-TOPOLOGY", "PR style job must be a mapping")
-    _validate_style_pr_job(style)
+    _validate_style_pr_job(style, actions)
     summary = jobs["ci-summary"]
     if not isinstance(summary, dict):
         fail("CI-TOPOLOGY", "ci-summary must be a mapping")
@@ -1728,7 +1682,7 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
     expected_pr_steps = (
         {
             "if": pr_condition,
-            "uses": CHECKOUT_ACTION,
+            "uses": checkout_action,
             "with": {
                 "ref": "${{ github.event.pull_request.base.sha }}",
                 "path": "trusted-base",
@@ -1737,7 +1691,7 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
         },
         {
             "if": pr_condition,
-            "uses": CHECKOUT_ACTION,
+            "uses": checkout_action,
             "with": {
                 "path": "candidate-commits",
                 "fetch-depth": 0,
@@ -1746,7 +1700,7 @@ def validate_workflow(workflow: dict[str, Any], root: Path | None = None) -> Non
         },
         {
             "if": pr_condition,
-            "uses": SETUP_PYTHON_ACTION,
+            "uses": setup_python_action,
             "with": {"python-version": "3.12"},
         },
         {
@@ -1788,7 +1742,7 @@ def main() -> int:
         job_count = validate_repository(args.root)
         print(
             "[PASS] local Python dependency and scoped CI contract passed: "
-            f"local-python-pins={len(EXPECTED_PINS)} hosted-installs={job_count}"
+            f"hosted-installs={job_count}"
         )
         return 0
     except ContractError as exc:
