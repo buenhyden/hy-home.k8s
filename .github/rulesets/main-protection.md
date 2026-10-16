@@ -124,8 +124,9 @@ commits.
 For prior PR 136, head `a639120b8548f4835a716a082696f01038870d27`,
 GitHub Actions run `37785109216` reported both named jobs successful. That
 result belongs to its own SHA and run; it does not prove later hosted execution.
-`SEC-P01-001` remains HIGH for a PR that changes its own workflow or control
-definition. Required checks from App `15368` do not independently authenticate
+`SEC-P01-001` remained HIGH as of 2026-10-09 for a PR that changes its own
+workflow or control definition; see the 2026-10-16 Independent Review
+Requirement section for its current split. Required checks from App `15368` do not independently authenticate
 PR-editable job definitions. The security/CI operator owns that separate guard.
 
 ### Current 2026-10-15 Observation
@@ -199,9 +200,11 @@ The two parts now have separate levels. Satisfying every required `main`
 check with a PR-edited workflow is closed as of 2026-10-16: PR #152 head
 `e3a4b713` was observed `BLOCKED` with both Actions checks `success` and no
 `independent-review`, then `CLEAN` after the RUN-0013 publication. The
-PR-editable workflow body itself, which still runs PR-authored steps in
-Actions with the read-only default token, remains open and is graded MEDIUM
-by SPEC-0116, pending confirmation by the CI and security owner.
+PR-editable workflow body itself remains HIGH and owner-accepted, as recorded
+by SPEC-0105 Task 0004: a PR-edited `pull_request` workflow still runs
+PR-authored steps in Actions and can declare permissions beyond the read-only
+default. Any regrade belongs to the CI and security owner with its own
+likelihood and impact derivation.
 
 ## Target Main Protection
 
@@ -253,8 +256,8 @@ operator decision and after-state. SHA pinning does not protect the body of a
 PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
 permissions. Required-check forgery is closed by the `independent-review`
-requirement above; the PR-editable workflow body remains a separate MEDIUM
-risk.
+requirement above; the PR-editable workflow body remains a separate,
+owner-accepted HIGH risk.
 
 ## Required Status Checks
 
