@@ -32,11 +32,11 @@ stale local checks found by the 2026-10-16 audit.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | Repair the three failing test modules | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-QR-002](../spec.md#success-criteria--verification-plan) | CI Python contract consistency checks | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-QR-003](../spec.md#success-criteria--verification-plan) | Ingress validator without chart versions | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | Quality and registry cleanup | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-005 | [VAL-QR-005](../spec.md#success-criteria--verification-plan) | Delivery procedure and README alignment | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | Repair the three failing test modules | platform | completed | PASS | EVD-010 tests resolving EVD-001 and EVD-002, EVD-011 staged QA, EVD-012 review |
+| WORK-002 | [VAL-QR-002](../spec.md#success-criteria--verification-plan) | CI Python contract consistency checks | platform | completed | PASS | EVD-003 tests and validator, EVD-007 staged QA, EVD-013 review |
+| WORK-003 | [VAL-QR-003](../spec.md#success-criteria--verification-plan) | Ingress validator without chart versions | platform | completed | PASS | EVD-004 tests and validator, EVD-008 staged QA, EVD-014 review |
+| WORK-004 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | Quality and registry cleanup | platform | completed | PASS | EVD-005 tests and quick QA, EVD-009 staged QA, EVD-015 review |
+| WORK-005 | [VAL-QR-005](../spec.md#success-criteria--verification-plan) | Delivery procedure and README alignment | platform | completed | PASS | EVD-006 staged QA, EVD-016 review |
 
 ## Task Evidence
 
@@ -53,16 +53,21 @@ stale local checks found by the 2026-10-16 audit.
 | EVD-009 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Selected staged QA | Commit `091a0afe` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | `Validate Staged QA Snapshot`, `commitizen check` and the generated-message exception hook passed | yes | none |
 | EVD-010 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Per-module test timing | Commit `d49e9585`: fixture alignment in `test_completed_state_migration`, `test_generic_migration_recovery`, `test_document_lifecycle_cumulative_history`; `document_contracts.py` reads `korean_allowed_markdown_roots` with `.get` for older committed registries; `document_lifecycle.py` and `validate-document-lifecycle.py` skip the new-work `PLAN-PROMOTION` and `TASK-PARENT-APPROVAL` guards only for paths admitted at a 9 -> 10 generation boundary whose bytes are unchanged | PASS | Nine modules OK: `test_task_execution_contract` 40, `test_completed_state_migration` 6, `test_generic_migration_recovery` 42, `test_document_lifecycle_cumulative_history` 28, `test_document_language` 35, `test_task_acceptance_contract` 17, `test_document_lifecycle_migration` 24, `test_document_lifecycle_archive_cutover` 36, `test_archive_disposition_lifecycle` 46. New `test_plan_edited_after_generation_boundary_keeps_new_work_guards` shows an edited Plan still fails `PLAN-PROMOTION`. Causes: commits `6327c3d3`, `5d0d9aef`, `55cd3415` and `92849f15` changed contracts without running these modules, which no registered lane executes | yes | EVD-001, EVD-002 |
 | EVD-011 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Selected staged QA | Commit `d49e9585` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | `Validate Staged QA Snapshot`, `commitizen check` and the generated-message exception hook passed | yes | none |
+| EVD-012 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff f062294c cbd370b4`, head `cbd370b46c55c1f6d095035fbc20d4683757e5c3` | PASS | `approve`, no critical, high or medium finding; the reviewer reran eight focused modules OK. Lifecycle exemption admits only real 9 -> 10 boundary paths with unchanged bytes; an edited Plan keeps the guards. LOW: misleading `ready` variable in the copied-Task test and a missing safety comment on the `compare_lifecycle` filter, both fixed in `5547da76` | yes | none |
+| EVD-013 | [VAL-QR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff f062294c cbd370b4`, head `cbd370b46c55c1f6d095035fbc20d4683757e5c3` | PASS | `approve`, no critical, high or medium finding; the reviewer reran eight focused modules OK. Remaining owners confirmed: `validate-github-actions-security.py` for SHA-pinned actions, the `--require-hashes` install from the trusted-base lock and the trusted-base pre-commit config in hosted `style-pr`. LOW: a PR may now add a hook repository with any full rev and frozen comment and pass locally; recorded as residual risk | yes | none |
+| EVD-014 | [VAL-QR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff f062294c cbd370b4`, head `cbd370b46c55c1f6d095035fbc20d4683757e5c3` | PASS | `approve`, no critical, high or medium finding; the reviewer reran eight focused modules OK. Repository, chart, release, namespace and server checks remain | yes | none |
+| EVD-015 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff f062294c cbd370b4`, head `cbd370b46c55c1f6d095035fbc20d4683757e5c3` | PASS | `approve`, no critical, high or medium finding; the reviewer reran eight focused modules OK. Removed items had no current consumer or were prose checks; workflow permission and secret checks were untouched | yes | none |
+| EVD-016 | [VAL-QR-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff f062294c cbd370b4`, head `cbd370b46c55c1f6d095035fbc20d4683757e5c3` | PASS | `approve`, no critical, high or medium finding; the reviewer reran eight focused modules OK. Claims match the repository. LOW: `.github/repository-surface.md` still described fixed pin checks; fixed in `5547da76` | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-QR-001](../spec.md#success-criteria--verification-plan) | pending | none | Root-cause repair of the failing modules remains | platform |
-| [VAL-QR-002](../spec.md#success-criteria--verification-plan) | pending | none | Validator and test change remains | platform |
-| [VAL-QR-003](../spec.md#success-criteria--verification-plan) | pending | none | Validator and test change remains | platform |
-| [VAL-QR-004](../spec.md#success-criteria--verification-plan) | pending | none | Validator, registry and fixture change remains | platform |
-| [VAL-QR-005](../spec.md#success-criteria--verification-plan) | pending | none | Document change and review remain | platform |
+| [VAL-QR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-002, EVD-010, EVD-011, EVD-012 | Four failing modules repaired at their root; EVD-001 and EVD-002 are resolved by EVD-010 | platform |
+| [VAL-QR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-003, EVD-007, EVD-013 | Copied pins replaced by consistency checks; the local hook-repository residual is stated in the Verification Summary | platform |
+| [VAL-QR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-008, EVD-014 | Chart versions are owned by the Application manifests | platform |
+| [VAL-QR-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-009, EVD-015 | Prose, retired, CODEOWNERS, dead-surface and unused-lane checks removed with owners named | platform |
+| [VAL-QR-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-016 | Delivery procedure names all three required checks | platform |
 
 ## Approval and Safety Boundaries
 
@@ -89,4 +94,19 @@ stale local checks found by the 2026-10-16 audit.
 
 ## Verification Summary
 
-Pending.
+All five criteria are accepted. Four focused modules that failed on `main`
+now pass with their root causes repaired (VAL-QR-001). The CI Python contract
+checks pin consistency instead of copied values (VAL-QR-002), the ingress
+validator no longer pins chart versions (VAL-QR-003), and repository quality
+and the registry lost prose, retired-path, CODEOWNERS, dead-surface and
+unused-lane checks (VAL-QR-004). The delivery procedure names
+`independent-review` (VAL-QR-005). Each commit passed staged QA and the branch
+passed an independent review whose four LOW notes were applied or recorded.
+
+Residual risk: a pull request may add a pre-commit hook repository with any
+full revision and frozen comment and still pass the local contract; hosted
+`style-pr` runs only the trusted-base configuration, so the exposure is a
+local run of that pull request's checkout. The four repaired modules belong to
+no registered lane, which is how they went unnoticed; selecting them is a
+phase-two item. `test_qa_runner` was not rerun. Next owner: platform, for
+phase two.
