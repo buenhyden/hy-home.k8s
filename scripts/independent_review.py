@@ -208,7 +208,10 @@ def publish(repo: str, pr: int, verdict: dict, app_id: str, key_file: Path) -> d
         try:
             github("DELETE", "/installation/token", auth)
         except ReviewError:
-            pass
+            print(
+                "WARN: token revocation failed; it expires within one hour",
+                file=sys.stderr,
+            )
 
 
 def main() -> int:

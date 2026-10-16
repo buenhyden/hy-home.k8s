@@ -37,13 +37,19 @@ PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
   `0600`으로 있고, `REVIEW_APP_ID=5341483`과 `REVIEW_APP_KEY_FILE`이 그 App과
   키를 가리킨다. 키를 GitHub secret, Environment, 저장소, 대화에 넣지 않는다.
 - `openssl`과 Python 3.12가 있다.
-- publisher는 키를 다루므로 신뢰된 사본만 실행한다. 매번
-  `git fetch origin main && PUBLISHER=$(mktemp) && git cat-file blob origin/main:scripts/independent_review.py > "$PUBLISHER"`로
-  저장소 밖 임시 파일을 만들어 쓴다. `REVIEW_APP_ID`와
+- 이 저장소는 추적되는 `scripts/githooks`를 `core.hooksPath`로 쓰므로, PR을
+  checkout하면 그 PR의 hook이 운영자 권한으로 실행될 수 있다. 리뷰 대상 PR은
+  checkout하지 않고 `git -c core.hooksPath=/dev/null fetch origin pull/N/head`
+  뒤 `git diff`로만 읽는다.
+- publisher는 키를 다루므로 신뢰된 사본만 실행한다. PR을 checkout한 적 없는
+  별도 clone에서 매번
+  `git -c core.hooksPath=/dev/null fetch origin main && PUBLISHER=$(mktemp) && git -c core.hooksPath=/dev/null cat-file blob origin/main:scripts/independent_review.py > "$PUBLISHER"`로
+  저장소 밖 임시 파일을 만들어 쓰고, 게시 후 `rm -- "$PUBLISHER"`로 지운다. `REVIEW_APP_ID`와
   `REVIEW_APP_KEY_FILE`은 게시 명령에만 지정한다. PR worktree의
   `scripts/independent_review.py`는 실행하지 않는다. PR이 publisher를 바꾸면
-  운영자가 그 diff를 직접 읽은 뒤에만 게시한다. SPEC-0116 자신의 PR만
-  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외다.
+  운영자가 그 diff를 직접 읽은 뒤에만 게시한다. SPEC-0116 자신의 PR #152만
+  독립 리뷰된 branch commit의 사본을 쓰는 일회성 예외이며, 그 사본은 Task에
+  기록한 commit과 blob으로 고정한다.
 
 PR 작성 세션이 직접 리뷰하거나, head가 확정되지 않았거나, 키 위치가
 불확실하면 멈춘다.

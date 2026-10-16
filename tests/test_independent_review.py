@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from unittest import mock
 from pathlib import Path
@@ -212,15 +212,31 @@ class PublishTests(unittest.TestCase):
             self.assertEqual(calls[-1][:2], ("DELETE", "/installation/token"))
 
 
+class GithubTests(unittest.TestCase):
+    def test_http_errors_map_without_credentials(self):
+        errors = [
+            review.urllib.error.HTTPError("u", 403, "no", {}, None),
+            review.urllib.error.URLError("down"),
+            TimeoutError(),
+        ]
+        for error in errors:
+            with mock.patch.object(review.urllib.request, "urlopen", side_effect=error):
+                with self.assertRaises(review.ReviewError) as caught:
+                    review.github("GET", "/x", "token secret-token")
+            self.assertNotIn("secret-token", str(caught.exception))
+            self.assertIn("GET /x", str(caught.exception))
+
+
 class MainTests(unittest.TestCase):
     def run_main(self, argv, env):
-        err = StringIO()
+        err, out = StringIO(), StringIO()
         with (
             mock.patch.object(sys, "argv", ["independent_review.py", *argv]),
             mock.patch.dict(os.environ, env, clear=True),
             redirect_stderr(err),
+            redirect_stdout(out),
         ):
-            return review.main(), err.getvalue()
+            return review.main(), err.getvalue() + out.getvalue()
 
     def test_errors_exit_one_without_traceback(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -239,6 +255,21 @@ class MainTests(unittest.TestCase):
                 code, err = self.run_main(argv, env)
                 self.assertEqual(code, 1)
                 self.assertTrue(err.startswith("FAIL: "), err)
+
+    def test_unexpected_response_shape_fails_without_token(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            good = Path(tmp) / "v.json"
+            good.write_text(review.json.dumps(verdict()), encoding="utf-8")
+            key = Path(tmp) / "k.pem"
+            key.write_text("k", encoding="utf-8")
+            os.chmod(key, 0o600)
+            with mock.patch.object(review, "publish", return_value={"id": 1}):
+                code, output = self.run_main(
+                    ["--repo", "o/r", "--pr", "1", "--verdict", str(good)],
+                    {"REVIEW_APP_ID": "1", "REVIEW_APP_KEY_FILE": str(key)},
+                )
+            self.assertEqual(code, 1)
+            self.assertIn("unexpected GitHub response shape", output)
 
     def test_check_only_makes_no_network_call(self):
         with tempfile.TemporaryDirectory() as tmp:

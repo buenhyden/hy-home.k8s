@@ -26,7 +26,7 @@ This plan executes [SPEC-0116](spec.md) on branch
 
 ## Context
 
-The research (Task EVD-001) found that the ruleset "require workflows"
+The research (Task EVD-008) found that the ruleset "require workflows"
 rule is documented for organizations only, that GitHub App reviews and Copilot
 reviews do not reliably count toward required approvals, and that a check
 bound to an App ID other than `15368` can only be produced with that App's

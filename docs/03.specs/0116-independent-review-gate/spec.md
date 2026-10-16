@@ -133,7 +133,9 @@ Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
 - Key file with group/other bits, symlink or missing: refuses before signing.
 - GitHub HTTP or network failure, openssl failure or timeout, or an
   unexpected response shape: `FAIL` with a bounded reason only; no token or
-  key material is printed. The installation token is revoked after use. A failure leaves the required check
+  key material is printed. The installation token is revoked after use on a
+  best-effort basis; a failed revocation prints a warning and the token expires
+  within one hour. A failure leaves the required check
   missing, which blocks merge.
 - Oversized text is rejected (summary and message 4,000 characters, 100
   findings); the rendered check summary is capped at 60,000 characters.
@@ -161,7 +163,10 @@ Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
   provider-permission follow-up may add Read and Bash denies for that path.
 - Residual: the trusted copy protects only the publish run. Any pull request
   code the operator runs as the same user (local QA, tests, hooks) can read the
-  key file. The gate therefore assumes the operator's account never runs
+  key file. Checking out a pull request runs it too, because this repository's
+  tracked `scripts/githooks` is the `core.hooksPath`; RUN-0013 therefore reads
+  pull requests without checkout and extracts the publisher from a clean clone
+  with hooks disabled. The gate assumes the operator's account never runs
   hostile pull request code, the same assumption the operator's admin `gh`
   token already depends on. Export `REVIEW_APP_*` only for the publish command;
   a passphrase-protected key is a possible later hardening.
