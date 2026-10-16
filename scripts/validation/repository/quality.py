@@ -774,6 +774,15 @@ def is_bare_or_main_push(line: str, markdown_prose: bool) -> bool:
     ) and not is_inert_prohibition(line, git_push_pattern, markdown_prose)
 
 
+def is_task_evidence_record(relative: str, line: str) -> bool:
+    """Task evidence rows cite commands as retained records, not instructions."""
+
+    return (
+        re.fullmatch(r"docs/03\.specs/[^/]+/tasks/[^/]+\.md", relative) is not None
+        and re.match(r"^\|\s*EVD-\d{3}\s*\|", line) is not None
+    )
+
+
 def is_unmarked_command(
     lines: list[str],
     index: int,
@@ -913,6 +922,8 @@ for command_root in command_boundary_roots:
         )
         for index, line in enumerate(lines):
             markdown_prose = index in visible_indices
+            if is_task_evidence_record(rel(path), line):
+                continue
             if is_bare_or_main_push(line, markdown_prose):
                 fail(
                     f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
