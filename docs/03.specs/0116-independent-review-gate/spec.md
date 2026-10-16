@@ -157,6 +157,12 @@ Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
 - Residual: no provider deny rule covers the review key directory; only the
   default permission prompt stops a local agent from reading it. A scoped
   provider-permission follow-up may add Read and Bash denies for that path.
+- Residual: the trusted copy protects only the publish run. Any pull request
+  code the operator runs as the same user (local QA, tests, hooks) can read the
+  key file. The gate therefore assumes the operator's account never runs
+  hostile pull request code, the same assumption the operator's admin `gh`
+  token already depends on. Export `REVIEW_APP_*` only for the publish command;
+  a passphrase-protected key is a possible later hardening.
 
 ## Verification Commands
 
@@ -164,8 +170,8 @@ Command: `python3 -I <trusted publisher copy> --repo OWNER/NAME --pr N
   conclusion rule, rendering and truncation, key mode and owner, an
   openssl-verified JWT and its claim window, `publish()` head/base refusal,
   token scope, check body and token revocation, and `main()` error exits.
-- `python3 -I scripts/independent_review.py --check-only …` — offline verdict
-  validation.
+- `python3 -I <trusted publisher copy> --check-only …` — offline verdict
+  validation (development runs inside this package's own branch excepted).
 - `gh api repos/buenhyden/hy-home.k8s/branches/main/protection` before and
   after the protection change, and `gh api
   repos/buenhyden/hy-home.k8s/commits/<head>/check-runs` for the observed App

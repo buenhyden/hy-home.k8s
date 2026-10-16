@@ -83,4 +83,4 @@ push, pull request and merge remain operator-requested actions.
 
 | Durable contract | Promoted to | Where |
 | --- | --- | --- |
-| none | none | No durable contract was introduced |
+| Local independent review published as the review App's required `independent-review` check | [Independent Review Check Runbook](../../05.operations/runbooks/0013-independent-review-check-runbook.md) | Procedure |
