@@ -2,7 +2,7 @@
 title: "Ingress Controller Identity in Validators"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-16"
 layer: "specs"

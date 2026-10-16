@@ -32,14 +32,15 @@ shell assertions.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | Declared controller identity in `ingress.py` | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-ICI-002](../spec.md#success-criteria--verification-plan) | Remove duplicated shell assertions | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | Declared controller identity in `ingress.py` | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-ICI-002](../spec.md#success-criteria--verification-plan) | Remove duplicated shell assertions | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Ingress focused tests | `scripts/validation/platform/ingress.py`, `tests/test_platform_ingress.py` on this branch | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-ICI-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Literal inventory | `git grep` of nginx identity literals at main `ad3e187f` | PASS | 35 hits in `scripts/validation/platform/ingress.py`, 6 in `scripts/validate-infrastructure-contracts.sh`; none in `policy/`, `.kube-linter.yaml` or `scripts/validation/registry.json` | no | none |
 
 ## Criterion Acceptance
 
