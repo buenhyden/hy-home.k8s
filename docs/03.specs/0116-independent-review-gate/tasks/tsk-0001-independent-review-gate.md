@@ -76,7 +76,7 @@ workflow forgery path behind SPEC-0115 Task 0005 EVD-012.
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-IR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-006, EVD-007, EVD-009, EVD-018, EVD-020 | Tests, staged QA and independent review passed; EVD-005 is resolved by EVD-006 | platform |
-| [VAL-IR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-017, EVD-021, EVD-022 | Documents pass staged QA and independent review. Accepted notwithstanding EVD-025 by explicit platform decision: the lapse touched only remote-tracking refs in this package's own authored worktree, rests on the reviewer\'s disclosure, and RUN-0013 already forbids it | platform |
+| [VAL-IR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-010, EVD-011, EVD-017, EVD-021, EVD-022 | Documents pass staged QA and independent review. Accepted notwithstanding EVD-025 by explicit platform decision: the lapse touched only remote-tracking refs in this package's own authored worktree, rests on the reviewer's disclosure, and RUN-0013 already forbids it | platform |
 | [VAL-IR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-012, EVD-013, EVD-014, EVD-016, EVD-019 | App `5341483` is installed with the scoped permissions on this repository only (EVD-019 supersedes the operator report in EVD-013) and produced a `success` check run on a real PR head; EVD-012 is resolved by EVD-014 | operator |
 | [VAL-IR-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-015, EVD-023, EVD-024 | Approved protection update, observed blocked and mergeable states and merge; EVD-004 is resolved by EVD-023 | operator and platform |
 
