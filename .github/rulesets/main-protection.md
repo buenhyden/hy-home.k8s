@@ -222,9 +222,9 @@ The read-back at `08:24:33Z` showed no repository secret, variable or
 environment and an empty `24342332` bypass list; `24342332` still blocks
 `main-<SHA>` tag creation for everyone, matching the retired publication path.
 `24769894` keeps the operator `9127269` as the SemVer tag producer, and the
-two immutable tag rulesets have no bypass. Revoking the underlying PAT and
-deleting the retired Apps `5156553` and `5156559` are operator UI actions not
-observed here. `actions/permissions` read at `08:22:11Z` still returned
+two immutable tag rulesets have no bypass. The operator later reported revoking
+the PAT behind `GHCR_TOKEN` and deleting the retired Apps `5156553` and
+`5156559` in the GitHub UI; those are operator reports, not API read-backs. `actions/permissions` read at `08:22:11Z` still returned
 `sha_pinning_required: true`.
 
 The operator then regraded the PR-editable workflow body with the

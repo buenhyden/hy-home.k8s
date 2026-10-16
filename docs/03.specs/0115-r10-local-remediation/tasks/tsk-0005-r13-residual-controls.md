@@ -83,7 +83,7 @@ Each criterion has a separate acceptance decision below.
   Registry value described above as a worktree proposal is now the merged
   `main` state. The earlier bullets above are the first-record snapshot; their
   pending statements and the "seven external uses" count are superseded by
-  EVD-039–050.
+  EVD-039–051.
 
 ## Task Table
 
@@ -150,6 +150,7 @@ Each criterion has a separate acceptance decision below.
 | EVD-048 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Workflow-body risk regrade | Operator decision on 2026-10-16 after EVD-047, recorded in the main protection record | PASS | The PR-editable workflow body is regraded from HIGH to **MEDIUM** (Possible × Moderate): no credential remains reachable from a same-repository PR workflow, and its token cannot change `main`, protected tag patterns or `independent-review`. Review cue: a new repository secret or access-granting variable, an environment without a `main`-only policy, a workflow requesting write permissions, or a new collaborator. The absent independent human reviewer stays HIGH. This supersedes the workflow-body HIGH wording of EVD-044 | yes | none |
 | EVD-049 | [VAL-R13-008](../spec.md#success-criteria--verification-plan) | WORK-016 | Criterion decision | Operator answer on 2026-10-16 after the EVD-042 review | PASS | The operator, as GitOps and live owner, accepted the selected leaves and router HEADs within their stated scope | yes | none |
 | EVD-050 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Criterion decision | Operator answer on 2026-10-16 after EVD-043–045 | PASS | The operator, as CI and repository protection owner, accepted the SHA-pinning hardening with compatible hosted CI; required-check forgery is mitigated (EVD-044) and the remaining limits are those of EVD-048 | yes | none |
+| EVD-051 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Retired credential revocation | Operator report on 2026-10-16 after EVD-047 | PASS | The operator reported revoking the personal access token behind the deleted `GHCR_TOKEN` and deleting the retired GitHub Apps `5156553` (verifier) and `5156559` (publisher) in the GitHub UI. This is an operator report; no API read-back of the token or App deletion was taken | no | none |
 
 ## Criterion Acceptance
 
