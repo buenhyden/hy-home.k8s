@@ -23,7 +23,9 @@ stale local checks found by the 2026-10-16 audit.
   over-applied, duplicated, conflicting or stale checks and to fix them; the
   operator chose to start with phase one.
 - Start: main `f062294c` (PR #155 merge), branch
-  `qa/spec-0117-local-qa-rightsizing`.
+  `refactor/spec-0117-local-qa-rightsizing` (renamed from
+  `qa/spec-0117-local-qa-rightsizing` after PR #156 failed the hosted
+  branch-prefix policy).
 - A per-module test timing run on `main` in the session scratch directory.
 
 ## Task Table

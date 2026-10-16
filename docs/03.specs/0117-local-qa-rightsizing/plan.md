@@ -20,7 +20,9 @@ parent_ids: ["SPEC-0117"]
 ## Overview
 
 This plan executes [SPEC-0117](spec.md) on branch
-`qa/spec-0117-local-qa-rightsizing` from main `f062294c`.
+`refactor/spec-0117-local-qa-rightsizing` from main `f062294c`. It was first
+pushed as `qa/spec-0117-local-qa-rightsizing`, which the hosted branch policy
+rejects, and renamed without changing commits.
 
 ## Context
 
