@@ -43,9 +43,10 @@ Project-Template native commit/정적 리뷰 통과는 그 원본 입력에 한�
 EVD-001이며, 지역 채택이나 다른 저장소의 적용 증거가 아니다.
 
 Registry의 `stage: adopted`는 이 저장소의 지역 adapter 선언이다. 공동
-owner의 원본 판본 승인과는 별도이며, 현재 작업트리의 값만으로 지역 수용
-완료를 주장하지 않는다. 지역 수용은 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
-EVD-002 통합 검사·독립 검토와 기준 수용 판정에 따른다.
+owner의 원본 판본 승인과는 별도이며, Registry 값만으로 지역 수용 완료를
+주장하지 않는다. 지역 수용의 근거는 [현재 잔여 통제 Task](../03.specs/0115-r10-local-remediation/tasks/tsk-0005-r13-residual-controls.md)의
+EVD-038 통합 staged QA, 독립 검토, 그리고 2026-10-16 buenhyden의 수용
+판정(EVD-039)이다.
 Project-Template의 P06 Git 소비자는 별도 commit
 `10001e3c1f9b7aea3f2fda555e1a5dcf0a6dfbc3`에서 관측했다. 이전 k8s C07
 Commitizen 문법 차이는 이번 지역 수정에서 원래 네 문장 재비교와 집중
