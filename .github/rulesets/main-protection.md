@@ -25,9 +25,9 @@ that a setting is in force; only a dated authenticated read-back is.
   `buenhyden`.** Main protection, repository Actions permissions, default
   workflow permissions and main HEAD were read separately after PR #150 merged.
   The before-state and subsequent SHA-pinning read-back are recorded below.
-- **An authenticated read-back was recorded on 2026-10-16 at `08:24:26Z`/
-  `08:24:33Z` by `buenhyden`** before and after retiring unused Actions
-  credentials. It follows the independent review requirement below.
+- **Authenticated read-backs were recorded on 2026-10-16 at `08:22:11Z`,
+  `08:24:26Z`/`08:24:33Z`, `08:39:24Z` and `08:48:05Z` by `buenhyden`**
+  around retiring unused Actions credentials. It follows the independent review requirement below.
 - **An authenticated read-back was recorded on 2026-10-16 at
   `07:03:23Z`/`07:03:24Z` by `buenhyden`** before and after the approved
   `required_status_checks` update for SPEC-0116. It follows below.
@@ -129,7 +129,7 @@ GitHub Actions run `37785109216` reported both named jobs successful. That
 result belongs to its own SHA and run; it does not prove later hosted execution.
 `SEC-P01-001` remained HIGH as of 2026-10-09 for a PR that changes its own
 workflow or control definition; see the 2026-10-16 Independent Review
-Requirement section for its current split. Required checks from App `15368` do not independently authenticate
+Requirement and Credential Retirement sections for its current split. Required checks from App `15368` do not independently authenticate
 PR-editable job definitions. The security/CI operator owns that separate guard.
 
 ### Current 2026-10-15 Observation
@@ -224,20 +224,45 @@ environment and an empty `24342332` bypass list; `24342332` still blocks
 `24769894` keeps the operator `9127269` as the SemVer tag producer, and the
 two immutable tag rulesets have no bypass. The operator later reported revoking
 the PAT behind `GHCR_TOKEN` and deleting the retired Apps `5156553` and
-`5156559` in the GitHub UI; those are operator reports, not API read-backs. `actions/permissions` read at `08:22:11Z` still returned
-`sha_pinning_required: true`.
+`5156559` in the GitHub UI; those are operator reports, not API read-backs.
+`actions/permissions` read at `08:22:11Z` still returned
+`sha_pinning_required: true`. Further operator-run read-only reads returned
+zero Codespaces secrets, no deploy keys, no webhooks and fork PR approval
+`all_external_contributors` at `08:39:24Z`, and zero self-hosted runners with
+GitHub Pages disabled at `08:48:05Z`. A user-owned repository has no
+organization secrets.
 
-The operator then regraded the PR-editable workflow body with the
-risk-report matrix: likelihood **Possible**, because only the admin
-collaborator `buenhyden` or a session acting with that account can open a
-same-repository PR, and external fork PRs need approval and receive no
-secrets; impact **Moderate**, because a PR-edited workflow can now reach no
-credential and its `GITHUB_TOKEN` cannot change `main`, the protected tag
-patterns or the `independent-review` check. The level is **MEDIUM**,
-monitor-only. Review cue: any new repository-level secret or variable that
-grants access, a new environment without a `main`-only branch policy, a
-workflow that requests write permissions, or a new collaborator; any of these
+The operator then made a current derivation with the risk-report matrix. It
+replaces the earlier HIGH basis of SPEC-0105, which graded the PR-editable job
+definitions themselves. Likelihood is **Possible**: same-repository branches
+come only from the admin collaborator `buenhyden` or a session acting with that
+account, and from `dependabot[bot]`, whose runs get a read-only token and no
+secrets; external fork PRs need approval and receive no secrets. Impact is
+**Moderate**. The observed basis: no repository Actions secret, variable or
+environment, Dependabot or Codespaces secret, deploy key, webhook or
+self-hosted runner remains; every job runs on GitHub-hosted `ubuntu-latest`;
+and no file in the repository trusts the GitHub OIDC token. External OIDC
+trust outside the repository was not inspected. A PR-edited workflow that
+declares write permissions can still push or delete non-`main` branches, create
+tags outside the protected patterns, create or delete releases, cancel or
+disable workflows and delete run logs and artifacts, edit issue and PR text
+that agent sessions later read, and post statuses or deployments. It cannot
+push `main`, change protected tag patterns, approve reviews or produce
+`independent-review` from App `5341483`, and Argo CD tracks only `main`. These
+effects stay inside the repository and are recoverable, which is Moderate. The
+level is **MEDIUM**, monitor-only, as the sole CI and security owner's decision
+with a recorded `security-auditor` concurrence (SPEC-0115 Task 0005 EVD-052).
+Review cue: a new repository secret or access-granting variable, an
+environment without a `main`-only policy, a self-hosted runner, OIDC trust
+keyed on this repository or owner, a GitOps revision other than `main`, a
+cluster image pulled from a package of this repository, GitHub Pages, a new or
+wider write permission in a committed workflow beyond the existing greeting and
+labeler `issues`/`pull-requests` write, or a new collaborator. Any of these
 raises the level back to HIGH until reassessed.
+
+The absent independent human reviewer remains a separate **HIGH** risk owned
+by the operator: the `independent-review` reviewer is an AI agent under the
+same solo operator, so the gate is not independent human review.
 
 ## Target Main Protection
 

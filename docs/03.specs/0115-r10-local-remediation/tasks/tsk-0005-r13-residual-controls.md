@@ -83,7 +83,7 @@ Each criterion has a separate acceptance decision below.
   Registry value described above as a worktree proposal is now the merged
   `main` state. The earlier bullets above are the first-record snapshot; their
   pending statements and the "seven external uses" count are superseded by
-  EVD-039–051.
+  EVD-039–053.
 
 ## Task Table
 
@@ -151,15 +151,17 @@ Each criterion has a separate acceptance decision below.
 | EVD-049 | [VAL-R13-008](../spec.md#success-criteria--verification-plan) | WORK-016 | Criterion decision | Operator answer on 2026-10-16 after the EVD-042 review | PASS | The operator, as GitOps and live owner, accepted the selected leaves and router HEADs within their stated scope | yes | none |
 | EVD-050 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Criterion decision | Operator answer on 2026-10-16 after EVD-043–045 | PASS | The operator, as CI and repository protection owner, accepted the SHA-pinning hardening with compatible hosted CI; required-check forgery is mitigated (EVD-044) and the remaining limits are those of EVD-048 | yes | none |
 | EVD-051 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Retired credential revocation | Operator report on 2026-10-16 after EVD-047 | PASS | The operator reported revoking the personal access token behind the deleted `GHCR_TOKEN` and deleting the retired GitHub Apps `5156553` (verifier) and `5156559` (publisher) in the GitHub UI. This is an operator report; no API read-back of the token or App deletion was taken | no | none |
+| EVD-052 | [VAL-R13-009](../spec.md#success-criteria--verification-plan) | WORK-017 | Independent security review of regrades | Fresh read-only `security-auditor` review of PR #155 head `a66713a8` with GitOps, workflow and host inspection; operator-run reads at `08:39:24Z` (Codespaces secrets 0, deploy keys none, webhooks none, fork PR approval `all_external_contributors`) and `08:48:05Z` (self-hosted runners 0, Pages disabled) | PASS | Concurs with the workflow-body MEDIUM (Possible × Moderate) on the observed basis now recorded in the main protection record, conditional on zero Codespaces secrets, deploy keys and runners, all observed. Required wording added: the existing greeting/labeler write permissions, `dependabot[bot]` branches, the remaining token capabilities and the extra review cues. EVD-051 stays a separate operator report | yes | none |
+| EVD-053 | [VAL-R13-007](../spec.md#success-criteria--verification-plan) | WORK-015 | Host residual risk level | Same `security-auditor` review with read-only host observation: profile SHA-256 `11d39094…64f9` and mode `0644`, `/usr/bin/bwrap` not setuid, `apparmor_restrict_unprivileged_userns=1`, `apparmor_restrict_unprivileged_unconfined=0`, most cluster pod processes `unconfined`; loaded state of other permissive profiles not observed | PASS | Concurs with MEDIUM but replaces the EVD-046 derivation: impact **Severe**, because this host runs the k3d cluster and holds kubeconfig and CA material, and with `restrict_unprivileged_unconfined=0` any unconfined process can enter profile `bwrap` and gain `allow userns` and capabilities; likelihood **Unlikely**, because exploitation needs a userns-reachable kernel flaw and attacker code in an unconfined process, neither observed, and the host user is already root-equivalent through `docker`/`lxd`. Unlikely × Severe = MEDIUM. This rating covers only the profile's added contribution; unconfined pods on the cluster host with the unconfined-to-profile path are a separate open risk for the host operator to score. Review cues add a userns-reachable kernel CVE, a pod workload compromise and a change of `restrict_unprivileged_unconfined` | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-R13-006](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-002, EVD-013, EVD-023, EVD-024, EVD-025, EVD-026, EVD-027, EVD-031, EVD-035, EVD-036, EVD-037, EVD-038, EVD-039 | Original authenticated, consumers and forms reviewed, the parent-guard bypass repaired, integrated staged QA passed and the owner accepted the merged `adopted` state. EVD-002 is resolved by EVD-039, EVD-026 by EVD-027 and EVD-035/036 by EVD-038. No new edition or four-repository adoption is inferred | buenhyden, common source and local adapter owners |
-| [VAL-R13-007](../spec.md#success-criteria--verification-plan) | accepted | EVD-003, EVD-004, EVD-005, EVD-006, EVD-007, EVD-020, EVD-021, EVD-022, EVD-028, EVD-029, EVD-030, EVD-032, EVD-033, EVD-034, EVD-040, EVD-041, EVD-046 | Accepted on bounded wording: approved profile installed and the inner sandbox on direct host invocation confined in explicit modes. Default CLI write behavior and default agent-session sandboxing are not claimed. The host-wide bwrap userns relaxation is a MEDIUM residual risk (EVD-046) owned by the host operator, with rollback in the handoff below; EVD-022 remains an advisory lapse | host operator, native owner and security reviewer |
+| [VAL-R13-007](../spec.md#success-criteria--verification-plan) | accepted | EVD-003, EVD-004, EVD-005, EVD-006, EVD-007, EVD-020, EVD-021, EVD-022, EVD-028, EVD-029, EVD-030, EVD-032, EVD-033, EVD-034, EVD-040, EVD-041, EVD-046, EVD-053 | Accepted on bounded wording: approved profile installed and the inner sandbox on direct host invocation confined in explicit modes. Default CLI write behavior and default agent-session sandboxing are not claimed. The host-wide bwrap userns relaxation is a MEDIUM residual risk (Unlikely × Severe, EVD-053 superseding the EVD-046 derivation) owned by the host operator, with rollback in the handoff below; EVD-022 remains an advisory lapse | host operator, native owner and security reviewer |
 | [VAL-R13-008](../spec.md#success-criteria--verification-plan) | accepted | EVD-014, EVD-015, EVD-016, EVD-017, EVD-018, EVD-019, EVD-042, EVD-049 | Accepted within the selected leaves and router HEADs; EVD-017 is resolved by EVD-018 and EVD-042 records the intervening diagnostic curl and ESO transition timing. Authentication, traffic isolation, deployment SHA and whole-cluster assurance are not claimed | GitOps and live operators |
-| [VAL-R13-009](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-009, EVD-010, EVD-011, EVD-043, EVD-044, EVD-045, EVD-047, EVD-048, EVD-050 | SHA pinning was set and re-read true (EVD-045), and compatible hosted CI passed on a new input; EVD-011 is resolved by EVD-043. Required-check forgery is mitigated by SPEC-0116 (EVD-044). After the credential retirement (EVD-047) the PR-editable workflow body is MEDIUM (EVD-048); the absent independent human reviewer stays HIGH | CI and repository protection operators |
+| [VAL-R13-009](../spec.md#success-criteria--verification-plan) | accepted | EVD-008, EVD-009, EVD-010, EVD-011, EVD-043, EVD-044, EVD-045, EVD-047, EVD-048, EVD-050, EVD-051, EVD-052 | SHA pinning was set and re-read true (EVD-045), and compatible hosted CI passed on a new input; EVD-011 is resolved by EVD-043. Required-check forgery is mitigated by SPEC-0116 (EVD-044). After the credential retirement (EVD-047) the PR-editable workflow body is MEDIUM (EVD-048, concurred by EVD-052); the absent independent human reviewer stays HIGH | CI and repository protection operators |
 
 ## Approval and Safety Boundaries
 
@@ -182,7 +184,14 @@ Each criterion has a separate acceptance decision below.
   `buenhyden/hy-home.k8s/actions/permissions` SHA-pinning setting only;
   `/root/ci_commit_range` owns the exact remote PUT/read-back after current
   target/revocation preflight. No standing approval or independent reviewer is
-  inferred from solo operation.
+  inferred from solo operation. On 2026-10-16 the operator separately decided, after
+  this Task's review, to retire unused Actions credentials outside the
+  original WORK-017 setting scope (EVD-047): the repository secret
+  `GHCR_TOKEN`; the variables `QA_CI_WORKFLOW_ID`, `QA_PROVENANCE_ENABLED`,
+  `QA_PUBLISHER_APP_ID`, `QA_REUSE_ENABLED` and `QA_VERIFIER_APP_ID`; the
+  environments `qa-control` and `qa-tag-publish` with `QA_VERIFIER_PRIVATE_KEY`
+  and `QA_PUBLISHER_PRIVATE_KEY`; and App `5156559` in ruleset `24342332`
+  bypass. That decision covered only those named items.
 - **Static Validation**: Selected Stage 99 profile, relationship, link and
   lifecycle checks on the actual document index; focused source and consumer
   tests for each implemented lane, with independent review before delivery.
@@ -199,7 +208,10 @@ Each criterion has a separate acceptance decision below.
   before snapshots. Reverting `sha_pinning_required=true` to `false` weakens
   the control, so a failed PUT/read-back freezes the operation and reports to
   the user; any later rollback requires an exact operator decision rather
-  than an automatic false write. Preserve failed observations.
+  than an automatic false write. Preserve failed observations. The
+  EVD-047 retirement is not reversible through Git: deleted secret and key
+  values are unrecoverable, so any restoration means issuing new credentials
+  and, for ruleset `24342332`, an exact operator decision with read-back.
 - **Evidence Location**: This Task owns four separate acceptance decisions;
   raw provider, cluster and remote logs remain with their producing owners.
 
@@ -275,7 +287,7 @@ kept. VAL-R13-009: SHA pinning was set, re-read true at `08:22:11Z`
 (EVD-045), and compatible hosted CI passed on PR #151 (EVD-043).
 Required-check forgery is now mitigated by SPEC-0116. After the unused
 `GHCR_TOKEN` and retired QA credentials were removed (EVD-047), the
-PR-editable workflow body is MEDIUM with a review cue (EVD-048), the host bwrap
-relaxation is MEDIUM (EVD-046), and the absent independent human reviewer
+PR-editable workflow body is MEDIUM with review cues (EVD-048, EVD-052), the
+host bwrap relaxation is MEDIUM as Unlikely × Severe (EVD-053), and the absent independent human reviewer
 stays HIGH. The rows are recorded `completed`; the
 criterion decisions above are the acceptance.
