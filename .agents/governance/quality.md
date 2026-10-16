@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.2.0"
+version: "2.2.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-16"
 ---
 
 # Quality and Evidence Policy
@@ -237,7 +237,7 @@ above.
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. `main` also requires `independent-review` (review App `5341483`): after a local read-only review of the exact head, the operator publishes the verdict through RUN-0013 in [Stage 05 runbooks](../../docs/05.operations/runbooks/README.md); merge only when `ci-summary`, `style-pr` and `independent-review` all pass. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
 | Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing Archive and security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
@@ -266,7 +266,8 @@ cannot establish hosted execution or remote branch protection.
 4. **delivery validation**: review the selected focused units and purpose gates
    against the final branch input. Record hosted branch metadata and selected
    style at their own PR or deployment SHA/run when observed. Retired full/ci
-   and blanket unit discovery add no completion gate. Recheck an integrated-main
+   and blanket unit discovery add no completion gate. Before merge, the local
+   independent review verdict is published as `independent-review` (see Pull request). Recheck an integrated-main
    input only to the extent changed bytes or history invalidate prior evidence.
 5. **repair and refresh**: inspect formatter findings, explicitly fix selected
    files, review/restage changed bytes and refresh affected evidence. QA itself

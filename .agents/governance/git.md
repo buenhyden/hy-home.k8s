@@ -1,6 +1,6 @@
 ---
 title: "Git Policy"
-version: "2.3.0"
+version: "2.3.1"
 type: "governance/rule"
 status: "active"
 owner: "platform"
@@ -72,7 +72,10 @@ gets only its invalidated checks, and an identical fast-forward does not replay
 them. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
 the hosted PR style job owns only its selected style verdict. Each observed
 result has its own SHA and trust boundary and never stands in for local purpose,
-unit or document-content checks. A deployment style result requires an actual
+unit or document-content checks. Merge also needs `independent-review`: the
+operator publishes the local independent review verdict through RUN-0013 in
+[Stage 05 runbooks](../../docs/05.operations/runbooks/README.md), and merge
+proceeds only when `ci-summary`, `style-pr` and `independent-review` pass. A deployment style result requires an actual
 deployment workflow and run; absent that input, keep it unobserved. Observe
 actual ruleset requirements before calling an integration accepted.
 

@@ -32,11 +32,11 @@ stale local checks found by the 2026-10-16 audit.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | Repair the three failing test modules | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-QR-002](../spec.md#success-criteria--verification-plan) | CI Python contract consistency checks | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-QR-003](../spec.md#success-criteria--verification-plan) | Ingress validator without chart versions | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | Quality and registry cleanup | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-005 | [VAL-QR-005](../spec.md#success-criteria--verification-plan) | Delivery procedure and README alignment | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-QR-001](../spec.md#success-criteria--verification-plan) | Repair the three failing test modules | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-QR-002](../spec.md#success-criteria--verification-plan) | CI Python contract consistency checks | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-QR-003](../spec.md#success-criteria--verification-plan) | Ingress validator without chart versions | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-QR-004](../spec.md#success-criteria--verification-plan) | Quality and registry cleanup | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-005 | [VAL-QR-005](../spec.md#success-criteria--verification-plan) | Delivery procedure and README alignment | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
