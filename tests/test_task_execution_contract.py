@@ -1632,6 +1632,28 @@ class GenerationAdmissionTests(unittest.TestCase):
                 [LIFECYCLE_CLI._format_diagnostic(item) for item in package_findings],
             )
 
+    def test_plan_edited_after_generation_boundary_keeps_new_work_guards(
+        self,
+    ) -> None:
+        with self._authentic_generation_replay() as (root, commit, absent, _intake):
+            commit()
+            plan = SPEC.parent / "plan.md"
+            (root / plan).write_text((root / plan).read_text() + "\nLater edit.\n")
+            edited = commit()
+            findings = LIFECYCLE_CLI._evaluate_comparison(
+                root,
+                self.registry,
+                mode="ci",
+                base_ref=absent,
+                to_ref=edited,
+                include_paths=(plan,),
+            )
+        self.assertIn(
+            ("PLAN-PROMOTION", plan),
+            {(item.rule_id, item.path) for item in findings},
+            [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
+        )
+
     def test_ci_seeded_snapshot_budget_preserves_package_history(self) -> None:
         self._assert_seeded_snapshot_budget("ci")
 

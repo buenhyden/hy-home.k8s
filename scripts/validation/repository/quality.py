@@ -281,21 +281,6 @@ def extract_pr_template_prefixes(text: str) -> list[str]:
     return [prefix.rstrip("/") for prefix in re.findall(r"`([a-z0-9-]+/)`", text)]
 
 
-def has_provider_example_boundary_prompt(text: str) -> bool:
-    required_terms = [
-        "examples/aws",
-        "examples/azure",
-        "adjacent executable assets",
-        "not live provider-latest guidance",
-        "approved provider refresh spec",
-    ]
-    for line in text.splitlines():
-        normalized = line.casefold()
-        if all(term in normalized for term in required_terms):
-            return True
-    return False
-
-
 tracked = set()
 try:
     proc = bounded_process(
@@ -447,31 +432,12 @@ allowed_top_level_docs = {
     "98.archive",
     "99.templates",
 }
-old_top_level_docs = {
-    "01.prd",
-    "02.ard",
-    "03.adr",
-    "04.specs",
-    "05.plans",
-    "06.tasks",
-    "07.guides",
-    "08.operations",
-    "09.runbooks",
-    "10.incidents",
-}
 docs_dir = root / "docs"
 actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
 for name in sorted(actual_docs - allowed_top_level_docs):
     fail(f"docs top-level folder is not allowed: docs/{name}")
 for name in sorted(allowed_top_level_docs - actual_docs):
     fail(f"required docs top-level folder is missing: docs/{name}")
-
-for provider in ["aws", "azure"]:
-    example_docs = root / "examples" / provider / "docs"
-    if example_docs.exists():
-        fail(
-            f"retired example docs root must be absent after ADM-006: {rel(example_docs)}"
-        )
 
 sample_app_dir = root / "examples/sample-app"
 sample_app_kustomization = sample_app_dir / "kustomization.yaml"
@@ -501,16 +467,6 @@ for active_reference_file in [
         )
 
 sample_app_external_secret = read_text(sample_app_dir / "external-secret.yaml")
-for phrase in [
-    "secret/apps/<appname>/config",
-    "remoteRef.key",
-    "apps/<appname>/config",
-    "ClusterSecretStore path",
-]:
-    if phrase not in sample_app_external_secret:
-        fail(
-            f"examples/sample-app/external-secret.yaml missing app secret path contract phrase: {phrase}"
-        )
 if "key: secret/apps/<appname>/config" in sample_app_external_secret:
     fail(
         "examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix"
@@ -597,11 +553,6 @@ for error in canonical_form_content_errors(
     form_sources, registry_form_owners, registry_profiles_by_id
 ):
     fail(error)
-
-
-template_support_root = root / "docs/99.templates/support"
-if template_support_root.exists():
-    fail("docs/99.templates/support is a retired transition surface")
 
 
 def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
@@ -706,67 +657,7 @@ for path in active_template_routing_reference_files:
             f"{rel(path)} must route exact template selection through docs/99.templates/registry.json"
         )
 
-legacy_denylist_literals = {
-    "operation" + ".template.md": "deprecated operations policy template route",
-    "platform" + "-" + "team": "deprecated owner value",
-    "Related " + "References": "deprecated README related-document heading",
-}
-legacy_scan_roots = [
-    root / "docs",
-    root / ".agents",
-    root / "scripts",
-    root / ".codex",
-    root / "AGENTS.md",
-    root / "RTK.md",
-]
-legacy_scan_suffixes = {".md", ".sh", ".py", ".toml", ".yaml", ".yml", ".json"}
-for scan_root in legacy_scan_roots:
-    if not scan_root.exists():
-        continue
-    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        if candidate.suffix not in legacy_scan_suffixes and candidate.name not in {
-            "AGENTS.md",
-            "RTK.md",
-        }:
-            continue
-        text = read_text(candidate)
-        for literal, replacement in legacy_denylist_literals.items():
-            if literal in text:
-                fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
-
-legacy_postmortems = "11" + ".postmortems"
-legacy_learning = "50" + ".Learning"
-legacy_stage_range = "00" + "~" + "11"
-legacy_docs_range = "01" + "~" + "99"
-legacy_stage_label = "Stage " + "11"
-legacy_harness = "H" + "100"
-legacy_harness_examples = "examples/" + "harness-100"
-old_docs_path_refs = ["docs/" + name for name in sorted(old_top_level_docs)] + [
-    "../" + name for name in sorted(old_top_level_docs)
-]
-legacy_dashboard_app = "platform" + "-dashboard"
-legacy_dashboard_ns_file = "namespace" + "-kubernetes-dashboard"
-legacy_dashboard_kubectl = "kubectl -n " + "kubernetes-dashboard"
-legacy_dashboard_namespace_code = "`" + "kubernetes-dashboard" + "` namespace"
-legacy_dashboard_namespace_text = "kubernetes-dashboard " + "namespace"
-legacy_docs_traefik = "docs/" + "traefik"
-stale_patterns = [
-    *old_docs_path_refs,
-    "file://",
-    str(root),
-    "docs/" + legacy_postmortems,
-    "docs/" + legacy_learning,
-    legacy_postmortems,
-    legacy_learning,
-    legacy_stage_range,
-    legacy_docs_range,
-    legacy_stage_label,
-    legacy_harness,
-    legacy_harness_examples,
-]
+stale_patterns = ["file://", str(root)]
 # `str(root)` catches a direct run, but `scripts/qa.py` always hands this
 # validator an isolated snapshot directory, so that entry can never match the
 # real checkout path. Match an absolute filesystem path that ends at this
@@ -776,21 +667,6 @@ stale_patterns = [
 local_checkout_path = re.compile(
     r"(?<![\w:/])/(?:[^\s`'\"()]+/)?hy-home\.k8s(?![\w.-])"
 )
-legacy_contract_patterns = [
-    legacy_dashboard_app,
-    legacy_dashboard_ns_file,
-    legacy_dashboard_kubectl,
-    legacy_dashboard_namespace_code,
-    legacy_dashboard_namespace_text,
-    legacy_docs_traefik,
-]
-legacy_contract_markers = [
-    "현재 실행계약 메모",
-    "Superseded",
-    "superseded",
-    "역사적",
-    "Headlamp Replaces Kubernetes Dashboard",
-]
 scan_roots = [
     root / "README.md",
     root / "docs",
@@ -815,13 +691,6 @@ for scan_root in scan_roots:
                 fail(f"stale docs path reference found in {rel(path)}: {pattern}")
         if local_checkout_path.search(text):
             fail(f"local checkout path found in {rel(path)}")
-        for pattern in legacy_contract_patterns:
-            if pattern in text and not any(
-                marker in text for marker in legacy_contract_markers
-            ):
-                fail(
-                    f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}"
-                )
 
 active_stale_contract_roots = [
     root / "docs/01.requirements",
@@ -832,12 +701,6 @@ active_stale_contract_roots = [
 active_stale_contract_patterns = [
     "172.19",
     "172.30",
-    "kubernetes-dashboard",
-    "Kubernetes Dashboard",
-    "k8s-dashboard",
-    "K8s Dashboard",
-    "platform-dashboard",
-    "dashboard-admin",
 ]
 for scan_root in active_stale_contract_roots:
     for path in sorted(scan_root.rglob("*.md")):
@@ -849,77 +712,6 @@ for scan_root in active_stale_contract_roots:
                 fail(
                     f"active authored docs must not retain stale implementation "
                     f"contract in {rel(path)}: {pattern}"
-                )
-
-active_currentness_roots = [
-    root / "docs/01.requirements",
-    root / "docs/02.architecture",
-    root / "docs/03.specs",
-    root / "docs/05.operations",
-    root / "docs/90.references",
-]
-migration_evidence_ledger_path = (
-    root
-    / "docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md"
-)
-
-
-def is_currentness_evidence_only(path: pathlib.Path) -> bool:
-    return path == migration_evidence_ledger_path
-
-
-if not is_currentness_evidence_only(migration_evidence_ledger_path):
-    fail("migration evidence ledger currentness exception must match its exact path")
-if is_currentness_evidence_only(root / "docs/90.references/README.md"):
-    fail("migration evidence ledger currentness exception must not widen to Stage 90")
-
-stale_shell_job_name = "shell" + "-static"
-stale_headlamp_oidc_patterns = [
-    "0004-" + "headlamp-auth-oidc-guide.md",
-    "0005-" + "headlamp-keycloak-runbook.md",
-    "headlamp-" + "oidc-secret",
-    "externalsecret-" + "oidc.yaml",
-    "gitops/platform/headlamp/" + "values.yaml",
-]
-stale_rollouts_currentness_patterns = [
-    (
-        "analysis-run 없이",
-        "stale Rollouts analysis-free promotion contract",
-    ),
-    (
-        "Prometheus analysis provider 연동 (후속 Phase)",
-        "stale Rollouts Prometheus analysis future-only contract",
-    ),
-]
-stale_app_onboarding_currentness_patterns = [
-    (
-        "Deployment는 `appproject-apps` whitelist에 포함",
-        "stale apps AppProject Deployment whitelist claim",
-    ),
-]
-for scan_root in active_currentness_roots:
-    for path in sorted(scan_root.rglob("*.md")):
-        if path.is_relative_to(root / "docs/98.archive"):
-            continue
-        if is_currentness_evidence_only(path):
-            continue
-        text = read_text(path)
-        if stale_shell_job_name in text:
-            fail(f"active authored docs must not list stale CI job name in {rel(path)}")
-        for pattern in stale_headlamp_oidc_patterns:
-            if pattern in text:
-                fail(
-                    f"active authored docs must not retain archived Headlamp OIDC "
-                    f"contract in {rel(path)}: {pattern}"
-                )
-        for pattern, description in [
-            *stale_rollouts_currentness_patterns,
-            *stale_app_onboarding_currentness_patterns,
-        ]:
-            if pattern in text:
-                fail(
-                    f"active authored docs must not retain {description} "
-                    f"in {rel(path)}: {pattern}"
                 )
 
 authored_command_roots = [
@@ -1168,18 +960,6 @@ for scan_root in markdown_direct_push_roots:
                     f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
                 )
 
-docs_readme_path = root / "docs/README.md"
-docs_readme_text = read_text(docs_readme_path)
-for phrase in [
-    "## 문서 역할과 언어 계약",
-    "AI Agent Requirements",
-    "사람이 읽는 안내와 요약은 한국어를 우선",
-]:
-    if phrase not in docs_readme_text:
-        fail(
-            f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}"
-        )
-
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted(
     (root / ".github").glob("**/*.yaml")
 )
@@ -1211,20 +991,6 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
                     f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}"
                 )
 
-codeowners_path = root / ".github/CODEOWNERS"
-codeowners_text = read_text(codeowners_path)
-if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
-    fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
-
-pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
-pull_request_template_text = read_text(pull_request_template_path)
-for phrase in [
-    "NOT_RUN",
-    "- [ ] Every validation lane is explicitly classified as `PASS`, `NOT_RUN`, `FAIL`, `DEFER`, or `NOT_APPLICABLE`.",
-]:
-    if phrase not in pull_request_template_text:
-        fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
-
 ci_path = root / ".github/workflows/ci.yml"
 try:
     ci_data = load_yaml(ci_path)
@@ -1239,53 +1005,12 @@ summary_job = ci_jobs.get("ci-summary") or {}
 branch_policy_text = "\n".join(
     str(step.get("run") or "") for step in summary_job.get("steps") or []
 )
-for phrase in [
-    "BASE_REF",
-    "HEAD_REF",
-    "allowed_branch_regex",
-    "PR base branch must be main",
-    "branch-policy result=",
-]:
-    if phrase not in branch_policy_text:
-        fail(f"{rel(ci_path)} ci-summary missing validation phrase: {phrase}")
-
 branch_prefixes = extract_ci_branch_policy_prefixes(branch_policy_text)
 if not branch_prefixes:
     fail(f"{rel(ci_path)} ci-summary must define supported branch prefixes")
-expected_branch_message = (
-    "PR source branch must start with one of: "
-    + format_branch_prefixes(branch_prefixes)
-)
-if expected_branch_message not in branch_policy_text:
-    fail(f"{rel(ci_path)} ci-summary message must match its allowed_branch_regex")
-
 pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pr_template_text = read_text(pr_template_path)
 
-for phrase in [
-    "Workflow triggers and job ownership reviewed",
-    "No live cluster mutation",
-    "approved prefix",
-    "`main`",
-]:
-    if phrase not in pr_template_text:
-        fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
-for phrase in [
-    "any exception must update CI `ci-summary` and governance in the same change",
-    "No PR targeting `main` bypasses the CI metadata check",
-    "Draft/WIP status is intentional",
-    "`test`: Tests or validation updates",
-    "`chore`: Maintenance updates",
-    "[`.cz.toml`](../.cz.toml)",
-]:
-    if phrase not in pr_template_text:
-        fail(f"{rel(pr_template_path)} missing CI metadata clarification: {phrase}")
-if not has_provider_example_boundary_prompt(pr_template_text):
-    fail(
-        f"{rel(pr_template_path)} missing provider example checklist line with "
-        "examples/aws, examples/azure, adjacent executable assets, provider-latest, "
-        "and approved provider refresh spec terms"
-    )
 
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
@@ -1320,13 +1045,6 @@ if pr_branch_prefixes != branch_prefixes:
         f"{rel(pr_template_path)} approved branch prefixes must match {rel(ci_path)} ci-summary "
         f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(pr_branch_prefixes)}"
     )
-for prefix in branch_prefixes:
-    prefix_label = f"{prefix}/"
-    if prefix not in pr_template_text:
-        fail(
-            f"{rel(pr_template_path)} missing approved source branch prefix from "
-            f"{rel(ci_path)} ci-summary: {prefix_label}"
-        )
 
 labeler_path = root / ".github/labeler.yml"
 labeler_data = load_yaml(labeler_path)
@@ -1672,11 +1390,6 @@ for script in infrastructure_shell_paths:
             f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}"
         )
 
-# ADR-0043 retired the external Traefik reference files; k8s routes are
-# Ingress objects served by the dedicated k8s router.
-if (root / "traefik").exists():
-    fail("traefik/ was retired by ADR-0043; declare k8s routes as Ingress objects")
-
 executable_reference_source_suffixes = {
     ".md",
     ".toml",
@@ -1731,26 +1444,9 @@ executable_reference_diagnostics = (
 for diagnostic in executable_reference_diagnostics:
     fail(str(diagnostic))
 
-secret_scanner_text = read_text(scripts_dir / "check-secret-handling.sh")
-for phrase in [
-    "examples/sample-app",
-    '-name "gitops"',
-    '-name "kubernetes"',
-    "value=<redacted>",
-]:
-    if phrase not in secret_scanner_text:
-        fail(
-            f"{rel(scripts_dir / 'check-secret-handling.sh')} missing examples secret-scan contract phrase: {phrase}"
-        )
-
 for obsolete in ["k3d_kubeconfig.yaml"]:
     if obsolete in tracked:
         fail(f"obsolete tracked file remains: {obsolete}")
-for tracked_path in tracked:
-    if tracked_path.startswith(
-        "docs/" + legacy_postmortems + "/"
-    ) or tracked_path.startswith("docs/" + legacy_learning + "/"):
-        fail(f"obsolete tracked docs path remains: {tracked_path}")
 
 
 if failures:

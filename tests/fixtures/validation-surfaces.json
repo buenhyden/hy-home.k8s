@@ -117,11 +117,6 @@
       "expectedSurface": "readme-router-review"
     },
     {
-      "name": "traefik",
-      "path": "traefik/route-probe.yaml",
-      "expectedSurface": "traefik"
-    },
-    {
       "name": "examples",
       "path": "examples/route-probe/manifest.yaml",
       "expectedSurface": "examples"

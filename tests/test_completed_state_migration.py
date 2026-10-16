@@ -48,21 +48,22 @@ class CompletedStateMigrationTests(unittest.TestCase):
             with self.subTest(profile=profile):
                 completed = self.document(path, profile, "completed")
                 done = self.document(path, profile, "done")
-                self.assertEqual(
-                    compare_lifecycle(
-                        self.registry,
-                        {
-                            completed.path: self.document(
-                                path,
-                                profile,
-                                "in-progress",
-                            )
-                        },
-                        {completed.path: completed},
-                        base_mode="staged",
-                    ),
-                    (),
-                )
+                # Spec and Plan close at approved; only a Task reaches completed
+                # through a forward edge.
+                if profile == "sdlc/task":
+                    self.assertEqual(
+                        compare_lifecycle(
+                            self.registry,
+                            {
+                                completed.path: self.document(
+                                    path, profile, "in-progress"
+                                )
+                            },
+                            {completed.path: completed},
+                            base_mode="staged",
+                        ),
+                        (),
+                    )
                 self.assertEqual(
                     [
                         item.rule_id
@@ -188,8 +189,6 @@ class CompletedStateMigrationTests(unittest.TestCase):
                 "draft",
                 "in-review",
                 "approved",
-                "in-progress",
-                "completed",
             ):
                 current, _ = git.commit(path, body(status))
             self.assertTrue(

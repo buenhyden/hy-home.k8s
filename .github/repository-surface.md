@@ -1,6 +1,6 @@
 ---
 title: "GitHub Configuration Hub"
-version: "0.5.1"
+version: "0.5.2"
 type: "common/readme"
 status: "active"
 owner: "platform"
@@ -51,14 +51,17 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   소유한다. hosted `ci-summary`와 `style-pr` 결과는 각각 별도의 SHA·run
   identity를 가진다. [main 보호 설정 기록](rulesets/main-protection.md)의
   2026-10-15 원격 read-back은 두 job 모두 GitHub Actions App `15368`의
-  required check이고 strict가 `true`임을 확인했다. 그 관측은 이후 변경의
+  required check이고 strict가 `true`임을 확인했다. 이후 review App `5341483`의
+  `independent-review`가 세 번째 required check로 추가되었다. 로컬 독립 리뷰 후
+  operator가 [Stage 05 runbooks](../docs/05.operations/runbooks/README.md)의
+  RUN-0013으로 verdict를 게시하며, 세 check가 모두 통과해야 merge한다. 그 관측은 이후 변경의
   실행 결과나 독립적인 workflow-control 보증이 아니다.
 - `.github/requirements/ci-validation.txt`와
   `.pre-commit-config.yaml`은 로컬 Python 의존성·hook revision 계약을
   보존한다. `style-pr`은 신뢰된 base의 hash lock에서 Python 도구를
   설치하며 로컬 목적·단위 검사는 실행하지 않는다.
-  `scripts/validate-ci-python-contract.py`가 고정 pin과 workflow 경계를
-  검사하므로 lock과 소비자 단언은 함께 리뷰한다.
+  `scripts/validate-ci-python-contract.py`는 pin 형식, 직접 pin과 lock의
+  일치, hash 존재와 workflow 경계를 검사하며 pin 값 사본은 두지 않는다.
 - Issue는 요청과 triage priority를 소유한다. 승인된 수용 계약은 Spec,
   실행 결과는 Task에 기록하고 Project는 상태를 표시한다. Issue form은
   접수 단계에 Spec이나 Requirement 링크를 요구하지 않는다.

@@ -213,12 +213,22 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         text = text.replace("VAL-FEATURE-001", "VAL-P02-004")
         text = text.replace("WORK-001", "WORK-004")
         if status == "completed":
-            text = text.replace(
-                "| NOT_RUN | pending | Pending named repository evidence |",
-                "| PASS | accepted | [Synthetic fixture result](#verification-summary) |",
-            ).replace(
-                "| NOT_RUN | Pending | pending |",
-                "| PASS | [Synthetic fixture result](#verification-summary) | accepted |",
+            text = (
+                text.replace(
+                    "| frontmatter | NOT_RUN | Pending named repository evidence |",
+                    "| frontmatter | PASS | [Synthetic fixture result](#verification-summary) |",
+                )
+                .replace(
+                    "| NOT_RUN | Pending | yes | none |",
+                    "| NOT_RUN | Pending | yes | none |\n"
+                    "| EVD-002 | [VAL-P02-004](../spec.md#success-criteria--verification-plan) "
+                    "| WORK-004 | Named deterministic check | Exact revision or fixture "
+                    "| PASS | [Synthetic fixture result](#verification-summary) | yes | EVD-001 |",
+                )
+                .replace(
+                    "| pending | none | Run named deterministic check |",
+                    "| accepted | EVD-002 | Synthetic fixture accepted |",
+                )
             )
         return text.replace('status: "draft"', f'status: "{status}"', 1).encode()
 
@@ -245,10 +255,16 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "{{TASK_RELATIVE_PATH}}": "tasks/tsk-0001-copy.md",
             }.items():
                 text = text.replace(placeholder, value)
+            text = text.replace(
+                "| {{DURABLE_CONTRACT}} | [{{CURRENT_AUTHORITY_TITLE}}]"
+                "({{CURRENT_AUTHORITY_PATH}}) | {{LOCATION_IN_OWNER}} |",
+                "| none | none | No durable contract was introduced |",
+            )
             self.assertNotIn("{{", text)
+            self.git.commit(f"{package}/{name}", text.encode())
             self.git.commit(
                 f"{package}/{name}",
-                text.encode(),
+                text.replace('status: "draft"', 'status: "approved"', 1).encode(),
             )
         self.base = self.oid("HEAD")
         target = PurePosixPath(f"{package}/tasks/tsk-0001-copy.md")
@@ -445,18 +461,20 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         destination = records.index(target.as_posix().encode())
         self.assertTrue(records[destination - 2].startswith(b"C"))
         self.assertEqual(records[destination - 1], source.as_posix().encode())
-        self.git.commit(target.as_posix(), self.registered_task_document("ready"))
-        ready = self.oid("HEAD")
+        # A ready first version is now a legal local initial state; a copied
+        # terminal Task is still no creation history.
+        self.git.commit(target.as_posix(), self.registered_task_document("completed"))
+        completed_copy = self.oid("HEAD")
         self.assertFalse(
             VALIDATOR._history_proves_cumulative_create(
                 self.root,
                 self.registry,
                 target,
                 self.base,
-                ready,
+                completed_copy,
             )
         )
-        result, output = self.invoke("ci", base_ref=self.base, to_ref=ready)
+        result, output = self.invoke("ci", base_ref=self.base, to_ref=completed_copy)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
 
@@ -510,7 +528,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                         self.registered_task_document("in-progress"),
                     )
                     invalid_result = completed.replace(
-                        b"| PASS | accepted |", b"| NOT_RUN | pending |"
+                        b"| frontmatter | PASS |", b"| frontmatter | NOT_RUN |"
                     )
                     self.assertNotEqual(invalid_result, completed)
                     completed = invalid_result

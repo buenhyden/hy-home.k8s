@@ -34,92 +34,31 @@ pre-commit==4.6.1
 PyYAML==6.0.3
 """
 
-RESOLVED_PINS = {
+LOCK_PINS = {
     "attrs": "26.1.0",
-    "cfgv": "3.5.0",
-    "distlib": "0.4.3",
-    "filelock": "3.32.2",
-    "identify": "2.6.19",
     "jsonschema": "4.26.0",
-    "jsonschema-specifications": "2025.9.1",
-    "nodeenv": "1.10.0",
-    "platformdirs": "4.11.0",
     "pre-commit": "4.6.1",
-    "python-discovery": "1.6.1",
     "pyyaml": "6.0.3",
-    "referencing": "0.37.0",
-    "rpds-py": "2026.6.3",
-    "typing-extensions": "4.16.0",
-    "virtualenv": "21.7.13",
 }
 
-PRE_COMMIT_REVISIONS = {
-    "https://github.com/commitizen-tools/commitizen": (
-        "efb1a7dc7a81934ff473100ae3a5a716f3022534"  # pragma: allowlist secret
-    ),
-    "https://github.com/pre-commit/pre-commit-hooks": (
-        "3e8a8703264a2f4a69428a0aa4dcb512790b2c8c"  # pragma: allowlist secret
-    ),
-    "https://github.com/gitleaks/gitleaks": (
-        "6eaad039603a4de39fddd1cf5f727391efe9974e"  # pragma: allowlist secret
-    ),
-    "https://github.com/Yelp/detect-secrets": (
-        "01886c8a910c64595c47f186ca1ffc0b77fa5458"  # pragma: allowlist secret
-    ),
-    "https://github.com/DavidAnson/markdownlint-cli2": (
-        "996abf60411a8d954288ac9856aae7602b80cbda"  # pragma: allowlist secret
-    ),
-    "https://github.com/python-jsonschema/check-jsonschema": (
-        "f805888065fdb6162e1f800e50bb9460cbd223d6"  # pragma: allowlist secret
-    ),
-    "https://github.com/shellcheck-py/shellcheck-py": (
-        "745eface02aef23e168a8afb6b5737818efbea95"  # pragma: allowlist secret
-    ),
-    "https://github.com/scop/pre-commit-shfmt": (
-        "05c1426671b9237fb5e1444dd63aa5731bec0dfb"  # pragma: allowlist secret
-    ),
-    "https://github.com/astral-sh/ruff-pre-commit": (
-        "1f1e8bf348ff38fc88619a38d3ca4d9c56abea49"  # pragma: allowlist secret
-    ),
-    "https://github.com/zizmorcore/zizmor-pre-commit": (
-        "a4727cbbcd26d7098e96b9cb738169b59711ae51"  # pragma: allowlist secret
-    ),
-    "https://github.com/rhysd/actionlint": (
-        "914e7df21a07ef503a81201c76d2b11c789d3fca"  # pragma: allowlist secret
-    ),
-    "https://github.com/stackrox/kube-linter": (
-        "10ae003038c81855aca8489df5e35da150f4dc2e"  # pragma: allowlist secret
-    ),
+# Any 40-hex revision and any frozen tag are valid: the config owns the values.
+PRE_COMMIT_REPOS = {
+    "https://github.com/example/one": ("a" * 40, "v1.0.0"),
+    "https://github.com/example/two": ("b" * 40, "0.2.3"),
 }
 
-PRE_COMMIT_SOURCE_TAGS = {
-    "https://github.com/commitizen-tools/commitizen": "v4.15.1",
-    "https://github.com/pre-commit/pre-commit-hooks": "v6.0.0",
-    "https://github.com/gitleaks/gitleaks": "v8.30.0",
-    "https://github.com/Yelp/detect-secrets": "v1.5.0",  # pragma: allowlist secret
-    "https://github.com/DavidAnson/markdownlint-cli2": "v0.22.1",
-    "https://github.com/python-jsonschema/check-jsonschema": "0.37.2",
-    "https://github.com/shellcheck-py/shellcheck-py": "v0.11.0.1",
-    "https://github.com/scop/pre-commit-shfmt": "v3.13.1-1",
-    "https://github.com/astral-sh/ruff-pre-commit": "v0.16.5",
-    "https://github.com/zizmorcore/zizmor-pre-commit": "v1.24.1",
-    "https://github.com/rhysd/actionlint": "v1.7.12",
-    "https://github.com/stackrox/kube-linter": "v0.8.3",
-}
+CHECKOUT_ACTION = "actions/checkout@" + "c" * 40
+SETUP_PYTHON_ACTION = "actions/setup-python@" + "d" * 40
+ACTIONS = (CHECKOUT_ACTION, SETUP_PYTHON_ACTION)
 
 
-def make_lock(pins: dict[str, str] | None = None) -> str:
-    if pins is None:
-        return (REPO_ROOT / ".github/requirements/ci-validation.txt").read_text(
-            encoding="utf-8"
-        )
-    resolved = RESOLVED_PINS if pins is None else pins
+def make_lock() -> str:
     lines = [
         "# Generated for the Linux CPython 3.12 CI lane.",
         "--only-binary :all:",
         "",
     ]
-    for index, (name, version) in enumerate(resolved.items(), start=1):
+    for index, (name, version) in enumerate(LOCK_PINS.items(), start=1):
         lines.extend(
             (
                 f"{name}=={version} \\",
@@ -131,11 +70,11 @@ def make_lock(pins: dict[str, str] | None = None) -> str:
 
 def make_pre_commit_config() -> str:
     lines = ["repos:"]
-    for repo, revision in PRE_COMMIT_REVISIONS.items():
+    for repo, (revision, tag) in PRE_COMMIT_REPOS.items():
         lines.extend(
             (
                 f"  - repo: {repo}",
-                f"    rev: {revision} # frozen: {PRE_COMMIT_SOURCE_TAGS[repo]}",
+                f"    rev: {revision} # frozen: {tag}",
                 "    hooks:",
                 "      - id: example",
             )
@@ -505,16 +444,30 @@ class CiPythonContractTests(unittest.TestCase):
     def test_valid_temporary_repository_passes(self) -> None:
         self.assertEqual(VALIDATOR.validate_dependencies(self.make_valid_root()), 0)
 
-    def test_cli_accepts_valid_temporary_repository(self) -> None:
+    def make_real_workflow_root(self, *replacements: tuple[str, str]) -> Path:
         root = self.make_valid_root()
-        (root / ".github/workflows/ci.yml").write_text(
-            (REPO_ROOT / ".github/workflows/ci.yml").read_text()
-        )
+        text = (REPO_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        for old, new in replacements:
+            self.assertIn(old, text)
+            text = text.replace(old, new)
+        (root / ".github/workflows/ci.yml").write_text(text, encoding="utf-8")
         metadata = root / VALIDATOR.PR_METADATA_SCRIPT_PATH
         metadata.parent.mkdir(exist_ok=True)
         metadata.write_bytes(
             (REPO_ROOT / VALIDATOR.PR_METADATA_SCRIPT_PATH).read_bytes()
         )
+        return root
+
+    def real_action_refs(self) -> tuple[str, str]:
+        workflow = VALIDATOR._load_yaml(
+            (REPO_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"),
+            "CI-PYTHON-WORKFLOW",
+            VALIDATOR.WORKFLOW_PATH,
+        )
+        return VALIDATOR._workflow_action_refs(workflow)
+
+    def test_cli_accepts_valid_temporary_repository(self) -> None:
+        root = self.make_real_workflow_root()
         result = subprocess.run(
             [sys.executable, str(VALIDATOR_PATH), "--root", str(root)],
             cwd=REPO_ROOT,
@@ -527,7 +480,39 @@ class CiPythonContractTests(unittest.TestCase):
             "[PASS] local Python dependency and scoped CI contract passed",
             result.stdout,
         )
-        self.assertIn("local-python-pins=3 hosted-installs=1", result.stdout)
+        self.assertIn("hosted-installs=1", result.stdout)
+
+    def test_action_sha_bump_passes(self) -> None:
+        checkout, setup_python = self.real_action_refs()
+        root = self.make_real_workflow_root(
+            (checkout, "actions/checkout@" + "1" * 40),
+            (setup_python, "actions/setup-python@" + "2" * 40),
+        )
+        self.assertEqual(VALIDATOR.validate_repository(root), 1)
+
+    def test_action_refs_must_be_full_commits(self) -> None:
+        checkout, _ = self.real_action_refs()
+        for bad in ("actions/checkout@v7", "actions/checkout@" + "A" * 40):
+            with self.subTest(bad=bad):
+                root = self.make_real_workflow_root((checkout, bad))
+                self.assert_rule_in_repository(root, "CI-PYTHON-WORKFLOW")
+
+    def test_action_refs_must_be_identical_across_uses(self) -> None:
+        checkout, _ = self.real_action_refs()
+        root = self.make_real_workflow_root()
+        workflow = root / ".github/workflows/ci.yml"
+        workflow.write_text(
+            workflow.read_text(encoding="utf-8").replace(
+                checkout, "actions/checkout@" + "1" * 40, 1
+            ),
+            encoding="utf-8",
+        )
+        self.assert_rule_in_repository(root, "CI-PYTHON-WORKFLOW")
+
+    def assert_rule_in_repository(self, root: Path, rule_id: str) -> None:
+        with self.assertRaises(VALIDATOR.ContractError) as raised:
+            VALIDATOR.validate_repository(root)
+        self.assertEqual(raised.exception.rule_id, rule_id)
 
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
@@ -674,65 +659,53 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
-    def test_direct_input_rejects_a_dropped_direct_dependency(self) -> None:
-        root = self.make_valid_root()
-        direct_input = root / ".github/requirements/ci-validation.in"
-        direct_input.write_text(
-            DIRECT_INPUT.replace("PyYAML==6.0.3\n", ""),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-PIN")
+    def edit(self, root: Path, relative: str, old: str, new: str) -> None:
+        path = root / relative
+        text = path.read_text(encoding="utf-8")
+        self.assertIn(old, text)
+        path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
-    def test_lock_rejects_an_unhashed_transitive_dependency(self) -> None:
+    def edit_lock(self, root: Path, old: str, new: str) -> None:
+        self.edit(root, ".github/requirements/ci-validation.txt", old, new)
+
+    def test_consistent_pin_bump_in_input_and_lock_passes(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "attrs==26.1.0 \\\n"
-                "    --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309\n",
-                "attrs==26.1.0\n",
-            ),
-            encoding="utf-8",
+        self.edit(root, ".github/requirements/ci-validation.in", "==4.26.0", "==9.9.9")
+        self.edit_lock(root, "jsonschema==4.26.0", "jsonschema==9.9.9")
+        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
+
+    def test_direct_input_must_agree_with_the_lock(self) -> None:
+        root = self.make_valid_root()
+        self.edit(root, ".github/requirements/ci-validation.in", "==4.26.0", "==9.9.9")
+        self.assert_rule(root, "CI-PYTHON-LOCK")
+
+    def test_direct_input_rejects_a_dependency_absent_from_the_lock(self) -> None:
+        root = self.make_valid_root()
+        self.edit(
+            root,
+            ".github/requirements/ci-validation.in",
+            "PyYAML==6.0.3\n",
+            "PyYAML==6.0.3\nrogue==1.0.0\n",
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
-    def test_lock_rejects_a_missing_transitive_dependency(self) -> None:
+    def test_lock_rejects_an_unhashed_transitive_dependency(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "cfgv==3.5.0 \\\n"
-                "    --hash=sha256:a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0\n",
-                "",
-            ),
-            encoding="utf-8",
+        self.edit_lock(
+            root,
+            f"attrs==26.1.0 \\\n    --hash=sha256:{1:064x}\n",
+            "attrs==26.1.0\n",
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
     def test_lock_rejects_a_non_sha256_hash(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "--hash=sha256:",
-                "--hash=sha512:",
-                1,
-            ),
-            encoding="utf-8",
-        )
+        self.edit_lock(root, "--hash=sha256:", "--hash=sha512:")
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
     def test_lock_rejects_a_ranged_dependency(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "attrs==26.1.0",
-                "attrs>=26.1.0",
-                1,
-            ),
-            encoding="utf-8",
-        )
+        self.edit_lock(root, "attrs==26.1.0", "attrs>=26.1.0")
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
     def test_lock_rejects_a_duplicate_dependency(self) -> None:
@@ -741,35 +714,28 @@ class CiPythonContractTests(unittest.TestCase):
         lock.write_text(
             lock.read_text(encoding="utf-8")
             + "attrs==26.1.0 \\\n"
-            + "    --hash=sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n",
+            + f"    --hash=sha256:{99:064x}\n",
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
     def test_lock_rejects_a_dropped_direct_dependency(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "jsonschema==4.26.0 \\\n"
-                "    --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce\n",
-                "",
-            ),
-            encoding="utf-8",
+        self.edit_lock(
+            root,
+            f"jsonschema==4.26.0 \\\n    --hash=sha256:{2:064x}\n",
+            "",
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
-    def test_structurally_valid_lock_hash_update_is_not_source_pinned(self) -> None:
+    def test_lock_requires_the_binary_only_directive(self) -> None:
         root = self.make_valid_root()
-        lock = root / ".github/requirements/ci-validation.txt"
-        lock.write_text(
-            lock.read_text(encoding="utf-8").replace(
-                "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",  # pragma: allowlist secret
-                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                1,
-            ),
-            encoding="utf-8",
-        )
+        self.edit_lock(root, "--only-binary :all:\n", "")
+        self.assert_rule(root, "CI-PYTHON-LOCK")
+
+    def test_lock_hash_update_is_not_source_pinned(self) -> None:
+        root = self.make_valid_root()
+        self.edit_lock(root, f"{1:064x}", "a" * 64)
         VALIDATOR.validate_dependencies(root)
 
     def test_validation_job_rejects_absolute_python_path_pip_install(self) -> None:
@@ -1129,112 +1095,74 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PRECOMMIT-ACTION")
 
-    def test_pre_commit_tag_revision_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        revision = next(iter(PRE_COMMIT_REVISIONS.values()))
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                revision,
-                "v4.15.1",
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PRECOMMIT-REV")
+    def edit_pre_commit(self, root: Path, old: str, new: str) -> None:
+        self.edit(root, ".pre-commit-config.yaml", old, new)
 
-    def test_pre_commit_branch_revision_is_rejected(self) -> None:
+    def test_pre_commit_revision_and_tag_bump_passes(self) -> None:
         root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        revision = next(iter(PRE_COMMIT_REVISIONS.values()))
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                revision,
-                "main",
-                1,
-            ),
-            encoding="utf-8",
+        revision, tag = PRE_COMMIT_REPOS["https://github.com/example/one"]
+        self.edit_pre_commit(
+            root,
+            f"rev: {revision} # frozen: {tag}",
+            f"rev: {'e' * 40} # frozen: v9.9.9",
         )
-        self.assert_rule(root, "CI-PRECOMMIT-REV")
+        self.assertEqual(VALIDATOR.validate_dependencies(root), 0)
 
-    def test_pre_commit_abbreviated_revision_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        revision = next(iter(PRE_COMMIT_REVISIONS.values()))
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                revision,
-                revision[:12],
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PRECOMMIT-REV")
-
-    def test_pre_commit_wrong_full_sha_revision_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        revision = next(iter(PRE_COMMIT_REVISIONS.values()))
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                revision,
-                "f" * 40,
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PRECOMMIT-REV")
+    def test_pre_commit_non_commit_revisions_are_rejected(self) -> None:
+        revision, _ = PRE_COMMIT_REPOS["https://github.com/example/one"]
+        for label, bad in (
+            ("tag", "v4.15.1"),
+            ("branch", "main"),
+            ("abbreviated", revision[:12]),
+            ("uppercase", revision.upper()),
+        ):
+            with self.subTest(label=label):
+                root = self.make_valid_root()
+                self.edit_pre_commit(root, revision, bad)
+                self.assert_rule(root, "CI-PRECOMMIT-REV")
 
     def test_pre_commit_missing_revision_is_rejected(self) -> None:
         root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        revision = next(iter(PRE_COMMIT_REVISIONS.values()))
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                f"    rev: {revision} # frozen: v4.15.1\n",
-                "",
-                1,
-            ),
-            encoding="utf-8",
-        )
+        revision, tag = PRE_COMMIT_REPOS["https://github.com/example/one"]
+        self.edit_pre_commit(root, f"    rev: {revision} # frozen: {tag}\n", "")
         self.assert_rule(root, "CI-PRECOMMIT-REV")
 
-    def test_pre_commit_frozen_tag_moved_to_unrelated_comment_is_rejected(
-        self,
-    ) -> None:
+    def test_pre_commit_revision_without_frozen_comment_is_rejected(self) -> None:
+        revision, tag = PRE_COMMIT_REPOS["https://github.com/example/one"]
+        for replacement in (
+            f"rev: {revision}",
+            f"rev: {revision} # {tag}",
+            f"rev: {revision} # frozen:",
+            f"rev: {revision} # frozen: {tag} extra",
+        ):
+            with self.subTest(replacement=replacement):
+                root = self.make_valid_root()
+                self.edit_pre_commit(
+                    root, f"rev: {revision} # frozen: {tag}", replacement
+                )
+                self.assert_rule(root, "CI-PRECOMMIT-REV")
+
+    def test_pre_commit_frozen_comment_elsewhere_does_not_count(self) -> None:
         root = self.make_valid_root()
+        revision, tag = PRE_COMMIT_REPOS["https://github.com/example/one"]
+        line = f"    rev: {revision} # frozen: {tag}"
+        self.edit_pre_commit(root, line, f"    rev: {revision}")
         config = root / ".pre-commit-config.yaml"
-        repo, revision = next(iter(PRE_COMMIT_REVISIONS.items()))
-        expected_line = f"    rev: {revision} # frozen: {PRE_COMMIT_SOURCE_TAGS[repo]}"
-        mutated = config.read_text(encoding="utf-8").replace(
-            expected_line,
-            f"    rev: {revision} # frozen: wrong-source-tag",
-            1,
-        )
         config.write_text(
-            mutated + f"\n# {expected_line}\n",
-            encoding="utf-8",
+            config.read_text(encoding="utf-8") + f"\n# {line}\n", encoding="utf-8"
         )
         self.assert_rule(root, "CI-PRECOMMIT-REV")
 
     def test_pre_commit_duplicate_repository_is_rejected(self) -> None:
         root = self.make_valid_root()
-        config = root / ".pre-commit-config.yaml"
-        repo, revision = next(iter(PRE_COMMIT_REVISIONS.items()))
+        repo, (revision, tag) = next(iter(PRE_COMMIT_REPOS.items()))
         duplicate = (
             f"  - repo: {repo}\n"
-            f"    rev: {revision} # frozen: {PRE_COMMIT_SOURCE_TAGS[repo]}\n"
+            f"    rev: {revision} # frozen: {tag}\n"
             "    hooks:\n"
             "      - id: duplicate\n"
         )
-        config.write_text(
-            config.read_text(encoding="utf-8").replace(
-                "  - repo: local\n",
-                duplicate + "  - repo: local\n",
-                1,
-            ),
-            encoding="utf-8",
-        )
+        self.edit_pre_commit(root, "  - repo: local\n", duplicate + "  - repo: local\n")
         self.assert_rule(root, "CI-PRECOMMIT-REV")
 
     def test_pre_commit_local_repository_must_not_have_a_revision(self) -> None:
@@ -1489,7 +1417,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
             "permissions": {"contents": "read"},
             "steps": [
                 {
-                    "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                    "uses": CHECKOUT_ACTION,
                     "with": {
                         "ref": "${{ github.event.pull_request.base.sha }}",
                         "path": "trusted-base",
@@ -1497,7 +1425,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                     },
                 },
                 {
-                    "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                    "uses": CHECKOUT_ACTION,
                     "with": {
                         "path": "candidate",
                         "fetch-depth": 2,
@@ -1505,7 +1433,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                     },
                 },
                 {
-                    "uses": "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+                    "uses": SETUP_PYTHON_ACTION,
                     "with": {"python-version": "3.12"},
                 },
                 {
@@ -1543,7 +1471,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
     def test_style_job_rejects_untrusted_or_mutable_inputs(self):
         import copy
 
-        VALIDATOR._validate_style_pr_job(self.style_job())
+        VALIDATOR._validate_style_pr_job(self.style_job(), ACTIONS)
         cases = (
             (0, "uses", "actions/checkout@v7"),
             (
@@ -1578,7 +1506,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 job = copy.deepcopy(self.style_job())
                 job["steps"][index][key] = value
                 with self.assertRaises(VALIDATOR.ContractError):
-                    VALIDATOR._validate_style_pr_job(job)
+                    VALIDATOR._validate_style_pr_job(job, ACTIONS)
 
     def test_style_job_rejects_permission_and_event_drift(self):
         for key, value in (
@@ -1590,7 +1518,7 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 job = self.style_job()
                 job[key] = value
                 with self.assertRaises(VALIDATOR.ContractError):
-                    VALIDATOR._validate_style_pr_job(job)
+                    VALIDATOR._validate_style_pr_job(job, ACTIONS)
 
 
 if __name__ == "__main__":

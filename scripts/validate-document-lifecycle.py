@@ -48,6 +48,7 @@ from document_lifecycle import (
     LifecycleDocument,
     LifecycleEvidenceContext,
     LifecycleEvidenceDocument,
+    LOCAL_CONTRACT_EVIDENCE_GAP,
     LifecycleRename,
     MigrationLifecycleEvents,
     RETIRED_DOCUMENT_TYPES,
@@ -4182,6 +4183,7 @@ def _admit_cumulative_create_diagnostics(
     admitted_indices: set[int] = set()
     proved_paths: set[PurePosixPath] = set()
     generation_copy_paths: set[PurePosixPath] = set()
+    generation_copy_blobs: dict[PurePosixPath, str] = {}
     try:
         if mode != "staged" and registry.migration_admission is not None:
             parent = history_base
@@ -4192,13 +4194,18 @@ def _admit_cumulative_create_diagnostics(
                     9,
                     10,
                 ):
-                    generation_copy_paths.update(
-                        _generation_admission_paths(
-                            after_registry,
-                            before_registry,
-                            cache._snapshot(parent)[0],
-                            cache._snapshot(commit)[0],
-                        )
+                    admitted = _generation_admission_paths(
+                        after_registry,
+                        before_registry,
+                        cache._snapshot(parent)[0],
+                        cache._snapshot(commit)[0],
+                    )
+                    generation_copy_paths.update(admitted)
+                    commit_blobs = _tree_blob_map(root, commit)
+                    generation_copy_blobs.update(
+                        (path, commit_blobs[path])
+                        for path in admitted
+                        if path in commit_blobs
                     )
                 parent = commit
         for index, diagnostic in candidates:
@@ -4222,10 +4229,21 @@ def _admit_cumulative_create_diagnostics(
                 proved_paths.add(diagnostic.path)
     except _CumulativeHistoryBudgetExceeded:
         return tuple(diagnostics)
+    # New-work guards do not apply to unchanged sanctioned generation bytes.
+    # ponytail: only reached when a create candidate exists in the range.
+    boundary_paths = {
+        path
+        for path in generation_copy_paths
+        if proposed_blobs.get(path) == generation_copy_blobs.get(path)
+    }
     return tuple(
         diagnostic
         for index, diagnostic in enumerate(diagnostics)
         if index not in admitted_indices
+        and not (
+            diagnostic.path in boundary_paths
+            and diagnostic.evidence_gap == LOCAL_CONTRACT_EVIDENCE_GAP
+        )
     )
 
 

@@ -48,15 +48,14 @@
     },
     "lanes": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 4,
       "uniqueItems": true,
       "items": {
         "enum": [
           "affected",
           "staged",
           "message/manual",
-          "remote/live",
-          "inventory"
+          "remote/live"
         ]
       }
     },
@@ -70,7 +69,6 @@
     "evidenceLanes": {
       "const": [
         "repo-static",
-        "ci",
         "remote/live"
       ]
     },
