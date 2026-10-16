@@ -107,6 +107,81 @@
       "expectedSurface": "release-tooling"
     },
     {
+      "name": "cluster-gate-script",
+      "path": "scripts/validate-vault-eso-contracts.py",
+      "expectedSurface": "cluster-gate-scripts"
+    },
+    {
+      "name": "cluster-gate-platform-checker",
+      "path": "scripts/validation/platform/assurance.py",
+      "expectedSurface": "cluster-gate-scripts"
+    },
+    {
+      "name": "archive-script",
+      "path": "scripts/archive_validation.py",
+      "expectedSurface": "archive-scripts"
+    },
+    {
+      "name": "tooling-script",
+      "path": "scripts/provider_write_guard.py",
+      "expectedSurface": "tooling-scripts"
+    },
+    {
+      "name": "lifecycle-module-reader-test",
+      "path": "tests/test_document_lifecycle_cumulative_history.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-gate-runner",
+      "path": "scripts/run-document-contract-tests.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-git-fixture",
+      "path": "tests/git_fixture.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-archive-generation-fixture",
+      "path": "tests/archive_generation_fixture.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "lifecycle-archive-cutover-helper",
+      "path": "tests/test_document_lifecycle_archive_cutover.py",
+      "expectedSurface": "shared-document-history-readers"
+    },
+    {
+      "name": "actions-security-validator",
+      "path": "scripts/validate-github-actions-security.py",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
+      "name": "actions-security-test",
+      "path": "tests/test_validate_github_actions_security.py",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
+      "name": "actions-security-fixture",
+      "path": "tests/fixtures/github-actions-security.json",
+      "expectedSurface": "ci-metadata-contract"
+    },
+    {
+      "name": "shared-import-stays-broad",
+      "path": "scripts/validation/repository/bounded_io.py",
+      "expectedSurface": "scripts"
+    },
+    {
+      "name": "unknown-script-stays-broad",
+      "path": "scripts/new-unclassified-tool.py",
+      "expectedSurface": "scripts"
+    },
+    {
+      "name": "validation-mutation-helper",
+      "path": "tests/affected_surface_mutations.py",
+      "expectedSurface": "validation-surface-contract"
+    },
+    {
       "name": "secrets",
       "path": "secrets/README.md",
       "expectedSurface": "readme-router-protected"
@@ -256,6 +331,7 @@
         "validators": [
           "affected-surface-contract",
           "document-contract-registry",
+          "document-contract-tests",
           "document-lifecycle",
           "links-and-owners",
           "markdown-profiles",
@@ -329,6 +405,145 @@
           "knowledge-surface",
           "links-and-owners",
           "markdown-profiles",
+          "repository-quality"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "cluster-gate-script-selects-its-validator",
+      "lane": "affected",
+      "paths": [
+        "scripts/validate-vault-eso-contracts.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "agent-governance",
+          "gitops-change-set",
+          "gitops-structure",
+          "infrastructure-contracts",
+          "k8s-manifests",
+          "platform-assurance",
+          "policy-gates",
+          "repository-quality",
+          "secret-handling",
+          "vault-eso-contracts"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "archive-script-selects-archive-gates",
+      "lane": "affected",
+      "paths": [
+        "scripts/archive_validation.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "agent-governance",
+          "archive-contract-tests",
+          "archive-integrity",
+          "document-contract-tests",
+          "document-lifecycle",
+          "links-and-owners",
+          "repository-quality"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "tooling-script-skips-cluster-and-archive-gates",
+      "lane": "affected",
+      "paths": [
+        "scripts/provider_write_guard.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "agent-governance",
+          "repository-quality"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "unknown-script-keeps-broad-gates",
+      "lane": "affected",
+      "paths": [
+        "scripts/new-unclassified-tool.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "agent-governance",
+          "archive-contract-tests",
+          "gitops-structure",
+          "infrastructure-contracts",
+          "k8s-manifests",
+          "policy-gates",
+          "repository-quality",
+          "secret-handling"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "test-catch-all-skips-script-only-gates",
+      "lane": "affected",
+      "paths": [
+        "tests/test_k8s_pre_edit_hook.py"
+      ],
+      "expected": {
+        "validators": [
+          "archive-contract-tests",
+          "repository-quality"
+        ],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "lifecycle-module-selects-document-contract-gate",
+      "lane": "staged",
+      "paths": [
+        "tests/test_completed_state_migration.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "archive-contract-tests",
+          "archive-integrity",
+          "document-contract-registry",
+          "document-contract-tests",
+          "document-lifecycle",
+          "links-and-owners",
+          "markdown-profiles",
+          "repository-quality",
+          "selected-nonstyle",
+          "selected-style"
+        ],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "actions-security-validator-selects-its-gate",
+      "lane": "affected",
+      "paths": [
+        "scripts/validate-github-actions-security.py"
+      ],
+      "expected": {
+        "validators": [
+          "affected-surface-contract",
+          "ci-python-contract",
+          "github-actions-security",
           "repository-quality"
         ],
         "protectedLevel": "protected",

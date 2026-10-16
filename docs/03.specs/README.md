@@ -87,6 +87,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0115-r10-local-remediation/
 ├── 0116-independent-review-gate/
 ├── 0117-local-qa-rightsizing/
+├── 0118-qa-phase-two/
 └── 0119-ingress-controller-identity/
 ```
 
@@ -103,6 +104,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [r10 Local Governance and Delivery Remediation](./0115-r10-local-remediation/)은 r10의 완료 증적과 현행 거버넌스·문서·검증·전달·GitOps 범위의 r13 후속 작업(SPEC-0115-TSK-0002)을 소유한다.
 [Independent Review Merge Gate](./0116-independent-review-gate/)는 로컬 독립 리뷰를 리뷰 App의 필수 check로 게시해 PR이 고친 workflow의 check 위조를 막는 계약을 소유한다.
 [Local QA Rightsizing](./0117-local-qa-rightsizing/)은 로컬 QA의 과잉·중복·상충·현행 불일치 검사 정리와 main에서 실패하던 테스트 복구를 소유한다.
+[Local QA Phase Two](./0118-qa-phase-two/)는 workflow 검사 단일 소유, 좁힌 script·test surface와 lifecycle 모듈 gate를 소유한다.
 [Ingress Controller Identity in Validators](./0119-ingress-controller-identity/)는 검증기의 ingress controller 식별자를 한 곳에 선언하고 중복 shell 검사를 정리하는 계약을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는

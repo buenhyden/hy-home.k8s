@@ -65,13 +65,14 @@ class DocumentScopeSelectionTests(unittest.TestCase):
 
     def test_document_only_paths_skip_unrelated_product_gates(self) -> None:
         affected = ROUTES.select_paths(CONTRACT, DOCUMENT_READERS, "affected")
-        self.assertEqual(set(affected["validators"]), DOCUMENT_GATES)
+        readers = DOCUMENT_GATES | {"document-contract-tests"}
+        self.assertEqual(set(affected["validators"]), readers)
         self.assertEqual(affected["protectedLevel"], "protected")
 
         staged = ROUTES.select_paths(CONTRACT, DOCUMENT_READERS, "staged")
         self.assertEqual(
             set(staged["validators"]),
-            DOCUMENT_GATES | {"selected-nonstyle", "selected-style"},
+            readers | {"selected-nonstyle", "selected-style"},
         )
 
     def test_shared_history_readers_keep_archive_contract_guards(self) -> None:
@@ -83,7 +84,8 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 )
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
                 self.assertEqual(
-                    set(selected["validators"]), DOCUMENT_GATES | ARCHIVE_GATES
+                    set(selected["validators"]),
+                    DOCUMENT_GATES | ARCHIVE_GATES | {"document-contract-tests"},
                 )
                 self.assertNotIn("k8s-manifests", selected["validators"])
 

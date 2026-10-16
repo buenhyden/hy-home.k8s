@@ -163,6 +163,76 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         self.assertNotIn("archive-contract-tests", form["validators"])
         self.assertIn("document-contract-registry", form["validators"])
 
+    def test_document_contract_tests_follow_their_real_inputs(self) -> None:
+        for path in (
+            "scripts/document_contracts.py",
+            "scripts/run-document-contract-tests.py",
+            "tests/test_task_acceptance_contract.py",
+            "tests/git_fixture.py",
+            "tests/archive_generation_fixture.py",
+            "tests/test_document_lifecycle_archive_cutover.py",
+            "scripts/archive_recovery.py",
+            "scripts/validate-markdown-profiles.py",
+            "docs/99.templates/registry.json",
+            "docs/99.templates/templates/specs/task.template.md",
+        ):
+            for lane in ("affected", "staged"):
+                with self.subTest(path=path, lane=lane):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertIn("document-contract-tests", selected["validators"])
+        for path in (
+            "docs/03.specs/README.md",
+            "scripts/provider_write_guard.py",
+            "tests/test_release.py",
+            "tests/test_archive_dispositions.py",
+        ):
+            with self.subTest(unrelated=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "staged", ROOT
+                )
+                self.assertNotIn("document-contract-tests", selected["validators"])
+
+    def test_lifecycle_helpers_keep_archive_and_document_gates(self) -> None:
+        for path in (
+            "tests/git_fixture.py",
+            "tests/archive_generation_fixture.py",
+            "tests/test_document_lifecycle_archive_cutover.py",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertTrue(
+                    {"archive-contract-tests", "document-contract-tests"}
+                    <= set(selected["validators"])
+                )
+        for path in (
+            "scripts/archive_validation.py",
+            "scripts/archive_recovery.py",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertTrue(
+                    {"document-lifecycle", "links-and-owners"}
+                    <= set(selected["validators"])
+                )
+
+    def test_actions_security_inputs_select_their_gate(self) -> None:
+        for path in (
+            "scripts/validate-github-actions-security.py",
+            "tests/test_validate_github_actions_security.py",
+            "tests/fixtures/github-actions-security.json",
+        ):
+            with self.subTest(path=path):
+                selected = self.validator.select_paths(
+                    self.contract, [path], "affected", ROOT
+                )
+                self.assertIn("github-actions-security", selected["validators"])
+
     def test_purpose_checks_follow_their_changed_surfaces_without_full_sweep(self):
         cases = (
             (
@@ -173,7 +243,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             ("scripts/validate-pr-metadata.py", {"ci-python-contract"}),
             ("scripts/validate-ci-python-contract.py", {"ci-python-contract"}),
             ("tests/test_validate_ci_python_contract.py", {"ci-python-contract"}),
-            ("tests/test_ci_qa_workflow.py", {"ci-python-contract"}),
+            ("tests/test_ci_branch_metadata.py", {"ci-python-contract"}),
             (
                 "docs/98.archive/completed/03.specs/route-probe/spec.md",
                 {"archive-integrity"},
@@ -240,6 +310,28 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         )
         self.assertIn("k8s-manifests", generic_script["validators"])
         self.assertIn("archive-contract-tests", generic_test["validators"])
+
+    def test_narrowed_script_surfaces_do_not_select_unrelated_gates(self) -> None:
+        cluster = {
+            "gitops-structure",
+            "infrastructure-contracts",
+            "k8s-manifests",
+            "policy-gates",
+            "secret-handling",
+        }
+        archive = {"archive-contract-tests", "archive-integrity"}
+        for path, forbidden in (
+            ("scripts/provider_write_guard.py", cluster | archive),
+            ("scripts/archive_validation.py", cluster),
+            ("scripts/validate-vault-eso-contracts.py", archive),
+            ("tests/test_k8s_pre_edit_hook.py", cluster | {"agent-governance"}),
+        ):
+            for lane in ("affected", "staged"):
+                with self.subTest(path=path, lane=lane):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertFalse(forbidden & set(selected["validators"]))
 
     def test_validation_routing_cases_keep_their_existing_owner(self) -> None:
         for path in (

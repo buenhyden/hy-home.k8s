@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate GitHub Actions identities, permissions, and workflow shapes."""
+"""Validate GitHub Actions identities, permissions, timeouts, and workflow shapes."""
 
 from __future__ import annotations
 
@@ -18,6 +18,15 @@ REMOTE_REF = re.compile(r"^[^\s/@]+/[^\s@]+(?:/[^\s@]+)*@([0-9a-f]{40})$")
 DOCKER_REF = re.compile(r"^docker://[^\s@]+@sha256:([0-9a-f]{64})$")
 VERSION_COMMENT = re.compile(r"#\s*(v?[0-9]+(?:\.[0-9]+){0,2})\s*$")
 USES_LINE = re.compile(r"^\s*(?:-\s*)?uses\s*:\s*(?P<value>.+?)\s*$")
+FORBIDDEN_COMMANDS = (
+    "kubectl apply",
+    "kubectl patch",
+    "argocd app sync",
+    "argocd app set",
+    "vault kv",
+    "docker push",
+    "git push",
+)
 ALLOWED_JOB_WRITES = {
     ("greetings.yml", "greeting"): {"issues", "pull-requests"},
     ("labeler.yml", "label"): {"pull-requests"},
@@ -158,14 +167,13 @@ def _validate_uses(path: Path, data: dict, lines: list[str]) -> list[str]:
     return errors
 
 
-def _validate_zizmor(path: Path, data: dict) -> list[str]:
-    rules = data.get("rules")
-    if not isinstance(rules, dict):
-        return []
-    unpinned = rules.get("unpinned-uses")
-    if isinstance(unpinned, dict) and unpinned.get("disable") is True:
-        return [_diagnostic(path, "unpinned-uses suppression is forbidden")]
-    return []
+def _validate_live_mutations(path: Path, lines: list[str]) -> list[str]:
+    text = "\n".join(lines)
+    return [
+        _diagnostic(path, f"forbidden live mutation or publish command {command}")
+        for command in FORBIDDEN_COMMANDS
+        if command in text
+    ]
 
 
 def _validate_permissions(path: Path, data: dict) -> list[str]:
@@ -214,6 +222,8 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
         if not isinstance(job, dict):
             errors.append(_diagnostic(job_path, "workflow job must be a mapping"))
             continue
+        if "timeout-minutes" not in job:
+            errors.append(_diagnostic(job_path, "job must declare timeout-minutes"))
         if "steps" in job:
             steps = job["steps"]
             if not isinstance(steps, list):
@@ -251,11 +261,13 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
 
 
 def validate_workflow(path: Path, data: dict, lines: list[str]) -> list[str]:
-    """Validate one parsed workflow or the repository zizmor configuration."""
+    """Validate one parsed workflow."""
 
-    if path.name in {"zizmor.yml", "zizmor.yaml"}:
-        return _validate_zizmor(path, data)
-    return _validate_permissions(path, data) + _validate_uses(path, data, lines)
+    return (
+        _validate_permissions(path, data)
+        + _validate_uses(path, data, lines)
+        + _validate_live_mutations(path, lines)
+    )
 
 
 def _load_yaml(path: Path) -> tuple[dict | None, list[str], str | None]:
@@ -368,32 +380,6 @@ def validate_repository(root: Path) -> list[str]:
         assert data is not None
         errors.extend(validate_workflow(relative_path, data, lines))
 
-    for filename in ("zizmor.yml", "zizmor.yaml"):
-        absolute_path = github_dir / filename
-        try:
-            absolute_path.lstat()
-        except FileNotFoundError:
-            continue
-        except OSError:
-            errors.append(
-                _diagnostic(Path(".github") / filename, "unable to inspect YAML")
-            )
-            continue
-        relative_path = Path(".github") / filename
-        if not _is_real_file(absolute_path):
-            errors.append(
-                _diagnostic(
-                    relative_path,
-                    "zizmor configuration must be a non-symlink regular file",
-                )
-            )
-            continue
-        data, lines, load_error = _load_yaml(absolute_path)
-        if load_error is not None:
-            errors.append(_diagnostic(relative_path, load_error))
-            continue
-        assert data is not None
-        errors.extend(validate_workflow(relative_path, data, lines))
     return errors
 
 

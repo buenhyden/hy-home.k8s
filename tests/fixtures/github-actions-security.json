@@ -10,7 +10,9 @@
     {"name": "valid-allowlisted-job", "workflow": "greetings.yml", "job": "greeting", "permissions": {"issues": "write", "pull-requests": "write"}, "expected": []},
     {"name": "unlisted-write", "workflow": "ci.yml", "job": "build", "permissions": {"pages": "write"}, "expected": ["write permission is not allowlisted"]},
     {"name": "write-all", "permissions": "write-all", "expected": ["write-all is forbidden"]},
-    {"name": "unpinned-suppression", "zizmor": {"rules": {"unpinned-uses": {"disable": true}}}, "expected": ["unpinned-uses suppression is forbidden"]}
+    {"name": "live-mutation-kubectl-apply", "run": "kubectl apply -f x.yaml", "expected": ["forbidden live mutation or publish command kubectl apply"]},
+    {"name": "live-mutation-git-push", "run": "git push origin HEAD", "expected": ["forbidden live mutation or publish command git push"]},
+    {"name": "missing-timeout", "timeout": false, "expected": ["job must declare timeout-minutes"]}
   ],
   "repositoryBoundaryCases": [
     {"name": "missing-root", "setup": "missing-root", "expected": ["repository root must be an existing non-symlink directory"]},
@@ -21,8 +23,7 @@
     {"name": "workflows-symlink", "setup": "workflows-symlink", "expected": ["workflow directory must be an existing non-symlink directory"]},
     {"name": "empty-workflows", "setup": "empty-workflows", "expected": ["workflow directory must contain at least one regular workflow YAML file"]},
     {"name": "workflow-file-symlink", "setup": "workflow-file-symlink", "expected": ["workflow YAML must be a non-symlink regular file"]},
-    {"name": "workflow-nonregular-file", "setup": "workflow-nonregular-file", "expected": ["workflow YAML must be a non-symlink regular file"]},
-    {"name": "zizmor-symlink", "setup": "zizmor-symlink", "expected": ["zizmor configuration must be a non-symlink regular file"]}
+    {"name": "workflow-nonregular-file", "setup": "workflow-nonregular-file", "expected": ["workflow YAML must be a non-symlink regular file"]}
   ],
   "requiredWriteCases": [
     {"name": "greetings-exact-writes", "workflow": "greetings.yml", "job": "greeting", "mutation": "exact-writes", "expected": []},

@@ -11,8 +11,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import yaml
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts/validate-github-actions-security.py"
@@ -50,6 +48,7 @@ INTERNAL_WORKFLOW_SHAPE_CASES = (
         "jobs:\n"
         "  build:\n"
         "    runs-on: ubuntu-latest\n"
+        "    timeout-minutes: 5\n"
         "    steps:\n"
         "      task:\n"
         "        run: 'true'\n",
@@ -57,7 +56,8 @@ INTERNAL_WORKFLOW_SHAPE_CASES = (
     ),
     (
         "step-scalar",
-        "jobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - not-a-step\n",
+        "jobs:\n  build:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n"
+        "    steps:\n      - not-a-step\n",
         ["job step must be a mapping"],
     ),
 )
@@ -89,18 +89,16 @@ def _write_self_test_case(root: Path, case: dict) -> None:
         if "permissions" in case:
             lines.append("    permissions:")
             lines.extend(_mapping_lines(case["permissions"], 6))
-        lines.extend(["    runs-on: ubuntu-latest", "    steps:"])
+        lines.append("    runs-on: ubuntu-latest")
+        if case.get("timeout", True):
+            lines.append("    timeout-minutes: 5")
+        lines.append("    steps:")
         if "uses" in case:
             suffix = f" # {case['comment']}" if case.get("comment") else ""
             lines.append(f"      - uses: {case['uses']}{suffix}")
         else:
-            lines.append("      - run: 'true'")
+            lines.append(f"      - run: '{case.get('run', 'true')}'")
     workflow_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-    if "zizmor" in case:
-        (root / ".github" / "zizmor.yml").write_text(
-            yaml.safe_dump(case["zizmor"], sort_keys=False), encoding="utf-8"
-        )
 
 
 def _write_workflow_shape_case(root: Path, body: str) -> None:
@@ -181,11 +179,6 @@ def _run_repository_boundary_case(validator, temp_root: Path, case: dict) -> lis
         (workflow_dir / "linked.yml").symlink_to(external / "linked.yml")
     elif setup == "workflow-nonregular-file":
         (workflow_dir / "directory.yml").mkdir()
-    elif setup == "zizmor-symlink":
-        (external / "zizmor.yml").write_text(
-            "rules:\n  unpinned-uses:\n    disable: true\n", encoding="utf-8"
-        )
-        (github_dir / "zizmor.yml").symlink_to(external / "zizmor.yml")
     else:
         raise ValueError(f"unknown repository boundary setup: {setup}")
     return validator.validate_repository(case_root)
@@ -206,9 +199,11 @@ def _write_required_write_case(validator, root: Path, case: dict) -> None:
         "jobs:",
     ]
     if mutation == "missing-job":
-        lines.append("  other: {runs-on: ubuntu-latest, steps: []}")
+        lines.append("  other: {runs-on: ubuntu-latest, timeout-minutes: 5, steps: []}")
     else:
-        lines.extend([f"  {job_id}:", "    runs-on: ubuntu-latest"])
+        lines.extend(
+            [f"  {job_id}:", "    runs-on: ubuntu-latest", "    timeout-minutes: 5"]
+        )
         if mutation != "missing-permissions":
             permissions = {key: "write" for key in sorted(required)}
             if mutation == "extra-read":
@@ -237,6 +232,7 @@ def _write_uses_shape_case(root: Path, raw_uses: str) -> None:
         "jobs:\n"
         "  build:\n"
         "    runs-on: ubuntu-latest\n"
+        "    timeout-minutes: 5\n"
         "    steps:\n"
         f"      - uses: {raw_uses}\n",
         encoding="utf-8",
