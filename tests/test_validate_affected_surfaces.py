@@ -241,6 +241,28 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         self.assertIn("k8s-manifests", generic_script["validators"])
         self.assertIn("archive-contract-tests", generic_test["validators"])
 
+    def test_narrowed_script_surfaces_do_not_select_unrelated_gates(self) -> None:
+        cluster = {
+            "gitops-structure",
+            "infrastructure-contracts",
+            "k8s-manifests",
+            "policy-gates",
+            "secret-handling",
+        }
+        archive = {"archive-contract-tests", "archive-integrity"}
+        for path, forbidden in (
+            ("scripts/provider_write_guard.py", cluster | archive),
+            ("scripts/archive_validation.py", cluster),
+            ("scripts/validate-vault-eso-contracts.py", archive),
+            ("tests/test_k8s_pre_edit_hook.py", cluster | {"agent-governance"}),
+        ):
+            for lane in ("affected", "staged"):
+                with self.subTest(path=path, lane=lane):
+                    selected = self.validator.select_paths(
+                        self.contract, [path], lane, ROOT
+                    )
+                    self.assertFalse(forbidden & set(selected["validators"]))
+
     def test_validation_routing_cases_keep_their_existing_owner(self) -> None:
         for path in (
             "tests/test_validate_affected_surfaces.py",
