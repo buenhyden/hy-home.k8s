@@ -1,10 +1,10 @@
 ---
 title: "Ingress-NGINX Replacement with Traefik"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-20"
 layer: "architecture"
 artifact_id: "ADR-0050"
 ---
@@ -62,7 +62,8 @@ redirects. Gateway API is deferred until the Istio upgrade in
 
 - Replace ingress-nginx with Traefik 3.7.15 or later, through the `traefik` Helm
   chart (v42 or later), in a dedicated namespace with Istio sidecar injection
-  and the restricted Pod Security profile that the current namespace uses.
+  and the Pod Security labels of the current namespace: `audit` and `warn` at
+  `baseline`, per ADR-0028, with a pod-level `RuntimeDefault` seccomp profile.
 - Enable only the `kubernetesIngressNGINX` provider, and disable the plain
   `kubernetesIngress` and `kubernetesCRD` providers. Keep `IngressClass`
   `nginx` (controller `k8s.io/ingress-nginx`) so that no `Ingress` changes.
@@ -72,12 +73,17 @@ redirects. Gateway API is deferred until the Istio upgrade in
 - Migrate side by side. Run Traefik next to ingress-nginx and verify each route,
   including the adminer mesh path and a Rollout canary step. Then move the
   NodePorts and remove the ingress-nginx Application and namespace.
-  - During the overlap, the ingress-nginx release keeps owning `IngressClass`
-    `nginx`. Traefik does not create or manage that class, so Argo CD sees one
-    owner. Traefik is reached through a temporary Service on other ports for
-    per-route checks, because NodePorts `30080` and `30443` stay with
-    ingress-nginx until the cutover.
-  - At the cutover, the Traefik release takes over the `IngressClass`.
+  - Before the overlap, `IngressClass` `nginx` moves to a neutral manifest
+    that neither controller's chart renders, and the ingress-nginx admission
+    webhook is turned off. Argo CD then sees one owner throughout.
+  - During the overlap, Traefik creates no class and publishes no Ingress
+    status. It is reached only through its ClusterIP Service for per-route
+    checks, because NodePorts `30080` and `30443` and the MetalLB address stay
+    with ingress-nginx until the cutover.
+  - At the cutover, the ingress-nginx Service is pruned before the Traefik
+    Service can take the NodePorts and the address, so a short outage is
+    expected. [SPEC-0121](../../03.specs/0121-traefik-ingress-cutover/spec.md)
+    owns the order.
   - The apex redirect Ingresses in
     `gitops/platform/ingress-routes/apex-redirects.yaml` live in the
     `ingress-nginx` namespace and use Service `ingress-nginx-controller` as
@@ -96,8 +102,7 @@ redirects. Gateway API is deferred until the Istio upgrade in
 ## Explicit Non-goals
 
 - Adopting Gateway API, `HTTPRoute` or the Istio ingress gateway (revisit after
-  the Istio upgrade). This deferral stands whether or not ADR-0051 is accepted
-  in its current form.
+  the Istio upgrade of ADR-0051).
 - Upgrading Istio (ADR-0051).
 - Changing host names, TLS issuance, the MetalLB pool or the serverlb address.
 - Adding annotations or Traefik CRD routing.
@@ -128,7 +133,6 @@ redirects. Gateway API is deferred until the Istio upgrade in
   - `gitops/README.md`;
   - the namespace manifest;
   - the PeerAuthentication comment;
-  - the NetworkPolicies;
   - the operations policies.
 
 ## Alternatives
@@ -162,5 +166,5 @@ The research behind this decision was read on 2026-10-16. Sources:
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | N/A — the cutover Spec is not written yet; it will link this decision |
+| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | [SPEC-0121](../../03.specs/0121-traefik-ingress-cutover/spec.md) |
 | [ADR-0051](./0051-istio-supported-release-upgrade.md) | Not replaced. Gateway API adoption is deferred to a decision after that upgrade | N/A — no Spec implements the deferral |
