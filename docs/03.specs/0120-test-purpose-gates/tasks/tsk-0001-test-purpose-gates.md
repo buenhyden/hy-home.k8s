@@ -3,7 +3,7 @@ title: "Test Module Purpose Gates Execution"
 version: "0.1.0"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-10-19"
+updated: "2026-10-20"
 layer: "specs"
 artifact_id: "SPEC-0120-TSK-0001"
 parent_ids: ["SPEC-0120-PLAN-0001"]
@@ -32,15 +32,23 @@ fixes, and a registered purpose gate for every unrun test module.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Suite gate runs | `scripts/run-contract-tests.py` for every suite on this branch | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Focused tests | Commit `8cb8980a`: `tests/test_documentation_link_boundary.py`, `tests/test_run_validation_lane.py` | PASS | The placeholder link test now runs the link pass over the two Stage 99 forms only, with the historical owner edges stubbed: those edges only exempt archived links. The module took 263 s and now takes 22 s (35 OK), and the three malformed placeholders still produce `LINK-BROKEN`. The two escaped-descendant tests got wider budgets and an atomic child write. Under 30 busy loops on 12 cores, the three escape tests passed 10 of 10. Idle, the lane module passed 3 of 3 (90 OK) | yes | none |
+| EVD-003 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Selected staged QA | Commit `8cb8980a` with pinned `/tmp/hyhome-r10-validation/bin` first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed | yes | none |
+| EVD-004 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Coverage guard | `test_every_test_module_runs_in_one_gate_selected_by_its_file` before and after the registry change | PASS | 74 subtests failed first; the two direct gates keep their own argv. With 11 suites registered, each of the 76 modules has exactly one gate, and its own file selects that gate in both lanes. The old archive and document runners are removed. `run-contract-tests.py --suite nope` exits 2 with an argparse error | yes | none |
+| EVD-005 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Suite gate runs | `python3 scripts/run-contract-tests.py --root . --suite <id>` for every suite, run serially on the working tree that became commit `774b13bb`, with pinned tools first on `PATH` | PASS | archive: 13 modules, 286 tests, 124 s; archive-validation: 1/86, 430 s; document: 21/325, 225 s; document-lifecycle: 3/71, 98 s; validation-routing: 8/192, 54 s; qa-runner: 1/38, 569 s; ci-metadata: 3/84, 9 s; release: 2/27, 34 s; agent-governance: 5/147, 47 s; tooling: 9/156, 15 s; cluster-gate: 8 modules OK in the foreground | yes | EVD-001 |
+| EVD-006 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selection tests and classification | Commit `774b13bb`: `registry.json`, the fixture, and the selection and registry tests | PASS | `validate-affected-surfaces.py --root .` PASS: 1,361 paths, uncovered 0, ambiguous 0. New surfaces: `validation-routing-scripts`, `qa-runner`, `lane-runner`, `contract-test-runner` and `archive-test-modules`. Two cluster test helpers moved to `cluster-gate-scripts`. A registry edit selects `validation-routing-tests` but not `qa-runner-tests`, and `qa.py` no longer pulls the broad script gates. Every changed fixture expectation adds only the newly intended gate. `test_validate_affected_surfaces`, `test_document_scope_selection`, `test_archive_registry_contract` and `test_validation_profiles` all OK | yes | none |
+| EVD-007 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | First commit attempt on the same index, with pinned tools first on `PATH` and SIGINT reset to default, while another repository's validation loaded the host | FAIL | 24 gates passed. `validation-routing-tests` failed one test, `test_successful_leader_closes_silent_owned_process_group`, which used the shared helper's 2 s timeout and 0.5 s cleanup. The same suite passed on an exported index snapshot, with and without the closed `HOME` and `PATH` | yes | none |
+| EVD-008 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Load test of the bounded-command class | Commit `774b13bb`: the shared `_run_python` defaults widened to 15 s timeout and 3 s cleanup; the per-test overrides from `8cb8980a` removed | PASS | Under 30 busy loops on 12 cores, the bounded-command class failed 5 to 7 tests per run across 9 tests with the old defaults, and 0 to 2 with the new ones. The remaining failures are only the two interrupt-count tests. The lane module passes idle (90 OK, 20 s) | yes | none |
+| EVD-009 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | Commit `774b13bb` with pinned tools first on `PATH` and SIGINT reset to default | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed | yes | EVD-007 |
 
 ## Criterion Acceptance
 
