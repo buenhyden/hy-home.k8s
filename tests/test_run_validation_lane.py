@@ -1004,14 +1004,17 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
 
 
 class BoundedValidationCommandTest(unittest.TestCase):
+    # Wide default budgets: under CPU load a child interpreter can take
+    # seconds to start, and the runner needs time to scan for descendants.
+    # Tests of a timeout or cleanup boundary pass their own short values.
     @staticmethod
     def _run_python(
         source: str,
         *,
-        timeout_seconds: float = 2.0,
+        timeout_seconds: float = 15.0,
         stdout_limit_bytes: int = 128,
         stderr_limit_bytes: int = 128,
-        cleanup_seconds: float = 0.5,
+        cleanup_seconds: float = 3.0,
     ):
         return RUNNER.run_bounded_command(
             [sys.executable, "-I", "-c", source],
@@ -1577,11 +1580,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
             )
             escaped: dict[str, int] = {}
             try:
-                # Wide budgets: under CPU load the escaped child can take
-                # seconds to start, and the runner needs time to scan for it.
-                outcome = self._run_python(
-                    leader_source, timeout_seconds=15.0, cleanup_seconds=3.0
-                )
+                outcome = self._run_python(leader_source)
                 escaped = json.loads(pid_path.read_text(encoding="utf-8"))
 
                 self.assertEqual(outcome.status, "descendant_cleanup")
@@ -1664,11 +1663,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
             )
             escaped: dict[str, int] = {}
             try:
-                # Wide budgets: under CPU load the escaped child can take
-                # seconds to start, and the runner needs time to scan for it.
-                outcome = self._run_python(
-                    leader_source, timeout_seconds=15.0, cleanup_seconds=3.0
-                )
+                outcome = self._run_python(leader_source)
                 escaped = json.loads(pid_path.read_text(encoding="utf-8"))
 
                 self.assertEqual(outcome.status, "descendant_cleanup")

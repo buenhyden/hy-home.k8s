@@ -4,8 +4,8 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
-import re
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
@@ -280,8 +280,11 @@ class FastGateTests(unittest.TestCase):
         runner = gate["argv"][1]
         self.assertFalse(runner.startswith("-"))
         self.assertTrue(runner.startswith("scripts/") and runner.endswith(".py"))
-        source = (ROOT / runner).read_text(encoding="utf-8")
-        modules = re.findall(r'"(tests\.[a-z0-9_]+)"', source)
+        spec = importlib.util.spec_from_file_location("contract_runner", ROOT / runner)
+        module_runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module_runner)
+        suite = gate["argv"][gate["argv"].index("--suite") + 1]
+        modules = module_runner.SUITES[suite]
         self.assertTrue(modules)
         for module in modules:
             with self.subTest(module=module):

@@ -65,9 +65,11 @@
       "id": "archive-contract-tests",
       "argv": [
         "python3",
-        "scripts/run-archive-contract-tests.py",
+        "scripts/run-contract-tests.py",
         "--root",
-        "."
+        ".",
+        "--suite",
+        "archive"
       ],
       "lanes": [
         "affected",
@@ -181,9 +183,11 @@
       "id": "document-contract-tests",
       "argv": [
         "python3",
-        "scripts/run-document-contract-tests.py",
+        "scripts/run-contract-tests.py",
         "--root",
-        "."
+        ".",
+        "--suite",
+        "document"
       ],
       "lanes": [
         "affected",
@@ -194,6 +198,195 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Document lifecycle contract regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "archive-validation-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "archive-validation"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Archive validator regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "document-lifecycle-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "document-lifecycle"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Document lifecycle migration and identity regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "validation-routing-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "validation-routing"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Validation routing and lane runner regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "qa-runner-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "qa-runner"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "QA runner regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "ci-metadata-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "ci-metadata"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "CI metadata and actions security regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "release-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "release"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Release and commit contract regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-governance-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "agent-governance"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Agent governance regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "tooling-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "tooling"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Repository tooling regressions are required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "cluster-gate-tests",
+      "argv": [
+        "python3",
+        "scripts/run-contract-tests.py",
+        "--root",
+        ".",
+        "--suite",
+        "cluster-gate"
+      ],
+      "lanes": [
+        "affected",
+        "staged"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Cluster gate script regressions are required."
       },
       "evidenceLane": "repo-static"
     },
@@ -694,11 +887,11 @@
         "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
+        "external-service-contracts",
         "knowledge-surface",
         "links-and-owners",
         "markdown-profiles",
-        "repository-quality",
-        "external-service-contracts"
+        "repository-quality"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -765,6 +958,7 @@
       ],
       "validators": [
         "agent-governance",
+        "ci-metadata-tests",
         "ci-python-contract",
         "github-actions-security",
         "markdown-profiles",
@@ -821,6 +1015,7 @@
         "document-contract-registry",
         "document-contract-tests",
         "document-lifecycle",
+        "document-lifecycle-tests",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
@@ -1009,6 +1204,7 @@
         }
       ],
       "validators": [
+        "cluster-gate-tests",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -1133,10 +1329,6 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/run-document-contract-tests.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_completed_state_migration.py"
         },
         {
@@ -1154,6 +1346,14 @@
         {
           "kind": "exact",
           "value": "tests/test_document_lifecycle_archive_cutover.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_lifecycle_migration.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_artifact_identity.py"
         }
       ],
       "validators": [
@@ -1163,6 +1363,7 @@
         "document-contract-registry",
         "document-contract-tests",
         "document-lifecycle",
+        "document-lifecycle-tests",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality"
@@ -1216,6 +1417,54 @@
         {
           "kind": "exact",
           "value": "tests/test_document_scope_selection.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_task_summary_derivation.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_evaluation_document_profiles.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_readme_navigation.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_reference_pack_routes.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_native_skill_envelope.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_markdown_render_cache.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_json_schema_validation.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_common_agents_document_routes.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_common_agents_archive_routes.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_strict_cutover.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_document_language.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_documentation_link_boundary.py"
         }
       ],
       "validators": [
@@ -1260,11 +1509,20 @@
         {
           "kind": "exact",
           "value": "tests/test_agent_governance_consumers.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_agent_harness_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_agent_core_cutover.py"
         }
       ],
       "validators": [
         "affected-surface-contract",
         "agent-governance",
+        "agent-governance-tests",
         "repository-quality"
       ],
       "protectedLevel": "protected",
@@ -1283,14 +1541,6 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/qa.py"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/test_qa_runner.py"
-        },
-        {
-          "kind": "exact",
           "value": "tests/test_validate_affected_surfaces.py"
         },
         {
@@ -1300,11 +1550,40 @@
         {
           "kind": "exact",
           "value": "tests/affected_surface_mutations.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validation_profiles.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_affected_surface_migration.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_run_validation_lane.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validation_tooling_ownership.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validation_bounded_io.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_selected_style.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_selected_nonstyle.py"
         }
       ],
       "validators": [
         "affected-surface-contract",
-        "repository-quality"
+        "repository-quality",
+        "validation-routing-tests"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1331,6 +1610,7 @@
       ],
       "validators": [
         "affected-surface-contract",
+        "release-tests",
         "repository-quality"
       ],
       "protectedLevel": "protected",
@@ -1460,6 +1740,7 @@
       ],
       "validators": [
         "affected-surface-contract",
+        "ci-metadata-tests",
         "ci-python-contract",
         "github-actions-security",
         "repository-quality"
@@ -1509,11 +1790,52 @@
         {
           "kind": "regex",
           "value": "^(?!.*(?:^|/)README\\.md$)scripts/validation/platform/.*$"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_check_secret_handling.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_k8s_manifests.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_gitops_change_set.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_vault_eso_contracts.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_platform_assurance.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_platform_ingress.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_infrastructure_tempfiles.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_external_service_contracts.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/gitops_change_set_cases.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/vault_eso_contract_cases.py"
         }
       ],
       "validators": [
         "affected-surface-contract",
         "agent-governance",
+        "cluster-gate-tests",
         "gitops-change-set",
         "gitops-structure",
         "infrastructure-contracts",
@@ -1552,11 +1874,11 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/run-archive-contract-tests.py"
+          "value": "scripts/validate-archive-integrity.py"
         },
         {
           "kind": "exact",
-          "value": "scripts/validate-archive-integrity.py"
+          "value": "tests/test_archive_validation.py"
         }
       ],
       "validators": [
@@ -1564,6 +1886,7 @@
         "agent-governance",
         "archive-contract-tests",
         "archive-integrity",
+        "archive-validation-tests",
         "document-contract-tests",
         "document-lifecycle",
         "links-and-owners",
@@ -1597,10 +1920,6 @@
         },
         {
           "kind": "exact",
-          "value": "scripts/validate-selected-nonstyle.py"
-        },
-        {
-          "kind": "exact",
           "value": "scripts/validation/current_executable_references.py"
         },
         {
@@ -1610,12 +1929,61 @@
         {
           "kind": "exact",
           "value": "scripts/validation/repository/sample_app_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validation/repository/quality.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-workspace-boundary.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-knowledge-surface.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_independent_review.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_prompt_input.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_provider_guard_registry_generation.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_k8s_pre_edit_hook.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_repository_quality_rules.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_repository_form_contracts.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_current_executable_references.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_workspace_boundary.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_validate_knowledge_surface.py"
         }
       ],
       "validators": [
         "affected-surface-contract",
         "agent-governance",
-        "repository-quality"
+        "repository-quality",
+        "tooling-tests"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1625,11 +1993,205 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "validation-routing-scripts",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/select-affected-surfaces.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-affected-surfaces.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-selected-style.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validate-selected-nonstyle.py"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/validation/repository/bounded_io.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "archive-contract-tests",
+        "gitops-structure",
+        "infrastructure-contracts",
+        "k8s-manifests",
+        "policy-gates",
+        "repository-quality",
+        "secret-handling",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Validation routing scripts rerun the broad script gates and their routing regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "qa-runner",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/qa.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_qa_runner.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "qa-runner-tests",
+        "repository-quality",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "The QA entrypoint reruns its runner and routing regressions."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "lane-runner",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/run-validation-lane.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "archive-contract-tests",
+        "gitops-structure",
+        "infrastructure-contracts",
+        "k8s-manifests",
+        "policy-gates",
+        "qa-runner-tests",
+        "repository-quality",
+        "secret-handling",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "The lane runner reruns the broad script gates and the runner regressions that load it."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "contract-test-runner",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/run-contract-tests.py"
+        }
+      ],
+      "validators": [
+        "affected-surface-contract",
+        "agent-governance",
+        "agent-governance-tests",
+        "archive-contract-tests",
+        "archive-validation-tests",
+        "ci-metadata-tests",
+        "cluster-gate-tests",
+        "document-contract-tests",
+        "document-lifecycle-tests",
+        "qa-runner-tests",
+        "release-tests",
+        "repository-quality",
+        "tooling-tests",
+        "validation-routing-tests"
+      ],
+      "protectedLevel": "protected",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "The shared contract test runner reruns every suite it runs."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "archive-test-modules",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_registry_contract.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_citation_decision.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_dispositions.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_disposition_lifecycle.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_catalog_reverification.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_reappraisal.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_generic_migration_recovery.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_current_pin.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_disposition_routes.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_generation_fixture.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_historical_proof.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_integrity.py"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/test_archive_recovery.py"
+        }
+      ],
+      "validators": [
+        "archive-contract-tests",
+        "repository-quality"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Archive contract test modules rerun their suite."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "scripts",
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:archive_(?:dispositions|objects|recovery|validation)|run-archive-contract-tests|validate-archive-integrity)\\.py$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|independent_review|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/run-document-contract-tests\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!scripts/(?:validation/registry\\.json|validation/document_content\\.py|document_authority\\.py|document_contracts\\.py|document_language\\.py|document_lifecycle\\.py|qa\\.py|release\\.py|validate-(?:document-contract-registry|markdown-profiles|links-and-owners|document-lifecycle|pr-metadata|ci-python-contract)\\.py)$)(?!scripts/(?:validate-agent-governance|agent_governance_consumers|agent_registry_loader)\\.py$)(?!scripts/workspace_memory\\.py$)(?!scripts/githooks/(?:pre-commit|commit-msg|pre-push|chained-hook\\.sh)$)(?!scripts/(?:archive_(?:dispositions|objects|recovery|validation)|validate-archive-integrity)\\.py$)(?!scripts/(?:check-secret-handling|render-platform-chart-kinds|validate-(?:gitops-structure|infrastructure-contracts|k8s-manifests|policy-gates))\\.sh$)(?!scripts/validate-(?:gitops-change-set|vault-eso-contracts)\\.py$)(?!scripts/validation/platform/)(?!scripts/(?:commit-message-exceptions|independent_review|prompt-input|provider_write_guard|validate-selected-nonstyle)\\.py$)(?!scripts/validation/(?:current_executable_references|repository/(?:form_contracts|sample_app_contract))\\.py$)(?!scripts/(?:run-contract-tests|run-validation-lane|select-affected-surfaces|validate-affected-surfaces|validate-selected-style|validate-workspace-boundary|validate-knowledge-surface)\\.py$)(?!scripts/validation/repository/(?:bounded_io|quality)\\.py$)(?!scripts/validate-github-actions-security\\.py$)scripts/.*$"
         }
       ],
       "validators": [
@@ -1674,7 +2236,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/(?:fixtures/validation-surfaces\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:test_operations_(?:section|lineage)_contract|test_shared_contract_binding|test_document_scope_selection|test_task_acceptance_boundaries|test_completed_state_migration|test_document_lifecycle_cumulative_history|test_task_acceptance_contract|test_task_execution_contract|test_qa_runner|test_validate_affected_surfaces|test_(?:commit_contracts|release))\\.py$)(?!tests/(?:test_agent_governance(?:_consumers)?|test_validate_agent_registry)\\.py$)(?!tests/(?:test_workspace_memory|test_chained_git_hooks|test_validate_ci_python_contract|test_ci_branch_metadata)\\.py$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|archive_generation_fixture|test_document_lifecycle_archive_cutover|test_validate_github_actions_security)\\.py)$)tests/.*$"
+          "value": "^(?!.*(?:^|/)README\\.md$)(?!tests/test_[^/]*\\.py$)(?!tests/(?:fixtures/validation-surfaces\\.json|affected_surface_mutations\\.py)$)(?!tests/(?:fixtures/github-actions-security\\.json|(?:git_fixture|archive_generation_fixture|gitops_change_set_cases|vault_eso_contract_cases)\\.py)$)tests/.*$"
         }
       ],
       "validators": [
@@ -1764,6 +2326,15 @@
       "ci-python-contract",
       "document-contract-registry",
       "document-contract-tests",
+      "archive-validation-tests",
+      "document-lifecycle-tests",
+      "validation-routing-tests",
+      "qa-runner-tests",
+      "ci-metadata-tests",
+      "release-tests",
+      "agent-governance-tests",
+      "tooling-tests",
+      "cluster-gate-tests",
       "document-lifecycle",
       "external-service-contracts",
       "github-actions-security",
@@ -1791,6 +2362,15 @@
       "ci-python-contract",
       "document-contract-registry",
       "document-contract-tests",
+      "archive-validation-tests",
+      "document-lifecycle-tests",
+      "validation-routing-tests",
+      "qa-runner-tests",
+      "ci-metadata-tests",
+      "release-tests",
+      "agent-governance-tests",
+      "tooling-tests",
+      "cluster-gate-tests",
       "document-lifecycle",
       "external-service-contracts",
       "github-actions-security",

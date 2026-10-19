@@ -85,7 +85,9 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
                 self.assertEqual(
                     set(selected["validators"]),
-                    DOCUMENT_GATES | ARCHIVE_GATES | {"document-contract-tests"},
+                    DOCUMENT_GATES
+                    | ARCHIVE_GATES
+                    | {"document-contract-tests", "document-lifecycle-tests"},
                 )
                 self.assertNotIn("k8s-manifests", selected["validators"])
 
@@ -97,30 +99,41 @@ class DocumentScopeSelectionTests(unittest.TestCase):
         )
         self.assertEqual(
             set(selected["validators"]),
-            {"affected-surface-contract", "repository-quality"},
+            {
+                "affected-surface-contract",
+                "repository-quality",
+                "validation-routing-tests",
+            },
         )
+        # The slow QA runner suite is not paid for registry edits.
+        self.assertNotIn("qa-runner-tests", selected["validators"])
 
-    def test_qa_entrypoint_and_its_regression_have_the_selector_owner(self) -> None:
+    def test_qa_entrypoint_and_its_regression_have_the_runner_owner(self) -> None:
         for path in ("scripts/qa.py", "tests/test_qa_runner.py"):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(CONTRACT, path)
-                self.assertEqual(surface["id"], "validation-surface-contract")
+                self.assertEqual(surface["id"], "qa-runner")
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
-                self.assertEqual(
-                    set(selected["validators"]),
-                    {"affected-surface-contract", "repository-quality"},
+                self.assertTrue(
+                    {
+                        "affected-surface-contract",
+                        "qa-runner-tests",
+                        "validation-routing-tests",
+                    }
+                    <= set(selected["validators"])
                 )
 
     def test_shared_validation_consumers_keep_broad_gate_closure(self) -> None:
-        for path in (
-            "scripts/run-validation-lane.py",
-            "scripts/validate-affected-surfaces.py",
-            "scripts/select-affected-surfaces.py",
+        for path, owner in (
+            ("scripts/run-validation-lane.py", "lane-runner"),
+            ("scripts/validate-affected-surfaces.py", "validation-routing-scripts"),
+            ("scripts/select-affected-surfaces.py", "validation-routing-scripts"),
         ):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(CONTRACT, path)
-                self.assertEqual(surface["id"], "scripts")
+                self.assertEqual(surface["id"], owner)
                 self.assertIn("k8s-manifests", surface["validators"])
+                self.assertIn("validation-routing-tests", surface["validators"])
 
     def test_reader_helpers_have_the_document_gate_owner(self) -> None:
         for path in (
@@ -194,7 +207,6 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 self.assertEqual(surface["id"], "scripts")
                 self.assertIn("k8s-manifests", surface["validators"])
         for path in (
-            "tests/test_k8s_contract.py",
             "tests/test_operations_section_contract.py.backup",
             "tests/test_task_acceptance_contract.py.backup",
         ):
@@ -202,6 +214,10 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 surface = ROUTES.classify_path(CONTRACT, path)
                 self.assertEqual(surface["id"], "tests")
                 self.assertIn("archive-contract-tests", surface["validators"])
+        # A new test module must be routed to its purpose gate, not left on
+        # the catch-all where no gate runs it.
+        with self.assertRaisesRegex(ROUTES.ContractError, "SURFACE-PATH-UNMATCHED"):
+            ROUTES.classify_path(CONTRACT, "tests/test_k8s_contract.py")
 
     def test_memory_and_hook_changes_select_their_own_regressions(self) -> None:
         cases = (
