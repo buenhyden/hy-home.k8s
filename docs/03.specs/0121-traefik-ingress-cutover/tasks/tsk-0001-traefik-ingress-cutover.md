@@ -35,10 +35,10 @@ Traefik side by side, live verification, the cutover and its revert evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Traefik side by side | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Traefik side by side | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
