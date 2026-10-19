@@ -1,10 +1,10 @@
 ---
 title: "Ingress-NGINX Replacement with Traefik"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-20"
 layer: "architecture"
 artifact_id: "ADR-0050"
 ---
@@ -162,5 +162,5 @@ The research behind this decision was read on 2026-10-16. Sources:
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | N/A — the cutover Spec is not written yet; it will link this decision |
+| [ADR-0043](./0043-dedicated-k8s-ingress-router.md) | Replaces only its non-goal that excludes replacing the ingress controller, and its naming of ingress-nginx as the controller. Preserves the dedicated address, NodePort, host and apex redirect contract | [SPEC-0121](../../03.specs/0121-traefik-ingress-cutover/spec.md) |
 | [ADR-0051](./0051-istio-supported-release-upgrade.md) | Not replaced. Gateway API adoption is deferred to a decision after that upgrade | N/A — no Spec implements the deferral |
