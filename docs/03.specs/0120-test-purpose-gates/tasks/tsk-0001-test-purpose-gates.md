@@ -32,9 +32,9 @@ fixes, and a registered purpose gate for every unrun test module.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
