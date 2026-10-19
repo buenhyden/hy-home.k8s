@@ -1,10 +1,10 @@
 ---
 title: "Istio Supported Release Upgrade"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-20"
 layer: "architecture"
 artifact_id: "ADR-0051"
 ---
@@ -13,9 +13,9 @@ artifact_id: "ADR-0051"
 
 ## Overview
 
-This proposal moves Istio `base`, `cni` and `istiod` from 1.25.2 to the
-supported 1.31 line (1.31.2 or later). It is proposed, not accepted. The
-operator has not yet chosen the upgrade method.
+This decision moves Istio `base`, `cni` and `istiod` from 1.25.2 to the
+supported 1.31 line (1.31.2 or later). The local cluster is rebuilt at the
+target version instead of being upgraded in place.
 
 ## Context
 
@@ -37,16 +37,14 @@ operator has not yet chosen the upgrade method.
 
 ## Decision
 
-Proposed:
 - Target Istio 1.31.2 or later for `base`, `cni` and `istiod`, with the k3s
   CNI profile and the current values otherwise preserved.
-- Preferred method: rebuild the local cluster at the target version, because
-  the cluster is disposable and a rebuild avoids three canary hops.
-- Fallback when the running cluster must be kept: canary revisions in
-  two-minor-version hops, 1.25 to 1.27, 1.29 and 1.31, reading each hop's
-  upgrade notes.
+- Method: rebuild the local cluster at the target version with
+  `infrastructure/bootstrap-local.sh`, because the cluster is disposable and a
+  rebuild avoids three canary hops. The operator chose this method on
+  2026-10-20.
 - Verify STRICT mTLS, the adminer canary and the Kiali, telemetry and tracing
-  providers after the change.
+  providers after the rebuild.
 
 ## Explicit Non-goals
 
@@ -62,8 +60,8 @@ Proposed:
 - Negative: a rebuild discards cluster state, and a hop upgrade is slow and
   needs per-hop verification. Values or CRD changes across six minor versions
   may need repository edits.
-- Operational: the chosen method needs operator approval before any live
-  change. Keep the version pinned and track Istio's support window.
+- Operational: the rebuild is a live change and needs operator approval
+  when it runs. Keep the version pinned and track Istio's support window.
 
 ## Alternatives
 
@@ -71,11 +69,16 @@ Proposed:
 - **Stop at 1.30:** rejected. Its end of life is about December 2026.
 - **Single jump 1.25 to 1.31 on a running cluster:** rejected. Istio does not
   support it.
+- **Canary revisions in two-minor-version hops (1.25 to 1.27, 1.29 and 1.31)
+  on the running cluster:** rejected. It keeps cluster state but takes three
+  upgrades, each needing its own notes and verification, while the cluster
+  can be rebuilt from the repository.
 
 ## Traceability
 
-The research for this proposal was read on 2026-10-16 from the Istio supported
-releases, upgrade and security pages.
+The research for this decision was read on 2026-10-16 from the Istio supported
+releases, upgrade and security pages. The operator chose the rebuild method on
+2026-10-20.
 
 ### Lifecycle Traceability
 
