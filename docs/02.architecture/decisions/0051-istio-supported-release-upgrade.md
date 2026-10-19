@@ -20,8 +20,9 @@ operator has not yet chosen the upgrade method.
 ## Context
 
 - The three Istio Applications under `gitops/apps/root/` pin 1.25.2.
-- Istio 1.25 reached end of life on 2025-09-30. Its supported Kubernetes range
-  is 1.29 to 1.32, while the cluster runs Kubernetes 1.35
+- Istio 1.25 reached end of life on 2025-09-30. The Istio supported-releases
+  page (read 2026-10-16) lists Kubernetes 1.29 to 1.32 for it, while the
+  cluster runs Kubernetes 1.35
   (`rancher/k3s:v1.35.0-k3s1`).
 - ISTIO-SECURITY-2025-001 lists 1.25.0 to 1.25.4 as affected.
 - On 2026-10-16 the supported releases are 1.31 (end of life about February
@@ -40,7 +41,7 @@ Proposed:
 - Target Istio 1.31.2 or later for `base`, `cni` and `istiod`, with the k3s
   CNI profile and the current values otherwise preserved.
 - Preferred method: rebuild the local cluster at the target version, because
-  the cluster is disposable and a rebuild avoids three unsupported-era hops.
+  the cluster is disposable and a rebuild avoids three canary hops.
 - Fallback when the running cluster must be kept: canary revisions in
   two-minor-version hops, 1.25 to 1.27, 1.29 and 1.31, reading each hop's
   upgrade notes.

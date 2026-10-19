@@ -43,11 +43,13 @@ redirects. Gateway API is deferred until the Istio upgrade in
   The last two make the injected controller reach the STRICT-mTLS workload
   through its mesh host, which keeps the Argo Rollouts canary on the adminer
   `VirtualService` working.
-- Traefik v3.7 supports all five annotations through its
-  `kubernetesIngressNGINX` provider. The provider has not been experimental
-  since v3.6.2. Traefik publishes a side-by-side migration guide. Seven Traefik
-  advisories from 2026-10-07 to 2026-10-16 concern provider features that this
-  repository does not use, and they are fixed in 3.7.15.
+- Per the Traefik documentation read on 2026-10-16, Traefik v3.7 supports all
+  five annotations through its `kubernetesIngressNGINX` provider, and the
+  provider has not been experimental since v3.6.2. Traefik publishes a
+  side-by-side migration guide. The seven Traefik advisories published from
+  2026-10-07 to 2026-10-16 are fixed in 3.7.15. As read, they concern provider
+  features that the current routes do not use; the cutover confirms this
+  against the route inventory.
 - Istio Gateway API is the long-term direction Kubernetes recommends. It
   requires the Istio upgrade first, because 1.25.2 is end of life and outside
   its supported Kubernetes range. It also requires rewriting every route,
@@ -70,16 +72,32 @@ redirects. Gateway API is deferred until the Istio upgrade in
 - Migrate side by side. Run Traefik next to ingress-nginx and verify each route,
   including the adminer mesh path and a Rollout canary step. Then move the
   NodePorts and remove the ingress-nginx Application and namespace.
-- Make the validator change in the same pull request: update `CONTROLLER` in
-  `scripts/validation/platform/ingress.py` and add Traefik chart value checks
-  (NodePorts, enabled providers, class), together with the live
-  `verify-ingress-tls.sh` names.
+  - During the overlap, the ingress-nginx release keeps owning `IngressClass`
+    `nginx`. Traefik does not create or manage that class, so Argo CD sees one
+    owner. Traefik is reached through a temporary Service on other ports for
+    per-route checks, because NodePorts `30080` and `30443` stay with
+    ingress-nginx until the cutover.
+  - At the cutover, the Traefik release takes over the `IngressClass`.
+  - The apex redirect Ingresses in
+    `gitops/platform/ingress-routes/apex-redirects.yaml` live in the
+    `ingress-nginx` namespace and use Service `ingress-nginx-controller` as
+    their backend. They move to the Traefik namespace with the Traefik Service
+    as their backend.
+  - The platform AppProject in `gitops/clusters/local/appproject-platform.yaml`
+    gains the Traefik chart repository and namespace before the overlap. It
+    loses the ingress-nginx entries after the removal.
+- Make the validator change in the same pull request as the cutover. Update
+  `CONTROLLER` in `scripts/validation/platform/ingress.py`, including its
+  namespace and Service name. Add Traefik chart value checks for the NodePorts,
+  the enabled providers and the class. Update the live `verify-ingress-tls.sh`
+  names at the same time.
 - Keep chart 4.15.1 as the interim controller until the cutover.
 
 ## Explicit Non-goals
 
 - Adopting Gateway API, `HTTPRoute` or the Istio ingress gateway (revisit after
-  ADR-0051).
+  the Istio upgrade). This deferral stands whether or not ADR-0051 is accepted
+  in its current form.
 - Upgrading Istio (ADR-0051).
 - Changing host names, TLS issuance, the MetalLB pool or the serverlb address.
 - Adding annotations or Traefik CRD routing.
@@ -92,14 +110,26 @@ redirects. Gateway API is deferred until the Istio upgrade in
   move does not need another controller swap.
 - Negative: the provider is a bridge on the Ingress API, which Kubernetes no
   longer develops. Traefik's provider is still being hardened and its
-  advisories need tracking. Some behaviors differ from nginx: forward auth,
-  load balancing, retries, trailing slashes, buffering and strict path types.
-  None of these is used by the current routes.
+  advisories need tracking. Some behaviors differ from nginx. No annotation
+  configures forward auth, retries, buffering or strict path types. The routes
+  still rely on nginx defaults that Traefik may handle differently:
+  - WebSocket and streaming for Headlamp and Kiali;
+  - `X-Forwarded-*` headers;
+  - request body size and timeouts;
+  - trailing-slash handling for Kiali's `app-root` with a `Prefix` path.
 - Operational: pin Traefik 3.7.15 or later and follow its security advisories.
-  Confirm live the redirect status codes, the `IngressClass` handling and the
-  adminer `503`/`200` mesh check before cutover. Update
-  `gitops/README.md`, the NetworkPolicies and the operations policies that
-  name ingress-nginx.
+  Before the cutover, confirm these live:
+  - the redirect status codes;
+  - the `IngressClass` handling;
+  - the adminer `503`/`200` mesh check;
+  - the nginx defaults listed above.
+
+  Update everything that names ingress-nginx:
+  - `gitops/README.md`;
+  - the namespace manifest;
+  - the PeerAuthentication comment;
+  - the NetworkPolicies;
+  - the operations policies.
 
 ## Alternatives
 
@@ -117,8 +147,16 @@ redirects. Gateway API is deferred until the Istio upgrade in
 ## Traceability
 
 The operator accepted Option B (Traefik provider) on 2026-10-16, after a
-comparison with Istio Gateway API. The research behind this decision was read on 2026-10-16 from the Kubernetes,
-Istio, Traefik, Gateway API and cert-manager release pages and advisories.
+comparison with Istio Gateway API.
+
+The research behind this decision was read on 2026-10-16. Sources:
+- the ingress-nginx retirement statement and repository archive notice;
+- the Traefik Kubernetes Ingress-NGINX provider and annotation-support
+  documentation;
+- the Traefik security advisories at
+  `https://github.com/traefik/traefik/security/advisories`;
+- the Istio supported-releases page;
+- the Gateway API and cert-manager release pages.
 
 ### Lifecycle Traceability
 
