@@ -22,8 +22,8 @@ parent_ids: ["SPEC-0121"]
 ## Overview
 
 This plan executes [SPEC-0121](spec.md) from main `8686ca24`. It has three
-pull requests (preparation and side by side in WORK-001, then the cutover), a
-live verification and the revert evidence.
+pull requests (preparation, side by side, cutover) plus a live verification
+and the revert evidence.
 
 ## Context
 
@@ -54,8 +54,8 @@ The non-goals listed in the Spec.
 
 ## Verification Plan
 
-Each pull request of WORK-001 and WORK-003 runs focused tests, the chart render and
-`qa.py staged`, and get one independent read-only review. WORK-002, the live
+Each pull request of WORK-001 and WORK-003 runs focused tests, the chart render
+and `qa.py staged`, and gets one independent read-only review. WORK-002, the live
 checks after each pull request, and WORK-004 are operator-run, recorded in the
 Task.
 

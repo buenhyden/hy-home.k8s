@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -114,11 +114,19 @@ The work is four units. The first is two pull requests:
    - The preparation pull request:
      - adds the neutral IngressClass manifest;
      - sets `controller.ingressClassResource.enabled=false` and
-       `controller.admissionWebhooks.enabled=false` on ingress-nginx.
+       `controller.admissionWebhooks.enabled=false` on ingress-nginx;
+     - adds `resources-finalizer.argocd.argoproj.io` to the
+       `platform-ingress-nginx` Application, so removing it at the cutover
+       deletes its resources, including the cluster-scoped ones.
 
      The class must exist throughout, tracked by `platform-ingress-routes`.
-     With the webhook gone, it cannot reject the duplicate apex Ingresses at
-     the cutover.
+     ingress-nginx syncs in wave 2 and `platform-ingress-routes` in wave 4,
+     so ingress-nginx could prune the old class before the neutral manifest
+     is applied. Before this pull request merges, the operator therefore
+     annotates the live class `argocd.argoproj.io/sync-options: Prune=false`.
+     This is an approved live step. Without it, a short gap with no class is
+     expected, and the routes do not serve during that gap. With the webhook
+     gone, it cannot reject the duplicate apex Ingresses at the cutover.
    - The side-by-side pull request, after the class check passes, adds the
      namespace, the AppProject entries and the Application. Traefik uses its
      ClusterIP Service only, with no IngressClass and no published status.
@@ -128,20 +136,25 @@ The work is four units. The first is two pull requests:
 3. **Cutover** (a pull request). It:
    - removes the ingress-nginx Application, namespace and AppProject entries;
    - moves the apex redirect Ingresses to the `traefik` namespace, with the
-     Traefik Service as backend;
+     Traefik Service as backend, and changes the `platform-ingress-routes`
+     destination namespace to `traefik`;
    - makes the Traefik Service the `LoadBalancer` with NodePorts `30080` and
      `30443` and address `172.18.0.240`;
    - swaps `CONTROLLER` and adds the Traefik value checks;
    - updates `verify-ingress-tls.sh` and the documents.
 
-   Argo CD prunes the ingress-nginx Service at the end of the root sync.
-   Until then, the Traefik Service cannot take the NodePorts or the address,
-   so its sync fails and succeeds on retry. Clients see a short outage
-   between the prune and the retry. The operator may instead sync manually:
-   first the root removal, then the Traefik Application.
+   The root sync prunes the `platform-ingress-nginx` Application. Its
+   finalizer then deletes the Service, the workloads and the cluster-scoped
+   objects. Until the Service is gone, the Traefik Service cannot take the
+   NodePorts or the address, so its sync fails and succeeds on retry.
+   Clients see a short outage between the deletion and the retry. The
+   operator may instead sync manually: first the root removal, waiting for
+   the cascade, then the Traefik Application.
 4. **Revert evidence**: reverting the cutover pull request is expected to
-   restore ingress-nginx. The Traefik Service returns to ClusterIP first, and
-   the ingress-nginx Service takes the NodePorts back on its sync retry. The
+   restore ingress-nginx. The Traefik Service returns to ClusterIP, the root
+   sync recreates the `platform-ingress-nginx` Application, and its Service
+   takes the NodePorts and the address back on a sync retry once Traefik has
+   released them. The
    Task records whether the revert was exercised live or only rendered.
 
 ## Data Modeling & Storage Strategy
