@@ -32,9 +32,9 @@ fixes, and a registered purpose gate for every unrun test module.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | Shared suite runner and coverage guard | platform | completed | PASS | EVD-004 guard, EVD-011 review |
+| WORK-002 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | Link-boundary rewrite and lane test budgets | platform | completed | PASS | EVD-002, EVD-008 tests, EVD-003 staged QA, EVD-012 review |
+| WORK-003 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | Register and route the suite gates | platform | completed | PASS | EVD-005, EVD-010 suite runs, EVD-006 selection tests, EVD-009 staged QA resolving EVD-007, EVD-013 review |
 
 ## Task Evidence
 
@@ -49,14 +49,18 @@ fixes, and a registered purpose gate for every unrun test module.
 | EVD-007 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | First commit attempt on the same index, with pinned tools first on `PATH` and SIGINT reset to default, while another repository's validation loaded the host | FAIL | 24 gates passed. `validation-routing-tests` failed one test, `test_successful_leader_closes_silent_owned_process_group`, which used the shared helper's 2 s timeout and 0.5 s cleanup. The same suite passed on an exported index snapshot, with and without the closed `HOME` and `PATH` | yes | none |
 | EVD-008 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Load test of the bounded-command class | Commit `774b13bb`: the shared `_run_python` defaults widened to 15 s timeout and 3 s cleanup; the per-test overrides from `8cb8980a` removed | PASS | Under 30 busy loops on 12 cores, the bounded-command class failed 5 to 7 tests per run across 9 tests with the old defaults, and 0 to 2 with the new ones. The remaining failures are only the two interrupt-count tests. The lane module passes idle (90 OK, 20 s) | yes | none |
 | EVD-009 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Selected staged QA | Commit `774b13bb` with pinned tools first on `PATH` and SIGINT reset to default | PASS | The pre-commit staged QA, `commitizen check` and the generated-message exception hook passed | yes | EVD-007 |
+| EVD-010 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Suite gate runs | `python3 scripts/run-contract-tests.py --root . --suite cluster-gate` at commit `a4043d9d`, in the foreground with pinned tools first on `PATH` | PASS | `[PASS] cluster-gate contract regressions passed: modules=8 tests=71`, 13 s | yes | none |
+| EVD-011 | [VAL-PG-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff a29c836f a4043d9d`, head `a4043d9d25897a3c592ad92be19ccb12f20e5fbe` | PASS | `approve`, no blocker or major. It compared old and new selection for every tracked non-document path in both lanes; no gate is lost for the carved scripts that other validators read. Every module has exactly one gate selected by its own file. The link test still rejects the malformed placeholders. Minor findings, dispositioned under Criterion Acceptance: the quality.py routing gap, staged QA cost, EVD-006 and EVD-008 wording, and the Spec wording for the link test and the budgets | yes | none |
+| EVD-012 | [VAL-PG-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff a29c836f a4043d9d`, head `a4043d9d25897a3c592ad92be19ccb12f20e5fbe` | PASS | `approve`, no blocker or major. It compared old and new selection for every tracked non-document path in both lanes; no gate is lost for the carved scripts that other validators read. Every module has exactly one gate selected by its own file. The link test still rejects the malformed placeholders. Minor findings, dispositioned under Criterion Acceptance: the quality.py routing gap, staged QA cost, EVD-006 and EVD-008 wording, and the Spec wording for the link test and the budgets | yes | none |
+| EVD-013 | [VAL-PG-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Independent branch review | Fresh `code-reviewer` session, read-only, `git diff a29c836f a4043d9d`, head `a4043d9d25897a3c592ad92be19ccb12f20e5fbe` | PASS | `approve`, no blocker or major. It compared old and new selection for every tracked non-document path in both lanes; no gate is lost for the carved scripts that other validators read. Every module has exactly one gate selected by its own file. The link test still rejects the malformed placeholders. Minor findings, dispositioned under Criterion Acceptance: the quality.py routing gap, staged QA cost, EVD-006 and EVD-008 wording, and the Spec wording for the link test and the budgets | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-PG-001](../spec.md#success-criteria--verification-plan) | pending | none | Runner and guard remain | platform |
-| [VAL-PG-002](../spec.md#success-criteria--verification-plan) | pending | none | Test fixes remain | platform |
-| [VAL-PG-003](../spec.md#success-criteria--verification-plan) | pending | none | Gate registration remains | platform |
+| [VAL-PG-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004, EVD-011 | One runner runs each suite; the old runners are removed; the guard failed first and now passes | platform |
+| [VAL-PG-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-002, EVD-003, EVD-008, EVD-012 | The link test takes 22 s and still rejects malformed placeholders; the bounded-command budgets hold far better under load, with two interrupt-count tests as residual risk | platform |
+| [VAL-PG-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-001, EVD-005, EVD-006, EVD-007, EVD-009, EVD-010, EVD-013 | Every suite gate passes and every module selects its gate. EVD-001 is resolved by EVD-005, and EVD-007 by EVD-009 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -80,4 +84,49 @@ fixes, and a registered purpose gate for every unrun test module.
 
 ## Verification Summary
 
-Pending.
+All three criteria are accepted. Each of the 76 test modules now runs in
+exactly one gate. The 74 suite modules run through
+`scripts/run-contract-tests.py`, and the two direct gates are unchanged. A
+module's own file selects its gate, and so does its product where the product
+has a surface (VAL-PG-001, VAL-PG-003). The placeholder link test takes 22 s
+instead of 263 s. The shared bounded-command budgets are wider, and the
+escape tests write their child file atomically (VAL-PG-002). The independent
+review approved with minor findings only.
+
+Departures from the Spec text, disclosed:
+- The link test was not moved to a temporary root. It runs the link pass on
+  the real forms only, and stubs the historical owner edges. The stub would
+  hide an archived link added to the forms later.
+- The budgets were widened in the shared helper default for every positive
+  path, not only in the one load-sensitive case. Boundary tests keep their
+  own short values.
+
+Corrections to the retained evidence:
+- EVD-006 also moves `qa.py` and `bounded_io.py` to new surfaces. It replaces
+  the hook case on the catch-all with `tests/__init__.py`. It also drops
+  `agent-governance` from the hook test's forbidden set.
+- `quality.py`, `validate-workspace-boundary.py` and
+  `validate-knowledge-surface.py` moved to `tooling-scripts`. They no longer
+  select archive-contract-tests, gitops-structure, infrastructure-contracts,
+  k8s-manifests, policy-gates or secret-handling. They have no importers, and
+  their own validators are kept.
+- EVD-008's PASS covers the improvement, not a clean result under load.
+  Under 30 busy loops on 12 cores, two interrupt-count tests still fail in 0
+  to 2 cases per run.
+
+Residual risk:
+- Editing `quality.py` does not select `validation-routing-tests`, although
+  two modules in that suite read it.
+- No dedicated surface selects the matching suite for: the provider hook
+  adapters, the external-service skill script, `validate-links-and-owners.py`
+  for `archive-validation`, `json_schema_validation.py`, the gitops seeds read
+  by `test_platform_ingress`, and the test fixtures on the catch-all.
+- Editing the shared runner selects all 11 suites, about 1,600 s serial.
+  `qa-runner` (569 s) and `archive-validation` (430 s) are under the 1,200 s
+  validator timeout with about a 2x margin. The `document` suite (225 s)
+  fires on template and Stage 99 edits.
+- The two interrupt-count lane tests can fail under heavy load.
+- A background job must reset SIGINT to default, or
+  `test_infrastructure_tempfiles` fails.
+
+Next owner: platform.
