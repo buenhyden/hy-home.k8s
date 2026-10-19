@@ -130,7 +130,9 @@ git diff --check
    오래 유지되는 같은 의미의 입력을 공유할 때만 추가한다.
 3. production 변경은 이 트리를 import하거나 읽지 않고 한다.
 4. 전용 named suite와 affected·staged 검증을 변경 입력에 맞춰 선택한다.
-   global QA 변경이나 명시적 감사도 목적별 필수 gate로 한정한다.
+   global QA 변경이나 명시적 감사도 목적별 필수 gate로 한정한다. 모든
+   `test_*.py`는 `scripts/run-contract-tests.py`의 suite 하나나 직접 gate 하나에
+   속한다. 새 module은 suite와 Registry route를 함께 추가해야 분류된다.
 5. 마지막 독립 소비자가 없어지면 그 fixture도 삭제한다.
 6. 실행할 수 없는 hosted·provider·live 검사는 `DEFER`로 보고하며 로컬 PASS로
    보고하지 않는다.

@@ -88,7 +88,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0116-independent-review-gate/
 ├── 0117-local-qa-rightsizing/
 ├── 0118-qa-phase-two/
-└── 0119-ingress-controller-identity/
+├── 0119-ingress-controller-identity/
+└── 0120-test-purpose-gates/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -106,6 +107,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Local QA Rightsizing](./0117-local-qa-rightsizing/)은 로컬 QA의 과잉·중복·상충·현행 불일치 검사 정리와 main에서 실패하던 테스트 복구를 소유한다.
 [Local QA Phase Two](./0118-qa-phase-two/)는 workflow 검사 단일 소유, 좁힌 script·test surface와 lifecycle 모듈 gate를 소유한다.
 [Ingress Controller Identity in Validators](./0119-ingress-controller-identity/)는 검증기의 ingress controller 식별자를 한 곳에 선언하고 중복 shell 검사를 정리하는 계약을 소유한다.
+[Test Module Purpose Gates](./0120-test-purpose-gates/)는 모든 test 모듈을 하나의 목적 gate에 배정하는 공유 suite runner와 그 coverage guard를 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.

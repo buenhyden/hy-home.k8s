@@ -7,6 +7,7 @@ import importlib.util
 import sys
 import unittest
 from contextlib import redirect_stdout
+from dataclasses import replace
 from io import StringIO
 from pathlib import Path, PurePosixPath
 from types import SimpleNamespace
@@ -127,8 +128,16 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             PurePosixPath("docs/99.templates/templates/specs/plan.template.md"),
             PurePosixPath("docs/99.templates/templates/specs/task.template.md"),
         )
-        context = validator._build_context(ROOT, forms)
-        registry = validator.load_registry(ROOT)
+        # LINK-BROKEN comes only from the link pass, so check just the forms
+        # instead of every diagnostic over the whole corpus. The historical
+        # owner edges only exempt archived links, which the forms never carry,
+        # so their whole-corpus migration proof is not recomputed per call.
+        context = replace(validator._build_context(ROOT, forms), paths=forms)
+        no_history = mock.patch.object(
+            validator, "_reviewed_work054_historical_owner_edges", return_value={}
+        )
+        no_history.start()
+        self.addCleanup(no_history.stop)
         expected = "{{SPEC_RELATIVE_PATH}}#success-criteria--verification-plan"
         for path in forms:
             spec_links = [
@@ -138,11 +147,7 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             ]
             self.assertTrue(spec_links, path)
             self.assertEqual(set(spec_links), {expected})
-        diagnostics = validator._raw_diagnostics(
-            context,
-            registry,
-            {profile.profile_id: profile for profile in registry.profiles},
-        )
+        diagnostics = validator._link_diagnostics(context)
         self.assertEqual(
             [
                 item
@@ -159,11 +164,7 @@ class RetainedReciprocalAndTemplateTests(unittest.TestCase):
             context.texts[forms[0]] = (
                 (ROOT / forms[0]).read_text().replace(expected, malformed)
             )
-            diagnostics = validator._raw_diagnostics(
-                context,
-                registry,
-                {profile.profile_id: profile for profile in registry.profiles},
-            )
+            diagnostics = validator._link_diagnostics(context)
             self.assertTrue(
                 any(
                     item.rule_id == "LINK-BROKEN" and item.path == forms[0]

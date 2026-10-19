@@ -90,8 +90,7 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `document_lifecycle.py`, `validate-document-lifecycle.py` | registry가 분류한 lifecycle과 staged index 전이 |
 | `validate-archive-integrity.py`, `archive_recovery.py`, `archive_validation.py` | 현재 Archive 보관 무결성·catalog·Git 복구 검사. `archive_recovery.py`의 공용 MIG-0001 reader가 현재 원장 bytes의 고정 digest와 canonical 형식을 확인하며, Archive·link 소비자가 그 결과를 읽는다. 필요할 때 역사 envelope은 bounded Git reader로 복구한다. 과거 cutover 완료 증명은 원래 Task/Archive 증거에 남긴다. |
 | `json_schema_validation.py` | production validator가 함께 쓰는 오프라인 JSON Schema 로딩 |
-| `run-archive-contract-tests.py` | Stage 98 Archive 계약 회귀를 해당 입력의 quick·staged 또는 명시적으로 선택된 목적 gate에서 실행한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
-| `run-document-contract-tests.py` | 완료 상태 이관, 누적 이력, Task 실행·인수 계약 회귀를 document reader, Stage 99 계약, template 입력이 바뀔 때의 quick·staged gate에서 실행한다. 한 script가 gate 하나를 식별하므로 모듈 목록을 이 파일이 소유한다. |
+| `run-contract-tests.py` | 이름 있는 suite 하나의 계약 회귀를 그 suite의 목적 gate로 실행한다. suite별 모듈 목록은 이 파일이 소유하며, 각 gate는 Registry에서 `--suite`로 suite 하나를 지정한다. 긴 blanket unit discovery의 간접 `coveredBy`를 현재 완료 조건으로 삼지 않는다. |
 
 현재 MIG-0001 원장이 없거나 그 bytes가 바뀌면 Archive 검사는 실패한다.
 고정 digest는 현재 원장 identity를, canonical parser와 현재 record 검사는

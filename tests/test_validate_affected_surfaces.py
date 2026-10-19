@@ -166,7 +166,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
     def test_document_contract_tests_follow_their_real_inputs(self) -> None:
         for path in (
             "scripts/document_contracts.py",
-            "scripts/run-document-contract-tests.py",
+            "scripts/run-contract-tests.py",
             "tests/test_task_acceptance_contract.py",
             "tests/git_fixture.py",
             "tests/archive_generation_fixture.py",
@@ -269,6 +269,35 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
         )
         self.assertFalse(any("coveredBy" in row for row in self.contract["validators"]))
 
+    def test_every_test_module_runs_in_one_gate_selected_by_its_file(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "run_contract_tests", ROOT / "scripts/run-contract-tests.py"
+        )
+        runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(runner)
+        owners: dict[str, list[str]] = {}
+        for row in self.contract["validators"]:
+            argv = row["argv"]
+            if argv[1] == "scripts/run-contract-tests.py":
+                suite = argv[argv.index("--suite") + 1]
+                for module in runner.SUITES[suite]:
+                    owners.setdefault(f"{module.replace('.', '/')}.py", []).append(
+                        row["id"]
+                    )
+            for argument in argv[1:]:
+                if argument.startswith("tests/test_"):
+                    owners.setdefault(argument, []).append(row["id"])
+        for path in sorted(ROOT.glob("tests/test_*.py")):
+            relative = path.relative_to(ROOT).as_posix()
+            with self.subTest(module=relative):
+                gates = owners.get(relative, [])
+                self.assertEqual(len(gates), 1, gates)
+                for lane in ("affected", "staged"):
+                    selected = self.validator.select_paths(
+                        self.contract, [relative], lane, ROOT
+                    )
+                    self.assertIn(gates[0], selected["validators"])
+
     def test_root_changelog_uses_document_surface(self) -> None:
         self.assertEqual(
             self.validator.classify_path(self.contract, "CHANGELOG.md")["id"],
@@ -290,12 +319,17 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     affected["validators"],
-                    ["affected-surface-contract", "repository-quality"],
+                    [
+                        "affected-surface-contract",
+                        "release-tests",
+                        "repository-quality",
+                    ],
                 )
                 self.assertEqual(
                     staged["validators"],
                     [
                         "affected-surface-contract",
+                        "release-tests",
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
@@ -324,7 +358,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             ("scripts/provider_write_guard.py", cluster | archive),
             ("scripts/archive_validation.py", cluster),
             ("scripts/validate-vault-eso-contracts.py", archive),
-            ("tests/test_k8s_pre_edit_hook.py", cluster | {"agent-governance"}),
+            ("tests/test_k8s_pre_edit_hook.py", cluster | archive),
         ):
             for lane in ("affected", "staged"):
                 with self.subTest(path=path, lane=lane):
@@ -353,6 +387,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                         "repository-quality",
                         "selected-nonstyle",
                         "selected-style",
+                        "validation-routing-tests",
                     ],
                 )
 

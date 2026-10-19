@@ -79,7 +79,7 @@
     {
       "name": "qa-entrypoint",
       "path": "scripts/qa.py",
-      "expectedSurface": "validation-surface-contract"
+      "expectedSurface": "qa-runner"
     },
     {
       "name": "validation-routing-test",
@@ -132,9 +132,9 @@
       "expectedSurface": "shared-document-history-readers"
     },
     {
-      "name": "lifecycle-gate-runner",
-      "path": "scripts/run-document-contract-tests.py",
-      "expectedSurface": "shared-document-history-readers"
+      "name": "contract-test-runner",
+      "path": "scripts/run-contract-tests.py",
+      "expectedSurface": "contract-test-runner"
     },
     {
       "name": "lifecycle-git-fixture",
@@ -169,7 +169,7 @@
     {
       "name": "shared-import-stays-broad",
       "path": "scripts/validation/repository/bounded_io.py",
-      "expectedSurface": "scripts"
+      "expectedSurface": "validation-routing-scripts"
     },
     {
       "name": "unknown-script-stays-broad",
@@ -305,6 +305,7 @@
         "validators": [
           "affected-surface-contract",
           "agent-governance",
+          "agent-governance-tests",
           "document-contract-registry",
           "document-lifecycle",
           "external-service-contracts",
@@ -335,7 +336,9 @@
           "document-lifecycle",
           "links-and-owners",
           "markdown-profiles",
-          "repository-quality"
+          "qa-runner-tests",
+          "repository-quality",
+          "validation-routing-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -421,6 +424,7 @@
         "validators": [
           "affected-surface-contract",
           "agent-governance",
+          "cluster-gate-tests",
           "gitops-change-set",
           "gitops-structure",
           "infrastructure-contracts",
@@ -447,6 +451,7 @@
           "agent-governance",
           "archive-contract-tests",
           "archive-integrity",
+          "archive-validation-tests",
           "document-contract-tests",
           "document-lifecycle",
           "links-and-owners",
@@ -466,7 +471,8 @@
         "validators": [
           "affected-surface-contract",
           "agent-governance",
-          "repository-quality"
+          "repository-quality",
+          "tooling-tests"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -498,7 +504,7 @@
       "name": "test-catch-all-skips-script-only-gates",
       "lane": "affected",
       "paths": [
-        "tests/test_k8s_pre_edit_hook.py"
+        "tests/__init__.py"
       ],
       "expected": {
         "validators": [
@@ -523,6 +529,7 @@
           "document-contract-registry",
           "document-contract-tests",
           "document-lifecycle",
+          "document-lifecycle-tests",
           "links-and-owners",
           "markdown-profiles",
           "repository-quality",
@@ -542,6 +549,7 @@
       "expected": {
         "validators": [
           "affected-surface-contract",
+          "ci-metadata-tests",
           "ci-python-contract",
           "github-actions-security",
           "repository-quality"
