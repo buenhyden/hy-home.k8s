@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Plan"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
@@ -21,8 +21,9 @@ parent_ids: ["SPEC-0121"]
 
 ## Overview
 
-This plan executes [SPEC-0121](spec.md) in three pull requests from main
-`8686ca24`: side by side, live verification, then cutover.
+This plan executes [SPEC-0121](spec.md) from main `8686ca24`. It has three
+pull requests (preparation and side by side in WORK-001, then the cutover), a
+live verification and the revert evidence.
 
 ## Context
 
@@ -46,23 +47,28 @@ The non-goals listed in the Spec.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](spec.md#success-criteria--verification-plan) | Traefik namespace, AppProject entries and Application side by side | None | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Chart render, staged QA, live Argo CD status |
-| WORK-002 | [VAL-TC-002](spec.md#success-criteria--verification-plan) | Live per-route verification through the temporary Service | WORK-001 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Operator-run live checks |
-| WORK-003 | [VAL-TC-003](spec.md#success-criteria--verification-plan) | Cutover: router contract, IngressClass, apex redirects, validators, removal, documents | WORK-002 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Validator tests, staged QA, live router checks |
-| WORK-004 | [VAL-TC-004](spec.md#success-criteria--verification-plan) | Revert evidence for the cutover | WORK-003 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Revert render or live revert |
+| WORK-001 | [VAL-TC-001](spec.md#success-criteria--verification-plan) | Preparation pull request (neutral IngressClass, ingress-nginx class and webhook off), then side-by-side pull request (Traefik namespace, AppProject entries, Application) | None | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Chart render, staged QA, live class check, live Argo CD status |
+| WORK-002 | [VAL-TC-002](spec.md#success-criteria--verification-plan) | Live per-route verification through a port-forward | WORK-001 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Operator-run live checks |
+| WORK-003 | [VAL-TC-003](spec.md#success-criteria--verification-plan) | Cutover in the stated order: removal, router Service, apex redirects, validators, documents | WORK-002 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Validator tests, staged QA, live router checks |
+| WORK-004 | [VAL-TC-004](spec.md#success-criteria--verification-plan) | Revert evidence for the cutover | WORK-003 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Live revert or render with the stated order |
 
 ## Verification Plan
 
-WORK-001 and WORK-003 each run focused tests, the chart render and
-`qa.py staged`, and get one independent read-only review. WORK-002 and the
-post-cutover checks in WORK-003 are operator-run live checks, recorded in the
+Each pull request of WORK-001 and WORK-003 runs focused tests, the chart render and
+`qa.py staged`, and get one independent read-only review. WORK-002, the live
+checks after each pull request, and WORK-004 are operator-run, recorded in the
 Task.
 
 ## Risks & Mitigations
 
-- Both controllers claim the same Ingress during the overlap. Traefik is
-  reachable only through the temporary Service, so clients see one
-  controller.
+- Both controllers claim the same Ingress during the overlap. Traefik has a
+  ClusterIP Service only and publishes no Ingress status, so clients and
+  `status.loadBalancer` see one controller.
+- The IngressClass disappears during its handover. The preparation is its own
+  pull request, and its class check passes before the side-by-side pull
+  request.
+- The router NodePorts and MetalLB address collide at the cutover. The Spec
+  states the order, the expected short outage and the revert order.
 - An nginx default behaves differently on Traefik. WORK-002 lists each
   behavior as a check, and cutover waits for all of them.
 - The cutover fails live. One revert of the cutover pull request restores

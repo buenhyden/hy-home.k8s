@@ -1,6 +1,6 @@
 ---
 title: "Istio Supported Release Upgrade"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
@@ -57,9 +57,10 @@ target version instead of being upgraded in place.
 - Positive: the mesh returns to a supported release with security fixes, and
   it is within the cluster's Kubernetes range. Gateway API becomes available as
   a later option.
-- Negative: a rebuild discards cluster state, and a hop upgrade is slow and
-  needs per-hop verification. Values or CRD changes across six minor versions
-  may need repository edits.
+- Negative: the rebuild discards cluster state that the repository does not
+  declare. Values or CRD changes across six minor versions may need
+  repository edits. The rebuild is planned after the SPEC-0121 ingress
+  cutover, so that the cutover is verified once, on the current cluster.
 - Operational: the rebuild is a live change and needs operator approval
   when it runs. Keep the version pinned and track Istio's support window.
 

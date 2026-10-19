@@ -14,7 +14,8 @@ parent_ids: ["SPEC-0121-PLAN-0001"]
 ## Overview
 
 Execute [SPEC-0121](../spec.md) through [WORK-001–004](../plan.md#work-breakdown):
-Traefik side by side, live verification, the cutover and its revert evidence.
+preparing ingress-nginx and running Traefik side by side, live verification,
+the cutover and its revert evidence.
 
 ## Inputs
 
@@ -35,7 +36,7 @@ Traefik side by side, live verification, the cutover and its revert evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Traefik side by side | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -45,12 +46,16 @@ Traefik side by side, live verification, the cutover and its revert evidence.
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side Application status | Live Argo CD status of `platform-traefik` after WORK-001 merges | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Live IngressClass handover check | `kubectl get ingressclass nginx` and its tracking label after the preparation pull request merges | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks | Per-route curl through the Traefik port-forward | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Live router checks after cutover | `verify-ingress-tls.sh` with `CHECK_K8S_ROUTER=true` and per-route curl after WORK-003 merges | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Revert evidence | Live revert or branch render of the cutover revert | NOT_RUN | Pending | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | pending | none | Side-by-side pull request remains | platform |
+| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | pending | none | Preparation and side-by-side pull requests remain | platform |
 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | pending | none | Live route checks remain | platform |
 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | none | Cutover pull request remains | platform |
 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | none | Revert evidence remains | platform |
