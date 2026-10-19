@@ -1559,8 +1559,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
             pid_path = Path(temporary) / "escaped.json"
             child_source = (
                 "import json, os, signal; os.setsid(); "
-                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                f"open({str(pid_path)!r} + '.tmp', 'w', encoding='utf-8').write("
                 "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()})); "
+                f"os.replace({str(pid_path)!r} + '.tmp', {str(pid_path)!r}); "
                 "signal.pause()"
             )
             leader_source = (
@@ -1569,14 +1570,18 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 "subprocess.Popen([sys.executable, '-I', '-c', "
                 f"{child_source!r}], stdin=subprocess.DEVNULL, "
                 "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
-                "deadline=time.monotonic()+2.0\n"
+                "deadline=time.monotonic()+20.0\n"
                 "while not path.exists():\n"
                 "    assert time.monotonic() < deadline\n"
                 "    time.sleep(0.01)\n"
             )
             escaped: dict[str, int] = {}
             try:
-                outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+                # Wide budgets: under CPU load the escaped child can take
+                # seconds to start, and the runner needs time to scan for it.
+                outcome = self._run_python(
+                    leader_source, timeout_seconds=15.0, cleanup_seconds=3.0
+                )
                 escaped = json.loads(pid_path.read_text(encoding="utf-8"))
 
                 self.assertEqual(outcome.status, "descendant_cleanup")
@@ -1641,8 +1646,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
             pid_path = Path(tmp) / "escaped.json"
             child_source = (
                 "import json, os, signal; os.setsid(); "
-                f"open({str(pid_path)!r}, 'w', encoding='utf-8').write("
+                f"open({str(pid_path)!r} + '.tmp', 'w', encoding='utf-8').write("
                 "json.dumps({'pid': os.getpid(), 'pgid': os.getpgrp()})); "
+                f"os.replace({str(pid_path)!r} + '.tmp', {str(pid_path)!r}); "
                 "signal.pause()"
             )
             leader_source = (
@@ -1651,14 +1657,18 @@ class BoundedValidationCommandTest(unittest.TestCase):
                 "subprocess.Popen([sys.executable, '-I', '-c', "
                 f"{child_source!r}], stdin=subprocess.DEVNULL, "
                 "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); "
-                "deadline=time.monotonic()+2.0\n"
+                "deadline=time.monotonic()+20.0\n"
                 "while not path.exists():\n"
                 "    assert time.monotonic() < deadline\n"
                 "    time.sleep(0.01)\n"
             )
             escaped: dict[str, int] = {}
             try:
-                outcome = self._run_python(leader_source, cleanup_seconds=0.5)
+                # Wide budgets: under CPU load the escaped child can take
+                # seconds to start, and the runner needs time to scan for it.
+                outcome = self._run_python(
+                    leader_source, timeout_seconds=15.0, cleanup_seconds=3.0
+                )
                 escaped = json.loads(pid_path.read_text(encoding="utf-8"))
 
                 self.assertEqual(outcome.status, "descendant_cleanup")
