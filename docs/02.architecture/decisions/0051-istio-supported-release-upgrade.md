@@ -1,8 +1,8 @@
 ---
 title: "Istio Supported Release Upgrade"
-version: "0.2.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-10-20"
 layer: "architecture"
