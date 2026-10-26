@@ -44,8 +44,8 @@ document that the seven Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | Consumer census and isolated recovery for the seven units | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AD-002](../spec.md#success-criteria--verification-plan) | Remove the seven units and add their assessment rows | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | Consumer census and isolated recovery for the seven units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AD-002](../spec.md#success-criteria--verification-plan) | Remove the seven units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
