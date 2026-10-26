@@ -54,7 +54,7 @@ hy-home.k8s/
 ├── examples/              # 앱 온보딩 및 AWS/Azure cloud target 참조 예시
 ├── scripts/               # 저장소 유틸리티 및 자동화 스크립트
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
-├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
+├── _workspace/            # Temporary non-secret scratch boundary; only its seven READMEs are tracked
 ├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
 ├── .github/               # Workflows, PR/issue templates, CODEOWNERS, labeler, dependabot, rulesets
@@ -97,7 +97,7 @@ hy-home.k8s/
 - `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
 - `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
 - `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
-- `_workspace/` - 비밀값을 담지 않는 임시 분석 경계. README만 추적한다
+- `_workspace/` - 비밀값을 담지 않는 임시 분석·진단 경계. 자신과 하위 디렉터리의 README 7개만 추적한다
 - `.github/` - `main` PR flow용 CI workflow, PR/issue intake, CODEOWNERS, labeler, dependabot, ruleset 기록, SECURITY 안내 (zizmor hook은 `.pre-commit-config.yaml`)
 - `.agents/` - 공급자 중립 역할·스킬·평가 하니스와 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
 - `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.

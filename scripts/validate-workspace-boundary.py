@@ -18,33 +18,32 @@ GIT_TIMEOUT_SECONDS = 10
 MAX_ROOT_IGNORE_BYTES = 65_536
 GIT_EXECUTABLE = "/usr/bin/git"
 WORKSPACE_ROOT = "_workspace"
-WORKSPACE_README = "_workspace/README.md"
-WORKSPACE_PROBE = "_workspace/probe.log"
+# Each staging directory tracks only its README; every other child stays ignored.
+WORKSPACE_DIRECTORIES = (
+    WORKSPACE_ROOT,
+    "_workspace/diagnostics",
+    "_workspace/diagnostics/ci",
+    "_workspace/diagnostics/validation",
+    "_workspace/repo-support",
+    "_workspace/repo-support/analysis",
+    "_workspace/repo-support/previews",
+)
+WORKSPACE_READMES = tuple(f"{path}/README.md" for path in WORKSPACE_DIRECTORIES)
+WORKSPACE_PROBES = tuple(f"{path}/probe.log" for path in WORKSPACE_DIRECTORIES)
 ROOT_IGNORE = ".gitignore"
 INDEX_ARGUMENTS = ("ls-files", "--stage", "-z", "--", WORKSPACE_ROOT)
 ROOT_IGNORE_INDEX_ARGUMENTS = ("ls-files", "--stage", "-z", "--", ROOT_IGNORE)
 ISOLATED_INIT_ARGUMENTS = ("init", "--quiet")
-PROBE_IGNORE_ARGUMENTS = (
-    "check-ignore",
-    "--no-index",
-    "--quiet",
-    "--",
-    WORKSPACE_PROBE,
-)
-README_IGNORE_ARGUMENTS = (
-    "check-ignore",
-    "--no-index",
-    "--quiet",
-    "--",
-    WORKSPACE_README,
+IGNORE_QUERY = ("check-ignore", "--no-index", "--quiet", "--")
+IGNORE_ARGUMENTS = frozenset(
+    (*IGNORE_QUERY, path) for path in WORKSPACE_PROBES + WORKSPACE_READMES
 )
 ALLOWED_GIT_ARGUMENTS = frozenset(
     (
         INDEX_ARGUMENTS,
         ROOT_IGNORE_INDEX_ARGUMENTS,
         ISOLATED_INIT_ARGUMENTS,
-        PROBE_IGNORE_ARGUMENTS,
-        README_IGNORE_ARGUMENTS,
+        *IGNORE_ARGUMENTS,
     )
 )
 CLOSED_GIT_ENVIRONMENT = {
@@ -101,10 +100,8 @@ class IndexEntry(NamedTuple):
 
 
 def _query_path(arguments: tuple[str, ...]) -> str:
-    if arguments == PROBE_IGNORE_ARGUMENTS:
-        return WORKSPACE_PROBE
-    if arguments == README_IGNORE_ARGUMENTS:
-        return WORKSPACE_README
+    if arguments in IGNORE_ARGUMENTS:
+        return arguments[-1]
     if arguments == INDEX_ARGUMENTS:
         return WORKSPACE_ROOT
     if arguments == ISOLATED_INIT_ARGUMENTS:
@@ -232,9 +229,9 @@ def _parse_index(output: bytes, *, error_path: str) -> tuple[IndexEntry, ...]:
 
 def _validate_index(output: bytes) -> None:
     entries = _parse_index(output, error_path=WORKSPACE_ROOT)
-    readme_count = 0
+    counts = dict.fromkeys(WORKSPACE_READMES, 0)
     for entry in entries:
-        if entry.path != WORKSPACE_README:
+        if entry.path not in counts:
             raise WorkspaceBoundaryError("WORKSPACE-TRACKED-EXTRA", entry.path)
         if entry.stage != 0:
             raise WorkspaceBoundaryError("WORKSPACE-INDEX-CONFLICT", entry.path)
@@ -242,12 +239,13 @@ def _validate_index(output: bytes) -> None:
             raise WorkspaceBoundaryError("WORKSPACE-TRACKED-NONREGULAR", entry.path)
         if entry.mode != "100644":
             raise WorkspaceBoundaryError("WORKSPACE-README-MODE", entry.path)
-        readme_count += 1
+        counts[entry.path] += 1
 
-    if readme_count == 0:
-        raise WorkspaceBoundaryError("WORKSPACE-README-MISSING", WORKSPACE_README)
-    if readme_count != 1:
-        raise WorkspaceBoundaryError("WORKSPACE-README-CARDINALITY", WORKSPACE_README)
+    for path, count in counts.items():
+        if count == 0:
+            raise WorkspaceBoundaryError("WORKSPACE-README-MISSING", path)
+        if count != 1:
+            raise WorkspaceBoundaryError("WORKSPACE-README-CARDINALITY", path)
 
 
 def _require_git_success(
@@ -301,25 +299,26 @@ def _validate_ignore_policy(blob: bytes, runner: GitRunner) -> None:
             _require_git_success(initialized, ROOT_IGNORE)
             (Path(isolated_root) / ROOT_IGNORE).write_bytes(blob)
 
-            probe = runner(isolated_root, PROBE_IGNORE_ARGUMENTS)
-            if not isinstance(probe, subprocess.CompletedProcess):
-                raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", WORKSPACE_PROBE)
-            if probe.returncode == 1:
-                raise WorkspaceBoundaryError(
-                    "WORKSPACE-SCRATCH-NOT-IGNORED", WORKSPACE_PROBE
-                )
-            if probe.returncode != 0:
-                raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", WORKSPACE_PROBE)
+            for probe_path, readme_path in zip(WORKSPACE_PROBES, WORKSPACE_READMES):
+                probe = runner(isolated_root, (*IGNORE_QUERY, probe_path))
+                if not isinstance(probe, subprocess.CompletedProcess):
+                    raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", probe_path)
+                if probe.returncode == 1:
+                    raise WorkspaceBoundaryError(
+                        "WORKSPACE-SCRATCH-NOT-IGNORED", probe_path
+                    )
+                if probe.returncode != 0:
+                    raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", probe_path)
 
-            readme = runner(isolated_root, README_IGNORE_ARGUMENTS)
-            if not isinstance(readme, subprocess.CompletedProcess):
-                raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", WORKSPACE_README)
-            if readme.returncode == 0:
-                raise WorkspaceBoundaryError(
-                    "WORKSPACE-README-IGNORED", WORKSPACE_README
-                )
-            if readme.returncode != 1:
-                raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", WORKSPACE_README)
+                readme = runner(isolated_root, (*IGNORE_QUERY, readme_path))
+                if not isinstance(readme, subprocess.CompletedProcess):
+                    raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", readme_path)
+                if readme.returncode == 0:
+                    raise WorkspaceBoundaryError(
+                        "WORKSPACE-README-IGNORED", readme_path
+                    )
+                if readme.returncode != 1:
+                    raise WorkspaceBoundaryError("WORKSPACE-GIT-FAILED", readme_path)
     except WorkspaceBoundaryError:
         raise
     except OSError as exc:
@@ -352,7 +351,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     arguments = _parse_args(sys.argv[1:] if argv is None else argv)
     try:
         validate_workspace_boundary(arguments.root)
-        print("[PASS] workspace boundary: _workspace/README.md")
+        print(f"[PASS] workspace boundary: {len(WORKSPACE_READMES)} READMEs")
     except WorkspaceBoundaryError as exc:
         print(f"ERR {exc}", file=sys.stderr)
         return 1

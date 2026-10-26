@@ -17,8 +17,26 @@ VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-workspace-boundary.py"
 AGGREGATE_PATH = REPOSITORY_ROOT / "scripts" / "qa.py"
 REGISTRY_PATH = REPOSITORY_ROOT / "scripts" / "validation" / "registry.json"
 OBJECT_ID = b"a" * 40
+WORKSPACE_DIRECTORIES = (
+    "_workspace",
+    "_workspace/diagnostics",
+    "_workspace/diagnostics/ci",
+    "_workspace/diagnostics/validation",
+    "_workspace/repo-support",
+    "_workspace/repo-support/analysis",
+    "_workspace/repo-support/previews",
+)
+WORKSPACE_READMES = tuple(f"{path}/README.md" for path in WORKSPACE_DIRECTORIES)
+WORKSPACE_PROBES = tuple(f"{path}/probe.log" for path in WORKSPACE_DIRECTORIES)
 README_RECORD = b"100644 " + OBJECT_ID + b" 0\t_workspace/README.md\0"
-ROOT_POLICY = b"_workspace/*\n!_workspace/README.md\n"
+INDEX_RECORDS = b"".join(
+    b"100644 " + OBJECT_ID + b" 0\t" + path.encode("ascii") + b"\0"
+    for path in WORKSPACE_READMES
+)
+ROOT_POLICY_TEXT = "/_workspace/*\n!/_workspace/README.md\n" + "".join(
+    f"!/{path}/\n/{path}/*\n!/{path}/README.md\n" for path in WORKSPACE_DIRECTORIES[1:]
+)
+ROOT_POLICY = ROOT_POLICY_TEXT.encode("ascii")
 ROOT_IGNORE_RECORD = b"100644 " + OBJECT_ID + b" 0\t.gitignore\0"
 
 
@@ -42,13 +60,14 @@ class InjectedGit:
     def __init__(
         self,
         *,
-        index: bytes = README_RECORD,
+        index: bytes = INDEX_RECORDS,
         root_ignore_index: bytes | None = None,
         root_ignore_object_id: bytes = OBJECT_ID,
         root_policy: bytes = ROOT_POLICY,
         root_policy_size: bytes | None = None,
         probe_status: int = 0,
         readme_status: int = 1,
+        status_path: str | None = None,
     ) -> None:
         self.index = index
         self.root_ignore_object_id = root_ignore_object_id
@@ -65,6 +84,7 @@ class InjectedGit:
         )
         self.probe_status = probe_status
         self.readme_status = readme_status
+        self.status_path = status_path
         self.calls: list[tuple[str, tuple[str, ...]]] = []
 
     def __call__(self, root: str, arguments: tuple[str, ...]):
@@ -80,22 +100,13 @@ class InjectedGit:
             return completed(arguments, 0, self.root_policy)
         if arguments == ("init", "--quiet"):
             return completed(arguments, 0)
-        if arguments == (
-            "check-ignore",
-            "--no-index",
-            "--quiet",
-            "--",
-            "_workspace/probe.log",
-        ):
-            return completed(arguments, self.probe_status)
-        if arguments == (
-            "check-ignore",
-            "--no-index",
-            "--quiet",
-            "--",
-            "_workspace/README.md",
-        ):
-            return completed(arguments, self.readme_status)
+        if arguments[:4] == ("check-ignore", "--no-index", "--quiet", "--"):
+            path = arguments[4]
+            selected = self.status_path in (None, path)
+            if path in WORKSPACE_PROBES:
+                return completed(arguments, self.probe_status if selected else 0)
+            if path in WORKSPACE_READMES:
+                return completed(arguments, self.readme_status if selected else 1)
         raise AssertionError(f"unexpected Git arguments: {arguments!r}")
 
 
@@ -133,16 +144,11 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
         self.assertEqual(initialized.returncode, 0, initialized.stderr)
         (root / ".gitignore").write_text(root_policy, encoding="utf-8")
         workspace = root / "_workspace"
-        workspace.mkdir()
-        (workspace / "README.md").write_text("fixture\n", encoding="utf-8")
+        for readme in WORKSPACE_READMES:
+            (root / readme).parent.mkdir(parents=True, exist_ok=True)
+            (root / readme).write_text("fixture\n", encoding="utf-8")
         added = subprocess.run(
-            [
-                "/usr/bin/git",
-                "add",
-                "--",
-                ".gitignore",
-                "_workspace/README.md",
-            ],
+            ["/usr/bin/git", "add", "-f", "--", ".gitignore", *WORKSPACE_READMES],
             cwd=root,
             env=self.validator.CLOSED_GIT_ENVIRONMENT,
             stdout=subprocess.PIPE,
@@ -172,7 +178,7 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
 
     def test_ignored_child_policy_cannot_override_correct_root_policy(self) -> None:
         temporary, root = self.isolated_repository_with_child_ignore(
-            root_policy="_workspace/*\n!_workspace/README.md\n",
+            root_policy=ROOT_POLICY_TEXT,
             child_policy="!probe.log\nREADME.md\n",
         )
         try:
@@ -182,7 +188,7 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
 
     def test_worktree_root_policy_cannot_override_staged_blob(self) -> None:
         temporary, root = self.isolated_repository_with_child_ignore(
-            root_policy="_workspace/*\n!_workspace/README.md\n",
+            root_policy=ROOT_POLICY_TEXT,
             child_policy="",
         )
         try:
@@ -213,32 +219,12 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
         self.assertEqual(len(isolated_roots), 1)
         isolated_root = isolated_roots.pop()
         self.assertNotEqual(isolated_root, actual_root)
-        self.assertEqual(
-            runner.calls[4:],
-            [
-                (isolated_root, ("init", "--quiet")),
-                (
-                    isolated_root,
-                    (
-                        "check-ignore",
-                        "--no-index",
-                        "--quiet",
-                        "--",
-                        "_workspace/probe.log",
-                    ),
-                ),
-                (
-                    isolated_root,
-                    (
-                        "check-ignore",
-                        "--no-index",
-                        "--quiet",
-                        "--",
-                        "_workspace/README.md",
-                    ),
-                ),
-            ],
-        )
+        query = ("check-ignore", "--no-index", "--quiet", "--")
+        expected = [(isolated_root, ("init", "--quiet"))]
+        for probe, readme in zip(WORKSPACE_PROBES, WORKSPACE_READMES):
+            expected.append((isolated_root, (*query, probe)))
+            expected.append((isolated_root, (*query, readme)))
+        self.assertEqual(runner.calls[4:], expected)
 
     def test_never_traverses_stats_or_opens_workspace_children(self) -> None:
         runner = InjectedGit()
@@ -347,15 +333,22 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
         cases = (
             (b"", ("WORKSPACE-README-MISSING", "_workspace/README.md")),
             (
-                README_RECORD + b"100644 " + OBJECT_ID + b" 0\t_workspace/extra.log\0",
+                README_RECORD,
+                ("WORKSPACE-README-MISSING", "_workspace/diagnostics/README.md"),
+            ),
+            (
+                INDEX_RECORDS + b"100644 " + OBJECT_ID + b" 0\t_workspace/extra.log\0",
                 ("WORKSPACE-TRACKED-EXTRA", "_workspace/extra.log"),
             ),
             (
-                README_RECORD + b"100644 " + OBJECT_ID + b" 0\t_workspace/forced.log\0",
-                ("WORKSPACE-TRACKED-EXTRA", "_workspace/forced.log"),
+                INDEX_RECORDS
+                + b"100644 "
+                + OBJECT_ID
+                + b" 0\t_workspace/diagnostics/ci/run.log\0",
+                ("WORKSPACE-TRACKED-EXTRA", "_workspace/diagnostics/ci/run.log"),
             ),
             (
-                README_RECORD + README_RECORD,
+                INDEX_RECORDS + README_RECORD,
                 ("WORKSPACE-README-CARDINALITY", "_workspace/README.md"),
             ),
         )
@@ -421,6 +414,29 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
             InjectedGit(readme_status=128),
             ("WORKSPACE-GIT-FAILED", "_workspace/README.md"),
         )
+
+    def test_requires_every_nested_scratch_ignored_and_readme_unignored(self) -> None:
+        for probe, readme in zip(WORKSPACE_PROBES[1:], WORKSPACE_READMES[1:]):
+            with self.subTest(path=probe):
+                self.assert_boundary_error(
+                    InjectedGit(probe_status=1, status_path=probe),
+                    ("WORKSPACE-SCRATCH-NOT-IGNORED", probe),
+                )
+            with self.subTest(path=readme):
+                self.assert_boundary_error(
+                    InjectedGit(readme_status=0, status_path=readme),
+                    ("WORKSPACE-README-IGNORED", readme),
+                )
+
+    def test_tracked_root_policy_satisfies_the_boundary(self) -> None:
+        temporary, root = self.isolated_repository_with_child_ignore(
+            root_policy=(REPOSITORY_ROOT / ".gitignore").read_text(encoding="utf-8"),
+            child_policy="",
+        )
+        try:
+            self.validator.validate_workspace_boundary(root)
+        finally:
+            temporary.cleanup()
 
     def test_default_git_runner_is_bounded_closed_and_shell_free(self) -> None:
         with mock.patch.object(

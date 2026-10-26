@@ -857,8 +857,8 @@
       "id": "workspace-boundary",
       "routes": [
         {
-          "kind": "exact",
-          "value": "_workspace/README.md"
+          "kind": "regex",
+          "value": "^_workspace/(?:diagnostics/(?:ci/|validation/)?|repo-support/(?:analysis/|previews/)?)?README\\.md$"
         }
       ],
       "validators": [

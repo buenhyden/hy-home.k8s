@@ -2529,7 +2529,7 @@
       "id": "common/readme-workspace-staging",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^_workspace/README\\.md$",
+      "path_pattern": "^_workspace/(?:diagnostics/(?:ci/|validation/)?|repo-support/(?:analysis/|previews/)?)?README\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
       "frontmatter": {
