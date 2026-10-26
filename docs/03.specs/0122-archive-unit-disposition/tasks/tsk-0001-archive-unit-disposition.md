@@ -44,24 +44,27 @@ document that the seven Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | Consumer census and isolated recovery for the seven units | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AD-002](../spec.md#success-criteria--verification-plan) | Remove the seven units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | Consumer census and isolated recovery for the seven units | platform | in-progress | PASS | EVD-002, EVD-003, EVD-004 |
+| WORK-002 | [VAL-AD-002](../spec.md#success-criteria--verification-plan) | Remove the seven units and add their assessment rows | platform | in-progress | NOT_RUN | EVD-005 |
 
 ## Task Evidence
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Exact revision | NOT_RUN | Pending | yes | none |
+| EVD-002 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Disposition authorization | User answer on 2026-10-27 approving exactly the seven units in Inputs | PASS | This Task Inputs | yes | none |
+| EVD-003 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer census | Unit directory name and `SPEC-####` identifier search over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml`, `.toml` outside Stage 98 on base `0a9e8062` | PASS | Zero consumers for each of the seven; static search only, external consumers not observable | yes | none |
+| EVD-004 | [VAL-AD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Named deterministic check | Isolated recovery on base `0a9e8062`: per unit, `git rev-parse` of the current tree against the envelope `<commit>:<original path>` tree, then `git archive` of the envelope into a scratch directory | PASS | 7/7 equal trees; restored 1, 3, 1, 1, 8, 8 and 8 files as expected | yes | EVD-001 |
+| EVD-005 | [VAL-AD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Canonical staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AD-001](../spec.md#success-criteria--verification-plan) | pending | none | Consumer census and recovery remain | platform |
-| [VAL-AD-002](../spec.md#success-criteria--verification-plan) | pending | none | Removal and assessment rows remain | platform |
+| [VAL-AD-001](../spec.md#success-criteria--verification-plan) | pending | EVD-002, EVD-003, EVD-004 | Accept with VAL-AD-002 after staged QA | platform |
+| [VAL-AD-002](../spec.md#success-criteria--verification-plan) | pending | none | Run staged QA on the exact index | platform |
 
 ## Approval and Safety Boundaries
-
 
 - **Allowed Paths**: the seven unit directories under `docs/98.archive/`, the
   Retention Assessment table in `docs/98.archive/README.md`, this package and
@@ -81,9 +84,8 @@ document that the seven Retention Assessment rows name.
 
 ## Verification Summary
 
-No unit has been removed yet. The dry-run in Inputs is a working
-observation; its census and recovery are recorded as evidence when WORK-001
-runs. Removal is not purification: every clone and commit that held the
+Recovery and consumer census passed for the seven units. Staged QA has not
+run yet. Removal is not purification: every clone and commit that held the
 bytes keeps them. Staged QA must run without the ignored `graphify-out/`
 directory, because MIG-0005 retired those paths and the migration proof reads
 the working tree in staged mode (a known SPEC-0120 non-goal).
