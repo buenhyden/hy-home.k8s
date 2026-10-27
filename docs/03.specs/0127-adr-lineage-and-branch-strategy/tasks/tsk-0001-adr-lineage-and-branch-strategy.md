@@ -46,10 +46,10 @@ prompts and numbering rule, and record the branch strategy. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 

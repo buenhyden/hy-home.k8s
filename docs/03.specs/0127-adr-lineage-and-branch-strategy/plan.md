@@ -2,7 +2,7 @@
 title: "ADR Lineage and Branch Strategy Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-27"
 layer: "specs"
