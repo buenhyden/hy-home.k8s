@@ -1,10 +1,10 @@
 ---
 title: "Traefik Ingress Cutover"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
-updated: "2026-10-20"
+updated: "2026-10-27"
 layer: "specs"
 artifact_id: "SPEC-0121"
 ---
@@ -92,8 +92,15 @@ These name ingress-nginx as the current controller:
   - Traefik creates no IngressClass (`ingressClass.enabled=false`) and
     publishes no Ingress status, so `status.loadBalancer` stays with
     ingress-nginx.
-- Traefik enables only the `kubernetesIngressNGINX` provider. The plain
-  `kubernetesIngress` and `kubernetesCRD` providers are disabled.
+- Traefik routes only through the `kubernetesIngressNGINX` provider. The
+  plain `kubernetesIngress` and `kubernetesCRD` providers are disabled.
+- Traefik keeps two ingress-nginx defaults that its provider does not apply
+  by itself (found by WORK-002 on 2026-10-27):
+  - request buffering is on (`proxyRequestBuffering: true`), so the 1 MiB
+    `proxyBodySize` default rejects larger bodies with `413`;
+  - the file provider is enabled for one `headers` middleware, `hsts`
+    (`max-age=31536000; includeSubDomains`), attached to the `websecure`
+    entrypoint. It defines no router and no service.
 - The Traefik namespace uses the labels of the current ingress namespace,
   per [ADR-0028](../../02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md):
   - `audit` and `warn` at `baseline`;
@@ -219,7 +226,7 @@ persistent state.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
-| VAL-TC-001 | IngressClass `nginx` exists throughout, tracked by `platform-ingress-routes`, and ingress-nginx renders no class and no admission webhook. Traefik then runs side by side: Synced and Healthy, only the Ingress-NGINX provider enabled, a ClusterIP Service only, no IngressClass, and every Ingress `status.loadBalancer` unchanged. |
+| VAL-TC-001 | IngressClass `nginx` exists throughout, tracked by `platform-ingress-routes`, and ingress-nginx renders no class and no admission webhook. Traefik then runs side by side: Synced and Healthy, routing only through the Ingress-NGINX provider, a ClusterIP Service only, no IngressClass, and every Ingress `status.loadBalancer` unchanged. |
 | VAL-TC-002 | Every route in `ROUTES` passes through the port-forward, together with the apex redirect status codes, the adminer mesh path, a Rollout canary step and the listed nginx-default behaviors. |
 | VAL-TC-003 | After the cutover, the router address serves every route through Traefik. The validators and the live check describe Traefik, and ingress-nginx is gone. The observed outage and sync order are recorded. |
 | VAL-TC-004 | The revert path is recorded: either a live revert restored ingress-nginx, or a branch render plus the stated order, with that limitation named. |
