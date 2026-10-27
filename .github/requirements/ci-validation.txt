@@ -4,8 +4,6 @@
 #
 #    pip-compile --generate-hashes --no-emit-index-url --no-emit-trusted-host --output-file=.github/requirements/ci-validation.txt --pip-args='--only-binary=:all:' --strip-extras .github/requirements/ci-validation.in
 #
---only-binary :all:
-
 attrs==26.1.0 \
     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
     # via
@@ -17,8 +15,9 @@ cfgv==3.5.0 \
 distlib==0.4.3 \
     --hash=sha256:4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b
     # via virtualenv
-filelock==3.32.2 \
-    --hash=sha256:87dd94cf281e586d135fa51132b8e3d9a598b316e90377a288663c9321036c82
+filelock==4.2.1 \
+    --hash=sha256:7be2662e9e826b9bba28afc0f843a123280d799a2ea44bb5d35ccec67905ae44 \
+    --hash=sha256:c4c937ccac2a813cee448e662a56366cfb374c0f8702e75f295c412cc1c5d5a3
     # via
     #   python-discovery
     #   virtualenv
@@ -27,7 +26,7 @@ identify==2.6.19 \
     # via pre-commit
 jsonschema==4.26.0 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
-    # via -r .github/requirements/ci-validation.in
+    # via -r ci-validation.in
 jsonschema-specifications==2025.9.1 \
     --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe
     # via jsonschema
@@ -42,7 +41,7 @@ platformdirs==4.11.0 \
     # via virtualenv
 pre-commit==4.6.1 \
     --hash=sha256:0e3b2942510d1fb34eec167a3ec57331bf8442122f1153a9fb8b58f5c49b2717
-    # via -r .github/requirements/ci-validation.in
+    # via -r ci-validation.in
 python-discovery==1.6.1 \
     --hash=sha256:d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3
     # via virtualenv
@@ -120,7 +119,7 @@ pyyaml==6.0.3 \
     --hash=sha256:fa160448684b4e94d80416c0fa4aac48967a969efe22931448d853ada8baf926 \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
     # via
-    #   -r .github/requirements/ci-validation.in
+    #   -r ci-validation.in
     #   pre-commit
 referencing==0.37.0 \
     --hash=sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231
