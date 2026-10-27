@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.7.0"
+version: "0.8.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -38,8 +38,8 @@ the cutover and its revert evidence.
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | completed | PASS | EVD-006 preparation render, EVD-007 class handover, EVD-008 and EVD-010 side-by-side render, EVD-009 side-by-side status |
 | WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | completed | PASS | EVD-011 routes; EVD-012 differences fixed by PR #170 (EVD-013, EVD-016); EVD-014 mesh path; EVD-015 forwarded headers; EVD-017 closes EVD-003; EVD-018 narrows them. The Rollout canary step moves to VAL-TC-003 (Spec 0.5.0) by operator decision |
-| WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | in-progress | NOT_RUN | EVD-019 cutover static checks; EVD-004 follows the merge |
-| WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | completed | PASS | EVD-019 static checks; EVD-020 cutover; EVD-021 canary; EVD-022 closes EVD-004 |
+| WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | in-progress | PASS | EVD-023 revert render closes EVD-005; the live revert was not exercised; completes when the operator accepts VAL-TC-004 |
 
 ## Task Evidence
 
@@ -64,6 +64,10 @@ the cutover and its revert evidence.
 | EVD-017 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks | EVD-011, EVD-014, EVD-015 and EVD-016 | PASS | Every route in `ROUTES`, the apex redirect status codes, the adminer mesh path and the listed nginx-default behaviors match ingress-nginx after PR #170. The Rollout canary step is verified at the cutover (EVD-004), as the operator chose | yes | EVD-003 |
 | EVD-018 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Evidence scope after review | PR #171 independent review of EVD-014, EVD-015 and EVD-017; `kubectl get networkpolicy -A` | PASS | Narrows three rows. EVD-014 observed a reset connection (curl exit 56), not an HTTP `503`: the plaintext caller never completes a request, which is how STRICT mTLS refuses it, and no NetworkPolicy selects ingress in `apps`, so the reset is not a policy drop; Spec 0.5.0 accepts either form. EVD-015 shows no real client address (`127.0.0.6` is the ingress-nginx sidecar, `127.0.0.1` the port-forward), so client-address preservation is checked through the router address after the cutover (EVD-004). EVD-017 no longer needs the canary step: Spec 0.5.0 moves it to VAL-TC-003 | no | none |
 | EVD-019 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Cutover static checks | Branch `feat/spec-0121-traefik-cutover`: `helm template` of `traefik` 42.1.3 with the cutover values, `python3 -m unittest tests.test_platform_ingress tests.test_infrastructure_tempfiles`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/render-platform-chart-kinds.sh`, `kubectl kustomize` of the changed directories | PASS | Service `traefik` renders as `LoadBalancer` with NodePorts 30080 and 30443 and `metallb.io/loadBalancerIPs: 172.18.0.240`; `--providers.kubernetesingressnginx.publishservice=traefik/traefik`; `aliasHeadersStrategy=delete` on both entrypoints. The validator `CONTROLLER` describes Traefik and fails closed on each changed Traefik value (15 tests); the tempfile tests (19) and the contract script pass; chart kinds stay inside the AppProject allow-lists | no | none |
+| EVD-020 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Live cutover | PR #173 merged as main `bab91b87` at 2026-10-27T05:44:01Z; read-only `kubectl` and curl through `192.168.0.14` every 5 s, then per route; `CHECK_K8S_ROUTER=true bash infrastructure/verify/verify-ingress-tls.sh`; operator-applied temporary whoami through the router | PASS | The router answered until 05:44:42 and again from 05:44:54 (about 12 to 17 s outage). Traefik took `172.18.0.240` and NodePorts 30080 and 30443 on its first sync, no retry needed; `platform-ingress-nginx` was gone by 05:45:58 and Namespace `ingress-nginx` finished terminating within the controller grace period. The new Traefik pod restarted once during startup (exit 137) and has run since. Through the router: argo, adminer and headlamp 200, kiali 302 to `/kiali`, rollouts 302 to `/rollouts/`, the five apex paths 301 to their hosts, HTTP 308 to HTTPS, HSTS present; the apex certificate was re-issued by the mkcert CA in `traefik`. All ten Ingresses report `172.18.0.240` from Traefik; no ingress-nginx ClusterRole, ClusterRoleBinding or webhook remains, only the neutral IngressClass. `verify-ingress-tls.sh` passed. The whoami backend saw `X-Forwarded-For` and `X-Real-Ip` `127.0.0.6`, `X-Forwarded-Port` 80 and the canonical host, as under ingress-nginx: the mesh sidecar address, so neither router preserves the client address | no | none |
+| EVD-021 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Rollout canary through Traefik | PR #174 (pod-template annotation `rollouts.hy-home/canary-check`) merged as main `c090747b` at 05:57:39Z; Rollout step, VirtualService weights and adminer through `192.168.0.14` sampled every 3 s | PASS | Canary `8497748d9c` started at 05:59:12, VirtualService 80/20 at 05:59:42, analysis `adminer-8497748d9c-5-1` Successful with measurements 0, 0, 0, 0, then 40/60 at 06:01:43 and Healthy with the new stable at 06:02:13, back to 100/0. All 82 router samples returned 200. The `adminer` and `platform-traefik` Applications are Synced and Healthy afterwards | no | none |
+| EVD-022 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Live router checks after cutover | EVD-020 and EVD-021 | PASS | The router address serves every route through Traefik, one Rollout canary step shifted adminer traffic through it, the validators and the live check describe Traefik, and ingress-nginx is gone. Narrows EVD-019: its tests mutate 13 of the Traefik value checks, not each one | yes | EVD-004 |
+| EVD-023 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Revert evidence | Detached worktree at `bab91b87` with `git revert -m 1 --no-commit bab91b87`: `python3 -m unittest tests.test_platform_ingress tests.test_infrastructure_tempfiles`, `bash scripts/validate-infrastructure-contracts.sh`, `bash scripts/render-platform-chart-kinds.sh`, `kubectl kustomize` of the changed directories | PASS | The revert restores `platform-ingress-nginx` (chart 4.15.1, LoadBalancer on NodePorts 30080 and 30443), the `ingress-nginx` namespace and the apex routes there, and returns the Traefik Service to `ClusterIP`; all checks pass on the reverted tree. Limitation: the revert was rendered, not exercised live. Its restored Application retries three times (about 70 s); if the NodePorts or the address are still held when they run out, the operator syncs `platform-ingress-nginx` manually | yes | EVD-005 |
 
 ## Criterion Acceptance
 
@@ -71,8 +75,8 @@ the cutover and its revert evidence.
 | --- | --- | --- | --- | --- |
 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Accepted by the operator on 2026-10-27 | platform |
 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-011, EVD-014, EVD-015, EVD-016, EVD-017, EVD-018 | Accepted by the operator on 2026-10-27 | platform |
-| [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | none | Cutover pull request remains | platform |
-| [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | none | Revert evidence remains | platform |
+| [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | EVD-019, EVD-020, EVD-021, EVD-022 | Evidence complete; operator acceptance remains | platform |
+| [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | EVD-023 | Render evidence complete, live revert not exercised; operator acceptance remains | platform |
 
 ## Approval and Safety Boundaries
 
@@ -136,7 +140,8 @@ WORK-001 passed and the operator accepted VAL-TC-001. WORK-002 passed:
 every route matches ingress-nginx (EVD-011); the body-size and HSTS
 differences (EVD-012) are fixed by PR #170 and rechecked live (EVD-016);
 the adminer mesh path (EVD-014) and the forwarded headers (EVD-015) match.
-The operator accepted VAL-TC-002. WORK-003 is in progress: the cutover
-pull request passes its static checks (EVD-019); the live router checks,
-the canary step and client-address preservation follow its merge
-(EVD-004), then the AppProject cleanup and the revert evidence.
+The operator accepted VAL-TC-002. WORK-003 passed: the cutover merged with
+a 12 to 17 s outage (EVD-020), every route serves through Traefik, and one
+canary step shifted adminer traffic through it (EVD-021, EVD-022). WORK-004
+passed by render (EVD-023). VAL-TC-003 and VAL-TC-004 await operator
+acceptance; the AppProject cleanup follows.
