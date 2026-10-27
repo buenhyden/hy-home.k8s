@@ -199,6 +199,60 @@ class PlatformAssuranceTests(unittest.TestCase):
         self.assertEqual(len(matching), 1)
         self.assertEqual(matching[0]["result"], "FAIL")
 
+    def test_ingress_class_is_judged_as_a_cluster_resource(self):
+        control = "gitops/clusters/local"
+        routes = "gitops/platform/ingress-routes"
+        managers = [
+            {"group": "argoproj.io", "kind": "AppProject"},
+            {"group": "argoproj.io", "kind": "Application"},
+        ]
+        ingress_class = {"group": "networking.k8s.io", "kind": "IngressClass"}
+
+        def rendered(cluster, namespaced):
+            project = {
+                "apiVersion": "argoproj.io/v1alpha1",
+                "kind": "AppProject",
+                "metadata": {"name": "platform", "namespace": "argocd"},
+                "spec": {
+                    "clusterResourceWhitelist": cluster,
+                    "namespaceResourceWhitelist": namespaced,
+                },
+            }
+            apps = [
+                {
+                    "apiVersion": "argoproj.io/v1alpha1",
+                    "kind": "Application",
+                    "metadata": {
+                        "name": path.replace("/", "-"),
+                        "namespace": "argocd",
+                    },
+                    "spec": {
+                        "project": "platform",
+                        "source": {
+                            "path": path,
+                            "repoURL": "https://github.com/buenhyden/hy-home.k8s.git",
+                            "targetRevision": "main",
+                        },
+                    },
+                }
+                for path in (control, routes)
+            ]
+            document = {
+                "apiVersion": "networking.k8s.io/v1",
+                "kind": "IngressClass",
+                "metadata": {"name": "nginx"},
+            }
+            return {control: [project, *apps], routes: [document]}
+
+        self.assertEqual(
+            ASSURANCE.validate_project_scope(rendered([ingress_class], managers)),
+            set(),
+        )
+        self.assertEqual(
+            ASSURANCE.validate_project_scope(rendered([], [*managers, ingress_class])),
+            {routes},
+        )
+
     def test_project_whitelist_uses_group_and_kind(self):
         control = "gitops/clusters/local"
         workload = "gitops/platform/service"
