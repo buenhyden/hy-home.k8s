@@ -269,3 +269,12 @@ jobs:
           --ruff-config ../trusted-base/.ruff.toml
           --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
           --expected-base-sha "$BASE_SHA"
+      # A Dependabot lock pull request never passes local staged QA. Check the
+      # candidate lock with the reviewed base's validator (SPEC-0123).
+      - name: Validate a changed CI lock
+        working-directory: candidate
+        run: |
+          set -euo pipefail
+          if grep -qz '^\.github/requirements/' "$RUNNER_TEMP/pr-style-paths.z"; then
+            python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
+          fi

@@ -1,10 +1,10 @@
 ---
 title: "Quality and Evidence Policy"
-version: "2.2.1"
+version: "2.3.0"
 type: "governance/rule"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-27"
 ---
 
 # Quality and Evidence Policy
@@ -53,7 +53,10 @@ metadata; static parity never proves discovery, model resolution, or execution.
 - **hosted**: a former local `ci` alias never established GitHub Actions
   execution. Hosted automation
   runs branch or repository metadata checks and the separately selected shared
-  style check on PR inputs. A deployment style route applies only if a real
+  style check on PR inputs. When a PR changes `.github/requirements/`, the
+  style job also runs the reviewed base's CI Python contract check against the
+  PR files, because a bot-authored lock update never passes local staged QA
+  (SPEC-0123). A deployment style route applies only if a real
   deployment workflow exists. Hosted automation does not run local full, unit or
   document-content QA. A hosted result reports only what its jobs actually
   observed; old full-QA `NOT_RUN` records remain historical, never a current

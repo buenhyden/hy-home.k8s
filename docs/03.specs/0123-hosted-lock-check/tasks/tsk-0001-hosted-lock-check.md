@@ -1,6 +1,6 @@
 ---
 title: "Hosted CI Lock Check"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -32,7 +32,7 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | in-progress | PASS | EVD-003 closes EVD-001 |
 | WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -41,6 +41,7 @@ Run the reviewed base's CI Python lock check on pull requests that change
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EVD-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Reviewed topology and failing lock | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted run and staged QA | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-003 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Reviewed topology and failing lock | Branch `ci/hosted-lock-check`: `python3 -m unittest tests.test_validate_ci_python_contract`, `python3 scripts/validate-ci-python-contract.py --root .` with the lock directive removed and restored, the step condition on NUL-separated path lists, `python3 scripts/validate-github-actions-security.py --root .` | PASS | Two new tests failed before the step existed and pass after it; the hand-built job fixture gains the seventh step and a case where the step runs the candidate's own validator, which is rejected; 79 tests pass. With `--only-binary :all:` removed the validator fails `CI-PYTHON-LOCK`, and the restored lock passes. The condition runs the check for a list that contains `.github/requirements/ci-validation.txt` and skips it for one that does not. GitHub Actions security passes | yes | EVD-001 |
 
 ## Criterion Acceptance
 
@@ -69,4 +70,6 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 ## Verification Summary
 
-Nothing has run yet.
+WORK-001 passed (EVD-003): `style-pr` has the seventh step, the validator
+admits exactly that topology, and a lock without `--only-binary :all:` fails.
+The hosted run and staged QA remain (WORK-002).

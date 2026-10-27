@@ -1334,7 +1334,7 @@ def _validate_style_pr_job(
     steps = job.get("steps")
     if (
         not isinstance(steps, list)
-        or len(steps) != 6
+        or len(steps) != 7
         or any(not isinstance(step, dict) for step in steps)
     ):
         fail("CI-STYLE-TOPOLOGY", "PR style job must have the reviewed steps")
@@ -1383,6 +1383,17 @@ def _validate_style_pr_job(
                 "--ruff-config ../trusted-base/.ruff.toml "
                 '--paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul '
                 '--expected-base-sha "$BASE_SHA"'
+            ),
+        },
+        {
+            "working-directory": "candidate",
+            "run": (
+                "set -euo pipefail\n"
+                "if grep -qz '^\\.github/requirements/' "
+                '"$RUNNER_TEMP/pr-style-paths.z"; then\n'
+                "  python -I ../trusted-base/scripts/validate-ci-python-contract.py "
+                "--root .\n"
+                "fi"
             ),
         },
     )
