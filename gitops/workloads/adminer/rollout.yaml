@@ -20,6 +20,8 @@ spec:
       # 바꿔 canary로 pod를 교체한다.
       annotations:
         mesh.hy-home/sidecar-config: "otlp-tracing"
+        # SPEC-0121 VAL-TC-003: one canary step through the Traefik router.
+        rollouts.hy-home/canary-check: "spec-0121-traefik"
     spec:
       # UID 999는 추측이 아니라 이미지에서 직접 읽은 값이다:
       # `/etc/passwd`에 `adminer:x:999:999::/home/adminer:/bin/sh`.
