@@ -1,10 +1,10 @@
 ---
 title: "Dedicated Kubernetes Ingress Router on hy-k8s.home.arpa"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "ADR-0043"
 ---
@@ -113,6 +113,8 @@ host names.
   - It is a Docker bridge address, so LAN clients cannot reach it.
 
 ## Traceability
+
+**Current-state clarification (2026-10-27).** The k8s router's backend controller is now Traefik (Service `traefik/traefik`, MetalLB `172.18.0.240`, NodePorts `30080/30443`) per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The router contract for clients is unchanged; the ingress-nginx wording below is preserved as history.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **AD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)

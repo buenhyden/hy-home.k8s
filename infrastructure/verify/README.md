@@ -1,10 +1,10 @@
 ---
 title: "verify"
-version: "0.2.2"
+version: "0.2.3"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-27"
 ---
 # verify
 
@@ -38,7 +38,7 @@ updated: "2026-10-16"
 | `verify-secrets.sh` | Live | External Secrets Operator, OpenBao HTTPS/Kubernetes auth, and ArgoCD external Valkey secret flow are bootstrapped. | PASS means `vault-backend` and `argocd-external-valkey` live readiness contracts pass. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-external-services.sh` | Live | Python 3 is available; platform namespace Services and EndpointSlices exist for external Valkey and observability contracts. | PASS means non-headless selectorless ClusterIP Service ports and every same-service EndpointSlice port/address match the four declared local contracts; connectivity and authentication are outside this check. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `verify-network-policies.sh` | Live | NetworkPolicy resources are reconciled in platform, argocd, external-secrets, and istio-system namespaces. | PASS means required live egress NetworkPolicy contracts match the expected CIDR and port checks. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
-| `verify-ingress-tls.sh` | Live | ingress-nginx LoadBalancer, ArgoCD ingress/TLS, the mkcert root CA file used by the verifier, curl, rg, and optional k8s router inputs are available. | PASS means ArgoCD ingress/TLS and fallback endpoint pass CA-verified HTTPS; router checks run only when enabled, and Headlamp/Kiali TLS type mismatches report warnings. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
+| `verify-ingress-tls.sh` | Live | Traefik LoadBalancer (Service `traefik/traefik`), ArgoCD ingress/TLS, the mkcert root CA file used by the verifier, curl, rg, and optional k8s router inputs are available. | PASS means ArgoCD ingress/TLS and fallback endpoint pass CA-verified HTTPS; router checks run only when enabled, and Headlamp/Kiali TLS type mismatches report warnings. | Tier B: called by `run-all.sh`; documented in bootstrap runbook and this README. |
 | `run-all.sh` | Live aggregate | All live-test preconditions above are satisfied. | PASS means every live verification script in this inventory completed successfully. | Tier B: canonical live validation entrypoint in this README and SDD verification records. |
 
 ## Usage

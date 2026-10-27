@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Runbook"
-version: "1.2.1"
+version: "1.2.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-27"
 layer: "operations"
 artifact_id: "RUN-0004"
 ---
@@ -204,7 +204,7 @@ kubectl -n headlamp rollout restart deployment headlamp
 ### Troubleshooting Signatures
 
 - `Error syncing application: slack token is empty` → Vault secret 미등록 또는 ESO 미동기화
-- Headlamp 404 → ingress-nginx 미시작 또는 TLS secret 미발급
+- Headlamp 404 → Traefik(`traefik` namespace) 미시작 또는 TLS secret 미발급
 - Rollouts `CRD not found` → `installCRDs: true` 확인 또는 ArgoCD sync wave 순서 문제
 - Rollouts Dashboard 502 → dashboard Pod 미기동, service port 3100 확인
 

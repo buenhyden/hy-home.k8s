@@ -44,7 +44,7 @@ def copy_declarations(root):
     paths = (
         "gitops/apps/root/platform-headlamp-app.yaml",
         "gitops/apps/root/platform-kiali-app.yaml",
-        "gitops/apps/root/platform-ingress-nginx-app.yaml",
+        "gitops/apps/root/platform-traefik-app.yaml",
         "gitops/apps/root/platform-rollouts-app.yaml",
         "infrastructure/argocd/values-local.yaml",
     )
@@ -100,9 +100,9 @@ class PlatformIngressTest(unittest.TestCase):
             "nginx.ingress.kubernetes.io/permanent-redirect"
         ] = "https://adminer.hy-k8s.home.arpa/"
         errors = INGRESS.validate(ROOT, docs)
-        self.assertIn("INGRESS_ROUTE ingress-nginx/apex-kiali", errors)
-        self.assertIn("INGRESS_TLS ingress-nginx/apex-kiali", errors)
-        self.assertIn("INGRESS_REDIRECT ingress-nginx/apex-kiali", errors)
+        self.assertIn("INGRESS_ROUTE traefik/apex-kiali", errors)
+        self.assertIn("INGRESS_TLS traefik/apex-kiali", errors)
+        self.assertIn("INGRESS_REDIRECT traefik/apex-kiali", errors)
 
     def test_unknown_ingress_fails(self):
         docs = copy.deepcopy(desired_documents())
@@ -137,7 +137,7 @@ class PlatformIngressTest(unittest.TestCase):
             )
 
     def test_chart_version_bump_is_not_pinned(self):
-        for chart in ("headlamp", "kiali", "ingress-nginx", "rollouts"):
+        for chart in ("headlamp", "kiali", "traefik", "rollouts"):
             with (
                 self.subTest(chart=chart),
                 tempfile.TemporaryDirectory() as temporary,
@@ -184,44 +184,31 @@ class PlatformIngressTest(unittest.TestCase):
 
     def test_chart_service_generation_controls_fail_closed(self):
         cases = (
-            (
-                "ingress-nginx",
-                lambda v: v["controller"]["service"].update(enabled=False),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v["controller"]["service"].update(
-                    external={"enabled": False}
-                ),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v["controller"]["service"].update(ports={"http": 81}),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v.update(fullnameOverride="other"),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v["controller"].update(name="other"),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v["controller"].update(allowSnippetAnnotations=True),
-                "ingress-nginx/apex-argo",
-            ),
-            (
-                "ingress-nginx",
-                lambda v: v["controller"].update(
-                    config={"allow-snippet-annotations": "true"}
-                ),
-                "ingress-nginx/apex-argo",
+            *(
+                ("traefik", change, "traefik/apex-argo")
+                for change in (
+                    lambda v: v["service"].update(enabled=False),
+                    lambda v: v["service"]["spec"].update(type="ClusterIP"),
+                    lambda v: v["service"].update(annotations={}),
+                    lambda v: v["ports"]["web"].update(nodePort=30081),
+                    lambda v: v["ports"]["web"].update(exposedPort=81),
+                    lambda v: v.update(fullnameOverride="other"),
+                    lambda v: v["ingressClass"].update(enabled=True),
+                    lambda v: v["providers"]["kubernetesCRD"].update(enabled=True),
+                    lambda v: v["providers"]["kubernetesIngressNGINX"].update(
+                        allowSnippetAnnotations=True
+                    ),
+                    lambda v: v["providers"]["kubernetesIngressNGINX"].update(
+                        publishService={"enabled": False}
+                    ),
+                    lambda v: v["providers"]["kubernetesIngressNGINX"].update(
+                        proxyRequestBuffering=False
+                    ),
+                    lambda v: v["ports"]["websecure"]["http"].update(
+                        aliasHeadersStrategy="keep"
+                    ),
+                    lambda v: v["ports"]["websecure"]["http"].update(middlewares=[]),
+                )
             ),
             (
                 "headlamp",
@@ -323,7 +310,7 @@ class PlatformIngressTest(unittest.TestCase):
         errors = self.swapped(namespace="other")
         for name in ("argo", "kiali", "headlamp", "rollouts", "adminer"):
             self.assertIn(f"INGRESS_MISSING other/apex-{name}", errors)
-            self.assertIn(f"INGRESS_UNKNOWN ingress-nginx/apex-{name}", errors)
+            self.assertIn(f"INGRESS_UNKNOWN traefik/apex-{name}", errors)
 
     def test_renamed_redirect_annotation_fails_redirect(self):
         controller = copy.deepcopy(INGRESS.CONTROLLER)

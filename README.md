@@ -1,10 +1,10 @@
 ---
 title: "hy-home.k8s"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-27"
 ---
 # hy-home.k8s
 
@@ -111,7 +111,7 @@ hy-home.k8s/
 | Platform       | Linux server (Ubuntu 24.04 LTS), native Docker Engine                                           | 로컬 실행 환경 기준                                                                             |
 | Kubernetes     | k3d, k3s, kubectl, Helm                                                                         | 로컬 멀티노드 클러스터와 패키징                                                                 |
 | GitOps         | ArgoCD, ApplicationSet                                                                          | App-of-Apps 선언형 배포                                                                         |
-| Ingress        | ingress-nginx, k8s 전용 router(k3d serverlb)                                                    | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
+| Ingress        | Traefik(Ingress-NGINX provider), k8s 전용 router(k3d serverlb)                                  | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
 | Secrets        | External Secrets Operator, OpenBao(Vault API)                                                   | 외부 시크릿 동기화 계약                                                                         |
 | Data Services  | External PostgreSQL, External Valkey                                                            | 저장소 외부 런타임을 Service 계약으로 연결                                                      |
 | Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x                                | provider README와 인접 실행 자산이 함께 소유하는 bounded 참조 구현                              |
@@ -243,7 +243,7 @@ timeout·출력·프로세스 정리 보장은 유지된다.
 
 표면별 승인 경계와 역할·스킬 정본은 [에이전트 거버넌스](.agents/README.md)가 라우팅한다. 정적 PASS는 네이티브 발견·권한 강제·훅 수신이나 hosted CI·클러스터 동작의 증거가 아니다. 실제 k3d/Argo CD/Vault 작업은 별도 승인된 운영 범위에 속한다.
 
-Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각 cloud 예시의 실행 소스가 소유한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
+Cloud 예시의 정확한 버전 기준은 [`examples/`](./examples/) 아래 각 cloud 예시의 실행 소스가 소유한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d는 Traefik으로 전환했고(ADR-0050), AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
 
 ## Related Documents
 

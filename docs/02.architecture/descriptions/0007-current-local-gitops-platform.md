@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.7.1"
+version: "1.7.2"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -30,7 +30,7 @@ The architecture's core goals are local reproducibility, GitOps-first ownership,
   - Local k3d cluster configuration and bootstrap assets.
   - ArgoCD root Application, AppProjects, platform Applications, and workload ApplicationSet manifests.
   - Kubernetes interface contracts for external OpenBao (Vault API compatible), PostgreSQL, Valkey, and observability services.
-  - Headlamp, Kiali, Argo Rollouts, Argo Notifications, ingress-nginx, cert-manager, Istio, monitoring, and ESO configuration.
+  - Headlamp, Kiali, Argo Rollouts, Argo Notifications, Traefik, cert-manager, Istio, monitoring, and ESO configuration.
 - **Consumes**:
   - External service runtime readiness.
   - OpenBao source secrets and operator-managed secret rotation.
@@ -73,7 +73,7 @@ owns this change's local review, not future operator observations.
 ## System Overview & Context
 
 The root application in `gitops/clusters/local/root-application.yaml` points to `gitops/apps/root`.
-Platform Applications then install or configure ArgoCD, namespaces, cert-manager, ingress-nginx, ESO, external services, Headlamp, Istio/Kiali, monitoring, Rollouts, and network policies.
+Platform Applications then install or configure ArgoCD, namespaces, cert-manager, Traefik, ESO, external services, Headlamp, Istio/Kiali, monitoring, Rollouts, and network policies.
 The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 
 ### Current platform sources and operating owners
@@ -81,7 +81,7 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 | Boundary | Current source and contract | Operating owner |
 | --- | --- | --- |
 | Reconciliation and permissions | [Cluster declarations](../../../gitops/clusters/local/) own the root Application, AppProjects and workload ApplicationSet; the root targets `gitops/apps/root`, and the ApplicationSet scans `gitops/workloads/*`. [Platform Applications](../../../gitops/apps/root/) and [namespace declarations](../../../gitops/platform/namespaces/) own platform desired state. | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) |
-| Host and browser entry | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml) binds the API to `192.168.0.13:6550` and serverlb to `192.168.0.14:80/443`, forwarding to ingress-nginx NodePorts `30080/30443`. k8s hosts use `<name>.hy-k8s.home.arpa` (`argo` for ArgoCD); [apex redirects](../../../gitops/platform/ingress-routes/) send `hy-k8s.home.arpa/<name>` to the HTTPS subdomain with 301. The external Traefik carries no k8s route (ADR-0042, ADR-0043, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); operator owns host addresses and name resolution |
+| Host and browser entry | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml) binds the API to `192.168.0.13:6550` and serverlb to `192.168.0.14:80/443`, forwarding to Traefik NodePorts `30080/30443` (Service `traefik/traefik`, MetalLB `172.18.0.240`; [ADR-0050](../decisions/0050-ingress-nginx-replacement-with-traefik.md)). k8s hosts use `<name>.hy-k8s.home.arpa` (`argo` for ArgoCD); [apex redirects](../../../gitops/platform/ingress-routes/) send `hy-k8s.home.arpa/<name>` to the HTTPS subdomain with 301. The external Traefik carries no k8s route (ADR-0042, ADR-0043, ADR-0046). | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md); operator owns host addresses and name resolution |
 | External secrets | [ESO configuration](../../../gitops/platform/eso/) uses the `vault-backend` store and Vault API provider to reach external OpenBao at `https://openbao.hy.home.arpa` with a pinned CA. Bootstrap owns the CoreDNS host mapping and CA distribution; secret values stay outside Git (ADR-0041, ADR-0046). | [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md), [RUN-0002](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
 | External data services | [Service and EndpointSlice manifests](../../../gitops/platform/external-services/) retain only the required management Valkey interface `valkey-external:6379` → host `192.168.0.13:26379` for ArgoCD. The external `hy-home.docker` source publishes `mng-pg` at `127.0.0.1:25432` and `dev-pg` at `127.0.0.1:25433`; `dev-valkey` exposes `6379` only in `dev_data_net`. No PostgreSQL or development Valkey K8s Service/EndpointSlice or LAN endpoint is declared. The former `postgres-ha`/`pg-router` write/read routes are retired from this repository; Valkey cluster had no K8s consumer. Earlier live samples refer to their dated source. Adminer has no default database server in current local source. A future K8s-to-PostgreSQL path requires a separately reviewed connection, policy and secret design; loopback TCP and container health do not establish that path. [ADR-0049](../decisions/0049-external-data-service-contract-alignment.md) is the accepted scoped amendment; its acceptance does not establish live reconciliation or database reachability. | [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md), [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md); external workspace owns data runtime and backups |
 | Telemetry and service UIs | [Alloy](../../../gitops/platform/monitoring/), [Kiali](../../../gitops/apps/root/platform-kiali-app.yaml) and [Rollouts](../../../gitops/apps/root/platform-rollouts-app.yaml) use the external observability backend. Prometheus and Grafana use HTTPS gateway names, authentication and CA verification; Loki, Tempo and Alloy OTLP retain Service/EndpointSlice interfaces. Metrics collection stays in-cluster; storage stays external (ADR-0037, ADR-0045, ADR-0046). | [RUN-0009](../../05.operations/runbooks/0009-k8s-observability-runbook.md), [POL-0003](../../05.operations/policies/0003-service-mesh-cert-manager-policy.md) |
@@ -181,7 +181,7 @@ follow-up does not reopen the withdrawn packages or certify live readiness.
 - **Runtime / Platform**:
   - Linux server shell with the native Docker Engine.
   - k3d cluster named `hyhome`.
-  - ingress-nginx behind the dedicated k8s router (k3d serverlb on `192.168.0.14:443`) for browser access at `<name>.hy-k8s.home.arpa` ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
+  - Traefik behind the dedicated k8s router (k3d serverlb on `192.168.0.14:443`) for browser access at `<name>.hy-k8s.home.arpa` ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - **Deployment Model**:
   - Bootstrap installs the initial ArgoCD boundary.
   - Steady-state changes flow through Git and ArgoCD reconciliation.

@@ -13,21 +13,24 @@ import yaml
 
 HOST_SUFFIX = "hy-k8s.home.arpa"
 ISSUER = "mkcert-ca-issuer"
+ROUTER_ADDRESS = "172.18.0.240"
 
 # The one declaration of the ingress controller identity (SPEC-0119). A
 # controller swap edits it in the same change as the manifests.
+# Traefik serves IngressClass `nginx` through its Ingress-NGINX provider, so the
+# class and the annotation set keep their ingress-nginx names (SPEC-0121).
 CONTROLLER = {
-    "kind": "ingress-nginx",
+    "kind": "traefik",
     "ingressClass": "nginx",
-    "namespace": "ingress-nginx",
+    "namespace": "traefik",
     "application": {
-        "name": "ingress-nginx",
-        "chart": "ingress-nginx",
-        "repo": "https://kubernetes.github.io/ingress-nginx",
-        "release": "ingress-nginx",
+        "name": "traefik",
+        "chart": "traefik",
+        "repo": "https://traefik.github.io/charts",
+        "release": "traefik",
     },
     "service": {
-        "name": "ingress-nginx-controller",
+        "name": "traefik",
         "httpPort": 80,
         "nodePorts": {"http": 30080, "https": 30443},
     },
@@ -125,28 +128,47 @@ def _chart(root, name, chart, repo, namespace, release=None):
 def _controller_values_ok(values, controller):
     """Chart value checks specific to the declared controller chart."""
     nodes = controller["service"]["nodePorts"]
+    nginx = _get(values, "providers", "kubernetesIngressNGINX")
+    web = _get(values, "ports", "web")
+    websecure = _get(values, "ports", "websecure")
     return (
-        _get(values, "controller", "service", "type") == "LoadBalancer"
-        and _get(values, "controller", "service", "nodePorts", "http") == nodes["http"]
-        and _get(values, "controller", "service", "nodePorts", "https")
-        == nodes["https"]
+        _get(values, "service", "spec", "type") == "LoadBalancer"
+        and _get(values, "service", "annotations", "metallb.io/loadBalancerIPs")
+        == ROUTER_ADDRESS
+        and _get(web, "nodePort") == nodes["http"]
+        and _get(websecure, "nodePort") == nodes["https"]
+        and _get(web, "exposedPort") in (None, controller["service"]["httpPort"])
+        and _get(websecure, "exposedPort") in (None, 443)
+        and _get(values, "service", "enabled") in (None, True)
+        and _get(values, "service", "single") in (None, True)
+        and _get(values, "service", "nameOverride") in (None, "")
         and _get(values, "nameOverride") in (None, "")
         and _get(values, "fullnameOverride") in (None, "")
         and _get(values, "namespaceOverride") in (None, "")
-        and _get(values, "controller", "name") in (None, "controller")
-        and _get(values, "controller", "enabled") in (None, True)
-        and _get(values, "controller", "service", "enabled") in (None, True)
-        and _get(values, "controller", "service", "external", "enabled") in (None, True)
-        and _get(values, "controller", "service", "enableHttp") in (None, True)
-        and _get(values, "controller", "service", "enableHttps") in (None, True)
-        and _get(values, "controller", "service", "ports", "http")
-        in (None, controller["service"]["httpPort"])
-        and _get(values, "controller", "service", "ports", "https") in (None, 443)
-        and _get(values, "controller", "service", "allocateLoadBalancerNodePorts")
-        in (None, True)
-        and _get(values, "controller", "allowSnippetAnnotations") in (None, False)
-        and _get(values, "controller", "config", "allow-snippet-annotations")
-        in (None, False, "false")
+        and _get(values, "ingressClass", "enabled") is False
+        and _get(values, "providers", "kubernetesCRD", "enabled") is False
+        and _get(values, "providers", "kubernetesIngress", "enabled") is False
+        and _get(nginx, "enabled") is True
+        and _get(nginx, "ingressClass") in (None, controller["ingressClass"])
+        and _get(nginx, "controllerClass") in (None, "k8s.io/ingress-nginx")
+        and _get(nginx, "allowSnippetAnnotations") in (None, False)
+        and _get(nginx, "publishService", "enabled") is True
+        and _get(nginx, "proxyRequestBuffering") is True
+        and _get(web, "http", "aliasHeadersStrategy") == "delete"
+        and _get(websecure, "http", "aliasHeadersStrategy") == "delete"
+        and "hsts@file" in (_get(websecure, "http", "middlewares") or ())
+        and _get(
+            values,
+            "providers",
+            "file",
+            "content",
+            "http",
+            "middlewares",
+            "hsts",
+            "headers",
+            "stsSeconds",
+        )
+        == 31536000
     )
 
 
@@ -214,7 +236,7 @@ def _owner_declarations(root, controller):
             controller["service"]["name"],
             controller["service"]["httpPort"],
         ): _controller_values_ok(values, controller)
-        if controller["kind"] == "ingress-nginx"
+        if controller["kind"] == "traefik"
         else values is not None,
     }
 
