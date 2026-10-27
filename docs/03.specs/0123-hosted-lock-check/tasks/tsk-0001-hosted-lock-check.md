@@ -32,8 +32,8 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
