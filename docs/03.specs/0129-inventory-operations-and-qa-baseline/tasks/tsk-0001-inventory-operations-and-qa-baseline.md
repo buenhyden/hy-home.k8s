@@ -1,6 +1,6 @@
 ---
 title: "Inventory, Operations and QA Baseline"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -86,10 +86,10 @@ validator-commit figure therefore remains open.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | in-progress | PASS | EVD-005 closes EVD-001; EVD-008 closes EVD-006 |
-| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | in-progress | PASS | EVD-009 closes EVD-002, EVD-007 |
-| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | in-progress | PASS | EVD-010 closes EVD-003 |
-| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-011 closes EVD-004 |
+| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | completed | PASS | EVD-005 closes EVD-001; EVD-008 closes EVD-006 |
+| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | completed | PASS | EVD-009 closes EVD-002, EVD-007 |
+| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | completed | PASS | EVD-010 closes EVD-003 |
+| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-011 closes EVD-004 |
 
 ## Task Evidence
 
@@ -111,10 +111,10 @@ validator-commit figure therefore remains open.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SV-001](../spec.md#success-criteria--verification-plan) | pending | none | Inventory evidence remains | platform |
-| [VAL-SV-002](../spec.md#success-criteria--verification-plan) | pending | none | Edits and review remain | platform |
-| [VAL-SV-003](../spec.md#success-criteria--verification-plan) | pending | none | Timing remains | platform |
-| [VAL-SV-004](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-SV-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: the classified inventory sums to 1364 files with a disposition for every special kind | platform |
+| [VAL-SV-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28: the operations survey is recorded and both edits were confirmed by review | platform |
+| [VAL-SV-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accepted by the operator on 2026-10-28: the document-commit timing baseline is recorded with the replay failures and the open validator figure | platform |
+| [VAL-SV-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-011 | Accepted by the operator on 2026-10-28: staged QA and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -131,7 +131,15 @@ validator-commit figure therefore remains open.
 - **Secret / Vault Handling**: no secret is read or written.
 - **Rollback Plan**: revert the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-SV-001 to
+  VAL-SV-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005; EVD-008 closes the EVD-006 review failure on the
+top-level breakdown). WORK-002 passed (EVD-009, closing EVD-007): both
+operations edits hold and the survey count is corrected. WORK-003 passed
+(EVD-010) for document commits. WORK-004 passed (EVD-011). The operator
+accepted all four criteria. Residual gap: no passing staged QA figure exists
+for a validator commit, because the detached replays exited 1 for a cause
+that was not isolated.
