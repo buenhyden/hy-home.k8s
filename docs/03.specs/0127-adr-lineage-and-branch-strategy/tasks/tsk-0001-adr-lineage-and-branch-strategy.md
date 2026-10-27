@@ -1,6 +1,6 @@
 ---
 title: "ADR Lineage and Branch Strategy"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -48,8 +48,8 @@ prompts and numbering rule, and record the branch strategy. It executes
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | in-progress | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | in-progress | PASS | EVD-008 closes EVD-003 |
+| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-009 closes EVD-004 |
 
 ## Task Evidence
 
@@ -62,6 +62,8 @@ prompts and numbering rule, and record the branch strategy. It executes
 | EVD-005 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Supersession tests and strict validation | Branch `feat/adr-lineage-and-branch-strategy`: `python3 -m unittest tests.test_document_lifecycle_archive_cutover` before and after the `scripts/document_lifecycle.py` change; `python3 scripts/validate-document-lifecycle.py --mode strict` | PASS | Before the change the new cycle test failed: two ADRs superseding each other produced no diagnostic. After it, the cycle fails `LIFECYCLE-EVIDENCE` on both ADRs, the reciprocal supersession test passes, and all 38 tests in the module pass. Strict lifecycle validation passes on the repository; ruff check and format pass | yes | EVD-001 |
 | EVD-006 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests and review | Same branch: `python3 scripts/validate-document-contract-registry.py`, `python3 -m unittest tests.test_repository_form_contracts` | PASS | The decision template asks for decision makers, decision date and confirmation as a prompt; the ADR log states that numbers are never reused and that MIG-0002 and approved Archive removals do not rewrite them; the comparison with Nygard, MADR 4.0.0 and Y-statement is in Inputs. The registry passes 976 paths and the form tests pass | yes | EVD-002 |
 | EVD-007 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Supersession tests and strict validation | PR #182 independent review of `8c598166`; then `python3 -m unittest tests.test_document_lifecycle_archive_cutover`, `python3 scripts/validate-document-lifecycle.py --mode strict` and the reviewer's scratch reproduction on the fix | PASS | The review found that the first walk followed only the first reciprocal link, so a chain that listed its superseded predecessor first, or two supersessions in one change, failed although they pass on main. New tests for both failed on `8c598166`. The rule now searches every reciprocal path and passes when any reaches a document whose status is not superseded; predecessors share the superseded status, so cycles still fail. With a three-document cycle test added, all 41 tests pass, the reviewer's reproduction passes, strict validation passes, and ruff passes | yes | none |
+| EVD-008 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | WORK-003 | ADR review and acceptance | PR #182 independent review of `8c598166` and `d6e3d5fb`; `gh api repos/buenhyden/hy-home.k8s/branches` | PASS | The review confirmed ADR-0052's facts: `main` is the only long-lived branch, ADR-0029's twelve `targetRevision: main` declarations, `scripts/release.py` as release producer and the merge checks in `git.md`, and found the Trunk-Based Development, GitHub flow and git-flow sources represented accurately. Its wording findings (open feature branches, the `release/<tag>` preparation branch, the Git policy as the merge rule) were applied in `d6e3d5fb` and approved. `git.md` states the rule; its link to ADR-0052 waits for acceptance because governance may link only current owners | yes | EVD-003 |
+| EVD-009 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | PR #182 heads `8c598166` (CI run `40510854088`) and `d6e3d5fb` (CI run `40514040098`); pre-commit staged QA on commits `d61fc680`, `c170d31f`, `8c598166` and `d6e3d5fb` | PASS | `ci-summary` and `style-pr` passed on both heads, and the PR checks list `label` and GitGuardian as passed. Staged QA passed on all four commits. The second review approved with one low note: link reachability is undirected, as it was on main, so a stricter directed rule needs a directed link source | yes | EVD-004 |
 
 ## Criterion Acceptance
 
