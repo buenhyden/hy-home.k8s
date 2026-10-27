@@ -30,10 +30,10 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CK-001](../spec.md#success-criteria--verification-plan) | Add the change-kind table and touchpoint sentences | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-CK-001](../spec.md#success-criteria--verification-plan) | Add the change-kind table and touchpoint sentences | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
