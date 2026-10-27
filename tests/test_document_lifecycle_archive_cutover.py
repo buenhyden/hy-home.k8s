@@ -765,6 +765,66 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             [("LIFECYCLE-EVIDENCE", source)],
         )
 
+    def _supersession_outcome(self, successor_status: str) -> list[tuple[str, str]]:
+        source = "docs/02.architecture/decisions/9001-source.md"
+        successor = "docs/02.architecture/decisions/9002-successor.md"
+
+        def adr(status: str, artifact_id: str, link: str) -> bytes:
+            return (
+                b"---\n"
+                b'title: "ADR fixture"\n'
+                b'type: "sdlc/architecture-decision"\n'
+                + f'status: "{status}"\n'.encode()
+                + b'owner: "platform"\n'
+                + b'updated: "2026-10-27"\n'
+                + f'artifact_id: "{artifact_id}"\n'.encode()
+                + b"---\n\n# ADR fixture\n\n## Traceability\n\n"
+                b"### Lifecycle Traceability\n\n"
+                b"| Decision lineage | Replacement relation | Affected Spec |\n"
+                b"| --- | --- | --- |\n"
+                + f"| [{link[:4]}](./{link}) | lineage | N/A |\n".encode()
+            )
+
+        temporary, root, base_commit = self._document_repository(
+            {
+                source: adr("accepted", "ADR-9001", "9002-successor.md"),
+                successor: adr("accepted", "ADR-9002", "9001-source.md"),
+            }
+        )
+        with temporary:
+            (root / source).write_bytes(
+                adr("superseded", "ADR-9001", "9002-successor.md")
+            )
+            (root / successor).write_bytes(
+                adr(successor_status, "ADR-9002", "9001-source.md")
+            )
+            self._git(root, "add", "--", source, successor)
+            self._git(root, "commit", "--quiet", "-m", "supersede")
+            proposed_commit = self._git(root, "rev-parse", "HEAD")
+            diagnostics = VALIDATOR._evaluate_comparison(
+                root,
+                legacy_registry(),
+                mode="ci",
+                base_ref=base_commit,
+                to_ref=proposed_commit,
+            )
+        return sorted((item.rule_id, item.path.as_posix()) for item in diagnostics)
+
+    def test_ci_adapter_accepts_reciprocal_supersession(self) -> None:
+        self.assertEqual(self._supersession_outcome("accepted"), [])
+
+    def test_ci_adapter_rejects_a_supersession_cycle(self) -> None:
+        self.assertEqual(
+            self._supersession_outcome("superseded"),
+            [
+                ("LIFECYCLE-EVIDENCE", "docs/02.architecture/decisions/9001-source.md"),
+                (
+                    "LIFECYCLE-EVIDENCE",
+                    "docs/02.architecture/decisions/9002-successor.md",
+                ),
+            ],
+        )
+
     def test_staged_rejects_metadata_and_payload_byte_mutation(self) -> None:
         registry = legacy_registry()
         for mutation in ("metadata", "payload"):

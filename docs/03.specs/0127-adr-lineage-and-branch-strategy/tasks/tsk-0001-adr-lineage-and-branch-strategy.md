@@ -1,6 +1,6 @@
 ---
 title: "ADR Lineage and Branch Strategy"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -46,8 +46,8 @@ prompts and numbering rule, and record the branch strategy. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | in-progress | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | in-progress | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -59,6 +59,8 @@ prompts and numbering rule, and record the branch strategy. It executes
 | EVD-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | WORK-003 | ADR review and acceptance | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Supersession tests and strict validation | Branch `feat/adr-lineage-and-branch-strategy`: `python3 -m unittest tests.test_document_lifecycle_archive_cutover` before and after the `scripts/document_lifecycle.py` change; `python3 scripts/validate-document-lifecycle.py --mode strict` | PASS | Before the change the new cycle test failed: two ADRs superseding each other produced no diagnostic. After it, the cycle fails `LIFECYCLE-EVIDENCE` on both ADRs, the reciprocal supersession test passes, and all 38 tests in the module pass. Strict lifecycle validation passes on the repository; ruff check and format pass | yes | EVD-001 |
+| EVD-006 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests and review | Same branch: `python3 scripts/validate-document-contract-registry.py`, `python3 -m unittest tests.test_repository_form_contracts` | PASS | The decision template asks for decision makers, decision date and confirmation as a prompt; the ADR log states that numbers are never reused and that MIG-0002 and approved Archive removals do not rewrite them; the comparison with Nygard, MADR 4.0.0 and Y-statement is in Inputs. The registry passes 976 paths and the form tests pass | yes | EVD-002 |
 
 ## Criterion Acceptance
 

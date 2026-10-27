@@ -62,6 +62,7 @@ branch convention; Codex-created branches normally use `codex/`.
 
 ### Branch and integration routing
 
+`main` is the only long-lived branch.
 Develop each independently reviewable Spec package on an owned feature branch
 and linked worktree when needed. Run changed-behavior and affected checks while
 editing, exact-index and message checks at logical commits, then applicable

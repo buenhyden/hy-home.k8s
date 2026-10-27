@@ -633,6 +633,41 @@ def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
     return current | (_RETIRED_REQUIREMENT_PROFILES & registry_profile_ids)
 
 
+def _reciprocal_successor(
+    path: PurePosixPath,
+    context: LifecycleEvidenceContext,
+    excluded: set[PurePosixPath],
+) -> PurePosixPath | None:
+    """Return the first linked document that links back, skipping visited ones."""
+
+    view = context.proposed_documents.get(path)
+    if view is None:
+        return None
+    for successor in view.relationship_links:
+        if successor in excluded:
+            continue
+        successor_view = context.proposed_documents.get(successor)
+        if successor_view is None:
+            continue
+        try:
+            require_reciprocal_supersession(
+                source=path.as_posix(),
+                successor=successor.as_posix(),
+                source_links={"superseded_by": successor.as_posix()},
+                successor_links={
+                    "supersedes": (
+                        path.as_posix()
+                        if path in successor_view.relationship_links
+                        else ""
+                    )
+                },
+            )
+        except AuthorityError:
+            continue
+        return successor
+    return None
+
+
 def _terminal_supersession_evidence(
     profile: DocumentProfile,
     target: LifecycleDocument,
@@ -640,40 +675,32 @@ def _terminal_supersession_evidence(
     *,
     base_mode: LifecycleBaseMode,
 ) -> tuple[LifecycleDiagnostic, ...]:
-    """Enforce the domain-derived reciprocal rule using rendered links."""
+    """Enforce the domain-derived reciprocal rule using rendered links.
+
+    A successor that is itself superseded must lead on to a further successor;
+    a chain that can only return to a visited document has no current decision.
+    """
 
     domain = profile.lifecycle_domain
     if domain is None or not domain.requires_reciprocal_supersession:
         return ()
-    target_view = context.proposed_documents.get(target.path)
-    if target_view is not None:
-        for successor in target_view.relationship_links:
-            successor_view = context.proposed_documents.get(successor)
-            if successor_view is None:
-                continue
-            try:
-                require_reciprocal_supersession(
-                    source=target.path.as_posix(),
-                    successor=successor.as_posix(),
-                    source_links={"superseded_by": successor.as_posix()},
-                    successor_links={
-                        "supersedes": (
-                            target.path.as_posix()
-                            if target.path in successor_view.relationship_links
-                            else ""
-                        )
-                    },
-                )
-            except AuthorityError:
-                continue
+    visited = {target.path}
+    successor = _reciprocal_successor(target.path, context, set())
+    observed = f"terminal supersession to {target.status}"
+    while successor is not None:
+        successor_view = context.proposed_documents[successor]
+        if successor_view.document.status != target.status:
             return ()
+        visited.add(successor)
+        successor = _reciprocal_successor(successor, context, visited)
+        observed = "supersession chain ends without a current decision"
     return (
         _diagnostic(
             "LIFECYCLE-EVIDENCE",
             path=target.path,
             profile=target.profile_id,
             expected="one reciprocal supersedes/superseded_by relationship",
-            observed=f"terminal supersession to {target.status}",
+            observed=observed,
             base_mode=base_mode,
             evidence_gap="registry lifecycle domain requires reciprocal supersession",
         ),
