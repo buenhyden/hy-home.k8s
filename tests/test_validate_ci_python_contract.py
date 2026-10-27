@@ -120,7 +120,8 @@ LOCK_STEP = """\
         working-directory: candidate
         run: |
           set -euo pipefail
-          if grep -qz '^\\.github/requirements/' "$RUNNER_TEMP/pr-style-paths.z"; then
+          git diff --no-ext-diff --no-textconv --no-renames --name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"
+          if grep -qz '^\\.github/requirements/' "$RUNNER_TEMP/pr-lock-paths.z"; then
             python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
           fi
 """
@@ -499,8 +500,17 @@ class CiPythonContractTests(unittest.TestCase):
     def test_changed_lock_step_condition_reads_the_path_list_directly(self) -> None:
         root = self.make_real_workflow_root(
             (
-                "if grep -qz '^\\.github/requirements/' \"$RUNNER_TEMP/pr-style-paths.z\"; then",
-                "if tr '\\0' '\\n' < \"$RUNNER_TEMP/pr-style-paths.z\" | grep -q '^\\.github/requirements/'; then",
+                "if grep -qz '^\\.github/requirements/' \"$RUNNER_TEMP/pr-lock-paths.z\"; then",
+                "if tr '\\0' '\\n' < \"$RUNNER_TEMP/pr-lock-paths.z\" | grep -q '^\\.github/requirements/'; then",
+            )
+        )
+        self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
+
+    def test_changed_lock_step_lists_every_change_kind(self) -> None:
+        root = self.make_real_workflow_root(
+            (
+                '--name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"',
+                '--name-only -z --diff-filter=ACMR HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"',
             )
         )
         self.assert_rule_in_repository(root, "CI-STYLE-TOPOLOGY")
@@ -1492,8 +1502,10 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                     "working-directory": "candidate",
                     "run": (
                         "set -euo pipefail\n"
+                        "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
+                        'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
                         "if grep -qz '^\\.github/requirements/' "
-                        '"$RUNNER_TEMP/pr-style-paths.z"; then\n'
+                        '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
                         "  python -I ../trusted-base/scripts/validate-ci-python-contract.py "
                         "--root .\n"
                         "fi"
@@ -1511,8 +1523,10 @@ class HostedStyleJobBoundaryTests(unittest.TestCase):
                 6,
                 "run",
                 "set -euo pipefail\n"
+                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
+                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
                 "if grep -qz '^\\.github/requirements/' "
-                '"$RUNNER_TEMP/pr-style-paths.z"; then\n'
+                '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
                 "  python -I scripts/validate-ci-python-contract.py --root .\n"
                 "fi",
             ),

@@ -1,6 +1,6 @@
 ---
 title: "Hosted CI Lock Check"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -53,10 +53,12 @@ lock check against a pull request's files when the pull request changes
 ## Core Design
 
 `style-pr` already checks out the reviewed base as `trusted-base` and the pull
-request merge as `candidate`, installs the base's pinned lock and lists the
-changed paths in `$RUNNER_TEMP/pr-style-paths.z`. A seventh step reads that
-list and, when a requirements path changed, runs the base validator against
-the candidate root. `validate-ci-python-contract.py` reads files only and
+request merge as `candidate` and installs the base's pinned lock. A seventh
+step lists every changed path with an unfiltered `git diff --name-only -z`
+into `$RUNNER_TEMP/pr-lock-paths.z`, so a deleted or retyped lock still
+matches, and a failed `git diff` stops the job instead of skipping the check.
+When a requirements path changed, it runs the base validator against the
+candidate root. `validate-ci-python-contract.py` reads files only and
 starts no subprocess, so a candidate cannot make it execute its code. The
 validator's reviewed `style-pr` step list gains the same seventh step.
 

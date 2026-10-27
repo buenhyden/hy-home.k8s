@@ -270,11 +270,14 @@ jobs:
           --paths-file "$RUNNER_TEMP/pr-style-paths.z" --delimiter nul
           --expected-base-sha "$BASE_SHA"
       # A Dependabot lock pull request never passes local staged QA. Check the
-      # candidate lock with the reviewed base's validator (SPEC-0123).
+      # candidate lock with the reviewed base's validator (SPEC-0123). The
+      # unfiltered list also catches a deleted or retyped lock, and a failed
+      # git diff stops the job instead of skipping the check.
       - name: Validate a changed CI lock
         working-directory: candidate
         run: |
           set -euo pipefail
-          if grep -qz '^\.github/requirements/' "$RUNNER_TEMP/pr-style-paths.z"; then
+          git diff --no-ext-diff --no-textconv --no-renames --name-only -z HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"
+          if grep -qz '^\.github/requirements/' "$RUNNER_TEMP/pr-lock-paths.z"; then
             python -I ../trusted-base/scripts/validate-ci-python-contract.py --root .
           fi

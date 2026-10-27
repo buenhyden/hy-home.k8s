@@ -1,6 +1,6 @@
 ---
 title: "Hosted CI Lock Check"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -43,13 +43,14 @@ Run the reviewed base's CI Python lock check on pull requests that change
 | EVD-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted run and staged QA | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Reviewed topology and failing lock | Branch `ci/hosted-lock-check`: `python3 -m unittest tests.test_validate_ci_python_contract`, `python3 scripts/validate-ci-python-contract.py --root .` with the lock directive removed and restored, the step condition on NUL-separated path lists, `python3 scripts/validate-github-actions-security.py --root .` | PASS | Two new tests failed before the step existed and pass after it; the hand-built job fixture gains the seventh step and a case where the step runs the candidate's own validator, which is rejected; 79 tests pass. With `--only-binary :all:` removed the validator fails `CI-PYTHON-LOCK`, and the restored lock passes. The condition runs the check for a list that contains `.github/requirements/ci-validation.txt` and skips it for one that does not. GitHub Actions security passes | yes | EVD-001 |
 | EVD-004 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted run and staged QA | PR #177 head `32d00544`, CI run `40466750554` (job `style-pr` `122063887522`); pre-commit staged QA on commits `d345ea72`, `3a6c62c9` and `32d00544` | PASS | `ci-summary` and `style-pr` passed. `style-pr` ran *Validate a changed CI lock* after the six reviewed steps; the pull request changes no `.github/requirements/` path, so the step printed nothing and passed. Staged QA passed on all three commits | yes | EVD-002 |
+| EVD-005 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Step hardening after review | PR #177 security review of `4b050a58`; `python3 -m unittest tests.test_validate_ci_python_contract`, `python3 scripts/validate-ci-python-contract.py --root .`, `python3 scripts/validate-github-actions-security.py --root .` | PASS | The review found that the reused `--diff-filter=ACMR` list omits a deleted or retyped lock and that an unreadable list skipped the check. The step now writes its own unfiltered list under `set -euo pipefail`, so both match and a failed `git diff` stops the job. A new test rejects a filtered list; 80 tests pass. A live simulation in a scratch Git repository was blocked by the session command gate, so the behavior rests on the review probes and the pinned step text. REQ-0003-FR-0017 now names the hosted lock check | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-003 | Accepted by the operator on 2026-10-27: the reviewed seven-step topology holds and a lock without the directive fails | platform |
-| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: the hosted step ran on the pull request and staged QA passed | platform |
+| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: the hosted step ran and skipped the check on the pull request, which changes no requirements path, and staged QA passed | platform |
 
 ## Approval and Safety Boundaries
 

@@ -1389,8 +1389,10 @@ def _validate_style_pr_job(
             "working-directory": "candidate",
             "run": (
                 "set -euo pipefail\n"
+                "git diff --no-ext-diff --no-textconv --no-renames --name-only -z "
+                'HEAD^1 HEAD > "$RUNNER_TEMP/pr-lock-paths.z"\n'
                 "if grep -qz '^\\.github/requirements/' "
-                '"$RUNNER_TEMP/pr-style-paths.z"; then\n'
+                '"$RUNNER_TEMP/pr-lock-paths.z"; then\n'
                 "  python -I ../trusted-base/scripts/validate-ci-python-contract.py "
                 "--root .\n"
                 "fi"
