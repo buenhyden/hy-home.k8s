@@ -316,11 +316,15 @@ have different lifecycle and review responsibilities even when co-located.
 **Current-state clarification (2026-10-27).** A census of
 `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs` and
 `docs/05.operations` confirmed that the one-time four-digit numbering
-generation is complete. MIG-0002 converted three-digit paths to four-digit
-stable IDs, and every number space began at 0001 in that generation. Current
-gaps and later starting numbers come from Archive dispositions and removals,
-so the numbering is kept: IDs are not reused, and gaps are not closed by
-renumbering.
+generation is complete. MIG-0002 converted the Stage 01 and Stage 03
+three-digit paths to four-digit stable IDs; Stage 02 and Stage 05 were
+four-digit from creation, and the architecture descriptions only dropped
+their `ad-` prefix. Every number space began at 0001, except the
+descriptions, which continue the earlier architecture-requirements numbering
+from 0004. Current gaps and later starting numbers come from Archive
+dispositions, Git-only removals and two never-allocated Spec numbers (0069 and
+0092), so the numbering is kept: IDs are not reused, and gaps are not closed
+by renumbering.
 
 **Current-state clarification (2026-09-14).** Later accepted decisions amend
 parts of this topology without superseding the whole record. ADR-0031 amends the
