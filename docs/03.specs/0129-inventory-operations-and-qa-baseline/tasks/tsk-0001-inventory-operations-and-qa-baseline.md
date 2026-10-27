@@ -30,11 +30,11 @@ Observed on main `3e922d51` with `git ls-files -s` and content checks.
 
 | Kind | Count | Disposition |
 | --- | --- | --- |
-| Tracked files | 1364 | Top level: `docs` 858, `tests` 93, `.agents` 88, `gitops` 85, `scripts` 71, `.claude` 45, `examples` 36, `.codex` 25, `infrastructure` 16, `.github` 15, `_workspace` 7, `policy` 3, `secrets` 2, root files 10 |
+| Tracked files | 1364 | Top level: `docs` 858, `tests` 93, `.agents` 88, `gitops` 85, `scripts` 71, `.claude` 45, `examples` 36, `.codex` 25, `infrastructure` 16, `.github` 15, `_workspace` 7, `policy` 3, `secrets` 2, `.rtk` 1, root files 19 |
 | Executable files | 24 | Mode `100755`; scripts and hooks |
 | Symlinks | 18 | All `.claude/skills/<id>` links to `.agents/skills/<id>`; none dangling |
 | Submodules | 0 | No `.gitmodules` |
-| Large-file pointers | 0 | No Git LFS pointer content; `.gitattributes` sets text and line endings only |
+| Large-file pointers | 0 | No Git LFS pointer content; `.gitattributes` sets text, line endings and `binary` for image and PDF patterns, none of which is tracked |
 | Binary files | 0 | Every tracked regular file is text |
 | `secrets/` | 2 | `secrets/README.md` and `secrets/certs/.gitkeep`; no secret material |
 
@@ -45,7 +45,7 @@ bytes) and the research register `m0012-source-coverage.md` (504,481 bytes).
 ### Operations Survey
 
 A read-only reviewer surveyed `docs/05.operations` on 2026-10-28: one guide,
-five policies, twelve runbooks and an incidents README with no records. All
+five policies, eleven runbooks and an incidents README with no records. All
 are active and current; none names a retired component as current.
 
 | Finding | Files | Disposition |
@@ -77,6 +77,8 @@ are active and current; none names a retired component as current.
 | EVD-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Timing record | Exact commits | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | Main `3e922d51`: `git ls-files -s` modes `100755`, `120000` and `160000`, `.gitmodules` absence, LFS pointer and NUL-byte content checks, symlink target resolution | PASS | Tracked File Inventory above: 1364 files, 24 executable, 18 resolving skill links, no submodule, LFS pointer or binary, `secrets/` holds only a README and `.gitkeep` | yes | EVD-001 |
+| EVD-006 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | PR #184 independent review of `5b8768f9` | FAIL | The top-level breakdown listed root files 10 and omitted `.rtk` 1, so it summed to 1354; the `.gitattributes` note omitted its `binary` patterns | yes | none |
+| EVD-007 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Survey record and review | PR #184 independent review of `5b8768f9` | FAIL | Both operations edits confirmed against RUN-0001 step 6, ADR-0050 and the Traefik manifests; the survey counted twelve runbooks instead of eleven, and RUN-0002 step 9 said "next step" although it is the last step | yes | none |
 
 ## Criterion Acceptance
 
