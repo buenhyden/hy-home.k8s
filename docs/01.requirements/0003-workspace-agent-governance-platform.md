@@ -226,9 +226,10 @@ SPEC-0097 is owned by
 [SPEC-0098](../98.archive/completed/03.specs/0098-claude-search-grant-and-retention/spec.md).
 Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 SPEC-0101.
-Packages named here without a link left the current tree under
-[SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md); each
-body is recovered from its Retention Catalog envelope in the
+SPEC-0073, SPEC-0074, SPEC-0077, SPEC-0078, SPEC-0079, SPEC-0081, SPEC-0088,
+SPEC-0089, SPEC-0090, SPEC-0094, SPEC-0100 and SPEC-0101 left the current
+tree under [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md);
+each body is recovered from its Retention Catalog envelope in the
 [Archive index](../98.archive/README.md).
 
 ## Traceability
