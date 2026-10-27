@@ -1,6 +1,6 @@
 ---
 title: "Architecture Views"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -30,7 +30,7 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | Add the C4 views, element table and deployment mapping | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | in-progress | PASS | EVD-004 closes EVD-002 |
 | WORK-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -40,6 +40,7 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 | EVD-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Diagram validation and source review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Coverage review and template tests | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Coverage review and template tests | Branch `docs/c4-arc42-views`: `python3 scripts/validate-document-contract-registry.py`, `python3 -m unittest tests.test_repository_form_contracts`, `python3 scripts/validate-markdown-profiles.py`, `python3 scripts/validate-links-and-owners.py` | PASS | AD-0007 gains `### arc42 coverage` with a location or reason for all twelve sections; five rows name a gap or omission (component view, dynamic diagram, crosscutting concepts kept in ADRs, risk register, glossary). The template gains one optional Traceability prompt. The registry passes 969 paths, the form contract tests pass, and the profile and cross-document checks pass with every in-page anchor resolving | yes | EVD-002 |
 
 ## Criterion Acceptance
 

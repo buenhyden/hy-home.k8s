@@ -48,6 +48,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Traceability
 
 <!-- Author prompt: map requirements and boundaries to the decisions or specifications that own them. -->
+<!-- Author prompt: optionally map the twelve arc42 sections to where this description, an ADR or a requirement covers them, with a reason for each omitted section; link instead of copying. -->
 
 ### Lifecycle Traceability
 
