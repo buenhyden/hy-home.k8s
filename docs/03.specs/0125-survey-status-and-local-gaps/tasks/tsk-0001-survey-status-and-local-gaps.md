@@ -191,9 +191,9 @@ operator decision or another repository is named where it blocks a row.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | Record the 148-CR status table | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | Record the 148-CR status table | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
