@@ -1,10 +1,10 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.7.3"
+version: "0.8.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-27"
 layer: "architecture"
 ---
 # 02.architecture/decisions (ADR)
@@ -76,6 +76,7 @@ layer: "architecture"
 |   [`./0049-external-data-service-contract-alignment.md`](./0049-external-data-service-contract-alignment.md) | 외부 데이터 서비스의 management/development 및 현행 K8s 소비 경계 한정 개정 |
 |   [`./0050-ingress-nginx-replacement-with-traefik.md`](./0050-ingress-nginx-replacement-with-traefik.md) | 은퇴한 ingress-nginx를 Traefik ingress-nginx provider로 교체 |
 |   [`./0051-istio-supported-release-upgrade.md`](./0051-istio-supported-release-upgrade.md) | Istio 1.25.2를 지원 release 1.31로 재구축 upgrade |
+|   [`./0052-single-main-trunk-branch-strategy.md`](./0052-single-main-trunk-branch-strategy.md) | `main` 하나만 장기 branch로 두고 짧은 feature branch로 통합 |
 
 ## Usage
 
@@ -84,6 +85,7 @@ layer: "architecture"
 3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 처분이 승인된 대체 ADR은 이 log를 떠나 Archive에 보존한다. ADR-0039는 ADR-0040에 의해 대체되었지만 별도 처분 승인 전까지 이 log에 남는다. ADR-0013, ADR-0015부터 ADR-0025, ADR-0027, ADR-0032, ADR-0034, ADR-0035, ADR-0038은 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
+6. ADR 번호는 재사용하지 않는다. 결정을 뒤집어도 이전 ADR을 지우지 않고 superseded로 표시해 후속 ADR과 연결한다. MIG-0002의 일회성 네 자리 전환과 승인된 Archive payload 제거는 [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md)과 ADR-0040이 정한 별도 결정이며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
 
 ### Relative Link Rules
 

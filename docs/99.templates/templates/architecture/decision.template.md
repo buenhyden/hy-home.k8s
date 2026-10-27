@@ -22,6 +22,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Decision
 
 <!-- Author prompt: record one decision precisely enough for downstream implementation. -->
+<!-- Author prompt: name the decision makers and the decision date when they differ from the owner and the updated date, and state how compliance will be confirmed. -->
 
 ## Explicit Non-goals
 
