@@ -633,19 +633,16 @@ def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
     return current | (_RETIRED_REQUIREMENT_PROFILES & registry_profile_ids)
 
 
-def _reciprocal_successor(
-    path: PurePosixPath,
-    context: LifecycleEvidenceContext,
-    excluded: set[PurePosixPath],
-) -> PurePosixPath | None:
-    """Return the first linked document that links back, skipping visited ones."""
+def _reciprocal_links(
+    path: PurePosixPath, context: LifecycleEvidenceContext
+) -> tuple[PurePosixPath, ...]:
+    """Return the linked documents that link back to ``path``."""
 
     view = context.proposed_documents.get(path)
     if view is None:
-        return None
+        return ()
+    reciprocal = []
     for successor in view.relationship_links:
-        if successor in excluded:
-            continue
         successor_view = context.proposed_documents.get(successor)
         if successor_view is None:
             continue
@@ -664,8 +661,8 @@ def _reciprocal_successor(
             )
         except AuthorityError:
             continue
-        return successor
-    return None
+        reciprocal.append(successor)
+    return tuple(reciprocal)
 
 
 def _terminal_supersession_evidence(
@@ -677,22 +674,25 @@ def _terminal_supersession_evidence(
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Enforce the domain-derived reciprocal rule using rendered links.
 
-    A successor that is itself superseded must lead on to a further successor;
-    a chain that can only return to a visited document has no current decision.
+    Some reciprocal path must reach a document whose status is not the
+    target's terminal status. Predecessors share that status, so they never
+    satisfy the rule on their own, and a cycle of superseded documents fails.
     """
 
     domain = profile.lifecycle_domain
     if domain is None or not domain.requires_reciprocal_supersession:
         return ()
     visited = {target.path}
-    successor = _reciprocal_successor(target.path, context, set())
+    pending = list(_reciprocal_links(target.path, context))
     observed = f"terminal supersession to {target.status}"
-    while successor is not None:
-        successor_view = context.proposed_documents[successor]
-        if successor_view.document.status != target.status:
+    while pending:
+        candidate = pending.pop()
+        if candidate in visited:
+            continue
+        visited.add(candidate)
+        if context.proposed_documents[candidate].document.status != target.status:
             return ()
-        visited.add(successor)
-        successor = _reciprocal_successor(successor, context, visited)
+        pending.extend(_reciprocal_links(candidate, context))
         observed = "supersession chain ends without a current decision"
     return (
         _diagnostic(

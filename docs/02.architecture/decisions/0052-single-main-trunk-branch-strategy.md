@@ -21,7 +21,8 @@ existing rules said how to use `main`, not why `main` alone is enough.
 
 ## Context
 
-On 2026-10-27 the only branch on GitHub is `main`. Each Spec package is
+On 2026-10-27 the only long-lived branch on GitHub is `main`; the others
+are open feature branches. Each Spec package is
 developed on an owned feature branch, often in a linked worktree, and merged
 when `ci-summary`, `style-pr` and `independent-review` pass
 ([Git policy](../../../.agents/governance/git.md)). One operator works with
@@ -57,7 +58,9 @@ Keep `main` as the only long-lived branch. Develop on short-lived feature
 branches, one per independently reviewable Spec package, merge them through
 pull requests, and delete them after merge. Cut a release branch only when a
 released version needs a fix that `main` cannot carry, and delete it after
-that release.
+that release. The short-lived `release/<tag>` preparation branch that
+`scripts/release.py` opens for every release pull request is a feature
+branch in this sense and is not affected.
 
 ## Explicit Non-goals
 
@@ -90,9 +93,9 @@ reopened.
   not have.
 - **Permanent release branches.** Rejected: releases are tags on reviewed
   `main` commits, and no released version is maintained separately.
-- **Direct commits to `main`.** Rejected: branch protection requires pull
-  requests with hosted checks and independent review, and feature branches
-  carry the Spec and Task evidence.
+- **Direct commits to `main`.** Rejected: the Git policy merges every change
+  through a pull request after hosted checks and independent review, and
+  feature branches carry the Spec and Task evidence.
 
 ## Traceability
 

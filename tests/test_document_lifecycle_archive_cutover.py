@@ -765,11 +765,25 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             [("LIFECYCLE-EVIDENCE", source)],
         )
 
-    def _supersession_outcome(self, successor_status: str) -> list[tuple[str, str]]:
-        source = "docs/02.architecture/decisions/9001-source.md"
-        successor = "docs/02.architecture/decisions/9002-successor.md"
+    def _supersession_outcome(
+        self,
+        base: dict[str, tuple[str, tuple[str, ...]]],
+        proposed: dict[str, tuple[str, tuple[str, ...]]],
+    ) -> list[tuple[str, str]]:
+        """Run the CI comparison over ADR fixtures named by four-digit number.
 
-        def adr(status: str, artifact_id: str, link: str) -> bytes:
+        Each fixture maps a number to its status and the numbers it links in
+        its Lifecycle Traceability table, in table order.
+        """
+
+        def path(number: str) -> str:
+            return f"docs/02.architecture/decisions/{number}-fixture.md"
+
+        def adr(number: str, status: str, links: tuple[str, ...]) -> bytes:
+            rows = "".join(
+                f"| [ADR-{link}](./{link}-fixture.md) | lineage | N/A |\n"
+                for link in links
+            )
             return (
                 b"---\n"
                 b'title: "ADR fixture"\n'
@@ -777,28 +791,20 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
                 + f'status: "{status}"\n'.encode()
                 + b'owner: "platform"\n'
                 + b'updated: "2026-10-27"\n'
-                + f'artifact_id: "{artifact_id}"\n'.encode()
+                + f'artifact_id: "ADR-{number}"\n'.encode()
                 + b"---\n\n# ADR fixture\n\n## Traceability\n\n"
                 b"### Lifecycle Traceability\n\n"
                 b"| Decision lineage | Replacement relation | Affected Spec |\n"
-                b"| --- | --- | --- |\n"
-                + f"| [{link[:4]}](./{link}) | lineage | N/A |\n".encode()
+                b"| --- | --- | --- |\n" + rows.encode()
             )
 
         temporary, root, base_commit = self._document_repository(
-            {
-                source: adr("accepted", "ADR-9001", "9002-successor.md"),
-                successor: adr("accepted", "ADR-9002", "9001-source.md"),
-            }
+            {path(number): adr(number, *state) for number, state in base.items()}
         )
         with temporary:
-            (root / source).write_bytes(
-                adr("superseded", "ADR-9001", "9002-successor.md")
-            )
-            (root / successor).write_bytes(
-                adr(successor_status, "ADR-9002", "9001-source.md")
-            )
-            self._git(root, "add", "--", source, successor)
+            for number, state in proposed.items():
+                (root / path(number)).write_bytes(adr(number, *state))
+                self._git(root, "add", "--", path(number))
             self._git(root, "commit", "--quiet", "-m", "supersede")
             proposed_commit = self._git(root, "rev-parse", "HEAD")
             diagnostics = VALIDATOR._evaluate_comparison(
@@ -808,20 +814,73 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
                 base_ref=base_commit,
                 to_ref=proposed_commit,
             )
-        return sorted((item.rule_id, item.path.as_posix()) for item in diagnostics)
+        return sorted(
+            (item.rule_id, PurePosixPath(item.path).name) for item in diagnostics
+        )
 
     def test_ci_adapter_accepts_reciprocal_supersession(self) -> None:
-        self.assertEqual(self._supersession_outcome("accepted"), [])
+        base = {"9001": ("accepted", ("9002",)), "9002": ("accepted", ("9001",))}
+        self.assertEqual(
+            self._supersession_outcome(base, {"9001": ("superseded", ("9002",))}),
+            [],
+        )
+
+    def test_ci_adapter_accepts_a_chain_that_lists_its_predecessor_first(
+        self,
+    ) -> None:
+        base = {
+            "9000": ("superseded", ("9001",)),
+            "9001": ("accepted", ("9000", "9002")),
+            "9002": ("accepted", ("9001",)),
+        }
+        self.assertEqual(
+            self._supersession_outcome(
+                base, {"9001": ("superseded", ("9000", "9002"))}
+            ),
+            [],
+        )
+
+    def test_ci_adapter_accepts_two_supersessions_in_one_change(self) -> None:
+        base = {
+            "9001": ("accepted", ("9002",)),
+            "9002": ("accepted", ("9001", "9003")),
+            "9003": ("accepted", ("9002",)),
+        }
+        proposed = {
+            "9001": ("superseded", ("9002",)),
+            "9002": ("superseded", ("9001", "9003")),
+        }
+        self.assertEqual(self._supersession_outcome(base, proposed), [])
 
     def test_ci_adapter_rejects_a_supersession_cycle(self) -> None:
+        base = {"9001": ("accepted", ("9002",)), "9002": ("accepted", ("9001",))}
+        proposed = {
+            "9001": ("superseded", ("9002",)),
+            "9002": ("superseded", ("9001",)),
+        }
         self.assertEqual(
-            self._supersession_outcome("superseded"),
+            self._supersession_outcome(base, proposed),
             [
-                ("LIFECYCLE-EVIDENCE", "docs/02.architecture/decisions/9001-source.md"),
-                (
-                    "LIFECYCLE-EVIDENCE",
-                    "docs/02.architecture/decisions/9002-successor.md",
-                ),
+                ("LIFECYCLE-EVIDENCE", "9001-fixture.md"),
+                ("LIFECYCLE-EVIDENCE", "9002-fixture.md"),
+            ],
+        )
+
+    def test_ci_adapter_rejects_a_three_document_cycle(self) -> None:
+        base = {
+            "9001": ("accepted", ("9003", "9002")),
+            "9002": ("accepted", ("9001", "9003")),
+            "9003": ("accepted", ("9002", "9001")),
+        }
+        proposed = {
+            number: ("superseded", links) for number, (_, links) in base.items()
+        }
+        self.assertEqual(
+            self._supersession_outcome(base, proposed),
+            [
+                ("LIFECYCLE-EVIDENCE", "9001-fixture.md"),
+                ("LIFECYCLE-EVIDENCE", "9002-fixture.md"),
+                ("LIFECYCLE-EVIDENCE", "9003-fixture.md"),
             ],
         )
 

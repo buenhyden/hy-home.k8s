@@ -1,6 +1,6 @@
 ---
 title: "ADR Lineage and Branch Strategy"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -61,6 +61,7 @@ prompts and numbering rule, and record the branch strategy. It executes
 | EVD-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Supersession tests and strict validation | Branch `feat/adr-lineage-and-branch-strategy`: `python3 -m unittest tests.test_document_lifecycle_archive_cutover` before and after the `scripts/document_lifecycle.py` change; `python3 scripts/validate-document-lifecycle.py --mode strict` | PASS | Before the change the new cycle test failed: two ADRs superseding each other produced no diagnostic. After it, the cycle fails `LIFECYCLE-EVIDENCE` on both ADRs, the reciprocal supersession test passes, and all 38 tests in the module pass. Strict lifecycle validation passes on the repository; ruff check and format pass | yes | EVD-001 |
 | EVD-006 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests and review | Same branch: `python3 scripts/validate-document-contract-registry.py`, `python3 -m unittest tests.test_repository_form_contracts` | PASS | The decision template asks for decision makers, decision date and confirmation as a prompt; the ADR log states that numbers are never reused and that MIG-0002 and approved Archive removals do not rewrite them; the comparison with Nygard, MADR 4.0.0 and Y-statement is in Inputs. The registry passes 976 paths and the form tests pass | yes | EVD-002 |
+| EVD-007 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Supersession tests and strict validation | PR #182 independent review of `8c598166`; then `python3 -m unittest tests.test_document_lifecycle_archive_cutover`, `python3 scripts/validate-document-lifecycle.py --mode strict` and the reviewer's scratch reproduction on the fix | PASS | The review found that the first walk followed only the first reciprocal link, so a chain that listed its superseded predecessor first, or two supersessions in one change, failed although they pass on main. New tests for both failed on `8c598166`. The rule now searches every reciprocal path and passes when any reaches a document whose status is not superseded; predecessors share the superseded status, so cycles still fail. With a three-document cycle test added, all 41 tests pass, the reviewer's reproduction passes, strict validation passes, and ruff passes | yes | none |
 
 ## Criterion Acceptance
 
