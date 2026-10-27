@@ -38,6 +38,9 @@ updated: "2026-10-27"
 | `ci/` | GitHub Actions job을 로컬에서 재현한 출력 |
 | `validation/` | `scripts/qa.py`와 개별 validator의 진단 출력 |
 
+두 경로에 자동으로 쓰는 producer는 없다. 작업자가 필요한 출력을 직접 리디렉션해 둔다.
+`scripts/qa.py`는 자체 임시 디렉터리를 쓰고 이 경로에 쓰지 않는다.
+
 ## Usage
 
 ### Promotion and Cleanup

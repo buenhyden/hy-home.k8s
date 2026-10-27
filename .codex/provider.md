@@ -159,6 +159,11 @@ team document, not a special automatic entry filename.
 - Use the shared workspace memory store from
   [context and memory](../.agents/governance/context-and-memory.md) instead of
   native memory, and re-observe repository/task state on resume. Shared context and safety rules live in policies, not this note.
+- Reviewed and not adopted on 2026-10-27 (SPEC-0125): no project MCP server
+  is registered in `.codex/config.toml`, no IDE shortcut or code-action
+  configuration is tracked, and no model-generated test cases or hook-based
+  automatic memory collection are used. Adding any of them is a separate
+  scoped change.
 - Follow `RTK.md` for shell tooling. Record an unavailable tool or runtime
   instead of inspecting private configuration to manufacture readiness.
 

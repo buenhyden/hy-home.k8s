@@ -1,6 +1,6 @@
 ---
 title: "Survey Status and Local Gaps"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -192,7 +192,7 @@ operator decision or another repository is named where it blocks a row.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | Record the 148-CR status table | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | in-progress | PASS | EVD-004 closes EVD-002 |
 | WORK-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -202,6 +202,7 @@ operator decision or another repository is named where it blocks a row.
 | EVD-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Status table and independent sample | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Ignore checks and restore test | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Ignore checks and restore test | Branch `docs/cr-status-and-local-gaps`: `git check-ignore --no-index` for each new entry, `python3 -m unittest tests.test_workspace_memory`, `pre-commit run detect-secrets --hook-stage manual` on m0012, NIST SP 800-218 Rev. 1 pages read on 2026-10-27 | PASS | `CLAUDE.local.md`, `AGENTS.override.md`, `.claude/agent-memory/` and `.codex/config.local.toml` were not ignored before the change and are after it. The new restore test damages the store, copies the backup over it, and reads the same records with an `ok` integrity check; 26 tests pass. Provider notes record MCP, IDE, test-generation and hook-collection non-adoption; the diagnostics README no longer implies a producer; `quality.md` names candidate, verified and delivered commits and stale results; the research contract records internal-decision non-applicability. NIST lists SSDF 1.2 as an initial public draft (2025-12-17, comments closed 2026-01-30) and `r1/final` returns 404, recorded in m0012. The m0012 baseline line numbers moved first in `0ec80f29`, and the secret scan passes | yes | EVD-002 |
 
 ## Criterion Acceptance
 

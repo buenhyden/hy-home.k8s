@@ -77,6 +77,11 @@ invocation. The common procedure retains the selected role and user scope.
   [context and memory](../.agents/governance/context-and-memory.md). Existing
   native memory files are neither deleted nor imported. A setting proves
   intent only; whether a session honors it is separate runtime evidence.
+- Reviewed and not adopted on 2026-10-27 (SPEC-0125): no project MCP server
+  is registered (no `.mcp.json` and no MCP key in tracked settings), no IDE
+  shortcut, code-action or inline-edit configuration is tracked, and no
+  model-generated test cases or hook-based automatic memory collection are
+  used. Adding any of them is a separate scoped change.
 - Treat ignored local warning files as auxiliary context, not shared policy or
   a substitute for repository validators.
 - Do not add native metadata fields from assumptions about another client

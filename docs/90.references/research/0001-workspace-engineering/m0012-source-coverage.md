@@ -484,6 +484,10 @@ Each cell gives the source's own support for one perspective: `EXPLICIT` (stated
 
 Not read by design this cycle: ai-memory `docs/`, Spec Kit template contents, adr.github.io sub-pages and docs.arc42.org. Adoption decisions for these values belong to the canonical owners, not to this register.
 
+#### 2026-10-27 SSDF edition check
+
+[SPEC-0125](../../../03.specs/0125-survey-status-and-local-gaps/spec.md) rechecked the SSDF edition that `SRC-WERPC-015` and `SRC-WERPC-033` cite. [SP 800-218 Rev. 1](https://csrc.nist.gov/pubs/sp/800/218/r1/ipd), SSDF version 1.2, is an initial public draft published 2025-12-17; its comment period closed 2026-01-30, and on 2026-10-27 NIST lists no final edition (the `r1/final` page returns 404). SSDF 1.1 (February 2022) therefore stays the final edition cited here, and the 1.2 draft is not policy input until NIST publishes it as final.
+
 ### Historical source and claim provenance
 
 The following dated register is retained as history. Its present-tense wording applies only to the recorded observation date. Current corrections and external ownership appear above; historical statuses are not today's implementation status.
