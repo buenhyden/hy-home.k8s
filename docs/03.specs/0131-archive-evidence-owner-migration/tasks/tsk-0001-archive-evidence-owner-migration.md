@@ -61,10 +61,10 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | Remove the ten units and add their assessment rows | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | Remove the ten units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
