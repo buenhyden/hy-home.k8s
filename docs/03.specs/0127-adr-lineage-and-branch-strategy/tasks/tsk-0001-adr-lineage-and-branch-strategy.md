@@ -1,6 +1,6 @@
 ---
 title: "ADR Lineage and Branch Strategy"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -46,10 +46,10 @@ prompts and numbering rule, and record the branch strategy. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | in-progress | PASS | EVD-008 closes EVD-003 |
-| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-009 closes EVD-004 |
+| WORK-001 | [VAL-AB-001](../spec.md#success-criteria--verification-plan) | Reject supersession chains without a current decision | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-AB-002](../spec.md#success-criteria--verification-plan) | Add the template prompt and the numbering rule | platform | completed | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-AB-003](../spec.md#success-criteria--verification-plan) | Record ADR-0052 and link it from `git.md` | platform | completed | PASS | EVD-008 closes EVD-003 |
+| WORK-004 | [VAL-AB-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-009 closes EVD-004 |
 
 ## Task Evidence
 
@@ -69,10 +69,10 @@ prompts and numbering rule, and record the branch strategy. It executes
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AB-001](../spec.md#success-criteria--verification-plan) | pending | none | Validator change and tests remain | platform |
-| [VAL-AB-002](../spec.md#success-criteria--verification-plan) | pending | none | Template prompt and rule remain | platform |
-| [VAL-AB-003](../spec.md#success-criteria--verification-plan) | pending | none | ADR-0052 and operator decision remain | platform |
-| [VAL-AB-004](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-AB-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-007 | Accepted by the operator on 2026-10-27: supersession chains without a current decision fail, legitimate chains pass, and strict validation passes | platform |
+| [VAL-AB-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-27: the template prompt, the never-reuse rule and the form comparison are in place | platform |
+| [VAL-AB-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-27: ADR-0052 is accepted and `git.md` names it through the ADR log | platform |
+| [VAL-AB-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-27: staged QA and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -89,6 +89,9 @@ prompts and numbering rule, and record the branch strategy. It executes
 - **Approval Required**: the operator said on 2026-10-27 to proceed as
   recommended; accepting ADR-0052 is a separate operator decision. Push,
   pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-27 the operator accepted VAL-AB-001 to
+  VAL-AB-004, including ADR-0052, which this commit marks accepted and
+  names in `git.md` through the ADR log.
 - **Static Validation**: focused tests, strict lifecycle validation and
   `qa.py staged`.
 - **Live Validation**: none.
@@ -98,4 +101,12 @@ prompts and numbering rule, and record the branch strategy. It executes
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005, EVD-007): a supersession chain must reach a
+current decision; the review found and the fix removed a regression for
+chains that list their predecessor first. WORK-002 passed (EVD-006): the
+ADR form prompt and never-reuse rule are in place. WORK-003 passed
+(EVD-008): ADR-0052 is reviewed and, after the operator's acceptance,
+accepted and named in `git.md` through the ADR log, because governance
+links only stage READMEs. WORK-004 passed (EVD-009). Residual risk:
+link reachability stays undirected, as before, so a directed rule needs a
+directed link source.

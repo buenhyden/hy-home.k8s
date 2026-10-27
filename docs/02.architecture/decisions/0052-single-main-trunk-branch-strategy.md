@@ -2,7 +2,7 @@
 title: "Single Main Trunk Branch Strategy"
 version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-10-27"
 layer: "architecture"
