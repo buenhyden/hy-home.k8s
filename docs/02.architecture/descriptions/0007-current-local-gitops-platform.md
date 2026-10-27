@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.8.0"
+version: "1.8.1"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-10-28"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -243,11 +243,14 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Implementation owners and remaining boundaries
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the completed Spec's Tasks record delivery evidence and explicit custom-CRD-schema, generated-output and live-observation DEFER owners and retry conditions. SPEC-0008 completion remains evidence for its original scope.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); it is kept in `98.archive/retired/` and not cited (SPEC-0090). [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the completed Spec's Tasks record delivery evidence and explicit custom-CRD-schema, generated-output and live-observation DEFER owners and retry conditions. SPEC-0008 completion remains evidence for its original scope.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and kept in `98.archive/retired/` ([SPEC-0087](../../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md));
 their scope currently has no implementation owner. The AD succession does not mean any tranche or WP-013 is complete.
+SPEC-0089 and SPEC-0090 left the current tree under SPEC-0130; their bodies
+are recovered from the Retention Catalog envelopes in the
+[Archive index](../../98.archive/README.md).
 [SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md) owns the current
 scoped verifier and ESO consumer repairs under VAL-R10-008; its Task records
 selected static results and any separately authorized live observation. This

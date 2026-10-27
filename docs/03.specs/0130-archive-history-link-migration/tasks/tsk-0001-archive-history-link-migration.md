@@ -56,8 +56,8 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | in-progress | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | in-progress | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -69,6 +69,8 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 | EVD-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer path search | Branch `docs/archive-history-link-migration`: `git grep` for each unit path outside Stage 98 after replacing 14 links in REQ-0003, 4 in REQ-0004 and 2 in AD-0007 | PASS | No current document links to the twelve units; only synthetic test fixture paths `0079-x`, `0090-x` and `0090-example` match. Each edited document names the Retention Catalog envelope as the recovery route | yes | EVD-001 |
+| EVD-006 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `21f68dde`: per unit, `git rev-parse` of the current tree against the envelope `<commit>:<original path>` tree, then `git archive` of the envelope into a scratch directory | PASS | 12/12 equal trees; restored 3 files per unit except 4 for `0079`, 37 in total, matching the current trees | yes | EVD-002 |
 
 ## Criterion Acceptance
 
