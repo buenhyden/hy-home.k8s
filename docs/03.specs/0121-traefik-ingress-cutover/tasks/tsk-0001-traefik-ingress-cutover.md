@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -36,7 +36,7 @@ the cutover and its revert evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | in-progress | NOT_RUN | EVD-006 preparation render, EVD-007 class handover, EVD-008 side-by-side render; EVD-001 remains |
+| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | completed | PASS | EVD-006 preparation render, EVD-007 class handover, EVD-008 and EVD-010 side-by-side render, EVD-009 side-by-side status |
 | WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -53,12 +53,14 @@ the cutover and its revert evidence.
 | EVD-006 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Preparation chart render | `helm template` of `ingress-nginx` 4.15.1 with the preparation values, against the same chart without them; `kustomize build gitops/platform/ingress-routes` | PASS | Chart IngressClass 1 to 0, ValidatingWebhookConfiguration 1 to 0, hook Jobs 2 to 0; the controller keeps `--ingress-class=nginx` and `--controller-class=k8s.io/ingress-nginx`; the neutral manifest renders IngressClass `nginx` with controller `k8s.io/ingress-nginx` | no | none |
 | EVD-007 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Live IngressClass handover check | Operator-approved read-only `kubectl` and route probes on 2026-10-27, after main `01f08f41` (PR #166) synced | PASS | IngressClass `nginx` carries tracking id `platform-ingress-routes:networking.k8s.io/IngressClass:ingress-nginx/nginx`; no ingress-nginx ValidatingWebhookConfiguration remains; `platform-ingress-nginx` Synced and Healthy, controller 1/1; all six route hosts answered (200, 301 or 302) through `172.18.0.240`. `argo` and `rollouts` timed out once during the controller rollout and answered on the next probe. The live `Prune=false` annotation, the old Helm labels on the class and the orphaned `ingress-nginx-admission` Secret remain | yes | EVD-002 |
 | EVD-008 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side chart render | `helm template` of `traefik` 42.1.3 (Traefik v3.7.16) with the `platform-traefik` values and `--skip-crds`; `bash scripts/render-platform-chart-kinds.sh` | PASS | Rendered kinds are ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment and a `ClusterIP` Service, with no IngressClass and no CRD; the only provider flags are `--providers.kubernetesingressnginx` with `ingressClass=nginx` and `controllerClass=k8s.io/ingress-nginx`; the pod sets seccompProfile RuntimeDefault; the chart-kind check passes against the platform AppProject | no | none |
+| EVD-009 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side Application status | Read-only `kubectl` on 2026-10-27, after main `5f68e9c3` (PR #168) synced | PASS | `platform-traefik` Synced and Healthy; namespace `traefik` has baseline audit and warn and `istio-injection=enabled`; Deployment `docker.io/traefik:v3.7.16` 1/1 with its pod 2/2 (sidecar injected); Service `traefik` is `ClusterIP` only; IngressClass `nginx` is still the only class; no Traefik CRD exists; every Ingress `status.loadBalancer` is still `172.18.0.240`; no error in the Traefik log | yes | EVD-001 |
+| EVD-010 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side render scope | PR #168 independent review of EVD-008 | PASS | Narrows EVD-008: "no CRD" holds for the `--skip-crds` render that matches `skipCrds: true`; `scripts/render-platform-chart-kinds.sh` ignores `skipCrds` and lists CustomResourceDefinition, which the AppProject allows. Besides the provider flag with `ingressClass` and `controllerClass`, the render carries the chart defaults `ingressClassByName=false`, `watchIngressWithoutClass=false`, `disableSvcExternalName=false` and the entrypoint flags. The chart ClusterRole can update Ingress status; that stays inert while `publishService` and `publishStatusAddress` are unset, and the cutover revisits it | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | pending | none | Preparation and side-by-side pull requests remain | platform |
+| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Evidence complete; operator acceptance remains | platform |
 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | pending | none | Live route checks remain | platform |
 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | none | Cutover pull request remains | platform |
 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | none | Revert evidence remains | platform |
@@ -103,6 +105,8 @@ the cutover and its revert evidence.
 
 ## Verification Summary
 
-The preparation render (EVD-006), the live class handover (EVD-007) and the
-side-by-side render (EVD-008) passed. The side-by-side Application status
-(EVD-001) and the later live checks remain NOT_RUN.
+WORK-001 passed: the preparation render (EVD-006), the live class handover
+(EVD-007), the side-by-side render (EVD-008, narrowed by EVD-010) and the
+side-by-side Application status (EVD-009). VAL-TC-001 awaits operator
+acceptance. The WORK-002 port-forward route checks are operator-run and
+remain NOT_RUN.
