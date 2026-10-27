@@ -28,7 +28,7 @@ that need no operator decision. It executes [SPEC-0125](../spec.md) through
 
 ### Survey CR Status
 
-Counts at `bc7da828`: 58 `KEEP`, 6 `DONE_THIS_CYCLE`, 5 `GAP`, 60
+Counts at `bc7da828`: 59 `KEEP`, 4 `DONE_THIS_CYCLE`, 5 `GAP`, 61
 `PARTIAL`, 8 `EXTERNAL`, 11 `PROCESS`. "Fixed here" means WORK-002 of this
 Task. "Next slice B" (architecture views, ADR lineage, branch strategy) and
 "Next slice C" (templates and governance prompts) are later Specs. An
@@ -61,7 +61,7 @@ operator decision or another repository is named where it blocks a row.
 | CR-03.06 | `EXTERNAL` | Needs the other three repositories' adopted revisions | none |
 | CR-03.07 | `EXTERNAL` | Needs the other three repositories and a joint edition approval | none |
 | CR-04.01 | `PARTIAL` | `domains.md`, `project-map.md`; Archive retention classes | Sentence-level conflict classification absent; maps are draft |
-| CR-04.02 | `DONE_THIS_CYCLE` | SPEC-0122, PR #165: seven units to `git-history-only` | none |
+| CR-04.02 | `PARTIAL` | SPEC-0122, PR #165: seven units to `git-history-only` | 57 retained units have no per-unit owner or rationale; see CR-08.03 |
 | CR-04.03 | `KEEP` | `agent-execution.md` single-owner and touched-duplicate rules; SPEC-0122 consumer search | none |
 | CR-04.04 | `PARTIAL` | `quality.md` retirement rules; pair screening exists only in ignored `_workspace/` | Pair review unverifiable from the repository |
 | CR-04.05 | `KEEP` | `quality.md` no new ledger to retire QA; MIG-0007 | none |
@@ -123,7 +123,7 @@ operator decision or another repository is named where it blocks a row.
 | CR-11.04 | `PARTIAL` | `quality.md` measure before claiming | Timing evidence absent in SPEC-0117 and SPEC-0118 |
 | CR-11.05 | `PARTIAL` | Dispositions in each Spec's Task | Acceptable without a new ledger |
 | CR-12.01 | `EXTERNAL` | Branch protection here; other repositories unobserved | none |
-| CR-12.02 | `DONE_THIS_CYCLE` | `.github/rulesets/main-protection.md` read-backs; GET on 2026-10-27 | none |
+| CR-12.02 | `KEEP` | `.github/rulesets/main-protection.md` read-backs, latest 2026-10-16 | none |
 | CR-12.03 | `PARTIAL` | Base-SHA tooling; `independent-review` App check | Candidate commit not documented |
 | CR-12.04 | `KEEP` | `ci.yml` least privilege; `tests/test_validate_github_actions_security.py` | none |
 | CR-12.05 | `PROCESS` | `quality.md` NOT_RUN and DEFER; SPEC-0121 operator-run evidence | none |
@@ -147,13 +147,13 @@ operator decision or another repository is named where it blocks a row.
 | CR-15.08 | `PARTIAL` | Independent review App check uses no model API | Fixed here: test-case generation non-adoption recorded |
 | CR-15.09 | `KEEP` | SPEC-0114; `.claude/settings.json`; `.codex/config.toml` | none |
 | CR-15.10 | `KEEP` | `.claude/skills` links to `.agents/skills`; `validate-agent-governance.py` | none |
-| CR-15.11 | `GAP` | Four local agent files were not ignored | Fixed here: `.gitignore` |
+| CR-15.11 | `GAP` | `CLAUDE.local.md`, `AGENTS.override.md`, `.claude/agent-memory/` and `.codex/config.local.toml` were not ignored; `.claude/agent-memory-local/` only through this checkout's `.git/info/exclude` | Fixed here: all five in `.gitignore`; the Codex entry is precautionary |
 | CR-15.12 | `PARTIAL` | `m0009` comparison; no role adopted | Operator decision |
 | CR-15.13 | `PARTIAL` | `work-lifecycle.md`; `quality.md` handoff | Run and permission-decision fields not captured |
 | CR-15.14 | `PARTIAL` | Resume decision; memory idempotency tests | Late-result and cancel cases untested |
 | CR-16.01 | `PARTIAL` | SPEC-0115 Task 0002 skill status | Some skills have no status; user-scope skills external |
 | CR-16.02 | `PROCESS` | Per-Task skill notes | none |
-| CR-16.03 | `PARTIAL` | 18 skills with `SKILL.md` | Three skills lack a verification section |
+| CR-16.03 | `PARTIAL` | 18 skills with `SKILL.md` | No common verification heading; `rca-methodology` and `risk-report` have no verification wording |
 | CR-16.04 | `PARTIAL` | `.agents/evaluations/results.md` has no admitted cycle | none |
 | CR-17.01 | `KEEP` | `scripts/workspace_memory.py`; SPEC-0109 evidence | none |
 | CR-17.02 | `KEEP` | `context-and-memory.md` tiers; `TIER_LIMITS` | none |
@@ -172,7 +172,7 @@ operator decision or another repository is named where it blocks a row.
 | CR-18.04 | `PARTIAL` | `model-selection.md` provider limits | GitHub API limits not documented |
 | CR-18.05 | `KEEP` | No nested retry in delivery scripts | none |
 | CR-18.06 | `EXTERNAL` | Needs live provider limit responses | none |
-| CR-19.01 | `DONE_THIS_CYCLE` | Seven `_workspace` READMEs tracked | none |
+| CR-19.01 | `DONE_THIS_CYCLE` | Seven `_workspace` READMEs tracked, commit `dc9cbeab` | none |
 | CR-19.02 | `PARTIAL` | `_workspace/diagnostics/README.md` implied a producer | Fixed here: no automatic producer stated |
 | CR-19.03 | `PARTIAL` | `_workspace/README.md` promotion rules | No sanitizer step |
 | CR-19.04 | `PARTIAL` | `.worktrees/` ignored; `git.md` worktree safety | Unregistered folders under `.worktrees/` need an operator decision |
