@@ -2943,33 +2943,6 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/document-migration-manifest",
-      "family": "common",
-      "mode": "native",
-      "path_pattern": "^scripts/document\\-taxonomy\\-migration\\.json$",
-      "artifact_id_pattern": null,
-      "template_source": null,
-      "frontmatter": {
-        "mode": "absent",
-        "required": [],
-        "optional": [],
-        "forbidden": [],
-        "order": [],
-        "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
       "id": "common/program-non-target",
       "family": "common",
       "mode": "non-target",
