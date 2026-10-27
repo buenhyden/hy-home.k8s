@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -36,7 +36,7 @@ the cutover and its revert evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | in-progress | NOT_RUN | EVD-006 preparation render; EVD-002 and EVD-001 remain |
+| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | in-progress | NOT_RUN | EVD-006 preparation render, EVD-007 class handover, EVD-008 side-by-side render; EVD-001 remains |
 | WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -51,6 +51,8 @@ the cutover and its revert evidence.
 | EVD-004 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Live router checks after cutover | `verify-ingress-tls.sh` with `CHECK_K8S_ROUTER=true` and per-route curl after WORK-003 merges | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Revert evidence | Live revert or branch render of the cutover revert | NOT_RUN | Pending | yes | none |
 | EVD-006 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Preparation chart render | `helm template` of `ingress-nginx` 4.15.1 with the preparation values, against the same chart without them; `kustomize build gitops/platform/ingress-routes` | PASS | Chart IngressClass 1 to 0, ValidatingWebhookConfiguration 1 to 0, hook Jobs 2 to 0; the controller keeps `--ingress-class=nginx` and `--controller-class=k8s.io/ingress-nginx`; the neutral manifest renders IngressClass `nginx` with controller `k8s.io/ingress-nginx` | no | none |
+| EVD-007 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Live IngressClass handover check | Operator-approved read-only `kubectl` and route probes on 2026-10-27, after main `01f08f41` (PR #166) synced | PASS | IngressClass `nginx` carries tracking id `platform-ingress-routes:networking.k8s.io/IngressClass:ingress-nginx/nginx`; no ingress-nginx ValidatingWebhookConfiguration remains; `platform-ingress-nginx` Synced and Healthy, controller 1/1; all six route hosts answered (200, 301 or 302) through `172.18.0.240`. `argo` and `rollouts` timed out once during the controller rollout and answered on the next probe. The live `Prune=false` annotation, the old Helm labels on the class and the orphaned `ingress-nginx-admission` Secret remain | yes | EVD-002 |
+| EVD-008 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side chart render | `helm template` of `traefik` 42.1.3 (Traefik v3.7.16) with the `platform-traefik` values and `--skip-crds`; `bash scripts/render-platform-chart-kinds.sh` | PASS | Rendered kinds are ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment and a `ClusterIP` Service, with no IngressClass and no CRD; the only provider flags are `--providers.kubernetesingressnginx` with `ingressClass=nginx` and `controllerClass=k8s.io/ingress-nginx`; the pod sets seccompProfile RuntimeDefault; the chart-kind check passes against the platform AppProject | no | none |
 
 ## Criterion Acceptance
 
@@ -88,6 +90,9 @@ the cutover and its revert evidence.
   - On 2026-10-27 the operator approved authoring the WORK-001 preparation
     pull request. Its merge still needs the live `Prune=false` annotation on
     IngressClass `nginx` first, then the EVD-002 check after the sync.
+  - On 2026-10-27, after EVD-007 passed, the operator approved the WORK-001
+    side-by-side pull request. Its merge starts the `platform-traefik` sync;
+    EVD-001 follows that sync.
 - **Static Validation**: Focused tests, the chart render and `qa.py staged` on
   the exact index.
 - **Live Validation**: Operator-run checks for WORK-001 to WORK-004.
@@ -98,4 +103,6 @@ the cutover and its revert evidence.
 
 ## Verification Summary
 
-The preparation render passed (EVD-006). Live checks remain NOT_RUN.
+The preparation render (EVD-006), the live class handover (EVD-007) and the
+side-by-side render (EVD-008) passed. The side-by-side Application status
+(EVD-001) and the later live checks remain NOT_RUN.
