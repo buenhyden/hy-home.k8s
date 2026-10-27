@@ -38,10 +38,10 @@ echo "[INFO] Checking ingress/TLS contracts"
 kubectl version --request-timeout=5s >/dev/null 2>&1 ||
   fail "kubectl cannot reach cluster (check kubeconfig/context)"
 
-svc_type="$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.spec.type}' 2>/dev/null || true)"
-[ "$svc_type" = "LoadBalancer" ] || fail "ingress-nginx-controller type mismatch (actual=$svc_type)"
+svc_type="$(kubectl -n traefik get svc traefik -o jsonpath='{.spec.type}' 2>/dev/null || true)"
+[ "$svc_type" = "LoadBalancer" ] || fail "traefik router Service type mismatch (actual=$svc_type)"
 
-ingress_lb_ip="$(kubectl -n ingress-nginx get svc ingress-nginx-controller \
+ingress_lb_ip="$(kubectl -n traefik get svc traefik \
   -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)"
 if [ -z "$ARGOCD_FALLBACK_IP" ]; then
   if [ -z "$ARGOCD_FALLBACK_PORT_WAS_SET" ]; then
@@ -50,7 +50,7 @@ if [ -z "$ARGOCD_FALLBACK_IP" ]; then
     ARGOCD_FALLBACK_IP="127.0.0.1"
   fi
 fi
-[ -n "$ARGOCD_FALLBACK_IP" ] || fail "ingress-nginx-controller LoadBalancer IP is empty"
+[ -n "$ARGOCD_FALLBACK_IP" ] || fail "traefik router Service LoadBalancer IP is empty"
 
 ing_host="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.rules[0].host}' 2>/dev/null || true)"
 [ "$ing_host" = "$ARGOCD_HOST" ] || fail "argocd ingress host mismatch (actual=$ing_host)"

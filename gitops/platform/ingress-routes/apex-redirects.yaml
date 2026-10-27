@@ -7,7 +7,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: apex-argo
-  namespace: ingress-nginx
+  namespace: traefik
   annotations:
     cert-manager.io/cluster-issuer: mkcert-ca-issuer
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
@@ -22,7 +22,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ingress-nginx-controller
+                name: traefik
                 port:
                   number: 80
   tls:
@@ -34,7 +34,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: apex-kiali
-  namespace: ingress-nginx
+  namespace: traefik
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/permanent-redirect: https://kiali.hy-k8s.home.arpa/
@@ -48,7 +48,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ingress-nginx-controller
+                name: traefik
                 port:
                   number: 80
   tls:
@@ -60,7 +60,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: apex-headlamp
-  namespace: ingress-nginx
+  namespace: traefik
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/permanent-redirect: https://headlamp.hy-k8s.home.arpa/
@@ -74,7 +74,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ingress-nginx-controller
+                name: traefik
                 port:
                   number: 80
   tls:
@@ -86,7 +86,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: apex-rollouts
-  namespace: ingress-nginx
+  namespace: traefik
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/permanent-redirect: https://rollouts.hy-k8s.home.arpa/
@@ -100,7 +100,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ingress-nginx-controller
+                name: traefik
                 port:
                   number: 80
   tls:
@@ -112,7 +112,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: apex-adminer
-  namespace: ingress-nginx
+  namespace: traefik
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/permanent-redirect: https://adminer.hy-k8s.home.arpa/
@@ -126,7 +126,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ingress-nginx-controller
+                name: traefik
                 port:
                   number: 80
   tls:

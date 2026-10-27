@@ -4,7 +4,7 @@ metadata:
   name: platform-traefik
   namespace: argocd
   # SPEC-0121: removing this Application deletes its resources, including
-  # the cluster-scoped ones.
+  # the cluster-scoped ones. Traefik is the k8s router (ADR-0043, ADR-0050).
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
@@ -20,12 +20,12 @@ spec:
       # Only the Ingress-NGINX provider runs; the Traefik CRDs are not needed.
       skipCrds: true
       values: |
-        # SPEC-0121 side by side: ingress-nginx still holds the router
-        # NodePorts and the MetalLB address. Traefik serves the existing
-        # `nginx` class through its ClusterIP Service only, creates no
-        # IngressClass and publishes no Ingress status (publishService stays
-        # off by default). The chart's pod securityContext already sets
-        # seccompProfile RuntimeDefault, which covers the injected sidecars.
+        # k8s router (ADR-0043): the k3d serverlb forwards 192.168.0.14:80/443
+        # to the fixed NodePorts below, and the Service keeps MetalLB address
+        # 172.18.0.240. Traefik serves the existing `nginx` class, creates no
+        # IngressClass and publishes Ingress status from this Service. The
+        # chart's pod securityContext already sets seccompProfile
+        # RuntimeDefault, which covers the injected sidecars.
         ingressClass:
           enabled: false
         providers:
@@ -39,6 +39,8 @@ spec:
             # 1 MiB default with 413. Traefik enforces proxyBodySize (1 MiB)
             # only in its buffering middleware, which this turns on.
             proxyRequestBuffering: true
+            publishService:
+              enabled: true
           # The file provider holds one middleware only: the HSTS header that
           # ingress-nginx sends on every TLS response (SPEC-0121 0.4.0).
           file:
@@ -51,14 +53,25 @@ spec:
                     headers:
                       stsSeconds: 31536000
                       stsIncludeSubdomains: true
+        # nginx drops request headers whose names alias another header
+        # (underscores_in_headers off); `delete` does the same, so a client
+        # cannot spoof a header Traefik manages.
         ports:
-          websecure:
+          web:
+            nodePort: 30080
             http:
+              aliasHeadersStrategy: delete
+          websecure:
+            nodePort: 30443
+            http:
+              aliasHeadersStrategy: delete
               middlewares:
                 - hsts@file
         service:
+          annotations:
+            metallb.io/loadBalancerIPs: 172.18.0.240
           spec:
-            type: ClusterIP
+            type: LoadBalancer
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
@@ -68,8 +81,10 @@ spec:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
+    # At the cutover the NodePorts and the address free only once the
+    # ingress-nginx Service is deleted, so the first attempts can fail.
     retry:
-      limit: 3
+      limit: 5
       backoff:
         duration: 10s
         factor: 2

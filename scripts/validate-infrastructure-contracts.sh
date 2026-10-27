@@ -34,7 +34,7 @@ VAULT_STORE="$ROOT_DIR/gitops/platform/eso/vault-secret-store.yaml"
 VAULT_TOKEN_REVIEWER="$ROOT_DIR/gitops/platform/eso/vault-token-reviewer-binding.yaml"
 VALKEY_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/valkey-external.yaml"
 ARGOCD_VALUES="$ROOT_DIR/infrastructure/argocd/values-local.yaml"
-INGRESS_APP="$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
+INGRESS_APP="$ROOT_DIR/gitops/apps/root/platform-traefik-app.yaml"
 VAULT_POLICY="$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl"
 APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
 APPPROJECT_PLATFORM="$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"
@@ -98,8 +98,8 @@ require_pattern 'hostIP:\s*192\.168\.0\.13' "$K3D_CONFIG"
 if grep -lP 'sync-wave:\s*"[1-9]' "$ROOT_DIR"/gitops/platform/{monitoring,kiali}/*externalsecret*.yaml; then
   fail 'ExternalSecrets for Alloy and Kiali must sync before their consumers (wave <= 0)'
 fi
-# The admission hook Jobs run in an injected namespace; a sidecar never exits.
-require_pattern 'sidecar\.istio\.io/inject:\s*"false"' "$INGRESS_APP"
+# The router Service keeps the MetalLB address the k8s router uses (ADR-0043).
+require_pattern 'metallb\.io/loadBalancerIPs:\s*172\.18\.0\.240$' "$INGRESS_APP"
 # istio-cni must install into the only CNI bin dir the k3s containerd reads.
 # The chart's platform profile overrides cniBinDir, so the k3s profile is pinned.
 require_pattern '^\s*platform:\s*k3s$' "$ROOT_DIR/gitops/apps/root/platform-istio-cni-app.yaml"

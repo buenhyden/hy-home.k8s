@@ -13,7 +13,7 @@ spec:
     path: gitops/platform/ingress-routes
   destination:
     server: https://kubernetes.default.svc
-    namespace: ingress-nginx
+    namespace: traefik
   syncPolicy:
     automated:
       prune: true
