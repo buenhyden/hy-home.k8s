@@ -208,6 +208,23 @@ class PlatformIngressTest(unittest.TestCase):
                         aliasHeadersStrategy="keep"
                     ),
                     lambda v: v["ports"]["websecure"]["http"].update(middlewares=[]),
+                    lambda v: v["ports"]["websecure"]["http"].update(
+                        middlewares="hsts@file-other"
+                    ),
+                    lambda v: v["ports"]["web"]["http"].update(
+                        aliasHeadersStrategy="keep"
+                    ),
+                    lambda v: v["ports"]["websecure"].update(nodePort=30444),
+                    lambda v: v["providers"]["kubernetesIngress"].update(enabled=True),
+                    lambda v: v["service"].update(
+                        annotations={"metallb.io/loadBalancerIPs": "172.18.0.241"}
+                    ),
+                    lambda v: v["providers"]["file"]["content"]["http"]["middlewares"][
+                        "hsts"
+                    ]["headers"].update(stsSeconds=0),
+                    lambda v: v["providers"]["kubernetesIngressNGINX"].update(
+                        ingressClass="other"
+                    ),
                 )
             ),
             (
