@@ -27,8 +27,8 @@ as `git-history-only`. The [Plan](plan.md) orders the work and
 ## Strategic Boundaries & Non-goals
 
 - In scope:
-  - consumers of the ten units in REQ-0003, REQ-0004, AD-0006, AD-0007,
-    ADR-0036, research note m0009, `.claude/provider.md`, `.codex/provider.md`,
+  - consumers of the ten units in REQ-0003, REQ-0004, AD-0006, AD-0007, the
+    architecture-description README, ADR-0036, research note m0009, `.claude/provider.md`, `.codex/provider.md`,
     `examples/aws/README.md` and `examples/azure/README.md`;
   - the sentences that say SPEC-0047, 0048, 0049, 0050 or 0051 are kept in
     `98.archive/retired/`;

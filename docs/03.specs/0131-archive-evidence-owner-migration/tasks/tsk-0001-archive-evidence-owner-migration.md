@@ -49,7 +49,7 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 | SPEC-0050 | REQ-0003, REQ-0004 and AD-0007 say it is kept in `retired/`; AWS and Azure example READMEs mention it | Same correction; the example mentions stay as history |
 | SPEC-0075 | REQ-0003 and ADR-0036 links; m0009 cites a head its Task recorded | Plain identifier; m0009 names the recovery route |
 | SPEC-0076 | REQ-0003 and m0009 links; m0009 refresh trigger | Plain identifier; the trigger stays as written |
-| SPEC-0083, SPEC-0084 | REQ-0003 links; AD-0006 history sentence | Plain identifier |
+| SPEC-0083, SPEC-0084 | REQ-0003 and architecture-description README links; AD-0006 history sentence | Plain identifier |
 | SPEC-0086 | REQ-0003 link; `.claude/provider.md` and `.codex/provider.md` name its Task as evidence owner | The notes keep each fact and say the Task recorded it |
 | SPEC-0087 | REQ-0003, REQ-0004 and AD-0007 links; operations guide 0010 and runbook 0011 history mentions | Plain identifier |
 | SPEC-0096 | REQ-0003 link; `.codex/provider.md` names its Task as evidence owner | As for SPEC-0086 |
@@ -61,8 +61,8 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | in-progress | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | in-progress | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | Remove the ten units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -74,6 +74,8 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 | EVD-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer search | Branch `docs/archive-evidence-owner-migration`: `git grep` for each unit path, for `SPEC-#### Task(s) own` and for `kept in \`98.archive/retired/\`` outside Stage 98 and this package, after the edits to REQ-0003, REQ-0004, AD-0007, the architecture-description README, ADR-0036, m0009 and both provider notes | PASS | No current document links to the ten units or names their Tasks as owners; each provider note keeps its observed facts and says the Task recorded them; no sentence says a removed Spec is kept in `retired/`. Plain mentions remain in AD-0006, the example READMEs, operations guide 0010 and runbook 0011 | yes | EVD-001 |
+| EVD-006 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `44e654dd`: per unit, `git rev-parse` of the current tree against the envelope tree, then `git archive` of the envelope into a scratch directory | PASS | 10/10 equal trees; restored 9, 9, 3, 3, 3, 3, 3, 3, 3 and 3 files, 42 in total, matching the current trees | yes | EVD-002 |
 
 ## Criterion Acceptance
 
@@ -87,7 +89,8 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: this package, the Stage 03 README index, REQ-0003,
-  REQ-0004, AD-0006, AD-0007, ADR-0036, research note m0009,
+  REQ-0004, AD-0006, AD-0007, the architecture-description README, ADR-0036,
+  research note m0009,
   `.claude/provider.md`, `.codex/provider.md`, the ten unit directories and
   the Retention Assessment table in `docs/98.archive/README.md`.
 - **Forbidden Paths**: every other Stage 98 payload, the frozen generation,

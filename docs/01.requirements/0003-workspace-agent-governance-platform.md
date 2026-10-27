@@ -142,9 +142,9 @@ It follows the current boundaries of [ADR-0030](../02.architecture/decisions/003
 ### Unfinished execution and original lineage
 
 Spec 0054 closed as `done` through WP-013 and TSK-0013 and is kept in `98.archive/completed/`.
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); it is kept in `98.archive/retired/` and not cited (SPEC-0090). Its retired design is not current authority. [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered the scoped repository-static render, built-in schema, per-target evidence, and ingress/GVK checks for REQ-0004-FR-0008 and FR-0010. Custom CRD schema, generated output, and live observations remain explicit DEFER under the owners in [REQ-0004](./0004-current-local-gitops-platform.md); other withdrawn work is not declared complete.
-Specs 0047, 0048, 0050, and 0051 were withdrawn without successors, are kept in `98.archive/retired/`, and are not cited
-([SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md)).
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); its package left the current tree under SPEC-0131 and is not cited (SPEC-0090). Its retired design is not current authority. [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered the scoped repository-static render, built-in schema, per-target evidence, and ingress/GVK checks for REQ-0004-FR-0008 and FR-0010. Custom CRD schema, generated output, and live observations remain explicit DEFER under the owners in [REQ-0004](./0004-current-local-gitops-platform.md); other withdrawn work is not declared complete.
+Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and are not cited
+(SPEC-0087); their packages left the current tree under SPEC-0122 and SPEC-0131.
 [REQ-0004](./0004-current-local-gitops-platform.md) co-owns the platform-specific obligations.
 
 The original REQ-0005/0006 were superseded by REQ-0008. Their current meaning passes back to this document,
@@ -162,10 +162,10 @@ honesty are owned by
 SPEC-0074.
 Common knowledge and prompt surfaces and their document contracts are
 owned by
-[SPEC-0075](../98.archive/completed/03.specs/0075-common-knowledge-and-prompt-surfaces/spec.md).
+SPEC-0075.
 Responsibility-boundary coverage, the roles that close it, and routing
 completeness are owned by
-[SPEC-0076](../98.archive/completed/03.specs/0076-agent-role-coverage-and-contract-completion/spec.md).
+SPEC-0076.
 Retirement of unreachable validation code, absent-subject assertions, and
 same-snapshot duplicate gate execution is owned by
 SPEC-0077.
@@ -185,20 +185,20 @@ first exact disposition are owned by
 [SPEC-0082](../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
 Retaining the ten finished Stage 03 packages under that contract, and
 recording why the two superseded proposals cannot follow, is owned by
-[SPEC-0083](../98.archive/completed/03.specs/0083-finished-package-retention/spec.md).
+SPEC-0083.
 Closing the Stage 03 backlog those rounds left, including the two registry gaps
 that blocked two of its dispositions, is owned by
-[SPEC-0084](../98.archive/completed/03.specs/0084-stage03-backlog-closeout/spec.md).
+SPEC-0084.
 The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
 [SPEC-0085](../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
-[SPEC-0086](../98.archive/completed/03.specs/0086-provider-native-runtime-observation/spec.md).
+SPEC-0086.
 Retaining the seven terminal Stage 03 packages that SPEC-0084 left in place is
 owned by
-[SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md).
+SPEC-0087.
 Converging Operations document ownership, disposing of Stage 98 Operations
 residue, and removing dead or duplicate validation logic is owned by
 SPEC-0088.
@@ -218,9 +218,9 @@ SPEC-0094.
 Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
 [SPEC-0095](../98.archive/completed/03.specs/0095-closed-package-retention/spec.md).
 Rebinding the Codex `top` and `worker` model tiers is owned by
-[SPEC-0096](../98.archive/completed/03.specs/0096-codex-model-tier-rebinding/spec.md).
+SPEC-0096.
 Binding the Claude role models and reasoning effort is owned by
-[SPEC-0097](../98.archive/completed/03.specs/0097-claude-model-and-effort-binding/spec.md).
+SPEC-0097.
 Granting search to every Claude role and retaining SPEC-0095 through
 SPEC-0097 is owned by
 [SPEC-0098](../98.archive/completed/03.specs/0098-claude-search-grant-and-retention/spec.md).
@@ -231,6 +231,10 @@ SPEC-0089, SPEC-0090, SPEC-0094, SPEC-0100 and SPEC-0101 left the current
 tree under [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md);
 each body is recovered from its Retention Catalog envelope in the
 [Archive index](../98.archive/README.md).
+SPEC-0049, SPEC-0050, SPEC-0075, SPEC-0076, SPEC-0083, SPEC-0084, SPEC-0086,
+SPEC-0087, SPEC-0096 and SPEC-0097 left the current tree under
+[SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md) and are
+recovered the same way.
 
 ## Traceability
 
