@@ -1,6 +1,6 @@
 ---
 title: "Required Source Coverage"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -29,8 +29,8 @@ the research register. It executes [SPEC-0124](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RS-001](../spec.md#success-criteria--verification-plan) | Read the ten sources and add the dated block to m0012 | platform | in-progress | PASS | EVD-003 closes EVD-001 |
-| WORK-002 | [VAL-RS-002](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-004 closes EVD-002 |
+| WORK-001 | [VAL-RS-001](../spec.md#success-criteria--verification-plan) | Read the ten sources and add the dated block to m0012 | platform | completed | PASS | EVD-003 closes EVD-001 |
+| WORK-002 | [VAL-RS-002](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-004 closes EVD-002 |
 
 ## Task Evidence
 
@@ -45,8 +45,8 @@ the research register. It executes [SPEC-0124](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RS-001](../spec.md#success-criteria--verification-plan) | pending | none | Source reading and block remain | platform |
-| [VAL-RS-002](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-RS-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-003 | Accepted by the operator on 2026-10-27: the ten sources are recorded with a value for every perspective and the independent re-read approved | platform |
+| [VAL-RS-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: staged QA passed on every commit and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -58,6 +58,8 @@ the research register. It executes [SPEC-0124](../spec.md) through
   members, provider settings and credentials.
 - **Approval Required**: the operator asked on 2026-10-27 to continue with
   the next slice. Push, pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-27 the operator accepted VAL-RS-001 and
+  VAL-RS-002.
 - **Static Validation**: `qa.py staged` on the exact index.
 - **Live Validation**: none; the hosted checks on the pull request.
 - **Secret / Vault Handling**: no secret is read or written.
@@ -66,4 +68,8 @@ the research register. It executes [SPEC-0124](../spec.md) through
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-003): m0012 records the ten required sources with a
+support value for each of the six perspectives, none `NOT_RETRIEVED`, and an
+independent re-read approved. WORK-002 passed (EVD-004): staged QA and the
+hosted checks passed. The operator accepted both criteria. Adoption of any
+source content stays with the canonical owners (CR-02.07).
