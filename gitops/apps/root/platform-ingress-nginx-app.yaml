@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: platform-ingress-nginx
   namespace: argocd
+  # SPEC-0121: removing this Application at the cutover also deletes its
+  # resources, including the cluster-scoped ones.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: '2'
 spec:
@@ -34,10 +38,17 @@ spec:
           podSecurityContext:
             seccompProfile:
               type: RuntimeDefault
+          # SPEC-0121: IngressClass `nginx` is owned by the neutral manifest in
+          # gitops/platform/ingress-routes, not by this chart.
+          ingressClassResource:
+            enabled: false
           # admission webhook Job도 같은 네임스페이스에서 주입 대상이 된다. 이 키가
           # 그 Job들의 pod 레벨 securityContext다(컨테이너 레벨은 createSecretJob /
           # patchWebhookJob 쪽 키로 따로 있으며 이미 하드닝되어 있다).
+          # SPEC-0121: the webhook would reject the duplicate apex Ingresses
+          # that the cutover briefly creates.
           admissionWebhooks:
+            enabled: false
             patch:
               # 주입된 istio-proxy는 끝나지 않으므로 hook Job이 완료되지 않고
               # ArgoCD sync가 그 hook에서 멈춘다. Job pod만 주입에서 뺀다.

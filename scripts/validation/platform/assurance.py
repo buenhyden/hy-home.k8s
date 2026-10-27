@@ -45,6 +45,7 @@ CLUSTER_KINDS = {
     ("", "Namespace"),
     ("cert-manager.io", "ClusterIssuer"),
     ("external-secrets.io", "ClusterSecretStore"),
+    ("networking.k8s.io", "IngressClass"),
     ("rbac.authorization.k8s.io", "ClusterRole"),
     ("rbac.authorization.k8s.io", "ClusterRoleBinding"),
 }
