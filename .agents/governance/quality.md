@@ -295,6 +295,9 @@ Record in the owning Task or approved evidence record:
 
 - scope, changed paths, and acceptance IDs;
 - the snapshot the work sits on: branch, HEAD, and the base it diverged from;
+  when they differ, name the candidate the checks ran on, the verified commit
+  and the delivered commit. A result recorded over a commit that later changed
+  is stale for the new commit until it is run again;
 - commands and tool/version, with each ordered completion-step result;
 - separate lane results and limitations;
 - the approval boundary in force: what was authorized and what was not;

@@ -109,7 +109,10 @@ resuming. A separate Git directory layout is currently unsupported; it reports
   a filesystem quota. Backups use a private temporary file, serialize with
   other backups, verify schema, workspace identity, revisions and conflicts,
   then atomically replace the single backup. A failed backup preserves the
-  previous valid copy.
+  previous valid copy. To restore, stop every writer, remove a leftover
+  `memory.sqlite3-journal` beside the store, copy the backup over the store
+  file and confirm `pragma integrity_check` returns `ok`; the restored store
+  reads the same records.
 - Never store credentials, secret values, personal data or raw transcripts;
   the store accepts only `public` or `internal` sensitivity.
 - Native Claude and Codex memory stay disabled in project configuration, and

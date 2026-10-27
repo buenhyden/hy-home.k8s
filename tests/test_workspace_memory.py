@@ -348,6 +348,23 @@ class WorkspaceMemoryTest(unittest.TestCase):
             len(os.listdir(self.store.path.parent)), MEMORY.RUNTIME_FILE_LIMIT
         )
 
+    def test_restored_backup_reads_the_same_records(self) -> None:
+        first = self.write()
+        self.write(memory_id=first["memory_id"], expected_revision=1, body=SHORT)
+        expected = self.store.query()
+        backup = Path(self.store.backup()["path"])
+        self.store.path.write_bytes(b"damaged")
+        self.store.path.write_bytes(backup.read_bytes())
+        restored = MEMORY.Store.open(self.root)
+        self.assertEqual(restored.query(), expected)
+        with restored._connect() as connection:
+            self.assertEqual(
+                connection.execute("pragma integrity_check").fetchone()[0], "ok"
+            )
+            self.assertEqual(
+                connection.execute("select count(*) from revision").fetchone()[0], 2
+            )
+
     def test_backup_rejects_existing_target_symlink(self) -> None:
         external = self.root.parent / "external-backup"
         external.write_text("untouched", encoding="utf-8")

@@ -64,6 +64,12 @@ secrets/certs/*.p12
 
 .claude/settings.local.json
 .claude/*.local.md
+# Personal agent instruction overrides and subagent memory stay local.
+CLAUDE.local.md
+AGENTS.override.md
+.claude/agent-memory/
+.claude/agent-memory-local/
+.codex/config.local.toml
 .agent-work/
 /_workspace/*
 !/_workspace/README.md
