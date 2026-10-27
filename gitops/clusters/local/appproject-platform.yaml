@@ -7,9 +7,6 @@ spec:
   description: Platform components (ingress, eso, networkpolicy, external endpoints)
   sourceRepos:
     - https://github.com/buenhyden/hy-home.k8s.git
-    # SPEC-0121: kept until the platform-ingress-nginx cascade finishes; the
-    # finalizer deletes only resources the project still permits.
-    - https://kubernetes.github.io/ingress-nginx
     - https://traefik.github.io/charts
     - https://charts.external-secrets.io
     - https://charts.jetstack.io
@@ -20,9 +17,6 @@ spec:
     - https://metallb.github.io/metallb
   destinations:
     - namespace: argocd
-      server: https://kubernetes.default.svc
-    # SPEC-0121: kept until the ingress-nginx cascade finishes (see above).
-    - namespace: ingress-nginx
       server: https://kubernetes.default.svc
     - namespace: traefik
       server: https://kubernetes.default.svc
