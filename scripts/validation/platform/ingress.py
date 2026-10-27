@@ -156,7 +156,8 @@ def _controller_values_ok(values, controller):
         and _get(nginx, "proxyRequestBuffering") is True
         and _get(web, "http", "aliasHeadersStrategy") == "delete"
         and _get(websecure, "http", "aliasHeadersStrategy") == "delete"
-        and "hsts@file" in (_get(websecure, "http", "middlewares") or ())
+        and isinstance(_get(websecure, "http", "middlewares"), list)
+        and "hsts@file" in _get(websecure, "http", "middlewares")
         and _get(
             values,
             "providers",
