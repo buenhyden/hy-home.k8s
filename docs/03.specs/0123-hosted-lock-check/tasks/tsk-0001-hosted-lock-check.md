@@ -1,6 +1,6 @@
 ---
 title: "Hosted CI Lock Check"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -33,7 +33,7 @@ Run the reviewed base's CI Python lock check on pull requests that change
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | completed | PASS | EVD-003 closes EVD-001 |
-| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | in-progress | PASS | EVD-004 closes EVD-002 |
+| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | completed | PASS | EVD-004 closes EVD-002 |
 
 ## Task Evidence
 
@@ -48,8 +48,8 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-HL-001](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Evidence complete; operator acceptance remains | platform |
-| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Evidence complete; operator acceptance remains | platform |
+| [VAL-HL-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-003 | Accepted by the operator on 2026-10-27: the reviewed seven-step topology holds and a lock without the directive fails | platform |
+| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: the hosted step ran on the pull request and staged QA passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -63,6 +63,8 @@ Run the reviewed base's CI Python lock check on pull requests that change
   provider settings and credentials.
 - **Approval Required**: the operator chose this change on 2026-10-27. Push,
   pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-27 the operator accepted VAL-HL-001 and
+  VAL-HL-002.
 - **Static Validation**: focused tests and `qa.py staged` on the exact index.
 - **Live Validation**: the hosted `style-pr` run on the pull request.
 - **Secret / Vault Handling**: no secret is read or written.
@@ -75,4 +77,4 @@ WORK-001 passed (EVD-003): `style-pr` has the seventh step, the validator
 admits exactly that topology, and a lock without `--only-binary :all:` fails.
 WORK-002 passed (EVD-004): the hosted job ran the step and skipped the check
 for a pull request without a requirements change, and staged QA passed.
-Both criteria await operator acceptance.
+The operator accepted both criteria.
