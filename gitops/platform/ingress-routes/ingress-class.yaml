@@ -1,0 +1,10 @@
+# IngressClass `nginx` has one owner through the SPEC-0121 cutover: this
+# neutral manifest, tracked by platform-ingress-routes. Neither controller's
+# chart renders it. ingress-nginx serves it now; Traefik's Ingress-NGINX
+# provider serves the same class after the cutover.
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx

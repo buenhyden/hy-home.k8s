@@ -17,6 +17,10 @@
       "file": "ingress-networking-v1.json",
       "sha256": "52a8ac4967de42dd4e0cb70fafc34cefc4da06afbfb085b8dfbec8d07d963681"
     },
+    "networking.k8s.io/v1:IngressClass": {
+      "file": "ingressclass-networking-v1.json",
+      "sha256": "323d49f470a3e07c93728b3119e7ff64524ce7f02cef902ab8a3e5dd9e215b5a"
+    },
     "networking.k8s.io/v1:NetworkPolicy": {
       "file": "networkpolicy-networking-v1.json",
       "sha256": "a97e0f3514bb0995d966abbd6fcda478f27e0262dd1d4b36dfb09656ba2edb2a"
