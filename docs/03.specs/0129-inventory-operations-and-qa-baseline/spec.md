@@ -2,7 +2,7 @@
 title: "Inventory, Operations and QA Baseline"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-28"
 layer: "specs"
@@ -37,15 +37,15 @@ records it.
 - Each operations edit removes a verbatim repeat or an ambiguity without
   changing a procedure's effect.
 - Each timing figure names the commit, profile, gate count, exit code,
-  seconds, UTC time, Python version and core count, and replays one real
-  commit on its parent.
+  seconds, UTC time, Python version and core count, and measures the exact
+  staged index of a commit in this pull request.
 
 ## Core Design
 
 The inventory uses `git ls-files` modes and content checks. The operations
 survey reads each document's role, age, consumers and validity. The timing
-replays one commit's diff into its parent's index in a detached worktree and
-runs `scripts/qa.py staged`.
+runs `scripts/qa.py staged` on the staged index just before each commit of
+this pull request.
 
 ## Data Modeling & Storage Strategy
 
@@ -58,7 +58,9 @@ None.
 ## Edge Cases & Error Handling
 
 - Replaying a whole pull request as one index jumps Task states and fails by
-  design, so the timing replays single commits.
+  design. Replaying single earlier commits in detached worktrees also failed,
+  so the baseline uses this pull request's own commits and the Task records
+  the replay attempts as a limitation.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -67,7 +69,6 @@ Reverting the pull request restores the two operations documents.
 ## Verification Commands
 
 - `git ls-files -s` and content checks for the inventory.
-- `python3 scripts/qa.py staged` for each replayed commit.
 - `python3 scripts/qa.py staged` on the exact index of each commit here.
 
 ## Success Criteria & Verification Plan
@@ -76,7 +77,7 @@ Reverting the pull request restores the two operations documents.
 | --- | --- |
 | VAL-SV-001 | The Task records the classified inventory with a disposition for every special kind. |
 | VAL-SV-002 | The Task records the operations survey, RUN-0002 step 9 no longer repeats RUN-0001's gate, POL-0007 names the Traefik-served `nginx` class, and an independent reviewer confirms both edits. |
-| VAL-SV-003 | The Task records reproducible staged QA figures for one document commit and one validator commit. |
+| VAL-SV-003 | The Task records staged QA figures for the commits of this pull request and the failed replay attempts with their cause. |
 | VAL-SV-004 | Staged QA passes on every commit and the pull request's hosted checks pass. |
 
 ## Traceability

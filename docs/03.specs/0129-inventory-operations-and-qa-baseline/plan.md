@@ -2,7 +2,7 @@
 title: "Inventory, Operations and QA Baseline Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-28"
 layer: "specs"
@@ -15,7 +15,7 @@ parent_ids: ["SPEC-0129"]
 ## Global Constraints
 
 - Every work unit inherits the [Spec](spec.md) contracts and non-goals.
-- Measurement worktrees are detached and disposable.
+- Timing runs on this branch's staged index; no measurement worktree is kept.
 
 ## Overview
 

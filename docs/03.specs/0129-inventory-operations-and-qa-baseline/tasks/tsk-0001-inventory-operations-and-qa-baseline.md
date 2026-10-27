@@ -63,10 +63,10 @@ are active and current; none names a retired component as current.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
