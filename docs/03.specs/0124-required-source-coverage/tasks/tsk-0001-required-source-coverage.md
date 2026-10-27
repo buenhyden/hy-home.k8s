@@ -29,8 +29,8 @@ the research register. It executes [SPEC-0124](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RS-001](../spec.md#success-criteria--verification-plan) | Read the ten sources and add the dated block to m0012 | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RS-002](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RS-001](../spec.md#success-criteria--verification-plan) | Read the ten sources and add the dated block to m0012 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RS-002](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
