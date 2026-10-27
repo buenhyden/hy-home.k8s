@@ -1,9 +1,9 @@
 ---
 title: "Change Kinds and Authoring Prompts"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-10-28"
 layer: "specs"
 artifact_id: "SPEC-0128-TSK-0001"
 parent_ids: ["SPEC-0128-PLAN-0001"]
@@ -30,10 +30,10 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CK-001](../spec.md#success-criteria--verification-plan) | Add the change-kind table and touchpoint sentences | platform | in-progress | PASS | EVD-008 closes EVD-001, EVD-007 |
-| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | in-progress | PASS | EVD-005 closes EVD-002 |
-| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | in-progress | PASS | EVD-006 closes EVD-003 |
-| WORK-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-009 closes EVD-004 |
+| WORK-001 | [VAL-CK-001](../spec.md#success-criteria--verification-plan) | Add the change-kind table and touchpoint sentences | platform | completed | PASS | EVD-008 closes EVD-001, EVD-007 |
+| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | completed | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | completed | PASS | EVD-006 closes EVD-003 |
+| WORK-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-009 closes EVD-004 |
 
 ## Task Evidence
 
@@ -53,10 +53,10 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CK-001](../spec.md#success-criteria--verification-plan) | pending | none | Table and review remain | platform |
-| [VAL-CK-002](../spec.md#success-criteria--verification-plan) | pending | none | Prompts remain | platform |
-| [VAL-CK-003](../spec.md#success-criteria--verification-plan) | pending | none | Validator change remains | platform |
-| [VAL-CK-004](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-CK-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: the change-kind table routes every row to its owner, confirmed by review | platform |
+| [VAL-CK-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28: the Spec, Plan and Task prompts are in place and the form tests pass | platform |
+| [VAL-CK-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28: link-only instruction sections fail and navigation sections may hold links | platform |
+| [VAL-CK-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28: staged QA and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -72,6 +72,8 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
   provider settings and credentials.
 - **Approval Required**: the operator said on 2026-10-27 to proceed as
   recommended. Push, pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-CK-001 to
+  VAL-CK-004.
 - **Static Validation**: focused tests and `qa.py staged`.
 - **Live Validation**: none.
 - **Secret / Vault Handling**: no secret is read or written.
@@ -80,4 +82,9 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-008, closing the EVD-007 review failure): the
+change-kind table states only what its owners say. WORK-002 passed
+(EVD-005): the template prompts are in place. WORK-003 passed (EVD-006):
+link-only instruction sections fail. WORK-004 passed (EVD-009). The operator
+accepted all four criteria. Residual gap: reference-style links, bare URLs
+and sentences such as `See [RUN-0001](x).` still count as content.
