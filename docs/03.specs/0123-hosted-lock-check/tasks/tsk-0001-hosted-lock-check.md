@@ -1,6 +1,6 @@
 ---
 title: "Hosted CI Lock Check"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -32,8 +32,8 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | in-progress | PASS | EVD-003 closes EVD-001 |
-| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | Add the step, the reviewed topology and its tests, and the hosted lane wording | platform | completed | PASS | EVD-003 closes EVD-001 |
+| WORK-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | Observe the hosted run and staged QA | platform | in-progress | PASS | EVD-004 closes EVD-002 |
 
 ## Task Evidence
 
@@ -42,13 +42,14 @@ Run the reviewed base's CI Python lock check on pull requests that change
 | EVD-001 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Reviewed topology and failing lock | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted run and staged QA | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-HL-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Reviewed topology and failing lock | Branch `ci/hosted-lock-check`: `python3 -m unittest tests.test_validate_ci_python_contract`, `python3 scripts/validate-ci-python-contract.py --root .` with the lock directive removed and restored, the step condition on NUL-separated path lists, `python3 scripts/validate-github-actions-security.py --root .` | PASS | Two new tests failed before the step existed and pass after it; the hand-built job fixture gains the seventh step and a case where the step runs the candidate's own validator, which is rejected; 79 tests pass. With `--only-binary :all:` removed the validator fails `CI-PYTHON-LOCK`, and the restored lock passes. The condition runs the check for a list that contains `.github/requirements/ci-validation.txt` and skips it for one that does not. GitHub Actions security passes | yes | EVD-001 |
+| EVD-004 | [VAL-HL-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Hosted run and staged QA | PR #177 head `32d00544`, CI run `40466750554` (job `style-pr` `122063887522`); pre-commit staged QA on commits `d345ea72`, `3a6c62c9` and `32d00544` | PASS | `ci-summary` and `style-pr` passed. `style-pr` ran *Validate a changed CI lock* after the six reviewed steps; the pull request changes no `.github/requirements/` path, so the step printed nothing and passed. Staged QA passed on all three commits | yes | EVD-002 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-HL-001](../spec.md#success-criteria--verification-plan) | pending | none | Step, topology and tests remain | platform |
-| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | pending | none | Hosted run and staged QA remain | platform |
+| [VAL-HL-001](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Evidence complete; operator acceptance remains | platform |
+| [VAL-HL-002](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Evidence complete; operator acceptance remains | platform |
 
 ## Approval and Safety Boundaries
 
@@ -72,4 +73,6 @@ Run the reviewed base's CI Python lock check on pull requests that change
 
 WORK-001 passed (EVD-003): `style-pr` has the seventh step, the validator
 admits exactly that topology, and a lock without `--only-binary :all:` fails.
-The hosted run and staged QA remain (WORK-002).
+WORK-002 passed (EVD-004): the hosted job ran the step and skipped the check
+for a pull request without a requirements change, and staged QA passed.
+Both criteria await operator acceptance.
