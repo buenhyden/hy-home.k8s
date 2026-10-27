@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.5.0"
+version: "0.6.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -37,7 +37,7 @@ the cutover and its revert evidence.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | completed | PASS | EVD-006 preparation render, EVD-007 class handover, EVD-008 and EVD-010 side-by-side render, EVD-009 side-by-side status |
-| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | in-progress | FAIL | EVD-011 routes PASS; EVD-012 body size and HSTS differ; EVD-013 parity render; recheck, `X-Forwarded-*` and the mesh check remain |
+| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | completed | PASS | EVD-011 routes; EVD-012 differences fixed by PR #170 (EVD-013, EVD-016); EVD-014 mesh path; EVD-015 forwarded headers; EVD-017 closes EVD-003; EVD-018 narrows them. The Rollout canary step moves to VAL-TC-003 (Spec 0.5.0) by operator decision |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -58,13 +58,18 @@ the cutover and its revert evidence.
 | EVD-011 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks through Traefik | Operator-run `kubectl port-forward` to `svc/traefik` and curl with `Host` and SNI per route, 2026-10-27, compared with the same requests through `172.18.0.240` | PASS | Same status on both routers: adminer 200, headlamp 200, kiali 302 to `/kiali`, the five apex paths 301 to their hosts. Headlamp `/wsMultiplexer` over HTTP/1.1 upgrades with 101 on both. Adminer answers 200 through the Traefik sidecar under STRICT mTLS | no | none |
 | EVD-012 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | nginx-default comparison | The same port-forward, 2026-10-27: POST of 512 KiB and 2 MiB to adminer, response headers of `/kiali/` | FAIL | ingress-nginx answers 200 and 413 and sends `strict-transport-security: max-age=31536000; includeSubDomains`. Traefik answers 200 and 200 and sends no HSTS header. Traefik v3.7.16 enforces `proxyBodySize` only in its buffering middleware (`pkg/provider/kubernetes/ingress-nginx/middleware.go`), which is skipped while `proxyRequestBuffering` is false, its default; the provider has no HSTS setting. Traefik also passes the upstream `server: envoy` header | no | none |
 | EVD-013 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Parity values render | `helm template` of `traefik` 42.1.3 with the amended `platform-traefik` values and `--skip-crds` | PASS | Adds `--providers.kubernetesingressnginx.proxyRequestBuffering=true`, `--providers.file.directory=/etc/traefik/dynamic` with a ConfigMap holding only the `hsts` headers middleware, and `--entryPoints.websecure.http.middlewares=hsts@file`; the Service stays `ClusterIP`, no IngressClass, no CRD | no | none |
+| EVD-014 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Adminer mesh path | Operator-run `kubectl run` of a `curlimages/curl:8.11.1` pod with `sidecar.istio.io/inject=false` in `default`, calling `http://adminer.apps.svc.cluster.local:8080/`, 2026-10-27 | PASS | curl exit 56 (connection reset): STRICT mTLS refuses a caller without mesh identity. Through Traefik adminer answers 200 (EVD-011). Two earlier probes to port 80, where the Service does not listen, timed out (exit 28) and are not evidence | no | none |
+| EVD-015 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Forwarded headers | Operator-applied temporary `traefik/whoami:v1.11.0` Pod, Service and Ingress (class `nginx`, no TLS) in `default`, requested through `172.18.0.240:80` and through the Traefik port-forward with a spoofed `X_Forwarded_For` header, then deleted, 2026-10-27 | PASS | Both send `X-Forwarded-For`, `X-Real-Ip`, `X-Forwarded-Host`, `X-Forwarded-Port`, `X-Forwarded-Proto` and `X-Request-Id` with the values each router sees; host port and client address differ only by the port-forward. Neither passes the underscore header. Remaining differences: only ingress-nginx sends `X-Forwarded-Scheme` and `X-Scheme`, only Traefik sends `X-Forwarded-Server`; no backend configuration in this repository reads them. Traefik logs that `aliasHeadersStrategy` is unset; setting it to `delete`, as nginx drops such headers, is left to the cutover pull request | no | none |
+| EVD-016 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Recheck after PR #170 | Read-only `kubectl` after main `36ffc574` synced, then the operator-run port-forward: POST of 512 KiB and 2 MiB to adminer, `/kiali/` headers, Headlamp `/wsMultiplexer` upgrade, 2026-10-27 | PASS | `platform-traefik` Synced and Healthy, pod rolled with `proxyRequestBuffering=true` and ConfigMap `traefik-file-provider`; Service still `ClusterIP`, IngressClass `nginx` the only class, no Traefik CRD, all ten Ingresses still at `172.18.0.240`. Traefik now answers 200 and 413, sends `strict-transport-security: max-age=31536000; includeSubDomains`, and upgrades the WebSocket with 101 | no | none |
+| EVD-017 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks | EVD-011, EVD-014, EVD-015 and EVD-016 | PASS | Every route in `ROUTES`, the apex redirect status codes, the adminer mesh path and the listed nginx-default behaviors match ingress-nginx after PR #170. The Rollout canary step is verified at the cutover (EVD-004), as the operator chose | yes | EVD-003 |
+| EVD-018 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Evidence scope after review | PR #171 independent review of EVD-014, EVD-015 and EVD-017; `kubectl get networkpolicy -A` | PASS | Narrows three rows. EVD-014 observed a reset connection (curl exit 56), not an HTTP `503`: the plaintext caller never completes a request, which is how STRICT mTLS refuses it, and no NetworkPolicy selects ingress in `apps`, so the reset is not a policy drop; Spec 0.5.0 accepts either form. EVD-015 shows no real client address (`127.0.0.6` is the ingress-nginx sidecar, `127.0.0.1` the port-forward), so client-address preservation is checked through the router address after the cutover (EVD-004). EVD-017 no longer needs the canary step: Spec 0.5.0 moves it to VAL-TC-003 | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Accepted by the operator on 2026-10-27 | platform |
-| [VAL-TC-002](../spec.md#success-criteria--verification-plan) | pending | none | Live route checks remain | platform |
+| [VAL-TC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-011, EVD-014, EVD-015, EVD-016, EVD-017, EVD-018 | Evidence complete; operator acceptance remains | platform |
 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | none | Cutover pull request remains | platform |
 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | none | Revert evidence remains | platform |
 
@@ -115,10 +120,10 @@ the cutover and its revert evidence.
 
 ## Verification Summary
 
-WORK-001 passed: the preparation render (EVD-006), the live class handover
-(EVD-007), the side-by-side render (EVD-008, narrowed by EVD-010) and the
-side-by-side Application status (EVD-009). The operator accepted VAL-TC-001.
-WORK-002 is in progress: every route matches ingress-nginx (EVD-011), but
-the body-size limit and the HSTS header differed (EVD-012). The amended
-values (EVD-013) are re-checked live after they sync; the `X-Forwarded-*`
-check and the adminer mesh check remain.
+WORK-001 passed and the operator accepted VAL-TC-001. WORK-002 passed:
+every route matches ingress-nginx (EVD-011); the body-size and HSTS
+differences (EVD-012) are fixed by PR #170 and rechecked live (EVD-016);
+the adminer mesh path (EVD-014) and the forwarded headers (EVD-015) match.
+VAL-TC-002 awaits operator acceptance. Spec 0.5.0 moves the Rollout canary
+step to VAL-TC-003, verified with EVD-004 after the cutover, together with
+client-address preservation through the router address.

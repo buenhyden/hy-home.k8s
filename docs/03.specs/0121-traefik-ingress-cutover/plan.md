@@ -1,10 +1,10 @@
 ---
 title: "Traefik Ingress Cutover Plan"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/plan"
 status: "approved"
 owner: "platform"
-updated: "2026-10-20"
+updated: "2026-10-27"
 layer: "specs"
 artifact_id: "SPEC-0121-PLAN-0001"
 parent_ids: ["SPEC-0121"]
@@ -49,7 +49,7 @@ The non-goals listed in the Spec.
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-TC-001](spec.md#success-criteria--verification-plan) | Preparation pull request (neutral IngressClass, ingress-nginx class and webhook off), then side-by-side pull request (Traefik namespace, AppProject entries, Application) | None | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Chart render, staged QA, live class check, live Argo CD status |
 | WORK-002 | [VAL-TC-002](spec.md#success-criteria--verification-plan) | Live per-route verification through a port-forward | WORK-001 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Operator-run live checks |
-| WORK-003 | [VAL-TC-003](spec.md#success-criteria--verification-plan) | Cutover in the stated order: removal, router Service, apex redirects, validators, documents | WORK-002 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Validator tests, staged QA, live router checks |
+| WORK-003 | [VAL-TC-003](spec.md#success-criteria--verification-plan) | Cutover in the stated order: removal, router Service, apex redirects, validators, documents | WORK-002 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Validator tests, staged QA, live router checks, one Rollout canary step |
 | WORK-004 | [VAL-TC-004](spec.md#success-criteria--verification-plan) | Revert evidence for the cutover | WORK-003 | [Task](tasks/tsk-0001-traefik-ingress-cutover.md) | Live revert or render with the stated order |
 
 ## Verification Plan
