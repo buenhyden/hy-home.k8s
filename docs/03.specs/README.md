@@ -94,7 +94,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0122-archive-unit-disposition/
 ├── 0123-hosted-lock-check/
 ├── 0124-required-source-coverage/
-└── 0125-survey-status-and-local-gaps/
+├── 0125-survey-status-and-local-gaps/
+└── 0126-architecture-views/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -118,6 +119,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Hosted CI Lock Check](./0123-hosted-lock-check/)는 `.github/requirements/`를 바꾸는 PR에서 검토된 base의 CI Python lock 검사를 hosted로 실행하는 변경을 소유한다.
 [Required Source Coverage](./0124-required-source-coverage/)는 조사 명세가 지정한 필수 출처 10개의 직접 열람과 여섯 관점별 지원 수준 기록을 소유한다.
 [Survey Status and Local Gaps](./0125-survey-status-and-local-gaps/)는 조사 명세 148개 요구의 현재 상태 기록과 운영자 결정이 필요 없는 로컬 공백 수정을 소유한다.
+[Architecture Views](./0126-architecture-views/)는 AD-0007의 C4 맥락·컨테이너·배포 뷰와 arc42 절별 점검표를 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.

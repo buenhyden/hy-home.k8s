@@ -1,6 +1,6 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.7.2"
+version: "1.8.0"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
@@ -75,6 +75,96 @@ owns this change's local review, not future operator observations.
 The root application in `gitops/clusters/local/root-application.yaml` points to `gitops/apps/root`.
 Platform Applications then install or configure ArgoCD, namespaces, cert-manager, Traefik, ESO, external services, Headlamp, Istio/Kiali, monitoring, Rollouts, and network policies.
 The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
+
+### System context and container views
+
+These views follow the [C4 model](https://c4model.com/): a context view of the
+platform and its neighbours, and a container view of what runs inside it. A
+C4 container is a separately running application or data store, so one
+container here can span several Pods, and a namespace or Docker container is
+not a C4 container by itself. Readers are the operator and reviewers of
+platform changes. The Mermaid source below is the editable source; GitHub
+renders it. Identifiers `P`, `S`, `E` and `C` are stable: a person, the
+system in scope, an external system and a container. Arrows point from the
+element that starts the interaction. The Kubernetes control plane, CoreDNS
+and MetalLB are deployment infrastructure and appear in the deployment
+mapping, not here.
+
+**System context (S1).** Bootstrap loads two operator-held inputs into the
+cluster: the mkcert root CA, which backs `mkcert-ca-issuer` and the clients
+of the external HTTPS services, and the Argo CD TLS secret. The operator
+also owns browser-side name resolution for `*.hy-k8s.home.arpa`.
+
+```mermaid
+flowchart LR
+  P1["P1 Operator<br/>[person]"]
+  P2["P2 Browser user<br/>[person]"]
+  S1["S1 Local GitOps platform<br/>[software system: k3d cluster hyhome]"]
+  E1["E1 GitHub repository<br/>buenhyden/hy-home.k8s<br/>[external system]"]
+  E2["E2 Upstream chart and image registries<br/>[external system]"]
+  E3["E3 hy-home.docker services<br/>OpenBao, Valkey, Prometheus, Grafana,<br/>Loki, Tempo, Alloy gateway<br/>[external system]"]
+  E4["E4 Slack<br/>[external system]"]
+  P1 -->|"commits desired state through reviewed pull requests"| E1
+  P1 -->|"bootstraps with infrastructure/bootstrap-local.sh"| S1
+  P2 -->|"opens name.hy-k8s.home.arpa over HTTPS"| S1
+  S1 -->|"pulls main and reconciles"| E1
+  S1 -->|"pulls pinned charts and container images"| E2
+  S1 -->|"reads secrets, uses cache, queries and ships telemetry"| E3
+  S1 -->|"sends sync notifications"| E4
+```
+
+**Containers inside S1.** Argo CD (C1) applies the manifests of every other
+container and notifies E4; those relationships are in the table, not drawn.
+Mesh sidecars run inside the Traefik and workload Pods, so their trace
+export is drawn from C10 and noted for C2.
+
+```mermaid
+flowchart LR
+  P2["P2 Browser user"]
+  E1["E1 GitHub repository"]
+  E3["E3 hy-home.docker services"]
+  subgraph S1["S1 Local GitOps platform"]
+    C1["C1 Argo CD<br/>[reconciler]"]
+    C2["C2 Traefik<br/>[ingress controller]"]
+    C3["C3 cert-manager<br/>[certificate issuer]"]
+    C4["C4 External Secrets Operator<br/>[secret sync]"]
+    C5["C5 Istio istiod and CNI<br/>[service mesh]"]
+    C6["C6 Kiali<br/>[mesh UI]"]
+    C7["C7 Argo Rollouts<br/>[progressive delivery]"]
+    C8["C8 Headlamp<br/>[cluster UI]"]
+    C9["C9 Alloy and kube-state-metrics<br/>[telemetry collection]"]
+    C10["C10 Workloads<br/>[gitops/workloads/*]"]
+  end
+  C1 -->|"pulls desired state"| E1
+  C1 -->|"uses Valkey"| E3
+  P2 -->|"HTTPS"| C2
+  C2 -->|"routes by host"| C1
+  C2 -->|"routes by host"| C6
+  C2 -->|"routes by host"| C7
+  C2 -->|"routes by host"| C8
+  C2 -->|"routes by host"| C10
+  C3 -->|"issues TLS for the Headlamp, Kiali, Rollouts, Adminer and apex Ingresses"| C2
+  C4 -->|"reads secrets from OpenBao"| E3
+  C5 -->|"injects sidecars in the traefik and apps namespaces"| C10
+  C6 -->|"queries Prometheus, Grafana and Tempo"| E3
+  C7 -->|"queries Prometheus for analysis"| E3
+  C7 -->|"sets canary weights in the workload VirtualService"| C10
+  C9 -->|"ships metrics and logs"| E3
+  C10 -->|"sidecars send OTLP traces to the Alloy gateway"| E3
+```
+
+| ID | Element | Responsibility | Technology and namespace | Source |
+| --- | --- | --- | --- | --- |
+| C1 | Argo CD | Reconciles the root Application, platform Applications and workload ApplicationSet; applies every other container's manifests; sends notifications to E4. Its Ingress TLS secret `argocd-local-tls` is loaded by bootstrap, not cert-manager | Argo CD Helm release, `argocd` | [Helm values](../../../infrastructure/argocd/values-local.yaml), [bootstrap](../../../infrastructure/bootstrap-local.sh), [cluster declarations](../../../gitops/clusters/local/), [Argo CD config](../../../gitops/platform/argocd/) |
+| C2 | Traefik | Terminates HTTPS for `<name>.hy-k8s.home.arpa` and routes by host; its Pods carry mesh sidecars | Traefik chart, `traefik` | [Application](../../../gitops/apps/root/platform-traefik-app.yaml) |
+| C3 | cert-manager | Issues Ingress TLS from `mkcert-ca-issuer`, whose CA secret bootstrap loads | cert-manager chart, `cert-manager` | [cert-manager](../../../gitops/platform/cert-manager/), [ADR-0006](../decisions/0006-cert-manager-mkcert-ca-issuer.md) |
+| C4 | External Secrets Operator | Syncs secrets from OpenBao through `vault-backend` | External Secrets chart, `external-secrets` | [ESO](../../../gitops/platform/eso/) |
+| C5 | Istio istiod and CNI | Mesh control plane for the `traefik` and `apps` namespaces; trace provider `alloy-external:4317` | Istio charts, `istio-system` | [istiod](../../../gitops/apps/root/platform-istiod-app.yaml) |
+| C6 | Kiali | Mesh UI backed by the external Prometheus, Grafana and Tempo | Kiali operator, `istio-system` | [Application](../../../gitops/apps/root/platform-kiali-app.yaml), [Kiali](../../../gitops/platform/kiali/) |
+| C7 | Argo Rollouts | Canary steps with Istio traffic routing and Prometheus analysis | Argo Rollouts chart, `argo-rollouts` | [Application](../../../gitops/apps/root/platform-rollouts-app.yaml) |
+| C8 | Headlamp | Cluster UI | Headlamp chart, `headlamp` | [Headlamp](../../../gitops/platform/headlamp/) |
+| C9 | Alloy and kube-state-metrics | Collect metrics and logs and send them to the external backend | Kustomize manifests, `monitoring` | [monitoring](../../../gitops/platform/monitoring/) |
+| C10 | Workloads | Application workloads onboarded by the ApplicationSet, currently Adminer | Kustomize per workload, `apps` | [workloads](../../../gitops/workloads/) |
 
 ### Current platform sources and operating owners
 
@@ -190,6 +280,16 @@ follow-up does not reopen the withdrawn packages or certify live readiness.
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
 
+### Deployment mapping
+
+| Deployment node | Hosts | Source |
+| --- | --- | --- |
+| Linux server with the native Docker Engine | The k3d node containers and the k3d server load balancer; API at `192.168.0.13:6550`, browser entry at `192.168.0.14:80/443` | [k3d config](../../../infrastructure/k3d/k3d-cluster.yaml), [ADR-0042](../decisions/0042-linux-server-single-host-baseline.md) |
+| k3d cluster `hyhome` | Containers C1 to C10 in the namespaces listed above | [namespaces](../../../gitops/platform/namespaces/) |
+| k3d load balancer to Traefik | Forwards to NodePorts `30080/30443`; MetalLB also gives Service `traefik/traefik` the address `172.18.0.240` | [ADR-0050](../decisions/0050-ingress-nginx-replacement-with-traefik.md), [MetalLB pool](../../../infrastructure/ipaddresspool.yaml) |
+| CoreDNS host mapping | Resolves `openbao`, `prometheus` and `grafana` under `hy.home.arpa` to `192.168.0.13`, which the ESO, Kiali, Rollouts and Prometheus-auth paths need | [CoreDNS custom](../../../infrastructure/coredns-custom.yaml), [ADR-0046](../decisions/0046-external-services-over-host-addresses.md) |
+| hy-home.docker workspace on the same host | E3: OpenBao, management Valkey, Prometheus, Grafana, Loki, Tempo and the Alloy gateway | [external services](../../../gitops/platform/external-services/), [ADR-0046](../decisions/0046-external-services-over-host-addresses.md) |
+
 ### Agent architecture requirements
 
 - **Model/Provider Strategy**: Provider adapters must route to Common agent governance and current active docs.
@@ -221,6 +321,27 @@ completed work unit.
 | N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Structure validation evidence for root, platform, and workload | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | tracked Kubernetes manifest syntax evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Active/archive currentness evidence from the repository quality gate | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+
+### arc42 coverage
+
+The twelve [arc42](https://arc42.org/overview/) sections are used as a
+content check, not as a required layout. Each row names where the content
+lives; nothing is copied between this description, the ADRs and REQ-0004.
+
+| arc42 section | Where it is covered | Gap or reason |
+| --- | --- | --- |
+| 1 Introduction and goals | [Overview](#overview); REQ-0004 | none |
+| 2 Constraints | [Boundaries & Non-goals](#boundaries--non-goals); ADR-0042, ADR-0044 | none |
+| 3 Context and scope | [System context view](#system-context-and-container-views); [platform sources](#current-platform-sources-and-operating-owners) | none |
+| 4 Solution strategy | [Current architecture summary](#current-architecture-summary); ADR-0002, ADR-0014 | none |
+| 5 Building block view | [Container view and element table](#system-context-and-container-views) | No component view; components are product internals of upstream charts |
+| 6 Runtime view | Reconciliation prose in [System Overview & Context](#system-overview--context) | No dynamic diagram or canary flow description; add a dynamic view when a multi-step flow needs review |
+| 7 Deployment view | [Infrastructure & Deployment](#infrastructure--deployment) and its deployment mapping | none |
+| 8 Crosscutting concepts | TLS (ADR-0006), secrets (ADR-0041), mesh (ADR-0008), pod security (ADR-0028), external services (ADR-0046) | Kept in the ADRs, not repeated here |
+| 9 Architecture decisions | The [decision log](../decisions/) | none |
+| 10 Quality requirements | [Quality Attributes](#quality-attributes); REQ-0004 scenarios | Measured values remain operator observations |
+| 11 Risks and technical debt | [Implementation owners and remaining boundaries](#implementation-owners-and-remaining-boundaries) | No separate risk register; residuals stay with their owners |
+| 12 Glossary | none | Omitted; the description uses product names, and SDLC terms live in `.agents/governance/sdlc.md` |
 
 ### Transferred requirement members
 
