@@ -216,6 +216,18 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 | `retired/03.specs/0047-current-surface-and-stash-reconciliation` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
 | `retired/03.specs/0048-github-routing-and-ci-evidence` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
 | `retired/03.specs/0051-repository-assurance-integration-and-closure` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `completed/03.specs/0073-provider-native-enforcement-parity` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0074-provider-write-guard-ownership-and-enforcement-honesty` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0077-dead-contract-and-duplicate-execution-retirement` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0078-document-currency-reconciliation` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0079-six-disposition-archive-stage` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0081-superseded-decision-retention` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0088-operations-corpus-convergence` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0089-deferred-conflict-resolution` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0090-spec0049-retirement` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0094-finished-package-retention` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0100-archive-lifecycle-standardization` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0101-closed-spec-retention` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
 
 ## Usage
 
