@@ -93,6 +93,29 @@ technical-design artifact.
 | Execution to handoff | Reviewed final bytes, resolved required checks, accepted criteria and Task handoff; scoped Git commit only when authorized | Local, index, hosted, provider, and live evidence remain distinct | Unresolved required checks block completion; missing external permission is DEFER |
 | Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply Stage 99 lifecycle and recovery contracts | Keep failures factual; use Git recovery rather than a second active owner |
 
+### Change kinds
+
+The kind of change sets the minimum records, checks and authoring approval.
+A change that fits several rows takes the union. Push, pull request and merge
+follow the [Git policy](git.md) for every row.
+
+| Change kind | Minimum records | Checks | Authoring approval |
+| --- | --- | --- | --- |
+| Small correction: wording, link or typo | The current owner; no new package | Ordinary document selection in [quality](quality.md) | The operator's request |
+| Document content: README, guide, reference | The current owner, or the Task of the package that changes it | Ordinary document selection | The operator's request |
+| Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
+| Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
+| Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and reciprocal links | The operator accepts the ADR |
+| Identity or Archive disposition | A current Task, Spec or decision that records the Retention Assessment judgment in [document lifecycle](document-lifecycle.md) | Lifecycle, identity and recovery checks | Its own approval, as document lifecycle requires |
+| Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
+
+Security checks follow their existing owners: [quality](quality.md) selects
+the security unit regressions for continuing guarantees, and a reviewer who
+finds secret exposure, RBAC risk or an isolation failure escalates to the
+security auditor role. Operations learning that would change a need is
+considered for an amended Requirement, which then follows that
+Requirement's own review and approval.
+
 A small correction reuses its current work owner and proportional checks. It
 need not create a Requirement, ADR, or a new Spec package merely to edit a file.
 An Issue can initiate work and a Project can display its progress without

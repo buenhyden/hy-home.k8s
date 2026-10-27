@@ -885,10 +885,19 @@ _BARE_PLACEHOLDER = re.compile(r"(?i)^(?:TBD|TODO|N/A|NA|pending)[\s.!?]*$")
 _TABLE_SEPARATOR = re.compile(r"^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$")
 _EMPTY_HTML_ANCHOR = re.compile(r"(?i)<a\b[^>]*>\s*</a>|<a\b[^>]*/>")
 _CHECKBOX_MARKER = re.compile(r"^\[[ xX]\](?:\s+|$)")
+_MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)|<[a-z][a-z0-9+.-]*:[^>]*>")
+# Sections whose job is navigation may consist of links alone.
+_LINK_ONLY_SECTIONS = frozenset({"Related Documents"})
 
 
-def _substantive_section_body(lines: Sequence[tuple[str, bool]]) -> bool:
-    """Recognize authored prose, table data, or code, leaving facts to review."""
+def _substantive_section_body(
+    lines: Sequence[tuple[str, bool]], *, links_are_content: bool = True
+) -> bool:
+    """Recognize authored prose, table data, or code, leaving facts to review.
+
+    Outside navigation sections a prose line made only of links is not
+    content: a link points at an instruction, it does not state one.
+    """
 
     table_data = False
     for index, (raw_line, fenced_code) in enumerate(lines):
@@ -921,6 +930,10 @@ def _substantive_section_body(lines: Sequence[tuple[str, bool]]) -> bool:
         prose = re.sub(r"^(?:[-*+]|\d+[.)]|>)\s+", "", prose)
         prose = _CHECKBOX_MARKER.sub("", prose)
         prose = prose.strip("*_`~ ")
+        if not links_are_content and not re.search(
+            r"\w", _MARKDOWN_LINK.sub("", prose)
+        ):
+            continue
         if prose and not _BARE_PLACEHOLDER.fullmatch(prose) and prose != "---":
             return True
     return False
@@ -945,7 +958,10 @@ def _scan_required_h2_content(
     def close_current() -> None:
         nonlocal current_heading, current_has_content, current_lines
         if current_heading is not None and not (
-            _substantive_section_body(current_lines)
+            _substantive_section_body(
+                current_lines,
+                links_are_content=current_heading in _LINK_ONLY_SECTIONS,
+            )
             if substantive_body
             else current_has_content
         ):

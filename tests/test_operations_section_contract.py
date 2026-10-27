@@ -162,6 +162,27 @@ class OperationsSectionContractTests(unittest.TestCase):
             with self.subTest(body=body):
                 self.assertNotIn("BODY-HEADING-EMPTY", rules(body))
 
+    def test_link_only_body_does_not_fill_an_instruction_section(self) -> None:
+        for body in (
+            "[RUN-0001](../runbooks/0001-example.md)\n",
+            "- [RUN-0001](../runbooks/0001-example.md)\n- [POL-0001](./0001-x.md)\n",
+            "<https://example.invalid/runbook>\n",
+        ):
+            with self.subTest(body=body):
+                self.assertIn("BODY-HEADING-EMPTY", rules(body))
+        self.assertNotIn(
+            "BODY-HEADING-EMPTY",
+            rules("Restart the controller as [RUN-0001](./0001-x.md) step 3 says.\n"),
+        )
+
+    def test_navigation_section_may_hold_links_only(self) -> None:
+        content = markdown._scan_required_h2_content(
+            "# Example\n\n## Related Documents\n- [RUN-0001](./0001-x.md)\n",
+            ("Related Documents",),
+            substantive_body=True,
+        )
+        self.assertEqual(content.empty, ())
+
     def test_nested_role_heading_is_rejected_even_when_prose_exists(self) -> None:
         self.assertIn(
             "BODY-HEADING-NESTED-ROLE",

@@ -38,6 +38,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 ## Edge Cases & Error Handling
 
 <!-- Author prompt: map boundary conditions to deterministic errors and recovery behavior. -->
+<!-- Author prompt: name the normal, error and boundary scenarios and the requirement each one serves. -->
 
 ## Failure Modes & Fallback / Human Escalation
 
