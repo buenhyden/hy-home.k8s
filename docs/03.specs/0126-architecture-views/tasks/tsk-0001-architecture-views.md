@@ -29,9 +29,9 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | Add the C4 views, element table and deployment mapping | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | Add the C4 views, element table and deployment mapping | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
