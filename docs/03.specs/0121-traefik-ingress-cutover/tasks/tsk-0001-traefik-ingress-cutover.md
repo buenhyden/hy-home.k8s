@@ -1,9 +1,9 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
-updated: "2026-10-20"
+updated: "2026-10-27"
 layer: "specs"
 artifact_id: "SPEC-0121-TSK-0001"
 parent_ids: ["SPEC-0121-PLAN-0001"]
@@ -36,7 +36,7 @@ the cutover and its revert evidence.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | in-progress | NOT_RUN | EVD-006 preparation render; EVD-002 and EVD-001 remain |
 | WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -50,6 +50,7 @@ the cutover and its revert evidence.
 | EVD-003 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks | Per-route curl through the Traefik port-forward | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Live router checks after cutover | `verify-ingress-tls.sh` with `CHECK_K8S_ROUTER=true` and per-route curl after WORK-003 merges | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Revert evidence | Live revert or branch render of the cutover revert | NOT_RUN | Pending | yes | none |
+| EVD-006 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Preparation chart render | `helm template` of `ingress-nginx` 4.15.1 with the preparation values, against the same chart without them; `kustomize build gitops/platform/ingress-routes` | PASS | Chart IngressClass 1 to 0, ValidatingWebhookConfiguration 1 to 0, hook Jobs 2 to 0; the controller keeps `--ingress-class=nginx` and `--controller-class=k8s.io/ingress-nginx`; the neutral manifest renders IngressClass `nginx` with controller `k8s.io/ingress-nginx` | no | none |
 
 ## Criterion Acceptance
 
@@ -84,6 +85,9 @@ the cutover and its revert evidence.
   - Each implementation pull request, and each live change outside Argo CD
     sync, needs its own operator approval.
   - Push, pull request and merge follow RUN-0013.
+  - On 2026-10-27 the operator approved authoring the WORK-001 preparation
+    pull request. Its merge still needs the live `Prune=false` annotation on
+    IngressClass `nginx` first, then the EVD-002 check after the sync.
 - **Static Validation**: Focused tests, the chart render and `qa.py staged` on
   the exact index.
 - **Live Validation**: Operator-run checks for WORK-001 to WORK-004.
@@ -94,4 +98,4 @@ the cutover and its revert evidence.
 
 ## Verification Summary
 
-Pending.
+The preparation render passed (EVD-006). Live checks remain NOT_RUN.
