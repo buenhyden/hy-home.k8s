@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -109,8 +109,10 @@ These name ingress-nginx as the current controller:
   Its pods set `seccompProfile: RuntimeDefault` at pod level so the injected
   sidecars are covered.
 - The adminer mesh path is kept: Traefik runs with an injected sidecar, the
-  adminer route returns `503` without mesh identity and `200` through the
-  ingress, and a Rollout canary step still shifts traffic.
+  adminer route refuses a caller without mesh identity (`503` or a reset
+  connection) and returns `200` through the ingress, and a Rollout canary
+  step still shifts traffic. The canary step is verified after the cutover,
+  through the router address (operator decision, 2026-10-27).
 - The validator `CONTROLLER` and the live check change in the cutover pull
   request. Before it, they describe ingress-nginx, which is still the router.
 
@@ -220,15 +222,16 @@ persistent state.
     the router address after it;
   - `infrastructure/verify/verify-ingress-tls.sh` with
     `CHECK_K8S_ROUTER=true` after the cutover;
-  - the adminer `503`/`200` mesh check and one Rollout canary step.
+  - the adminer mesh check before the cutover, and one Rollout canary step
+    after it.
 
 ## Success Criteria & Verification Plan
 
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-TC-001 | IngressClass `nginx` exists throughout, tracked by `platform-ingress-routes`, and ingress-nginx renders no class and no admission webhook. Traefik then runs side by side: Synced and Healthy, routing only through the Ingress-NGINX provider, a ClusterIP Service only, no IngressClass, and every Ingress `status.loadBalancer` unchanged. |
-| VAL-TC-002 | Every route in `ROUTES` passes through the port-forward, together with the apex redirect status codes, the adminer mesh path, a Rollout canary step and the listed nginx-default behaviors. |
-| VAL-TC-003 | After the cutover, the router address serves every route through Traefik. The validators and the live check describe Traefik, and ingress-nginx is gone. The observed outage and sync order are recorded. |
+| VAL-TC-002 | Every route in `ROUTES` passes through the port-forward, together with the apex redirect status codes, the adminer mesh path and the listed nginx-default behaviors. |
+| VAL-TC-003 | After the cutover, the router address serves every route through Traefik. One Rollout canary step shifts adminer traffic through Traefik. The validators and the live check describe Traefik, and ingress-nginx is gone. The observed outage and sync order are recorded. |
 | VAL-TC-004 | The revert path is recorded: either a live revert restored ingress-nginx, or a branch render plus the stated order, with that limitation named. |
 
 ## Traceability
