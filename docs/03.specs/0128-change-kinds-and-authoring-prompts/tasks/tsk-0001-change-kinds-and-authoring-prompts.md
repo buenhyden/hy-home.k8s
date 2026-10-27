@@ -1,6 +1,6 @@
 ---
 title: "Change Kinds and Authoring Prompts"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -31,8 +31,8 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-CK-001](../spec.md#success-criteria--verification-plan) | Add the change-kind table and touchpoint sentences | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | Add the Spec, Plan and Task prompts | platform | in-progress | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | Reject link-only instruction sections | platform | in-progress | PASS | EVD-006 closes EVD-003 |
 | WORK-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -43,6 +43,8 @@ instruction sections. It executes [SPEC-0128](../spec.md) through
 | EVD-002 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Profile validator tests | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-CK-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-CK-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Template tests | Branch `feat/sdlc-change-kinds-and-prompts`: `python3 scripts/validate-document-contract-registry.py`, `python3 -m unittest tests.test_repository_form_contracts` | PASS | The Spec template asks for normal, error and boundary scenarios with their requirements; the Plan template asks for architecture views or ADRs, interfaces, migration and rollback; the Task evidence prompt asks for command, tool version, exit code and UTC time. The registry passes 976 paths and the form tests pass | yes | EVD-002 |
+| EVD-006 | [VAL-CK-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Profile validator tests | Same branch: `python3 -m unittest tests.test_operations_section_contract` with the previous and the new `scripts/validate-markdown-profiles.py`; `python3 scripts/validate-markdown-profiles.py` over the repository | PASS | With the previous validator the link-only test failed for all three bodies (a bare link, a link list and an autolink). With the change all eight module tests pass: link-only bodies are empty, a sentence with an instruction and a link fills the section, and Related Documents may hold links only. The repository-wide profile run reports no violations; ruff check and format pass | yes | EVD-003 |
 
 ## Criterion Acceptance
 

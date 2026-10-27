@@ -32,7 +32,7 @@ parent_ids: ["{{PARENT_ID}}"]
 
 ## Task Evidence
 
-<!-- Author prompt: record each factual check with an exact input and location. Required is yes or no. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Check, Work Unit, and Criteria that explicitly names its Evidence ID. Keep failed rows as history. -->
+<!-- Author prompt: record each factual check with an exact input and location; for a command, name it, its tool version, exit code and UTC time when they matter. Required is yes or no. Resolves is none or comma-space separated earlier Evidence IDs. A required FAIL, DEFER, or NOT_RUN is closed only by a later PASS for the same Check, Work Unit, and Criteria that explicitly names its Evidence ID. Keep failed rows as history. -->
 
 | Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

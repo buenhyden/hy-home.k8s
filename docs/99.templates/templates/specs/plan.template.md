@@ -24,6 +24,7 @@ parent_ids: ["{{PARENT_ID}}"]
 ## Context
 
 <!-- Author prompt: summarize current evidence, constraints, and prerequisite decisions. -->
+<!-- Author prompt: name the architecture views or ADRs, interfaces, migration and rollback this plan touches, or say that none apply. -->
 
 ## Goals & In-Scope
 
