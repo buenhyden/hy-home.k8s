@@ -7,6 +7,11 @@
       "expectedSurface": "workspace-boundary"
     },
     {
+      "name": "workspace-nested-readme",
+      "path": "_workspace/diagnostics/ci/README.md",
+      "expectedSurface": "workspace-boundary"
+    },
+    {
       "name": "gitignore",
       "path": ".gitignore",
       "expectedSurface": "root-config"
@@ -570,6 +575,20 @@
     }
   ],
   "rejectionCases": [
+    {
+      "name": "workspace-scratch-child",
+      "paths": [
+        "_workspace/diagnostics/ci/run.log"
+      ],
+      "expectedError": "SURFACE-PATH-UNMATCHED"
+    },
+    {
+      "name": "workspace-undeclared-readme",
+      "paths": [
+        "_workspace/other/README.md"
+      ],
+      "expectedError": "SURFACE-PATH-UNMATCHED"
+    },
     {
       "name": "parent-segment",
       "paths": [

@@ -2224,6 +2224,18 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         # Removing a whole Archive unit to Git history legitimately vacates
         # its rows, so measure the change from the current tree's baseline.
         aliases, baseline = self.validator._work109_four_digit_aliases(self.context)
+        # Every vacancy must trace to a unit an approved Retention Assessment
+        # row removed to Git history; an unexplained one is a projection fault.
+        index = self.context.texts[PurePosixPath("docs/98.archive/README.md")]
+        removed = re.findall(
+            r"^\| `[^`]*/(\d{4}-[^`/]+)` \|[^|]*\| git-history-only \|", index, re.M
+        )
+        for vacated_path in baseline:
+            match = re.match(
+                r"docs/03\.specs/(\d{3})-([^/]+)/", vacated_path.as_posix()
+            )
+            self.assertIsNotNone(match, vacated_path)
+            self.assertIn(f"0{match[1]}-{match[2]}", removed, vacated_path)
         legacy, target = sorted(aliases.items())[0]
 
         context = dataclasses.replace(
