@@ -58,8 +58,8 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | in-progress | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | in-progress | PASS | EVD-007 closes EVD-003 |
+| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-008 closes EVD-004 |
 
 ## Task Evidence
 
@@ -71,6 +71,8 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 | EVD-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer path search | Branch `docs/archive-history-link-migration`: `git grep` for each unit path outside Stage 98 after replacing 14 links in REQ-0003, 4 in REQ-0004 and 2 in AD-0007 | PASS | No current document links to the twelve units; only synthetic test fixture paths `0079-x`, `0090-x` and `0090-example` match. Each edited document names the Retention Catalog envelope as the recovery route | yes | EVD-001 |
 | EVD-006 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `21f68dde`: per unit, `git rev-parse` of the current tree against the envelope `<commit>:<original path>` tree, then `git archive` of the envelope into a scratch directory | PASS | 12/12 equal trees; restored 3 files per unit except 4 for `0079`, 37 in total, matching the current trees | yes | EVD-002 |
+| EVD-007 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Commit `5415cfd1`, committed from a worktree without `graphify-out/`, CI-lock environment first on `PATH` | PASS | The pre-commit `Validate Staged QA Snapshot`, `commitizen check` and generated-message hooks passed in 342 seconds; the twelve units are absent, 37 files removed, and their twelve rows validate | yes | EVD-003 |
+| EVD-008 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | PR #185 independent review of `5415cfd1` and re-review of `d1992abf`; heads `5415cfd1` (CI run `40595347792`) and `d1992abf` (CI run `40596732912`) | PASS | The reviewer re-verified all twelve envelope trees, found no outside link or evidence-owner citation, and approved. Its one low finding, a REQ-0003 recovery note that covered other unlinked packages, was fixed in `d1992abf` and approved on re-review. `ci-summary`, `style-pr`, `label` and GitGuardian passed on both heads | yes | EVD-004 |
 
 ## Criterion Acceptance
 
