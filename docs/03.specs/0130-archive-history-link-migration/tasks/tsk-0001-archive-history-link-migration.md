@@ -56,10 +56,10 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
