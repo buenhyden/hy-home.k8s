@@ -205,8 +205,8 @@ SPEC-0088.
 Resolving the conflicts SPEC-0088 deferred and withdrawing open packages that
 contradict current authority is owned by
 SPEC-0089.
-Retaining the withdrawn SPEC-0049 package in `retired/` is owned by
-SPEC-0090.
+Retaining the withdrawn SPEC-0049 package in `retired/` was owned by
+SPEC-0090; the package later left the current tree under SPEC-0131.
 Constraining every README to its direct children under one registry
 navigation contract is owned by
 [SPEC-0091](../98.archive/completed/03.specs/0091-readme-navigation-contract/spec.md).
