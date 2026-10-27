@@ -1,10 +1,10 @@
 ---
 title: "Authority-First SDLC and Agent Governance Convergence"
-version: "1.0.4"
+version: "1.0.5"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-24"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "ADR-0030"
 supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
@@ -312,6 +312,15 @@ Rejected because behavior, implementation strategy, and execution evidence
 have different lifecycle and review responsibilities even when co-located.
 
 ## Traceability
+
+**Current-state clarification (2026-10-27).** A census of
+`docs/01.requirements`, `docs/02.architecture`, `docs/03.specs` and
+`docs/05.operations` confirmed that the one-time four-digit numbering
+generation is complete. MIG-0002 converted three-digit paths to four-digit
+stable IDs, and every number space began at 0001 in that generation. Current
+gaps and later starting numbers come from Archive dispositions and removals,
+so the numbering is kept: IDs are not reused, and gaps are not closed by
+renumbering.
 
 **Current-state clarification (2026-09-14).** Later accepted decisions amend
 parts of this topology without superseding the whole record. ADR-0031 amends the
