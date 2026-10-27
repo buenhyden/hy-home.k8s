@@ -92,7 +92,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0120-test-purpose-gates/
 ├── 0121-traefik-ingress-cutover/
 ├── 0122-archive-unit-disposition/
-└── 0123-hosted-lock-check/
+├── 0123-hosted-lock-check/
+└── 0124-required-source-coverage/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -114,6 +115,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Traefik Ingress Cutover](./0121-traefik-ingress-cutover/)는 ingress-nginx를 Traefik으로 교체하는 병행 운영, 라이브 검증, 전환과 되돌리기 단위를 소유한다.
 [Archive Unit Disposition](./0122-archive-unit-disposition/)는 소비자가 없는 Archive 보존 단위 7개를 `git-history-only`로 처분한 결정과 증거를 소유한다.
 [Hosted CI Lock Check](./0123-hosted-lock-check/)는 `.github/requirements/`를 바꾸는 PR에서 검토된 base의 CI Python lock 검사를 hosted로 실행하는 변경을 소유한다.
+[Required Source Coverage](./0124-required-source-coverage/)는 조사 명세가 지정한 필수 출처 10개의 직접 열람과 여섯 관점별 지원 수준 기록을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
