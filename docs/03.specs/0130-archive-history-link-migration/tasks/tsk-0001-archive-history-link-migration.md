@@ -1,6 +1,6 @@
 ---
 title: "Archive History Link Migration"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -56,10 +56,10 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | in-progress | PASS | EVD-007 closes EVD-003 |
-| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-008 closes EVD-004 |
+| WORK-001 | [VAL-AM-001](../spec.md#success-criteria--verification-plan) | Replace the history links with plain identifiers | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-AM-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twelve units | platform | completed | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-AM-003](../spec.md#success-criteria--verification-plan) | Remove the twelve units and add their assessment rows | platform | completed | PASS | EVD-007 closes EVD-003 |
+| WORK-004 | [VAL-AM-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-008 closes EVD-004 |
 
 ## Task Evidence
 
@@ -78,10 +78,10 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AM-001](../spec.md#success-criteria--verification-plan) | pending | none | Link edits remain | platform |
-| [VAL-AM-002](../spec.md#success-criteria--verification-plan) | pending | none | Recovery remains | platform |
-| [VAL-AM-003](../spec.md#success-criteria--verification-plan) | pending | none | Removal remains | platform |
-| [VAL-AM-004](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-AM-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28: no current document links to the twelve units and each edited document names the recovery route | platform |
+| [VAL-AM-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28: all twelve envelope trees equal the removed trees and restore 37 files | platform |
+| [VAL-AM-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accepted by the operator on 2026-10-28: the twelve units left the tree with valid `git-history-only` rows and staged QA passed | platform |
+| [VAL-AM-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: the independent review approved and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -104,7 +104,16 @@ identifier over tracked `.md`, `.json`, `.py`, `.yml`, `.yaml` and
   bringing it back is a new unit under a new decision. The link edits revert
   with the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-AM-001 to
+  VAL-AM-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005): REQ-0003, REQ-0004 and AD-0007 name the twelve
+packages as plain identifiers with a recovery note. WORK-002 passed
+(EVD-006). WORK-003 passed (EVD-007): commit `5415cfd1` removed the twelve
+units and added their `git-history-only` rows. WORK-004 passed (EVD-008).
+The operator accepted all four criteria. Removal is not purification: every
+clone and commit that held the bytes keeps them. The other 45 retained units
+keep their consumers; moving them needs evidence transfer or validator,
+registry and test changes under their own decisions.
