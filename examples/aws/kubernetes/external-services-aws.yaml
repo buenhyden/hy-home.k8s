@@ -30,7 +30,7 @@ spec:
 
 ---
 # 3. AWS Load Balancer Controller Installation (EKS Addon)
-# In EKS, we use Ingress with ALB instead of Ingress-Nginx or MetalLB.
+# In EKS, we use Ingress with ALB instead of Traefik or MetalLB.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

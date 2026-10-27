@@ -1,8 +1,8 @@
-# Ingress — ingress-nginx + cert-manager mkcert-ca-issuer
+# Ingress — Traefik(Ingress-NGINX provider, class nginx) + cert-manager mkcert-ca-issuer
 #
 # TLS 흐름:
 #   cert-manager가 mkcert-ca-issuer로 인증서를 발급하여 <appname>-tls Secret에 저장한다.
-#   ingress-nginx가 해당 Secret을 사용하여 TLS 종료를 수행한다.
+#   Traefik이 해당 Secret을 사용하여 TLS 종료를 수행한다.
 #
 # 접근 URL: https://<appname>.hy-k8s.home.arpa
 #

@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts, Notifications & Headlamp Operations Policy"
-version: "1.2.0"
+version: "1.2.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-27"
 layer: "operations"
 artifact_id: "POL-0004"
 ---
@@ -38,7 +38,7 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
   - canary 단계는 AnalysisTemplate으로 gate한다. 단계 사이 pause는 앱별로 timed pause(`pause: {duration: ...}`) 또는 수동 pause(`pause: {}`)를 선택하며, 플랫폼이 자동 promotion을 강제하지 않는다 (ADR-0011)
   - Analysis 결과 무시(`skipAnalysis: true`)는 플랫폼 오너 승인 필요
   - CRD 설치: `installCRDs: true` 유지
-  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + ingress-nginx + TLS 유지
+  - Rollouts Dashboard는 `rollouts.hy-k8s.home.arpa` + Traefik + TLS 유지
 - **Allowed**:
   - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택

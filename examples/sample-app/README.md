@@ -1,10 +1,10 @@
 ---
 title: "sample-app"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-27"
 ---
 # sample-app
 
@@ -111,7 +111,7 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
   `remoteRef.key`는 `apps/<appname>/config` 형식을 사용한다.
 - `remoteRef.key`는 Vault mount prefix를 제외한 key convention만 기록하며,
   secret values, token, private key는 예시 manifest나 README에 남기지 않는다.
-- `ingress-nginx`에 Istio sidecar 주입 → mTLS 체인 완성
+- `traefik`에 Istio sidecar 주입 → mTLS 체인 완성
 - AnalysisTemplate이 Prometheus API(`https://prometheus.hy.home.arpa`)에 접근 필요. Basic Auth header는 platform이 관리하는 `apps/prometheus-api-auth` Secret에서 읽는다 (ADR-0046)
 
 ### Link Basis

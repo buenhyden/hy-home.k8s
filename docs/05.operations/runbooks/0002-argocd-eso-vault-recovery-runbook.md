@@ -1,10 +1,10 @@
 ---
 title: "ArgoCD ESO Vault Recovery Runbook"
-version: "1.4.2"
+version: "1.4.3"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-10-27"
 layer: "operations"
 artifact_id: "RUN-0002"
 ---
@@ -180,7 +180,7 @@ ConfigMap(`openbao-ca`, `hy-home-root-ca`, `kiali-cabundle`)의 재적용은 이
 - [ ] `argocd` egress(Valkey `192.168.0.13:26379` + DNS + HTTPS) 통과
 - [ ] `external-secrets` egress(`192.168.0.13:443` + DNS) 통과
 - [ ] ingress/TLS 계약(host=`argo.hy-k8s.home.arpa`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
-- [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; k8s router
+- [ ] Traefik LoadBalancer IP(Service `traefik/traefik`) 기반 HTTPS 응답 확인; k8s router
       (`192.168.0.14:443`) 확인은 host 주소가 할당된 경우에만 별도 수행
 - [ ] 선택한 저장소 정적 계약(`./scripts/validate-infrastructure-contracts.sh`) 통과
 

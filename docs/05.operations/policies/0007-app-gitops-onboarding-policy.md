@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.3.0"
+version: "1.3.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-27"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -26,7 +26,7 @@ artifact_id: "POL-0007"
 ## Scope
 
 - `apps` namespace에 배포되는 신규 애플리케이션 workload
-- Argo Rollouts, AnalysisTemplate, ingress-nginx, cert-manager, Istio sidecar/mTLS 패턴
+- Argo Rollouts, AnalysisTemplate, Traefik, cert-manager, Istio sidecar/mTLS 패턴
 - 앱 단위 OpenBao/ExternalSecret 연동과 k8s router host 계약
 
 - **Systems**: `gitops/workloads/`, `examples/sample-app/`, `gitops/clusters/local/appproject-apps.yaml`

@@ -1,10 +1,10 @@
 ---
 title: "Istio Default Profile with ingress-nginx Coexistence"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "ADR-0008"
 ---
@@ -71,6 +71,8 @@ The Istio IngressGateway must coexist with ingress-nginx without port conflicts.
 - Bad: cannot be managed declaratively through GitOps
 
 ## Traceability
+
+**Current-state clarification (2026-10-27).** The ingress controller is now Traefik, not ingress-nginx, per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The `ingress-nginx` namespace and Application named here are removed; the Decision text above is preserved as history.
 
 **Current-state clarification (2026-09-14).** Two parts of the Decision no
 longer match the tree. `ingress-nginx` is injected, not excluded:

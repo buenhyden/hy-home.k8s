@@ -1,10 +1,10 @@
 ---
 title: "infrastructure"
-version: "0.3.0"
+version: "0.3.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-27"
 ---
 # infrastructure
 
@@ -62,7 +62,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 | `Host shell and Docker context` | Linux server (Ubuntu 24.04 LTS) shell with the native Docker Engine; the Docker context is checked on the host. | Operator owns the host Docker daemon/context and external runtime startup. | Run `docker context show` and confirm Docker commands work on the host before bootstrap. | A wrong or remote Docker context blocks bootstrap; this repository records the blocker and does not switch contexts automatically. |
 | `kubectl and k3d context` | Local cluster name and kubectl context are `k3d-hyhome`; cluster shape lives in `k3d/k3d-cluster.yaml`. | Operator owns cluster creation/reuse through `bootstrap-local.sh` and k3d. | Run `k3d cluster list` and `kubectl config current-context`; live proof uses `infrastructure/verify/verify-cluster.sh`. | Missing cluster or wrong context blocks live validation; static gates remain valid. |
 | `kubeconfig and TLS trust` | Default kubeconfig is `~/.kube/config` unless `KUBECONFIG` is intentionally set for a temporary check. | Operator owns kubeconfig CA trust and context repair. | `kubectl version --request-timeout=5s` must reach the API server; `x509: certificate signed by unknown authority` is a TLS trust blocker. | TLS trust repair is an operator action, not an automatic doc/static-gate side effect. |
-| `Port and network contracts` | Current local contracts are ingress-nginx LoadBalancer `172.18.0.240:443`, required management Valkey `192.168.0.13:26379`, and OpenBao through external Traefik `192.168.0.13:443`. Management/development PostgreSQL publish only to host loopback `127.0.0.1:25432/25433`; development Valkey has only its Docker-network `6379`. No current K8s PostgreSQL or development Valkey endpoint is declared. Current AD-0007 is reached through the [architecture stage router](../docs/02.architecture/README.md). | External service workspace owns service containers and addresses; this repository owns the declared K8s interface. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses selected, authorized runtime checks after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up; host-loopback TCP does not prove K8s DB reachability. |
+| `Port and network contracts` | Current local contracts are Traefik LoadBalancer `172.18.0.240:443`, required management Valkey `192.168.0.13:26379`, and OpenBao through external Traefik `192.168.0.13:443`. Management/development PostgreSQL publish only to host loopback `127.0.0.1:25432/25433`; development Valkey has only its Docker-network `6379`. No current K8s PostgreSQL or development Valkey endpoint is declared. Current AD-0007 is reached through the [architecture stage router](../docs/02.architecture/README.md). | External service workspace owns service containers and addresses; this repository owns the declared K8s interface. | Static proof comes from `scripts/validate-infrastructure-contracts.sh`; live proof uses selected, authorized runtime checks after bootstrap. | Port conflicts or stale addresses block runtime checks and require external-service or bootstrap follow-up; host-loopback TCP does not prove K8s DB reachability. |
 | `Host networking constraints` | k8s hosts are `<name>.hy-k8s.home.arpa` served by the k8s router: the k3d serverlb bound to `192.168.0.14:80/443` (ADR-0043). External service hosts stay on `hy.home.arpa` behind the external Traefik. | Operator owns assigning `192.168.0.14` to the host, `hy-k8s.home.arpa` name resolution, the host firewall, and binding the external Traefik to its own address. | `validate-infrastructure-contracts.sh` checks the serverlb bind, NodePorts, and apex redirects statically; `CHECK_K8S_ROUTER=true` in `verify-ingress-tls.sh` is the explicit runtime check. | Host address, DNS, firewall, or external gateway state is outside repo-static ownership. |
 
 ### Bootstrap Boundary Matrix
@@ -150,7 +150,7 @@ Test Inventory가 소유한다.
 
 - **라이브 검증 (k3d 클러스터 필요)**: `verify-cluster.sh`, `verify-gitops.sh`, `verify-external-services.sh`, `verify-ingress-tls.sh`, `verify-network-policies.sh`, `verify-secrets.sh`, `run-all.sh` — 실행 전 k3d 클러스터가 부트스트랩되어 있어야 한다.
 
-기본 `run-all.sh`는 ingress-nginx LoadBalancer fallback 경로를 검증한다.
+기본 `run-all.sh`는 Traefik LoadBalancer fallback 경로를 검증한다.
 k8s router(`192.168.0.14:443`)와 apex redirect 증명은 `CHECK_K8S_ROUTER=true`를
 명시한 별도 live check이며, host에 `192.168.0.14`가 할당되지 않았거나 외부
 Traefik이 모든 주소의 443을 점유하면 runtime blocker로 기록한다.

@@ -1,10 +1,10 @@
 ---
 title: "Pod Security Admission Per-namespace Adoption"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-15"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "ADR-0028"
 supersedes: "ADR-0027"
@@ -177,6 +177,8 @@ fact that a future version would tighten. Splitting them is what makes the warni
 channel useful.
 
 ## Traceability
+
+**Current-state clarification (2026-10-27).** The `ingress-nginx` namespace named in this record is removed; the ingress controller is Traefik in the `traefik` namespace per [ADR-0050](./0050-ingress-nginx-replacement-with-traefik.md). The decision text below is preserved as history.
 
 **Current-state clarification (2026-09-14).** After the argocd amendment the
 `audit`/`warn`-only Helm namespaces are five, not four: `cert-manager`,

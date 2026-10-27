@@ -1,10 +1,10 @@
 ---
 title: "Argo Rollouts Progressive Delivery Architecture Description"
-version: "1.0.4"
+version: "1.0.5"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-09-26"
+updated: "2026-10-27"
 layer: "architecture"
 artifact_id: "AD-0004"
 ---
@@ -18,7 +18,7 @@ The GitOps resources already exist in the repository, so this AD is not a future
 
 ### Current architecture summary
 
-Argo Rollouts provides the controller and dashboard in the `argo-rollouts` namespace and lets application teams run progressive delivery by combining `Rollout`, `AnalysisTemplate`, Istio routing, ingress-nginx, and cert-manager TLS.
+Argo Rollouts provides the controller and dashboard in the `argo-rollouts` namespace and lets application teams run progressive delivery by combining `Rollout`, `AnalysisTemplate`, Istio routing, Traefik, and cert-manager TLS.
 The platform owns the controller install, dashboard access, AppProject permissions, observability exposure, and the safe manual promotion boundary.
 
 ## Boundaries & Non-goals
@@ -31,7 +31,7 @@ The platform owns the controller install, dashboard access, AppProject permissio
   - Exposing controller metrics for Prometheus to collect
 - **Consumes**:
   - ArgoCD App-of-Apps reconciliation
-  - ingress-nginx and the cert-manager `mkcert-ca-issuer`
+  - Traefik and the cert-manager `mkcert-ca-issuer`
   - The external Prometheus and observability stack
   - Per-application Rollout manifests
 - **Does Not Own**:
@@ -57,7 +57,7 @@ The platform owns the controller install, dashboard access, AppProject permissio
 - Platform root app includes `gitops/apps/root/platform-rollouts-app.yaml`.
 - The chart source and exact revision are owned by the [Rollouts Application](../../../gitops/apps/root/platform-rollouts-app.yaml); this AD does not maintain a second version pin.
 - The controller and dashboard run in `argo-rollouts`.
-- Dashboard traffic uses ingress-nginx TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
+- Dashboard traffic uses Traefik TLS behind the dedicated k8s router for browser access ([ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md)).
 - Application teams consume the CRDs through workload manifests, for example `gitops/workloads/adminer/rollout.yaml`.
 
 ## Data Architecture

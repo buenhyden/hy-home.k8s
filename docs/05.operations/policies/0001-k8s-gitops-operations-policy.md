@@ -1,10 +1,10 @@
 ---
 title: "K8s GitOps Platform Operations Policy"
-version: "1.4.0"
+version: "1.4.1"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-27"
 layer: "operations"
 artifact_id: "POL-0001"
 ---
@@ -23,7 +23,7 @@ artifact_id: "POL-0001"
 - k3d cluster와 ArgoCD pull 기반 GitOps 운영
 - ESO와 외부 Vault의 시크릿 경계
 - 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스와 management/development 경계
-- ingress-nginx, k8s 전용 router, AppProject, NetworkPolicy 통제
+- Traefik, k8s 전용 router, AppProject, NetworkPolicy 통제
 - repository 정적 검증과 승인된 runtime 검증의 증적 경계
 
 - **Systems**: `infrastructure/`, `gitops/`, `.github/workflows/`
@@ -47,7 +47,7 @@ artifact_id: "POL-0001"
 | PLAT-001 topology | Platform Owner | `infrastructure/k3d/k3d-cluster.yaml` | `servers: 1`, `agents: 3`; inotify preflight `>= 512` |
 | PLAT-002 external desired state | Platform Owner | `gitops/platform/external-services/*.yaml` | reviewed Service/EndpointSlice definitions |
 | PLAT-003 secret boundary | Security Reviewer | Vault, ESO, secret scanners | no plaintext secret; approved Vault/ESO health evidence |
-| PLAT-004 ingress and TLS | Platform Owner | ingress-nginx, k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
+| PLAT-004 ingress and TLS | Platform Owner | Traefik, k8s router, ArgoCD ingress | host, TLS secret, router bind and redirect agreement |
 | PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
 | PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
 
@@ -79,7 +79,7 @@ artifact_id: "POL-0001"
   소유 Runbook의 검증 대상으로 유지한다.
 - ArgoCD host는 `argo.hy-k8s.home.arpa`, TLS secret은 `argocd-local-tls`다.
 - k8s 플랫폼 UI와 앱은 `<name>.hy-k8s.home.arpa`로만 노출하고, k8s 전용
-  router(k3d serverlb, `192.168.0.14:80/443` → ingress-nginx NodePort
+  router(k3d serverlb, `192.168.0.14:80/443` → Traefik NodePort
   `30080/30443`)를 거친다
   ([ADR-0043](../../02.architecture/decisions/0043-dedicated-k8s-ingress-router.md)).
   `hy-k8s.home.arpa/<name>`은 `gitops/platform/ingress-routes/`의 301

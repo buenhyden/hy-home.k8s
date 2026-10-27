@@ -1,10 +1,10 @@
 ---
 title: "platform"
-version: "0.2.0"
+version: "0.2.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-27"
 ---
 # platform
 
@@ -37,7 +37,7 @@ cluster 변경은 이 폴더의 범위가 아니며 [gitops](../README.md)의 �
 | `eso` | External Secrets Operator platform config owned by platform maintainers.                        | Kustomize config for Vault ClusterSecretStore and app ExternalSecret examples.                                         | Depends on external Vault, exact `vault` audience, and approved Vault policy; secret values stay outside Git.                  | Validate with `python3 scripts/validate-vault-eso-contracts.py --root .` plus static secret checks; live readiness requires ESO/Vault checks.                                         |
 | `external-services` | In-cluster Service/EndpointSlice contracts for external services owned by platform maintainers. | Kustomize config for PostgreSQL, Valkey, Loki, Tempo, and Alloy endpoints. | Depends on external runtimes and stable local network addresses; OpenBao, Prometheus, and Grafana use external HTTPS names instead. | Validate static contracts; live reachability requires `infrastructure/verify/verify-external-services.sh`. |
 | `headlamp` | Headlamp ingress config owned by platform maintainers.                                          | Kustomize config for Headlamp ingress.                                                                                 | Depends on Headlamp controller and local ingress/TLS route.                                                                    | Validate manifests statically; live route requires ingress/TLS checks.                                                                                                                |
-| `ingress-routes` | k8s router apex redirects owned by platform maintainers (ADR-0043).                             | Kustomize config for `hy-k8s.home.arpa/<name>` 301 redirects to `<name>.hy-k8s.home.arpa`.                             | Depends on ingress-nginx, the `mkcert-ca-issuer` ClusterIssuer, and the k8s router on `192.168.0.14`.                          | Validate with `validate-infrastructure-contracts.sh`; live redirect requires `CHECK_K8S_ROUTER=true`.                                                                                 |
+| `ingress-routes` | k8s router apex redirects owned by platform maintainers (ADR-0043).                             | Kustomize config for `hy-k8s.home.arpa/<name>` 301 redirects to `<name>.hy-k8s.home.arpa`.                             | Depends on Traefik, the `mkcert-ca-issuer` ClusterIssuer, and the k8s router on `192.168.0.14`.                          | Validate with `validate-infrastructure-contracts.sh`; live redirect requires `CHECK_K8S_ROUTER=true`.                                                                                 |
 | `kiali` | Kiali ingress config owned by platform maintainers.                                             | Kustomize config for Kiali ingress.                                                                                    | Depends on Kiali, Istio, and observability endpoints.                                                                          | Validate manifests and Kiali egress policy; live route requires ingress/TLS checks.                                                                                                   |
 | `monitoring` | Monitoring integration config owned by platform maintainers. | Kustomize config for kube-state-metrics, Alloy collection, and Prometheus API auth. | Depends on monitoring namespace and external observability services; metrics NodePorts are retired. | Validate manifests statically; live behavior requires monitoring and external service checks. |
 | `namespaces` | Namespace desired state owned by platform maintainers.                                          | Kustomize config for platform, apps, ingress, ESO, cert-manager, Istio, Headlamp, Rollouts, and monitoring namespaces. | Dependencies are cluster-scoped namespace resources; no secrets.                                                               | Validate Kustomize completeness and manifest syntax.                                                                                                                                  |
