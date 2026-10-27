@@ -1,6 +1,6 @@
 ---
 title: "Architecture Views"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -29,9 +29,9 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | Add the C4 views, element table and deployment mapping | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | in-progress | PASS | EVD-004 closes EVD-002 |
-| WORK-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-006 closes EVD-003 |
+| WORK-001 | [VAL-AV-001](../spec.md#success-criteria--verification-plan) | Add the C4 views, element table and deployment mapping | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-AV-002](../spec.md#success-criteria--verification-plan) | Add the arc42 coverage table and template prompt | platform | completed | PASS | EVD-004 closes EVD-002 |
+| WORK-003 | [VAL-AV-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-006 closes EVD-003 |
 
 ## Task Evidence
 
@@ -48,9 +48,9 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AV-001](../spec.md#success-criteria--verification-plan) | pending | none | Views and review remain | platform |
-| [VAL-AV-002](../spec.md#success-criteria--verification-plan) | pending | none | Coverage table and prompt remain | platform |
-| [VAL-AV-003](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-AV-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-27: valid context and container views, element table and deployment mapping, with every relationship traced to a source | platform |
+| [VAL-AV-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: all twelve arc42 sections have a location or reason, and the template prompt passes its contract tests | platform |
+| [VAL-AV-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-27: staged QA and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -63,6 +63,8 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
   credentials.
 - **Approval Required**: the operator said on 2026-10-27 to proceed as
   recommended. Push, pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-27 the operator accepted VAL-AV-001 to
+  VAL-AV-003.
 - **Static Validation**: Mermaid validation, focused tests and `qa.py staged`.
 - **Live Validation**: none; the views describe tracked desired state.
 - **Secret / Vault Handling**: no secret is read or written.
@@ -71,4 +73,10 @@ Add C4 views and an arc42 coverage table to AD-0007. It executes
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005): AD-0007 has valid C4 context and container views,
+an element table and a deployment mapping, revised after the first review
+and approved by the second. WORK-002 passed (EVD-004): the arc42 coverage
+table and the optional template prompt are in place. WORK-003 passed
+(EVD-006): staged QA and the hosted checks passed. The operator accepted all
+three criteria. The ADR form comparison (CR-09.06) and the branch-strategy
+ADR (CR-13.07) remain for the next Spec.
