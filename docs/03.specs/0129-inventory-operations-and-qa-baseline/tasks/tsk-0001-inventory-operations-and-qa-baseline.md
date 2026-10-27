@@ -57,16 +57,39 @@ are active and current; none names a retired component as current.
 | RUN-0012 frontmatter `updated` (2026-10-08) precedes its last commit (2026-10-09) | RUN-0012 | Kept: correct when RUN-0012 next changes |
 | Incident facts and standing guidance | `incidents/README.md`, all runbooks | Separate: no incident record exists and no runbook carries an incident timeline |
 
+### QA Timing Baseline
+
+Each run timed `python3 scripts/qa.py staged` on the staged index just
+before the commit, in this branch's worktree, with Python 3.12.3 on 12
+cores. The pre-commit hook then ran the same profile again.
+
+| Commit | Content | Gates | Exit | Seconds | UTC end |
+| --- | --- | --- | --- | --- | --- |
+| `76537285` | Spec, Plan and Task approval | 6 | 0 | 269 | 2026-10-27T15:56:33Z |
+| `5b8768f9` | Two operations documents and the Task | 6 | 0 | 280 | 2026-10-27T16:06:16Z |
+| `ce619196` | Task and RUN-0002 review fixes | 6 | 0 | 252 | 2026-10-27T16:18:03Z |
+
+The figures are a baseline for document-only commits, not an optimization
+claim. Two earlier replays applied one past commit to its parent's index in
+a detached worktree and were not used as the baseline. Document commit
+`2af87818` ran 6 gates in 207 seconds and exited 1. Validator commit
+`04ee94b2` ran 11 gates in 392 seconds and exited 1. Both runs failed on
+`document-lifecycle`, which reported `RECOVERY-DURABLE-REF` for Archive
+migration 0005, and on `links-and-owners`. The validator replay also failed
+`agent-governance` and `document-contract-tests`. Those commits passed the
+same hook when they were made, and the replay cause was not isolated. A
+validator-commit figure therefore remains open.
+
 ## Task Table
 
 ### Lifecycle Traceability
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | in-progress | PASS | EVD-005 closes EVD-001; EVD-008 closes EVD-006 |
+| WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | in-progress | PASS | EVD-009 closes EVD-002, EVD-007 |
+| WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | in-progress | PASS | EVD-010 closes EVD-003 |
+| WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-011 closes EVD-004 |
 
 ## Task Evidence
 
@@ -79,6 +102,10 @@ are active and current; none names a retired component as current.
 | EVD-005 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | Main `3e922d51`: `git ls-files -s` modes `100755`, `120000` and `160000`, `.gitmodules` absence, LFS pointer and NUL-byte content checks, symlink target resolution | PASS | Tracked File Inventory above: 1364 files, 24 executable, 18 resolving skill links, no submodule, LFS pointer or binary, `secrets/` holds only a README and `.gitkeep` | yes | EVD-001 |
 | EVD-006 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | PR #184 independent review of `5b8768f9` | FAIL | The top-level breakdown listed root files 10 and omitted `.rtk` 1, so it summed to 1354; the `.gitattributes` note omitted its `binary` patterns | yes | none |
 | EVD-007 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Survey record and review | PR #184 independent review of `5b8768f9` | FAIL | Both operations edits confirmed against RUN-0001 step 6, ADR-0050 and the Traefik manifests; the survey counted twelve runbooks instead of eleven, and RUN-0002 step 9 said "next step" although it is the last step | yes | none |
+| EVD-008 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | PR #184 independent re-review of `ce619196`; `git ls-files` top-level counts at `3e922d51` | PASS | The breakdown sums to 1364 with root files 19 and `.rtk` 1, and the `.gitattributes` note names its `binary` patterns | yes | EVD-006 |
+| EVD-009 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Survey record and review | PR #184 independent reviews of `5b8768f9` and `ce619196` | PASS | RUN-0002 step 9 re-runs RUN-0001 step 6's two root-application checks and then proceeds to Verification. POL-0007 matches ADR-0050, `platform-traefik-app.yaml` and the `nginx` IngressClass. The survey counts eleven runbooks | yes | EVD-002, EVD-007 |
+| EVD-010 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Timing record | Timed `python3 scripts/qa.py staged` before commits `76537285`, `5b8768f9` and `ce619196`; replays of `2af87818` and `04ee94b2` | PASS | QA Timing Baseline above: 6 gates, 252 to 280 seconds, exit 0; replay failures and the open validator figure are recorded | yes | EVD-003 |
+| EVD-011 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | PR #184 heads `5b8768f9` (CI run `40538463272`) and `ce619196` (CI run `40540264153`); pre-commit staged QA on commits `2ede6daa`, `76537285`, `5b8768f9` and `ce619196` | PASS | Staged QA passed on every commit; `ci-summary`, `style-pr`, `label` and GitGuardian passed on both heads | yes | EVD-004 |
 
 ## Criterion Acceptance
 
