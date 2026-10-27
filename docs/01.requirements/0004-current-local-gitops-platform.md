@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.2.3"
+version: "1.2.4"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-20"
+updated: "2026-10-27"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -229,7 +229,7 @@ that RUN-0004 points to.
 | REQ-0004-FR-0012 | Exact infrastructure, workflow, dependency, and example versions must be confirmed from the executable source or a reviewed lock, and a Reference mirror must not be required as an execution precondition. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md), [SPEC-0123](../03.specs/0123-hosted-lock-check/spec.md) |
 | REQ-0004-FR-0013 | The revision policy of the repository's own continuously reconciled source must be kept distinct from that of external release sources, and revisited when multiple operators or environments, or history rewriting, are introduced. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 | REQ-0004-FR-0014 | The Pod security enforcement level must be proportional to the workload evidence the repository owns and validates statically. Chart, injection, and runtime uncertainty is separated as audit/warn, and CNI desired state is not promoted to live evidence. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
-| REQ-0004-NFR-0001 | The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0106 P08](../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan) — VAL-P08-018 operating-content follow-up |
+| REQ-0004-NFR-0001 | The local platform must provide the current integration scope of certificates, ingress, service mesh, observability UIs, progressive delivery, notifications, monitoring, and external secret integration. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0106 P08](../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan) — VAL-P08-018 operating-content follow-up; [SPEC-0126](../03.specs/0126-architecture-views/spec.md) |
 | REQ-0004-NFR-0002 | Secret values, tokens, and private keys must not be recorded in Git, documents, or logs. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md); [SPEC-0106 P08](../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan) — VAL-P08-018 operating-content follow-up |
 | REQ-0004-NFR-0003 | Image and artifact assurance must stay fail-closed without an unvalidated blanket digest conversion, and follow-on provenance obligations must be stated with a consumer, owner, and trigger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
 | REQ-0004-IF-0001 | Historical records must be kept apart from current execution authority. An explicit historical citation of a completed package is allowed, but a sealed record is not used as current implementation guidance. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) |
