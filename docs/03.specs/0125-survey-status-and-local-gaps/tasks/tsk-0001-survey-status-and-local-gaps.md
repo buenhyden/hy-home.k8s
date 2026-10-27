@@ -1,6 +1,6 @@
 ---
 title: "Survey Status and Local Gaps"
-version: "0.3.0"
+version: "0.4.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -191,9 +191,9 @@ operator decision or another repository is named where it blocks a row.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | Record the 148-CR status table | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | in-progress | PASS | EVD-004 closes EVD-002 |
-| WORK-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | in-progress | PASS | EVD-006 closes EVD-003 |
+| WORK-001 | [VAL-CS-001](../spec.md#success-criteria--verification-plan) | Record the 148-CR status table | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-CS-002](../spec.md#success-criteria--verification-plan) | Fix the local gaps | platform | completed | PASS | EVD-004 closes EVD-002 |
+| WORK-003 | [VAL-CS-003](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | completed | PASS | EVD-006 closes EVD-003 |
 
 ## Task Evidence
 
@@ -210,9 +210,9 @@ operator decision or another repository is named where it blocks a row.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CS-001](../spec.md#success-criteria--verification-plan) | pending | none | Status table and review remain | platform |
-| [VAL-CS-002](../spec.md#success-criteria--verification-plan) | pending | none | Local fixes remain | platform |
-| [VAL-CS-003](../spec.md#success-criteria--verification-plan) | pending | none | Staged QA and hosted checks remain | platform |
+| [VAL-CS-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-27: all 148 CRs have one cited status and a disposition, confirmed by independent review | platform |
+| [VAL-CS-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-27: the ignore entries match, the restore test passes and the notes state observed facts | platform |
+| [VAL-CS-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-27: staged QA and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -229,6 +229,8 @@ operator decision or another repository is named where it blocks a row.
   `.worktrees/` content and the other three repositories.
 - **Approval Required**: the operator said on 2026-10-27 to proceed as
   recommended. Push, pull request and merge follow RUN-0013.
+- **Acceptance**: on 2026-10-27 the operator accepted VAL-CS-001 to
+  VAL-CS-003.
 - **Static Validation**: focused tests and `qa.py staged` on the exact index.
 - **Live Validation**: none; the hosted checks on the pull request.
 - **Secret / Vault Handling**: no secret is read or written.
@@ -237,4 +239,11 @@ operator decision or another repository is named where it blocks a row.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005): the 148-CR status table holds 59 `KEEP`, 4
+`DONE_THIS_CYCLE`, 5 `GAP`, 61 `PARTIAL`, 8 `EXTERNAL` and 11 `PROCESS` rows,
+and an independent review approved it after two reclassifications. WORK-002
+passed (EVD-004): the local gaps that need no operator decision are closed.
+WORK-003 passed (EVD-006): staged QA and the hosted checks passed. The
+operator accepted all three criteria. Remaining work is named per row: slice B
+(architecture views, ADR lineage, branch strategy), slice C (template and
+governance prompts), operator decisions and other repositories.
