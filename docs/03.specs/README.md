@@ -99,7 +99,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0127-adr-lineage-and-branch-strategy/
 ├── 0128-change-kinds-and-authoring-prompts/
 ├── 0129-inventory-operations-and-qa-baseline/
-└── 0130-archive-history-link-migration/
+├── 0130-archive-history-link-migration/
+└── 0131-archive-evidence-owner-migration/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -128,6 +129,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Change Kinds and Authoring Prompts](./0128-change-kinds-and-authoring-prompts/)는 변경 종류별 최소 기록·검사·승인 표, Spec·Plan·Task 작성 prompt와 링크만 있는 운영 절의 거부를 소유한다.
 [Inventory, Operations and QA Baseline](./0129-inventory-operations-and-qa-baseline/)는 추적 파일 분류, 운영 문서 중복 조사와 두 수정, staged QA 시간 기준선 기록을 소유한다.
 [Archive History Link Migration](./0130-archive-history-link-migration/)는 역사 링크만 소비자인 Archive 보존 단위 12개의 링크 이관과 `git-history-only` 처분을 소유한다.
+[Archive Evidence Owner Migration](./0131-archive-evidence-owner-migration/)는 현재 문서만 소비자인 Archive 보존 단위 10개의 소비자·증적 소유 문장 이관과 `git-history-only` 처분을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
