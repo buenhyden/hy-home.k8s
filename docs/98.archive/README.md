@@ -209,6 +209,13 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 
 | Disposition Record | Assessment | Availability | Current Owner | Decision | Assessed | Hold |
 | --- | --- | --- | --- | --- | --- | --- |
+| `completed/03.specs/0006-workspace-harness-gap-analysis` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `completed/03.specs/0071-document-taxonomy-and-form-identity-normalization` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `superseded/03.specs/0068-agent-projection-rendering-and-gate-reduction` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `superseded/03.specs/0070-retired-provider-residue-disposition` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `retired/03.specs/0047-current-surface-and-stash-reconciliation` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `retired/03.specs/0048-github-routing-and-ci-evidence` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
+| `retired/03.specs/0051-repository-assurance-integration-and-closure` | unreviewed | git-history-only | none | [SPEC-0122-TSK-0001](../03.specs/0122-archive-unit-disposition/tasks/tsk-0001-archive-unit-disposition.md) | 2026-10-27 | none |
 
 ## Usage
 

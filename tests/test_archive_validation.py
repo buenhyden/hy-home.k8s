@@ -2221,8 +2221,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     ) -> None:
         """Ledger coverage is counted from the rows, not from what resolves."""
 
-        aliases, vacated = self.validator._work109_four_digit_aliases(self.context)
-        self.assertEqual(vacated, frozenset())
+        # Removing a whole Archive unit to Git history legitimately vacates
+        # its rows, so measure the change from the current tree's baseline.
+        aliases, baseline = self.validator._work109_four_digit_aliases(self.context)
         legacy, target = sorted(aliases.items())[0]
 
         context = dataclasses.replace(
@@ -2233,7 +2234,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         reduced, vacated = self.validator._work109_four_digit_aliases(context)
 
         self.assertNotIn(legacy, reduced)
-        self.assertEqual(vacated, frozenset({legacy}))
+        self.assertEqual(vacated, baseline | {legacy})
         self.assertEqual(len(reduced), len(aliases) - 1)
 
     def _mutated_work109_context(self, mutate) -> object:

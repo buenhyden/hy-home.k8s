@@ -1339,6 +1339,34 @@ def _staged_path_is_present(root: Path, path: str) -> bool:
     return True
 
 
+def _worktree_path_is_current(root: Path, path: str) -> bool:
+    """A working-tree path counts only when Git would not ignore it.
+
+    Ignored local output, such as a tool regenerating a retired path, is not
+    repository content and never makes a retired source current again.
+    """
+
+    if not os.path.lexists(root / path):
+        return False
+    # Tracked and untracked-but-not-ignored entries list; ignored ones do not.
+    result = _git_command(
+        root,
+        "ls-files",
+        "-z",
+        "--cached",
+        "--others",
+        "--exclude-standard",
+        "--",
+        path,
+        output_limit=_INDEX_CAPTURE_MAX_BYTES,
+    )
+    if result.returncode:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-REFERENCE", "ignore lookup failed"
+        )
+    return bool(result.stdout)
+
+
 def validate_migration_records(
     repository_root: str | Path,
     records: Mapping[str, bytes],
@@ -1711,7 +1739,7 @@ def validate_migration_records(
     for path in ordered:
         if path in present:
             _require_regular_current_target(path, inventory)
-        elif proposed_commit is None and os.path.lexists(root / path):
+        elif proposed_commit is None and _worktree_path_is_current(root, path):
             _require_regular_current_target(path, inventory)
         else:
             historical_paths.append(path)
@@ -1761,9 +1789,9 @@ def validate_migration_records(
         target_contents[path] = content
     for legacy in view_sources:
         if proposed_commit is None:
-            present_view = _staged_path_is_present(root, legacy) or os.path.lexists(
-                root / legacy
-            )
+            present_view = _staged_path_is_present(
+                root, legacy
+            ) or _worktree_path_is_current(root, legacy)
         else:
             present_view = legacy in _proposal_members(root, proposed_commit, (legacy,))
         if present_view:
@@ -1817,7 +1845,7 @@ def validate_migration_records(
             )
             and (
                 source in present
-                or (proposed_commit is None and os.path.lexists(root / source))
+                or (proposed_commit is None and _worktree_path_is_current(root, source))
             )
         ):
             raise ArchiveContractError(

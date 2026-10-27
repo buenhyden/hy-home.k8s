@@ -1,10 +1,10 @@
 ---
 title: "workspace"
-version: "0.2.0"
+version: "0.3.0"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-27"
 ---
 # _workspace
 
@@ -14,10 +14,11 @@ updated: "2026-10-05"
 
 `_workspace/`는 감사, migration dry-run, route inventory 작업 중에 생기는
 수명이 짧고 비밀이 아닌 산출물을 두는 격리된 저장소 지원 staging 경계다.
-오래 유지할 문서, runtime 진단, 인증 상태, 개인 로컬 데이터를 두는 곳이 아니다.
+오래 유지할 문서, 인증 상태, 개인 로컬 데이터를 두는 곳이 아니다. 비밀이 없는
+QA·CI 진단 출력은 `diagnostics/`에 둘 수 있다.
 
-이 README만 추적한다. scratch 하위 항목은 ignore 상태로 남고 Git에 강제로
-추가하면 안 된다.
+이 README와 아래 Structure의 하위 README 6개만 추적한다. 나머지 하위 항목은
+ignore 상태로 남고 Git에 강제로 추가하면 안 된다.
 
 ## Scope
 
@@ -39,17 +40,18 @@ credential이나 secret이 담긴 runtime 세부 정보를 포함하지 않아�
 - credential, 토큰, 인증 파일, kubeconfig
 - SSH 키, 인증서, 그 밖의 개인 키 material
 - shell history, 브라우저 프로필, provider cache, 로컬 설정
-- 비공개 상태를 드러낼 수 있는 개인 진단 정보나 로컬 로그
+- 비공개 상태를 드러낼 수 있는 개인 진단 정보, 비밀이 들어 있는 로컬 로그
 - secret이 담긴 scan 출력, dry-run 로그, 명령 transcript
 
-진단 정보, 로컬 로그, 인증 material, 토큰, shell history는 저장소와 이 staging
-경계 밖에 둔다.
+인증 material, 토큰, shell history, 비밀이 담긴 로그는 저장소와 이 staging
+경계 밖에 둔다. 비밀이 없는 QA·CI 진단 출력만 `diagnostics/`에 둔다.
 
 ## Structure
 
 | Path | Purpose |
 | --- | --- |
-| `repo-support/` | 추적하지 않는 임시 산출물 경로 |
+| [`diagnostics/`](diagnostics/README.md) | QA·CI 진단 출력 (`ci/`, `validation/`) |
+| [`repo-support/`](repo-support/README.md) | 감사·분석과 미리보기 산출물 (`analysis/`, `previews/`) |
 
 ## Usage
 
@@ -72,15 +74,24 @@ force-add로 옮기지 않는다.
 
 ```text
 _workspace/
-├── README.md          # Tracked contract for this staging boundary
-└── <ignored scratch>  # Temporary non-secret repository-support files
+├── README.md                  # Tracked contract for this staging boundary
+├── diagnostics/
+│   ├── README.md              # Tracked
+│   ├── ci/README.md           # Tracked
+│   └── validation/README.md   # Tracked
+├── repo-support/
+│   ├── README.md              # Tracked
+│   ├── analysis/README.md     # Tracked
+│   └── previews/README.md     # Tracked
+└── <ignored scratch>          # Every other child, at any depth
 ```
 
 이 계약은 Git metadata로만 검증한다.
 
-- `git ls-files _workspace`는 `_workspace/README.md`를 반환해야 한다.
-- `git check-ignore -q _workspace/probe.tmp`는 probe 파일을 만들지 않고
-  성공해야 한다.
+- `git ls-files _workspace`는 위 README 7개만 반환해야 한다.
+- 각 디렉터리의 `probe.log`는 ignore되고 각 README는 ignore되지 않아야 한다.
+  `scripts/validate-workspace-boundary.py`가 probe 파일을 만들지 않고
+  격리된 Git 저장소에서 이를 확인한다.
 
 이 규칙을 확인하는 동안 ignore된 하위 항목을 나열하거나, 열거나, 읽거나,
 해시하거나, 옮기거나, 삭제하지 않는다.

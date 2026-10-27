@@ -67,6 +67,24 @@ secrets/certs/*.p12
 .agent-work/
 /_workspace/*
 !/_workspace/README.md
+!/_workspace/diagnostics/
+/_workspace/diagnostics/*
+!/_workspace/diagnostics/README.md
+!/_workspace/diagnostics/ci/
+/_workspace/diagnostics/ci/*
+!/_workspace/diagnostics/ci/README.md
+!/_workspace/diagnostics/validation/
+/_workspace/diagnostics/validation/*
+!/_workspace/diagnostics/validation/README.md
+!/_workspace/repo-support/
+/_workspace/repo-support/*
+!/_workspace/repo-support/README.md
+!/_workspace/repo-support/analysis/
+/_workspace/repo-support/analysis/*
+!/_workspace/repo-support/analysis/README.md
+!/_workspace/repo-support/previews/
+/_workspace/repo-support/previews/*
+!/_workspace/repo-support/previews/README.md
 kube-linter-linux.tar.gz
 .gstack/
 
