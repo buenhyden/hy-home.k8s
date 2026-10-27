@@ -1,10 +1,10 @@
 ---
 title: "앱 GitOps 온보딩 정책"
-version: "1.3.1"
+version: "1.3.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-10-28"
 layer: "operations"
 artifact_id: "POL-0007"
 ---
@@ -83,6 +83,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 ### 2-2. Ingress 설정
 
 신규 앱 Ingress는 `ingressClassName: nginx`, `cert-manager.io/cluster-issuer: mkcert-ca-issuer`, `nginx.ingress.kubernetes.io/ssl-redirect: "true"`, `<appname>.hy-k8s.home.arpa` host 계약을 따라야 한다.
+`nginx` class는 Traefik의 Ingress-NGINX provider가 처리하는 호환 class이며, 은퇴한 ingress-nginx controller를 뜻하지 않는다([ADR-0050](../../02.architecture/decisions/0050-ingress-nginx-replacement-with-traefik.md)).
 
 ### 2-3. k8s router 경로
 

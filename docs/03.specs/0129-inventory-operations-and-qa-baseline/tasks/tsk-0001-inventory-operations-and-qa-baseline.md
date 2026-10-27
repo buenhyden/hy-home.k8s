@@ -63,7 +63,7 @@ are active and current; none names a retired component as current.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | Record the tracked-file inventory | platform | in-progress | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | Record the operations survey and make its two edits | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | Record the staged QA timing baseline | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | Run staged QA and observe the hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -76,6 +76,7 @@ are active and current; none names a retired component as current.
 | EVD-002 | [VAL-SV-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Survey record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-SV-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Timing record | Exact commits | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-SV-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Staged QA and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-SV-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Inventory record | Main `3e922d51`: `git ls-files -s` modes `100755`, `120000` and `160000`, `.gitmodules` absence, LFS pointer and NUL-byte content checks, symlink target resolution | PASS | Tracked File Inventory above: 1364 files, 24 executable, 18 resolving skill links, no submodule, LFS pointer or binary, `secrets/` holds only a README and `.gitkeep` | yes | EVD-001 |
 
 ## Criterion Acceptance
 
