@@ -1,6 +1,6 @@
 ---
 title: "Traefik Ingress Cutover Execution"
-version: "0.4.0"
+version: "0.5.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-27"
@@ -37,7 +37,7 @@ the cutover and its revert evidence.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | Prepare ingress-nginx, then Traefik side by side | platform | completed | PASS | EVD-006 preparation render, EVD-007 class handover, EVD-008 and EVD-010 side-by-side render, EVD-009 side-by-side status |
-| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | Live per-route verification | platform | in-progress | FAIL | EVD-011 routes PASS; EVD-012 body size and HSTS differ; EVD-013 parity render; recheck, `X-Forwarded-*` and the mesh check remain |
 | WORK-003 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | Cutover and ingress-nginx removal | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | Revert evidence | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -55,12 +55,15 @@ the cutover and its revert evidence.
 | EVD-008 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side chart render | `helm template` of `traefik` 42.1.3 (Traefik v3.7.16) with the `platform-traefik` values and `--skip-crds`; `bash scripts/render-platform-chart-kinds.sh` | PASS | Rendered kinds are ServiceAccount, ClusterRole, ClusterRoleBinding, Deployment and a `ClusterIP` Service, with no IngressClass and no CRD; the only provider flags are `--providers.kubernetesingressnginx` with `ingressClass=nginx` and `controllerClass=k8s.io/ingress-nginx`; the pod sets seccompProfile RuntimeDefault; the chart-kind check passes against the platform AppProject | no | none |
 | EVD-009 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side Application status | Read-only `kubectl` on 2026-10-27, after main `5f68e9c3` (PR #168) synced | PASS | `platform-traefik` Synced and Healthy; namespace `traefik` has baseline audit and warn and `istio-injection=enabled`; Deployment `docker.io/traefik:v3.7.16` 1/1 with its pod 2/2 (sidecar injected); Service `traefik` is `ClusterIP` only; IngressClass `nginx` is still the only class; no Traefik CRD exists; every Ingress `status.loadBalancer` is still `172.18.0.240`; no error in the Traefik log | yes | EVD-001 |
 | EVD-010 | [VAL-TC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Side-by-side render scope | PR #168 independent review of EVD-008 | PASS | Narrows EVD-008: "no CRD" holds for the `--skip-crds` render that matches `skipCrds: true`; `scripts/render-platform-chart-kinds.sh` ignores `skipCrds` and lists CustomResourceDefinition, which the AppProject allows. Besides the provider flag with `ingressClass` and `controllerClass`, the render carries the chart defaults `ingressClassByName=false`, `watchIngressWithoutClass=false`, `disableSvcExternalName=false` and the entrypoint flags. The chart ClusterRole can update Ingress status; that stays inert while `publishService` and `publishStatusAddress` are unset, and the cutover revisits it | no | none |
+| EVD-011 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live route checks through Traefik | Operator-run `kubectl port-forward` to `svc/traefik` and curl with `Host` and SNI per route, 2026-10-27, compared with the same requests through `172.18.0.240` | PASS | Same status on both routers: adminer 200, headlamp 200, kiali 302 to `/kiali`, the five apex paths 301 to their hosts. Headlamp `/wsMultiplexer` over HTTP/1.1 upgrades with 101 on both. Adminer answers 200 through the Traefik sidecar under STRICT mTLS | no | none |
+| EVD-012 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | nginx-default comparison | The same port-forward, 2026-10-27: POST of 512 KiB and 2 MiB to adminer, response headers of `/kiali/` | FAIL | ingress-nginx answers 200 and 413 and sends `strict-transport-security: max-age=31536000; includeSubDomains`. Traefik answers 200 and 200 and sends no HSTS header. Traefik v3.7.16 enforces `proxyBodySize` only in its buffering middleware (`pkg/provider/kubernetes/ingress-nginx/middleware.go`), which is skipped while `proxyRequestBuffering` is false, its default; the provider has no HSTS setting. Traefik also passes the upstream `server: envoy` header | no | none |
+| EVD-013 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Parity values render | `helm template` of `traefik` 42.1.3 with the amended `platform-traefik` values and `--skip-crds` | PASS | Adds `--providers.kubernetesingressnginx.proxyRequestBuffering=true`, `--providers.file.directory=/etc/traefik/dynamic` with a ConfigMap holding only the `hsts` headers middleware, and `--entryPoints.websecure.http.middlewares=hsts@file`; the Service stays `ClusterIP`, no IngressClass, no CRD | no | none |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Evidence complete; operator acceptance remains | platform |
+| [VAL-TC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006, EVD-007, EVD-008, EVD-009, EVD-010 | Accepted by the operator on 2026-10-27 | platform |
 | [VAL-TC-002](../spec.md#success-criteria--verification-plan) | pending | none | Live route checks remain | platform |
 | [VAL-TC-003](../spec.md#success-criteria--verification-plan) | pending | none | Cutover pull request remains | platform |
 | [VAL-TC-004](../spec.md#success-criteria--verification-plan) | pending | none | Revert evidence remains | platform |
@@ -95,6 +98,13 @@ the cutover and its revert evidence.
   - On 2026-10-27, after EVD-007 passed, the operator approved the WORK-001
     side-by-side pull request. Its merge starts the `platform-traefik` sync;
     EVD-001 follows that sync.
+  - On 2026-10-27 the operator accepted VAL-TC-001 and approved the
+    body-size and HSTS comparison. For the EVD-012 differences the operator
+    chose to amend the Spec (0.4.0): request buffering on, and the file
+    provider for one HSTS middleware. The operator also chose a temporary
+    `traefik/whoami` workload, applied and deleted by the operator, for the
+    `X-Forwarded-*` check, and to verify the Rollout canary step at the
+    cutover (EVD-004).
 - **Static Validation**: Focused tests, the chart render and `qa.py staged` on
   the exact index.
 - **Live Validation**: Operator-run checks for WORK-001 to WORK-004.
@@ -107,6 +117,8 @@ the cutover and its revert evidence.
 
 WORK-001 passed: the preparation render (EVD-006), the live class handover
 (EVD-007), the side-by-side render (EVD-008, narrowed by EVD-010) and the
-side-by-side Application status (EVD-009). VAL-TC-001 awaits operator
-acceptance. The WORK-002 port-forward route checks are operator-run and
-remain NOT_RUN.
+side-by-side Application status (EVD-009). The operator accepted VAL-TC-001.
+WORK-002 is in progress: every route matches ingress-nginx (EVD-011), but
+the body-size limit and the HSTS header differed (EVD-012). The amended
+values (EVD-013) are re-checked live after they sync; the `X-Forwarded-*`
+check and the adminer mesh check remain.

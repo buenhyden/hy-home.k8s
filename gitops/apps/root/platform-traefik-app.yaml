@@ -35,6 +35,27 @@ spec:
             enabled: false
           kubernetesIngressNGINX:
             enabled: true
+            # ingress-nginx buffers request bodies and rejects bodies over its
+            # 1 MiB default with 413. Traefik enforces proxyBodySize (1 MiB)
+            # only in its buffering middleware, which this turns on.
+            proxyRequestBuffering: true
+          # The file provider holds one middleware only: the HSTS header that
+          # ingress-nginx sends on every TLS response (SPEC-0121 0.4.0).
+          file:
+            enabled: true
+            watch: false
+            content:
+              http:
+                middlewares:
+                  hsts:
+                    headers:
+                      stsSeconds: 31536000
+                      stsIncludeSubdomains: true
+        ports:
+          websecure:
+            http:
+              middlewares:
+                - hsts@file
         service:
           spec:
             type: ClusterIP
