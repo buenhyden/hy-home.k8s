@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-traefik
+  namespace: argocd
+  # SPEC-0121: removing this Application deletes its resources, including
+  # the cluster-scoped ones.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  project: platform
+  source:
+    repoURL: https://traefik.github.io/charts
+    chart: traefik
+    targetRevision: 42.1.3
+    helm:
+      releaseName: traefik
+      # Only the Ingress-NGINX provider runs; the Traefik CRDs are not needed.
+      skipCrds: true
+      values: |
+        # SPEC-0121 side by side: ingress-nginx still holds the router
+        # NodePorts and the MetalLB address. Traefik serves the existing
+        # `nginx` class through its ClusterIP Service only, creates no
+        # IngressClass and publishes no Ingress status (publishService stays
+        # off by default). The chart's pod securityContext already sets
+        # seccompProfile RuntimeDefault, which covers the injected sidecars.
+        ingressClass:
+          enabled: false
+        providers:
+          kubernetesCRD:
+            enabled: false
+          kubernetesIngress:
+            enabled: false
+          kubernetesIngressNGINX:
+            enabled: true
+        service:
+          spec:
+            type: ClusterIP
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

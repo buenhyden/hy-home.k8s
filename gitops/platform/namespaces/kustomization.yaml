@@ -5,6 +5,7 @@ resources:
   - namespace-platform.yaml
   - namespace-apps.yaml
   - namespace-ingress-nginx.yaml
+  - namespace-traefik.yaml
   - namespace-external-secrets.yaml
   - namespace-cert-manager.yaml
   - namespace-istio-system.yaml

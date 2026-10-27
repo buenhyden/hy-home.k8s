@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: traefik
+  labels:
+    # SPEC-0121: the labels of the current ingress namespace (ADR-0028).
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline
+    istio-injection: enabled
