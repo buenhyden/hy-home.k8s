@@ -1,6 +1,6 @@
 ---
 title: "First SemVer Release"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -22,6 +22,9 @@ executes [SPEC-0136](../spec.md) through
 - Request: on 2026-10-28 the operator chose `v0.1.0` for the first SemVer
   release.
 - Start: main `65f1f4e7`, branch `release/v0.1.0`.
+- Dependency: the `0.1.0` section exceeds GitHub's 125,000-character Release
+  body limit, so `publish --execute` waits until
+  SPEC-0137 (PR #192, `fix/release-body-limit`) is on `main`.
 
 ### Release Scope
 
@@ -62,9 +65,9 @@ accepts.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | completed | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-009 closes EVD-003 |
 | WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -78,14 +81,16 @@ accepts.
 | EVD-005 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | Main `65f1f4e7`: `git tag`, commit-type counts since `main-3ff0ab62`, the breaking-change search, and the operator's version choice | PASS | Release Scope above: no `v*` tag, 497 commits, one marked breaking change, five public interface classes changed, and `v0.1.0` with no compatibility promise | yes | EVD-001 |
 | EVD-006 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Release tool output and staged QA | Branch `release/v0.1.0` at `20527f43`: `python3 scripts/release.py --root . prepare --version v0.1.0 --initial-version`, then the same with `--write` | PASS | The preview and the write both reported 143862 bytes with SHA-256 `8b0810a3f38c6580e7433eeea124f9c5cbc9cd96712fcd3c4ac7ee7cf54e78bb`; `CHANGELOG.md` holds the `0.1.0` section dated 2026-10-28 under eleven headings, including Breaking Changes; staged QA runs on this commit | yes | EVD-002 |
 | EVD-007 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | PR #191 independent review of `3960b995` | FAIL | EVD-005 stated 497 commits where `git log --no-merges main-3ff0ab62..65f1f4e7` gives 349, and named one breaking change where the notes list two; the review also found the 143,352-character notes exceed GitHub's 125,000-character Release body limit, which `publish` does not handle | yes | none |
+| EVD-008 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | PR #191 re-review of `26b0543b`: `git log --no-merges main-3ff0ab62..65f1f4e7` and the two breaking commits `620e8f1b` and `7523ece4` | PASS | The Release Scope states 349 commits with the command, both breaking changes and that the notes cover the whole history; it supersedes the 497 count and single breaking change in EVD-005. The body limit is deferred to SPEC-0137 before publication | yes | EVD-007 |
+| EVD-009 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | PR #191 independent review of `3960b995`, re-reviews of `26b0543b` and `ac590955`; heads `3960b995` (CI run `40646300977`), `26b0543b` (CI run `40647453961`) and `ac590955` (CI run `40652560974`) | PASS | The reviewer regenerated the `0.1.0` section byte-identically with git-cliff, matched the SHA-256, spot-checked entries against commits and approved after the scope corrections; `ci-summary`, `style-pr`, `label` and GitGuardian passed on each head | yes | EVD-003 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-SR-001](../spec.md#success-criteria--verification-plan) | pending | none | Scope review remains | platform |
-| [VAL-SR-002](../spec.md#success-criteria--verification-plan) | pending | none | Changelog remains | platform |
-| [VAL-SR-003](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
+| [VAL-SR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-SR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-SR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28 | platform |
 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | pending | none | Publication remains | operator |
 
 ## Approval and Safety Boundaries
@@ -105,7 +110,15 @@ accepts.
 - **Rollback Plan**: revert the pull request before publication. After
   publication, a published tag is not moved; a later release supersedes it.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-SR-001 to
+  VAL-SR-003. VAL-SR-004 waits for publication after SPEC-0137 is on `main`.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-008, closing EVD-007): 349 commits since `main-3ff0ab62`,
+two breaking changes, no `0.y` compatibility promise. WORK-002 passed
+(EVD-006): the release tool wrote the `0.1.0` section, regenerated
+byte-identically in review. WORK-003 passed (EVD-009). The operator accepted
+VAL-SR-001 to VAL-SR-003. WORK-004 remains: after this pull request and
+SPEC-0137 merge, the operator runs the `publish` preview and `--execute` on
+`main`, and this Task records the tag and Release or a `DEFER`.
