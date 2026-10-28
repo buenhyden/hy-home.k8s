@@ -97,7 +97,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0125-survey-status-and-local-gaps/
 ├── 0126-architecture-views/
 ├── 0127-adr-lineage-and-branch-strategy/
-└── 0128-change-kinds-and-authoring-prompts/
+├── 0128-change-kinds-and-authoring-prompts/
+└── 0129-inventory-operations-and-qa-baseline/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -124,6 +125,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Architecture Views](./0126-architecture-views/)는 AD-0007의 C4 맥락·컨테이너·배포 뷰와 arc42 절별 점검표를 소유한다.
 [ADR Lineage and Branch Strategy](./0127-adr-lineage-and-branch-strategy/)는 현재 결정이 없는 supersession chain 거부, ADR 양식 prompt·번호 비재사용 규칙과 단일 `main` branch 전략 ADR을 소유한다.
 [Change Kinds and Authoring Prompts](./0128-change-kinds-and-authoring-prompts/)는 변경 종류별 최소 기록·검사·승인 표, Spec·Plan·Task 작성 prompt와 링크만 있는 운영 절의 거부를 소유한다.
+[Inventory, Operations and QA Baseline](./0129-inventory-operations-and-qa-baseline/)는 추적 파일 분류, 운영 문서 중복 조사와 두 수정, staged QA 시간 기준선 기록을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
