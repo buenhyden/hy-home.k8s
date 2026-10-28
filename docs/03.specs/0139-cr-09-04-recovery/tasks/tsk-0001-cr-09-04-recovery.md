@@ -78,9 +78,9 @@ about 10:05.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | Record the cause and the recovery | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | Record the post-recovery live observation | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | Record the cause and the recovery | platform | completed | PASS | EVD-004 closes EVD-001 |
+| WORK-002 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | Record the post-recovery live observation | platform | completed | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-006 closes EVD-003 |
 
 ## Task Evidence
 
@@ -89,14 +89,17 @@ about 10:05.
 | EVD-001 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Cause record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live observation record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Cause record and review | Cause and Recovery table on `aa853c2e`; ESO log, store and application status; `hy-home.docker` commit `5759bdeeb` | PASS | Each time matches its source. The stopped OpenBao server is recorded as an inference from the owner record and timing, beside the DNS phase. No value was read | yes | EVD-001 |
+| EVD-005 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live observation record and review | Observation at 09:57Z; reviewer re-read at 10:08–10:10Z; recheck at 10:31Z | PASS | All 22 applications are Synced Healthy, all 6 ExternalSecrets are synced, the store is Ready and Ingress TLS verifies, with no drift. No cluster object changed. CR-09.04 is closed | yes | EVD-002 |
+| EVD-006 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | PR #195 independent review of `939dded1`; CI run `40672763653` on `aa853c2e` | PASS | The reviewer returned REQUEST_CHANGES with four medium and several low findings, all fixed in `aa853c2e`. The hosted checks passed | yes | EVD-003 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-CR-001](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-CR-002](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-CR-003](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-CR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-CR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-CR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -128,3 +131,9 @@ REQUEST_CHANGES with four medium findings and several low ones:
 - the residuals were stale.
 
 All of them are fixed in this revision.
+
+WORK-001 passed (EVD-004), WORK-002 passed (EVD-005) and WORK-003 passed
+(EVD-006). The operator accepted all three criteria, so CR-09.04 is closed.
+Residual risk: the OpenBao restart policy did not survive a host package
+upgrade. That residual, the Agent token and the metrics scrape stay with
+`hy-home.docker`.
