@@ -1,6 +1,6 @@
 ---
 title: "Archive Evidence Owner Migration"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -61,10 +61,10 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | Remove the ten units and add their assessment rows | platform | in-progress | PASS | EVD-007 closes EVD-003 |
-| WORK-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-008 closes EVD-004 |
+| WORK-001 | [VAL-EO-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-EO-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the ten units | platform | completed | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-EO-003](../spec.md#success-criteria--verification-plan) | Remove the ten units and add their assessment rows | platform | completed | PASS | EVD-007 closes EVD-003 |
+| WORK-004 | [VAL-EO-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-008 closes EVD-004 |
 
 ## Task Evidence
 
@@ -83,10 +83,10 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-EO-001](../spec.md#success-criteria--verification-plan) | pending | none | Consumer edits remain | platform |
-| [VAL-EO-002](../spec.md#success-criteria--verification-plan) | pending | none | Recovery remains | platform |
-| [VAL-EO-003](../spec.md#success-criteria--verification-plan) | pending | none | Removal remains | platform |
-| [VAL-EO-004](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-EO-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28: no current document links to the ten units or names their Tasks as owners, and every stated fact is kept | platform |
+| [VAL-EO-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28: all ten envelope trees equal the removed trees and restore 42 files | platform |
+| [VAL-EO-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accepted by the operator on 2026-10-28: the ten units left the tree with valid `git-history-only` rows and staged QA passed | platform |
+| [VAL-EO-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: the independent review approved and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -108,7 +108,17 @@ Observed on `0d5d491e` by path and identifier search outside Stage 98.
   bringing it back is a new unit under a new decision. The consumer edits
   revert with the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-EO-001 to
+  VAL-EO-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005): the consumers name the ten packages as plain
+identifiers with a recovery route, the provider notes keep their facts, and
+no sentence says a removed Spec is kept in `retired/`. WORK-002 passed
+(EVD-006). WORK-003 passed (EVD-007): commit `f5a46cfc` removed the ten units.
+WORK-004 passed (EVD-008). The operator accepted all four criteria.
+Residual items: the m0009 refresh trigger still names SPEC-0076, and retained
+Archive payloads such as SPEC-0098 keep historical links to removed units.
+SPEC-0104 and the 34 units with registry, validator or test consumers stay
+`retained`.
