@@ -35,7 +35,7 @@ artifact_id: "{{ARTIFACT_ID}}"
 <!-- Author prompt: Describe components, actors, trust boundaries, and major interactions. -->
 <!-- Author prompt: State core structural choices and link each significant decision to its owning ADR. -->
 <!-- Author prompt: Use proportionate context and container views to show responsibilities, labels, and relationships, or explain an omitted view. -->
-<!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. -->
+<!-- Author prompt: Give every diagram a title, scope, intended reader, legend, and editable source. Label each element with its name, type and responsibility, and give each relationship a direction and a label that states its purpose and protocol. -->
 
 ## Data Architecture
 

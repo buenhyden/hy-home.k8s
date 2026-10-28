@@ -74,7 +74,7 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | in-progress | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
@@ -87,6 +87,7 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 | EVD-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Decision record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | External record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Prompt change | Branch `docs/review-decisions-and-c4-prompt`: the diagram author prompt in `description.template.md`; `python3 scripts/qa.py staged` on the exact index, including the form-contract tests | PASS | The prompt now asks for each element's name, type and responsibility and each relationship's direction, purpose and protocol; no section, template or validator rule was added | yes | EVD-001 |
 
 ## Criterion Acceptance
 
