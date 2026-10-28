@@ -48,10 +48,10 @@ that the nine Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | platform | in-progress | PASS | EVD-007 closes EVD-001, EVD-006 |
 | WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of SPEC-0080 | platform | in-progress | PASS | EVD-005 closes EVD-002 |
-| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | platform | in-progress | PASS | EVD-008 closes EVD-003 |
+| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-009 closes EVD-004 |
 
 ## Task Evidence
 
@@ -63,6 +63,9 @@ that the nine Retention Assessment rows name.
 | EVD-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `cfe3fdb6`: `git rev-parse` of the SPEC-0080 tree against its envelope tree, then `git archive` of the envelope into a scratch directory | PASS | Equal tree; restored 3 files, matching the current tree | yes | EVD-002 |
 | EVD-006 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Test runs and link search | PR #189 independent review of `7142c6a8` | FAIL | The pinned read in `test_task_acceptance_contract` decoded with the locale encoding instead of UTF-8, and the SPEC-0054 reason cited 78 links where 48 Markdown links exist outside Stage 98 | yes | none |
+| EVD-007 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Test runs and link search | `python3 -m unittest tests.test_archive_disposition_lifecycle tests.test_task_acceptance_contract` before removal at `424e11f8` and after removal at `7142c6a8`; `git grep` for the SPEC-0080 path outside Stage 98; PR #189 re-review of `c4fb06e9` | PASS | The modules passed before and after removal with unchanged assertions, the pinned inputs are byte-identical to the removed files, no current document links to SPEC-0080, and the UTF-8 and link-count fixes were approved | yes | EVD-001, EVD-006 |
+| EVD-008 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Validators and staged QA | Removal commit `7142c6a8`: `validate-archive-integrity.py`, `validate-document-lifecycle.py --mode strict`, `validate-links-and-owners.py --mode strict`; pre-commit staged QA on `424e11f8`, `7142c6a8` and `c4fb06e9` | PASS | All three validators exited 0; staged QA passed in 922, 495 and 1005 seconds; SPEC-0080 is absent with a `git-history-only` row and the eight kept units carry `usable` rows | yes | EVD-003 |
+| EVD-009 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | PR #189 independent review of `7142c6a8` and re-review of `c4fb06e9`; heads `7142c6a8` (CI run `40636118266`) and `c4fb06e9` (CI run `40638724601`) | PASS | The reviewer approved after the fix; `ci-summary`, `style-pr`, `label` and GitGuardian passed on both heads | yes | EVD-004 |
 
 ## Criterion Acceptance
 
