@@ -1,6 +1,6 @@
 ---
 title: "First SemVer Release"
-version: "0.2.0"
+version: "0.3.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -68,7 +68,7 @@ accepts.
 | WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | completed | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | completed | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-009 closes EVD-003 |
-| WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | in-progress | PASS | EVD-010 closes EVD-004 |
+| WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | completed | PASS | EVD-010 closes EVD-004 |
 
 ## Task Evidence
 
@@ -92,7 +92,7 @@ accepts.
 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28 | platform |
 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28 | platform |
-| [VAL-SR-004](../spec.md#success-criteria--verification-plan) | pending | none | Publication remains | operator |
+| [VAL-SR-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accepted by the operator on 2026-10-28 | operator |
 
 ## Approval and Safety Boundaries
 
@@ -112,7 +112,7 @@ accepts.
   publication, a published tag is not moved; a later release supersedes it.
 - **Evidence Location**: this Task.
 - **Acceptance**: on 2026-10-28 the operator accepted VAL-SR-001 to
-  VAL-SR-003. VAL-SR-004 waits for publication after SPEC-0137 is on `main`.
+  VAL-SR-003, and VAL-SR-004 after publication.
 
 ## Verification Summary
 
@@ -120,6 +120,7 @@ WORK-001 passed (EVD-008, closing EVD-007): 349 commits since `main-3ff0ab62`,
 two breaking changes, no `0.y` compatibility promise. WORK-002 passed
 (EVD-006): the release tool wrote the `0.1.0` section, regenerated
 byte-identically in review. WORK-003 passed (EVD-009). The operator accepted
-VAL-SR-001 to VAL-SR-003. WORK-004 remains: after this pull request and
-SPEC-0137 merge, the operator runs the `publish` preview and `--execute` on
-`main`, and this Task records the tag and Release or a `DEFER`.
+VAL-SR-001 to VAL-SR-003. WORK-004 passed (EVD-010): after SPEC-0137 merged,
+the operator published `v0.1.0` at `356278fe` with a 391-character summary
+body, and the tag and Release read back as published. The operator accepted
+VAL-SR-004. The historical `main-<SHA>` tags remain.
