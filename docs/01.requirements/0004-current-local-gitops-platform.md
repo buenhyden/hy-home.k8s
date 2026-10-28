@@ -1,10 +1,10 @@
 ---
 title: "Local GitOps Platform and Delivery Assurance Requirements"
-version: "1.2.4"
+version: "1.2.5"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-10-28"
 layer: "requirements"
 artifact_id: "REQ-0004"
 ---
@@ -199,15 +199,18 @@ Reading secrets, pushing, cloud work, and live mutation each need separate appro
 
 ### Delivery assurance coverage and limits
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 ([SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md)); it is kept in `98.archive/retired/` and not cited ([SPEC-0090](../98.archive/completed/03.specs/0090-spec0049-retirement/spec.md)). Its withdrawal does not remove current validation: the repository checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries, and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and `gitops/platform/ingress-routes/` own the current ingress architecture and desired state; [SPEC-0008](../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) is completed delivery evidence. Current manifest image-version checks require an explicit tag or `@sha256:` reference and reject `:latest`; they do not establish provenance or validate digest identity. [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered the repository-static scope of REQ-0004-FR-0008 and FR-0010: pinned offline Kustomize render and built-in schema checks, per-target depth/tool-version/fallback/lane/result evidence, and fail-closed ingress/GVK reference checks. Its Tasks record the passing hosted implementation run and negative fixtures. Custom-resource schema checks remain DEFER until the quality/GitOps owner supplies reviewed CRD schemas and fixtures; chart-generated output and live admission/routing remain unobserved until an authorized platform operator can inspect a named render/cluster target. The retired Traefik lane is not a current target.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); it is kept in `98.archive/retired/` and not cited (SPEC-0090). Its withdrawal does not remove current validation: the repository checks structure, Kubernetes YAML, required policy tools, secret handling, Vault/ESO boundaries, and product semantics. [AD-0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and `gitops/platform/ingress-routes/` own the current ingress architecture and desired state; [SPEC-0008](../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) is completed delivery evidence. Current manifest image-version checks require an explicit tag or `@sha256:` reference and reject `:latest`; they do not establish provenance or validate digest identity. [SPEC-0104](../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered the repository-static scope of REQ-0004-FR-0008 and FR-0010: pinned offline Kustomize render and built-in schema checks, per-target depth/tool-version/fallback/lane/result evidence, and fail-closed ingress/GVK reference checks. Its Tasks record the passing hosted implementation run and negative fixtures. Custom-resource schema checks remain DEFER until the quality/GitOps owner supplies reviewed CRD schemas and fixtures; chart-generated output and live admission/routing remain unobserved until an authorized platform operator can inspect a named render/cluster target. The retired Traefik lane is not a current target.
 Specs 0047, 0048, 0050, and 0051 were withdrawn without successors and kept in `98.archive/retired/`
 ([SPEC-0087](../98.archive/completed/03.specs/0087-stage03-terminal-package-retention/spec.md)); their scope currently has no implementation owner.
 The original REQ-0007 program history is kept; its current platform meaning passes to this document and its common routing, approval, and QA meaning to REQ-0003.
 This succession does not declare any tranche, or Spec 0054 WP-013, complete.
-[SPEC-0088](../98.archive/completed/03.specs/0088-operations-corpus-convergence/spec.md) owns aligning operations documents with current implementation facts
+SPEC-0088 owns aligning operations documents with current implementation facts
 and validating the boundary that secret values are never printed.
-[SPEC-0089](../98.archive/completed/03.specs/0089-deferred-conflict-resolution/spec.md) owns confirming the cluster UI chart objects
+SPEC-0089 owns confirming the cluster UI chart objects
 that RUN-0004 points to.
+SPEC-0088, SPEC-0089 and SPEC-0090 left the current tree under SPEC-0130;
+their bodies are recovered from the Retention Catalog envelopes in the
+[Archive index](../98.archive/README.md).
 
 ## Traceability
 
