@@ -1,6 +1,6 @@
 ---
 title: "Release Body Limit"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -34,9 +34,9 @@ It executes [SPEC-0137](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RB-001](../spec.md#success-criteria--verification-plan) | Derive a bounded Release body | platform | in-progress | PASS | EVD-004 closes EVD-001 |
-| WORK-002 | [VAL-RB-002](../spec.md#success-criteria--verification-plan) | Use the body in publish and describe it in RUN-0012 | platform | in-progress | PASS | EVD-005 closes EVD-002 |
-| WORK-003 | [VAL-RB-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-006 closes EVD-003 |
+| WORK-001 | [VAL-RB-001](../spec.md#success-criteria--verification-plan) | Derive a bounded Release body | platform | completed | PASS | EVD-004 closes EVD-001 |
+| WORK-002 | [VAL-RB-002](../spec.md#success-criteria--verification-plan) | Use the body in publish and describe it in RUN-0012 | platform | completed | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-RB-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-006 closes EVD-003 |
 
 ## Task Evidence
 
@@ -53,9 +53,9 @@ It executes [SPEC-0137](../spec.md) through
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RB-001](../spec.md#success-criteria--verification-plan) | pending | none | Test and change remain | platform |
-| [VAL-RB-002](../spec.md#success-criteria--verification-plan) | pending | none | Publish wiring remains | platform |
-| [VAL-RB-003](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
+| [VAL-RB-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-RB-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-RB-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -73,7 +73,15 @@ It executes [SPEC-0137](../spec.md) through
 - **Secret / Vault Handling**: no secret is read.
 - **Rollback Plan**: revert the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-RB-001 to
+  VAL-RB-003.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-004): an over-limit section becomes a bounded summary with
+group counts and the tagged `CHANGELOG.md` link. WORK-002 passed (EVD-005):
+publish, verification and preview share the body, RUN-0012 states the rule,
+and `CHANGELOG.md` is checked as a historical record. WORK-003 passed
+(EVD-006). The operator accepted all three criteria. Residual risk: the
+125,000-character limit is unobserved live, and a section with thousands of
+distinct groups could still exceed it.
