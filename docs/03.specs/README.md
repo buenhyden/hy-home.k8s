@@ -104,7 +104,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0132-archive-registry-and-test-consumers/
 ├── 0133-review-decisions-and-c4-prompt/
 ├── 0134-archive-final-units/
-└── 0135-external-item-decisions/
+├── 0135-external-item-decisions/
+└── 0136-first-semver-release/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -138,6 +139,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Review Decisions and C4 Prompt](./0133-review-decisions-and-c4-prompt/)는 m0012 `DERIVED_PROPOSAL` 칸과 외부 의존 조사 항목에 대한 운영자 결정 기록과 다이어그램 작성 prompt의 C4 점검 추가를 소유한다.
 [Archive Final Units](./0134-archive-final-units/)는 테스트만 읽던 Archive 보존 단위 SPEC-0080의 처분과 남은 8개의 `usable` 판정 기록을 소유한다.
 [External Item Decisions](./0135-external-item-decisions/)는 외부 의존 조사 항목 다섯 개에 대한 운영자 결정과 Archive 구조·Projects 관측 기록을 소유한다.
+[First SemVer Release](./0136-first-semver-release/)는 첫 SemVer 릴리스 `v0.1.0`의 범위 검토, CHANGELOG 작성과 게시 관측 기록을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
