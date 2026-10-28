@@ -62,9 +62,9 @@ recovery procedure. CR-09.04 stays `EXTERNAL` with the operator as next owner.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
