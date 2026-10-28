@@ -1,6 +1,6 @@
 ---
 title: "External Item Decisions"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -66,9 +66,9 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | in-progress | PASS | EVD-005 closes EVD-001, EVD-004 |
-| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | in-progress | PASS | EVD-006 closes EVD-002 |
-| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-007 closes EVD-003 |
+| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | completed | PASS | EVD-005 closes EVD-001, EVD-004 |
+| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | completed | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-007 closes EVD-003 |
 
 ## Task Evidence
 
@@ -86,9 +86,9 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-XD-001](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-XD-002](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-XD-003](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-XD-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-XD-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-XD-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accepted by the operator on 2026-10-28 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -104,7 +104,14 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
   is read; only directory names and Project metadata.
 - **Rollback Plan**: revert the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-XD-001 to
+  VAL-XD-003.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005, closing EVD-004): CR-01.02, CR-12.01 and CR-18.06
+are decided and closed; CR-18.06 is mock-only and not operational. WORK-002
+passed (EVD-006): the CR-08.01 layouts and the CR-14.03 Projects observation
+match their sources. WORK-003 passed (EVD-007). The operator accepted all
+three criteria. CR-03.06, CR-03.07, CR-08.01, CR-09.04 and CR-14.03 stay
+`EXTERNAL` with their remaining operator actions named above.
