@@ -24,7 +24,7 @@ that the 26 Retention Assessment rows name.
 - Request: on 2026-10-28 the operator approved the next Archive batch, the
   units whose census consumers were the registry, validators or tests.
 - Approval: the operator approved that batch; this Task disposes of exactly
-  these 26 units and keeps the nine below:
+  these 26 units:
   - `superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
   - `superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md`
   - `superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md`
@@ -58,6 +58,11 @@ that the 26 Retention Assessment rows name.
   SPEC-0072, which REQ-0003 names as the trace owner of FR-0011 and acceptance
   criterion 09; this was found while editing its consumers.
 - Start: `9bab5067`, branch `docs/archive-batch3`.
+- Scope changes after approval, recorded in Spec 0.1.1: SPEC-0072 stays as a
+  REQ-0003 trace owner; VAL-RT-002 accepts link-target-only differences for
+  the fifteen rebased decisions; and after review the scope adds the two
+  README sentences and the lifecycle test that read ADR-0035, which the
+  operator approved on 2026-10-28.
 
 ### Trial Result
 
@@ -70,7 +75,7 @@ SPEC-0104 on 2026-10-28.
 | `validate-document-lifecycle.py --mode strict` | PASS | Removal rows are admitted |
 | `validate-document-contract-registry.py --mode strict` | PASS | The rebased-path list is classified by path |
 | `validate-links-and-owners.py --mode strict` | 272 failures | Current documents link to SPEC-0004, 0005, 0008, 0054, 0062, 0072, 0080, 0082, 0085, 0091, 0093, 0095, 0098, 0102 and 0103; three frozen migration ledgers resolve a link through ADR-0032 |
-| Test modules naming a unit | 2 modules failed | `test_task_acceptance_contract` and `test_archive_disposition_lifecycle` read SPEC-0080; `test_documentation_link_boundary` reads SPEC-0103 |
+| Test modules naming a unit | 3 modules failed | `test_task_acceptance_contract` and `test_archive_disposition_lifecycle` read SPEC-0080; `test_documentation_link_boundary` reads SPEC-0103; review later found that `test_archive_disposition_lifecycle` also reads ADR-0035, masked here by the earlier SPEC-0080 error |
 
 ## Task Table
 
@@ -92,6 +97,8 @@ SPEC-0104 on 2026-10-28.
 | EVD-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `9378b5c5`: per unit, `git rev-parse` of the current object against the envelope object, then `git archive` of the envelope into a scratch directory; for unequal blobs, a comparison with every Markdown link target masked | PASS | 11 objects equal; the 15 rebased decisions differ only in link targets; 26/26 restored, 63 files, matching the current file counts | yes | EVD-002 |
+| EVD-006 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer validation | PR #188 independent review of `fe3bd418` | FAIL | `test_archive_disposition_lifecycle` read ADR-0035 from the working tree (46 errors); `docs/README.md` and `docs/02.architecture/README.md` still said every superseded ADR stays in `superseded/`; ADR-0047 named SPEC-0102 as a future owner | yes | none |
+| EVD-007 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | PR #188 independent review of `fe3bd418` | FAIL | EVD-005 counted 63 restored files; the envelopes and the removed trees hold 64 | yes | none |
 
 ## Criterion Acceptance
 
@@ -106,10 +113,12 @@ SPEC-0104 on 2026-10-28.
 
 - **Allowed Paths**: this package, the Stage 03 README index, REQ-0003,
   ADR-0039, ADR-0040, ADR-0047, the archive research README and
-  m0001, research note m0012, `.claude/provider.md`, the 26 units and the
+  m0001, research note m0012, `.claude/provider.md`, `docs/README.md`,
+  `docs/02.architecture/README.md`,
+  `tests/test_archive_disposition_lifecycle.py`, the 26 units and the
   Retention Assessment table in `docs/98.archive/README.md`.
 - **Forbidden Paths**: the nine kept units, frozen Archive records, catalog
-  rows and envelopes, validators, the registry and tests.
+  rows and envelopes, validators, the registry and other tests.
 - **Approval Required**: the operator approved the batch on 2026-10-28. Push,
   pull request and merge follow RUN-0013.
 - **Static Validation**: `python3 scripts/qa.py staged` on each exact index.

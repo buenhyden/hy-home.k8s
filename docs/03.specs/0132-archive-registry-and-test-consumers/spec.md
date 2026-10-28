@@ -1,6 +1,6 @@
 ---
 title: "Archive Registry and Test Consumers"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -42,7 +42,11 @@ as `git-history-only`. The [Plan](plan.md) orders the work and
   - the links and owner sentences in REQ-0003, ADR-0039, ADR-0040,
     ADR-0047, the archive research README and m0001, m0012 and
     `.claude/provider.md` that name the 26 units;
-  - removing the 26 whole units and adding one Retention Assessment row each.
+  - removing the 26 whole units and adding one Retention Assessment row each;
+  - the two README sentences that said every superseded ADR stays in
+    `98.archive/superseded/`;
+  - `tests/test_archive_disposition_lifecycle.py`, which read ADR-0035 from the
+    working tree and now reads it from the last `main` commit that held it.
 - Non-goals:
   - ADR-0032, SPEC-0080 and SPEC-0103, which frozen ledgers or tests read;
   - SPEC-0004, SPEC-0005, SPEC-0008 and SPEC-0104, which current Requirements
@@ -50,7 +54,8 @@ as `git-history-only`. The [Plan](plan.md) orders the work and
     the trace owner of FR-0011 and acceptance criterion 09;
   - SPEC-0054, which 78 current links cite as the governance convergence
     record;
-  - changing a validator, the registry, a test or a frozen Archive record.
+  - changing a validator, the registry, any other test or a frozen Archive
+    record.
 
 ## Contracts
 

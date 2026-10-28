@@ -1,10 +1,10 @@
 ---
 title: "docs: 프로젝트 문서 허브"
-version: "0.6.0"
+version: "0.6.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-28"
 ---
 # docs: 프로젝트 문서 허브
 
@@ -65,8 +65,9 @@ skill과 provider projection을 소유한다.
    이상 현재가 아닌 문서는 Stage 98의 해당 disposition으로 떠나며, 원본은 두
    번째 복구 원장 없이 Git history가 복구한다
    ([ADR-0040](02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). Disposition은
-   spec package, Incident bundle, 단일 문서를 한 단위로 원본 Git object 그대로, 링크까지 보존한다. 대체된 ADR은
-   ADR-0038을 포함해 모두 `98.archive/superseded/`에 보존되어 있다.
+   spec package, Incident bundle, 단일 문서를 한 단위로 원본 Git object 그대로, 링크까지 보존한다. 대체된 ADR 중
+   ADR-0032만 `98.archive/superseded/`에 남아 있고, ADR-0038을 비롯한 나머지는 Retention Catalog의
+   envelope로 Git에서 복구한다.
 
    Archive 인용 가능 여부는 registry의 순서 있는 `archive_citation` 표가 판정한다.
    **허용**: `completed/`는 promote 선언을 통해, `resolved/`는 corrective-work

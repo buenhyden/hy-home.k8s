@@ -174,8 +174,8 @@ retain approval, evidence-depth and negative-test boundaries.
 
 [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) describes
 the current platform. Implementing the approved amendment requires updating
-that view and the current ownership contracts together. SPEC-0102 supplies
-change-specific behavior; its later approved Plan and Tasks will own execution
+that view and the current ownership contracts together. SPEC-0102 supplied
+change-specific behavior, and its approved Plan and Tasks recorded execution
 order and evidence. The pending persisted acceptance transition and approved
 decision claim no completed migration or implemented acceptance criterion.
 
