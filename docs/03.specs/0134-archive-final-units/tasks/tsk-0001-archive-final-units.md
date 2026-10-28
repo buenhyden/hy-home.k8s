@@ -1,6 +1,6 @@
 ---
 title: "Archive Final Units"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -48,10 +48,10 @@ that the nine Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | platform | in-progress | PASS | EVD-007 closes EVD-001, EVD-006 |
-| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of SPEC-0080 | platform | in-progress | PASS | EVD-005 closes EVD-002 |
-| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | platform | in-progress | PASS | EVD-008 closes EVD-003 |
-| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-009 closes EVD-004 |
+| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | platform | completed | PASS | EVD-007 closes EVD-001, EVD-006 |
+| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of SPEC-0080 | platform | completed | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | platform | completed | PASS | EVD-008 closes EVD-003 |
+| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-009 closes EVD-004 |
 
 ## Task Evidence
 
@@ -71,10 +71,10 @@ that the nine Retention Assessment rows name.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-AF-001](../spec.md#success-criteria--verification-plan) | pending | none | Test and link moves remain | platform |
-| [VAL-AF-002](../spec.md#success-criteria--verification-plan) | pending | none | Recovery remains | platform |
-| [VAL-AF-003](../spec.md#success-criteria--verification-plan) | pending | none | Removal and rows remain | platform |
-| [VAL-AF-004](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-AF-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-AF-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-AF-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-AF-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -93,7 +93,15 @@ that the nine Retention Assessment rows name.
   content is recovered with `git archive <envelope commit> <original path>`.
   The test, link and row changes revert with the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-AF-001 to
+  VAL-AF-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-007, closing EVD-006): the two tests read SPEC-0080 from
+pinned commit `9bab5067` and pass before and after removal. WORK-002 passed
+(EVD-005). WORK-003 passed (EVD-008): SPEC-0080 left the tree and the eight
+kept units carry `usable` rows with the reasons above. WORK-004 passed
+(EVD-009). The operator accepted all four criteria. SPEC-0103 stays because
+the older-form SPEC-0105 Task 0003 links to it; moving it needs that Task's
+form migrated under its own decision.
