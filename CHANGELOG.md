@@ -8,3 +8,2409 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Record changes awaiting a reviewed release here. Release preparation adds its
 versioned section below before the tag is created.
+
+## [0.1.0] - 2026-10-28
+
+### Added
+
+- Add expert rules for GitOps, Kubernetes, and DevSecOps.
+- Add CI/CD pipelines rule covering concepts, tools, best practices, and security.
+- Bootstrap Kubernetes cluster with core infrastructure components and sample applications.
+- Add Airflow secrets definition for Kubernetes deployment.
+- 업데이트된 README 및 추가 스크립트, CI/CD 파이프라인, 자격증명 가이드 및 템플릿 추가
+- CI/CD 파이프라인 통합 및 기존 YAML 파일 삭제
+- Add unified CI/CD workflow with linting, building, testing, and deployment for services, including Makefiles and an ArgoCD bootstrap script.
+- Add yamllint configuration file with default rules and ignored paths.
+- Add new Kubernetes agent workflows for safe operations, deployment, multi-environment deployment, and troubleshooting, along with general, security, and multi-environment rules.
+- Add Kubernetes workflows for multi-environment deployment, safe operations, troubleshooting, and application deployment
+- **agent:** Initialize comprehensive rules and workflows
+- **apps:** Refine demo-backend and templates to follow project rules
+- Initialize project with a comprehensive README detailing its AI-optimized GitOps structure and update agent rule paths.
+- Initialize project with comprehensive documentation, CI/CD, governance, and an AI-ready GitOps Kubernetes platform.
+- Establish initial repository structure with CI, Dependabot, PR template, and example application documentation.
+- Add CI workflow for linting Markdown, GitHub Actions, and validating Kubernetes manifests.
+- Add GitHub Actions CI workflow for Markdown, GitHub Actions, and Kubernetes manifest linting.
+- Implement foundational development standards with `.editorconfig`, comprehensive CI pipelines for linting and validation, and updated Markdown linting configurations.
+- Add a pre-commit git hook for various linting checks and update CONTRIBUTING.md with instructions to enable it.
+- Add pre-commit hook to lint Markdown, GitHub Actions, Kubernetes, and Python files.
+- Add pre-commit hooks for linting Markdown, GitHub Actions, Kubernetes, and Python code.
+- Introduce development workflow documentation, pre-commit linting hooks, and bootstrap scripts for development tool installation.
+- Introduce core Kubernetes manifests for applications and external services, along with initial developer tooling and CI/CD setup.
+- Add GitHub Actions CI workflow for linting and bootstrap scripts for Kind cluster setup and ArgoCD installation.
+- Add initial bootstrap scripts for Kind cluster setup, developer pre-commit tools, and ArgoCD SSH repository configuration with SealedSecrets.
+- Add GitHub issue templates and Dependabot configuration for automated dependency updates.
+- Introduce a comprehensive documentation framework with templates, creation scripts, and validation tools for ADRs, ARDs, Plans, PRDs, and Specs.
+- Introduce agent system with comprehensive rules and workflows, replacing legacy documentation and scripts.
+- Introduce comprehensive project templates, documentation, and operational runbooks, while updating GitHub issue templates and configuration files.
+- Introduce minimal k3d cluster configuration, standardize k3d port mappings, and remove API reference from README.
+- Add MetalLB configuration, update k3d cluster API exposure, and implement automated changelog generation using git-cliff.
+- Add gitleaks and detect-secrets pre-commit hooks.
+- Add GitHub Actions workflow to greet first-time contributors on new issues and pull requests.
+- Define initial core infrastructure for the home cluster with k3d, including ADR, PRD, ARD, and implementation plans.
+- Introduce comprehensive WSL2 integration and documentation for the k3d local cluster.
+- Implement auto-scrolling to the bottom of the chat container when new messages are added.
+- Integrate MetalLB for external IP pool management and update related infrastructure specifications and documentation.
+- Enhance k3d local cluster setup documentation with detailed MetalLB configuration and WSL2 GPU prerequisites.
+- Enhance k3d cluster architecture documentation with C4 diagram and checklist, update infrastructure roadmap, and add AI agent guidelines.
+- Enhance k3d cluster setup documentation with WSL2 systemd clarifications and Windows host access requirements.
+- Implement core Kubernetes infrastructure including ingress-nginx, MetalLB, network policies, and namespace definitions.
+- Implement GitOps for local cluster using ArgoCD, including infrastructure and application manifests.
+- Establish structured documentation
+- Expand CLAUDE.md with a detailed repository overview, quick commands, documentation architecture, and development workflow guidance.
+- Implement documentation and agent instruction refactor with new specs, plans, and ARDs, alongside general documentation updates.
+- Refactor documentation structure by standardizing README.md usage, updating dated PRD references, and adding new operational and planning documentation.
+- Add documentation hardening plans and operational standards, and update internal documentation links.
+- Revamp README template
+- Refactor API spec template for OpenAPI 3.1.0 and enhance ADR template with new sections, updating layer options in both.
+- Add agentic conventions and development workflows documentation, and update agent configurations to reference these new guidelines.
+- Standardize documentation paths, update agent instructions
+- Add comprehensive documentation templates and examples, and update existing template structures.
+- Expand documentation structure with new categories and agent roles, and refine agent response instructions.
+- Add `commands.md` for standardized command inventory and update agent instructions to reference it.
+- Update agent governance documentation
+- Remove k3d local cluster infrastructure, GitOps configurations, and associated documentation.
+- Implement initial k3d and ArgoCD GitOps platform bootstrap with comprehensive documentation and infrastructure setup.
+- Implement local Kubernetes bootstrap with ArgoCD for platform and external services management.
+- Migrate external services from docker-compose to ExternalName with Vault-managed secrets and enhance bootstrap script.
+- Refactor external Postgres into separate read/write endpoints and update Valkey and Postgres service ports.
+- Introduce comprehensive documentation and infrastructure verification tests for the WSL2 K3d ArgoCD HA platform.
+- Implement network policies for external service egress, refine Vault access, and configure Ingress Nginx as LoadBalancer.
+- Implement local TLS certificate validation and automated ingress verification for ArgoCD setup
+- Add Application kind to platform AppProject and include it in static contract verification
+- Implement platform expansion with cert-manager, dashboard, and istio service mesh integration
+- Bootstrap cert-manager, istio, kiali, and kubernetes-dashboard with updated external service IP ranges
+- Add Kubernetes services and EndpointSlices for observability stack and update Kiali configuration to use internal DNS names.
+- Update network policy verification for Kiali and mark platform expansion tasks as completed
+- Pre-create platform namespace and deploy valkey-external service during bootstrap
+- Increase ArgoCD readiness timeout and add diagnostic output on failure
+- Add inotify instance limit check to bootstrap script and update documentation
+- Replace Kubernetes Dashboard with Headlamp in platform deployment
+- Add Argo Rollouts, Notifications(Slack), Headlamp; replace K8s Dashboard
+- Add postgres-app ExternalSecret from Vault
+- Expose ArgoCD metrics via NodePort for Prometheus scraping
+- Add k8s cluster observability (kube-state-metrics, Alloy logs, platform NodePorts)
+- Add adminer workload with Rollout canary and apps namespace istio-injection
+- Platform hardening — NetworkPolicy, mTLS, AnalysisTemplate, sample-app cleanup
+- Add comprehensive AWS and Azure migration documentation, infrastructure Bicep templates, and Kubernetes workload identity configurations
+- Implement Istio-based canary traffic routing for Adminer and update ArgoCD reconciliation settings
+- **harness:** Implement H100-based agent harness for hy-home.k8s
+- **skills:** Migrate H100 harness skills to k8s workspace
+- **graphify:** Add knowledge graph integration and update documentation
+- Implement document stage routing rules and skill to enforce canonical documentation paths and prevent parallel hierarchies.
+- Integrate RTK token-optimized CLI with configuration and documentation
+- Expanded platform expansion documentation
+- Introduce agent-based infrastructure skills and configuration
+- Add mandatory PyYAML validation scripts to CI pipeline and update PR template accordingly
+- Enforce CI standards, PR requirements, and labeler configuration in repository quality gates
+- Implement agent-first remediation framework, readiness matrix, and formalize direct cluster mutation boundaries across project documentation.
+- Implement CI branch policy enforcement, job-level timeouts, and workflow concurrency controls
+- Implement Harness and Agent-first component audit matrices with associated repository quality gate validations and governance rules.
+- Implement authored-doc command-boundary regression gate in repository quality checks
+- Harden repo quality gates for risky commands and audit matrix compliance
+- Standardize README structure across documentation and add link integrity validation to repository quality gates
+- Enforce template heading consistency across all document stages and update documentation templates/specifications.
+- Introduce agent progress ledger in docs/00.agent-governance/memory/progress.md and integrate into governance protocols
+- Implement LLM Wiki curation system with automated index generation, agent governance, and repository quality gate validation.
+- Integrate session-start, pre-edit, and post-validate hooks into Codex configuration and update governance documentation.
+- Add graphify output directory with generated project documentation maps and analysis files
+- Implement Tier A/B/C script retention taxonomy and update validation tool with explicit command-contract allowlist
+- Initialize graph visualization output and add graphify-out directory to gitignore
+- **hooks:** Enforce docs template checks
+- Update documentation and templates for clarity and consistency
+- Update operations policies and documentation
+- Implement GitOps hierarchy and environment key validation guardrails in scripts and docs
+- Implement automated validation logic for operations structure, infrastructure test inventory, and traefik routes in quality gate script
+- Add automated repository quality gates
+- Implement Incident Boundary Matrix validation in scripts/validate-repo-quality-gates.sh and document as VAL-SPC-006-034
+- **skills:** Add 5 SDD lifecycle repo-local skills (P0-16)
+- Add concurrency control to greeting workflow and update CI/CD documentation
+- Add policy gate validation check to pull request template
+- Initialize agent-governance framework
+- Add hooks configuration file for agent automation
+- **governance:** Sync agent models and update model hierarchy
+- **governance:** Unify configuration and hooks across providers
+- **governance:** Establish structural parity and output styles
+- **harness:** Add connective layer contracts
+- **agents:** Add observability-reviewer and network-reviewer worker agents
+- **docs:** Define document profile registry schema
+- **validation:** Add document registry classifier
+- **docs:** Classify document contract corpus
+- **templates:** Define readme profiles
+- **docs:** Add registry-driven markdown profile validation
+- **docs:** Validate links indexes and current owners
+- **qa:** Define affected-surface validation contract
+- **agents:** Enforce cross-provider role semantics
+- **gitops:** Validate identity-only change sets
+- **docs:** Enforce registry v7 metadata contracts
+- **docs:** Add deterministic lifecycle validation
+- **docs:** Enforce transition evidence predicates
+- **docs:** Close native and role drift
+- **docs:** Add archive recovery envelope capability
+- **docs:** Add archive integrity authority validators
+- **docs:** Activate full-body archive authority
+- **workspace:** Enforce metadata-only scratch boundary
+- **docs:** Add active corpus census contract
+- **docs:** Add active corpus eligibility ledger
+- **docs:** Archive Spec 031 execution lineage
+- **docs:** Archive Spec 032 execution lineage
+- **docs:** Archive Spec 033 execution lineage
+- **docs:** Archive Spec 034 execution lineage
+- **docs:** Archive Spec 035 execution lineage
+- **docs:** Archive Spec 036 execution lineage
+- **docs:** Validate Stage 05 and helper roles
+- **docs:** Close active corpus residue and cardinality
+- **references:** Add reference architecture contract
+- **references:** Protect reference observations and overlays
+- **references:** Enforce source scope and freshness
+- **references:** Enforce generated ownership
+- **references:** Reject duplicate reference owners
+- **governance:** Enforce strict-only document validation
+- **governance:** Enforce terminal program frontier
+- **governance:** Add agent harness machine contract
+- **governance:** Integrate agent harness validation
+- **governance:** Add provider runtime evidence contract
+- **agents:** Enforce bounded loop lifecycle
+- **agents:** Validate checkpoint memory lifecycle
+- **agents:** Integrate loop lifecycle routing
+- **agent:** Add roster admission evaluation gates
+- **agent:** Promote repository-static roster parity
+- **agent:** Add evaluation readiness corpus
+- **agent:** Add evidence-honest model fitness readiness
+- **ci:** Add agent governance static lane
+- **ci:** Enforce closed agent governance contract
+- **agent:** Complete consumer-first legacy cutover
+- **qa:** Close canonical local validation order
+- **memory:** Isolate checkpoints and close memory lifecycle
+- **ci:** Close AGQC-005 static evidence ownership
+- **agent:** Add program closure contract
+- **agent:** Route program closure gate
+- Adopt the Istio CNI node agent to remove privileged init containers
+- Adopt Pod Security Admission per namespace
+- Adopt the argocd namespace into GitOps with prune protection
+- Upgrade kube-state-metrics to v2.19.1 and swap endpoints for endpointslices
+- Upgrade grafana/alloy to v1.18.1
+- Add fail-closed document route transition
+- Complete WORK-106 identity validators
+- Consolidate the agent governance control plane (WP-003, partial)
+- **docs:** Add the Stage 99 registry and its two contract schemas
+- **docs:** Split the nine route and corpus keys into a sibling contract
+- **governance:** Land the Spec 0054 convergence work in progress
+- **validation:** Prove cumulative lifecycle history
+- **validation:** Activate delegated ownership
+- **spec-0067:** Give Stage 90 pack members their own identity
+- **spec-0067:** Guide the full frontmatter key set from Stage 99
+- **spec-0067:** Bind each reference family to its own profile
+- **templates:** Give the runtime-governance entrypoint a common README form
+- **archive:** Read the successor graph one generation at a time
+- **lifecycle:** Give each reference role the lifecycle its Spec names
+- **lint:** Give Python the same report-and-rewrite lane as shell
+- **validation:** Route and admit the Stage 98 retention taxonomy
+- **validation:** Compose later sealed relocations of stable archive paths
+- **agents:** Bind provider native models to the capability tier
+- **codex:** Declare a per-role sandbox scope
+- **hooks:** Observe shell writes in the pre-edit guard
+- **codex:** Register the pre-action guard as a native hook
+- **evals:** Grade recorded agent responses at the evaluation boundary
+- **editor:** Expose the QA entry points as project tasks
+- **governance:** Adopt the knowledge surface with the rule that keeps it a map
+- **governance:** Adopt the prompt surface and give both surfaces real readers
+- **docs:** Enforce the outside-docs stage link boundary
+- **agents:** Give the Codex reasoning effort a registry owner
+- **qa:** Run both the global and the workspace Git hooks
+- **skills:** Give risk-report the scoring step its description promises
+- **validation:** Reject a stage route written out as a grammar
+- **skills:** Admit references, scripts and assets into a skill package
+- **skills:** Route every skill to the sibling that owns the adjacent question
+- **agents:** Admit the architect role and its projections
+- **agents:** Admit the governance-steward role and its projections
+- **agents:** Admit the ci-workflow-engineer role and its projections
+- **agents:** Admit the repo-tooling-engineer role and its projections
+- **agents:** Admit the agent-evaluator role and close the evaluation boundary
+- **agents:** Complete responsibility routing and activate SPEC-0076
+- **skills:** Admit the archive cutover procedure under doc-writer
+- **archive:** Move registry and validators to six dispositions
+- **archive:** Declare retention units, modes, and a citation table
+- **archive:** Decide archive citations from one registry table
+- **archive:** Retain units as exact Git objects and admit identity moves
+- Implement Archive Assessment Contract and Diagnostics
+- **platform:** Serve k8s hosts through a dedicated router on hy-k8s.home.arpa
+- **monitoring:** Collect k8s metrics in-cluster and remote-write them out
+- **platform:** Reach external services through host-published addresses
+- **monitoring:** Retire the metrics NodePorts of the static scrape
+- **platform:** Call Prometheus and Grafana through the external Traefik
+- **validation:** Run conftest from its pinned image when no binary exists
+- **platform:** Authenticate Kiali to Grafana with a Viewer token
+- **istio:** Send mesh traces over OTLP to the external Alloy
+- **argocd:** Send notifications to #hy-home-alerts
+- **spec-0085:** Verify archive envelopes against the default branch (([#95](https://github.com/buenhyden/hy-home.k8s/issues/95)))
+- **agents:** Keep gpt-6-astra to the Codex planning roles
+- **agents:** Bind Claude role models and effort through the registry
+- **agents:** Give every Claude role a search path through Bash
+- Allow owned skill resources and central gate selection
+- Audit external service contracts with owned skill checker
+- Reuse exact local QA evidence
+- Add offline platform validation assurance
+- **governance:** Normalize generation 10 document lifecycle
+- **docs:** Add explicit Task summary synchronization
+- Migrate shared operations profiles and consumers
+- Centralize task acceptance and preserve lifecycle evidence
+- **governance:** Prompt for requested Claude push, merge and PR commands
+- **memory:** Add the shared workspace memory store and CLI
+- **governance:** Disable native provider memory for the shared store
+- **claude:** Allow delivery commands and disable bypass mode
+- **codex:** Pin sandbox, approval and secret environment filtering
+- **codex:** Forbid destructive and secret-printing command prefixes
+- Allow Korean explanations in common agent docs
+- Adopt r13 residual local controls
+- **qa:** Gate the document lifecycle contract tests on their inputs
+- **workspace:** Track diagnostics and repo-support staging READMEs
+- **gitops:** Move IngressClass nginx to a neutral manifest before Traefik
+- **gitops:** Run Traefik side by side with ingress-nginx
+- **gitops:** Cut the k8s router over from ingress-nginx to Traefik
+- **governance:** Add change kinds, authoring prompts and a link-only check
+
+### Breaking Changes
+
+- **qa:** Consolidate local validation and SemVer delivery
+- **platform:** Adopt external data contract alignment
+
+### Changed
+
+- Consolidate AI agent rules, introduce new project documentation, and update core repository files.
+- Migrate local Kubernetes environment to k3d by removing previous infrastructure and application manifests and adding k3d cluster configuration.
+- Standardize quote usage and indentation across configurations, and update pre-commit hooks for hadolint and kube-linter.
+- Move Zizmor configuration to the repository root and update rule definitions from disabled to file-specific ignores.
+- Standardize documentation and specification paths to `docs/`, update agent rules and workflows, and refine LLM configuration.
+- Consolidate templates
+- Consolidate agent-specific guidance
+- Agent instruction root files
+- Agent instruction files with progressive disclosure and lazy-loading hub
+- Consolidate agent instructions into single agent-instructions.md per directory
+- Remove local Kubernetes
+- Centralize agent instructions and scopes
+- Simplify document templates by removing shape guidance and extensive boilerplate, and update path references.
+- Consolidate `specs` and `runbooks` directories under `docs/` and flatten template paths.
+- Normalize documentation paths, enforce metadata, and implement lazy-loading agent instructions with new ADRs, plans, runbooks, and specs.
+- Implement documentation refactor plan and enhance AI agent framework with new instructions and conduct standards.
+- Standardize documentation headers and add related document links across various documentation files.
+- Standardize ARD document naming to `*-ard.md` and update related references, READMEs, and documentation guidelines.
+- Rename 'Related Documents' to 'Canonical References' across runbooks and specs, and update document metadata.
+- Update documentation links, IDs, and metadata for consistency.
+- Simplify template paths for ARD and runbook templates.
+- Standardize documentation metadata with frontmatter, update internal links, and remove obsolete files.
+- Standardize documentation and template structure, introducing new manual templates and reorganizing `docs` directories.
+- Standardize documentation structure, templates, and guidelines across all document types.
+- Restructure documentation with a new hierarchical system and standardized templates, deprecating old specific documents and general project files.
+- Standardize and refine documentation templates by updating titles, content, and internal link formats.
+- Reorganize agent rules, scopes, and AI provider configurations.
+- Refine agent instructions, lazy loading protocol, persona rules, and SSoT taxonomy, and add top-level README.
+- Relocate and refine agent governance documentation from `docs/00.agent/` to `docs/00.agent-governance/` and update all internal references.
+- Enhance agent governance by introducing structured memory, a new documentation scope, and updating rules and definitions of done across existing scopes.
+- Restructure agent governance documentation by introducing new rules and provider directories, updating existing scopes, and removing obsolete files.
+- Enhance CI pipeline with path-based job filtering, static contract verification, and improved error handling in bootstrap scripts.
+- Modularize Azure Bicep infrastructure and expand documentation for multi-cloud platform operations
+- Simplify CI/CD pipelines, optimize repository automation, and remove legacy shell-based gates
+- Offload long-form RTK instructions from root shims to dedicated documentation and synchronize Codex TOML agent mirrors with Claude agent definitions.
+- Migrate postmortems to docs/10.incidents/postmortems, introduce repository quality gate CI, and update governance documentation.
+- Enhance CI path filtering, tighten security gate validation, and update repository governance documentation
+- Update agent governance documentation taxonomy and strengthen subagent protocol validation gates
+- Clarify harness catalog documentation and implement gateway/runtime regression checks in validation scripts
+- Consolidate policy SSoT by refactoring ABOUT.md as a router and enforcing branch prefix parity in quality gates.
+- Enforce repository root contract and validate input paths in manifest and secret scanning scripts
+- Reorganize documentation structure and align agent governance taxonomy
+- Reorganize references documentation by creating learning and versions subdirectories and migrating the tech stack inventory
+- Standardize documentation taxonomy and align canonical templates with strict relative link requirements
+- Refactor code structure for improved readability and maintainability
+- Integrate authored SSoT and deferred item overlays into 006 plan and enforce commit discipline in lifecycle hooks
+- Update agent governance, harden GitOps mutation boundaries, and complete workspace-harness documentation/governance audit tasks
+- Remove shell-static CI job and consolidate validation documentation in PR template
+- Centralize agent security and governance policies into standards.md and update provider configurations
+- Optimize agent gateway validation logic and flatten provider shim dependencies
+- **governance:** Centralize hook scripts and update event wiring
+- **governance:** Establish .agents as SSoT via symlinks
+- **templates:** Rename operation.template.md to policy.template.md and fix references globally
+- Update file paths in manifest
+- **templates:** Normalize document forms
+- **templates:** Remove legacy harness task form
+- **qa:** Delegate document checks to semantic validators
+- **hooks:** Drive local validation from affected surfaces
+- **contracts:** Add registry v5 body contracts
+- **templates:** Normalize canonical document forms
+- **contracts:** Add registry v6 program lineage
+- **contracts:** Add registry v7 lifecycle schema
+- **governance:** Migrate agent contract consumers
+- Retire the research collection from Current-pack governance
+- Complete WORK-105 document form cutover
+- **docs:** Normalize terminal SDLC routes
+- **scripts:** Read the published contracts as the registry authority
+- **docs:** Move the registry form schema out of the support collection
+- **scripts:** Move current registry reads off the retired combined file
+- **scripts:** Merge both published contracts in the closure authority
+- **scripts:** Repoint the WORK-109 approval and governance policy links
+- **governance:** Activate document lifecycle authority
+- **docs:** Converge SDLC packages
+- **validation:** Simplify document contracts
+- **validation:** Pin sealed cutover target
+- **docs:** Retire the combined Stage 99 registry file
+- Retire the active-corpus residue-closure validator
+- Split the active-corpus role-audit validator
+- Reduce Stage 98 to its ADR-0030 shape and retire the migrations validator
+- Retire the active-corpus eligibility validator
+- Retire the active-corpus retention validator
+- Retire three reference profiles that never routed a document
+- **agents:** Drop an unowned save location and an empty scaffold
+- **governance:** Retire the agent progress ledger
+- Retire the completed-history alias machinery
+- **spec-0065:** Retire the route_state transition machinery
+- **spec-0065:** Retire the progress append form and its two profiles
+- **spec-0065:** Retire the governance memory directory
+- **spec-0065:** Retire the append-contract machinery
+- **ci:** Remove reference inventory authority
+- **references:** Reconcile Stage 90 ownership
+- **ops:** Clarify operations document ownership
+- **validation:** Move routing registry
+- **validation:** Give each validation rule one owner
+- **spec-0067:** Converge Stage 03 identity and retire duplicate domain keys
+- **spec-0067:** Name tombstones by the sequence slot they vacate
+- **spec-0067:** Lead every Stage 98 filename with its number
+- **spec-0067:** Stop repeating identity inside the title
+- **spec-0067:** Leave one answer for which identity forms are current
+- **spec-0067:** Remove the last dead cutover admission
+- **docs:** Normalize document taxonomy, layer, version, and form identity
+- **docs:** Retire the Stage 03 package router
+- **governance:** Let the registry alone own the transition graph
+- **templates:** Name each reference form for the family it serves
+- **lifecycle:** Drop the transitional research state now it is empty
+- **lint:** Give every formatting and linting rule one owner
+- **github:** Rename the GitHub hub to repository-surface.md
+- **docs:** Adopt common document contract v9
+- **specs:** Converge current execution packages
+- **docs:** Converge requirements and architecture corpus
+- **templates:** Reduce document control plane
+- **validation:** Retire taxonomy transition controls
+- **governance:** Consolidate current agent and QA work
+- **governance:** Migrate shared authority to .agents
+- **archive:** Retain the completed Spec 0052 package
+- **validation:** Drop the duplicated Vault and ESO contract check
+- **agents:** Bind the Claude native scope to the registry
+- **hooks:** Give the shared write guard one owner outside a provider
+- **hooks:** Give Codex its own adapter for the shared write boundary
+- **governance:** Fold the seven responsibility documents into their router
+- **policy:** Give the deployment-safety rules one working owner
+- **qa:** Give kube-linter one owner that always reports a result
+- **qa:** Retire the second QA entrypoint and cite the supported one
+- **test:** Give the shared Git fixture one owner
+- **qa:** Separate the static contract check from the live checks
+- **test:** Let each registered gate own its own repository result
+- **qa:** Resolve the hosted profile from the gate set that owns it
+- **skills:** Return handoff edges and the RCA template to their owners
+- **skills:** Route docs-stage-routing to its owners instead of restating them
+- **skills:** Leave workspace-harness-audit only the audit's own discipline
+- **roles:** Make Role the boundary instead of a second summary
+- **skills:** Give vulnerability-patterns a procedure and move its catalog
+- **skills:** Give deployment-strategies a procedure and split its catalog
+- **skills:** Give k8s-security-audit a procedure and move its dimensions
+- **skills:** Give rca-methodology a procedure and move its techniques
+- **validation:** Retire the unreachable cross-document subtree
+- **validation:** Retire the unreachable lifecycle evidence cluster
+- **validation:** Drop frozen migration proofs no entrypoint reaches
+- **validation:** Remove admissions whose subjects no longer exist
+- **validation:** Resolve the duplicated frontmatter helper to its owner
+- **validation:** Remove dead and duplicate script logic
+- **validation:** Run each archive contract module once per profile
+- **tests:** List later optional frontmatter keys in one table
+- Align role skills and provider contracts
+- Colocate agent evaluations and close authority gaps
+- **qa:** Retire duplicate unit snapshots
+- **qa:** Separate recurring checks from local regressions
+- **qa:** Consolidate direct dependency pin checks
+- **qa:** Deduplicate full manifest syntax checks
+- **qa:** Retire blanket validation sweeps
+- Share current archive readers and retire unused cutover helpers
+- Share QA inputs and narrow validation ownership
+- Scope document bodies by changed inputs
+- **governance:** Stop the Claude baseline rereading gateway imports
+- **docs:** Derive an omitted multi-row Task summary in every reader
+- **qa:** Stop pinning chart versions in the ingress validator
+- **qa:** Check CI pin consistency instead of copied pin values
+- **qa:** Drop prose, retired-path and dead-surface checks
+- **qa:** Declare the ingress controller identity once
+- **qa:** Drop shell ingress checks owned by the ingress validator
+- **qa:** Give workflow rules one owner in the actions security validator
+- **qa:** Rename the CI metadata test and drop its duplicate cases
+- **qa:** Narrow script and test surfaces to the gates that read them
+- **templates:** Drop the orphaned document-migration-manifest profile
+
+### Continuous Integration
+
+- Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
+- Optimize workflows by offloading tasks to pre-commit action
+- **pre-commit:** Narrow hook scopes and sync manifest validation
+- **workflows:** Align CI path filters with pre-commit scopes
+- **github:** Prune stale dependabot targets and align shell checks
+- **pre-commit:** Fix commitizen hook args
+- **governance:** Align stale action inventory
+- Add validate-policy-gates to CI; scope post-validate to workspace; record P5 progress
+- **governance:** Harden shared asset validation triggers
+- Align scripts QA gate contracts
+- **qa:** Select jobs from affected-surface registry
+- **qa:** Pin explicit pre-commit validation environment
+- **evidence:** Enforce seven-day changelog retention
+- Unify GitHub Action pins and refresh recorded version inventory
+- Run the regression suite, and record Spec 0063's execution evidence
+- **validation:** Register the GitHub Actions security gate
+- Align QA guidance and GitHub routes
+- Add isolated protected PR provenance verifier
+- Attest complete main QA with protected App verdict
+- Verify and reuse matching main QA gates
+- Publish immutable validated main tags
+- Allow authenticated compare routes for QA reuse
+- **governance:** Retire hosted full QA execution
+- **qa:** Enforce shared style at commit and pull request
+- Validate pull request commit metadata
+- Validate a changed CI lock in the pull request style job
+
+### Documentation
+
+- Update git commit message template
+- **.github:** Update issue templates, policies, and repository config
+- Update root repository assets and AI instruction guides
+- Enhance README.md with badges, AI policy, and license info
+- Comprehensive update to root README.md
+- **.github:** Rename README.md to GITHUB_GUIDE.md
+- Update AI agent rules and project documentation reference
+- Add `CHANGELOG.md` and clear `CONTRIBUTING.md` content.
+- Update AGENTS.md to use relative paths for all rule links.
+- Add a comprehensive development workflow guide and instructions for installing pre-commit hook tools.
+- Standardize `core-infra` references to `infra` and enhance PRD, spec, and operations guide with new checklists and notes.
+- Enhance infrastructure specification with detailed personas, new operational and testing sections, and introduce an infrastructure README.
+- Formalize the infrastructure implementation plan with detailed sections and update the README with WSL2 specifics and enhanced setup instructions.
+- Improve project documentation
+- Refactor and update documentation
+- Remove collaboration, operations, and QA security guide files from README.md directory structure.
+- Update paths for specification and collaboration guide files.
+- Add Korean overviews to documentation refactor spec and plan, update PRD requirement IDs, and refine runbook metadata.
+- Standardize document metadata using YAML front matter and update PRD/story IDs.
+- Update ADR template filename example to use angle bracket placeholder syntax.
+- Standardize document metadata with YAML front matter and update README indices for clarity.
+- Refactor and harden documentation by fixing links, normalizing ADR metadata, adding new validation and hardening plans, and updating content.
+- Refine documentation goals, correct internal links, and simplify collaboration guide content.
+- Standardize document headings, remove redundant frontmatter, and refine README structures.
+- Add learning roadmap document.
+- Add compliance information and external references to agent documentation.
+- Update readme template.
+- Update README template.
+- Refine documentation formatting by updating template option separators, adjusting heading levels, and minor diagram cleanup.
+- Remove specific rule references for CI/CD pipelines and Git workflows from ABOUT.md.
+- Update and organize runbooks, guides, and operations documentation.
+- Clean up whitespace and formatting across documentation and project metadata files
+- Update ADRs for k3d topology and external service endpoint configurations
+- Update valkey-external port and synchronize platform expansion documentation
+- Update documentation for WSL2 k3d ArgoCD HA platform specifications and operations guides
+- Add infrastructure-to-theory learning roadmap document
+- Add new onboarding guides and operational runbooks for Kiali and Headlamp
+- Update documentation for guides and runbooks in hy-home.k8s
+- Add Grafana OAuth 401 root cause and anonymous access fix to kiali runbook
+- Add ArgoCD metrics observability documentation set
+- Add k8s observability operations policy, runbook, and guide index
+- Add app GitOps onboarding runbook and operations policy
+- **governance:** Align agent guidance with GitHub instruction model
+- **github:** Refresh repo ownership and PR checklist
+- **governance:** Update agent instruction model and clarify repository guidelines
+- **governance:** Mark P2 and P4 complete in progress.md
+- Update documentation with local tool dependencies and platform expansion status notes
+- Update project and documentation README files
+- Add script inventory remediation plan and task documentation, and update scripts README
+- Update agent governance with readiness and mutation boundaries and enforce cleanup of template residue in quality gate validation.
+- Update and standardize documentation across operations, guides, and project references
+- Standardize reference documentation structure and establish authority boundaries for the 90.references directory
+- Update documentation across all example directories for consistency and clarity
+- **operations:** Add local toolchain prerequisites to WSL2 setup guide
+- Align markdown link labels
+- Record template cross-link completion
+- **operations:** Align operations docs metadata
+- **operations:** Add reference maintenance runbook
+- **governance:** Record reference maintenance progress
+- **references:** Harden template cross-link guidance
+- **01.requirements:** PRD 정비 — 프론트매터 추가, 신규 PRD 2건 작성, README 통합
+- **requirements:** Clarify PRD currentness
+- Update architecture documentation and requirement specifications
+- Create documentation for Argo Notifications and Argo Rollouts progressive delivery architectures, specs, and execution plans
+- Normalize structure and headings across 04.execution READMEs
+- Consolidate operations documentation structure and add routing tables to README entrypoints
+- Clarify that learning roadmap exercises are offline concepts rather than infrastructure tasks
+- **templates:** Clarify template link basis
+- **governance:** Record template link-basis progress
+- Normalize all README entrypoints to match repository template structure by adding purpose statements and link basis sections.
+- **governance:** Enforce stage document templates
+- Update metadata and structure across various documents and templates
+- Update documentation templates for clarity and consistency
+- Update specifications and templates for clarity and traceability
+- **readme:** Align documentation entrypoints
+- **templates:** Strengthen traceability examples
+- **operations:** Clarify historical policy boundaries
+- **governance:** Record documentation alignment progress
+- **governance:** Define structural template coverage
+- **runtime:** Align WSL-native Docker documentation
+- **governance:** Record runtime mirror remediation
+- **readme:** Standardize README link basis
+- **execution:** Record governance hardening evidence
+- **governance:** Record workspace purpose audit
+- **execution:** Close historical platform baseline
+- Record spec execution implementation audit
+- **governance:** Align harness routing boundaries
+- **execution:** Record workspace harness gap analysis
+- **governance:** Add workspace harness audit follow-up
+- **execution:** Record implementation skill mapping
+- **execution:** Record hybrid workspace refresh
+- **execution:** Record office-hours reflection follow-up
+- **execution:** Record brainstorming reflection follow-up
+- **execution:** Plan approved P3 remediation
+- **execution:** Record P3 runtime remediation evidence
+- **execution:** Record CEO review coverage overlay
+- **execution:** Record executing-plans follow-up
+- **governance:** Record skill quality follow-up
+- **governance:** Add docs stage conformance skill
+- **graphify:** Update workspace knowledge graph
+- **sdd:** Record workspace overlay evidence
+- **hooks:** Clarify manifest coverage matching
+- **governance:** Clarify Codex provider routing
+- **sdd:** Record P0 workspace revalidation
+- **governance:** Record task-unit commit follow-up
+- **governance:** Record approval audit PR evidence
+- **governance:** Record superseded dependabot PR
+- **governance:** Refresh PR check evidence
+- **governance:** Record post-merge completion audit
+- **governance:** Harden workspace static guardrails
+- **sdd:** Record workspace guardrail evidence
+- **runtime:** Record temporary kubeconfig validation
+- **runtime:** Record default kubeconfig repair
+- **traefik:** Record external gateway proof gap
+- **governance:** Record residual area audit
+- Complete workspace-wide P0 audit (VAL-SPC-006-059) and update agent skill parity mirrors
+- Add spec/plan/task for docs-governance-consistency (007)
+- **templates:** Add Runbook Type section to runbook.template.md and fix 0001, 0003
+- Remove superseded files, move harness audit to 90.references/audits, fix cross-refs
+- **ops/policies:** Add AI Agent Policy Section to all 7 policy files
+- **ops/runbooks:** Standardize Runbook Type values, add Agent Operations to all 10 runbooks
+- **ops/guides:** Demote orphaned H2 procedure sections to H3, move validation section in 0002
+- **execution:** Standardize status to done, add Agent Rollout sections
+- **execution:** Mark docs-governance-consistency plan/task as done
+- Normalize owner field and add CI/CD reference guide
+- Update README sync rules
+- Update QA scope, persona responsibilities, and stage checklists for improved verification standards
+- Update QA governance
+- **governance:** Enforce workspace contracts in core documentation
+- **governance:** Define canonical model policy across platforms
+- **governance:** Complete common governance documentation and missing symlinks
+- **governance:** Reconcile harness catalog to hybrid SSoT with model policy
+- **governance:** Separate provider-specific agent files and restore local model hierarchies
+- **execution:** Add governance refactoring execution plans and tasks
+- **governance:** Update model policy baseline to May 2026 and unify harness mirrors
+- **agents:** Add Gemini-specific workspace rules and QA/CI/CD workflow definitions
+- **governance:** Align Codex model harness
+- **governance:** Normalize policy document routing
+- **execution:** Record Codex harness alignment
+- **governance:** Define Stage 00 adapter model
+- **templates:** Normalize metadata defaults
+- **execution:** Close adapter redesign tasks
+- **governance:** Map Phase 1 skill axes
+- **governance:** Add agent platform traceability
+- **governance:** Record Phase 1 decision follow-up
+- **guides:** Align operations guide README template
+- **policies:** Align operations policy README template
+- **operations:** Align runbook and incident READMEs
+- **governance:** Record operations docs conformance
+- **governance:** Reconcile Stage 00 Codex coverage
+- **governance:** Close Codex QA routing gap
+- **platform:** Align current implementation docs
+- **operations:** Refresh current platform references
+- **operations:** Document sealed Vault recovery boundary
+- **governance:** Record phase alignment evidence
+- **archive:** Archive stale Headlamp and governance docs
+- Align active contracts with current implementation
+- Record alignment progress evidence
+- Update graphify branch-switch outputs
+- Stabilize graphify regenerated outputs
+- **governance:** Define four-element harness contract
+- **governance:** Codify documentation language and drift policy
+- **governance:** Add harness governance v2 overlay
+- **language:** Add policy and validation
+- **language:** Translate stage execution records
+- **language:** Normalize overview headings
+- **research:** Design workspace harness research pack
+- **research:** Plan workspace harness research pack
+- **research:** Scaffold workspace harness research references
+- **research:** Document workspace governance baseline
+- **research:** Align governance baseline index status
+- **research:** Analyze harness and loop engineering
+- **research:** Compare provider harness implementations
+- **research:** Complete provider source ledger
+- **research:** Correct Codex MCP config status
+- **research:** Map SDD SDLC CI QA formatting practices
+- **research:** Finalize workspace harness research pack
+- **research:** Align research pack completion state
+- **spec:** Design workspace harness implementation audit pack
+- **plan:** Plan workspace harness implementation audit pack
+- **audit:** Scaffold workspace harness audit references
+- **audit:** Align reference audit role taxonomy
+- **audit:** Assess workspace governance implementation
+- **audit:** Assess harness and loop implementation
+- **audit:** Fix harness loop audit section contract
+- **audit:** Restore harness loop audit template sections
+- **audit:** Assess provider harness implementation
+- **audit:** Assess SDLC delivery implementation
+- **audit:** Clarify audit pack index completion
+- **audit:** Finalize workspace harness implementation audit pack
+- **spec:** Define template governance migration
+- **plan:** Plan template governance migration
+- **templates:** Add support contract baseline
+- **templates:** Move template forms into categories
+- **templates:** Normalize frontmatter profiles
+- **templates:** Complete governance migration sync
+- **references:** Consolidate reference data category
+- **operations:** Update incident bundle layout
+- **spec:** Define template governance audit enhancement
+- **plan:** Plan template governance audit enhancement
+- **audit:** Record template governance baseline
+- **templates:** Clarify current support contracts
+- **validation:** Guard template support drift
+- **audit:** Verify authored template usage
+- **audit:** Complete template governance audit enhancement
+- **audit:** Address final review findings
+- **plan:** Mark audit execution steps complete
+- **plan:** Align validator guardrail snippet
+- **spec:** Define workspace document governance hardening
+- **plan:** Plan workspace document governance hardening
+- **audit:** Record workspace document governance baseline
+- **governance:** Harden document contract surfaces
+- **governance:** Align provider entrypoint contracts
+- **governance:** Apply document contract cleanup
+- **validation:** Finalize workspace governance hardening
+- **spec:** Define workspace document contract normalization
+- **plan:** Plan workspace document contract normalization
+- **audit:** Inventory workspace document contract drift
+- **templates:** Normalize document contract profiles
+- **sdlc:** Apply active document profiles
+- **audits:** Frame historical evidence contracts
+- **ci:** Align QA references and formatting evidence
+- **validation:** Reconcile document governance gates
+- **spec:** Define agent governance contract normalization
+- **plan:** Plan agent governance contract normalization
+- **task:** Track agent governance normalization evidence
+- **task:** Record T-001 validation evidence
+- **governance:** Normalize agent provider contracts
+- Refine heading extraction documentation by removing redundant spaces in regex patterns
+- **governance:** Align scope subagent dispatch wording
+- **adapters:** Align provider agent surfaces
+- **ci:** Align agent governance validation gates
+- **validation:** Close agent governance normalization
+- **spec:** Define active control surface hardening
+- **plan:** Plan active control surface hardening
+- **task:** Track active control surface hardening evidence
+- **governance:** Define active control surface boundaries
+- **ci:** Align active GitHub control surfaces
+- **validation:** Align active control surface checks
+- **validation:** Close active control surface hardening
+- **spec:** Define workspace engineering research pack
+- **plan:** Plan workspace engineering research pack
+- **task:** Track workspace engineering research pack
+- **research:** Scaffold workspace engineering research pack
+- **research:** Refresh workspace governance baseline
+- **research:** Refresh harness loop and provider sources
+- **research:** Clarify WER-004 reference boundaries
+- **research:** Refresh SDLC CI QA security sources
+- **research:** Clarify WER-005 source currency
+- **research:** Add Kubernetes infrastructure security reference
+- **research:** Align research index freshness date
+- **research:** Add automation workflow QA reference
+- **research:** Clarify WER-007 closure scan
+- **research:** Address WER-007 review findings
+- **spec:** Define workspace engineering audit pack
+- **plan:** Plan workspace engineering audit pack
+- **task:** Track workspace engineering audit pack
+- **audits:** Folderize dated audit reports
+- **audits:** Add governance harness provider audit
+- **audits:** Add SDLC CI QA automation audit
+- **audits:** Add Kubernetes infrastructure security audit
+- **audits:** Add implementation roadmap audit
+- **audits:** Close workspace engineering audit pack
+- **references:** Normalize Stage 90 dated packs
+- **specs:** Add template path numbering design
+- **plans:** Add template path numbering plan
+- **tasks:** Add template path numbering evidence
+- **requirements:** Number active PRD files
+- **requirements:** Refresh PRD graph references
+- **templates:** Number PRD and spec route contracts
+- **governance:** Enforce numbered document routes
+- **validation:** Close template path numbering migration
+- **specs:** Define workspace contract governance normalization
+- **plans:** Plan workspace contract governance normalization
+- **tasks:** Start workspace contract governance evidence
+- **tasks:** Refine workspace evidence handoff
+- **governance:** Define workspace staging boundary
+- **governance:** Clarify workspace dry-run boundary
+- **governance:** Normalize document contract drift
+- **tasks:** Clarify workspace drift deferrals
+- **tasks:** Clarify workspace drift evidence
+- **tasks:** Refine workspace progress deferral
+- **qa:** Align control surface validation contracts
+- **validation:** Close workspace contract governance normalization
+- **plans:** Mark workspace governance plan done
+- **specs:** Add SDLC lifecycle contract spec
+- **plans:** Add SDLC lifecycle contract plan
+- **governance:** Align SDLC lifecycle contracts
+- **specs:** Align lifecycle numbering placeholders
+- **archive:** Add archive tombstone metadata contract
+- **tasks:** Record SDLC lifecycle contract execution
+- **validation:** Enforce SDLC lifecycle contract gates
+- **governance:** Normalize agent adapter contracts
+- **specs:** Define control cloud doc normalization
+- **governance:** Route cloud examples as local snapshots
+- **examples:** Normalize cloud snapshot frontmatter
+- **examples:** Align cloud snapshot sections
+- **tasks:** Record cloud doc normalization validation
+- **specs:** Define Stage 03 04 repo-static gap closure
+- **plans:** Add Stage 03 04 repo-static gap closure plan
+- **tasks:** Start Stage 03 04 repo-static gap closure
+- **tasks:** Classify Stage 03 04 repo-static gaps
+- **execution:** Close WER repo-static lifecycle drift
+- **tasks:** Route operator-approved Stage 03 04 follow-ups
+- **tasks:** Record Stage 03 04 repo-static gap closure
+- **references:** Add AI agents roster and gap analysis research reference
+- **tasks:** Record WER-008 AI agents roster reference evidence
+- **references:** Correct observability and network manifest precondition facts
+- **specs:** Define observability and network review agents
+- Add plan and task records for 2026-07-07 research pack refresh
+- Scaffold 2026-07-07 research pack and create README
+- Add governance baseline and harness engineering research documents
+- Add provider harness implementation status reference
+- Add spec SDLC CI/QA formatting reference document
+- Add kubernetes infrastructure security reference document
+- Add automation pipeline workflow QA reference document
+- Add AI Agents roster and gap analysis reference document
+- Update research index and progress ledger for 2026-07-07 pack
+- Align plan and task files with repository templates and relative links
+- Finalize task and plan files status as done
+- **research:** Add SDLC document taxonomy to 07-07 spec-sdlc reference
+- **memory:** Record research pack SDLC taxonomy supplement pass
+- **research:** Add new-agent addition candidates to 07-07 ai-agents reference
+- **memory:** Record research pack second supplement pass
+- **research:** Deepen harness/loop reference from external sources
+- **memory:** Record research pack external-source deepening pass
+- **memory:** Record research pack full defect scan pass
+- **research:** Add task-characteristic model configuration to ai-agents roster
+- **research:** Add reasoning/effort control dimension to provider matrix
+- **research:** Add loop termination and safety bounds to loop engineering
+- **memory:** Record wer pack model-config and loop-termination deepening
+- **spec:** Define current research pack hardening
+- **plan:** Add current research hardening plan
+- **execution:** Scaffold current research hardening evidence
+- **execution:** Complete task record index
+- **research:** Harden workspace governance baseline
+- **research:** Reconcile governance adapter inventory
+- **research:** Deepen spec driven SDLC and QA analysis
+- **research:** Correct SDLC QA evidence ownership
+- **research:** Track formatting source freshness
+- **research:** Deepen harness and loop engineering
+- **research:** Refresh provider and model analysis
+- **research:** Complete provider routing evidence
+- **research:** Correct automation and CI topology
+- **research:** Deepen Kubernetes infrastructure security
+- **research:** Clarify secret control evidence
+- **research:** Refresh AI agent roster and routing analysis
+- **research:** Clarify upstream agent overlap evidence
+- **research:** Close current pack coverage and integration
+- **research:** Reconcile current pack cross references
+- **plan:** Align final review and closure order
+- **plan:** Make final validation evidence durable
+- **execution:** Record provisional current research closure
+- **execution:** Correct provisional closure inventory
+- **execution:** Close current research hardening evidence
+- **execution:** Qualify volatile upstream observations
+- **audit:** Record Stage 90 integration design
+- **audit:** Add Stage 90 implementation plan
+- **research:** Define integrated audit measurement contract
+- **plan:** Align agent QA ownership
+- **research:** Harden audit traceability evidence
+- **research:** Deepen SDLC and frontmatter benchmark
+- **research:** Correct SDLC schema and anchors
+- **research:** Clarify SDLC authority and evidence
+- **research:** Add vibe coding and agent QA controls
+- **research:** Refresh harness and provider controls
+- **research:** Refresh governance delivery and platform evidence
+- **research:** Correct platform image inventory
+- **research:** Pin governance history count
+- **audit:** Finalize evidence and scoring contract
+- **audit:** Separate provider and model-routing ownership
+- **audit:** Clarify no-action rows and task history
+- **audit:** Assess governance harness and provider parity
+- **audit:** Align provider audit verdicts and ownership
+- **audit:** Align provider evidence confidence
+- **audit:** Assess SDLC lifecycle and frontmatter
+- **audit:** Correct PRD requirement identity count
+- **audit:** Assess delivery quality and automation
+- **audit:** Route adapter inventory to canonical audit
+- **audit:** Assess Kubernetes infrastructure and security
+- **audit:** Correct Vault policy maturity
+- **audit:** Assess agents models and vibe coding
+- **audit:** Correct shared-role validation maturity
+- **audit:** Route integrated remediation roadmap
+- **audit:** Correct remediation ownership and dependencies
+- **audit:** Order remediation phase dependencies
+- **audit:** Preserve remediation lane ownership
+- **audit:** Prepare Current audit integration review
+- **research:** Remove unreproducible OpenAI redirect claim
+- **audit:** Publish Current implementation audit pack
+- **spec:** Define roster currentness normalization design
+- **plan:** Plan roster currentness normalization
+- **execution:** Start roster currentness workstream
+- **audits:** Normalize audit pack information architecture
+- **audits:** Clarify relocated plan authority
+- **specs:** Reconcile lifecycle and current ownership
+- **plans:** Reconcile execution evidence links
+- **governance:** Close roster currentness evidence
+- **governance:** Record final review remediation
+- **governance:** Record parser review remediation
+- **design:** Define workspace document assurance program
+- **design:** Clarify template and README handoffs
+- **plans:** Define document assurance execution program
+- **execution:** Start document registry tranche
+- **validation:** Close document registry evidence
+- **execution:** Start template consolidation tranche
+- **research:** Record template format evidence
+- **governance:** Consolidate template support ownership
+- **templates:** Close consolidation evidence
+- **execution:** Start readme profile tranche
+- **readme:** Migrate repository and index profiles
+- **readme:** Migrate snapshot pack profiles
+- **readme:** Migrate implementation and workspace profiles
+- **readme:** Close profile migration evidence
+- **execution:** Start semantic document validation
+- **execution:** Start authored document migration
+- **migration:** Inventory authored document dispositions
+- **migration:** Normalize active sdlc design documents
+- **migration:** Normalize execution and operations documents
+- **migration:** Normalize governance references and archive links
+- **migration:** Consolidate cloud example documentation
+- **migration:** Retire remaining document aliases
+- **execution:** Start affected surface agent qa
+- **agents:** Align provider qa evidence contracts
+- **execution:** Start protected surface hardening
+- **security:** Close protected surface hardening evidence
+- **program:** Close document assurance lifecycle
+- **governance:** Align strict validation freshness
+- **sdlc:** Define template lifecycle normalization
+- **execution:** Plan template lifecycle normalization
+- **governance:** Separate template support authority
+- **sdlc:** Migrate current core lifecycle documents
+- **operations:** Migrate current operating documents
+- **execution:** Close template lifecycle normalization
+- **sdlc:** Define lifecycle evidence consolidation program
+- **sdlc:** Address lifecycle design review gaps
+- **execution:** Plan authority lineage foundation
+- **audit:** Reconcile current lineage dispositions
+- **execution:** Close authority lineage foundation
+- **execution:** Plan document lifecycle contract
+- **execution:** Clarify DSLC005 stage authoring scope
+- **execution:** Close document schema lifecycle contract
+- **execution:** Plan archive record workspace boundary
+- **sdlc:** Close archive and workspace tranche
+- **sdlc:** Record archive tranche postflight
+- **sdlc:** Pin archive postflight range
+- **execution:** Plan active corpus retention
+- **sdlc:** Record active corpus census postflight
+- **sdlc:** Record active corpus eligibility postflight
+- **sdlc:** Record Spec 031 archive batch postflight
+- **sdlc:** Record Spec 032 archive batch postflight
+- **sdlc:** Record Spec 033 archive batch postflight
+- **sdlc:** Record Spec 034 archive batch postflight
+- **sdlc:** Record Spec 035 archive batch postflight
+- **sdlc:** Record Spec 036 archive batch postflight
+- **sdlc:** Record ACER-004 role audit postflight
+- **sdlc:** Record ACER-005 residue closure postflight
+- **sdlc:** Close active corpus retention tranche
+- **sdlc:** Record Spec 037 closure postflight
+- **governance:** Record archive authority postflight
+- **agent-governance:** Define provider-native harness program
+- **execution:** Activate reference information architecture
+- **execution:** Correct reference baseline transition model
+- **execution:** Close reference design review gaps
+- **sdlc:** Close reference information architecture tranche
+- **sdlc:** Record reference architecture postflight
+- **sdlc:** Settle reference architecture baseline
+- **agent-governance:** Rebaseline foundation-first program design
+- **agent-governance:** Align closure evidence semantics
+- **execution:** Activate GitHub CI QA evidence
+- **execution:** Record Spec039 activation evidence
+- **qa:** Enforce all-files completion evidence
+- **qa:** Record GitHub CI integration evidence
+- **sdlc:** Close GitHub CI and QA evidence tranche
+- **sdlc:** Record Spec039 closure postflight
+- **execution:** Activate contract cutover program closure
+- **sdlc:** Record CCPC001 postflight
+- **tests:** Retire archive authority wording
+- **architecture:** Draft program closure evidence decision
+- **sdlc:** Reconcile CCPC002 closure evidence
+- **audit:** Restore protected roadmap frontmatter
+- **governance:** Close CCPC002 evidence matrix
+- **architecture:** Activate program closure decision
+- **sdlc:** Close CCPC003 whole-branch evidence
+- **sdlc:** Close document lifecycle program
+- **sdlc:** Record Spec040 closure postflight
+- **sdlc:** Activate Stage 00 agent governance contract
+- **sdlc:** Record Spec041 activation postflight
+- **sdlc:** Record Spec041 harness evidence
+- **sdlc:** Record Spec041 qa checkpoint
+- **sdlc:** Close Spec041 agent governance contract
+- **sdlc:** Record Spec041 closure postflight
+- **sdlc:** Reconcile Spec041 terminal evidence
+- **sdlc:** Activate provider runtime evidence tranche
+- **sdlc:** Record Spec042 activation postflight
+- **sdlc:** Close provider evidence tranche
+- **sdlc:** Record Spec042 closure postflight
+- **sdlc:** Activate agent loop lifecycle
+- **memory:** Record spec043 activation postflight
+- **sdlc:** Record checkpoint lifecycle evidence
+- **sdlc:** Record loop routing evidence
+- **sdlc:** Record loop boundary remediation
+- **sdlc:** Close agent loop lifecycle
+- **sdlc:** Record Spec043 closure postflight
+- **sdlc:** Activate agent roster admission
+- **memory:** Record spec044 activation postflight
+- **memory:** Record spec044 area001 postflight
+- **memory:** Record spec044 area002 postflight
+- **memory:** Record spec044 area003 postflight
+- **agent:** Record AREA-004 postflight evidence
+- **agent:** Reconcile model fitness governance
+- **agent:** Close Spec 044 roster readiness
+- **agent:** Record Spec 044 closure postflight
+- **agent:** Activate Spec 045 CI QA cutover
+- **memory:** Record Spec 045 activation postflight
+- **memory:** Record AGQC-001 CI topology postflight
+- **memory:** Record AGQC-002 CI contract postflight
+- **memory:** Record AGQC-003 legacy cutover postflight
+- **memory:** Record AGQC-004 QA postflight
+- **memory:** Record AGQC-005 checkpoint postflight
+- **agent:** Close Spec 045 CI QA cutover
+- **agent:** Record Spec 045 closure postflight
+- **agent:** Activate Spec 046 program closure
+- **agent:** Record Spec 046 activation postflight
+- **agent:** Record closure contract postflight
+- **agent:** Record closure routing postflight
+- **agent:** Activate governance successor decision
+- **agent:** Record decision readiness postflight
+- **agent:** Record final QA review evidence
+- **agent:** Record AGPC-003 evidence postflight
+- **agent:** Close agent governance program documents
+- **agent:** Record governance closure postflight
+- Define repository delivery assurance program
+- Specify current surface and stash reconciliation
+- Specify github routing and ci evidence
+- Specify platform validation and security evidence
+- Specify example iac and validator qa
+- Specify repository assurance integration and closure
+- Record repository assurance design review
+- Plan current surface and stash reconciliation
+- Plan github routing and ci evidence
+- Plan platform validation and security evidence
+- Plan example iac and validator qa
+- Plan repository assurance integration and closure
+- Make closure worktree cleanup portable
+- Align assurance plans with sdd task briefs
+- Activate repository delivery decision
+- Activate spec 047 lifecycle and extend document validators
+- Add 2026-08-07 workspace engineering research collection
+- Record the 2026-08-07 research refresh in the progress ledger
+- Fix code-span spacing in the progress ledger entry
+- Consolidate same-purpose research documents into a supersession map
+- Record the research consolidation pass in the progress ledger
+- Move the 2026-08-07 research into the research collection
+- Merge the carried-forward 2026-07-04 facts into their 2026-07-07 owners
+- Record the research file merge in the progress ledger
+- Define the document taxonomy consolidation program
+- Correct the execution-status finding in Spec 052
+- Plan the document taxonomy consolidation program
+- Correct the test runner and record the pre-existing suite state
+- Activate spec 052 and suspend the delivery assurance program
+- State PRD-007 as execution-paused and close the WORK-000 row
+- Design consolidated workspace research pack
+- Activate research pack consolidation
+- Support direct approval standalone execution
+- Establish consolidated research pack
+- Research harness and agent providers
+- Research SDLC and knowledge architecture
+- Research Kubernetes infrastructure security
+- Research CI CD and quality gates
+- Research agents models and memory
+- Migrate research pack consumers
+- Retire predecessor research packs
+- Close research pack consolidation
+- Design workspace governance audit
+- Activate workspace governance audit
+- Establish governance audit pack
+- Audit workspace governance contracts
+- Audit spec driven documentation system
+- Audit ci and qa controls
+- Audit harness and loop controls
+- Audit knowledge and memory controls
+- Audit agent system and roles
+- Audit security and approval boundaries
+- Classify governance remediation and cleanup
+- Record WGIA-011 review evidence
+- Cut over current governance audit
+- Record governance no-deletion result
+- Close workspace governance audit
+- Design WER gap-only research refresh
+- Plan WER gap-only research refresh
+- Activate WER gap-only research refresh
+- Classify WER gap-only research scope
+- Research WER document and validation gaps
+- Research WER Kubernetes security gaps
+- Reconcile WER gap-only research evidence
+- Resolve WER whole-branch review findings
+- Correct WER pack provider wiring and freshness facts
+- Sharpen WER pack precision and absence statements
+- Close Spec 055 lifecycle with truthful validation evidence
+- Register WER follow-up candidates without implementing them
+- Index WER research findings by governance scope
+- Re-check WER external source freshness
+- Record persistent diataxis re-check failure
+- Record candidate re-verification and deferred coupling
+- Recover orphaned taxonomy-program findings
+- Verify Diataxis claims at source and close the profile candidate
+- Reconcile WERG terminal traceability
+- Reconcile WER completion evidence
+- Design Partial DEFER incremental research refresh
+- Plan Partial DEFER incremental research refresh
+- Activate Partial DEFER research refresh
+- Fix Partial DEFER activation review findings
+- Classify Partial DEFER refresh scope
+- Refresh agent model and memory evidence
+- Refresh Kubernetes infrastructure security evidence
+- Refresh Guide and Diataxis evidence
+- Reconcile OIDC summary recovery contract
+- Refresh GitHub CI and validation evidence
+- Reconcile Partial DEFER refresh evidence
+- Close Partial DEFER research refresh
+- Reconcile Partial DEFER final review evidence
+- Define workspace research consistency and partial refresh
+- Plan workspace research consistency and partial refresh
+- Correct plan registry expectation for graphify removal
+- Admit Spec Task Plan document-family owners
+- Activate workspace research consistency refresh
+- Scope the cleanup consumer check to real consumers
+- Refresh agent governance and memory evidence
+- Refresh Kubernetes infrastructure and security evidence
+- Refresh Guide and documentation architecture evidence
+- Refresh CI CD Actions and QA evidence
+- Reproject scope index and reconcile cross-links
+- Close workspace research consistency refresh
+- Record the quality-gate restoration in the durable ledger
+- Reconcile topic counts and record closure registration
+- Define workspace research full-corpus refresh cycle
+- Record full-corpus re-observation of all thirty-six owner rows
+- Close blocking classes and re-project governance scopes
+- Reconcile the graphify tracking contract with tracked reality
+- Reconcile pack counts and cross-links for the full-corpus cycle
+- Register and close the full-corpus refresh cycle
+- Close the cycle's two carried limitations with executed evidence
+- Repoint two redirecting Codex links in the model policy
+- Correct the cycle handoff to record completed integration
+- Withdraw an incorrect kube-state-metrics RBAC claim
+- Record the platform currency defect closure cycle
+- Close the platform currency defect closure cycle
+- Record the workload security context baseline cycle
+- Close the workload security context baseline cycle
+- Record the Pod Security Standards staged adoption decision
+- Correct two unverified claims in ADR 0024
+- Survey pod security compliance and evaluate Istio CNI adoption
+- Record the compliance survey and CNI evaluation cycle
+- Record the PSS remediation sweep and CNI adoption cycle
+- Record the PSS per-namespace adoption cycle
+- Assign scope ownership for .github
+- Decline commit-SHA pinning of targetRevision
+- Hold the k3s pin and record why the version string understates the change
+- Record the open-item closure and deferred-upgrade cycles
+- Rebaseline SDLC governance design
+- Activate document taxonomy implementation plan
+- Accept the document taxonomy decision
+- Correct closure validator inventory
+- Correct ACER helper baseline counts
+- Archive unmatched execution history
+- Record terminal taxonomy amendment
+- Clarify terminal taxonomy contracts
+- Close terminal artifact identity grammar
+- Retire authored api spec profile
+- Require complete api spec consumer retirement
+- Close architecture description corpus transition
+- Co-locate execution records with specs
+- Rehome stage 98 archive records
+- Backfill stable artifact identities
+- Define SDLC governance consolidation
+- Define control-plane simplicity boundary
+- Adopt package-oriented document taxonomy
+- Define package-scoped requirement identities
+- Order package foundation before governance cutover
+- Rebaseline plan 0054 onto the package-oriented topology
+- Record the merge validation closure in the progress ledger
+- Record the Stage 99 registry authority cutover in the progress ledger
+- Establish authority-first SDLC convergence
+- Align Spec 0054 execution plan
+- Define full-corpus research reverification
+- Plan full-corpus research reverification
+- Activate full-corpus research reverification
+- Clarify reverification activation lifecycle
+- Record full-corpus research evidence intake
+- Recover helper workflow after temp loss
+- Correct helper review artifact class
+- Close full-corpus evidence intake review
+- Authorize allocation checker recovery
+- Reverify agent engineering research
+- Close agent engineering review
+- Reverify provider environment research
+- Close provider environment review
+- Reverify SDLC and documentation research
+- Close SDLC documentation review
+- Reverify platform and security research
+- Close platform security review
+- Record WRFR-006 remote recovery gate
+- Record WRFR-006 remote incident contract
+- Record WRFR-006 OIDC schema incident
+- Clarify WRFR-006 canonical class order
+- Reverify delivery and quality research
+- Close delivery quality review
+- Define shared integration checker recovery
+- Approve shared integration checker
+- Define Stage 90 transition guard recovery
+- Integrate full-corpus research evidence
+- Close shared research integration review
+- Record WRFR007 provenance blockers
+- Reconcile WRFR007 traceability
+- Close WRFR007 correction review
+- Define WRFR007 Path B recovery
+- Correct WRFR007 recovery contract
+- Record WRFR007 fix evidence
+- Withdraw WRFR007 shared projection
+- Reapply WRFR007 shared projection
+- Refresh provider harness research
+- Refresh platform quality research
+- Register Spec0054-compatible research gaps
+- **research:** Refresh architecture practice sources
+- **research:** Reconcile current research scope
+- **research:** Complete revalidation source routing
+- **research:** Record approved closeout disposition
+- **spec:** Design the governance invariant consolidation
+- **spec:** Expand the Spec 0063 work breakdown into executable steps
+- **spec:** Record the WP-001 governance diagnosis
+- Correct the service mesh policy's declared systems
+- **spec:** Revise VAL-GIC-005 to the invariant that holds
+- **archive:** Open MIG-0006 for the unroutable reference profiles
+- **spec-0058:** Open TSK-0058-0008 so it can be closed as not executed
+- **spec-0063:** Close the lifecycle, and finish the half-done cleanups
+- **spec-0064:** Design the agent governance surface consolidation
+- **spec-0064:** Activate the standalone execution relation
+- **spec-0064:** Close the lifecycle, and record the blocked retirement
+- **archive:** Open MIG-0007 for the progress ledger retirement
+- **archive:** Open MIG-0008 for the progress append form
+- **archive:** Record MIG-0008 as a blocked retirement, not an executed one
+- **spec-0054:** Open WP-012 and record its execution
+- **spec-0054:** Close WP-012
+- **spec-0065:** Design the transition residue retirement
+- **spec-0065:** Activate the standalone execution relation
+- **spec-0065:** Record the WP-001 classification
+- **spec-0065:** Close the transition residue retirement
+- **spec-0066:** Design the validation tooling ownership restructure
+- **governance:** Define corpus and validation ownership
+- **spec-0054:** Rebaseline WP-003 execution
+- **spec-0054:** Align WP-003 provenance boundary
+- **governance:** Activate context and memory policy
+- **governance:** Keep memory policy routing thin
+- **spec-0054:** Prioritize reference cleanup
+- **spec-0054:** Hand off to reference review
+- **spec-0054:** Isolate archive dependencies
+- **references:** Record Stage 90 dispositions
+- **spec-0054:** Hand off to reference cutover
+- **platform:** Route version facts to direct sources
+- **ops:** Record operations document dispositions
+- **spec-0054:** Hand off to validation ownership
+- **spec-0066:** Capture validation baseline
+- **spec-0054:** Record delegated validation ownership acceptance
+- **spec-0066:** Close delegated validation tooling ownership
+- **spec-0067:** Open artifact identity and filename normalization
+- **spec-0067:** Record the identity and filename baseline
+- **spec-0067:** Record the identity cutover results and open the package
+- **spec-0067:** Close artifact identity and filename normalization
+- **spec-0067:** Record both residual items as closed
+- **spec-0071:** Record the measured verification evidence
+- **governance:** Stop restating the frontmatter contract in policy prose
+- **specs:** Restate the lifecycle table as three reference shapes
+- **governance:** Promote the formatting and linting policy to active
+- **readme:** Give every top-level tree a profiled README
+- **specs:** Re-verify the current-corpus and archive dispositions
+- **specs:** Decide which document forms the repository actually needs
+- **specs:** Add the unclaimed provider residue and sequence the shared rewrites
+- **specs:** Complete the WP-011 parent handoff
+- **specs:** Activate SPEC-0054-TSK-0013 and record the WP-013 entry release
+- **specs:** Remove the completed Spec 0067 package and its index entries
+- **architecture:** Propose ADR-0032 terminal document retention
+- **specs:** Retain completed Spec 0067 under the Stage 98 retention tree
+- **specs:** Retain the remaining forty-nine completed Stage 03 packages
+- **governance:** Define the four Stage 98 directories and the retention duty
+- **archive:** Relocate the seventeen supersession records to superseded/
+- **architecture:** Bound retention by consumer zero and the package unit
+- **specs:** Retain terminal Spec 0058 as one package
+- **research:** Reproject current responsibility routing
+- **spec-0062:** Record current-main delta gate
+- **research:** Preserve dated scope evidence
+- **spec-0062:** Record preservation correction
+- **architecture:** Accept retention and v9 decisions
+- **task:** Record v9 handoff evidence
+- **governance:** Define Stage 00 and unified QA authority
+- **plan:** Order WP-013 lifecycle cutover
+- **research:** Record 2026-09-05 external observation cycle
+- **tasks:** Record current-state main integration handoff
+- **governance:** Reconcile local merge and follow-up authority
+- **specs:** Add the provider native enforcement parity package
+- **governance:** Supersede ADR-0034 and accept ADR-0035
+- **governance:** Scope the per-commit quality sequence
+- **providers:** Date the native capability statements
+- **governance:** Add injection, cost, and loop boundaries
+- **research:** Mark the pack baselines as dated observation
+- **specs:** Record the enforcement parity execution evidence
+- **specs:** Record the passing handoff gate
+- **governance:** Carry the snapshot and boundary across a handoff
+- **specs:** Record the reopened and added parity packages
+- **specs:** Reconcile the specification with what was built
+- **specs:** Bring the parity package under its own currency rule
+- **specs:** Close the provider native enforcement parity package
+- **specs:** Draft the guard ownership and common surface packages
+- **specs:** Plan the write-guard ownership package
+- **specs:** Plan the common knowledge and prompt surface package
+- **specs:** Schedule the four design findings the plan had left unowned
+- **providers:** Separate what is registered from what was observed
+- **specs:** Close the write-guard ownership package
+- **specs:** Take the write-guard plan to its closing lifecycle edge
+- **specs:** Reconcile the spec record with the implemented tree
+- **adr:** Propose the successor that adopts the knowledge and prompt surfaces
+- **adr:** Accept the successor and supersede ADR-0035
+- **governance:** Align the policy text with the accepted successor decision
+- **specs:** Record the work SPEC-0075 had already completed
+- **templates:** Add the knowledge and prompt document profiles
+- Correct statements the tree no longer supports
+- **archive:** Propose the successor record for the absorbed responsibility documents
+- **archive:** Seal MIG-0023 and close the fourteen composed routes
+- **specs:** Close SPEC-0075 with its handoff evidence
+- **specs:** Stop Spec 048 describing a CI topology that no longer exists
+- **task:** Record the hosted CI repair evidence for Spec 072
+- **task:** Record the hosted result and the two gates it exposed
+- **scripts:** Record how to reproduce the hosted dependency identity
+- **task:** Record the second hosted result and the dependency divergence
+- **task:** Record the third hosted result, the merge, and the trusted-path cause
+- **task:** Record the fourth hosted result and the narrowed escape
+- **task:** Record the escape as a definition defect and its repair
+- **qa:** Record final validation and local handoff
+- **qa:** Record completion audit and conditional finish
+- **qa:** Reconcile evidence and preserve the local branch
+- **qa:** Record local discovery and pending native checks
+- **governance:** Plan approved validation contract repairs
+- **governance:** Align owner and tooling guidance
+- **governance:** Record validated contract repair completion
+- **github:** Correct guidance that contradicted the tracked configuration
+- **github:** State the support, projection and lock-refresh boundaries
+- **specs:** Record the entry point contract and its work package
+- **operations:** Return restated agent rules to their owners
+- **github:** Describe this repository's own branch protection
+- **specs:** Move the entry point Task to in-progress
+- **specs:** Complete the entry point Task with its full profile result
+- **governance:** State hook-chain coverage and stop citing sealed evidence
+- **specs:** Open the work package and Task record for WP-012
+- **specs:** Move the WP-012 Task record to in-progress
+- **specs:** Close the WP-012 Task record with its pre-handoff result
+- **specs:** Open the work package and Task record for WP-013
+- **specs:** Move the WP-013 Task record to in-progress
+- **specs:** Close the WP-013 Task record
+- **roles:** Say why two read-only roles are narrowed below their class
+- **agents:** Specify agent role coverage and contract completion
+- **specs:** Correct the plan against two observed validator contracts
+- **agents:** State the architect and doc-writer boundary from both sides
+- **specs:** Close the SPEC-0076 package Task
+- **github:** Record the first authenticated read-back of main protection
+- **specs:** Admit the dead contract retirement package
+- **governance:** State why a stage index is not an outside entry point
+- **specs:** Record the dead contract retirement evidence and deferrals
+- **specs:** Admit the document currency reconciliation package
+- Reconcile operations, architecture and reference statements with the tree
+- **architecture:** Record the Pod Security and Kiali decision state
+- **specs:** Move implemented Stage 03 work one lifecycle edge
+- **specs:** Record the document currency reconciliation evidence
+- **archive:** Propose six-disposition archive stage
+- **archive:** Accept ADR-0038 and supersede ADR-0032
+- **archive:** Retain ADR-0032 as the first ADR-0038 disposition
+- **archive:** Retain the fifteen remaining superseded decisions
+- **archive:** Correct statements that contradicted ADR-0038
+- **archive:** Propose unit retention and a citation table
+- **specs:** Activate the retention pilot packages for closure
+- **specs:** Trace package closure to its own criterion
+- **archive:** Accept ADR-0039 and supersede ADR-0038
+- **archive:** State the unit retention contract and add its fast gate
+- **archive:** Close the cutover Task with its observed results
+- **archive:** Repoint current consumers of ADR-0038 to its successor
+- **archive:** Retain ADR-0038 as the first exact disposition
+- **archive:** Record the ADR-0038 disposition results
+- **specs:** Close the unit archive retention package
+- **specs:** Propose the finished package retention round
+- **specs:** Activate the finished package retention round
+- **archive:** Retain the seven finished Stage 03 packages
+- **specs:** Close the two completed backfill packages
+- **archive:** Retain the three remaining finished Stage 03 packages
+- **specs:** Record the disposition of every Stage 03 package that stays
+- **specs:** Close the finished package retention round
+- **specs:** Propose the Stage 03 backlog closeout round
+- **specs:** Activate the Stage 03 backlog closeout round
+- **specs:** Close the document taxonomy and form identity package
+- **specs:** Activate the document currency reconciliation package
+- **specs:** Close the document currency reconciliation package
+- **specs:** Unblock the three SPEC-0062 tasks for disposition
+- **specs:** Cancel the three unexecutable SPEC-0062 tasks
+- **specs:** Close the workspace research reverification package
+- **specs:** Take the queued SPEC-0054 tasks out of the queue for disposition
+- **specs:** Dispose of the two SPEC-0054 tasks that left the queue
+- **specs:** Close the transition-only taxonomy cutover task
+- **specs:** Close the SDLC document and agent governance consolidation
+- **specs:** Take the SPEC-0048 and SPEC-0051 tasks out of the queue
+- **specs:** Cancel the twelve tasks of the two withdrawn packages
+- **specs:** Withdraw the GitHub routing and repository assurance packages
+- **specs:** Close the workspace harness gap analysis
+- **specs:** Record why five packages stay in Stage 03
+- **specs:** Close the dead contract and duplicate execution retirement
+- **archive:** Retain four finished Stage 03 packages
+- **specs:** Name the successor the two superseded proposals already state
+- **archive:** Retain the two superseded proposals as units
+- **archive:** Retain the finished package retention round
+- **specs:** Record why two finished packages stay in Stage 03
+- **specs:** Close the Stage 03 backlog closeout package
+- **archive:** Propose archive reappraisal and verifiable sources
+- Correct index navigation that still names ADR-0038 as current
+- **operations:** Correct Stage 05 facts that drifted from the tree
+- **operations:** Give each Stage 05 rule and procedure one owner
+- **adr:** Propose OpenBao as the runtime secret backend
+- **adr:** Accept ADR-0041 and supersede the Vault backend decision
+- **adr:** Name ADR-0003 by identifier before it leaves the log
+- **archive:** Retain the superseded Vault backend decision
+- **adr:** Propose the Linux server single-host baseline
+- **adr:** Accept the Linux server single-host baseline
+- **adr:** Propose a dedicated k8s router and external data stores
+- **adr:** Accept the dedicated k8s router and external data stores
+- **specs:** Plan the dedicated k8s router and reconcile open specs
+- **adr:** Propose in-cluster telemetry collection with an external backend
+- **adr:** Accept in-cluster telemetry collection
+- **specs:** Record router and telemetry evidence in the SPEC-0008 task
+- **adr:** Propose reaching external services through host addresses
+- **adr:** Accept reaching external services through host addresses
+- **operations:** Describe host-address transport to external services
+- **specs:** Record host-address transport evidence in the SPEC-0008 task
+- **operations:** Rewrite the metrics runbooks for in-cluster collection
+- **operations:** Describe the Prometheus API and Grafana Traefik path
+- **operations:** Describe the Kiali Grafana token instead of anonymous access
+- **ops:** Query Loki k8s streams with a range query in RUN-0009
+- **specs:** Record SPEC-0008 WORK-007 live verification and close the plan
+- **specs:** Record the WORK-007 CoreDNS and Rollouts canary checks
+- **spec-0008:** Record the post-handoff follow-ups and current residual risk
+- **spec-0008:** Record the live mesh trace activation
+- **spec-0008:** Describe the adminer restart limit without a command example
+- **spec-0008:** Record the closed trace path and the notification wiring
+- **specs:** Stage 03 dispositions for 0047, 0049, 0050 and 0072 (([#94](https://github.com/buenhyden/hy-home.k8s/issues/94)))
+- **archive:** SPEC-0087 retire four withdrawn Stage 03 packages (([#97](https://github.com/buenhyden/hy-home.k8s/issues/97)))
+- **archive:** SPEC-0087 retain SPEC-0054, 0062, 0084 and repair main (([#98](https://github.com/buenhyden/hy-home.k8s/issues/98)))
+- **specs:** Close SPEC-0085 and SPEC-0087 (([#99](https://github.com/buenhyden/hy-home.k8s/issues/99)))
+- **specs:** Propose SPEC-0088 to converge the operations corpus
+- **operations:** Give each recovery path one owner and match the tree
+- **specs:** Record SPEC-0088 evidence and close the package
+- **specs:** Propose SPEC-0089 to resolve SPEC-0088's deferred conflicts
+- **architecture:** State Spec 0054 closure and the role registry path
+- **specs:** Withdraw SPEC-0049, which conflicts with current authority
+- **specs:** Cancel SPEC-0049 Tasks and close SPEC-0089
+- **specs:** Propose SPEC-0090 to retire SPEC-0049
+- **archive:** SPEC-0090 retire withdrawn SPEC-0049
+- **specs:** Record SPEC-0090 results and close the package
+- README navigation and document language contracts (SPEC-0091, SPEC-0093) (([#100](https://github.com/buenhyden/hy-home.k8s/issues/100)))
+- **specs:** Keep the SPEC-0093 plan list valid for markdownlint
+- **spec-0086:** Record the Claude and Codex native observation sessions
+- **spec-0086:** Close the package on observed results
+- **specs:** Propose SPEC-0094 to retain eight finished packages
+- **archive:** SPEC-0094 retain eight finished Stage 03 packages
+- **spec-0094:** Record the retention results and close the package
+- **specs:** Propose SPEC-0095 to retain SPEC-0086 and SPEC-0094
+- **archive:** SPEC-0095 retain SPEC-0086 and SPEC-0094
+- **spec-0095:** Record the retention results and close the package
+- **specs:** Propose SPEC-0096 to rebind the Codex model tiers
+- **spec-0096:** Close the package on observed results
+- **specs:** Propose SPEC-0097 to bind Claude role models and effort
+- **spec-0097:** Close the package on observed results
+- **specs:** Propose SPEC-0098 to grant Claude search and retain packages
+- **archive:** SPEC-0098 retain SPEC-0095, SPEC-0096, and SPEC-0097
+- **spec-0098:** Record the retention results and close the package
+- Define external research refresh contract
+- Refresh the workspace engineering research pack
+- Record research validation and failure handoff
+- Fix research formatting and record isolated QA
+- **archive:** Clarify lifecycle follow-up dispositions
+- **specs:** Record SPEC-0099 resolution and activate SPEC-0100
+- **specs:** Close SPEC-0099 and SPEC-0100
+- **spec-0101:** Propose retention of SPEC-0098 through SPEC-0100
+- **archive:** SPEC-0101 retain SPEC-0098, SPEC-0099, and SPEC-0100
+- **spec-0101:** Record the retention results and close the package
+- Record agent contract implementation package
+- Activate approved agent contract work
+- Record completed agent contract verification
+- Remove duplicate blank line from closure plan
+- Require automated checks and independent semantic review
+- Specify QA evidence reuse and main tags
+- Extend QA spec to script and GitHub audit
+- Plan QA evidence reuse implementation
+- Record local QA evidence task results
+- Record Task 2 validation handoff
+- Add active QA test disposition
+- Record Task 7 implementation evidence
+- Close Task 7 with final QA evidence
+- Record protected PR provenance evidence
+- Record protected proof review approval
+- Complete protected proof handoff evidence
+- Record main QA reuse implementation evidence
+- Record Task 4 evidence validation snapshot
+- Record protected main tag evidence
+- Clarify publisher credential evidence
+- Reconcile QA integration evidence
+- Record QA scanner retry evidence
+- Record QA evidence reuse verification
+- Retain completed specs and record hosted QA evidence
+- Record protected QA activation evidence
+- Record protected QA trials and full fallback
+- Record QA evidence reuse verification
+- Authorize SPEC-0103 retention
+- Retain completed SPEC-0103 package
+- **platform:** Transfer current GitOps contract authority
+- **platform:** Advance closeout task to in progress
+- **platform:** Complete SPEC-0008 closeout task
+- **platform:** Retain completed SPEC-0008 package
+- Scope platform validation assurance work
+- Complete platform assurance acceptance records
+- Retain completed platform assurance package
+- **governance:** Define P01 authority and authoring work unit
+- **governance:** Record P01 acceptance and local handoff
+- **governance:** Prepare quoted Secret output follow-up
+- **governance:** Record quoted output acceptance and handoff
+- **governance:** Prepare P02 lifecycle normalization
+- **governance:** Record P02 acceptance and local handoff
+- **governance:** Clarify authority evidence follow-up scope
+- **governance:** Mark P01 follow-up ready
+- **governance:** Record P02 closing recheck evidence
+- **governance:** Advance P01 handoff verification
+- **governance:** Complete P01 evidence follow-up
+- **governance:** Scope P02 Task summary follow-up
+- **governance:** Ready P02 Task summary implementation
+- **governance:** Accept local Task summary implementation
+- **specs:** Scope hosted fixture compatibility repair
+- **specs:** Ready hosted compatibility repair
+- **specs:** Complete hosted compatibility follow-up
+- **specs:** Scope registered Task template correction
+- **specs:** Ready registered Task template correction
+- **specs:** Complete registered Task template correction
+- **specs:** Scope current Registry fixture consumers
+- **specs:** Ready current Registry fixture consumers
+- **specs:** Complete current Registry fixture follow-up
+- **specs:** Scope sealed source revision fixture
+- **specs:** Ready sealed source revision fixture
+- **specs:** Complete sealed source revision fixture
+- **specs:** Scope current owner fixture conformance
+- **specs:** Ready current owner fixture conformance
+- **specs:** Complete current owner fixture conformance
+- **specs:** Scope common authority lifecycle fixture repair
+- **specs:** Ready common authority lifecycle fixture repair
+- **specs:** Complete common authority lifecycle fixture repair
+- **specs:** Scope registered-form authority fixture reinstantiation
+- **specs:** Ready registered-form authority fixture reinstantiation
+- **specs:** Complete registered-form authority fixture reinstantiation
+- **specs:** Scope completed-state and navigation fixture repair
+- **specs:** Ready completed-state fixture verification
+- **specs:** Complete completed-state fixture verification
+- **specs:** Scope authority lifecycle fixture correction
+- **specs:** Ready authority lifecycle fixture checks
+- **specs:** Complete authority lifecycle fixture correction
+- **specs:** Draft QA and navigation fixture correction
+- **specs:** Ready QA and navigation fixture correction
+- **specs:** Complete QA and navigation fixture correction
+- **specs:** Draft reference pack route fixture correction
+- **specs:** Ready reference pack route fixture correction
+- **specs:** Complete reference pack route fixture correction
+- **governance:** Scope generation and retention fixture repairs
+- **governance:** Ready generation and retention fixture repairs
+- **governance:** Complete generation and retention fixture repairs
+- **governance:** Scope hosted QA cleanup
+- **governance:** Ready hosted QA cleanup
+- **governance:** Complete local hosted QA cleanup
+- **governance:** Scope local QA and release lifecycle
+- **governance:** Ready local QA retirement
+- **governance:** Approve local QA lifecycle contract
+- **governance:** Close local QA lifecycle handoff
+- **governance:** Record current P01 follow-up scope
+- **governance:** Clarify resource and shared source boundaries
+- **operations:** Adopt reviewed main release procedure
+- **governance:** Hand off shared and server decisions
+- **governance:** Record approved required-check migration
+- **governance:** Record merge review and delivery scope
+- Record shared profile migration scope
+- Record verified profile migration evidence
+- Accept local profile migration and handoff
+- Define current task acceptance and spec review scope
+- Record verified task acceptance and lifecycle results
+- Complete current task acceptance and spec review
+- **governance:** Apply prompt-audit fixes to RTK, lifecycle and skills
+- Reconcile current main governance with task acceptance
+- Scope current archive and QA retirement follow-up
+- Record archive retirement execution and local acceptance
+- Close local archive retirement and handoff
+- Scope purpose QA and CI follow-up
+- Record P05 local acceptance
+- Define P06 commit and release follow-up
+- Admit P06 local implementation
+- Record P06 local acceptance and integration
+- Record P07 provider governance intake
+- Admit P07 provider governance execution
+- Accept P07 provider governance follow-up
+- Define P08 operations quality review
+- Admit P08 operations content work
+- Align operating procedures and quality scenarios
+- Record P08 local acceptance and handoff
+- **platform:** Record local contract execution evidence
+- **platform:** Complete scoped external contract acceptance
+- **governance:** Identify common source and preserve admission failures
+- **governance:** Retain common admission and parity boundaries
+- **governance:** Record the verified local C07 delivery
+- **governance:** Let provider-root READMEs follow their Korean profile
+- **specs:** Open SPEC-0108 and draft the SPEC-0109 memory design
+- **specs:** Submit SPEC-0108 for review and ready its Task
+- **specs:** Start the SPEC-0108 Task work units
+- **specs:** Record SPEC-0108 Task evidence and acceptance
+- **specs:** Approve SPEC-0108 and its Plan
+- **specs:** Open SPEC-0110 for provider README language and QA tool diagnostics
+- **governance:** Translate the remaining provider-root READMEs into Korean
+- **specs:** Revise the SPEC-0109 memory design after review
+- **specs:** Submit SPEC-0110 for review and ready its Task
+- **specs:** Start the SPEC-0110 Task work units
+- **specs:** Record SPEC-0110 Task evidence and acceptance
+- **specs:** Submit the SPEC-0109 memory design for review
+- **specs:** Approve SPEC-0110 and the SPEC-0109 memory design
+- **specs:** Plan the SPEC-0109 memory store implementation
+- **governance:** Admit the shared workspace memory store in policy
+- **specs:** Submit the SPEC-0109 Plan for review and ready its Task
+- **specs:** Start the SPEC-0109 Task work units
+- **specs:** Record SPEC-0109 Task evidence and the pending native observation
+- **specs:** Record the Codex shared-memory read observation
+- **specs:** Approve the SPEC-0109 Plan and record the Claude memory read
+- **specs:** Record Codex native memory non-write for SPEC-0109
+- **specs:** Record the operator decision to keep the F21 trigger
+- **specs:** Record PR ([#140](https://github.com/buenhyden/hy-home.k8s/issues/140)) hosted checks and the CI contract pin fix
+- **specs:** Record the linked-worktree memory observation for SPEC-0109
+- **specs:** Accept VAL-MEMORY-002 and complete the SPEC-0109 Task
+- **specs:** Add interactive worktree observations to SPEC-0109
+- **specs:** Draft SPEC-0111 for historical fixture drift in lifecycle tests
+- **specs:** Submit SPEC-0111 for review and ready its Task
+- **specs:** Approve SPEC-0111 and its Plan
+- **specs:** Start the SPEC-0111 Task work units
+- **specs:** Accept SPEC-0111 criteria and complete its Task
+- **specs:** Draft SPEC-0112 for pinned package fixtures in lifecycle tests
+- **specs:** Submit SPEC-0112 for review and ready its Task
+- **specs:** Start the SPEC-0112 Task
+- **specs:** Record the SPEC-0112 approval in its Task
+- **specs:** Draft SPEC-0113 for SDLC document sync and remaining v9 gaps
+- **specs:** Submit SPEC-0113 for review and ready its Task
+- **specs:** Approve SPEC-0113 and its Plan
+- **specs:** Start the SPEC-0113 Task work units
+- **specs:** Record that notification checks are not SPEC-0110 QA evidence
+- **governance:** Separate common and Codex-only reads in AGENTS.md
+- **templates:** State each WGOV-CORE claim status separately
+- Sync requirements, architecture and Specs with SPEC-0108 to SPEC-0112
+- **specs:** Add the memory store timeout regression to SPEC-0113
+- **specs:** Ready the SPEC-0113 timeout work unit
+- **specs:** Start the SPEC-0113 timeout work unit
+- **specs:** Complete SPEC-0113 after the independent review
+- **specs:** Record the SPEC-0113 delivery to main
+- **specs:** Draft SPEC-0114 for provider permission and hook hardening
+- **specs:** Submit SPEC-0114 for review and ready its Task
+- **specs:** Approve SPEC-0114 and its Plan
+- **specs:** Start the SPEC-0114 Task work units
+- **providers:** Describe the SPEC-0114 permission, config and hook controls
+- **specs:** Complete SPEC-0114 after the security review
+- **specs:** Record the SPEC-0114 delivery to main
+- **specs:** Record the operator-run Codex session observation for SPEC-0114
+- Record current remote protection observations
+- Record r13 follow-up scope and execution
+- Align r13 owners and preserve check failures
+- Close r13 local follow-up evidence
+- Record authorized r13 residual verification
+- Close authorized r13 residual verification
+- Record r13 solo integration plan
+- Close r13 protected integration evidence
+- Record r13 corrected staged qa evidence
+- **specs:** Draft SPEC-0116 independent review merge gate
+- **specs:** Approve SPEC-0116 and address independent review
+- **specs:** Record SPEC-0116 review evidence and activate RUN-0013
+- **specs:** Pin SPEC-0116 review App ID 5341483
+- **specs:** Record SPEC-0116 review App and protection evidence
+- **specs:** Close SPEC-0116 independent review gate evidence
+- **specs:** Keep SEC-P01-001 workflow-body risk at owner-accepted HIGH
+- **specs:** Remove stray escape in SPEC-0116 Task acceptance
+- **specs:** Remove remaining stray escape in SPEC-0116 Task
+- **specs:** Accept SPEC-0115 r13 residual controls
+- **specs:** Record credential retirement and residual risk levels
+- **specs:** Record retired credential revocation report
+- **specs:** Record observed basis and security concurrence for regrades
+- **specs:** Draft SPEC-0117 local QA rightsizing
+- **specs:** Approve SPEC-0117 and record full timing run
+- **governance:** Name independent-review in delivery and fix .github summary
+- **specs:** Record SPEC-0117 work evidence
+- **specs:** Accept SPEC-0117 local QA rightsizing
+- **specs:** Record SPEC-0117 branch rename
+- **specs:** Draft SPEC-0119 ingress controller identity
+- **specs:** Approve SPEC-0119 and record literal inventory
+- **specs:** Record SPEC-0119 work evidence
+- **specs:** Accept SPEC-0119 ingress controller identity
+- **specs:** Draft SPEC-0118 local QA phase two
+- **specs:** Approve SPEC-0118 local QA phase two
+- **specs:** Record SPEC-0118 work evidence
+- **specs:** Accept SPEC-0118 local QA phase two
+- **adr:** Propose ADR-0050 ingress-nginx replacement and ADR-0051 Istio upgrade
+- **adr:** Accept ADR-0050 Traefik replacement for ingress-nginx
+- **adr:** Name the cutover dependencies and source the ingress claims
+- **specs:** Draft SPEC-0120 test module purpose gates
+- **specs:** Approve SPEC-0120 test module purpose gates
+- **specs:** Record SPEC-0120 work evidence
+- **specs:** Accept SPEC-0120 test module purpose gates
+- **adr:** Choose the rebuild method for the ADR-0051 Istio upgrade
+- **adr:** Accept ADR-0051 Istio supported release upgrade
+- **specs:** Draft SPEC-0121 Traefik ingress cutover
+- **specs:** Approve SPEC-0121 Traefik ingress cutover
+- **specs:** Sequence the SPEC-0121 cutover and correct its premises
+- **specs:** Cascade the ingress-nginx removal and protect the class handover
+- **specs:** Draft SPEC-0122 archive unit disposition
+- **specs:** Approve SPEC-0122 archive unit disposition
+- **archive:** Move seven consumer-free units to git history
+- **specs:** Accept SPEC-0122 archive unit disposition
+- **specs:** Record SPEC-0121 WORK-001 preparation evidence
+- **specs:** Record the SPEC-0121 class handover and side-by-side render
+- **specs:** Record the SPEC-0121 side-by-side status and close WORK-001
+- **specs:** Record WORK-002 findings and accept VAL-TC-001
+- **specs:** Record the SPEC-0121 WORK-002 live verification
+- **specs:** Move the SPEC-0121 canary step to the cutover criterion
+- Describe Traefik as the k8s ingress controller
+- Name Traefik as the k8s LoadBalancer in .env.example
+- **specs:** Record the SPEC-0121 cutover, canary and revert evidence
+- **specs:** Accept SPEC-0121 and close the Traefik cutover
+- **specs:** Draft SPEC-0123 hosted CI lock check
+- **specs:** Approve SPEC-0123 hosted CI lock check
+- **specs:** Record the SPEC-0123 hosted run
+- **specs:** Accept SPEC-0123 hosted CI lock check
+- **adr:** Record that the four-digit numbering generation is complete
+- **adr:** Narrow the numbering census attribution
+- **specs:** Draft SPEC-0124 required source coverage
+- **specs:** Approve SPEC-0124 required source coverage
+- **research:** Record the ten required sources by perspective
+- **specs:** Record the SPEC-0124 hosted run
+- **specs:** Accept SPEC-0124 required source coverage
+- **specs:** Correct the SPEC-0124 reused source count
+- **specs:** Draft SPEC-0125 survey status and local gaps
+- **specs:** Approve SPEC-0125 survey status and local gaps
+- **specs:** Correct the survey status after review
+- **specs:** Record the SPEC-0125 review and hosted run
+- **specs:** Accept SPEC-0125 survey status and local gaps
+- **specs:** Draft SPEC-0126 architecture views
+- **specs:** Approve SPEC-0126 architecture views
+- **architecture:** Add C4 views and arc42 coverage to AD-0007
+- **architecture:** Complete the AD-0007 dependencies after review
+- **specs:** Record the SPEC-0126 review and hosted run
+- **specs:** Accept SPEC-0126 architecture views
+- **specs:** Draft SPEC-0127 ADR lineage and branch strategy
+- **specs:** Approve SPEC-0127 ADR lineage and branch strategy
+- **specs:** Record the SPEC-0127 review and hosted run
+- **specs:** Accept SPEC-0127 and ADR-0052
+- **specs:** Draft SPEC-0128 change kinds and authoring prompts
+- **specs:** Approve SPEC-0128 change kinds and authoring prompts
+- **governance:** Route the change-kind table to existing owners
+- **specs:** Record the SPEC-0128 review and hosted run
+- **specs:** Accept SPEC-0128 change kinds and authoring prompts
+- **specs:** Draft SPEC-0129 inventory, operations and QA baseline
+- **specs:** Approve SPEC-0129 inventory, operations and QA baseline
+- **operations:** Link RUN-0002 to the RUN-0001 source gate and name the nginx class
+- **specs:** Correct the SPEC-0129 inventory and survey after review
+- **specs:** Record the SPEC-0129 review, timing baseline and hosted runs
+- **specs:** Accept SPEC-0129 inventory, operations and QA baseline
+- **specs:** Draft SPEC-0130 archive history link migration
+- **specs:** Approve SPEC-0130 archive history link migration
+- **requirements:** Replace history links to twelve archive units
+- **archive:** Move twelve history-link units to git history
+- **requirements:** Name the twelve removed packages in the REQ-0003 note
+- **specs:** Record the SPEC-0130 staged QA, review and hosted runs
+- **specs:** Accept SPEC-0130 archive history link migration
+- **specs:** Draft SPEC-0131 archive evidence owner migration
+- **specs:** Approve SPEC-0131 archive evidence owner migration
+- Move consumers of ten archive units to the Git recovery route
+- **archive:** Move ten document-consumer units to git history
+- **requirements:** Mark the SPEC-0049 retention sentence as history
+- **specs:** Record the SPEC-0131 staged QA, review and hosted runs
+- **specs:** Accept SPEC-0131 archive evidence owner migration
+- **specs:** Draft SPEC-0133 review decisions and C4 prompt
+- **specs:** Approve SPEC-0133 review decisions and C4 prompt
+- **templates:** Add C4 element and relationship checks to the diagram prompt
+- **specs:** Correct the SPEC-0133 clone and layout records after review
+- **specs:** Record the SPEC-0133 review and hosted runs
+- **specs:** Accept SPEC-0133 review decisions and C4 prompt
+- **specs:** Draft SPEC-0132 archive registry and test consumers
+- **specs:** Approve SPEC-0132 archive registry and test consumers
+- Move consumers of twenty-six archive units to the Git recovery route
+- **archive:** Move twenty-six registry and test consumer units to git history
+- **specs:** Record the SPEC-0132 validation, review and hosted runs
+- **specs:** Accept SPEC-0132 archive registry and test consumers
+- **specs:** Draft SPEC-0134 archive final units
+- **specs:** Approve SPEC-0134 archive final units
+- **archive:** Move SPEC-0080 to git history and assess the eight kept units
+- **specs:** Draft SPEC-0135 external item decisions
+- **specs:** Approve SPEC-0135 external item decisions
+- **specs:** Correct the SPEC-0135 decision wording after review
+- **specs:** Record the SPEC-0135 review and hosted runs
+- **specs:** Accept SPEC-0135 external item decisions
+- **specs:** Record the SPEC-0134 validation, review and hosted runs
+- **specs:** Accept SPEC-0134 archive final units
+- **specs:** Draft SPEC-0136 first SemVer release
+- **specs:** Approve SPEC-0136 first SemVer release
+
+### Fixed
+
+- **ci:** Format shell scripts and add missing psscriptanalyzer script
+- **ci:** Fix psscriptanalyzer parameter binding
+- **ci:** Iterate over files in psscriptanalyzer to avoid type mismatch
+- **ci:** Silence powershell lint warnings in dev-tools
+- **ci:** Fix powershell suppression syntax
+- **ci:** Suppress write-host warning in psscriptanalyzer script
+- Add kiali root-path redirect, extend verify-gitops app checks, add traefik deploy docs
+- Remove blocking NetworkPolicies and update k3d-hyhome IPs
+- Add ignoreDifferences for Istio ValidatingWebhookConfiguration failurePolicy drift
+- Remove namespace.yaml from sample-app — apps ns owned by platform-namespaces
+- Correct istiod Deployment ignoreDifferences manager from istiod to k3s
+- Add RespectIgnoreDifferences=true to platform-istiod syncOptions
+- Remove ServerSideApply from platform-istiod to resolve ghost OutOfSync
+- Ignore k8s-defaulted fields in istiod Deployment
+- Rename external service port names to Istio protocol prefix format
+- Add --storage.path and emptyDir for alloy-k8s-logs readOnlyRootFilesystem
+- Replace extra_labels with loki.process stage for k8s events
+- Reduce large file size limit to 500KB in pre-commit configuration
+- **docs:** Correct template relative links
+- **gitops:** Remediate P3 secret runtime contracts
+- **runtime:** Close live bootstrap validation gaps
+- **gitops:** Tighten appproject namespace ownership
+- **governance:** Align routing rules and validation script with new paths
+- **governance:** Restore adapter guardrails
+- **docs:** Align plan/task README index status with done frontmatter
+- **research:** Correct untrusted typo in 07-07 provider reference
+- **research:** Correct agency-agents division count 12 -> 17
+- **docs:** Align setup-python inventory with actual ci.yml pin
+- **governance:** Enforce canonical roster and owner pointers
+- **governance:** Handle roster validator input errors
+- **governance:** Harden roster currentness validation
+- **governance:** Reject malformed canonical owner links
+- **validation:** Enforce registry inventory evidence
+- **docs:** Preserve task template compatibility
+- **docs:** Harden document profile coverage
+- **validation:** Complete document profile digest
+- **docs:** Align template consolidation task rows
+- **research:** Correct progress profile boundary
+- **validation:** Harden template compatibility gate
+- **governance:** Restore task route ownership
+- **validation:** Allow canonical document growth
+- **plans:** Make readme profile transition atomic
+- **plans:** Harden readme transition proofs
+- **validation:** Make readme migration fixtures executable
+- **validation:** Support profiled readme table headings
+- **validation:** Ignore hidden readme table anchors
+- **validation:** Support implementation readme table headings
+- **plans:** Make readme profile closure atomic
+- **validation:** Enforce final readme exact set
+- **plans:** Make semantic validation executable
+- **plans:** Unblock semantic fixture handoff
+- **plans:** Bound semantic compatibility debt
+- **plans:** Correct unsupported heading debt cap
+- **plans:** Align semantic debt removal lifecycle
+- **validation:** Harden markdown debt mutation proofs
+- **plans:** Define cross-document inventory handoff
+- **validation:** Harden cross-document boundary proofs
+- **qa:** Preserve document delegation boundaries
+- **plans:** Align migration inventory and diagnostic filtering
+- **plans:** Make ledger publication fail fast
+- **plans:** Close authored migration debt ownership
+- **plans:** Make migration debt batches atomic
+- **qa:** Preserve migration evidence boundaries
+- **plans:** Allow zero-cap migration self-tests
+- **docs:** Preserve ADM-004 document semantics
+- **docs:** Align ADM-004 task safety evidence
+- **plans:** Cover ADM-006 relocation links
+- **plans:** Reconcile document retirement boundaries
+- **plans:** Make retirement proofs executable
+- **plans:** Close retirement proof bypasses
+- **plans:** Authorize retirement lifecycle closure
+- **plans:** Encode cloud retirement guard fixtures
+- **plans:** Cover retired zizmor references
+- **ci:** Pin Actions and minimize workflow permissions
+- **plans:** Scope Vault unsafe example scan
+- **security:** Harden local Vault and ESO contracts
+- **validation:** Run Actions self-test in aggregate gate
+- **docs:** Enforce complete governance sections
+- **governance:** Enforce current Stage 00 owners
+- **governance:** Distinguish Gemini native surfaces
+- **references:** Enforce current pack lifecycle indexes
+- **governance:** Distinguish local and native adapter surfaces
+- **governance:** Close retired route and affected-path gaps
+- **contracts:** Derive native mappings from registry
+- **governance:** Reject unowned template files
+- **templates:** Harden form residue validation
+- **docs:** Harden lifecycle audit parsing
+- **docs:** Normalize reference link labels
+- **docs:** Preserve first reference definition
+- **docs:** Ignore nonrendered markdown links
+- **operations:** Clarify observability desired state
+- **docs:** Admit successor planning gap
+- **contracts:** Align lineage closure projection
+- **docs:** Decouple lifecycle rollover fixtures
+- **docs:** Enforce immutable archive replacement authority
+- **docs:** Accept draft lifecycle index rows
+- **docs:** Admit active execution controls after corpus closure
+- **docs:** Reject unadmitted stage04 artifacts
+- **references:** Harden reference contract boundaries
+- **qa:** Admit post-closure reference helpers
+- **qa:** Close post-closure helper admission
+- **references:** Harden immutable transition evidence
+- **references:** Bind schema and recurse lineage diff
+- **qa:** Admit RIA source freshness fixture
+- **qa:** Admit RIA generator collision fixture
+- **qa:** Admit RIA duplicate ownership fixtures
+- **qa:** Admit terminal spec038 residue closure
+- **references:** Honor selected contract authority path
+- **docs:** Honor settled migration ledger boundary
+- **docs:** Refresh Spec039 pre-commit pin
+- **qa:** Seal settled ledger provenance
+- **qa:** Make GitOps boundary fixture portable
+- **qa:** Make Gitleaks available to closed validation
+- **qa:** Validate effective Gitleaks execution
+- **sdlc:** Support final-tranche lifecycle fixtures
+- **sdlc:** Advance active-corpus terminal frontier
+- **governance:** Scope ACER closure to PRD006
+- **governance:** Freeze ACER authority guard paths
+- **agents:** Harden loop checkpoint boundaries
+- **agent:** Preserve projected admission boundaries
+- **docs:** Align AGQC-005 progress metadata
+- **qa:** Close validation input boundaries
+- **ci:** Align provider evidence ownership
+- **agent:** Reconcile harness currentness and permissions
+- **qa:** Harden governed input resolution
+- **docs:** Reconcile Spec 045 execution indexes
+- **ci:** Lock validation supply chain
+- **ci:** Reject abbreviated git execution options
+- **ci:** Preserve safe git option grammar
+- **security:** Annotate synthetic tls secret checks
+- **security:** Close legacy candidate scan boundary
+- **agent:** Harden legacy candidate reader
+- **agent:** Close legacy cutover cleanup gaps
+- **agent:** Bound legacy cleanup waits
+- **qa:** Bound validation lane subprocesses
+- **qa:** Close validation process lifecycle gaps
+- **qa:** Contain cross-session validator descendants
+- **qa:** Retain spawn signal mask through cleanup
+- **qa:** Harden validator spawn acquisition cleanup
+- **qa:** Close validator ownership restore races
+- **agent:** Close final governance review findings
+- Replace leaked absolute host paths in the assurance plan
+- Admit ADR-0021 to the post-closure authority allowlist
+- **hooks:** Resolve edit paths against their own git worktree root
+- **hooks:** Pin the pre-edit guard's executable to PROJECT_DIR
+- Reconcile governance documentation owners
+- Complete script inventory
+- Narrow Claude approval boundaries
+- Drop uncollected kube-state-metrics RBAC grants
+- **docs:** Harden Partial DEFER admission checker evidence
+- Correct consumer check scope and execute approved graphify/sessions cleanup
+- Restore the quality gate after lifecycle closure
+- Grant kube-state-metrics its default collectors and pin bootstrap charts
+- Close the workload security context gap and stop the template propagating it
+- Harden the argo-rollouts dashboard this repository enables
+- Close the remaining seccompProfile gaps
+- Bring kiali-operator to Restricted without losing its chart hardening
+- Bring headlamp to Restricted while keeping its numeric user
+- Close the last Restricted gap and amend the ADR 0024 rationale
+- Add pod-level seccompProfile to the istio-injected workloads
+- Enforce the workload_images contract that nothing was checking
+- Align taxonomy decision consumers
+- Close the repository validation baseline
+- Complete document migration transition contract
+- Harden document migration apply transaction
+- Bind migration apply to verified filesystem state
+- Quarantine concurrent document migration writes
+- Anchor migration paths to repository descriptors
+- Close partial document migration states
+- Fail closed on unsupported migration platforms
+- Harden archive transition validation
+- Bound archive provenance reads
+- Make archive tree lookup exact
+- Reconcile frozen-blob pins and rebuild the ledger as append-only
+- Repoint execution-route links and index the renumbered specs
+- Reconcile the reviewed-alias and RIA contracts with the merged corpus
+- Register the Istio CNI Application in the root kustomization
+- Close the WORK-105 ARD disposition and reconcile the README census
+- Reconcile the reference-pack and helper contracts after the merge
+- Relax the RIA cutover FSM to a settlement-free terminal shape
+- Separate the projection and protection pins, and follow WP-003's moved content
+- **governance:** Consume document lifecycle authority
+- **governance:** Enforce terminal lifecycle semantics
+- **governance:** Close document authority validation gaps
+- **validation:** Enforce sealed document cutover
+- **validation:** Constrain canonical repair parsing
+- **validation:** Parse canonical markdown repairs
+- **validation:** Cover sealed cutover additions
+- **docs:** Route package task records
+- **governance:** Close the Spec 0054 archive and cutover gaps
+- **governance:** Give the reference pack projection a current owner
+- **governance:** Finish the later-migration composition and bound its cost
+- **governance:** Restore the docs language contract and close the form marker
+- **docs:** Restore Spec 0062 registry authority
+- **tests:** Decouple historical standalone authority order
+- **tests:** Admit Spec 0062 registry authority
+- **docs:** Normalize Spec 0059 task tables
+- **docs:** Admit append-only SDLC research authority
+- **tests:** Admit Spec 0062 standalone approval
+- **docs:** Admit reviewed Stage 90 transition
+- **validation:** Route RIA through published contract
+- **governance:** Settle the merged Spec 0062 package and ledger pin
+- **governance:** Refresh two current-authority surfaces to the ADR-0030 boundary
+- **governance:** Resolve removed-directory links and record the agent governance lane
+- Run every required validator and refuse one that no runner invokes
+- **archive:** Let a draft migration be inert instead of breaking the proof
+- **archive:** Release a consumer that a sealed row retires
+- **spec-0065:** Release retired Stage 99 targets from the current tree
+- **validation:** Harden cumulative history admission
+- **validation:** Close cumulative history ambiguity
+- **validation:** Preflight cumulative snapshot budgets
+- **validation:** Bound cumulative snapshot paths
+- **validation:** Enforce executable references
+- **archive:** Re-pin MIG-0005 historical consumers to their current bytes
+- **archive:** Retire a document, not the location it occupied
+- **docs:** Correct nine stale status cells in the architecture indexes
+- **contracts:** Make the lifecycle declaration match what it governs
+- **lifecycle:** Ask one predicate whether a creation has a lifecycle
+- **contracts:** Let each form inherit the status vocabulary it produces
+- **lint:** Make the markdown lane match what it actually guards
+- **validation:** Release the sealed-endpoint pin across three migration owners
+- **validation:** Read a retained document as historical evidence
+- **governance:** Repoint retained package references at the retention tree
+- **ci:** Validate pull request head commit
+- **ci:** Preserve candidate branch ref
+- **tests:** Align v9 regression contracts
+- **tests:** Avoid optional jsonschema transport alias
+- **tooling:** Align Commitizen with repository convention
+- **docs:** Reject missing reference collections
+- **qa:** Handle staged directory transitions in quick
+- **archive:** Reach sealed ledgers through the archive index
+- **quality:** Detect a local checkout path in any snapshot
+- **validation:** Keep the evaluation gate off a retired identifier
+- **specs:** Do not record an integration that has not happened
+- **hooks:** Evaluate patch-envelope targets as data, not as a shell command
+- **roles:** Give a read-only role a shell only where it needs one
+- **policy:** Stop a read-only guardrail from offering an edit it cannot make
+- **hooks:** Bound the affected-surface selector and treat a hang as failure
+- **validation:** Repair the two gates the new knowledge gate regressed
+- **prompts:** Stop the handoff contract assuming a base ref exists
+- **qa:** Resolve the archive retention anchor from an exact-SHA checkout
+- **ci:** Publish pre-commit where the validators actually search
+- **qa:** Let cold hook installs build inside the closed environment
+- **qa:** Fit the slow suite inside the hosted budgets it now reaches
+- **qa:** Make a failing gate say why, not only which case failed
+- **validation:** Stop the schema evaluator warning on the pinned interpreter
+- **ci:** State the ownership the validator search path requires
+- **qa:** Let a containment failure name what escaped
+- **qa:** Name the git call that escapes, and whether it still runs
+- **qa:** Preserve process diagnostics without reading arguments
+- **qa:** Align snapshot coverage and validation ownership
+- **git:** Align message validation and changelog parsing
+- **qa:** Resolve findings exposed by snapshot hooks
+- **qa:** Stop counting an exited process as a containment escape
+- **qa:** Integrate upstream process liveness repair
+- **qa:** Preserve snapshot index and staged review inputs
+- **evals:** Contain and bound evaluation input reads
+- **infra:** Isolate verification temporary files
+- **docs:** Enforce artifact identity and retired reservations
+- **qa:** Bind the write guard to its registered hook budget and provider
+- **docs:** Apply the stage index contract to the Archive index
+- **agents:** Constrain native scope overrides to their permission class
+- **qa:** Remove the one-shot archive mutation path from a read-only gate
+- **roles:** Point two reviewers at the domain that owns their work
+- **docs:** Bind every document outside the archive to the archive index
+- **skills:** Route incident records through the profile, not a stale path
+- **skills:** Stop the audit report standing in for a security approval
+- **roles:** Settle the four roles whose identity contradicted itself
+- **roles:** Drop the retired surface from the wiki-curator contract
+- **github:** Correct the two protection fields that contradicted the intent
+- **archive:** Compare moved bodies through relative link rebasing
+- **archive:** Scope legacy link equivalence to its own generation
+- **archive:** Teach the sealed ledgers that retention is a move
+- **templates:** Close the two registry gaps that blocked two dispositions
+- **templates:** Restore the frozen README route that names traefik
+- **operations:** Name the k3d API server by DNS, not by 172.18.0.2
+- **validation:** Drop the single-item loop left by the traefik removal
+- **validation:** Format the ESO validator and unbreak an ADR-0045 line
+- **platform:** Give the ESO token the API server audience for TokenReview
+- **workloads:** Bound the canary analysis metric so the Rollout is valid
+- **platform:** Install istio-cni where the k3s containerd looks for plugins
+- **platform:** Select the istio-cni k3s profile so its bin dir takes effect
+- **platform:** Keep the ingress-nginx admission Jobs out of sidecar injection
+- **platform:** Sync the Alloy and Kiali ExternalSecrets before their consumers
+- **platform:** Give the Kiali Prometheus and Grafana clients the gateway CA
+- **platform:** Compare platform-monitoring with a server-side diff
+- **rollouts:** Compare the canary restart count as a number
+- **monitoring:** Keep kube-state-metrics labels with honor_labels
+- **monitoring:** Roll Alloy when its config changes
+- **eso:** Remove postgres-app-secret until a workload consumes it
+- **docs:** Let Stage 05 documents reach a terminal status for archiving
+- **tests:** Reverse the Stage 05 superseded_by key in the frozen archive fixture
+- **adminer:** Route ingress traffic through the mesh host (([#92](https://github.com/buenhyden/hy-home.k8s/issues/92)))
+- **qa:** Keep remote-tracking refs in the QA snapshot
+- **qa:** Copy remote-tracking refs without a fetch
+- **agents:** Bind the Codex worker tier to a model the client serves
+- **agents:** Bind the Codex top tier to gpt-6-astra
+- **archive:** Standardize lifecycle and completion states
+- **lifecycle:** Merge main and validate imported history
+- Enforce current document authority boundaries
+- Bound prompt capture and validate knowledge provenance
+- Supply checker owners and normalize evidence formatting
+- Close agent contract gaps and lifecycle evidence
+- Limit local QA reuse to audited gate
+- Authenticate fork PRs without run relations
+- Authenticate historical QA sources and checkout controls
+- Preserve immutable main tag retries
+- Align full QA checks with CI partition
+- Trust only isolated QA checkout for Git reads
+- Ignore access time in committed input checks
+- Match audited isolated bootstrap contract
+- Align secret scan locations with CI bootstrap
+- Attach QA provenance to PR head
+- Patch CI virtualenv dependency
+- Align platform assurance with hosted QA contracts
+- **governance:** Separate safe authoring from protected execution
+- **governance:** Recognize quoted Secret output safely
+- **governance:** Reuse exact history text across registry generations
+- **tests:** Align hosted fixtures and formatting
+- **lifecycle:** Admit registered Task template drafts
+- **lifecycle:** Limit new history metadata to Task targets
+- **specs:** Withdraw Task8 with non-template creation provenance
+- **qa:** Align platform syntax fallback with its owner
+- Align commit grammar and release verification
+- **governance:** Separate native bindings and enforce role ceilings
+- **qa:** Select agent checks by their owned inputs
+- **qa:** Preserve trusted secret baseline self-exclusion
+- **platform:** Align external data service contracts
+- **governance:** Align approved C07 consumers
+- **qa:** Exclude the reviewed commit-message hook from file checks
+- **qa:** Name a missing pre-commit module and failing hooks in style gates
+- **ci:** Pin the CI contract to the bumped checkout action
+- **validation:** Drop the route for the deleted hadolint config
+- **memory:** Bound the Git call in the workspace memory store
+- Address the SPEC-0113 review findings
+- **claude:** Deny secret reads and secret-printing commands
+- **claude:** Deny option-first cluster and tool mutation
+- **claude:** Deny deletion and history-destroying variants
+- **hooks:** Make the shared write guard and adapters fail closed
+- **codex:** Block the hook outside the repository
+- **claude:** Deny executable-carrying options on allowed Git commands
+- Address the SPEC-0114 security review findings
+- Make local QA hooks read-only and preserve task state
+- Bind memory retries and preserve verified backups
+- Require reconciled GitOps state and trusted TLS
+- Support reviewed local batch document approvals
+- Preserve idempotent memory conflict history
+- Verify complete GitOps and external service routes
+- Harden independent review publication against PR hooks
+- **lifecycle:** Repair stale lifecycle tests and boundary replay guards
+- **qa:** Address SPEC-0117 review notes
+- **qa:** Keep the workflow live-mutation scan in the actions security validator
+- **qa:** Select the lifecycle and actions gates from their direct inputs
+- **qa:** Read Task evidence rows as records in the command scan
+- **gitops:** Move ingress-nginx to chart 4.15.1 for published CVE fixes
+- **ci:** Restore binary-only lock directive for virtualenv bump
+- **archive:** Ignore git-ignored local files when judging retired paths
+- **validation:** Judge IngressClass as a pinned cluster-scoped kind
+- **gitops:** Keep the ingress-nginx body limit and HSTS on Traefik
+- **ci:** Restore binary-only lock directive for filelock bump
+- **ci:** List every changed path for the CI lock check
+- **governance:** Close the local survey gaps
+- **lifecycle:** Reject supersession chains without a current decision
+- **lifecycle:** Search every reciprocal path for a current decision
+- **tests:** Read the retained ADR-0035 body from Git history
+- **tests:** Decode the pinned SPEC-0080 plan as UTF-8
+
+### Miscellaneous
+
+- Remove inline comments from Renovate configuration.
+- **deps:** Update helm release kube-prometheus-stack to v66.7.1
+- **agent:** Consolidate AI agent rules into structured .agent/rules directory
+- **agent:** Ignore .agent/rules and stop tracking contents
+- **agent:** Ignore .agent/rules and stop tracking contents
+- Update gitignore and add documentation issue template
+- **project:** Standardize project metadata, assets and documentation
+- **deps:** Bump DavidAnson/markdownlint-cli2-action from 16 to 22
+- **deps:** Bump actions/stale from 9 to 10
+- **deps:** Bump actions/labeler from 5 to 6
+- **deps:** Bump actions/checkout from 4 to 6
+- **deps:** Bump kindest/node from v1.28.0 to v1.35.0
+- Add Zizmor configuration to disable unpinned-uses rule
+- Migrate markdown linter pre-commit hook to `markdownlint-cli` and add `.markdownlintignore` for path exclusions.
+- **deps:** Bump actions/checkout from 4 to 6
+- **deps:** Bump actions/setup-go from 5 to 6
+- **deps:** Bump actions/setup-python from 5 to 6
+- **deps:** Bump DavidAnson/markdownlint-cli2-action from 16 to 22
+- Remove explicit control-plane node image version from Kind configuration.
+- Update changelog from Unreleased to 0.0.1.
+- Remove redundant Python hooks and overlapping check-github-workflows from pre-commit
+- Release version 0.0.1 by updating the changelog.
+- Update pre-commit hook versions for gitleaks, markdownlint-cli2, check-jsonschema, actionlint, and kube-linter.
+- **deps:** Bump the actions group across 1 directory with 2 updates
+- Add `.claude/settings.local.json` and `.agent/` to `.gitignore`.
+- **deps:** Bump actions/first-interaction in the actions group
+- Refine numerous agent workflows and rules
+- Remove .gitkeep placeholder files from incidents and postmortems documentation directories.
+- Exclude agent governance and protocol Markdown files from linting and apply minor formatting adjustments.
+- Update ArgoCD ingress configuration to use hostname and disable default TLS
+- Update external valkey port from 26379 to 6379 across configuration and test files
+- Update dashboard helm repo URL and migrate Kiali to operator with version bump, plus documentation updates
+- Update kubernetes dashboard and kiali helm repository URLs
+- Update Kiali helm repository URL and add Kiali CRD to platform AppProject
+- Update valkey external service endpoint address to 172.18.0.9
+- Update external service endpoint IP addresses to the 172.18.0.x subnet
+- Update external service endpoint IPs to correct k3d-hyhome addresses
+- Update postgres external endpoint to k3d-hyhome IP
+- Update k3d-hyhome IPs in .env.example and bootstrap-local.sh
+- Add pragma allowlist comment to headlamp ingress secret and update onboarding guide
+- Update linting configurations, standardize YAML quoting, and fix documentation code block syntax
+- Disable dangling-service check in kube-linter configuration
+- Update static contract IP addresses and repository URLs in verification script
+- Short-term platform completeness
+- Add secret allowlist pragmas, update linting configurations, and refine pre-commit exclusions
+- Fix indentation in sample-app.yaml and disable MD060 rule in markdownlint configuration
+- **deps:** Bump dorny/paths-filter in the github-actions group
+- **secrets:** Remove stale detect-secrets baseline entries
+- **deps:** Bump dorny/paths-filter in the github-actions group
+- Update quality gate script with new legacy contract patterns and documentation status checks
+- Update cloud infrastructure example versions and technical stack inventory snapshot
+- Upgrade infrastructure versions, update documentation, and add markdown direct-push validation to quality gates
+- Enforce memory ledger coupling and template compliance for agent governance documentation
+- Update secret scanning to include examples, enforce deterministic LLM Wiki standards, and tighten CI quality gates
+- Add .agent-work/ to .gitignore
+- **deps:** Bump the github-actions group with 2 updates
+- **meta:** Align version inventory, fix quality gate latent issues, and clean up housekeeping
+- **governance:** Complete prompt-kit static readiness
+- Add CI group to commit parser and update documentation for gitops workflows
+- Create template cross-link fix plan and update documentation templates for correct relative paths
+- Update markdownlint-cli2 configuration
+- Add .graphifyignore to exclude unnecessary directories from graph analysis
+- Track graph report and data files in git by overriding ignore rules
+- Normalize document frontmatter and standardize related-link headings across architecture and execution documentation
+- Demote duplicate H1 headings in templates and update README repository map
+- Add additional allowed values to MD024 configuration in markdownlint settings
+- **deps:** Bump actions/labeler in the github-actions group
+- Update actions/labeler version to v6.1.0 in tech stack inventory
+- **agent:** Enforce local skill mirror boundaries
+- **governance:** Harden Hookify local boundaries
+- **agent:** Harden direct command guardrails
+- **hooks:** Add post-edit style formatting
+- **harness:** Gate live startup probes
+- Enforce mandatory coverage and validation-matrix phrases
+- **deps:** Bump actions/stale in the github-actions group
+- **deps:** Align stale action inventory
+- Exclude graphify-out directory from detect-secrets hook
+- **deps:** Bump actions/checkout in the github-actions group
+- **deps:** Bump actions/checkout in the github-actions group
+- **deps:** Bump the github-actions group with 2 updates
+- Ignore sessions directory in git repository
+- **deps:** Bump actions/setup-python in the github-actions group
+- **lint:** Configure markdownlint to resolve pre-commit run failures
+- **git:** Ignore local worktrees
+- **plan:** Align isolated SDD workspace
+- **deps:** Bump dorny/paths-filter in the github-actions group
+- **docs:** Cut over document profiles to strict validation
+- **contracts:** Remove obsolete gate imports
+- **qa:** Integrate reference architecture validation
+- **deps:** Bump the github-actions group across 1 directory with 4 updates
+- Remove superseded graphify snapshot and freeze topic ledger
+- **security:** Refresh reviewed hash baseline
+- **security:** Refresh detect-secrets locations
+- **scripts:** Normalize archive cutover manifest file ending
+- **spec-0067:** Re-declare the consumers whose reviewed bytes moved
+- **deps:** Bump actions/stale
+- **governance:** Preserve cutover preparation
+- **integration:** Merge document contract work into main
+- **integration:** Merge governance and QA work into main
+- **qa:** Capture immutable source for isolated governance audit
+- **integration:** Preserve governance audit snapshot work
+- **config:** Remove retired provider and path residue
+- Refine .gitignore entries for graphify-out directory outputs
+- Ignore entire .vscode directory to simplify project configuration
+- Retire the VS Code surface
+- **validation:** Retire the routes for the removed editor surface
+- Update gitignore to exclude workspace files and agent work directory
+- Update gitignore to exclude workspace files and agent work directory
+- **ci:** Retire the finished governance audit snapshot workflow
+- **deps:** Bump actions/upload-artifact in the github-actions group
+- Re-audit the secrets baseline after the workflow gained a step
+- **qa:** Probe chained hook wiring
+- **deps:** Bump orhun/git-cliff-action in the github-actions group
+- **archive:** Record the fast gate in the surface fixture and script index
+- **adminer:** Roll the pod so its sidecar loads the OTLP tracing config
+- **deps:** Bump orhun/git-cliff-action in the github-actions group
+- **governance:** Integrate validated P01 compatibility repairs
+- **governance:** Integrate sealed-source fixture correction
+- **governance:** Integrate current owner fixture corrections
+- **governance:** Integrate authority route fixture corrections
+- **governance:** Integrate registered fixture reinstantiation
+- **governance:** Integrate completed-state fixture repairs
+- **governance:** Integrate navigation fixture prerequisites
+- **governance:** Integrate QA and reference fixture repairs
+- **governance:** Reconcile integrated server main ancestry
+- **governance:** Integrate reference pack fixture repairs
+- **governance:** Reconcile local main ancestry
+- Integrate P05 with current main
+- **security:** Verify public common source revision
+- **security:** Verify approved common source identity
+- **security:** Move the Registry secret-scan finding back to its line
+- **deps:** Bump actions/checkout
+- Refresh existing secret baseline location
+- Align existing baseline location for reviewed lifecycle change
+- Refresh audited detector line metadata
+- Align existing secret baseline line metadata
+- **deps:** Bump virtualenv
+- **secrets:** Move the registry baseline entry ahead of a 27-line removal
+- **deps:** Bump filelock
+- **gitops:** Run one adminer canary through the Traefik router
+- **gitops:** Drop the ingress-nginx AppProject entries after the cutover
+- **secrets:** Move the m0012 baseline entries ahead of a 42-line insertion
+- **secrets:** Move the m0012 baseline entries ahead of a 4-line insertion
+
+### Performance
+
+- **validation:** Memoize the shared Markdown rendering path
+- **validation:** Keep inline link suffix ownership per input
+
+### Styles
+
+- **lint:** Apply ruff-format and scope the Python lane to Python
+- **tests:** Apply the formatter to the new test cases
+- **agents:** Settle the Python lane formatter on the parity changes
+- Apply ruff formatting to the new regression test
+- Apply ruff formatting to this branch's new code
+- **test:** Apply the pinned formatter to the guard regression
+- **docs:** Wrap the Git policy hook clause to the document width
+- **tests:** Apply the pinned ruff format to the quality rule test
+- **tests:** Apply ruff format to the model override tests
+- Format CI QA workflow tests
+- Apply hosted QA formatter output
+- Apply pinned provenance test format
+- **qa:** Format the SPEC-0108 status reader changes
+
+### Testing
+
+- **docs:** Enforce reference maintenance links
+- **governance:** Enforce lifecycle repository gates
+- **contracts:** Cover rollout notification contracts
+- **gitops:** Require root app manifests
+- **secrets:** Detect quoted manifest secrets
+- **gitops:** Enforce validator command contract
+- **gitops:** Add image kind policy guardrail
+- **gitops:** Guard namespace ownership matrix
+- **manifests:** Guard kube-linter exclusions
+- **traefik:** Guard serverlb gateway boundary
+- **governance:** Guard destructive git commands
+- **gitops:** Guard appproject allow-list rationale
+- **gitops:** Add platform chart render review
+- **policy:** Add OPA-style policy gate
+- **governance:** Enforce Codex harness drift checks
+- **governance:** Enforce archive currentness gates
+- **governance:** Harden docs currentness gates
+- **governance:** Add harness regression gates and evidence
+- **harness:** Enforce connective layer gates
+- **validation:** Cover document heading contract drift
+- **security:** Add GitHub Actions security validator
+- **docs:** Validate lifecycle traceability contracts
+- **docs:** Enforce program lineage admission
+- **docs:** Pin historical archive registry proof
+- **references:** Close reference self-test gaps
+- **docs:** Align active-control unit expectations
+- **sdlc:** Bind frontier assertions to index
+- **governance:** Isolate effective identity fixtures
+- **governance:** Support terminal closure validators
+- **governance:** Support staged program lineage
+- **governance:** Require program-owned active execution
+- **qa:** Reconcile active corpus helper inventory
+- **qa:** Isolate reaped group regression
+- **hooks:** Cover the pre-edit guard and finish the execution-pause wording
+- Mirror the post-closure spec allowlist in its fixture
+- Realign merged contract pins with their reviewed owners
+- Allowlist reviewed blob fixtures
+- **docs:** Refresh the research artifact census
+- **governance:** Admit the declared 0062 standalone execution
+- Repoint the archive fixtures to the reduced Stage 98 corpus
+- **spec-0067:** Move the fixtures onto the current forms and drop dead machinery
+- **archive:** Repoint cutover fixtures away from a retained package
+- **archive:** Read sealed stable paths through the relocation composition
+- **archive:** Account MIG-0018 in the Git subprocess budget
+- **evals:** Make the harness reproduce the failures it claims to detect
+- Restore the suite the roles consolidation broke
+- Record the second cost increment and finish the Task evidence
+- Make the harness CLI test independent of path and tree state
+- **archive:** Report why a trusted tool candidate was refused
+- **infra:** Isolate signal delivery from runner masks
+- **evals:** Cover the research permission class in the evaluation boundary
+- **evals:** Give every admitted role an evaluation case
+- Restore honest collection and repair an empty ledger traversal
+- Stop re-running registered gates inside the unit-test gate
+- **archive:** Reverse the SPEC-0084 gap-fill in the frozen derivation
+- **archive:** Raise the Git subprocess budget with a measured attribution
+- **archive:** Pass the registry to the index parsers and raise the git budget
+- **archive:** Reverse the SPEC-0097 effort key in the frozen generation
+- Retire proven redundant QA tests
+- Scope secret scanner exception to dummy fixture
+- **archive:** Align cutover fixtures with retained SPEC-0008
+- Complete platform gate routing expectations
+- **lifecycle:** Align current Registry fixture consumers
+- **archive:** Bind frozen source revision fixtures
+- **archive:** Align current owner fixture expectations
+- **governance:** Align common authority lifecycle fixtures
+- **governance:** Restore current authority fixture contracts
+- **lifecycle:** Align completed-state and navigation fixtures
+- **lifecycle:** Align authority fixtures with owned states
+- **contracts:** Align QA and reference navigation fixtures
+- **contracts:** Align reference pack route fixtures
+- **governance:** Repair generation and retention fixtures
+- **qa:** Remove obsolete registry corpus snapshots
+- **qa:** Align dispatch tests with selected contracts
+- **qa:** Retire historical validation profile assertions
+- **qa:** Retire completed migration snapshot replays
+- **lifecycle:** Pin the SPEC-0107 package snapshot in acceptance tests
+- **lifecycle:** Replay the generation boundary in the current Task form
+- **lifecycle:** Read completed package fixtures from pinned commits
+- **lifecycle:** Decode pinned fixtures as UTF-8 and complete SPEC-0112
+- **tooling:** Check frozen formatter exclusions against the registry
+- Check template links on the forms only and widen escape budgets
+- Give every test module a purpose gate through one suite runner
+- **archive:** Measure WORK-109 vacancy from the current baseline
+- **validation:** Pin workspace routing and WORK-109 vacancy causes
+- Read the SPEC-0080 seed from Git history
+
+### Merge
+
+- Workspace document assurance modernization
+- **specs:** Integrate provider native enforcement parity

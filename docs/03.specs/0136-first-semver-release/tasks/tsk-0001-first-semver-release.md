@@ -48,7 +48,9 @@ public interface may change in a later `0.y` release.
 On 2026-10-28 the first `prepare` preview stopped with
 `RELEASE-TOOL-UNAVAILABLE` for `git-cliff`. The only installed copy is the
 npm package under the user's NVM directory, outside the trusted system and
-`~/.local/bin` locations that `scripts/run-validation-lane.py` accepts.
+`~/.local/bin` locations that `scripts/run-validation-lane.py` accepts. The operator then installed that package's native
+binary at `~/.local/bin/git-cliff` (`git-cliff 2.14.2`), which the resolver
+accepts.
 
 ## Task Table
 
@@ -56,8 +58,8 @@ npm package under the user's NVM directory, outside the trusted system and
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | in-progress | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | in-progress | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | ready | NOT_RUN | Pending named repository evidence |
 
@@ -69,6 +71,8 @@ npm package under the user's NVM directory, outside the trusted system and
 | EVD-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Release tool output and staged QA | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Publication observation | Exact main commit | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | Main `65f1f4e7`: `git tag`, commit-type counts since `main-3ff0ab62`, the breaking-change search, and the operator's version choice | PASS | Release Scope above: no `v*` tag, 497 commits, one marked breaking change, five public interface classes changed, and `v0.1.0` with no compatibility promise | yes | EVD-001 |
+| EVD-006 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Release tool output and staged QA | Branch `release/v0.1.0` at `20527f43`: `python3 scripts/release.py --root . prepare --version v0.1.0 --initial-version`, then the same with `--write` | PASS | The preview and the write both reported 143862 bytes with SHA-256 `8b0810a3f38c6580e7433eeea124f9c5cbc9cd96712fcd3c4ac7ee7cf54e78bb`; `CHANGELOG.md` holds the `0.1.0` section dated 2026-10-28 under eleven headings, including Breaking Changes; staged QA runs on this commit | yes | EVD-002 |
 
 ## Criterion Acceptance
 
