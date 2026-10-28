@@ -43,10 +43,10 @@ that the nine Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and links of SPEC-0080 and SPEC-0103 | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the two units | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove the two units and record the nine assessment rows | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and links of SPEC-0080 and SPEC-0103 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the two units | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove the two units and record the nine assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
