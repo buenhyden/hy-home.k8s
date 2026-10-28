@@ -66,9 +66,9 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | in-progress | PASS | EVD-005 closes EVD-001, EVD-004 |
+| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | in-progress | PASS | EVD-006 closes EVD-002 |
+| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-007 closes EVD-003 |
 
 ## Task Evidence
 
@@ -78,6 +78,9 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 | EVD-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observation record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | PR #190 independent review of `14eadc51` | FAIL | The CR-12.01 decision cited QA routes that SPEC-0133 does not record, the decision table named no date, and CR-14.03 had no stated state | yes | none |
+| EVD-005 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | PR #190 independent review of `14eadc51` and re-review of `4ba2904c` | PASS | The three decisions match SPEC-0133's records, carry their date and effect, and the CR-18.06 claim holds: no LLM provider call exists and the cited tests exist | yes | EVD-001, EVD-004 |
+| EVD-006 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observation record and review | PR #190 independent review re-running the archive listings and the `projectsV2` query | PASS | Every layout and the Projects observation match the re-read sources | yes | EVD-002 |
+| EVD-007 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | PR #190 heads `14eadc51` (CI run `40637984111`) and `4ba2904c` (CI run `40639016144`) | PASS | The reviewer approved after the fix; `ci-summary`, `style-pr`, `label` and GitGuardian passed | yes | EVD-003 |
 
 ## Criterion Acceptance
 
