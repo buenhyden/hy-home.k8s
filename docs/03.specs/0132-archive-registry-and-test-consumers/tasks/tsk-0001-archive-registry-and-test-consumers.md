@@ -83,10 +83,10 @@ SPEC-0104 on 2026-10-28.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | platform | in-progress | PASS | EVD-005 closes EVD-002 |
-| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | in-progress | PASS | EVD-008 closes EVD-001, EVD-006 |
+| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | platform | in-progress | PASS | EVD-005, EVD-009 close EVD-002, EVD-007 |
+| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | platform | in-progress | PASS | EVD-010 closes EVD-003 |
+| WORK-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-011 closes EVD-004 |
 
 ## Task Evidence
 
@@ -99,6 +99,10 @@ SPEC-0104 on 2026-10-28.
 | EVD-005 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `9378b5c5`: per unit, `git rev-parse` of the current object against the envelope object, then `git archive` of the envelope into a scratch directory; for unequal blobs, a comparison with every Markdown link target masked | PASS | 11 objects equal; the 15 rebased decisions differ only in link targets; 26/26 restored, 63 files, matching the current file counts | yes | EVD-002 |
 | EVD-006 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer validation | PR #188 independent review of `fe3bd418` | FAIL | `test_archive_disposition_lifecycle` read ADR-0035 from the working tree (46 errors); `docs/README.md` and `docs/02.architecture/README.md` still said every superseded ADR stays in `superseded/`; ADR-0047 named SPEC-0102 as a future owner | yes | none |
 | EVD-007 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | PR #188 independent review of `fe3bd418` | FAIL | EVD-005 counted 63 restored files; the envelopes and the removed trees hold 64 | yes | none |
+| EVD-008 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Consumer validation | Removal commit `fe3bd418`: `validate-archive-integrity.py`, `validate-document-lifecycle.py --mode strict`, `validate-document-contract-registry.py --mode strict` and `validate-links-and-owners.py --mode strict`; then 17 test modules that name a unit, run on that tree with the test change later committed as `c7374cce`; PR #188 re-review of `c7374cce` | PASS | All four validators exited 0, links in 454 seconds; 482 tests ran OK in 1169 seconds; `test_archive_disposition_lifecycle` ran 46 OK after its change and 46 errors before it; the reviewer found no other test that reads a removed unit and confirmed the README and ADR-0047 corrections | yes | EVD-001, EVD-006 |
+| EVD-009 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | PR #188 re-review of `c7374cce`, with the per-unit counts of EVD-005 | PASS | The 26 envelopes restore 64 files, matching the 64 removed; 11 objects are equal and 15 rebased decisions differ only in link targets | yes | EVD-007 |
+| EVD-010 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Commits `fe3bd418` and `c7374cce`, committed from a worktree without `graphify-out/`, CI-lock environment first on `PATH` | PASS | The pre-commit staged QA, `commitizen check` and generated-message hooks passed in 574 and 723 seconds; an earlier attempt of the second commit failed on a formatter change to the test and was reformatted; the 26 rows validate | yes | EVD-003 |
+| EVD-011 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | PR #188 independent review of `fe3bd418` and re-review of `c7374cce`; heads `fe3bd418` (CI run `40622072052`) and `c7374cce` (CI run `40625360280`) | PASS | The reviewer approved after the fix; `ci-summary`, `style-pr`, `label` and GitGuardian passed on both heads | yes | EVD-004 |
 
 ## Criterion Acceptance
 
