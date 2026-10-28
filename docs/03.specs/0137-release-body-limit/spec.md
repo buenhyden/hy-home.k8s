@@ -14,7 +14,8 @@ artifact_id: "SPEC-0137"
 ## Overview
 
 `scripts/release.py publish` passes the whole `CHANGELOG.md` section as the
-GitHub Release body. GitHub rejects a body longer than 125,000 characters. The
+GitHub Release body. GitHub rejects a body longer than 125,000 characters, the limit its
+error message states; this repository has not observed it live. The
 `0.1.0` section that [SPEC-0136](../0136-first-semver-release/spec.md)
 prepared covers the whole repository history and holds 143,352 characters, so
 publication would fail with `RELEASE-DRAFT-INCOMPLETE`. On 2026-10-28 the
@@ -72,7 +73,7 @@ Reverting the pull request restores the previous behaviour.
 
 ## Verification Commands
 
-- `python3 -m unittest tests.test_release`
+- `python3 -m unittest tests.test_release tests.test_current_executable_references`
 - `python3 scripts/release.py --root . publish --version v0.1.0 --initial-version`
   on `main` after merge, as a read-only preview.
 - `python3 scripts/qa.py staged` on each commit.
