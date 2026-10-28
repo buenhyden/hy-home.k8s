@@ -66,9 +66,9 @@ other containers that stopped with it stay with `hy-home.docker`.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | Record the cause and the recovery | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | Record the post-recovery live observation | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-CR-001](../spec.md#success-criteria--verification-plan) | Record the cause and the recovery | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-CR-002](../spec.md#success-criteria--verification-plan) | Record the post-recovery live observation | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-CR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 

@@ -2,7 +2,7 @@
 title: "CR-09.04 Recovery"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-10-28"
 layer: "specs"
