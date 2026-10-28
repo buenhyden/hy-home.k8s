@@ -97,6 +97,9 @@ def _source_kind(path: PurePosixPath, text: str) -> str:
         or PurePosixPath("docs/90.references") in path.parents
     ):
         return "historical"
+    if path == PurePosixPath("CHANGELOG.md"):
+        # Release notes record history; their commands may be retired since.
+        return "historical"
     status = _frontmatter_status(text)
     if (
         path == PurePosixPath("docs/03.specs")

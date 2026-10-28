@@ -1,6 +1,6 @@
 ---
 title: "Release Body Limit"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/spec"
 status: "approved"
 owner: "platform"
@@ -27,6 +27,10 @@ The [Plan](plan.md) orders the work and
 - In scope: `scripts/release.py`, `tests/test_release.py`, RUN-0012's
   description of the release body, this package, the Stage 03 README index
   and the REQ-0003 trace link.
+- Added after approval: `scripts/validation/current_executable_references.py`
+  and its test, which classify `CHANGELOG.md` as a historical record. The
+  `0.1.0` notes name scripts retired since, and the repository quality gate
+  rejected them as current references.
 - Non-goals:
   - changing `CHANGELOG.md`, `cliff.toml` or what a section contains;
   - publishing any release.
@@ -41,6 +45,8 @@ The [Plan](plan.md) orders the work and
 - The publish preview reports the body length and whether the summary is
   used, so the operator sees it before `--execute`.
 - Remote verification compares the Release body with the same derived body.
+- A script named in `CHANGELOG.md` must be recoverable from Git history, as
+  for any other historical record; it need not exist in the current tree.
 
 ## Core Design
 
@@ -76,7 +82,7 @@ Reverting the pull request restores the previous behaviour.
 | Criterion | Acceptance evidence |
 | --- | --- |
 | VAL-RB-001 | A test fails before the change and passes after it: a section over 125,000 characters yields a summary within the limit with group counts and the tagged `CHANGELOG.md` link, and a section at or under the limit is unchanged. |
-| VAL-RB-002 | The publish draft, its verification and the preview use the derived body, the existing release tests pass, and RUN-0012 describes the rule. |
+| VAL-RB-002 | The publish draft, its verification and the preview use the derived body, the existing release tests pass, RUN-0012 describes the rule, and the repository quality gate accepts the `0.1.0` changelog. |
 | VAL-RB-003 | An independent reviewer confirms the change, and the pull request's hosted checks pass. |
 
 ## Traceability

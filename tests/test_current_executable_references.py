@@ -117,6 +117,22 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         self.assertEqual(diagnostics, ())
         self.assertEqual(recovered, [target])
 
+    def test_changelog_reference_uses_git_first_recovery(self) -> None:
+        target = PurePosixPath("scripts/validate-retired-gates.sh")
+        recovered: list[PurePosixPath] = []
+        text = f"# Changelog\n\n## [0.1.0] - 2026-10-28\n\n- Add {target} checks.\n"
+
+        diagnostics = self.validate(
+            "CHANGELOG.md",
+            text,
+            historical_path_exists=lambda path: recovered.append(path) or True,
+        )
+        self.assertEqual(diagnostics, ())
+        self.assertEqual(recovered, [target])
+
+        lost = self.validate("CHANGELOG.md", text)
+        self.assertEqual([item.code for item in lost], ["EXECUTABLE-HISTORY"])
+
     def test_completed_spec_reference_uses_git_first_recovery(self) -> None:
         target = PurePosixPath("scripts/retired/deep/check-contract.py")
         recovered: list[PurePosixPath] = []
