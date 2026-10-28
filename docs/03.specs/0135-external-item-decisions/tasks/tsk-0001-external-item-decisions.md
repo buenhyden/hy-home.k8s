@@ -26,10 +26,10 @@ through [WORK-001–003](../plan.md#work-breakdown).
 
 ### Decisions
 
-| CR | Decision | Effect |
+| CR | Decision on 2026-10-28 | Effect |
 | --- | --- | --- |
 | CR-01.02 | The operator accepts the rewritten survey text in place of the original attachment | Closed |
-| CR-12.01 | The operator accepts the observed visibility, required checks, runners and QA routes recorded in SPEC-0133 as the target; private branch protection stays unavailable on the current plan | Closed; the plan limit is accepted residual risk |
+| CR-12.01 | The operator accepts the visibility, default branches, required checks, approving reviews and runners recorded in SPEC-0133 as the target; private branch protection stays unavailable on the current plan | Closed; the plan limit is accepted residual risk |
 | CR-18.06 | The operator accepts a mock-only record. No repository code calls an LLM provider, so no provider-limit mock or live response exists. The nearest repository tests bound processes, such as the timeout and pipe-overflow tests in `tests/test_agent_governance_consumers.py` and `tests/test_archive_integrity.py`. This record is not operational evidence | Closed as mock-only, not operational |
 
 ### CR-08.01 Archive Layouts
@@ -52,7 +52,8 @@ CR-03.07 wait on, so CR-08.01 stays `EXTERNAL` with the layouts recorded.
 A GraphQL `projectsV2` query with the `read:project` scope on 2026-10-28
 returned one user Project, number 1, untitled, closed, private, last updated
 2026-01-09, with 0 items. No Project is linked to `hy-home.k8s`. No projection
-exists to test, so CR-14.03 is not applicable until the operator chooses one.
+exists to test, so CR-14.03 stays `EXTERNAL` until the operator chooses a
+projection Project.
 
 ### Remaining
 
@@ -76,6 +77,7 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 | EVD-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Observation record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | PR #190 independent review of `14eadc51` | FAIL | The CR-12.01 decision cited QA routes that SPEC-0133 does not record, the decision table named no date, and CR-14.03 had no stated state | yes | none |
 
 ## Criterion Acceptance
 
