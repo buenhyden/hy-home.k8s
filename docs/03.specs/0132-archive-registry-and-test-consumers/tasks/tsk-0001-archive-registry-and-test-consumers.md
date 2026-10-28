@@ -1,6 +1,6 @@
 ---
 title: "Archive Registry and Test Consumers"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -83,10 +83,10 @@ SPEC-0104 on 2026-10-28.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | in-progress | PASS | EVD-008 closes EVD-001, EVD-006 |
-| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | platform | in-progress | PASS | EVD-005, EVD-009 close EVD-002, EVD-007 |
-| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | platform | in-progress | PASS | EVD-010 closes EVD-003 |
-| WORK-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-011 closes EVD-004 |
+| WORK-001 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | completed | PASS | EVD-008 closes EVD-001, EVD-006 |
+| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | platform | completed | PASS | EVD-005, EVD-009 close EVD-002, EVD-007 |
+| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | platform | completed | PASS | EVD-010 closes EVD-003 |
+| WORK-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-011 closes EVD-004 |
 
 ## Task Evidence
 
@@ -108,10 +108,10 @@ SPEC-0104 on 2026-10-28.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RT-001](../spec.md#success-criteria--verification-plan) | pending | none | Consumer edits remain | platform |
-| [VAL-RT-002](../spec.md#success-criteria--verification-plan) | pending | none | Recovery remains | platform |
-| [VAL-RT-003](../spec.md#success-criteria--verification-plan) | pending | none | Removal remains | platform |
-| [VAL-RT-004](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-RT-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: no current document links to or reads the 26 units, and the validators and named tests pass | platform |
+| [VAL-RT-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005, EVD-009 | Accepted by the operator on 2026-10-28: all 26 envelopes restore 64 files; rebased decisions differ only in link targets | platform |
+| [VAL-RT-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accepted by the operator on 2026-10-28: the 26 units left the tree with valid `git-history-only` rows and staged QA passed | platform |
+| [VAL-RT-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-011 | Accepted by the operator on 2026-10-28: the independent review approved and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -133,7 +133,18 @@ SPEC-0104 on 2026-10-28.
   bringing it back is a new unit under a new decision. The consumer edits
   revert with the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-RT-001 to
+  VAL-RT-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-008, closing EVD-006): the validators and the named
+tests pass with the 26 units removed, after the lifecycle test read ADR-0035
+from Git history and two README sentences were corrected. WORK-002 passed
+(EVD-005 and EVD-009, closing EVD-007). WORK-003 passed (EVD-010): commit
+`fe3bd418` removed the 26 units. WORK-004 passed (EVD-011). The operator
+accepted all four criteria. Nine units stay `retained`: ADR-0032, SPEC-0004,
+SPEC-0005, SPEC-0008, SPEC-0054, SPEC-0072, SPEC-0080, SPEC-0103 and
+SPEC-0104. Moving them needs a frozen-ledger, test or Requirement trace
+change under its own decision. The lifecycle test now needs commit
+`9bab5067` in the checkout.
