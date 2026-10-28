@@ -30,9 +30,9 @@ It executes [SPEC-0137](../spec.md) through
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RB-001](../spec.md#success-criteria--verification-plan) | Derive a bounded Release body | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RB-002](../spec.md#success-criteria--verification-plan) | Use the body in publish and describe it in RUN-0012 | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RB-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RB-001](../spec.md#success-criteria--verification-plan) | Derive a bounded Release body | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RB-002](../spec.md#success-criteria--verification-plan) | Use the body in publish and describe it in RUN-0012 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-RB-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
