@@ -1,6 +1,6 @@
 ---
 title: "Review Decisions and C4 Prompt"
-version: "0.1.0"
+version: "0.2.0"
 type: "sdlc/task"
 owner: "platform"
 updated: "2026-10-28"
@@ -75,10 +75,10 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | in-progress | PASS | EVD-008 closes EVD-002, EVD-006 |
-| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | in-progress | PASS | EVD-009 closes EVD-003, EVD-007 |
-| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-010 closes EVD-004 |
+| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | completed | PASS | EVD-005 closes EVD-001 |
+| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | completed | PASS | EVD-008 closes EVD-002, EVD-006 |
+| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | completed | PASS | EVD-009 closes EVD-003, EVD-007 |
+| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-010 closes EVD-004 |
 
 ## Task Evidence
 
@@ -99,10 +99,10 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RD-001](../spec.md#success-criteria--verification-plan) | pending | none | Prompt change remains | platform |
-| [VAL-RD-002](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-RD-003](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-RD-004](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-RD-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28: the diagram prompt asks for C4 element labels and relationship direction, purpose and protocol | platform |
+| [VAL-RD-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Accepted by the operator on 2026-10-28: each proposal cell and catalogue has one decision with its owner or reason | platform |
+| [VAL-RD-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Accepted by the operator on 2026-10-28: CR-12.01 evidence and the closing action for each other external item are recorded | platform |
+| [VAL-RD-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Accepted by the operator on 2026-10-28: the independent review approved and the hosted checks passed | platform |
 
 ## Approval and Safety Boundaries
 
@@ -119,7 +119,14 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
   is read.
 - **Rollback Plan**: revert the pull request.
 - **Evidence Location**: this Task.
+- **Acceptance**: on 2026-10-28 the operator accepted VAL-RD-001 to
+  VAL-RD-004.
 
 ## Verification Summary
 
-Not run yet.
+WORK-001 passed (EVD-005): the diagram prompt carries the C4 checks.
+WORK-002 passed (EVD-008, closing EVD-006): the proposal decisions name
+their owners. WORK-003 passed (EVD-009, closing EVD-007): the external record
+matches re-read metadata and the clone layouts. WORK-004 passed (EVD-010).
+The operator accepted all four criteria. CR-02.07 is decided. The eight
+`EXTERNAL` CRs stay open; each names the operator action that would close it.
