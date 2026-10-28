@@ -74,10 +74,10 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
