@@ -49,9 +49,19 @@ BUNDLE = "docs/05.operations/incidents/2026/inc-0001-example"
 INDEX_TEXT = "---\ntitle: Archive\n---\n\n# Archive\n"
 
 
-# SPEC-0132 moved the retained decision body to Git history; this main commit
-# is the last one that holds it at its retained path.
+# SPEC-0132 and SPEC-0134 moved the retained decision and seed package to Git
+# history; this main commit still holds both at their retained paths.
 RETAINED_BODY_COMMIT = "9bab5067821ef45411a655b54e0ec5aa35593d2e"
+
+
+def retained_bytes(path: str) -> bytes:
+    """Return a retained body from the commit that still holds it."""
+
+    return subprocess.run(
+        ["git", "-C", str(ROOT), "show", f"{RETAINED_BODY_COMMIT}:{path}"],
+        check=True,
+        capture_output=True,
+    ).stdout
 
 
 def original_bytes(path: str) -> bytes:
@@ -59,18 +69,7 @@ def original_bytes(path: str) -> bytes:
 
     source = PurePosixPath(path)
     retained = dispositions.retained_body_path(source, "superseded")
-    text = subprocess.run(
-        [
-            "git",
-            "-C",
-            str(ROOT),
-            "show",
-            f"{RETAINED_BODY_COMMIT}:{retained.as_posix()}",
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
+    text = retained_bytes(retained.as_posix()).decode("utf-8")
     return dispositions.rebase_relative_links(text, retained, source).encode("utf-8")
 
 
@@ -133,7 +132,7 @@ class DispositionLifecycleTest(unittest.TestCase):
         self.write(REGISTRY_PATH, self.registry_bytes)
         self.write(RUNBOOK, (ROOT / RUNBOOK).read_bytes())
         for member in PACKAGE_MEMBERS:
-            frozen = (ROOT / PACKAGE_SEED / member).read_bytes()
+            frozen = retained_bytes(f"{PACKAGE_SEED}/{member}")
             assert frozen.count(b'status: "done"') == 1
             self.write(
                 f"{PACKAGE}/{member}",

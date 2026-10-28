@@ -1,10 +1,10 @@
 ---
 title: "98.archive"
-version: "0.8.1"
+version: "0.8.2"
 type: "archive/catalog"
 status: "active"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-10-28"
 layer: "archive"
 ---
 
@@ -205,7 +205,7 @@ ADR-0038 disposition이 보존한 본문을 행마다 하나씩 명명한다. �
 
 ### Retention Assessment
 
-Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 행이 없는 단위는 `unreviewed`이며 `retained`다. 이 표는 envelope·class·digest를 반복하지 않고, 보존 본문도 바꾸지 않는다. 허용값과 조건은 Stage 99 registry의 `archive_assessment`가 소유한다. `usable`은 역사 증거로 인용할 수 있다는 뜻이지 현재 authority가 아니다. `superseded`는 현재 owner를, 그 밖의 모든 판단은 판단과 승인을 기록한 현재 Task·Spec·ADR을 Decision으로 명명한다. `git-history-only`는 실제 가치·소비자, disposition 승인, Hold `none`, 전체 단위의 tree 제거와 도달 가능한 catalog 복구 좌표를 각각 확인한 뒤에만 쓴다. 역사 digest나 Git 좌표의 존재만으로 처분 승인 또는 hold 해소를 대신하지 않는다. 한 번 떠난 단위는 돌아오지 않는다. `purged`는 보안 승인된 정화 계약이 없으므로 쓰지 않는다. 행은 표를 떠나지 않으며, 판단 변경 이력은 Git이 소유한다. 현재 표는 비어 있어 어느 단위도 이 재평가에 따라 처분 적격으로 확인되지 않았다.
+Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 명명한다([ADR-0040](../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 행이 없는 단위는 `unreviewed`이며 `retained`다. 이 표는 envelope·class·digest를 반복하지 않고, 보존 본문도 바꾸지 않는다. 허용값과 조건은 Stage 99 registry의 `archive_assessment`가 소유한다. `usable`은 역사 증거로 인용할 수 있다는 뜻이지 현재 authority가 아니다. `superseded`는 현재 owner를, 그 밖의 모든 판단은 판단과 승인을 기록한 현재 Task·Spec·ADR을 Decision으로 명명한다. `git-history-only`는 실제 가치·소비자, disposition 승인, Hold `none`, 전체 단위의 tree 제거와 도달 가능한 catalog 복구 좌표를 각각 확인한 뒤에만 쓴다. 역사 digest나 Git 좌표의 존재만으로 처분 승인 또는 hold 해소를 대신하지 않는다. 한 번 떠난 단위는 돌아오지 않는다. `purged`는 보안 승인된 정화 계약이 없으므로 쓰지 않는다. 행은 표를 떠나지 않으며, 판단 변경 이력은 Git이 소유한다. 행이 판단과 승인을 기록한 Task를 Decision으로 명명하며, 남은 보존 단위는 모두 `usable` 행으로 남는 이유를 기록한다.
 
 | Disposition Record | Assessment | Availability | Current Owner | Decision | Assessed | Hold |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -264,6 +264,15 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 | `completed/03.specs/0098-claude-search-grant-and-retention` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
 | `completed/03.specs/0099-workspace-engineering-research-refresh` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
 | `completed/03.specs/0102-agent-contracts-and-skill-ownership` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
+| `completed/03.specs/0080-adr-0032-retention-pilot` | unreviewed | git-history-only | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0004-argo-rollouts-progressive-delivery` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0005-argo-notifications-slack` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0008-current-local-gitops-platform` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0072-agent-governance-and-quality-gate-consolidation` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0103-qa-evidence-reuse` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0104-platform-validation-assurance` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
 
 ## Usage
 

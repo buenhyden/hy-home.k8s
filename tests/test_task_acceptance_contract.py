@@ -925,13 +925,20 @@ class PriorGenerationEvidenceTests(unittest.TestCase):
         )
         registry = _typed_registry_from_mapping(json.loads(raw))
         path = PurePosixPath("docs/03.specs/0080-adr-0032-retention-pilot/plan.md")
-        seed = (
-            ROOT
-            / "docs/98.archive/completed/03.specs/0080-adr-0032-retention-pilot/plan.md"
+        # SPEC-0134 moved this package to Git history; read it from the last
+        # main commit that held it.
+        seed = subprocess.check_output(
+            [
+                "git",
+                "show",
+                "9bab5067821ef45411a655b54e0ec5aa35593d2e:"
+                "docs/98.archive/completed/03.specs/0080-adr-0032-retention-pilot/plan.md",
+            ],
+            cwd=ROOT,
+            encoding="utf-8",
+            text=True,
         )
-        text = seed.read_text(encoding="utf-8").replace(
-            'status: "done"', 'status: "completed"', 1
-        )
+        text = seed.replace('status: "done"', 'status: "completed"', 1)
         cli = load_lifecycle_cli()
         document = cli.document_from_text(registry, path, text)
         context = cli._evidence_context(
