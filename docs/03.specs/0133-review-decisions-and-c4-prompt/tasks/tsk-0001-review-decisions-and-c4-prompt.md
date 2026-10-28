@@ -76,9 +76,9 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | Add the C4 checks to the diagram author prompt | platform | in-progress | PASS | EVD-005 closes EVD-001 |
-| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | Record the proposal and catalogue decisions | platform | in-progress | PASS | EVD-008 closes EVD-002, EVD-006 |
+| WORK-003 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | Record the external evidence and closing actions | platform | in-progress | PASS | EVD-009 closes EVD-003, EVD-007 |
+| WORK-004 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | PASS | EVD-010 closes EVD-004 |
 
 ## Task Evidence
 
@@ -91,6 +91,9 @@ Read with `gh api` GET calls at 2026-10-28T00:54Z.
 | EVD-005 | [VAL-RD-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Prompt change | Branch `docs/review-decisions-and-c4-prompt`: the diagram author prompt in `description.template.md`; `python3 scripts/qa.py staged` on the exact index, including the form-contract tests | PASS | The prompt now asks for each element's name, type and responsibility and each relationship's direction, purpose and protocol; no section, template or validator rule was added | yes | EVD-001 |
 | EVD-006 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Decision record and review | PR #187 independent review of `ee4987aa` | FAIL | The SRC-SDD-D row named the spec form at the wrong path and claimed coverage of example subsections that m0012 does not list | yes | none |
 | EVD-007 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | External record and review | PR #187 independent review of `ee4987aa` | FAIL | The record said only `hy-home.docker` is cloned locally, but `Project-Template` is too; the CR-03.07 layout claim cited no observation | yes | none |
+| EVD-008 | [VAL-RD-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Decision record and review | PR #187 independent review of `ee4987aa` and re-review of `6e54674d` | PASS | The five cells match the m0012 matrix; each covered claim names an owner that exists; the spec-form row now names `specs/spec.template.md` and a claim m0012 supports | yes | EVD-002, EVD-006 |
+| EVD-009 | [VAL-RD-003](../spec.md#success-criteria--verification-plan) | WORK-003 | External record and review | PR #187 independent review re-running each GitHub GET call, and re-review of `6e54674d` listing the clone layouts | PASS | The CR-12.01 table matches the re-read metadata; the clone record names both local clones and their archive and template layouts; no row closes a CR | yes | EVD-003, EVD-007 |
+| EVD-010 | [VAL-RD-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | PR #187 heads `ee4987aa` (CI run `40614815423`) and `6e54674d` (CI run `40616741520`) | PASS | The reviewer approved after the fix; `ci-summary`, `style-pr`, `label` and GitGuardian passed on both heads | yes | EVD-004 |
 
 ## Criterion Acceptance
 
