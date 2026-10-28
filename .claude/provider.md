@@ -1,6 +1,6 @@
 ---
 title: "Claude Provider Notes"
-version: "1.6.1"
+version: "1.6.2"
 type: "governance/provider"
 status: "active"
 owner: "platform"
@@ -109,8 +109,8 @@ a changed projection from a new session. Native macOS and Linux builds from
 names silently. SPEC-0098 therefore gives every role's Claude scope `Bash`, and
 `Grep` and `Glob` stay for the builds that still ship them. The two read-only
 roles that held no shell now confine it to read-only repository search by
-policy. The SPEC-0098 Task owns that evidence; the SPEC-0097 Task's
-record is recovered from Git through the Retention Catalog.
+policy. The SPEC-0097 and SPEC-0098 Tasks recorded that evidence and are
+recovered from Git through the Retention Catalog.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),

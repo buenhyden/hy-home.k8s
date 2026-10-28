@@ -1,10 +1,10 @@
 ---
 title: "02.architecture"
-version: "0.6.0"
+version: "0.6.1"
 type: "common/readme"
 status: "active"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-28"
 layer: "architecture"
 ---
 # 02.architecture
@@ -24,7 +24,8 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 정적 검증 스크립트가 우선한다. ADR을 포함해 더 이상 현재가 아닌 문서는 current consumer와 의미를
 승계한 뒤 Stage 98로 떠난다. 대체된 문서는 `superseded/<stage>/`, 후계자 없이 철회된 문서는 `retired/<stage>/`에
 원래 profile 그대로 보존한다([ADR-0040](./decisions/0040-archive-reappraisal-and-verifiable-sources.md)). 대체된 ADR은
-`98.archive/superseded/`에 보존되며 상호 supersession을 유지한다. ADR-0038도 이미 그곳에 보존되어 decision log를 떠났다.
+`98.archive/superseded/`로 떠나며 상호 supersession을 유지한다. ADR-0032 외의 대체된 ADR은 그 뒤 Retention Catalog
+envelope로 Git에서 복구하는 `git-history-only`가 되었다.
 [`Archive index`](../98.archive/README.md)는 현재 탐색 경계이며 보존본은 현재 실행 권위가 아니다.
 
 ### Reader Route

@@ -1,10 +1,10 @@
 ---
 title: "Archive Reappraisal and Verifiable Sources"
-version: "1.0.1"
+version: "1.0.2"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-10-28"
 layer: "architecture"
 artifact_id: "ADR-0040"
 supersedes: "ADR-0039"
@@ -29,8 +29,8 @@ validators, and tests over to it.
 ## Context
 
 A read-only survey at `980c5458` compared ADR-0039 with the registry, catalog,
-and validators that implement it. The proposal Task of SPEC-0085 records each
-finding with its file and line.
+and validators that implement it. The proposal Task of SPEC-0085, recovered from Git through the Retention
+Catalog, records each finding with its file and line.
 
 - Retention has no end state. ADR-0039 forbids editing, deleting, renaming, or
   recreating a retained unit, and the lifecycle gate fails any base catalog row
@@ -182,4 +182,4 @@ squash later makes unreachable, which the envelope exists to prevent.
 
 | Decision lineage | Replacement relation                                                       | Affected Spec                                                                       |
 | ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes ADR-0039; the frozen generations keep theirs | [SPEC-0085](../../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md) |
+| [ADR-0039](./0039-unit-archive-retention-and-citation-table.md) | Supersedes ADR-0039; the frozen generations keep theirs | SPEC-0085 |

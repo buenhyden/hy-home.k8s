@@ -1,10 +1,10 @@
 ---
 title: "Archive Retention and Provenance Research Pack"
-version: "0.1.1"
+version: "0.1.2"
 type: "reference/research-pack"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-10-28"
 artifact_id: "RES-0002"
 ---
 
@@ -64,4 +64,4 @@ cluster 상태를 입증하지 않으며 여기서 인용했다고 해서 그 �
 
 - [Research collection](../README.md)
 - [ADR-0039](../../../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
-- [Spec 0082](../../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md)
+- Spec 0082, recovered from Git through the Retention Catalog

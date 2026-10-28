@@ -1,6 +1,6 @@
 ---
 title: "Workspace Agent and Document Governance Requirements"
-version: "2.1.15"
+version: "2.1.16"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
@@ -182,7 +182,7 @@ Retaining the fifteen remaining superseded decisions is owned by
 SPEC-0081.
 The unit archive retention contract that ADR-0039 adopts, its cutover, and the
 first exact disposition are owned by
-[SPEC-0082](../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
+SPEC-0082.
 Retaining the ten finished Stage 03 packages under that contract, and
 recording why the two superseded proposals cannot follow, is owned by
 SPEC-0083.
@@ -192,7 +192,7 @@ SPEC-0084.
 The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
-[SPEC-0085](../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
+SPEC-0085.
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
 SPEC-0086.
@@ -209,21 +209,21 @@ Retaining the withdrawn SPEC-0049 package in `retired/` was owned by
 SPEC-0090; the package later left the current tree under SPEC-0131.
 Constraining every README to its direct children under one registry
 navigation contract is owned by
-[SPEC-0091](../98.archive/completed/03.specs/0091-readme-navigation-contract/spec.md).
+SPEC-0091.
 Stating each document's language in one registry contract is owned by
-[SPEC-0093](../98.archive/completed/03.specs/0093-document-language-contract/spec.md).
+SPEC-0093.
 Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
 through SPEC-0093 is owned by
 SPEC-0094.
 Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
-[SPEC-0095](../98.archive/completed/03.specs/0095-closed-package-retention/spec.md).
+SPEC-0095.
 Rebinding the Codex `top` and `worker` model tiers is owned by
 SPEC-0096.
 Binding the Claude role models and reasoning effort is owned by
 SPEC-0097.
 Granting search to every Claude role and retaining SPEC-0095 through
 SPEC-0097 is owned by
-[SPEC-0098](../98.archive/completed/03.specs/0098-claude-search-grant-and-retention/spec.md).
+SPEC-0098.
 Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 SPEC-0101.
 SPEC-0073, SPEC-0074, SPEC-0077, SPEC-0078, SPEC-0079, SPEC-0081, SPEC-0088,
@@ -235,10 +235,14 @@ SPEC-0049, SPEC-0050, SPEC-0075, SPEC-0076, SPEC-0083, SPEC-0084, SPEC-0086,
 SPEC-0087, SPEC-0096 and SPEC-0097 left the current tree under
 [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md) and are
 recovered the same way.
+SPEC-0062, SPEC-0082, SPEC-0085, SPEC-0091, SPEC-0093, SPEC-0095, SPEC-0098,
+SPEC-0099 and SPEC-0102 left the current tree under
+[SPEC-0132](../03.specs/0132-archive-registry-and-test-consumers/spec.md) and
+are recovered the same way.
 
 ## Traceability
 
-[SPEC-0102](../98.archive/completed/03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is the completed agent-contract work unit. The completed [SPEC-0103](../98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md) records QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
+SPEC-0102 is the completed agent-contract work unit. The completed [SPEC-0103](../98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md) records QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
 
 [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md) is the current
 local-QA and release contract for REQ-0003-FR-0001/0005/0016/0017/0018/0024/0026/0027/0029/0030,
@@ -273,10 +277,10 @@ Archive lifecycle conformance for REQ-0003-FR-0020 and REQ-0003-NFR-0002 was del
 | REQ-0003-FR-0021 | Audit, research, data, generated output, and learning material must state their basis, observation time, and owner, and must not substitute for current policy or execution approval. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0124](../03.specs/0124-required-source-coverage/spec.md), [SPEC-0129](../03.specs/0129-inventory-operations-and-qa-baseline/spec.md), [SPEC-0133](../03.specs/0133-review-decisions-and-c4-prompt/spec.md) |
 | REQ-0003-FR-0022 | Scratch and checkpoints must stay bounded, secret-free temporary state, and durable execution evidence must be left in the Task. The removed shared progress ledger is not restored as a new current owner. The SPEC-0109 shared workspace memory store may retain revised decision context across sessions and providers; it is never Task status, evidence, approval or acceptance, and it is not that ledger. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0109](../03.specs/0109-shared-workspace-memory/spec.md), [SPEC-0115](../03.specs/0115-r10-local-remediation/spec.md), [SPEC-0125](../03.specs/0125-survey-status-and-local-gaps/spec.md) |
 | REQ-0003-FR-0023 | Stable document identities and semantic filenames must be kept, and the identity rules, uniqueness, and path correspondence of mandatory/excluded profiles must be validated. Identifiers in existing decision history are not reassigned. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0127](../03.specs/0127-adr-lineage-and-branch-strategy/spec.md) |
-| REQ-0003-FR-0024 | A compatibility layer, wrapper, or script must be kept only while it has a real consumer and a unique rule or negative fixture, and must be removed after succession evidence and consumer-zero. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0108](../03.specs/0108-task-status-and-provider-boundaries/spec.md), [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0122](../03.specs/0122-archive-unit-disposition/spec.md), [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md), [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md) |
+| REQ-0003-FR-0024 | A compatibility layer, wrapper, or script must be kept only while it has a real consumer and a unique rule or negative fixture, and must be removed after succession evidence and consumer-zero. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0108](../03.specs/0108-task-status-and-provider-boundaries/spec.md), [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0122](../03.specs/0122-archive-unit-disposition/spec.md), [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md), [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md), [SPEC-0132](../03.specs/0132-archive-registry-and-test-consumers/spec.md) |
 | REQ-0003-FR-0025 | The agent system's risk, tool/data trust, oversight, stop, approval, trace, evaluation, and component provenance obligations must be implemented and validated in the current `.agents/roles/` Registry and `.agents/governance/` owners. A static declaration does not prove runtime enforcement. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0114](../03.specs/0114-provider-permission-hardening/spec.md) |
 | REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI, and approved remote/live evidence must be kept apart and must not be promoted into one another without observation. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0108](../03.specs/0108-task-status-and-provider-boundaries/spec.md), [SPEC-0109](../03.specs/0109-shared-workspace-memory/spec.md), [SPEC-0113](../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md), [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0114](../03.specs/0114-provider-permission-hardening/spec.md), [SPEC-0115](../03.specs/0115-r10-local-remediation/spec.md), [SPEC-0116](../03.specs/0116-independent-review-gate/spec.md) |
-| REQ-0003-FR-0027 | Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Integrity checks of the sealed Archive stay separate. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0115](../03.specs/0115-r10-local-remediation/spec.md), [SPEC-0122](../03.specs/0122-archive-unit-disposition/spec.md), [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md), [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md), [SPEC-0127](../03.specs/0127-adr-lineage-and-branch-strategy/spec.md), [SPEC-0128](../03.specs/0128-change-kinds-and-authoring-prompts/spec.md) |
+| REQ-0003-FR-0027 | Lifecycle validation must judge profile, state, and allowed edges, while ordinary body corrections and consumer succession are judged by semantic/link validation and reviewed Git recovery. Integrity checks of the sealed Archive stay separate. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0115](../03.specs/0115-r10-local-remediation/spec.md), [SPEC-0122](../03.specs/0122-archive-unit-disposition/spec.md), [SPEC-0130](../03.specs/0130-archive-history-link-migration/spec.md), [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md), [SPEC-0132](../03.specs/0132-archive-registry-and-test-consumers/spec.md), [SPEC-0127](../03.specs/0127-adr-lineage-and-branch-strategy/spec.md), [SPEC-0128](../03.specs/0128-change-kinds-and-authoring-prompts/spec.md) |
 | REQ-0003-FR-0028 | Malformed input, a missing tool, fallbacks, risky paths, and forbidden actions must have deterministic direct negative tests, and a required-tool failure must not be hidden as a diagnostic SKIP. Whether it is met is judged by the owner's static validation and separate observed evidence. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md), [SPEC-0110](../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md), [SPEC-0111](../03.specs/0111-historical-fixture-drift/spec.md), [SPEC-0112](../03.specs/0112-pinned-package-fixtures/spec.md), [SPEC-0113](../03.specs/0113-sdlc-sync-and-v9-gaps/spec.md), [SPEC-0114](../03.specs/0114-provider-permission-hardening/spec.md) |
 | REQ-0003-FR-0029 | A reviewed main release-preparation PR controls canonical changelog and a single SemVer tag/Release producer; historical SHA tags are preserved. Actual publication needs separate observation. | [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md) |
 | REQ-0003-FR-0030 | Active scripts, tests and hosted surfaces are retired only after ongoing coverage and consumers transfer, with distinct failure meanings preserved. | [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md), [SPEC-0110](../03.specs/0110-provider-readme-and-qa-diagnostics/spec.md) |
