@@ -264,6 +264,15 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 | `completed/03.specs/0098-claude-search-grant-and-retention` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
 | `completed/03.specs/0099-workspace-engineering-research-refresh` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
 | `completed/03.specs/0102-agent-contracts-and-skill-ownership` | unreviewed | git-history-only | none | [SPEC-0132-TSK-0001](../03.specs/0132-archive-registry-and-test-consumers/tasks/tsk-0001-archive-registry-and-test-consumers.md) | 2026-10-28 | none |
+| `completed/03.specs/0080-adr-0032-retention-pilot` | unreviewed | git-history-only | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0004-argo-rollouts-progressive-delivery` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0005-argo-notifications-slack` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0008-current-local-gitops-platform` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0054-sdlc-document-and-agent-governance-consolidation` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0072-agent-governance-and-quality-gate-consolidation` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0103-qa-evidence-reuse` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
+| `completed/03.specs/0104-platform-validation-assurance` | usable | retained | none | [SPEC-0134-TSK-0001](../03.specs/0134-archive-final-units/tasks/tsk-0001-archive-final-units.md) | 2026-10-28 | none |
 
 ## Usage
 
