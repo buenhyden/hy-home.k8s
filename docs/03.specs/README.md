@@ -106,7 +106,8 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 ├── 0134-archive-final-units/
 ├── 0135-external-item-decisions/
 ├── 0136-first-semver-release/
-└── 0137-release-body-limit/
+├── 0137-release-body-limit/
+└── 0138-remaining-decisions-closeout/
 ```
 
 [Common Authority and Safe Authoring](./0105-authority-and-safe-authoring/)은 P01의 공통 권한과 안전한 저술 계약을 소유한다.
@@ -142,6 +143,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [External Item Decisions](./0135-external-item-decisions/)는 외부 의존 조사 항목 다섯 개에 대한 운영자 결정과 Archive 구조·Projects 관측 기록을 소유한다.
 [First SemVer Release](./0136-first-semver-release/)는 첫 SemVer 릴리스 `v0.1.0`의 범위 검토, CHANGELOG 작성과 게시 관측 기록을 소유한다.
 [Release Body Limit](./0137-release-body-limit/)는 GitHub Release 본문 길이 제한을 넘는 릴리스 노트를 요약과 CHANGELOG 링크로 게시하는 release tool 변경을 소유한다.
+[Remaining Decisions Closeout](./0138-remaining-decisions-closeout/)는 남은 조사 항목과 SPEC-0103에 대한 운영자 결정, CR-09.04 읽기 전용 live 관측 기록을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.
