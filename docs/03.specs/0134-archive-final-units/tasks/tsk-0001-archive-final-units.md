@@ -37,7 +37,7 @@ that the nine Retention Assessment rows name.
 | SPEC-0004 | usable | REQ-0001, ADR-0011 and AD-0004 cite it as Argo Rollouts delivery evidence |
 | SPEC-0005 | usable | REQ-0002, ADR-0012, AD-0005 and RUN-0004 cite it as Argo Notifications delivery evidence |
 | SPEC-0008 | usable | REQ-0004, AD-0007 and the platform ADRs cite it as local GitOps platform delivery evidence |
-| SPEC-0054 | usable | 78 current links cite it as the governance convergence record |
+| SPEC-0054 | usable | 48 Markdown links outside Stage 98 cite it as the governance convergence record |
 | SPEC-0072 | usable | REQ-0003 names it as the trace owner of FR-0011 and acceptance criterion 09 |
 | SPEC-0103 | usable | The SPEC-0105 Task 0003 Inputs link to its Task 0006, and that older-form Task cannot be edited |
 | SPEC-0104 | usable | REQ-0004 FR-0008 and FR-0010 and AD-0007 cite its Tasks as acceptance evidence |
@@ -62,6 +62,7 @@ that the nine Retention Assessment rows name.
 | EVD-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Validators and staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `cfe3fdb6`: `git rev-parse` of the SPEC-0080 tree against its envelope tree, then `git archive` of the envelope into a scratch directory | PASS | Equal tree; restored 3 files, matching the current tree | yes | EVD-002 |
+| EVD-006 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Test runs and link search | PR #189 independent review of `7142c6a8` | FAIL | The pinned read in `test_task_acceptance_contract` decoded with the locale encoding instead of UTF-8, and the SPEC-0054 reason cited 78 links where 48 Markdown links exist outside Stage 98 | yes | none |
 
 ## Criterion Acceptance
 

@@ -935,6 +935,7 @@ class PriorGenerationEvidenceTests(unittest.TestCase):
                 "docs/98.archive/completed/03.specs/0080-adr-0032-retention-pilot/plan.md",
             ],
             cwd=ROOT,
+            encoding="utf-8",
             text=True,
         )
         text = seed.replace('status: "done"', 'status: "completed"', 1)
