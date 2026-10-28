@@ -182,7 +182,7 @@ Retaining the fifteen remaining superseded decisions is owned by
 SPEC-0081.
 The unit archive retention contract that ADR-0039 adopts, its cutover, and the
 first exact disposition are owned by
-[SPEC-0082](../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md).
+SPEC-0082.
 Retaining the ten finished Stage 03 packages under that contract, and
 recording why the two superseded proposals cannot follow, is owned by
 SPEC-0083.
@@ -192,7 +192,7 @@ SPEC-0084.
 The archive reappraisal and verifiable-source contract that ADR-0040 proposes,
 its cutover, the index navigation corrections, and the ordered lifecycle and
 result vocabulary work are owned by
-[SPEC-0085](../98.archive/completed/03.specs/0085-archive-reappraisal-and-document-standards/spec.md).
+SPEC-0085.
 The operator-authorized native-runtime observation of Claude and Codex that
 SPEC-0072 left open is owned by
 SPEC-0086.
@@ -209,21 +209,21 @@ Retaining the withdrawn SPEC-0049 package in `retired/` was owned by
 SPEC-0090; the package later left the current tree under SPEC-0131.
 Constraining every README to its direct children under one registry
 navigation contract is owned by
-[SPEC-0091](../98.archive/completed/03.specs/0091-readme-navigation-contract/spec.md).
+SPEC-0091.
 Stating each document's language in one registry contract is owned by
-[SPEC-0093](../98.archive/completed/03.specs/0093-document-language-contract/spec.md).
+SPEC-0093.
 Retaining the eight finished packages SPEC-0072, SPEC-0085, and SPEC-0087
 through SPEC-0093 is owned by
 SPEC-0094.
 Retaining SPEC-0086 and SPEC-0094 after they closed is owned by
-[SPEC-0095](../98.archive/completed/03.specs/0095-closed-package-retention/spec.md).
+SPEC-0095.
 Rebinding the Codex `top` and `worker` model tiers is owned by
 SPEC-0096.
 Binding the Claude role models and reasoning effort is owned by
 SPEC-0097.
 Granting search to every Claude role and retaining SPEC-0095 through
 SPEC-0097 is owned by
-[SPEC-0098](../98.archive/completed/03.specs/0098-claude-search-grant-and-retention/spec.md).
+SPEC-0098.
 Retaining SPEC-0098 through SPEC-0100 after they closed is owned by
 SPEC-0101.
 SPEC-0073, SPEC-0074, SPEC-0077, SPEC-0078, SPEC-0079, SPEC-0081, SPEC-0088,
@@ -235,10 +235,14 @@ SPEC-0049, SPEC-0050, SPEC-0075, SPEC-0076, SPEC-0083, SPEC-0084, SPEC-0086,
 SPEC-0087, SPEC-0096 and SPEC-0097 left the current tree under
 [SPEC-0131](../03.specs/0131-archive-evidence-owner-migration/spec.md) and are
 recovered the same way.
+SPEC-0062, SPEC-0082, SPEC-0085, SPEC-0091, SPEC-0093, SPEC-0095, SPEC-0098,
+SPEC-0099 and SPEC-0102 left the current tree under
+[SPEC-0132](../03.specs/0132-archive-registry-and-test-consumers/spec.md) and
+are recovered the same way.
 
 ## Traceability
 
-[SPEC-0102](../98.archive/completed/03.specs/0102-agent-contracts-and-skill-ownership/spec.md) is the completed agent-contract work unit. The completed [SPEC-0103](../98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md) records QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
+SPEC-0102 is the completed agent-contract work unit. The completed [SPEC-0103](../98.archive/completed/03.specs/0103-qa-evidence-reuse/spec.md) records QA evidence-reuse behavior for REQ-0003-FR-0016/0017/0018/0026/0028/0029/0030 and REQ-0003-NFR-0002/0004; this reciprocal link grants no Plan or implementation approval.
 
 [SPEC-0107](../03.specs/0107-local-qa-and-release/spec.md) is the current
 local-QA and release contract for REQ-0003-FR-0001/0005/0016/0017/0018/0024/0026/0027/0029/0030,

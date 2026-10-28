@@ -30,7 +30,7 @@ units whose bodies something still reads:
 - one test seeds from the SPEC-0080 package;
 - one test reads the SPEC-0103 Spec.
 
-This Spec moves the document consumers of 27 units and removes those units
+This Spec moves the document consumers of 26 units and removes those units
 under
 [ADR-0040](../../02.architecture/decisions/0040-archive-reappraisal-and-verifiable-sources.md)
 as `git-history-only`. The [Plan](plan.md) orders the work and
@@ -39,14 +39,15 @@ as `git-history-only`. The [Plan](plan.md) orders the work and
 ## Strategic Boundaries & Non-goals
 
 - In scope:
-  - the links and owner sentences in REQ-0003, AD-0006, ADR-0039, ADR-0040,
+  - the links and owner sentences in REQ-0003, ADR-0039, ADR-0040,
     ADR-0047, the archive research README and m0001, m0012 and
-    `.claude/provider.md` that name the 27 units;
-  - removing the 27 whole units and adding one Retention Assessment row each.
+    `.claude/provider.md` that name the 26 units;
+  - removing the 26 whole units and adding one Retention Assessment row each.
 - Non-goals:
   - ADR-0032, SPEC-0080 and SPEC-0103, which frozen ledgers or tests read;
   - SPEC-0004, SPEC-0005, SPEC-0008 and SPEC-0104, which current Requirements
-    and ADRs cite as delivery evidence;
+    and ADRs cite as delivery evidence, and SPEC-0072, which REQ-0003 names as
+    the trace owner of FR-0011 and acceptance criterion 09;
   - SPEC-0054, which 78 current links cite as the governance convergence
     record;
   - changing a validator, the registry, a test or a frozen Archive record.
@@ -72,7 +73,7 @@ modules that name them run on the result.
 
 ## Data Modeling & Storage Strategy
 
-Twenty-seven rows in the Retention Assessment table of
+Twenty-six rows in the Retention Assessment table of
 `docs/98.archive/README.md`.
 
 ## Interfaces & Data Structures
@@ -106,9 +107,9 @@ decision, recovered with `git archive <envelope commit> <original path>`.
 
 | Criterion | Acceptance evidence |
 | --- | --- |
-| VAL-RT-001 | No tracked file outside Stage 98 links to or reads the 27 units, every stated fact is kept, and the archive, lifecycle and link validators and the named test modules pass with the units removed. |
-| VAL-RT-002 | Each unit's envelope object equals its current object and restores into a scratch directory with the expected file count. |
-| VAL-RT-003 | The 27 units are absent, each has a valid `git-history-only` row, and staged QA passes on every commit. |
+| VAL-RT-001 | No tracked file outside Stage 98 links to or reads the 26 units, every stated fact is kept, and the archive, lifecycle and link validators and the named test modules pass with the units removed. |
+| VAL-RT-002 | Each unit's envelope object equals its current object, or for the fifteen decisions whose links ADR-0038 rebased differs only in link targets, and restores into a scratch directory with the expected file count. |
+| VAL-RT-003 | The 26 units are absent, each has a valid `git-history-only` row, and staged QA passes on every commit. |
 | VAL-RT-004 | An independent reviewer confirms the consumer edits and removals, and the pull request's hosted checks pass. |
 
 ## Traceability

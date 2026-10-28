@@ -27,7 +27,7 @@ This plan executes [SPEC-0132](spec.md) on branch
 
 The SPEC-0131 Task left 35 units `retained`. On 2026-10-28 the operator
 approved the next batch. A trial removal of 34 units showed which consumers
-read a body and which only name it; eight units stay.
+read a body and which only name it; nine units stay.
 
 ## Goals & In-Scope
 
@@ -44,8 +44,8 @@ The non-goals listed in the Spec.
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-RT-001](spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | None | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Consumer search and review |
-| WORK-002 | [VAL-RT-002](spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-seven units | None | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Tree equality and scratch restore |
-| WORK-003 | [VAL-RT-003](spec.md#success-criteria--verification-plan) | Remove the twenty-seven units and add their assessment rows | WORK-001, WORK-002 | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Staged QA on the exact index |
+| WORK-002 | [VAL-RT-002](spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | None | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Tree equality and scratch restore |
+| WORK-003 | [VAL-RT-003](spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | WORK-001, WORK-002 | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Staged QA on the exact index |
 | WORK-004 | [VAL-RT-004](spec.md#success-criteria--verification-plan) | Independent review and hosted checks | WORK-003 | [Task](tasks/tsk-0001-archive-registry-and-test-consumers.md) | Review and hosted checks |
 
 ## Verification Plan

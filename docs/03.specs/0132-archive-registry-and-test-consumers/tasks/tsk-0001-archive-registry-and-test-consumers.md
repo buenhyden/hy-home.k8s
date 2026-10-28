@@ -13,18 +13,18 @@ parent_ids: ["SPEC-0132-PLAN-0001"]
 
 ## Overview
 
-Move the document consumers of 27 retained Archive units to plain identifiers
-and the Git recovery route, and remove the 27 units as `git-history-only`. It
+Move the document consumers of 26 retained Archive units to plain identifiers
+and the Git recovery route, and remove the 26 units as `git-history-only`. It
 executes [SPEC-0132](../spec.md) through
 [WORK-001–004](../plan.md#work-breakdown). This Task is the Decision document
-that the 27 Retention Assessment rows name.
+that the 26 Retention Assessment rows name.
 
 ## Inputs
 
 - Request: on 2026-10-28 the operator approved the next Archive batch, the
   units whose census consumers were the registry, validators or tests.
 - Approval: the operator approved that batch; this Task disposes of exactly
-  these 27 units and keeps the eight below:
+  these 26 units and keeps the nine below:
   - `superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
   - `superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md`
   - `superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md`
@@ -44,7 +44,6 @@ that the 27 Retention Assessment rows name.
   - `completed/03.specs/0082-unit-archive-retention-contract`
   - `superseded/02.architecture/decisions/0003-eso-vault-k8s-auth.md`
   - `completed/03.specs/0062-workspace-research-full-corpus-reverification`
-  - `completed/03.specs/0072-agent-governance-and-quality-gate-consolidation`
   - `completed/03.specs/0085-archive-reappraisal-and-document-standards`
   - `completed/03.specs/0091-readme-navigation-contract`
   - `completed/03.specs/0093-document-language-contract`
@@ -55,7 +54,9 @@ that the 27 Retention Assessment rows name.
 - Kept: ADR-0032 (frozen migration ledgers resolve a link through it),
   SPEC-0080 (a lifecycle test seeds from its package), SPEC-0103 (a
   link-boundary test reads its Spec), SPEC-0004, SPEC-0005, SPEC-0008 and
-  SPEC-0104 (current delivery evidence), and SPEC-0054 (78 current links).
+  SPEC-0104 (current delivery evidence), SPEC-0054 (78 current links), and
+  SPEC-0072, which REQ-0003 names as the trace owner of FR-0011 and acceptance
+  criterion 09; this was found while editing its consumers.
 - Start: `9bab5067`, branch `docs/archive-batch3`.
 
 ### Trial Result
@@ -78,8 +79,8 @@ SPEC-0104 on 2026-10-28.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-RT-001](../spec.md#success-criteria--verification-plan) | Move the consumers to identifiers and the recovery route | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-seven units | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-seven units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the twenty-six units | platform | in-progress | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | Remove the twenty-six units and add their assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -90,6 +91,7 @@ SPEC-0104 on 2026-10-28.
 | EVD-002 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-RT-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Canonical staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-RT-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-RT-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `9378b5c5`: per unit, `git rev-parse` of the current object against the envelope object, then `git archive` of the envelope into a scratch directory; for unequal blobs, a comparison with every Markdown link target masked | PASS | 11 objects equal; the 15 rebased decisions differ only in link targets; 26/26 restored, 63 files, matching the current file counts | yes | EVD-002 |
 
 ## Criterion Acceptance
 
@@ -103,10 +105,10 @@ SPEC-0104 on 2026-10-28.
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: this package, the Stage 03 README index, REQ-0003,
-  AD-0006, ADR-0039, ADR-0040, ADR-0047, the archive research README and
-  m0001, research note m0012, `.claude/provider.md`, the 27 units and the
+  ADR-0039, ADR-0040, ADR-0047, the archive research README and
+  m0001, research note m0012, `.claude/provider.md`, the 26 units and the
   Retention Assessment table in `docs/98.archive/README.md`.
-- **Forbidden Paths**: the eight kept units, frozen Archive records, catalog
+- **Forbidden Paths**: the nine kept units, frozen Archive records, catalog
   rows and envelopes, validators, the registry and tests.
 - **Approval Required**: the operator approved the batch on 2026-10-28. Push,
   pull request and merge follow RUN-0013.

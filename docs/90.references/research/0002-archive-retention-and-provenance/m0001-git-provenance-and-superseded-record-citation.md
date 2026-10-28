@@ -1,10 +1,10 @@
 ---
 title: "Reference: Git Provenance and Superseded Record Citation"
-version: "0.1.2"
+version: "0.1.3"
 type: "reference/research"
 status: "draft"
 owner: "platform"
-updated: "2026-09-28"
+updated: "2026-10-28"
 layer: "references"
 artifact_id: "RES-0002-m0001"
 ---
@@ -158,4 +158,4 @@ The earlier 2026-09-15 findings and source results above remain their dated evid
 ## Related Documents
 
 - [Research pack](README.md)
-- [Spec 0082](../../../98.archive/completed/03.specs/0082-unit-archive-retention-contract/spec.md)
+- Spec 0082, recovered from Git through the Retention Catalog
