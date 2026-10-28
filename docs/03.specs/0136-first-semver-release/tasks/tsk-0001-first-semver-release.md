@@ -68,7 +68,7 @@ accepts.
 | WORK-001 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | Review the release scope and compatibility | platform | completed | PASS | EVD-005 closes EVD-001 |
 | WORK-002 | [VAL-SR-002](../spec.md#success-criteria--verification-plan) | Write the changelog section with the release tool | platform | completed | PASS | EVD-006 closes EVD-002 |
 | WORK-003 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-009 closes EVD-003 |
-| WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-004 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | Record the publish preview and outcome | platform | in-progress | PASS | EVD-010 closes EVD-004 |
 
 ## Task Evidence
 
@@ -83,6 +83,7 @@ accepts.
 | EVD-007 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | PR #191 independent review of `3960b995` | FAIL | EVD-005 stated 497 commits where `git log --no-merges main-3ff0ab62..65f1f4e7` gives 349, and named one breaking change where the notes list two; the review also found the 143,352-character notes exceed GitHub's 125,000-character Release body limit, which `publish` does not handle | yes | none |
 | EVD-008 | [VAL-SR-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Scope review | PR #191 re-review of `26b0543b`: `git log --no-merges main-3ff0ab62..65f1f4e7` and the two breaking commits `620e8f1b` and `7523ece4` | PASS | The Release Scope states 349 commits with the command, both breaking changes and that the notes cover the whole history; it supersedes the 497 count and single breaking change in EVD-005. The body limit is deferred to SPEC-0137 before publication | yes | EVD-007 |
 | EVD-009 | [VAL-SR-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | PR #191 independent review of `3960b995`, re-reviews of `26b0543b` and `ac590955`; heads `3960b995` (CI run `40646300977`), `26b0543b` (CI run `40647453961`) and `ac590955` (CI run `40652560974`) | PASS | The reviewer regenerated the `0.1.0` section byte-identically with git-cliff, matched the SHA-256, spot-checked entries against commits and approved after the scope corrections; `ci-summary`, `style-pr`, `label` and GitGuardian passed on each head | yes | EVD-003 |
+| EVD-010 | [VAL-SR-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Publication observation | Main `356278fe` after PR #191 and PR #192: `release.py publish --version v0.1.0 --initial-version` preview, then the operator's `--execute`; `git ls-remote --tags origin v0.1.0`, `gh release view v0.1.0` and `gh api .../git/ref/tags/v0.1.0` | PASS | Preview: `body_chars=391 body=summary assets=0`. The operator's run printed `PUBLISHED release version=v0.1.0 main=356278fe…`. Read back: tag `v0.1.0` is a commit ref to `356278fecf66ef1abe84faec1af434ff3023dd3d`; the Release is published at 2026-10-28T08:25:55Z, not draft or prerelease, with a 391-character body; https://github.com/buenhyden/hy-home.k8s/releases/tag/v0.1.0 | yes | EVD-004 |
 
 ## Criterion Acceptance
 
