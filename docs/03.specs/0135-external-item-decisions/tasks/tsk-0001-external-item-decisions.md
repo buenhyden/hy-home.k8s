@@ -65,9 +65,9 @@ repositories. CR-09.04 waits on live cluster and certificate acceptance.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | draft | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-XD-001](../spec.md#success-criteria--verification-plan) | Record the three operator decisions | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-XD-002](../spec.md#success-criteria--verification-plan) | Record the archive layouts and the Projects observation | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-XD-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
