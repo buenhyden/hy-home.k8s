@@ -41,6 +41,8 @@ _REMOTE = re.compile(
 _ASSET_ROOTS = frozenset({"dist", "release-assets"})
 _STDOUT_LIMIT = 4 * 1024 * 1024
 _STDERR_LIMIT = 64 * 1024
+# GitHub rejects a Release body longer than this many characters.
+RELEASE_BODY_LIMIT = 125_000
 
 
 class ReleaseError(Exception):
@@ -250,6 +252,29 @@ def _release_notes(content: bytes, version: SemVer) -> str:
     if not re.search(r"(?m)^\s*-\s+\S", section):
         raise ReleaseError("RELEASE-CHANGELOG-EMPTY", "CHANGELOG.md")
     return section + "\n"
+
+
+def _release_body(section: str, version: SemVer) -> str:
+    """Return the Release body: the section, or a linked summary when too long."""
+
+    if len(section) <= RELEASE_BODY_LIMIT:
+        return section
+    counts: list[list[object]] = []
+    for line in section.splitlines():
+        if line.startswith("### "):
+            counts.append([line[4:].strip(), 0])
+        elif counts and re.match(r"\s*-\s+\S", line):
+            counts[-1][1] += 1
+    lines = [
+        section.split("\n", 1)[0],
+        "",
+        f"The full notes exceed the {RELEASE_BODY_LIMIT}-character Release body"
+        f" limit and are in [CHANGELOG.md](https://{REPOSITORY}/blob/"
+        f"{version.tag}/CHANGELOG.md). Entries per group:",
+        "",
+        *(f"- {name}: {count}" for name, count in counts),
+    ]
+    return "\n".join(lines) + "\n"
 
 
 def _release_section_bytes(content: bytes, version: SemVer) -> bytes:
@@ -575,12 +600,14 @@ def publish(
     previous = _local_versions(root)
     _check_order(version, previous, initial)
     content = _committed_changelog(root, local_sha)
-    notes = _release_notes(content, version)
+    section = _release_notes(content, version)
+    notes = _release_body(section, version)
     _verify_history(root, content, previous)
     assets = _assets(root, requested_assets)
     if not execute:
+        mode = "section" if notes == section else "summary"
         print(
-            f"PREVIEW release publish version={version.tag} main={local_sha} assets={len(assets)} remote=NOT_RUN"
+            f"PREVIEW release publish version={version.tag} main={local_sha} assets={len(assets)} body_chars={len(notes)} body={mode} remote=NOT_RUN"
         )
         return
     with tempfile.TemporaryDirectory(prefix="release-payload-") as temp:

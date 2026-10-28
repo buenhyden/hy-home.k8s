@@ -35,6 +35,36 @@ class ReleaseVersionTest(unittest.TestCase):
         )
 
 
+class ReleaseBodyTest(unittest.TestCase):
+    def test_oversized_section_becomes_a_bounded_summary_with_the_tagged_link(
+        self,
+    ) -> None:
+        version = release.parse_version("v0.1.0")
+        added = "".join(f"- Entry {index}.\n" for index in range(15000))
+        section = (
+            "## [0.1.0] - 2026-10-28\n\n### Added\n\n"
+            + added
+            + "\n### Fixed\n\n- One fix.\n"
+        )
+        self.assertGreater(len(section), release.RELEASE_BODY_LIMIT)
+        body = release._release_body(section, version)
+        self.assertLessEqual(len(body), release.RELEASE_BODY_LIMIT)
+        self.assertTrue(body.startswith("## [0.1.0] - 2026-10-28\n"))
+        self.assertIn("- Added: 15000\n", body)
+        self.assertIn("- Fixed: 1\n", body)
+        self.assertIn(
+            "https://github.com/buenhyden/hy-home.k8s/blob/v0.1.0/CHANGELOG.md", body
+        )
+
+    def test_section_within_the_limit_is_the_body_unchanged(self) -> None:
+        version = release.parse_version("v0.1.0")
+        head = "## [0.1.0] - 2026-10-28\n\n### Added\n\n- "
+        section = head + "x" * (release.RELEASE_BODY_LIMIT - len(head) - 1) + "\n"
+        self.assertEqual(len(section), release.RELEASE_BODY_LIMIT)
+        self.assertEqual(release._release_body(section, version), section)
+        self.assertEqual(release._release_body(NOTES, version), NOTES)
+
+
 class ReleaseCliTest(unittest.TestCase):
     def setUp(self) -> None:
         self.directory = tempfile.TemporaryDirectory(prefix="release-contract-")

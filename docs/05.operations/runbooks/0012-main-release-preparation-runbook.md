@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "1.2.0"
+version: "1.2.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-08"
+updated: "2026-10-28"
 layer: "operations"
 artifact_id: "RUN-0012"
 ---
@@ -58,6 +58,11 @@ Python과 구현의 trusted resolver가 받아들이는 `git`, `git-cliff`, `gh`
 `--help`, `prepare --help`, `publish --help`에서 확인했다. 도움말 확인은
 prepare 실행이나 원격 게시 성공을 증명하지 않는다.
 `prepare`와 `publish`의 기본형은 읽기 전용 preview다.
+
+GitHub는 125,000자를 넘는 Release 본문을 거부한다. 절이 그 이하이면 본문은 절
+그대로이고, 넘으면 publish는 절 heading, `###` group별 항목 수와 tag 시점
+`CHANGELOG.md` 링크로 된 요약을 본문으로 쓴다. publish preview는 `body_chars`와
+`body=section|summary`로 이를 미리 보여 준다.
 
 ```bash
 python3 scripts/release.py --root . prepare --version vX.Y.Z
