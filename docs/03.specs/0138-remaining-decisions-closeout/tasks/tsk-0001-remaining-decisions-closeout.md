@@ -65,9 +65,9 @@ owner.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | in-progress | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | completed | PASS | EVD-004 closes EVD-001 |
+| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | completed | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-006 closes EVD-003 |
 
 ## Task Evidence
 
@@ -76,14 +76,17 @@ owner.
 | EVD-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live observation record and review | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-004 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Decision record and review | Decisions table on `cd90dee5`; tags of the four repositories by `gh api` | PASS | CR-03.06, CR-03.07 and CR-08.01 are closed, CR-14.03 is closed as not applicable and SPEC-0103 stays `usable`, consistent with SPEC-0134 and SPEC-0135. The reviewer's `hy-home.docker` tag finding is fixed | yes | EVD-001 |
+| EVD-005 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Live observation record and review | Observation at 2026-10-28T08:47Z; reviewer re-read at 09:06Z | PASS | Every recorded row matched with no drift. Acceptance fails on the secret store, whose cause is not isolated; ingress and certificates pass. CR-09.04 stays `EXTERNAL` with the operator as next owner and RUN-0002 linked. No cluster object was changed | yes | EVD-002 |
+| EVD-006 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | PR #194 independent review of `51852eb1`; CI run `40664454655` on `cd90dee5` | PASS | The reviewer returned REQUEST_CHANGES with one medium, one low and one informational finding, all fixed in `cd90dee5`. The hosted style and summary checks passed | yes | EVD-003 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-RC-001](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-RC-002](../spec.md#success-criteria--verification-plan) | pending | none | Review remains | platform |
-| [VAL-RC-003](../spec.md#success-criteria--verification-plan) | pending | none | Review and hosted checks remain | platform |
+| [VAL-RC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-004 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-RC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-005 | Accepted by the operator on 2026-10-28 | platform |
+| [VAL-RC-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Accepted by the operator on 2026-10-28 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -109,3 +112,8 @@ REQUEST_CHANGES with one medium finding: `hy-home.docker` has an unprefixed
 past the observation, because a host-side 404 does not isolate the cause. It
 also noted that RUN-0002 was unlinked. All three are fixed in this revision;
 the decisions and the conclusion are unchanged.
+
+WORK-001 passed (EVD-004), WORK-002 passed (EVD-005) and WORK-003 passed
+(EVD-006). The operator accepted all three criteria. Residual risk: the
+OpenBao secret backend stays failed until the operator repairs it under
+RUN-0002.
