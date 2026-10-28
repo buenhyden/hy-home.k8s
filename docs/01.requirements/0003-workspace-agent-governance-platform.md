@@ -177,7 +177,7 @@ the registry routes, archive forms, and validators to that model are owned by
 SPEC-0079.
 The first disposition under that model, which retains ADR-0032 and resolves
 frozen Stage 98 links to a retained source, is owned by
-[SPEC-0080](../98.archive/completed/03.specs/0080-adr-0032-retention-pilot/spec.md).
+SPEC-0080.
 Retaining the fifteen remaining superseded decisions is owned by
 SPEC-0081.
 The unit archive retention contract that ADR-0039 adopts, its cutover, and the
@@ -239,6 +239,9 @@ SPEC-0062, SPEC-0082, SPEC-0085, SPEC-0091, SPEC-0093, SPEC-0095, SPEC-0098,
 SPEC-0099 and SPEC-0102 left the current tree under
 [SPEC-0132](../03.specs/0132-archive-registry-and-test-consumers/spec.md) and
 are recovered the same way.
+SPEC-0080 left the current tree under
+[SPEC-0134](../03.specs/0134-archive-final-units/spec.md) and is recovered the
+same way.
 
 ## Traceability
 

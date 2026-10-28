@@ -135,7 +135,7 @@ Git 복구가 끝난 뒤에만 현재 트리를 떠나 [Archive](../98.archive/R
 [Archive Evidence Owner Migration](./0131-archive-evidence-owner-migration/)는 현재 문서만 소비자인 Archive 보존 단위 10개의 소비자·증적 소유 문장 이관과 `git-history-only` 처분을 소유한다.
 [Archive Registry and Test Consumers](./0132-archive-registry-and-test-consumers/)는 registry·검증기·테스트 소비자로 분류되었던 Archive 보존 단위 26개의 소비자 이관과 `git-history-only` 처분을 소유한다.
 [Review Decisions and C4 Prompt](./0133-review-decisions-and-c4-prompt/)는 m0012 `DERIVED_PROPOSAL` 칸과 외부 의존 조사 항목에 대한 운영자 결정 기록과 다이어그램 작성 prompt의 C4 점검 추가를 소유한다.
-[Archive Final Units](./0134-archive-final-units/)는 테스트만 읽던 Archive 보존 단위 2개의 처분과 남은 7개의 `usable` 판정 기록을 소유한다.
+[Archive Final Units](./0134-archive-final-units/)는 테스트만 읽던 Archive 보존 단위 SPEC-0080의 처분과 남은 8개의 `usable` 판정 기록을 소유한다.
 SPEC-0104 완료 증적과 완료된 local GitOps platform 구현 증적은
 각 package의 원본을 보존하는
 [Archive Retention Catalog](../98.archive/README.md#structure)에서 찾는다.

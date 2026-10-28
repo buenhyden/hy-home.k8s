@@ -13,8 +13,8 @@ parent_ids: ["SPEC-0134-PLAN-0001"]
 
 ## Overview
 
-Move SPEC-0080 and SPEC-0103 to Git history after their test readers move,
-and record a `usable` assessment with a reason for the seven units that stay.
+Move SPEC-0080 to Git history after its test readers move, and record a
+`usable` assessment with a reason for the eight units that stay.
 It executes [SPEC-0134](../spec.md) through
 [WORK-001–004](../plan.md#work-breakdown). This Task is the Decision document
 that the nine Retention Assessment rows name.
@@ -23,6 +23,10 @@ that the nine Retention Assessment rows name.
 
 - Request: on 2026-10-28 the operator chose to move SPEC-0080 and SPEC-0103
   and to record `usable` for the other seven remaining units.
+- Change during implementation: staged QA failed when the SPEC-0105 Task 0003
+  Inputs link to SPEC-0103 was edited, because that Task uses an older form that
+  the current validators reject on any change. SPEC-0103 therefore stays, with
+  a `usable` row, and Spec 0.1.1 records the narrower scope.
 - Start: main `480ec7eb`, branch `docs/archive-final-units`.
 
 ### Kept Units
@@ -35,6 +39,7 @@ that the nine Retention Assessment rows name.
 | SPEC-0008 | usable | REQ-0004, AD-0007 and the platform ADRs cite it as local GitOps platform delivery evidence |
 | SPEC-0054 | usable | 78 current links cite it as the governance convergence record |
 | SPEC-0072 | usable | REQ-0003 names it as the trace owner of FR-0011 and acceptance criterion 09 |
+| SPEC-0103 | usable | The SPEC-0105 Task 0003 Inputs link to its Task 0006, and that older-form Task cannot be edited |
 | SPEC-0104 | usable | REQ-0004 FR-0008 and FR-0010 and AD-0007 cite its Tasks as acceptance evidence |
 
 ## Task Table
@@ -43,9 +48,9 @@ that the nine Retention Assessment rows name.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and links of SPEC-0080 and SPEC-0103 | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of the two units | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove the two units and record the nine assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-AF-001](../spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | Isolated recovery of SPEC-0080 | platform | in-progress | PASS | EVD-005 closes EVD-002 |
+| WORK-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | platform | ready | NOT_RUN | Pending named repository evidence |
 | WORK-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
@@ -56,6 +61,7 @@ that the nine Retention Assessment rows name.
 | EVD-002 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-003 | [VAL-AF-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Validators and staged QA | Exact disposition index | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-AF-004](../spec.md#success-criteria--verification-plan) | WORK-004 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
+| EVD-005 | [VAL-AF-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Isolated recovery | Base `cfe3fdb6`: `git rev-parse` of the SPEC-0080 tree against its envelope tree, then `git archive` of the envelope into a scratch directory | PASS | Equal tree; restored 3 files, matching the current tree | yes | EVD-002 |
 
 ## Criterion Acceptance
 
@@ -69,11 +75,10 @@ that the nine Retention Assessment rows name.
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: this package, the Stage 03 README index, REQ-0003, the
-  SPEC-0105 Task 0003 Inputs link, `tests/test_archive_disposition_lifecycle.py`,
-  `tests/test_task_acceptance_contract.py`,
-  `tests/test_documentation_link_boundary.py`, the two unit directories and the
+  `tests/test_archive_disposition_lifecycle.py`,
+  `tests/test_task_acceptance_contract.py`, the SPEC-0080 directory and the
   Retention Assessment table in `docs/98.archive/README.md`.
-- **Forbidden Paths**: the seven kept units, frozen Archive records, catalog
+- **Forbidden Paths**: the eight kept units, the SPEC-0105 Tasks, frozen Archive records, catalog
   rows and envelopes, validators, the registry and Task evidence rows.
 - **Approval Required**: the operator decided on 2026-10-28 (Inputs). Push,
   pull request and merge follow RUN-0013.

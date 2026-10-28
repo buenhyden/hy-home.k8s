@@ -25,7 +25,7 @@ This plan executes [SPEC-0134](spec.md) on branch
 ## Context
 
 SPEC-0132 kept nine units because frozen ledgers, tests or current traces
-read or cite them. Only two of those reasons are test reads that a pinned
+read or cite them. Only SPEC-0080 is held by test reads alone, which a pinned
 read can replace.
 
 ## Goals & In-Scope
@@ -42,14 +42,14 @@ The non-goals listed in the Spec.
 
 | Work Unit | Criteria | Work | Dependencies | Task | Verification |
 | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-AF-001](spec.md#success-criteria--verification-plan) | Move the test reads and links of SPEC-0080 and SPEC-0103 | None | [Task](tasks/tsk-0001-archive-final-units.md) | Test runs and link search |
-| WORK-002 | [VAL-AF-002](spec.md#success-criteria--verification-plan) | Isolated recovery of the two units | None | [Task](tasks/tsk-0001-archive-final-units.md) | Tree equality and scratch restore |
-| WORK-003 | [VAL-AF-003](spec.md#success-criteria--verification-plan) | Remove the two units and record the nine assessment rows | WORK-001, WORK-002 | [Task](tasks/tsk-0001-archive-final-units.md) | Validators and staged QA |
+| WORK-001 | [VAL-AF-001](spec.md#success-criteria--verification-plan) | Move the test reads and link of SPEC-0080 | None | [Task](tasks/tsk-0001-archive-final-units.md) | Test runs and link search |
+| WORK-002 | [VAL-AF-002](spec.md#success-criteria--verification-plan) | Isolated recovery of SPEC-0080 | None | [Task](tasks/tsk-0001-archive-final-units.md) | Tree equality and scratch restore |
+| WORK-003 | [VAL-AF-003](spec.md#success-criteria--verification-plan) | Remove SPEC-0080 and record the nine assessment rows | WORK-001, WORK-002 | [Task](tasks/tsk-0001-archive-final-units.md) | Validators and staged QA |
 | WORK-004 | [VAL-AF-004](spec.md#success-criteria--verification-plan) | Independent review and hosted checks | WORK-003 | [Task](tasks/tsk-0001-archive-final-units.md) | Review and hosted checks |
 
 ## Verification Plan
 
-The three test modules run before and after removal; the archive, lifecycle
+The two test modules run before and after removal; the archive, lifecycle
 and link validators run on the removal commit.
 
 ## Risks & Mitigations
