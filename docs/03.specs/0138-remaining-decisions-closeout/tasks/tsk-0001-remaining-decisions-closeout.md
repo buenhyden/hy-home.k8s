@@ -27,7 +27,7 @@ and the read-only live observation for CR-09.04. It executes
 
 | Item | Decision on 2026-10-28 | Effect |
 | --- | --- | --- |
-| CR-03.06, CR-03.07 | The four repositories stay independent; no shared edition binds them. On 2026-10-28 they used three version schemes: SemVer here and in `Project-Template`, date tags in `blog-data`, none in `hy-home.docker` | Closed |
+| CR-03.06, CR-03.07 | The four repositories stay independent; no shared edition binds them. On 2026-10-28 they released differently: SemVer releases here and in `Project-Template`, date-tag releases in `blog-data` (beside `blog-data-web-v0.2.x` component tags), and in `hy-home.docker` no release, only an unprefixed `0.0.1` tag and `main-current` | Closed |
 | CR-08.01 | Each repository keeps its own Archive contract; the layouts recorded in SPEC-0135 stay as they are | Closed |
 | CR-14.03 | GitHub Projects are not used for status; the Task stays the status source. The one closed, empty user Project stays untouched | Closed as not applicable |
 | SPEC-0103 | It stays `usable` for good, because the older-form SPEC-0105 Task 0003 links to it and is not migrated | Final |
@@ -50,11 +50,14 @@ permission layer and not rerun.
 | Certificates | `kubectl get certificates -A`, `kubectl get clusterissuers` | 4 Ready; `mkcert-ca-issuer` Ready |
 | Ingress TLS | `openssl s_client -connect 172.18.0.240:443 -servername <host>` | `argo`, `headlamp`, `rollouts`, `adminer` and the apex host each present a certificate whose SAN covers the host; the earliest expiry is 2026-12-22 |
 
-Acceptance fails: the secret backend the platform depends on is unavailable,
-so four platform applications are Degraded. Ingress and certificate serving
-pass. Repair changes a secret, the cluster or the OpenBao service in
-`hy-home.docker`, and needs a separate operator approval; RUN-0002 is the
-recovery procedure. CR-09.04 stays `EXTERNAL` with the operator as next owner.
+Acceptance fails: the secret backend the platform depends on is unreachable
+or misconfigured from the cluster, cause not isolated, so four platform
+applications are Degraded. Ingress and certificate serving pass. Repair
+changes a secret, the cluster or the OpenBao service in `hy-home.docker`, and
+needs a separate operator approval;
+[RUN-0002](../../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+is the recovery procedure. CR-09.04 stays `EXTERNAL` with the operator as next
+owner.
 
 ## Task Table
 
@@ -62,9 +65,9 @@ recovery procedure. CR-09.04 stays `EXTERNAL` with the operator as next owner.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | ready | NOT_RUN | Pending named repository evidence |
-| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | Pending named repository evidence |
+| WORK-001 | [VAL-RC-001](../spec.md#success-criteria--verification-plan) | Record the operator decisions | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-002 | [VAL-RC-002](../spec.md#success-criteria--verification-plan) | Record the read-only live observation for CR-09.04 | platform | in-progress | NOT_RUN | Pending named repository evidence |
+| WORK-003 | [VAL-RC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | NOT_RUN | Pending named repository evidence |
 
 ## Task Evidence
 
@@ -99,4 +102,10 @@ recovery procedure. CR-09.04 stays `EXTERNAL` with the operator as next owner.
 
 ## Verification Summary
 
-Not run yet.
+An independent read-only reviewer read `51852eb1` against `origin/main` and
+re-ran the live checks at 2026-10-28T09:06Z with no drift. It returned
+REQUEST_CHANGES with one medium finding: `hy-home.docker` has an unprefixed
+`0.0.1` tag, so "none" was false. It had one low finding: "unavailable" went
+past the observation, because a host-side 404 does not isolate the cause. It
+also noted that RUN-0002 was unlinked. All three are fixed in this revision;
+the decisions and the conclusion are unchanged.
