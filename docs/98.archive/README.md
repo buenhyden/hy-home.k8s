@@ -228,6 +228,16 @@ Retention Catalog의 단위 중 현재 판단이 바뀐 단위만 행 하나로 
 | `completed/03.specs/0094-finished-package-retention` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
 | `completed/03.specs/0100-archive-lifecycle-standardization` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
 | `completed/03.specs/0101-closed-spec-retention` | unreviewed | git-history-only | none | [SPEC-0130-TSK-0001](../03.specs/0130-archive-history-link-migration/tasks/tsk-0001-archive-history-link-migration.md) | 2026-10-28 | none |
+| `retired/03.specs/0049-platform-validation-and-security-evidence` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `retired/03.specs/0050-example-iac-and-validator-qa` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0075-common-knowledge-and-prompt-surfaces` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0076-agent-role-coverage-and-contract-completion` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0083-finished-package-retention` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0084-stage03-backlog-closeout` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0086-provider-native-runtime-observation` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0087-stage03-terminal-package-retention` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0096-codex-model-tier-rebinding` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
+| `completed/03.specs/0097-claude-model-and-effort-binding` | unreviewed | git-history-only | none | [SPEC-0131-TSK-0001](../03.specs/0131-archive-evidence-owner-migration/tasks/tsk-0001-archive-evidence-owner-migration.md) | 2026-10-28 | none |
 
 ## Usage
 

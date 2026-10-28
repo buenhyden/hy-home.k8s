@@ -1,10 +1,10 @@
 ---
 title: "Reference: AI Agents and Agency-Agents"
-version: "1.3.0"
+version: "1.3.1"
 type: "reference/research"
 status: "published"
 owner: "platform"
-updated: "2026-09-27"
+updated: "2026-10-28"
 layer: "references"
 artifact_id: "RES-0001-m0009"
 ---
@@ -480,8 +480,8 @@ premise was already withdrawn on 2026-09-05 and stays withdrawn.
   2026-09-06. The repository metadata reports `license.spdx_id` `MIT`,
   `default_branch` `main`, and `pushed_at` `2026-09-06T20:47:20Z`. The head is
   therefore beyond both retained pins and beyond
-  `1454492577d1af4884722837f491fef14b501e21`, which SPEC-0075's Task recorded as
-  the head observed on 2026-09-06; that reading was accurate when taken and is
+  `1454492577d1af4884722837f491fef14b501e21`, which SPEC-0075's Task (recovered from Git
+  through the Retention Catalog) recorded as the head observed on 2026-09-06; that reading was accurate when taken and is
   superseded here rather than corrected in place. The catalogue remains
   organised as division directories of persona prompt files.
 - **Workspace selector and result:** `unchanged`. The registry reports twelve
@@ -530,7 +530,7 @@ trigger fired on 2026-09-10 and this cycle records the outcome.
   `evals/` carry no role authorised to author them. That gap is observed in
   this repository, not inferred from the catalogue.
 - **Conclusion on adoption:** adapt, not adopt. Five roles are proposed by
-  [SPEC-0076](../../../98.archive/completed/03.specs/0076-agent-role-coverage-and-contract-completion/spec.md)
+  SPEC-0076 (recovered from Git through the Retention Catalog)
   to close the gap above; four have a nearest counterpart in the catalogue and
   the fifth, agent evaluation, has none and rests on the local folder contract. No upstream role, file, name, frontmatter field or
   prose enters this repository, and no converter or installer was executed. The

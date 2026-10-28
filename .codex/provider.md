@@ -1,10 +1,10 @@
 ---
 title: "Codex Provider Notes"
-version: "1.6.0"
+version: "1.6.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-15"
+updated: "2026-10-28"
 ---
 
 # Codex Provider Notes
@@ -86,9 +86,10 @@ team document, not a special automatic entry filename.
   budget failure. `--ignore-user-config` did not isolate every user role/skill
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
-  or hook enforcement. The SPEC-0086 Task (`docs/98.archive/README.md`)
-  owns that attempt's evidence; SPEC-0072's Task recorded it first and
-  transferred it here on 2026-09-24 when SPEC-0072 closed on its static half.
+  or hook enforcement. The SPEC-0086 Task recorded that attempt's evidence and is recovered from Git
+  through the Retention Catalog in `docs/98.archive/README.md`; SPEC-0072's
+  Task recorded it first and transferred it to SPEC-0086 on 2026-09-24 when
+  SPEC-0072 closed on its static half.
   At that point the next owner was the user/operator for a reviewed project/hook
   trust state and an explicitly authorized observable session.
 - On `codex-cli 0.155.1` (2026-09-27) an authorized `--sandbox read-only`
@@ -97,7 +98,7 @@ team document, not a special automatic entry filename.
   off. It discovered none of the `.codex/agents/*.toml` roles and did not expose
   an exact model identifier. It refused a probe write fail-closed, because
   `bwrap` could not start the sandbox. Hook delivery was `DEFER` for that
-  attempt: the user declined a trust bypass. The SPEC-0086 Task owns that
+  attempt: the user declined a trust bypass. The SPEC-0086 Task recorded that
   evidence; at that point the user and operator owned the project and hook
   trust state.
 - Root cause and repair (2026-09-27, `codex-cli 0.155.1`). The roles were
@@ -120,8 +121,9 @@ team document, not a special automatic entry filename.
   `native_model_override.codex = gpt-6-astra`; the current override is in
   [Codex bindings](bindings.json), not the neutral registry. Rollout records
   of spawned threads show that the client
-  applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task owns
-  the rationale and the evidence.
+  applied each bound model and `model_reasoning_effort`. The SPEC-0096 Task recorded
+  the rationale and the evidence, which Git recovers through the Retention
+  Catalog.
 - The intended boundary for a non-authoring role on this provider is the
   operating-system `sandbox_mode` mapped by its binding under the neutral class
   ceiling. A delivered hook does not establish sandbox enforcement. On this host,

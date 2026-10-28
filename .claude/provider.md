@@ -1,10 +1,10 @@
 ---
 title: "Claude Provider Notes"
-version: "1.6.0"
+version: "1.6.1"
 type: "governance/provider"
 status: "active"
 owner: "platform"
-updated: "2026-10-14"
+updated: "2026-10-28"
 ---
 
 # Claude Provider Notes
@@ -97,8 +97,8 @@ every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
 structured write tools for `read-only-evidence`, and delivery of the pre-edit
 hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
-(`docs/98.archive/README.md`)
-owns that evidence.
+recorded that evidence and is recovered from Git through the Retention Catalog
+in `docs/98.archive/README.md`.
 Projections also carry `effort`, which the provider binding table owns per
 tier, with a role override where effort or model genuinely differs.
 Models stay aliases (`fable`, `opus`, `sonnet`, `haiku`), so each one follows
@@ -109,7 +109,8 @@ a changed projection from a new session. Native macOS and Linux builds from
 names silently. SPEC-0098 therefore gives every role's Claude scope `Bash`, and
 `Grep` and `Glob` stay for the builds that still ship them. The two read-only
 roles that held no shell now confine it to read-only repository search by
-policy. The SPEC-0097 and SPEC-0098 Tasks own that evidence.
+policy. The SPEC-0098 Task owns that evidence; the SPEC-0097 Task's
+record is recovered from Git through the Retention Catalog.
 These are configuration intent; availability and resolution remain separate
 runtime evidence. The native `Task` tool remains a documented alias for `Agent`.
 See [subagent fields](https://code.claude.com/docs/en/sub-agents),
