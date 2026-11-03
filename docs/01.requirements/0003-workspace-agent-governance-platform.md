@@ -274,7 +274,7 @@ The table below records the succession of current meaning. Earlier member IDs ar
 
 ### Archived Lineage
 
-These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`. Paths below are the paths at that commit; a completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
+These documents were deleted from `docs/98.archive/` or `docs/03.specs/` under SPEC-0140. Unless a row names its own recovery commit, recover one with `git show 69445fca:<path>`; the paths below are the paths at the recovery commit. A completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
 
 | Source | Kind | Summary | Original path |
 | --- | --- | --- | --- |
