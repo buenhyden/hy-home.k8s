@@ -21,8 +21,8 @@ import yaml
 from json_schema_validation import SchemaEvaluationError, schema_errors
 
 # This module is the markdown-profile facade over the document contract.
-# The names this file does not call itself are re-exported for the archive,
-# harness and cutover validators that reach the contract through it.
+# The names this file does not call itself are re-exported for the
+# harness validators that reach the contract through it.
 from document_contracts import (
     ConditionalConstraint,  # noqa: F401 - re-exported
     ConstantConstraint,  # noqa: F401 - re-exported
@@ -39,13 +39,10 @@ from document_contracts import (
     is_ignored_repository_path,
     load_internal_payload,  # noqa: F401 - re-exported
     load_registry,
-    legacy_task_profile,
     read_repository_text,
     scoped_document_content_paths,
     validated_changed_paths,
-    task_execution_issues,
     task_status,
-    task_evidence_issues,
     task_contract_issues,
     direct_parent,
     MARKDOWN_TEMPLATE_PLACEHOLDER,
@@ -60,8 +57,7 @@ from validation.document_content import validate_document_content
 SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
 # Stage 05 documents are platform-owned.  The shared registry constrains owner
 # to any string, so owner is pinned per profile here, where the other
-# frontmatter values are already checked.  Status is not pinned: a document
-# reaches a terminal status in place before it moves to the archive, and the
+# frontmatter values are already checked.  Status is not pinned: the
 # registry's status domain already bounds the value.
 STAGE05_PROFILE_IDS = frozenset(
     {
@@ -82,7 +78,6 @@ OWNER = "markdown-profile-validator"
 FRONTMATTER_SCHEMA_PATH = PurePosixPath(
     "docs/99.templates/contracts/frontmatter.schema.json"
 )
-ARCHIVE_STAGE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 
 AUTHOR_PROMPT_MARKER = "Author prompt:"
 AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
@@ -92,14 +87,6 @@ GENERIC_RESIDUE = (
     "Replace every placeholder with researched, topic-specific content.",
 )
 STARTER_PLACEHOLDER = re.compile(r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}")
-TOKEN_BEARING_DEBT_RULES = frozenset(
-    {
-        "BODY-H2-DUPLICATE",
-        "BODY-HEADING-REQUIRED",
-        "BODY-HEADING-UNSUPPORTED",
-        "BODY-TEMPLATE-RESIDUE",
-    }
-)
 
 
 class ContractError(ValueError):
@@ -599,10 +586,6 @@ def expected_artifact_id(
             "reference/data": "DATA",
         }[profile_id]
         return f"{prefix}-{path.parent.name[:4]}-{path.stem[:5]}"
-    if profile_id in {"archive/migration", "archive/scope-migration"}:
-        return f"MIG-{path.name[:4]}"
-    if profile_id == "archive/route-tombstone":
-        return f"TOMB-{path.name[:4]}"
     return None
 
 
@@ -776,11 +759,9 @@ def _body_contract_diagnostics(
             )
         ]
     column_indexes = {column: index for index, column in enumerate(header)}
-    execution_rows: list[dict[str, str]] = []
     for row_index, row in enumerate(rows, start=1):
         normalized = row + [""] * max(0, len(header) - len(row))
         normalized = normalized[: len(header)]
-        execution_rows.append(dict(zip(header, normalized, strict=True)))
         for column_index, value in enumerate(normalized):
             if not value.strip():
                 diagnostics.append(
@@ -852,19 +833,6 @@ def _body_contract_diagnostics(
                             value,
                         )
                     )
-    if (
-        contract.task_execution is not None
-        and not contract.task_execution.criterion_acceptance_section
-    ):
-        diagnostics.extend(
-            _diagnostic(rule, path, profile, "valid Task execution row", detail)
-            for rule, detail in task_execution_issues(
-                execution_rows,
-                status,
-                contract.task_execution,
-                template=profile.mode == "template",
-            )
-        )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -1066,12 +1034,6 @@ def _frontmatter_value_style_diagnostics(
         if match is None:
             continue
         key, raw_value = match.groups()
-        if (
-            key == "successor"
-            and raw_value == "null"
-            and _expected_type(profile) == "archive/route"
-        ):
-            continue
         try:
             value = json.loads(raw_value)
         except json.JSONDecodeError:
@@ -1206,7 +1168,7 @@ def _value_rule_id(key: str, constraint: str) -> str:
         return "FM-STATUS"
     if key == "owner" and constraint in {"kind", "null", "pattern"}:
         return "FM-OWNER"
-    if key in {"updated", "archived_on"} and constraint in {
+    if key == "updated" and constraint in {
         "kind",
         "null",
         "pattern",
@@ -1239,7 +1201,6 @@ def _value_contract_diagnostics(
         "status": "string",
         "owner": "string",
         "updated": "date",
-        "archived_on": "date",
         "artifact_id": "string",
         "supersedes": "string-or-sequence",
         "superseded_by": "string-or-sequence",
@@ -1325,10 +1286,6 @@ def _value_contract_diagnostics(
         if (
             key == "artifact_id"
             and profile.artifact_id_pattern is not None
-            and not (
-                profile.profile_id == "archive/tombstone"
-                and path.parts[:3] == ("docs", "98.archive", "changes")
-            )
             and re.search(profile.artifact_id_pattern, _value_pattern_text(value))
             is None
         ):
@@ -1862,7 +1819,7 @@ def validate_document(
     return validate_document_text(
         text,
         path,
-        legacy_task_profile(root, path, text, profile),
+        profile,
         mode,
         today=today,
         body_contracts=body_contracts,
@@ -1922,27 +1879,12 @@ def validate_document_text(
 ) -> list[Diagnostic]:
     """Validate exact caller-supplied text without consulting filesystem bytes."""
 
-    if mode not in {"compatibility", "strict"}:
-        raise ValueError("mode must be compatibility or strict")
+    if mode != "strict":
+        raise ValueError("mode must be strict")
     if profile.profile_id == "evaluation/raw-output" and profile.mode == "native":
         return []
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
-    # A retained payload under the Archive stage keeps the profile it had when
-    # it was finished, and its body is terminal evidence rather than a current
-    # contract, so only its identity is checked. The stage index is not such a
-    # payload: the registry gives it an active routing constant, so it answers
-    # to its own router profile like every other stage index.
-    if (
-        path.parts[:2] == ("docs", "98.archive")
-        and profile.profile_class != "archive"
-        and path != ARCHIVE_STAGE_INDEX_PATH
-    ):
-        try:
-            _, metadata, _ = extract_frontmatter(text)
-        except ContractError:
-            return []
-        return artifact_identity_diagnostics(path, profile, metadata)
     body = _frontmatter_body(
         text, path, profile, diagnostics, effective_today, frontmatter_schema
     )
@@ -1986,69 +1928,57 @@ def validate_document_text(
                 )
                 return sorted(diagnostics, key=diagnostic_sort_key)
             evidence_rows = [dict(zip(table[0], row, strict=True)) for row in table[1]]
-            if binding.criterion_acceptance_section:
-                decision_section = _exact_heading_section(
-                    body, f"## {binding.criterion_acceptance_section}"
+            decision_section = _exact_heading_section(
+                body, f"## {binding.criterion_acceptance_section}"
+            )
+            decision_table = _first_visible_table(decision_section or "")
+            execution_section = _exact_heading_section(
+                body, f"## {profile.body_contract.section}"
+            )
+            execution_table = _first_visible_table(
+                _exact_heading_section(
+                    execution_section or "",
+                    f"### {profile.body_contract.table_heading}",
                 )
-                decision_table = _first_visible_table(decision_section or "")
-                execution_section = _exact_heading_section(
-                    body, f"## {profile.body_contract.section}"
+                or ""
+            )
+            if (
+                decision_table is None
+                or tuple(decision_table[0]) != binding.criterion_acceptance_columns
+                or not decision_table[1]
+                or any(len(row) != len(decision_table[0]) for row in decision_table[1])
+            ):
+                diagnostics.append(
+                    _diagnostic(
+                        "TASK-ACCEPTANCE-COLUMNS",
+                        path,
+                        profile,
+                        repr(binding.criterion_acceptance_columns),
+                        "missing or malformed criterion acceptance table",
+                    )
                 )
-                execution_table = _first_visible_table(
-                    _exact_heading_section(
-                        execution_section or "",
-                        f"### {profile.body_contract.table_heading}",
-                    )
-                    or ""
+            elif (
+                execution_table is not None
+                and tuple(execution_table[0]) == profile.body_contract.required_columns
+                and all(
+                    len(row) == len(execution_table[0]) for row in execution_table[1]
                 )
-                if (
-                    decision_table is None
-                    or tuple(decision_table[0]) != binding.criterion_acceptance_columns
-                    or not decision_table[1]
-                    or any(
-                        len(row) != len(decision_table[0]) for row in decision_table[1]
-                    )
-                ):
-                    diagnostics.append(
-                        _diagnostic(
-                            "TASK-ACCEPTANCE-COLUMNS",
-                            path,
-                            profile,
-                            repr(binding.criterion_acceptance_columns),
-                            "missing or malformed criterion acceptance table",
-                        )
-                    )
-                elif (
-                    execution_table is not None
-                    and tuple(execution_table[0])
-                    == profile.body_contract.required_columns
-                    and all(
-                        len(row) == len(execution_table[0])
-                        for row in execution_table[1]
-                    )
-                ):
-                    work_rows = [
-                        dict(zip(execution_table[0], row, strict=True))
-                        for row in execution_table[1]
-                    ]
-                    decision_rows = [
-                        dict(zip(decision_table[0], row, strict=True))
-                        for row in decision_table[1]
-                    ]
-                    diagnostics.extend(
-                        _diagnostic(
-                            rule, path, profile, "valid Task acceptance graph", detail
-                        )
-                        for rule, detail in task_contract_issues(
-                            work_rows, evidence_rows, decision_rows, status, binding
-                        )
-                    )
-            else:
+            ):
+                work_rows = [
+                    dict(zip(execution_table[0], row, strict=True))
+                    for row in execution_table[1]
+                ]
+                decision_rows = [
+                    dict(zip(decision_table[0], row, strict=True))
+                    for row in decision_table[1]
+                ]
                 diagnostics.extend(
                     _diagnostic(
-                        rule, path, profile, "valid Task check evidence", detail
+                        rule, path, profile, "valid Task acceptance graph", detail
                     )
-                    for rule, detail in task_evidence_issues(evidence_rows, binding)
+                    for rule, detail in task_contract_issues(
+                        work_rows, evidence_rows, decision_rows, status, binding
+                    )
                 )
     diagnostics.extend(
         _body_contract_diagnostics(
@@ -2090,39 +2020,11 @@ def _rule_ids(diagnostics: Sequence[Diagnostic]) -> list[str]:
 class ResultRow:
     outcome: str
     diagnostic: Diagnostic
-    debt_token: str
 
 
-def _debt_token(diagnostic: Diagnostic) -> str:
-    return diagnostic.actual if diagnostic.rule_id in TOKEN_BEARING_DEBT_RULES else ""
-
-
-def _assert_retired_debt_source(
-    root: Path, mode: str, contract: dict[str, Any] | None = None
-) -> None:
-    """Require the canonical post-migration debt-source retirement state."""
-
-    del root
-    if contract is not None:
-        raise ValueError("DEBT-SOURCE-REINTRODUCED: retired compatibility contract")
-    if mode == "compatibility":
-        raise ValueError(
-            "DEBT-SOURCE-MISSING: compatibilityDebt and semanticDebtCaps are retired"
-        )
-    if mode != "strict":
-        raise ValueError("mode must be compatibility or strict")
-
-
-def _outcome_rows(
-    root: Path,
-    diagnostics: Sequence[Diagnostic],
-    mode: str,
-    *,
-    contract: dict[str, Any] | None = None,
-) -> list[ResultRow]:
-    _assert_retired_debt_source(root, mode, contract)
+def _outcome_rows(diagnostics: Sequence[Diagnostic]) -> list[ResultRow]:
     return [
-        ResultRow("FAIL", diagnostic, _debt_token(diagnostic))
+        ResultRow("FAIL", diagnostic)
         for diagnostic in sorted(diagnostics, key=diagnostic_sort_key)
     ]
 
@@ -2148,7 +2050,6 @@ def _result_object(mode: str, rows: Sequence[ResultRow]) -> dict[str, Any]:
             "expected": row.diagnostic.expected,
             "actual": row.diagnostic.actual,
             "owner": row.diagnostic.owner,
-            "debtToken": row.debt_token,
         }
         for row in rows
     ]
@@ -2314,7 +2215,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 validate_document_text(
                     text,
                     path,
-                    legacy_task_profile(root, path, text, profile),
+                    profile,
                     args.mode,
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
@@ -2375,7 +2276,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 ),
             )
         )
-        rows = _outcome_rows(root, diagnostics, args.mode)
+        rows = _outcome_rows(diagnostics)
         _emit_results(args.mode, args.format, rows)
         return 1 if any(row.outcome == "FAIL" for row in rows) else 0
     except (DocumentContractError, OSError, ValueError, json.JSONDecodeError) as exc:

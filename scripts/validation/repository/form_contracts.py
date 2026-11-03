@@ -161,12 +161,6 @@ def canonical_form_content_errors(
         r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
     )
     markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
-    archive_envelope_marker = (
-        "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
-    )
-    archive_migration_marker = "<!-- archive-migration-ledger:v1 format=json -->"
-    # The migration form also opens the consumer block the Archive parser owns.
-    archive_consumers_marker = "<!-- archive-historical-consumers:v1 format=json -->"
     for form_path, source in sorted(
         form_sources.items(), key=lambda item: str(item[0])
     ):
@@ -180,12 +174,7 @@ def canonical_form_content_errors(
             continue
         for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
             comment = match.group(0)
-            if comment in {
-                markdownlint_directive,
-                archive_envelope_marker,
-                archive_migration_marker,
-                archive_consumers_marker,
-            } or author_comment.fullmatch(comment):
+            if comment == markdownlint_directive or author_comment.fullmatch(comment):
                 continue
             errors.append(f"{form_path} contains a non-author form comment")
 

@@ -82,7 +82,7 @@ technical-design artifact.
 | QA / CI / CD | Quality checks / integration orchestration and applicable branch metadata / delivery and reconciliation. This public repository runs repository-static QA locally; GitHub branch checks do not replay that QA. Argo CD reconciles declared GitOps state only under the operating boundary. |
 | Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
 | Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
-| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Stage 98 owns retained bodies and route dispositions; Git owns source recovery. |
+| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Git owns source recovery. Stage 98 is unvalidated history. |
 
 ### Proportional transitions
 
@@ -106,7 +106,6 @@ follow the [Git policy](git.md) for every row.
 | Executable behavior | A Stage 03 package; a failing case then a passing case in its Task | Focused regressions and affected purpose gates | Spec and Plan approval |
 | Governance, provider, Stage 99 form, schema or registry | A Stage 03 package; durable meaning promoted to its owner | The contract-change selection in [quality](quality.md) | Spec and Plan approval |
 | Architecture boundary or durable choice | An Architecture Description or ADR; a package when it is implemented | Document checks and reciprocal links | The operator accepts the ADR |
-| Identity or Archive disposition | A current Task, Spec or decision that records the Retention Assessment judgment in [document lifecycle](document-lifecycle.md) | Lifecycle, identity and recovery checks | Its own approval, as document lifecycle requires |
 | Live cluster change or incident fix | A Task, and an Incident record for an incident; Runbook steps | Observation in the approved live lane | The operator approves the live action; approved bootstrap and break-glass actions stay operator-bound under [approval and safety](approval-and-safety.md) |
 
 Security checks follow their existing owners: [quality](quality.md) selects

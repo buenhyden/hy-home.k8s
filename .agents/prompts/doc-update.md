@@ -50,7 +50,7 @@ form.
 
 - No owner can be resolved for the statement, which means the owner must be
   decided before the text is written.
-- The target is a sealed archive record or a completed Task whose body is
+- The target is an archived file or a completed Task whose body is
   historical evidence.
 - The proposal would create a second document stating the same contract.
 

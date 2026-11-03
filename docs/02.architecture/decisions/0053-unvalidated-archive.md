@@ -2,7 +2,7 @@
 title: "Unvalidated Archive"
 version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-11-03"
 layer: "architecture"
@@ -80,4 +80,4 @@ README and structure.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0040](0040-archive-reappraisal-and-verifiable-sources.md) | Supersedes ADR-0040; no retention unit, catalog or citation table carries forward | [SPEC-0140](../../03.specs/0140-archive-check-removal/spec.md) |
+| ADR-0040 | Supersedes ADR-0040, removed from the decision log and summarized in AD-0006 Archived Lineage; no retention unit, catalog or citation table carries forward | [SPEC-0140](../../03.specs/0140-archive-check-removal/spec.md) |

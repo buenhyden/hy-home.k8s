@@ -11,9 +11,6 @@ layer: "architecture"
 
 > 아키텍처 선택의 맥락, 대안, 결과를 보존하는 ADR stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 중요한 기술/아키텍처 결정을 ADR로 기록하는 canonical stage다.
@@ -26,7 +23,6 @@ layer: "architecture"
 - Platform Architects
 - Platform Engineers
 - Operators
-- AI Agents
 
 ## Scope
 
@@ -63,8 +59,6 @@ layer: "architecture"
 |   [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision |
 |   [`./0036-common-knowledge-and-prompt-surfaces.md`](./0036-common-knowledge-and-prompt-surfaces.md) | Common knowledge and prompt surface adoption |
 |   [`./0037-kiali-operator-installation.md`](./0037-kiali-operator-installation.md) | Kiali operator 설치 결정 |
-|   [`./0039-unit-archive-retention-and-citation-table.md`](./0039-unit-archive-retention-and-citation-table.md) | Unit archive retention and citation table decision |
-|   [`./0040-archive-reappraisal-and-verifiable-sources.md`](./0040-archive-reappraisal-and-verifiable-sources.md) | Archive reappraisal and verifiable sources decision |
 |   [`./0041-openbao-secret-backend.md`](./0041-openbao-secret-backend.md) | OpenBao 런타임 시크릿 backend 전환 결정 |
 |   [`./0042-linux-server-single-host-baseline.md`](./0042-linux-server-single-host-baseline.md) | Linux server single-host baseline 결정 |
 |   [`./0043-dedicated-k8s-ingress-router.md`](./0043-dedicated-k8s-ingress-router.md) | Dedicated Kubernetes ingress router 결정 |
@@ -83,10 +77,10 @@ layer: "architecture"
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/architecture/decision.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. Superseded ADR은 predecessor/successor를 상호 연결한다. [ADR-0040](./0040-archive-reappraisal-and-verifiable-sources.md)에 따라 다른 family와 같이 `98.archive/superseded/`로 옮기고 이 log는 predecessor를 identifier로 명명한다. 처분이 승인된 대체 ADR은 이 log를 떠나 Archive에 보존한다. ADR-0039는 ADR-0040에 의해 대체되었지만 별도 처분 승인 전까지 이 log에 남는다. ADR-0013, ADR-0015부터 ADR-0025, ADR-0027, ADR-0032, ADR-0034, ADR-0035, ADR-0038은 [Archive index](../../98.archive/README.md)의 Retention Catalog가 명명한다. redirect나 본문 복제본을 만들지 않는다.
+3. 이 log에는 superseded·retired·deprecated 상태의 ADR을 두지 않는다. 결정을 대체하는 변경은 새 ADR의 `supersedes`와 Traceability에 이전 ADR ID를 적고, 이전 ADR을 해당 AD의 `Archived Lineage` 표에 요약한 뒤 같은 변경에서 삭제한다. 원본은 Git history로만 복구하며 redirect나 본문 복제본을 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
-6. ADR 번호는 재사용하지 않는다. 결정을 뒤집어도 이전 ADR을 지우지 않고 superseded로 표시해 후속 ADR과 연결한다. MIG-0002의 일회성 네 자리 전환과 승인된 Archive payload 제거는 [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md)과 ADR-0040이 정한 별도 결정이며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
+6. ADR 번호는 재사용하지 않는다. 삭제된 ADR의 번호도 다시 쓰지 않으며, 기존 번호의 의미나 원래 승인·이력을 새 번호로 고쳐 쓰지 않는다.
 
 ### Relative Link Rules
 

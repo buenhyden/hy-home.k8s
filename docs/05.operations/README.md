@@ -11,9 +11,6 @@ layer: "operations"
 
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `05.operations/`는 안정 상태 운영 지식, 운영 정책, 실행 런북, 사고 기록을 묶는 운영 허브다.
@@ -84,7 +81,6 @@ marker는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 G
 - GitOps Operators
 - Platform Engineers
 - Incident Responders
-- AI Agents
 
 ## Scope
 

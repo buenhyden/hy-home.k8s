@@ -1,10 +1,10 @@
 ---
 title: "Main Release Preparation"
-version: "1.2.1"
+version: "1.2.2"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-03"
 layer: "operations"
 artifact_id: "RUN-0012"
 ---
@@ -16,7 +16,7 @@ artifact_id: "RUN-0012"
 이 Runbook은 main의 검토된 변경을 정규 `CHANGELOG.md`에 기록하고 한
 생산자로 SemVer tag와 GitHub Release를 준비하는 순서를 제공한다. 릴리스는
 저장소의 공개 계약 이력이다. k3d·ArgoCD·Vault의 배포 완료나 live 검증을
-증명하지 않는다. 계약은 [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md),
+증명하지 않는다. 계약은 SPEC-0107,
 실제 실행 증적은 해당 변경의 Task가 소유한다.
 
 - **Type**: Repository release preparation and publication
@@ -124,4 +124,4 @@ Release 이력을 보존한다. 원격 결과가 불명확하면 재시도 전�
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |
+| N/A — SPEC-0107 left the tree; Git history recovers it | Reviewed main release-preparation PR, one SemVer producer and external publication boundary | Release Task, Git history and observed GitHub Release/tag |

@@ -1,10 +1,10 @@
 ---
 title: "External Data Service Contract Alignment"
-version: "1.0.0"
+version: "1.0.1"
 type: "sdlc/architecture-decision"
 status: "accepted"
 owner: "platform"
-updated: "2026-10-09"
+updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "ADR-0049"
 ---
@@ -59,7 +59,7 @@ interfaces (FR-0003), currently supported UI claims (FR-0004), validation
 depth and truthful live evidence (FR-0008), fail-closed source references
 (FR-0010), and no secret values in Git or logs (NFR-0002). The existing
 observation and local change are owned by
-[SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md),
+SPEC-0106,
 WORK-019 and its Task. External Docker runtime and credentials remain outside
 this repository.
 
@@ -153,9 +153,9 @@ neither whole document is superseded or archived by this scoped ADR.
 - **Requirement:** [REQ-0004](../../01.requirements/0004-current-local-gitops-platform.md),
   FR-0001/0003/0004/0008/0010 and NFR-0002.
 - **Architecture:** [AD-0007](../descriptions/0007-current-local-gitops-platform.md).
-- **Specification and execution:** [SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md),
-  [Plan WORK-019](../../03.specs/0106-stage99-lifecycle-normalization/plan.md#work-breakdown),
-  [Task0019](../../03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0019-live-quality-observation.md).
+- **Specification and execution:** SPEC-0106,
+  Plan WORK-019,
+  Task0019.
 - **Operations:** [POL-0001](../../05.operations/policies/0001-k8s-gitops-operations-policy.md),
   [POL-0007](../../05.operations/policies/0007-app-gitops-onboarding-policy.md),
   [RUN-0001](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md).
@@ -164,5 +164,5 @@ neither whole document is superseded or archived by this scoped ADR.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0044](./0044-stateful-data-stores-stay-external.md) | Replaces only its `pg-router` K8s PostgreSQL consumer clause; confirms its existing exclusion of Valkey cluster from this repository, while preserving external placement, backup and data-lifetime ownership | [SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md) |
-| [ADR-0046](./0046-external-services-over-host-addresses.md) | Replaces only host `15432/15433` PostgreSQL route and PG bootstrap warning clauses; preserves host transport for OpenBao, telemetry, management Valkey and k3d API/TLS | [SPEC-0106](../../03.specs/0106-stage99-lifecycle-normalization/spec.md) |
+| [ADR-0044](./0044-stateful-data-stores-stay-external.md) | Replaces only its `pg-router` K8s PostgreSQL consumer clause; confirms its existing exclusion of Valkey cluster from this repository, while preserving external placement, backup and data-lifetime ownership | N/A — SPEC-0106 left the tree; Git history recovers it |
+| [ADR-0046](./0046-external-services-over-host-addresses.md) | Replaces only host `15432/15433` PostgreSQL route and PG bootstrap warning clauses; preserves host transport for OpenBao, telemetry, management Valkey and k3d API/TLS | N/A — SPEC-0106 left the tree; Git history recovers it |

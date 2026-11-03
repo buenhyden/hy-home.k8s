@@ -1,10 +1,10 @@
 ---
 title: "Local QA and SemVer Release Ownership"
-version: "0.1.0"
+version: "0.1.1"
 type: "sdlc/architecture-decision"
 status: "proposed"
 owner: "platform"
-updated: "2026-10-07"
+updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "ADR-0048"
 ---
@@ -15,7 +15,7 @@ artifact_id: "ADR-0048"
 
 Record the user-requested design for local quality validation and explicit
 SemVer releases in the public `hy-home.k8s` repository.
-[SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) owns the change
+SPEC-0107 owns the change
 contract and its Task owns implementation and observed evidence. This proposed
 decision establishes no completed migration, release publication, Project
 activation, authenticated remote setting or native hook delivery.
@@ -240,6 +240,6 @@ its Task alone records commands and actual results.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ADR-0031](0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment: local QA selection and delivery replace the CI-projection obligation; the single validation registry and remaining ownership contracts continue | [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | Scoped amendment: local validation and explicit release ownership; common governance and provider boundaries continue | [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
-| [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) | Updated structural view; no whole-document supersession | [SPEC-0107](../../03.specs/0107-local-qa-and-release/spec.md) |
+| [ADR-0031](0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment: local QA selection and delivery replace the CI-projection obligation; the single validation registry and remaining ownership contracts continue | N/A — SPEC-0107 left the tree; Git history recovers it |
+| [ADR-0036](0036-common-knowledge-and-prompt-surfaces.md) | Scoped amendment: local validation and explicit release ownership; common governance and provider boundaries continue | N/A — SPEC-0107 left the tree; Git history recovers it |
+| [AD-0006](../descriptions/0006-workspace-agent-governance-platform.md) | Updated structural view; no whole-document supersession | N/A — SPEC-0107 left the tree; Git history recovers it |

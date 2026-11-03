@@ -30,7 +30,6 @@ from validation.repository.bounded_io import (
 
 
 GIT_TIMEOUT_SECONDS = 10
-TASK_LEGACY_BASELINE_COMMIT = "ae93644e7e1137ed66ac243af4156ecea2d9cee4"
 TASK_FIRST_RECORDING_EXTENSION = (
     "Local candidate Task first-recording of observed draft, ready, in-progress, "
     "or blocked state"
@@ -111,12 +110,12 @@ class IdentifierColumn:
 class TaskExecution:
     single_status_marker: Literal["frontmatter"]
     result_states: Mapping[str, tuple[str, ...]]
-    summary_rule: Literal["task-items-v1", "task-items-v2"]
+    summary_rule: Literal["task-items-v2"]
+    criterion_acceptance_section: str
     acceptance_states: tuple[str, ...] = ()
     evidence_section: str | None = None
     evidence_columns: tuple[str, ...] = ()
     evidence_result_states: tuple[str, ...] = ()
-    criterion_acceptance_section: str | None = None
     criterion_acceptance_columns: tuple[str, ...] = ()
 
 
@@ -161,36 +160,19 @@ def task_evidence_issues(
             )
         if re.fullmatch(r"WORK-[0-9]{3}", row["Work Unit"].strip()) is None:
             issues.append(("TASK-EVIDENCE-WORK", f"row {number}: invalid work unit"))
-        if binding.criterion_acceptance_section:
-            if row.get("Required", "").strip() not in {"yes", "no"}:
-                issues.append(
-                    ("TASK-EVIDENCE-REQUIRED", f"row {number}: expected yes/no")
-                )
-            if _task_evidence_ids(row.get("Resolves", "")) is None:
-                issues.append(
-                    ("TASK-EVIDENCE-RESOLUTION", f"row {number}: invalid Resolves IDs")
-                )
-        result, acceptance = row["Result"].strip(), row.get("Acceptance", "").strip()
+        if row.get("Required", "").strip() not in {"yes", "no"}:
+            issues.append(("TASK-EVIDENCE-REQUIRED", f"row {number}: expected yes/no"))
+        if _task_evidence_ids(row.get("Resolves", "")) is None:
+            issues.append(
+                ("TASK-EVIDENCE-RESOLUTION", f"row {number}: invalid Resolves IDs")
+            )
+        result = row["Result"].strip()
         if result not in binding.evidence_result_states:
             issues.append(
                 ("TASK-EVIDENCE-RESULT", f"row {number}: invalid result {result!r}")
             )
-        if not binding.criterion_acceptance_section and (
-            acceptance not in binding.acceptance_states
-            or (acceptance == "accepted" and result != "PASS")
-        ):
-            issues.append(
-                (
-                    "TASK-EVIDENCE-ACCEPTANCE",
-                    f"row {number}: invalid acceptance {acceptance!r}/{result} ",
-                )
-            )
         placeholder_keys = (
-            ("Check", "Input", "Location")
-            if binding.criterion_acceptance_section and result in {"PASS", "FAIL"}
-            else ("Location",)
-            if not binding.criterion_acceptance_section and acceptance == "accepted"
-            else ()
+            ("Check", "Input", "Location") if result in {"PASS", "FAIL"} else ()
         )
         if any(not cell.strip() for cell in row.values()) or any(
             _TASK_EVIDENCE_PLACEHOLDER.fullmatch(row[key].strip())
@@ -231,8 +213,6 @@ def task_contract_issues(
 
     issues = list(task_execution_issues(work_rows, status, binding))
     issues.extend(task_evidence_issues(evidence_rows, binding))
-    if not binding.criterion_acceptance_section:
-        return tuple(issues)
 
     work_by_id = {row["ID"].strip().strip("`"): row for row in work_rows}
     required_criteria = {
@@ -428,22 +408,15 @@ def derive_task_summary(states: Sequence[str], binding: TaskExecution) -> str:
     elif "blocked" in states:
         expected = "blocked"
     elif "in-progress" in states or (
-        "completed" in states
-        and any(state in states for state in ("queued", "draft", "ready"))
+        "completed" in states and any(state in states for state in ("draft", "ready"))
     ):
         expected = "in-progress"
-    elif "ready" in states or "queued" in states:
-        expected = "ready" if binding.summary_rule == "task-items-v2" else "queued"
+    elif "ready" in states:
+        expected = "ready"
     elif "draft" in states:
         expected = "draft"
     elif all(state == "completed" for state in states):
         expected = "completed"
-    elif "superseded" in states:
-        if "cancelled" in states or any(
-            state not in {"completed", "superseded"} for state in states
-        ):
-            raise ValueError("Task summary has incompatible superseded rows")
-        expected = "superseded"
     else:
         expected = "cancelled"
     return expected
@@ -517,7 +490,6 @@ def task_execution_issues(
             )
         row_status = row["Status"].strip()
         result = row["Result"].strip()
-        acceptance = row.get("Acceptance", "").strip()
         evidence = row["Evidence"].strip()
         if len(rows) == 1 and row_status != binding.single_status_marker:
             issues.append(
@@ -535,63 +507,13 @@ def task_execution_issues(
             issues.append(
                 ("TASK-EXECUTION-RESULT", f"row {number}: {effective_status}/{result}")
             )
-        if binding.criterion_acceptance_section:
-            if criterion_ids and effective_status == "completed" and result != "PASS":
-                issues.append(
-                    (
-                        "TASK-EXECUTION-RESULT",
-                        f"row {number}: linked completed criterion requires PASS",
-                    )
+        if criterion_ids and effective_status == "completed" and result != "PASS":
+            issues.append(
+                (
+                    "TASK-EXECUTION-RESULT",
+                    f"row {number}: linked completed criterion requires PASS",
                 )
-        elif binding.summary_rule == "task-items-v2":
-            if acceptance not in binding.acceptance_states:
-                issues.append(
-                    (
-                        "TASK-EXECUTION-ACCEPTANCE",
-                        f"row {number}: invalid acceptance {acceptance!r}",
-                    )
-                )
-            elif criterion_ids:
-                if acceptance == "not-required" or (
-                    effective_status == "completed" and result == "NOT_APPLICABLE"
-                ):
-                    issues.append(
-                        (
-                            "TASK-EXECUTION-ACCEPTANCE",
-                            f"row {number}: linked criterion cannot be excluded by Task",
-                        )
-                    )
-                elif effective_status == "completed" and (result, acceptance) != (
-                    "PASS",
-                    "accepted",
-                ):
-                    issues.append(
-                        (
-                            "TASK-EXECUTION-ACCEPTANCE",
-                            f"row {number}: completed criterion requires PASS/accepted",
-                        )
-                    )
-            elif (
-                criterion_ids == ()
-                and effective_status == "completed"
-                and (
-                    result not in {"PASS", "NOT_APPLICABLE"}
-                    or acceptance != "not-required"
-                )
-            ):
-                issues.append(
-                    (
-                        "TASK-EXECUTION-ACCEPTANCE",
-                        f"row {number}: nonrequired completed row requires PASS or NOT_APPLICABLE/not-required",
-                    )
-                )
-            if acceptance == "accepted" and result != "PASS":
-                issues.append(
-                    (
-                        "TASK-EXECUTION-ACCEPTANCE",
-                        f"row {number}: accepted result must be PASS",
-                    )
-                )
+            )
         if effective_status == "completed" and (
             not evidence or _TASK_EVIDENCE_PLACEHOLDER.fullmatch(evidence)
         ):
@@ -694,82 +616,6 @@ class LifecycleDomain:
 
 
 @dataclass(frozen=True)
-class RetentionClass:
-    """One Stage 98 retention class, what its body names, and its source states."""
-
-    name: Literal["completed", "superseded", "retired", "resolved"]
-    names: Literal["promotion", "successor", "reason", "corrective-owner"]
-    admitted_states: frozenset[str]
-
-
-@dataclass(frozen=True)
-class RetentionUnit:
-    """A Stage 98 retention unit: its root, the anchor its class is read from, and members."""
-
-    name: Literal["spec-package", "incident-bundle"]
-    root: re.Pattern[str]
-    anchor: str
-    required_members: tuple[str, ...]
-    member_admitted_states: tuple[tuple[str, frozenset[str]], ...] = ()
-    completed_authority_members: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True)
-class RetentionMode:
-    """One retention mode and the registry profiles its selector binds."""
-
-    name: Literal[
-        "move-frozen-body", "sealed-record", "retain-in-place", "git-history-only"
-    ]
-    profile_id_pattern: re.Pattern[str]
-    classes: frozenset[str]
-
-
-@dataclass(frozen=True)
-class CitationRule:
-    """One ordered rule of the archive citation table."""
-
-    source: Literal["archive", "any", "profiles"]
-    target: Literal["any", "index", "route-record", "sealed-record", "retained-body"]
-    decision: Literal["admit", "reject"]
-    source_profile_ids: frozenset[str] = frozenset()
-    target_classes: frozenset[str] = frozenset()
-    target_assessments: frozenset[str] = frozenset()
-    target_availabilities: frozenset[str] = frozenset()
-
-
-@dataclass(frozen=True)
-class ArchiveAssessment:
-    """ADR-0040's current judgment of retained units, kept beside the catalog.
-
-    A unit without a row carries the defaults. The value lists, which values
-    need a current owner, which are reserved, which mean the unit left the tree,
-    and which profiles may record a decision are owned here and nowhere else."""
-
-    index: PurePosixPath
-    heading: str
-    columns: tuple[str, ...]
-    assessments: tuple[str, ...]
-    availabilities: tuple[str, ...]
-    default_assessment: str
-    default_availability: str
-    owner_required_assessments: frozenset[str]
-    reserved_availabilities: frozenset[str]
-    removed_availabilities: frozenset[str]
-    decision_profile_ids: frozenset[str]
-    default_branch: str
-
-
-@dataclass(frozen=True)
-class ArchiveCitation:
-    """The ordered citation table into Stage 98; the first matching rule decides."""
-
-    index: PurePosixPath
-    default: Literal["reject"]
-    rules: tuple[CitationRule, ...]
-
-
-@dataclass(frozen=True)
 class ReadmeNavigationProfile:
     """The navigation section a README profile owns and whether it is complete."""
 
@@ -830,7 +676,6 @@ class DocumentProfile:
         "sdlc",
         "operation",
         "reference",
-        "archive",
         "governance",
         "evaluation",
         "readme",
@@ -882,15 +727,8 @@ class Registry:
     schema_version: int
     profiles: tuple[DocumentProfile, ...]
     lifecycle_domains: tuple[LifecycleDomain, ...]
-    retention_classes: tuple[RetentionClass, ...] = ()
-    retention_units: tuple[RetentionUnit, ...] = ()
-    retention_modes: tuple[RetentionMode, ...] = ()
-    archive_citation: ArchiveCitation | None = None
-    archive_assessment: ArchiveAssessment | None = None
-    legacy_rebased_retained_paths: frozenset[PurePosixPath] = frozenset()
     readme_navigation: ReadmeNavigation | None = None
     document_language: DocumentLanguage | None = None
-    migration_admission: Mapping[str, Any] | None = None
     shared_contract: SharedContract | None = None
 
 
@@ -1179,69 +1017,15 @@ def _run_git(
     return completed.stdout
 
 
-@lru_cache(maxsize=8)
-def _legacy_task_registry(root: Path) -> Registry | None:
-    """Read the reviewed pre-P03 machine edition from its actual Git object."""
-
-    try:
-        raw = _run_git(
-            root,
-            ["show", f"{TASK_LEGACY_BASELINE_COMMIT}:{REGISTRY_PATH.as_posix()}"],
-            max_stdout_bytes=REGISTRY_MAX_BYTES,
-        )
-        import json
-
-        return _typed_registry_from_mapping(json.loads(raw))
-    except Exception:  # A missing baseline fails closed to the current profile.
-        return None
-
-
-def legacy_task_profile(
-    root: Path, path: PurePosixPath, text: str, profile: DocumentProfile
-) -> DocumentProfile:
-    """Keep exact unchanged completed Task bytes on their historical binding."""
-
-    if (
-        profile.profile_id != "sdlc/task"
-        or re.search(r'(?m)^status: "completed"$', text) is None
-        or "| Acceptance | Evidence |" not in text
-        or path.is_absolute()
-        or ".." in path.parts
-    ):
-        return profile
-    baseline = _legacy_task_registry(root.resolve())
-    if baseline is None:
-        return profile
-    if not task_baseline_bytes_match(root, path, text):
-        return profile
-    return next(item for item in baseline.profiles if item.profile_id == "sdlc/task")
-
-
-def task_baseline_bytes_match(root: Path, path: PurePosixPath, text: str) -> bool:
-    """Attest exact path and bytes to the actual P03 prechange main commit."""
-
-    if (
-        path.is_absolute()
-        or ".." in path.parts
-        or path.parts[:2] != ("docs", "03.specs")
-        or path.parent.name != "tasks"
-    ):
-        return False
-    try:
-        return _run_git(
-            root,
-            ["show", f"{TASK_LEGACY_BASELINE_COMMIT}:{path.as_posix()}"],
-        ) == text.encode("utf-8")
-    except Exception:
-        return False
-
-
 def _within_target_scope(path: PurePosixPath) -> bool:
     if path.as_posix() == "RTK.md":
         return False
     if not path.parts:
         return False
     if path.parts[0] == ".worktrees":
+        return False
+    if path.parts[:2] == ("docs", "98.archive"):
+        # Archive content is unvalidated history, outside the document scope.
         return False
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
 
@@ -1499,9 +1283,7 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
                 evidence_result_states=tuple(
                     execution.get("evidence_result_states", ())
                 ),
-                criterion_acceptance_section=execution.get(
-                    "criterion_acceptance_section"
-                ),
+                criterion_acceptance_section=execution["criterion_acceptance_section"],
                 criterion_acceptance_columns=tuple(
                     execution.get("criterion_acceptance_columns", ())
                 ),
@@ -1564,220 +1346,16 @@ def _profile_from_mapping(
     )
 
 
-def _retention_unit_diagnostics(
-    raw_registry: Mapping[str, Any], declared_states: set[str]
-) -> list[Diagnostic]:
-    """Check that each retention unit is declared once and names its own members."""
-
-    diagnostics: list[Diagnostic] = []
-    seen: set[str] = set()
-    for item in raw_registry.get("retention_units", ()):
-        name = item["unit"]
-        problems: list[str] = []
-        if name in seen:
-            problems.append("duplicate declaration")
-        seen.add(name)
-        try:
-            re.compile(item["root_pattern"])
-        except re.error:
-            problems.append("invalid root_pattern")
-        if item["anchor"] not in item["required_members"]:
-            problems.append(f"anchor {item['anchor']} is not a required member")
-        for member, states in item.get("member_admitted_states", {}).items():
-            undeclared = sorted(set(states) - declared_states)
-            if member not in item["required_members"] or undeclared:
-                problems.append(f"{member}: undeclared {undeclared!r}")
-        authority = tuple(item.get("completed_authority_members", ()))
-        if authority and (
-            name != "spec-package"
-            or set(authority) != {"spec.md", "plan.md"}
-            or "spec.md" not in item["required_members"]
-        ):
-            problems.append("approved completion is bound only to spec.md/plan.md")
-        diagnostics.extend(
-            _diagnostic(
-                "REGISTRY_RETENTION_UNIT",
-                expected="one unit with a required anchor and declared member states",
-                actual=f"{name}: {problem}",
-            )
-            for problem in problems
-        )
-    return diagnostics
-
-
-def _retention_mode_bindings(
-    raw_registry: Mapping[str, Any],
-    profiles_by_id: Mapping[str, Mapping[str, Any]],
-) -> tuple[dict[str, str], list[Diagnostic]]:
-    """Bind each profile to at most one retention mode and report selector faults."""
-
-    bound: dict[str, str] = {}
-    diagnostics: list[Diagnostic] = []
-
-    def fault(actual: str, profile: str = "") -> None:
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_RETENTION_MODE",
-                profile=profile,
-                expected="each mode binds profiles once, and moved bodies are mirrored",
-                actual=actual,
-            )
-        )
-
-    seen: set[str] = set()
-    for item in raw_registry.get("retention_modes", ()):
-        name = item["mode"]
-        if name in seen:
-            fault(f"duplicate retention mode {name}")
-        seen.add(name)
-        try:
-            selector = re.compile(item["profile_id_pattern"])
-        except re.error:
-            fault(f"{name}: invalid profile_id_pattern")
-            continue
-        # A mode that binds no profile is declared but cannot be applied; a
-        # reduced registry may leave one unbound.
-        matched = sorted(pid for pid in profiles_by_id if selector.search(pid))
-        for profile_id in matched:
-            if profile_id in bound:
-                fault(f"bound to {bound[profile_id]} and {name}", profile_id)
-                continue
-            bound[profile_id] = name
-            path_pattern = profiles_by_id[profile_id]["path_pattern"]
-            if item["classes"] and "98\\.archive/" not in path_pattern:
-                fault(f"{name}: no Stage 98 alternative in path_pattern", profile_id)
-    return bound, diagnostics
-
-
-def _archive_citation_diagnostics(
+def _registry_section_diagnostics(
     raw_registry: Mapping[str, Any],
     profiles_by_id: Mapping[str, Mapping[str, Any]],
 ) -> list[Diagnostic]:
-    """Require every citation rule to name registry profiles and retention classes."""
+    """Validate the README navigation and document language sections."""
 
-    citation = raw_registry.get("archive_citation")
-    if citation is None:
-        return []
-    class_names = {item["class"] for item in raw_registry.get("retention_classes", ())}
-    diagnostics: list[Diagnostic] = []
-    for position, rule in enumerate(citation["rules"], start=1):
-        profiles = set(rule.get("source_profile_ids", ()))
-        unknown_profiles = sorted(profiles - set(profiles_by_id))
-        unknown_classes = sorted(set(rule.get("target_classes", ())) - class_names)
-        if unknown_profiles or unknown_classes:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_ARCHIVE_CITATION",
-                    expected="rules that name registry profiles and retention classes",
-                    actual=(
-                        f"rule {position}: profiles {unknown_profiles!r}, "
-                        f"classes {unknown_classes!r}"
-                    ),
-                )
-            )
-    return diagnostics
-
-
-def _archive_assessment_diagnostics(
-    raw_registry: Mapping[str, Any],
-    profiles_by_id: Mapping[str, Mapping[str, Any]],
-) -> list[Diagnostic]:
-    """Require the assessment defaults and subsets to come from its own lists."""
-
-    contract = raw_registry.get("archive_assessment")
-    if contract is None:
-        return []
-    assessments = set(contract["assessments"])
-    availabilities = set(contract["availabilities"])
-    faults: list[str] = []
-    if contract["default_assessment"] not in assessments:
-        faults.append("default_assessment")
-    if contract["default_availability"] not in availabilities:
-        faults.append("default_availability")
-    if not set(contract["owner_required_assessments"]) <= assessments:
-        faults.append("owner_required_assessments")
-    for key in ("reserved_availabilities", "removed_availabilities"):
-        values = set(contract[key])
-        if not values <= availabilities or contract["default_availability"] in values:
-            faults.append(key)
-    unknown = sorted(set(contract["decision_profile_ids"]) - set(profiles_by_id))
-    if unknown:
-        faults.append(f"decision_profile_ids {unknown!r}")
-    for position, rule in enumerate(
-        raw_registry.get("archive_citation", {}).get("rules", ()), start=1
-    ):
-        if (
-            not set(rule.get("target_assessments", ())) <= assessments
-            or not set(rule.get("target_availabilities", ())) <= availabilities
-        ):
-            faults.append(f"citation rule {position}")
     return [
-        _diagnostic(
-            "REGISTRY_ARCHIVE_ASSESSMENT",
-            expected="assessment defaults, subsets, and profiles the registry declares",
-            actual=fault,
-        )
-        for fault in faults
-    ]
-
-
-def _legacy_retained_diagnostics(
-    raw_registry: Mapping[str, Any], bound_modes: Mapping[str, str]
-) -> list[Diagnostic]:
-    """Require each legacy path to classify as a body retained under a class."""
-
-    legacy = raw_registry.get("legacy_rebased_retained_paths", ())
-    if not legacy:
-        return []
-    class_names = {item["class"] for item in raw_registry.get("retention_classes", ())}
-    typed = _typed_registry_from_mapping(raw_registry)
-    diagnostics: list[Diagnostic] = []
-    for value in legacy:
-        path = PurePosixPath(value)
-        try:
-            profile_id = classify_path(typed, path).profile_id
-        except DocumentContractError:
-            profile_id = ""
-        retained = (
-            len(path.parts) >= 4
-            and path.parts[:2] == ("docs", "98.archive")
-            and path.parts[2] in class_names
-            and bound_modes.get(profile_id) == "move-frozen-body"
-        )
-        if not retained:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_LEGACY_RETAINED",
-                    path=path,
-                    expected="a body retained under a retention class",
-                    actual=f"{value} is not a retained body",
-                )
-            )
-    return diagnostics
-
-
-def _archive_retention_diagnostics(
-    raw_registry: Mapping[str, Any],
-    profiles_by_id: Mapping[str, Mapping[str, Any]],
-    declared_states: set[str],
-) -> list[Diagnostic]:
-    """Validate the ADR-0039 units, modes, citation table, and legacy set."""
-
-    bound_modes, mode_diagnostics = _retention_mode_bindings(
-        raw_registry, profiles_by_id
-    )
-    diagnostics = [
-        *_retention_unit_diagnostics(raw_registry, declared_states),
-        *mode_diagnostics,
-        *_archive_citation_diagnostics(raw_registry, profiles_by_id),
-        *_archive_assessment_diagnostics(raw_registry, profiles_by_id),
         *_readme_navigation_registry_diagnostics(raw_registry, profiles_by_id),
         *_document_language_registry_diagnostics(raw_registry, profiles_by_id),
     ]
-    if diagnostics:
-        # The legacy check builds the typed registry, which needs the rest valid.
-        return diagnostics
-    return _legacy_retained_diagnostics(raw_registry, bound_modes)
 
 
 def _terminal_semantic_diagnostics(
@@ -1957,12 +1535,6 @@ def _terminal_semantic_diagnostics(
     assigned_profiles: set[str] = set()
     domains_by_profile: dict[str, Mapping[str, Any]] = {}
     families: set[str] = set()
-    task_binding = (
-        (profiles_by_id.get("sdlc/task") or {}).get("relationships") or {}
-    ).get("body_contract") or {}
-    modern_task = bool(
-        (task_binding.get("task_execution") or {}).get("criterion_acceptance_section")
-    )
     shared_contract = raw_registry.get("shared_contract")
     local_extension_stage = isinstance(
         shared_contract, Mapping
@@ -1979,13 +1551,9 @@ def _terminal_semantic_diagnostics(
         family = domain["family"]
         initial_states = domain.get("initial_states")
         inbound = {target for _, target in domain["transitions"]}
-        if (
-            modern_task
-            and family == "spec-plan"
-            and (
-                (["draft", "approved"] in domain["transitions"])
-                != local_spec_direct_approval
-            )
+        if family == "spec-plan" and (
+            (["draft", "approved"] in domain["transitions"])
+            != local_spec_direct_approval
         ):
             diagnostics.append(
                 _diagnostic(
@@ -1998,8 +1566,7 @@ def _terminal_semantic_diagnostics(
                 )
             )
         observed_task_initial = (
-            modern_task
-            and family == "task"
+            family == "task"
             and local_task_recording
             and initial_states == list(TASK_INITIAL_STATES)
         )
@@ -2025,8 +1592,7 @@ def _terminal_semantic_diagnostics(
             else ["draft"]
         )
         if (
-            modern_task
-            and family in {"spec-plan", "task"}
+            family in {"spec-plan", "task"}
             and initial_states != expected_initial_states
         ):
             diagnostics.append(
@@ -2075,34 +1641,7 @@ def _terminal_semantic_diagnostics(
             assigned_profiles.add(profile_id)
             domains_by_profile[profile_id] = domain
 
-    declared_states = {
-        state
-        for domain in raw_registry["lifecycle_domains"]
-        for state in domain["states"]
-    }
-    retention_names: set[str] = set()
-    for item in raw_registry.get("retention_classes", ()):
-        if item["class"] in retention_names:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_RETENTION_CLASS",
-                    expected="one binding per retention class",
-                    actual=f"duplicate retention class {item['class']}",
-                )
-            )
-        retention_names.add(item["class"])
-        undeclared = sorted(set(item["admitted_states"]) - declared_states)
-        if undeclared:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_RETENTION_CLASS",
-                    expected="admitted states declared by a lifecycle domain",
-                    actual=f"{item['class']}: undeclared {undeclared!r}",
-                )
-            )
-    diagnostics.extend(
-        _archive_retention_diagnostics(raw_registry, profiles_by_id, declared_states)
-    )
+    diagnostics.extend(_registry_section_diagnostics(raw_registry, profiles_by_id))
 
     for profile_id, profile in profiles_by_id.items():
         if profile["mode"] != "authored":
@@ -2177,7 +1716,6 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     )
     return Registry(
         schema_version=raw["schema_version"],
-        migration_admission=raw.get("migration_admission"),
         shared_contract=(
             SharedContract(
                 **{
@@ -2190,73 +1728,8 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         ),
         profiles=profiles,
         lifecycle_domains=domains,
-        retention_classes=tuple(
-            RetentionClass(
-                name=item["class"],
-                names=item["names"],
-                admitted_states=frozenset(item["admitted_states"]),
-            )
-            for item in raw.get("retention_classes", ())
-        ),
-        retention_units=tuple(
-            RetentionUnit(
-                name=item["unit"],
-                root=re.compile(item["root_pattern"]),
-                anchor=item["anchor"],
-                required_members=tuple(item["required_members"]),
-                member_admitted_states=tuple(
-                    (member, frozenset(states))
-                    for member, states in sorted(
-                        item.get("member_admitted_states", {}).items()
-                    )
-                ),
-                completed_authority_members=tuple(
-                    item.get("completed_authority_members", ())
-                ),
-            )
-            for item in raw.get("retention_units", ())
-        ),
-        retention_modes=tuple(
-            RetentionMode(
-                name=item["mode"],
-                profile_id_pattern=re.compile(item["profile_id_pattern"]),
-                classes=frozenset(item["classes"]),
-            )
-            for item in raw.get("retention_modes", ())
-        ),
-        archive_citation=_archive_citation_from_mapping(raw.get("archive_citation")),
-        archive_assessment=_archive_assessment_from_mapping(
-            raw.get("archive_assessment")
-        ),
-        legacy_rebased_retained_paths=frozenset(
-            PurePosixPath(value)
-            for value in raw.get("legacy_rebased_retained_paths", ())
-        ),
         readme_navigation=_readme_navigation_from_mapping(raw.get("readme_navigation")),
         document_language=_document_language_from_mapping(raw.get("document_language")),
-    )
-
-
-def _archive_citation_from_mapping(
-    raw: Mapping[str, Any] | None,
-) -> ArchiveCitation | None:
-    if raw is None:
-        return None
-    return ArchiveCitation(
-        index=PurePosixPath(raw["index"]),
-        default=raw["default"],
-        rules=tuple(
-            CitationRule(
-                source=rule["source"],
-                target=rule["target"],
-                decision=rule["decision"],
-                source_profile_ids=frozenset(rule.get("source_profile_ids", ())),
-                target_classes=frozenset(rule.get("target_classes", ())),
-                target_assessments=frozenset(rule.get("target_assessments", ())),
-                target_availabilities=frozenset(rule.get("target_availabilities", ())),
-            )
-            for rule in raw["rules"]
-        ),
     )
 
 
@@ -2394,27 +1867,6 @@ def _document_language_registry_diagnostics(
         )
         for fault in faults
     ]
-
-
-def _archive_assessment_from_mapping(
-    raw: Mapping[str, Any] | None,
-) -> ArchiveAssessment | None:
-    if raw is None:
-        return None
-    return ArchiveAssessment(
-        index=PurePosixPath(raw["index"]),
-        heading=raw["heading"],
-        columns=tuple(raw["columns"]),
-        assessments=tuple(raw["assessments"]),
-        availabilities=tuple(raw["availabilities"]),
-        default_assessment=raw["default_assessment"],
-        default_availability=raw["default_availability"],
-        owner_required_assessments=frozenset(raw["owner_required_assessments"]),
-        reserved_availabilities=frozenset(raw["reserved_availabilities"]),
-        removed_availabilities=frozenset(raw["removed_availabilities"]),
-        decision_profile_ids=frozenset(raw["decision_profile_ids"]),
-        default_branch=raw["default_branch"],
-    )
 
 
 def validate_registry(
@@ -2671,7 +2123,6 @@ def _typed_profile_class(profile: Mapping[str, Any]) -> str:
             "sdlc",
             "operation",
             "reference",
-            "archive",
             "evaluation",
         }:
             return source_family

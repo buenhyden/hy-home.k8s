@@ -17,7 +17,8 @@ execution policy or the agent roster.
 ## Authority Boundary
 
 `AGENTS.md` is the thin Codex gateway; `.codex/CODEX.md` is the local
-baseline. Native sandbox, approval, and configuration surfaces govern the
+baseline. Codex also loads a folder `AGENTS.md` natively for work below it;
+those files carry folder agent rules and never widen the gateway. Native sandbox, approval, and configuration surfaces govern the
 running client. The neutral registry owns shared role and permission meaning.
 
 ## Governance Context
@@ -87,7 +88,7 @@ team document, not a special automatic entry filename.
   discovery surface. Explicit role/skill file reads, agent-reported denial and
   an absent probe file do not establish native discovery, resolved role model
   or hook enforcement. The SPEC-0086 Task recorded that attempt's evidence and is recovered from Git
-  through the Retention Catalog in `docs/98.archive/README.md`; SPEC-0072's
+  history; SPEC-0072's
   Task recorded it first and transferred it to SPEC-0086 on 2026-09-24 when
   SPEC-0072 closed on its static half.
   At that point the next owner was the user/operator for a reviewed project/hook

@@ -48,90 +48,7 @@ class LifecycleDocument:
     profile_id: str
     status: str | None
     state_issue: str | None = None
-    original_path: PurePosixPath | None = None
-    archive_reason: str | None = None
-    replacement: PurePosixPath | None = None
     artifact_id: str | None = None
-    original_artifact_id: str | None = None
-
-
-def generation_admission_paths(
-    registry: Registry,
-    base_registry: Registry,
-    before: Mapping[PurePosixPath, LifecycleDocument],
-    after: Mapping[PurePosixPath, LifecycleDocument],
-) -> frozenset[PurePosixPath]:
-    """Admit only declared nonterminal events at the actual 9 -> 10 boundary."""
-    declaration = registry.migration_admission
-    if declaration is None or (
-        base_registry.schema_version,
-        registry.schema_version,
-    ) != (9, 10):
-        return frozenset()
-    if (declaration.get("from_generation"), declaration.get("to_generation")) != (
-        9,
-        10,
-    ):
-        raise ValueError("generation migration boundary is invalid")
-    spec = after.get(PurePosixPath(declaration["spec_ref"]))
-    task = after.get(PurePosixPath(declaration["task_ref"]))
-    if (
-        spec is None
-        or spec.profile_id != "sdlc/spec"
-        or task is None
-        or task.profile_id != "sdlc/task"
-        or task.path.parent.parent != spec.path.parent
-    ):
-        raise ValueError(
-            "generation migration requires current same-package Spec and Task references"
-        )
-    base_profiles = {profile.profile_id: profile for profile in base_registry.profiles}
-    profiles = {profile.profile_id: profile for profile in registry.profiles}
-    admitted: set[PurePosixPath] = set()
-    seen: set[PurePosixPath] = set()
-    for entry in declaration["entries"]:
-        path = PurePosixPath(entry["path"])
-        if (
-            path in seen
-            or entry["source_profile"] not in base_profiles
-            or entry["target_profile"] not in profiles
-        ):
-            raise ValueError(
-                "generation migration path/profile is duplicate or unknown"
-            )
-        for profile, status in (
-            (base_profiles[entry["source_profile"]], entry["source_status"]),
-            (profiles[entry["target_profile"]], entry["target_status"]),
-        ):
-            if profile.lifecycle_domain is None:
-                valid = status is None
-            else:
-                valid = (
-                    profile.lifecycle_domain.validation_class(status or "") is not None
-                )
-            if not valid:
-                raise ValueError(
-                    "generation migration status is unknown to its own generation"
-                )
-        seen.add(path)
-        old, new = before.get(path), after.get(path)
-        if old is None or new is None:
-            continue  # A declaration cannot manufacture an absent source document.
-        if (old.profile_id, old.status, new.profile_id, new.status) != (
-            entry["source_profile"],
-            entry["source_status"],
-            entry["target_profile"],
-            entry["target_status"],
-        ):
-            continue
-        domain = base_profiles[old.profile_id].lifecycle_domain
-        if (
-            domain is not None
-            and domain.validation_class(old.status or "") == "terminal"
-        ):
-            raise ValueError("generation migration cannot reopen terminal evidence")
-        admitted.add(path)
-    return frozenset(admitted)
 
 
 @dataclass(frozen=True)
@@ -140,35 +57,6 @@ class LifecycleRename:
 
     old_path: PurePosixPath
     new_path: PurePosixPath
-
-
-@dataclass(frozen=True, order=True)
-class ArtifactIdentityLineage:
-    """One proof-backed same-document identity move between exact paths."""
-
-    artifact_id: str
-    source_path: PurePosixPath
-    target_path: PurePosixPath
-
-
-@dataclass(frozen=True)
-class MigrationLifecycleEvents:
-    """Proof-backed events, never permission to suppress a path's diagnostics."""
-
-    publications: frozenset[PurePosixPath] = frozenset()
-    source_removals: frozenset[PurePosixPath] = frozenset()
-    current_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
-    # An archive record is not a current document, so it cannot rehome through
-    # `current_rehomes`. A proven archive move consumes both of its paths: the
-    # record's bytes and provenance are checked by the archive owner, and the
-    # move itself is admitted only from a reviewed declaration.
-    archive_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
-    # A form holds no lifecycle state and lives outside the governance tree, so
-    # it reaches neither rehome above. Its identity is the registry route it
-    # answers to, and a `moved` row is byte-identical, so a reviewed move onto
-    # the same template route is the entire event.
-    form_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
-    identity_lineages: frozenset[ArtifactIdentityLineage] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -204,13 +92,6 @@ class LifecycleEvidenceContext:
     base_task_evidence_rows: Mapping[
         PurePosixPath, tuple[tuple[tuple[str, str], ...], ...]
     ] = field(default_factory=dict)
-    baseline_task_paths: frozenset[PurePosixPath] = frozenset()
-    task_plan_criteria: Mapping[PurePosixPath, frozenset[str]] = field(
-        default_factory=dict
-    )
-    task_spec_criteria: Mapping[PurePosixPath, frozenset[str]] = field(
-        default_factory=dict
-    )
     local_contract_issues: tuple[tuple[PurePosixPath, str, str, str, str], ...] = ()
 
 
@@ -313,19 +194,11 @@ def _stateful(profile: DocumentProfile) -> bool:
 
     A declared domain is the claim that the profile has states, so an authored
     mode is not required: naming one profile here exempted every other one that
-    declares a graph and is not authored. Two exclusions remain, each an
-    ownership boundary rather than a name. A form carries an example value, not
-    a document's state, so `mode: template` never transitions. A tombstone's
-    creation is evidenced by the archive owner and its bytes are immutable
-    afterwards, so admitting it as an ordinary creation here would answer ahead
-    of the gate that owns it.
+    declares a graph and is not authored. A form carries an example value, not
+    a document's state, so `mode: template` never transitions.
     """
 
-    return (
-        profile.lifecycle_domain is not None
-        and profile.mode != "template"
-        and profile.profile_id != "archive/tombstone"
-    )
+    return profile.lifecycle_domain is not None and profile.mode != "template"
 
 
 def _state_diagnostic(
@@ -371,7 +244,6 @@ def _create_diagnostics(
     documents: Sequence[LifecycleDocument],
     *,
     base_mode: LifecycleBaseMode,
-    migration_events: MigrationLifecycleEvents = MigrationLifecycleEvents(),
 ) -> list[LifecycleDiagnostic]:
     diagnostics: list[LifecycleDiagnostic] = []
     for document in documents:
@@ -391,29 +263,13 @@ def _create_diagnostics(
             continue
         if not _stateful(profile):
             # A profile with no lifecycle domain declares no creation state, so
-            # its appearance is not a lifecycle event. The transition, snapshot
-            # and parsing paths all ask `_stateful`. Creation asked `mode`, and
-            # the two answers differed: a migration record was never checked,
-            # while a domainless README was reported for having no lifecycle.
+            # its appearance is not a lifecycle event.
             continue
         state_failure = _state_diagnostic(
             document, profile, base_mode=base_mode, side="proposed"
         )
         if state_failure is not None:
             diagnostics.append(state_failure)
-            continue
-        if (
-            document.path in migration_events.publications
-            and document.profile_id == "archive/migration"
-            and document.status == "sealed"
-        ) or (
-            any(
-                target == document.path
-                for _, target in migration_events.current_rehomes
-            )
-            and profile.lifecycle_domain is not None
-            and profile.lifecycle_domain.validation_class(document.status) == "current"
-        ):
             continue
         domain = profile.lifecycle_domain
         assert domain is not None  # `_stateful` admits only a declared domain.
@@ -437,180 +293,15 @@ def _create_diagnostics(
     return diagnostics
 
 
-def _mirrored_archive_path(
-    original_path: PurePosixPath, archive_reason: str | None = None
-) -> PurePosixPath | None:
-    if (
-        original_path.is_absolute()
-        or not original_path.parts
-        or original_path.parts[0] != "docs"
-        or ".." in original_path.parts
-        or original_path.parts[1:2] == ("98.archive",)
-    ):
-        return None
-    if archive_reason is not None:
-        from archive_recovery import ArchiveContractError, disposition_archive_path
-
-        try:
-            return PurePosixPath(
-                disposition_archive_path(original_path.as_posix(), archive_reason)
-            )
-        except ArchiveContractError:
-            return None
-    return PurePosixPath("docs/98.archive", *original_path.parts[1:])
-
-
-def archive_disposition_gaps(
-    registry: Registry,
-    source: LifecycleDocument,
-    reason: str,
-    replacement: PurePosixPath | None,
-    successor: LifecycleDocument | None,
-) -> list[str]:
-    """Share the declared terminal edge and successor checks with sealed recovery."""
-    gaps: list[str] = []
-    source_profile = _optional_profile_by_id(registry, source.profile_id)
-    domain = source_profile.lifecycle_domain if source_profile else None
-    terminal = {
-        "superseded": "superseded",
-        "consolidated": "superseded",
-        "duplicate": "superseded",
-        "retired": "retired",
-        "abandoned": "withdrawn",
-    }.get(reason)
-    if (
-        source.state_issue
-        or domain is None
-        or terminal is None
-        or domain.validation_class(terminal) != "terminal"
-        or (
-            source.status != terminal
-            and (source.status, terminal) not in domain.transitions
-        )
-    ):
-        gaps.append(
-            "source lacks the declared terminal state or forward lifecycle edge"
-        )
-    if terminal == "superseded":
-        successor_profile = (
-            _optional_profile_by_id(registry, successor.profile_id)
-            if successor
-            else None
-        )
-        successor_domain = (
-            successor_profile.lifecycle_domain if successor_profile else None
-        )
-        if (
-            replacement is None
-            or successor is None
-            or successor.state_issue
-            or successor_domain is None
-            or successor.status is None
-            or successor_domain.validation_class(successor.status) != "current"
-            or domain is None
-            or successor_domain.family != domain.family
-        ):
-            gaps.append(
-                "supersession replacement is not a current owner of the same family"
-            )
-    elif replacement is not None:
-        gaps.append("ended-without-successor record must not claim a replacement")
-    return gaps
-
-
-def _archive_creation_evidence(
-    registry: Registry,
-    created: Sequence[LifecycleDocument],
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-    evidence_context: LifecycleEvidenceContext | None,
-    *,
-    base_mode: LifecycleBaseMode,
-) -> tuple[list[LifecycleDiagnostic], set[PurePosixPath]]:
-    diagnostics: list[LifecycleDiagnostic] = []
-    admitted_source_removals: set[PurePosixPath] = set()
-    for document in created:
-        if document.profile_id != "archive/tombstone":
-            continue
-        profile = _optional_profile_by_id(registry, document.profile_id)
-        gaps: list[str] = []
-        original_path = document.original_path
-        expected_archive_path = (
-            _mirrored_archive_path(original_path, document.archive_reason)
-            if original_path is not None
-            else None
-        )
-        if profile is None or profile.lifecycle_domain is None:
-            gaps.append("registry archive lifecycle domain is unavailable")
-        if document.state_issue or document.status != "archived":
-            gaps.append("archive envelope is not a valid archived record")
-        if original_path is None:
-            gaps.append("archive original_path evidence is missing")
-        elif expected_archive_path != document.path:
-            gaps.append("archive path does not mirror original_path")
-        elif original_path not in base_documents:
-            gaps.append("original source is absent from the comparison base")
-        elif original_path in proposed_documents:
-            gaps.append("original source remains in the proposed snapshot")
-        if isinstance(document.archive_reason, str) and original_path in base_documents:
-            gaps.extend(
-                archive_disposition_gaps(
-                    registry,
-                    base_documents[original_path],
-                    document.archive_reason,
-                    document.replacement,
-                    proposed_documents.get(document.replacement),
-                )
-            )
-        if evidence_context is None:
-            gaps.append("same-diff archive evidence context is unavailable")
-        elif original_path is not None:
-            if original_path not in evidence_context.changed_paths:
-                gaps.append("original source removal is absent from the same diff")
-            if document.path not in evidence_context.created_paths:
-                gaps.append("mirrored archive creation is absent from the same diff")
-        if gaps:
-            diagnostics.append(
-                _diagnostic(
-                    "LIFECYCLE-EVIDENCE",
-                    path=document.path,
-                    profile=document.profile_id,
-                    expected=(
-                        "predicate archive-source-removal for one source removal "
-                        "and mirrored content/archive creation"
-                    ),
-                    observed=f"absent -> {document.status or 'not-applicable'}",
-                    base_mode=base_mode,
-                    evidence_gap="; ".join(gaps),
-                )
-            )
-        elif original_path is not None:
-            admitted_source_removals.add(original_path)
-    return diagnostics, admitted_source_removals
-
-
 SPECIFICATION_PROFILES = frozenset(
     {
         "sdlc/spec",
     }
 )
-_RETIRED_SPECIFICATION_PROFILES = frozenset(
-    {
-        "sdlc/agent-design",
-        "sdlc/tests",
-    }
-)
-_RETIRED_REQUIREMENT_PROFILES = frozenset(
-    {
-        "sdlc/prd",
-        "sdlc/srs",
-        "sdlc/interface",
-    }
-)
 
 
 def specification_relationship_profiles(registry: Registry) -> frozenset[str]:
-    """Return current Spec-package profiles plus snapshot-only retired aliases."""
+    """Return the current Spec-package profiles."""
 
     registry_profile_ids = frozenset(
         profile.profile_id for profile in registry.profiles
@@ -618,11 +309,11 @@ def specification_relationship_profiles(registry: Registry) -> frozenset[str]:
     current = SPECIFICATION_PROFILES & registry_profile_ids
     if "sdlc/spec" not in current:
         raise ValueError("registry lacks the canonical sdlc/spec relationship profile")
-    return current | (_RETIRED_SPECIFICATION_PROFILES & registry_profile_ids)
+    return current
 
 
 def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
-    """Return the terminal Requirement owner plus snapshot-only retired aliases."""
+    """Return the terminal Requirement owner."""
 
     registry_profile_ids = frozenset(
         profile.profile_id for profile in registry.profiles
@@ -630,7 +321,7 @@ def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
     current = frozenset({"sdlc/requirement"}) & registry_profile_ids
     if not current:
         raise ValueError("registry lacks the canonical Requirement Package profile")
-    return current | (_RETIRED_REQUIREMENT_PROFILES & registry_profile_ids)
+    return current
 
 
 def _reciprocal_links(
@@ -711,41 +402,14 @@ def artifact_identity_reuse_diagnostics(
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     *,
-    identity_lineages: frozenset[ArtifactIdentityLineage] = frozenset(),
     base_mode: LifecycleBaseMode,
 ) -> tuple[LifecycleDiagnostic, ...]:
-    """Reject new owners of identities reserved by the base or sealed evidence."""
+    """Reject new owners of identities reserved by the base."""
 
     reserved: dict[str, set[PurePosixPath]] = {}
     for document in base_documents.values():
         if document.artifact_id is not None:
             reserved.setdefault(document.artifact_id, set()).add(document.path)
-    for lineage in identity_lineages:
-        reserved.setdefault(lineage.artifact_id, set()).add(lineage.source_path)
-
-    tombstone_lineages: set[ArtifactIdentityLineage] = set()
-    for document in (*base_documents.values(), *proposed_documents.values()):
-        if (
-            document.profile_id != "archive/tombstone"
-            or document.status != "archived"
-            or document.state_issue is not None
-            or document.original_artifact_id is None
-            or document.original_path is None
-        ):
-            continue
-        reserved.setdefault(document.original_artifact_id, set()).add(
-            document.original_path
-        )
-        if document.replacement is not None:
-            tombstone_lineages.add(
-                ArtifactIdentityLineage(
-                    document.original_artifact_id,
-                    document.original_path,
-                    document.replacement,
-                )
-            )
-
-    allowed = identity_lineages | frozenset(tombstone_lineages)
     diagnostics: list[LifecycleDiagnostic] = []
     for path, document in sorted(
         proposed_documents.items(), key=lambda item: item[0].as_posix()
@@ -756,24 +420,17 @@ def artifact_identity_reuse_diagnostics(
         base = base_documents.get(path)
         if base is not None and base.artifact_id == artifact_id:
             continue
-        sources = reserved.get(artifact_id, set())
-        if not sources or any(
-            ArtifactIdentityLineage(artifact_id, source, path) in allowed
-            for source in sources
-        ):
+        if not reserved.get(artifact_id):
             continue
         diagnostics.append(
             _diagnostic(
                 "LIFECYCLE-IDENTITY-REUSE",
                 path=path,
                 profile=document.profile_id,
-                expected=(
-                    "new artifact identity absent from the comparison base and "
-                    "sealed dispositions, or exact same-document lineage"
-                ),
+                expected="new artifact identity absent from the comparison base",
                 observed=f"{artifact_id!r} reserved at another document path",
                 base_mode=base_mode,
-                evidence_gap="base or sealed migration/tombstone identity provenance",
+                evidence_gap="base identity provenance",
             )
         )
     return tuple(diagnostics)
@@ -822,33 +479,11 @@ def _task_item_edge_diagnostics(
             else None
         )
 
-    def effective_status(
-        row: Mapping[str, str], header: str | None, *, legacy: bool = False
-    ) -> str:
+    def effective_status(row: Mapping[str, str], header: str | None) -> str:
         value = row["Status"].strip()
-        if value == "frontmatter":
-            return header or ""
-        if legacy:
-            lowered = value.casefold().replace(" ", "-")
-            if (
-                lowered in {"done", "archived"}
-                and profile.lifecycle_domain.validation_class("completed") is not None
-            ):
-                return "completed"
-            if (
-                lowered == "queued"
-                and profile.lifecycle_domain.validation_class("ready") is not None
-            ):
-                return "ready"
-            if (
-                profile.lifecycle_domain is not None
-                and profile.lifecycle_domain.validation_class(lowered) is not None
-            ):
-                return lowered
-        return value
+        return (header or "") if value == "frontmatter" else value
 
     issues: list[LifecycleDiagnostic] = []
-    added_by_work: dict[str, frozenset[str]] = {}
     for work_id, old in before.items():
         new = after.get(work_id)
         rule = ""
@@ -857,41 +492,16 @@ def _task_item_edge_diagnostics(
         new_criteria = (
             criterion_ids(new["Upstream criterion"]) if new is not None else None
         )
-        rebinding = (
-            path in context.baseline_task_paths
-            and "Acceptance" in old
-            and new is not None
-            and "Acceptance" not in new
-        )
-        added = (
-            frozenset(new_criteria) - frozenset(old_criteria)
-            if old_criteria is not None and new_criteria is not None
-            else frozenset()
-        )
-        valid_rebinding = bool(
-            rebinding
-            and old_criteria is not None
-            and new_criteria is not None
-            and set(old_criteria) < set(new_criteria)
-            and added <= context.task_plan_criteria.get(path, frozenset())
-            and added <= context.task_spec_criteria.get(path, frozenset())
-        )
-        if valid_rebinding:
-            added_by_work[work_id] = added
         if new is None:
             rule, observed = "TASK-ITEM-DELETE", f"{work_id} removed"
-        elif old_criteria != new_criteria and not valid_rebinding:
+        elif old_criteria != new_criteria:
             rule, observed = "TASK-ITEM-HIDE", f"{work_id} upstream criterion changed"
         elif effective_status(
-            old, context.base_documents[path].status, legacy="Acceptance" not in old
+            old, context.base_documents[path].status
         ) != effective_status(new, after_view.document.status) and (
             profile.lifecycle_domain is None
             or not profile.lifecycle_domain.allows(
-                effective_status(
-                    old,
-                    context.base_documents[path].status,
-                    legacy="Acceptance" not in old,
-                ),
+                effective_status(old, context.base_documents[path].status),
                 effective_status(new, after_view.document.status),
             )
         ):
@@ -914,9 +524,7 @@ def _task_item_edge_diagnostics(
                 )
             )
     issues.extend(
-        _task_evidence_retention_diagnostics(
-            path, context, added_by_work, base_mode=base_mode
-        )
+        _task_evidence_retention_diagnostics(path, context, base_mode=base_mode)
     )
     return tuple(issues)
 
@@ -924,25 +532,10 @@ def _task_item_edge_diagnostics(
 def _task_evidence_retention_diagnostics(
     path: PurePosixPath,
     context: LifecycleEvidenceContext,
-    added_by_work: Mapping[str, frozenset[str]],
     *,
     base_mode: LifecycleBaseMode,
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Keep prior factual check rows immutable while allowing new resolution rows."""
-
-    # A single reviewed P01 cutover reclassified four retained adverse checks
-    # after the Spec/Plan split their original broad criteria. The original
-    # cells remain in the ae93644 Git object; no successful check may move.
-    p01_cutover = PurePosixPath(
-        "docs/03.specs/0105-authority-and-safe-authoring/tasks/"
-        "tsk-0004-current-contract-review.md"
-    )
-    p01_adverse_rebinds = {
-        "EVD-003": ({"VAL-P01-001", "VAL-P01-003"}, {"VAL-P01-007"}),
-        "EVD-008": ({"VAL-P01-006"}, {"VAL-P01-008"}),
-        "EVD-009": ({"VAL-P01-003", "VAL-P01-006"}, {"VAL-P01-008"}),
-        "EVD-010": ({"VAL-P01-003", "VAL-P01-006"}, {"VAL-P01-008"}),
-    }
 
     before = {
         dict(cells)["Evidence"].strip(): dict(cells)
@@ -976,24 +569,7 @@ def _task_evidence_retention_diagnostics(
         ):
             reason = f"{identifier} prior adverse check made optional"
         elif old.get("Criteria", "").strip() != new.get("Criteria", "").strip():
-            old_criteria = task_criterion_ids(old["Criteria"])
-            new_criteria = task_criterion_ids(new["Criteria"])
-            allowed = added_by_work.get(old["Work Unit"].strip(), frozenset())
-            reviewed = (
-                p01_adverse_rebinds.get(identifier) if path == p01_cutover else None
-            )
-            if not (
-                path in context.baseline_task_paths
-                and "Required" not in old
-                and old["Result"].strip() in {"FAIL", "DEFER", "NOT_RUN"}
-                and old_criteria is not None
-                and new_criteria is not None
-                and reviewed is not None
-                and set(old_criteria) == reviewed[0]
-                and set(new_criteria) == reviewed[1]
-                and set(new_criteria) <= allowed
-            ):
-                reason = f"{identifier} criterion membership changed without verified migration"
+            reason = f"{identifier} criterion membership changed"
         if reason:
             issues.append(
                 _diagnostic(
@@ -1003,7 +579,7 @@ def _task_evidence_retention_diagnostics(
                     expected="prior EVD IDs and factual fields retained; new PASS rows append resolution",
                     observed=reason,
                     base_mode=base_mode,
-                    evidence_gap="base and proposed Task Evidence rows with bounded P03 criterion rebinding",
+                    evidence_gap="base and proposed Task Evidence rows",
                 )
             )
     return tuple(issues)
@@ -1017,10 +593,8 @@ def compare_lifecycle(
     renames: Sequence[LifecycleRename] = (),
     base_mode: Literal["staged", "ci", "explicit-ref"],
     evidence_context: LifecycleEvidenceContext | None = None,
-    migration_events: MigrationLifecycleEvents = MigrationLifecycleEvents(),
     enforce_task_execution: bool = False,
     base_registry: Registry | None = None,
-    generation_admissions: frozenset[PurePosixPath] = frozenset(),
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare independently classified snapshots with fixed event precedence.
 
@@ -1048,17 +622,11 @@ def compare_lifecycle(
         artifact_identity_reuse_diagnostics(
             identity_base,
             identity_proposed,
-            identity_lineages=migration_events.identity_lineages,
             base_mode=base_mode,
         )
     )
     consumed_base: set[PurePosixPath] = set()
     consumed_proposed: set[PurePosixPath] = set()
-
-    for source, target in migration_events.archive_rehomes:
-        if source in base_documents and target in proposed_documents:
-            consumed_base.add(source)
-            consumed_proposed.add(target)
 
     for rename in sorted(
         renames, key=lambda item: (item.old_path.as_posix(), item.new_path.as_posix())
@@ -1069,17 +637,6 @@ def compare_lifecycle(
             raise ValueError(
                 "exact rename must name one base and one proposed document"
             )
-        if (rename.old_path, rename.new_path) in migration_events.archive_rehomes:
-            # Already consumed above: a reviewed archive move, not a bare rename.
-            continue
-        if (rename.old_path, rename.new_path) in migration_events.current_rehomes:
-            # A proven move remains a create/delete pair so state validation is
-            # still performed; only its exact rename event is admitted.
-            continue
-        if (rename.old_path, rename.new_path) in migration_events.form_rehomes:
-            # Same admission for a form: the create/delete pair still runs, and
-            # a form has no state for it to evaluate.
-            continue
         consumed_base.add(rename.old_path)
         consumed_proposed.add(rename.new_path)
         diagnostics.append(
@@ -1123,28 +680,6 @@ def compare_lifecycle(
                     evidence_gap="registry-owned profile and state contract",
                 )
             )
-            continue
-        if path in generation_admissions:
-            old_failure = _state_diagnostic(
-                base, base_profile, base_mode=base_mode, side="base"
-            )
-            new_failure = _state_diagnostic(
-                proposed, proposed_profile, base_mode=base_mode, side="proposed"
-            )
-            diagnostics.extend(
-                failure for failure in (old_failure, new_failure) if failure is not None
-            )
-            if (
-                not old_failure
-                and not new_failure
-                and enforce_task_execution
-                and evidence_context is not None
-            ):
-                diagnostics.extend(
-                    _task_item_edge_diagnostics(
-                        proposed_profile, path, evidence_context, base_mode=base_mode
-                    )
-                )
             continue
         if base.profile_id != proposed.profile_id:
             diagnostics.append(
@@ -1213,7 +748,7 @@ def compare_lifecycle(
         if (
             evidence_context is not None
             and proposed.profile_id == "sdlc/task"
-            and proposed.status in {"cancelled", "superseded"}
+            and proposed.status == "cancelled"
             and not evidence_context.proposed_documents[path].task_disposition_valid
         ):
             diagnostics.append(
@@ -1233,30 +768,11 @@ def compare_lifecycle(
         proposed_documents[path]
         for path in sorted(created_paths, key=PurePosixPath.as_posix)
     ]
-    creation_diagnostics = _create_diagnostics(
-        registry, created, base_mode=base_mode, migration_events=migration_events
-    )
-    diagnostics.extend(creation_diagnostics)
-    archive_evidence_diagnostics, _ = _archive_creation_evidence(
-        registry,
-        created,
-        base_documents,
-        proposed_documents,
-        evidence_context,
-        base_mode=base_mode,
-    )
-    diagnostics.extend(archive_evidence_diagnostics)
+    diagnostics.extend(_create_diagnostics(registry, created, base_mode=base_mode))
 
     if enforce_task_execution and evidence_context is not None:
-        # Sanctioned generation-boundary bytes predate the new-work guards.
-        # Safe without byte equality only because admissions exist solely at a
-        # real schema 9 -> 10 registry transition; keep that if reusing them.
         diagnostics.extend(
-            item
-            for item in local_contract_diagnostics(
-                evidence_context, base_mode=base_mode
-            )
-            if item.path not in generation_admissions
+            local_contract_diagnostics(evidence_context, base_mode=base_mode)
         )
 
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
@@ -1320,7 +836,7 @@ def validate_current_task_evidence(
         for path, view in sorted(context.proposed_documents.items())
         if path.parts[:2] == ("docs", "03.specs")
         and view.document.profile_id == "sdlc/task"
-        and view.document.status in {"cancelled", "superseded"}
+        and view.document.status == "cancelled"
         and not view.task_disposition_valid
     )
     return completed + disposition
@@ -1368,48 +884,15 @@ def validate_snapshot_documents(
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 
-# A base or historical snapshot spells a profile identity the way the registry
-# spelled it when those bytes were reviewed. Reading history through the current
-# registry alone would report every renamed profile as unknown, so a snapshot
-# that declares itself historical resolves a retired spelling through the route
-# the path selects today. The route, not a fixed successor, decides: one retired
-# identity split into six, and only the path says which kind a document became.
-# The proposed snapshot passes no retired set and therefore still rejects one.
-RETIRED_DOCUMENT_TYPES: frozenset[str] = frozenset(
-    {
-        "sdlc/ad",
-        "sdlc/adr",
-        "sdlc/requirement-package",
-        "sdlc/guide",
-        "sdlc/policy",
-        "sdlc/runbook",
-        "sdlc/incident",
-        "sdlc/postmortem",
-        "content/audit-reference",
-        "content/research-reference",
-        "content/data-reference",
-        "content/archive",
-        "content/archive-migration",
-        "governance/reference",
-    }
-)
-
-
 def document_from_text(
     registry: Registry,
     path: PurePosixPath,
     text: str,
-    *,
-    retired_types: frozenset[str] | None = None,
-    legacy_completion: bool = False,
 ) -> LifecycleDocument:
     """Classify one document and extract only its registry-owned status."""
 
     selected_profile = classify_path(registry, path)
-    if (
-        not _stateful(selected_profile)
-        and selected_profile.profile_id != "archive/tombstone"
-    ):
+    if not _stateful(selected_profile):
         return LifecycleDocument(
             path=path, profile_id=selected_profile.profile_id, status=None
         )
@@ -1449,20 +932,11 @@ def document_from_text(
         if selected_profile.profile_id == "common/native-skill-package"
         else dict(selected_profile.constants).get("type", selected_profile.profile_id)
     )
-    if (
-        retired_types is not None
-        and isinstance(claimed_profile_id, str)
-        and claimed_profile_id in retired_types
-    ):
-        claimed_profile_id = selected_profile.profile_id
     profile_id = selected_profile.profile_id
     profile_issue: str | None = None
     if not isinstance(claimed_profile_id, str):
         profile_issue = "frontmatter type is missing or not a string"
-    elif claimed_profile_id == expected_type or (
-        registry.schema_version < 10
-        and claimed_profile_id == selected_profile.profile_id
-    ):
+    elif claimed_profile_id == expected_type:
         pass
     elif claimed_profile_id in known_profile_ids:
         profile_id = claimed_profile_id
@@ -1481,100 +955,13 @@ def document_from_text(
             status=None,
             state_issue="frontmatter status is missing or not a string",
         )
-    if status == "done" and selected_profile.profile_id in {
-        "sdlc/spec",
-        "sdlc/plan",
-        "sdlc/task",
-    }:
-        domain = selected_profile.lifecycle_domain
-        if (
-            domain is not None
-            and domain.validation_class("completed") == "terminal"
-            and domain.validation_class("done") is None
-        ):
-            from archive_dispositions import retention_class_of
-
-            if legacy_completion or retention_class_of(registry, path) is not None:
-                # Compare old evidence against the current spelling; the source
-                # text and its Git object remain byte-for-byte unchanged.
-                status = "completed"
-    if selected_profile.profile_id == "archive/migration" and status == "accepted":
-        # Only byte-verified historical controls use the predecessor spelling.
-        # The registry domain continues to reject accepted for future records.
-        from archive_validation import (
-            ArchiveContractError,
-            parse_pinned_migration_control,
-        )
-
-        try:
-            parse_pinned_migration_control(path.as_posix(), text.encode("utf-8"))
-        except ArchiveContractError:
-            profile_issue = "unverified historical Migration state"
-        else:
-            status = "sealed"
-    original_path: PurePosixPath | None = None
-    archive_reason: str | None = None
-    replacement_path: PurePosixPath | None = None
     artifact_id = metadata.get("artifact_id")
     if not isinstance(artifact_id, str):
         artifact_id = None
-    original_artifact_id: str | None = None
-    if profile_id == "archive/tombstone":
-        prior_generation: bool | None = None
-        from archive_recovery import (
-            ArchiveContractError,
-            archive_metadata_is_prior_generation,
-            validate_archive_replacement,
-        )
-
-        try:
-            prior_generation = archive_metadata_is_prior_generation(metadata)
-        except ArchiveContractError as error:
-            profile_issue = (
-                "archive replacement is missing"
-                if error.code == "ARCHIVE-METADATA-REPLACEMENT"
-                else "archive generation is noncanonical"
-            )
-        raw_original_path = metadata.get("original_path")
-        if isinstance(raw_original_path, str):
-            candidate = PurePosixPath(raw_original_path)
-            if (
-                candidate.as_posix() == raw_original_path
-                and _mirrored_archive_path(candidate) is not None
-            ):
-                original_path = candidate
-        if original_path is None:
-            profile_issue = "archive original_path is missing or noncanonical"
-        raw_reason = metadata.get("archive_reason")
-        if isinstance(raw_reason, str):
-            archive_reason = raw_reason
-            if prior_generation is not None:
-                try:
-                    replacement = validate_archive_replacement(
-                        raw_reason,
-                        metadata["replacement"],
-                        prior_generation=prior_generation,
-                    )
-                except ArchiveContractError:
-                    profile_issue = (
-                        "archive replacement is noncanonical for document generation"
-                    )
-                else:
-                    if replacement is not None:
-                        replacement_path = PurePosixPath(replacement.path)
-        elif raw_reason is not None:
-            profile_issue = "archive_reason is not a string"
-        raw_original_artifact_id = metadata.get("original_artifact_id")
-        if isinstance(raw_original_artifact_id, str):
-            original_artifact_id = raw_original_artifact_id
     return LifecycleDocument(
         path=path,
         profile_id=profile_id,
         status=status,
         state_issue=profile_issue,
-        original_path=original_path,
-        archive_reason=archive_reason,
-        replacement=replacement_path,
         artifact_id=artifact_id,
-        original_artifact_id=original_artifact_id,
     )

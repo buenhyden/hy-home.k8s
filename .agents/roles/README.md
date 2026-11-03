@@ -158,8 +158,8 @@ agent 범위로 이런 일반 의무를 따로 둘 필요가 없다.
 역할이나 skill은 승인된 구체적 공백이 있을 때만 중립 registry와 검토된
 projection을 통해 추가한다. 새 역할 본문은 `status: "draft"`로 만들고 이후의
 별도 논리 변경에서 `active`로 올린다. `governance/role` lifecycle domain은 생성을
-`draft`로만 허용하고, `active`에서 되돌아가는 edge가 없으며, 삭제는 고정된
-migration 기록으로만 허용한다. 처음부터 `active`로 커밋한 본문은 앞으로 고칠 수
+`draft`로만 허용하고, `active`에서 되돌아가는 edge가 없으며, 삭제는 별도로
+승인된 변경으로만 한다. 처음부터 `active`로 커밋한 본문은 앞으로 고칠 수
 없으므로 그 커밋 전에 staged 검증 결과를 읽는다. 작업이 도메인을 넘을 때는 소유권
 전환을 선언하고, 경계가 불분명하거나 충돌하면 에스컬레이션한다.
 

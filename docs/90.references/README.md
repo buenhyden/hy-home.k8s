@@ -11,9 +11,6 @@ layer: "references"
 
 > 감사, 외부 조사, 데이터 등 비권위 참고 자료를 관리한다.
 
-> [!NOTE]
-> AI Agent가 이 Stage를 사용할 때는 [Agent Governance Hub](../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `docs/90.references/`는 워크스페이스와 관련된 출처 기반 참고 자료를 둔다.

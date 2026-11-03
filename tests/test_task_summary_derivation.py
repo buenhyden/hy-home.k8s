@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import sys
 import unittest
-from dataclasses import replace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,28 +44,6 @@ class TaskSummaryDerivationTests(unittest.TestCase):
                 original = tuple(states)
                 self.assertEqual(self.derive(states), expected)
                 self.assertEqual(tuple(states), original)
-
-    def test_historical_queued_summary_is_preserved(self):
-        binding = replace(
-            self.binding,
-            summary_rule="task-items-v1",
-            result_states={
-                "draft": ("NOT_RUN",),
-                "queued": ("NOT_RUN",),
-                "in-progress": ("PASS",),
-                "blocked": ("DEFER",),
-                "completed": ("PASS",),
-                "cancelled": ("NOT_RUN",),
-            },
-        )
-        for states, expected in [
-            (["queued", "draft"], "queued"),
-            (["completed", "queued"], "in-progress"),
-            (["blocked", "queued"], "blocked"),
-            (["cancelled", "completed"], "cancelled"),
-        ]:
-            with self.subTest(states=states):
-                self.assertEqual(self.derive(states, binding), expected)
 
     def test_empty_and_unknown_states_fail(self):
         for states in ([], ["invented"], ["frontmatter"]):

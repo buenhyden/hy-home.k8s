@@ -64,7 +64,7 @@ class OperationsLineageContractTests(unittest.TestCase):
                 first: self._body("0001-unrelated", "0003-shared"),
                 second: self._body("0002-unrelated", "0003-shared"),
             },
-            document_registry=SimpleNamespace(profiles=(profile,)),
+            current_registry=SimpleNamespace(profiles=(profile,)),
         )
 
         keys, diagnostics = links._owner_state(context)

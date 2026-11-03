@@ -1,10 +1,10 @@
 ---
 title: "Service Mesh & cert-manager Operations Policy"
-version: "1.2.1"
+version: "1.2.2"
 type: "operation/policy"
 status: "active"
 owner: "platform"
-updated: "2026-10-27"
+updated: "2026-11-03"
 layer: "operations"
 artifact_id: "POL-0003"
 ---
@@ -112,7 +112,7 @@ k8s router와 live 변경 예외의 공통 기준은 [POL-0001](./0001-k8s-gitop
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Platform Policy**: [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)
-- **Current control review**: [SPEC-0106 P08 Task0018](../../03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0018-operations-quality-and-architecture.md) compares this policy with the current istiod source and records the local review result. It is not the original promotion approval or live adoption evidence.
+- **Current control review**: SPEC-0106 P08 Task0018 compares this policy with the current istiod source and records the local review result. It is not the original promotion approval or live adoption evidence.
 
 ### Lifecycle Traceability
 

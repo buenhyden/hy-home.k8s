@@ -67,8 +67,7 @@ canonical owners before using remembered paths, results, or approvals.
 
 ### Shared workspace memory store
 
-SPEC-0109, reached through the Stage 03 index (`docs/03.specs/README.md`),
-defines one store that Claude and Codex sessions both read and write:
+SPEC-0109 (recovered from Git history) defined one store that Claude and Codex sessions both read and write:
 `.workspace-memory/memory.sqlite3` at the main worktree root, resolved from the
 Git common directory so every linked worktree reaches the same file. It is
 Git-ignored runtime data. Use `scripts/workspace_memory.py`; run `init` once,

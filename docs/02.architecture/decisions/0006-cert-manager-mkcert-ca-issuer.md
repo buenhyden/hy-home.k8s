@@ -76,7 +76,7 @@ the mkcert `ClusterIssuer` boundary this decision chose.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: `../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`
 - **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
 
@@ -84,4 +84,4 @@ the mkcert `ClusterIssuer` boundary this decision chose.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |

@@ -101,13 +101,13 @@ chart 버전은 각 Application manifest의 `targetRevision`이 소유하며 이
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Rollouts Spec**: `SPEC-0004` (retained; reach it through the Archive index)
-- **Notifications Spec**: `SPEC-0005` (retained; reach it through the Archive index)
+- **Rollouts Spec**: `SPEC-0004` (recovered from Git history)
+- **Notifications Spec**: `SPEC-0005` (recovered from Git history)
 - **Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — SPEC-0004 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
-| N/A — SPEC-0005 is retained in `completed/` under ADR-0040 and reached through the Archive index, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |
+| N/A — SPEC-0004 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for promotion approval, analysis exceptions, CRDs, dashboard, and rollback evidence | Argo Rollouts chart values, Rollout resources, AnalysisTemplate review, dashboard ingress/TLS, and runbook evidence |
+| N/A — SPEC-0005 left the tree and is recovered from Git history, so no eligible upstream document carries a reciprocal link | Platform Owner for subscription policy; secret owner for the Slack credential path | Vault-to-ESO secret contract, notifications ConfigMap and annotations, controller logs, and plaintext-secret gates |

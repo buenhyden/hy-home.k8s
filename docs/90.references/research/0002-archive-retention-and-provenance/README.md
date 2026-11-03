@@ -63,5 +63,5 @@ cluster 상태를 입증하지 않으며 여기서 인용했다고 해서 그 �
 ## Related Documents
 
 - [Research collection](../README.md)
-- [ADR-0039](../../../02.architecture/decisions/0039-unit-archive-retention-and-citation-table.md)
+- ADR-0039
 - Spec 0082, recovered from Git through the Retention Catalog

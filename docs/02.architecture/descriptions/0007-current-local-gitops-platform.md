@@ -1,10 +1,10 @@
 ---
 title: "Current Local GitOps Platform Architecture Description"
-version: "1.8.2"
+version: "1.8.5"
 type: "sdlc/architecture-description"
 status: "active"
 owner: "platform"
-updated: "2026-10-28"
+updated: "2026-11-03"
 layer: "architecture"
 artifact_id: "AD-0007"
 ---
@@ -58,7 +58,7 @@ The in-review [REQ-0004](../../01.requirements/0004-current-local-gitops-platfor
 owns each scenario's measure, unit, environment, sample, and threshold or named
 gap. This view identifies the current implementation path and the evidence
 boundary; it does not promote a configured check or repository-static result
-into an observed service-level result. [VAL-P08-018](../../03.specs/0106-stage99-lifecycle-normalization/spec.md#success-criteria--verification-plan)
+into an observed service-level result. VAL-P08-018
 owns this change's local review, not future operator observations.
 
 | Requirement scenario | Architecture source and response | Evidence boundary and operating owner |
@@ -243,16 +243,15 @@ The Istio CNI manifest is desired state and proves no actual admission or networ
 
 ### Implementation owners and remaining boundaries
 
-Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); its package left the current tree under SPEC-0131 and is not cited (SPEC-0090). [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) delivered repository-static acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the completed Spec's Tasks record delivery evidence and explicit custom-CRD-schema, generated-output and live-observation DEFER owners and retry conditions. SPEC-0008 completion remains evidence for its original scope.
+Spec 0049 depended on the retired Spec 0048 and the Traefik lane and was withdrawn on 2026-09-25 (SPEC-0089); its package left the current tree under SPEC-0131 and is not cited (SPEC-0090). SPEC-0104 delivered repository-static acceptance evidence for REQ-0004-FR-0008 and REQ-0004-FR-0010: offline render/built-in schema checks, per-target depth/tool-version/fallback results and ingress/resource-kind reference integrity. It extends the existing structure, YAML, required policy-tool, secret, Vault/ESO and product checks without restoring the retired Traefik lane. This AD and ADR-0043 retain the current ingress architecture; the completed Spec's Tasks record delivery evidence and explicit custom-CRD-schema, generated-output and live-observation DEFER owners and retry conditions. SPEC-0008 completion remains evidence for its original scope.
 GitHub routing/CI (Spec 0048), native IaC/direct negative fixtures (Spec 0050),
 the final local-only integration (Spec 0051), and surface/hunk reconciliation (Spec 0047) were withdrawn without successors
 and their packages left the current tree under SPEC-0122 and SPEC-0131 (SPEC-0087);
 their scope currently has no implementation owner. The AD succession does not mean any tranche or WP-013 is complete.
 SPEC-0089 and SPEC-0090 left the current tree under SPEC-0130, and SPEC-0049,
 SPEC-0050 and SPEC-0087 under SPEC-0131; their bodies
-are recovered from the Retention Catalog envelopes in the
-[Archive index](../../98.archive/README.md).
-[SPEC-0115](../../03.specs/0115-r10-local-remediation/spec.md) owns the current
+are recovered from Git history.
+SPEC-0115 owns the current
 scoped verifier and ESO consumer repairs under VAL-R10-008; its Task records
 selected static results and any separately authorized live observation. This
 follow-up does not reopen the withdrawn packages or certify live readiness.
@@ -312,19 +311,19 @@ completed work unit.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | Desired-state root ownership of clusters, root apps, platform, and workloads | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-FR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The App-of-Apps and ApplicationSet reconciliation boundary | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-FR-0003](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the external runtime from the Kubernetes Service/EndpointSlice interface | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-FR-0004](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the current Headlamp UI from archived UI history | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct | [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) |
-| [REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md) | Fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks | [ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md) and [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md) |
-| [REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The explicit scope of the current platform component graph | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-NFR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The trust boundary between ESO/Vault references and secret values | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| [REQ-0004-IF-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The authority boundary between the active current contract and archive Tombstones | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Repo-backed evidence owned by static contract verification | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Structure validation evidence for root, platform, and workload | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | tracked Kubernetes manifest syntax evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
-| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Active/archive currentness evidence from the repository quality gate | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and [Spec 008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [REQ-0004-FR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | Desired-state root ownership of clusters, root apps, platform, and workloads | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-FR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The App-of-Apps and ApplicationSet reconciliation boundary | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-FR-0003](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the external runtime from the Kubernetes Service/EndpointSlice interface | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-FR-0004](../../01.requirements/0004-current-local-gitops-platform.md) | Separation of the current Headlamp UI from archived UI history | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-FR-0008](../../01.requirements/0004-current-local-gitops-platform.md) | Composed per-target validation depths with explicit tool, fallback, execution lane and result; static and live evidence stay distinct | N/A — SPEC-0104 left the tree; Git history recovers it |
+| [REQ-0004-FR-0010](../../01.requirements/0004-current-local-gitops-platform.md) | Fail-closed resource and ingress reference integrity with explicit chart/operator declaration boundaries and preserved policy/secret checks | [ADR-0043](../decisions/0043-dedicated-k8s-ingress-router.md) and SPEC-0104 |
+| [REQ-0004-NFR-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The explicit scope of the current platform component graph | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-NFR-0002](../../01.requirements/0004-current-local-gitops-platform.md) | The trust boundary between ESO/Vault references and secret values | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| [REQ-0004-IF-0001](../../01.requirements/0004-current-local-gitops-platform.md) | The authority boundary between the active current contract and archive Tombstones | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Repo-backed evidence owned by static contract verification | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Structure validation evidence for root, platform, and workload | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | tracked Kubernetes manifest syntax evidence | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
+| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | Active/archive currentness evidence from the repository quality gate | [ADR 0014](../decisions/0014-current-local-gitops-platform-contract.md) and Spec 008 |
 
 ### arc42 coverage
 
@@ -353,7 +352,7 @@ lives; nothing is copied between this description, the ADRs and REQ-0004.
 | --- | --- | --- |
 | REQ-0004-FR-0005, REQ-0004-FR-0006 | Source inventory and resumed-change semantic ownership | None; Spec 0047 was withdrawn without a successor |
 | REQ-0004-FR-0007 | Single routing owner with GitHub-native projections | AD-0006; Spec 0048 was withdrawn without a successor |
-| REQ-0004-FR-0008, REQ-0004-FR-0010 | Delivered repository-static layered validation evidence and fail-closed platform reference integrity | [SPEC-0104](../../98.archive/completed/03.specs/0104-platform-validation-assurance/spec.md); current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation DEFER explicitly reported |
+| REQ-0004-FR-0008, REQ-0004-FR-0010 | Delivered repository-static layered validation evidence and fail-closed platform reference integrity | SPEC-0104; current ingress sources and operating owners are named above, with custom-schema, generated-output and live-observation DEFER explicitly reported |
 | REQ-0004-FR-0014, REQ-0004-NFR-0003 | Namespace and artifact assurance | Existing validators retain their current coverage; conditional digest/SBOM/provenance follow-on remains as stated above and is outside SPEC-0104 |
 | REQ-0004-FR-0009 | Example-adjacent native validation without cloud deployment | None; Spec 0050 was withdrawn without a successor |
 | REQ-0004-FR-0011 | Ordered review/rollback boundaries and local-only integration | None; Spec 0051 was withdrawn without a successor |
@@ -363,7 +362,23 @@ Original AD-0010 and REQ-0007 program identity remain historical lineage. These 
 do not rewrite which description the original ADRs served; superseded bodies are retained under `98.archive/superseded/`.
 
 - **Requirement**: [../../01.requirements/0004-current-local-gitops-platform.md](../../01.requirements/0004-current-local-gitops-platform.md)
-- **Implementation evidence**: [SPEC-0008](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md); current structure is owned here, operating controls by the named Stage 05 documents.
+- **Implementation evidence**: SPEC-0008; current structure is owned here, operating controls by the named Stage 05 documents.
 - **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
 - **ADR**: [../decisions/0014-current-local-gitops-platform-contract.md](../decisions/0014-current-local-gitops-platform-contract.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
+
+### Archived Lineage
+
+These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`.
+
+| Source | Kind | Summary | Original path |
+| --- | --- | --- | --- |
+| ADR-0001 | superseded decision | Fixed the k3d topology and external network baseline for WSL2; its old `infra_net` addresses and Valkey port notes were later marked historical. Replaced by ADR-0014, with the current EndpointSlice/CIDR values owned by `gitops/platform/external-services/`. | `docs/98.archive/superseded/02.architecture/0001-k3d-topology-and-network.md` |
+| WSL k3d/k3s ArgoCD Platform Architecture Reference Document (AD-0001) | superseded architecture | Draft reference architecture for the WSL2 k3d/k3s platform covering GitOps, secret management, external data service connection and operating controls. Replaced by AD-0007. | `docs/98.archive/superseded/02.architecture/0001-wsl-k3d-argocd-platform.md` |
+| WSL2 k3d/k3s ArgoCD HA Platform Architecture Reference Document (AD-0002) | superseded architecture | Draft 2026-03-28 reference architecture for the multi-node HA platform, external data service boundaries and the CI static verification layers. Replaced by AD-0007. | `docs/98.archive/superseded/02.architecture/0002-wsl2-k3d-argocd-ha-platform.md` |
+| Platform Expansion Mesh Dashboard Architecture Reference Document (AD-0003) | superseded architecture | Draft 2026-03-29 reference architecture for adding cert-manager, Kubernetes Dashboard, Istio and Kiali plus an external service IP fix. Replaced by AD-0007; the dashboard part is superseded by Headlamp. | `docs/98.archive/superseded/02.architecture/0003-platform-expansion-mesh-dashboard.md` |
+| ADR-0004 | superseded decision | Recorded the external service access model and the external Valkey backend for Argo CD; amended on 2026-03-29 from `ExternalName` Service to Service plus EndpointSlice, with Vault on the same pattern. Replaced by ADR-0014. | `docs/98.archive/superseded/02.architecture/0004-external-services-endpoints-and-valkey-backend.md` |
+| ADR-0005 | superseded decision | Fixed the WSL2 HA baseline topology, the external service interface contract and the CI/CD operating model; EndpointSlice addresses were corrected on 2026-03-29. Replaced by ADR-0014. | `docs/98.archive/superseded/02.architecture/0005-wsl2-ha-baseline-and-external-endpoint-contract.md` |
+| ADR-0007 | superseded decision | Installed Kubernetes Dashboard v3 through Helm, exposed through ingress-nginx and cert-manager at `k8s-dashboard.127.0.0.1.nip.io`. Superseded on 2026-05-09 by Headlamp; replaced by ADR-0014. | `docs/98.archive/superseded/02.architecture/0007-kubernetes-dashboard-v3.md` |
+| ADR-0010 | superseded decision | Removed Kubernetes Dashboard v3 in favor of Headlamp (lighter RBAC-based authentication, plugins, simpler deployment). Replaced by ADR-0014, which owns the current Headlamp contract. | `docs/98.archive/superseded/02.architecture/0010-headlamp-replaces-dashboard.md` |
+| AD-0010 | superseded architecture | Repository Delivery Evidence Architecture: a repository-static assurance control plane (routing, projection, validation depth, evidence classification, review, rollback) for the delivery and platform surfaces of PRD-0007, tied to ADR-0021 and Spec 047. Replaced by AD-0007. | `docs/98.archive/superseded/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` |

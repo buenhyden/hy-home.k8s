@@ -7,7 +7,7 @@
       "id": "sdlc/requirement",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/01\\.requirements|docs/98\\.archive/superseded/01\\.requirements(?!/(?:0001\\-wsl\\-k3d\\-argocd\\-platform|0002\\-wsl2\\-k3d\\-argocd\\-ha\\-platform|0003\\-platform\\-expansion\\-dashboard\\-mesh|0005\\-workspace\\-document\\-assurance\\-modernization|0006\\-workspace\\-document\\-lifecycle\\-and\\-evidence\\-consolidation|0007\\-repository\\-delivery\\-and\\-platform\\-assurance|0008\\-workspace\\-document\\-taxonomy\\-consolidation)\\.md$)|docs/98\\.archive/retired/01\\.requirements)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^REQ-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/requirements/requirement-package.template.md",
       "frontmatter": {
@@ -23,8 +23,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -36,8 +35,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/requirement",
@@ -64,9 +62,7 @@
         "status_domain": [
           "draft",
           "in-review",
-          "approved",
-          "superseded",
-          "retired"
+          "approved"
         ]
       },
       "relationships": {
@@ -107,7 +103,7 @@
       "id": "sdlc/architecture-description",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/02\\.architecture/descriptions|docs/98\\.archive/retired/02\\.architecture/descriptions|docs/98\\.archive/superseded/02\\.architecture/descriptions(?!/(?:0008\\-workspace\\-document\\-assurance\\-operating\\-model|0009\\-document\\-lifecycle\\-evidence\\-operating\\-model|0010\\-repository\\-delivery\\-evidence\\-architecture|0011\\-document\\-taxonomy\\-consolidation\\-architecture)\\.md$))/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/02\\.architecture/descriptions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AD-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/architecture/description.template.md",
       "frontmatter": {
@@ -123,8 +119,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -136,8 +131,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/architecture-description",
@@ -161,10 +155,7 @@
         "status_domain": [
           "draft",
           "in-review",
-          "active",
-          "deprecated",
-          "superseded",
-          "retired"
+          "active"
         ]
       },
       "relationships": {
@@ -175,8 +166,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "active",
-            "deprecated"
+            "active"
           ],
           "required_columns": [
             "Upstream requirement",
@@ -208,7 +198,7 @@
       "id": "sdlc/architecture-decision",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/02\\.architecture|docs/98\\.archive/superseded/02\\.architecture|docs/98\\.archive/retired/02\\.architecture)/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^ADR-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/architecture/decision.template.md",
       "frontmatter": {
@@ -224,8 +214,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -237,8 +226,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/architecture-decision",
@@ -262,9 +250,7 @@
         "status_domain": [
           "proposed",
           "accepted",
-          "rejected",
-          "superseded",
-          "retired"
+          "rejected"
         ]
       },
       "relationships": {
@@ -300,7 +286,7 @@
       "id": "sdlc/spec",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/03\\.specs|docs/98\\.archive/(?:completed|superseded|retired)/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
+      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/specs/spec.template.md",
       "frontmatter": {
@@ -316,7 +302,6 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by",
           "cancellation"
         ],
         "forbidden": [],
@@ -329,7 +314,6 @@
           "updated",
           "layer",
           "artifact_id",
-          "superseded_by",
           "cancellation"
         ],
         "constants": {
@@ -362,8 +346,7 @@
           "in-progress",
           "blocked",
           "completed",
-          "cancelled",
-          "superseded"
+          "cancelled"
         ]
       },
       "relationships": {
@@ -409,7 +392,7 @@
       "id": "sdlc/plan",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/03\\.specs|docs/98\\.archive/(?:completed|superseded|retired)/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
+      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}-PLAN-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/specs/plan.template.md",
       "frontmatter": {
@@ -426,8 +409,7 @@
           "parent_ids"
         ],
         "optional": [
-          "cancellation",
-          "superseded_by"
+          "cancellation"
         ],
         "forbidden": [],
         "order": [
@@ -440,8 +422,7 @@
           "layer",
           "artifact_id",
           "parent_ids",
-          "cancellation",
-          "superseded_by"
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/plan",
@@ -473,8 +454,7 @@
           "in-progress",
           "blocked",
           "completed",
-          "cancelled",
-          "superseded"
+          "cancelled"
         ]
       },
       "relationships": {
@@ -521,7 +501,7 @@
       "id": "sdlc/task",
       "family": "sdlc",
       "mode": "authored",
-      "path_pattern": "^(?:docs/03\\.specs|docs/98\\.archive/(?:completed|superseded|retired)/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^SPEC-[0-9]{4}-TSK-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/specs/task.template.md",
       "frontmatter": {
@@ -539,8 +519,7 @@
         "optional": [
           "status",
           "cancellation",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -554,8 +533,7 @@
           "artifact_id",
           "parent_ids",
           "cancellation",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -582,8 +560,7 @@
           "in-progress",
           "blocked",
           "completed",
-          "cancelled",
-          "superseded"
+          "cancelled"
         ]
       },
       "relationships": {
@@ -654,13 +631,6 @@
                 "FAIL",
                 "DEFER",
                 "NOT_APPLICABLE"
-              ],
-              "superseded": [
-                "NOT_RUN",
-                "PASS",
-                "FAIL",
-                "DEFER",
-                "NOT_APPLICABLE"
               ]
             },
             "acceptance_states": [
@@ -706,7 +676,7 @@
       "id": "operation/guide",
       "family": "operation",
       "mode": "authored",
-      "path_pattern": "^(?:docs/05\\.operations|docs/98\\.archive/(?:superseded|retired)/05\\.operations)/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^GDE-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/operations/guide.template.md",
       "frontmatter": {
@@ -799,7 +769,7 @@
       "id": "operation/policy",
       "family": "operation",
       "mode": "authored",
-      "path_pattern": "^(?:docs/05\\.operations|docs/98\\.archive/(?:superseded|retired)/05\\.operations)/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^POL-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/operations/policy.template.md",
       "frontmatter": {
@@ -892,7 +862,7 @@
       "id": "operation/runbook",
       "family": "operation",
       "mode": "authored",
-      "path_pattern": "^(?:docs/05\\.operations|docs/98\\.archive/(?:superseded|retired)/05\\.operations)/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RUN-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/operations/runbook.template.md",
       "frontmatter": {
@@ -986,7 +956,7 @@
       "id": "operation/incident",
       "family": "operation",
       "mode": "authored",
-      "path_pattern": "^(?:docs/05\\.operations|docs/98\\.archive/resolved/05\\.operations)/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
+      "path_pattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
       "artifact_id_pattern": "^inc-[0-9]{4}-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/operations/incident.template.md",
       "frontmatter": {
@@ -1078,7 +1048,7 @@
       "id": "operation/postmortem",
       "family": "operation",
       "mode": "authored",
-      "path_pattern": "^(?:docs/05\\.operations|docs/98\\.archive/(?:resolved|superseded)/05\\.operations)/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
+      "path_pattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
       "artifact_id_pattern": "^inc-[0-9]{4}-[0-9]{4}-PM$",
       "template_source": "docs/99.templates/templates/operations/postmortem.template.md",
       "frontmatter": {
@@ -1168,7 +1138,7 @@
       "id": "reference/audit",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:retired)/90\\.references)/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit.template.md",
       "frontmatter": {
@@ -1238,7 +1208,7 @@
       "id": "reference/research",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research.template.md",
       "frontmatter": {
@@ -1308,7 +1278,7 @@
       "id": "reference/data",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data.template.md",
       "frontmatter": {
@@ -1366,251 +1336,6 @@
           "published",
           "superseded",
           "retired"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "archive/tombstone",
-      "family": "archive",
-      "mode": "evidence",
-      "path_pattern": "^(?:docs/98\\.archive/superseded/01\\.requirements/0001\\-wsl\\-k3d\\-argocd\\-platform\\.md|docs/98\\.archive/superseded/01\\.requirements/0002\\-wsl2\\-k3d\\-argocd\\-ha\\-platform\\.md|docs/98\\.archive/superseded/01\\.requirements/0003\\-platform\\-expansion\\-dashboard\\-mesh\\.md|docs/98\\.archive/superseded/01\\.requirements/0005\\-workspace\\-document\\-assurance\\-modernization\\.md|docs/98\\.archive/superseded/01\\.requirements/0006\\-workspace\\-document\\-lifecycle\\-and\\-evidence\\-consolidation\\.md|docs/98\\.archive/superseded/01\\.requirements/0007\\-repository\\-delivery\\-and\\-platform\\-assurance\\.md|docs/98\\.archive/superseded/01\\.requirements/0008\\-workspace\\-document\\-taxonomy\\-consolidation\\.md|docs/98\\.archive/superseded/02\\.architecture/0001\\-k3d\\-topology\\-and\\-network\\.md|docs/98\\.archive/superseded/02\\.architecture/0001\\-wsl\\-k3d\\-argocd\\-platform\\.md|docs/98\\.archive/superseded/02\\.architecture/0002\\-wsl2\\-k3d\\-argocd\\-ha\\-platform\\.md|docs/98\\.archive/superseded/02\\.architecture/0003\\-platform\\-expansion\\-mesh\\-dashboard\\.md|docs/98\\.archive/superseded/02\\.architecture/0004\\-external\\-services\\-endpoints\\-and\\-valkey\\-backend\\.md|docs/98\\.archive/superseded/02\\.architecture/0005\\-wsl2\\-ha\\-baseline\\-and\\-external\\-endpoint\\-contract\\.md|docs/98\\.archive/superseded/02\\.architecture/0007\\-kubernetes\\-dashboard\\-v3\\.md|docs/98\\.archive/superseded/02\\.architecture/0010\\-headlamp\\-replaces\\-dashboard\\.md|docs/98\\.archive/superseded/02\\.architecture/descriptions/0008\\-workspace\\-document\\-assurance\\-operating\\-model\\.md|docs/98\\.archive/superseded/02\\.architecture/descriptions/0009\\-document\\-lifecycle\\-evidence\\-operating\\-model\\.md|docs/98\\.archive/superseded/02\\.architecture/descriptions/0010\\-repository\\-delivery\\-evidence\\-architecture\\.md|docs/98\\.archive/superseded/02\\.architecture/descriptions/0011\\-document\\-taxonomy\\-consolidation\\-architecture\\.md|docs/98\\.archive/superseded/03\\.specs/0001\\-wsl\\-k3d\\-argocd\\-platform\\.md|docs/98\\.archive/superseded/03\\.specs/0002\\-wsl2\\-k3d\\-argocd\\-ha\\-platform\\.md|docs/98\\.archive/superseded/03\\.specs/0003\\-platform\\-expansion\\.md|docs/98\\.archive/superseded/03\\.specs/0007\\-docs\\-governance\\-consistency\\.md|docs/98\\.archive/superseded/05\\.operations/0004\\-headlamp\\-auth\\-oidc\\-guide\\.md|docs/98\\.archive/superseded/05\\.operations/0005\\-headlamp\\-keycloak\\-runbook\\.md)$",
-      "artifact_id_pattern": "^tomb-(?:REQ|PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/archive/tombstone.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "original_type",
-          "original_path",
-          "archived_on",
-          "archive_reason",
-          "replacement",
-          "source_commit",
-          "source_blob",
-          "content_sha256"
-        ],
-        "optional": [
-          "change_id",
-          "original_artifact_id"
-        ],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "change_id",
-          "original_artifact_id",
-          "original_type",
-          "original_path",
-          "archived_on",
-          "archive_reason",
-          "replacement",
-          "source_commit",
-          "source_blob",
-          "content_sha256"
-        ],
-        "constants": {
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "archived"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "archive/migration",
-      "family": "archive",
-      "mode": "evidence",
-      "path_pattern": "^(?:docs/98\\.archive/migrations/0001\\-sdlc\\-taxonomy\\-convergence\\.md|docs/98\\.archive/migrations/0002\\-sdlc\\-document\\-and\\-governance\\-consolidation\\.md|docs/98\\.archive/migrations/0003\\-agent\\-governance\\-control\\-plane\\-consolidation\\.md|docs/98\\.archive/migrations/0004\\-document\\-authority\\-convergence\\.md|docs/98\\.archive/migrations/0005\\-codex\\-claude\\-agent\\-governance\\-convergence\\.md|docs/98\\.archive/migrations/0006\\-unroutable\\-reference\\-profile\\-retirement\\.md|docs/98\\.archive/migrations/0007\\-agent\\-progress\\-ledger\\-retirement\\.md|docs/98\\.archive/migrations/0008\\-progress\\-append\\-form\\-retirement\\.md|docs/98\\.archive/migrations/0009\\-governance\\-memory\\-retirement\\.md|docs/98\\.archive/migrations/0010\\-stage99\\-form\\-naming\\-and\\-profile\\-identity\\-convergence\\.md|docs/98\\.archive/migrations/0011\\-stage03\\-package\\-router\\-retirement\\.md|docs/98\\.archive/migrations/0012\\-reference\\-form\\-family\\-naming\\.md|docs/98\\.archive/migrations/0013\\-completed\\-stage03\\-package\\-retention\\.md|docs/98\\.archive/migrations/0014\\-completed\\-stage03\\-package\\-retention\\-batch\\-a\\.md|docs/98\\.archive/migrations/0015\\-completed\\-stage03\\-package\\-retention\\-batch\\-b\\.md|docs/98\\.archive/migrations/0016\\-completed\\-stage03\\-package\\-retention\\-batch\\-c\\.md|docs/98\\.archive/migrations/0017\\-supersession\\-record\\-relocation\\.md|docs/98\\.archive/migrations/0018\\-terminal\\-stage03\\-package\\-retention\\.md|docs/98\\.archive/migrations/0019\\-requirement\\-and\\-architecture\\-authority\\-transfer\\.md|docs/98\\.archive/migrations/0020\\-stage00\\-agent\\-registry\\-authority\\-transfer\\.md|docs/98\\.archive/migrations/0021\\-common\\-agent\\-authority\\-routing\\.md|docs/98\\.archive/migrations/0022\\-document\\-taxonomy\\-package\\-retention\\.md|docs/98\\.archive/migrations/0023\\-responsibility\\-document\\-router\\-absorption\\.md)$",
-      "artifact_id_pattern": "^MIG-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/archive/migration.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "constants": {
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Migration Ledger",
-          "Recovery"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "accepted",
-          "sealed"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "archive/route",
-      "family": "archive",
-      "mode": "evidence",
-      "path_pattern": "^docs/98\\.archive/tombstones/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifact_id_pattern": "^TOMB-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/archive/route-tombstone.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "retired_route",
-          "successor",
-          "reason"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "retired_route",
-          "successor",
-          "reason"
-        ],
-        "constants": {
-          "type": "archive/route",
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "sealed"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "archive/scope-migration",
-      "family": "archive",
-      "mode": "evidence",
-      "path_pattern": "^docs/98\\.archive/migrations/(?!00(?:0[1-9]|1[0-9]|2[0-3])-)[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
-      "artifact_id_pattern": "^MIG-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/archive/scope-migration.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "moved_scope",
-          "current_owner"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "moved_scope",
-          "current_owner"
-        ],
-        "constants": {
-          "type": "archive/route",
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "sealed"
         ]
       },
       "relationships": {
@@ -2319,7 +2044,7 @@
       "id": "reference/audit-pack",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:retired)/90\\.references)/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^AUD-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/audit-pack.template.md",
       "frontmatter": {
@@ -2389,7 +2114,7 @@
       "id": "reference/data-pack",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^DATA-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/data-pack.template.md",
       "frontmatter": {
@@ -2459,7 +2184,7 @@
       "id": "reference/research-pack",
       "family": "reference",
       "mode": "authored",
-      "path_pattern": "^(?:docs/90\\.references|docs/98\\.archive/(?:superseded|retired)/90\\.references)/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "path_pattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
       "artifact_id_pattern": "^RES-[0-9]{4}$",
       "template_source": "docs/99.templates/templates/references/research-pack.template.md",
       "frontmatter": {
@@ -2634,6 +2359,33 @@
       "family": "common",
       "mode": "native",
       "path_pattern": "^(?:AGENTS\\.md|CLAUDE\\.md)$",
+      "artifact_id_pattern": null,
+      "template_source": null,
+      "frontmatter": {
+        "mode": "absent",
+        "required": [],
+        "optional": [],
+        "forbidden": [],
+        "order": [],
+        "constants": {}
+      },
+      "sections": {
+        "required": [],
+        "optional": [],
+        "forbidden": []
+      },
+      "lifecycle": null,
+      "relationships": {
+        "source_profile_ids": [],
+        "body_contract": null
+      },
+      "placeholder_policy": "forbidden"
+    },
+    {
+      "id": "common/folder-agents-guide",
+      "family": "common",
+      "mode": "native",
+      "path_pattern": "^(?!docs/98\\.archive/)(?:[^/]+/)+AGENTS\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
@@ -2968,242 +2720,6 @@
         "body_contract": null
       },
       "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "common/template-archive-tombstone",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/archive/tombstone\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/archive/tombstone.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "original_type",
-          "original_path",
-          "archived_on",
-          "archive_reason",
-          "replacement",
-          "source_commit",
-          "source_blob",
-          "content_sha256"
-        ],
-        "optional": [
-          "change_id",
-          "original_artifact_id"
-        ],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "change_id",
-          "original_artifact_id",
-          "original_type",
-          "original_path",
-          "archived_on",
-          "archive_reason",
-          "replacement",
-          "source_commit",
-          "source_blob",
-          "content_sha256"
-        ],
-        "constants": {
-          "layer": "archive",
-          "type": "archive/tombstone",
-          "status": "draft"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "archive/tombstone"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
-      "id": "common/template-archive-migration",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/archive/migration\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/archive/migration.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "constants": {
-          "layer": "archive",
-          "type": "archive/migration"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Migration Ledger",
-          "Recovery"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "archive/migration"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
-      "id": "common/template-archive-route-tombstone",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/archive/route\\-tombstone\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/archive/route-tombstone.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "retired_route",
-          "successor",
-          "reason"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "retired_route",
-          "successor",
-          "reason"
-        ],
-        "constants": {
-          "type": "archive/route",
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "archive/route"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
-      "id": "common/template-archive-scope-migration",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/archive/scope\\-migration\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/archive/scope-migration.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "moved_scope",
-          "current_owner"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id",
-          "moved_scope",
-          "current_owner"
-        ],
-        "constants": {
-          "type": "archive/route",
-          "layer": "archive"
-        }
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "archive/scope-migration"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
     },
     {
       "id": "common/template-readme-repository",
@@ -3939,8 +3455,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -3952,8 +3467,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/architecture-decision",
@@ -4025,8 +3539,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -4038,8 +3551,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/architecture-description",
@@ -4070,8 +3582,7 @@
           "enforced_statuses": [
             "draft",
             "in-review",
-            "active",
-            "deprecated"
+            "active"
           ],
           "required_columns": [
             "Upstream requirement",
@@ -4120,8 +3631,7 @@
           "parent_ids"
         ],
         "optional": [
-          "cancellation",
-          "superseded_by"
+          "cancellation"
         ],
         "forbidden": [],
         "order": [
@@ -4134,8 +3644,7 @@
           "layer",
           "artifact_id",
           "parent_ids",
-          "cancellation",
-          "superseded_by"
+          "cancellation"
         ],
         "constants": {
           "type": "sdlc/plan",
@@ -4224,8 +3733,7 @@
         "optional": [
           "status",
           "cancellation",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -4239,8 +3747,7 @@
           "artifact_id",
           "parent_ids",
           "cancellation",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/task",
@@ -4326,13 +3833,6 @@
                 "NOT_APPLICABLE"
               ],
               "cancelled": [
-                "NOT_RUN",
-                "PASS",
-                "FAIL",
-                "DEFER",
-                "NOT_APPLICABLE"
-              ],
-              "superseded": [
                 "NOT_RUN",
                 "PASS",
                 "FAIL",
@@ -4831,8 +4331,7 @@
           "artifact_id"
         ],
         "optional": [
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "forbidden": [],
         "order": [
@@ -4844,8 +4343,7 @@
           "updated",
           "layer",
           "artifact_id",
-          "supersedes",
-          "superseded_by"
+          "supersedes"
         ],
         "constants": {
           "type": "sdlc/requirement",
@@ -4925,7 +4423,6 @@
           "artifact_id"
         ],
         "optional": [
-          "superseded_by",
           "cancellation"
         ],
         "forbidden": [],
@@ -4938,7 +4435,6 @@
           "updated",
           "layer",
           "artifact_id",
-          "superseded_by",
           "cancellation"
         ],
         "constants": {
@@ -5513,61 +5009,6 @@
       "placeholder_policy": "template-only"
     },
     {
-      "id": "archive/catalog",
-      "family": "archive",
-      "mode": "router",
-      "path_pattern": "^docs/98\\.archive/README\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": null,
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "layer"
-        ],
-        "forbidden": [
-          "artifact_id"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer"
-        ],
-        "constants": {
-          "type": "archive/catalog",
-          "status": "active"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Scope",
-          "Structure",
-          "Usage",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
       "id": "evaluation/task",
       "family": "evaluation",
       "mode": "authored",
@@ -5949,9 +5390,7 @@
       "states": {
         "draft": "mutable",
         "in-review": "mutable",
-        "approved": "current",
-        "superseded": "terminal",
-        "retired": "terminal"
+        "approved": "current"
       },
       "transitions": [
         [
@@ -5965,14 +5404,6 @@
         [
           "in-review",
           "approved"
-        ],
-        [
-          "approved",
-          "superseded"
-        ],
-        [
-          "approved",
-          "retired"
         ]
       ]
     },
@@ -5984,10 +5415,7 @@
       "states": {
         "draft": "mutable",
         "in-review": "mutable",
-        "active": "current",
-        "deprecated": "current",
-        "superseded": "terminal",
-        "retired": "terminal"
+        "active": "current"
       },
       "transitions": [
         [
@@ -5997,22 +5425,6 @@
         [
           "in-review",
           "active"
-        ],
-        [
-          "active",
-          "deprecated"
-        ],
-        [
-          "active",
-          "superseded"
-        ],
-        [
-          "active",
-          "retired"
-        ],
-        [
-          "deprecated",
-          "retired"
         ]
       ]
     },
@@ -6024,9 +5436,7 @@
       "states": {
         "proposed": "mutable",
         "accepted": "current",
-        "rejected": "terminal",
-        "superseded": "terminal",
-        "retired": "terminal"
+        "rejected": "terminal"
       },
       "transitions": [
         [
@@ -6036,14 +5446,6 @@
         [
           "proposed",
           "rejected"
-        ],
-        [
-          "accepted",
-          "superseded"
-        ],
-        [
-          "accepted",
-          "retired"
         ]
       ]
     },
@@ -6063,8 +5465,7 @@
         "in-progress": "current",
         "blocked": "current",
         "completed": "terminal",
-        "cancelled": "terminal",
-        "superseded": "terminal"
+        "cancelled": "terminal"
       },
       "transitions": [
         [
@@ -6090,14 +5491,6 @@
         [
           "blocked",
           "cancelled"
-        ],
-        [
-          "approved",
-          "superseded"
-        ],
-        [
-          "completed",
-          "superseded"
         ],
         [
           "approved",
@@ -6130,8 +5523,7 @@
         "in-progress": "current",
         "blocked": "current",
         "completed": "terminal",
-        "cancelled": "terminal",
-        "superseded": "terminal"
+        "cancelled": "terminal"
       },
       "transitions": [
         [
@@ -6169,18 +5561,6 @@
         [
           "blocked",
           "cancelled"
-        ],
-        [
-          "ready",
-          "superseded"
-        ],
-        [
-          "in-progress",
-          "superseded"
-        ],
-        [
-          "blocked",
-          "superseded"
         ],
         [
           "draft",
@@ -6322,73 +5702,6 @@
       ]
     },
     {
-      "family": "migration",
-      "profile_ids": [
-        "archive/migration"
-      ],
-      "states": {
-        "draft": "mutable",
-        "accepted": "current",
-        "sealed": "terminal"
-      },
-      "transitions": [
-        [
-          "draft",
-          "accepted"
-        ],
-        [
-          "accepted",
-          "sealed"
-        ],
-        [
-          "draft",
-          "sealed"
-        ]
-      ]
-    },
-    {
-      "family": "tombstone",
-      "profile_ids": [
-        "archive/tombstone"
-      ],
-      "states": {
-        "archived": "terminal"
-      },
-      "transitions": []
-    },
-    {
-      "family": "route-disposition",
-      "profile_ids": [
-        "archive/route"
-      ],
-      "states": {
-        "draft": "mutable",
-        "sealed": "terminal"
-      },
-      "transitions": [
-        [
-          "draft",
-          "sealed"
-        ]
-      ]
-    },
-    {
-      "family": "scope-migration",
-      "profile_ids": [
-        "archive/scope-migration"
-      ],
-      "states": {
-        "draft": "mutable",
-        "sealed": "terminal"
-      },
-      "transitions": [
-        [
-          "draft",
-          "sealed"
-        ]
-      ]
-    },
-    {
       "family": "evaluation",
       "profile_ids": [
         "evaluation/task",
@@ -6430,232 +5743,6 @@
         ]
       ]
     }
-  ],
-  "retention_classes": [
-    {
-      "class": "completed",
-      "names": "promotion",
-      "admitted_states": [
-        "completed"
-      ]
-    },
-    {
-      "class": "superseded",
-      "names": "successor",
-      "admitted_states": [
-        "superseded"
-      ]
-    },
-    {
-      "class": "retired",
-      "names": "reason",
-      "admitted_states": [
-        "retired",
-        "rejected"
-      ]
-    },
-    {
-      "class": "resolved",
-      "names": "corrective-owner",
-      "admitted_states": [
-        "resolved"
-      ]
-    }
-  ],
-  "retention_units": [
-    {
-      "unit": "spec-package",
-      "root_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
-      "anchor": "spec.md",
-      "required_members": [
-        "spec.md"
-      ],
-      "completed_authority_members": [
-        "spec.md",
-        "plan.md"
-      ]
-    },
-    {
-      "unit": "incident-bundle",
-      "root_pattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
-      "anchor": "incident.md",
-      "required_members": [
-        "incident.md",
-        "postmortem.md"
-      ],
-      "member_admitted_states": {
-        "postmortem.md": [
-          "published"
-        ]
-      }
-    }
-  ],
-  "retention_modes": [
-    {
-      "mode": "move-frozen-body",
-      "profile_id_pattern": "^(?:sdlc|operation|reference)/",
-      "classes": [
-        "completed",
-        "superseded",
-        "retired",
-        "resolved"
-      ]
-    },
-    {
-      "mode": "sealed-record",
-      "profile_id_pattern": "^archive/(?:tombstone|migration)$",
-      "classes": []
-    },
-    {
-      "mode": "retain-in-place",
-      "profile_id_pattern": "^common/readme-(?:stage|collection)-index$",
-      "classes": []
-    },
-    {
-      "mode": "git-history-only",
-      "profile_id_pattern": "^common/template-",
-      "classes": []
-    }
-  ],
-  "archive_citation": {
-    "index": "docs/98.archive/README.md",
-    "default": "reject",
-    "rules": [
-      {
-        "source": "archive",
-        "target": "any",
-        "decision": "admit"
-      },
-      {
-        "source": "any",
-        "target": "index",
-        "decision": "admit"
-      },
-      {
-        "source": "any",
-        "target": "retained-body",
-        "target_classes": [
-          "completed",
-          "superseded",
-          "retired",
-          "resolved"
-        ],
-        "target_assessments": [
-          "withdrawn",
-          "invalidated"
-        ],
-        "decision": "reject"
-      },
-      {
-        "source": "any",
-        "target": "retained-body",
-        "target_classes": [
-          "completed",
-          "superseded",
-          "retired",
-          "resolved"
-        ],
-        "target_availabilities": [
-          "git-history-only",
-          "purged"
-        ],
-        "decision": "reject"
-      },
-      {
-        "source": "any",
-        "target": "route-record",
-        "decision": "reject"
-      },
-      {
-        "source": "any",
-        "target": "sealed-record",
-        "decision": "reject"
-      },
-      {
-        "source": "profiles",
-        "source_profile_ids": [
-          "operation/incident",
-          "operation/postmortem"
-        ],
-        "target": "retained-body",
-        "target_classes": [
-          "completed",
-          "superseded",
-          "retired",
-          "resolved"
-        ],
-        "decision": "admit"
-      },
-      {
-        "source": "any",
-        "target": "retained-body",
-        "target_classes": [
-          "completed",
-          "resolved"
-        ],
-        "decision": "admit"
-      }
-    ]
-  },
-  "archive_assessment": {
-    "index": "docs/98.archive/README.md",
-    "heading": "Retention Assessment",
-    "columns": [
-      "Disposition Record",
-      "Assessment",
-      "Availability",
-      "Current Owner",
-      "Decision",
-      "Assessed",
-      "Hold"
-    ],
-    "assessments": [
-      "unreviewed",
-      "usable",
-      "superseded",
-      "withdrawn",
-      "invalidated"
-    ],
-    "availabilities": [
-      "retained",
-      "git-history-only",
-      "purged"
-    ],
-    "default_assessment": "unreviewed",
-    "default_availability": "retained",
-    "owner_required_assessments": [
-      "superseded"
-    ],
-    "reserved_availabilities": [
-      "purged"
-    ],
-    "removed_availabilities": [
-      "git-history-only"
-    ],
-    "decision_profile_ids": [
-      "sdlc/task",
-      "sdlc/spec",
-      "sdlc/architecture-decision"
-    ],
-    "default_branch": "main"
-  },
-  "legacy_rebased_retained_paths": [
-    "docs/98.archive/superseded/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0015-declarative-document-contract-registry.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0016-program-to-tranche-document-lineage.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0018-full-body-archive-record-and-retention.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0025-four-digit-document-path-identity.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0032-completed-and-terminal-document-retention.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md",
-    "docs/98.archive/superseded/02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md"
   ],
   "readme_navigation": {
     "placeholders": [
@@ -6702,9 +5789,7 @@
       }
     },
     "pending_paths": [],
-    "exempt_paths": [
-      "docs/98.archive/README.md"
-    ],
+    "exempt_paths": [],
     "index_columns": [
       "Path",
       "Purpose"
@@ -6744,8 +5829,7 @@
       "operation/policy",
       "operation/runbook",
       "operation/incident",
-      "operation/postmortem",
-      "archive/catalog"
+      "operation/postmortem"
     ],
     "english_sections": [
       "AI Agent Requirements",
@@ -6754,211 +5838,6 @@
     ],
     "min_latin_words": 8,
     "pending_paths": []
-  },
-  "migration_admission": {
-    "from_generation": 9,
-    "to_generation": 10,
-    "spec_ref": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md",
-    "task_ref": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md",
-    "updated": "2026-10-05",
-    "entries": [
-      {
-        "path": "docs/01.requirements/0001-argo-rollouts-progressive-delivery.md",
-        "source_profile": "sdlc/requirement",
-        "source_status": "active",
-        "target_profile": "sdlc/requirement",
-        "target_status": "in-review"
-      },
-      {
-        "path": "docs/01.requirements/0002-argo-notifications-slack.md",
-        "source_profile": "sdlc/requirement",
-        "source_status": "active",
-        "target_profile": "sdlc/requirement",
-        "target_status": "in-review"
-      },
-      {
-        "path": "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-        "source_profile": "sdlc/requirement",
-        "source_status": "active",
-        "target_profile": "sdlc/requirement",
-        "target_status": "in-review"
-      },
-      {
-        "path": "docs/01.requirements/0004-current-local-gitops-platform.md",
-        "source_profile": "sdlc/requirement",
-        "source_status": "active",
-        "target_profile": "sdlc/requirement",
-        "target_status": "in-review"
-      },
-      {
-        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/spec.md",
-        "source_profile": "sdlc/spec",
-        "source_status": "draft",
-        "target_profile": "sdlc/spec",
-        "target_status": "in-progress"
-      },
-      {
-        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/plan.md",
-        "source_profile": "sdlc/plan",
-        "source_status": "draft",
-        "target_profile": "sdlc/plan",
-        "target_status": "in-progress"
-      },
-      {
-        "path": "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/tsk-0001-lifecycle-normalization.md",
-        "source_profile": "sdlc/task",
-        "source_status": "queued",
-        "target_profile": "sdlc/task",
-        "target_status": "in-progress"
-      },
-      {
-        "path": "docs/90.references/research/0001-workspace-engineering/README.md",
-        "source_profile": "common/readme-research-pack",
-        "source_status": null,
-        "target_profile": "reference/research-pack",
-        "target_status": "in-review"
-      },
-      {
-        "path": "docs/90.references/research/0002-archive-retention-and-provenance/README.md",
-        "source_profile": "common/readme-research-pack",
-        "source_status": null,
-        "target_profile": "reference/research-pack",
-        "target_status": "in-review"
-      },
-      {
-        "path": ".agents/skills/archive-cutover/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/deployment-strategies/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/docs-stage-conformance/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/docs-stage-routing/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/execution-plan/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/external-service-contract-audit/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/gitops-workflow/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/incident-postmortem/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/k8s-security-audit/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/k8s-validate/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/knowledge-map/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/ops-runbook/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/rca-methodology/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/requirements-to-design/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/risk-report/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/task-breakdown/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/vulnerability-patterns/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": ".agents/skills/workspace-harness-audit/SKILL.md",
-        "source_profile": "common/native-skill-package",
-        "source_status": null,
-        "target_profile": "common/native-skill-package",
-        "target_status": "active"
-      },
-      {
-        "path": "docs/98.archive/README.md",
-        "source_profile": "common/readme-stage-index",
-        "source_status": null,
-        "target_profile": "archive/catalog",
-        "target_status": null
-      }
-    ]
   },
   "shared_contract": {
     "contract_id": "WGOV-CORE",
@@ -6972,11 +5851,10 @@
     "local_adapter": "docs/99.templates/registry.json",
     "extensions": [
       "Kubernetes/GitOps/bootstrap/external-service procedures",
-      "Task Table/frontmatter summary and historical completed-parent lifecycle",
+      "Task Table/frontmatter summary",
       "Registry document_language, Korean-allowed common agent Markdown, and Codex/Claude native syntax",
       "Local candidate Task first-recording of observed draft, ready, in-progress, or blocked state",
       "Local candidate Spec/Plan direct draft-to-approved transition after actual batch review and approval",
-      "Task superseded state with verified successor and criterion transfer",
       "Advisory shared workspace-memory SQLite store with Task and repository authority"
     ]
   }

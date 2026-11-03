@@ -24,7 +24,7 @@ The request owner approved this decision, SPEC-0102 and the execution Plan on
 2026-09-29. Commit `8e811506` records the initial `proposed` creation state;
 this reviewed change records `accepted` and version `1.0.0`. Implementation
 follows the approved Plan, without external or live authority.
-SPEC-0102, recovered from Git through the Retention Catalog,
+SPEC-0102, recovered from Git history,
 recorded the approved behavior, migration boundaries and acceptance criteria.
 
 The amendment concerns ADR-0036's skill-resource boundary, pointer-only

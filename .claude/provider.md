@@ -69,6 +69,9 @@ invocation. The common procedure retains the selected role and user scope.
   advisorily rather than blocked. On Codex the same class binds an
   operating-system `read-only` sandbox. That difference is documented and
   accepted; it is not parity, and neither side is described as the other.
+- Claude loads root `CLAUDE.md`, not a folder `AGENTS.md`. Before working in a
+  directory, read each `AGENTS.md` from the root down to it explicitly, as
+  [agent execution](../.agents/governance/agent-execution.md) requires.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
 - `settings.json` sets `autoMemoryEnabled: false`, and the validator rejects
@@ -97,8 +100,7 @@ every role projection, `sonnet` resolving to `claude-sonnet-5`, withheld
 structured write tools for `read-only-evidence`, and delivery of the pre-edit
 hook. The client exposes no `Grep` or `Glob` tool, although projections declare
 both. The SPEC-0086 Task
-recorded that evidence and is recovered from Git through the Retention Catalog
-in `docs/98.archive/README.md`.
+recorded that evidence and is recovered from Git history.
 Projections also carry `effort`, which the provider binding table owns per
 tier, with a role override where effort or model genuinely differs.
 Models stay aliases (`fable`, `opus`, `sonnet`, `haiku`), so each one follows

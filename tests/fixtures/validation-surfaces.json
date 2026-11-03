@@ -122,11 +122,6 @@
       "expectedSurface": "cluster-gate-scripts"
     },
     {
-      "name": "archive-script",
-      "path": "scripts/archive_validation.py",
-      "expectedSurface": "archive-scripts"
-    },
-    {
       "name": "tooling-script",
       "path": "scripts/provider_write_guard.py",
       "expectedSurface": "tooling-scripts"
@@ -144,16 +139,6 @@
     {
       "name": "lifecycle-git-fixture",
       "path": "tests/git_fixture.py",
-      "expectedSurface": "shared-document-history-readers"
-    },
-    {
-      "name": "lifecycle-archive-generation-fixture",
-      "path": "tests/archive_generation_fixture.py",
-      "expectedSurface": "shared-document-history-readers"
-    },
-    {
-      "name": "lifecycle-archive-cutover-helper",
-      "path": "tests/test_document_lifecycle_archive_cutover.py",
       "expectedSurface": "shared-document-history-readers"
     },
     {
@@ -230,6 +215,11 @@
       "name": "root-changelog",
       "path": "CHANGELOG.md",
       "expectedSurface": "authored-documents"
+    },
+    {
+      "name": "folder-agents-guide",
+      "path": "docs/AGENTS.md",
+      "expectedSurface": "folder-agents-guides"
     }
   ],
   "selectionCases": [
@@ -445,29 +435,7 @@
       }
     },
     {
-      "name": "archive-script-selects-archive-gates",
-      "lane": "affected",
-      "paths": [
-        "scripts/archive_validation.py"
-      ],
-      "expected": {
-        "validators": [
-          "affected-surface-contract",
-          "agent-governance",
-          "archive-contract-tests",
-          "archive-integrity",
-          "archive-validation-tests",
-          "document-contract-tests",
-          "document-lifecycle",
-          "links-and-owners",
-          "repository-quality"
-        ],
-        "protectedLevel": "protected",
-        "unmatchedPaths": []
-      }
-    },
-    {
-      "name": "tooling-script-skips-cluster-and-archive-gates",
+      "name": "tooling-script-skips-cluster-gates",
       "lane": "affected",
       "paths": [
         "scripts/provider_write_guard.py"
@@ -493,7 +461,6 @@
         "validators": [
           "affected-surface-contract",
           "agent-governance",
-          "archive-contract-tests",
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
@@ -513,7 +480,6 @@
       ],
       "expected": {
         "validators": [
-          "archive-contract-tests",
           "repository-quality"
         ],
         "protectedLevel": "review",
@@ -524,13 +490,11 @@
       "name": "lifecycle-module-selects-document-contract-gate",
       "lane": "staged",
       "paths": [
-        "tests/test_completed_state_migration.py"
+        "tests/test_document_lifecycle_cumulative_history.py"
       ],
       "expected": {
         "validators": [
           "affected-surface-contract",
-          "archive-contract-tests",
-          "archive-integrity",
           "document-contract-registry",
           "document-contract-tests",
           "document-lifecycle",

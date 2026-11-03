@@ -31,7 +31,7 @@ for the broader responsibility context.
 ### Role
 
 Change the repository tooling that is not a registered validation-lane member:
-the write guard, the archive and document-lifecycle modules, the shared
+the write guard, the document-lifecycle module, the shared
 helpers, and the policy rules under `policy/conftest/`. The split is decided by
 registry membership rather than by reading a filename — a script that
 `scripts/validation/registry.json` registers is `quality-engineer.md`'s

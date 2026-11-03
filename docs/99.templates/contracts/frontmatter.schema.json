@@ -90,32 +90,6 @@
     "original_path": {
       "$ref": "#/$defs/repoRelativePath"
     },
-    "archived_on": {
-      "$ref": "#/$defs/isoDate"
-    },
-    "archive_reason": {
-      "type": "string",
-      "minLength": 1
-    },
-    "replacement": {
-      "oneOf": [
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/repoRelativePath"
-            },
-            {
-              "not": {
-                "const": "none"
-              }
-            }
-          ]
-        },
-        {
-          "const": "none"
-        }
-      ]
-    },
     "source_commit": {
       "$ref": "#/$defs/gitOid"
     },

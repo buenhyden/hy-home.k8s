@@ -11,9 +11,6 @@ layer: "operations"
 
 > 사고 사실 기록과 postmortem을 보관하는 incident stage다.
 
-> [!NOTE]
-> 이 stage에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 이 경로는 사고 사실 기록과 사고 후 회고를 보관하는 canonical stage다.
@@ -42,7 +39,6 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 - Operators
 - Incident Commanders
 - Platform Engineers
-- AI Agents
 
 ## Scope
 

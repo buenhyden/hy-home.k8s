@@ -35,7 +35,6 @@ patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외�
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ### Scope
 

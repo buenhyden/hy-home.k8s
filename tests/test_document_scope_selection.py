@@ -50,7 +50,6 @@ DOCUMENT_GATES = {
     "markdown-profiles",
     "repository-quality",
 }
-ARCHIVE_GATES = {"archive-contract-tests", "archive-integrity"}
 
 
 class DocumentScopeSelectionTests(unittest.TestCase):
@@ -75,7 +74,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
             readers | {"selected-nonstyle", "selected-style"},
         )
 
-    def test_shared_history_readers_keep_archive_contract_guards(self) -> None:
+    def test_shared_history_readers_keep_document_guards(self) -> None:
         for path in HISTORY_READERS:
             with self.subTest(path=path):
                 self.assertEqual(
@@ -86,7 +85,6 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 self.assertEqual(
                     set(selected["validators"]),
                     DOCUMENT_GATES
-                    | ARCHIVE_GATES
                     | {"document-contract-tests", "document-lifecycle-tests"},
                 )
                 self.assertNotIn("k8s-manifests", selected["validators"])
@@ -213,7 +211,7 @@ class DocumentScopeSelectionTests(unittest.TestCase):
             with self.subTest(path=path):
                 surface = ROUTES.classify_path(CONTRACT, path)
                 self.assertEqual(surface["id"], "tests")
-                self.assertIn("archive-contract-tests", surface["validators"])
+                self.assertIn("repository-quality", surface["validators"])
         # A new test module must be routed to its purpose gate, not left on
         # the catch-all where no gate runs it.
         with self.assertRaisesRegex(ROUTES.ContractError, "SURFACE-PATH-UNMATCHED"):
@@ -248,7 +246,6 @@ class DocumentScopeSelectionTests(unittest.TestCase):
                 self.assertEqual(surface["id"], surface_id)
                 selected = ROUTES.select_paths(CONTRACT, (path,), "affected")
                 self.assertIn(gate, selected["validators"])
-                self.assertNotIn("archive-contract-tests", selected["validators"])
                 self.assertNotIn("k8s-manifests", selected["validators"])
                 if path.startswith("scripts/"):
                     self.assertIn("secret-handling", selected["validators"])
@@ -337,7 +334,7 @@ class DocumentContentClosureTests(unittest.TestCase):
                 )
 
     def test_ordinary_document_limits_body_to_current_changed_path(self) -> None:
-        selected = "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0003-purpose-qa-and-ci.md"
+        selected = "docs/03.specs/0140-archive-check-removal/tasks/tsk-0001-archive-check-removal.md"
         scope = DOCUMENTS.scoped_document_content_paths(
             self.registry, (selected,), self.current
         )

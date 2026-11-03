@@ -24,7 +24,6 @@ updated: "2026-10-07"
 - Quality engineers
 - Platform maintainers
 - Validator authors
-- AI agents
 
 ## Scope
 
@@ -34,7 +33,7 @@ updated: "2026-10-07"
 - 임시 저장소와 합성 mutation을 쓰는 실패 경계 검증
 - staged index와 작업 트리 권한의 구분
 - fixture 소비자 소유권과 고아 fixture 방지
-- hook, routing, 문서, Archive 무결성, Agent governance, GitOps·Kubernetes,
+- hook, routing, 문서, Agent governance, GitOps·Kubernetes,
   Docker·project-template·web·Vault의 실제 저장소 표면에 적용되는 정적 계약
 
 ### Out of Scope
@@ -52,7 +51,6 @@ updated: "2026-10-07"
 | --- | --- |
 | Validation routing | Affected-path selection, exact index, bounded runner and failure propagation |
 | Document contracts | Profile, form, frontmatter, relationship, link, lifecycle and current owner |
-| Archive integrity | Sealed source recovery, retention envelopes and current catalog parity; historical cutover completion stays with its original Task evidence |
 | Agent governance | Role/permission/skill consumers and evaluations with a proven ongoing governance contract |
 | Repository purpose | GitOps, Kubernetes, Docker, project-template, web and Vault/ESO interfaces actually present in this repository |
 | Supply chain and hooks | GitHub workflow identity/permissions, secret handling, local hook and commit-message boundaries |
@@ -61,7 +59,7 @@ updated: "2026-10-07"
 
 | Module | 책임 |
 | --- | --- |
-| `git_fixture.py` | archive와 lifecycle 회귀 테스트를 위해 임시 root에 정확한 Git 객체를 만든다 |
+| `git_fixture.py` | lifecycle·release 회귀 테스트를 위해 임시 root에 정확한 Git 객체를 만든다 |
 | `affected_surface_mutations.py` | affected surface 선택을 위한 routing mutation 사례 |
 | `gitops_change_set_cases.py` | GitOps diff rendering을 위한 change set 사례 |
 | `vault_eso_contract_cases.py` | Vault·ESO 계약과 보안 사례 |
@@ -103,7 +101,7 @@ fixture는 범위가 제한된 예시이며 production registry가 아니다. fi
 
 반복 작업 중에는 바뀐 계약의 전용 named suite와 affected 경로를 먼저
 선택한다. global QA 계약 변경이나 명시적 한정 감사도 사전 도구·예산
-확인 후 목적에 해당하는 named 동작·Archive·보안 회귀만 실행한다.
+확인 후 목적에 해당하는 named 동작·보안 회귀만 실행한다.
 긴 full/ci 일괄 검사와 blanket discovery는 현재 완료 조건이 아니다.
 
 ```bash

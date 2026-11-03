@@ -96,14 +96,12 @@ class AgentRegistryTests(unittest.TestCase):
         mutated["skills"].append(copy.deepcopy(mutated["skills"][0]))
         self.assert_rule(mutated, "AGENT-REGISTRY-SKILL")
 
-    def test_retired_skill_and_neutral_role_paths_are_rejected(self) -> None:
+    def test_skill_and_capability_paths_outside_current_owners_are_rejected(
+        self,
+    ) -> None:
         for collection, key, value in (
-            ("skills", "path", "docs/00.agent-governance/skills/risk-report/SKILL.md"),
-            (
-                "roles",
-                "capability_tier_ref",
-                "docs/00.agent-governance/policies/model-selection.md#top",
-            ),
+            ("skills", "path", "docs/other/skills/risk-report/SKILL.md"),
+            ("roles", "capability_tier_ref", "docs/other/model-selection.md#top"),
         ):
             with self.subTest(collection=collection):
                 mutated = self.registry_copy()

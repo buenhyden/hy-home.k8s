@@ -254,7 +254,7 @@ def repository_snapshot(root: Path, *, staged: bool = False):
         # The clone maps the source's branches to remote-tracking refs and
         # drops the source's own remote-tracking refs. A checkout whose default
         # branch exists only as `origin/<name>`, as in CI, would lose it, and
-        # archive envelopes resolve against that branch (ADR-0040).
+        # comparisons against that branch need it.
         # The shared clone already holds the objects, so the refs are written
         # directly; a fetch would spawn a transport process the bounded runner
         # rejects as an escaped descendant.

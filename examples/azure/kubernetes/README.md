@@ -20,7 +20,6 @@ updated: "2026-10-05"
 
 - Application Developers
 - DevOps Engineers
-- AI Agents
 
 ### Scope
 
@@ -74,12 +73,6 @@ kubernetes/
 - **Example boundary**: [Azure reference implementation](../README.md)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 - **Infrastructure**: [../infrastructure/main.bicep](../infrastructure/main.bicep)
-
-### AI Agent Guidance
-
-1. 매니페스트 생성 시 `azure.workload.identity/use: "true"` 라벨 누락 여부를 반드시 확인한다.
-2. 모든 시크릿은 `secrets-store.csi.k8s.io` 볼륨을 통해 파일로 마운트하여 사용하도록 설계한다.
-3. 리소스 태그 및 라벨링 규칙을 준수하여 관리 편의성을 높인다.
 
 ## Verification
 

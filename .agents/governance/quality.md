@@ -44,7 +44,7 @@ metadata; static parity never proves discovery, model resolution, or execution.
 - **retired full / ci sweep**: historical local `full` and `ci` all-files
   profiles and blanket unit discovery are retained as past evidence, not
   selected for current completion. Even a shared QA-contract change selects
-  its actual affected gates and named behavior, Archive and security unit
+  its actual affected gates and named behavior and security unit
   regressions; it does not revive a repository-wide sweep. An explicit audit
   identifies its purpose, inputs and bounded named checks under the active
   registry before execution.
@@ -203,11 +203,11 @@ when their input, threat model or failure meaning differs.
 An old name, a slow run or a failure alone does not prove a test is obsolete.
 
 For a one-use, legacy or deprecated check, first transfer any ongoing
-protection to its durable owner, including normal Archive catalog, lifecycle,
-link and content integrity apart from historical cutover completion proof.
+protection to its durable owner, including lifecycle, link and content
+integrity apart from historical cutover completion proof.
 Then remove the old caller and registration, remove its dedicated helper,
 fixture and test when no consumer remains, and preserve necessary past results
-in the existing Task, Archive or Git recovery owner. Do not add a new Spec or
+in the existing Task or Git history. Do not add a new Spec or
 progress ledger solely to retire old QA. Ordinary document changes select
 profile, relationship, link and state checks; executable behavior changes get
 focused negative and boundary regressions. A one-time Spec or Task migration
@@ -243,7 +243,7 @@ above.
 | Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. `main` also requires `independent-review` (review App `5341483`): after a local read-only review of the exact head, the operator publishes the verdict through RUN-0013 in [Stage 05 runbooks](../../docs/05.operations/runbooks/README.md); merge only when `ci-summary`, `style-pr` and `independent-review` all pass. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
-| Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing Archive and security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
+| Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
 
 The registry selects gates within a profile. Reuse only a successful result for
 identical declared input bytes and history, configuration, tool identity, scope,

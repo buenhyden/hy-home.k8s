@@ -228,6 +228,20 @@ def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
     return visible_lines
 
 
+def agents_router_gaps(tracked) -> list[str]:
+    """Return the human router each folder AGENTS.md lacks beside it."""
+
+    gaps = []
+    for path in sorted(tracked):
+        if pathlib.PurePosixPath(path).name != "AGENTS.md" or "/" not in path:
+            continue
+        folder = path.rsplit("/", 1)[0]
+        router = "repository-surface.md" if folder == ".github" else "README.md"
+        if f"{folder}/{router}" not in tracked:
+            gaps.append(f"{folder}/{router}")
+    return gaps
+
+
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
 
@@ -294,6 +308,9 @@ try:
     tracked = set(proc.stdout.splitlines())
 except Exception as exc:
     fail(f"git ls-files failed: {exc}")
+
+for missing_router in agents_router_gaps(tracked):
+    fail(f"folder AGENTS.md needs its human router {missing_router}")
 
 for tracked_path in sorted(tracked):
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):

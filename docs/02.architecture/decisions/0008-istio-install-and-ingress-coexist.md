@@ -86,11 +86,11 @@ Application values.
 
 - **PRD**: [`../../01.requirements/0004-current-local-gitops-platform.md`](../../01.requirements/0004-current-local-gitops-platform.md)
 - **ARD**: [`../descriptions/0007-current-local-gitops-platform.md`](../descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md)
+- **Spec**: `../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md`
 - **Related ADR**: [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | [Completed implementation evidence](../../98.archive/completed/03.specs/0008-current-local-gitops-platform/spec.md) |
+| [Architecture owner](../descriptions/0007-current-local-gitops-platform.md) | N/A — no whole-document supersession; scoped current-state clarifications above remain preserved | Completed implementation evidence |

@@ -11,9 +11,6 @@ layer: "references"
 
 > 오래 유지할 data pack, 그 dataset, dataset 출처를 두는 곳이다.
 
-> [!NOTE]
-> 이 디렉터리에서 이루어지는 모든 AI 에이전트 작업은 [Agent Governance Hub](../../../.agents/README.md)를 따른다.
-
 ## Overview
 
 `data/`는 오래 유지할 dataset 자료를 둔다. 저장소가 의존하는 데이터의 형태와
@@ -33,7 +30,6 @@ provider 계약을 정의하지 않는다. 이것들은 계속 `.agents/`,
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ## Scope
 

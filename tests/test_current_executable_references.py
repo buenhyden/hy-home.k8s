@@ -165,7 +165,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
 
         self.assertEqual([item.code for item in diagnostics], ["EXECUTABLE-HISTORY"])
 
-    def test_sealed_archive_reference_is_delegated_to_archive_validation(self) -> None:
+    def test_archive_reference_is_not_checked(self) -> None:
         invoked: list[PurePosixPath] = []
         diagnostics = self.validate(
             "docs/98.archive/records/0001-example.md",

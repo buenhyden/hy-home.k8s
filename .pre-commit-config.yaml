@@ -53,42 +53,11 @@ repos:
         stages: [manual]
       - id: end-of-file-fixer
         stages: [manual]
-        # Projection of terminal archive placement and sealed migration paths.
-        # Refresh with lifecycle transitions; the ownership test compares actual
-        # lifecycle meaning, including historical accepted controls. New draft
-        # migration paths remain formatter inputs. This is hook-local only.
+        # Archive records are unvalidated history and are never rewritten.
         # Raw paired-trial outputs are opaque evidence bytes. Scope the same
         # mutation exclusion to their exact current Stage 99 filename grammar.
         exclude: &frozen_archive |
-          (?x)^(?:docs/98\.archive/(?:
-            completed/(?!.*(?:/)?README\.md$).*\.md
-            | (?!migrations/)(?!completed/)(?!.*(?:/)?README\.md$).+\.md
-            | migrations/(?:
-              0001-sdlc-taxonomy-convergence
-              | 0002-sdlc-document-and-governance-consolidation
-              | 0003-agent-governance-control-plane-consolidation
-              | 0004-document-authority-convergence
-              | 0005-codex-claude-agent-governance-convergence
-              | 0006-unroutable-reference-profile-retirement
-              | 0007-agent-progress-ledger-retirement
-              | 0008-progress-append-form-retirement
-              | 0009-governance-memory-retirement
-              | 0010-stage99-form-naming-and-profile-identity-convergence
-              | 0011-stage03-package-router-retirement
-              | 0012-reference-form-family-naming
-              | 0013-completed-stage03-package-retention
-              | 0014-completed-stage03-package-retention-batch-a
-              | 0015-completed-stage03-package-retention-batch-b
-              | 0016-completed-stage03-package-retention-batch-c
-              | 0017-supersession-record-relocation
-              | 0018-terminal-stage03-package-retention
-              | 0019-requirement-and-architecture-authority-transfer
-              | 0020-stage00-agent-registry-authority-transfer
-              | 0021-common-agent-authority-routing
-              | 0022-document-taxonomy-package-retention
-              | 0023-responsibility-document-router-absorption
-            )\.md
-          )
+          (?x)^(?:docs/98\.archive/.+
           | \.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:baseline|with-skill)\.md
           )$
       - id: mixed-line-ending
@@ -113,13 +82,11 @@ repos:
         args:
           - '--baseline'
           - '.secrets.baseline'
-          # ArchiveEnvelope, ACER census, and Spec 046 closure Git/SHA
-          # identities are integrity metadata. Exact payloads remain covered
-          # by gitleaks and domain validators; only canonical identity-key
-          # lines are ignored.
+          # Pinned hash and commit identities are integrity metadata. Exact
+          # payloads remain covered by gitleaks and domain validators; only
+          # canonical identity-key lines are ignored.
           - '--exclude-lines'
-          - '^source_(commit|blob): "[0-9a-f]{40}"$|^content_sha256: "[0-9a-f]{64}"$|^ {2}"sourceCommit": "[0-9a-f]{40}",$|^ {4}"(baseCommit|candidateBaselineCommit|activationCommit|censusSha256)": "[0-9a-f]{40,64}",$|^ {4}"(?:source_commit|legacy_archive_commit|legacy_envelope_blob|source_blob)": "[0-9a-f]{40}",$|^ {4}"content_sha256": "[0-9a-f]{64}",$|^ {6}"sourceBlob": "[0-9a-f]{40}",?$|^ {8}"(sourceBlob|matchedLineSha256)": "[0-9a-f]{40,64}",?$|^ {10}"sourceBlob": "[0-9a-f]{40}",?$|^rev: "[0-9a-f]{40}" # frozen: [A-Za-z0-9][A-Za-z0-9._-]*$|^    --hash=sha256:[0-9a-f]{64}(?: [\\])?$|^ {6}"sha256": "[0-9a-f]{64}",?$|^ {2}"commit": "[0-9a-f]{40}",$|^ +"implementationRef": "git-sha1:[0-9a-f]{40}",$|^ +"(?:evidenceSha256|sourceSha256)": "[0-9a-f]{64}",$|^ +"sourceSha256": \{"const": "[0-9a-f]{64}"\},$|^TRANSITION_(BASE_OUTPUT|CURRENT_OUTPUT|REGISTRY|MANIFEST|MIGRATION)_OID="[0-9a-f]{40}"$|^ {4}''TRANSITION_(BASE_OUTPUT|CURRENT_OUTPUT|REGISTRY|MANIFEST|MIGRATION)_OID="[0-9a-f]{40}"'',$|^[A-Z0-9_]*(?:COMMIT|OID|SHA256) = "[0-9a-f]{40,64}"$|^ +(?:source_blob|content_sha256)="[0-9a-f]{40,64}",$|^ +"(?:baseOutputOid|currentOutputOid|currentGeneratorOid)": "[0-9a-f]{40}",$|^ {4}"(?:openapi\.template\.yaml|schema\.template\.graphql|service\.template\.proto)": "[0-9a-f]{64}",$'
-        exclude: '^(docs/90\.references/data/active-corpus-(eligibility-ledger|migration-results)\.json)$'
+          - '^rev: "[0-9a-f]{40}" # frozen: [A-Za-z0-9][A-Za-z0-9._-]*$|^    --hash=sha256:[0-9a-f]{64}(?: [\\])?$|^ {6}"sha256": "[0-9a-f]{64}",?$|^ {2}"commit": "[0-9a-f]{40}",$|^[A-Z0-9_]*(?:COMMIT|OID|SHA256) = "[0-9a-f]{40,64}"$'
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: 996abf60411a8d954288ac9856aae7602b80cbda # frozen: v0.22.1

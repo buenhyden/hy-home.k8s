@@ -134,26 +134,6 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
                     MARKDOWN.validate_document_text(invalid, path, profile, "strict")
                 )
 
-    def test_retired_governance_root_rejects_even_a_dangling_link(self) -> None:
-        from tests.test_validate_agent_registry import load_validator
-
-        validator = load_validator()
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / ".agents").mkdir()
-            validator.validate_absent_surfaces(root)
-            old = root / "docs/00.agent-governance"
-            old.parent.mkdir()
-            old.symlink_to("missing-governance")
-            with self.assertRaises(validator.HarnessError) as raised:
-                validator.validate_absent_surfaces(root)
-            self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
-            old.unlink()
-            (root / ".agents/memory").mkdir()
-            with self.assertRaises(validator.HarnessError) as raised:
-                validator.validate_absent_surfaces(root)
-            self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
-
     def test_common_agent_markdown_allows_korean_but_native_sidecars_do_not(
         self,
     ) -> None:
@@ -188,41 +168,6 @@ class CommonAgentsDocumentRoutesTests(unittest.TestCase):
             translated, path, profile, "strict"
         )
         self.assertIn("BODY-HEADING-REQUIRED", {item.rule_id for item in diagnostics})
-
-
-class ArchiveStageIndexRouteTests(unittest.TestCase):
-    """The Archive stage index answers to its router profile, not the payload rule."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.registry = contracts.load_registry(ROOT)
-        cls.profiles = {
-            profile.profile_id: profile for profile in cls.registry.profiles
-        }
-
-    def _report(self, path: str, profile_id: str, text: str):
-        return MARKDOWN.validate_document_text(
-            text,
-            PurePosixPath(path),
-            self.profiles[profile_id],
-            "strict",
-        )
-
-    def test_a_stage_index_without_frontmatter_is_reported(self) -> None:
-        diagnostics = self._report(
-            "docs/98.archive/README.md", "common/readme-stage-index", "# 98.archive\n"
-        )
-
-        self.assertIn("FM-DELIMITER", {item.rule_id for item in diagnostics})
-
-    def test_a_retained_payload_keeps_its_identity_only_contract(self) -> None:
-        diagnostics = self._report(
-            "docs/98.archive/completed/03.specs/0072-example/spec.md",
-            "sdlc/spec",
-            "# terminal evidence\n",
-        )
-
-        self.assertEqual(diagnostics, [])
 
 
 if __name__ == "__main__":

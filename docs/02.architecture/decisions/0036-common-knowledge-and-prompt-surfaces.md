@@ -133,8 +133,7 @@ This decision supersedes ADR-0035,
 whose body stays intact as evidence of the decision taken at that time.
 SPEC-0075
 recorded the acceptance criteria, the ordered work and the execution evidence
-for the two adopted surfaces; its package is recovered from Git through the
-Retention Catalog in the [Archive index](../../98.archive/README.md).
+for the two adopted surfaces; its package is recovered from Git history.
 
 ### Lifecycle Traceability
 

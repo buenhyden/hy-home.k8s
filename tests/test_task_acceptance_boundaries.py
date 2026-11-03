@@ -4,16 +4,13 @@ from __future__ import annotations
 
 import sys
 import unittest
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from document_contracts import (  # noqa: E402
     TaskExecution,
-    classify_path,
-    legacy_task_profile,
-    load_registry,
     task_contract_issues,
     task_evidence_issues,
 )
@@ -33,7 +30,6 @@ BINDING = TaskExecution(
         "blocked": ("NOT_RUN", "FAIL", "DEFER"),
         "completed": ("PASS", "NOT_APPLICABLE"),
         "cancelled": ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
-        "superseded": ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
     },
     summary_rule="task-items-v2",
     acceptance_states=("pending", "accepted", "rejected", "not-required"),
@@ -331,7 +327,6 @@ class TaskAcceptanceTests(unittest.TestCase):
             "blocked": ("NOT_RUN", "FAIL", "DEFER"),
             "completed": ("PASS", "NOT_APPLICABLE"),
             "cancelled": ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
-            "superseded": ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
         },
         summary_rule="task-items-v2",
         acceptance_states=("pending", "accepted", "rejected", "not-required"),
@@ -481,7 +476,6 @@ class TaskAcceptanceTests(unittest.TestCase):
             "in-progress",
             "blocked",
             "completed",
-            "superseded",
         ):
             with self.subTest(state=state):
                 self.assertIn(
@@ -528,55 +522,33 @@ class TaskAcceptanceTests(unittest.TestCase):
                 )
 
 
-class LegacyEvidenceCompatibilityTests(unittest.TestCase):
-    def test_old_accepted_check_keeps_location_only_placeholder_guard(self) -> None:
-        registry = load_registry(ROOT)
-        path = PurePosixPath(
-            "docs/03.specs/0106-stage99-lifecycle-normalization/tasks/"
-            "tsk-0016-shared-profile-migration.md"
-        )
-        text = (ROOT / path).read_text(encoding="utf-8")
-        current = classify_path(registry, path)
-        old = legacy_task_profile(ROOT, path, text, current)
-        binding = old.body_contract.task_execution
-        self.assertIsNone(binding.criterion_acceptance_section)
+class EvidencePlaceholderTests(unittest.TestCase):
+    def test_checked_result_keeps_placeholder_guard(self) -> None:
         row = {
             "Evidence": "EVD-001",
             "Criteria": CRITERION,
             "Work Unit": "WORK-001",
-            "Check": "Pending",
-            "Input": "Pending",
+            "Check": "Focused test",
+            "Input": "revision one",
             "Result": "PASS",
             "Location": "tests/focused_fixture.py",
-            "Acceptance": "accepted",
+            "Required": "yes",
+            "Resolves": "none",
         }
-
-        def rules(check):
-            return {rule for rule, _ in task_evidence_issues((check,), binding)}
-
-        self.assertEqual(rules(row), set())
-        self.assertIn("TASK-EVIDENCE-LOCATION", rules(row | {"Location": "Pending"}))
-        self.assertIn("TASK-EVIDENCE-LOCATION", rules(row | {"Input": ""}))
-
         modern = TaskAcceptanceTests.binding
+        self.assertEqual(
+            {rule for rule, _ in task_evidence_issues((row,), modern)}, set()
+        )
         for result in ("PASS", "FAIL"):
             for key in ("Check", "Input", "Location"):
                 with self.subTest(result=result, key=key):
-                    modern_row = {
-                        name: value
-                        for name, value in row.items()
-                        if name != "Acceptance"
-                    } | {
-                        "Required": "yes",
-                        "Resolves": "none",
-                        "Result": result,
-                        key: "Pending",
-                    }
                     self.assertIn(
                         "TASK-EVIDENCE-LOCATION",
                         {
                             rule
-                            for rule, _ in task_evidence_issues((modern_row,), modern)
+                            for rule, _ in task_evidence_issues(
+                                (row | {"Result": result, key: "Pending"},), modern
+                            )
                         },
                     )
 

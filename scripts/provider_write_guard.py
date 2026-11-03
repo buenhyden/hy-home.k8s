@@ -375,8 +375,8 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         reject_with_detail("HOOK-DOC-REGISTRY", str(exc))
     generation = registry.get("schema_version") if isinstance(registry, dict) else None
-    if type(generation) is not int or generation not in {9, 10}:
-        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 9 or 10")
+    if type(generation) is not int or generation != 10:
+        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 10")
     profiles = registry.get("profiles") if isinstance(registry, dict) else None
     if not isinstance(profiles, list) or not profiles:
         reject_with_detail("HOOK-DOC-REGISTRY", "profiles must be a non-empty list")
@@ -401,22 +401,6 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
     return tuple(routes)
 
 
-def retired_document_owner(path: str) -> str:
-    basename = path.rsplit("/", 1)[-1]
-    if path.startswith("docs/01.requirements/") and basename.startswith(
-        ("prd-", "srs-", "ifc-", "interface-")
-    ):
-        return "sdlc/requirement"
-    if path.startswith("docs/03.specs/"):
-        return {
-            "design.md": "sdlc/spec",
-            "tests.md": "sdlc/spec",
-            "agent-design.md": "sdlc/spec",
-            "tasks.md": "sdlc/task",
-        }.get(basename, "")
-    return ""
-
-
 def authored_doc_route(
     path: str, resolved_root: str, document_routes: tuple[dict[str, object], ...]
 ) -> tuple[str, str] | None:
@@ -430,12 +414,6 @@ def authored_doc_route(
         path,
     ):
         return None
-    retired_owner = retired_document_owner(path)
-    if retired_owner:
-        reject_with_detail(
-            "HOOK-DOC-RETIRED",
-            f"{path} is a retired standalone form; use registry profile {retired_owner}",
-        )
     matches = [route for route in document_routes if route["pattern"].fullmatch(path)]
     if len(matches) != 1:
         reject_with_detail(
@@ -647,15 +625,6 @@ def main(argv: list[str] | None = None) -> int:
     resolved_root = next(iter(absolute_roots), project_dir)
 
     for candidate in paths:
-        # QA may resolve a deleted historical source to its current owner. An
-        # edit must not use that deletion proof to recreate the retired
-        # authority root.
-        if candidate == "docs/00.agent-governance" or candidate.startswith(
-            "docs/00.agent-governance/"
-        ):
-            reject_with_detail(
-                "HOOK-PATH-RETIRED", "common authority is owned by .agents/"
-            )
         cursor = Path(resolved_root)
         for part in PurePosixPath(candidate).parts:
             cursor /= part

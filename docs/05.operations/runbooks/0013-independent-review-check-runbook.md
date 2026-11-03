@@ -1,10 +1,10 @@
 ---
 title: "Independent Review Check"
-version: "1.0.0"
+version: "1.0.1"
 type: "operation/runbook"
 status: "active"
 owner: "platform"
-updated: "2026-10-16"
+updated: "2026-11-03"
 layer: "operations"
 artifact_id: "RUN-0013"
 ---
@@ -17,7 +17,7 @@ artifact_id: "RUN-0013"
 전용 GitHub App의 `independent-review` check run으로 게시하는 절차다.
 `main` 보호가 이 check를 해당 App ID로 요구하게 되면(SPEC-0116 WORK-004),
 PR이 workflow를 고쳐도 이 결과를 만들 수 없다. 계약은
-[SPEC-0116](../../03.specs/0116-independent-review-gate/spec.md)이
+SPEC-0116이
 소유한다. AI 모델 API는 호출하지 않는다.
 
 - **Type**: PR merge gate publication
@@ -99,4 +99,4 @@ check run URL은 해당 변경의 Task 증거에 남긴다.
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [SPEC-0116](../../03.specs/0116-independent-review-gate/spec.md) | Required `independent-review` check from the review App on every `main` PR | Change Task evidence, the check run and [main protection record](../../../.github/rulesets/main-protection.md) |
+| N/A — SPEC-0116 left the tree; Git history recovers it | Required `independent-review` check from the review App on every `main` PR | Change Task evidence, the check run and [main protection record](../../../.github/rulesets/main-protection.md) |

@@ -16,7 +16,6 @@ import re
 import stat
 import sys
 import tomllib
-from contextlib import nullcontext
 
 import yaml
 from pathlib import Path, PurePosixPath
@@ -28,22 +27,6 @@ from json_schema_validation import SchemaEvaluationError, schema_errors
 REGISTRY_PATH = PurePosixPath(".agents/roles/registry.json")
 REGISTRY_SCHEMA_PATH = PurePosixPath(".agents/roles/registry.schema.json")
 REGISTRY_PROVIDER_IDS = ("claude", "codex")
-# A surface stays retired while the reason it was retired still holds. The
-# Codex hook surface left this list once the installed client shipped one;
-# `.codex/skills` stays because shared skills are read through `.claude/skills`.
-RETIRED_SURFACES = (
-    "docs/00.agent-governance",
-    ".agents/memory",
-    ".agents/rules",
-    ".agents/agents",
-    ".agents/registry.json",
-    ".agents/registry.schema.json",
-    ".agents/hooks",
-    ".agents/providers",
-    ".codex/skills",
-    ".gemini",
-    "GEMINI.md",
-)
 CODEX_CONFIG_PATH = ".codex/config.toml"
 # SPEC-0114: the reviewed Codex execpolicy file. A digest keeps it exact the
 # way the config and Claude permission lists are exact; a reviewed edit
@@ -608,8 +591,6 @@ def validate_registry(
 ) -> dict[str, int]:
     """Validate the sole Codex/Claude provider-neutral registry authority."""
 
-    if check_files:
-        validate_absent_surfaces(root)
     if registry is None:
         registry = load_json(root, REGISTRY_PATH)
     registry = _validate_registry_schema(root, registry)
@@ -801,7 +782,7 @@ def _frontmatter(text: str) -> tuple[dict[str, Any], str]:
 
 
 def _node_exists(root: Path, relative: str) -> bool:
-    """Inspect a retired node without following any parent or leaf link."""
+    """Inspect a node without following any parent or leaf link."""
     descriptors: list[int] = []
     try:
         flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
@@ -817,59 +798,12 @@ def _node_exists(root: Path, relative: str) -> bool:
         return False
     except OSError:
         fail(
-            "AGENT-GOVERNANCE-RETIRED",
-            "retired owner parent cannot be inspected safely",
+            "AGENT-NATIVE-HOOK",
+            "owner parent cannot be inspected safely",
         )
     finally:
         for descriptor in reversed(descriptors):
             os.close(descriptor)
-
-
-def validate_absent_surfaces(root: Path) -> None:
-    root = _strict_root(root)
-    for path in RETIRED_SURFACES:
-        if _node_exists(root, path):
-            fail("AGENT-GOVERNANCE-RETIRED", "retired surface was recreated")
-
-
-def validate_current_sources(root: Path) -> None:
-    """Current guidance cannot import retired common owners.
-
-    Historical Spec/Task/archive records and negative tests are deliberately
-    outside this scan; their evidence belongs to the historical consumer owner.
-    """
-    paths = [f".{provider}/provider.md" for provider in REGISTRY_PROVIDER_IDS]
-    governance = root / ".agents"
-    if governance.is_dir():
-        for parent, directories, files in os.walk(governance, followlinks=False):
-            for name in directories:
-                if (Path(parent) / name).is_symlink():
-                    fail(
-                        "AGENT-GOVERNANCE-CONSUMER",
-                        "shared owner has a symlink directory",
-                    )
-            paths.extend(
-                (Path(parent) / name).relative_to(root).as_posix()
-                for name in files
-                if name.endswith((".md", ".json", ".sh", ".yaml"))
-            )
-    for path in paths:
-        text = _read_text(root, path, "AGENT-GOVERNANCE-CONSUMER")
-        if any(
-            token in text
-            for token in (
-                "docs/00.agent-governance/",
-                ".agents/registry.json",
-                ".agents/registry.schema.json",
-                ".agents/agents/",
-                ".agents/rules/",
-                ".agents/memory/",
-            )
-        ):
-            fail(
-                "AGENT-GOVERNANCE-CONSUMER",
-                "current guidance references a retired owner",
-            )
 
 
 def _validate_directory_entries(
@@ -1595,8 +1529,6 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                 "AGENT-NATIVE-REFERENCE",
                 "root gateway must remain a thin current router",
             )
-        if "docs/00.agent-governance/" in gateway:
-            fail("AGENT-GOVERNANCE-CONSUMER", "gateway depends on retired root")
         loader_refs = _gateway_loader_refs(provider["id"])
         if provider["id"] == "codex":
             loads = re.findall(r"(?m)^Read `([^`]+)` before acting\.$", gateway)
@@ -1623,33 +1555,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = _resolve_root(args.root)
-        validate_absent_surfaces(root)
-        import agent_governance_consumers
-        import qa
-
-        # The consumer proof uses index membership and working-tree bytes.
-        # Reuse QA's isolated index for unstaged/new files; a clean QA checkout
-        # already has the exact inventory and needs no nested snapshot.
-        snapshot_required = bool(
-            qa.git(root, "diff", "--name-only", "-z")
-            or qa.git(root, "ls-files", "--others", "--exclude-standard", "-z")
-        )
-        context = (
-            qa.repository_snapshot(root) if snapshot_required else nullcontext(root)
-        )
-        with context as validation_root:
-            counts = validate_registry(validation_root)
-            validate_current_sources(validation_root)
-            try:
-                agent_governance_consumers.validate_repository(validation_root)
-            except agent_governance_consumers.ContractError:
-                fail(
-                    "AGENT-GOVERNANCE-CONSUMER",
-                    "historical/current consumer proof failed",
-                )
-        scope = "working-tree snapshot" if snapshot_required else "current indexed tree"
+        counts = validate_registry(root)
         print(
-            f"[PASS] agent registry validation passed ({scope}): "
+            "[PASS] agent registry validation passed: "
             + " ".join(
                 f"{key}={counts[key]}"
                 for key in (

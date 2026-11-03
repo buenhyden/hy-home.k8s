@@ -23,7 +23,6 @@ updated: "2026-10-27"
 - Developers
 - Operators
 - Documentation Writers
-- AI Agents
 
 ## Scope
 
@@ -61,7 +60,7 @@ hy-home.k8s/
 ├── .agents/               # 공급자 중립 역할·스킬 registry와 공유 자산
 ├── .claude/               # Claude native 투영과 권한·훅 선언
 ├── .codex/                # Codex native 투영과 로컬 베이스라인
-├── AGENTS.md              # Codex/GPT 전용 얇은 게이트웨이
+├── AGENTS.md              # AI 에이전트용 루트 게이트웨이(Codex/GPT)
 ├── CLAUDE.md              # Claude 전용 얇은 오버레이
 └── README.md              # This file
 ```
@@ -186,8 +185,13 @@ cd hy-home.k8s
 
 ### Repository Workflow
 
-처음에는 [문서 허브](docs/README.md)에서 목적에 맞는 stage를 찾고,
-에이전트 작업은 [공통 거버넌스](.agents/README.md)에서 역할과 절차를 찾는다.
+처음에는 [문서 허브](docs/README.md)에서 목적에 맞는 stage를 찾는다.
+README는 사람을 위한 안내이고, `AGENTS.md`는 AI 에이전트를 위한 지시다.
+`AGENTS.md`는 README마다 두지 않고, 고유한 에이전트 책임과 규칙이 있는 작업
+영역의 루트(`docs/`, `gitops/`, `infrastructure/`, `policy/`, `scripts/`,
+`tests/`, `.github/`, `examples/`)에만 README와 함께 두며 하위 폴더에 적용된다.
+나머지 폴더는 README만 둔다. 판정 규칙은
+[문서 작성 정책](.agents/governance/document-authoring.md)이 소유한다. 에이전트의 역할과 절차는 [공통 거버넌스](.agents/README.md)에 있다.
 문서 작성·링크·언어 기준과 에이전트 실행·승인·Git 절차는
 [공통 거버넌스](.agents/README.md)에서 각 정책 소유자를 찾는다.
 

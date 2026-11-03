@@ -28,23 +28,13 @@ TOP_LEVEL_KEYS = frozenset(
         "lifecycle_domains",
     }
 )
-# ADR-0038 binds each Stage 98 retention class to the terminal states it admits,
-# ADR-0039 adds the retention units, modes, citation table, and legacy set, and
-# ADR-0040 adds the assessment contract, and SPEC-0091 adds the README
-# navigation contract. SPEC-0093 adds the document language contract.
-# A comparison-base registry from before either decision has none of them, so
-# the keys are admitted beside the required set rather than required by it.
+# SPEC-0091 adds the README navigation contract and SPEC-0093 the document
+# language contract. A comparison-base registry from before either decision
+# has none of them, so the keys are admitted beside the required set.
 OPTIONAL_TOP_LEVEL_KEYS = frozenset(
     {
-        "retention_classes",
-        "retention_units",
-        "retention_modes",
-        "archive_citation",
-        "archive_assessment",
         "readme_navigation",
         "document_language",
-        "legacy_rebased_retained_paths",
-        "migration_admission",
         "shared_contract",
     }
 )
@@ -64,7 +54,7 @@ PROFILE_KEYS = frozenset(
     }
 )
 DOCUMENT_FAMILIES = frozenset(
-    {"common", "governance", "sdlc", "operation", "reference", "archive", "evaluation"}
+    {"common", "governance", "sdlc", "operation", "reference", "evaluation"}
 )
 PROFILE_MODES = frozenset(
     {"authored", "router", "template", "evidence", "native", "non-target"}
@@ -82,21 +72,6 @@ AGENT_MACHINE_FIELDS = frozenset(
         "providers",
         "skill",
         "skills",
-    }
-)
-TRANSITION_SUPPORT_PROFILE_IDS = frozenset(
-    {
-        "governance/template-support",
-        "common/template-governance-template-support",
-    }
-)
-RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
-    {
-        "sdlc/data-model",
-        "governance/control",
-        "common/native-contract-openapi",
-        "common/native-contract-graphql",
-        "common/native-contract-protobuf",
     }
 )
 
@@ -186,8 +161,6 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         profile_id = profile.get("id")
         if not isinstance(profile_id, str) or not profile_id or profile_id in seen:
             raise AuthorityError("REGISTRY_PROFILE_ID: IDs must be unique strings")
-        if profile_id in RETIRED_UNUSED_CAPACITY_PROFILE_IDS:
-            raise AuthorityError(f"RETIRED_UNUSED_CAPACITY_PROFILE: {profile_id}")
         seen.add(profile_id)
         if set(profile) != PROFILE_KEYS:
             raise AuthorityError(
@@ -206,10 +179,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         path_pattern = profile.get("path_pattern")
         if not isinstance(path_pattern, str):
             raise AuthorityError(f"REGISTRY_PATH_PATTERN: {profile_id}")
-        if (
-            path_pattern.startswith("^docs/99\\.templates/support/")
-            and profile_id not in TRANSITION_SUPPORT_PROFILE_IDS
-        ):
+        if path_pattern.startswith("^docs/99\\.templates/support/"):
             raise AuthorityError(f"STAGE99_SUPPORT_OWNER: {profile_id}")
     lineage = {"lifecycleDomains": registry.get("lifecycle_domains")}
     if isinstance(lineage, Mapping):
@@ -251,8 +221,6 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
                 source not in states or target not in states for source, target in edges
             ):
                 raise AuthorityError("LIFECYCLE_TRANSITION: invalid edge")
-            if not [state for state, kind in states.items() if kind == "terminal"]:
-                raise AuthorityError(f"LIFECYCLE_TERMINAL: {domain['family']}")
             # A family may have no edges only when it has exactly one state and
             # that state is terminal: a document created immutable and finished.
             # Any other edgeless family would leave states unreachable.
@@ -267,7 +235,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
                     continue
                 # A member's admitted states and the graph's nodes are the same
                 # fact. Letting them differ lets a document hold a state no edge
-                # can reach or leave, which is how the archive families drifted.
+                # can reach or leave.
                 if set(
                     (declared.get("lifecycle") or {}).get("status_domain", [])
                 ) != set(states):

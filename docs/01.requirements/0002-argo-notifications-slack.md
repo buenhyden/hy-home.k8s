@@ -1,10 +1,10 @@
 ---
 title: "Argo Notifications Slack Webhook Requirement Package"
-version: "1.0.2"
+version: "1.0.3"
 type: "sdlc/requirement"
 status: "in-review"
 owner: "platform"
-updated: "2026-10-05"
+updated: "2026-11-03"
 layer: "requirements"
 artifact_id: "REQ-0002"
 ---
@@ -96,23 +96,31 @@ This update does not claim to have observed runtime state or received live notif
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0002-FR-0001 | The ArgoCD Notifications controller is enabled and an operator can check its Pod state. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| REQ-0002-FR-0002 | The Slack credential syncs from Vault through ESO, and no plaintext token appears in Git or logs. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| REQ-0002-FR-0003 | The ConfigMap defines templates and triggers for deployment, health, sync, Rollouts completion, and abort events. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| REQ-0002-NFR-0001 | Default subscriptions apply health degradation and sync failure notifications to every app. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| REQ-0002-IF-0001 | A per-app Slack channel opt-in for deployment completion notifications can be declared. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| REQ-0002-IF-0002 | Notification credential bootstrap is performed only as a human-approved external task. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the `argocd-notifications-controller` Pod is `Running`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | The `argocd-notifications-secret` ExternalSecret can be confirmed as `Ready=True`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — Acceptance criterion 03 remains acceptance-only | A deliberately triggered sync failure event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — Acceptance criterion 04 remains acceptance-only | A health degraded event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
-| N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and [Spec 005](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md) |
+| REQ-0002-FR-0001 | The ArgoCD Notifications controller is enabled and an operator can check its Pod state. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| REQ-0002-FR-0002 | The Slack credential syncs from Vault through ESO, and no plaintext token appears in Git or logs. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| REQ-0002-FR-0003 | The ConfigMap defines templates and triggers for deployment, health, sync, Rollouts completion, and abort events. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| REQ-0002-NFR-0001 | Default subscriptions apply health degradation and sync failure notifications to every app. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| REQ-0002-IF-0001 | A per-app Slack channel opt-in for deployment completion notifications can be declared. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| REQ-0002-IF-0002 | Notification credential bootstrap is performed only as a human-approved external task. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| N/A — Acceptance criterion 01 remains acceptance-only | An operator can confirm that the `argocd-notifications-controller` Pod is `Running`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| N/A — Acceptance criterion 02 remains acceptance-only | The `argocd-notifications-secret` ExternalSecret can be confirmed as `Ready=True`. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| N/A — Acceptance criterion 03 remains acceptance-only | A deliberately triggered sync failure event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| N/A — Acceptance criterion 04 remains acceptance-only | A health degraded event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
+| N/A — Acceptance criterion 05 remains acceptance-only | A Rollouts abort event arrives in the approved Slack channel. | [AD 0005](../02.architecture/descriptions/0005-argo-notifications-slack.md) and Spec 005 |
 
 - **AD**: [`../02.architecture/descriptions/0005-argo-notifications-slack.md`](../02.architecture/descriptions/0005-argo-notifications-slack.md)
-- **Spec**: [`../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`](../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md)
-- **Plan**: [`../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md`](../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
-- **Task**: [Spec 0005 Plan](../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md)
+- **Spec**: `../98.archive/completed/03.specs/0005-argo-notifications-slack/spec.md`
+- **Plan**: `../98.archive/completed/03.specs/0005-argo-notifications-slack/plan.md`
+- **Task**: Spec 0005 Plan
 - **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/decisions/0041-openbao-secret-backend.md`](../02.architecture/decisions/0041-openbao-secret-backend.md)
 - **Requirement**: [`./0001-argo-rollouts-progressive-delivery.md`](./0001-argo-rollouts-progressive-delivery.md) — Rollouts event source
 - **Requirement**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — ESO/Vault dependency
+
+### Archived Lineage
+
+These documents were deleted from `docs/98.archive/` under SPEC-0140 and are recovered with `git show 69445fca:<path>`. Paths below are the archive paths at that commit; a completed Spec path is its package directory (`spec.md`, `plan.md`, `tasks/`).
+
+| Source | Kind | Summary | Original path |
+| --- | --- | --- | --- |
+| SPEC-0005 | completed spec | Defined the repo-backed contract for Slack notifications through ArgoCD Notifications: Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions and per-application opt-in annotations. Completed against the static contract; Slack token bootstrap, Vault writes and live sends stayed human-approved runtime validation. | `docs/98.archive/completed/03.specs/0005-argo-notifications-slack/` |

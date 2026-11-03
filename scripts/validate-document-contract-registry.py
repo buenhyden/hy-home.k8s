@@ -32,7 +32,6 @@ DOCUMENT_REGISTRY_ROOT_ERROR = (
 TERMINAL_TEMPLATE_GROUPS = frozenset(
     {
         "architecture",
-        "archive",
         "common",
         "evaluations",
         "governance",
@@ -78,11 +77,6 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--mode", choices=("strict",), default="strict")
-    parser.add_argument(
-        "--route-state",
-        choices=("legacy", "transition", "terminal"),
-        help="parse-only compatibility argument; the registry is terminal",
-    )
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",

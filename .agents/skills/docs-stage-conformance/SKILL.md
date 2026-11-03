@@ -29,7 +29,7 @@ using this procedure. Skill invocation does not authorize additional actions.
    authority drift before editing. For a broad governance audit use
    workspace-harness-audit instead.
 3. Apply the smallest authorized fix. Preserve sealed or completed evidence;
-   report historical disposition to its migration owner rather than rewriting
+   report historical disposition to its owning Task rather than rewriting
    facts to satisfy a current profile.
 4. Update affected navigation and exact current consumers together.
 5. Run the applicable strict document validators and generated-index checks,

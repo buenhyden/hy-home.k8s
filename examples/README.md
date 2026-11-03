@@ -26,7 +26,6 @@ AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 
 - Operators
 - Cloud Architects
 - Documentation Writers
-- AI Agents
 
 ### Scope
 

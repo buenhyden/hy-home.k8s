@@ -3,17 +3,15 @@
 from __future__ import annotations
 
 import importlib.util
-import json
 import contextlib
 from dataclasses import replace
 import io
-import tarfile
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
-from unittest import mock
 from pathlib import Path, PurePosixPath
 
 
@@ -23,8 +21,8 @@ sys.path.insert(0, str(SCRIPTS))
 from document_contracts import (  # noqa: E402
     TaskExecution,
     load_registry,
+    task_contract_issues,
     task_execution_issues,
-    _typed_registry_from_mapping,
 )
 from document_lifecycle import compare_lifecycle, document_from_text  # noqa: E402
 
@@ -48,73 +46,39 @@ TASK = PurePosixPath(
 )
 SPEC = TASK.parent.parent / "spec.md"
 UPSTREAM = "[VAL-P02-001](../spec.md#success-criteria--verification-plan)"
-HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Acceptance | Evidence |"
-SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- |"
-PRE_MIGRATION_COMMIT = "7fc8829858bdcdf27e3ab93c23e62cb2a84df751"
-MIGRATION_COMMIT = "2a03a5e03d6134542dc8c1d8eafc6b63e9f50fcb"
-PRE_P03_COMMIT = "ae93644e7e1137ed66ac243af4156ecea2d9cee4"
+HEADER = "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |"
+SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- |"
+CHECK_HEADER = "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Required | Resolves |"
+CHECK_SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+RESULTS = ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE")
 
 
-def pre_p03_registry():
-    return _typed_registry_from_mapping(
-        json.loads(
-            subprocess.check_output(
-                ["git", "show", f"{PRE_P03_COMMIT}:docs/99.templates/registry.json"],
-                cwd=ROOT,
-            )
-        )
-    )
-
-
-def current_task_form(text: str) -> str:
-    """Project a generation 10 Task's tables into the current column contract.
-
-    The current contract reads the eight-column form only as exact completed
-    baseline bytes, so a historical replay keeps every row and drops or maps
-    only the retired Acceptance column.
-    """
-
-    lines = []
-    for line in text.split("\n"):
-        cells = line.split(" | ")
-        if line.startswith(("| ID | ", "| WORK-")) and len(cells) == 8:
-            del cells[6]
-        elif line.startswith("| Evidence | ") and cells[-1] == "Acceptance |":
-            cells[-1] = "Required | Resolves |"
-        elif line.startswith("| EVD-") and len(cells) == 8:
-            required = "no" if cells[-1].startswith("not-required") else "yes"
-            cells[-1] = f"{required} | none |"
-        elif line == "| --- | --- | --- | --- | --- | --- | --- | --- |":
-            cells = None
-        lines.append(line if cells is None else " | ".join(cells))
-    text = "\n".join(lines)
-    task, _, evidence = text.partition("## Task Evidence")
-    task = task.replace(
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
-    )
-    evidence = evidence.replace(
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-    )
-    return task + "## Task Evidence" + evidence
-
-
-def cancelled_spec(text: str) -> str:
-    """Close an in-progress Spec through its declared cancellation edge."""
-
-    return text.replace(
-        'status: "in-progress"',
-        'status: "cancelled"\n'
-        "cancellation:\n"
-        '  reason: "fixture"\n'
-        '  authorization_ref: "fixture"\n'
-        '  criteria_disposition: "fixture"',
-        1,
-    )
+def _cells(line: str) -> list[str]:
+    return [cell.strip() for cell in line.strip("|").split(" | ")]
 
 
 def task_text(status: str, rows: list[str]) -> str:
+    """Render one current-form Task whose checks and verdicts follow its rows."""
+
+    checks, decisions, decided = [], [], set()
+    for number, line in enumerate(rows, 1):
+        work, criterion, _, _, state, result, _ = _cells(line)
+        outcome = result if result in RESULTS else "NOT_RUN"
+        linked = re.findall(r"\[VAL-[^\]]+\]\([^)]*\)", criterion)
+        checks.append(
+            f"| EVD-{number:03d} | {', '.join(linked) or criterion} | {work} | "
+            f"Focused test | Synthetic fixture | {outcome} | "
+            f"{'tests/fixture.py' if outcome in ('PASS', 'FAIL') else 'Pending'} | "
+            "yes | none |"
+        )
+        for link in linked:
+            if link not in decided:
+                decided.add(link)
+                accepted = "completed" in (status, state) and outcome == "PASS"
+                decisions.append(
+                    f"| {link} | {'accepted' if accepted else 'pending'} | "
+                    f"{f'EVD-{number:03d}' if accepted else 'none'} | Fixture | platform |"
+                )
     return "\n".join(
         [
             "---",
@@ -138,14 +102,16 @@ def task_text(status: str, rows: list[str]) -> str:
             HEADER,
             SEPARATOR,
             *rows,
+            "## Task Evidence",
+            CHECK_HEADER,
+            CHECK_SEPARATOR,
+            *checks,
+            "## Criterion Acceptance",
+            "| Criterion | Acceptance | Evidence | Disposition | Current owner |",
+            "| --- | --- | --- | --- | --- |",
+            *decisions,
             "## Approval and Safety Boundaries",
             "Example.",
-            "## Task Evidence",
-            "| Evidence | Criteria | Work Unit | Check | Input | Result | Location | Acceptance |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- |",
-            "| EVD-001 | "
-            + UPSTREAM
-            + " | WORK-001 | Focused test | Synthetic fixture | NOT_RUN | Pending | pending |",
             "## Verification Summary",
             "Example.",
             "",
@@ -159,19 +125,18 @@ def row(
     criterion: str = UPSTREAM,
     status: str = "frontmatter",
     result: str = "NOT_RUN",
-    acceptance: str | None = None,
     evidence: str = "Execution pending",
 ) -> str:
     return (
         f"| {work_id} | {criterion} | Verify the change | platform | "
-        f"{status} | {result} | {acceptance or ('accepted' if result == 'PASS' else 'pending')} | {evidence} |"
+        f"{status} | {result} | {evidence} |"
     )
 
 
 class TaskExecutionContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.registry = pre_p03_registry()
+        cls.registry = load_registry(ROOT)
         cls.profile = next(
             profile
             for profile in cls.registry.profiles
@@ -179,12 +144,27 @@ class TaskExecutionContractTests(unittest.TestCase):
         )
 
     def rules(self, text: str) -> set[str]:
-        return {
+        """Profile findings plus the Task row, check and verdict contract."""
+
+        found = {
             item.rule_id
             for item in MARKDOWN.validate_document_text(
                 text, TASK, self.profile, "strict"
             )
         }
+        binding = self.profile.body_contract.task_execution
+        state = re.search(r'(?m)^status: "([^"]+)"$', text)
+        work = LINKS._body_contract_rows(text, self.profile)
+        checks = LINKS.task_evidence_rows(text, binding)
+        decisions = LINKS.task_acceptance_rows(text, binding)
+        if work and checks is not None and decisions is not None:
+            found |= {
+                rule
+                for rule, _ in task_contract_issues(
+                    work, checks, decisions, state.group(1) if state else "", binding
+                )
+            }
+        return found
 
     def test_one_task_table_is_bound_for_all_six_states(self) -> None:
         contract = self.profile.body_contract
@@ -200,7 +180,6 @@ class TaskExecutionContractTests(unittest.TestCase):
                 "Owner",
                 "Status",
                 "Result",
-                "Acceptance",
                 "Evidence",
             ),
         )
@@ -241,54 +220,45 @@ class TaskExecutionContractTests(unittest.TestCase):
             self.rules(task_text("completed", [row(result="NOT_RUN")])),
         )
 
-    def test_all_state_execution_remains_strict_in_registry_and_audit(self) -> None:
-        for mode in ("registry", "audit"):
-            for status in ("completed", "cancelled"):
-                with self.subTest(mode=mode, status=status):
-                    text = task_text(
-                        status,
-                        [
-                            row(
-                                result="INVENTED",
-                                evidence="Reason: factual check attempted",
-                            )
-                        ],
-                    )
-                    body = text.split("---", 2)[2]
-                    rules = {
-                        item.rule_id
-                        for item in MARKDOWN._body_contract_diagnostics(
-                            TASK, self.profile, body, status, mode
+    def test_all_state_execution_remains_strict(self) -> None:
+        for status in ("completed", "cancelled"):
+            with self.subTest(status=status):
+                self.assertIn(
+                    "TASK-EXECUTION-RESULT",
+                    self.rules(
+                        task_text(
+                            status,
+                            [
+                                row(
+                                    result="INVENTED",
+                                    evidence="Reason: factual check attempted",
+                                )
+                            ],
                         )
-                    }
-                    self.assertIn("TASK-EXECUTION-RESULT", rules)
-            completed = task_text(
-                "completed", [row(result="FAIL", evidence="Observed check FAIL")]
-            ).split("---", 2)[2]
-            self.assertIn(
-                "TASK-EXECUTION-RESULT",
-                {
-                    item.rule_id
-                    for item in MARKDOWN._body_contract_diagnostics(
-                        TASK, self.profile, completed, "completed", mode
-                    )
-                },
-            )
-            cancelled = task_text(
-                "cancelled",
-                [
-                    row(
-                        result="FAIL",
-                        evidence="Reason: cancelled after observed check FAIL",
-                    )
-                ],
-            ).split("---", 2)[2]
-            self.assertEqual(
-                MARKDOWN._body_contract_diagnostics(
-                    TASK, self.profile, cancelled, "cancelled", mode
-                ),
-                [],
-            )
+                    ),
+                )
+        self.assertIn(
+            "TASK-EXECUTION-RESULT",
+            self.rules(
+                task_text(
+                    "completed", [row(result="FAIL", evidence="Observed check FAIL")]
+                )
+            ),
+        )
+        self.assertNotIn(
+            "TASK-EXECUTION-RESULT",
+            self.rules(
+                task_text(
+                    "cancelled",
+                    [
+                        row(
+                            result="FAIL",
+                            evidence="Reason: cancelled after observed check FAIL",
+                        )
+                    ],
+                )
+            ),
+        )
 
     def test_terminal_and_blocked_evidence_cannot_be_placeholders(self) -> None:
         self.assertIn(
@@ -332,65 +302,8 @@ class TaskExecutionContractTests(unittest.TestCase):
             task_text("completed", [row(result="PASS", evidence="focused test PASS")]),
             unbound,
             {TASK: "sdlc/task", SPEC: "sdlc/spec"},
-            registry_generation=10,
         )
         self.assertFalse(view.task_terminal_evidence_valid)
-
-    def test_route_frontmatter_schema_accepts_current_scalar_record(self) -> None:
-        route = next(
-            profile
-            for profile in self.registry.profiles
-            if profile.profile_id == "archive/scope-migration"
-        )
-        schema = json.loads(
-            (ROOT / "docs/99.templates/contracts/frontmatter.schema.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        text = "\n".join(
-            [
-                "---",
-                'title: "Retired route"',
-                'version: "0.1.0"',
-                'type: "archive/route"',
-                'status: "draft"',
-                'owner: "platform"',
-                'updated: "2026-10-04"',
-                'layer: "archive"',
-                'artifact_id: "MIG-9999"',
-                'retired_route: "docs/03.specs/9999-example/spec.md"',
-                "successor: null",
-                'reason: "Retired after reviewed disposition"',
-                "---",
-                "",
-            ]
-        )
-        diagnostics = MARKDOWN.validate_document_text(
-            text,
-            PurePosixPath("docs/98.archive/tombstones/9999-example.md"),
-            route,
-            "strict",
-            frontmatter_schema=schema,
-        )
-        self.assertNotIn("FM-SCHEMA", {item.rule_id for item in diagnostics})
-        for successor, rejected in (
-            ('"null"', True),
-            ('["docs/03.specs/9999-example/spec.md"]', True),
-            ('"docs/03.specs/9999-example/spec.md"', False),
-        ):
-            with self.subTest(successor=successor):
-                changed = text.replace("successor: null", f"successor: {successor}")
-                rules = {
-                    item.rule_id
-                    for item in MARKDOWN.validate_document_text(
-                        changed,
-                        PurePosixPath("docs/98.archive/tombstones/9999-example.md"),
-                        route,
-                        "strict",
-                        frontmatter_schema=schema,
-                    )
-                }
-                self.assertEqual("FM-SCHEMA" in rules, rejected)
 
     def test_failed_completed_row_is_not_terminal_evidence(self) -> None:
         text = task_text(
@@ -429,7 +342,7 @@ class TaskExecutionContractTests(unittest.TestCase):
 
 
 class V4TaskRowTests(unittest.TestCase):
-    """The current eight-column result/acceptance contract has one source row."""
+    """The current seven-column Task row; verdicts live in Criterion Acceptance."""
 
     binding = TaskExecution(
         single_status_marker="frontmatter",
@@ -442,6 +355,7 @@ class V4TaskRowTests(unittest.TestCase):
             "cancelled": ("NOT_RUN", "PASS", "FAIL", "DEFER", "NOT_APPLICABLE"),
         },
         summary_rule="task-items-v2",
+        criterion_acceptance_section="Criterion Acceptance",
         acceptance_states=("pending", "accepted", "rejected", "not-required"),
     )
 
@@ -454,57 +368,28 @@ class V4TaskRowTests(unittest.TestCase):
             "Owner": "platform",
             "Status": "frontmatter",
             "Result": "NOT_RUN",
-            "Acceptance": "pending",
             "Evidence": "Execution pending",
         } | changes
 
     def rules(self, status: str, *rows: dict[str, str]) -> set[str]:
         return {rule for rule, _ in task_execution_issues(rows, status, self.binding)}
 
-    def test_draft_is_valid_and_completed_requires_pass_and_acceptance(self) -> None:
+    def test_draft_is_valid_and_completed_linked_row_requires_pass(self) -> None:
         self.assertEqual(self.rules("draft", self.work()), set())
-        self.assertIn(
-            "TASK-EXECUTION-ACCEPTANCE",
-            self.rules(
-                "completed",
-                self.work(Result="PASS", Evidence="focused test PASS"),
-            ),
-        )
         self.assertEqual(
             self.rules(
-                "completed",
-                self.work(
-                    Result="PASS", Acceptance="accepted", Evidence="focused test PASS"
-                ),
+                "completed", self.work(Result="PASS", Evidence="focused test PASS")
             ),
             set(),
         )
 
     def test_not_applicable_cannot_waive_linked_required_criterion(self) -> None:
         self.assertIn(
-            "TASK-EXECUTION-ACCEPTANCE",
+            "TASK-EXECUTION-RESULT",
             self.rules(
                 "completed",
                 self.work(
-                    Result="NOT_APPLICABLE",
-                    Acceptance="not-required",
-                    Evidence="Criterion omitted by Task",
-                ),
-            ),
-        )
-
-    def test_nonrequired_completed_row_cannot_claim_required_acceptance(self) -> None:
-        self.assertIn(
-            "TASK-EXECUTION-ACCEPTANCE",
-            self.rules(
-                "completed",
-                self.work(
-                    **{
-                        "Upstream criterion": "N/A — optional experiment",
-                        "Result": "PASS",
-                        "Acceptance": "accepted",
-                        "Evidence": "No acceptance criterion",
-                    }
+                    Result="NOT_APPLICABLE", Evidence="Criterion omitted by Task"
                 ),
             ),
         )
@@ -519,7 +404,6 @@ class V4TaskRowTests(unittest.TestCase):
                             **{
                                 "Upstream criterion": "N/A — optional experiment",
                                 "Result": result,
-                                "Acceptance": "not-required",
                                 "Evidence": "Reason: optional experiment withdrawn",
                             }
                         ),
@@ -551,11 +435,11 @@ class CompletionIndexTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="task-completion-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        archive = subprocess.check_output(
-            ["git", "archive", PRE_P03_COMMIT, "docs/99.templates"], cwd=ROOT
+        shutil.copytree(
+            ROOT / "docs/99.templates",
+            self.root / "docs/99.templates",
+            ignore=shutil.ignore_patterns("__pycache__"),
         )
-        with tarfile.open(fileobj=io.BytesIO(archive)) as source:
-            source.extractall(self.root, filter="data")
         self.spec = SPEC
         self.plan = SPEC.parent / "plan.md"
         self.task = TASK
@@ -609,6 +493,12 @@ class CompletionIndexTests(unittest.TestCase):
                     "| --- | --- | --- | --- | --- | --- |",
                     "| WORK-001 | [VAL-P02-001](spec.md#success-criteria--verification-plan) | Verify | none | "
                     "[SPEC-0106-TSK-0001](tasks/tsk-0001-example.md) | Focused test |",
+                    "## Global Constraints",
+                    "Keep the approved [Spec](spec.md#strategic-boundaries--non-goals) parent contract.",
+                    "## Promotion",
+                    "| Durable contract | Promoted to | Where |",
+                    "| --- | --- | --- |",
+                    "| none | none | No durable contract was introduced |",
                     "",
                 ]
             ),
@@ -726,42 +616,6 @@ class CompletionIndexTests(unittest.TestCase):
                 self.assertEqual(result, 1, output)
                 self.assertIn("COMPLETION-RESULT", output)
 
-    def test_nonrequired_cancelled_row_does_not_waive_completed_requirement(
-        self,
-    ) -> None:
-        self.write(
-            self.task,
-            task_text(
-                "cancelled",
-                [
-                    row(
-                        status="completed",
-                        result="PASS",
-                        evidence="focused unit test PASS",
-                    ),
-                    row(
-                        "WORK-002",
-                        criterion="N/A — optional experiment outside Spec acceptance",
-                        status="cancelled",
-                        result="NOT_RUN",
-                        evidence="Reason: optional experiment withdrawn",
-                    ),
-                ],
-            ),
-        )
-        self.write(
-            self.task,
-            (self.root / self.task)
-            .read_text()
-            .replace(
-                'parent_ids: ["SPEC-0106-PLAN-0001"]',
-                'parent_ids: ["SPEC-0106-PLAN-0001"]\ncancellation:\n  reason: optional experiment withdrawn\n  authorization_ref: current fixture approval\n  criteria_disposition: required work completed; optional work excluded',
-            ),
-        )
-        self.stage()
-        result, output = self.completion()
-        self.assertEqual(result, 0, output)
-
     def test_every_plan_assigned_task_must_pass_the_same_criterion(self) -> None:
         second = TASK.parent / "tsk-0002-example.md"
         plan = (self.root / self.plan).read_text(encoding="utf-8")
@@ -855,11 +709,8 @@ class CompletionIndexTests(unittest.TestCase):
             ),
             (
                 self.task,
-                passed.replace(
-                    "| NOT_RUN | Pending | pending |",
-                    "| NOT_RUN | Pending | accepted |",
-                ),
-                "TASK-EVIDENCE-ACCEPTANCE",
+                passed.replace("| accepted |", "| bogus |"),
+                "TASK-ACCEPTANCE-STATE",
             ),
             (
                 self.task,
@@ -917,7 +768,7 @@ class CompletionIndexTests(unittest.TestCase):
 class LifecycleItemTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.registry = pre_p03_registry()
+        cls.registry = load_registry(ROOT)
 
     def rules(self, before: str, after: str) -> set[str]:
         base = document_from_text(self.registry, TASK, before)
@@ -961,37 +812,6 @@ class LifecycleItemTests(unittest.TestCase):
         )
         self.assertIn("TASK-ITEM-DELETE", self.rules(base, deleted))
         self.assertIn("TASK-ITEM-EDGE", self.rules(base, reopened))
-
-    def test_legacy_seven_column_base_preserves_work_ids_without_old_result_reparse(
-        self,
-    ) -> None:
-        old = (
-            task_text(
-                "completed",
-                [
-                    row(
-                        status="Completed",
-                        result="Old prose result",
-                        evidence="Prior evidence",
-                    ),
-                    row(
-                        "WORK-002",
-                        status="Completed",
-                        result="Old prose result",
-                        evidence="Prior evidence",
-                    ),
-                ],
-            )
-            .replace(SEPARATOR, "| --- | --- | --- | --- | --- | --- | --- |")
-            .replace("| Acceptance |", "|")
-            .replace("| pending |", "|")
-            .replace("### Lifecycle Traceability\n", "")
-            .replace(UPSTREAM, "VAL-P02-001")
-        )
-        current = task_text(
-            "completed", [row(result="PASS", evidence="focused test PASS")]
-        )
-        self.assertIn("TASK-ITEM-DELETE", self.rules(old, current))
 
 
 class AdoptedExecutionParentTests(unittest.TestCase):
@@ -1299,403 +1119,6 @@ class AdoptedExecutionParentTests(unittest.TestCase):
         )
 
 
-class GenerationAdmissionTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.registry = load_registry(ROOT)
-        self.base = _typed_registry_from_mapping(
-            json.loads(
-                subprocess.check_output(
-                    [
-                        "git",
-                        "show",
-                        f"{PRE_MIGRATION_COMMIT}:docs/99.templates/registry.json",
-                    ],
-                    cwd=ROOT,
-                )
-            )
-        )
-        self.after_bytes = {
-            PurePosixPath(entry["path"]): subprocess.check_output(
-                ["git", "show", f"{MIGRATION_COMMIT}:{entry['path']}"], cwd=ROOT
-            )
-            for entry in self.registry.migration_admission["entries"]
-        }
-        task_ref = PurePosixPath(self.registry.migration_admission["task_ref"])
-        self.after_bytes[task_ref] = current_task_form(
-            self.after_bytes[task_ref].decode()
-        ).encode()
-        self.before, self.after = {}, {}
-        for entry in self.registry.migration_admission["entries"]:
-            path = PurePosixPath(entry["path"])
-            old = subprocess.check_output(
-                ["git", "show", f"{PRE_MIGRATION_COMMIT}:{path}"], cwd=ROOT
-            ).decode()
-            self.before[path] = document_from_text(self.base, path, old)
-            self.after[path] = document_from_text(
-                self.registry, path, self.after_bytes[path].decode()
-            )
-
-    def test_actual_nine_to_ten_boundary_and_absent_source(self) -> None:
-        admitted = LIFECYCLE_CLI._generation_admission_paths(
-            self.registry, self.base, self.before, self.after
-        )
-        self.assertEqual(admitted, frozenset(self.before))
-        path = next(iter(self.before))
-        self.assertNotIn(
-            path,
-            LIFECYCLE_CLI._generation_admission_paths(
-                self.registry,
-                self.base,
-                {p: d for p, d in self.before.items() if p != path},
-                self.after,
-            ),
-        )
-        self.assertEqual(
-            LIFECYCLE_CLI._generation_admission_paths(
-                self.registry, self.registry, self.before, self.after
-            ),
-            frozenset(),
-        )
-
-    def test_unknown_reference_and_status_fail_closed(self) -> None:
-        for change in ("reference", "status"):
-            declaration = json.loads(json.dumps(self.registry.migration_admission))
-            if change == "reference":
-                declaration["spec_ref"] = "docs/03.specs/9999-missing/spec.md"
-            else:
-                declaration["entries"][0]["target_status"] = "INVENTED"
-            with (
-                self.subTest(change=change),
-                self.assertRaises(LIFECYCLE_CLI.InvocationError),
-            ):
-                LIFECYCLE_CLI._generation_admission_paths(
-                    replace(self.registry, migration_admission=declaration),
-                    self.base,
-                    self.before,
-                    self.after,
-                )
-
-    @contextlib.contextmanager
-    def _authentic_generation_replay(self):
-        with tempfile.TemporaryDirectory(prefix="generation-history-") as directory:
-            root = Path(directory)
-            shutil.copytree(ROOT / "docs/99.templates", root / "docs/99.templates")
-            registry_path = root / "docs/99.templates/registry.json"
-            registry_path.write_bytes(
-                subprocess.check_output(
-                    [
-                        "git",
-                        "show",
-                        f"{PRE_MIGRATION_COMMIT}:docs/99.templates/registry.json",
-                    ],
-                    cwd=ROOT,
-                )
-            )
-            for markdown in (root / "docs/99.templates").rglob("*.md"):
-                markdown.unlink()
-            copy_sources = (
-                PurePosixPath(
-                    "docs/98.archive/completed/03.specs/0063-governance-invariant-consolidation/spec.md"
-                ),
-                PurePosixPath(
-                    "docs/98.archive/completed/03.specs/0091-readme-navigation-contract/tasks/tsk-0001-converge-readme-navigation.md"
-                ),
-                PurePosixPath(
-                    "docs/03.specs/0105-authority-and-safe-authoring/plan.md"
-                ),
-            )
-            for source in copy_sources:
-                target = root / source
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(
-                    subprocess.check_output(
-                        ["git", "show", f"{PRE_MIGRATION_COMMIT}:{source}"], cwd=ROOT
-                    )
-                )
-            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
-
-            def commit() -> str:
-                subprocess.run(["git", "add", "--all"], cwd=root, check=True)
-                subprocess.run(
-                    [
-                        "git",
-                        "-c",
-                        "user.name=Fixture",
-                        "-c",
-                        "user.email=fixture@example.invalid",
-                        "commit",
-                        "--quiet",
-                        "-m",
-                        "fixture",
-                    ],
-                    cwd=root,
-                    check=True,
-                )
-                return subprocess.check_output(
-                    ["git", "rev-parse", "HEAD"], cwd=root, text=True
-                ).strip()
-
-            absent = commit()
-            for markdown in (ROOT / "docs/99.templates").rglob("*.md"):
-                target = root / markdown.relative_to(ROOT)
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(markdown.read_bytes())
-            for path in self.before:
-                target = root / path
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(
-                    subprocess.check_output(
-                        ["git", "show", f"{PRE_MIGRATION_COMMIT}:{path}"], cwd=ROOT
-                    )
-                )
-            intake = commit()
-            registry_path.write_bytes(
-                (ROOT / "docs/99.templates/registry.json").read_bytes()
-            )
-            for path in self.after:
-                (root / path).write_bytes(self.after_bytes[path])
-            subprocess.run(["git", "add", "--all"], cwd=root, check=True)
-            yield root, commit, absent, intake
-
-    def test_exact_git_boundary_replay_and_later_completion(self) -> None:
-        with self._authentic_generation_replay() as (root, commit, absent, intake):
-            findings = LIFECYCLE_CLI._evaluate_comparison(
-                root,
-                self.registry,
-                mode="staged",
-                from_ref=None,
-                base_ref=None,
-                to_ref=None,
-            )
-            self.assertEqual(
-                findings,
-                (),
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-            )
-            output = io.StringIO()
-            with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
-                result = LIFECYCLE_CLI.main(["--root", str(root), "--mode", "staged"])
-            self.assertEqual(result, 0, output.getvalue())
-            self.assertIn("PASS lifecycle validation mode=staged", output.getvalue())
-            migration = commit()
-            cache = LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)
-            for path in (SPEC, self.registry.migration_admission["task_ref"]):
-                path = PurePosixPath(path)
-                findings = LIFECYCLE_CLI._history_event_diagnostics(
-                    root,
-                    self.registry,
-                    path,
-                    intake,
-                    migration,
-                    cache._snapshot(intake)[0][path],
-                    cache._snapshot(migration)[0][path],
-                    cache,
-                )
-                self.assertEqual(
-                    findings,
-                    (),
-                    [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-                )
-            (root / SPEC).write_text(cancelled_spec((root / SPEC).read_text()))
-            cancelled = commit()
-            for before_commit, after_commit in (
-                (absent, intake),
-                (migration, cancelled),
-            ):
-                findings = LIFECYCLE_CLI._history_event_diagnostics(
-                    root,
-                    self.registry,
-                    SPEC,
-                    before_commit,
-                    after_commit,
-                    cache._snapshot(before_commit)[0].get(SPEC),
-                    cache._snapshot(after_commit)[0][SPEC],
-                    cache,
-                )
-                self.assertEqual(
-                    findings,
-                    (),
-                    [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-                )
-            self.assertFalse(
-                LIFECYCLE_CLI._history_proves_cumulative_create(
-                    root, self.registry, SPEC, absent, cancelled
-                )
-            )
-            task_path = PurePosixPath(self.registry.migration_admission["task_ref"])
-            self.assertFalse(
-                LIFECYCLE_CLI._history_proves_cumulative_create(
-                    root, self.registry, task_path, absent, cancelled
-                )
-            )
-            new_path = PurePosixPath("docs/03.specs/9999-new-current/spec.md")
-            (root / new_path).parent.mkdir(parents=True)
-            (root / new_path).write_text(
-                (root / SPEC).read_text().replace("SPEC-0106", "SPEC-9999")
-            )
-            invalid_create = commit()
-            findings = LIFECYCLE_CLI._evaluate_comparison(
-                root,
-                self.registry,
-                mode="ci",
-                base_ref=cancelled,
-                to_ref=invalid_create,
-                include_paths=(new_path,),
-            )
-            self.assertTrue(
-                any(
-                    item.path == new_path and item.rule_id == "LIFECYCLE-CREATE"
-                    for item in findings
-                ),
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-            )
-            # The current Spec lifecycle retired in-progress -> completed.
-            (root / SPEC).write_text(
-                cache._snapshot(migration)[1][SPEC].replace(
-                    'status: "in-progress"', 'status: "completed"', 1
-                )
-            )
-            retired = commit()
-            findings = LIFECYCLE_CLI._history_event_diagnostics(
-                root,
-                self.registry,
-                SPEC,
-                migration,
-                retired,
-                cache._snapshot(migration)[0][SPEC],
-                LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)._snapshot(
-                    retired
-                )[0][SPEC],
-                cache,
-            )
-            self.assertIn(
-                "LIFECYCLE-EDGE",
-                {item.rule_id for item in findings},
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-            )
-
-    def _assert_seeded_snapshot_budget(self, mode: str) -> None:
-        with self._authentic_generation_replay() as (root, commit, absent, intake):
-            migration = commit()
-            _cache = LIFECYCLE_CLI._CumulativeHistoryCache(root, self.registry)
-            (root / SPEC).write_text(cancelled_spec((root / SPEC).read_text()))
-            cancelled = commit()
-            task_path = PurePosixPath(self.registry.migration_admission["task_ref"])
-            package_paths = {SPEC, SPEC.parent / "plan.md", task_path}
-            seed_blobs = LIFECYCLE_CLI._tree_blob_map(root, absent)
-            snapshot_blobs = {
-                revision: LIFECYCLE_CLI._tree_blob_map(root, revision)
-                for revision in (intake, migration, cancelled)
-            }
-            newly_read_sizes = {
-                revision: LIFECYCLE_CLI._snapshot_blob_size(
-                    root,
-                    {
-                        path: oid
-                        for path, oid in blobs.items()
-                        if seed_blobs.get(path) != oid
-                    },
-                )
-                for revision, blobs in snapshot_blobs.items()
-            }
-            snapshot_limit = max(newly_read_sizes.values())
-            self.assertGreater(
-                LIFECYCLE_CLI._snapshot_blob_size(root, snapshot_blobs[cancelled]),
-                snapshot_limit,
-            )
-            self.assertLess(
-                snapshot_limit, LIFECYCLE_CLI.CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
-            )
-            with mock.patch.object(
-                LIFECYCLE_CLI,
-                "CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES",
-                snapshot_limit,
-            ):
-                with self.assertRaises(LIFECYCLE_CLI._CumulativeHistoryBudgetExceeded):
-                    LIFECYCLE_CLI._CumulativeHistoryCache(
-                        root, self.registry
-                    )._snapshot(cancelled)
-                findings = LIFECYCLE_CLI._evaluate_comparison(
-                    root,
-                    self.registry,
-                    mode=mode,
-                    **({"base_ref": absent} if mode == "ci" else {"from_ref": absent}),
-                    to_ref=cancelled,
-                    include_paths=tuple(package_paths),
-                )
-            package_findings = tuple(
-                item for item in findings if item.path in package_paths
-            )
-            self.assertEqual(
-                package_findings,
-                (),
-                [LIFECYCLE_CLI._format_diagnostic(item) for item in package_findings],
-            )
-
-    def test_plan_edited_after_generation_boundary_keeps_new_work_guards(
-        self,
-    ) -> None:
-        with self._authentic_generation_replay() as (root, commit, absent, _intake):
-            commit()
-            plan = SPEC.parent / "plan.md"
-            (root / plan).write_text((root / plan).read_text() + "\nLater edit.\n")
-            edited = commit()
-            findings = LIFECYCLE_CLI._evaluate_comparison(
-                root,
-                self.registry,
-                mode="ci",
-                base_ref=absent,
-                to_ref=edited,
-                include_paths=(plan,),
-            )
-        self.assertIn(
-            ("PLAN-PROMOTION", plan),
-            {(item.rule_id, item.path) for item in findings},
-            [LIFECYCLE_CLI._format_diagnostic(item) for item in findings],
-        )
-
-    def test_ci_seeded_snapshot_budget_preserves_package_history(self) -> None:
-        self._assert_seeded_snapshot_budget("ci")
-
-    def test_explicit_ref_seeded_snapshot_budget_preserves_package_history(
-        self,
-    ) -> None:
-        self._assert_seeded_snapshot_budget("explicit-ref")
-
-    def test_terminal_reopen_is_never_a_generation_admission(self) -> None:
-        path = SPEC
-        old = replace(self.before[path], status="completed")
-        new = replace(self.after[path], status="ready")
-        declaration = json.loads(json.dumps(self.registry.migration_admission))
-        declaration["entries"] = [
-            {
-                "path": str(path),
-                "source_profile": "sdlc/spec",
-                "source_status": "completed",
-                "target_profile": "sdlc/task",
-                "target_status": "ready",
-            }
-        ]
-        new = replace(new, profile_id="sdlc/task")
-        with self.assertRaises(LIFECYCLE_CLI.InvocationError):
-            LIFECYCLE_CLI._generation_admission_paths(
-                replace(self.registry, migration_admission=declaration),
-                self.base,
-                self.before | {path: old},
-                self.after | {path: new},
-            )
-
-
-# Completed SPEC-0107 package read as a fixture; archiving it must not change
-# a test.
-FIXTURE_SNAPSHOT = (
-    "bceca1b7a495a4025291062e4b204f79ae2064c4"  # pragma: allowlist secret
-)
-CURRENT_TASK = PurePosixPath(
-    "docs/03.specs/0107-local-qa-and-release/tasks/tsk-0004-commit-release-and-work-tracking.md"
-)
-
-
 class OptionalMultiRowStatusTests(unittest.TestCase):
     """A multi-row Task may omit its frontmatter summary; readers derive it."""
 
@@ -1705,21 +1128,16 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
 
         cls.task_status = staticmethod(task_status)
         cls.registry = load_registry(ROOT)
-        cls.profile = classify_path(cls.registry, CURRENT_TASK)
+        cls.profile = classify_path(cls.registry, TASK)
         cls.binding = cls.profile.body_contract.task_execution
-        single = subprocess.check_output(
-            ["git", "show", f"{FIXTURE_SNAPSHOT}:{CURRENT_TASK}"],
-            cwd=ROOT,
-            encoding="utf-8",
+        single = task_text("completed", [row(result="PASS", evidence="test: PASS")])
+        second = row(
+            "WORK-099", status="completed", result="PASS", evidence="test: PASS"
         )
-        lines = single.split("\n")
-        index = next(
-            i for i, line in enumerate(lines) if line.startswith("| WORK-004 |")
+        cls.with_status = task_text(
+            "completed",
+            [row(status="completed", result="PASS", evidence="test: PASS"), second],
         )
-        first = lines[index].replace("| frontmatter |", "| completed |", 1)
-        second = first.replace("| WORK-004 |", "| WORK-099 |", 1)
-        lines[index : index + 1] = [first, second]
-        cls.with_status = "\n".join(lines)
         cls.without_status = cls.with_status.replace('status: "completed"\n', "", 1)
         cls.single = single
         cls.single_without = single.replace('status: "completed"\n', "", 1)
@@ -1768,9 +1186,9 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
         self.assertIn("TASK-EXECUTION-STATUS", self.rule_ids("", "frontmatter"))
 
     def test_lifecycle_reads_the_derived_status(self) -> None:
-        document = document_from_text(self.registry, CURRENT_TASK, self.without_status)
+        document = document_from_text(self.registry, TASK, self.without_status)
         self.assertEqual((document.status, document.state_issue), ("completed", None))
-        document = document_from_text(self.registry, CURRENT_TASK, self.single_without)
+        document = document_from_text(self.registry, TASK, self.single_without)
         self.assertIsNone(document.status)
 
     def test_profile_validation_accepts_an_omitted_multi_row_summary(self) -> None:
@@ -1778,7 +1196,7 @@ class OptionalMultiRowStatusTests(unittest.TestCase):
             return {
                 item.rule_id
                 for item in MARKDOWN.validate_document_text(
-                    text, CURRENT_TASK, self.profile, "strict"
+                    text, TASK, self.profile, "strict"
                 )
             }
 

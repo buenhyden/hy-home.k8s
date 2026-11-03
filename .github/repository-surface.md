@@ -68,8 +68,6 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 - 현재 검증 명령과 fixture는 [`scripts/README.md`](../scripts/README.md)와
   [`tests/README.md`](../tests/README.md)를 따른다. 이 hub는 그 개수를
   복사하지 않는다.
-- ARWB-003의 전체 cutover는 과거 로컬·수동 증거다. 지속적인 Archive
-  무결성 검사는 현재 validation owner에서 수행한다.
 - `ci.yml`은 pull request의 형태를 검증한다. 원격 branch protection은
   직접 push 제한을 설정한다. 2026-10-15 인증된 원격 read-back에서
   `enforce_admins: true`를 확인해 관리자도 기존 보호 조건을 만족해야 한다.
@@ -99,7 +97,7 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
   QA 통과나 사람의 리뷰 승인을 대체하지 않는다.
 - 과거 hosted verifier, SHA main tag publisher, 임시 changelog artifact와
   stale 자동 종료는 현재 workflow에서 은퇴했다. 당시 인증된 활성화·태그
-  기록은 [Archive 탐색](../docs/98.archive/README.md)에 남아 있다.
+  기록은 Git history에서 복구한다.
   현재 원격 App·ruleset·보호 설정은 위 날짜의 read-back 범위에서만
   관찰했다. 환경과 이후 변경은 여기서 확인하지 않았다.
 - release 준비 PR은 main의 `CHANGELOG.md`를 갱신하고, SemVer tag와
@@ -120,7 +118,6 @@ full·unit·문서 내용 QA, 배포 CD, live 클러스터·외부 Vault 변경 
 
 - 현재 workflow 계약은 `.github/workflows/*.yml`과 공통
   [Quality policy](../.agents/governance/quality.md)가 소유한다.
-- 과거 SPEC-0103과 완료 증거는 [Archive 탐색](../docs/98.archive/README.md)을
-  통해 찾는다. 완료 Spec을 현재 실행 권위로 사용하지 않는다.
+- 과거 SPEC-0103과 완료 증거는 Git history에서 복구한다. 완료 Spec을 현재 실행 권위로 사용하지 않는다.
 - 외부 도구 계약이 바뀌면 공식 출처를 확인하고 현재 소유자와 소비자를
   함께 갱신한다.

@@ -949,23 +949,6 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, runner_text)
             self.assertNotIn(variable, qa_text)
 
-    def test_registry_dispatches_current_archive_integrity(self):
-        aggregate = (ROOT / "scripts/qa.py").read_text(encoding="utf-8")
-        registry = json.loads(
-            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
-        )
-        archive = next(
-            row for row in registry["validators"] if row["id"] == "archive-integrity"
-        )
-
-        self.assertEqual(
-            archive["argv"],
-            ["python3", "scripts/validate-archive-integrity.py", "--root", "."],
-        )
-        self.assertIn("affected", archive["lanes"])
-        self.assertIn("staged", archive["lanes"])
-        self.assertNotIn("scripts/validate-archive-integrity.py", aggregate)
-
     def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
         contract = {
             "validators": [

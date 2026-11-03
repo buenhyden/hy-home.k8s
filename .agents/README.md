@@ -86,7 +86,7 @@ package를 명시 호출용으로 노출한다. skill은 쓰기, 전송, 배포,
 schema·projection·중립 상한에 대한 정적 근거이며 native 강제의 근거가 아니다.
 실제 변경 범위에는 로컬 affected와 exact-index profile을 쓴다. 공용 QA
 machinery를 바꾸거나 범위가 명시된 감사를 할 때는 자원 사전 점검 뒤 등록된
-목적 gate와 이름 있는 동작·Archive·보안 회귀를 고른다. 퇴역한 full/ci
+목적 gate와 이름 있는 동작·보안 회귀를 고른다. 퇴역한 full/ci
 sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰지 않는다. native
 발견, 호출, 권한, hook 전달은 새 세션에서 따로 근거를 얻어야 한다.
 
@@ -94,5 +94,4 @@ sweep은 완료 명령이 아니다. 역할 projection 생성기는 쓰지 않�
 
 - Document profiles and templates (`docs/99.templates/README.md`)
 - [Repository documentation](../docs/README.md)
-- Memory retirement: MIG-0009 through the archive index (`docs/98.archive/README.md`)
 - [Governance contracts](governance/)

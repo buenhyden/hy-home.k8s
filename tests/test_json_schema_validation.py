@@ -55,7 +55,7 @@ class SchemaEvaluationBoundaryTest(unittest.TestCase):
 
         The pinned CI interpreter carries a newer jsonschema than a developer
         machine may have, so this only fails where the deprecation exists. That
-        is the environment whose stderr the archive cutover contract reads.
+        is the environment whose stderr a validator reports.
         """
 
         with warnings.catch_warnings(record=True) as caught:
