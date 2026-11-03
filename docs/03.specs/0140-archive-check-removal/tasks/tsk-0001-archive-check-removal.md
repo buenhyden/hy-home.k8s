@@ -65,11 +65,11 @@ delete the archived files and keep the README and structure. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | platform | in-progress | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | platform | in-progress | NOT_RUN | EVD-002 |
+| WORK-001 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | platform | completed | PASS | EVD-006 |
+| WORK-002 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | platform | completed | PASS | EVD-007 |
 | WORK-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | NOT_RUN | EVD-003 |
-| WORK-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items, refuse legacy document states in Stages 01 to 03, and delete completed Spec packages | platform | in-progress | NOT_RUN | EVD-005 |
-| WORK-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | platform | in-progress | NOT_RUN | EVD-004 |
+| WORK-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items, refuse legacy document states in Stages 01 to 03, and delete completed Spec packages | platform | completed | PASS | EVD-008 |
+| WORK-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | platform | completed | PASS | EVD-009 |
 
 ## Task Evidence
 
@@ -80,16 +80,20 @@ delete the archived files and keep the README and structure. It executes
 | EVD-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | NOT_RUN | Pending | yes | none |
 | EVD-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Contract suites, validators and QA | Exact revision | NOT_RUN | Pending | yes | none |
 | EVD-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | README search, registry and link checks | Exact revision | NOT_RUN | Pending | yes | none |
+| EVD-006 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | WORK-001 | Validators, test suites and QA | Exact revision | PASS | Commits `9e7cf390` and `dcbbf84a`: staged QA hook, strict link, Markdown-profile, lifecycle and repository-quality checks | yes | EVD-001 |
+| EVD-007 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Tree listing and link check | Exact revision | PASS | Commit `dcbbf84a`: `docs/98.archive/` holds README and `.gitkeep` only; strict link check passes | yes | EVD-002 |
+| EVD-008 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Contract suites, validators and QA | Exact revision | PASS | Commits `dcbbf84a` and `13f6115c`: staged QA hook, contract suites and strict lifecycle check | yes | EVD-005 |
+| EVD-009 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | README search, registry and link checks | Exact revision | PASS | Commits `dcbbf84a` and `13f6115c`: README audience search, registry profile, agent-governance and link checks | yes | EVD-004 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-001 | Awaiting evidence | platform |
-| [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-002 | Awaiting evidence | platform |
+| [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | PASS evidence recorded; awaiting operator acceptance | platform |
+| [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | PASS evidence recorded; awaiting operator acceptance | platform |
 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Awaiting evidence | platform |
-| [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | pending | EVD-005 | Awaiting evidence | platform |
-| [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | pending | EVD-004 | Awaiting evidence | platform |
+| [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | PASS evidence recorded; awaiting operator acceptance | platform |
+| [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | pending | EVD-009 | PASS evidence recorded; awaiting operator acceptance | platform |
 
 ## Approval and Safety Boundaries
 
@@ -115,4 +119,14 @@ delete the archived files and keep the README and structure. It executes
 
 ## Verification Summary
 
-Pending.
+- Every commit passed `python3 scripts/qa.py staged` through the pre-commit
+  hook on its exact index; platform live and syntax depths stay DEFER with
+  their named fallbacks.
+- `9e7cf390` fixed a pre-existing false positive: the kubeconfig rule flagged
+  read-only `kubectl config current-context`. A regression case covers it.
+- The non-style gate scans against the HEAD secret baseline, so the registry
+  baseline line moved one commit ahead of the profile removal.
+- Residual risk: the cancelled-Task `not-required` waiver lost its direct
+  regression test, and native runtime behavior was not observed.
+- Pending: WORK-003 independent review and hosted checks on the pull request,
+  then operator acceptance of every criterion.
