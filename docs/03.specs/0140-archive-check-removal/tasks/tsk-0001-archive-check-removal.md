@@ -15,7 +15,7 @@ parent_ids: ["SPEC-0140-PLAN-0001"]
 
 Remove every check of `docs/98.archive/` and every migration check, then
 delete the archived files and keep the README and structure. It executes
-[SPEC-0140](../spec.md) through [WORK-001–003](../plan.md#work-breakdown).
+[SPEC-0140](../spec.md) through [WORK-001–005](../plan.md#work-breakdown).
 
 ## Inputs
 
@@ -36,6 +36,19 @@ delete the archived files and keep the README and structure. It executes
   and one-time scripts, tests and QA checks. The operator chose to retire the
   completed SPEC-0105, SPEC-0106 and SPEC-0107 packages so the legacy Task
   binding can be deleted.
+- Follow-up (2026-11-03): Stages 01, 02 and 03 admit no legacy or deprecated
+  document state or form; existing ones are investigated and cleaned up, and
+  the rule is reflected in governance. The operator chose to forbid document
+  states only.
+- Follow-up (2026-11-03): each folder `AGENTS.md` references the matching
+  `.agents`, `.claude` and `.codex` files and states the folder's purpose; an
+  `AGENTS.md` exists only where the folder's role needs one, governance states
+  when a folder holds both files or a README alone, and the `AGENTS.md` files
+  under `examples/azure/` subfolders are removed.
+- Follow-up (2026-11-03): delete the completed Spec, Plan and Task documents in
+  `docs/03.specs/`.
+- Follow-up (2026-11-03): the operator chose logical commits, a pushed branch
+  and a pull request; merge waits for a separate request.
 - Start: main `69445fca`, branch `refactor/archive-check-removal`.
 - Hosted CI (`.github/workflows/ci.yml`) already ran no archive check; the
   checks lived in the local QA registry and the document validators.
@@ -46,11 +59,11 @@ delete the archived files and keep the README and structure. It executes
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-001 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | platform | draft | NOT_RUN | EVD-001 |
-| WORK-002 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | platform | draft | NOT_RUN | EVD-002 |
-| WORK-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | draft | NOT_RUN | EVD-003 |
-| WORK-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items and retire SPEC-0105 to SPEC-0107 | platform | draft | NOT_RUN | EVD-005 |
-| WORK-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | platform | draft | NOT_RUN | EVD-004 |
+| WORK-001 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | platform | ready | NOT_RUN | EVD-001 |
+| WORK-002 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | platform | ready | NOT_RUN | EVD-002 |
+| WORK-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | ready | NOT_RUN | EVD-003 |
+| WORK-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items, refuse legacy document states in Stages 01 to 03, and delete completed Spec packages | platform | ready | NOT_RUN | EVD-005 |
+| WORK-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | platform | ready | NOT_RUN | EVD-004 |
 
 ## Task Evidence
 
@@ -78,7 +91,8 @@ delete the archived files and keep the README and structure. It executes
   `docs/98.archive/`, `.pre-commit-config.yaml`, `.markdownlint-cli2.yaml`,
   `.agents/`, `.claude/`, `.codex/`, governance READMEs, REQ-0003, ADR-0040,
   ADR-0053, current documents that link into the archive, READMEs and folder
-  `AGENTS.md` files, and this package.
+  `AGENTS.md` files, Stage 01 and 02 documents that receive archived
+  lineage, completed Spec packages in `docs/03.specs/`, and this package.
 - **Forbidden Paths**: `.github/workflows/`, cluster objects, secrets and
   other repositories.
 - **Approval Required**: the operator's requests above. Commit, push, pull

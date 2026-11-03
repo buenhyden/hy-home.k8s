@@ -2,7 +2,7 @@
 title: "Archive Check Removal Plan"
 version: "0.1.0"
 type: "sdlc/plan"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-03"
 layer: "specs"
@@ -44,7 +44,7 @@ The non-goals listed in the Spec.
 | WORK-001 | [VAL-ARC-001](spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | None | [Task](tasks/tsk-0001-archive-check-removal.md) | Validators, test suites and QA |
 | WORK-002 | [VAL-ARC-002](spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | WORK-001 | [Task](tasks/tsk-0001-archive-check-removal.md) | Tree listing and link check |
 | WORK-003 | [VAL-ARC-003](spec.md#success-criteria--verification-plan) | Independent review and hosted checks | WORK-001, WORK-002, WORK-004, WORK-005 | [Task](tasks/tsk-0001-archive-check-removal.md) | Review and hosted checks |
-| WORK-005 | [VAL-ARC-005](spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items and retire SPEC-0105 to SPEC-0107 | WORK-001 | [Task](tasks/tsk-0001-archive-check-removal.md) | Contract suites, validators and QA |
+| WORK-005 | [VAL-ARC-005](spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items, refuse legacy document states in Stages 01 to 03, and delete completed Spec packages | WORK-001 | [Task](tasks/tsk-0001-archive-check-removal.md) | Contract suites, validators and QA |
 | WORK-004 | [VAL-ARC-004](spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | None | [Task](tasks/tsk-0001-archive-check-removal.md) | README search, registry and link checks |
 
 ## Verification Plan

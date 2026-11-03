@@ -2,7 +2,7 @@
 title: "Archive Check Removal"
 version: "0.1.0"
 type: "sdlc/spec"
-status: "draft"
+status: "approved"
 owner: "platform"
 updated: "2026-11-03"
 layer: "specs"
@@ -42,6 +42,11 @@ records the decision. The [Plan](plan.md) orders the work and
     configuration, and retiring the completed SPEC-0105, SPEC-0106 and
     SPEC-0107 packages whose old Task form kept a legacy validator binding
     alive;
+  - refusing the `superseded`, `retired` and `deprecated` states and older
+    forms in Stage 01, 02 and 03 profiles, summarizing the documents that
+    held them in their current owners, and deleting them;
+  - deleting the completed Spec packages SPEC-0108 to SPEC-0139 after their
+    durable contracts are promoted to current owners;
   - removing agent-directed text from READMEs, moving folder agent rules into
     folder `AGENTS.md` files, a registry profile for them, and the governance,
     provider and README text that states the split.
@@ -106,7 +111,7 @@ Recovery of any removed file or check is `git revert` of the change, or
 | VAL-ARC-001 | No registered validator or test reads or proves archive content or migrations, and the selected QA passes. |
 | VAL-ARC-002 | `docs/98.archive/` holds only its README and directory structure, each deleted document is summarized in a current Stage 01 or Stage 02 owner, and the strict link check passes. |
 | VAL-ARC-003 | An independent reviewer confirms the change, and the pull request's hosted checks pass. |
-| VAL-ARC-005 | No QA, test or CI/CD path keeps a compatibility branch for an older format, generation or pinned historical commit, or checks only a finished one-time transition, and the selected QA passes. |
+| VAL-ARC-005 | No QA, test or CI/CD path keeps a compatibility branch for an older format, generation or pinned historical commit, or checks only a finished one-time transition; no Stage 01, 02 or 03 profile admits a superseded, retired or deprecated state; no completed Spec package remains; and the selected QA passes. |
 | VAL-ARC-004 | No README carries agent instructions or an AI agent audience, folder agent rules live in `AGENTS.md`, and the governance states the split. |
 
 ## Traceability
