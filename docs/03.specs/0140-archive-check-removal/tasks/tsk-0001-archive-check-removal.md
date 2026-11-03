@@ -55,6 +55,8 @@ delete the archived files and keep the README and structure. It executes
   `docs/05.operations` and `docs/99.templates` for text that differs from or
   conflicts with the current implementation, and correct and complete it.
 - Approval (2026-11-03): the operator accepted ADR-0048.
+- Approval (2026-11-03): the operator accepted VAL-ARC-001 to VAL-ARC-005
+  after the published independent review of PR #197.
 - Follow-up (2026-11-03): each of `docs/01.requirements`,
   `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`,
   `docs/90.references` and `docs/99.templates` holds an `AGENTS.md` written
@@ -71,7 +73,7 @@ delete the archived files and keep the README and structure. It executes
 | --- | --- | --- | --- | --- | --- | --- |
 | WORK-001 | [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | Remove archive and migration checks, their tests, registry entries and policy text | platform | completed | PASS | EVD-006 |
 | WORK-002 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | Delete archived files, keep README and structure, repoint current links, summarize them in Stage 01 and 02 owners | platform | completed | PASS | EVD-007 |
-| WORK-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | in-progress | NOT_RUN | EVD-003 |
+| WORK-003 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | Independent review and hosted checks | platform | completed | PASS | EVD-010 |
 | WORK-005 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | Delete legacy, deprecated and one-time QA and CI/CD items, refuse legacy document states in Stages 01 to 03, and delete completed Spec packages | platform | completed | PASS | EVD-008 |
 | WORK-004 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | Separate README (human) and AGENTS.md (agent) audiences | platform | completed | PASS | EVD-009 |
 
@@ -88,16 +90,17 @@ delete the archived files and keep the README and structure. It executes
 | EVD-007 | [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | WORK-002 | Tree listing and link check | Exact revision | PASS | Commit `dcbbf84a`: `docs/98.archive/` holds README and `.gitkeep` only; strict link check passes | yes | EVD-002 |
 | EVD-008 | [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | WORK-005 | Contract suites, validators and QA | Exact revision | PASS | Commits `dcbbf84a` and `13f6115c`: staged QA hook, contract suites and strict lifecycle check | yes | EVD-005 |
 | EVD-009 | [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | WORK-004 | README search, registry and link checks | Exact revision | PASS | Commits `dcbbf84a` and `13f6115c`: README audience search, registry profile, agent-governance and link checks | yes | EVD-004 |
+| EVD-010 | [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | WORK-003 | Review and hosted checks | Exact pull request head | PASS | PR #197 head `5d7b7641`: RUN-0013 `independent-review` check run `125945829687` (App `5341483`, success); `ci-summary` and `style-pr` run `41642458090` pass | yes | EVD-003 |
 
 ## Criterion Acceptance
 
 | Criterion | Acceptance | Evidence | Disposition | Current owner |
 | --- | --- | --- | --- | --- |
-| [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | pending | EVD-006 | PASS evidence recorded; awaiting operator acceptance | platform |
-| [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | pending | EVD-007 | PASS evidence recorded; awaiting operator acceptance | platform |
-| [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | pending | EVD-003 | Awaiting evidence | platform |
-| [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | pending | EVD-008 | PASS evidence recorded; awaiting operator acceptance | platform |
-| [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | pending | EVD-009 | PASS evidence recorded; awaiting operator acceptance | platform |
+| [VAL-ARC-001](../spec.md#success-criteria--verification-plan) | accepted | EVD-006 | Operator accepted on 2026-11-03 | platform |
+| [VAL-ARC-002](../spec.md#success-criteria--verification-plan) | accepted | EVD-007 | Operator accepted on 2026-11-03 | platform |
+| [VAL-ARC-003](../spec.md#success-criteria--verification-plan) | accepted | EVD-010 | Operator accepted on 2026-11-03 | platform |
+| [VAL-ARC-005](../spec.md#success-criteria--verification-plan) | accepted | EVD-008 | Operator accepted on 2026-11-03 | platform |
+| [VAL-ARC-004](../spec.md#success-criteria--verification-plan) | accepted | EVD-009 | Operator accepted on 2026-11-03 | platform |
 
 ## Approval and Safety Boundaries
 
@@ -146,5 +149,7 @@ delete the archived files and keep the README and structure. It executes
 - Left as is: the SPEC-0123 comment in `.github/workflows/ci.yml` is outside
   the allowed paths, and `.codex/rules/default.rules` is digest-pinned by
   the agent-governance validator.
-- Pending: WORK-003 independent review published on the final pull request
-  head and its hosted checks, then operator acceptance of every criterion.
+- The second RUN-0013 review of head `5d7b7641` returned `approve` with one
+  low finding (the two comments above) and was published as check run
+  `125945829687`; every hosted check passed on that head.
+- The operator accepted all five criteria on 2026-11-03.
