@@ -75,8 +75,16 @@ gets only its invalidated checks, and an identical fast-forward does not replay
 them. The hosted `ci-summary` job owns the PR branch and commit-metadata verdict directly;
 the hosted PR style job owns only its selected style verdict. Each observed
 result has its own SHA and trust boundary and never stands in for local purpose,
-unit or document-content checks. Merge proceeds only when `ci-summary` and
-`style-pr` pass. A deployment style result requires an actual
+unit or document-content checks. Every change to `main` arrives by pull
+request; direct and force pushes are blocked. A pull request completes only
+when the required checks pass, the required review approval is met (zero
+approvals and no CODEOWNERS review, because a sole owner cannot approve their
+own pull request) and the new-context review of the final diff reports no
+`BLOCK` finding ([semantic review](quality.md#semantic-review)). The owner
+merges personally, with a merge commit only, so the commits a Task cites stay
+reachable. Required checks, the separated review and the owner's own merge
+together offset the missing second reviewer; no automated check, App or
+signature replaces the owner's approval. A deployment style result requires an actual
 deployment workflow and run; absent that input, keep it unobserved. Observe
 actual ruleset requirements before calling an integration accepted.
 

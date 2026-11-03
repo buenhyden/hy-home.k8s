@@ -164,7 +164,14 @@ confirmation for the same scope and evidence snapshot.
   scope, findings and disposition in the existing handoff evidence. The writer
   repairs findings; refresh affected checks and independent review after
   changes. Reuse unchanged evidence under the validation lane contract.
-- A failed required check or unresolved finding blocks completion. Missing
+- Grade every finding `BLOCK`, `FIX` or `NOTE`. `BLOCK` is a correctness,
+  security or data-loss defect or a violation of a current contract or policy;
+  it must be fixed before merge. `FIX` should be fixed, in the same change or
+  in a tracked follow-up with a named owner. `NOTE` is informational.
+- For a pull request, review the final diff of the exact head in a new context
+  separated from the authoring context: one that did not write the change and
+  receives the diff and current owners, not the author's conclusions.
+- A failed required check or unresolved `BLOCK` finding blocks completion. Missing
   applicable automation or an unavailable independent reviewer is an explicit
   evidence gap, not PASS; route it to the responsible owner. Human judgment is
   needed for unresolved intent, conflicting authority or a decision reserved
@@ -242,7 +249,7 @@ above.
 | Routine editing | Run focused behavior checks and selected affected `quick` checks over changed working-tree bytes. |
 | Local commit | Review the logical index, run selected exact-index `staged` QA, required lint and format checks on the final index immediately before commit, and actual commit-message validation, then commit with active hooks. An identical hook leaf already run over the same index must not be invoked a second time manually. |
 | Feature push | Preserve checked commit evidence and observed push result; pushing adds no QA leaf for unchanged inputs. |
-| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. Merge only when `ci-summary` and `style-pr` both pass. |
+| Pull request | Observe required hosted branch or repository metadata and selected style checks at the exact PR SHA and run identity. Hosted style does not certify local purpose checks or document content; remote protection remains `DEFER` when unobserved. A pull request completes only when the required checks pass, the required review approval is met (currently zero approvals) and the new-context review of the final diff reports no `BLOCK` finding. The owner merges it personally with a merge commit; automated checks, Apps and signatures never stand in for the owner's approval. |
 | Deployment | If a deployment workflow exists, observe its selected style check at the actual deployment SHA/run before deployment. Without such a workflow or run, retain `NOT_RUN` or `DEFER` for that lane; repository files alone cannot certify deployment. |
 | Main integration | Compare the integrated tree and history with checked inputs. Run only checks invalidated by a changed input; an identical fast-forward needs no repeat. Record the actual merge and any remote required-check result separately. |
 | Local handoff | Resolve tools, actual resources, output, technical command limits and necessary native approval for applicable selected gates and named unit regressions, including continuing security guarantees. No session timebox or reserve approval is required. Do not select blanket discovery or a retired full/ci sweep merely to close the task. |
