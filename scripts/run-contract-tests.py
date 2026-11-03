@@ -68,7 +68,6 @@ SUITES = {
         "validate_agent_core",
     ),
     "tooling": _modules(
-        "independent_review",
         "prompt_input",
         "k8s_pre_edit_hook",
         "repository_quality_rules",

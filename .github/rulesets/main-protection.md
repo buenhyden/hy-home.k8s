@@ -31,9 +31,6 @@ that a setting is in force; only a dated authenticated read-back is.
   `15368` on a pull request; the former checks branch metadata and the latter
   checks selected style. Their separate required results carry the style
   failure to the merge decision.
-- Require `independent-review` from review App `5341483`, published only
-  through RUN-0013, so a PR-edited workflow cannot satisfy every required
-  check.
 - Do not enforce squash/rebase-only or linear-history settings that would
   discard referenced objects, so delivered history can keep them.
 - Keep `enforce_admins` enabled, so the owner also uses a pull request and the
@@ -60,22 +57,25 @@ Changing the remote setting back requires a new reviewed before-state,
 operator decision and after-state. SHA pinning does not protect the body of a
 PR-editable `pull_request` workflow, its shell steps, or required job names.
 The repository's default read token is not a hard ceiling on workflow-defined
-permissions. Required-check forgery is closed by the `independent-review`
-requirement above; the PR-editable workflow body is a separate MEDIUM risk owned
-by the CI and security operator. SPEC-0115 Task 0005 first recorded it; that
-package left the tree and Git history recovers it.
+permissions. Both required checks come from GitHub Actions App `15368`, so a
+pull request that edits a `pull_request` workflow can still produce passing
+results under those names. The 2026-11-03 removal of the `independent-review`
+check reopened that required-check forgery risk; the CI and security operator
+owns it as HIGH, together with the PR-editable workflow body as MEDIUM.
+SPEC-0115 Task 0005 first recorded the latter; that package left the tree and
+Git history recovers it.
 
 ## Required Status Checks
 
-The target requires three separate checks.
-`.github/workflows/ci.yml` owns the two Actions job identities and
-`.github/repository-surface.md` explains their roles. The independent review
-runbook RUN-0013 in `docs/05.operations/runbooks/` owns the third; SPEC-0116,
-which introduced it, left the tree and Git history recovers it.
+The target requires two separate checks.
+`.github/workflows/ci.yml` owns both Actions job identities and
+`.github/repository-surface.md` explains their roles. A third check,
+`independent-review` from review App `5341483`, was removed from the remote
+setting on 2026-11-03 at the operator's request; SPEC-0116, which introduced
+it, left the tree and Git history recovers it.
 
 - `ci-summary` (App `15368`)
 - `style-pr` (App `15368`)
-- `independent-review` (App `5341483`, no workflow; published locally)
 
 `ci-summary` checks pull-request base and source-prefix
 metadata directly, and reports branch policy as `NOT_APPLICABLE` on main
@@ -84,11 +84,6 @@ has its own input and evidence. `style-pr` checks selected style on the PR
 merge candidate using the reviewed base's tool and configuration copies. Its
 job result is separately required. A main push or manual dispatch skips the
 PR-only job; that skip is not PR style PASS.
-
-The `independent-review` reviewer is an AI agent under the same solo operator,
-so the gate is not independent human review; the operator owns that HIGH risk.
-A protected publication path requires a new current contract, its own identity
-and an authenticated remote read-back. No setting is changed by this guidance.
 
 GitHub treats a whole workflow skipped by a path or branch filter as an
 expected check that may remain pending. No CI workflow here declares a `paths`

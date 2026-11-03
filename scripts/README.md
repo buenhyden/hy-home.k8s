@@ -118,7 +118,6 @@ Python validator의 모든 subprocess 호출은 유한한 timeout을 쓴다. 텍
 | `validate-workspace-boundary.py` | staged workspace 경계와 ignore 경로 계약 |
 | `render-platform-chart-kinds.sh` | 운영자가 직접 실행하는 chart kind 리뷰 보조 도구 |
 | `release.py` | main changelog PR을 준비하고 SemVer GitHub Release 하나를 명시적으로 게시한다. 기본은 로컬 읽기 전용 미리보기이며 `publish --execute`는 운영자 작업이다. |
-| `independent_review.py` | 운영자가 직접 실행한다. 로컬 독립 리뷰 verdict를 PR의 현재 head에 묶어 리뷰 App의 `independent-review` check run으로 게시한다. 절차는 Stage 05 RUN-0013이 소유한다. 모델 API를 호출하지 않는다. |
 
 ## Usage
 
