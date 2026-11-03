@@ -46,7 +46,7 @@ config:
 
 ignores:
   # Archive records are unvalidated history.
-  - "docs/98.archive/"
+  - "docs/98.archive/*/**"
   # Only paired-trial raw outputs are data. Routers, task, score and results
   # remain linted as authored Markdown.
   - ".agents/evaluations/harnesses/*/baseline.md"

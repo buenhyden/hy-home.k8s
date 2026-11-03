@@ -22,6 +22,7 @@ def _modules(*names: str) -> tuple[str, ...]:
 SUITES = {
     "document": _modules(
         "document_lifecycle_cumulative_history",
+        "document_lifecycle_completion",
         "task_execution_contract",
         "task_acceptance_contract",
         "task_acceptance_boundaries",

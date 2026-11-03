@@ -127,7 +127,7 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                     )
 
     def test_frozen_exclusions_follow_the_registry(self):
-        """Hook-local frozen lists cover the archive and raw harness outputs."""
+        """Frozen lists cover archive bodies (not its README) and harness outputs."""
 
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
         hooks = {h["id"]: h for r in config["repos"] for h in r["hooks"]}
@@ -135,8 +135,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             "ignores"
         ]
         archive = re.compile(hooks["end-of-file-fixer"]["exclude"])
-        self.assertTrue(archive.search("docs/98.archive/README.md"))
-        self.assertIn("docs/98.archive/", ignores)
+        self.assertTrue(archive.search("docs/98.archive/completed/x.md"))
+        self.assertIsNone(archive.search("docs/98.archive/README.md"))
+        self.assertIn("docs/98.archive/*/**", ignores)
         harness = re.search(
             r"harnesses/.*?/\(\?:([a-z|-]+)\)\\\.md",
             hooks["end-of-file-fixer"]["exclude"],

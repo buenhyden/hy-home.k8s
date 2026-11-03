@@ -57,7 +57,7 @@ repos:
         # Raw paired-trial outputs are opaque evidence bytes. Scope the same
         # mutation exclusion to their exact current Stage 99 filename grammar.
         exclude: &frozen_archive |
-          (?x)^(?:docs/98\.archive/.+
+          (?x)^(?:docs/98\.archive/(?!README\.md$).+
           | \.agents/evaluations/harnesses/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?:baseline|with-skill)\.md
           )$
       - id: mixed-line-ending

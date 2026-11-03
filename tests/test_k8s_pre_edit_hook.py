@@ -186,6 +186,13 @@ class PreEditAcceptanceTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_unvalidated_archive_path_needs_no_profile(self):
+        for target in ("docs/98.archive/README.md", "docs/98.archive/completed/x.md"):
+            result = run_hook(scalar_payload(target), ROOT)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn("HOOK-DOC-ROUTE", result.stderr)
+
     def test_terminal_requirement_route_is_selected_from_registry(self):
         target = "docs/01.requirements/9999-example-feature.md"
 

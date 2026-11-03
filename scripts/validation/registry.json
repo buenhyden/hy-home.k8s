@@ -1287,6 +1287,10 @@
         },
         {
           "kind": "exact",
+          "value": "tests/test_document_lifecycle_completion.py"
+        },
+        {
+          "kind": "exact",
           "value": "tests/git_fixture.py"
         },
         {

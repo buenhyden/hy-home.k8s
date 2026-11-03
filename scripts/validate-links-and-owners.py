@@ -3673,8 +3673,6 @@ def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
         raw = path.stem
     elif re.fullmatch(r"docs/03\.specs/[^/]+/spec\.md", value):
         raw = path.parent.name
-    elif re.fullmatch(r"docs/04\.execution/(?:plans|tasks)/[^/]+\.md", value):
-        raw = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", path.stem)
     else:
         raw = value.removesuffix(".md")
     return _normalize_component(raw)

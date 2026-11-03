@@ -409,8 +409,8 @@ def authored_doc_route(
     if path.startswith(".agents/") or path.startswith("docs/99.templates/"):
         return None
     if not re.match(
-        r"^docs/(01\.requirements|02\.architecture|03\.specs|04\.execution|"
-        r"05\.operations|90\.references|98\.archive)(/|$)",
+        r"^docs/(01\.requirements|02\.architecture|03\.specs|05\.operations|"
+        r"90\.references)(/|$)",
         path,
     ):
         return None
